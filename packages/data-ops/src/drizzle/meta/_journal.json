@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1763410761776,
+      "tag": "0000_purple_tyger_tiger",
+      "breakpoints": true
+    }
+  ]
+}
