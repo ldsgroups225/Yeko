@@ -1,0 +1,49 @@
+{
+  "name": "@repo/logger",
+  "version": "1.0.0",
+  "description": "Logger package for Yeko educational management platform using LogTape",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@logtape/logtape": "^0.8.2"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.9.2"
+  },
+  "packageManager": "pnpm@10.14.0",
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/darius-kassi/yeko.git",
+    "directory": "packages/logger"
+  },
+  "keywords": [
+    "logging",
+    "logtape",
+    "typescript",
+    "yeko",
+    "education",
+    "saas"
+  ],
+  "author": "Yeko Team",
+  "license": "ISC"
+}
