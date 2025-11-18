@@ -9,21 +9,14 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as StaticRouteRouteImport } from './routes/_static/route'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as StaticDocsIndexRouteImport } from './routes/_static/docs/index'
 import { Route as AuthAppIndexRouteImport } from './routes/_auth/app/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
-import { Route as StaticDocsNameRouteImport } from './routes/_static/docs/$name'
 import { Route as AuthAppPolarSubscriptionsRouteImport } from './routes/_auth/app/polar/subscriptions'
 import { Route as AuthAppPolarPortalRouteImport } from './routes/_auth/app/polar/portal'
 import { Route as AuthAppPolarCheckoutSuccessRouteImport } from './routes/_auth/app/polar/checkout.success'
 
-const StaticRouteRoute = StaticRouteRouteImport.update({
-  id: '/_static',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthRouteRoute = AuthRouteRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
@@ -32,11 +25,6 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any)
-const StaticDocsIndexRoute = StaticDocsIndexRouteImport.update({
-  id: '/docs/',
-  path: '/docs/',
-  getParentRoute: () => StaticRouteRoute,
 } as any)
 const AuthAppIndexRoute = AuthAppIndexRouteImport.update({
   id: '/app/',
@@ -47,11 +35,6 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
-} as any)
-const StaticDocsNameRoute = StaticDocsNameRouteImport.update({
-  id: '/docs/$name',
-  path: '/docs/$name',
-  getParentRoute: () => StaticRouteRoute,
 } as any)
 const AuthAppPolarSubscriptionsRoute =
   AuthAppPolarSubscriptionsRouteImport.update({
@@ -73,20 +56,16 @@ const AuthAppPolarCheckoutSuccessRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/docs/$name': typeof StaticDocsNameRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/app': typeof AuthAppIndexRoute
-  '/docs': typeof StaticDocsIndexRoute
   '/app/polar/portal': typeof AuthAppPolarPortalRoute
   '/app/polar/subscriptions': typeof AuthAppPolarSubscriptionsRoute
   '/app/polar/checkout/success': typeof AuthAppPolarCheckoutSuccessRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/docs/$name': typeof StaticDocsNameRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/app': typeof AuthAppIndexRoute
-  '/docs': typeof StaticDocsIndexRoute
   '/app/polar/portal': typeof AuthAppPolarPortalRoute
   '/app/polar/subscriptions': typeof AuthAppPolarSubscriptionsRoute
   '/app/polar/checkout/success': typeof AuthAppPolarCheckoutSuccessRoute
@@ -95,11 +74,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteRouteWithChildren
-  '/_static': typeof StaticRouteRouteWithChildren
-  '/_static/docs/$name': typeof StaticDocsNameRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_auth/app/': typeof AuthAppIndexRoute
-  '/_static/docs/': typeof StaticDocsIndexRoute
   '/_auth/app/polar/portal': typeof AuthAppPolarPortalRoute
   '/_auth/app/polar/subscriptions': typeof AuthAppPolarSubscriptionsRoute
   '/_auth/app/polar/checkout/success': typeof AuthAppPolarCheckoutSuccessRoute
@@ -108,20 +84,16 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/docs/$name'
     | '/api/auth/$'
     | '/app'
-    | '/docs'
     | '/app/polar/portal'
     | '/app/polar/subscriptions'
     | '/app/polar/checkout/success'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/docs/$name'
     | '/api/auth/$'
     | '/app'
-    | '/docs'
     | '/app/polar/portal'
     | '/app/polar/subscriptions'
     | '/app/polar/checkout/success'
@@ -129,11 +101,8 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_auth'
-    | '/_static'
-    | '/_static/docs/$name'
     | '/api/auth/$'
     | '/_auth/app/'
-    | '/_static/docs/'
     | '/_auth/app/polar/portal'
     | '/_auth/app/polar/subscriptions'
     | '/_auth/app/polar/checkout/success'
@@ -142,19 +111,11 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
-  StaticRouteRoute: typeof StaticRouteRouteWithChildren
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_static': {
-      id: '/_static'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof StaticRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_auth': {
       id: '/_auth'
       path: ''
@@ -169,13 +130,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_static/docs/': {
-      id: '/_static/docs/'
-      path: '/docs'
-      fullPath: '/docs'
-      preLoaderRoute: typeof StaticDocsIndexRouteImport
-      parentRoute: typeof StaticRouteRoute
-    }
     '/_auth/app/': {
       id: '/_auth/app/'
       path: '/app'
@@ -189,13 +143,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/auth/$'
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/_static/docs/$name': {
-      id: '/_static/docs/$name'
-      path: '/docs/$name'
-      fullPath: '/docs/$name'
-      preLoaderRoute: typeof StaticDocsNameRouteImport
-      parentRoute: typeof StaticRouteRoute
     }
     '/_auth/app/polar/subscriptions': {
       id: '/_auth/app/polar/subscriptions'
@@ -239,24 +186,9 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
   AuthRouteRouteChildren,
 )
 
-interface StaticRouteRouteChildren {
-  StaticDocsNameRoute: typeof StaticDocsNameRoute
-  StaticDocsIndexRoute: typeof StaticDocsIndexRoute
-}
-
-const StaticRouteRouteChildren: StaticRouteRouteChildren = {
-  StaticDocsNameRoute: StaticDocsNameRoute,
-  StaticDocsIndexRoute: StaticDocsIndexRoute,
-}
-
-const StaticRouteRouteWithChildren = StaticRouteRoute._addFileChildren(
-  StaticRouteRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRouteRoute: AuthRouteRouteWithChildren,
-  StaticRouteRoute: StaticRouteRouteWithChildren,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport
