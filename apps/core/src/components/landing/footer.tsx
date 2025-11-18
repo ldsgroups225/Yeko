@@ -1,38 +1,37 @@
-import { ExternalLink } from "lucide-react";
-import { FaXTwitter, FaFacebook, FaLinkedin } from "react-icons/fa6";
-import { Link } from "@tanstack/react-router";
+import { Link } from '@tanstack/react-router'
+import { FaFacebook, FaLinkedin, FaXTwitter } from 'react-icons/fa6'
 
 const navigation = {
   product: [
-    { name: "Features", href: "/#features" },
-    { name: "Pricing", href: "/pricing" },
-    { name: "About Us", href: "/about" },
-    { name: "Contact", href: "/contact" },
+    { name: 'Features', href: '/#features' },
+    { name: 'Pricing', href: '/pricing' },
+    { name: 'About Us', href: '/about' },
+    { name: 'Contact', href: '/contact' },
   ],
   resources: [
-    { name: "Help Center", href: "/help" },
-    { name: "Privacy Policy", href: "/privacy" },
-    { name: "Terms of Service", href: "/terms" },
-    { name: "Security", href: "/security" },
+    { name: 'Help Center', href: '/help' },
+    { name: 'Privacy Policy', href: '/privacy' },
+    { name: 'Terms of Service', href: '/terms' },
+    { name: 'Security', href: '/security' },
   ],
   social: [
     {
-      name: "Facebook",
-      href: "https://facebook.com/yekoplatform",
+      name: 'Facebook',
+      href: 'https://facebook.com/yekoplatform',
       icon: FaFacebook,
     },
     {
-      name: "Twitter",
-      href: "https://twitter.com/yekoplatform",
+      name: 'Twitter',
+      href: 'https://twitter.com/yekoplatform',
       icon: FaXTwitter,
     },
     {
-      name: "LinkedIn",
-      href: "https://linkedin.com/company/yekoplatform",
+      name: 'LinkedIn',
+      href: 'https://linkedin.com/company/yekoplatform',
       icon: FaLinkedin,
     },
   ],
-};
+}
 
 export function Footer() {
   return (
@@ -43,8 +42,8 @@ export function Footer() {
             <h3 className="text-sm font-semibold text-foreground">
               Product
             </h3>
-            <ul role="list" className="mt-2 space-y-1">
-              {navigation.product.map((item) => (
+            <ul className="mt-2 space-y-1">
+              {navigation.product.map(item => (
                 <li key={item.name}>
                   <Link
                     to={item.href}
@@ -61,8 +60,8 @@ export function Footer() {
             <h3 className="text-sm font-semibold text-foreground">
               Resources
             </h3>
-            <ul role="list" className="mt-2 space-y-1">
-              {navigation.resources.map((item) => (
+            <ul className="mt-2 space-y-1">
+              {navigation.resources.map(item => (
                 <li key={item.name}>
                   <Link
                     to={item.href}
@@ -79,7 +78,7 @@ export function Footer() {
         <div className="mt-8 md:mt-0 flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-6">
           <div className="flex space-x-6">
             {navigation.social.map((item) => {
-              const IconComponent = item.icon;
+              const IconComponent = item.icon
               return (
                 <a
                   key={item.name}
@@ -91,7 +90,7 @@ export function Footer() {
                   <span className="sr-only">{item.name}</span>
                   <IconComponent className="h-5 w-5" />
                 </a>
-              );
+              )
             })}
           </div>
 
@@ -100,11 +99,15 @@ export function Footer() {
               Empowering Education Across Africa
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              &copy; {new Date().getFullYear()} Yeko Platform. All rights reserved.
+              &copy;
+              {' '}
+              {new Date().getFullYear()}
+              {' '}
+              Yeko Platform. All rights reserved.
             </p>
           </div>
         </div>
       </div>
     </footer>
-  );
+  )
 }

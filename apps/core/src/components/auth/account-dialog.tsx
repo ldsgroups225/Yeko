@@ -1,35 +1,35 @@
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { LogOut, Palette } from 'lucide-react'
+import { ThemeToggle } from '@/components/theme/theme-toggle'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { authClient } from "@/lib/auth-client";
-import { LogOut, Palette } from "lucide-react";
-import { ThemeToggle } from "@/components/theme/theme-toggle";
+} from '@/components/ui/dialog'
+import { authClient } from '@/lib/auth-client'
 
 interface AccountDialogProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 export function AccountDialog({ children }: AccountDialogProps) {
-  const { data: session } = authClient.useSession();
+  const { data: session } = authClient.useSession()
 
   const signOut = async () => {
-    await authClient.signOut();
-  };
-
-  if (!session) {
-    return null;
+    await authClient.signOut()
   }
 
-  const user = session.user;
+  if (!session) {
+    return null
+  }
+
+  const user = session.user
   const fallbackText = user.name
     ? user.name.charAt(0).toUpperCase()
-    : user.email?.charAt(0).toUpperCase() || "U";
+    : user.email?.charAt(0).toUpperCase() || 'U'
 
   return (
     <Dialog>
@@ -44,7 +44,7 @@ export function AccountDialog({ children }: AccountDialogProps) {
           <Avatar className="h-20 w-20">
             <AvatarImage
               src={user.image || undefined}
-              alt={user.name || "User"}
+              alt={user.name || 'User'}
             />
             <AvatarFallback className="text-2xl font-semibold">
               {fallbackText}
@@ -79,5 +79,5 @@ export function AccountDialog({ children }: AccountDialogProps) {
         </div>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

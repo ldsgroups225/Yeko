@@ -1,28 +1,28 @@
-import { collectSubscription, validPayment } from "@/core/functions/payments";
-import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
-import { z } from "zod";
-import { Button } from "@/components/ui/button";
-import { CheckCircle2, Loader2, AlertCircle } from "lucide-react";
+import { useQuery } from '@tanstack/react-query'
+import { createFileRoute } from '@tanstack/react-router'
+import { AlertCircle, CheckCircle2, Loader2 } from 'lucide-react'
+import { z } from 'zod'
+import { Button } from '@/components/ui/button'
+import { collectSubscription, validPayment } from '@/core/functions/payments'
 
 const searchSchema = z.object({
   checkout_id: z.string(),
-});
+})
 
-export const Route = createFileRoute("/_auth/app/polar/checkout/success")({
+export const Route = createFileRoute('/_auth/app/polar/checkout/success')({
   component: RouteComponent,
-  validateSearch: (search) => searchSchema.parse(search),
+  validateSearch: search => searchSchema.parse(search),
   beforeLoad: async ({ search }) => {
-    return search;
+    return search
   },
   loader: async (input) => {
     const isValid = await validPayment({
       data: input.context.checkout_id,
-    });
+    })
     return {
       isValid,
       checkoutId: input.context.checkout_id,
-    };
+    }
   },
   errorComponent: ({ error }) => {
     return (
@@ -46,68 +46,71 @@ export const Route = createFileRoute("/_auth/app/polar/checkout/success")({
           </div>
         </div>
       </div>
-    );
+    )
   },
-});
+})
 
 function RouteComponent() {
-  const loaderData = Route.useLoaderData();
-  const nav = Route.useNavigate();
+  const loaderData = Route.useLoaderData()
+  const nav = Route.useNavigate()
 
   const { data, isLoading, isFetching, error } = useQuery({
     queryKey: [loaderData.checkoutId],
     queryFn: collectSubscription,
     refetchInterval: (query) => {
       if (!query.state.data) {
-        return 2000;
+        return 2000
       }
-      return false;
+      return false
     },
-  });
+  })
 
   const getStatus = () => {
-    if (error) return "error";
-    if (data) return "success";
-    if (isFetching || isLoading) return "processing";
-    return "processing";
-  };
+    if (error)
+      return 'error'
+    if (data)
+      return 'success'
+    if (isFetching || isLoading)
+      return 'processing'
+    return 'processing'
+  }
 
-  const status = getStatus();
+  const status = getStatus()
 
   const getStatusIcon = () => {
     switch (status) {
-      case "success":
-        return <CheckCircle2 className="w-16 h-16 text-primary" />;
-      case "error":
-        return <AlertCircle className="w-16 h-16 text-destructive" />;
+      case 'success':
+        return <CheckCircle2 className="w-16 h-16 text-primary" />
+      case 'error':
+        return <AlertCircle className="w-16 h-16 text-destructive" />
       default:
-        return <Loader2 className="w-12 h-12 text-primary animate-spin" />;
+        return <Loader2 className="w-12 h-12 text-primary animate-spin" />
     }
-  };
+  }
 
   const getStatusMessage = () => {
     switch (status) {
-      case "success":
+      case 'success':
         return {
-          title: "Payment Successful!",
-          description: "Your subscription has been activated successfully.",
-        };
-      case "error":
+          title: 'Payment Successful!',
+          description: 'Your subscription has been activated successfully.',
+        }
+      case 'error':
         return {
-          title: "Payment Processing Error",
+          title: 'Payment Processing Error',
           description:
-            "There was an issue processing your payment. Please contact support.",
-        };
+            'There was an issue processing your payment. Please contact support.',
+        }
       default:
         return {
-          title: "Processing Your Payment",
+          title: 'Processing Your Payment',
           description:
-            "We're verifying your payment details. This may take a few moments...",
-        };
+            'We\'re verifying your payment details. This may take a few moments...',
+        }
     }
-  };
+  }
 
-  const { title, description } = getStatusMessage();
+  const { title, description } = getStatusMessage()
 
   return (
     <div className="h-full flex flex-col items-center justify-center bg-background px-6 py-12">
@@ -122,9 +125,9 @@ function RouteComponent() {
         </div>
 
         <div className="space-y-6">
-          {status === "success" && (
+          {status === 'success' && (
             <Button
-              onClick={() => nav({ to: "/app" })}
+              onClick={() => nav({ to: '/app' })}
               size="lg"
               className="px-8 py-3"
             >
@@ -132,7 +135,7 @@ function RouteComponent() {
             </Button>
           )}
 
-          {status === "error" && (
+          {status === 'error' && (
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button
                 onClick={() => window.location.reload()}
@@ -143,7 +146,7 @@ function RouteComponent() {
                 Try Again
               </Button>
               <Button
-                onClick={() => nav({ to: "/app/polar/subscriptions" })}
+                onClick={() => nav({ to: '/app/polar/subscriptions' })}
                 size="lg"
                 className="px-6"
               >
@@ -155,7 +158,8 @@ function RouteComponent() {
 
         <div className="pt-8">
           <p className="text-sm text-muted-foreground">
-            Transaction ID:{" "}
+            Transaction ID:
+            {' '}
             <span className="font-mono text-foreground">
               {loaderData.checkoutId.slice(-8)}
             </span>
@@ -163,5 +167,5 @@ function RouteComponent() {
         </div>
       </div>
     </div>
-  );
+  )
 }

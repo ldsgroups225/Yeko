@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 
 export function CoursePromoSection() {
   return (
@@ -16,6 +16,7 @@ export function CoursePromoSection() {
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               referrerPolicy="strict-origin-when-cross-origin"
               allowFullScreen
+              sandbox="allow-scripts allow-popups allow-forms allow-presentation"
             />
           </div>
         </div>
@@ -107,5 +108,5 @@ export function CoursePromoSection() {
         </div>
       </div>
     </section>
-  );
+  )
 }

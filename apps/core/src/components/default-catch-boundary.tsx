@@ -1,46 +1,46 @@
-import { Link, rootRouteId, useMatch, useRouter } from "@tanstack/react-router";
-import type { ErrorComponentProps } from "@tanstack/react-router";
+import type { ErrorComponentProps } from '@tanstack/react-router'
+import { Link, rootRouteId, useMatch, useRouter } from '@tanstack/react-router'
 import {
   AlertTriangle,
-  RefreshCw,
   ArrowLeft,
-  Home,
-  ChevronDown,
   Bug,
+  ChevronDown,
+  Home,
   Mail,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+  RefreshCw,
+} from 'lucide-react'
+import { useState } from 'react'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { useState } from "react";
+} from '@/components/ui/collapsible'
 
 export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
-  const router = useRouter();
+  const router = useRouter()
   const isRoot = useMatch({
     strict: false,
-    select: (state) => state.id === rootRouteId,
-  });
-  const [showDetails, setShowDetails] = useState(false);
+    select: state => state.id === rootRouteId,
+  })
+  const [showDetails, setShowDetails] = useState(false)
 
-  console.error(error);
+  console.error(error)
 
   // Format error details for display
-  const errorMessage = error?.message || "An unexpected error occurred";
-  const errorStack = error?.stack || "";
-  const hasStack = errorStack.length > 0;
+  const errorMessage = error?.message || 'An unexpected error occurred'
+  const errorStack = error?.stack || ''
+  const hasStack = errorStack.length > 0
 
   const handleReportError = () => {
-    const subject = encodeURIComponent("Error Report");
+    const subject = encodeURIComponent('Error Report')
     const body = encodeURIComponent(
       `An error occurred in the application:\n\nError: ${errorMessage}\n\nStack Trace:\n${errorStack}\n\nPlease describe what you were doing when this error occurred:`,
-    );
-    window.location.href = `mailto:support@example.com?subject=${subject}&body=${body}`;
-  };
+    )
+    window.location.href = `mailto:support@example.com?subject=${subject}&body=${body}`
+  }
 
   return (
     <div className="min-h-[60vh] flex items-center justify-center p-4">
@@ -78,23 +78,25 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
               Try Again
             </Button>
 
-            {isRoot ? (
-              <Button variant="outline" asChild>
-                <Link to="/" className="flex items-center gap-2">
-                  <Home className="h-4 w-4" />
-                  Go to Home
-                </Link>
-              </Button>
-            ) : (
-              <Button
-                variant="outline"
-                onClick={() => window.history.back()}
-                className="flex items-center gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Go Back
-              </Button>
-            )}
+            {isRoot
+              ? (
+                  <Button variant="outline" asChild>
+                    <Link to="/" className="flex items-center gap-2">
+                      <Home className="h-4 w-4" />
+                      Go to Home
+                    </Link>
+                  </Button>
+                )
+              : (
+                  <Button
+                    variant="outline"
+                    onClick={() => window.history.back()}
+                    className="flex items-center gap-2"
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                    Go Back
+                  </Button>
+                )}
           </div>
 
           {/* Error Details (Collapsible) */}
@@ -109,7 +111,7 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
                   <Bug className="h-4 w-4" />
                   Technical Details
                   <ChevronDown
-                    className={`h-4 w-4 transition-transform duration-200 ${showDetails ? "rotate-180" : ""}`}
+                    className={`h-4 w-4 transition-transform duration-200 ${showDetails ? 'rotate-180' : ''}`}
                   />
                 </Button>
               </CollapsibleTrigger>
@@ -146,5 +148,5 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

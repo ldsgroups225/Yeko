@@ -1,28 +1,28 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Zap, Shield, Globe, Smartphone } from "lucide-react";
+import { Globe, Shield, Smartphone, Zap } from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/card'
 
 const reasons = [
   {
     icon: Zap,
-    title: "Lightning Fast",
-    description: "Built on Cloudflare's global network for instant access from anywhere in Africa with minimal latency.",
+    title: 'Lightning Fast',
+    description: 'Built on Cloudflare\'s global network for instant access from anywhere in Africa with minimal latency.',
   },
   {
     icon: Shield,
-    title: "Secure & Compliant",
-    description: "Bank-level security with role-based access control. Your data is encrypted and protected 24/7.",
+    title: 'Secure & Compliant',
+    description: 'Bank-level security with role-based access control. Your data is encrypted and protected 24/7.',
   },
   {
     icon: Globe,
-    title: "Africa-First Design",
-    description: "Tailored for African educational systems with support for ministerial programs and local curricula.",
+    title: 'Africa-First Design',
+    description: 'Tailored for African educational systems with support for ministerial programs and local curricula.',
   },
   {
     icon: Smartphone,
-    title: "Mobile Optimized",
-    description: "Teachers and parents can access everything from their smartphones, even with limited connectivity.",
+    title: 'Mobile Optimized',
+    description: 'Teachers and parents can access everything from their smartphones, even with limited connectivity.',
   },
-];
+]
 
 export function WhyYekoSection() {
   return (
@@ -39,7 +39,7 @@ export function WhyYekoSection() {
 
         <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8 lg:mx-0 lg:max-w-none lg:grid-cols-2">
           {reasons.map((reason) => {
-            const IconComponent = reason.icon;
+            const IconComponent = reason.icon
             return (
               <Card key={reason.title} className="group hover:shadow-lg transition-all duration-300">
                 <CardContent className="p-8 flex gap-6">
@@ -52,10 +52,10 @@ export function WhyYekoSection() {
                   </div>
                 </CardContent>
               </Card>
-            );
+            )
           })}
         </div>
       </div>
     </section>
-  );
+  )
 }

@@ -1,28 +1,28 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { TrendingUp, Clock, Users, DollarSign } from "lucide-react";
+import { Clock, DollarSign, TrendingUp, Users } from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/card'
 
 const benefits = [
   {
     icon: Clock,
-    title: "Save 20+ Hours Weekly",
-    description: "Automate repetitive tasks like report card generation, attendance tracking, and grade calculations.",
+    title: 'Save 20+ Hours Weekly',
+    description: 'Automate repetitive tasks like report card generation, attendance tracking, and grade calculations.',
   },
   {
     icon: Users,
-    title: "Improve Parent Engagement",
-    description: "85% increase in parent satisfaction with real-time updates and direct teacher communication.",
+    title: 'Improve Parent Engagement',
+    description: '85% increase in parent satisfaction with real-time updates and direct teacher communication.',
   },
   {
     icon: TrendingUp,
-    title: "Boost Academic Performance",
-    description: "Data-driven insights help identify struggling students early and track curriculum progress effectively.",
+    title: 'Boost Academic Performance',
+    description: 'Data-driven insights help identify struggling students early and track curriculum progress effectively.',
   },
   {
     icon: DollarSign,
-    title: "Increase Revenue Collection",
-    description: "Streamlined fee management and mobile payments improve tuition collection rates by 40%.",
+    title: 'Increase Revenue Collection',
+    description: 'Streamlined fee management and mobile payments improve tuition collection rates by 40%.',
   },
-];
+]
 
 export function BenefitsSection() {
   return (
@@ -39,7 +39,7 @@ export function BenefitsSection() {
 
         <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8 lg:mx-0 lg:max-w-none lg:grid-cols-2">
           {benefits.map((benefit) => {
-            const IconComponent = benefit.icon;
+            const IconComponent = benefit.icon
             return (
               <Card key={benefit.title} className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-2">
                 <CardContent className="p-8">
@@ -54,10 +54,10 @@ export function BenefitsSection() {
                   </div>
                 </CardContent>
               </Card>
-            );
+            )
           })}
         </div>
       </div>
     </section>
-  );
+  )
 }

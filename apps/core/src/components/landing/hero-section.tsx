@@ -1,31 +1,33 @@
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Play, CheckCircle2 } from "lucide-react";
+import { ArrowRight, CheckCircle2, Play } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 
 export function HeroSection() {
+  const { t } = useTranslation()
+
   return (
     <section className="relative px-6 lg:px-8 pt-32 pb-24 sm:pt-40 sm:pb-32">
       <div className="mx-auto max-w-5xl">
         <div className="text-center">
           <Badge variant="secondary" className="mb-6 px-4 py-2">
             <CheckCircle2 className="mr-2 h-4 w-4" />
-            Trusted by 200+ Schools Across Africa
+            {t('socialProof.trustedBy')}
           </Badge>
 
           <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-7xl">
-            Modernize Your School
-            <span className="block text-primary mt-2">Save 20+ Hours Weekly</span>
+            {t('hero.title')}
+            <span className="block text-primary mt-2">{t('hero.subtitle')}</span>
           </h1>
 
           <p className="mt-8 text-xl leading-8 text-muted-foreground max-w-3xl mx-auto">
-            The complete EdTech platform for African schools. Automate grades, attendance,
-            and parent communication. Boost efficiency, improve outcomes, and increase revenue.
+            {t('hero.description')}
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button size="lg" className="group h-14 px-8 text-lg" asChild>
               <a href="/signup">
-                Start Free 30-Day Trial
+                {t('hero.cta.primary')}
                 <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
               </a>
             </Button>
@@ -33,7 +35,7 @@ export function HeroSection() {
             <Button variant="outline" size="lg" className="h-14 px-8 text-lg" asChild>
               <a href="/demo">
                 <Play className="mr-2 h-5 w-5" />
-                Watch Demo
+                {t('hero.cta.secondary')}
               </a>
             </Button>
           </div>
@@ -81,10 +83,10 @@ export function HeroSection() {
           className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-primary to-secondary opacity-20 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
           style={{
             clipPath:
-              "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
+              'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
           }}
         />
       </div>
     </section>
-  );
+  )
 }

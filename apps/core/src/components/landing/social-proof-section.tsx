@@ -1,11 +1,11 @@
-import { Users, School, TrendingUp, Award } from "lucide-react";
+import { Award, School, TrendingUp, Users } from 'lucide-react'
 
 const stats = [
-  { icon: School, value: "200+", label: "Partner Schools" },
-  { icon: Users, value: "50K+", label: "Active Students" },
-  { icon: TrendingUp, value: "98%", label: "Parent Satisfaction" },
-  { icon: Award, value: "15+", label: "Countries" },
-];
+  { icon: School, value: '200+', label: 'Partner Schools' },
+  { icon: Users, value: '50K+', label: 'Active Students' },
+  { icon: TrendingUp, value: '98%', label: 'Parent Satisfaction' },
+  { icon: Award, value: '15+', label: 'Countries' },
+]
 
 export function SocialProofSection() {
   return (
@@ -18,7 +18,7 @@ export function SocialProofSection() {
         </div>
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
           {stats.map((stat) => {
-            const IconComponent = stat.icon;
+            const IconComponent = stat.icon
             return (
               <div key={stat.label} className="flex flex-col items-center">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 mb-3">
@@ -27,10 +27,10 @@ export function SocialProofSection() {
                 <div className="text-3xl font-bold text-foreground">{stat.value}</div>
                 <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
               </div>
-            );
+            )
           })}
         </div>
       </div>
     </section>
-  );
+  )
 }

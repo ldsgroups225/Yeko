@@ -1,26 +1,26 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { UserPlus, Settings, Rocket } from "lucide-react";
+import { Rocket, Settings, UserPlus } from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/card'
 
 const steps = [
   {
     icon: UserPlus,
-    step: "1",
-    title: "Sign Up & Setup",
-    description: "Create your school account and add your staff, teachers, and students in minutes.",
+    step: '1',
+    title: 'Sign Up & Setup',
+    description: 'Create your school account and add your staff, teachers, and students in minutes.',
   },
   {
     icon: Settings,
-    step: "2",
-    title: "Configure Your School",
-    description: "Set up classes, subjects, fee structures, and academic calendar with our intuitive interface.",
+    step: '2',
+    title: 'Configure Your School',
+    description: 'Set up classes, subjects, fee structures, and academic calendar with our intuitive interface.',
   },
   {
     icon: Rocket,
-    step: "3",
-    title: "Go Live",
-    description: "Start managing grades, attendance, and communication. Your school is now digital!",
+    step: '3',
+    title: 'Go Live',
+    description: 'Start managing grades, attendance, and communication. Your school is now digital!',
   },
-];
+]
 
 export function HowItWorksSection() {
   return (
@@ -37,7 +37,7 @@ export function HowItWorksSection() {
 
         <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
           {steps.map((step, index) => {
-            const IconComponent = step.icon;
+            const IconComponent = step.icon
             return (
               <div key={step.title} className="relative">
                 {index < steps.length - 1 && (
@@ -51,16 +51,19 @@ export function HowItWorksSection() {
                     <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary text-primary-foreground mb-6">
                       <IconComponent className="h-7 w-7" />
                     </div>
-                    <div className="text-sm font-semibold text-primary mb-2">Step {step.step}</div>
+                    <div className="text-sm font-semibold text-primary mb-2">
+                      Step
+                      {step.step}
+                    </div>
                     <h3 className="text-xl font-semibold mb-3">{step.title}</h3>
                     <p className="text-muted-foreground leading-relaxed">{step.description}</p>
                   </CardContent>
                 </Card>
               </div>
-            );
+            )
           })}
         </div>
       </div>
     </section>
-  );
+  )
 }

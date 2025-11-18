@@ -1,33 +1,34 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star } from "lucide-react";
+import { Star } from 'lucide-react'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Card, CardContent } from '@/components/ui/card'
+import { generateUUID } from '@/utils/generateUUID'
 
 const testimonials = [
   {
-    content: "Yeko has transformed how we manage our school. What used to take days now takes minutes. Parent satisfaction has never been higher.",
-    author: "Dr. Amina Diallo",
-    role: "Principal, Lycée Excellence",
-    location: "Dakar, Senegal",
-    avatar: "AD",
+    content: 'Yeko has transformed how we manage our school. What used to take days now takes minutes. Parent satisfaction has never been higher.',
+    author: 'Dr. Amina Diallo',
+    role: 'Principal, Lycée Excellence',
+    location: 'Dakar, Senegal',
+    avatar: 'AD',
     rating: 5,
   },
   {
-    content: "As a teacher, I love how easy it is to enter grades and communicate with parents. The mobile app is a game-changer for busy educators.",
-    author: "Jean-Paul Kouassi",
-    role: "Mathematics Teacher",
-    location: "Abidjan, Côte d'Ivoire",
-    avatar: "JK",
+    content: 'As a teacher, I love how easy it is to enter grades and communicate with parents. The mobile app is a game-changer for busy educators.',
+    author: 'Jean-Paul Kouassi',
+    role: 'Mathematics Teacher',
+    location: 'Abidjan, Côte d\'Ivoire',
+    avatar: 'JK',
     rating: 5,
   },
   {
-    content: "Finally, I can track my children's progress in real-time. The transparency and communication have improved dramatically. Highly recommend!",
-    author: "Grace Okonkwo",
-    role: "Parent of 3 Students",
-    location: "Lagos, Nigeria",
-    avatar: "GO",
+    content: 'Finally, I can track my children\'s progress in real-time. The transparency and communication have improved dramatically. Highly recommend!',
+    author: 'Grace Okonkwo',
+    role: 'Parent of 3 Students',
+    location: 'Lagos, Nigeria',
+    avatar: 'GO',
     rating: 5,
   },
-];
+]
 
 export function TestimonialsSection() {
   return (
@@ -43,16 +44,18 @@ export function TestimonialsSection() {
         </div>
 
         <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-          {testimonials.map((testimonial) => (
+          {testimonials.map(testimonial => (
             <Card key={testimonial.author} className="border-2">
               <CardContent className="p-8">
                 <div className="flex gap-1 mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="h-5 w-5 fill-primary text-primary" />
+                  {Array.from({ length: testimonial.rating }).map(() => (
+                    <Star key={generateUUID()} className="h-5 w-5 fill-primary text-primary" />
                   ))}
                 </div>
                 <blockquote className="text-muted-foreground mb-6 leading-relaxed">
-                  "{testimonial.content}"
+                  "
+                  {testimonial.content}
+                  "
                 </blockquote>
                 <div className="flex items-center gap-4">
                   <Avatar className="h-12 w-12">
@@ -72,5 +75,5 @@ export function TestimonialsSection() {
         </div>
       </div>
     </section>
-  );
+  )
 }

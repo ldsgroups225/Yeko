@@ -1,7 +1,11 @@
-import * as React from "react";
-import { Link } from "@tanstack/react-router";
-import { Menu, Github, ExternalLink, LogIn } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Link } from '@tanstack/react-router'
+import { ExternalLink, Github, LogIn, Menu } from 'lucide-react'
+import * as React from 'react'
+import { AccountDialog } from '@/components/auth/account-dialog'
+import { LanguageSwitcher } from '@/components/language-switcher'
+import { ThemeToggle } from '@/components/theme'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
 import {
   Sheet,
   SheetContent,
@@ -9,74 +13,67 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
-import { cn } from "@/lib/utils";
-import { ThemeToggle } from "@/components/theme";
-import { authClient } from "@/lib/auth-client";
-import { AccountDialog } from "@/components/auth/account-dialog";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+} from '@/components/ui/sheet'
+import { authClient } from '@/lib/auth-client'
+import { cn } from '@/lib/utils'
 
 interface NavigationItem {
-  label: string;
-  href: string;
-  isExternal?: boolean;
-  scrollTo?: string;
+  label: string
+  href: string
+  isExternal?: boolean
+  scrollTo?: string
 }
 
 const navigationItems: NavigationItem[] = [
-  { label: "Solutions", href: "/#solutions", scrollTo: "solutions" },
-  { label: "Benefits", href: "/#benefits", scrollTo: "benefits" },
-  { label: "Pricing", href: "/#pricing", scrollTo: "pricing" },
-  { label: "About", href: "/about", isExternal: false },
-];
+  { label: 'Solutions', href: '/#solutions', scrollTo: 'solutions' },
+  { label: 'Benefits', href: '/#benefits', scrollTo: 'benefits' },
+  { label: 'Pricing', href: '/#pricing', scrollTo: 'pricing' },
+  { label: 'About', href: '/about', isExternal: false },
+]
 
 export function NavigationBar() {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [isScrolled, setIsScrolled] = React.useState(false);
-  const { data: session } = authClient.useSession();
+  const [isOpen, setIsOpen] = React.useState(false)
+  const [isScrolled, setIsScrolled] = React.useState(false)
+  const { data: session } = authClient.useSession()
 
   const handleGoogleSignIn = async () => {
     await authClient.signIn.social({
-      provider: "google",
-      callbackURL: "/app",
-    });
-  };
+      provider: 'google',
+      callbackURL: '/app',
+    })
+  }
 
-  const user = session?.user;
+  const handleNavClick = (item: NavigationItem) => {
+    if (item.scrollTo) {
+      const element = document.getElementById(item.scrollTo)
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' })
+      }
+    }
+    setIsOpen(false)
+  }
+
+  const user = session?.user
   const fallbackText = user?.name
     ? user.name.charAt(0).toUpperCase()
-    : user?.email?.charAt(0).toUpperCase() || "U";
+    : user?.email?.charAt(0).toUpperCase() || 'U'
 
   React.useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const handleSmoothScroll = (elementId: string) => {
-    const element = document.getElementById(elementId);
-    if (element) {
-      element.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
+      setIsScrolled(window.scrollY > 20)
     }
-  };
 
-  const handleNavClick = (item: NavigationItem) => {
-    setIsOpen(false);
-  };
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   return (
     <nav
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out",
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out',
         isScrolled
-          ? "bg-background/80 backdrop-blur-xl border-b border-border/50 shadow-lg shadow-primary/5"
-          : "bg-transparent",
+          ? 'bg-background/80 backdrop-blur-xl border-b border-border/50 shadow-lg shadow-primary/5'
+          : 'bg-transparent',
       )}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -87,7 +84,7 @@ export function NavigationBar() {
             className="group flex items-center space-x-3 no-underline"
           >
             <div className="flex flex-col">
-              <span className="text-lg lg:text-xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent group-hover:from-primary group-hover:to-primary/80 transition-all duration-300">
+              <span className="text-lg lg:text-xl font-bold bg-linear-to-r from-foreground to-foreground/80 bg-clip-text text-transparent group-hover:from-primary group-hover:to-primary/80 transition-all duration-300">
                 Yeko Platform
               </span>
               <span className="text-xs text-muted-foreground font-medium tracking-wider">
@@ -98,82 +95,90 @@ export function NavigationBar() {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-1">
-            {navigationItems.map((item) => (
+            {navigationItems.map(item => (
               <div key={item.label} className="relative group">
-                {item.isExternal ? (
-                  <a
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-300 hover:bg-accent/50 group"
-                  >
-                    <span>{item.label}</span>
-                    {item.label === "GitHub" ? (
-                      <Github className="h-4 w-4" />
-                    ) : (
-                      <ExternalLink className="h-4 w-4" />
+                {item.isExternal
+                  ? (
+                      <a
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-300 hover:bg-accent/50 group"
+                      >
+                        <span>{item.label}</span>
+                        {item.label === 'GitHub'
+                          ? (
+                              <Github className="h-4 w-4" />
+                            )
+                          : (
+                              <ExternalLink className="h-4 w-4" />
+                            )}
+                      </a>
+                    )
+                  : (
+                      <Link
+                        to={item.href}
+                        onClick={() => handleNavClick(item)}
+                        className="px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-300 hover:bg-accent/50 block"
+                      >
+                        {item.label}
+                      </Link>
                     )}
-                  </a>
-                ) : (
-                  <Link
-                    to={item.href}
-                    onClick={() => handleNavClick(item)}
-                    className="px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-300 hover:bg-accent/50 block"
-                  >
-                    {item.label}
-                  </Link>
-                )}
-                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-primary to-primary/80 transition-all duration-300 group-hover:w-3/4" />
+                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-linear-to-r from-primary to-primary/80 transition-all duration-300 group-hover:w-3/4" />
               </div>
             ))}
 
-            {/* Theme Toggle */}
-            <div className="ml-2 pl-2 border-l border-border/30">
+            {/* Theme Toggle & Language Switcher */}
+            <div className="ml-2 pl-2 border-l border-border/30 flex items-center gap-1">
+              <LanguageSwitcher />
               <ThemeToggle variant="ghost" align="end" />
             </div>
           </div>
 
           {/* Action Buttons - Desktop */}
           <div className="hidden lg:block">
-            {session ? (
-              <AccountDialog>
-                <Button
-                  variant="ghost"
-                  className="flex items-center gap-2 px-3"
-                >
-                  <Avatar className="h-7 w-7">
-                    <AvatarImage
-                      src={user?.image || undefined}
-                      alt={user?.name || "User"}
-                    />
-                    <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-                      {fallbackText}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="text-sm font-medium">
-                    {user?.name || "Account"}
-                  </span>
-                </Button>
-              </AccountDialog>
-            ) : (
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" asChild>
-                  <Link to="/demo">Request Demo</Link>
-                </Button>
-                <Button
-                  onClick={handleGoogleSignIn}
-                  variant="default"
-                  className="gap-2"
-                >
-                  <LogIn className="h-4 w-4" />
-                  Sign In
-                </Button>
-              </div>
-            )}
+            {session
+              ? (
+                  <AccountDialog>
+                    <Button
+                      variant="ghost"
+                      className="flex items-center gap-2 px-3"
+                    >
+                      <Avatar className="h-7 w-7">
+                        <AvatarImage
+                          src={user?.image || undefined}
+                          alt={user?.name || 'User'}
+                        />
+                        <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                          {fallbackText}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="text-sm font-medium">
+                        {user?.name || 'Account'}
+                      </span>
+                    </Button>
+                  </AccountDialog>
+                )
+              : (
+                  <div className="flex items-center gap-2">
+                    <Button variant="outline" size="sm" asChild>
+                      <Link to="/demo-request">Request Demo</Link>
+                    </Button>
+                    <Button
+                      onClick={handleGoogleSignIn}
+                      variant="default"
+                      className="gap-2"
+                    >
+                      <LogIn className="h-4 w-4" />
+                      Sign In
+                    </Button>
+                  </div>
+                )}
           </div>
 
-          {/* Mobile Menu Button + Theme Toggle */}
-          <div className="lg:hidden flex items-center space-x-2">
+          {/* Mobile Menu Button + Language + Theme Toggle */}
+          <div className="lg:hidden flex items-center space-x-1">
+            <LanguageSwitcher />
             <ThemeToggle variant="ghost" align="end" />
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
@@ -191,7 +196,7 @@ export function NavigationBar() {
                 className="w-[300px] bg-background/95 backdrop-blur-xl border-l border-border/50"
               >
                 <SheetHeader className="text-left space-y-1 pb-6">
-                  <SheetTitle className="text-xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+                  <SheetTitle className="text-xl font-bold bg-linear-to-r from-primary to-primary/80 bg-clip-text text-transparent">
                     Navigation
                   </SheetTitle>
                   <SheetDescription className="text-muted-foreground">
@@ -200,73 +205,79 @@ export function NavigationBar() {
                 </SheetHeader>
 
                 <div className="flex flex-col space-y-2 pb-6">
-                  {navigationItems.map((item) => (
+                  {navigationItems.map(item => (
                     <div key={item.label} className="relative group">
-                      {item.isExternal ? (
-                        <a
-                          href={item.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center justify-between w-full px-4 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-300 hover:bg-accent/50"
-                          onClick={() => setIsOpen(false)}
-                        >
-                          <span>{item.label}</span>
-                          {item.label === "GitHub" ? (
-                            <Github className="h-4 w-4" />
-                          ) : (
-                            <ExternalLink className="h-4 w-4" />
+                      {item.isExternal
+                        ? (
+                            <a
+                              href={item.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center justify-between w-full px-4 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-300 hover:bg-accent/50"
+                              onClick={() => setIsOpen(false)}
+                            >
+                              <span>{item.label}</span>
+                              {item.label === 'GitHub'
+                                ? (
+                                    <Github className="h-4 w-4" />
+                                  )
+                                : (
+                                    <ExternalLink className="h-4 w-4" />
+                                  )}
+                            </a>
+                          )
+                        : (
+                            <Link
+                              to={item.href}
+                              onClick={() => handleNavClick(item)}
+                              className="flex items-center w-full px-4 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-300 hover:bg-accent/50 text-left"
+                            >
+                              {item.label}
+                            </Link>
                           )}
-                        </a>
-                      ) : (
-                        <Link
-                          to={item.href}
-                          onClick={() => handleNavClick(item)}
-                          className="flex items-center w-full px-4 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-300 hover:bg-accent/50 text-left"
-                        >
-                          {item.label}
-                        </Link>
-                      )}
                     </div>
                   ))}
                 </div>
 
                 {/* Mobile Actions */}
                 <div className="pt-4 border-t border-border/50">
-                  {session ? (
-                    <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-accent/30">
-                      <Avatar className="h-10 w-10">
-                        <AvatarImage
-                          src={user?.image || undefined}
-                          alt={user?.name || "User"}
-                        />
-                        <AvatarFallback className="bg-primary text-primary-foreground text-sm">
-                          {fallbackText}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">
-                          {user?.name || "User"}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {user?.email}
-                        </p>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      <Button variant="outline" className="w-full" asChild>
-                        <Link to="/demo">Request Demo</Link>
-                      </Button>
-                      <Button
-                        onClick={handleGoogleSignIn}
-                        variant="default"
-                        className="w-full gap-2"
-                      >
-                        <LogIn className="h-4 w-4" />
-                        Sign In with Google
-                      </Button>
-                    </div>
-                  )}
+                  {session
+                    ? (
+                        <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-accent/30">
+                          <Avatar className="h-10 w-10">
+                            <AvatarImage
+                              src={user?.image || undefined}
+                              alt={user?.name || 'User'}
+                            />
+                            <AvatarFallback className="bg-primary text-primary-foreground text-sm">
+                              {fallbackText}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium">
+                              {user?.name || 'User'}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {user?.email}
+                            </p>
+                          </div>
+                        </div>
+                      )
+                    : (
+                        <div className="space-y-2">
+                          <Button variant="outline" className="w-full" asChild>
+                            <Link to="/demo-request">Request Demo</Link>
+                          </Button>
+                          <Button
+                            onClick={handleGoogleSignIn}
+                            variant="default"
+                            className="w-full gap-2"
+                          >
+                            <LogIn className="h-4 w-4" />
+                            Sign In with Google
+                          </Button>
+                        </div>
+                      )}
                 </div>
               </SheetContent>
             </Sheet>
@@ -274,5 +285,5 @@ export function NavigationBar() {
         </div>
       </div>
     </nav>
-  );
+  )
 }

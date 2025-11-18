@@ -1,12 +1,12 @@
-import { createMiddleware } from "@tanstack/react-start";
+import { createMiddleware } from '@tanstack/react-start'
 
 export const exampleMiddlewareWithContext = createMiddleware({
-  type: "function",
+  type: 'function',
 }).server(async ({ next }) => {
-  console.log("Executing exampleMiddlewareWithContext");
+  console.warn('Executing exampleMiddlewareWithContext')
   return await next({
     context: {
-      data: "Some Data From Middleware",
+      data: 'Some Data From Middleware',
     },
-  });
-});
+  })
+})

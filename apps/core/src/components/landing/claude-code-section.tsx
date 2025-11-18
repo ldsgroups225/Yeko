@@ -1,5 +1,5 @@
-import { Badge } from "@/components/ui/badge";
-import { Sparkles } from "lucide-react";
+import { Sparkles } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
 
 export function ClaudeCodeSection() {
   return (
@@ -41,5 +41,5 @@ export function ClaudeCodeSection() {
         </div>
       </div>
     </section>
-  );
+  )
 }

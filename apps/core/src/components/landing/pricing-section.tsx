@@ -1,60 +1,60 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Check, ArrowRight } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { Link } from '@tanstack/react-router'
+import { ArrowRight, Check } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 const plans = [
   {
-    name: "Starter",
-    price: "$99",
-    period: "/month",
-    description: "Perfect for small schools getting started",
+    name: 'Starter',
+    price: '$99',
+    period: '/month',
+    description: 'Perfect for small schools getting started',
     features: [
-      "Up to 200 students",
-      "5 teachers",
-      "Basic grade management",
-      "Parent portal access",
-      "Email support",
+      'Up to 200 students',
+      '5 teachers',
+      'Basic grade management',
+      'Parent portal access',
+      'Email support',
     ],
-    cta: "Start Free Trial",
+    cta: 'Start Free Trial',
     popular: false,
   },
   {
-    name: "Professional",
-    price: "$299",
-    period: "/month",
-    description: "For growing schools with advanced needs",
+    name: 'Professional',
+    price: '$299',
+    period: '/month',
+    description: 'For growing schools with advanced needs',
     features: [
-      "Up to 1,000 students",
-      "Unlimited teachers",
-      "Advanced analytics",
-      "Mobile apps included",
-      "SMS notifications",
-      "Priority support",
-      "Custom report cards",
+      'Up to 1,000 students',
+      'Unlimited teachers',
+      'Advanced analytics',
+      'Mobile apps included',
+      'SMS notifications',
+      'Priority support',
+      'Custom report cards',
     ],
-    cta: "Start Free Trial",
+    cta: 'Start Free Trial',
     popular: true,
   },
   {
-    name: "Enterprise",
-    price: "Custom",
-    period: "",
-    description: "For large institutions and school groups",
+    name: 'Enterprise',
+    price: 'Custom',
+    period: '',
+    description: 'For large institutions and school groups',
     features: [
-      "Unlimited students",
-      "Unlimited teachers",
-      "Multi-school management",
-      "Custom integrations",
-      "Dedicated account manager",
-      "24/7 phone support",
-      "On-premise deployment option",
+      'Unlimited students',
+      'Unlimited teachers',
+      'Multi-school management',
+      'Custom integrations',
+      'Dedicated account manager',
+      '24/7 phone support',
+      'On-premise deployment option',
     ],
-    cta: "Contact Sales",
+    cta: 'Contact Sales',
     popular: false,
   },
-];
+]
 
 export function PricingSection() {
   return (
@@ -70,13 +70,13 @@ export function PricingSection() {
         </div>
 
         <div className="mx-auto mt-16 grid max-w-lg grid-cols-1 gap-8 lg:max-w-none lg:grid-cols-3">
-          {plans.map((plan) => (
+          {plans.map(plan => (
             <Card
               key={plan.name}
               className={`relative flex flex-col ${plan.popular
-                  ? "border-2 border-primary shadow-xl scale-105"
-                  : "border-2"
-                }`}
+                ? 'border-2 border-primary shadow-xl scale-105'
+                : 'border-2'
+              }`}
             >
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2">
@@ -95,7 +95,7 @@ export function PricingSection() {
               </CardHeader>
               <CardContent className="flex-1">
                 <ul className="space-y-3 mb-8">
-                  {plan.features.map((feature) => (
+                  {plan.features.map(feature => (
                     <li key={feature} className="flex items-start gap-3">
                       <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                       <span className="text-sm text-muted-foreground">{feature}</span>
@@ -104,11 +104,11 @@ export function PricingSection() {
                 </ul>
                 <Button
                   className="w-full group"
-                  variant={plan.popular ? "default" : "outline"}
+                  variant={plan.popular ? 'default' : 'outline'}
                   size="lg"
                   asChild
                 >
-                  <Link to={plan.name === "Enterprise" ? "/contact" : "/signup"}>
+                  <Link to={plan.name === 'Enterprise' ? '/demo-request' : '/demo-request'}>
                     {plan.cta}
                     <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Link>
@@ -125,5 +125,5 @@ export function PricingSection() {
         </div>
       </div>
     </section>
-  );
+  )
 }

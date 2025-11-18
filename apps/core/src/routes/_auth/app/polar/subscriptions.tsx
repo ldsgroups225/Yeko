@@ -1,38 +1,38 @@
-import { getProducts, collectSubscription } from "@/core/functions/payments";
-import { createFileRoute } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { PricingGrid, useCheckout } from "@/components/payments/polar";
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { createFileRoute } from '@tanstack/react-router'
+import { PricingGrid, useCheckout } from '@/components/payments/polar'
+import { collectSubscription, getProducts } from '@/core/functions/payments'
 
-export const Route = createFileRoute("/_auth/app/polar/subscriptions")({
+export const Route = createFileRoute('/_auth/app/polar/subscriptions')({
   component: RouteComponent,
   loader: async ({ context }) => {
     await Promise.all([
       context.queryClient.prefetchQuery({
-        queryKey: ["products"],
+        queryKey: ['products'],
         queryFn: getProducts,
       }),
       context.queryClient.prefetchQuery({
-        queryKey: ["subscription"],
+        queryKey: ['subscription'],
         queryFn: collectSubscription,
       }),
-    ]);
+    ])
   },
-});
+})
 
 function RouteComponent() {
   const { data: products } = useSuspenseQuery({
-    queryKey: ["products"],
+    queryKey: ['products'],
     queryFn: getProducts,
     refetchOnWindowFocus: true,
-  });
+  })
 
   const { data: subscription } = useSuspenseQuery({
-    queryKey: ["subscription"],
+    queryKey: ['subscription'],
     queryFn: collectSubscription,
     refetchOnWindowFocus: true,
-  });
+  })
 
-  const { redirectToCheckout, isCheckoutPending } = useCheckout();
+  const { redirectToCheckout, isCheckoutPending } = useCheckout()
 
   return (
     <div className="container mx-auto py-8">
@@ -50,5 +50,5 @@ function RouteComponent() {
         isCheckoutPending={isCheckoutPending}
       />
     </div>
-  );
+  )
 }

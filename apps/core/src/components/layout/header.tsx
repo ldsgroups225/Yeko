@@ -1,35 +1,35 @@
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { AccountDialog } from "@/components/auth/account-dialog";
-import { 
-  Bell, 
-  Search, 
-  Menu
-} from "lucide-react";
-import { useState } from "react";
-import { authClient } from "@/lib/auth-client";
+import {
+  Bell,
+  Menu,
+  Search,
+} from 'lucide-react'
+import { useState } from 'react'
+import { AccountDialog } from '@/components/auth/account-dialog'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { authClient } from '@/lib/auth-client'
+import { cn } from '@/lib/utils'
 
 interface HeaderProps {
-  className?: string;
-  onMobileMenuToggle?: () => void;
+  className?: string
+  onMobileMenuToggle?: () => void
 }
 
 export function Header({ className, onMobileMenuToggle }: HeaderProps) {
-  const [searchQuery, setSearchQuery] = useState("");
-  const { data: session } = authClient.useSession();
-  
-  const user = session?.user;
+  const [searchQuery, setSearchQuery] = useState('')
+  const { data: session } = authClient.useSession()
+
+  const user = session?.user
   const fallbackText = user?.name
     ? user.name.charAt(0).toUpperCase()
-    : user?.email?.charAt(0).toUpperCase() || "U";
+    : user?.email?.charAt(0).toUpperCase() || 'U'
 
   return (
     <header
       className={cn(
-        "flex h-16 items-center justify-between border-b border-border bg-background px-6",
-        className
+        'flex h-16 items-center justify-between border-b border-border bg-background px-6',
+        className,
       )}
     >
       {/* Left side - Mobile menu button and search */}
@@ -48,7 +48,7 @@ export function Header({ className, onMobileMenuToggle }: HeaderProps) {
           <Input
             placeholder="Search..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={e => setSearchQuery(e.target.value)}
             className="w-64 pl-9 bg-muted/50 border-0 focus-visible:ring-1 focus-visible:ring-ring"
           />
         </div>
@@ -64,18 +64,18 @@ export function Header({ className, onMobileMenuToggle }: HeaderProps) {
         <AccountDialog>
           <Button variant="ghost" className="flex items-center gap-2 px-3">
             <Avatar className="h-8 w-8">
-              <AvatarImage src={user?.image || undefined} alt={user?.name || "User"} />
+              <AvatarImage src={user?.image || undefined} alt={user?.name || 'User'} />
               <AvatarFallback className="bg-primary text-primary-foreground text-sm">
                 {fallbackText}
               </AvatarFallback>
             </Avatar>
             <div className="hidden sm:flex flex-col items-start">
-              <span className="text-sm font-medium">{user?.name || "User"}</span>
+              <span className="text-sm font-medium">{user?.name || 'User'}</span>
               <span className="text-xs text-muted-foreground">Online</span>
             </div>
           </Button>
         </AccountDialog>
       </div>
     </header>
-  );
+  )
 }

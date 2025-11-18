@@ -1,100 +1,99 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import {
-  Users,
-  GraduationCap,
-  TrendingUp,
-  Shield,
-  DollarSign,
-  Calendar,
-  MessageSquare,
-  FileText,
   Award,
   BookOpen,
+  Calendar,
+  DollarSign,
+  GraduationCap,
   Home,
-  UserCheck
-} from "lucide-react"
+  MessageSquare,
+  Shield,
+  TrendingUp,
+  UserCheck,
+  Users,
+} from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 const schoolManagementFeatures = [
   {
     icon: Users,
-    title: "Student Management",
-    description: "Complete student lifecycle management from enrollment to graduation. Track attendance, grades, conduct, and academic progress.",
-    badge: "Core"
+    title: 'Student Management',
+    description: 'Complete student lifecycle management from enrollment to graduation. Track attendance, grades, conduct, and academic progress.',
+    badge: 'Core',
   },
   {
     icon: UserCheck,
-    title: "Teacher & Staff Management",
-    description: "Manage teachers, administrative staff, and homeroom assignments. Track punctuality, performance, and workload distribution.",
-    badge: "HR"
+    title: 'Teacher & Staff Management',
+    description: 'Manage teachers, administrative staff, and homeroom assignments. Track punctuality, performance, and workload distribution.',
+    badge: 'HR',
   },
   {
     icon: GraduationCap,
-    title: "Academic Tracking",
-    description: "Monitor curriculum progress, track grades, generate report cards, and ensure ministerial program compliance.",
-    badge: "Academics"
+    title: 'Academic Tracking',
+    description: 'Monitor curriculum progress, track grades, generate report cards, and ensure ministerial program compliance.',
+    badge: 'Academics',
   },
   {
     icon: TrendingUp,
-    title: "Progress Analytics",
-    description: "Real-time insights on class performance, curriculum coverage, and student achievement patterns.",
-    badge: "Analytics"
+    title: 'Progress Analytics',
+    description: 'Real-time insights on class performance, curriculum coverage, and student achievement patterns.',
+    badge: 'Analytics',
   },
   {
     icon: DollarSign,
-    title: "Financial Management",
-    description: "Handle tuition payments, school accounting, fee structures, and generate financial reports.",
-    badge: "Finance"
+    title: 'Financial Management',
+    description: 'Handle tuition payments, school accounting, fee structures, and generate financial reports.',
+    badge: 'Finance',
   },
   {
     icon: Calendar,
-    title: "Schedule Management",
-    description: "Create and manage class timetables, exam schedules, and school events with automated notifications.",
-    badge: "Planning"
+    title: 'Schedule Management',
+    description: 'Create and manage class timetables, exam schedules, and school events with automated notifications.',
+    badge: 'Planning',
   },
   {
     icon: MessageSquare,
-    title: "Parent Communication",
-    description: "Built-in messaging system for parent-teacher communication with translation support.",
-    badge: "Communication"
+    title: 'Parent Communication',
+    description: 'Built-in messaging system for parent-teacher communication with translation support.',
+    badge: 'Communication',
   },
   {
     icon: Shield,
-    title: "Secure & Compliant",
-    description: "Role-based access control, data privacy protection, and compliance with educational regulations.",
-    badge: "Security"
-  }
+    title: 'Secure & Compliant',
+    description: 'Role-based access control, data privacy protection, and compliance with educational regulations.',
+    badge: 'Security',
+  },
 ]
 
 const userPersonaFeatures = [
   {
     icon: Home,
-    title: "For School Administrators",
-    description: "Complete oversight of all school operations. Manage multiple schools, track performance metrics, and ensure regulatory compliance.",
-    badge: "Management",
-    highlight: true
+    title: 'For School Administrators',
+    description: 'Complete oversight of all school operations. Manage multiple schools, track performance metrics, and ensure regulatory compliance.',
+    badge: 'Management',
+    highlight: true,
   },
   {
     icon: BookOpen,
-    title: "For Teachers",
-    description: "Mobile-optimized interface for grade entry, attendance tracking, session management, and parent communication.",
-    badge: "Teaching",
-    highlight: true
+    title: 'For Teachers',
+    description: 'Mobile-optimized interface for grade entry, attendance tracking, session management, and parent communication.',
+    badge: 'Teaching',
+    highlight: true,
   },
   {
     icon: Users,
-    title: "For Parents",
-    description: "Real-time access to children's grades, homework, attendance, and direct communication with teachers.",
-    badge: "Engagement",
-    highlight: true
+    title: 'For Parents',
+    description: 'Real-time access to children\'s grades, homework, attendance, and direct communication with teachers.',
+    badge: 'Engagement',
+    highlight: true,
   },
   {
     icon: Award,
-    title: "For Students",
-    description: "Track personal academic progress, view assignments, check schedules, and stay connected with school activities.",
-    badge: "Learning",
-    highlight: true
-  }
+    title: 'For Students',
+    description: 'Track personal academic progress, view assignments, check schedules, and stay connected with school activities.',
+    badge: 'Learning',
+    highlight: true,
+  },
 ]
 
 export function FeaturesSection() {

@@ -1,46 +1,46 @@
-import * as React from "react";
-import { useMutation } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
+import { useMutation } from '@tanstack/react-query'
+import {
+  AlertCircle,
+  CheckCircle,
+  Code2,
+  Loader2,
+  Play,
+  Server,
+  Zap,
+} from 'lucide-react'
+import * as React from 'react'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import {
-  Loader2,
-  Play,
-  Server,
-  Zap,
-  CheckCircle,
-  AlertCircle,
-  Code2,
-} from "lucide-react";
-import { examplefunction } from "@/core/functions/example-functions";
+} from '@/components/ui/card'
+import { examplefunction } from '@/core/functions/example-functions'
 
 export function MiddlewareDemo() {
-  const [inputValue, setInputValue] = React.useState("Hello TanStack Start!");
+  const [inputValue, setInputValue] = React.useState('Hello TanStack Start!')
 
   const mutation = useMutation({
     mutationFn: examplefunction,
     onSuccess: (data) => {
-      console.log("Client: Server function executed successfully:", data);
+      console.warn('Client: Server function executed successfully:', data)
     },
     onError: (error) => {
-      console.error("Client: Server function failed:", error);
+      console.error('Client: Server function failed:', error)
     },
-  });
+  })
 
   const handleExecute = () => {
     mutation.mutate({
       data: {
-        exampleKey: "exampleValue",
+        exampleKey: 'exampleValue',
       },
-    });
-  };
+    })
+  }
 
   return (
     <section className="py-24 bg-gradient-to-b from-background to-muted/20">
@@ -85,7 +85,7 @@ export function MiddlewareDemo() {
                     id="input-value"
                     type="text"
                     value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
+                    onChange={e => setInputValue(e.target.value)}
                     className="w-full px-3 py-2 border border-border rounded-lg bg-background focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
                     placeholder="Enter a message..."
                   />
@@ -96,11 +96,13 @@ export function MiddlewareDemo() {
                   disabled={mutation.isPending || !inputValue.trim()}
                   className="w-full"
                 >
-                  {mutation.isPending ? (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  ) : (
-                    <Zap className="w-4 h-4 mr-2" />
-                  )}
+                  {mutation.isPending
+                    ? (
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      )
+                    : (
+                        <Zap className="w-4 h-4 mr-2" />
+                      )}
                   Execute Server Function
                 </Button>
 
@@ -119,7 +121,11 @@ export function MiddlewareDemo() {
                     <Alert className="border-green-500 bg-green-200/10">
                       <CheckCircle className="w-4 h-4 text-green-800 dark:text-green-400" />
                       <AlertDescription className="text-green-700 dark:text-green-300">
-                        <strong>Success!</strong> Response: "{mutation.data}"
+                        <strong>Success!</strong>
+                        {' '}
+                        Response: "
+                        {mutation.data}
+                        "
                       </AlertDescription>
                     </Alert>
                   )}
@@ -128,8 +134,9 @@ export function MiddlewareDemo() {
                     <Alert className="border-red-200 bg-red-50 dark:bg-red-950/20">
                       <AlertCircle className="w-4 h-4 text-red-600" />
                       <AlertDescription className="text-red-800 dark:text-red-200">
-                        <strong>Error:</strong>{" "}
-                        {mutation.error?.message || "Something went wrong"}
+                        <strong>Error:</strong>
+                        {' '}
+                        {mutation.error?.message || 'Something went wrong'}
                       </AlertDescription>
                     </Alert>
                   )}
@@ -196,7 +203,9 @@ export function MiddlewareDemo() {
                     <Alert>
                       <Server className="w-4 h-4" />
                       <AlertDescription>
-                        <strong>Check your server logs!</strong> You'll see
+                        <strong>Check your server logs!</strong>
+                        {' '}
+                        You'll see
                         console output from both the middleware and server
                         function execution.
                       </AlertDescription>
@@ -209,10 +218,14 @@ export function MiddlewareDemo() {
                     </p>
                     <ul className="space-y-1 ml-4">
                       <li>
-                        • <code>src/core/middleware/example-middleware.ts</code>
+                        •
+                        {' '}
+                        <code>src/core/middleware/example-middleware.ts</code>
                       </li>
                       <li>
-                        • <code>src/core/functions/example-functions.ts</code>
+                        •
+                        {' '}
+                        <code>src/core/functions/example-functions.ts</code>
                       </li>
                     </ul>
                   </div>
@@ -251,5 +264,5 @@ export function MiddlewareDemo() {
         </div>
       </div>
     </section>
-  );
+  )
 }
