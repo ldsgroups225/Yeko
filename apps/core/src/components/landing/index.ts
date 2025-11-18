@@ -1,0 +1,14 @@
+export { HeroSection } from "./hero-section";
+export { SocialProofSection } from "./social-proof-section";
+export { UseCasesSection } from "./use-cases-section";
+export { PainPointsSection } from "./pain-points-section";
+export { WhyYekoSection } from "./why-yeko-section";
+export { HowItWorksSection } from "./how-it-works-section";
+export { BenefitsSection } from "./benefits-section";
+export { PricingSection } from "./pricing-section";
+export { TestimonialsSection } from "./testimonials-section";
+export { FAQSection } from "./faq-section";
+export { CTASection } from "./cta-section";
+export { FeaturesSection } from "./features-section";
+export { ClaudeCodeSection } from "./claude-code-section";
+export { Footer } from "./footer";
