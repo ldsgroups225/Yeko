@@ -4,7 +4,7 @@
 
 import type { UserRole, YekoLogger } from '@repo/logger'
 import { createClientLogger, initClientLogging, setupGlobalErrorHandling, UserInteractionLogger } from '@repo/logger'
-import React from 'react'
+import { useEffect, useState } from 'react'
 
 // Initialize client-side logging when the module loads
 let isInitialized = false
@@ -124,17 +124,57 @@ export function logFormSubmission(formName: string, fields?: string[]) {
  * React hook for using the logger in components
  */
 export function useLogger() {
-  // Use React state to track initialization and force re-renders
-  const [isReady, setIsReady] = React.useState(isInitialized)
+  // Initialize state directly from the module variable
+  // This avoids needing to sync state in an effect
+  const [isReady, setIsReady] = useState(() => isInitialized)
 
-  React.useEffect(() => {
+  useEffect(() => {
+    // Only set up a check if not already initialized
     if (!isInitialized) {
-      // Initialize with default settings if not already done
-      initializeLogger().then(() => {
-        setIsReady(true)
-      }).catch(console.error)
+      // Poll for initialization (this handles async initialization)
+      const checkInterval = setInterval(() => {
+        if (isInitialized) {
+          setIsReady(true)
+          clearInterval(checkInterval)
+        }
+      }, 100)
+
+      return () => clearInterval(checkInterval)
     }
   }, [])
+
+  // Return safe fallbacks when not initialized (e.g., during SSR)
+  if (!isInitialized || !isReady) {
+    return {
+      logger: {
+        debug: () => { },
+        info: () => { },
+        warning: () => { },
+        error: () => { },
+        fatal: () => { },
+        audit: () => { },
+        performance: () => { },
+        security: () => { },
+        withContext: () => ({} as any),
+        withUser: () => ({} as any),
+        withSchool: () => ({} as any),
+        withAcademicContext: () => ({} as any),
+        child: () => ({} as any),
+      },
+      userLogger: {
+        logAction: () => { },
+        logNavigation: () => { },
+        logError: () => { },
+        logFormSubmission: () => { },
+        withUser: () => ({} as any),
+      },
+      logUserAction: () => { },
+      logNavigation: () => { },
+      logError: () => { },
+      logFormSubmission: () => { },
+      isReady: false,
+    }
+  }
 
   return {
     logger: getLogger(),
@@ -143,6 +183,6 @@ export function useLogger() {
     logNavigation,
     logError,
     logFormSubmission,
-    isReady, // Include the readiness state for components that need it
+    isReady,
   }
 }

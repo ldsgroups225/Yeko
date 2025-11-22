@@ -104,7 +104,8 @@ export function getEnvironment(): string {
   if (isServer()) {
     return process.env.NODE_ENV || "development";
   } else {
-    return (process.env.NODE_ENV as string) || "development";
+    // In browser, we can't access process.env directly
+    return "development";
   }
 }
 

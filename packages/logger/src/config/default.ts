@@ -12,6 +12,6 @@ export const defaultConfig: LoggerConfig = {
   enableStructuredLogging: false,
   defaultContext: {
     service: "yeko",
-    version: process.env.npm_package_version || "1.0.0",
+    version: (typeof process !== "undefined" && process.env?.npm_package_version) || "1.0.0",
   },
 };
