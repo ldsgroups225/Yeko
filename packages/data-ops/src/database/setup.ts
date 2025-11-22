@@ -1,25 +1,25 @@
 // packages/data-ops/src/database/setup.ts
 
-import { drizzle } from "drizzle-orm/neon-http";
+import { drizzle } from 'drizzle-orm/neon-http'
 
-let db: ReturnType<typeof drizzle>;
+let db: ReturnType<typeof drizzle>
 
 export function initDatabase(connection: {
-  host: string;
-  username: string;
-  password: string;
+  host: string
+  username: string
+  password: string
 }) {
   if (db) {
-    return db;
+    return db
   }
-  const connectionString = `postgres://${connection.username}:${connection.password}@${connection.host}`;
-  db = drizzle(connectionString);
-  return db;
+  const connectionString = `postgres://${connection.username}:${connection.password}@${connection.host}`
+  db = drizzle(connectionString)
+  return db
 }
 
 export function getDb() {
   if (!db) {
-    throw new Error("Database not initialized");
+    throw new Error('Database not initialized')
   }
-  return db;
+  return db
 }

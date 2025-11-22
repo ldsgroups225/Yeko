@@ -8,9 +8,9 @@
     "deploy": "pnpm run build && wrangler deploy",
     "serve": "vite preview",
     "cf-typegen": "wrangler types --env-interface Env",
-    "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
     "test": "vitest --run"
   },
   "dependencies": {

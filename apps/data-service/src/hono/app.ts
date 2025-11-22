@@ -1,7 +1,7 @@
-import { Hono } from "hono";
+import { Hono } from 'hono'
 
-export const app = new Hono<{ Bindings: Env }>();
+export const app = new Hono<{ Bindings: Env }>()
 
-app.get("/", (c) => {
-  return c.text("Hello World");
-});
+app.get('/', (c) => {
+  return c.text('Hello World')
+})

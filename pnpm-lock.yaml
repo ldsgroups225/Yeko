@@ -211,6 +211,12 @@ importers:
       '@types/node':
         specifier: ^22.15.19
         version: 22.18.6
+      '@yeko/eslint-config':
+        specifier: workspace:^
+        version: link:../../packages/eslint-config
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.1(jiti@2.6.1)
       typescript:
         specifier: ^5.5.2
         version: 5.9.2
@@ -254,12 +260,18 @@ importers:
       '@types/better-sqlite3':
         specifier: ^7.6.13
         version: 7.6.13
+      '@yeko/eslint-config':
+        specifier: workspace:^
+        version: link:../eslint-config
       better-sqlite#:
         specifier: link:@types/better-sqlite#
         version: link:@types/better-sqlite#
       drizzle-kit:
         specifier: ^0.31.4
         version: 0.31.4
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.1(jiti@2.6.1)
       mysql2:
         specifier: ^3.14.3
         version: 3.14.3
@@ -312,6 +324,12 @@ importers:
         specifier: ^0.8.2
         version: 0.8.2
     devDependencies:
+      '@yeko/eslint-config':
+        specifier: workspace:^
+        version: link:../eslint-config
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.1(jiti@2.6.1)
       tsup:
         specifier: ^8.0.0
         version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)

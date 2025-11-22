@@ -2,78 +2,78 @@
  * Shared logger implementation for both server and client
  */
 
-import { configure, getLogger, getConsoleSink, type Logger as LogTapeLogger } from "@logtape/logtape";
-import type { YekoLogger, YekoLogContext, LogLevel, LoggerConfig } from "../types";
-import { mergeContext, normalizeContext, maskSensitiveData } from "../utils/context";
-import { selectFormatter } from "../utils/formatters";
+import type { Logger as LogTapeLogger } from '@logtape/logtape'
+import type { LoggerConfig, LogLevel, YekoLogContext, YekoLogger } from '../types'
+import { configure, getConsoleSink, getLogger } from '@logtape/logtape'
+import { maskSensitiveData, mergeContext, normalizeContext } from '../utils/context'
 
 /**
  * Base Yeko Logger implementation
  */
 export class BaseYekoLogger implements YekoLogger {
-  private readonly logTapeLogger: LogTapeLogger;
-  private readonly baseConfig: LoggerConfig;
-  private readonly baseContext?: YekoLogContext;
+  private readonly logTapeLogger: LogTapeLogger
+  private readonly baseConfig: LoggerConfig
+  private readonly baseContext?: YekoLogContext
 
   constructor(
     category: string[],
     config: LoggerConfig,
-    baseContext?: YekoLogContext
+    baseContext?: YekoLogContext,
   ) {
-    this.logTapeLogger = getLogger(category);
-    this.baseConfig = config;
-    this.baseContext = baseContext;
+    this.logTapeLogger = getLogger(category)
+    this.baseConfig = config
+    this.baseContext = baseContext
 
     // Bind methods to allow destructuring
-    this.debug = this.debug.bind(this);
-    this.info = this.info.bind(this);
-    this.warning = this.warning.bind(this);
-    this.error = this.error.bind(this);
-    this.fatal = this.fatal.bind(this);
-    this.audit = this.audit.bind(this);
-    this.performance = this.performance.bind(this);
-    this.security = this.security.bind(this);
+    this.debug = this.debug.bind(this)
+    this.info = this.info.bind(this)
+    this.warning = this.warning.bind(this)
+    this.error = this.error.bind(this)
+    this.fatal = this.fatal.bind(this)
+    this.audit = this.audit.bind(this)
+    this.performance = this.performance.bind(this)
+    this.security = this.security.bind(this)
   }
 
   // Standard logging methods
   debug(message: string, context?: YekoLogContext): void {
-    this.log("debug", message, undefined, context);
+    this.log('debug', message, undefined, context)
   }
 
   info(message: string, context?: YekoLogContext): void {
-    this.log("info", message, undefined, context);
+    this.log('info', message, undefined, context)
   }
 
   warning(message: string, context?: YekoLogContext): void {
-    this.log("warning", message, undefined, context);
+    this.log('warning', message, undefined, context)
   }
 
   error(message: string, error?: Error, context?: YekoLogContext): void {
-    this.log("error", message, error, context);
+    this.log('error', message, error, context)
   }
 
   fatal(message: string, error?: Error, context?: YekoLogContext): void {
-    this.log("fatal", message, error, context);
+    this.log('fatal', message, error, context)
   }
 
   // Yeko-specific methods
   audit(message: string, context?: YekoLogContext): void {
-    this.log("info", message, undefined, { ...context, logType: "audit" });
+    this.log('info', message, undefined, { ...context, logType: 'audit' })
   }
 
   performance(operation: string, duration: number, context?: YekoLogContext): void {
-    this.log("info", `Performance: ${operation}`, undefined, {
+    this.log('info', `Performance: ${operation}`, undefined, {
       ...context,
       duration,
-      logType: "performance",
-    });
+      logType: 'performance',
+    })
   }
 
   security(event: string, context?: YekoLogContext): void {
-    this.log("warning", `Security: ${event}`, undefined, {
+    this.log('warning', `Security: ${event}`, undefined, {
       ...context,
-      logType: "security",
-    });
+      logType: 'security',
+    })
   }
 
   // Context management
@@ -81,28 +81,28 @@ export class BaseYekoLogger implements YekoLogger {
     return new BaseYekoLogger(
       this.getCategory(),
       this.baseConfig,
-      mergeContext(this.baseContext, context)
-    );
+      mergeContext(this.baseContext, context),
+    )
   }
 
   withUser(userId: string, role: string): YekoLogger {
-    return this.withContext({ userId, userRole: role as any });
+    return this.withContext({ userId, userRole: role as any })
   }
 
   withSchool(schoolId: string): YekoLogger {
-    return this.withContext({ schoolId });
+    return this.withContext({ schoolId })
   }
 
   withAcademicContext(academicYearId: string, semesterId?: string): YekoLogger {
-    return this.withContext({ academicYearId, semesterId });
+    return this.withContext({ academicYearId, semesterId })
   }
 
   // Child logger creation
   child(category: string[]): YekoLogger {
-    const currentCategory = this.getCategory();
-    const newCategory = [...currentCategory, ...category];
+    const currentCategory = this.getCategory()
+    const newCategory = [...currentCategory, ...category]
 
-    return new BaseYekoLogger(newCategory, this.baseConfig, this.baseContext);
+    return new BaseYekoLogger(newCategory, this.baseConfig, this.baseContext)
   }
 
   /**
@@ -112,16 +112,16 @@ export class BaseYekoLogger implements YekoLogger {
     level: LogLevel,
     message: string,
     error?: Error,
-    context?: YekoLogContext
+    context?: YekoLogContext,
   ): void {
     const mergedContext = normalizeContext(
-      mergeContext(this.baseContext, context)
-    );
+      mergeContext(this.baseContext, context),
+    )
 
-    const maskedContext = maskSensitiveData(mergedContext);
+    const maskedContext = maskSensitiveData(mergedContext)
 
     // Use LogTape's structured logging
-    const logMethod = this.getLogTapeMethod(level);
+    const logMethod = this.getLogTapeMethod(level)
 
     if (error) {
       logMethod(`${message}`, {
@@ -131,9 +131,10 @@ export class BaseYekoLogger implements YekoLogger {
           stack: error.stack,
         },
         ...maskedContext,
-      });
-    } else {
-      logMethod(`${message}`, maskedContext);
+      })
+    }
+    else {
+      logMethod(`${message}`, maskedContext)
     }
   }
 
@@ -142,18 +143,18 @@ export class BaseYekoLogger implements YekoLogger {
    */
   private getLogTapeMethod(level: LogLevel): any {
     switch (level) {
-      case "debug":
-        return this.logTapeLogger.debug.bind(this.logTapeLogger);
-      case "info":
-        return this.logTapeLogger.info.bind(this.logTapeLogger);
-      case "warning":
-        return this.logTapeLogger.warn.bind(this.logTapeLogger);
-      case "error":
-        return this.logTapeLogger.error.bind(this.logTapeLogger);
-      case "fatal":
-        return this.logTapeLogger.error.bind(this.logTapeLogger); // LogTape uses error for fatal
+      case 'debug':
+        return this.logTapeLogger.debug.bind(this.logTapeLogger)
+      case 'info':
+        return this.logTapeLogger.info.bind(this.logTapeLogger)
+      case 'warning':
+        return this.logTapeLogger.warn.bind(this.logTapeLogger)
+      case 'error':
+        return this.logTapeLogger.error.bind(this.logTapeLogger)
+      case 'fatal':
+        return this.logTapeLogger.error.bind(this.logTapeLogger) // LogTape uses error for fatal
       default:
-        return this.logTapeLogger.info.bind(this.logTapeLogger);
+        return this.logTapeLogger.info.bind(this.logTapeLogger)
     }
   }
 
@@ -164,7 +165,7 @@ export class BaseYekoLogger implements YekoLogger {
     // LogTape doesn't expose category directly, so we'll need to track it
     // This is a simplified approach - in a real implementation,
     // you might need to store the category separately
-    return ["yeko"];
+    return ['yeko']
   }
 }
 
@@ -172,17 +173,17 @@ export class BaseYekoLogger implements YekoLogger {
  * Logger factory for creating Yeko loggers
  */
 export class YekoLoggerFactory {
-  private static instance: YekoLoggerFactory;
-  private static isConfigured = false;
-  private static config: LoggerConfig;
+  private static instance: YekoLoggerFactory
+  private static isConfigured = false
+  private static config: LoggerConfig
 
   private constructor() { }
 
   static getInstance(): YekoLoggerFactory {
     if (!YekoLoggerFactory.instance) {
-      YekoLoggerFactory.instance = new YekoLoggerFactory();
+      YekoLoggerFactory.instance = new YekoLoggerFactory()
     }
-    return YekoLoggerFactory.instance;
+    return YekoLoggerFactory.instance
   }
 
   /**
@@ -190,59 +191,59 @@ export class YekoLoggerFactory {
    */
   async configure(config: LoggerConfig, reset = false): Promise<void> {
     if (YekoLoggerFactory.isConfigured && !reset) {
-      return; // Already configured
+      return // Already configured
     }
 
-    YekoLoggerFactory.config = config;
+    YekoLoggerFactory.config = config
 
     // Check if we're in a browser environment
-    const isBrowser = typeof window !== 'undefined';
+    const isBrowser = typeof window !== 'undefined'
 
     if (isBrowser) {
       // In browser, skip LogTape configuration as it uses Node.js APIs
       // LogTape will use default configuration
-      YekoLoggerFactory.isConfigured = true;
-      return;
+      YekoLoggerFactory.isConfigured = true
+      return
     }
 
-    const sinks = this.createSinks(config);
-    const loggers = this.createLoggerConfigs(config);
+    const sinks = this.createSinks(config)
+    const loggers = this.createLoggerConfigs(config)
 
     await configure({
       sinks,
       loggers,
       reset, // Pass reset flag to LogTape
-    });
+    })
 
-    YekoLoggerFactory.isConfigured = true;
+    YekoLoggerFactory.isConfigured = true
   }
 
   /**
    * Create a new Yeko logger
    */
   create(category: string[], config?: Partial<LoggerConfig>): YekoLogger {
-    const finalConfig = { ...YekoLoggerFactory.config, ...config };
-    return new BaseYekoLogger(category, finalConfig);
+    const finalConfig = { ...YekoLoggerFactory.config, ...config }
+    return new BaseYekoLogger(category, finalConfig)
   }
 
   /**
    * Create sinks for LogTape configuration
    */
   private createSinks(config: LoggerConfig) {
-    const sinks: Record<string, any> = {};
+    const sinks: Record<string, any> = {}
 
     // Console sink
-    if (config.sinks.includes("console")) {
-      sinks.console = getConsoleSink();
+    if (config.sinks.includes('console')) {
+      sinks.console = getConsoleSink()
     }
 
     // File sink (for production)
-    if (config.sinks.includes("file")) {
+    if (config.sinks.includes('file')) {
       // Note: You would need to implement file sink
       // This would require additional dependencies like @logtape/file
     }
 
-    return sinks;
+    return sinks
   }
 
   /**
@@ -251,11 +252,11 @@ export class YekoLoggerFactory {
   private createLoggerConfigs(config: LoggerConfig) {
     return [
       {
-        category: "yeko",
+        category: 'yeko',
         lowestLevel: config.level,
         sinks: config.sinks,
       },
-    ];
+    ]
   }
 
   /**
@@ -264,6 +265,6 @@ export class YekoLoggerFactory {
   async shutdown(): Promise<void> {
     // LogTape doesn't have a shutdown method in the current version
     // This would be used for cleanup if needed
-    YekoLoggerFactory.isConfigured = false;
+    YekoLoggerFactory.isConfigured = false
   }
 }

@@ -1,7 +1,7 @@
+import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 // packages/data-ops/config/auth.ts
-import { createBetterAuth } from "../src/auth/setup";
-import { initDatabase } from "../src/database/setup";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { createBetterAuth } from '../src/auth/setup'
+import { initDatabase } from '../src/database/setup'
 
 export const auth = createBetterAuth({
   database: drizzleAdapter(
@@ -11,7 +11,7 @@ export const auth = createBetterAuth({
       username: process.env.DATABASE_USERNAME!,
     }),
     {
-      provider: "pg",
+      provider: 'pg',
     },
   ),
-});
+})

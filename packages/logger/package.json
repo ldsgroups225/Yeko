@@ -1,36 +1,11 @@
 {
   "name": "@repo/logger",
+  "type": "module",
   "version": "1.0.0",
-  "description": "Logger package for Yeko educational management platform using LogTape",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
-    }
-  },
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "build": "tsup",
-    "dev": "tsc --watch",
-    "typecheck": "tsc --noEmit"
-  },
-  "dependencies": {
-    "@logtape/logtape": "^0.8.2"
-  },
-  "devDependencies": {
-    "tsup": "^8.0.0",
-    "typescript": "^5.9.2"
-  },
   "packageManager": "pnpm@10.14.0",
-  "publishConfig": {
-    "access": "restricted"
-  },
+  "description": "Logger package for Yeko educational management platform using LogTape",
+  "author": "Yeko Team",
+  "license": "ISC",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/darius-kassi/yeko.git",
@@ -44,6 +19,35 @@
     "education",
     "saas"
   ],
-  "author": "Yeko Team",
-  "license": "ISC"
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsc --watch",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@logtape/logtape": "^0.8.2"
+  },
+  "devDependencies": {
+    "@yeko/eslint-config": "workspace:^",
+    "eslint": "^9.39.1",
+    "tsup": "^8.0.0",
+    "typescript": "^5.9.2"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
 }

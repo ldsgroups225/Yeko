@@ -6,17 +6,17 @@
       "DOM",
       "DOM.Iterable"
     ],
+    "rootDir": "src",
     "module": "CommonJS",
     "moduleResolution": "node",
     "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true,
     "outDir": "dist",
-    "rootDir": "src"
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
   },
   "include": [
     "src/**/*"

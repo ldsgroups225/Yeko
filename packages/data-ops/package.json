@@ -1,23 +1,28 @@
 {
   "name": "@repo/data-ops",
+  "type": "module",
   "version": "1.0.0",
+  "packageManager": "pnpm@10.14.0",
   "description": "Manage auth, database, schemas, and queries",
+  "author": "",
+  "license": "ISC",
+  "keywords": [],
   "exports": {
     "./auth/*": {
-      "default": "./dist/auth/*.js",
-      "types": "./dist/auth/*.d.ts"
+      "types": "./dist/auth/*.d.ts",
+      "default": "./dist/auth/*.js"
     },
     "./database/*": {
-      "default": "./dist/database/*.js",
-      "types": "./dist/database/*.d.ts"
+      "types": "./dist/database/*.d.ts",
+      "default": "./dist/database/*.js"
     },
     "./zod-schema/*": {
-      "default": "./dist/zod-schema/*.js",
-      "types": "./dist/zod-schema/*.d.ts"
+      "types": "./dist/zod-schema/*.d.ts",
+      "default": "./dist/zod-schema/*.js"
     },
     "./queries/*": {
-      "default": "./dist/queries/*.js",
-      "types": "./dist/queries/*.d.ts"
+      "types": "./dist/queries/*.d.ts",
+      "default": "./dist/queries/*.js"
     }
   },
   "scripts": {
@@ -26,15 +31,12 @@
     "drizzle:generate": "drizzle-kit generate --config drizzle.config.ts",
     "drizzle:migrate": "drizzle-kit migrate --config drizzle.config.ts",
     "drizzle:pull": "drizzle-kit pull --config drizzle.config.ts",
+    "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
     "seed": "node dist/seed/index.js",
     "seed:fresh": "node dist/seed/index.js --fresh",
     "verify": "node dist/verify.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.14.0",
   "dependencies": {
     "@neondatabase/serverless": "^1.0.1",
     "@planetscale/database": "^1.19.0",
@@ -48,8 +50,10 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250823.0",
     "@types/better-sqlite3": "^7.6.13",
+    "@yeko/eslint-config": "workspace:^",
     "better-sqlite#": "link:@types/better-sqlite#",
     "drizzle-kit": "^0.31.4",
+    "eslint": "^9.39.1",
     "mysql2": "^3.14.3",
     "postgres": "^3.4.7",
     "tsc-alias": "^1.8.16",

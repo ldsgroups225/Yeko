@@ -41,7 +41,7 @@ logger.audit('User logged in', { userId: '123', role: 'teacher' })
 ### With Environment Detection
 
 ```typescript
-import { initLogging, createLogger } from '@repo/logger'
+import { createLogger, initLogging } from '@repo/logger'
 
 // Automatically detects environment and configures accordingly
 await initLogging({
@@ -134,7 +134,8 @@ const requestLogger = new RequestLogger(
 try {
   // Process request
   requestLogger.success(200)
-} catch (error) {
+}
+catch (error) {
   requestLogger.error(error as Error, 500)
 }
 ```
@@ -194,7 +195,8 @@ setupGlobalErrorHandling()
 // Or manually log errors
 try {
   // Risky operation
-} catch (error) {
+}
+catch (error) {
   logger.error('Operation failed', error as Error, {
     component: 'DataProcessor',
     operation: 'parse-csv',
@@ -247,31 +249,31 @@ await initLogging({
 ```typescript
 interface YekoLogContext {
   // Tenant information
-  schoolId?: string;
-  organizationId?: string;
+  schoolId?: string
+  organizationId?: string
 
   // User information
-  userId?: string;
-  userRole?: 'admin' | 'teacher' | 'student' | 'parent' | 'staff';
-  sessionId?: string;
+  userId?: string
+  userRole?: 'admin' | 'teacher' | 'student' | 'parent' | 'staff'
+  sessionId?: string
 
   // Academic context
-  academicYearId?: string;
-  semesterId?: string;
-  courseId?: string;
-  subjectId?: string;
+  academicYearId?: string
+  semesterId?: string
+  courseId?: string
+  subjectId?: string
 
   // Request information
-  requestId?: string;
-  ip?: string;
-  userAgent?: string;
+  requestId?: string
+  ip?: string
+  userAgent?: string
 
   // Performance metrics
-  duration?: number;
-  memoryUsage?: number;
+  duration?: number
+  memoryUsage?: number
 
   // Custom fields
-  [key: string]: unknown;
+  [key: string]: unknown
 }
 ```
 
@@ -280,22 +282,22 @@ interface YekoLogContext {
 ```typescript
 interface YekoLogger {
   // Standard logging methods
-  debug(message: string, context?: YekoLogContext): void;
-  info(message: string, context?: YekoLogContext): void;
-  warning(message: string, context?: YekoLogContext): void;
-  error(message: string, error?: Error, context?: YekoLogContext): void;
-  fatal(message: string, error?: Error, context?: YekoLogContext): void;
+  debug: (message: string, context?: YekoLogContext) => void
+  info: (message: string, context?: YekoLogContext) => void
+  warning: (message: string, context?: YekoLogContext) => void
+  error: (message: string, error?: Error, context?: YekoLogContext) => void
+  fatal: (message: string, error?: Error, context?: YekoLogContext) => void
 
   // Yeko-specific methods
-  audit(message: string, context?: YekoLogContext): void;
-  performance(operation: string, duration: number, context?: YekoLogContext): void;
-  security(event: string, context?: YekoLogContext): void;
+  audit: (message: string, context?: YekoLogContext) => void
+  performance: (operation: string, duration: number, context?: YekoLogContext) => void
+  security: (event: string, context?: YekoLogContext) => void
 
   // Context management
-  withContext(context: Partial<YekoLogContext>): YekoLogger;
-  withUser(userId: string, role: UserRole): YekoLogger;
-  withSchool(schoolId: string): YekoLogger;
-  withAcademicContext(academicYearId: string, semesterId?: string): YekoLogger;
+  withContext: (context: Partial<YekoLogContext>) => YekoLogger
+  withUser: (userId: string, role: UserRole) => YekoLogger
+  withSchool: (schoolId: string) => YekoLogger
+  withAcademicContext: (academicYearId: string, semesterId?: string) => YekoLogger
 }
 ```
 
@@ -305,9 +307,9 @@ interface YekoLogger {
 
 ```typescript
 import {
-  createUserContext,
+  createAcademicContext,
   createSchoolContext,
-  createAcademicContext
+  createUserContext
 } from '@repo/logger'
 
 const userContext = createUserContext('user-123', 'teacher', { sessionId: 'abc-123' })
@@ -404,15 +406,16 @@ logger.error('Database error', error, { operation: 'user-login' })
 
 ```typescript
 // ❌ Before (winston)
+// ✅ After
+import { createLogger, initLogging } from '@repo/logger'
+
 const winston = require('winston')
+
 const logger = winston.createLogger({
   level: 'info',
   format: winston.format.json(),
   transports: [new winston.transports.Console()]
 })
-
-// ✅ After
-import { createLogger, initLogging } from '@repo/logger'
 await initLogging()
 const logger = createLogger(['app'])
 ```
