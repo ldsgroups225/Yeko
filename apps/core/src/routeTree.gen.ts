@@ -12,10 +12,21 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as DemoRequestRouteImport } from './routes/demo-request'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthAppRouteRouteImport } from './routes/_auth/app/route'
 import { Route as AuthAppIndexRouteImport } from './routes/_auth/app/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
+import { Route as AuthAppDashboardRouteImport } from './routes/_auth/app/dashboard'
+import { Route as AuthAppSupportIndexRouteImport } from './routes/_auth/app/support/index'
+import { Route as AuthAppSchoolsIndexRouteImport } from './routes/_auth/app/schools/index'
+import { Route as AuthAppCatalogsIndexRouteImport } from './routes/_auth/app/catalogs/index'
+import { Route as AuthAppAnalyticsIndexRouteImport } from './routes/_auth/app/analytics/index'
+import { Route as AuthAppSchoolsCreateRouteImport } from './routes/_auth/app/schools/create'
+import { Route as AuthAppSchoolsSchoolIdRouteImport } from './routes/_auth/app/schools/$schoolId'
 import { Route as AuthAppPolarSubscriptionsRouteImport } from './routes/_auth/app/polar/subscriptions'
 import { Route as AuthAppPolarPortalRouteImport } from './routes/_auth/app/polar/portal'
+import { Route as AuthAppCatalogsSubjectsRouteImport } from './routes/_auth/app/catalogs/subjects'
+import { Route as AuthAppCatalogsProgramsRouteImport } from './routes/_auth/app/catalogs/programs'
+import { Route as AuthAppCatalogsCoefficientsRouteImport } from './routes/_auth/app/catalogs/coefficients'
 import { Route as AuthAppPolarCheckoutSuccessRouteImport } from './routes/_auth/app/polar/checkout.success'
 
 const DemoRequestRoute = DemoRequestRouteImport.update({
@@ -32,50 +43,127 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthAppIndexRoute = AuthAppIndexRouteImport.update({
-  id: '/app/',
-  path: '/app/',
+const AuthAppRouteRoute = AuthAppRouteRouteImport.update({
+  id: '/app',
+  path: '/app',
   getParentRoute: () => AuthRouteRoute,
+} as any)
+const AuthAppIndexRoute = AuthAppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthAppRouteRoute,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthAppDashboardRoute = AuthAppDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthAppRouteRoute,
+} as any)
+const AuthAppSupportIndexRoute = AuthAppSupportIndexRouteImport.update({
+  id: '/support/',
+  path: '/support/',
+  getParentRoute: () => AuthAppRouteRoute,
+} as any)
+const AuthAppSchoolsIndexRoute = AuthAppSchoolsIndexRouteImport.update({
+  id: '/schools/',
+  path: '/schools/',
+  getParentRoute: () => AuthAppRouteRoute,
+} as any)
+const AuthAppCatalogsIndexRoute = AuthAppCatalogsIndexRouteImport.update({
+  id: '/catalogs/',
+  path: '/catalogs/',
+  getParentRoute: () => AuthAppRouteRoute,
+} as any)
+const AuthAppAnalyticsIndexRoute = AuthAppAnalyticsIndexRouteImport.update({
+  id: '/analytics/',
+  path: '/analytics/',
+  getParentRoute: () => AuthAppRouteRoute,
+} as any)
+const AuthAppSchoolsCreateRoute = AuthAppSchoolsCreateRouteImport.update({
+  id: '/schools/create',
+  path: '/schools/create',
+  getParentRoute: () => AuthAppRouteRoute,
+} as any)
+const AuthAppSchoolsSchoolIdRoute = AuthAppSchoolsSchoolIdRouteImport.update({
+  id: '/schools/$schoolId',
+  path: '/schools/$schoolId',
+  getParentRoute: () => AuthAppRouteRoute,
+} as any)
 const AuthAppPolarSubscriptionsRoute =
   AuthAppPolarSubscriptionsRouteImport.update({
-    id: '/app/polar/subscriptions',
-    path: '/app/polar/subscriptions',
-    getParentRoute: () => AuthRouteRoute,
+    id: '/polar/subscriptions',
+    path: '/polar/subscriptions',
+    getParentRoute: () => AuthAppRouteRoute,
   } as any)
 const AuthAppPolarPortalRoute = AuthAppPolarPortalRouteImport.update({
-  id: '/app/polar/portal',
-  path: '/app/polar/portal',
-  getParentRoute: () => AuthRouteRoute,
+  id: '/polar/portal',
+  path: '/polar/portal',
+  getParentRoute: () => AuthAppRouteRoute,
 } as any)
+const AuthAppCatalogsSubjectsRoute = AuthAppCatalogsSubjectsRouteImport.update({
+  id: '/catalogs/subjects',
+  path: '/catalogs/subjects',
+  getParentRoute: () => AuthAppRouteRoute,
+} as any)
+const AuthAppCatalogsProgramsRoute = AuthAppCatalogsProgramsRouteImport.update({
+  id: '/catalogs/programs',
+  path: '/catalogs/programs',
+  getParentRoute: () => AuthAppRouteRoute,
+} as any)
+const AuthAppCatalogsCoefficientsRoute =
+  AuthAppCatalogsCoefficientsRouteImport.update({
+    id: '/catalogs/coefficients',
+    path: '/catalogs/coefficients',
+    getParentRoute: () => AuthAppRouteRoute,
+  } as any)
 const AuthAppPolarCheckoutSuccessRoute =
   AuthAppPolarCheckoutSuccessRouteImport.update({
-    id: '/app/polar/checkout/success',
-    path: '/app/polar/checkout/success',
-    getParentRoute: () => AuthRouteRoute,
+    id: '/polar/checkout/success',
+    path: '/polar/checkout/success',
+    getParentRoute: () => AuthAppRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/demo-request': typeof DemoRequestRoute
+  '/app': typeof AuthAppRouteRouteWithChildren
+  '/app/dashboard': typeof AuthAppDashboardRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/app': typeof AuthAppIndexRoute
+  '/app/': typeof AuthAppIndexRoute
+  '/app/catalogs/coefficients': typeof AuthAppCatalogsCoefficientsRoute
+  '/app/catalogs/programs': typeof AuthAppCatalogsProgramsRoute
+  '/app/catalogs/subjects': typeof AuthAppCatalogsSubjectsRoute
   '/app/polar/portal': typeof AuthAppPolarPortalRoute
   '/app/polar/subscriptions': typeof AuthAppPolarSubscriptionsRoute
+  '/app/schools/$schoolId': typeof AuthAppSchoolsSchoolIdRoute
+  '/app/schools/create': typeof AuthAppSchoolsCreateRoute
+  '/app/analytics': typeof AuthAppAnalyticsIndexRoute
+  '/app/catalogs': typeof AuthAppCatalogsIndexRoute
+  '/app/schools': typeof AuthAppSchoolsIndexRoute
+  '/app/support': typeof AuthAppSupportIndexRoute
   '/app/polar/checkout/success': typeof AuthAppPolarCheckoutSuccessRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/demo-request': typeof DemoRequestRoute
+  '/app/dashboard': typeof AuthAppDashboardRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/app': typeof AuthAppIndexRoute
+  '/app/catalogs/coefficients': typeof AuthAppCatalogsCoefficientsRoute
+  '/app/catalogs/programs': typeof AuthAppCatalogsProgramsRoute
+  '/app/catalogs/subjects': typeof AuthAppCatalogsSubjectsRoute
   '/app/polar/portal': typeof AuthAppPolarPortalRoute
   '/app/polar/subscriptions': typeof AuthAppPolarSubscriptionsRoute
+  '/app/schools/$schoolId': typeof AuthAppSchoolsSchoolIdRoute
+  '/app/schools/create': typeof AuthAppSchoolsCreateRoute
+  '/app/analytics': typeof AuthAppAnalyticsIndexRoute
+  '/app/catalogs': typeof AuthAppCatalogsIndexRoute
+  '/app/schools': typeof AuthAppSchoolsIndexRoute
+  '/app/support': typeof AuthAppSupportIndexRoute
   '/app/polar/checkout/success': typeof AuthAppPolarCheckoutSuccessRoute
 }
 export interface FileRoutesById {
@@ -83,10 +171,21 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteRouteWithChildren
   '/demo-request': typeof DemoRequestRoute
+  '/_auth/app': typeof AuthAppRouteRouteWithChildren
+  '/_auth/app/dashboard': typeof AuthAppDashboardRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_auth/app/': typeof AuthAppIndexRoute
+  '/_auth/app/catalogs/coefficients': typeof AuthAppCatalogsCoefficientsRoute
+  '/_auth/app/catalogs/programs': typeof AuthAppCatalogsProgramsRoute
+  '/_auth/app/catalogs/subjects': typeof AuthAppCatalogsSubjectsRoute
   '/_auth/app/polar/portal': typeof AuthAppPolarPortalRoute
   '/_auth/app/polar/subscriptions': typeof AuthAppPolarSubscriptionsRoute
+  '/_auth/app/schools/$schoolId': typeof AuthAppSchoolsSchoolIdRoute
+  '/_auth/app/schools/create': typeof AuthAppSchoolsCreateRoute
+  '/_auth/app/analytics/': typeof AuthAppAnalyticsIndexRoute
+  '/_auth/app/catalogs/': typeof AuthAppCatalogsIndexRoute
+  '/_auth/app/schools/': typeof AuthAppSchoolsIndexRoute
+  '/_auth/app/support/': typeof AuthAppSupportIndexRoute
   '/_auth/app/polar/checkout/success': typeof AuthAppPolarCheckoutSuccessRoute
 }
 export interface FileRouteTypes {
@@ -94,29 +193,61 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/demo-request'
-    | '/api/auth/$'
     | '/app'
+    | '/app/dashboard'
+    | '/api/auth/$'
+    | '/app/'
+    | '/app/catalogs/coefficients'
+    | '/app/catalogs/programs'
+    | '/app/catalogs/subjects'
     | '/app/polar/portal'
     | '/app/polar/subscriptions'
+    | '/app/schools/$schoolId'
+    | '/app/schools/create'
+    | '/app/analytics'
+    | '/app/catalogs'
+    | '/app/schools'
+    | '/app/support'
     | '/app/polar/checkout/success'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/demo-request'
+    | '/app/dashboard'
     | '/api/auth/$'
     | '/app'
+    | '/app/catalogs/coefficients'
+    | '/app/catalogs/programs'
+    | '/app/catalogs/subjects'
     | '/app/polar/portal'
     | '/app/polar/subscriptions'
+    | '/app/schools/$schoolId'
+    | '/app/schools/create'
+    | '/app/analytics'
+    | '/app/catalogs'
+    | '/app/schools'
+    | '/app/support'
     | '/app/polar/checkout/success'
   id:
     | '__root__'
     | '/'
     | '/_auth'
     | '/demo-request'
+    | '/_auth/app'
+    | '/_auth/app/dashboard'
     | '/api/auth/$'
     | '/_auth/app/'
+    | '/_auth/app/catalogs/coefficients'
+    | '/_auth/app/catalogs/programs'
+    | '/_auth/app/catalogs/subjects'
     | '/_auth/app/polar/portal'
     | '/_auth/app/polar/subscriptions'
+    | '/_auth/app/schools/$schoolId'
+    | '/_auth/app/schools/create'
+    | '/_auth/app/analytics/'
+    | '/_auth/app/catalogs/'
+    | '/_auth/app/schools/'
+    | '/_auth/app/support/'
     | '/_auth/app/polar/checkout/success'
   fileRoutesById: FileRoutesById
 }
@@ -150,12 +281,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_auth/app/': {
-      id: '/_auth/app/'
+    '/_auth/app': {
+      id: '/_auth/app'
       path: '/app'
       fullPath: '/app'
-      preLoaderRoute: typeof AuthAppIndexRouteImport
+      preLoaderRoute: typeof AuthAppRouteRouteImport
       parentRoute: typeof AuthRouteRoute
+    }
+    '/_auth/app/': {
+      id: '/_auth/app/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AuthAppIndexRouteImport
+      parentRoute: typeof AuthAppRouteRoute
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -164,42 +302,144 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_auth/app/dashboard': {
+      id: '/_auth/app/dashboard'
+      path: '/dashboard'
+      fullPath: '/app/dashboard'
+      preLoaderRoute: typeof AuthAppDashboardRouteImport
+      parentRoute: typeof AuthAppRouteRoute
+    }
+    '/_auth/app/support/': {
+      id: '/_auth/app/support/'
+      path: '/support'
+      fullPath: '/app/support'
+      preLoaderRoute: typeof AuthAppSupportIndexRouteImport
+      parentRoute: typeof AuthAppRouteRoute
+    }
+    '/_auth/app/schools/': {
+      id: '/_auth/app/schools/'
+      path: '/schools'
+      fullPath: '/app/schools'
+      preLoaderRoute: typeof AuthAppSchoolsIndexRouteImport
+      parentRoute: typeof AuthAppRouteRoute
+    }
+    '/_auth/app/catalogs/': {
+      id: '/_auth/app/catalogs/'
+      path: '/catalogs'
+      fullPath: '/app/catalogs'
+      preLoaderRoute: typeof AuthAppCatalogsIndexRouteImport
+      parentRoute: typeof AuthAppRouteRoute
+    }
+    '/_auth/app/analytics/': {
+      id: '/_auth/app/analytics/'
+      path: '/analytics'
+      fullPath: '/app/analytics'
+      preLoaderRoute: typeof AuthAppAnalyticsIndexRouteImport
+      parentRoute: typeof AuthAppRouteRoute
+    }
+    '/_auth/app/schools/create': {
+      id: '/_auth/app/schools/create'
+      path: '/schools/create'
+      fullPath: '/app/schools/create'
+      preLoaderRoute: typeof AuthAppSchoolsCreateRouteImport
+      parentRoute: typeof AuthAppRouteRoute
+    }
+    '/_auth/app/schools/$schoolId': {
+      id: '/_auth/app/schools/$schoolId'
+      path: '/schools/$schoolId'
+      fullPath: '/app/schools/$schoolId'
+      preLoaderRoute: typeof AuthAppSchoolsSchoolIdRouteImport
+      parentRoute: typeof AuthAppRouteRoute
+    }
     '/_auth/app/polar/subscriptions': {
       id: '/_auth/app/polar/subscriptions'
-      path: '/app/polar/subscriptions'
+      path: '/polar/subscriptions'
       fullPath: '/app/polar/subscriptions'
       preLoaderRoute: typeof AuthAppPolarSubscriptionsRouteImport
-      parentRoute: typeof AuthRouteRoute
+      parentRoute: typeof AuthAppRouteRoute
     }
     '/_auth/app/polar/portal': {
       id: '/_auth/app/polar/portal'
-      path: '/app/polar/portal'
+      path: '/polar/portal'
       fullPath: '/app/polar/portal'
       preLoaderRoute: typeof AuthAppPolarPortalRouteImport
-      parentRoute: typeof AuthRouteRoute
+      parentRoute: typeof AuthAppRouteRoute
+    }
+    '/_auth/app/catalogs/subjects': {
+      id: '/_auth/app/catalogs/subjects'
+      path: '/catalogs/subjects'
+      fullPath: '/app/catalogs/subjects'
+      preLoaderRoute: typeof AuthAppCatalogsSubjectsRouteImport
+      parentRoute: typeof AuthAppRouteRoute
+    }
+    '/_auth/app/catalogs/programs': {
+      id: '/_auth/app/catalogs/programs'
+      path: '/catalogs/programs'
+      fullPath: '/app/catalogs/programs'
+      preLoaderRoute: typeof AuthAppCatalogsProgramsRouteImport
+      parentRoute: typeof AuthAppRouteRoute
+    }
+    '/_auth/app/catalogs/coefficients': {
+      id: '/_auth/app/catalogs/coefficients'
+      path: '/catalogs/coefficients'
+      fullPath: '/app/catalogs/coefficients'
+      preLoaderRoute: typeof AuthAppCatalogsCoefficientsRouteImport
+      parentRoute: typeof AuthAppRouteRoute
     }
     '/_auth/app/polar/checkout/success': {
       id: '/_auth/app/polar/checkout/success'
-      path: '/app/polar/checkout/success'
+      path: '/polar/checkout/success'
       fullPath: '/app/polar/checkout/success'
       preLoaderRoute: typeof AuthAppPolarCheckoutSuccessRouteImport
-      parentRoute: typeof AuthRouteRoute
+      parentRoute: typeof AuthAppRouteRoute
     }
   }
 }
 
-interface AuthRouteRouteChildren {
+interface AuthAppRouteRouteChildren {
+  AuthAppDashboardRoute: typeof AuthAppDashboardRoute
   AuthAppIndexRoute: typeof AuthAppIndexRoute
+  AuthAppCatalogsCoefficientsRoute: typeof AuthAppCatalogsCoefficientsRoute
+  AuthAppCatalogsProgramsRoute: typeof AuthAppCatalogsProgramsRoute
+  AuthAppCatalogsSubjectsRoute: typeof AuthAppCatalogsSubjectsRoute
   AuthAppPolarPortalRoute: typeof AuthAppPolarPortalRoute
   AuthAppPolarSubscriptionsRoute: typeof AuthAppPolarSubscriptionsRoute
+  AuthAppSchoolsSchoolIdRoute: typeof AuthAppSchoolsSchoolIdRoute
+  AuthAppSchoolsCreateRoute: typeof AuthAppSchoolsCreateRoute
+  AuthAppAnalyticsIndexRoute: typeof AuthAppAnalyticsIndexRoute
+  AuthAppCatalogsIndexRoute: typeof AuthAppCatalogsIndexRoute
+  AuthAppSchoolsIndexRoute: typeof AuthAppSchoolsIndexRoute
+  AuthAppSupportIndexRoute: typeof AuthAppSupportIndexRoute
   AuthAppPolarCheckoutSuccessRoute: typeof AuthAppPolarCheckoutSuccessRoute
 }
 
-const AuthRouteRouteChildren: AuthRouteRouteChildren = {
+const AuthAppRouteRouteChildren: AuthAppRouteRouteChildren = {
+  AuthAppDashboardRoute: AuthAppDashboardRoute,
   AuthAppIndexRoute: AuthAppIndexRoute,
+  AuthAppCatalogsCoefficientsRoute: AuthAppCatalogsCoefficientsRoute,
+  AuthAppCatalogsProgramsRoute: AuthAppCatalogsProgramsRoute,
+  AuthAppCatalogsSubjectsRoute: AuthAppCatalogsSubjectsRoute,
   AuthAppPolarPortalRoute: AuthAppPolarPortalRoute,
   AuthAppPolarSubscriptionsRoute: AuthAppPolarSubscriptionsRoute,
+  AuthAppSchoolsSchoolIdRoute: AuthAppSchoolsSchoolIdRoute,
+  AuthAppSchoolsCreateRoute: AuthAppSchoolsCreateRoute,
+  AuthAppAnalyticsIndexRoute: AuthAppAnalyticsIndexRoute,
+  AuthAppCatalogsIndexRoute: AuthAppCatalogsIndexRoute,
+  AuthAppSchoolsIndexRoute: AuthAppSchoolsIndexRoute,
+  AuthAppSupportIndexRoute: AuthAppSupportIndexRoute,
   AuthAppPolarCheckoutSuccessRoute: AuthAppPolarCheckoutSuccessRoute,
+}
+
+const AuthAppRouteRouteWithChildren = AuthAppRouteRoute._addFileChildren(
+  AuthAppRouteRouteChildren,
+)
+
+interface AuthRouteRouteChildren {
+  AuthAppRouteRoute: typeof AuthAppRouteRouteWithChildren
+}
+
+const AuthRouteRouteChildren: AuthRouteRouteChildren = {
+  AuthAppRouteRoute: AuthAppRouteRouteWithChildren,
 }
 
 const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(

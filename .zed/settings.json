@@ -1,0 +1,42 @@
+{
+  "languages": {
+    "TypeScript": {
+      "formatter": [
+        {
+          "code_action": "source.fixAll.eslint"
+        }
+      ],
+      "format_on_save": "on"
+    },
+    "TSX": {
+      "formatter": [
+        {
+          "code_action": "source.fixAll.eslint"
+        }
+      ],
+      "format_on_save": "on"
+    },
+    "JavaScript": {
+      "formatter": [
+        {
+          "code_action": "source.fixAll.eslint"
+        }
+      ],
+      "format_on_save": "on"
+    }
+  },
+
+  // Optional: Configure ESLint LSP settings
+  "lsp": {
+    "eslint": {
+      "settings": {
+        "codeActionOnSave": {
+          "enable": true,
+          "mode": "all"
+        },
+        "format": true,
+        "run": "onType"
+      }
+    }
+  }
+}
