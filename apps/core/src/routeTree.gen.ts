@@ -27,6 +27,7 @@ import { Route as AuthAppPolarPortalRouteImport } from './routes/_auth/app/polar
 import { Route as AuthAppCatalogsSubjectsRouteImport } from './routes/_auth/app/catalogs/subjects'
 import { Route as AuthAppCatalogsProgramsRouteImport } from './routes/_auth/app/catalogs/programs'
 import { Route as AuthAppCatalogsCoefficientsRouteImport } from './routes/_auth/app/catalogs/coefficients'
+import { Route as AuthAppSchoolsSchoolIdEditRouteImport } from './routes/_auth/app/schools/$schoolId_.edit'
 import { Route as AuthAppPolarCheckoutSuccessRouteImport } from './routes/_auth/app/polar/checkout.success'
 
 const DemoRequestRoute = DemoRequestRouteImport.update({
@@ -120,6 +121,12 @@ const AuthAppCatalogsCoefficientsRoute =
     path: '/catalogs/coefficients',
     getParentRoute: () => AuthAppRouteRoute,
   } as any)
+const AuthAppSchoolsSchoolIdEditRoute =
+  AuthAppSchoolsSchoolIdEditRouteImport.update({
+    id: '/schools/$schoolId_/edit',
+    path: '/schools/$schoolId/edit',
+    getParentRoute: () => AuthAppRouteRoute,
+  } as any)
 const AuthAppPolarCheckoutSuccessRoute =
   AuthAppPolarCheckoutSuccessRouteImport.update({
     id: '/polar/checkout/success',
@@ -146,6 +153,7 @@ export interface FileRoutesByFullPath {
   '/app/schools': typeof AuthAppSchoolsIndexRoute
   '/app/support': typeof AuthAppSupportIndexRoute
   '/app/polar/checkout/success': typeof AuthAppPolarCheckoutSuccessRoute
+  '/app/schools/$schoolId/edit': typeof AuthAppSchoolsSchoolIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -165,6 +173,7 @@ export interface FileRoutesByTo {
   '/app/schools': typeof AuthAppSchoolsIndexRoute
   '/app/support': typeof AuthAppSupportIndexRoute
   '/app/polar/checkout/success': typeof AuthAppPolarCheckoutSuccessRoute
+  '/app/schools/$schoolId/edit': typeof AuthAppSchoolsSchoolIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -187,6 +196,7 @@ export interface FileRoutesById {
   '/_auth/app/schools/': typeof AuthAppSchoolsIndexRoute
   '/_auth/app/support/': typeof AuthAppSupportIndexRoute
   '/_auth/app/polar/checkout/success': typeof AuthAppPolarCheckoutSuccessRoute
+  '/_auth/app/schools/$schoolId_/edit': typeof AuthAppSchoolsSchoolIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -209,6 +219,7 @@ export interface FileRouteTypes {
     | '/app/schools'
     | '/app/support'
     | '/app/polar/checkout/success'
+    | '/app/schools/$schoolId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -228,6 +239,7 @@ export interface FileRouteTypes {
     | '/app/schools'
     | '/app/support'
     | '/app/polar/checkout/success'
+    | '/app/schools/$schoolId/edit'
   id:
     | '__root__'
     | '/'
@@ -249,6 +261,7 @@ export interface FileRouteTypes {
     | '/_auth/app/schools/'
     | '/_auth/app/support/'
     | '/_auth/app/polar/checkout/success'
+    | '/_auth/app/schools/$schoolId_/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -386,6 +399,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAppCatalogsCoefficientsRouteImport
       parentRoute: typeof AuthAppRouteRoute
     }
+    '/_auth/app/schools/$schoolId_/edit': {
+      id: '/_auth/app/schools/$schoolId_/edit'
+      path: '/schools/$schoolId/edit'
+      fullPath: '/app/schools/$schoolId/edit'
+      preLoaderRoute: typeof AuthAppSchoolsSchoolIdEditRouteImport
+      parentRoute: typeof AuthAppRouteRoute
+    }
     '/_auth/app/polar/checkout/success': {
       id: '/_auth/app/polar/checkout/success'
       path: '/polar/checkout/success'
@@ -411,6 +431,7 @@ interface AuthAppRouteRouteChildren {
   AuthAppSchoolsIndexRoute: typeof AuthAppSchoolsIndexRoute
   AuthAppSupportIndexRoute: typeof AuthAppSupportIndexRoute
   AuthAppPolarCheckoutSuccessRoute: typeof AuthAppPolarCheckoutSuccessRoute
+  AuthAppSchoolsSchoolIdEditRoute: typeof AuthAppSchoolsSchoolIdEditRoute
 }
 
 const AuthAppRouteRouteChildren: AuthAppRouteRouteChildren = {
@@ -428,6 +449,7 @@ const AuthAppRouteRouteChildren: AuthAppRouteRouteChildren = {
   AuthAppSchoolsIndexRoute: AuthAppSchoolsIndexRoute,
   AuthAppSupportIndexRoute: AuthAppSupportIndexRoute,
   AuthAppPolarCheckoutSuccessRoute: AuthAppPolarCheckoutSuccessRoute,
+  AuthAppSchoolsSchoolIdEditRoute: AuthAppSchoolsSchoolIdEditRoute,
 }
 
 const AuthAppRouteRouteWithChildren = AuthAppRouteRoute._addFileChildren(

@@ -76,7 +76,7 @@ export function Sidebar({ className }: SidebarProps) {
   const routerState = useRouterState()
   const currentPath = routerState.location.pathname
   const [isCollapsed, setIsCollapsed] = useState(false)
-  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set())
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(() => new Set())
 
   const toggleExpanded = (href: string) => {
     const newExpanded = new Set(expandedItems)
@@ -164,11 +164,11 @@ export function Sidebar({ className }: SidebarProps) {
               >
                 {isExpanded
                   ? (
-                    <ChevronDown className="h-4 w-4" />
-                  )
+                      <ChevronDown className="h-4 w-4" />
+                    )
                   : (
-                    <ChevronRight className="h-4 w-4" />
-                  )}
+                      <ChevronRight className="h-4 w-4" />
+                    )}
               </motion.div>
             </Button>
           )}

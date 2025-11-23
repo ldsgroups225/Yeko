@@ -122,31 +122,31 @@ export function NavigationBar() {
               >
                 {item.isExternal
                   ? (
-                    <a
-                      href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-300 hover:bg-accent/50 group"
-                    >
-                      <span>{item.label}</span>
-                      {item.label === 'GitHub'
-                        ? (
-                          <Github className="h-4 w-4" />
-                        )
-                        : (
-                          <ExternalLink className="h-4 w-4" />
-                        )}
-                    </a>
-                  )
+                      <a
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-300 hover:bg-accent/50 group"
+                      >
+                        <span>{item.label}</span>
+                        {item.label === 'GitHub'
+                          ? (
+                              <Github className="h-4 w-4" />
+                            )
+                          : (
+                              <ExternalLink className="h-4 w-4" />
+                            )}
+                      </a>
+                    )
                   : (
-                    <Link
-                      to={item.href}
-                      onClick={() => handleNavClick(item)}
-                      className="px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-300 hover:bg-accent/50 block"
-                    >
-                      {item.label}
-                    </Link>
-                  )}
+                      <Link
+                        to={item.href}
+                        onClick={() => handleNavClick(item)}
+                        className="px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-300 hover:bg-accent/50 block"
+                      >
+                        {item.label}
+                      </Link>
+                    )}
                 <motion.div
                   className="absolute bottom-0 left-1/2 transform -translate-x-1/2 h-0.5 bg-linear-to-r from-primary to-primary/80"
                   initial={{ width: 0 }}
@@ -167,41 +167,41 @@ export function NavigationBar() {
           <div className="hidden lg:block">
             {session
               ? (
-                <AccountDialog>
-                  <Button
-                    variant="ghost"
-                    className="flex items-center gap-2 px-3"
-                  >
-                    <Avatar className="h-7 w-7">
-                      <AvatarImage
-                        src={user?.image || undefined}
-                        alt={user?.name || 'User'}
-                      />
-                      <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-                        {fallbackText}
-                      </AvatarFallback>
-                    </Avatar>
-                    <span className="text-sm font-medium">
-                      {user?.name || 'Account'}
-                    </span>
-                  </Button>
-                </AccountDialog>
-              )
+                  <AccountDialog>
+                    <Button
+                      variant="ghost"
+                      className="flex items-center gap-2 px-3"
+                    >
+                      <Avatar className="h-7 w-7">
+                        <AvatarImage
+                          src={user?.image || undefined}
+                          alt={user?.name || 'User'}
+                        />
+                        <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                          {fallbackText}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="text-sm font-medium">
+                        {user?.name || 'Account'}
+                      </span>
+                    </Button>
+                  </AccountDialog>
+                )
               : (
-                <div className="flex items-center gap-2">
-                  <Button variant="outline" size="sm" asChild>
-                    <Link to="/demo-request">Request Demo</Link>
-                  </Button>
-                  <Button
-                    onClick={handleGoogleSignIn}
-                    variant="default"
-                    className="gap-2"
-                  >
-                    <LogIn className="h-4 w-4" />
-                    Sign In
-                  </Button>
-                </div>
-              )}
+                  <div className="flex items-center gap-2">
+                    <Button variant="outline" size="sm" asChild>
+                      <Link to="/demo-request">Request Demo</Link>
+                    </Button>
+                    <Button
+                      onClick={handleGoogleSignIn}
+                      variant="default"
+                      className="gap-2"
+                    >
+                      <LogIn className="h-4 w-4" />
+                      Sign In
+                    </Button>
+                  </div>
+                )}
           </div>
 
           {/* Mobile Menu Button + Language + Theme Toggle */}
@@ -244,32 +244,32 @@ export function NavigationBar() {
                     <div key={item.label} className="relative group">
                       {item.isExternal
                         ? (
-                          <a
-                            href={item.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center justify-between w-full px-4 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-300 hover:bg-accent/50"
-                            onClick={() => setIsOpen(false)}
-                          >
-                            <span>{item.label}</span>
-                            {item.label === 'GitHub'
-                              ? (
-                                <Github className="h-4 w-4" />
-                              )
-                              : (
-                                <ExternalLink className="h-4 w-4" />
-                              )}
-                          </a>
-                        )
+                            <a
+                              href={item.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center justify-between w-full px-4 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-300 hover:bg-accent/50"
+                              onClick={() => setIsOpen(false)}
+                            >
+                              <span>{item.label}</span>
+                              {item.label === 'GitHub'
+                                ? (
+                                    <Github className="h-4 w-4" />
+                                  )
+                                : (
+                                    <ExternalLink className="h-4 w-4" />
+                                  )}
+                            </a>
+                          )
                         : (
-                          <Link
-                            to={item.href}
-                            onClick={() => handleNavClick(item)}
-                            className="flex items-center w-full px-4 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-300 hover:bg-accent/50 text-left"
-                          >
-                            {item.label}
-                          </Link>
-                        )}
+                            <Link
+                              to={item.href}
+                              onClick={() => handleNavClick(item)}
+                              className="flex items-center w-full px-4 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-300 hover:bg-accent/50 text-left"
+                            >
+                              {item.label}
+                            </Link>
+                          )}
                     </div>
                   ))}
                 </div>
@@ -278,41 +278,41 @@ export function NavigationBar() {
                 <div className="pt-4 border-t border-border/50">
                   {session
                     ? (
-                      <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-accent/30">
-                        <Avatar className="h-10 w-10">
-                          <AvatarImage
-                            src={user?.image || undefined}
-                            alt={user?.name || 'User'}
-                          />
-                          <AvatarFallback className="bg-primary text-primary-foreground text-sm">
-                            {fallbackText}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1">
-                          <p className="text-sm font-medium">
-                            {user?.name || 'User'}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {user?.email}
-                          </p>
+                        <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-accent/30">
+                          <Avatar className="h-10 w-10">
+                            <AvatarImage
+                              src={user?.image || undefined}
+                              alt={user?.name || 'User'}
+                            />
+                            <AvatarFallback className="bg-primary text-primary-foreground text-sm">
+                              {fallbackText}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium">
+                              {user?.name || 'User'}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {user?.email}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    )
+                      )
                     : (
-                      <div className="space-y-2">
-                        <Button variant="outline" className="w-full" asChild>
-                          <Link to="/demo-request">Request Demo</Link>
-                        </Button>
-                        <Button
-                          onClick={handleGoogleSignIn}
-                          variant="default"
-                          className="w-full gap-2"
-                        >
-                          <LogIn className="h-4 w-4" />
-                          Sign In with Google
-                        </Button>
-                      </div>
-                    )}
+                        <div className="space-y-2">
+                          <Button variant="outline" className="w-full" asChild>
+                            <Link to="/demo-request">Request Demo</Link>
+                          </Button>
+                          <Button
+                            onClick={handleGoogleSignIn}
+                            variant="default"
+                            className="w-full gap-2"
+                          >
+                            <LogIn className="h-4 w-4" />
+                            Sign In with Google
+                          </Button>
+                        </div>
+                      )}
                 </div>
               </SheetContent>
             </Sheet>

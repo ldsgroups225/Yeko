@@ -110,7 +110,7 @@ function CoefficientsCatalog() {
                 <tr className="border-b">
                   <th className="text-left p-3 bg-muted">Subject</th>
                   {grades.map(grade => (
-                    <th key={grade} className="text-center p-3 bg-muted min-w-[80px]">
+                    <th key={grade} className="text-center p-3 bg-muted min-w-20">
                       {grade}
                     </th>
                   ))}

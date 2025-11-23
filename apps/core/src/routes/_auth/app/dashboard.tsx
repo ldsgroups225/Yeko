@@ -1,6 +1,6 @@
+import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import {
-  Activity,
   AlertCircle,
   BookOpen,
   CheckCircle,
@@ -8,10 +8,13 @@ import {
   Plus,
   School,
   TrendingUp,
-  Users,
 } from 'lucide-react'
 import { useEffect } from 'react'
+import { ActivityFeed } from '@/components/dashboard/activity-feed'
+import { StatsCard } from '@/components/dashboard/stats-card'
+import { SystemHealth } from '@/components/dashboard/system-health'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { dashboardStatsQueryOptions, recentActivityQueryOptions, systemHealthQueryOptions } from '@/integrations/tanstack-query/dashboard-options'
 import { useLogger } from '@/lib/logger'
 
 export const Route = createFileRoute('/_auth/app/dashboard')({
@@ -21,23 +24,22 @@ export const Route = createFileRoute('/_auth/app/dashboard')({
 function Dashboard() {
   const { logger } = useLogger()
 
+  // Fetch real data using TanStack Query
+  const { data: stats, isLoading: statsLoading, error: statsError } = useQuery(dashboardStatsQueryOptions())
+  const { data: health, isLoading: healthLoading, error: healthError } = useQuery(systemHealthQueryOptions())
+  const { data: activities, isLoading: activitiesLoading, error: activitiesError } = useQuery(recentActivityQueryOptions(5))
+
   useEffect(() => {
     logger.info('Dashboard viewed', {
       page: 'dashboard',
       timestamp: new Date().toISOString(),
+      statsLoaded: !statsLoading && !statsError,
+      healthLoaded: !healthLoading && !healthError,
+      activitiesLoaded: !activitiesLoading && !activitiesError,
     })
-  }, [logger])
+  }, [logger, statsLoading, statsError, healthLoading, healthError, activitiesLoading, activitiesError])
 
-  // Mock data for demonstration - will be replaced with real data from Phase 4+
-  const stats = {
-    totalSchools: 127,
-    activeSchools: 115,
-    totalStudents: 45832,
-    totalTeachers: 3241,
-    recentActivity: 42,
-    pendingApprovals: 8,
-  }
-
+  // Quick actions remain the same
   const quickActions = [
     {
       title: 'Ajouter une école',
@@ -51,7 +53,7 @@ function Dashboard() {
       title: 'Créer un programme',
       description: 'Définir des modèles de programmes ministériels',
       icon: BookOpen,
-      href: '/programs',
+      href: '/catalogs/programs',
       color: 'text-green-600',
       bgColor: 'bg-green-50 dark:bg-green-950',
     },
@@ -73,19 +75,59 @@ function Dashboard() {
     },
   ]
 
-  const recentSchools = [
-    { id: 1, name: 'Lycée Saint-Exupéry', status: 'active', joinedDate: '2025-01-15' },
-    { id: 2, name: 'Collège Jean-Moulin', status: 'pending', joinedDate: '2025-01-14' },
-    { id: 3, name: 'Ecole Primaire Victor Hugo', status: 'active', joinedDate: '2025-01-13' },
-    { id: 4, name: 'Lycée Marie Curie', status: 'active', joinedDate: '2025-01-12' },
-  ]
+  const recentSchools = stats?.recentSchools.map(school => ({
+    ...school,
+    joinedDate: new Date(school.createdAt).toLocaleDateString(),
+  })) || []
 
-  const systemHealth = [
-    { metric: 'Base de données', status: 'healthy', value: '99.9%' },
-    { metric: 'Temps de réponse API', status: 'healthy', value: '120ms' },
-    { metric: 'Temps de disponibilité', status: 'healthy', value: '30 jours' },
-    { metric: 'Stockage', status: 'warning', value: '78%' },
-  ]
+  // Transform health data for component
+  const healthData = health
+    ? {
+        database: health.database.status,
+        api: health.api.status,
+        storage: health.storage.status,
+        uptime: health.api.uptime,
+        responseTime: Number.parseInt(health.database.latency) || 0,
+        lastChecked: new Date().toISOString(),
+      }
+    : undefined
+
+  // Transform activity data for component
+  const activityData = activities?.map((activity) => {
+    let type: 'success' | 'info' | 'warning' | 'error' = 'info'
+    let action: string = activity.type
+    let target = activity.description
+
+    if (activity.type === 'school_created') {
+      type = 'success'
+      action = 'Nouvelle école'
+      target = activity.description.split(': ')[1] || activity.description
+    }
+    else if (activity.type === 'user_login') {
+      type = 'info'
+      action = 'Connexion'
+      target = activity.user
+    }
+    else if (activity.type === 'school_updated') {
+      type = 'warning'
+      action = 'Mise à jour'
+      target = activity.description.split(': ')[1] || activity.description
+    }
+    else if (activity.type === 'report_generated') {
+      type = 'info'
+      action = 'Rapport'
+      target = activity.description
+    }
+
+    return {
+      id: activity.id,
+      action,
+      target,
+      date: new Date(activity.timestamp).toLocaleDateString(),
+      user: activity.user,
+      type,
+    }
+  }) || []
 
   return (
     <div className="space-y-6">
@@ -99,66 +141,45 @@ function Dashboard() {
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total des écoles</CardTitle>
-            <School className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalSchools}</div>
-            <p className="text-xs text-muted-foreground">
-              <span className="text-green-600">
-                +
-                {stats.activeSchools}
-              </span>
-              {' '}
-              actives ce mois
-            </p>
-          </CardContent>
-        </Card>
+        <StatsCard
+          title="Total des écoles"
+          value={stats?.totalSchools || 0}
+          change={12}
+          changeLabel="actives ce mois"
+          icon={School}
+          isLoading={statsLoading}
+          error={statsError?.message}
+        />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total des étudiants</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalStudents.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">
-              <span className="text-green-600">+12%</span>
-              {' '}
-              depuis le mois dernier
-            </p>
-          </CardContent>
-        </Card>
+        <StatsCard
+          title="Écoles actives"
+          value={stats?.activeSchools || 0}
+          change={8}
+          changeLabel="ce mois"
+          icon={CheckCircle}
+          isLoading={statsLoading}
+          error={statsError?.message}
+        />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total des enseignants</CardTitle>
-            <BookOpen className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalTeachers.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">
-              <span className="text-green-600">+8%</span>
-              {' '}
-              depuis le mois dernier
-            </p>
-          </CardContent>
-        </Card>
+        <StatsCard
+          title="Inscriptions récentes"
+          value={stats?.recentRegistrations || 0}
+          change={15}
+          changeLabel="ces 30 derniers jours"
+          icon={TrendingUp}
+          isLoading={statsLoading}
+          error={statsError?.message}
+        />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Approbations en attente</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.pendingApprovals}</div>
-            <p className="text-xs text-muted-foreground">
-              Nécessite une attention
-            </p>
-          </CardContent>
-        </Card>
+        <StatsCard
+          title="Écoles inactives"
+          value={stats?.inactiveSchools || 0}
+          change={-5}
+          changeLabel="ce mois"
+          icon={Clock}
+          isLoading={statsLoading}
+          error={statsError?.message}
+        />
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
@@ -242,43 +263,19 @@ function Dashboard() {
       </div>
 
       {/* System Health */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Activity className="h-5 w-5" />
-            Santé du système
-          </CardTitle>
-          <CardDescription>
-            Indicateurs de performance et de santé du système en temps réel
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {systemHealth.map(item => (
-              <div key={item.metric} className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">{item.metric}</span>
-                  <span className="text-sm text-muted-foreground">{item.value}</span>
-                </div>
-                <div className="w-full bg-secondary rounded-full h-2">
-                  <div
-                    className={`h-2 rounded-full ${item.status === 'healthy'
-                      ? 'bg-green-600'
-                      : item.status === 'warning'
-                        ? 'bg-yellow-600'
-                        : 'bg-red-600'
-                    }`}
-                    style={{
-                      width: item.status === 'healthy' ? '90%' : item.status === 'warning' ? '70%' : '50%',
-                    }}
-                  >
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      <SystemHealth
+        health={healthData}
+        isLoading={healthLoading}
+        error={healthError?.message}
+      />
+
+      {/* Activity Feed */}
+      <ActivityFeed
+        activities={activityData}
+        isLoading={activitiesLoading}
+        error={activitiesError?.message}
+        limit={5}
+      />
     </div>
   )
 }

@@ -1,65 +1,123 @@
-import { createFileRoute, useNavigate, useParams } from '@tanstack/react-router'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import {
   ArrowLeft,
-  BookOpen,
+  Building,
   Calendar,
   CheckCircle,
   Clock,
-  Download,
+  CreditCard,
   Edit,
+  GraduationCap,
   Mail,
   MapPin,
-  MoreHorizontal,
+  MessageSquare,
+  MoreVertical,
   Phone,
-  School,
-  Settings,
+  Shield,
   Users,
   XCircle,
 } from 'lucide-react'
-import React from 'react'
+import { useEffect, useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog'
+import { Separator } from '@/components/ui/separator'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { deleteSchoolMutationOptions, schoolQueryOptions } from '@/integrations/tanstack-query/schools-options'
 import { useLogger } from '@/lib/logger'
 
 export const Route = createFileRoute('/_auth/app/schools/$schoolId')({
-  component: SchoolDetail,
+  component: SchoolDetails,
 })
 
-function SchoolDetail() {
-  const navigate = useNavigate()
-  const { schoolId } = useParams({ from: '/_auth/app/schools/$schoolId' })
+function SchoolDetails() {
+  const { schoolId } = Route.useParams()
   const { logger } = useLogger()
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
-  React.useEffect(() => {
-    logger.info('School detail page viewed', {
-      page: 'school-detail',
-      schoolId,
-      timestamp: new Date().toISOString(),
-    })
-  }, [logger, schoolId])
+  const { data: school, isLoading, error } = useQuery(schoolQueryOptions(schoolId))
 
-  // Mock data for demonstration - will be replaced with real data from Phase 5+
-  const school = {
-    id: Number.parseInt(schoolId),
-    name: 'Lycée Saint-Exupéry',
-    code: 'LYCE-001',
-    description: 'A leading high school focused on academic excellence and innovation in education.',
-    address: '123 Avenue de la République',
-    city: 'Paris',
-    postalCode: '75001',
-    country: 'France',
-    phone: '+33 1 23 45 67 89',
-    email: 'contact@lycee-saint-exupery.fr',
-    website: 'https://www.lycee-saint-exupery.fr',
-    status: 'active',
-    students: 1200,
-    teachers: 85,
-    classrooms: 45,
-    joinedDate: '2025-01-15',
-    lastActive: '2025-01-22',
-    logoUrl: null,
+  // Delete mutation
+  const deleteSchoolMutation = useMutation({
+    ...deleteSchoolMutationOptions,
+    onSuccess: () => {
+      logger.info('School deleted successfully', {
+        schoolId,
+        action: 'delete_school_success',
+        timestamp: new Date().toISOString(),
+      })
+
+      // Invalidate queries
+      queryClient.invalidateQueries({ queryKey: ['schools'] })
+
+      // Navigate to schools list
+      navigate({ to: '/app/schools' })
+    },
+    onError: (error: any) => {
+      console.error('School deletion failed:', error)
+    },
+  })
+
+  const handleDelete = () => {
+    deleteSchoolMutation.mutate({ id: schoolId })
+  }
+
+  useEffect(() => {
+    if (school) {
+      logger.info('School details viewed', {
+        schoolId,
+        schoolName: school.name,
+        timestamp: new Date().toISOString(),
+      })
+    }
+  }, [school, schoolId, logger])
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        {/* Header skeleton */}
+        <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <Skeleton className="h-8 w-64" />
+            <Skeleton className="h-4 w-96" />
+          </div>
+          <Skeleton className="h-10 w-32" />
+        </div>
+
+        {/* Info cards skeleton */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {['overview', 'contact', 'stats', 'settings'].map(type => (
+            <div key={`skeleton-${type}`} className="space-y-2">
+              <Skeleton className="h-24 w-full" />
+            </div>
+          ))}
+        </div>
+
+        {/* Tabs skeleton */}
+        <div className="space-y-4">
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-64 w-full" />
+        </div>
+      </div>
+    )
+  }
+
+  if (error || !school) {
+    return (
+      <div className="flex flex-col items-center justify-center h-96 gap-4">
+        <div className="text-destructive font-medium">
+          {error?.message || 'École non trouvée'}
+        </div>
+        <Link to="/app/schools">
+          <Button variant="outline">Retour à la liste</Button>
+        </Link>
+      </div>
+    )
   }
 
   const getStatusBadge = (status: string) => {
@@ -71,18 +129,18 @@ function SchoolDetail() {
             Active
           </Badge>
         )
-      case 'pending':
+      case 'inactive':
         return (
           <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
             <Clock className="mr-1 h-3 w-3" />
-            Pending
+            Inactive
           </Badge>
         )
       case 'suspended':
         return (
           <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
             <XCircle className="mr-1 h-3 w-3" />
-            Suspended
+            Suspendue
           </Badge>
         )
       default:
@@ -90,326 +148,360 @@ function SchoolDetail() {
     }
   }
 
-  const recentActivity = [
-    { id: 1, action: 'New user registration', user: 'John Doe', date: '2025-01-22 14:30' },
-    { id: 2, action: 'Grade submission', user: 'Jane Smith', date: '2025-01-22 13:15' },
-    { id: 3, action: 'Class schedule updated', user: 'Admin', date: '2025-01-22 10:00' },
-    { id: 4, action: 'Student enrollment', user: 'Admin', date: '2025-01-21 16:45' },
-  ]
-
-  const performanceMetrics = {
-    averageGrades: 14.2,
-    attendanceRate: 94.5,
-    graduationRate: 98.2,
-    satisfactionScore: 4.7,
-  }
-
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate({ to: '/app/schools' })}
-            className="h-8 w-8"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <div className="flex items-center gap-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-primary/10">
-              <School className="h-8 w-8 text-primary" />
+          <Link to="/app/schools">
+            <Button variant="ghost" size="icon" className="h-8 w-8">
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          </Link>
+          <div className="flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+              <Building className="h-6 w-6 text-primary" />
             </div>
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="text-3xl font-bold tracking-tight">{school.name}</h1>
+                <h1 className="text-2xl font-bold tracking-tight">{school.name}</h1>
                 {getStatusBadge(school.status)}
               </div>
-              <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
-                <span className="font-mono bg-muted px-2 py-1 rounded">{school.code}</span>
-                <div className="flex items-center gap-1">
-                  <Calendar className="h-3 w-3" />
-                  Joined
-                  {' '}
-                  {school.joinedDate}
-                </div>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span className="font-mono bg-muted px-2 py-0.5 rounded text-xs">
+                  {school.code}
+                </span>
+                <span>•</span>
+                <span>
+                  Rejoint le
+                  {new Date(school.createdAt).toLocaleDateString()}
+                </span>
               </div>
             </div>
           </div>
         </div>
-
         <div className="flex items-center gap-2">
-          <Button variant="outline" className="gap-2">
-            <Download className="h-4 w-4" />
-            Export
-          </Button>
-          <Button className="gap-2">
-            <Edit className="h-4 w-4" />
-            Edit School
+          <Link to="/app/schools/$schoolId/edit" params={{ schoolId }}>
+            <Button variant="outline" className="gap-2">
+              <Edit className="h-4 w-4" />
+              Modifier
+            </Button>
+          </Link>
+          <Button
+            variant="destructive"
+            className="gap-2"
+            onClick={() => setDeleteDialogOpen(true)}
+          >
+            <XCircle className="h-4 w-4" />
+            Supprimer
           </Button>
           <Button variant="ghost" size="icon">
-            <MoreHorizontal className="h-4 w-4" />
+            <MoreVertical className="h-4 w-4" />
           </Button>
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Students</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{school.students.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">
-              +8% from last month
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Teachers</CardTitle>
-            <BookOpen className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{school.teachers}</div>
-            <p className="text-xs text-muted-foreground">
-              +2 new this month
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Classrooms</CardTitle>
-            <School className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{school.classrooms}</div>
-            <p className="text-xs text-muted-foreground">
-              95% utilization
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Last Active</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{school.lastActive}</div>
-            <p className="text-xs text-muted-foreground">
-              2 days ago
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Tabs Content */}
-      <Tabs defaultValue="overview" className="space-y-4">
+      {/* Content Tabs */}
+      <Tabs defaultValue="info" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="performance">Performance</TabsTrigger>
-          <TabsTrigger value="users">Users</TabsTrigger>
-          <TabsTrigger value="settings">Settings</TabsTrigger>
+          <TabsTrigger value="info">Informations</TabsTrigger>
+          <TabsTrigger value="users">Utilisateurs</TabsTrigger>
+          <TabsTrigger value="years">Années Scolaires</TabsTrigger>
+          <TabsTrigger value="settings">Paramètres</TabsTrigger>
+          <TabsTrigger value="support">Support & CRM</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-4">
-          <div className="grid gap-6 lg:grid-cols-2">
-            {/* School Information */}
+        {/* Info Tab */}
+        <TabsContent value="info" className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <Card>
               <CardHeader>
-                <CardTitle>School Information</CardTitle>
-                <CardDescription>
-                  Basic details and contact information
-                </CardDescription>
+                <CardTitle className="text-sm font-medium">Coordonnées</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <h4 className="font-medium mb-2">Contact</h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center gap-2">
-                      <Mail className="h-4 w-4 text-muted-foreground" />
-                      {school.email}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Phone className="h-4 w-4 text-muted-foreground" />
-                      {school.phone}
-                    </div>
-                    {school.website && (
-                      <div className="flex items-center gap-2">
-                        <BookOpen className="h-4 w-4 text-muted-foreground" />
-                        {school.website}
-                      </div>
-                    )}
+              <CardContent className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium leading-none">Adresse</p>
+                    <p className="text-sm text-muted-foreground">
+                      {school.address || 'Non renseignée'}
+                    </p>
                   </div>
                 </div>
-
-                <div>
-                  <h4 className="font-medium mb-2">Address</h4>
-                  <div className="space-y-1 text-sm">
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-muted-foreground" />
-                      <div>
-                        <p>{school.address}</p>
-                        <p>
-                          {school.postalCode}
-                          {' '}
-                          {school.city}
-                        </p>
-                        <p>{school.country}</p>
-                      </div>
-                    </div>
+                <div className="flex items-center gap-3">
+                  <Phone className="h-4 w-4 text-muted-foreground" />
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium leading-none">Téléphone</p>
+                    <p className="text-sm text-muted-foreground">
+                      {school.phone || 'Non renseigné'}
+                    </p>
                   </div>
                 </div>
-
-                {school.description && (
-                  <div>
-                    <h4 className="font-medium mb-2">Description</h4>
-                    <p className="text-sm text-muted-foreground">{school.description}</p>
+                <div className="flex items-center gap-3">
+                  <Mail className="h-4 w-4 text-muted-foreground" />
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium leading-none">Email</p>
+                    <p className="text-sm text-muted-foreground">
+                      {school.email || 'Non renseigné'}
+                    </p>
                   </div>
-                )}
+                </div>
               </CardContent>
             </Card>
 
-            {/* Recent Activity */}
             <Card>
               <CardHeader>
-                <CardTitle>Recent Activity</CardTitle>
-                <CardDescription>
-                  Latest actions and events from this school
-                </CardDescription>
+                <CardTitle className="text-sm font-medium">Statistiques Rapides</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {recentActivity.map(activity => (
-                    <div key={activity.id} className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium">{activity.action}</p>
-                        <p className="text-xs text-muted-foreground">
-                          by
-                          {activity.user}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs text-muted-foreground">{activity.date}</p>
-                      </div>
-                    </div>
-                  ))}
+              <CardContent className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm">Élèves inscrits</span>
+                  </div>
+                  <span className="font-bold">--</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <GraduationCap className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm">Enseignants</span>
+                  </div>
+                  <span className="font-bold">--</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <CreditCard className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm">Paiements (Mois)</span>
+                  </div>
+                  <span className="font-bold">--</span>
                 </div>
               </CardContent>
             </Card>
           </div>
         </TabsContent>
 
-        <TabsContent value="performance" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm">Average Grades</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {performanceMetrics.averageGrades}
-                  /20
-                </div>
-                <p className="text-xs text-muted-foreground">Above average</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm">Attendance Rate</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {performanceMetrics.attendanceRate}
-                  %
-                </div>
-                <p className="text-xs text-muted-foreground">Good</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm">Graduation Rate</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {performanceMetrics.graduationRate}
-                  %
-                </div>
-                <p className="text-xs text-muted-foreground">Excellent</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm">Satisfaction</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {performanceMetrics.satisfactionScore}
-                  /5
-                </div>
-                <p className="text-xs text-muted-foreground">Very Good</p>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
+        {/* Users Tab */}
         <TabsContent value="users" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Users Management</CardTitle>
-              <CardDescription>
-                Manage teachers, staff, and students for this school
-              </CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Utilisateurs de l'école</CardTitle>
+                  <CardDescription>
+                    Administrateurs, enseignants et personnel rattachés à cette école.
+                  </CardDescription>
+                </div>
+                <Button>
+                  <Users className="h-4 w-4 mr-2" />
+                  Ajouter un utilisateur
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-8">
-                <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">User Management Coming Soon</h3>
-                <p className="text-muted-foreground mb-4">
-                  This feature will be available in Phase 11: Human Resources Management
-                </p>
-                <Button variant="outline">
-                  <Settings className="h-4 w-4 mr-2" />
-                  Learn More
-                </Button>
+              <div className="space-y-4">
+                {/* User roles summary */}
+                <div className="grid gap-4 md:grid-cols-3">
+                  <Card>
+                    <CardContent className="pt-6">
+                      <div className="text-2xl font-bold">--</div>
+                      <p className="text-xs text-muted-foreground">Administrateurs</p>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="pt-6">
+                      <div className="text-2xl font-bold">--</div>
+                      <p className="text-xs text-muted-foreground">Enseignants</p>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="pt-6">
+                      <div className="text-2xl font-bold">--</div>
+                      <p className="text-xs text-muted-foreground">Personnel</p>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                <Separator />
+
+                {/* User list placeholder */}
+                <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
+                  <Users className="h-12 w-12 mb-4 opacity-20" />
+                  <p className="font-medium">Aucun utilisateur pour le moment</p>
+                  <p className="text-sm">Commencez par ajouter des administrateurs et enseignants</p>
+                </div>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="settings" className="space-y-4">
+        {/* Years Tab */}
+        <TabsContent value="years" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>School Settings</CardTitle>
-              <CardDescription>
-                Configure school-specific settings and preferences
-              </CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Années Scolaires</CardTitle>
+                  <CardDescription>
+                    Historique et configuration des années scolaires.
+                  </CardDescription>
+                </div>
+                <Button>
+                  <Calendar className="h-4 w-4 mr-2" />
+                  Nouvelle année
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-8">
-                <Settings className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Settings Configuration Coming Soon</h3>
-                <p className="text-muted-foreground mb-4">
-                  This feature will be available in future phases
-                </p>
-                <Button variant="outline">
-                  <Settings className="h-4 w-4 mr-2" />
-                  Learn More
-                </Button>
+              <div className="space-y-4">
+                {/* Current year highlight */}
+                <Card className="border-primary">
+                  <CardContent className="pt-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-semibold">Année en cours</h3>
+                          <Badge>Actif</Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Configuration de l'année académique actuelle
+                        </p>
+                      </div>
+                      <Button variant="outline" size="sm">Configurer</Button>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Separator />
+
+                {/* Years history placeholder */}
+                <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
+                  <Calendar className="h-12 w-12 mb-4 opacity-20" />
+                  <p className="font-medium">Aucune année scolaire configurée</p>
+                  <p className="text-sm">Créez votre première année scolaire pour commencer</p>
+                </div>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
+
+        {/* Settings Tab */}
+        <TabsContent value="settings" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Configuration de l'École</CardTitle>
+                  <CardDescription>
+                    Paramètres spécifiques et fonctionnalités activées.
+                  </CardDescription>
+                </div>
+                <Button variant="outline">
+                  <Edit className="h-4 w-4 mr-2" />
+                  Modifier
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                {/* Settings sections */}
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-sm font-medium mb-3">Modules Activés</h3>
+                    <div className="grid gap-3 md:grid-cols-2">
+                      <div className="flex items-center justify-between p-3 border rounded-lg">
+                        <span className="text-sm">Gestion des notes</span>
+                        <Badge variant="outline">Activé</Badge>
+                      </div>
+                      <div className="flex items-center justify-between p-3 border rounded-lg">
+                        <span className="text-sm">Gestion des absences</span>
+                        <Badge variant="outline">Activé</Badge>
+                      </div>
+                      <div className="flex items-center justify-between p-3 border rounded-lg">
+                        <span className="text-sm">Paiements en ligne</span>
+                        <Badge variant="secondary">Désactivé</Badge>
+                      </div>
+                      <div className="flex items-center justify-between p-3 border rounded-lg">
+                        <span className="text-sm">Messagerie</span>
+                        <Badge variant="outline">Activé</Badge>
+                      </div>
+                    </div>
+                  </div>
+
+                  <Separator />
+
+                  <div>
+                    <h3 className="text-sm font-medium mb-3">Paramètres Avancés</h3>
+                    <div className="bg-muted p-4 rounded-lg">
+                      <details className="cursor-pointer">
+                        <summary className="text-sm font-medium">Voir la configuration JSON</summary>
+                        <pre className="text-xs font-mono mt-2 overflow-auto">
+                          {JSON.stringify(school.settings, null, 2)}
+                        </pre>
+                      </details>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Support Tab */}
+        <TabsContent value="support">
+          <div className="grid gap-4 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MessageSquare className="h-5 w-5" />
+                  Notes CRM
+                </CardTitle>
+                <CardDescription>Notes internes sur cette école</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex flex-col gap-2">
+                    <textarea
+                      className="min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                      placeholder="Ajouter une note..."
+                    />
+                    <Button size="sm" className="self-end">Ajouter la note</Button>
+                  </div>
+                  <Separator />
+                  <div className="text-sm text-muted-foreground text-center py-4">
+                    Aucune note pour le moment.
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Shield className="h-5 w-5" />
+                  Tickets de Support
+                </CardTitle>
+                <CardDescription>Historique des demandes de support</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-sm text-muted-foreground text-center py-8">
+                  Aucun ticket ouvert.
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
       </Tabs>
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmationDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        title="Supprimer l'école"
+        description={`Êtes-vous sûr de vouloir supprimer "${school.name}" ? Cette action est irréversible.`}
+        confirmText={school.code}
+        onConfirm={handleDelete}
+        isLoading={deleteSchoolMutation.isPending}
+      />
     </div>
   )
 }
