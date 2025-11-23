@@ -22,8 +22,8 @@ function CreateSchool() {
     ...createSchoolMutationOptions,
     onSuccess: (data: any) => {
       logger.info('School created successfully', {
-        schoolId: (data as any)?.id,
-        schoolName: (data as any)?.name,
+        schoolId: (data)?.id,
+        schoolName: (data)?.name,
         action: 'create_school_success',
         timestamp: new Date().toISOString(),
       })

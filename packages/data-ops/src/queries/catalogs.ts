@@ -1,4 +1,4 @@
-import type { EducationLevel, Grade, Serie, Subject, Track } from '@/drizzle/core-schema'
+import type { EducationLevel, Grade, Serie, Subject, SubjectCategory, Track } from '@/drizzle/core-schema'
 import { and, asc, count, eq, like, or } from 'drizzle-orm'
 import { getDb } from '@/database/setup'
 import { educationLevels, grades, series, subjects, tracks } from '@/drizzle/core-schema'
@@ -234,7 +234,7 @@ export async function bulkCreateSeries(data: Omit<typeof series.$inferInsert, 'i
 // ===== SUBJECTS =====
 
 export async function getSubjects(options?: {
-  category?: string
+  category?: SubjectCategory
   search?: string
   page?: number
   limit?: number
@@ -247,7 +247,7 @@ export async function getSubjects(options?: {
   const conditions = []
 
   if (category) {
-    conditions.push(eq(subjects.category, category as any))
+    conditions.push(eq(subjects.category, category))
   }
 
   if (search) {

@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, Save, School } from 'lucide-react'
 import { useEffect } from 'react'
-import { useForm, useFormState } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -32,9 +32,10 @@ export function SchoolForm({
     },
   })
 
-  const { register, handleSubmit, setValue, reset } = form
+  const { register, handleSubmit, setValue, reset, watch } = form
   const { errors } = form.formState
-  const { status, logoUrl } = useFormState({ control: form.control }) as any
+  const status = watch('status')
+  const logoUrl = watch('logoUrl')
 
   // Reset form when defaultValues change (for edit mode)
   useEffect(() => {
@@ -127,28 +128,28 @@ export function SchoolForm({
                 <div className="shrink-0">
                   {logoUrl
                     ? (
-                        <div className="relative w-24 h-24 border-2 border-dashed rounded-lg overflow-hidden">
-                          <img
-                            src={logoUrl}
-                            alt="Logo preview"
-                            className="w-full h-full object-cover"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setValue('logoUrl', '')}
-                            className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-1 hover:bg-destructive/90"
-                          >
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                          </button>
-                        </div>
-                      )
+                      <div className="relative w-24 h-24 border-2 border-dashed rounded-lg overflow-hidden">
+                        <img
+                          src={logoUrl}
+                          alt="Logo preview"
+                          className="w-full h-full object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setValue('logoUrl', '')}
+                          className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-1 hover:bg-destructive/90"
+                        >
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                    )
                     : (
-                        <div className="w-24 h-24 border-2 border-dashed rounded-lg flex items-center justify-center bg-muted">
-                          <School className="h-8 w-8 text-muted-foreground" />
-                        </div>
-                      )}
+                      <div className="w-24 h-24 border-2 border-dashed rounded-lg flex items-center justify-center bg-muted">
+                        <School className="h-8 w-8 text-muted-foreground" />
+                      </div>
+                    )}
                 </div>
 
                 {/* Upload options */}
@@ -241,17 +242,17 @@ export function SchoolForm({
         <Button type="submit" disabled={isSubmitting} className="gap-2">
           {isSubmitting
             ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  {mode === 'create' ? 'Création en cours...' : 'Enregistrement...'}
-                </>
-              )
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                {mode === 'create' ? 'Création en cours...' : 'Enregistrement...'}
+              </>
+            )
             : (
-                <>
-                  <Save className="h-4 w-4" />
-                  {mode === 'create' ? 'Créer l\'École' : 'Enregistrer les modifications'}
-                </>
-              )}
+              <>
+                <Save className="h-4 w-4" />
+                {mode === 'create' ? 'Créer l\'École' : 'Enregistrer les modifications'}
+              </>
+            )}
         </Button>
       </div>
     </form>

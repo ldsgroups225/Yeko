@@ -2,7 +2,7 @@
  * Server-side logger instance for Node.js and Cloudflare Workers
  */
 
-import type { Environment, LoggerConfig, YekoLogger } from '../types'
+import type { Environment, LoggerConfig, UserRole, YekoLogger } from '../types'
 import { developmentConfig } from '../config/development'
 import { productionConfig } from '../config/production'
 import { testConfig } from '../config/test'
@@ -209,8 +209,8 @@ export class RequestLogger {
   /**
    * Log request with user context
    */
-  withUser(userId: string, role: string): RequestLogger {
-    this.logger.withUser(userId, role as any)
+  withUser(userId: string, role: UserRole): RequestLogger {
+    this.logger.withUser(userId, role)
     return this
   }
 

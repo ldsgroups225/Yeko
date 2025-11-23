@@ -176,7 +176,7 @@ function SubjectsCatalog() {
     const data: CreateSubjectInput = {
       name: formData.get('name') as string,
       shortName: formData.get('shortName') as string,
-      category: formData.get('category') as any,
+      category: (formData.get('category') as 'Scientifique' | 'Littéraire' | 'Sportif' | 'Autre') || 'Autre',
     }
     createMutation.mutate(data)
   }
@@ -184,11 +184,12 @@ function SubjectsCatalog() {
   const handleUpdate = (e: FormEvent<HTMLFormElement>, subjectId: string) => {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
+    const categoryValue = formData.get('category')
     const data: UpdateSubjectInput = {
       id: subjectId,
       name: formData.get('name') as string,
       shortName: formData.get('shortName') as string,
-      category: formData.get('category') as any,
+      category: categoryValue ? (categoryValue as 'Scientifique' | 'Littéraire' | 'Sportif' | 'Autre') : undefined,
     }
     updateMutation.mutate(data)
   }

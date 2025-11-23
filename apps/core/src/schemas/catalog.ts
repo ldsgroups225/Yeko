@@ -74,7 +74,7 @@ export const SubjectIdSchema = z.object({
 })
 
 export const GetSubjectsSchema = z.object({
-  category: z.string().optional(),
+  category: z.enum(['Scientifique', 'Littéraire', 'Sportif', 'Autre']).optional(),
   search: z.string().optional(),
   page: z.number().int().min(1).default(1),
   limit: z.number().int().min(1).max(100).default(20),

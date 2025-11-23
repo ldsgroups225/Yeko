@@ -25,10 +25,10 @@ function EditSchool() {
   // Set up mutation for updating school
   const updateSchoolMutation = useMutation({
     ...updateSchoolMutationOptions,
-    onSuccess: (data: any) => {
+    onSuccess: (data) => {
       logger.info('School updated successfully', {
-        schoolId: (data as any)?.id,
-        schoolName: (data as any)?.name,
+        schoolId: (data)?.id,
+        schoolName: (data)?.name,
         action: 'update_school_success',
         timestamp: new Date().toISOString(),
       })

@@ -156,6 +156,7 @@ export const programTemplates = pgTable('program_templates', {
     .defaultNow()
     .$onUpdate(() => new Date())
     .notNull(),
+  status: text('status', { enum: ['draft', 'published', 'archived'] }).default('draft').notNull(),
 })
 
 export const programTemplateChapters = pgTable('program_template_chapters', {
@@ -193,6 +194,23 @@ export const programTemplatesRelations = relations(programTemplates, ({ one, man
 export const programTemplateChaptersRelations = relations(programTemplateChapters, ({ one }) => ({
   programTemplate: one(programTemplates, {
     fields: [programTemplateChapters.programTemplateId],
+    references: [programTemplates.id],
+  }),
+}))
+
+export const programTemplateVersions = pgTable('program_template_versions', {
+  id: text('id').primaryKey(),
+  programTemplateId: text('program_template_id')
+    .notNull()
+    .references(() => programTemplates.id),
+  versionNumber: integer('version_number').notNull(),
+  snapshotData: jsonb('snapshot_data').$type<any>().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})
+
+export const programTemplateVersionsRelations = relations(programTemplateVersions, ({ one }) => ({
+  programTemplate: one(programTemplates, {
+    fields: [programTemplateVersions.programTemplateId],
     references: [programTemplates.id],
   }),
 }))
@@ -249,6 +267,7 @@ export type SchoolYearTemplateInsert = typeof schoolYearTemplates.$inferInsert
 export type TermTemplateInsert = typeof termTemplates.$inferInsert
 export type ProgramTemplateInsert = typeof programTemplates.$inferInsert
 export type ProgramTemplateChapterInsert = typeof programTemplateChapters.$inferInsert
+export type ProgramTemplateVersionInsert = typeof programTemplateVersions.$inferInsert
 export type CoefficientTemplateInsert = typeof coefficientTemplates.$inferInsert
 
 // Types without auto-generated fields (for data seeding)
@@ -261,6 +280,7 @@ export type SchoolYearTemplateData = Omit<SchoolYearTemplateInsert, 'id' | 'crea
 export type TermTemplateData = Omit<TermTemplateInsert, 'id' | 'schoolYearTemplateId' | 'createdAt' | 'updatedAt'>
 export type ProgramTemplateData = Omit<ProgramTemplateInsert, 'id' | 'schoolYearTemplateId' | 'subjectId' | 'gradeId' | 'createdAt' | 'updatedAt'>
 export type ProgramTemplateChapterData = Omit<ProgramTemplateChapterInsert, 'id' | 'programTemplateId' | 'createdAt' | 'updatedAt'>
+export type ProgramTemplateVersionData = Omit<ProgramTemplateVersionInsert, 'id' | 'createdAt'>
 export type CoefficientTemplateData = Omit<CoefficientTemplateInsert, 'id' | 'schoolYearTemplateId' | 'subjectId' | 'gradeId' | 'seriesId' | 'createdAt' | 'updatedAt'>
 
 // Select types (for querying)
@@ -274,9 +294,11 @@ export type SchoolYearTemplate = typeof schoolYearTemplates.$inferSelect
 export type TermTemplate = typeof termTemplates.$inferSelect
 export type ProgramTemplate = typeof programTemplates.$inferSelect
 export type ProgramTemplateChapter = typeof programTemplateChapters.$inferSelect
+export type ProgramTemplateVersion = typeof programTemplateVersions.$inferSelect
 export type CoefficientTemplate = typeof coefficientTemplates.$inferSelect
 
 // Enum types for type safety
 export type SubjectCategory = 'Scientifique' | 'Littéraire' | 'Sportif' | 'Autre'
 export type TermType = 'trimester' | 'semester'
 export type SchoolStatus = 'active' | 'inactive' | 'suspended'
+export type ProgramStatus = 'draft' | 'published' | 'archived'

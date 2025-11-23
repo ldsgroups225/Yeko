@@ -3,7 +3,7 @@
  */
 
 import type { Logger as LogTapeLogger } from '@logtape/logtape'
-import type { LoggerConfig, LogLevel, YekoLogContext, YekoLogger } from '../types'
+import type { LoggerConfig, LogLevel, UserRole, YekoLogContext, YekoLogger } from '../types'
 import { configure, getConsoleSink, getLogger } from '@logtape/logtape'
 import { maskSensitiveData, mergeContext, normalizeContext } from '../utils/context'
 
@@ -85,8 +85,8 @@ export class BaseYekoLogger implements YekoLogger {
     )
   }
 
-  withUser(userId: string, role: string): YekoLogger {
-    return this.withContext({ userId, userRole: role as any })
+  withUser(userId: string, role: UserRole): YekoLogger {
+    return this.withContext({ userId, userRole: role })
   }
 
   withSchool(schoolId: string): YekoLogger {

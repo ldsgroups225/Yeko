@@ -15,6 +15,13 @@
       "when": 1763819771342,
       "tag": "0001_lively_randall_flagg",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1763893556601,
+      "tag": "0002_glamorous_luckman",
+      "breakpoints": true
     }
   ]
 }
