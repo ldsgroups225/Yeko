@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { LogOut, Palette } from 'lucide-react'
 import { ThemeToggle } from '@/components/theme/theme-toggle'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -12,7 +13,7 @@ import {
 import { authClient } from '@/lib/auth-client'
 
 interface AccountDialogProps {
-  children: React.ReactNode
+  children: ReactNode
 }
 
 export function AccountDialog({ children }: AccountDialogProps) {

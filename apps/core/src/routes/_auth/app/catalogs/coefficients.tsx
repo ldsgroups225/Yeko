@@ -7,7 +7,7 @@ import {
   Save,
   Upload,
 } from 'lucide-react'
-import React from 'react'
+import { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -20,7 +20,7 @@ export const Route = createFileRoute('/_auth/app/catalogs/coefficients')({
 function CoefficientsCatalog() {
   const { logger } = useLogger()
 
-  React.useEffect(() => {
+  useEffect(() => {
     logger.info('Coefficients catalog page viewed', {
       page: 'coefficients-catalog',
       timestamp: new Date().toISOString(),

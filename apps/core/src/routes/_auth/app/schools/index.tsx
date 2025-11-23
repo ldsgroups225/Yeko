@@ -17,7 +17,7 @@ import {
   Upload,
   XCircle,
 } from 'lucide-react'
-import React, { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -46,7 +46,7 @@ function Schools() {
   const limit = 10
 
   // Build query parameters
-  const queryParams = React.useMemo(() => ({
+  const queryParams = useMemo(() => ({
     page,
     limit,
     search: debouncedSearch || undefined,
@@ -61,7 +61,7 @@ function Schools() {
   // Fetch schools count for stats
   const { data: allSchoolsData } = useQuery(schoolsQueryOptions({ page: 1, limit: 1000 }))
 
-  React.useEffect(() => {
+  useEffect(() => {
     logger.info('Schools page viewed', {
       page: 'schools',
       timestamp: new Date().toISOString(),

@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { ExternalLink, Github, LogIn, Menu } from 'lucide-react'
 import { motion } from 'motion/react'
-import * as React from 'react'
+import { useEffect, useState } from 'react'
 import { AccountDialog } from '@/components/auth/account-dialog'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { ThemeToggle } from '@/components/theme'
@@ -33,8 +33,8 @@ const navigationItems: NavigationItem[] = [
 ]
 
 export function NavigationBar() {
-  const [isOpen, setIsOpen] = React.useState(false)
-  const [isScrolled, setIsScrolled] = React.useState(false)
+  const [isOpen, setIsOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
   const { data: session } = authClient.useSession()
 
   const handleGoogleSignIn = async () => {
@@ -59,7 +59,7 @@ export function NavigationBar() {
     ? user.name.charAt(0).toUpperCase()
     : user?.email?.charAt(0).toUpperCase() || 'U'
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20)
     }

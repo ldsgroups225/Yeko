@@ -8,7 +8,7 @@ import {
   Server,
   Zap,
 } from 'lucide-react'
-import * as React from 'react'
+import { useState } from 'react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -22,7 +22,7 @@ import {
 import { examplefunction } from '@/core/functions/example-functions'
 
 export function MiddlewareDemo() {
-  const [inputValue, setInputValue] = React.useState('Hello TanStack Start!')
+  const [inputValue, setInputValue] = useState('Hello TanStack Start!')
 
   const mutation = useMutation({
     mutationFn: examplefunction,
@@ -43,7 +43,7 @@ export function MiddlewareDemo() {
   }
 
   return (
-    <section className="py-24 bg-gradient-to-b from-background to-muted/20">
+    <section className="py-24 bg-linear-to-b from-background to-muted/20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <Badge variant="outline" className="mb-4">
@@ -163,7 +163,7 @@ export function MiddlewareDemo() {
                     </h4>
                     <ol className="space-y-3 text-sm">
                       <li className="flex items-start">
-                        <span className="flex-shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-medium mr-3 mt-0.5">
+                        <span className="shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-medium mr-3 mt-0.5">
                           1
                         </span>
                         <span>
@@ -171,7 +171,7 @@ export function MiddlewareDemo() {
                         </span>
                       </li>
                       <li className="flex items-start">
-                        <span className="flex-shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-medium mr-3 mt-0.5">
+                        <span className="shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-medium mr-3 mt-0.5">
                           2
                         </span>
                         <span>
@@ -179,19 +179,19 @@ export function MiddlewareDemo() {
                         </span>
                       </li>
                       <li className="flex items-start">
-                        <span className="flex-shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-medium mr-3 mt-0.5">
+                        <span className="shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-medium mr-3 mt-0.5">
                           3
                         </span>
                         <span>Input validation with Zod schema</span>
                       </li>
                       <li className="flex items-start">
-                        <span className="flex-shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-medium mr-3 mt-0.5">
+                        <span className="shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-medium mr-3 mt-0.5">
                           4
                         </span>
                         <span>Server function handler executes</span>
                       </li>
                       <li className="flex items-start">
-                        <span className="flex-shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-medium mr-3 mt-0.5">
+                        <span className="shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-medium mr-3 mt-0.5">
                           5
                         </span>
                         <span>Response sent back to client</span>

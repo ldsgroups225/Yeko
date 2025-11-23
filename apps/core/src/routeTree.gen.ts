@@ -24,8 +24,10 @@ import { Route as AuthAppSchoolsCreateRouteImport } from './routes/_auth/app/sch
 import { Route as AuthAppSchoolsSchoolIdRouteImport } from './routes/_auth/app/schools/$schoolId'
 import { Route as AuthAppPolarSubscriptionsRouteImport } from './routes/_auth/app/polar/subscriptions'
 import { Route as AuthAppPolarPortalRouteImport } from './routes/_auth/app/polar/portal'
+import { Route as AuthAppCatalogsTracksRouteImport } from './routes/_auth/app/catalogs/tracks'
 import { Route as AuthAppCatalogsSubjectsRouteImport } from './routes/_auth/app/catalogs/subjects'
 import { Route as AuthAppCatalogsProgramsRouteImport } from './routes/_auth/app/catalogs/programs'
+import { Route as AuthAppCatalogsGradesRouteImport } from './routes/_auth/app/catalogs/grades'
 import { Route as AuthAppCatalogsCoefficientsRouteImport } from './routes/_auth/app/catalogs/coefficients'
 import { Route as AuthAppSchoolsSchoolIdEditRouteImport } from './routes/_auth/app/schools/$schoolId_.edit'
 import { Route as AuthAppPolarCheckoutSuccessRouteImport } from './routes/_auth/app/polar/checkout.success'
@@ -105,6 +107,11 @@ const AuthAppPolarPortalRoute = AuthAppPolarPortalRouteImport.update({
   path: '/polar/portal',
   getParentRoute: () => AuthAppRouteRoute,
 } as any)
+const AuthAppCatalogsTracksRoute = AuthAppCatalogsTracksRouteImport.update({
+  id: '/catalogs/tracks',
+  path: '/catalogs/tracks',
+  getParentRoute: () => AuthAppRouteRoute,
+} as any)
 const AuthAppCatalogsSubjectsRoute = AuthAppCatalogsSubjectsRouteImport.update({
   id: '/catalogs/subjects',
   path: '/catalogs/subjects',
@@ -113,6 +120,11 @@ const AuthAppCatalogsSubjectsRoute = AuthAppCatalogsSubjectsRouteImport.update({
 const AuthAppCatalogsProgramsRoute = AuthAppCatalogsProgramsRouteImport.update({
   id: '/catalogs/programs',
   path: '/catalogs/programs',
+  getParentRoute: () => AuthAppRouteRoute,
+} as any)
+const AuthAppCatalogsGradesRoute = AuthAppCatalogsGradesRouteImport.update({
+  id: '/catalogs/grades',
+  path: '/catalogs/grades',
   getParentRoute: () => AuthAppRouteRoute,
 } as any)
 const AuthAppCatalogsCoefficientsRoute =
@@ -142,8 +154,10 @@ export interface FileRoutesByFullPath {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/app/': typeof AuthAppIndexRoute
   '/app/catalogs/coefficients': typeof AuthAppCatalogsCoefficientsRoute
+  '/app/catalogs/grades': typeof AuthAppCatalogsGradesRoute
   '/app/catalogs/programs': typeof AuthAppCatalogsProgramsRoute
   '/app/catalogs/subjects': typeof AuthAppCatalogsSubjectsRoute
+  '/app/catalogs/tracks': typeof AuthAppCatalogsTracksRoute
   '/app/polar/portal': typeof AuthAppPolarPortalRoute
   '/app/polar/subscriptions': typeof AuthAppPolarSubscriptionsRoute
   '/app/schools/$schoolId': typeof AuthAppSchoolsSchoolIdRoute
@@ -162,8 +176,10 @@ export interface FileRoutesByTo {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/app': typeof AuthAppIndexRoute
   '/app/catalogs/coefficients': typeof AuthAppCatalogsCoefficientsRoute
+  '/app/catalogs/grades': typeof AuthAppCatalogsGradesRoute
   '/app/catalogs/programs': typeof AuthAppCatalogsProgramsRoute
   '/app/catalogs/subjects': typeof AuthAppCatalogsSubjectsRoute
+  '/app/catalogs/tracks': typeof AuthAppCatalogsTracksRoute
   '/app/polar/portal': typeof AuthAppPolarPortalRoute
   '/app/polar/subscriptions': typeof AuthAppPolarSubscriptionsRoute
   '/app/schools/$schoolId': typeof AuthAppSchoolsSchoolIdRoute
@@ -185,8 +201,10 @@ export interface FileRoutesById {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_auth/app/': typeof AuthAppIndexRoute
   '/_auth/app/catalogs/coefficients': typeof AuthAppCatalogsCoefficientsRoute
+  '/_auth/app/catalogs/grades': typeof AuthAppCatalogsGradesRoute
   '/_auth/app/catalogs/programs': typeof AuthAppCatalogsProgramsRoute
   '/_auth/app/catalogs/subjects': typeof AuthAppCatalogsSubjectsRoute
+  '/_auth/app/catalogs/tracks': typeof AuthAppCatalogsTracksRoute
   '/_auth/app/polar/portal': typeof AuthAppPolarPortalRoute
   '/_auth/app/polar/subscriptions': typeof AuthAppPolarSubscriptionsRoute
   '/_auth/app/schools/$schoolId': typeof AuthAppSchoolsSchoolIdRoute
@@ -208,8 +226,10 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/app/'
     | '/app/catalogs/coefficients'
+    | '/app/catalogs/grades'
     | '/app/catalogs/programs'
     | '/app/catalogs/subjects'
+    | '/app/catalogs/tracks'
     | '/app/polar/portal'
     | '/app/polar/subscriptions'
     | '/app/schools/$schoolId'
@@ -228,8 +248,10 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/app'
     | '/app/catalogs/coefficients'
+    | '/app/catalogs/grades'
     | '/app/catalogs/programs'
     | '/app/catalogs/subjects'
+    | '/app/catalogs/tracks'
     | '/app/polar/portal'
     | '/app/polar/subscriptions'
     | '/app/schools/$schoolId'
@@ -250,8 +272,10 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/_auth/app/'
     | '/_auth/app/catalogs/coefficients'
+    | '/_auth/app/catalogs/grades'
     | '/_auth/app/catalogs/programs'
     | '/_auth/app/catalogs/subjects'
+    | '/_auth/app/catalogs/tracks'
     | '/_auth/app/polar/portal'
     | '/_auth/app/polar/subscriptions'
     | '/_auth/app/schools/$schoolId'
@@ -378,6 +402,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAppPolarPortalRouteImport
       parentRoute: typeof AuthAppRouteRoute
     }
+    '/_auth/app/catalogs/tracks': {
+      id: '/_auth/app/catalogs/tracks'
+      path: '/catalogs/tracks'
+      fullPath: '/app/catalogs/tracks'
+      preLoaderRoute: typeof AuthAppCatalogsTracksRouteImport
+      parentRoute: typeof AuthAppRouteRoute
+    }
     '/_auth/app/catalogs/subjects': {
       id: '/_auth/app/catalogs/subjects'
       path: '/catalogs/subjects'
@@ -390,6 +421,13 @@ declare module '@tanstack/react-router' {
       path: '/catalogs/programs'
       fullPath: '/app/catalogs/programs'
       preLoaderRoute: typeof AuthAppCatalogsProgramsRouteImport
+      parentRoute: typeof AuthAppRouteRoute
+    }
+    '/_auth/app/catalogs/grades': {
+      id: '/_auth/app/catalogs/grades'
+      path: '/catalogs/grades'
+      fullPath: '/app/catalogs/grades'
+      preLoaderRoute: typeof AuthAppCatalogsGradesRouteImport
       parentRoute: typeof AuthAppRouteRoute
     }
     '/_auth/app/catalogs/coefficients': {
@@ -420,8 +458,10 @@ interface AuthAppRouteRouteChildren {
   AuthAppDashboardRoute: typeof AuthAppDashboardRoute
   AuthAppIndexRoute: typeof AuthAppIndexRoute
   AuthAppCatalogsCoefficientsRoute: typeof AuthAppCatalogsCoefficientsRoute
+  AuthAppCatalogsGradesRoute: typeof AuthAppCatalogsGradesRoute
   AuthAppCatalogsProgramsRoute: typeof AuthAppCatalogsProgramsRoute
   AuthAppCatalogsSubjectsRoute: typeof AuthAppCatalogsSubjectsRoute
+  AuthAppCatalogsTracksRoute: typeof AuthAppCatalogsTracksRoute
   AuthAppPolarPortalRoute: typeof AuthAppPolarPortalRoute
   AuthAppPolarSubscriptionsRoute: typeof AuthAppPolarSubscriptionsRoute
   AuthAppSchoolsSchoolIdRoute: typeof AuthAppSchoolsSchoolIdRoute
@@ -438,8 +478,10 @@ const AuthAppRouteRouteChildren: AuthAppRouteRouteChildren = {
   AuthAppDashboardRoute: AuthAppDashboardRoute,
   AuthAppIndexRoute: AuthAppIndexRoute,
   AuthAppCatalogsCoefficientsRoute: AuthAppCatalogsCoefficientsRoute,
+  AuthAppCatalogsGradesRoute: AuthAppCatalogsGradesRoute,
   AuthAppCatalogsProgramsRoute: AuthAppCatalogsProgramsRoute,
   AuthAppCatalogsSubjectsRoute: AuthAppCatalogsSubjectsRoute,
+  AuthAppCatalogsTracksRoute: AuthAppCatalogsTracksRoute,
   AuthAppPolarPortalRoute: AuthAppPolarPortalRoute,
   AuthAppPolarSubscriptionsRoute: AuthAppPolarSubscriptionsRoute,
   AuthAppSchoolsSchoolIdRoute: AuthAppSchoolsSchoolIdRoute,

@@ -1,27 +1,46 @@
+/* eslint-disable react-hooks-extra/no-direct-set-state-in-use-effect */
+import type { Subject } from '@repo/data-ops'
+import type { FormEvent } from 'react'
+import type { CreateSubjectInput, UpdateSubjectInput } from '@/schemas/catalog'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import {
-  Beaker,
   BookOpen,
-  Briefcase,
-  Calculator,
   Download,
-  Dumbbell,
   Edit,
-  Filter,
-  Globe,
-  Music,
-  Palette,
+  FileUp,
   Plus,
+  Save,
   Search,
   Trash2,
   Upload,
+  X,
+  XCircle,
 } from 'lucide-react'
-import React from 'react'
+import { AnimatePresence, motion } from 'motion/react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { toast } from 'sonner'
+import { CatalogListSkeleton, CatalogStatsSkeleton } from '@/components/catalogs/catalog-skeleton'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Skeleton } from '@/components/ui/skeleton'
+import { useDebounce } from '@/hooks/use-debounce'
+import { useInfiniteScroll } from '@/hooks/use-infinite-scroll'
+import {
+  bulkCreateSubjectsMutationOptions,
+  createSubjectMutationOptions,
+  deleteSubjectMutationOptions,
+  subjectsQueryOptions,
+  updateSubjectMutationOptions,
+} from '@/integrations/tanstack-query/catalogs-options'
+import { downloadSubjectsTemplate, exportSubjectsToExcel, importSubjectsFromExcel } from '@/lib/catalog-csv'
 import { useLogger } from '@/lib/logger'
+import { generateUUID } from '@/utils/generateUUID'
 
 export const Route = createFileRoute('/_auth/app/catalogs/subjects')({
   component: SubjectsCatalog,
@@ -29,147 +48,226 @@ export const Route = createFileRoute('/_auth/app/catalogs/subjects')({
 
 function SubjectsCatalog() {
   const { logger } = useLogger()
+  const queryClient = useQueryClient()
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
-  React.useEffect(() => {
+  const [isCreating, setIsCreating] = useState(false)
+  const [editingSubject, setEditingSubject] = useState<string | null>(null)
+  const [deletingSubject, setDeletingSubject] = useState<{ id: string, name: string } | null>(null)
+  const [search, setSearch] = useState('')
+  const [categoryFilter, setCategoryFilter] = useState<string>('all')
+  const [page, setPage] = useState(1)
+  const debouncedSearch = useDebounce(search, 500)
+
+  const queryParams = useMemo(() => ({
+    search: debouncedSearch || undefined,
+    category: categoryFilter === 'all' ? undefined : categoryFilter,
+    page,
+    limit: 20,
+  }), [debouncedSearch, categoryFilter, page])
+
+  const { data: subjectsData, isLoading, error } = useQuery(subjectsQueryOptions(queryParams))
+
+  // Custom hook for managing infinite scroll subjects
+  const useInfiniteSubjects = (subjectsData: any, page: number, debouncedSearch: string, categoryFilter: string) => {
+    const [allSubjects, setAllSubjects] = useState<Subject[]>([])
+
+    // Reset when filters change
+    useEffect(() => {
+      setAllSubjects(() => [])
+    }, [debouncedSearch, categoryFilter])
+
+    // Update subjects when data changes
+    useEffect(() => {
+      if (subjectsData?.subjects) {
+        setAllSubjects((prev) => {
+          if (page === 1) {
+            return subjectsData.subjects
+          }
+          else {
+            return [...prev, ...subjectsData.subjects]
+          }
+        })
+      }
+    }, [subjectsData, page])
+
+    return allSubjects
+  }
+
+  const allSubjects = useInfiniteSubjects(subjectsData, page, debouncedSearch, categoryFilter)
+
+  const pagination = subjectsData?.pagination
+  const hasMore = pagination ? page < pagination.totalPages : false
+
+  const loadMoreRef = useInfiniteScroll({
+    onLoadMore: () => setPage(prev => prev + 1),
+    hasMore,
+    isLoading,
+  })
+
+  const createMutation = useMutation({
+    ...createSubjectMutationOptions,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['subjects'] })
+      setIsCreating(false)
+      setPage(1)
+      toast.success('Matière créée avec succès')
+      logger.info('Subject created successfully')
+    },
+    onError: (error) => {
+      toast.error('Erreur lors de la création de la matière')
+      logger.error('Failed to create subject', error)
+    },
+  })
+
+  const bulkCreateMutation = useMutation({
+    ...bulkCreateSubjectsMutationOptions,
+    onSuccess: (data: Subject[]) => {
+      queryClient.invalidateQueries({ queryKey: ['subjects'] })
+      setPage(1)
+      toast.success(`${data.length} matières importées avec succès`)
+      logger.info('Subjects imported successfully')
+    },
+    onError: (error) => {
+      toast.error('Erreur lors de l\'import des matières')
+      logger.error('Failed to import subjects', error)
+    },
+  })
+
+  const updateMutation = useMutation({
+    ...updateSubjectMutationOptions,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['subjects'] })
+      setEditingSubject(null)
+      toast.success('Matière mise à jour avec succès')
+      logger.info('Subject updated successfully')
+    },
+    onError: (error) => {
+      toast.error('Erreur lors de la mise à jour de la matière')
+      logger.error('Failed to update subject', error)
+    },
+  })
+
+  const deleteMutation = useMutation({
+    ...deleteSubjectMutationOptions,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['subjects'] })
+      setDeletingSubject(null)
+      toast.success('Matière supprimée avec succès')
+      logger.info('Subject deleted successfully')
+    },
+    onError: (error) => {
+      toast.error('Erreur lors de la suppression de la matière')
+      logger.error('Failed to delete subject', error)
+    },
+  })
+
+  useEffect(() => {
     logger.info('Subjects catalog page viewed', {
       page: 'subjects-catalog',
       timestamp: new Date().toISOString(),
+      filters: queryParams,
     })
-  }, [logger])
+  }, [logger, queryParams])
 
-  // Mock data for demonstration - will be replaced with real data from Phase 6+
-  const subjects = [
-    {
-      id: 1,
-      name: 'Mathématiques',
-      shortName: 'Maths',
-      category: 'Scientifique',
-      description: 'Mathématiques avancées incluant algèbre, géométrie, calcul infinitésimal',
-      gradeLevels: ['6ème', '5ème', '4ème', '3ème', '2nde', '1ère', 'Terminale'],
-      icon: Calculator,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50 dark:bg-blue-950',
-      status: 'active',
-      createdAt: '2025-01-10',
-      updatedAt: '2025-01-15',
-    },
-    {
-      id: 2,
-      name: 'Physique-Chimie',
-      shortName: 'PC',
-      category: 'Scientifique',
-      description: 'Physique et chimie incluant les travaux pratiques',
-      gradeLevels: ['4ème', '3ème', '2nde', '1ère', 'Terminale'],
-      icon: Beaker,
-      color: 'text-green-600',
-      bgColor: 'bg-green-50 dark:bg-green-950',
-      status: 'active',
-      createdAt: '2025-01-10',
-      updatedAt: '2025-01-14',
-    },
-    {
-      id: 3,
-      name: 'Français',
-      shortName: 'Fr',
-      category: 'Littéraire',
-      description: 'Langue française, littérature et composition',
-      gradeLevels: ['6ème', '5ème', '4ème', '3ème', '2nde', '1ère', 'Terminale'],
-      icon: BookOpen,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50 dark:bg-purple-950',
-      status: 'active',
-      createdAt: '2025-01-10',
-      updatedAt: '2025-01-10',
-    },
-    {
-      id: 4,
-      name: 'Histoire-Géographie',
-      shortName: 'HG',
-      category: 'Littéraire',
-      description: 'Histoire et géographie de la France et du monde',
-      gradeLevels: ['6ème', '5ème', '4ème', '3ème', '2nde', '1ère', 'Terminale'],
-      icon: Globe,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50 dark:bg-orange-950',
-      status: 'active',
-      createdAt: '2025-01-11',
-      updatedAt: '2025-01-11',
-    },
-    {
-      id: 5,
-      name: 'Education Physique et Sportive',
-      shortName: 'EPS',
-      category: 'Sportif',
-      description: 'Éducation physique et activités sportives',
-      gradeLevels: ['6ème', '5ème', '4ème', '3ème', '2nde', '1ère', 'Terminale'],
-      icon: Dumbbell,
-      color: 'text-red-600',
-      bgColor: 'bg-red-50 dark:bg-red-950',
-      status: 'active',
-      createdAt: '2025-01-11',
-      updatedAt: '2025-01-13',
-    },
-    {
-      id: 6,
-      name: 'Arts Plastiques',
-      shortName: 'Arts',
-      category: 'Artistique',
-      description: 'Arts visuels, dessin, peinture et expression artistique',
-      gradeLevels: ['6ème', '5ème', '4ème', '3ème'],
-      icon: Palette,
-      color: 'text-pink-600',
-      bgColor: 'bg-pink-50 dark:bg-pink-950',
-      status: 'active',
-      createdAt: '2025-01-12',
-      updatedAt: '2025-01-12',
-    },
-    {
-      id: 7,
-      name: 'Musique',
-      shortName: 'Mus',
-      category: 'Artistique',
-      description: 'Théorie musicale, écoute et compétences pratiques',
-      gradeLevels: ['6ème', '5ème', '4ème', '3ème'],
-      icon: Music,
-      color: 'text-indigo-600',
-      bgColor: 'bg-indigo-50 dark:bg-indigo-950',
-      status: 'active',
-      createdAt: '2025-01-12',
-      updatedAt: '2025-01-12',
-    },
-    {
-      id: 8,
-      name: 'Technologie',
-      shortName: 'Tech',
-      category: 'Technique',
-      description: 'Éducation technologique et culture numérique',
-      gradeLevels: ['6ème', '5ème', '4ème', '3ème'],
-      icon: Briefcase,
-      color: 'text-gray-600',
-      bgColor: 'bg-gray-50 dark:bg-gray-950',
-      status: 'active',
-      createdAt: '2025-01-13',
-      updatedAt: '2025-01-13',
-    },
-  ]
+  const handleCreate = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    const data: CreateSubjectInput = {
+      name: formData.get('name') as string,
+      shortName: formData.get('shortName') as string,
+      category: formData.get('category') as any,
+    }
+    createMutation.mutate(data)
+  }
 
-  const categories = [
-    { name: 'Scientifique', count: subjects.filter(s => s.category === 'Scientifique').length },
-    { name: 'Littéraire', count: subjects.filter(s => s.category === 'Littéraire').length },
-    { name: 'Sportif', count: subjects.filter(s => s.category === 'Sportif').length },
-    { name: 'Artistique', count: subjects.filter(s => s.category === 'Artistique').length },
-    { name: 'Technique', count: subjects.filter(s => s.category === 'Technique').length },
-  ]
+  const handleUpdate = (e: FormEvent<HTMLFormElement>, subjectId: string) => {
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    const data: UpdateSubjectInput = {
+      id: subjectId,
+      name: formData.get('name') as string,
+      shortName: formData.get('shortName') as string,
+      category: formData.get('category') as any,
+    }
+    updateMutation.mutate(data)
+  }
+
+  const handleDelete = () => {
+    if (deletingSubject) {
+      deleteMutation.mutate({ id: deletingSubject.id })
+    }
+  }
+
+  const handleExport = () => {
+    if (allSubjects.length > 0) {
+      exportSubjectsToExcel(allSubjects)
+      logger.info('Subjects exported to Excel')
+    }
+  }
+
+  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file)
+      return
+
+    try {
+      const importedSubjects = await importSubjectsFromExcel(file)
+      logger.info(`Imported ${importedSubjects.length} subjects from Excel`)
+
+      // Create subjects in batch
+      const subjectsToCreate = importedSubjects
+        .filter(s => s.name && s.category)
+        .map(s => s as CreateSubjectInput)
+
+      if (subjectsToCreate.length > 0) {
+        await bulkCreateMutation.mutateAsync(subjectsToCreate)
+      }
+    }
+    catch (error) {
+      logger.error('Failed to import subjects', error as Error)
+      toast.error('Erreur lors de l\'import du fichier')
+    }
+    finally {
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+    }
+  }
+
+  const categories = useMemo(() => {
+    const allCategories = ['Scientifique', 'Littéraire', 'Sportif', 'Autre']
+    return allCategories.map(cat => ({
+      name: cat,
+      count: allSubjects.filter(s => s.category === cat).length,
+    }))
+  }, [allSubjects])
 
   const getCategoryColor = (category: string) => {
     switch (category) {
       case 'Scientifique': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
       case 'Littéraire': return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
       case 'Sportif': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-      case 'Artistique': return 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200'
-      case 'Technique': return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
+      case 'Autre': return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
       default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
     }
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-8">
+        <XCircle className="h-8 w-8 text-red-600 mx-auto mb-2" />
+        <h3 className="text-lg font-medium text-red-600">Erreur de chargement</h3>
+        <p className="text-muted-foreground">{error.message}</p>
+        <Button
+          variant="outline"
+          onClick={() => window.location.reload()}
+          className="mt-4"
+        >
+          Réessayer
+        </Button>
+      </div>
+    )
   }
 
   return (
@@ -183,58 +281,129 @@ function SubjectsCatalog() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="gap-2">
-            <Download className="h-4 w-4" />
+          <Button variant="outline" size="sm" onClick={downloadSubjectsTemplate}>
+            <FileUp className="h-4 w-4 mr-2" />
+            Template
+          </Button>
+          <Button variant="outline" size="sm" onClick={handleExport} disabled={allSubjects.length === 0}>
+            <Download className="h-4 w-4 mr-2" />
             Exporter
           </Button>
-          <Button variant="outline" className="gap-2">
-            <Upload className="h-4 w-4" />
-            Importer CSV
+          <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
+            <Upload className="h-4 w-4 mr-2" />
+            Importer
           </Button>
-          <Button className="gap-2">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".xlsx,.xls"
+            className="hidden"
+            onChange={handleImport}
+          />
+          <Button className="gap-2" onClick={() => setIsCreating(true)}>
             <Plus className="h-4 w-4" />
-            Ajouter une Matière
+            Ajouter
           </Button>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {isLoading && page === 1
+        ? (
+            <CatalogStatsSkeleton />
+          )
+        : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Total</CardTitle>
+                  <BookOpen className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{pagination?.total || 0}</div>
+                  <p className="text-xs text-muted-foreground">matières</p>
+                </CardContent>
+              </Card>
+
+              {categories.map(category => (
+                <Card key={category.name}>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">{category.name}</CardTitle>
+                    <BookOpen className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{category.count}</div>
+                    <p className="text-xs text-muted-foreground">matières</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+
+      {/* Create Form */}
+      {isCreating && (
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total des Matières</CardTitle>
-            <BookOpen className="h-4 w-4 text-muted-foreground" />
+          <CardHeader>
+            <CardTitle>Créer une Nouvelle Matière</CardTitle>
+            <CardDescription>Ajouter une nouvelle matière au catalogue</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{subjects.length}</div>
-            <p className="text-xs text-muted-foreground">
-              Toutes catégories
-            </p>
+            <form onSubmit={handleCreate} className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Nom *</Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    placeholder="Mathématiques"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="shortName">Nom Court</Label>
+                  <Input
+                    id="shortName"
+                    name="shortName"
+                    placeholder="Maths"
+                    maxLength={10}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="category">Catégorie *</Label>
+                  <Select name="category" required>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sélectionner une catégorie" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Scientifique">Scientifique</SelectItem>
+                      <SelectItem value="Littéraire">Littéraire</SelectItem>
+                      <SelectItem value="Sportif">Sportif</SelectItem>
+                      <SelectItem value="Autre">Autre</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button type="button" variant="outline" onClick={() => setIsCreating(false)}>
+                  <X className="h-4 w-4 mr-2" />
+                  Annuler
+                </Button>
+                <Button type="submit" disabled={createMutation.isPending}>
+                  <Save className="h-4 w-4 mr-2" />
+                  {createMutation.isPending ? 'Création...' : 'Créer'}
+                </Button>
+              </div>
+            </form>
           </CardContent>
         </Card>
-
-        {categories.slice(0, 3).map(category => (
-          <Card key={category.name}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{category.name}</CardTitle>
-              <BookOpen className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{category.count}</div>
-              <p className="text-xs text-muted-foreground">
-                matières
-              </p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      )}
 
       {/* Search and Filters */}
       <Card>
         <CardHeader>
           <CardTitle>Rechercher & Filtrer</CardTitle>
           <CardDescription>
-            Trouver des matières spécifiques ou filtrer par catégorie et niveau de classe
+            Trouver des matières spécifiques ou filtrer par catégorie
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -244,113 +413,217 @@ function SubjectsCatalog() {
               <Input
                 placeholder="Rechercher des matières..."
                 className="pl-9"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value)
+                  setPage(1)
+                }}
               />
             </div>
-            <Button variant="outline" className="gap-2">
-              <Filter className="h-4 w-4" />
-              Filtres
-            </Button>
+            <Select
+              value={categoryFilter}
+              onValueChange={(value) => {
+                setCategoryFilter(value)
+                setPage(1)
+              }}
+            >
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Catégorie" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Toutes catégories</SelectItem>
+                <SelectItem value="Scientifique">Scientifique</SelectItem>
+                <SelectItem value="Littéraire">Littéraire</SelectItem>
+                <SelectItem value="Sportif">Sportif</SelectItem>
+                <SelectItem value="Autre">Autre</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </CardContent>
       </Card>
 
-      {/* Categories Overview */}
+      {/* Subjects List */}
       <Card>
         <CardHeader>
-          <CardTitle>Aperçu des Catégories</CardTitle>
+          <CardTitle>Matières</CardTitle>
           <CardDescription>
-            Distribution des matières par catégorie éducative
+            {pagination?.total || 0}
+            {' '}
+            matière(s) au total
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 md:grid-cols-5">
-            {categories.map(category => (
-              <div key={category.name} className="text-center">
-                <div className="text-2xl font-bold">{category.count}</div>
-                <Badge className={`mt-1 ${getCategoryColor(category.name)}`}>
-                  {category.name}
-                </Badge>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Subjects Grid */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Toutes les Matières</CardTitle>
-          <CardDescription>
-            Catalogue complet des matières avec leurs détails et niveaux de classe
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {subjects.map(subject => (
-              <div
-                key={subject.id}
-                className="border rounded-lg p-6 hover:bg-accent/50 transition-colors"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${subject.bgColor}`}>
-                    <subject.icon className={`h-6 w-6 ${subject.color}`} />
+          {isLoading && page === 1
+            ? (
+                <CatalogListSkeleton count={5} />
+              )
+            : allSubjects.length === 0
+              ? (
+                  <div className="text-center py-8">
+                    <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-lg font-medium">Aucune matière trouvée</h3>
+                    <p className="text-muted-foreground">
+                      {search || categoryFilter !== 'all'
+                        ? 'Essayez de modifier vos filtres de recherche.'
+                        : 'Commencez par ajouter votre première matière.'}
+                    </p>
                   </div>
-                  <div className="flex gap-2">
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-lg font-semibold">{subject.name}</h3>
-                    <Badge variant="outline" className="text-xs">
-                      {subject.shortName}
-                    </Badge>
-                  </div>
-
-                  <Badge className={`text-xs ${getCategoryColor(subject.category)}`}>
-                    {subject.category}
-                  </Badge>
-
-                  <p className="text-sm text-muted-foreground mt-2">
-                    {subject.description}
-                  </p>
-
-                  <div className="space-y-2 mt-4">
-                    <div className="text-xs font-medium text-muted-foreground">Niveaux de Classe:</div>
-                    <div className="flex flex-wrap gap-1">
-                      {subject.gradeLevels.map(grade => (
-                        <span
-                          key={grade}
-                          className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-secondary text-secondary-foreground"
-                        >
-                          {grade}
-                        </span>
-                      ))}
+                )
+              : (
+                  <>
+                    <div className="space-y-4">
+                      <AnimatePresence mode="popLayout">
+                        {allSubjects.map(subject => (
+                          <motion.div
+                            key={subject.id}
+                            layout
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            {editingSubject === subject.id
+                              ? (
+                                  <form
+                                    onSubmit={e => handleUpdate(e, subject.id)}
+                                    className="border rounded-lg p-4 space-y-4"
+                                  >
+                                    <div className="grid gap-4 md:grid-cols-3">
+                                      <div className="space-y-2">
+                                        <Label htmlFor={`edit-name-${subject.id}`}>Nom *</Label>
+                                        <Input
+                                          id={`edit-name-${subject.id}`}
+                                          name="name"
+                                          defaultValue={subject.name}
+                                          required
+                                        />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label htmlFor={`edit-shortName-${subject.id}`}>Nom Court</Label>
+                                        <Input
+                                          id={`edit-shortName-${subject.id}`}
+                                          name="shortName"
+                                          defaultValue={subject.shortName || ''}
+                                          maxLength={10}
+                                        />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label htmlFor={`edit-category-${subject.id}`}>Catégorie *</Label>
+                                        <Select name="category" defaultValue={subject.category} required>
+                                          <SelectTrigger>
+                                            <SelectValue />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                            <SelectItem value="Scientifique">Scientifique</SelectItem>
+                                            <SelectItem value="Littéraire">Littéraire</SelectItem>
+                                            <SelectItem value="Sportif">Sportif</SelectItem>
+                                            <SelectItem value="Autre">Autre</SelectItem>
+                                          </SelectContent>
+                                        </Select>
+                                      </div>
+                                    </div>
+                                    <div className="flex justify-end gap-2">
+                                      <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => setEditingSubject(null)}
+                                      >
+                                        <X className="h-4 w-4 mr-2" />
+                                        Annuler
+                                      </Button>
+                                      <Button type="submit" disabled={updateMutation.isPending}>
+                                        <Save className="h-4 w-4 mr-2" />
+                                        {updateMutation.isPending ? 'Enregistrement...' : 'Enregistrer'}
+                                      </Button>
+                                    </div>
+                                  </form>
+                                )
+                              : (
+                                  <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors">
+                                    <div className="flex items-center gap-4">
+                                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                                        <BookOpen className="h-5 w-5 text-primary" />
+                                      </div>
+                                      <div>
+                                        <div className="flex items-center gap-2">
+                                          <h3 className="font-semibold">{subject.name}</h3>
+                                          {subject.shortName && (
+                                            <Badge variant="outline" className="text-xs">
+                                              {subject.shortName}
+                                            </Badge>
+                                          )}
+                                          <Badge className={`text-xs ${getCategoryColor(subject.category)}`}>
+                                            {subject.category}
+                                          </Badge>
+                                        </div>
+                                        <div className="flex items-center gap-2 mt-1">
+                                          <span className="text-xs text-muted-foreground">
+                                            Créé le
+                                            {' '}
+                                            {new Date(subject.createdAt).toLocaleDateString()}
+                                          </span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="flex gap-2">
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => setEditingSubject(subject.id)}
+                                      >
+                                        <Edit className="h-4 w-4" />
+                                      </Button>
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => setDeletingSubject({ id: subject.id, name: subject.name })}
+                                        disabled={deleteMutation.isPending}
+                                      >
+                                        <Trash2 className="h-4 w-4" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                )}
+                          </motion.div>
+                        ))}
+                      </AnimatePresence>
                     </div>
-                  </div>
 
-                  <div className="flex items-center justify-between text-xs text-muted-foreground pt-4 border-t">
-                    <span>
-                      Créé:
-                      {subject.createdAt}
-                    </span>
-                    <span>
-                      Mis à jour:
-                      {subject.updatedAt}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+                    {/* Infinite Scroll Trigger */}
+                    {hasMore && (
+                      <div ref={loadMoreRef} className="py-4">
+                        {isLoading && (
+                          <div className="space-y-4">
+                            {Array.from({ length: 3 }).map(() => (
+                              <div key={generateUUID()} className="flex items-center justify-between p-4 border rounded-lg">
+                                <div className="flex items-center gap-4 flex-1">
+                                  <Skeleton className="h-10 w-10 rounded-lg" />
+                                  <div className="space-y-2 flex-1">
+                                    <Skeleton className="h-5 w-32" />
+                                    <Skeleton className="h-4 w-24" />
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </>
+                )}
         </CardContent>
       </Card>
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmationDialog
+        open={!!deletingSubject}
+        onOpenChange={open => !open && setDeletingSubject(null)}
+        title="Supprimer la matière"
+        description={`Êtes-vous sûr de vouloir supprimer la matière "${deletingSubject?.name}" ? Cette action est irréversible.`}
+        confirmText={deletingSubject?.name}
+        onConfirm={handleDelete}
+        isLoading={deleteMutation.isPending}
+      />
     </div>
   )
 }

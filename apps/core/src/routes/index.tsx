@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import React from 'react'
+import { useEffect } from 'react'
 import { BenefitsSection } from '@/components/landing/benefits-section'
 import { CTASection } from '@/components/landing/cta-section'
 import { FAQSection } from '@/components/landing/faq-section'
@@ -23,7 +23,7 @@ function LandingPage() {
   const { logger } = useLogger()
 
   // Log page view
-  React.useEffect(() => {
+  useEffect(() => {
     logger.info('Landing page viewed', {
       page: 'home',
       timestamp: new Date().toISOString(),

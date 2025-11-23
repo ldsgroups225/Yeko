@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { createRouter } from '@tanstack/react-router'
 import { setupRouterSsrQueryIntegration } from '@tanstack/react-router-ssr-query'
 import { getContext } from './integrations/tanstack-query/get-context'
@@ -14,7 +15,7 @@ export function getRouter() {
     routeTree,
     context: { ...rqContext },
     defaultPreload: 'intent',
-    Wrap: (props: { children: React.ReactNode }) => {
+    Wrap: (props: { children: ReactNode }) => {
       return (
         <TanstackQuery.Provider {...rqContext}>
           {props.children}

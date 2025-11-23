@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import {
   ArrowRight,
@@ -9,11 +10,13 @@ import {
   Search,
   TrendingUp,
 } from 'lucide-react'
-import React from 'react'
+import { useEffect } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { Skeleton } from '@/components/ui/skeleton'
+import { catalogStatsQueryOptions } from '@/integrations/tanstack-query/catalogs-options'
 import { useLogger } from '@/lib/logger'
 
 export const Route = createFileRoute('/_auth/app/catalogs/')({
@@ -24,40 +27,33 @@ function Catalogs() {
   const navigate = useNavigate()
   const { logger } = useLogger()
 
-  React.useEffect(() => {
+  // Fetch real catalog stats
+  const { data: catalogStats, isLoading } = useQuery(catalogStatsQueryOptions())
+
+  useEffect(() => {
     logger.info('Catalogs page viewed', {
       page: 'catalogs',
       timestamp: new Date().toISOString(),
     })
   }, [logger])
 
-  // Mock data for demonstration - will be replaced with real data from Phase 6+
-  const catalogStats = {
-    educationLevels: 4,
-    tracks: 8,
-    grades: 15,
-    series: 12,
-    subjects: 45,
-    programs: 28,
-  }
-
   const catalogSections = [
     {
       title: 'Niveaux et Filières d\'Éducation',
       description: 'Définir les niveaux éducatifs (Primaire, Secondaire, etc.) et les filières (Générale, Technique)',
       icon: GraduationCap,
-      href: '/catalogs/education-levels',
-      stats: `${catalogStats.educationLevels} niveaux, ${catalogStats.tracks} filières`,
+      href: '/app/catalogs/tracks',
+      stats: isLoading ? '...' : `${catalogStats?.educationLevels || 0} niveaux, ${catalogStats?.tracks || 0} filières`,
       color: 'text-blue-600',
       bgColor: 'bg-blue-50 dark:bg-blue-950',
       borderColor: 'border-blue-200 dark:border-blue-800',
     },
     {
       title: 'Classes et Séries',
-      description: 'Gérer les niveaux de classe (6ème à Terminale) et les séries académiques (C, D, A4, etc.)',
+      description: 'Gérer les niveaux de classe (6ème à Terminale) et les séries académiques (C, D, A, etc.)',
       icon: Award,
-      href: '/catalogs/grades',
-      stats: `${catalogStats.grades} classes, ${catalogStats.series} séries`,
+      href: '/app/catalogs/grades',
+      stats: isLoading ? '...' : `${catalogStats?.grades || 0} classes, ${catalogStats?.series || 0} séries`,
       color: 'text-green-600',
       bgColor: 'bg-green-50 dark:bg-green-950',
       borderColor: 'border-green-200 dark:border-green-800',
@@ -66,8 +62,8 @@ function Catalogs() {
       title: 'Matières',
       description: 'Catalogue global de toutes les matières enseignées dans les écoles (Mathématiques, Physique, etc.)',
       icon: BookOpen,
-      href: '/catalogs/subjects',
-      stats: `${catalogStats.subjects} matières`,
+      href: '/app/catalogs/subjects',
+      stats: isLoading ? '...' : `${catalogStats?.subjects || 0} matières`,
       color: 'text-purple-600',
       bgColor: 'bg-purple-50 dark:bg-purple-950',
       borderColor: 'border-purple-200 dark:border-purple-800',
@@ -76,8 +72,8 @@ function Catalogs() {
       title: 'Modèles de Programmes',
       description: 'Programmes ministériels et modèles de curriculum pour différentes matières et classes',
       icon: Database,
-      href: '/catalogs/programs',
-      stats: `${catalogStats.programs} programmes`,
+      href: '/app/catalogs/programs',
+      stats: 'Bientôt disponible',
       color: 'text-orange-600',
       bgColor: 'bg-orange-50 dark:bg-orange-950',
       borderColor: 'border-orange-200 dark:border-orange-800',
@@ -121,7 +117,7 @@ function Catalogs() {
             <GraduationCap className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{catalogStats.educationLevels}</div>
+            {isLoading ? <Skeleton className="h-8 w-16" /> : <div className="text-2xl font-bold">{catalogStats?.educationLevels || 0}</div>}
             <p className="text-xs text-muted-foreground">
               Niveaux disponibles
             </p>
@@ -134,7 +130,7 @@ function Catalogs() {
             <Award className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{catalogStats.tracks}</div>
+            {isLoading ? <Skeleton className="h-8 w-16" /> : <div className="text-2xl font-bold">{catalogStats?.tracks || 0}</div>}
             <p className="text-xs text-muted-foreground">
               Filières académiques
             </p>
@@ -147,7 +143,7 @@ function Catalogs() {
             <BookOpen className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{catalogStats.subjects}</div>
+            {isLoading ? <Skeleton className="h-8 w-16" /> : <div className="text-2xl font-bold">{catalogStats?.subjects || 0}</div>}
             <p className="text-xs text-muted-foreground">
               Catalogue global
             </p>
@@ -156,13 +152,13 @@ function Catalogs() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Programmes</CardTitle>
+            <CardTitle className="text-sm font-medium">Classes & Séries</CardTitle>
             <Database className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{catalogStats.programs}</div>
+            {isLoading ? <Skeleton className="h-8 w-16" /> : <div className="text-2xl font-bold">{(catalogStats?.grades || 0) + (catalogStats?.series || 0)}</div>}
             <p className="text-xs text-muted-foreground">
-              Modèles de programmes
+              Niveaux et séries
             </p>
           </CardContent>
         </Card>

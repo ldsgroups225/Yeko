@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { AlertCircle, ArrowLeft } from 'lucide-react'
-import React from 'react'
+import { useEffect } from 'react'
 import { SchoolForm } from '@/components/schools/school-form'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
@@ -49,7 +49,7 @@ function CreateSchool() {
     }
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     logger.info('Create school page viewed', {
       page: 'schools-create',
       timestamp: new Date().toISOString(),

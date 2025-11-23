@@ -1,3 +1,4 @@
+import type { ComponentType } from 'react'
 import type { FileRoutesByTo } from '@/routeTree.gen'
 import { useNavigate, useRouterState } from '@tanstack/react-router'
 import {
@@ -19,7 +20,7 @@ import { cn } from '@/lib/utils'
 
 interface NavigationItem {
   name: string
-  icon: React.ComponentType<{ className?: string }>
+  icon: ComponentType<{ className?: string }>
   href: keyof FileRoutesByTo
   badge?: string | number
   description?: string

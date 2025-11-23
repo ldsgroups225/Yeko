@@ -12,7 +12,7 @@ import {
   TrendingUp,
   Users,
 } from 'lucide-react'
-import React from 'react'
+import { useEffect } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -26,7 +26,7 @@ export const Route = createFileRoute('/_auth/app/support/')({
 function Support() {
   const { logger } = useLogger()
 
-  React.useEffect(() => {
+  useEffect(() => {
     logger.info('Support page viewed', {
       page: 'support',
       timestamp: new Date().toISOString(),

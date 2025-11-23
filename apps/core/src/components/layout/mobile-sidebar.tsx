@@ -1,3 +1,4 @@
+import type { ComponentType } from 'react'
 import { useNavigate, useRouterState } from '@tanstack/react-router'
 import {
   BarChart3,
@@ -7,7 +8,6 @@ import {
   Home,
   School,
 } from 'lucide-react'
-import React from 'react'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
@@ -17,7 +17,7 @@ import { cn } from '@/lib/utils'
 
 interface NavigationItem {
   name: string
-  icon: React.ComponentType<{ className?: string }>
+  icon: ComponentType<{ className?: string }>
   href: string
   description?: string
 }

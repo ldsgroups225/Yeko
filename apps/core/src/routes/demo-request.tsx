@@ -1,3 +1,4 @@
+import type { FormEvent } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowLeft, CheckCircle2 } from 'lucide-react'
 import { useState } from 'react'
@@ -31,7 +32,7 @@ function DemoRequest() {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
 
@@ -54,7 +55,7 @@ function DemoRequest() {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 py-12 px-4">
+      <div className="min-h-screen bg-linear-to-b from-background to-muted/20 py-12 px-4">
         <div className="container mx-auto max-w-2xl">
           <div className="mb-8">
             <Link to="/">
@@ -93,7 +94,7 @@ function DemoRequest() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 py-12 px-4">
+    <div className="min-h-screen bg-linear-to-b from-background to-muted/20 py-12 px-4">
       <div className="container mx-auto max-w-4xl">
         <div className="mb-8">
           <Link to="/">

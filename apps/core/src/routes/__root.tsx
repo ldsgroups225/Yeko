@@ -1,6 +1,8 @@
-import type { QueryClient } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 /// <reference types="vite/client" />
+
+import type { QueryClient } from '@tanstack/react-query'
+import type { ReactNode } from 'react'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import {
   createRootRouteWithContext,
   HeadContent,
@@ -8,7 +10,7 @@ import {
   Scripts,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-import * as React from 'react'
+import { useEffect } from 'react'
 import { DefaultCatchBoundary } from '@/components/default-catch-boundary'
 import { NotFound } from '@/components/not-found'
 import { ThemeProvider } from '@/components/theme'
@@ -73,7 +75,7 @@ export const Route = createRootRouteWithContext<{
 
 function RootComponent() {
   // Initialize logger on app startup
-  React.useEffect(() => {
+  useEffect(() => {
     initializeLogger().catch((error) => {
       console.error('Failed to initialize logger:', error)
     })
@@ -93,7 +95,7 @@ function RootComponent() {
   )
 }
 
-function RootDocument({ children }: { children: React.ReactNode }) {
+function RootDocument({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>

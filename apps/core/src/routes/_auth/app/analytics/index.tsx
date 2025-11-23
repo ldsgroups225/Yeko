@@ -9,7 +9,7 @@ import {
   TrendingUp,
   Users,
 } from 'lucide-react'
-import React from 'react'
+import { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useLogger } from '@/lib/logger'
@@ -21,7 +21,7 @@ export const Route = createFileRoute('/_auth/app/analytics/')({
 function Analytics() {
   const { logger } = useLogger()
 
-  React.useEffect(() => {
+  useEffect(() => {
     logger.info('Analytics page viewed', {
       page: 'analytics',
       timestamp: new Date().toISOString(),

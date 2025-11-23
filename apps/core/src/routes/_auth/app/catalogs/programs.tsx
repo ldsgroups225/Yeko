@@ -9,7 +9,7 @@ import {
   Plus,
   Trash2,
 } from 'lucide-react'
-import React from 'react'
+import { useEffect } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -23,7 +23,7 @@ export const Route = createFileRoute('/_auth/app/catalogs/programs')({
 function ProgramsCatalog() {
   const { logger } = useLogger()
 
-  React.useEffect(() => {
+  useEffect(() => {
     logger.info('Programs catalog page viewed', {
       page: 'programs-catalog',
       timestamp: new Date().toISOString(),
