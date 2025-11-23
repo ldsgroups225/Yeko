@@ -231,7 +231,7 @@ export async function bulkUpdateCoefficients(
   if (updates.length === 0)
     return
 
-  await db.transaction(async (tx) => {
+  await db.transaction(async (tx: any) => {
     for (const update of updates) {
       await tx
         .update(coefficientTemplates)
@@ -262,7 +262,7 @@ export async function copyCoefficientTemplates(
   }
 
   // Create new coefficients for target year
-  const newCoefficients = sourceCoefficients.map(coef => ({
+  const newCoefficients = sourceCoefficients.map((coef: any) => ({
     id: crypto.randomUUID(),
     weight: coef.weight,
     schoolYearTemplateId: targetYearId,

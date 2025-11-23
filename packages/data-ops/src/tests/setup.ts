@@ -1,5 +1,10 @@
+import path from 'node:path'
+import dotenv from 'dotenv'
 import { beforeAll } from 'vitest'
 import { initDatabase } from '../database/setup'
+
+// Load environment variables from .env file
+dotenv.config({ path: path.resolve(__dirname, '../../.env.test') })
 
 // Initialize database before all tests
 beforeAll(async () => {

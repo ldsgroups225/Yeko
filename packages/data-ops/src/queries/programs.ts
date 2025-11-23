@@ -302,7 +302,7 @@ export async function cloneProgramTemplate(id: string, newSchoolYearTemplateId: 
 
   // Clone chapters
   if (originalChapters.length > 0) {
-    const newChapters = originalChapters.map(chapter => ({
+    const newChapters = originalChapters.map((chapter: any) => ({
       id: crypto.randomUUID(),
       title: chapter.title,
       objectives: chapter.objectives,
@@ -386,7 +386,7 @@ export async function bulkUpdateChaptersOrder(items: { id: string, order: number
   if (items.length === 0)
     return
 
-  await db.transaction(async (tx) => {
+  await db.transaction(async (tx: any) => {
     for (const item of items) {
       await tx
         .update(programTemplateChapters)
@@ -450,7 +450,7 @@ export async function publishProgram(id: string) {
       gradeId: program.gradeId,
       schoolYearTemplateId: program.schoolYearTemplateId,
     },
-    chapters: chapters.map(c => ({
+    chapters: chapters.map((c: any) => ({
       title: c.title,
       objectives: c.objectives,
       order: c.order,
@@ -469,7 +469,7 @@ export async function publishProgram(id: string) {
   const nextVersion = (lastVersion?.versionNumber || 0) + 1
 
   // 4. Transaction: Update status + Create version
-  await db.transaction(async (tx) => {
+  await db.transaction(async (tx: any) => {
     await tx
       .update(programTemplates)
       .set({
@@ -516,7 +516,7 @@ export async function restoreProgramVersion(versionId: string) {
   const programId = version.programTemplateId
 
   // 2. Transaction: Restore program + Replace chapters
-  await db.transaction(async (tx) => {
+  await db.transaction(async (tx: any) => {
     // Restore program fields
     await tx
       .update(programTemplates)

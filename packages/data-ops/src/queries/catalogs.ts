@@ -1,5 +1,5 @@
 import type { EducationLevel, Grade, Serie, Subject, SubjectCategory, Track } from '@/drizzle/core-schema'
-import { and, asc, count, eq, like, or } from 'drizzle-orm'
+import { and, asc, count, eq, ilike, or } from 'drizzle-orm'
 import { getDb } from '@/database/setup'
 import { educationLevels, grades, series, subjects, tracks } from '@/drizzle/core-schema'
 
@@ -137,7 +137,7 @@ export async function bulkUpdateGradesOrder(items: { id: string, order: number }
   if (items.length === 0)
     return
 
-  await db.transaction(async (tx) => {
+  await db.transaction(async (tx: any) => {
     for (const item of items) {
       await tx
         .update(grades)
@@ -253,8 +253,8 @@ export async function getSubjects(options?: {
   if (search) {
     conditions.push(
       or(
-        like(subjects.name, `%${search}%`),
-        like(subjects.shortName, `%${search}%`),
+        ilike(subjects.name, `%${search}%`),
+        ilike(subjects.shortName, `%${search}%`),
       ),
     )
   }
@@ -269,12 +269,12 @@ export async function getSubjects(options?: {
 
   const total = countResult?.count || 0
 
-  // Get subjects
+  // Get subjects with stable ordering
   const subjectsList = await db
     .select()
     .from(subjects)
     .where(whereClause)
-    .orderBy(asc(subjects.name))
+    .orderBy(asc(subjects.name), asc(subjects.id)) // Add id as secondary sort for stability
     .limit(limit)
     .offset(offset)
 

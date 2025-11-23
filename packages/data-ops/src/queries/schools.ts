@@ -1,5 +1,5 @@
 import type { School, SchoolInsert, SchoolStatus } from '@/drizzle/core-schema'
-import { and, asc, count, desc, eq, inArray, like, or } from 'drizzle-orm'
+import { and, asc, count, desc, eq, ilike, inArray, or } from 'drizzle-orm'
 import { getDb } from '@/database/setup'
 import { schools } from '@/drizzle/core-schema'
 
@@ -30,9 +30,9 @@ export async function getSchools(options: {
   if (search) {
     conditions.push(
       or(
-        like(schools.name, `%${search}%`),
-        like(schools.code, `%${search}%`),
-        like(schools.email, `%${search}%`),
+        ilike(schools.name, `%${search}%`),
+        ilike(schools.code, `%${search}%`),
+        ilike(schools.email, `%${search}%`),
       ),
     )
   }
@@ -167,10 +167,10 @@ export async function searchSchools(query: string, limit: number = 10): Promise<
     .from(schools)
     .where(
       or(
-        like(schools.name, `%${query}%`),
-        like(schools.code, `%${query}%`),
-        like(schools.email, `%${query}%`),
-        like(schools.phone, `%${query}%`),
+        ilike(schools.name, `%${query}%`),
+        ilike(schools.code, `%${query}%`),
+        ilike(schools.email, `%${query}%`),
+        ilike(schools.phone, `%${query}%`),
       ),
     )
     .limit(limit)

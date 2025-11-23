@@ -57,7 +57,7 @@ export async function getDailyActiveUsers(startDate: Date): Promise<number> {
   const db = getDb()
 
   const [result] = await db
-    .select({ count: sql<number>`COUNT(DISTINCT ${activityLogs.userId})` })
+    .select({ count: sql<string>`COUNT(DISTINCT ${activityLogs.userId})` })
     .from(activityLogs)
     .where(
       and(
@@ -66,7 +66,7 @@ export async function getDailyActiveUsers(startDate: Date): Promise<number> {
       ),
     )
 
-  return result?.count || 0
+  return Number(result?.count || 0)
 }
 
 /**
@@ -76,7 +76,7 @@ export async function getWeeklyActiveUsers(startDate: Date): Promise<number> {
   const db = getDb()
 
   const [result] = await db
-    .select({ count: sql<number>`COUNT(DISTINCT ${activityLogs.userId})` })
+    .select({ count: sql<string>`COUNT(DISTINCT ${activityLogs.userId})` })
     .from(activityLogs)
     .where(
       and(
@@ -85,7 +85,7 @@ export async function getWeeklyActiveUsers(startDate: Date): Promise<number> {
       ),
     )
 
-  return result?.count || 0
+  return Number(result?.count || 0)
 }
 
 /**
@@ -95,7 +95,7 @@ export async function getMonthlyActiveUsers(startDate: Date): Promise<number> {
   const db = getDb()
 
   const [result] = await db
-    .select({ count: sql<number>`COUNT(DISTINCT ${activityLogs.userId})` })
+    .select({ count: sql<string>`COUNT(DISTINCT ${activityLogs.userId})` })
     .from(activityLogs)
     .where(
       and(
@@ -104,7 +104,7 @@ export async function getMonthlyActiveUsers(startDate: Date): Promise<number> {
       ),
     )
 
-  return result?.count || 0
+  return Number(result?.count || 0)
 }
 
 /**
@@ -135,7 +135,7 @@ export async function getFeatureUsage(startDate: Date): Promise<FeatureUsage[]> 
     .limit(10)
 
   // Calculate total for percentage
-  const total = results.reduce((sum, r) => sum + r.count, 0)
+  const total = results.reduce((sum: number, r: { count: number }) => sum + r.count, 0)
 
   // Map resource names to friendly names
   const resourceNameMap: Record<string, string> = {
@@ -151,7 +151,7 @@ export async function getFeatureUsage(startDate: Date): Promise<FeatureUsage[]> 
     subject: 'Matières',
   }
 
-  return results.map(r => ({
+  return results.map((r: { resource?: string, count: number }) => ({
     name: resourceNameMap[r.resource || ''] || r.resource || 'Autre',
     usage: total > 0 ? Math.round((r.count / total) * 100) : 0,
   }))
@@ -173,7 +173,7 @@ export async function getApiEndpointUsage(startDate: Date): Promise<ApiEndpointU
     .select({
       endpoint: apiMetrics.endpoint,
       requests: count(),
-      avgResponseTime: sql<number>`ROUND(AVG(${apiMetrics.responseTimeMs}))`,
+      avgResponseTime: sql<string>`ROUND(AVG(${apiMetrics.responseTimeMs}))`,
     })
     .from(apiMetrics)
     .where(gte(apiMetrics.createdAt, startDate))
@@ -181,10 +181,10 @@ export async function getApiEndpointUsage(startDate: Date): Promise<ApiEndpointU
     .orderBy(desc(count()))
     .limit(10)
 
-  return results.map(r => ({
+  return results.map((r: { endpoint: string, requests: number, avgResponseTime?: string }) => ({
     endpoint: r.endpoint,
     requests: r.requests,
-    avgResponseTime: r.avgResponseTime || 0,
+    avgResponseTime: Number(r.avgResponseTime || 0),
   }))
 }
 
@@ -201,7 +201,7 @@ export async function getPeakUsageTimes(startDate: Date): Promise<PeakUsageTime[
 
   const results = await db
     .select({
-      hour: sql<number>`EXTRACT(HOUR FROM ${activityLogs.createdAt})`,
+      hour: sql<string>`EXTRACT(HOUR FROM ${activityLogs.createdAt})`,
       requests: count(),
     })
     .from(activityLogs)
@@ -210,11 +210,11 @@ export async function getPeakUsageTimes(startDate: Date): Promise<PeakUsageTime[
     .orderBy(sql`EXTRACT(HOUR FROM ${activityLogs.createdAt})`)
 
   // Fill in missing hours with 0
-  const hourMap = new Map(results.map(r => [r.hour, r.requests]))
+  const hourMap = new Map(results.map((r: { hour: string, requests: number }) => [Number(r.hour), r.requests]))
 
   return Array.from({ length: 24 }, (_, hour) => ({
     hour,
-    requests: hourMap.get(hour) || 0,
+    requests: (hourMap.get(hour) as number) || 0,
   }))
 }
 
@@ -226,7 +226,7 @@ export async function getSchoolEngagementScore(schoolId: string, startDate: Date
 
   // Count unique active users for this school
   const [activeUsers] = await db
-    .select({ count: sql<number>`COUNT(DISTINCT ${activityLogs.userId})` })
+    .select({ count: sql<string>`COUNT(DISTINCT ${activityLogs.userId})` })
     .from(activityLogs)
     .where(
       and(
@@ -238,7 +238,7 @@ export async function getSchoolEngagementScore(schoolId: string, startDate: Date
 
   // For now, return a simple metric based on activity count
   // In production, this would factor in total users, activity frequency, etc.
-  const activityCount = activeUsers?.count || 0
+  const activityCount = Number(activeUsers?.count || 0)
 
   // Simple engagement score: cap at 100
   return Math.min(Math.round(activityCount * 10), 100)
@@ -252,12 +252,12 @@ export async function getAverageResponseTime(startDate: Date): Promise<number> {
 
   const [result] = await db
     .select({
-      avg: sql<number>`ROUND(AVG(${apiMetrics.responseTimeMs}))`,
+      avg: sql<string>`ROUND(AVG(${apiMetrics.responseTimeMs}))`,
     })
     .from(apiMetrics)
     .where(gte(apiMetrics.createdAt, startDate))
 
-  return result?.avg || 0
+  return Number(result?.avg || 0)
 }
 
 /**
@@ -267,7 +267,7 @@ export async function getUserActivityCount(startDate: Date, endDate: Date): Prom
   const db = getDb()
 
   const [result] = await db
-    .select({ count: sql<number>`COUNT(DISTINCT ${activityLogs.userId})` })
+    .select({ count: sql<string>`COUNT(DISTINCT ${activityLogs.userId})` })
     .from(activityLogs)
     .where(
       and(
@@ -277,5 +277,5 @@ export async function getUserActivityCount(startDate: Date, endDate: Date): Prom
       ),
     )
 
-  return result?.count || 0
+  return Number(result?.count || 0)
 }

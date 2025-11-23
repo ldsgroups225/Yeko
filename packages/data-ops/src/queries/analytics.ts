@@ -154,7 +154,7 @@ export async function getSchoolsPerformance(timeRange: '7d' | '30d' | '90d' | '1
 
   // Calculate engagement scores for each school
   const topSchoolsWithEngagement = await Promise.all(
-    topSchoolsData.map(async (school) => {
+    topSchoolsData.map(async (school: { id: string, name: string, code: string, status: string }) => {
       const engagementScore = await getSchoolEngagementScore(school.id, engagementStartDate)
       return {
         ...school,

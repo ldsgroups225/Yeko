@@ -1,6 +1,7 @@
 import { eq } from 'drizzle-orm'
 import { afterAll, beforeAll, describe, expect } from 'vitest'
 import { getDb } from '../database/setup'
+import { auth_user } from '../drizzle/auth-schema'
 import { activityLogs, apiMetrics, schools } from '../drizzle/core-schema'
 import {
   getApiEndpointUsage,
@@ -16,23 +17,33 @@ import {
 } from '../queries/activity-tracking'
 import {
   getAnalyticsOverview,
+  generateReportData,
   getPlatformUsage,
   getSchoolsPerformance,
 } from '../queries/analytics'
 
 describe('activity Tracking', () => {
-  const db = getDb()
+  let db: ReturnType<typeof getDb>
   const testUserId = 'test-user-123'
   const testSchoolId = 'test-school-123'
 
   beforeAll(async () => {
+    db = getDb()
+    // Create test user first (required for foreign key constraint)
+    await db.insert(auth_user).values({
+      id: testUserId,
+      name: 'Test User',
+      email: 'test-user@example.com',
+      emailVerified: true,
+    }).onConflictDoNothing() // Use onConflictDoNothing to avoid duplicate key errors
+
     // Create test school
     await db.insert(schools).values({
       id: testSchoolId,
       name: 'Test School',
       code: 'TEST001',
       status: 'active',
-    })
+    }).onConflictDoNothing() // Use onConflictDoNothing to avoid duplicate key errors
   })
 
   afterAll(async () => {
@@ -40,6 +51,7 @@ describe('activity Tracking', () => {
     await db.delete(activityLogs)
     await db.delete(apiMetrics)
     await db.delete(schools).where(eq(schools.id, testSchoolId))
+    await db.delete(auth_user).where(eq(auth_user.id, testUserId))
   })
 
   test('should log user activity', async () => {
@@ -222,6 +234,24 @@ describe('analytics Queries', () => {
     expect(typeof result.schoolsGrowth).toBe('number')
     expect(Number.isFinite(result.schoolsGrowth)).toBe(true)
   })
+
+  test('should handle zero growth calculation correctly', async () => {
+    // Test edge case where there are no schools in previous period
+    const result = await getAnalyticsOverview('7d') // Short time range likely to have zero previous period
+
+    expect(result.schoolsGrowth).toBeGreaterThanOrEqual(0)
+    expect(typeof result.userGrowth).toBe('number')
+    expect(Number.isFinite(result.userGrowth)).toBe(true)
+  })
+
+  test('should handle engagement rate calculation edge cases', async () => {
+    const result = await getAnalyticsOverview('30d')
+
+    // Engagement rate should be between 0 and 100
+    expect(result.engagementRate).toBeGreaterThanOrEqual(0)
+    expect(result.engagementRate).toBeLessThanOrEqual(100)
+    expect(typeof result.engagementRate).toBe('number')
+  })
 })
 
 describe('analytics Edge Cases', () => {
@@ -245,5 +275,30 @@ describe('analytics Edge Cases', () => {
     const result2 = await getAnalyticsOverview('30d')
 
     expect(Object.keys(result1).sort()).toStrictEqual(Object.keys(result2).sort())
+  })
+})
+
+describe('generateReportData', () => {
+  test('should generate report data for all time ranges', async () => {
+    const timeRanges: Array<'7d' | '30d' | '90d' | '1y'> = ['7d', '30d', '90d', '1y']
+
+    for (const timeRange of timeRanges) {
+      const reportData = await generateReportData(timeRange)
+
+      expect(reportData).toHaveProperty('generatedAt')
+      expect(reportData).toHaveProperty('timeRange', timeRange)
+      expect(reportData).toHaveProperty('overview')
+      expect(reportData).toHaveProperty('schoolsPerformance')
+      expect(reportData).toHaveProperty('platformUsage')
+      expect(typeof reportData.generatedAt).toBe('string')
+    }
+  })
+
+  test('should generate consistent report structure', async () => {
+    const report1 = await generateReportData('30d')
+    const report2 = await generateReportData('30d')
+
+    expect(Object.keys(report1).sort()).toStrictEqual(Object.keys(report2).sort())
+    expect(report1.timeRange).toBe(report2.timeRange)
   })
 })

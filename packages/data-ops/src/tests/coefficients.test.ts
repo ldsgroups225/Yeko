@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test } from 'vitest'
+import { afterAll, beforeEach, describe, expect, test } from 'vitest'
 import { createGrade, createSerie, createSubject, createTrack } from '../queries/catalogs'
 import {
   bulkCreateCoefficients,
@@ -12,6 +12,9 @@ import {
   updateCoefficientTemplate,
 } from '../queries/coefficients'
 import { createSchoolYearTemplate } from '../queries/programs'
+import { getDb } from '../database/setup'
+import { eq } from 'drizzle-orm'
+import { coefficientTemplates, schoolYearTemplates, subjects, grades, series, tracks } from '../drizzle/core-schema'
 
 describe('coefficient Templates', () => {
   let testYearId: string
@@ -455,5 +458,36 @@ describe('coefficient Templates', () => {
 
       expect(updated.updatedAt.getTime()).toBeGreaterThan(createdAt.getTime())
     })
+
+    test('should throw error when updating non-existent coefficient template', async () => {
+      // This covers lines 188-189 in coefficients.ts
+      const nonExistentId = 'non-existent-coefficient-id'
+
+      await expect(updateCoefficientTemplate(nonExistentId, { weight: 5 })).rejects.toThrow(
+        `Coefficient template with id ${nonExistentId} not found`,
+      )
+    })
+  })
+
+  afterAll(async () => {
+    // Clean up test data to prevent foreign key constraint issues
+    try {
+      const db = getDb()
+      // Delete coefficient templates first (references other tables)
+      await db.delete(coefficientTemplates).where(eq(coefficientTemplates.schoolYearTemplateId, testYearId))
+      await db.delete(coefficientTemplates).where(eq(coefficientTemplates.subjectId, testSubjectId))
+      await db.delete(coefficientTemplates).where(eq(coefficientTemplates.gradeId, testGradeId))
+      await db.delete(coefficientTemplates).where(eq(coefficientTemplates.seriesId, testSeriesId))
+
+      // Then clean up the referenced tables
+      await db.delete(schoolYearTemplates).where(eq(schoolYearTemplates.id, testYearId))
+      await db.delete(subjects).where(eq(subjects.id, testSubjectId))
+      await db.delete(grades).where(eq(grades.id, testGradeId))
+      await db.delete(series).where(eq(series.id, testSeriesId))
+      await db.delete(tracks).where(eq(tracks.id, testTrackId))
+    } catch (error) {
+      // Ignore cleanup errors
+      console.warn('Coefficients test cleanup warning:', error)
+    }
   })
 })
