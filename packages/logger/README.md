@@ -65,7 +65,7 @@ logger.info('Grade submitted', {
   userId: 'student-123',
   userRole: 'student',
   schoolId: 'school-456',
-  academicYearId: 'year-2024',
+  academicYearId: 'year-2025',
   courseId: 'math-101',
   subjectId: 'mathematics',
 })
@@ -314,7 +314,7 @@ import {
 
 const userContext = createUserContext('user-123', 'teacher', { sessionId: 'abc-123' })
 const schoolContext = createSchoolContext('school-456', 'org-789')
-const academicContext = createAcademicContext('year-2024', 'fall', 'math-101')
+const academicContext = createAcademicContext('year-2025', 'fall', 'math-101')
 ```
 
 #### Performance Tracking

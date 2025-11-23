@@ -15,6 +15,7 @@ import { ThemeProvider } from '@/components/theme'
 import { initializeLogger } from '@/lib/logger'
 import appCss from '@/styles.css?url'
 import { seo } from '@/utils/seo'
+import { generateStructuredData } from '@/utils/structuredData'
 import '@/i18n/config'
 
 export const Route = createRootRouteWithContext<{
@@ -30,9 +31,10 @@ export const Route = createRootRouteWithContext<{
         content: 'width=device-width, initial-scale=1',
       },
       ...seo({
-        title:
-          'TanStack Start | Type-Safe, Client-First, Full-Stack React Framework',
-        description: `TanStack Start is a type-safe, client-first, full-stack React framework. `,
+        title: 'Yeko | Smart School Management Platform',
+        description: `Yeko is a comprehensive school management platform designed to streamline educational operations and enhance learning experiences.`,
+        canonical: 'https://yeko.com',
+        keywords: 'school management, education platform, student information system, school administration, education technology, SIS, LMS',
       }),
     ],
     links: [
@@ -97,6 +99,27 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         <HeadContent />
         <script
+          type="application/ld+json"
+          // eslint-disable-next-line react-dom/no-dangerously-set-innerhtml
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(generateStructuredData('organization')),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react-dom/no-dangerously-set-innerhtml
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(generateStructuredData('software')),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react-dom/no-dangerously-set-innerhtml
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(generateStructuredData('website')),
+          }}
+        />
+        <script
           // eslint-disable-next-line react-dom/no-dangerously-set-innerhtml
           dangerouslySetInnerHTML={{
             __html: `
@@ -105,7 +128,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                   var theme = localStorage.getItem('ui-theme') || 'system';
                   var systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
                   var resolvedTheme = theme === 'system' ? systemTheme : theme;
-                  
+
                   if (resolvedTheme === 'dark') {
                     document.documentElement.classList.add('dark');
                   } else {
