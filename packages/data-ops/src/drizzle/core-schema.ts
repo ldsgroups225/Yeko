@@ -1,6 +1,9 @@
 import { relations } from 'drizzle-orm'
 import { boolean, index, integer, jsonb, pgTable, smallint, text, timestamp } from 'drizzle-orm/pg-core'
 
+// Import auth_user for foreign key reference
+import { auth_user } from './auth-schema'
+
 // --- Level 0: Independent Entities ---
 
 export const schools = pgTable('schools', {
@@ -267,6 +270,65 @@ export const coefficientTemplatesRelations = relations(coefficientTemplates, ({ 
   }),
 }))
 
+// --- Activity Tracking & Analytics ---
+
+export const activityLogs = pgTable('activity_logs', {
+  id: text('id').primaryKey(), // UUID
+  userId: text('user_id').references(() => auth_user.id, { onDelete: 'cascade' }),
+  schoolId: text('school_id').references(() => schools.id, { onDelete: 'cascade' }),
+  action: text('action').notNull(), // 'view', 'create', 'update', 'delete', 'export', 'login', etc.
+  resource: text('resource'), // 'school', 'student', 'grade', 'program', etc.
+  resourceId: text('resource_id'), // ID of the resource being acted upon
+  metadata: jsonb('metadata'), // Additional context (filters, search terms, etc.)
+  ipAddress: text('ip_address'),
+  userAgent: text('user_agent'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, table => ({
+  userTimeIdx: index('idx_activity_user_time').on(table.userId, table.createdAt.desc()),
+  schoolTimeIdx: index('idx_activity_school_time').on(table.schoolId, table.createdAt.desc()),
+  actionTimeIdx: index('idx_activity_action_time').on(table.action, table.createdAt.desc()),
+  resourceIdx: index('idx_activity_resource').on(table.resource, table.resourceId),
+}))
+
+export const apiMetrics = pgTable('api_metrics', {
+  id: text('id').primaryKey(), // UUID
+  endpoint: text('endpoint').notNull(), // '/api/schools', '/api/analytics', etc.
+  method: text('method', { enum: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] }).notNull(),
+  statusCode: smallint('status_code').notNull(),
+  responseTimeMs: integer('response_time_ms').notNull(),
+  userId: text('user_id').references(() => auth_user.id, { onDelete: 'set null' }),
+  schoolId: text('school_id').references(() => schools.id, { onDelete: 'set null' }),
+  errorMessage: text('error_message'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, table => ({
+  endpointTimeIdx: index('idx_api_endpoint_time').on(table.endpoint, table.createdAt.desc()),
+  statusTimeIdx: index('idx_api_status_time').on(table.statusCode, table.createdAt.desc()),
+  userTimeIdx: index('idx_api_user_time').on(table.userId, table.createdAt.desc()),
+}))
+
+// Relations
+export const activityLogsRelations = relations(activityLogs, ({ one }) => ({
+  user: one(auth_user, {
+    fields: [activityLogs.userId],
+    references: [auth_user.id],
+  }),
+  school: one(schools, {
+    fields: [activityLogs.schoolId],
+    references: [schools.id],
+  }),
+}))
+
+export const apiMetricsRelations = relations(apiMetrics, ({ one }) => ({
+  user: one(auth_user, {
+    fields: [apiMetrics.userId],
+    references: [auth_user.id],
+  }),
+  school: one(schools, {
+    fields: [apiMetrics.schoolId],
+    references: [schools.id],
+  }),
+}))
+
 // --- Type Exports for Reusability ---
 
 // Full insert types (for explicit ID creation)
@@ -282,6 +344,8 @@ export type ProgramTemplateInsert = typeof programTemplates.$inferInsert
 export type ProgramTemplateChapterInsert = typeof programTemplateChapters.$inferInsert
 export type ProgramTemplateVersionInsert = typeof programTemplateVersions.$inferInsert
 export type CoefficientTemplateInsert = typeof coefficientTemplates.$inferInsert
+export type ActivityLogInsert = typeof activityLogs.$inferInsert
+export type ApiMetricInsert = typeof apiMetrics.$inferInsert
 
 // Types without auto-generated fields (for data seeding)
 export type SchoolData = Omit<SchoolInsert, 'id' | 'createdAt' | 'updatedAt'>
@@ -309,6 +373,8 @@ export type ProgramTemplate = typeof programTemplates.$inferSelect
 export type ProgramTemplateChapter = typeof programTemplateChapters.$inferSelect
 export type ProgramTemplateVersion = typeof programTemplateVersions.$inferSelect
 export type CoefficientTemplate = typeof coefficientTemplates.$inferSelect
+export type ActivityLog = typeof activityLogs.$inferSelect
+export type ApiMetric = typeof apiMetrics.$inferSelect
 
 // Enum types for type safety
 export type SubjectCategory = 'Scientifique' | 'Littéraire' | 'Sportif' | 'Autre'

@@ -16,6 +16,7 @@ import { Route as AuthAppRouteRouteImport } from './routes/_auth/app/route'
 import { Route as AuthAppIndexRouteImport } from './routes/_auth/app/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as AuthAppDashboardRouteImport } from './routes/_auth/app/dashboard'
+import { Route as AuthAppAnalyticsRouteImport } from './routes/_auth/app/analytics'
 import { Route as AuthAppSupportIndexRouteImport } from './routes/_auth/app/support/index'
 import { Route as AuthAppSchoolsIndexRouteImport } from './routes/_auth/app/schools/index'
 import { Route as AuthAppCatalogsIndexRouteImport } from './routes/_auth/app/catalogs/index'
@@ -67,6 +68,11 @@ const AuthAppDashboardRoute = AuthAppDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthAppRouteRoute,
 } as any)
+const AuthAppAnalyticsRoute = AuthAppAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AuthAppRouteRoute,
+} as any)
 const AuthAppSupportIndexRoute = AuthAppSupportIndexRouteImport.update({
   id: '/support/',
   path: '/support/',
@@ -83,9 +89,9 @@ const AuthAppCatalogsIndexRoute = AuthAppCatalogsIndexRouteImport.update({
   getParentRoute: () => AuthAppRouteRoute,
 } as any)
 const AuthAppAnalyticsIndexRoute = AuthAppAnalyticsIndexRouteImport.update({
-  id: '/analytics/',
-  path: '/analytics/',
-  getParentRoute: () => AuthAppRouteRoute,
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthAppAnalyticsRoute,
 } as any)
 const AuthAppSchoolsCreateRoute = AuthAppSchoolsCreateRouteImport.update({
   id: '/schools/create',
@@ -157,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/demo-request': typeof DemoRequestRoute
   '/app': typeof AuthAppRouteRouteWithChildren
+  '/app/analytics': typeof AuthAppAnalyticsRouteWithChildren
   '/app/dashboard': typeof AuthAppDashboardRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/app/': typeof AuthAppIndexRoute
@@ -169,7 +176,7 @@ export interface FileRoutesByFullPath {
   '/app/polar/subscriptions': typeof AuthAppPolarSubscriptionsRoute
   '/app/schools/$schoolId': typeof AuthAppSchoolsSchoolIdRoute
   '/app/schools/create': typeof AuthAppSchoolsCreateRoute
-  '/app/analytics': typeof AuthAppAnalyticsIndexRoute
+  '/app/analytics/': typeof AuthAppAnalyticsIndexRoute
   '/app/catalogs': typeof AuthAppCatalogsIndexRoute
   '/app/schools': typeof AuthAppSchoolsIndexRoute
   '/app/support': typeof AuthAppSupportIndexRoute
@@ -206,6 +213,7 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteRouteWithChildren
   '/demo-request': typeof DemoRequestRoute
   '/_auth/app': typeof AuthAppRouteRouteWithChildren
+  '/_auth/app/analytics': typeof AuthAppAnalyticsRouteWithChildren
   '/_auth/app/dashboard': typeof AuthAppDashboardRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_auth/app/': typeof AuthAppIndexRoute
@@ -232,6 +240,7 @@ export interface FileRouteTypes {
     | '/'
     | '/demo-request'
     | '/app'
+    | '/app/analytics'
     | '/app/dashboard'
     | '/api/auth/$'
     | '/app/'
@@ -244,7 +253,7 @@ export interface FileRouteTypes {
     | '/app/polar/subscriptions'
     | '/app/schools/$schoolId'
     | '/app/schools/create'
-    | '/app/analytics'
+    | '/app/analytics/'
     | '/app/catalogs'
     | '/app/schools'
     | '/app/support'
@@ -280,6 +289,7 @@ export interface FileRouteTypes {
     | '/_auth'
     | '/demo-request'
     | '/_auth/app'
+    | '/_auth/app/analytics'
     | '/_auth/app/dashboard'
     | '/api/auth/$'
     | '/_auth/app/'
@@ -359,6 +369,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAppDashboardRouteImport
       parentRoute: typeof AuthAppRouteRoute
     }
+    '/_auth/app/analytics': {
+      id: '/_auth/app/analytics'
+      path: '/analytics'
+      fullPath: '/app/analytics'
+      preLoaderRoute: typeof AuthAppAnalyticsRouteImport
+      parentRoute: typeof AuthAppRouteRoute
+    }
     '/_auth/app/support/': {
       id: '/_auth/app/support/'
       path: '/support'
@@ -382,10 +399,10 @@ declare module '@tanstack/react-router' {
     }
     '/_auth/app/analytics/': {
       id: '/_auth/app/analytics/'
-      path: '/analytics'
-      fullPath: '/app/analytics'
+      path: '/'
+      fullPath: '/app/analytics/'
       preLoaderRoute: typeof AuthAppAnalyticsIndexRouteImport
-      parentRoute: typeof AuthAppRouteRoute
+      parentRoute: typeof AuthAppAnalyticsRoute
     }
     '/_auth/app/schools/create': {
       id: '/_auth/app/schools/create'
@@ -474,6 +491,17 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthAppAnalyticsRouteChildren {
+  AuthAppAnalyticsIndexRoute: typeof AuthAppAnalyticsIndexRoute
+}
+
+const AuthAppAnalyticsRouteChildren: AuthAppAnalyticsRouteChildren = {
+  AuthAppAnalyticsIndexRoute: AuthAppAnalyticsIndexRoute,
+}
+
+const AuthAppAnalyticsRouteWithChildren =
+  AuthAppAnalyticsRoute._addFileChildren(AuthAppAnalyticsRouteChildren)
+
 interface AuthAppCatalogsProgramsRouteChildren {
   AuthAppCatalogsProgramsProgramIdRoute: typeof AuthAppCatalogsProgramsProgramIdRoute
 }
@@ -490,6 +518,7 @@ const AuthAppCatalogsProgramsRouteWithChildren =
   )
 
 interface AuthAppRouteRouteChildren {
+  AuthAppAnalyticsRoute: typeof AuthAppAnalyticsRouteWithChildren
   AuthAppDashboardRoute: typeof AuthAppDashboardRoute
   AuthAppIndexRoute: typeof AuthAppIndexRoute
   AuthAppCatalogsCoefficientsRoute: typeof AuthAppCatalogsCoefficientsRoute
@@ -501,7 +530,6 @@ interface AuthAppRouteRouteChildren {
   AuthAppPolarSubscriptionsRoute: typeof AuthAppPolarSubscriptionsRoute
   AuthAppSchoolsSchoolIdRoute: typeof AuthAppSchoolsSchoolIdRoute
   AuthAppSchoolsCreateRoute: typeof AuthAppSchoolsCreateRoute
-  AuthAppAnalyticsIndexRoute: typeof AuthAppAnalyticsIndexRoute
   AuthAppCatalogsIndexRoute: typeof AuthAppCatalogsIndexRoute
   AuthAppSchoolsIndexRoute: typeof AuthAppSchoolsIndexRoute
   AuthAppSupportIndexRoute: typeof AuthAppSupportIndexRoute
@@ -510,6 +538,7 @@ interface AuthAppRouteRouteChildren {
 }
 
 const AuthAppRouteRouteChildren: AuthAppRouteRouteChildren = {
+  AuthAppAnalyticsRoute: AuthAppAnalyticsRouteWithChildren,
   AuthAppDashboardRoute: AuthAppDashboardRoute,
   AuthAppIndexRoute: AuthAppIndexRoute,
   AuthAppCatalogsCoefficientsRoute: AuthAppCatalogsCoefficientsRoute,
@@ -521,7 +550,6 @@ const AuthAppRouteRouteChildren: AuthAppRouteRouteChildren = {
   AuthAppPolarSubscriptionsRoute: AuthAppPolarSubscriptionsRoute,
   AuthAppSchoolsSchoolIdRoute: AuthAppSchoolsSchoolIdRoute,
   AuthAppSchoolsCreateRoute: AuthAppSchoolsCreateRoute,
-  AuthAppAnalyticsIndexRoute: AuthAppAnalyticsIndexRoute,
   AuthAppCatalogsIndexRoute: AuthAppCatalogsIndexRoute,
   AuthAppSchoolsIndexRoute: AuthAppSchoolsIndexRoute,
   AuthAppSupportIndexRoute: AuthAppSupportIndexRoute,

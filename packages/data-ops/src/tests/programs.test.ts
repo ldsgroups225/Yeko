@@ -42,12 +42,7 @@ describe('program Queries', () => {
   test('should publish a program', async () => {
     // Mock implementation details would go here
     // For now we just check if the function exists and runs
-    try {
-      await publishProgram('test-id')
-    }
-    catch {
-      // Expected to fail with mock db
-    }
+    await expect(publishProgram('test-id')).rejects.toThrow()
   })
 
   test('should get program versions', async () => {
@@ -56,11 +51,6 @@ describe('program Queries', () => {
   })
 
   test('should restore a program version', async () => {
-    try {
-      await restoreProgramVersion('version-id')
-    }
-    catch {
-      // Expected to fail with mock db
-    }
+    await expect(restoreProgramVersion('version-id')).rejects.toThrow()
   })
 })

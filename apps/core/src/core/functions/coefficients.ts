@@ -93,7 +93,7 @@ export const validateCoefficientImportMutation = createServerFn()
   .handler(async (ctx) => {
     // This will be called from the client with parsed Excel data
     // to validate against existing data in the database
-    const { data } = ctx.data as { data: any[] }
+    // const { data: _data } = ctx.data as { data: any[] }
 
     // TODO: Implement validation logic
     // - Check if school years exist
