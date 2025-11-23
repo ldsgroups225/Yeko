@@ -37,6 +37,8 @@
     "drizzle:pull": "drizzle-kit pull --config drizzle.config.ts",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "seed": "node dist/seed/index.js",
     "seed:fresh": "node dist/seed/index.js --fresh",
     "verify": "node dist/verify.js"

@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm'
-import { boolean, integer, jsonb, pgTable, smallint, text, timestamp } from 'drizzle-orm/pg-core'
+import { boolean, index, integer, jsonb, pgTable, smallint, text, timestamp } from 'drizzle-orm/pg-core'
 
 // --- Level 0: Independent Entities ---
 
@@ -233,7 +233,20 @@ export const coefficientTemplates = pgTable('coefficient_templates', {
     .defaultNow()
     .$onUpdate(() => new Date())
     .notNull(),
-})
+}, table => ({
+  // Composite index for fast coefficient lookups during average calculations
+  // This is CRITICAL for performance - used thousands of times daily
+  coefficientLookupIdx: index('idx_coeff_lookup').on(
+    table.schoolYearTemplateId,
+    table.gradeId,
+    table.seriesId,
+    table.subjectId,
+  ),
+  // Individual indexes for filtering
+  yearIdx: index('idx_coeff_year').on(table.schoolYearTemplateId),
+  gradeIdx: index('idx_coeff_grade').on(table.gradeId),
+  subjectIdx: index('idx_coeff_subject').on(table.subjectId),
+}))
 
 export const coefficientTemplatesRelations = relations(coefficientTemplates, ({ one }) => ({
   schoolYearTemplate: one(schoolYearTemplates, {

@@ -1,16 +1,44 @@
+import type { FormEvent } from 'react'
+import type { CreateCoefficientTemplateInput } from '@/schemas/coefficients'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import {
+  AlertTriangle,
   Calculator,
+  Copy,
   Download,
-  Edit,
+  FileDown,
+  FileUp,
   Plus,
   Save,
-  Upload,
+  Trash2,
+  X,
 } from 'lucide-react'
-import { useEffect } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { toast } from 'sonner'
+import { CatalogListSkeleton, CatalogStatsSkeleton } from '@/components/catalogs/catalog-skeleton'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { COEFFICIENT_LIMITS, COEFFICIENT_MESSAGES } from '@/constants/coefficients'
+import { gradesQueryOptions, seriesQueryOptions, subjectsQueryOptions } from '@/integrations/tanstack-query/catalogs-options'
+import {
+  bulkUpdateCoefficientsMutationOptions,
+  coefficientStatsQueryOptions,
+  coefficientTemplatesQueryOptions,
+  copyCoefficientsMutationOptions,
+  createCoefficientTemplateMutationOptions,
+  deleteCoefficientTemplateMutationOptions,
+} from '@/integrations/tanstack-query/coefficients-options'
+import { schoolYearTemplatesQueryOptions } from '@/integrations/tanstack-query/programs-options'
+import { exportCoefficientsToExcel, generateCoefficientTemplate, parseCoefficientsExcel } from '@/lib/excel/coefficients-excel'
 import { useLogger } from '@/lib/logger'
 
 export const Route = createFileRoute('/_auth/app/catalogs/coefficients')({
@@ -19,6 +47,95 @@ export const Route = createFileRoute('/_auth/app/catalogs/coefficients')({
 
 function CoefficientsCatalog() {
   const { logger } = useLogger()
+  const queryClient = useQueryClient()
+
+  const [isCreating, setIsCreating] = useState(false)
+  const [deletingCoefficient, setDeletingCoefficient] = useState<{ id: string, name: string } | null>(null)
+  const [yearFilter, setYearFilter] = useState<string>('all')
+  const [gradeFilter, setGradeFilter] = useState<string>('all')
+  const [seriesFilter, setSeriesFilter] = useState<string>('all')
+  const [editingCells, setEditingCells] = useState<Record<string, number>>({})
+  const [viewMode, setViewMode] = useState<'matrix' | 'list'>('matrix')
+  const [isImporting, setIsImporting] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Fetch data
+  const { data: schoolYears, isLoading: yearsLoading } = useQuery(schoolYearTemplatesQueryOptions())
+  const { data: subjects } = useQuery(subjectsQueryOptions({ limit: 100 }))
+  const { data: grades } = useQuery(gradesQueryOptions())
+  const { data: seriesData } = useQuery(seriesQueryOptions())
+  const { data: stats, isLoading: statsLoading } = useQuery(coefficientStatsQueryOptions())
+
+  const queryParams = useMemo(() => ({
+    schoolYearTemplateId: yearFilter === 'all' ? undefined : yearFilter,
+    gradeId: gradeFilter === 'all' ? undefined : gradeFilter,
+    seriesId: seriesFilter === 'all' ? undefined : seriesFilter,
+    limit: 200,
+  }), [yearFilter, gradeFilter, seriesFilter])
+
+  const { data: coefficientsData, isLoading: coefficientsLoading } = useQuery(
+    coefficientTemplatesQueryOptions(queryParams),
+  )
+
+  // Mutations
+  const createMutation = useMutation({
+    ...createCoefficientTemplateMutationOptions,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['coefficient-templates'] })
+      queryClient.invalidateQueries({ queryKey: ['coefficient-stats'] })
+      setIsCreating(false)
+      toast.success(COEFFICIENT_MESSAGES.CREATED)
+      logger.info('Coefficient template created')
+    },
+    onError: (error: any) => {
+      const isDuplicate = error?.message?.includes('unique') || error?.message?.includes('duplicate')
+      toast.error(isDuplicate ? COEFFICIENT_MESSAGES.ERROR_DUPLICATE : COEFFICIENT_MESSAGES.ERROR_CREATE)
+      logger.error('Failed to create coefficient template', error)
+    },
+  })
+
+  const deleteMutation = useMutation({
+    ...deleteCoefficientTemplateMutationOptions,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['coefficient-templates'] })
+      queryClient.invalidateQueries({ queryKey: ['coefficient-stats'] })
+      setDeletingCoefficient(null)
+      toast.success(COEFFICIENT_MESSAGES.DELETED)
+      logger.info('Coefficient template deleted')
+    },
+    onError: (error) => {
+      toast.error(COEFFICIENT_MESSAGES.ERROR_DELETE)
+      logger.error('Failed to delete coefficient template', error)
+    },
+  })
+
+  const bulkUpdateMutation = useMutation({
+    ...bulkUpdateCoefficientsMutationOptions,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['coefficient-templates'] })
+      setEditingCells({})
+      toast.success(COEFFICIENT_MESSAGES.BULK_UPDATED)
+      logger.info('Coefficients bulk updated')
+    },
+    onError: (error) => {
+      toast.error(COEFFICIENT_MESSAGES.ERROR_BULK_UPDATE)
+      logger.error('Failed to bulk update coefficients', error)
+    },
+  })
+
+  const copyMutation = useMutation({
+    ...copyCoefficientsMutationOptions,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['coefficient-templates'] })
+      queryClient.invalidateQueries({ queryKey: ['coefficient-stats'] })
+      toast.success(COEFFICIENT_MESSAGES.COPIED)
+      logger.info('Coefficients copied from previous year')
+    },
+    onError: (error) => {
+      toast.error(COEFFICIENT_MESSAGES.ERROR_COPY)
+      logger.error('Failed to copy coefficients', error)
+    },
+  })
 
   useEffect(() => {
     logger.info('Coefficients catalog page viewed', {
@@ -27,193 +144,579 @@ function CoefficientsCatalog() {
     })
   }, [logger])
 
-  // Mock coefficients matrix data
-  const coefficientsMatrix = [
-    { 'subject': 'Mathématiques', '6ème': 3, '5ème': 3, '4ème': 3, '3ème': 3, '2nde': 4, '1èreS': 5, '1èreA': 3, 'TerminaleS': 7, 'TerminaleA': 4 },
-    { 'subject': 'Français', '6ème': 4, '5ème': 4, '4ème': 4, '3ème': 4, '2nde': 3, '1èreS': 3, '1èreA': 4, 'TerminaleS': 3, 'TerminaleA': 5 },
-    { 'subject': 'Physique-Chimie', '6ème': 2, '5ème': 2, '4ème': 3, '3ème': 3, '2nde': 3, '1èreS': 5, '1èreA': 0, 'TerminaleS': 6, 'TerminaleA': 0 },
-    { 'subject': 'SVT', '6ème': 2, '5ème': 2, '4ème': 3, '3ème': 3, '2nde': 3, '1èreS': 5, '1èreA': 0, 'TerminaleS': 6, 'TerminaleA': 0 },
-    { 'subject': 'Histoire-Géographie', '6ème': 2, '5ème': 2, '4ème': 2, '3ème': 2, '2nde': 3, '1èreS': 2, '1èreA': 3, 'TerminaleS': 2, 'TerminaleA': 3 },
-  ]
+  const handleCreate = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    const data: CreateCoefficientTemplateInput = {
+      weight: Number.parseInt(formData.get('weight') as string),
+      schoolYearTemplateId: formData.get('schoolYearTemplateId') as string,
+      subjectId: formData.get('subjectId') as string,
+      gradeId: formData.get('gradeId') as string,
+      seriesId: (formData.get('seriesId') as string) || null,
+    }
+    createMutation.mutate(data)
+  }
 
-  const grades = ['6ème', '5ème', '4ème', '3ème', '2nde', '1èreS', '1èreA', 'TerminaleS', 'TerminaleA']
+  const handleDelete = () => {
+    if (deletingCoefficient) {
+      deleteMutation.mutate({ id: deletingCoefficient.id })
+    }
+  }
+
+  const handleCellEdit = (coefficientId: string, newWeight: number) => {
+    setEditingCells(prev => ({ ...prev, [coefficientId]: newWeight }))
+  }
+
+  const handleSaveChanges = () => {
+    const updates = Object.entries(editingCells).map(([id, weight]) => ({ id, weight }))
+    if (updates.length > 0) {
+      bulkUpdateMutation.mutate(updates)
+    }
+  }
+
+  const handleCopyFromPreviousYear = () => {
+    if (!schoolYears || schoolYears.length < 2) {
+      toast.error('Impossible de trouver les années scolaires')
+      return
+    }
+
+    const activeYear = schoolYears.find(y => y.isActive)
+    const previousYear = schoolYears.find(y => !y.isActive)
+
+    if (!activeYear || !previousYear) {
+      toast.error('Impossible de trouver les années scolaires')
+      return
+    }
+
+    copyMutation.mutate({
+      sourceYearId: previousYear.id,
+      targetYearId: activeYear.id,
+    })
+  }
+
+  const handleExport = async () => {
+    if (!coefficientsData || coefficientsData.coefficients.length === 0) {
+      toast.error('Aucun coefficient à exporter')
+      return
+    }
+
+    try {
+      await exportCoefficientsToExcel(
+        coefficientsData.coefficients,
+        `coefficients-${new Date().toISOString().split('T')[0]}.xlsx`,
+      )
+      toast.success('Coefficients exportés avec succès')
+      logger.info('Coefficients exported to Excel')
+    }
+    catch (error) {
+      toast.error('Erreur lors de l\'exportation')
+      logger.error('Failed to export coefficients', error instanceof Error ? error : new Error(String(error)))
+    }
+  }
+
+  const handleDownloadTemplate = async () => {
+    try {
+      await generateCoefficientTemplate()
+      toast.success('Modèle téléchargé avec succès')
+      logger.info('Coefficient template downloaded')
+    }
+    catch (error) {
+      toast.error('Erreur lors du téléchargement du modèle')
+      logger.error('Failed to download template', error instanceof Error ? error : new Error(String(error)))
+    }
+  }
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file)
+      return
+
+    setIsImporting(true)
+
+    try {
+      const { data, errors } = await parseCoefficientsExcel(file)
+
+      if (errors.length > 0) {
+        toast.error(`Erreurs trouvées: ${errors.length}`, {
+          description: errors.slice(0, 3).join(', '),
+        })
+        logger.error('Excel import validation errors', new Error(errors.join('; ')))
+        setIsImporting(false)
+        return
+      }
+
+      if (data.length === 0) {
+        toast.error('Aucune donnée trouvée dans le fichier')
+        setIsImporting(false)
+        return
+      }
+
+      // TODO: Map Excel data to coefficient IDs and bulk create
+      // For now, show success message
+      toast.success(`${data.length} coefficients prêts à être importés`, {
+        description: 'Fonctionnalité d\'import en cours de développement',
+      })
+      logger.info('Excel data parsed successfully', { count: data.length })
+    }
+    catch (error) {
+      toast.error('Erreur lors de l\'import')
+      logger.error('Failed to import coefficients', error instanceof Error ? error : new Error(String(error)))
+    }
+    finally {
+      setIsImporting(false)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+    }
+  }
+
+  // Build matrix data
+  const matrixData = useMemo(() => {
+    if (!coefficientsData || !subjects || !grades)
+      return null
+
+    const matrix: Record<string, Record<string, { id: string, weight: number, seriesName?: string }>> = {}
+
+    coefficientsData.coefficients.forEach((coef) => {
+      const subjectName = coef.subject?.name || 'Unknown'
+      const gradeName = coef.grade?.name || 'Unknown'
+      const key = coef.series ? `${gradeName} (${coef.series.name})` : gradeName
+
+      const subjectMatrix = matrix[subjectName] || {}
+      subjectMatrix[key] = {
+        id: coef.id,
+        weight: editingCells[coef.id] ?? coef.weight,
+        seriesName: coef.series?.name,
+      }
+      matrix[subjectName] = subjectMatrix
+    })
+
+    return matrix
+  }, [coefficientsData, subjects, grades, editingCells])
+
+  const activeYear = schoolYears?.find(y => y.isActive)
+
+  if (yearsLoading || statsLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="space-y-2">
+          <Skeleton className="h-8 w-64" />
+          <Skeleton className="h-4 w-96" />
+        </div>
+        <CatalogStatsSkeleton />
+        <CatalogListSkeleton count={5} />
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Coefficient Templates</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Coefficients</h1>
           <p className="text-muted-foreground">
-            Define subject coefficients for grade calculations across different grade levels and series
+            Gérer les coefficients des matières pour le calcul des moyennes
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="gap-2">
-            <Download className="h-4 w-4" />
-            Export Matrix
+          <Button variant="outline" size="sm" onClick={handleDownloadTemplate}>
+            <FileDown className="h-4 w-4 mr-2" />
+            Modèle
           </Button>
-          <Button variant="outline" className="gap-2">
-            <Upload className="h-4 w-4" />
-            Import Excel
+          <Button variant="outline" size="sm" onClick={handleImportClick} disabled={isImporting}>
+            <FileUp className="h-4 w-4 mr-2" />
+            {isImporting ? 'Import...' : 'Importer'}
           </Button>
-          <Button className="gap-2">
-            <Save className="h-4 w-4" />
-            Save Changes
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".xlsx,.xls"
+            onChange={handleFileChange}
+            className="hidden"
+          />
+          <Button variant="outline" size="sm" onClick={handleExport} disabled={!coefficientsData || coefficientsData.coefficients.length === 0}>
+            <Download className="h-4 w-4 mr-2" />
+            Exporter
+          </Button>
+          <Button variant="outline" onClick={handleCopyFromPreviousYear} disabled={copyMutation.isPending}>
+            <Copy className="h-4 w-4 mr-2" />
+            Copier Année Précédente
+          </Button>
+          <Button onClick={() => setIsCreating(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Nouveau Coefficient
           </Button>
         </div>
       </div>
 
-      {/* Info Card */}
-      <Card>
-        <CardContent className="py-6">
-          <div className="text-center">
-            <Calculator className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Coefficient Matrix Management</h3>
-            <p className="text-muted-foreground mb-4">
-              Define and manage coefficient templates for calculating student averages.
-              These templates will be used by all schools for grade calculations.
-            </p>
-            <div className="grid gap-4 md:grid-cols-3 text-sm">
-              <div>
-                <strong>Editing Mode:</strong>
-                {' '}
-                Click on any coefficient value to edit
-              </div>
-              <div>
-                <strong>School Year:</strong>
-                {' '}
-                2025-2026
-              </div>
-              <div>
-                <strong>Auto-Save:</strong>
-                {' '}
-                Changes are saved automatically
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Coefficient Matrix */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Coefficient Matrix View</CardTitle>
-          <CardDescription>
-            Interactive matrix showing coefficients for each subject across different grade levels and series
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-left p-3 bg-muted">Subject</th>
-                  {grades.map(grade => (
-                    <th key={grade} className="text-center p-3 bg-muted min-w-20">
-                      {grade}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {coefficientsMatrix.map((row, index) => (
-                  <tr key={row.subject} className={index % 2 === 0 ? 'bg-muted/30' : ''}>
-                    <td className="font-medium p-3 border-r">
-                      {row.subject}
-                    </td>
-                    {grades.map(grade => (
-                      <td key={grade} className="text-center p-3">
-                        <Input
-                          type="number"
-                          value={row[grade as keyof typeof row] || 0}
-                          onChange={(e) => {
-                            // TODO: Implement coefficient update logic
-                            console.warn(`Updating ${row.subject} ${grade} to ${e.target.value}`)
-                          }}
-                          className="w-16 mx-auto text-center"
-                          min="0"
-                          max="10"
-                        />
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Quick Actions */}
+      {/* Stats */}
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Copy from Previous Year</CardTitle>
-            <CardDescription>
-              Copy coefficients from 2024-2025 school year
-            </CardDescription>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Coefficients</CardTitle>
+            <Calculator className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <Button variant="outline" className="w-full gap-2">
-              <Calculator className="h-4 w-4" />
-              Copy from 2024-2025
-            </Button>
+            <div className="text-2xl font-bold">{stats?.total || 0}</div>
+            <p className="text-xs text-muted-foreground">Configurations actives</p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Series Templates</CardTitle>
-            <CardDescription>
-              Create coefficient templates for different series
-            </CardDescription>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Année Active</CardTitle>
+            <Calculator className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <Button variant="outline" className="w-full gap-2">
-              <Plus className="h-4 w-4" />
-              Manage Series
-            </Button>
+            <div className="text-2xl font-bold">{activeYear?.name || 'Aucune'}</div>
+            <p className="text-xs text-muted-foreground">Année scolaire en cours</p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Validation Rules</CardTitle>
-            <CardDescription>
-              Configure coefficient validation and limits
-            </CardDescription>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Modifications</CardTitle>
+            <Save className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <Button variant="outline" className="w-full gap-2">
-              <Edit className="h-4 w-4" />
-              Configure Rules
-            </Button>
+            <div className="text-2xl font-bold">{Object.keys(editingCells).length}</div>
+            <p className="text-xs text-muted-foreground">En attente de sauvegarde</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Coming Soon Note */}
+      {/* Create Form */}
+      {isCreating && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Créer un Nouveau Coefficient</CardTitle>
+            <CardDescription>Ajouter un coefficient pour une matière et une classe</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleCreate} className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="coef-year">Année Scolaire *</Label>
+                  <Select name="schoolYearTemplateId" required>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sélectionner" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {schoolYears?.map(year => (
+                        <SelectItem key={year.id} value={year.id}>
+                          {year.name}
+                          {year.isActive && ' (Active)'}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="coef-subject">Matière *</Label>
+                  <Select name="subjectId" required>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sélectionner" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {subjects?.subjects.map(subject => (
+                        <SelectItem key={subject.id} value={subject.id}>
+                          {subject.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="coef-grade">Classe *</Label>
+                  <Select name="gradeId" required>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sélectionner" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {grades?.map(grade => (
+                        <SelectItem key={grade.id} value={grade.id}>
+                          {grade.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="coef-series">Série (optionnel)</Label>
+                  <Select name="seriesId">
+                    <SelectTrigger>
+                      <SelectValue placeholder="Aucune" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">Aucune</SelectItem>
+                      {seriesData?.map(serie => (
+                        <SelectItem key={serie.id} value={serie.id}>
+                          {serie.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="coef-weight">Coefficient *</Label>
+                  <Input
+                    id="coef-weight"
+                    name="weight"
+                    type="number"
+                    min={COEFFICIENT_LIMITS.MIN}
+                    max={COEFFICIENT_LIMITS.MAX}
+                    required
+                    placeholder={String(COEFFICIENT_LIMITS.DEFAULT)}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Entre
+                    {' '}
+                    {COEFFICIENT_LIMITS.MIN}
+                    {' '}
+                    et
+                    {' '}
+                    {COEFFICIENT_LIMITS.MAX}
+                  </p>
+                </div>
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button type="button" variant="outline" onClick={() => setIsCreating(false)}>
+                  <X className="h-4 w-4 mr-2" />
+                  Annuler
+                </Button>
+                <Button type="submit" disabled={createMutation.isPending}>
+                  <Save className="h-4 w-4 mr-2" />
+                  {createMutation.isPending ? 'Création...' : 'Créer'}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Filters & View Toggle */}
       <Card>
-        <CardContent className="py-8">
-          <div className="text-center">
-            <Calculator className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Advanced Coefficient Management Coming Soon</h3>
-            <p className="text-muted-foreground mb-4">
-              Full coefficient management features will be available in Phase 8: Coefficient Configuration
-            </p>
-            <div className="text-sm text-muted-foreground">
-              <p>Features coming:</p>
-              <ul className="mt-2 space-y-1">
-                <li>• Bulk coefficient editing</li>
-                <li>• Import/Export from Excel</li>
-                <li>• Historical coefficient tracking</li>
-                <li>• School-specific overrides</li>
-              </ul>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Filtres</CardTitle>
+              <CardDescription>Filtrer les coefficients par année, classe ou série</CardDescription>
             </div>
+            <Tabs value={viewMode} onValueChange={v => setViewMode(v as 'matrix' | 'list')}>
+              <TabsList>
+                <TabsTrigger value="matrix">Matrice</TabsTrigger>
+                <TabsTrigger value="list">Liste</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col md:flex-row gap-4">
+            <Select value={yearFilter} onValueChange={setYearFilter}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Année" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Toutes les années</SelectItem>
+                {schoolYears?.map(year => (
+                  <SelectItem key={year.id} value={year.id}>
+                    {year.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={gradeFilter} onValueChange={setGradeFilter}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Classe" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Toutes les classes</SelectItem>
+                {grades?.map(grade => (
+                  <SelectItem key={grade.id} value={grade.id}>
+                    {grade.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={seriesFilter} onValueChange={setSeriesFilter}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Série" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Toutes les séries</SelectItem>
+                {seriesData?.map(serie => (
+                  <SelectItem key={serie.id} value={serie.id}>
+                    {serie.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {Object.keys(editingCells).length > 0 && (
+              <Button onClick={handleSaveChanges} disabled={bulkUpdateMutation.isPending} className="ml-auto">
+                <Save className="h-4 w-4 mr-2" />
+                Enregistrer (
+                {Object.keys(editingCells).length}
+                )
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>
+
+      {/* Matrix View */}
+      {viewMode === 'matrix' && matrixData && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Vue Matrice</CardTitle>
+            <CardDescription>Cliquez sur un coefficient pour le modifier</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left p-3 bg-muted sticky left-0 z-10">Matière</th>
+                    {grades?.map(grade => (
+                      <th key={grade.id} className="text-center p-3 bg-muted min-w-24">
+                        {grade.name}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(matrixData).map(([subjectName, gradeCoefs], index) => (
+                    <tr key={subjectName} className={index % 2 === 0 ? 'bg-muted/30' : ''}>
+                      <td className="font-medium p-3 border-r sticky left-0 bg-background">
+                        {subjectName}
+                      </td>
+                      {grades?.map((grade) => {
+                        const coef = gradeCoefs[grade.name]
+                        return (
+                          <td key={grade.id} className="text-center p-3">
+                            {coef
+                              ? (
+                                <div className="flex flex-col items-center gap-1">
+                                  <Input
+                                    type="number"
+                                    value={coef.weight}
+                                    onChange={e => handleCellEdit(coef.id, Number.parseInt(e.target.value))}
+                                    className={`w-16 mx-auto text-center ${coef.weight === 0 ? 'border-yellow-500' : ''}`}
+                                    min={COEFFICIENT_LIMITS.MIN}
+                                    max={COEFFICIENT_LIMITS.MAX}
+                                  />
+                                  {coef.weight === 0 && (
+                                    <div className="flex items-center gap-1 text-xs text-yellow-600">
+                                      <AlertTriangle className="h-3 w-3" />
+                                      <span>Coef 0</span>
+                                    </div>
+                                  )}
+                                </div>
+                              )
+                              : (
+                                <span className="text-muted-foreground text-sm">-</span>
+                              )}
+                          </td>
+                        )
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* List View */}
+      {viewMode === 'list' && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Liste des Coefficients</CardTitle>
+            <CardDescription>
+              {coefficientsData?.pagination.total || 0}
+              {' '}
+              coefficient(s) au total
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {coefficientsLoading
+              ? (
+                <CatalogListSkeleton count={5} />
+              )
+              : !coefficientsData || coefficientsData.coefficients.length === 0
+                ? (
+                  <div className="text-center py-8">
+                    <Calculator className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-lg font-medium">Aucun coefficient trouvé</h3>
+                    <p className="text-muted-foreground">
+                      Commencez par créer votre premier coefficient.
+                    </p>
+                  </div>
+                )
+                : (
+                  <div className="space-y-4">
+                    <AnimatePresence mode="popLayout">
+                      {coefficientsData.coefficients.map(coef => (
+                        <motion.div
+                          key={coef.id}
+                          layout
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, scale: 0.95 }}
+                          transition={{ duration: 0.2 }}
+                          className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
+                        >
+                          <div className="flex items-center gap-4 flex-1">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                              <span className="text-lg font-bold text-primary">{coef.weight}</span>
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <h3 className="font-semibold">{coef.subject?.name}</h3>
+                                <Badge variant="outline">{coef.grade?.name}</Badge>
+                                {coef.series && (
+                                  <Badge variant="secondary">{coef.series.name}</Badge>
+                                )}
+                              </div>
+                              <div className="text-sm text-muted-foreground mt-1">
+                                {coef.schoolYearTemplate?.name}
+                              </div>
+                            </div>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setDeletingCoefficient({
+                              id: coef.id,
+                              name: `${coef.subject?.name} - ${coef.grade?.name}`,
+                            })}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </div>
+                )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmationDialog
+        open={!!deletingCoefficient}
+        onOpenChange={open => !open && setDeletingCoefficient(null)}
+        title="Supprimer le coefficient"
+        description={`Êtes-vous sûr de vouloir supprimer le coefficient "${deletingCoefficient?.name}" ? Cette action est irréversible.`}
+        confirmText={deletingCoefficient?.name}
+        onConfirm={handleDelete}
+        isLoading={deleteMutation.isPending}
+      />
     </div>
   )
 }
