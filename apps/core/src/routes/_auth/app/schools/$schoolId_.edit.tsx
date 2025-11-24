@@ -2,12 +2,14 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { AlertCircle, ArrowLeft } from 'lucide-react'
 import { useEffect } from 'react'
+import { toast } from 'sonner'
 import { SchoolForm } from '@/components/schools/school-form'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { schoolQueryOptions, updateSchoolMutationOptions } from '@/integrations/tanstack-query/schools-options'
 import { useLogger } from '@/lib/logger'
+import { parseServerFnError } from '@/utils/error-handlers'
 
 export const Route = createFileRoute('/_auth/app/schools/$schoolId_/edit')({
   component: EditSchool,
@@ -41,6 +43,8 @@ function EditSchool() {
       navigate({ to: '/app/schools/$schoolId', params: { schoolId } })
     },
     onError: (error: any) => {
+      const message = parseServerFnError(error, 'Une erreur est survenue lors de la mise à jour')
+      toast.error(message)
       console.error('School update failed:', error)
     },
   })

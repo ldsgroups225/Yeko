@@ -16,8 +16,8 @@ import {
   logApiMetric,
 } from '../queries/activity-tracking'
 import {
-  getAnalyticsOverview,
   generateReportData,
+  getAnalyticsOverview,
   getPlatformUsage,
   getSchoolsPerformance,
 } from '../queries/analytics'

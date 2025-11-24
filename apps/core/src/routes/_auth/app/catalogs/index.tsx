@@ -49,7 +49,7 @@ function Catalogs() {
       borderColor: 'border-blue-200 dark:border-blue-800',
     },
     {
-      title: 'Classes et Séries',
+      title: 'Niveaux et Séries',
       description: 'Gérer les niveaux de classe (6ème à Terminale) et les séries académiques (C, D, A, etc.)',
       icon: Award,
       href: '/app/catalogs/grades',

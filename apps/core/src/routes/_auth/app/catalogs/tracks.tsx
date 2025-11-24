@@ -12,6 +12,7 @@ import {
   X,
 } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
+import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -26,6 +27,7 @@ import {
   updateTrackMutationOptions,
 } from '@/integrations/tanstack-query/catalogs-options'
 import { useLogger } from '@/lib/logger'
+import { parseServerFnError } from '@/utils/error-handlers'
 
 export const Route = createFileRoute('/_auth/app/catalogs/tracks')({
   component: TracksManagement,
@@ -47,7 +49,13 @@ function TracksManagement() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tracks'] })
       setIsCreating(false)
+      toast.success('Filière créée avec succès')
       logger.info('Track created successfully')
+    },
+    onError: (error) => {
+      const message = parseServerFnError(error, 'Erreur lors de la création de la filière')
+      toast.error(message)
+      logger.error('Failed to create track', error)
     },
   })
 
@@ -56,7 +64,13 @@ function TracksManagement() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tracks'] })
       setEditingTrack(null)
+      toast.success('Filière mise à jour avec succès')
       logger.info('Track updated successfully')
+    },
+    onError: (error) => {
+      const message = parseServerFnError(error, 'Erreur lors de la mise à jour de la filière')
+      toast.error(message)
+      logger.error('Failed to update track', error)
     },
   })
 
@@ -65,7 +79,13 @@ function TracksManagement() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tracks'] })
       setDeletingTrack(null)
+      toast.success('Filière supprimée avec succès')
       logger.info('Track deleted successfully')
+    },
+    onError: (error) => {
+      const message = parseServerFnError(error, 'Erreur lors de la suppression de la filière')
+      toast.error(message)
+      logger.error('Failed to delete track', error)
     },
   })
 

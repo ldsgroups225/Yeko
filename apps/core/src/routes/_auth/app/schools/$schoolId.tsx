@@ -19,6 +19,7 @@ import {
   XCircle,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -28,6 +29,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { deleteSchoolMutationOptions, schoolQueryOptions } from '@/integrations/tanstack-query/schools-options'
 import { useLogger } from '@/lib/logger'
+import { parseServerFnError } from '@/utils/error-handlers'
 
 export const Route = createFileRoute('/_auth/app/schools/$schoolId')({
   component: SchoolDetails,
@@ -59,6 +61,8 @@ function SchoolDetails() {
       navigate({ to: '/app/schools' })
     },
     onError: (error: any) => {
+      const message = parseServerFnError(error, 'Une erreur est survenue lors de la suppression de l\'école')
+      toast.error(message)
       console.error('School deletion failed:', error)
     },
   })

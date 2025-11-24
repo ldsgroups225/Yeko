@@ -2,11 +2,13 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { AlertCircle, ArrowLeft } from 'lucide-react'
 import { useEffect } from 'react'
+import { toast } from 'sonner'
 import { SchoolForm } from '@/components/schools/school-form'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { createSchoolMutationOptions } from '@/integrations/tanstack-query/schools-options'
 import { useLogger } from '@/lib/logger'
+import { parseServerFnError } from '@/utils/error-handlers'
 
 export const Route = createFileRoute('/_auth/app/schools/create')({
   component: CreateSchool,
@@ -35,6 +37,8 @@ function CreateSchool() {
       navigate({ to: '/app/schools' })
     },
     onError: (error: any) => {
+      const message = parseServerFnError(error, 'Une erreur est survenue lors de la création de l\'école')
+      toast.error(message)
       console.error('School creation failed:', error)
     },
   })

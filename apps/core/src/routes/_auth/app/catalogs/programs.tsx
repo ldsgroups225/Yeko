@@ -42,6 +42,7 @@ import {
   schoolYearTemplatesQueryOptions,
 } from '@/integrations/tanstack-query/programs-options'
 import { useLogger } from '@/lib/logger'
+import { parseServerFnError } from '@/utils/error-handlers'
 
 export const Route = createFileRoute('/_auth/app/catalogs/programs')({
   component: ProgramsCatalog,
@@ -95,7 +96,8 @@ function ProgramsCatalog() {
       logger.info('School year template created')
     },
     onError: (error) => {
-      toast.error('Erreur lors de la création de l\'année scolaire')
+      const message = parseServerFnError(error, 'Erreur lors de la création de l\'année scolaire')
+      toast.error(message)
       logger.error('Failed to create school year template', error)
     },
   })
@@ -111,7 +113,8 @@ function ProgramsCatalog() {
       logger.info('Program template created')
     },
     onError: (error) => {
-      toast.error('Erreur lors de la création du programme')
+      const message = parseServerFnError(error, 'Erreur lors de la création du programme')
+      toast.error(message)
       logger.error('Failed to create program template', error)
     },
   })
@@ -126,7 +129,8 @@ function ProgramsCatalog() {
       logger.info('Program template deleted')
     },
     onError: (error) => {
-      toast.error('Erreur lors de la suppression du programme')
+      const message = parseServerFnError(error, 'Erreur lors de la suppression du programme')
+      toast.error(message)
       logger.error('Failed to delete program template', error)
     },
   })
@@ -141,7 +145,8 @@ function ProgramsCatalog() {
       logger.info('Program template cloned')
     },
     onError: (error) => {
-      toast.error('Erreur lors du clonage du programme')
+      const message = parseServerFnError(error, 'Erreur lors du clonage du programme')
+      toast.error(message)
       logger.error('Failed to clone program template', error)
     },
   })

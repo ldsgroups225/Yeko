@@ -40,6 +40,7 @@ import {
 } from '@/integrations/tanstack-query/catalogs-options'
 import { downloadSubjectsTemplate, exportSubjectsToExcel, importSubjectsFromExcel } from '@/lib/catalog-csv'
 import { useLogger } from '@/lib/logger'
+import { parseServerFnError } from '@/utils/error-handlers'
 import { generateUUID } from '@/utils/generateUUID'
 
 export const Route = createFileRoute('/_auth/app/catalogs/subjects')({
@@ -115,7 +116,8 @@ function SubjectsCatalog() {
       logger.info('Subject created successfully')
     },
     onError: (error) => {
-      toast.error('Erreur lors de la création de la matière')
+      const message = parseServerFnError(error, 'Erreur lors de la création de la matière')
+      toast.error(message)
       logger.error('Failed to create subject', error)
     },
   })
@@ -129,7 +131,8 @@ function SubjectsCatalog() {
       logger.info('Subjects imported successfully')
     },
     onError: (error) => {
-      toast.error('Erreur lors de l\'import des matières')
+      const message = parseServerFnError(error, 'Erreur lors de l\'import des matières')
+      toast.error(message)
       logger.error('Failed to import subjects', error)
     },
   })
@@ -143,7 +146,8 @@ function SubjectsCatalog() {
       logger.info('Subject updated successfully')
     },
     onError: (error) => {
-      toast.error('Erreur lors de la mise à jour de la matière')
+      const message = parseServerFnError(error, 'Erreur lors de la mise à jour de la matière')
+      toast.error(message)
       logger.error('Failed to update subject', error)
     },
   })
@@ -157,7 +161,8 @@ function SubjectsCatalog() {
       logger.info('Subject deleted successfully')
     },
     onError: (error) => {
-      toast.error('Erreur lors de la suppression de la matière')
+      const message = parseServerFnError(error, 'Erreur lors de la suppression de la matière')
+      toast.error(message)
       logger.error('Failed to delete subject', error)
     },
   })

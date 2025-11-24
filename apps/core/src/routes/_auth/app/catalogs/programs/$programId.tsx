@@ -41,6 +41,7 @@ import {
   updateProgramTemplateMutationOptions,
 } from '@/integrations/tanstack-query/programs-options'
 import { useLogger } from '@/lib/logger'
+import { parseServerFnError } from '@/utils/error-handlers'
 import { generateUUID } from '@/utils/generateUUID'
 
 export const Route = createFileRoute('/_auth/app/catalogs/programs/$programId')({
@@ -114,7 +115,8 @@ function ProgramDetails() {
       logger.info('Program chapter created')
     },
     onError: (error) => {
-      toast.error('Erreur lors de la création du chapitre')
+      const message = parseServerFnError(error, 'Erreur lors de la création du chapitre')
+      toast.error(message)
       logger.error('Failed to create chapter', error)
     },
   })
@@ -128,7 +130,8 @@ function ProgramDetails() {
       logger.info('Program chapter updated')
     },
     onError: (error) => {
-      toast.error('Erreur lors de la mise à jour du chapitre')
+      const message = parseServerFnError(error, 'Erreur lors de la mise à jour du chapitre')
+      toast.error(message)
       logger.error('Failed to update chapter', error)
     },
   })
@@ -143,7 +146,8 @@ function ProgramDetails() {
       logger.info('Program chapter deleted')
     },
     onError: (error) => {
-      toast.error('Erreur lors de la suppression du chapitre')
+      const message = parseServerFnError(error, 'Erreur lors de la suppression du chapitre')
+      toast.error(message)
       logger.error('Failed to delete chapter', error)
     },
   })
