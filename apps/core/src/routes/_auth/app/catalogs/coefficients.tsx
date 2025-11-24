@@ -605,26 +605,26 @@ function CoefficientsCatalog() {
                           <td key={grade.id} className="text-center p-3">
                             {coef
                               ? (
-                                <div className="flex flex-col items-center gap-1">
-                                  <Input
-                                    type="number"
-                                    value={coef.weight}
-                                    onChange={e => handleCellEdit(coef.id, Number.parseInt(e.target.value))}
-                                    className={`w-16 mx-auto text-center ${coef.weight === 0 ? 'border-yellow-500' : ''}`}
-                                    min={COEFFICIENT_LIMITS.MIN}
-                                    max={COEFFICIENT_LIMITS.MAX}
-                                  />
-                                  {coef.weight === 0 && (
-                                    <div className="flex items-center gap-1 text-xs text-yellow-600">
-                                      <AlertTriangle className="h-3 w-3" />
-                                      <span>Coef 0</span>
-                                    </div>
-                                  )}
-                                </div>
-                              )
+                                  <div className="flex flex-col items-center gap-1">
+                                    <Input
+                                      type="number"
+                                      value={coef.weight}
+                                      onChange={e => handleCellEdit(coef.id, Number.parseInt(e.target.value))}
+                                      className={`w-16 mx-auto text-center ${coef.weight === 0 ? 'border-yellow-500' : ''}`}
+                                      min={COEFFICIENT_LIMITS.MIN}
+                                      max={COEFFICIENT_LIMITS.MAX}
+                                    />
+                                    {coef.weight === 0 && (
+                                      <div className="flex items-center gap-1 text-xs text-yellow-600">
+                                        <AlertTriangle className="h-3 w-3" />
+                                        <span>Coef 0</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                )
                               : (
-                                <span className="text-muted-foreground text-sm">-</span>
-                              )}
+                                  <span className="text-muted-foreground text-sm">-</span>
+                                )}
                           </td>
                         )
                       })}
@@ -651,63 +651,63 @@ function CoefficientsCatalog() {
           <CardContent>
             {coefficientsLoading
               ? (
-                <CatalogListSkeleton count={5} />
-              )
-              : !coefficientsData || coefficientsData.coefficients.length === 0
-                ? (
-                  <div className="text-center py-8">
-                    <Calculator className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <h3 className="text-lg font-medium">Aucun coefficient trouvé</h3>
-                    <p className="text-muted-foreground">
-                      Commencez par créer votre premier coefficient.
-                    </p>
-                  </div>
+                  <CatalogListSkeleton count={5} />
                 )
-                : (
-                  <div className="space-y-4">
-                    <AnimatePresence mode="popLayout">
-                      {coefficientsData.coefficients.map((coef: any) => (
-                        <motion.div
-                          key={coef.id}
-                          layout
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, scale: 0.95 }}
-                          transition={{ duration: 0.2 }}
-                          className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
-                        >
-                          <div className="flex items-center gap-4 flex-1">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                              <span className="text-lg font-bold text-primary">{coef.weight}</span>
-                            </div>
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2">
-                                <h3 className="font-semibold">{coef.subject?.name}</h3>
-                                <Badge variant="outline">{coef.grade?.name}</Badge>
-                                {coef.series && (
-                                  <Badge variant="secondary">{coef.series.name}</Badge>
-                                )}
+              : !coefficientsData || coefficientsData.coefficients.length === 0
+                  ? (
+                      <div className="text-center py-8">
+                        <Calculator className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                        <h3 className="text-lg font-medium">Aucun coefficient trouvé</h3>
+                        <p className="text-muted-foreground">
+                          Commencez par créer votre premier coefficient.
+                        </p>
+                      </div>
+                    )
+                  : (
+                      <div className="space-y-4">
+                        <AnimatePresence mode="popLayout">
+                          {coefficientsData.coefficients.map((coef: any) => (
+                            <motion.div
+                              key={coef.id}
+                              layout
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, scale: 0.95 }}
+                              transition={{ duration: 0.2 }}
+                              className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
+                            >
+                              <div className="flex items-center gap-4 flex-1">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                                  <span className="text-lg font-bold text-primary">{coef.weight}</span>
+                                </div>
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2">
+                                    <h3 className="font-semibold">{coef.subject?.name}</h3>
+                                    <Badge variant="outline">{coef.grade?.name}</Badge>
+                                    {coef.series && (
+                                      <Badge variant="secondary">{coef.series.name}</Badge>
+                                    )}
+                                  </div>
+                                  <div className="text-sm text-muted-foreground mt-1">
+                                    {coef.schoolYearTemplate?.name}
+                                  </div>
+                                </div>
                               </div>
-                              <div className="text-sm text-muted-foreground mt-1">
-                                {coef.schoolYearTemplate?.name}
-                              </div>
-                            </div>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => setDeletingCoefficient({
-                              id: coef.id,
-                              name: `${coef.subject?.name} - ${coef.grade?.name}`,
-                            })}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </motion.div>
-                      ))}
-                    </AnimatePresence>
-                  </div>
-                )}
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setDeletingCoefficient({
+                                  id: coef.id,
+                                  name: `${coef.subject?.name} - ${coef.grade?.name}`,
+                                })}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </motion.div>
+                          ))}
+                        </AnimatePresence>
+                      </div>
+                    )}
           </CardContent>
         </Card>
       )}

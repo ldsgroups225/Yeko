@@ -483,134 +483,134 @@ function GradesManagement() {
             <CardContent>
               {trackGrades.length === 0
                 ? (
-                  <p className="text-sm text-muted-foreground text-center py-4">
-                    Aucune niveau pour cette filière
-                  </p>
-                )
+                    <p className="text-sm text-muted-foreground text-center py-4">
+                      Aucune niveau pour cette filière
+                    </p>
+                  )
                 : editingGrade && trackGrades.some(g => g.id === editingGrade)
                   ? (
-                    <div className="space-y-4">
-                      {trackGrades.map(grade => (
-                        <div key={grade.id}>
-                          {editingGrade === grade.id
-                            ? (
-                              <form
-                                onSubmit={e => handleUpdateGrade(e, grade.id)}
-                                className="border rounded-lg p-4 space-y-4"
-                              >
-                                <div className="grid gap-4 md:grid-cols-3">
-                                  <div className="space-y-2">
-                                    <Label htmlFor={`edit-grade-name-${grade.id}`}>Nom *</Label>
-                                    <Input
-                                      id={`edit-grade-name-${grade.id}`}
-                                      name="name"
-                                      defaultValue={grade.name}
-                                      required
-                                    />
-                                  </div>
-                                  <div className="space-y-2">
-                                    <Label htmlFor={`edit-grade-code-${grade.id}`}>Code *</Label>
-                                    <Input
-                                      id={`edit-grade-code-${grade.id}`}
-                                      name="code"
-                                      defaultValue={grade.code}
-                                      required
-                                    />
-                                  </div>
-                                  <div className="space-y-2">
-                                    <Label htmlFor={`edit-grade-order-${grade.id}`}>Ordre *</Label>
-                                    <Input
-                                      id={`edit-grade-order-${grade.id}`}
-                                      name="order"
-                                      type="number"
-                                      defaultValue={grade.order}
-                                      required
-                                    />
-                                  </div>
-                                </div>
-                                <div className="space-y-2">
-                                  <Label htmlFor={`edit-grade-track-${grade.id}`}>Filière *</Label>
-                                  <select
-                                    id={`edit-grade-track-${grade.id}`}
-                                    name="trackId"
-                                    defaultValue={grade.trackId}
-                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                                    required
+                      <div className="space-y-4">
+                        {trackGrades.map(grade => (
+                          <div key={grade.id}>
+                            {editingGrade === grade.id
+                              ? (
+                                  <form
+                                    onSubmit={e => handleUpdateGrade(e, grade.id)}
+                                    className="border rounded-lg p-4 space-y-4"
                                   >
-                                    {tracks?.map(track => (
-                                      <option key={track.id} value={track.id}>
-                                        {track.name}
-                                      </option>
-                                    ))}
-                                  </select>
-                                </div>
-                                <div className="flex nd gap-2">
-                                  <Button
-                                    type="button"
-                                    variant="outline"
-                                    onClick={() => setEditingGrade(null)}
-                                  >
-                                    <X className="h-4 w-4 mr-2" />
-                                    Annuler
-                                  </Button>
-                                  <Button type="submit" disabled={updateGradeMutation.isPending}>
-                                    <Save className="h-4 w-4 mr-2" />
-                                    {updateGradeMutation.isPending ? 'Enregistrement...' : 'Enregistrer'}
-                                  </Button>
-                                </div>
-                              </form>
-                            )
-                            : (
-                              <div className="flex items-center justify-4 border rounded-lg hover:bg-accent/50 transition-colors">
-                                <div className="flex items-center gap-4">
-                                  <div className="flex h-10 w-10 items-center justify-center roundedue-50 dark:bg-blue-950">
-                                    <GraduationCap className="h-5 w-5 text-blue-600" />
-                                  </div>
-                                  <div>
-                                    <h3 className="font-semibold">{grade.name}</h3>
-                                    <div className="flex items-center gap-2 mt-1">
-                                      <Badge variant="outline" className="text-xs">
-                                        {grade.code}
-                                      </Badge>
-                                      <Badge variant="secondary" className="text-xs">
-                                        Ordre:
-                                        {' '}
-                                        {grade.order}
-                                      </Badge>
+                                    <div className="grid gap-4 md:grid-cols-3">
+                                      <div className="space-y-2">
+                                        <Label htmlFor={`edit-grade-name-${grade.id}`}>Nom *</Label>
+                                        <Input
+                                          id={`edit-grade-name-${grade.id}`}
+                                          name="name"
+                                          defaultValue={grade.name}
+                                          required
+                                        />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label htmlFor={`edit-grade-code-${grade.id}`}>Code *</Label>
+                                        <Input
+                                          id={`edit-grade-code-${grade.id}`}
+                                          name="code"
+                                          defaultValue={grade.code}
+                                          required
+                                        />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label htmlFor={`edit-grade-order-${grade.id}`}>Ordre *</Label>
+                                        <Input
+                                          id={`edit-grade-order-${grade.id}`}
+                                          name="order"
+                                          type="number"
+                                          defaultValue={grade.order}
+                                          required
+                                        />
+                                      </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                      <Label htmlFor={`edit-grade-track-${grade.id}`}>Filière *</Label>
+                                      <select
+                                        id={`edit-grade-track-${grade.id}`}
+                                        name="trackId"
+                                        defaultValue={grade.trackId}
+                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                                        required
+                                      >
+                                        {tracks?.map(track => (
+                                          <option key={track.id} value={track.id}>
+                                            {track.name}
+                                          </option>
+                                        ))}
+                                      </select>
+                                    </div>
+                                    <div className="flex nd gap-2">
+                                      <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => setEditingGrade(null)}
+                                      >
+                                        <X className="h-4 w-4 mr-2" />
+                                        Annuler
+                                      </Button>
+                                      <Button type="submit" disabled={updateGradeMutation.isPending}>
+                                        <Save className="h-4 w-4 mr-2" />
+                                        {updateGradeMutation.isPending ? 'Enregistrement...' : 'Enregistrer'}
+                                      </Button>
+                                    </div>
+                                  </form>
+                                )
+                              : (
+                                  <div className="flex items-center justify-4 border rounded-lg hover:bg-accent/50 transition-colors">
+                                    <div className="flex items-center gap-4">
+                                      <div className="flex h-10 w-10 items-center justify-center roundedue-50 dark:bg-blue-950">
+                                        <GraduationCap className="h-5 w-5 text-blue-600" />
+                                      </div>
+                                      <div>
+                                        <h3 className="font-semibold">{grade.name}</h3>
+                                        <div className="flex items-center gap-2 mt-1">
+                                          <Badge variant="outline" className="text-xs">
+                                            {grade.code}
+                                          </Badge>
+                                          <Badge variant="secondary" className="text-xs">
+                                            Ordre:
+                                            {' '}
+                                            {grade.order}
+                                          </Badge>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="flex gap-2">
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => setEditingGrade(grade.id)}
+                                      >
+                                        <Edit className="h-4 w-4" />
+                                      </Button>
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => setDeletingGrade({ id: grade.id, name: grade.name })}
+                                        disabled={deleteGradeMutation.isPending}
+                                      >
+                                        <Trash2 className="h-4 w-4" />
+                                      </Button>
                                     </div>
                                   </div>
-                                </div>
-                                <div className="flex gap-2">
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => setEditingGrade(grade.id)}
-                                  >
-                                    <Edit className="h-4 w-4" />
-                                  </Button>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => setDeletingGrade({ id: grade.id, name: grade.name })}
-                                    disabled={deleteGradeMutation.isPending}
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
-                                </div>
-                              </div>
-                            )}
-                        </div>
-                      ))}
-                    </div>
-                  )
+                                )}
+                          </div>
+                        ))}
+                      </div>
+                    )
                   : (
-                    <DraggableGradeList
-                      grades={trackGrades}
-                      onReorder={handleReorderGrades}
-                      onEdit={setEditingGrade}
-                      onDelete={setDeletingGrade}
-                    />
-                  )}
+                      <DraggableGradeList
+                        grades={trackGrades}
+                        onReorder={handleReorderGrades}
+                        onEdit={setEditingGrade}
+                        onDelete={setDeletingGrade}
+                      />
+                    )}
             </CardContent>
           </Card>
         ))}
@@ -727,120 +727,120 @@ function GradesManagement() {
                 <AnimatePresence mode="popLayout">
                   {trackSeries.length === 0
                     ? (
-                      <motion.p
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="text-sm text-muted-foreground text-center py-4"
-                      >
-                        Aucune série pour cette filière
-                      </motion.p>
-                    )
-                    : (
-                      trackSeries.map(serie => (
-                        <motion.div
-                          key={serie.id}
-                          layout
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, scale: 0.95 }}
-                          transition={{ duration: 0.2 }}
+                        <motion.p
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          className="text-sm text-muted-foreground text-center py-4"
                         >
-                          {editingSerie === serie.id
-                            ? (
-                              <form
-                                onSubmit={e => handleUpdateSerie(e, serie.id)}
-                                className="border rounded-lg p-4 space-y-4"
-                              >
-                                <div className="grid gap-4 md:grid-cols-2">
-                                  <div className="space-y-2">
-                                    <Label htmlFor={`edit-serie-name-${serie.id}`}>Nom *</Label>
-                                    <Input
-                                      id={`edit-serie-name-${serie.id}`}
-                                      name="name"
-                                      defaultValue={serie.name}
-                                      required
-                                    />
-                                  </div>
-                                  <div className="space-y-2">
-                                    <Label htmlFor={`edit-serie-code-${serie.id}`}>Code *</Label>
-                                    <Input
-                                      id={`edit-serie-code-${serie.id}`}
-                                      name="code"
-                                      defaultValue={serie.code}
-                                      required
-                                    />
-                                  </div>
-                                </div>
-                                <div className="space-y-2">
-                                  <Label htmlFor={`edit-serie-track-${serie.id}`}>Filière *</Label>
-                                  <select
-                                    id={`edit-serie-track-${serie.id}`}
-                                    name="trackId"
-                                    defaultValue={serie.trackId}
-                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                                    required
+                          Aucune série pour cette filière
+                        </motion.p>
+                      )
+                    : (
+                        trackSeries.map(serie => (
+                          <motion.div
+                            key={serie.id}
+                            layout
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            {editingSerie === serie.id
+                              ? (
+                                  <form
+                                    onSubmit={e => handleUpdateSerie(e, serie.id)}
+                                    className="border rounded-lg p-4 space-y-4"
                                   >
-                                    {tracks?.map(track => (
-                                      <option key={track.id} value={track.id}>
-                                        {track.name}
-                                      </option>
-                                    ))}
-                                  </select>
-                                </div>
-                                <div className="flex justify-end gap-2">
-                                  <Button
-                                    type="button"
-                                    variant="outline"
-                                    onClick={() => setEditingSerie(null)}
-                                  >
-                                    <X className="h-4 w-4 mr-2" />
-                                    Annuler
-                                  </Button>
-                                  <Button type="submit" disabled={updateSerieMutation.isPending}>
-                                    <Save className="h-4 w-4 mr-2" />
-                                    {updateSerieMutation.isPending ? 'Enregistrement...' : 'Enregistrer'}
-                                  </Button>
-                                </div>
-                              </form>
-                            )
-                            : (
-                              <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors">
-                                <div className="flex items-center gap-4">
-                                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-50 dark:bg-purple-950">
-                                    <Award className="h-5 w-5 text-purple-600" />
-                                  </div>
-                                  <div>
-                                    <h3 className="font-semibold">{serie.name}</h3>
-                                    <div className="flex items-center gap-2 mt-1">
-                                      <Badge variant="outline" className="text-xs">
-                                        {serie.code}
-                                      </Badge>
+                                    <div className="grid gap-4 md:grid-cols-2">
+                                      <div className="space-y-2">
+                                        <Label htmlFor={`edit-serie-name-${serie.id}`}>Nom *</Label>
+                                        <Input
+                                          id={`edit-serie-name-${serie.id}`}
+                                          name="name"
+                                          defaultValue={serie.name}
+                                          required
+                                        />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label htmlFor={`edit-serie-code-${serie.id}`}>Code *</Label>
+                                        <Input
+                                          id={`edit-serie-code-${serie.id}`}
+                                          name="code"
+                                          defaultValue={serie.code}
+                                          required
+                                        />
+                                      </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                      <Label htmlFor={`edit-serie-track-${serie.id}`}>Filière *</Label>
+                                      <select
+                                        id={`edit-serie-track-${serie.id}`}
+                                        name="trackId"
+                                        defaultValue={serie.trackId}
+                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                                        required
+                                      >
+                                        {tracks?.map(track => (
+                                          <option key={track.id} value={track.id}>
+                                            {track.name}
+                                          </option>
+                                        ))}
+                                      </select>
+                                    </div>
+                                    <div className="flex justify-end gap-2">
+                                      <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => setEditingSerie(null)}
+                                      >
+                                        <X className="h-4 w-4 mr-2" />
+                                        Annuler
+                                      </Button>
+                                      <Button type="submit" disabled={updateSerieMutation.isPending}>
+                                        <Save className="h-4 w-4 mr-2" />
+                                        {updateSerieMutation.isPending ? 'Enregistrement...' : 'Enregistrer'}
+                                      </Button>
+                                    </div>
+                                  </form>
+                                )
+                              : (
+                                  <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors">
+                                    <div className="flex items-center gap-4">
+                                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-50 dark:bg-purple-950">
+                                        <Award className="h-5 w-5 text-purple-600" />
+                                      </div>
+                                      <div>
+                                        <h3 className="font-semibold">{serie.name}</h3>
+                                        <div className="flex items-center gap-2 mt-1">
+                                          <Badge variant="outline" className="text-xs">
+                                            {serie.code}
+                                          </Badge>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="flex gap-2">
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => setEditingSerie(serie.id)}
+                                      >
+                                        <Edit className="h-4 w-4" />
+                                      </Button>
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => setDeletingSerie({ id: serie.id, name: serie.name })}
+                                        disabled={deleteSerieMutation.isPending}
+                                      >
+                                        <Trash2 className="h-4 w-4" />
+                                      </Button>
                                     </div>
                                   </div>
-                                </div>
-                                <div className="flex gap-2">
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => setEditingSerie(serie.id)}
-                                  >
-                                    <Edit className="h-4 w-4" />
-                                  </Button>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => setDeletingSerie({ id: serie.id, name: serie.name })}
-                                    disabled={deleteSerieMutation.isPending}
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
-                                </div>
-                              </div>
-                            )}
-                        </motion.div>
-                      ))
-                    )}
+                                )}
+                          </motion.div>
+                        ))
+                      )}
                 </AnimatePresence>
               </div>
             </CardContent>
