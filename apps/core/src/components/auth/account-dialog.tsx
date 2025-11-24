@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
-import { LogOut, Palette } from 'lucide-react'
+import { Languages, LogOut, Palette } from 'lucide-react'
+import { LanguageSwitcher } from '@/components/language-switcher'
 import { ThemeToggle } from '@/components/theme/theme-toggle'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -66,6 +67,13 @@ export function AccountDialog({ children }: AccountDialogProps) {
                 Theme
               </span>
               <ThemeToggle />
+            </div>
+            <div className="flex items-center justify-between w-full py-3 px-4 rounded-lg border bg-card">
+              <span className="text-sm font-medium flex items-center gap-2">
+                <Languages className="h-4 w-4" />
+                Language
+              </span>
+              <LanguageSwitcher />
             </div>
             <Button
               onClick={signOut}

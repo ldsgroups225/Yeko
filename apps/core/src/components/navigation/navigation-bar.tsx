@@ -167,25 +167,31 @@ export function NavigationBar() {
           <div className="hidden lg:block">
             {session
               ? (
-                  <AccountDialog>
-                    <Button
-                      variant="ghost"
-                      className="flex items-center gap-2 px-3"
-                    >
-                      <Avatar className="h-7 w-7">
-                        <AvatarImage
-                          src={user?.image || undefined}
-                          alt={user?.name || 'User'}
-                        />
-                        <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-                          {fallbackText}
-                        </AvatarFallback>
-                      </Avatar>
-                      <span className="text-sm font-medium">
-                        {user?.name || 'Account'}
-                      </span>
+                  <div className="flex flex-row items-center gap-4">
+                    <Button variant="secondary" asChild>
+                      <Link to="/app">Accueil</Link>
                     </Button>
-                  </AccountDialog>
+
+                    <AccountDialog>
+                      <Button
+                        variant="ghost"
+                        className="flex items-center gap-2 px-3"
+                      >
+                        <Avatar className="h-7 w-7">
+                          <AvatarImage
+                            src={user?.image || undefined}
+                            alt={user?.name || 'User'}
+                          />
+                          <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                            {fallbackText}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="text-sm font-medium">
+                          {user?.name || 'Account'}
+                        </span>
+                      </Button>
+                    </AccountDialog>
+                  </div>
                 )
               : (
                   <div className="flex items-center gap-2">
