@@ -61,6 +61,12 @@ export function DeleteConfirmationDialog({
               onChange={(e) => setInputValue(e.target.value)}
               placeholder={confirmText}
               disabled={isLoading}
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && isConfirmEnabled) {
+                  onConfirm()
+                }
+              }}
             />
           </div>
         )}
