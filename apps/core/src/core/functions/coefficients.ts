@@ -90,7 +90,7 @@ export const coefficientStatsQuery = createServerFn()
 
 export const validateCoefficientImportMutation = createServerFn()
   .middleware([exampleMiddlewareWithContext])
-  .handler(async (ctx) => {
+  .handler(async () => {
     // This will be called from the client with parsed Excel data
     // to validate against existing data in the database
     // const { data: _data } = ctx.data as { data: any[] }

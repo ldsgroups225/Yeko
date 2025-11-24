@@ -43,7 +43,7 @@ export const getSchools = createServerFn()
     const result = await getSchoolsQuery(ctx.data)
 
     return {
-      data: result.schools.map(s => ({
+      data: result.schools.map((s: any) => ({
         ...s,
         settings: (s.settings as Record<string, any>) || {},
       })),

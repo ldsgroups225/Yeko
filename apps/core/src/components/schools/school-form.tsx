@@ -34,6 +34,7 @@ export function SchoolForm({
 
   const { register, handleSubmit, setValue, reset, watch } = form
   const { errors } = form.formState
+  // eslint-disable-next-line react-hooks/incompatible-library
   const status = watch('status')
   const logoUrl = watch('logoUrl')
 

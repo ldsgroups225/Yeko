@@ -180,8 +180,8 @@ function CoefficientsCatalog() {
       return
     }
 
-    const activeYear = schoolYears.find(y => y.isActive)
-    const previousYear = schoolYears.find(y => !y.isActive)
+    const activeYear = schoolYears.find((y: any) => y.isActive)
+    const previousYear = schoolYears.find((y: any) => !y.isActive)
 
     if (!activeYear || !previousYear) {
       toast.error('Impossible de trouver les années scolaires')
@@ -281,7 +281,7 @@ function CoefficientsCatalog() {
 
     const matrix: Record<string, Record<string, { id: string, weight: number, seriesName?: string }>> = {}
 
-    coefficientsData.coefficients.forEach((coef) => {
+    coefficientsData.coefficients.forEach((coef: any) => {
       const subjectName = coef.subject?.name || 'Unknown'
       const gradeName = coef.grade?.name || 'Unknown'
       const key = coef.series ? `${gradeName} (${coef.series.name})` : gradeName
@@ -298,7 +298,7 @@ function CoefficientsCatalog() {
     return matrix
   }, [coefficientsData, subjects, grades, editingCells])
 
-  const activeYear = schoolYears?.find(y => y.isActive)
+  const activeYear = schoolYears?.find((y: any) => y.isActive)
 
   if (yearsLoading || statsLoading) {
     return (
@@ -407,7 +407,7 @@ function CoefficientsCatalog() {
                       <SelectValue placeholder="Sélectionner" />
                     </SelectTrigger>
                     <SelectContent>
-                      {schoolYears?.map(year => (
+                      {schoolYears?.map((year: any) => (
                         <SelectItem key={year.id} value={year.id}>
                           {year.name}
                           {year.isActive && ' (Active)'}
@@ -523,7 +523,7 @@ function CoefficientsCatalog() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Toutes les années</SelectItem>
-                {schoolYears?.map(year => (
+                {schoolYears?.map((year: any) => (
                   <SelectItem key={year.id} value={year.id}>
                     {year.name}
                   </SelectItem>
@@ -661,7 +661,7 @@ function CoefficientsCatalog() {
                   : (
                       <div className="space-y-4">
                         <AnimatePresence mode="popLayout">
-                          {coefficientsData.coefficients.map(coef => (
+                          {coefficientsData.coefficients.map((coef: any) => (
                             <motion.div
                               key={coef.id}
                               layout

@@ -24,6 +24,7 @@ import {
   schoolsPerformanceQueryOptions,
 } from '@/integrations/tanstack-query/analytics-options'
 import { useLogger } from '@/lib/logger'
+import { generateUUID } from '@/utils/generateUUID'
 
 export const Route = createFileRoute('/_auth/app/analytics')({
   component: () => (
@@ -118,8 +119,8 @@ function AnalyticsPage() {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {overviewLoading
               ? (
-                  Array.from({ length: 4 }).map((_, i) => (
-                    <Card key={i}>
+                  Array.from({ length: 4 }).map(() => (
+                    <Card key={generateUUID()}>
                       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <Skeleton className="h-4 w-24" />
                         <Skeleton className="h-4 w-4" />
@@ -246,8 +247,8 @@ function AnalyticsPage() {
                 {schoolsPerfLoading
                   ? (
                       <div className="space-y-2">
-                        {Array.from({ length: 3 }).map((_, i) => (
-                          <Skeleton key={i} className="h-12 w-full" />
+                        {Array.from({ length: 3 }).map(() => (
+                          <Skeleton key={generateUUID()} className="h-12 w-full" />
                         ))}
                       </div>
                     )
@@ -319,8 +320,8 @@ function AnalyticsPage() {
               {schoolsPerfLoading
                 ? (
                     <div className="space-y-2">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Skeleton key={i} className="h-16 w-full" />
+                      {Array.from({ length: 5 }).map(() => (
+                        <Skeleton key={generateUUID()} className="h-16 w-full" />
                       ))}
                     </div>
                   )
@@ -368,8 +369,8 @@ function AnalyticsPage() {
                 {usageLoading
                   ? (
                       <div className="space-y-2">
-                        {Array.from({ length: 3 }).map((_, i) => (
-                          <Skeleton key={i} className="h-12 w-full" />
+                        {Array.from({ length: 3 }).map(() => (
+                          <Skeleton key={generateUUID()} className="h-12 w-full" />
                         ))}
                       </div>
                     )
@@ -402,8 +403,8 @@ function AnalyticsPage() {
                 {usageLoading
                   ? (
                       <div className="space-y-2">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <Skeleton key={i} className="h-8 w-full" />
+                        {Array.from({ length: 5 }).map(() => (
+                          <Skeleton key={generateUUID()} className="h-8 w-full" />
                         ))}
                       </div>
                     )

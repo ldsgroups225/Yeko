@@ -23,6 +23,7 @@ export const CreateProgramTemplateSchema = z.object({
   subjectId: z.string().min(1, 'La matière est requise'),
   gradeId: z.string().min(1, 'La classe est requise'),
   status: z.enum(['draft', 'published', 'archived']).default('draft'),
+  description: z.string().optional(),
 })
 
 export const UpdateProgramTemplateSchema = CreateProgramTemplateSchema.partial().merge(z.object({

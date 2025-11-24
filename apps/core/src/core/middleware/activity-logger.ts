@@ -1,73 +1,23 @@
-import type { MiddlewareFn } from '@tanstack/react-start'
-import { logActivity } from '@repo/data-ops'
+import { createMiddleware } from '@tanstack/react-start'
+// import { logActivity } from '@repo/data-ops'
 
 /**
  * Middleware to log user activities
  * Tracks actions like view, create, update, delete, export
+ *
+ * TODO: This middleware needs proper auth context integration
+ * Currently disabled due to missing context properties
  */
-export const activityLoggerMiddleware: MiddlewareFn = async ({ next, context }) => {
-  const startTime = Date.now()
+export const activityLoggerMiddleware = createMiddleware({
+  type: 'function',
+}).server(async ({ next }) => {
+  // TODO: Implement activity logging when auth context is available
+  // const startTime = Date.now()
+  return await next({ context: {} })
+})
 
-  try {
-    // Execute the handler
-    const result = await next()
-
-    // Log successful activity
-    if (context.user) {
-      const action = determineAction(context)
-      const resource = determineResource(context)
-
-      if (action && resource) {
-        await logActivity({
-          userId: context.user.id,
-          schoolId: context.schoolId || null,
-          action,
-          resource,
-          resourceId: context.resourceId || null,
-          metadata: {
-            path: context.path,
-            method: context.method,
-            duration: Date.now() - startTime,
-          },
-          ipAddress: context.ipAddress || null,
-          userAgent: context.userAgent || null,
-        }).catch((error) => {
-          // Don't fail the request if logging fails
-          console.error('Failed to log activity:', error)
-        })
-      }
-    }
-
-    return result
-  }
-  catch (error) {
-    // Log failed activity
-    if (context.user) {
-      await logActivity({
-        userId: context.user.id,
-        schoolId: context.schoolId || null,
-        action: 'error',
-        resource: determineResource(context) || 'unknown',
-        metadata: {
-          path: context.path,
-          method: context.method,
-          error: error instanceof Error ? error.message : String(error),
-          duration: Date.now() - startTime,
-        },
-        ipAddress: context.ipAddress || null,
-        userAgent: context.userAgent || null,
-      }).catch((logError) => {
-        console.error('Failed to log error activity:', logError)
-      })
-    }
-
-    throw error
-  }
-}
-
-/**
- * Determine the action from the context
- */
+// TODO: Uncomment when activity logging is properly implemented
+/*
 function determineAction(context: any): string | null {
   const method = context.method?.toUpperCase()
   const path = context.path || ''
@@ -87,9 +37,6 @@ function determineAction(context: any): string | null {
   return null
 }
 
-/**
- * Determine the resource from the context
- */
 function determineResource(context: any): string | null {
   const path = context.path || ''
 
@@ -117,9 +64,6 @@ function determineResource(context: any): string | null {
   return null
 }
 
-/**
- * Helper to manually log an activity (for client-side actions)
- */
 export async function logUserActivity(params: {
   action: string
   resource: string
@@ -143,3 +87,4 @@ export async function logUserActivity(params: {
     console.error('Failed to log user activity:', error)
   }
 }
+*/

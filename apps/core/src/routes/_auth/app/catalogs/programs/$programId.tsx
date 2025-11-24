@@ -218,7 +218,7 @@ function ProgramDetails() {
     })
   }
 
-  const totalDuration = chapters?.reduce((sum, ch) => sum + (ch.durationHours || 0), 0) || 0
+  const totalDuration = chapters?.reduce((sum: any, ch: any) => sum + (ch.durationHours || 0), 0) || 0
 
   if (programLoading || chaptersLoading) {
     return (
@@ -444,7 +444,7 @@ function ProgramDetails() {
             : (
                 <div className="space-y-4">
                   <AnimatePresence mode="popLayout">
-                    {chapters.map(chapter => (
+                    {chapters.map((chapter: any) => (
                       <motion.div
                         key={chapter.id}
                         layout

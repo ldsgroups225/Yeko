@@ -366,7 +366,7 @@ function Schools() {
                         : (
                             <>
                               <div className="space-y-4">
-                                {schools.map(school => (
+                                {schools.map((school: any) => (
                                   <Link
                                     key={school.id}
                                     to="/app/schools/$schoolId"

@@ -1,3 +1,11 @@
+import type {
+  BulkCreateCoefficientsInput,
+  BulkUpdateCoefficientsInput,
+  CoefficientTemplateIdInput,
+  CopyCoefficientsInput,
+  CreateCoefficientTemplateInput,
+  UpdateCoefficientTemplateInput,
+} from '@/schemas/coefficients'
 import {
   bulkCreateCoefficientsMutation,
   bulkUpdateCoefficientsMutation,
@@ -39,27 +47,27 @@ export function coefficientTemplateByIdQueryOptions(id: string) {
 }
 
 export const createCoefficientTemplateMutationOptions = {
-  mutationFn: (data: any) => createCoefficientTemplateMutation({ data }),
+  mutationFn: (data: CreateCoefficientTemplateInput) => createCoefficientTemplateMutation({ data }),
 }
 
 export const updateCoefficientTemplateMutationOptions = {
-  mutationFn: (data: any) => updateCoefficientTemplateMutation({ data }),
+  mutationFn: (data: UpdateCoefficientTemplateInput) => updateCoefficientTemplateMutation({ data }),
 }
 
 export const deleteCoefficientTemplateMutationOptions = {
-  mutationFn: (data: any) => deleteCoefficientTemplateMutation({ data }),
+  mutationFn: (data: CoefficientTemplateIdInput) => deleteCoefficientTemplateMutation({ data }),
 }
 
 export const bulkCreateCoefficientsMutationOptions = {
-  mutationFn: (data: any) => bulkCreateCoefficientsMutation({ data }),
+  mutationFn: (data: BulkCreateCoefficientsInput) => bulkCreateCoefficientsMutation({ data }),
 }
 
 export const bulkUpdateCoefficientsMutationOptions = {
-  mutationFn: (data: any) => bulkUpdateCoefficientsMutation({ data }),
+  mutationFn: (data: BulkUpdateCoefficientsInput) => bulkUpdateCoefficientsMutation({ data }),
 }
 
 export const copyCoefficientsMutationOptions = {
-  mutationFn: (data: any) => copyCoefficientsMutation({ data }),
+  mutationFn: (data: CopyCoefficientsInput) => copyCoefficientsMutation({ data }),
 }
 
 export function coefficientStatsQueryOptions() {

@@ -222,7 +222,7 @@ function SubjectsCatalog() {
         .map(s => s as CreateSubjectInput)
 
       if (subjectsToCreate.length > 0) {
-        await bulkCreateMutation.mutateAsync(subjectsToCreate)
+        await bulkCreateMutation.mutateAsync({ subjects: subjectsToCreate })
       }
     }
     catch (error) {

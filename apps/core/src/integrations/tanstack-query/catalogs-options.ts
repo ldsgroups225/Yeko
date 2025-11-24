@@ -1,3 +1,17 @@
+import type {
+  CreateGradeInput,
+  CreateSerieInput,
+  CreateSubjectInput,
+  CreateTrackInput,
+  GradeIdInput,
+  SerieIdInput,
+  SubjectIdInput,
+  TrackIdInput,
+  UpdateGradeInput,
+  UpdateSerieInput,
+  UpdateSubjectInput,
+  UpdateTrackInput,
+} from '@/schemas/catalog'
 import {
   bulkCreateSeriesMutation,
   bulkCreateSubjectsMutation,
@@ -59,15 +73,15 @@ export function trackByIdQueryOptions(id: string) {
 }
 
 export const createTrackMutationOptions = {
-  mutationFn: (data: any) => createTrackMutation({ data }),
+  mutationFn: (data: CreateTrackInput) => createTrackMutation({ data }),
 }
 
 export const updateTrackMutationOptions = {
-  mutationFn: (data: any) => updateTrackMutation({ data }),
+  mutationFn: (data: UpdateTrackInput) => updateTrackMutation({ data }),
 }
 
 export const deleteTrackMutationOptions = {
-  mutationFn: (data: any) => deleteTrackMutation({ data }),
+  mutationFn: (data: TrackIdInput) => deleteTrackMutation({ data }),
 }
 
 // ===== GRADES =====
@@ -92,19 +106,19 @@ export function gradeByIdQueryOptions(id: string) {
 }
 
 export const createGradeMutationOptions = {
-  mutationFn: (data: any) => createGradeMutation({ data }),
+  mutationFn: (data: CreateGradeInput) => createGradeMutation({ data }),
 }
 
 export const updateGradeMutationOptions = {
-  mutationFn: (data: any) => updateGradeMutation({ data }),
+  mutationFn: (data: UpdateGradeInput) => updateGradeMutation({ data }),
 }
 
 export const deleteGradeMutationOptions = {
-  mutationFn: (data: any) => deleteGradeMutation({ data }),
+  mutationFn: (data: GradeIdInput) => deleteGradeMutation({ data }),
 }
 
 export const bulkUpdateGradesOrderMutationOptions = {
-  mutationFn: (data: any) => bulkUpdateGradesOrderMutation({ data }),
+  mutationFn: (data: Array<{ id: string, order: number }>) => bulkUpdateGradesOrderMutation({ data }),
 }
 
 // ===== SERIES =====
@@ -129,19 +143,19 @@ export function serieByIdQueryOptions(id: string) {
 }
 
 export const createSerieMutationOptions = {
-  mutationFn: (data: any) => createSerieMutation({ data }),
+  mutationFn: (data: CreateSerieInput) => createSerieMutation({ data }),
 }
 
 export const updateSerieMutationOptions = {
-  mutationFn: (data: any) => updateSerieMutation({ data }),
+  mutationFn: (data: UpdateSerieInput) => updateSerieMutation({ data }),
 }
 
 export const deleteSerieMutationOptions = {
-  mutationFn: (data: any) => deleteSerieMutation({ data }),
+  mutationFn: (data: SerieIdInput) => deleteSerieMutation({ data }),
 }
 
 export const bulkCreateSeriesMutationOptions = {
-  mutationFn: (data: any) => bulkCreateSeriesMutation({ data }),
+  mutationFn: (data: { series: CreateSerieInput[] }) => bulkCreateSeriesMutation({ data }),
 }
 
 // ===== SUBJECTS =====
@@ -171,19 +185,19 @@ export function subjectByIdQueryOptions(id: string) {
 }
 
 export const createSubjectMutationOptions = {
-  mutationFn: (data: any) => createSubjectMutation({ data }),
+  mutationFn: (data: CreateSubjectInput) => createSubjectMutation({ data }),
 }
 
 export const updateSubjectMutationOptions = {
-  mutationFn: (data: any) => updateSubjectMutation({ data }),
+  mutationFn: (data: UpdateSubjectInput) => updateSubjectMutation({ data }),
 }
 
 export const deleteSubjectMutationOptions = {
-  mutationFn: (data: any) => deleteSubjectMutation({ data }),
+  mutationFn: (data: SubjectIdInput) => deleteSubjectMutation({ data }),
 }
 
 export const bulkCreateSubjectsMutationOptions = {
-  mutationFn: (data: any) => bulkCreateSubjectsMutation({ data }),
+  mutationFn: (data: { subjects: CreateSubjectInput[] }) => bulkCreateSubjectsMutation({ data }),
 }
 
 // ===== CATALOG STATS =====

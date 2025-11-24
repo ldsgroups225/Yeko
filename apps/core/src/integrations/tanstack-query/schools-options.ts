@@ -1,3 +1,9 @@
+import type {
+  BulkUpdateSchoolsInput,
+  CreateSchoolInput,
+  SchoolIdInput,
+  UpdateSchoolInput,
+} from '@/schemas/school'
 import {
   bulkUpdateSchools,
   createSchool,
@@ -38,13 +44,13 @@ export function schoolQueryOptions(id: string) {
 }
 
 export const createSchoolMutationOptions = {
-  mutationFn: (data: any) => createSchool({ data }),
-  onSuccess: (data: any) => {
+  mutationFn: (data: CreateSchoolInput) => createSchool({ data }),
+  onSuccess: (data: unknown) => {
     console.warn('School created successfully:', data)
     // Invalidate schools list cache
     // This will be handled in the component with queryClient
   },
-  onError: (error: any) => {
+  onError: (error: Error) => {
     console.error('Failed to create school:', error)
   },
   onSettled: () => {
@@ -53,31 +59,31 @@ export const createSchoolMutationOptions = {
 }
 
 export const updateSchoolMutationOptions = {
-  mutationFn: (data: any) => updateSchool({ data }),
-  onSuccess: (data: any) => {
+  mutationFn: (data: UpdateSchoolInput) => updateSchool({ data }),
+  onSuccess: (data: unknown) => {
     console.warn('School updated successfully:', data)
   },
-  onError: (error: any) => {
+  onError: (error: Error) => {
     console.error('Failed to update school:', error)
   },
 }
 
 export const deleteSchoolMutationOptions = {
-  mutationFn: (data: any) => deleteSchool({ data }),
-  onSuccess: (data: any) => {
+  mutationFn: (data: SchoolIdInput) => deleteSchool({ data }),
+  onSuccess: (data: unknown) => {
     console.warn('School deleted successfully:', data)
   },
-  onError: (error: any) => {
+  onError: (error: Error) => {
     console.error('Failed to delete school:', error)
   },
 }
 
 export const bulkUpdateSchoolsMutationOptions = {
-  mutationFn: (data: any) => bulkUpdateSchools({ data }),
-  onSuccess: (data: any) => {
+  mutationFn: (data: BulkUpdateSchoolsInput) => bulkUpdateSchools({ data }),
+  onSuccess: (data: unknown) => {
     console.warn('Schools bulk updated successfully:', data)
   },
-  onError: (error: any) => {
+  onError: (error: Error) => {
     console.error('Failed to bulk update schools:', error)
   },
 }

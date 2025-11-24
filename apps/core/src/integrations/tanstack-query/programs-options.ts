@@ -1,3 +1,19 @@
+import type {
+  BulkCreateChaptersInput,
+  BulkUpdateChaptersOrderInput,
+  CloneProgramTemplateInput,
+  CreateProgramTemplateChapterInput,
+  CreateProgramTemplateInput,
+  CreateSchoolYearTemplateInput,
+  ProgramTemplateChapterIdInput,
+  ProgramTemplateIdInput,
+  PublishProgramInput,
+  RestoreProgramVersionInput,
+  SchoolYearTemplateIdInput,
+  UpdateProgramTemplateChapterInput,
+  UpdateProgramTemplateInput,
+  UpdateSchoolYearTemplateInput,
+} from '@/schemas/programs'
 import {
   bulkCreateChaptersMutation,
   bulkUpdateChaptersOrderMutation,
@@ -45,15 +61,15 @@ export function schoolYearTemplateByIdQueryOptions(id: string) {
 }
 
 export const createSchoolYearTemplateMutationOptions = {
-  mutationFn: (data: any) => createSchoolYearTemplateMutation({ data }),
+  mutationFn: (data: CreateSchoolYearTemplateInput) => createSchoolYearTemplateMutation({ data }),
 }
 
 export const updateSchoolYearTemplateMutationOptions = {
-  mutationFn: (data: any) => updateSchoolYearTemplateMutation({ data }),
+  mutationFn: (data: UpdateSchoolYearTemplateInput) => updateSchoolYearTemplateMutation({ data }),
 }
 
 export const deleteSchoolYearTemplateMutationOptions = {
-  mutationFn: (data: any) => deleteSchoolYearTemplateMutation({ data }),
+  mutationFn: (data: SchoolYearTemplateIdInput) => deleteSchoolYearTemplateMutation({ data }),
 }
 
 // ===== PROGRAM TEMPLATES =====
@@ -85,19 +101,19 @@ export function programTemplateByIdQueryOptions(id: string) {
 }
 
 export const createProgramTemplateMutationOptions = {
-  mutationFn: (data: any) => createProgramTemplateMutation({ data }),
+  mutationFn: (data: CreateProgramTemplateInput) => createProgramTemplateMutation({ data }),
 }
 
 export const updateProgramTemplateMutationOptions = {
-  mutationFn: (data: any) => updateProgramTemplateMutation({ data }),
+  mutationFn: (data: UpdateProgramTemplateInput) => updateProgramTemplateMutation({ data }),
 }
 
 export const deleteProgramTemplateMutationOptions = {
-  mutationFn: (data: any) => deleteProgramTemplateMutation({ data }),
+  mutationFn: (data: ProgramTemplateIdInput) => deleteProgramTemplateMutation({ data }),
 }
 
 export const cloneProgramTemplateMutationOptions = {
-  mutationFn: (data: any) => cloneProgramTemplateMutation({ data }),
+  mutationFn: (data: CloneProgramTemplateInput) => cloneProgramTemplateMutation({ data }),
 }
 
 // ===== PROGRAM TEMPLATE CHAPTERS =====
@@ -123,29 +139,29 @@ export function programTemplateChapterByIdQueryOptions(id: string) {
 }
 
 export const createProgramTemplateChapterMutationOptions = {
-  mutationFn: (data: any) => createProgramTemplateChapterMutation({ data }),
+  mutationFn: (data: CreateProgramTemplateChapterInput) => createProgramTemplateChapterMutation({ data }),
 }
 
 export const updateProgramTemplateChapterMutationOptions = {
-  mutationFn: (data: any) => updateProgramTemplateChapterMutation({ data }),
+  mutationFn: (data: UpdateProgramTemplateChapterInput) => updateProgramTemplateChapterMutation({ data }),
 }
 
 export const deleteProgramTemplateChapterMutationOptions = {
-  mutationFn: (data: any) => deleteProgramTemplateChapterMutation({ data }),
+  mutationFn: (data: ProgramTemplateChapterIdInput) => deleteProgramTemplateChapterMutation({ data }),
 }
 
 export const bulkUpdateChaptersOrderMutationOptions = {
-  mutationFn: (data: any) => bulkUpdateChaptersOrderMutation({ data }),
+  mutationFn: (data: BulkUpdateChaptersOrderInput) => bulkUpdateChaptersOrderMutation({ data }),
 }
 
 export const bulkCreateChaptersMutationOptions = {
-  mutationFn: (data: any) => bulkCreateChaptersMutation({ data }),
+  mutationFn: (data: BulkCreateChaptersInput) => bulkCreateChaptersMutation({ data }),
 }
 
 // ===== PROGRAM VERSIONS =====
 
 export const publishProgramMutationOptions = {
-  mutationFn: (data: any) => publishProgramMutation({ data }),
+  mutationFn: (data: PublishProgramInput) => publishProgramMutation({ data }),
 }
 
 export function getProgramVersionsQueryOptions(programTemplateId: string) {
@@ -159,7 +175,7 @@ export function getProgramVersionsQueryOptions(programTemplateId: string) {
 }
 
 export const restoreProgramVersionMutationOptions = {
-  mutationFn: (data: any) => restoreProgramVersionMutation({ data }),
+  mutationFn: (data: RestoreProgramVersionInput) => restoreProgramVersionMutation({ data }),
 }
 
 // ===== PROGRAM STATS =====

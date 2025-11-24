@@ -274,7 +274,7 @@ function GradesManagement() {
         .map(s => s as CreateSerieInput)
 
       if (seriesToCreate.length > 0) {
-        bulkCreateSeriesMutation.mutate(seriesToCreate)
+        bulkCreateSeriesMutation.mutate({ series: seriesToCreate })
       }
     }
     catch (error) {

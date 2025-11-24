@@ -35,6 +35,8 @@ export const GradeIdSchema = z.object({
 
 export const GetGradesSchema = z.object({
   trackId: z.string().optional(),
+  page: z.number().int().min(1).default(1),
+  limit: z.number().int().min(1).max(100).default(20),
 })
 
 // ===== SERIES =====
@@ -55,6 +57,9 @@ export const SerieIdSchema = z.object({
 
 export const GetSeriesSchema = z.object({
   trackId: z.string().optional(),
+  gradeId: z.string().optional(),
+  page: z.number().int().min(1).default(1),
+  limit: z.number().int().min(1).max(100).default(20),
 })
 
 // ===== SUBJECTS =====

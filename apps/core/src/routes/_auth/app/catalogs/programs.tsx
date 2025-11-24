@@ -195,7 +195,7 @@ function ProgramsCatalog() {
     })
   }
 
-  const activeYear = schoolYears?.find(y => y.isActive)
+  const activeYear = schoolYears?.find((y: any) => y.isActive)
 
   if (yearsLoading || statsLoading) {
     return (
@@ -352,7 +352,7 @@ function ProgramsCatalog() {
                       <SelectValue placeholder="Sélectionner" />
                     </SelectTrigger>
                     <SelectContent>
-                      {schoolYears?.map(year => (
+                      {schoolYears?.map((year: any) => (
                         <SelectItem key={year.id} value={year.id}>
                           {year.name}
                           {year.isActive && ' (Active)'}
@@ -430,7 +430,7 @@ function ProgramsCatalog() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Toutes les années</SelectItem>
-                {schoolYears?.map(year => (
+                {schoolYears?.map((year: any) => (
                   <SelectItem key={year.id} value={year.id}>
                     {year.name}
                   </SelectItem>
@@ -508,7 +508,7 @@ function ProgramsCatalog() {
                 : (
                     <div className="space-y-4">
                       <AnimatePresence mode="popLayout">
-                        {programsData.programs.map(program => (
+                        {programsData.programs.map((program: any) => (
                           <motion.div
                             key={program.id}
                             layout
@@ -604,7 +604,7 @@ function ProgramsCatalog() {
                       <SelectValue placeholder="Sélectionner" />
                     </SelectTrigger>
                     <SelectContent>
-                      {schoolYears?.map(year => (
+                      {schoolYears?.map((year: any) => (
                         <SelectItem key={year.id} value={year.id}>
                           {year.name}
                         </SelectItem>
