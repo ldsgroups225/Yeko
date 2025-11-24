@@ -99,7 +99,7 @@ export function NavigationBar() {
                 Yeko Platform
               </span>
               <span className="text-xs text-muted-foreground font-medium tracking-wider">
-                on Cloudflare
+                la transparence éducative
               </span>
             </div>
           </Link>
@@ -201,6 +201,7 @@ export function NavigationBar() {
                     <Button
                       onClick={handleGoogleSignIn}
                       variant="default"
+                      size="sm"
                       className="gap-2"
                     >
                       <LogIn className="h-4 w-4" />

@@ -15,6 +15,7 @@ import { StatsCard } from '@/components/dashboard/stats-card'
 import { SystemHealth } from '@/components/dashboard/system-health'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { dashboardStatsQueryOptions, recentActivityQueryOptions, systemHealthQueryOptions } from '@/integrations/tanstack-query/dashboard-options'
+import { authClient } from '@/lib/auth-client'
 import { useLogger } from '@/lib/logger'
 
 export const Route = createFileRoute('/_auth/app/dashboard')({
@@ -23,6 +24,7 @@ export const Route = createFileRoute('/_auth/app/dashboard')({
 
 function Dashboard() {
   const { logger } = useLogger()
+  const { data: session } = authClient.useSession()
 
   // Fetch real data using TanStack Query
   const { data: stats, isLoading: statsLoading, error: statsError } = useQuery(dashboardStatsQueryOptions())
@@ -100,23 +102,25 @@ function Dashboard() {
 
     if (activity.type === 'school_created') {
       type = 'success'
-      action = 'Nouvelle école'
-      target = activity.description.split(': ')[1] || activity.description
+      const schoolName = activity.description.split(': ')[1] || activity.description
+      action = `${schoolName} a rejoint la plateforme`
+      target = 'Nouvelle inscription'
     }
     else if (activity.type === 'user_login') {
       type = 'info'
-      action = 'Connexion'
-      target = activity.user
+      action = `${activity.user} s'est connecté`
+      target = 'Connexion système'
     }
     else if (activity.type === 'school_updated') {
       type = 'warning'
-      action = 'Mise à jour'
-      target = activity.description.split(': ')[1] || activity.description
+      const schoolName = activity.description.split(': ')[1] || activity.description
+      action = `${schoolName} a été mis à jour`
+      target = 'Modification de profil'
     }
     else if (activity.type === 'report_generated') {
       type = 'info'
-      action = 'Rapport'
-      target = activity.description
+      action = `Rapport généré: ${activity.description}`
+      target = 'Export de données'
     }
 
     return {
@@ -125,9 +129,13 @@ function Dashboard() {
       target,
       date: new Date(activity.timestamp).toLocaleDateString(),
       user: activity.user,
+      // userAvatar: activity.userAvatar, // Assuming this might be available in future, currently undefined
       type,
     }
   }) || []
+
+  const greeting = new Date().getHours() < 18 ? 'Bonjour' : 'Bonsoir'
+  const userName = session?.user?.name || 'Super Admin'
 
   return (
     <div className="space-y-6">
@@ -135,7 +143,10 @@ function Dashboard() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Tableau de bord</h1>
         <p className="text-muted-foreground">
-          Bienvenue dans le tableau de bord Super Administrateur de Yeko Core. Voici un aperçu de votre système.
+          {greeting}
+          ,
+          {userName}
+          . Voici un aperçu de votre système aujourd'hui.
         </p>
       </div>
 
@@ -267,6 +278,7 @@ function Dashboard() {
         health={healthData}
         isLoading={healthLoading}
         error={healthError?.message}
+        collapsedByDefault={true}
       />
 
       {/* Activity Feed */}

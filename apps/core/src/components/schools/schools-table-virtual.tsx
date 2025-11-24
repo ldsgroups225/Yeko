@@ -4,10 +4,19 @@
 import type { School } from '@repo/data-ops'
 import { Link } from '@tanstack/react-router'
 import { useVirtualizer } from '@tanstack/react-virtual'
-import { Building, Mail, MapPin, Phone } from 'lucide-react'
+import { Ban, Eye, Mail, MapPin, MoreHorizontal, Pencil, Phone, Users } from 'lucide-react'
 import { useRef } from 'react'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import {
   Table,
   TableBody,
@@ -90,9 +99,12 @@ export function SchoolsTableVirtual({ schools, onSchoolClick }: SchoolsTableVirt
                 >
                   <TableCell>
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                        <Building className="h-5 w-5 text-primary" />
-                      </div>
+                      <Avatar className="h-10 w-10 rounded-lg">
+                        <AvatarImage src={school.logoUrl || undefined} alt={school.name} />
+                        <AvatarFallback className="rounded-lg bg-primary/10 text-primary font-medium">
+                          {school.name.substring(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
                       <div>
                         <div className="font-medium">{school.name}</div>
                         {school.address && (
@@ -127,11 +139,44 @@ export function SchoolsTableVirtual({ schools, onSchoolClick }: SchoolsTableVirt
                   </TableCell>
                   <TableCell>{getStatusBadge(school.status)}</TableCell>
                   <TableCell className="text-right">
-                    <Link to="/app/schools/$schoolId" params={{ schoolId: school.id }}>
-                      <Button variant="ghost" size="sm" onClick={e => e.stopPropagation()}>
-                        Voir détails
-                      </Button>
-                    </Link>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={e => e.stopPropagation()}>
+                          <MoreHorizontal className="h-4 w-4" />
+                          <span className="sr-only">Actions</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" onClick={e => e.stopPropagation()}>
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuItem asChild>
+                          <Link to="/app/schools/$schoolId" params={{ schoolId: school.id }}>
+                            <Eye className="mr-2 h-4 w-4" />
+                            {' '}
+                            Voir détails
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link to="/app/schools/$schoolId" params={{ schoolId: school.id }} search={{ tab: 'users' }}>
+                            <Users className="mr-2 h-4 w-4" />
+                            {' '}
+                            Gérer utilisateurs
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link to="/app/schools/$schoolId" params={{ schoolId: school.id }} search={{ edit: true }}>
+                            <Pencil className="mr-2 h-4 w-4" />
+                            {' '}
+                            Modifier
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="text-red-600 focus:text-red-600">
+                          <Ban className="mr-2 h-4 w-4" />
+                          {' '}
+                          Suspendre
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               )

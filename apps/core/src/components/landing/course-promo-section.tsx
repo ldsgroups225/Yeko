@@ -65,30 +65,30 @@ export function CoursePromoSection() {
 
             <div className="space-y-3">
               <h3 className="font-semibold text-lg mb-2">
-                Technologies Covered
+                Key Platform Features
               </h3>
               <div className="space-y-2">
                 <div className="flex items-start gap-2">
                   <CheckCircle className="w-5 h-5 text-primary mt-0.5" />
                   <span className="text-sm">
-                    Cloudflare D1, KV, R2, Workers AI
+                    Enterprise-grade Scalability & Storage
                   </span>
                 </div>
                 <div className="flex items-start gap-2">
                   <CheckCircle className="w-5 h-5 text-primary mt-0.5" />
                   <span className="text-sm">
-                    Durable Objects for state management
+                    Real-time Collaboration Engine
                   </span>
                 </div>
                 <div className="flex items-start gap-2">
                   <CheckCircle className="w-5 h-5 text-primary mt-0.5" />
                   <span className="text-sm">
-                    Better Auth & Stripe integration
+                    Secure Authentication & Payments
                   </span>
                 </div>
                 <div className="flex items-start gap-2">
                   <CheckCircle className="w-5 h-5 text-primary mt-0.5" />
-                  <span className="text-sm">TypeScript, Drizzle ORM, pnpm</span>
+                  <span className="text-sm">Modern, High-Performance Architecture</span>
                 </div>
               </div>
             </div>

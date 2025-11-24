@@ -5,7 +5,7 @@ const reasons = [
   {
     icon: Zap,
     title: 'Lightning Fast',
-    description: 'Built on Cloudflare\'s global network for instant access from anywhere in Africa with minimal latency.',
+    description: 'Built on a high-performance global network for instant access from anywhere in Africa with minimal latency.',
   },
   {
     icon: Shield,

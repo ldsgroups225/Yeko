@@ -13,7 +13,7 @@ const faqs = [
   },
   {
     question: 'Is my school\'s data secure?',
-    answer: 'Absolutely. We use bank-level encryption, role-based access control, and host on Cloudflare\'s secure infrastructure. Your data is backed up daily and we\'re fully compliant with international data protection standards.',
+    answer: 'Absolutely. We use bank-level encryption, role-based access control, and host on a secure, global infrastructure. Your data is backed up daily and we\'re fully compliant with international data protection standards.',
   },
   {
     question: 'Can parents and teachers use Yeko on their phones?',

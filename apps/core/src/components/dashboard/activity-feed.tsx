@@ -1,4 +1,5 @@
 import { AlertCircle, AlertTriangle, CheckCircle, Info } from 'lucide-react'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -9,6 +10,7 @@ interface ActivityItem {
   target: string
   date: string
   user: string
+  userAvatar?: string
   type: 'success' | 'info' | 'warning' | 'error'
 }
 
@@ -141,12 +143,18 @@ export function ActivityFeed({ activities, isLoading, error, limit = 5 }: Activi
                 <p className="text-sm text-muted-foreground">
                   {activity.target}
                 </p>
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <span>
-                    Par
-                    {' '}
-                    {activity.user}
-                  </span>
+                <div className="flex items-center justify-between text-xs text-muted-foreground pt-1">
+                  <div className="flex items-center gap-2">
+                    <Avatar className="h-5 w-5">
+                      <AvatarImage src={activity.userAvatar} alt={activity.user} />
+                      <AvatarFallback className="text-[10px]">
+                        {activity.user.substring(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span>
+                      {activity.user}
+                    </span>
+                  </div>
                   <span>{activity.date}</span>
                 </div>
               </div>
