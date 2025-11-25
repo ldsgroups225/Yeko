@@ -6,7 +6,11 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 // Mock motion/react
 vi.mock('motion/react', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: any) => {
+      // Filter out motion-specific props that shouldn't be on DOM elements
+      const { layout: _layout, animate: _animate, initial: _initial, exit: _exit, whileHover: _whileHover, whileTap: _whileTap, transition: _transition, ...domProps } = props
+      return <div {...domProps}>{children}</div>
+    },
   },
   AnimatePresence: ({ children }: any) => <>{children}</>,
 }))
@@ -247,14 +251,18 @@ describe('programs List Component', () => {
       await waitFor(() => {
         expect(screen.getByText('Mathématiques')).toBeInTheDocument()
         expect(screen.getByText('Terminale C')).toBeInTheDocument()
-        expect(screen.getByText('2024-2025')).toBeInTheDocument()
 
         expect(screen.getByText('Physique-Chimie')).toBeInTheDocument()
         expect(screen.getByText('Première S')).toBeInTheDocument()
 
         expect(screen.getByText('Histoire')).toBeInTheDocument()
         expect(screen.getByText('Seconde')).toBeInTheDocument()
-        expect(screen.getByText('2023-2024')).toBeInTheDocument()
+
+        // Check for school year templates - use getAllByText since there might be duplicates
+        const year2024Elements = screen.getAllByText('2024-2025')
+        const year2023Elements = screen.getAllByText('2023-2024')
+        expect(year2024Elements.length).toBeGreaterThan(0)
+        expect(year2023Elements.length).toBeGreaterThan(0)
       })
     })
 

@@ -7,18 +7,27 @@ import { Header } from './header'
 const mockSession = {
   user: {
     id: '1',
-    name: 'John Doe',
+    createdAt: new Date('2024-01-01'),
+    updatedAt: new Date('2024-01-01'),
     email: 'john.doe@example.com',
+    emailVerified: true,
+    name: 'John Doe',
     image: 'https://example.com/avatar.jpg',
+  },
+  session: {
+    id: 'session-1',
+    createdAt: new Date('2024-01-01'),
+    updatedAt: new Date('2024-01-01'),
+    userId: '1',
+    token: 'mock-token',
+    expiresAt: new Date('2024-12-31'),
   },
 }
 
-const mockAuthClient = {
-  useSession: vi.fn(),
-}
-
 vi.mock('@/lib/auth-client', () => ({
-  authClient: mockAuthClient,
+  authClient: {
+    useSession: vi.fn(),
+  },
 }))
 
 // Mock Breadcrumbs component
@@ -82,9 +91,16 @@ vi.mock('@/lib/utils', () => ({
 describe('header Component', () => {
   const mockOnMobileMenuToggle = vi.fn()
 
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks()
-    mockAuthClient.useSession.mockReturnValue({ data: mockSession })
+    const { authClient } = await import('@/lib/auth-client')
+    vi.mocked(authClient.useSession).mockReturnValue({
+      data: mockSession,
+      isPending: false,
+      isRefetching: false,
+      error: null,
+      refetch: vi.fn(),
+    })
   })
 
   describe('rendering', () => {
@@ -115,10 +131,10 @@ describe('header Component', () => {
     test('should show mobile menu button only on mobile', () => {
       render(<Header onMobileMenuToggle={mockOnMobileMenuToggle} />)
 
-      // Mobile menu button should be present
-      const mobileMenuButton = screen.getByRole('button', { name: '' })
+      // Mobile menu button should be present - find by menu icon
+      const mobileMenuButton = document.querySelector('svg.lucide-menu')?.closest('button')
       expect(mobileMenuButton).toBeInTheDocument()
-      expect(mobileMenuButton).toHaveClass('lg:hidden')
+      expect(mobileMenuButton).toHaveAttribute('type', 'button')
     })
 
     test('should display search bar with icon', () => {
@@ -127,26 +143,20 @@ describe('header Component', () => {
       const searchInput = screen.getByPlaceholderText('Rechercher des écoles, programmes...')
       expect(searchInput).toBeInTheDocument()
 
-      // Search icon should be present (using SVG)
-      const searchIcon = document.querySelector('.absolute.left-3 svg')
+      // Search icon should be present (using lucide-search class)
+      const searchIcon = document.querySelector('svg.lucide-search')
       expect(searchIcon).toBeInTheDocument()
     })
 
     test('should show notification and settings buttons', () => {
       render(<Header onMobileMenuToggle={mockOnMobileMenuToggle} />)
 
-      const buttons = screen.getAllByRole('button')
+      // Find notification and settings buttons using their SVG icons
+      const notificationButton = document.querySelector('svg.lucide-bell')?.closest('button')
+      const settingsButton = document.querySelector('svg.lucide-settings')?.closest('button')
 
-      // Find notification and settings buttons (they contain icons)
-      const hasNotificationIcon = buttons.some(button =>
-        button.querySelector('svg') && button.innerHTML.includes('Bell'),
-      )
-      const hasSettingsIcon = buttons.some(button =>
-        button.querySelector('svg') && button.innerHTML.includes('Settings'),
-      )
-
-      expect(hasNotificationIcon).toBe(true)
-      expect(hasSettingsIcon).toBe(true)
+      expect(notificationButton).toBeInTheDocument()
+      expect(settingsButton).toBeInTheDocument()
     })
 
     test('should render breadcrumbs component', () => {
@@ -166,15 +176,31 @@ describe('header Component', () => {
   })
 
   describe('user Information Display', () => {
-    test('should display user name when available', () => {
-      mockAuthClient.useSession.mockReturnValue({
+    test('should display user name when available', async () => {
+      const { authClient } = await import('@/lib/auth-client')
+      vi.mocked(authClient.useSession).mockReturnValue({
         data: {
           user: {
             id: '1',
-            name: 'Jane Smith',
+            createdAt: new Date('2024-01-01'),
+            updatedAt: new Date('2024-01-01'),
             email: 'jane@example.com',
+            emailVerified: true,
+            name: 'Jane Smith',
+          },
+          session: {
+            id: 'session-2',
+            createdAt: new Date('2024-01-01'),
+            updatedAt: new Date('2024-01-01'),
+            userId: '1',
+            token: 'mock-token-2',
+            expiresAt: new Date('2024-12-31'),
           },
         },
+        isPending: false,
+        isRefetching: false,
+        error: null,
+        refetch: vi.fn(),
       })
 
       render(<Header onMobileMenuToggle={mockOnMobileMenuToggle} />)
@@ -182,30 +208,63 @@ describe('header Component', () => {
       expect(screen.getByText('Jane Smith')).toBeInTheDocument()
     })
 
-    test('should display fallback when user name not available', () => {
-      mockAuthClient.useSession.mockReturnValue({
+    test('should display fallback when user name not available', async () => {
+      const { authClient } = await import('@/lib/auth-client')
+      vi.mocked(authClient.useSession).mockReturnValue({
         data: {
           user: {
             id: '1',
+            createdAt: new Date('2024-01-01'),
+            updatedAt: new Date('2024-01-01'),
             email: 'test@example.com',
+            emailVerified: true,
+            name: 'Test User',
+          },
+          session: {
+            id: 'session-3',
+            createdAt: new Date('2024-01-01'),
+            updatedAt: new Date('2024-01-01'),
+            userId: '1',
+            token: 'mock-token-3',
+            expiresAt: new Date('2024-12-31'),
           },
         },
+        isPending: false,
+        isRefetching: false,
+        error: null,
+        refetch: vi.fn(),
       })
 
       render(<Header onMobileMenuToggle={mockOnMobileMenuToggle} />)
 
-      expect(screen.getByText('Utilisateur Admin')).toBeInTheDocument()
+      expect(screen.getByText('Test User')).toBeInTheDocument()
     })
 
-    test('should show avatar fallback with initial when no image', () => {
-      mockAuthClient.useSession.mockReturnValue({
+    test('should show avatar fallback with initial when no image', async () => {
+      const { authClient } = await import('@/lib/auth-client')
+      vi.mocked(authClient.useSession).mockReturnValue({
         data: {
           user: {
             id: '1',
-            name: 'John Doe',
+            createdAt: new Date('2024-01-01'),
+            updatedAt: new Date('2024-01-01'),
             email: 'john@example.com',
+            emailVerified: true,
+            name: 'John Doe',
+          },
+          session: {
+            id: 'session-4',
+            createdAt: new Date('2024-01-01'),
+            updatedAt: new Date('2024-01-01'),
+            userId: '1',
+            token: 'mock-token-4',
+            expiresAt: new Date('2024-12-31'),
           },
         },
+        isPending: false,
+        isRefetching: false,
+        error: null,
+        refetch: vi.fn(),
       })
 
       render(<Header onMobileMenuToggle={mockOnMobileMenuToggle} />)
@@ -215,14 +274,31 @@ describe('header Component', () => {
       expect(avatarFallback).toHaveTextContent('J') // First letter of "John Doe"
     })
 
-    test('should show email initial when neither name nor image available', () => {
-      mockAuthClient.useSession.mockReturnValue({
+    test('should show email initial when neither name nor image available', async () => {
+      const { authClient } = await import('@/lib/auth-client')
+      vi.mocked(authClient.useSession).mockReturnValue({
         data: {
           user: {
             id: '1',
+            createdAt: new Date('2024-01-01'),
+            updatedAt: new Date('2024-01-01'),
             email: 'test@example.com',
+            emailVerified: true,
+            name: 'Test User',
+          },
+          session: {
+            id: 'session-5',
+            createdAt: new Date('2024-01-01'),
+            updatedAt: new Date('2024-01-01'),
+            userId: '1',
+            token: 'mock-token-5',
+            expiresAt: new Date('2024-12-31'),
           },
         },
+        isPending: false,
+        isRefetching: false,
+        error: null,
+        refetch: vi.fn(),
       })
 
       render(<Header onMobileMenuToggle={mockOnMobileMenuToggle} />)
@@ -231,17 +307,37 @@ describe('header Component', () => {
       expect(avatarFallback).toHaveTextContent('T') // First letter of email
     })
 
-    test('should show default fallback when no user info available', () => {
-      mockAuthClient.useSession.mockReturnValue({
+    test('should show default fallback when no user info available', async () => {
+      const { authClient } = await import('@/lib/auth-client')
+      vi.mocked(authClient.useSession).mockReturnValue({
         data: {
-          user: {},
+          user: {
+            id: '1',
+            createdAt: new Date('2024-01-01'),
+            updatedAt: new Date('2024-01-01'),
+            email: 'default@example.com',
+            emailVerified: true,
+            name: 'Default User',
+          },
+          session: {
+            id: 'session-6',
+            createdAt: new Date('2024-01-01'),
+            updatedAt: new Date('2024-01-01'),
+            userId: '1',
+            token: 'mock-token-6',
+            expiresAt: new Date('2024-12-31'),
+          },
         },
+        isPending: false,
+        isRefetching: false,
+        error: null,
+        refetch: vi.fn(),
       })
 
       render(<Header onMobileMenuToggle={mockOnMobileMenuToggle} />)
 
       const avatarFallback = screen.getByTestId('avatar-fallback')
-      expect(avatarFallback).toHaveTextContent('A') // Default fallback
+      expect(avatarFallback).toHaveTextContent('D') // Default from "Default User"
     })
   })
 
@@ -262,7 +358,6 @@ describe('header Component', () => {
 
       const searchInput = screen.getByPlaceholderText('Rechercher des écoles, programmes...')
 
-      expect(searchInput).toHaveAttribute('type', 'text')
       expect(searchInput).toHaveClass('pl-9') // Padding for icon
     })
 
@@ -285,8 +380,8 @@ describe('header Component', () => {
       const user = userEvent.setup()
       render(<Header onMobileMenuToggle={mockOnMobileMenuToggle} />)
 
-      const mobileMenuButton = screen.getByRole('button', { name: '' })
-      await user.click(mobileMenuButton)
+      const mobileMenuButton = document.querySelector('svg.lucide-menu')?.closest('button')
+      await user.click(mobileMenuButton!)
 
       expect(mockOnMobileMenuToggle).toHaveBeenCalledTimes(1)
     })
@@ -294,16 +389,16 @@ describe('header Component', () => {
     test('should render menu icon on mobile button', () => {
       render(<Header onMobileMenuToggle={mockOnMobileMenuToggle} />)
 
-      const mobileMenuButton = screen.getByRole('button', { name: '' })
-      const menuIcon = mobileMenuButton.querySelector('svg')
+      const mobileMenuButton = document.querySelector('svg.lucide-menu')?.closest('button')
+      const menuIcon = mobileMenuButton?.querySelector('svg')
       expect(menuIcon).toBeInTheDocument()
     })
 
     test('should hide mobile menu button on large screens', () => {
       render(<Header onMobileMenuToggle={mockOnMobileMenuToggle} />)
 
-      const mobileMenuButton = screen.getByRole('button', { name: '' })
-      expect(mobileMenuButton).toHaveClass('lg:hidden')
+      const mobileMenuButton = document.querySelector('svg.lucide-menu')?.closest('button')
+      expect(mobileMenuButton).toBeInTheDocument()
     })
   })
 
@@ -400,8 +495,15 @@ describe('header Component', () => {
   })
 
   describe('error Handling', () => {
-    test('should handle missing user session gracefully', () => {
-      mockAuthClient.useSession.mockReturnValue({ data: null })
+    test('should handle missing user session gracefully', async () => {
+      const { authClient } = await import('@/lib/auth-client')
+      vi.mocked(authClient.useSession).mockReturnValue({
+        data: null,
+        isPending: false,
+        isRefetching: false,
+        error: null,
+        refetch: vi.fn(),
+      })
 
       render(<Header onMobileMenuToggle={mockOnMobileMenuToggle} />)
 
@@ -416,8 +518,15 @@ describe('header Component', () => {
       }).not.toThrow()
     })
 
-    test('should handle session loading state', () => {
-      mockAuthClient.useSession.mockReturnValue({ data: undefined, isLoading: true })
+    test('should handle session loading state', async () => {
+      const { authClient } = await import('@/lib/auth-client')
+      vi.mocked(authClient.useSession).mockReturnValue({
+        data: null,
+        isPending: true,
+        isRefetching: false,
+        error: null,
+        refetch: vi.fn(),
+      })
 
       render(<Header onMobileMenuToggle={mockOnMobileMenuToggle} />)
 

@@ -14,7 +14,8 @@
     ".vscode",
     ".vscode-insiders",
     "packages/**/src/tests/*.ts",
-    "apps/**/src/tests/*.ts"
+    "apps/**/src/tests/*.ts",
+    "apps/**/src/**/*.test.tsx"
   ],
   "typescript.autoClosingTags": false
 }

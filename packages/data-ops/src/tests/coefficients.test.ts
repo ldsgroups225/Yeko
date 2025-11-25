@@ -1,4 +1,7 @@
+import { eq } from 'drizzle-orm'
 import { afterAll, beforeEach, describe, expect, test } from 'vitest'
+import { getDb } from '../database/setup'
+import { coefficientTemplates, grades, schoolYearTemplates, series, subjects, tracks } from '../drizzle/core-schema'
 import { createGrade, createSerie, createSubject, createTrack } from '../queries/catalogs'
 import {
   bulkCreateCoefficients,
@@ -12,9 +15,6 @@ import {
   updateCoefficientTemplate,
 } from '../queries/coefficients'
 import { createSchoolYearTemplate } from '../queries/programs'
-import { getDb } from '../database/setup'
-import { eq } from 'drizzle-orm'
-import { coefficientTemplates, schoolYearTemplates, subjects, grades, series, tracks } from '../drizzle/core-schema'
 
 describe('coefficient Templates', () => {
   let testYearId: string
@@ -485,7 +485,8 @@ describe('coefficient Templates', () => {
       await db.delete(grades).where(eq(grades.id, testGradeId))
       await db.delete(series).where(eq(series.id, testSeriesId))
       await db.delete(tracks).where(eq(tracks.id, testTrackId))
-    } catch (error) {
+    }
+    catch (error) {
       // Ignore cleanup errors
       console.warn('Coefficients test cleanup warning:', error)
     }
