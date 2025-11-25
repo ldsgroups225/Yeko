@@ -59,7 +59,7 @@ export const grades = pgTable('grades', {
   order: smallint('order').notNull(),
   trackId: text('track_id')
     .notNull()
-    .references(() => tracks.id),
+    .references(() => tracks.id, { onDelete: 'cascade' }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at')
     .defaultNow()
@@ -80,7 +80,7 @@ export const series = pgTable('series', {
   code: text('code').notNull().unique(),
   trackId: text('track_id')
     .notNull()
-    .references(() => tracks.id),
+    .references(() => tracks.id, { onDelete: 'cascade' }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at')
     .defaultNow()
@@ -170,7 +170,7 @@ export const programTemplateChapters = pgTable('program_template_chapters', {
   durationHours: integer('duration_hours'),
   programTemplateId: text('program_template_id')
     .notNull()
-    .references(() => programTemplates.id),
+    .references(() => programTemplates.id, { onDelete: 'cascade' }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at')
     .defaultNow()
@@ -226,11 +226,11 @@ export const coefficientTemplates = pgTable('coefficient_templates', {
     .references(() => schoolYearTemplates.id),
   subjectId: text('subject_id')
     .notNull()
-    .references(() => subjects.id),
+    .references(() => subjects.id, { onDelete: 'cascade' }),
   gradeId: text('grade_id')
     .notNull()
-    .references(() => grades.id),
-  seriesId: text('series_id').references(() => series.id),
+    .references(() => grades.id, { onDelete: 'cascade' }),
+  seriesId: text('series_id').references(() => series.id, { onDelete: 'cascade' }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at')
     .defaultNow()
