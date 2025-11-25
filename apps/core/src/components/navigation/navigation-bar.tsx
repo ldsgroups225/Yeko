@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router'
 import { ExternalLink, Github, LogIn, Menu } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { AccountDialog } from '@/components/auth/account-dialog'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { ThemeToggle } from '@/components/theme'
@@ -25,17 +26,18 @@ interface NavigationItem {
   scrollTo?: string
 }
 
-const navigationItems: NavigationItem[] = [
-  { label: 'Solutions', href: '/#solutions', scrollTo: 'solutions' },
-  { label: 'Benefits', href: '/#benefits', scrollTo: 'benefits' },
-  { label: 'Pricing', href: '/#pricing', scrollTo: 'pricing' },
-  { label: 'About', href: '/about', isExternal: false },
-]
-
 export function NavigationBar() {
+  const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const { data: session } = authClient.useSession()
+
+  const navigationItems: NavigationItem[] = [
+    { label: t('nav.solutions'), href: '/#solutions', scrollTo: 'solutions' },
+    { label: t('nav.benefits'), href: '/#benefits', scrollTo: 'benefits' },
+    { label: t('nav.pricing'), href: '/#pricing', scrollTo: 'pricing' },
+    { label: 'About', href: '/about', isExternal: false },
+  ]
 
   const handleGoogleSignIn = async () => {
     await authClient.signIn.social({
@@ -99,7 +101,7 @@ export function NavigationBar() {
                 Yeko Platform
               </span>
               <span className="text-xs text-muted-foreground font-medium tracking-wider">
-                la transparence éducative
+                {t('nav.tagline')}
               </span>
             </div>
           </Link>
@@ -169,7 +171,7 @@ export function NavigationBar() {
               ? (
                   <div className="flex flex-row items-center gap-4">
                     <Button variant="secondary" asChild>
-                      <Link to="/app">Accueil</Link>
+                      <Link to="/app">{t('nav.dashboard')}</Link>
                     </Button>
 
                     <AccountDialog>
@@ -196,7 +198,7 @@ export function NavigationBar() {
               : (
                   <div className="flex items-center gap-2">
                     <Button variant="outline" size="sm" asChild>
-                      <Link to="/demo-request">Request Demo</Link>
+                      <Link to="/demo-request">{t('nav.requestDemo')}</Link>
                     </Button>
                     <Button
                       onClick={handleGoogleSignIn}
@@ -205,7 +207,7 @@ export function NavigationBar() {
                       className="gap-2"
                     >
                       <LogIn className="h-4 w-4" />
-                      Sign In
+                      {t('nav.signIn')}
                     </Button>
                   </div>
                 )}
@@ -238,11 +240,11 @@ export function NavigationBar() {
                       className="h-10 w-10 object-contain"
                     />
                     <SheetTitle className="text-xl font-bold bg-linear-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-                      Navigation
+                      {t('nav.menuTitle')}
                     </SheetTitle>
                   </div>
                   <SheetDescription className="text-muted-foreground">
-                    Explore Yeko Platform
+                    {t('nav.menuDescription')}
                   </SheetDescription>
                 </SheetHeader>
 
@@ -308,7 +310,7 @@ export function NavigationBar() {
                     : (
                         <div className="space-y-2">
                           <Button variant="outline" className="w-full" asChild>
-                            <Link to="/demo-request">Request Demo</Link>
+                            <Link to="/demo-request">{t('nav.requestDemo')}</Link>
                           </Button>
                           <Button
                             onClick={handleGoogleSignIn}
@@ -316,7 +318,7 @@ export function NavigationBar() {
                             className="w-full gap-2"
                           >
                             <LogIn className="h-4 w-4" />
-                            Sign In with Google
+                            {t('nav.signInWithGoogle')}
                           </Button>
                         </div>
                       )}

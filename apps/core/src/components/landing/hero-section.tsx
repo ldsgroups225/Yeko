@@ -45,15 +45,15 @@ export function HeroSection() {
           <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground animate-in fade-in duration-1000 delay-500 fill-mode-backwards">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-primary" />
-              No credit card required
+              {t('hero.features.0')}
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-primary" />
-              Setup in 5 days
+              {t('hero.features.1')}
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-primary" />
-              Cancel anytime
+              {t('hero.features.2')}
             </div>
           </div>
         </div>
@@ -65,10 +65,10 @@ export function HeroSection() {
               <div className="text-center">
                 <div className="text-6xl mb-4">📊</div>
                 <p className="text-lg font-semibold text-muted-foreground">
-                  Dashboard Preview
+                  {t('hero.demo.title')}
                 </p>
                 <p className="text-sm text-muted-foreground mt-2">
-                  Real-time insights into your school's performance
+                  {t('hero.demo.description')}
                 </p>
               </div>
             </div>

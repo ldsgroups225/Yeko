@@ -1,46 +1,49 @@
 import { Link } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import { FaFacebook, FaLinkedin, FaXTwitter } from 'react-icons/fa6'
 
-const navigation = {
-  product: [
-    { name: 'Features', href: '/#features' },
-    { name: 'Pricing', href: '/pricing' },
-    { name: 'About Us', href: '/about' },
-    { name: 'Contact', href: '/contact' },
-  ],
-  resources: [
-    { name: 'Help Center', href: '/help' },
-    { name: 'Privacy Policy', href: '/privacy' },
-    { name: 'Terms of Service', href: '/terms' },
-    { name: 'Security', href: '/security' },
-  ],
-  social: [
-    {
-      name: 'Facebook',
-      href: 'https://facebook.com/yekoplatform',
-      icon: FaFacebook,
-    },
-    {
-      name: 'Twitter',
-      href: 'https://twitter.com/yekoplatform',
-      icon: FaXTwitter,
-    },
-    {
-      name: 'LinkedIn',
-      href: 'https://linkedin.com/company/yekoplatform',
-      icon: FaLinkedin,
-    },
-  ],
-}
-
 export function Footer() {
+  const { t } = useTranslation()
+
+  const navigation = {
+    product: [
+      { name: t('footerNav.product.features'), href: '/#features' },
+      { name: t('footerNav.product.pricing'), href: '/pricing' },
+      { name: t('footerNav.product.about'), href: '/about' },
+      { name: t('footerNav.product.contact'), href: '/contact' },
+    ],
+    resources: [
+      { name: t('footerNav.resources.help'), href: '/help' },
+      { name: t('footerNav.resources.privacy'), href: '/privacy' },
+      { name: t('footerNav.resources.terms'), href: '/terms' },
+      { name: t('footerNav.resources.security'), href: '/security' },
+    ],
+    social: [
+      {
+        name: t('footerNav.social.facebook'),
+        href: 'https://facebook.com/yekoplatform',
+        icon: FaFacebook,
+      },
+      {
+        name: t('footerNav.social.twitter'),
+        href: 'https://twitter.com/yekoplatform',
+        icon: FaXTwitter,
+      },
+      {
+        name: t('footerNav.social.linkedin'),
+        href: 'https://linkedin.com/company/yekoplatform',
+        icon: FaLinkedin,
+      },
+    ],
+  }
+
   return (
     <footer className="border-t bg-background">
       <div className="mx-auto max-w-7xl px-6 py-12 md:flex md:items-center md:justify-between lg:px-8">
         <div className="flex flex-col md:flex-row md:items-center md:space-x-8 space-y-6 md:space-y-0">
           <div>
             <h3 className="text-sm font-semibold text-foreground">
-              Product
+              {t('footerNav.product.title')}
             </h3>
             <ul className="mt-2 space-y-1">
               {navigation.product.map(item => (
@@ -58,7 +61,7 @@ export function Footer() {
 
           <div>
             <h3 className="text-sm font-semibold text-foreground">
-              Resources
+              {t('footerNav.resources.title')}
             </h3>
             <ul className="mt-2 space-y-1">
               {navigation.resources.map(item => (
@@ -96,14 +99,14 @@ export function Footer() {
 
           <div className="text-center md:text-right">
             <p className="text-xs text-muted-foreground">
-              Empowering Education Across Africa
+              {t('footerNav.tagline')}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
               &copy;
               {' '}
               {new Date().getFullYear()}
               {' '}
-              Yeko Platform. All rights reserved.
+              {t('footerNav.copyright')}
             </p>
           </div>
         </div>
