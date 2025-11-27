@@ -4,6 +4,7 @@ import { GoogleLogin } from '@/components/auth/google-login'
 import { Header } from '@/components/layout/header'
 import { MobileSidebar } from '@/components/layout/mobile-sidebar'
 import { Sidebar } from '@/components/layout/sidebar'
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { authClient } from '@/lib/auth-client'
 
 export const Route = createFileRoute('/_auth')({
@@ -18,20 +19,21 @@ function RouteComponent() {
     <>
       {session.isPending
         ? (
-            <div className="min-h-screen flex items-center justify-center bg-background">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-            </div>
-          )
+          <div className="min-h-screen flex items-center justify-center bg-background">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+          </div>
+        )
         : session.data
           ? (
-              <div className="flex h-screen bg-background overflow-hidden">
-                <Sidebar className="shrink-0" />
+            <SidebarProvider>
+              <div className="flex h-screen w-full bg-background overflow-hidden">
+                <Sidebar />
                 <MobileSidebar
                   isOpen={isMobileMenuOpen}
                   onClose={() => setIsMobileMenuOpen(false)}
                 />
 
-                <div className="flex flex-1 flex-col overflow-hidden">
+                <SidebarInset className="flex flex-col overflow-hidden">
                   <Header
                     onMobileMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                   />
@@ -41,12 +43,13 @@ function RouteComponent() {
                       <Outlet />
                     </div>
                   </main>
-                </div>
+                </SidebarInset>
               </div>
-            )
+            </SidebarProvider>
+          )
           : (
-              <GoogleLogin />
-            )}
+            <GoogleLogin />
+          )}
     </>
   )
 }

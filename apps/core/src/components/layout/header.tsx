@@ -9,6 +9,7 @@ import { AccountDialog } from '@/components/auth/account-dialog'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { SidebarTrigger } from '@/components/ui/sidebar'
 import { authClient } from '@/lib/auth-client'
 import { cn } from '@/lib/utils'
 import { Breadcrumbs } from './breadcrumbs'
@@ -38,6 +39,10 @@ export function Header({ className, onMobileMenuToggle }: HeaderProps) {
       <div className="flex h-16 items-center justify-between px-6">
         {/* Left side - Mobile menu button and search */}
         <div className="flex items-center gap-4">
+          {/* Desktop sidebar trigger */}
+          <SidebarTrigger className="hidden lg:flex" />
+
+          {/* Mobile menu button */}
           <Button
             variant="ghost"
             size="icon"

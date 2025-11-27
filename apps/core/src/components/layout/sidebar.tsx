@@ -5,17 +5,28 @@ import {
   BarChart3,
   BookOpen,
   ChevronDown,
-  ChevronRight,
   GraduationCap,
   HelpCircle,
   Home,
-  Menu,
   School,
 } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { ScrollArea } from '@/components/ui/scroll-area'
+import {
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+  Sidebar as SidebarRoot,
+  useSidebar,
+} from '@/components/ui/sidebar'
 import { cn } from '@/lib/utils'
 
 interface NavigationItem {
@@ -76,8 +87,9 @@ export function Sidebar({ className }: SidebarProps) {
   const navigate = useNavigate()
   const routerState = useRouterState()
   const currentPath = routerState.location.pathname
-  const [isCollapsed, setIsCollapsed] = useState(false)
   const [expandedItems, setExpandedItems] = useState<Set<string>>(() => new Set())
+  const { state } = useSidebar()
+  const isCollapsed = state === 'collapsed'
 
   const toggleExpanded = (href: string) => {
     const newExpanded = new Set(expandedItems)
@@ -90,7 +102,7 @@ export function Sidebar({ className }: SidebarProps) {
     setExpandedItems(newExpanded)
   }
 
-  const renderNavigationItem = (item: NavigationItem, level = 0) => {
+  const renderNavigationItem = (item: NavigationItem) => {
     const itemPath = item.href
     const isActive = currentPath === itemPath
       || (item.href !== '/app/dashboard' && currentPath.startsWith(itemPath))
@@ -98,166 +110,119 @@ export function Sidebar({ className }: SidebarProps) {
     const isExpanded = expandedItems.has(item.href)
 
     return (
-      <motion.div
-        key={item.href}
-        className="group"
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.3 }}
-        whileHover={{ x: 4 }}
-      >
-        <div className="flex items-center gap-1">
-          <Button
-            variant={isActive && !hasChildren ? 'default' : 'ghost'}
-            className={cn(
-              'flex-1 justify-start gap-3 h-12 relative overflow-hidden',
-              isCollapsed && 'px-2 justify-center',
-              level > 0 && !isCollapsed && 'pl-12',
-              isActive && !hasChildren && 'bg-primary text-primary-foreground shadow-sm',
-              !isActive && 'text-muted-foreground hover:text-foreground hover:bg-accent',
-            )}
-            onClick={() => navigate({ to: item.href })}
-            title={isCollapsed ? item.name : undefined}
+      <SidebarMenuItem key={item.href}>
+        <SidebarMenuButton
+          isActive={isActive && !hasChildren}
+          onClick={() => {
+            if (hasChildren) {
+              toggleExpanded(item.href)
+            }
+            else {
+              navigate({ to: item.href })
+            }
+          }}
+          tooltip={isCollapsed ? item.name : undefined}
+          className="h-12"
+        >
+          <motion.div
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 10 }}
           >
-            <motion.div
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 10 }}
-            >
-              <item.icon className="h-5 w-5 shrink-0" />
-            </motion.div>
+            <item.icon className="h-5 w-5" />
+          </motion.div>
+          <div className="flex flex-col items-start flex-1">
+            <span className="text-sm font-medium">{item.name}</span>
             {!isCollapsed && (
-              <motion.div
-                className="flex items-center justify-between w-full"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                <div className="flex flex-col items-start">
-                  <span className="text-sm font-medium">{item.name}</span>
-                  <span className="text-xs text-muted-foreground">{item.description}</span>
-                </div>
-                {item.badge && (
-                  <motion.span
-                    className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: 'spring', stiffness: 500, damping: 15 }}
-                  >
-                    {item.badge}
-                  </motion.span>
-                )}
-              </motion.div>
+              <span className="text-xs text-muted-foreground">{item.description}</span>
             )}
-          </Button>
+          </div>
           {hasChildren && !isCollapsed && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-12 w-8 shrink-0"
-              onClick={(e) => {
-                e.stopPropagation()
-                toggleExpanded(item.href)
-              }}
+            <motion.div
+              animate={{ rotate: isExpanded ? 180 : 0 }}
+              transition={{ duration: 0.3 }}
             >
-              <motion.div
-                animate={{ rotate: isExpanded ? 180 : 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                {isExpanded
-                  ? (
-                      <ChevronDown className="h-4 w-4" />
-                    )
-                  : (
-                      <ChevronRight className="h-4 w-4" />
-                    )}
-              </motion.div>
-            </Button>
+              <ChevronDown className="h-4 w-4" />
+            </motion.div>
           )}
-        </div>
+          {item.badge && !isCollapsed && (
+            <motion.span
+              className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', stiffness: 500, damping: 15 }}
+            >
+              {item.badge}
+            </motion.span>
+          )}
+        </SidebarMenuButton>
         <AnimatePresence>
           {hasChildren && isExpanded && !isCollapsed && (
             <motion.div
-              className="mt-1 space-y-1 overflow-hidden"
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.3 }}
             >
-              {item.children?.map(child => renderNavigationItem(child, level + 1))}
+              <SidebarMenuSub>
+                {item.children?.map(child => (
+                  <SidebarMenuSubItem key={child.href}>
+                    <SidebarMenuSubButton
+                      isActive={currentPath === child.href}
+                      onClick={() => navigate({ to: child.href })}
+                    >
+                      <child.icon className="h-4 w-4" />
+                      <span>{child.name}</span>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+                ))}
+              </SidebarMenuSub>
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.div>
+      </SidebarMenuItem>
     )
   }
 
   return (
-    <>
-      {/* Desktop Sidebar */}
-      <motion.div
-        initial={{ x: -100, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        transition={{ duration: 0.5, ease: 'easeOut' }}
-        className={cn(
-          'hidden lg:flex lg:flex-col lg:border-r lg:border-border lg:bg-background',
-          isCollapsed ? 'lg:w-16' : 'lg:w-64',
-          'transition-all duration-300 ease-in-out',
-          className,
-        )}
-      >
-        <div className="flex h-16 items-center justify-between px-6 border-b border-border">
-          <div className="flex items-center gap-2">
-            <motion.img
-              src="/icon.png"
-              alt="Yeko Logo"
-              className="h-8 w-8 object-contain"
-              whileHover={{ scale: 1.1, rotate: 10 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 10 }}
-            />
-            <AnimatePresence>
-              {!isCollapsed && (
-                <motion.div
-                  initial={{ opacity: 0, width: 0 }}
-                  animate={{ opacity: 1, width: 'auto' }}
-                  exit={{ opacity: 0, width: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <h1 className="text-xl font-semibold tracking-tight text-foreground">
-                    Yeko Core
-                  </h1>
-                  <p className="text-xs text-muted-foreground">Super Administrateur</p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              className="h-8 w-8"
+    <SidebarRoot collapsible="icon" className={cn('hidden lg:flex', className)}>
+      <SidebarHeader className="border-b">
+        <div className="flex items-center gap-2 px-2">
+          <motion.img
+            src="/icon.png"
+            alt="Yeko Logo"
+            className="h-8 w-8 object-contain"
+            whileHover={{ scale: 1.1, rotate: 10 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+          />
+          {!isCollapsed && (
+            <motion.div
+              initial={{ opacity: 0, width: 0 }}
+              animate={{ opacity: 1, width: 'auto' }}
+              exit={{ opacity: 0, width: 0 }}
+              transition={{ duration: 0.3 }}
             >
-              <motion.div
-                animate={{ rotate: isCollapsed ? 180 : 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <Menu className="h-4 w-4" />
-              </motion.div>
-            </Button>
-          </motion.div>
+              <h1 className="text-xl font-semibold tracking-tight text-foreground">
+                Yeko Core
+              </h1>
+              <p className="text-xs text-muted-foreground">Super Administrateur</p>
+            </motion.div>
+          )}
         </div>
+      </SidebarHeader>
 
-        <ScrollArea className="flex-1 px-3 py-4">
-          <nav className="space-y-1">
-            {navigationItems.map(item => renderNavigationItem(item))}
-          </nav>
-        </ScrollArea>
-      </motion.div>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navigationItems.map(item => renderNavigationItem(item))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
 
-      {/* Mobile Sidebar Overlay */}
-      <div className="lg:hidden">
-        {/* Mobile implementation can be added here with a sheet/drawer */}
-      </div>
-    </>
+      <SidebarFooter>
+        {/* Add footer content if needed */}
+      </SidebarFooter>
+    </SidebarRoot>
   )
 }
