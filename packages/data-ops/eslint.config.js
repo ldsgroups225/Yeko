@@ -9,6 +9,7 @@ export default config.append(
       'node_modules/',
       'src/seed/',
       'src/verify.ts',
+      'scripts',
     ],
   },
   {

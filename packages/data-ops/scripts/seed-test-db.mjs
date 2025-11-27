@@ -1,12 +1,12 @@
 #!/usr/bin/env node
-import { Pool } from 'pg';
+import { Pool } from 'pg'
 
-const connectionString = 'postgresql://root:root@127.0.0.1:5432/app';
-const pool = new Pool({ connectionString });
+const connectionString = 'postgresql://root:root@127.0.0.1:5432/app'
+const pool = new Pool({ connectionString })
 
 async function seedDatabase() {
   try {
-    console.log('🌱 Seeding test database...');
+    console.log('🌱 Seeding test database...')
 
     // Insert education levels
     await pool.query(`
@@ -16,8 +16,8 @@ async function seedDatabase() {
       (3, 'Secondaire', 3),
       (4, 'Supérieur', 4)
       ON CONFLICT (id) DO NOTHING;
-    `);
-    console.log('✓ Education levels seeded');
+    `)
+    console.log('✓ Education levels seeded')
 
     // Insert tracks
     const trackResult = await pool.query(`
@@ -26,10 +26,10 @@ async function seedDatabase() {
       (gen_random_uuid(), 'Technique', 'TECH', 3, NOW(), NOW())
       ON CONFLICT (code) DO NOTHING
       RETURNING id, code;
-    `);
+    `)
 
-    const genTrack = trackResult.rows.find(r => r.code === 'GEN');
-    console.log('✓ Tracks seeded');
+    const genTrack = trackResult.rows.find(r => r.code === 'GEN')
+    console.log('✓ Tracks seeded')
 
     // Insert grades for general track
     if (genTrack) {
@@ -40,8 +40,8 @@ async function seedDatabase() {
         (gen_random_uuid(), 'Quatrième', '4EME', 3, $1, NOW(), NOW()),
         (gen_random_uuid(), 'Troisième', '3EME', 4, $1, NOW(), NOW())
         ON CONFLICT DO NOTHING;
-      `, [genTrack.id]);
-      console.log('✓ Grades seeded');
+      `, [genTrack.id])
+      console.log('✓ Grades seeded')
 
       // Insert series
       await pool.query(`
@@ -50,8 +50,8 @@ async function seedDatabase() {
         (gen_random_uuid(), 'Série C', 'C', $1, NOW(), NOW()),
         (gen_random_uuid(), 'Série D', 'D', $1, NOW(), NOW())
         ON CONFLICT (code) DO NOTHING;
-      `, [genTrack.id]);
-      console.log('✓ Series seeded');
+      `, [genTrack.id])
+      console.log('✓ Series seeded')
     }
 
     // Insert subjects
@@ -63,24 +63,26 @@ async function seedDatabase() {
       (gen_random_uuid(), 'Physique-Chimie', 'PC', 'Scientifique', NOW(), NOW()),
       (gen_random_uuid(), 'SVT', 'SVT', 'Scientifique', NOW(), NOW())
       ON CONFLICT DO NOTHING;
-    `);
-    console.log('✓ Subjects seeded');
+    `)
+    console.log('✓ Subjects seeded')
 
     // Insert school year template
     await pool.query(`
       INSERT INTO school_year_templates (id, name, is_active, created_at, updated_at) VALUES
       (gen_random_uuid(), '2025-2026', true, NOW(), NOW())
       ON CONFLICT DO NOTHING;
-    `);
-    console.log('✓ School year template seeded');
+    `)
+    console.log('✓ School year template seeded')
 
-    console.log('✅ Seeding complete!');
-  } catch (error) {
-    console.error('❌ Seeding failed:', error);
-    process.exit(1);
-  } finally {
-    await pool.end();
+    console.log('✅ Seeding complete!')
+  }
+  catch (error) {
+    console.error('❌ Seeding failed:', error)
+    process.exit(1)
+  }
+  finally {
+    await pool.end()
   }
 }
 
-seedDatabase();
+seedDatabase()
