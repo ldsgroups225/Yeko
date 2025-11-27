@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "yeko-school",
+  "compatibility_date": "2025-09-02",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "main": "./src/server.ts",
+  "pages_build_output_dir": "./dist",
+  "routes": [
+    {
+      "pattern": "school.yeko.app",
+      "zone_name": "yeko.app"
+    }
+  ],
+  "vars": {
+    "APP_NAME": "Yeko School",
+    "APP_URL": "https://school.yeko.app"
+  }
+}
