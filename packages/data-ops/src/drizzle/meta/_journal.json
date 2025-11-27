@@ -1,40 +1,12 @@
 {
   "version": "7",
-  "dialect": "mysql",
+  "dialect": "postgresql",
   "entries": [
     {
       "idx": 0,
       "version": "7",
-      "when": 1763410761776,
-      "tag": "0000_purple_tyger_tiger",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1763819771342,
-      "tag": "0001_lively_randall_flagg",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1763893556601,
-      "tag": "0002_glamorous_luckman",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1763901704208,
-      "tag": "0003_grey_blur",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1764033251244,
-      "tag": "0004_nappy_firestar",
+      "when": 1764258568675,
+      "tag": "0000_amusing_carnage",
       "breakpoints": true
     }
   ]

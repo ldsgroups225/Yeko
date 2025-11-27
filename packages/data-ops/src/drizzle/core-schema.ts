@@ -2,7 +2,7 @@ import { relations } from 'drizzle-orm'
 import { boolean, index, integer, jsonb, pgTable, smallint, text, timestamp } from 'drizzle-orm/pg-core'
 
 // Import auth_user for foreign key reference
-import { auth_user } from './auth-schema'
+import { auth_user } from './auth-schema.js'
 
 // --- Level 0: Independent Entities ---
 
