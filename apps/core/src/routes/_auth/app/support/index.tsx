@@ -91,31 +91,31 @@ function Support() {
   ]
 
   const categories = [
-    { name: 'Problème Technique', count: 89, color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' },
-    { name: 'Demande de Fonctionnalité', count: 45, color: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' },
-    { name: 'Rapport de Bogue', count: 67, color: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200' },
-    { name: 'Authentification', count: 33, color: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200' },
+    { name: 'Problème Technique', count: 89, variant: 'destructive' as const },
+    { name: 'Demande de Fonctionnalité', count: 45, variant: 'default' as const },
+    { name: 'Rapport de Bogue', count: 67, variant: 'secondary' as const },
+    { name: 'Authentification', count: 33, variant: 'secondary' as const },
   ]
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'open':
         return (
-          <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+          <Badge variant="destructive">
             <AlertCircle className="mr-1 h-3 w-3" />
             Ouvert
           </Badge>
         )
       case 'in_progress':
         return (
-          <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+          <Badge variant="secondary">
             <Clock className="mr-1 h-3 w-3" />
             En Cours
           </Badge>
         )
       case 'resolved':
         return (
-          <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+          <Badge variant="default">
             <CheckCircle className="mr-1 h-3 w-3" />
             Résolu
           </Badge>
@@ -128,13 +128,13 @@ function Support() {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'Haute':
-        return 'text-red-600 bg-red-50 dark:bg-red-950'
+        return 'text-destructive bg-destructive/10 dark:bg-destructive/20'
       case 'Moyenne':
-        return 'text-yellow-600 bg-yellow-50 dark:bg-yellow-950'
+        return 'text-secondary bg-secondary/10 dark:bg-secondary/20'
       case 'Faible':
-        return 'text-green-600 bg-green-50 dark:bg-green-950'
+        return 'text-primary bg-primary/10 dark:bg-primary/20'
       default:
-        return 'text-gray-600 bg-gray-50 dark:bg-gray-950'
+        return 'text-muted-foreground bg-muted dark:bg-muted/80'
     }
   }
 
@@ -305,7 +305,7 @@ function Support() {
                     <span className="text-sm font-medium">{category.name}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge className={`text-xs ${category.color}`}>
+                    <Badge variant={category.variant}>
                       {category.count}
                     </Badge>
                   </div>

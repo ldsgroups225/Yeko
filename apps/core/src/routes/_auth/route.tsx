@@ -19,37 +19,37 @@ function RouteComponent() {
     <>
       {session.isPending
         ? (
-          <div className="min-h-screen flex items-center justify-center bg-background">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-          </div>
-        )
+            <div className="min-h-screen flex items-center justify-center bg-background">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+            </div>
+          )
         : session.data
           ? (
-            <SidebarProvider>
-              <div className="flex h-screen w-full bg-background overflow-hidden">
-                <Sidebar />
-                <MobileSidebar
-                  isOpen={isMobileMenuOpen}
-                  onClose={() => setIsMobileMenuOpen(false)}
-                />
-
-                <SidebarInset className="flex flex-col overflow-hidden">
-                  <Header
-                    onMobileMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              <SidebarProvider>
+                <div className="flex h-screen w-full bg-background overflow-hidden">
+                  <Sidebar />
+                  <MobileSidebar
+                    isOpen={isMobileMenuOpen}
+                    onClose={() => setIsMobileMenuOpen(false)}
                   />
 
-                  <main className="flex-1 overflow-y-auto bg-muted/20 p-6">
-                    <div className="mx-auto max-w-7xl">
-                      <Outlet />
-                    </div>
-                  </main>
-                </SidebarInset>
-              </div>
-            </SidebarProvider>
-          )
+                  <SidebarInset className="flex flex-col overflow-hidden">
+                    <Header
+                      onMobileMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    />
+
+                    <main className="flex-1 overflow-y-auto bg-muted/20 p-6">
+                      <div className="mx-auto max-w-7xl">
+                        <Outlet />
+                      </div>
+                    </main>
+                  </SidebarInset>
+                </div>
+              </SidebarProvider>
+            )
           : (
-            <GoogleLogin />
-          )}
+              <GoogleLogin />
+            )}
     </>
   )
 }

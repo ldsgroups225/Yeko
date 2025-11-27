@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, Save, School } from 'lucide-react'
 import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -24,6 +24,8 @@ export function SchoolForm({
   mode = 'create',
   onCancel,
 }: SchoolFormProps) {
+  'use no memo'
+
   const form = useForm({
     resolver: zodResolver(CreateSchoolSchema),
     defaultValues: defaultValues || {
@@ -32,11 +34,10 @@ export function SchoolForm({
     },
   })
 
-  const { register, handleSubmit, setValue, reset, watch } = form
+  const { register, handleSubmit, setValue, reset, control } = form
   const { errors } = form.formState
-  // eslint-disable-next-line react-hooks/incompatible-library
-  const status = watch('status')
-  const logoUrl = watch('logoUrl')
+  const status = useWatch({ control, name: 'status' })
+  const logoUrl = useWatch({ control, name: 'logoUrl' })
 
   // Reset form when defaultValues change (for edit mode)
   useEffect(() => {
@@ -69,7 +70,7 @@ export function SchoolForm({
                   {...register('name')}
                 />
                 {errors.name && (
-                  <p className="text-sm text-red-600">{errors.name.message as string}</p>
+                  <p className="text-sm text-destructive">{errors.name.message as string}</p>
                 )}
               </div>
               <div className="space-y-2">
@@ -80,7 +81,7 @@ export function SchoolForm({
                   {...register('code')}
                 />
                 {errors.code && (
-                  <p className="text-sm text-red-600">{errors.code.message as string}</p>
+                  <p className="text-sm text-destructive">{errors.code.message as string}</p>
                 )}
               </div>
             </div>
@@ -93,7 +94,7 @@ export function SchoolForm({
                 {...register('address')}
               />
               {errors.address && (
-                <p className="text-sm text-red-600">{errors.address.message as string}</p>
+                <p className="text-sm text-destructive">{errors.address.message as string}</p>
               )}
             </div>
 
@@ -105,7 +106,7 @@ export function SchoolForm({
                 {...register('phone')}
               />
               {errors.phone && (
-                <p className="text-sm text-red-600">{errors.phone.message as string}</p>
+                <p className="text-sm text-destructive">{errors.phone.message as string}</p>
               )}
             </div>
 
@@ -118,7 +119,7 @@ export function SchoolForm({
                 {...register('email')}
               />
               {errors.email && (
-                <p className="text-sm text-red-600">{errors.email.message as string}</p>
+                <p className="text-sm text-destructive">{errors.email.message as string}</p>
               )}
             </div>
 
@@ -204,7 +205,7 @@ export function SchoolForm({
                 </div>
               </div>
               {errors.logoUrl && (
-                <p className="text-sm text-red-600">{errors.logoUrl.message as string}</p>
+                <p className="text-sm text-destructive">{errors.logoUrl.message as string}</p>
               )}
             </div>
 
@@ -224,7 +225,7 @@ export function SchoolForm({
                 </SelectContent>
               </Select>
               {errors.status && (
-                <p className="text-sm text-red-600">{errors.status.message as string}</p>
+                <p className="text-sm text-destructive">{errors.status.message as string}</p>
               )}
             </div>
           </CardContent>

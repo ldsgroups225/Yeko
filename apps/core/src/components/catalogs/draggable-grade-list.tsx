@@ -67,8 +67,8 @@ function SortableGradeItem({
         >
           <GripVertical className="h-5 w-5 text-muted-foreground" />
         </button>
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950">
-          <GripVertical className="h-5 w-5 text-blue-600" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+          <GripVertical className="h-5 w-5 text-primary" />
         </div>
         <div>
           <h3 className="font-semibold">{grade.name}</h3>

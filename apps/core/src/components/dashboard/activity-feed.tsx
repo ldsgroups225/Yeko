@@ -45,10 +45,10 @@ export function ActivityFeed({ activities, isLoading, error, limit = 5 }: Activi
 
   if (error) {
     return (
-      <Card className="border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950">
+      <Card className="border-destructive/20 bg-destructive/10 dark:border-destructive/40 dark:bg-destructive/20">
         <CardHeader>
-          <CardTitle className="text-red-600">Activité récente</CardTitle>
-          <CardDescription className="text-red-600">
+          <CardTitle className="text-destructive">Activité récente</CardTitle>
+          <CardDescription className="text-destructive">
             Impossible de charger les données d'activité
           </CardDescription>
         </CardHeader>
@@ -78,13 +78,13 @@ export function ActivityFeed({ activities, isLoading, error, limit = 5 }: Activi
   const getIcon = (type: ActivityItem['type']) => {
     switch (type) {
       case 'success':
-        return <CheckCircle className="h-4 w-4 text-green-600" />
+        return <CheckCircle className="h-4 w-4 text-primary" />
       case 'warning':
-        return <AlertTriangle className="h-4 w-4 text-yellow-600" />
+        return <AlertTriangle className="h-4 w-4 text-secondary" />
       case 'error':
-        return <AlertCircle className="h-4 w-4 text-red-600" />
+        return <AlertCircle className="h-4 w-4 text-destructive" />
       default:
-        return <Info className="h-4 w-4 text-blue-600" />
+        return <Info className="h-4 w-4 text-primary" />
     }
   }
 

@@ -8,8 +8,7 @@ vi.mock('motion/react', () => ({
   motion: {
     div: ({ children, ...props }: any) => {
       // Filter out motion-specific props that shouldn't be on DOM elements
-      const { layout: _layout, animate: _animate, initial: _initial, exit: _exit, whileHover: _whileHover, whileTap: _whileTap, transition: _transition, ...domProps } = props
-      return <div {...domProps}>{children}</div>
+      return <div {...props}>{children}</div>
     },
   },
   AnimatePresence: ({ children }: any) => <>{children}</>,
@@ -119,7 +118,7 @@ function ProgramsList({ programs, onProgramClick, onEdit, onDelete, onClone }: P
               <div className="flex items-center gap-2">
                 <h3 className="font-semibold">{program.name}</h3>
                 {program.status === 'published' && (
-                  <span className="text-xs bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded">Publié</span>
+                  <span className="text-xs bg-primary hover:bg-primary/90 text-primary-foreground px-2 py-1 rounded">Publié</span>
                 )}
                 {program.status === 'draft' && (
                   <span className="text-xs bg-secondary text-secondary-foreground px-2 py-1 rounded">Brouillon</span>
@@ -461,7 +460,7 @@ describe('programs List Component', () => {
         const draftBadge = screen.getByText('Brouillon')
         const archivedBadge = screen.getByText('Archivé')
 
-        expect(publishedBadge).toHaveClass('bg-green-500')
+        expect(publishedBadge).toHaveClass('bg-primary')
         expect(draftBadge).toHaveClass('bg-secondary')
         expect(archivedBadge).toHaveClass('border', 'border-border')
       })

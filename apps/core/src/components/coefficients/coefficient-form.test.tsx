@@ -257,7 +257,7 @@ function CoefficientForm({
                         : (
                             <span
                               onClick={() => handleEditCoefficient(coefficient.id, coefficient.weight)}
-                              className="cursor-pointer hover:bg-gray-100 px-2 py-1 rounded"
+                              className="cursor-pointer hover:bg-muted px-2 py-1 rounded"
                               data-testid={`weight-display-${coefficient.id}`}
                               role="button"
                               tabIndex={0}

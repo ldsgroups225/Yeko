@@ -68,7 +68,7 @@ function DemoRequest() {
 
           <Card className="text-center">
             <CardContent className="pt-6">
-              <CheckCircle2 className="w-16 h-16 text-green-600 mx-auto mb-4" />
+              <CheckCircle2 className="w-16 h-16 text-primary mx-auto mb-4" />
               <CardTitle className="mb-2">Demo Request Received!</CardTitle>
               <CardDescription className="text-lg mb-6">
                 Thank you for your interest in Yeko! Our team will contact you within 24 hours to schedule your personalized demo.

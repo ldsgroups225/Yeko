@@ -10,7 +10,7 @@ import {
   Scripts,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { DefaultCatchBoundary } from '@/components/default-catch-boundary'
 import { NotFound } from '@/components/not-found'
 import { ThemeProvider } from '@/components/theme'
@@ -96,51 +96,69 @@ function RootComponent() {
 }
 
 function RootDocument({ children }: { children: ReactNode }) {
+  // Generate structured data JSON (no sanitization needed - we control the data)
+  const organizationData = useMemo(
+    () => JSON.stringify(generateStructuredData('organization')),
+    [],
+  )
+  const softwareData = useMemo(
+    () => JSON.stringify(generateStructuredData('software')),
+    [],
+  )
+  const websiteData = useMemo(
+    () => JSON.stringify(generateStructuredData('website')),
+    [],
+  )
+
+  // Theme initialization script (static, trusted code)
+  const themeScript = useMemo(
+    () => `
+      (function() {
+        try {
+          var theme = localStorage.getItem('ui-theme') || 'system';
+          var systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          var resolvedTheme = theme === 'system' ? systemTheme : theme;
+
+          if (resolvedTheme === 'dark') {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.add('light');
+          }
+        } catch (e) {}
+      })();
+    `,
+    [],
+  )
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
+        {/* eslint-disable react-dom/no-dangerously-set-innerhtml */}
         <script
           type="application/ld+json"
-          // eslint-disable-next-line react-dom/no-dangerously-set-innerhtml
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(generateStructuredData('organization')),
-          }}
-        />
-        <script
-          type="application/ld+json"
-          // eslint-disable-next-line react-dom/no-dangerously-set-innerhtml
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(generateStructuredData('software')),
+            __html: organizationData,
           }}
         />
         <script
           type="application/ld+json"
-          // eslint-disable-next-line react-dom/no-dangerously-set-innerhtml
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(generateStructuredData('website')),
+            __html: softwareData,
           }}
         />
         <script
-          // eslint-disable-next-line react-dom/no-dangerously-set-innerhtml
+          type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  var theme = localStorage.getItem('ui-theme') || 'system';
-                  var systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-                  var resolvedTheme = theme === 'system' ? systemTheme : theme;
-
-                  if (resolvedTheme === 'dark') {
-                    document.documentElement.classList.add('dark');
-                  } else {
-                    document.documentElement.classList.add('light');
-                  }
-                } catch (e) {}
-              })();
-            `,
+            __html: websiteData,
           }}
         />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: themeScript,
+          }}
+        />
+        {/* eslint-enable react-dom/no-dangerously-set-innerhtml */}
       </head>
       <body>
         {children}

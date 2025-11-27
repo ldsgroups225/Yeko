@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next'
 import { Card, CardContent } from '@/components/ui/card'
 
 const useCaseColors = [
-  'bg-blue-500/10 text-blue-600 dark:text-blue-400',
-  'bg-green-500/10 text-green-600 dark:text-green-400',
-  'bg-purple-500/10 text-purple-600 dark:text-purple-400',
+  'bg-primary/10 text-primary dark:text-primary',
+  'bg-primary/10 text-primary dark:text-primary',
+  'bg-secondary/10 text-secondary dark:text-secondary',
 ]
 
 const useCaseIcons = [GraduationCap, BookOpen, Users]

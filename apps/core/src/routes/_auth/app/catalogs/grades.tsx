@@ -467,8 +467,8 @@ function GradesManagement() {
           <Card key={track.id}>
             <CardHeader>
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50 dark:bg-green-950">
-                  <GraduationCap className="h-5 w-5 text-green-600" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                  <GraduationCap className="h-5 w-5 text-primary" />
                 </div>
                 <div>
                   <CardTitle>{track.name}</CardTitle>
@@ -563,8 +563,8 @@ function GradesManagement() {
                               : (
                                   <div className="flex items-center justify-4 border rounded-lg hover:bg-accent/50 transition-colors">
                                     <div className="flex items-center gap-4">
-                                      <div className="flex h-10 w-10 items-center justify-center roundedue-50 dark:bg-blue-950">
-                                        <GraduationCap className="h-5 w-5 text-blue-600" />
+                                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                                        <GraduationCap className="h-5 w-5 text-primary" />
                                       </div>
                                       <div>
                                         <h3 className="font-semibold">{grade.name}</h3>
@@ -709,8 +709,8 @@ function GradesManagement() {
           <Card key={track.id}>
             <CardHeader>
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-50 dark:bg-purple-950">
-                  <Award className="h-5 w-5 text-purple-600" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary/10">
+                  <Award className="h-5 w-5 text-secondary" />
                 </div>
                 <div>
                   <CardTitle>{track.name}</CardTitle>
@@ -807,8 +807,8 @@ function GradesManagement() {
                               : (
                                   <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors">
                                     <div className="flex items-center gap-4">
-                                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-50 dark:bg-purple-950">
-                                        <Award className="h-5 w-5 text-purple-600" />
+                                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary/10">
+                                        <Award className="h-5 w-5 text-secondary" />
                                       </div>
                                       <div>
                                         <h3 className="font-semibold">{serie.name}</h3>

@@ -48,32 +48,32 @@ function Dashboard() {
       description: 'Enregistrer une nouvelle école partenaire',
       icon: Plus,
       href: '/schools/create',
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50 dark:bg-blue-950',
+      color: 'text-primary',
+      bgColor: 'bg-primary/10',
     },
     {
       title: 'Créer un programme',
       description: 'Définir des modèles de programmes ministériels',
       icon: BookOpen,
       href: '/catalogs/programs',
-      color: 'text-green-600',
-      bgColor: 'bg-green-50 dark:bg-green-950',
+      color: 'text-primary',
+      bgColor: 'bg-primary/10',
     },
     {
       title: 'Voir les analytiques',
       description: 'Mesures de performance du système',
       icon: TrendingUp,
       href: '/analytics',
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50 dark:bg-purple-950',
+      color: 'text-secondary',
+      bgColor: 'bg-secondary/10',
     },
     {
       title: 'Tickets de support',
       description: 'Gérer les demandes de support',
       icon: AlertCircle,
       href: '/support',
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50 dark:bg-orange-950',
+      color: 'text-secondary',
+      bgColor: 'bg-secondary/10',
     },
   ]
 
@@ -144,7 +144,7 @@ function Dashboard() {
         <h1 className="text-3xl font-bold tracking-tight">Tableau de bord</h1>
         <p className="text-muted-foreground">
           {greeting}
-          ,
+          {', '}
           {userName}
           . Voici un aperçu de votre système aujourd'hui.
         </p>
@@ -255,14 +255,14 @@ function Dashboard() {
                     {school.status === 'active'
                       ? (
                           <>
-                            <CheckCircle className="h-4 w-4 text-green-600" />
-                            <span className="text-sm text-green-600">Active</span>
+                            <CheckCircle className="h-4 w-4 text-primary" />
+                            <span className="text-sm text-primary">Active</span>
                           </>
                         )
                       : (
                           <>
-                            <Clock className="h-4 w-4 text-yellow-600" />
-                            <span className="text-sm text-yellow-600">En attente</span>
+                            <Clock className="h-4 w-4 text-secondary" />
+                            <span className="text-sm text-secondary">En attente</span>
                           </>
                         )}
                   </div>

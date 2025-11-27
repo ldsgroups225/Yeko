@@ -212,13 +212,13 @@ function CoefficientsMatrix({
                                 type="number"
                                 value={editingCells[coef.id] ?? coef.weight}
                                 onChange={e => onCellEdit?.(coef.id, Number.parseInt(e.target.value))}
-                                className={`w-16 mx-auto text-center ${coef.weight === 0 ? 'border-yellow-500' : ''}`}
+                                className={`w-16 mx-auto text-center ${coef.weight === 0 ? 'border-secondary' : ''}`}
                                 min={0}
                                 max={99}
                                 data-testid={`coefficient-input-${coef.id}`}
                               />
                               {coef.weight === 0 && (
-                                <div className="flex items-center gap-1 text-xs text-yellow-600" data-testid={`zero-warning-${coef.id}`}>
+                                <div className="flex items-center gap-1 text-xs text-secondary" data-testid={`zero-warning-${coef.id}`}>
                                   <span className="icon-warning">⚠</span>
                                   <span>Coef 0</span>
                                 </div>
@@ -467,7 +467,7 @@ describe('coefficients Matrix View', () => {
       )
 
       const zeroInput = screen.getByDisplayValue('0')
-      expect(zeroInput).toHaveClass('border-yellow-500')
+      expect(zeroInput).toHaveClass('border-secondary')
     })
 
     test('should show visual warnings for zero coefficients', async () => {
@@ -481,7 +481,7 @@ describe('coefficients Matrix View', () => {
 
       const warning = screen.getByTestId('zero-warning-coef-7')
       expect(warning).toBeInTheDocument()
-      expect(warning).toHaveClass('text-yellow-600')
+      expect(warning).toHaveClass('text-secondary')
     })
 
     test('should handle invalid coefficient values', async () => {

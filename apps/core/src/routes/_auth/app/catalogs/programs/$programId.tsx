@@ -523,8 +523,8 @@ function ProgramDetails() {
                           : (
                               <div className="flex items-start justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors">
                                 <div className="flex items-start gap-4 flex-1">
-                                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950 shrink-0">
-                                    <span className="text-sm font-semibold text-blue-600">{chapter.order}</span>
+                                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 shrink-0">
+                                    <span className="text-sm font-semibold text-primary">{chapter.order}</span>
                                   </div>
                                   <div className="flex-1">
                                     <h3 className="font-semibold">{chapter.title}</h3>

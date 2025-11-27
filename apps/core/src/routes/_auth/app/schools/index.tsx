@@ -110,21 +110,21 @@ function Schools() {
     switch (status) {
       case 'active':
         return (
-          <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+          <Badge variant="default">
             <CheckCircle className="mr-1 h-3 w-3" />
             Active
           </Badge>
         )
       case 'pending':
         return (
-          <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+          <Badge variant="secondary">
             <Clock className="mr-1 h-3 w-3" />
             En attente
           </Badge>
         )
       case 'suspended':
         return (
-          <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+          <Badge variant="destructive">
             <XCircle className="mr-1 h-3 w-3" />
             Suspendu
           </Badge>
@@ -330,8 +330,8 @@ function Schools() {
                 error
                   ? (
                       <div className="text-center py-8">
-                        <XCircle className="h-8 w-8 text-red-600 mx-auto mb-2" />
-                        <h3 className="text-lg font-medium text-red-600">Erreur de chargement</h3>
+                        <XCircle className="h-8 w-8 text-destructive mx-auto mb-2" />
+                        <h3 className="text-lg font-medium text-destructive">Erreur de chargement</h3>
                         <p className="text-muted-foreground">{error.message}</p>
                         <Button
                           variant="outline"

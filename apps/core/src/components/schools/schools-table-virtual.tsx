@@ -45,11 +45,11 @@ export function SchoolsTableVirtual({ schools, onSchoolClick }: SchoolsTableVirt
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
-        return <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">Active</Badge>
+        return <Badge variant="default">Active</Badge>
       case 'inactive':
-        return <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">Inactive</Badge>
+        return <Badge variant="secondary">Inactive</Badge>
       case 'suspended':
-        return <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">Suspendue</Badge>
+        return <Badge variant="destructive">Suspendue</Badge>
       default:
         return <Badge variant="secondary">{status}</Badge>
     }
@@ -170,7 +170,7 @@ export function SchoolsTableVirtual({ schools, onSchoolClick }: SchoolsTableVirt
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-red-600 focus:text-red-600">
+                        <DropdownMenuItem className="text-destructive focus:text-destructive">
                           <Ban className="mr-2 h-4 w-4" />
                           {' '}
                           Suspendre

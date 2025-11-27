@@ -128,21 +128,21 @@ function SchoolDetails() {
     switch (status) {
       case 'active':
         return (
-          <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+          <Badge variant="default">
             <CheckCircle className="mr-1 h-3 w-3" />
             Active
           </Badge>
         )
       case 'inactive':
         return (
-          <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+          <Badge variant="secondary">
             <Clock className="mr-1 h-3 w-3" />
             Inactive
           </Badge>
         )
       case 'suspended':
         return (
-          <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+          <Badge variant="destructive">
             <XCircle className="mr-1 h-3 w-3" />
             Suspendue
           </Badge>

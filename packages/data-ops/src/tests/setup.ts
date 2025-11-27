@@ -23,8 +23,7 @@ beforeAll(async () => {
       username: username!,
       password: password!,
     })
-    // eslint-disable-next-line no-console
-    console.log('✓ Test database initialized')
+    console.warn('✓ Test database initialized')
   }
   catch (error) {
     console.error('Failed to initialize test database:', error)

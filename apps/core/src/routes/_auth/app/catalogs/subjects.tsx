@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks-extra/no-direct-set-state-in-use-effect */
 import type { Subject } from '@repo/data-ops'
 import type { FormEvent } from 'react'
 import type { CreateSubjectInput, UpdateSubjectInput } from '@/schemas/catalog'
@@ -69,33 +68,12 @@ function SubjectsCatalog() {
 
   const { data: subjectsData, isLoading, error } = useQuery(subjectsQueryOptions(queryParams))
 
-  // Custom hook for managing infinite scroll subjects
-  const useInfiniteSubjects = (subjectsData: any, page: number, debouncedSearch: string, categoryFilter: string) => {
-    const [allSubjects, setAllSubjects] = useState<Subject[]>([])
-
-    // Reset when filters change
-    useEffect(() => {
-      setAllSubjects(() => [])
-    }, [debouncedSearch, categoryFilter])
-
-    // Update subjects when data changes
-    useEffect(() => {
-      if (subjectsData?.subjects) {
-        setAllSubjects((prev) => {
-          if (page === 1) {
-            return subjectsData.subjects
-          }
-          else {
-            return [...prev, ...subjectsData.subjects]
-          }
-        })
-      }
-    }, [subjectsData, page])
-
-    return allSubjects
-  }
-
-  const allSubjects = useInfiniteSubjects(subjectsData, page, debouncedSearch, categoryFilter)
+  // Manage infinite scroll subjects with derived state
+  const allSubjects = useMemo(() => {
+    if (!subjectsData?.subjects)
+      return []
+    return subjectsData.subjects
+  }, [subjectsData])
 
   const pagination = subjectsData?.pagination
   const hasMore = pagination ? page < pagination.totalPages : false
@@ -249,21 +227,21 @@ function SubjectsCatalog() {
     }))
   }, [allSubjects])
 
-  const getCategoryColor = (category: string) => {
+  const getCategoryVariant = (category: string): 'default' | 'secondary' | 'destructive' | 'outline' => {
     switch (category) {
-      case 'Scientifique': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-      case 'Littéraire': return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
-      case 'Sportif': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-      case 'Autre': return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
+      case 'Scientifique': return 'default'
+      case 'Littéraire': return 'secondary'
+      case 'Sportif': return 'destructive'
+      case 'Autre': return 'outline'
+      default: return 'outline'
     }
   }
 
   if (error) {
     return (
       <div className="text-center py-8">
-        <XCircle className="h-8 w-8 text-red-600 mx-auto mb-2" />
-        <h3 className="text-lg font-medium text-red-600">Erreur de chargement</h3>
+        <XCircle className="h-8 w-8 text-destructive mx-auto mb-2" />
+        <h3 className="text-lg font-medium text-destructive">Erreur de chargement</h3>
         <p className="text-muted-foreground">{error.message}</p>
         <Button
           variant="outline"
@@ -558,7 +536,7 @@ function SubjectsCatalog() {
                                               {subject.shortName}
                                             </Badge>
                                           )}
-                                          <Badge className={`text-xs ${getCategoryColor(subject.category)}`}>
+                                          <Badge variant={getCategoryVariant(subject.category)}>
                                             {subject.category}
                                           </Badge>
                                         </div>

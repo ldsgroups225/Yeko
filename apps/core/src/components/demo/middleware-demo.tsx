@@ -118,9 +118,9 @@ export function MiddlewareDemo() {
                   )}
 
                   {mutation.isSuccess && (
-                    <Alert className="border-green-500 bg-green-200/10">
-                      <CheckCircle className="w-4 h-4 text-green-800 dark:text-green-400" />
-                      <AlertDescription className="text-green-700 dark:text-green-300">
+                    <Alert className="border-primary/50 bg-primary/10">
+                      <CheckCircle className="w-4 h-4 text-primary" />
+                      <AlertDescription className="text-primary">
                         <strong>Success!</strong>
                         {' '}
                         Response: "
@@ -131,9 +131,9 @@ export function MiddlewareDemo() {
                   )}
 
                   {mutation.isError && (
-                    <Alert className="border-red-200 bg-red-50 dark:bg-red-950/20">
-                      <AlertCircle className="w-4 h-4 text-red-600" />
-                      <AlertDescription className="text-red-800 dark:text-red-200">
+                    <Alert className="border-destructive/50 bg-destructive/10">
+                      <AlertCircle className="w-4 h-4 text-destructive" />
+                      <AlertDescription className="text-destructive">
                         <strong>Error:</strong>
                         {' '}
                         {mutation.error?.message || 'Something went wrong'}

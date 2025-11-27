@@ -610,12 +610,12 @@ function CoefficientsCatalog() {
                                       type="number"
                                       value={coef.weight}
                                       onChange={e => handleCellEdit(coef.id, Number.parseInt(e.target.value))}
-                                      className={`w-16 mx-auto text-center ${coef.weight === 0 ? 'border-yellow-500' : ''}`}
+                                      className={`w-16 mx-auto text-center ${coef.weight === 0 ? 'border-secondary' : ''}`}
                                       min={COEFFICIENT_LIMITS.MIN}
                                       max={COEFFICIENT_LIMITS.MAX}
                                     />
                                     {coef.weight === 0 && (
-                                      <div className="flex items-center gap-1 text-xs text-yellow-600">
+                                      <div className="flex items-center gap-1 text-xs text-secondary">
                                         <AlertTriangle className="h-3 w-3" />
                                         <span>Coef 0</span>
                                       </div>

@@ -52,13 +52,13 @@ export function SystemHealth({ health, isLoading, error, collapsedByDefault = fa
 
   if (error || !health) {
     return (
-      <Card className="border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950">
+      <Card className="border-destructive/20 bg-destructive/10 dark:border-destructive/40 dark:bg-destructive/20">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-red-600">
+          <CardTitle className="flex items-center gap-2 text-destructive">
             <AlertCircle className="h-5 w-5" />
             Santé du système
           </CardTitle>
-          <CardDescription className="text-red-600">
+          <CardDescription className="text-destructive">
             Impossible de charger les données de santé du système
           </CardDescription>
         </CardHeader>
@@ -69,26 +69,26 @@ export function SystemHealth({ health, isLoading, error, collapsedByDefault = fa
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'healthy':
-        return <CheckCircle className="h-4 w-4 text-green-600" />
+        return <CheckCircle className="h-4 w-4 text-primary" />
       case 'warning':
-        return <AlertTriangle className="h-4 w-4 text-yellow-600" />
+        return <AlertTriangle className="h-4 w-4 text-secondary" />
       case 'error':
-        return <AlertCircle className="h-4 w-4 text-red-600" />
+        return <AlertCircle className="h-4 w-4 text-destructive" />
       default:
-        return <Activity className="h-4 w-4 text-gray-600" />
+        return <Activity className="h-4 w-4 text-muted-foreground" />
     }
   }
 
   const getProgressBarColor = (status: string) => {
     switch (status) {
       case 'healthy':
-        return 'bg-green-600'
+        return 'bg-primary'
       case 'warning':
-        return 'bg-yellow-600'
+        return 'bg-secondary'
       case 'error':
-        return 'bg-red-600'
+        return 'bg-destructive'
       default:
-        return 'bg-gray-600'
+        return 'bg-muted'
     }
   }
 
@@ -146,10 +146,10 @@ export function SystemHealth({ health, isLoading, error, collapsedByDefault = fa
               <span className={cn(
                 'ml-2 text-sm font-normal px-2 py-0.5 rounded-full flex items-center gap-1',
                 overallStatus === 'healthy'
-                  ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                  ? 'bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary'
                   : overallStatus === 'warning'
-                    ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
-                    : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+                    ? 'bg-secondary/10 text-secondary dark:bg-secondary/20 dark:text-secondary'
+                    : 'bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive',
               )}
               >
                 {getStatusIcon(overallStatus)}

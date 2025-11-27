@@ -39,15 +39,15 @@ export function StatsCard({
 
   if (error) {
     return (
-      <Card className="border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950">
+      <Card className="border-destructive/20 bg-destructive/10 dark:border-destructive/40 dark:bg-destructive/20">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-red-600">{title}</CardTitle>
-          <Icon className="h-4 w-4 text-red-600" />
+          <CardTitle className="text-sm font-medium text-destructive">{title}</CardTitle>
+          <Icon className="h-4 w-4 text-destructive" />
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-2">
-            <AlertCircle className="h-4 w-4 text-red-600" />
-            <span className="text-sm text-red-600">Erreur de chargement</span>
+            <AlertCircle className="h-4 w-4 text-destructive" />
+            <span className="text-sm text-destructive">Erreur de chargement</span>
           </div>
         </CardContent>
       </Card>
@@ -67,9 +67,9 @@ export function StatsCard({
         <div className="text-2xl font-bold">{typeof value === 'number' ? value.toLocaleString() : value}</div>
         {change !== undefined && (
           <p className="text-xs text-muted-foreground flex items-center gap-1">
-            {isPositive && <TrendingUp className="h-3 w-3 text-green-600" />}
-            {isNegative && <TrendingDown className="h-3 w-3 text-red-600" />}
-            <span className={isPositive ? 'text-green-600' : isNegative ? 'text-red-600' : ''}>
+            {isPositive && <TrendingUp className="h-3 w-3 text-primary" />}
+            {isNegative && <TrendingDown className="h-3 w-3 text-destructive" />}
+            <span className={isPositive ? 'text-primary' : isNegative ? 'text-destructive' : ''}>
               {change > 0 ? '+' : ''}
               {change}
               %

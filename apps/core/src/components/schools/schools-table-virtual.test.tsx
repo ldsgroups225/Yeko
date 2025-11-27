@@ -115,13 +115,13 @@ describe('schools List Component', () => {
 
       // Check badge classes
       const activeBadge = screen.getByText('Active')
-      expect(activeBadge).toHaveClass('bg-green-100', 'text-green-800')
+      expect(activeBadge).toHaveClass('bg-primary', 'text-primary-foreground')
 
       const inactiveBadge = screen.getByText('Inactive')
-      expect(inactiveBadge).toHaveClass('bg-yellow-100', 'text-yellow-800')
+      expect(inactiveBadge).toHaveClass('bg-secondary', 'text-secondary-foreground')
 
       const suspendedBadge = screen.getByText('Suspendue')
-      expect(suspendedBadge).toHaveClass('bg-red-100', 'text-red-800')
+      expect(suspendedBadge).toHaveClass('bg-destructive', 'text-white')
     })
 
     test('should show action buttons', async () => {

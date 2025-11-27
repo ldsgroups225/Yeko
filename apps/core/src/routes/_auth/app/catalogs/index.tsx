@@ -44,9 +44,7 @@ function Catalogs() {
       icon: GraduationCap,
       href: '/app/catalogs/tracks',
       stats: isLoading ? '...' : `${catalogStats?.educationLevels || 0} niveaux, ${catalogStats?.tracks || 0} filières`,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50 dark:bg-blue-950',
-      borderColor: 'border-blue-200 dark:border-blue-800',
+      variant: 'default' as const,
     },
     {
       title: 'Niveaux et Séries',
@@ -54,9 +52,7 @@ function Catalogs() {
       icon: Award,
       href: '/app/catalogs/grades',
       stats: isLoading ? '...' : `${catalogStats?.grades || 0} classes, ${catalogStats?.series || 0} séries`,
-      color: 'text-green-600',
-      bgColor: 'bg-green-50 dark:bg-green-950',
-      borderColor: 'border-green-200 dark:border-green-800',
+      variant: 'default' as const,
     },
     {
       title: 'Matières',
@@ -64,9 +60,7 @@ function Catalogs() {
       icon: BookOpen,
       href: '/app/catalogs/subjects',
       stats: isLoading ? '...' : `${catalogStats?.subjects || 0} matières`,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50 dark:bg-purple-950',
-      borderColor: 'border-purple-200 dark:border-purple-800',
+      variant: 'secondary' as const,
     },
     {
       title: 'Modèles de Programmes',
@@ -74,9 +68,7 @@ function Catalogs() {
       icon: Database,
       href: '/app/catalogs/programs',
       stats: 'Bientôt disponible',
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50 dark:bg-orange-950',
-      borderColor: 'border-orange-200 dark:border-orange-800',
+      variant: 'secondary' as const,
     },
   ]
 
@@ -186,13 +178,13 @@ function Catalogs() {
       {/* Catalog Sections */}
       <div className="grid gap-6 md:grid-cols-2">
         {catalogSections.map(section => (
-          <Card key={section.title} className={`border-l-4 ${section.borderColor}`}>
+          <Card key={section.title} className="border-l-4 border-primary">
             <CardHeader>
               <div className="flex items-center justify-between">
-                <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${section.bgColor}`}>
-                  <section.icon className={`h-6 w-6 ${section.color}`} />
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+                  <section.icon className="h-6 w-6 text-primary" />
                 </div>
-                <Badge variant="secondary" className="text-xs">
+                <Badge variant={section.variant} className="text-xs">
                   {section.stats}
                 </Badge>
               </div>
@@ -268,7 +260,7 @@ function Catalogs() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm">Mises à jour nécessaires</span>
-                <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                <Badge variant="secondary">
                   3 éléments
                 </Badge>
               </div>

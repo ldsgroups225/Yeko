@@ -64,29 +64,29 @@ function Analytics() {
       title: 'Résumé des Écoles',
       description: 'Vue complète de toutes les écoles du système',
       icon: School,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50 dark:bg-blue-950',
+      color: 'text-primary',
+      bgColor: 'bg-primary/10 dark:bg-primary/20',
     },
     {
       title: 'Activité des Utilisateurs',
       description: 'Analyse détaillée de l\'engagement et de l\'activité des utilisateurs',
       icon: Users,
-      color: 'text-green-600',
-      bgColor: 'bg-green-50 dark:bg-green-950',
+      color: 'text-primary',
+      bgColor: 'bg-primary/10 dark:bg-primary/20',
     },
     {
       title: 'Santé du Système',
       description: 'Métriques de performance et rapports d\'état du système',
       icon: Activity,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50 dark:bg-purple-950',
+      color: 'text-secondary',
+      bgColor: 'bg-secondary/10 dark:bg-secondary/20',
     },
     {
       title: 'Tendances de Croissance',
       description: 'Métriques de croissance et analyse des tendances d\'utilisation',
       icon: TrendingUp,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50 dark:bg-orange-950',
+      color: 'text-secondary',
+      bgColor: 'bg-secondary/10 dark:bg-secondary/20',
     },
   ]
 
@@ -153,7 +153,7 @@ function Analytics() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{kpi.value}</div>
-              <p className={`text-xs ${kpi.positive ? 'text-green-600' : 'text-red-600'}`}>
+              <p className={`text-xs ${kpi.positive ? 'text-primary' : 'text-destructive'}`}>
                 {kpi.change}
                 {' '}
                 depuis le mois dernier
@@ -257,7 +257,7 @@ function Analytics() {
                     <div className="flex items-center gap-2">
                       <div className="flex-1 bg-secondary rounded-full h-2 max-w-[100px]">
                         <div
-                          className="bg-green-600 h-2 rounded-full"
+                          className="bg-primary h-2 rounded-full"
                           style={{
                             width: `${(data.users / 15200) * 100}%`,
                           }}
@@ -293,7 +293,7 @@ function Analytics() {
                 <span className="text-sm text-muted-foreground">45ms</span>
               </div>
               <div className="w-full bg-secondary rounded-full h-2">
-                <div className="bg-green-600 h-2 rounded-full" style={{ width: '85%' }}></div>
+                <div className="bg-primary h-2 rounded-full" style={{ width: '85%' }}></div>
               </div>
             </div>
 
@@ -303,7 +303,7 @@ function Analytics() {
                 <span className="text-sm text-muted-foreground">1.2K req/s</span>
               </div>
               <div className="w-full bg-secondary rounded-full h-2">
-                <div className="bg-blue-600 h-2 rounded-full" style={{ width: '70%' }}></div>
+                <div className="bg-primary h-2 rounded-full" style={{ width: '70%' }}></div>
               </div>
             </div>
 
@@ -313,7 +313,7 @@ function Analytics() {
                 <span className="text-sm text-muted-foreground">0.12%</span>
               </div>
               <div className="w-full bg-secondary rounded-full h-2">
-                <div className="bg-yellow-600 h-2 rounded-full" style={{ width: '5%' }}></div>
+                <div className="bg-secondary h-2 rounded-full" style={{ width: '5%' }}></div>
               </div>
             </div>
 
@@ -323,7 +323,7 @@ function Analytics() {
                 <span className="text-sm text-muted-foreground">78%</span>
               </div>
               <div className="w-full bg-secondary rounded-full h-2">
-                <div className="bg-orange-600 h-2 rounded-full" style={{ width: '78%' }}></div>
+                <div className="bg-secondary h-2 rounded-full" style={{ width: '78%' }}></div>
               </div>
             </div>
           </div>

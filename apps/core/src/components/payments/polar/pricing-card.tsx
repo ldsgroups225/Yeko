@@ -163,7 +163,7 @@ export function PricingCard({
           <div className="space-y-3 mb-6">
             {features.map(feature => (
               <div key={`feature-${feature.toString().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`} className="flex items-start gap-2">
-                <Check className="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
+                <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                 <span className="text-sm">{feature}</span>
               </div>
             ))}

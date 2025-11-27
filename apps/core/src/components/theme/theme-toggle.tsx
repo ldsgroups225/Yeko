@@ -170,7 +170,7 @@ export function ThemeToggle({
             <div className="flex items-center gap-2 px-3 py-1.5 text-xs text-muted-foreground">
               <div className={`
                 w-2 h-2 rounded-full transition-colors duration-200
-                ${resolvedTheme === 'dark' ? 'bg-blue-500' : 'bg-amber-500'}
+                ${resolvedTheme === 'dark' ? 'bg-primary' : 'bg-secondary'}
               `}
               />
               Currently using

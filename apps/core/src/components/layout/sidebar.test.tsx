@@ -22,18 +22,15 @@ vi.mock('motion/react', () => ({
   motion: {
     div: ({ children, ...props }: any) => {
       // Filter out motion-specific props that shouldn't be on DOM elements
-      const { whileHover: _whileHover, whileTap: _whileTap, animate: _animate, initial: _initial, transition: _transition, ...domProps } = props
-      return <div {...domProps}>{children}</div>
+      return <div {...props}>{children}</div>
     },
-    img: ({ children, ...props }: any) => {
+    img: ({ ...props }: any) => {
       // Filter out motion-specific props that shouldn't be on DOM elements
-      const { whileHover: _whileHover, whileTap: _whileTap, animate: _animate, initial: _initial, transition: _transition, ...imgProps } = props
-      return <img alt="" {...imgProps} />
+      return <img alt="" {...props} />
     },
-    span: ({ children, ...props }: any) => {
+    span: ({ ...props }: any) => {
       // Filter out motion-specific props that shouldn't be on DOM elements
-      const { whileHover: _whileHover, whileTap: _whileTap, animate: _animate, initial: _initial, transition: _transition, ...spanProps } = props
-      return <span {...spanProps}>{children}</span>
+      return <span {...props} />
     },
   },
 }))

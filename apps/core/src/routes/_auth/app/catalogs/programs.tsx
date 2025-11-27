@@ -532,7 +532,7 @@ function ProgramsCatalog() {
                                 <div className="flex items-center gap-2">
                                   <h3 className="font-semibold">{program.name}</h3>
                                   {program.status === 'published' && (
-                                    <Badge variant="default" className="text-xs bg-green-500 hover:bg-green-600">Publié</Badge>
+                                    <Badge variant="default" className="text-xs">Publié</Badge>
                                   )}
                                   {program.status === 'draft' && (
                                     <Badge variant="secondary" className="text-xs">Brouillon</Badge>
