@@ -2,12 +2,16 @@ import type { ComponentType } from 'react'
 import type { FileRoutesByTo } from '@/routeTree.gen'
 import { useNavigate, useRouterState } from '@tanstack/react-router'
 import {
+  Award,
   BarChart3,
+  BookMarked,
   BookOpen,
+  Calculator,
   ChevronDown,
   GraduationCap,
   HelpCircle,
   Home,
+  Route,
   School,
 } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
@@ -63,6 +67,30 @@ const navigationItems: NavigationItem[] = [
         href: '/app/catalogs/programs',
         description: 'Programmes ministériels',
       },
+      {
+        name: 'Matières',
+        icon: BookMarked,
+        href: '/app/catalogs/subjects',
+        description: 'Matières académiques',
+      },
+      {
+        name: 'Filières',
+        icon: Route,
+        href: '/app/catalogs/tracks',
+        description: 'Filières d\'études',
+      },
+      {
+        name: 'Notes',
+        icon: Award,
+        href: '/app/catalogs/grades',
+        description: 'Système de notation',
+      },
+      {
+        name: 'Coefficients',
+        icon: Calculator,
+        href: '/app/catalogs/coefficients',
+        description: 'Coefficients des matières',
+      },
     ],
   },
   {
@@ -111,50 +139,54 @@ export function Sidebar({ className }: SidebarProps) {
 
     return (
       <SidebarMenuItem key={item.href}>
-        <SidebarMenuButton
-          isActive={isActive && !hasChildren}
-          onClick={() => {
-            if (hasChildren) {
-              toggleExpanded(item.href)
-            }
-            else {
-              navigate({ to: item.href })
-            }
-          }}
-          tooltip={isCollapsed ? item.name : undefined}
-          className="h-12"
-        >
-          <motion.div
-            whileHover={{ scale: 1.1, rotate: 5 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+        <div className="flex items-center w-full">
+          <SidebarMenuButton
+            isActive={isActive && !hasChildren}
+            onClick={() => navigate({ to: item.href })}
+            tooltip={isCollapsed ? item.name : undefined}
+            className="h-12 flex-1"
           >
-            <item.icon className="h-5 w-5" />
-          </motion.div>
-          <div className="flex flex-col items-start flex-1">
-            <span className="text-sm font-medium">{item.name}</span>
-            {!isCollapsed && (
-              <span className="text-xs text-muted-foreground">{item.description}</span>
-            )}
-          </div>
-          {hasChildren && !isCollapsed && (
             <motion.div
-              animate={{ rotate: isExpanded ? 180 : 0 }}
-              transition={{ duration: 0.3 }}
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 10 }}
             >
-              <ChevronDown className="h-4 w-4" />
+              <item.icon className="h-5 w-5" />
             </motion.div>
-          )}
-          {item.badge && !isCollapsed && (
-            <motion.span
-              className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 500, damping: 15 }}
+            <div className="flex flex-col items-start flex-1">
+              <span className="text-sm font-medium">{item.name}</span>
+              {!isCollapsed && (
+                <span className="text-xs text-muted-foreground">{item.description}</span>
+              )}
+            </div>
+            {item.badge && !isCollapsed && (
+              <motion.span
+                className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', stiffness: 500, damping: 15 }}
+              >
+                {item.badge}
+              </motion.span>
+            )}
+          </SidebarMenuButton>
+          {hasChildren && !isCollapsed && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                toggleExpanded(item.href)
+              }}
+              className="p-2 hover:bg-accent rounded-md transition-colors"
+              aria-label={isExpanded ? 'Collapse' : 'Expand'}
             >
-              {item.badge}
-            </motion.span>
+              <motion.div
+                animate={{ rotate: isExpanded ? 180 : 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <ChevronDown className="h-4 w-4" />
+              </motion.div>
+            </button>
           )}
-        </SidebarMenuButton>
+        </div>
         <AnimatePresence>
           {hasChildren && isExpanded && !isCollapsed && (
             <motion.div
@@ -167,11 +199,16 @@ export function Sidebar({ className }: SidebarProps) {
                 {item.children?.map(child => (
                   <SidebarMenuSubItem key={child.href}>
                     <SidebarMenuSubButton
+                      asChild
                       isActive={currentPath === child.href}
-                      onClick={() => navigate({ to: child.href })}
                     >
-                      <child.icon className="h-4 w-4" />
-                      <span>{child.name}</span>
+                      <button
+                        onClick={() => navigate({ to: child.href })}
+                        className="cursor-pointer w-full"
+                      >
+                        <child.icon className="h-4 w-4" />
+                        <span>{child.name}</span>
+                      </button>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
                 ))}
