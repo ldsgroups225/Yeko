@@ -1,5 +1,6 @@
 import { and, desc, eq, ilike, isNull, or } from 'drizzle-orm'
 import { getDb } from '@/database/setup'
+import { schools } from '@/drizzle/core-schema'
 import { roles, userRoles, users, userSchools } from '@/drizzle/school-schema'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
 
@@ -252,4 +253,30 @@ export async function assignRolesToUser(userId: string, schoolId: string, roleId
 
     return getUserWithRoles(userId, schoolId)
   })
+}
+
+export async function getUserSchoolsByUserId(userId: string) {
+  if (!userId) {
+    throw new Error('User ID is required')
+  }
+
+  const db = getDb()
+
+  return db
+    .select({
+      id: schools.id,
+      name: schools.name,
+      code: schools.code,
+      status: schools.status,
+      logoUrl: schools.logoUrl,
+    })
+    .from(userSchools)
+    .innerJoin(schools, eq(userSchools.schoolId, schools.id))
+    .innerJoin(users, eq(userSchools.userId, users.id))
+    .where(and(
+      eq(userSchools.userId, userId),
+      isNull(users.deletedAt),
+      eq(schools.status, 'active'),
+    ))
+    .orderBy(schools.name)
 }
