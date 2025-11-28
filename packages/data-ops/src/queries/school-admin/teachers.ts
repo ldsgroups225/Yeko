@@ -1,4 +1,4 @@
-import { and, desc, eq, ilike, or } from 'drizzle-orm'
+import { and, count, desc, eq, ilike, or } from 'drizzle-orm'
 import { getDb } from '@/database/setup'
 import { subjects } from '@/drizzle/core-schema'
 import { teachers, teacherSubjects, users } from '@/drizzle/school-schema'
@@ -224,4 +224,37 @@ export async function assignSubjectsToTeacher(teacherId: string, schoolId: strin
 
     return getTeacherWithSubjects(teacherId, schoolId)
   })
+}
+
+// Phase 11: Count teachers for pagination
+export async function countTeachersBySchool(
+  schoolId: string,
+  options?: {
+    search?: string
+    status?: 'active' | 'inactive' | 'on_leave'
+  },
+) {
+  if (!schoolId) {
+    throw new Error(SCHOOL_ERRORS.NO_SCHOOL_CONTEXT)
+  }
+
+  const db = getDb()
+
+  const conditions = [eq(teachers.schoolId, schoolId)]
+
+  if (options?.status) {
+    conditions.push(eq(teachers.status, options.status))
+  }
+
+  if (options?.search) {
+    conditions.push(or(ilike(users.name, `%${options.search}%`), ilike(users.email, `%${options.search}%`))!)
+  }
+
+  const [result] = await db
+    .select({ count: count() })
+    .from(teachers)
+    .innerJoin(users, eq(teachers.userId, users.id))
+    .where(and(...conditions))
+
+  return result?.count || 0
 }

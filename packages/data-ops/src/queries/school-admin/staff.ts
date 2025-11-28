@@ -1,4 +1,4 @@
-import { and, desc, eq, ilike, or } from 'drizzle-orm'
+import { and, count, desc, eq, ilike, or } from 'drizzle-orm'
 import { getDb } from '@/database/setup'
 import { staff, users } from '@/drizzle/school-schema'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
@@ -153,4 +153,42 @@ export async function deleteStaff(staffId: string, schoolId: string) {
   await db.delete(staff).where(eq(staff.id, staffId))
 
   return { success: true }
+}
+
+// Phase 11: Count staff for pagination
+export async function countStaffBySchool(
+  schoolId: string,
+  options?: {
+    search?: string
+    position?: string
+    status?: 'active' | 'inactive' | 'on_leave'
+  },
+) {
+  if (!schoolId) {
+    throw new Error(SCHOOL_ERRORS.NO_SCHOOL_CONTEXT)
+  }
+
+  const db = getDb()
+
+  const conditions = [eq(staff.schoolId, schoolId)]
+
+  if (options?.status) {
+    conditions.push(eq(staff.status, options.status))
+  }
+
+  if (options?.position) {
+    conditions.push(eq(staff.position, options.position))
+  }
+
+  if (options?.search) {
+    conditions.push(or(ilike(users.name, `%${options.search}%`), ilike(users.email, `%${options.search}%`))!)
+  }
+
+  const [result] = await db
+    .select({ count: count() })
+    .from(staff)
+    .innerJoin(users, eq(staff.userId, users.id))
+    .where(and(...conditions))
+
+  return result?.count || 0
 }

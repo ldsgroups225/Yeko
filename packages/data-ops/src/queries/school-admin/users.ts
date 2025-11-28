@@ -1,12 +1,13 @@
-import { and, desc, eq, ilike, isNull, or } from 'drizzle-orm'
+import { and, count, desc, eq, ilike, inArray, isNull, or, sql } from 'drizzle-orm'
 import { getDb } from '@/database/setup'
 import { schools } from '@/drizzle/core-schema'
-import { roles, userRoles, users, userSchools } from '@/drizzle/school-schema'
+import { auditLogs, roles, userRoles, users, userSchools } from '@/drizzle/school-schema'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
 
 export async function getUsersBySchool(schoolId: string, options?: {
   search?: string
   status?: 'active' | 'inactive' | 'suspended'
+  roleId?: string
   limit?: number
   offset?: number
 }) {
@@ -31,13 +32,15 @@ export async function getUsersBySchool(schoolId: string, options?: {
       or(
         ilike(users.name, `%${options.search}%`),
         ilike(users.email, `%${options.search}%`),
+        ilike(users.phone, `%${options.search}%`),
       )!,
     )
   }
 
   const db = getDb()
 
-  return db
+  // Build query with role aggregation
+  const query = db
     .select({
       id: users.id,
       email: users.email,
@@ -45,15 +48,62 @@ export async function getUsersBySchool(schoolId: string, options?: {
       phone: users.phone,
       avatarUrl: users.avatarUrl,
       status: users.status,
+      lastLoginAt: users.lastLoginAt,
       createdAt: users.createdAt,
       updatedAt: users.updatedAt,
+      roles: sql<string[]>`COALESCE(array_agg(DISTINCT ${roles.name}) FILTER (WHERE ${roles.name} IS NOT NULL), ARRAY[]::text[])`,
     })
     .from(users)
     .innerJoin(userSchools, eq(users.id, userSchools.userId))
+    .leftJoin(userRoles, and(eq(userRoles.userId, users.id), eq(userRoles.schoolId, schoolId)))
+    .leftJoin(roles, eq(roles.id, userRoles.roleId))
     .where(and(...conditions))
+    .groupBy(users.id)
     .orderBy(desc(users.createdAt))
     .limit(limit)
     .offset(offset)
+
+  return query
+}
+
+// Phase 11: Count users for pagination
+export async function countUsersBySchool(schoolId: string, options?: {
+  search?: string
+  status?: 'active' | 'inactive' | 'suspended'
+  roleId?: string
+}) {
+  if (!schoolId) {
+    throw new Error(SCHOOL_ERRORS.NO_SCHOOL_CONTEXT)
+  }
+
+  const conditions = [
+    eq(userSchools.schoolId, schoolId),
+    isNull(users.deletedAt),
+  ]
+
+  if (options?.status) {
+    conditions.push(eq(users.status, options.status))
+  }
+
+  if (options?.search) {
+    conditions.push(
+      or(
+        ilike(users.name, `%${options.search}%`),
+        ilike(users.email, `%${options.search}%`),
+        ilike(users.phone, `%${options.search}%`),
+      )!,
+    )
+  }
+
+  const db = getDb()
+
+  const [result] = await db
+    .select({ count: count() })
+    .from(users)
+    .innerJoin(userSchools, eq(users.id, userSchools.userId))
+    .where(and(...conditions))
+
+  return result?.count || 0
 }
 
 export async function getUserById(userId: string, schoolId: string) {
@@ -303,8 +353,8 @@ export async function getUserPermissionsBySchool(userId: string, schoolId: strin
       .where(
         and(
           eq(userRoles.userId, userId),
-          eq(userRoles.schoolId, schoolId)
-        )
+          eq(userRoles.schoolId, schoolId),
+        ),
       )
 
     // Merge permissions from all roles
@@ -318,8 +368,8 @@ export async function getUserPermissionsBySchool(userId: string, schoolId: strin
         }
         // Add unique actions
         for (const action of actions) {
-          if (!mergedPermissions[resource].includes(action)) {
-            mergedPermissions[resource].push(action)
+          if (!mergedPermissions[resource]?.includes(action)) {
+            mergedPermissions[resource]?.push(action)
           }
         }
       }
@@ -331,4 +381,175 @@ export async function getUserPermissionsBySchool(userId: string, schoolId: strin
     console.error('Error fetching user permissions:', error)
     return {}
   }
+}
+
+// Phase 11: Bulk update users status
+export async function bulkUpdateUsersStatus(
+  userIds: string[],
+  schoolId: string,
+  status: 'active' | 'inactive' | 'suspended',
+  performedBy: string,
+) {
+  if (!schoolId) {
+    throw new Error(SCHOOL_ERRORS.NO_SCHOOL_CONTEXT)
+  }
+
+  if (userIds.length === 0) {
+    return { success: 0, failed: 0 }
+  }
+
+  const db = getDb()
+
+  return db.transaction(async (tx: any) => {
+    // Update users
+    const updated = await tx
+      .update(users)
+      .set({
+        status,
+        updatedAt: new Date(),
+      })
+      .where(inArray(users.id, userIds))
+      .returning()
+
+    // Log audit for each user
+    for (const user of updated) {
+      await tx.insert(auditLogs).values({
+        id: crypto.randomUUID(),
+        schoolId,
+        userId: performedBy,
+        action: 'update',
+        tableName: 'users',
+        recordId: user.id,
+        oldValues: { status: user.status },
+        newValues: { status },
+        createdAt: new Date(),
+      })
+    }
+
+    return { success: updated.length, failed: userIds.length - updated.length }
+  })
+}
+
+// Phase 11: Bulk delete users (soft delete)
+export async function bulkDeleteUsers(userIds: string[], schoolId: string, performedBy: string) {
+  if (!schoolId) {
+    throw new Error(SCHOOL_ERRORS.NO_SCHOOL_CONTEXT)
+  }
+
+  if (userIds.length === 0) {
+    return { success: 0, failed: 0 }
+  }
+
+  const db = getDb()
+
+  return db.transaction(async (tx: any) => {
+    // Soft delete users
+    const deleted = await tx
+      .update(users)
+      .set({
+        deletedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(inArray(users.id, userIds))
+      .returning()
+
+    // Log audit for each user
+    for (const user of deleted) {
+      await tx.insert(auditLogs).values({
+        id: crypto.randomUUID(),
+        schoolId,
+        userId: performedBy,
+        action: 'delete',
+        tableName: 'users',
+        recordId: user.id,
+        oldValues: { deletedAt: null },
+        newValues: { deletedAt: new Date() },
+        createdAt: new Date(),
+      })
+    }
+
+    return { success: deleted.length, failed: userIds.length - deleted.length }
+  })
+}
+
+// Phase 11: Check email uniqueness within school
+export async function checkEmailUniqueness(email: string, schoolId: string, excludeUserId?: string) {
+  if (!schoolId) {
+    throw new Error(SCHOOL_ERRORS.NO_SCHOOL_CONTEXT)
+  }
+
+  const db = getDb()
+
+  const conditions = [eq(users.email, email), isNull(users.deletedAt)]
+
+  if (excludeUserId) {
+    conditions.push(sql`${users.id} != ${excludeUserId}`)
+  }
+
+  const [result] = await db
+    .select({ count: count() })
+    .from(users)
+    .innerJoin(userSchools, eq(users.id, userSchools.userId))
+    .where(and(eq(userSchools.schoolId, schoolId), ...conditions))
+
+  return (result?.count || 0) === 0
+}
+
+// Phase 11: Get available users for teacher assignment (users not yet teachers)
+export async function getAvailableUsersForTeacher(schoolId: string) {
+  if (!schoolId) {
+    throw new Error(SCHOOL_ERRORS.NO_SCHOOL_CONTEXT)
+  }
+
+  const db = getDb()
+
+  return db
+    .select({
+      id: users.id,
+      name: users.name,
+      email: users.email,
+      phone: users.phone,
+    })
+    .from(users)
+    .innerJoin(userSchools, eq(users.id, userSchools.userId))
+    .leftJoin(sql`(SELECT user_id FROM teachers WHERE school_id = ${schoolId})`, sql`teachers.user_id = ${users.id}`)
+    .where(and(eq(userSchools.schoolId, schoolId), isNull(users.deletedAt), sql`teachers.user_id IS NULL`))
+    .orderBy(users.name)
+}
+
+// Phase 11: Get user activity logs
+export async function getUserActivityLogs(userId: string, schoolId: string, limit: number = 20) {
+  if (!schoolId) {
+    throw new Error(SCHOOL_ERRORS.NO_SCHOOL_CONTEXT)
+  }
+
+  const db = getDb()
+
+  return db
+    .select({
+      id: auditLogs.id,
+      action: auditLogs.action,
+      tableName: auditLogs.tableName,
+      recordId: auditLogs.recordId,
+      oldValues: auditLogs.oldValues,
+      newValues: auditLogs.newValues,
+      createdAt: auditLogs.createdAt,
+    })
+    .from(auditLogs)
+    .where(and(eq(auditLogs.userId, userId), eq(auditLogs.schoolId, schoolId)))
+    .orderBy(desc(auditLogs.createdAt))
+    .limit(limit)
+}
+
+// Phase 11: Update last login timestamp
+export async function updateLastLogin(userId: string) {
+  const db = getDb()
+
+  await db
+    .update(users)
+    .set({
+      lastLoginAt: new Date(),
+      updatedAt: new Date(),
+    })
+    .where(eq(users.id, userId))
 }

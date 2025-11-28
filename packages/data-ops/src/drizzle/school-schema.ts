@@ -15,6 +15,7 @@ export const users = pgTable('users', {
   phone: text('phone'),
   avatarUrl: text('avatar_url'),
   status: text('status', { enum: ['active', 'inactive', 'suspended'] }).default('active').notNull(),
+  lastLoginAt: timestamp('last_login_at'), // Phase 11: Activity tracking
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at')
     .defaultNow()
@@ -47,6 +48,7 @@ export const roles = pgTable('roles', {
   description: text('description'), // For UI display
   permissions: jsonb('permissions').$type<Record<string, string[]>>().notNull().default({}),
   scope: text('scope', { enum: ['school', 'system'] }).notNull(),
+  isSystemRole: boolean('is_system_role').default(false).notNull(), // Phase 11: Prevent deletion of system roles
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at')
     .defaultNow()

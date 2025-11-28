@@ -1,6 +1,6 @@
-import { desc, eq, ilike } from 'drizzle-orm'
+import { and, count, desc, eq, ilike } from 'drizzle-orm'
 import { getDb } from '@/database/setup'
-import { roles } from '@/drizzle/school-schema'
+import { roles, userRoles } from '@/drizzle/school-schema'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
 
 export async function getAllRoles(options?: {
@@ -110,6 +110,11 @@ export async function deleteRole(roleId: string) {
     throw new Error(SCHOOL_ERRORS.ROLE_NOT_FOUND)
   }
 
+  // Phase 11: Prevent deletion of system roles
+  if (role.isSystemRole) {
+    throw new Error('Cannot delete system roles')
+  }
+
   // Hard delete (cascade will handle user_roles)
   await db.delete(roles).where(eq(roles.id, roleId))
 
@@ -125,4 +130,38 @@ export async function checkPermission(roleId: string, action: string, resource: 
 
   const permissions = role.permissions as Record<string, string[]>
   return permissions[resource]?.includes(action) ?? false
+}
+
+// Phase 11: Count roles
+export async function countRoles(options?: { search?: string, scope?: 'school' | 'system' }) {
+  const db = getDb()
+
+  const conditions = []
+
+  if (options?.scope) {
+    conditions.push(eq(roles.scope, options.scope))
+  }
+
+  if (options?.search) {
+    conditions.push(ilike(roles.name, `%${options.search}%`))
+  }
+
+  const [result] = await db
+    .select({ count: count() })
+    .from(roles)
+    .where(conditions.length > 0 ? (conditions.length === 1 ? conditions[0] : undefined) : undefined)
+
+  return result?.count || 0
+}
+
+// Phase 11: Get users count per role
+export async function getRoleUsersCount(roleId: string, schoolId: string) {
+  const db = getDb()
+
+  const [result] = await db
+    .select({ count: count() })
+    .from(userRoles)
+    .where(and(eq(userRoles.roleId, roleId), eq(userRoles.schoolId, schoolId)))
+
+  return result?.count || 0
 }
