@@ -12,11 +12,15 @@ export const userSchema = z.object({
   roleIds: z.array(z.string()).min(1, 'Au moins un rôle requis'),
 })
 
-export const createUserSchema = userSchema
+export const userCreateSchema = userSchema
 
-export const updateUserSchema = userSchema.partial().extend({
+export const userUpdateSchema = userSchema.partial().extend({
   roleIds: z.array(z.string()).optional(),
 })
+
+// Aliases for backward compatibility
+export const createUserSchema = userCreateSchema
+export const updateUserSchema = userUpdateSchema
 
 // Bulk import schema
 export const bulkImportUserSchema = z.object({

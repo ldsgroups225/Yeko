@@ -12,7 +12,14 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthAppRouteImport } from './routes/_auth/app'
+import { Route as AuthAppHrRouteImport } from './routes/_auth/app/hr'
 import { Route as AuthAppDashboardRouteImport } from './routes/_auth/app/dashboard'
+import { Route as AuthAppHrIndexRouteImport } from './routes/_auth/app/hr/index'
+import { Route as AuthAppHrUsersIndexRouteImport } from './routes/_auth/app/hr/users/index'
+import { Route as AuthAppHrUsersNewRouteImport } from './routes/_auth/app/hr/users/new'
+import { Route as AuthAppHrUsersImportRouteImport } from './routes/_auth/app/hr/users/import'
+import { Route as AuthAppHrUsersUserIdIndexRouteImport } from './routes/_auth/app/hr/users/$userId/index'
+import { Route as AuthAppHrUsersUserIdEditRouteImport } from './routes/_auth/app/hr/users/$userId/edit'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
@@ -28,21 +35,71 @@ const AuthAppRoute = AuthAppRouteImport.update({
   path: '/app',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthAppHrRoute = AuthAppHrRouteImport.update({
+  id: '/hr',
+  path: '/hr',
+  getParentRoute: () => AuthAppRoute,
+} as any)
 const AuthAppDashboardRoute = AuthAppDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AuthAppRoute,
 } as any)
+const AuthAppHrIndexRoute = AuthAppHrIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthAppHrRoute,
+} as any)
+const AuthAppHrUsersIndexRoute = AuthAppHrUsersIndexRouteImport.update({
+  id: '/users/',
+  path: '/users/',
+  getParentRoute: () => AuthAppHrRoute,
+} as any)
+const AuthAppHrUsersNewRoute = AuthAppHrUsersNewRouteImport.update({
+  id: '/users/new',
+  path: '/users/new',
+  getParentRoute: () => AuthAppHrRoute,
+} as any)
+const AuthAppHrUsersImportRoute = AuthAppHrUsersImportRouteImport.update({
+  id: '/users/import',
+  path: '/users/import',
+  getParentRoute: () => AuthAppHrRoute,
+} as any)
+const AuthAppHrUsersUserIdIndexRoute =
+  AuthAppHrUsersUserIdIndexRouteImport.update({
+    id: '/users/$userId/',
+    path: '/users/$userId/',
+    getParentRoute: () => AuthAppHrRoute,
+  } as any)
+const AuthAppHrUsersUserIdEditRoute =
+  AuthAppHrUsersUserIdEditRouteImport.update({
+    id: '/users/$userId/edit',
+    path: '/users/$userId/edit',
+    getParentRoute: () => AuthAppHrRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AuthAppRouteWithChildren
   '/app/dashboard': typeof AuthAppDashboardRoute
+  '/app/hr': typeof AuthAppHrRouteWithChildren
+  '/app/hr/': typeof AuthAppHrIndexRoute
+  '/app/hr/users/import': typeof AuthAppHrUsersImportRoute
+  '/app/hr/users/new': typeof AuthAppHrUsersNewRoute
+  '/app/hr/users': typeof AuthAppHrUsersIndexRoute
+  '/app/hr/users/$userId/edit': typeof AuthAppHrUsersUserIdEditRoute
+  '/app/hr/users/$userId': typeof AuthAppHrUsersUserIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AuthAppRouteWithChildren
   '/app/dashboard': typeof AuthAppDashboardRoute
+  '/app/hr': typeof AuthAppHrIndexRoute
+  '/app/hr/users/import': typeof AuthAppHrUsersImportRoute
+  '/app/hr/users/new': typeof AuthAppHrUsersNewRoute
+  '/app/hr/users': typeof AuthAppHrUsersIndexRoute
+  '/app/hr/users/$userId/edit': typeof AuthAppHrUsersUserIdEditRoute
+  '/app/hr/users/$userId': typeof AuthAppHrUsersUserIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -50,13 +107,51 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteWithChildren
   '/_auth/app': typeof AuthAppRouteWithChildren
   '/_auth/app/dashboard': typeof AuthAppDashboardRoute
+  '/_auth/app/hr': typeof AuthAppHrRouteWithChildren
+  '/_auth/app/hr/': typeof AuthAppHrIndexRoute
+  '/_auth/app/hr/users/import': typeof AuthAppHrUsersImportRoute
+  '/_auth/app/hr/users/new': typeof AuthAppHrUsersNewRoute
+  '/_auth/app/hr/users/': typeof AuthAppHrUsersIndexRoute
+  '/_auth/app/hr/users/$userId/edit': typeof AuthAppHrUsersUserIdEditRoute
+  '/_auth/app/hr/users/$userId/': typeof AuthAppHrUsersUserIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/app' | '/app/dashboard'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/app/dashboard'
+    | '/app/hr'
+    | '/app/hr/'
+    | '/app/hr/users/import'
+    | '/app/hr/users/new'
+    | '/app/hr/users'
+    | '/app/hr/users/$userId/edit'
+    | '/app/hr/users/$userId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/app' | '/app/dashboard'
-  id: '__root__' | '/' | '/_auth' | '/_auth/app' | '/_auth/app/dashboard'
+  to:
+    | '/'
+    | '/app'
+    | '/app/dashboard'
+    | '/app/hr'
+    | '/app/hr/users/import'
+    | '/app/hr/users/new'
+    | '/app/hr/users'
+    | '/app/hr/users/$userId/edit'
+    | '/app/hr/users/$userId'
+  id:
+    | '__root__'
+    | '/'
+    | '/_auth'
+    | '/_auth/app'
+    | '/_auth/app/dashboard'
+    | '/_auth/app/hr'
+    | '/_auth/app/hr/'
+    | '/_auth/app/hr/users/import'
+    | '/_auth/app/hr/users/new'
+    | '/_auth/app/hr/users/'
+    | '/_auth/app/hr/users/$userId/edit'
+    | '/_auth/app/hr/users/$userId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -87,6 +182,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAppRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/app/hr': {
+      id: '/_auth/app/hr'
+      path: '/hr'
+      fullPath: '/app/hr'
+      preLoaderRoute: typeof AuthAppHrRouteImport
+      parentRoute: typeof AuthAppRoute
+    }
     '/_auth/app/dashboard': {
       id: '/_auth/app/dashboard'
       path: '/dashboard'
@@ -94,15 +196,81 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAppDashboardRouteImport
       parentRoute: typeof AuthAppRoute
     }
+    '/_auth/app/hr/': {
+      id: '/_auth/app/hr/'
+      path: '/'
+      fullPath: '/app/hr/'
+      preLoaderRoute: typeof AuthAppHrIndexRouteImport
+      parentRoute: typeof AuthAppHrRoute
+    }
+    '/_auth/app/hr/users/': {
+      id: '/_auth/app/hr/users/'
+      path: '/users'
+      fullPath: '/app/hr/users'
+      preLoaderRoute: typeof AuthAppHrUsersIndexRouteImport
+      parentRoute: typeof AuthAppHrRoute
+    }
+    '/_auth/app/hr/users/new': {
+      id: '/_auth/app/hr/users/new'
+      path: '/users/new'
+      fullPath: '/app/hr/users/new'
+      preLoaderRoute: typeof AuthAppHrUsersNewRouteImport
+      parentRoute: typeof AuthAppHrRoute
+    }
+    '/_auth/app/hr/users/import': {
+      id: '/_auth/app/hr/users/import'
+      path: '/users/import'
+      fullPath: '/app/hr/users/import'
+      preLoaderRoute: typeof AuthAppHrUsersImportRouteImport
+      parentRoute: typeof AuthAppHrRoute
+    }
+    '/_auth/app/hr/users/$userId/': {
+      id: '/_auth/app/hr/users/$userId/'
+      path: '/users/$userId'
+      fullPath: '/app/hr/users/$userId'
+      preLoaderRoute: typeof AuthAppHrUsersUserIdIndexRouteImport
+      parentRoute: typeof AuthAppHrRoute
+    }
+    '/_auth/app/hr/users/$userId/edit': {
+      id: '/_auth/app/hr/users/$userId/edit'
+      path: '/users/$userId/edit'
+      fullPath: '/app/hr/users/$userId/edit'
+      preLoaderRoute: typeof AuthAppHrUsersUserIdEditRouteImport
+      parentRoute: typeof AuthAppHrRoute
+    }
   }
 }
 
+interface AuthAppHrRouteChildren {
+  AuthAppHrIndexRoute: typeof AuthAppHrIndexRoute
+  AuthAppHrUsersImportRoute: typeof AuthAppHrUsersImportRoute
+  AuthAppHrUsersNewRoute: typeof AuthAppHrUsersNewRoute
+  AuthAppHrUsersIndexRoute: typeof AuthAppHrUsersIndexRoute
+  AuthAppHrUsersUserIdEditRoute: typeof AuthAppHrUsersUserIdEditRoute
+  AuthAppHrUsersUserIdIndexRoute: typeof AuthAppHrUsersUserIdIndexRoute
+}
+
+const AuthAppHrRouteChildren: AuthAppHrRouteChildren = {
+  AuthAppHrIndexRoute: AuthAppHrIndexRoute,
+  AuthAppHrUsersImportRoute: AuthAppHrUsersImportRoute,
+  AuthAppHrUsersNewRoute: AuthAppHrUsersNewRoute,
+  AuthAppHrUsersIndexRoute: AuthAppHrUsersIndexRoute,
+  AuthAppHrUsersUserIdEditRoute: AuthAppHrUsersUserIdEditRoute,
+  AuthAppHrUsersUserIdIndexRoute: AuthAppHrUsersUserIdIndexRoute,
+}
+
+const AuthAppHrRouteWithChildren = AuthAppHrRoute._addFileChildren(
+  AuthAppHrRouteChildren,
+)
+
 interface AuthAppRouteChildren {
   AuthAppDashboardRoute: typeof AuthAppDashboardRoute
+  AuthAppHrRoute: typeof AuthAppHrRouteWithChildren
 }
 
 const AuthAppRouteChildren: AuthAppRouteChildren = {
   AuthAppDashboardRoute: AuthAppDashboardRoute,
+  AuthAppHrRoute: AuthAppHrRouteWithChildren,
 }
 
 const AuthAppRouteWithChildren =
