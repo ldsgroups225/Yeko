@@ -1,0 +1,243 @@
+{
+  "app": {
+    "name": "Yeko School",
+    "tagline": "Smart school management"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "create": "Create",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "import": "Import",
+    "refresh": "Refresh",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
+    "all": "All",
+    "none": "None",
+    "select": "Select",
+    "actions": "Actions",
+    "status": "Status",
+    "date": "Date",
+    "time": "Time",
+    "total": "Total",
+    "active": "Active",
+    "inactive": "Inactive",
+    "pending": "Pending",
+    "validated": "Validated",
+    "rejected": "Rejected"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "hr": "Human Resources",
+    "users": "Users",
+    "teachers": "Teachers",
+    "staff": "Staff",
+    "roles": "Roles & Permissions",
+    "students": "Students",
+    "studentsList": "Student List",
+    "parents": "Parents",
+    "enrollments": "Enrollments",
+    "academic": "Academic",
+    "classes": "Classes",
+    "subjects": "Subjects",
+    "grades": "Grades",
+    "reportCards": "Report Cards",
+    "progress": "Progress",
+    "schoolLife": "School Life",
+    "attendance": "Attendance",
+    "conduct": "Conduct",
+    "punctuality": "Punctuality",
+    "finance": "Finance",
+    "accounting": "Accounting",
+    "tuition": "Tuition",
+    "payments": "Payments",
+    "settings": "Settings"
+  },
+  "school": {
+    "switcher": {
+      "title": "Switch School",
+      "placeholder": "Select a school",
+      "noSchools": "No schools available",
+      "loading": "Loading schools...",
+      "current": "Current school"
+    }
+  },
+  "roles": {
+    "school_administrator": "School Administrator",
+    "academic_coordinator": "Academic Coordinator",
+    "discipline_officer": "Discipline Officer",
+    "accountant": "Accountant",
+    "cashier": "Cashier",
+    "registrar": "Registrar"
+  },
+  "dashboard": {
+    "welcome": "Welcome",
+    "overview": "Overview",
+    "statistics": "Statistics",
+    "recentActivity": "Recent Activity",
+    "quickActions": "Quick Actions",
+    "alerts": "Alerts",
+    "admin": {
+      "title": "Administrator Dashboard",
+      "students": "Students",
+      "teachers": "Teachers",
+      "classes": "Classes",
+      "revenue": "Revenue",
+      "addUser": "Add User",
+      "enrollStudent": "Enroll Student",
+      "createClass": "Create Class",
+      "recordPayment": "Record Payment"
+    },
+    "coordinator": {
+      "title": "Coordinator Dashboard",
+      "subjects": "Subjects",
+      "pendingGrades": "Pending Grades",
+      "average": "Average",
+      "gradeValidation": "Grade Validation",
+      "performanceByLevel": "Performance by Level",
+      "atRiskSubjects": "At-Risk Subjects"
+    },
+    "discipline": {
+      "title": "Discipline Dashboard",
+      "attendanceRate": "Attendance Rate",
+      "absences": "Absences",
+      "lateArrivals": "Late Arrivals",
+      "incidents": "Incidents",
+      "todayAbsences": "Today's Absences",
+      "conductIncidents": "Conduct Incidents",
+      "frequentLate": "Frequent Late"
+    },
+    "accountant": {
+      "title": "Accountant Dashboard",
+      "monthlyRevenue": "Monthly Revenue",
+      "expenses": "Expenses",
+      "balance": "Balance",
+      "unpaidFees": "Unpaid Fees",
+      "recentTransactions": "Recent Transactions",
+      "pendingPayments": "Pending Payments"
+    },
+    "cashier": {
+      "title": "Cashier Dashboard",
+      "dailyCollections": "Daily Collections",
+      "transactions": "Transactions",
+      "validated": "Validated",
+      "quickPayment": "Quick Payment",
+      "recentPayments": "Recent Payments"
+    },
+    "registrar": {
+      "title": "Registrar Dashboard",
+      "totalStudents": "Total Students",
+      "newEnrollments": "New Enrollments",
+      "incompleteFiles": "Incomplete Files",
+      "pendingEnrollments": "Pending Enrollments",
+      "studentDistribution": "Student Distribution"
+    }
+  },
+  "users": {
+    "title": "Users",
+    "addUser": "Add User",
+    "editUser": "Edit User",
+    "deleteUser": "Delete User",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "role": "Role",
+    "status": "Status",
+    "createdAt": "Created At",
+    "lastLogin": "Last Login"
+  },
+  "students": {
+    "title": "Students",
+    "addStudent": "Add Student",
+    "editStudent": "Edit Student",
+    "deleteStudent": "Delete Student",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "matricule": "Student ID",
+    "dateOfBirth": "Date of Birth",
+    "gender": "Gender",
+    "class": "Class",
+    "enrollmentDate": "Enrollment Date",
+    "male": "Male",
+    "female": "Female"
+  },
+  "teachers": {
+    "title": "Teachers",
+    "addTeacher": "Add Teacher",
+    "editTeacher": "Edit Teacher",
+    "deleteTeacher": "Delete Teacher",
+    "specialization": "Specialization",
+    "hireDate": "Hire Date",
+    "subjects": "Subjects Taught"
+  },
+  "classes": {
+    "title": "Classes",
+    "addClass": "Add Class",
+    "editClass": "Edit Class",
+    "deleteClass": "Delete Class",
+    "name": "Name",
+    "grade": "Grade",
+    "series": "Series",
+    "section": "Section",
+    "classroom": "Classroom",
+    "homeroomTeacher": "Homeroom Teacher",
+    "studentCount": "Student Count"
+  },
+  "finance": {
+    "title": "Finance",
+    "income": "Income",
+    "expense": "Expense",
+    "payment": "Payment",
+    "receipt": "Receipt",
+    "amount": "Amount",
+    "method": "Method",
+    "cash": "Cash",
+    "card": "Card",
+    "transfer": "Transfer",
+    "mobile": "Mobile Money",
+    "description": "Description",
+    "category": "Category"
+  },
+  "permissions": {
+    "accessDenied": "Access Denied",
+    "noPermission": "You don't have permission to access this resource",
+    "contactAdmin": "Please contact your administrator"
+  },
+  "errors": {
+    "generic": "An error occurred",
+    "notFound": "Resource not found",
+    "unauthorized": "Unauthorized",
+    "forbidden": "Access forbidden",
+    "serverError": "Server error",
+    "networkError": "Network error",
+    "validationError": "Validation error"
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Invalid email",
+    "phone": "Invalid phone number",
+    "minLength": "Minimum {{min}} characters",
+    "maxLength": "Maximum {{max}} characters",
+    "numeric": "Must be a number",
+    "positive": "Must be positive"
+  },
+  "language": {
+    "french": "Français",
+    "english": "English",
+    "switchLanguage": "Switch Language"
+  }
+}

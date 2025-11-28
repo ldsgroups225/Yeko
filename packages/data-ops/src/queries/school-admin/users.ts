@@ -280,3 +280,55 @@ export async function getUserSchoolsByUserId(userId: string) {
     ))
     .orderBy(schools.name)
 }
+
+/**
+ * Get user permissions for a specific school
+ * Returns merged permissions from all user roles
+ */
+export async function getUserPermissionsBySchool(userId: string, schoolId: string) {
+  if (!userId || !schoolId) {
+    return {}
+  }
+
+  const db = getDb()
+
+  try {
+    // Get user's roles for this school with permissions
+    const userRolesWithPermissions = await db
+      .select({
+        permissions: roles.permissions,
+      })
+      .from(userRoles)
+      .innerJoin(roles, eq(userRoles.roleId, roles.id))
+      .where(
+        and(
+          eq(userRoles.userId, userId),
+          eq(userRoles.schoolId, schoolId)
+        )
+      )
+
+    // Merge permissions from all roles
+    const mergedPermissions: Record<string, string[]> = {}
+
+    for (const roleData of userRolesWithPermissions) {
+      const perms = roleData.permissions as Record<string, string[]>
+      for (const [resource, actions] of Object.entries(perms)) {
+        if (!mergedPermissions[resource]) {
+          mergedPermissions[resource] = []
+        }
+        // Add unique actions
+        for (const action of actions) {
+          if (!mergedPermissions[resource].includes(action)) {
+            mergedPermissions[resource].push(action)
+          }
+        }
+      }
+    }
+
+    return mergedPermissions
+  }
+  catch (error) {
+    console.error('Error fetching user permissions:', error)
+    return {}
+  }
+}

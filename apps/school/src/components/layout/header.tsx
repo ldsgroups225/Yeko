@@ -1,5 +1,6 @@
 import { Bell, Menu } from 'lucide-react';
 import { SchoolSwitcher } from '@/components/school/school-switcher';
+import { LanguageSwitcher } from '@/components/layout/language-switcher';
 import { cn } from '@/lib/utils';
 
 interface HeaderProps {
@@ -38,6 +39,9 @@ export function Header({ onMenuClick }: HeaderProps) {
 
         {/* School Switcher */}
         <SchoolSwitcher />
+
+        {/* Language Switcher */}
+        <LanguageSwitcher />
 
         {/* Notifications */}
         <button

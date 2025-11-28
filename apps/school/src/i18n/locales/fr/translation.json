@@ -1,0 +1,243 @@
+{
+  "app": {
+    "name": "Yeko School",
+    "tagline": "Gestion scolaire intelligente"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "view": "Voir",
+    "create": "Créer",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "export": "Exporter",
+    "import": "Importer",
+    "refresh": "Actualiser",
+    "close": "Fermer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "submit": "Soumettre",
+    "confirm": "Confirmer",
+    "yes": "Oui",
+    "no": "Non",
+    "all": "Tous",
+    "none": "Aucun",
+    "select": "Sélectionner",
+    "actions": "Actions",
+    "status": "Statut",
+    "date": "Date",
+    "time": "Heure",
+    "total": "Total",
+    "active": "Actif",
+    "inactive": "Inactif",
+    "pending": "En attente",
+    "validated": "Validé",
+    "rejected": "Rejeté"
+  },
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "hr": "Ressources Humaines",
+    "users": "Utilisateurs",
+    "teachers": "Enseignants",
+    "staff": "Personnel",
+    "roles": "Rôles & Permissions",
+    "students": "Élèves",
+    "studentsList": "Liste des élèves",
+    "parents": "Parents",
+    "enrollments": "Inscriptions",
+    "academic": "Académique",
+    "classes": "Classes",
+    "subjects": "Matières",
+    "grades": "Notes",
+    "reportCards": "Bulletins",
+    "progress": "Progression",
+    "schoolLife": "Vie Scolaire",
+    "attendance": "Présence",
+    "conduct": "Conduite",
+    "punctuality": "Ponctualité",
+    "finance": "Finance",
+    "accounting": "Comptabilité",
+    "tuition": "Frais de scolarité",
+    "payments": "Paiements",
+    "settings": "Paramètres"
+  },
+  "school": {
+    "switcher": {
+      "title": "Changer d'école",
+      "placeholder": "Sélectionner une école",
+      "noSchools": "Aucune école disponible",
+      "loading": "Chargement des écoles...",
+      "current": "École actuelle"
+    }
+  },
+  "roles": {
+    "school_administrator": "Administrateur Scolaire",
+    "academic_coordinator": "Coordinateur Académique",
+    "discipline_officer": "Responsable Discipline",
+    "accountant": "Comptable",
+    "cashier": "Caissier",
+    "registrar": "Registraire"
+  },
+  "dashboard": {
+    "welcome": "Bienvenue",
+    "overview": "Vue d'ensemble",
+    "statistics": "Statistiques",
+    "recentActivity": "Activité récente",
+    "quickActions": "Actions rapides",
+    "alerts": "Alertes",
+    "admin": {
+      "title": "Tableau de bord Administrateur",
+      "students": "Élèves",
+      "teachers": "Enseignants",
+      "classes": "Classes",
+      "revenue": "Revenus",
+      "addUser": "Ajouter un utilisateur",
+      "enrollStudent": "Inscrire un élève",
+      "createClass": "Créer une classe",
+      "recordPayment": "Enregistrer un paiement"
+    },
+    "coordinator": {
+      "title": "Tableau de bord Coordinateur",
+      "subjects": "Matières",
+      "pendingGrades": "Notes en attente",
+      "average": "Moyenne",
+      "gradeValidation": "Validation des notes",
+      "performanceByLevel": "Performance par niveau",
+      "atRiskSubjects": "Matières à risque"
+    },
+    "discipline": {
+      "title": "Tableau de bord Discipline",
+      "attendanceRate": "Taux de présence",
+      "absences": "Absences",
+      "lateArrivals": "Retards",
+      "incidents": "Incidents",
+      "todayAbsences": "Absences du jour",
+      "conductIncidents": "Incidents de conduite",
+      "frequentLate": "Retards fréquents"
+    },
+    "accountant": {
+      "title": "Tableau de bord Comptable",
+      "monthlyRevenue": "Revenus mensuels",
+      "expenses": "Dépenses",
+      "balance": "Solde",
+      "unpaidFees": "Frais impayés",
+      "recentTransactions": "Transactions récentes",
+      "pendingPayments": "Paiements en attente"
+    },
+    "cashier": {
+      "title": "Tableau de bord Caissier",
+      "dailyCollections": "Encaissements du jour",
+      "transactions": "Transactions",
+      "validated": "Validées",
+      "quickPayment": "Paiement rapide",
+      "recentPayments": "Paiements récents"
+    },
+    "registrar": {
+      "title": "Tableau de bord Registraire",
+      "totalStudents": "Total élèves",
+      "newEnrollments": "Nouvelles inscriptions",
+      "incompleteFiles": "Dossiers incomplets",
+      "pendingEnrollments": "Inscriptions en attente",
+      "studentDistribution": "Répartition des élèves"
+    }
+  },
+  "users": {
+    "title": "Utilisateurs",
+    "addUser": "Ajouter un utilisateur",
+    "editUser": "Modifier l'utilisateur",
+    "deleteUser": "Supprimer l'utilisateur",
+    "name": "Nom",
+    "email": "Email",
+    "phone": "Téléphone",
+    "role": "Rôle",
+    "status": "Statut",
+    "createdAt": "Créé le",
+    "lastLogin": "Dernière connexion"
+  },
+  "students": {
+    "title": "Élèves",
+    "addStudent": "Ajouter un élève",
+    "editStudent": "Modifier l'élève",
+    "deleteStudent": "Supprimer l'élève",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "matricule": "Matricule",
+    "dateOfBirth": "Date de naissance",
+    "gender": "Genre",
+    "class": "Classe",
+    "enrollmentDate": "Date d'inscription",
+    "male": "Masculin",
+    "female": "Féminin"
+  },
+  "teachers": {
+    "title": "Enseignants",
+    "addTeacher": "Ajouter un enseignant",
+    "editTeacher": "Modifier l'enseignant",
+    "deleteTeacher": "Supprimer l'enseignant",
+    "specialization": "Spécialisation",
+    "hireDate": "Date d'embauche",
+    "subjects": "Matières enseignées"
+  },
+  "classes": {
+    "title": "Classes",
+    "addClass": "Ajouter une classe",
+    "editClass": "Modifier la classe",
+    "deleteClass": "Supprimer la classe",
+    "name": "Nom",
+    "grade": "Niveau",
+    "series": "Série",
+    "section": "Section",
+    "classroom": "Salle",
+    "homeroomTeacher": "Professeur principal",
+    "studentCount": "Nombre d'élèves"
+  },
+  "finance": {
+    "title": "Finance",
+    "income": "Revenus",
+    "expense": "Dépenses",
+    "payment": "Paiement",
+    "receipt": "Reçu",
+    "amount": "Montant",
+    "method": "Méthode",
+    "cash": "Espèces",
+    "card": "Carte",
+    "transfer": "Virement",
+    "mobile": "Mobile Money",
+    "description": "Description",
+    "category": "Catégorie"
+  },
+  "permissions": {
+    "accessDenied": "Accès refusé",
+    "noPermission": "Vous n'avez pas la permission d'accéder à cette ressource",
+    "contactAdmin": "Veuillez contacter votre administrateur"
+  },
+  "errors": {
+    "generic": "Une erreur s'est produite",
+    "notFound": "Ressource non trouvée",
+    "unauthorized": "Non autorisé",
+    "forbidden": "Accès interdit",
+    "serverError": "Erreur serveur",
+    "networkError": "Erreur réseau",
+    "validationError": "Erreur de validation"
+  },
+  "validation": {
+    "required": "Ce champ est requis",
+    "email": "Email invalide",
+    "phone": "Numéro de téléphone invalide",
+    "minLength": "Minimum {{min}} caractères",
+    "maxLength": "Maximum {{max}} caractères",
+    "numeric": "Doit être un nombre",
+    "positive": "Doit être positif"
+  },
+  "language": {
+    "french": "Français",
+    "english": "English",
+    "switchLanguage": "Changer de langue"
+  }
+}
