@@ -26,9 +26,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
-import { MoreHorizontal, Eye, Edit, Trash2, Search } from 'lucide-react';
+import { MoreHorizontal, Eye, Edit, Trash2, Search, GraduationCap } from 'lucide-react';
 import { useDebounce } from '@/hooks/use-debounce';
 import { format } from 'date-fns';
+import { TableSkeleton } from '@/components/hr/table-skeleton';
+import { EmptyState } from '@/components/hr/empty-state';
 
 interface Teacher {
   id: string;
@@ -188,15 +190,11 @@ export function TeachersTable({ filters }: TeachersTableProps) {
   });
 
   if (isLoading) {
-    return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <div className="text-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-          <p className="mt-4 text-sm text-muted-foreground">{t('common.loading')}</p>
-        </div>
-      </div>
-    );
+    return <TableSkeleton columns={7} rows={5} />;
   }
+
+  const hasNoData = !data?.teachers || data.teachers.length === 0;
+  const hasNoResults = hasNoData && (debouncedSearch || filters.subjectId || filters.status);
 
   return (
     <div className="space-y-4">
@@ -215,28 +213,50 @@ export function TeachersTable({ filters }: TeachersTableProps) {
         </div>
       </div>
 
+      {/* Empty State */}
+      {hasNoData && !hasNoResults && (
+        <EmptyState
+          icon={GraduationCap}
+          title={t('hr.teachers.noTeachers')}
+          description={t('hr.teachers.noTeachersDescription')}
+          action={{
+            label: t('hr.teachers.addTeacher'),
+            onClick: () => navigate({ to: '/app/hr/teachers/new' }),
+          }}
+        />
+      )}
+
+      {/* No Results State */}
+      {hasNoResults && (
+        <EmptyState
+          icon={Search}
+          title={t('common.noResults')}
+          description={t('common.noResultsDescription')}
+        />
+      )}
+
       {/* Table */}
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+      {!hasNoData && (
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -244,20 +264,14 @@ export function TeachersTable({ filters }: TeachersTableProps) {
                     </TableCell>
                   ))}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                  {t('hr.teachers.noTeachers')}
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      )}
 
       {/* Pagination */}
-      {data && data.totalPages > 1 && (
+      {!hasNoData && data && data.totalPages > 1 && (
         <div className="flex items-center justify-between">
           <div className="text-sm text-muted-foreground">
             {t('common.showing')} {(data.page - 1) * data.limit + 1} -{' '}
