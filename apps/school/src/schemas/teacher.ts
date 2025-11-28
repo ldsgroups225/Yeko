@@ -14,11 +14,14 @@ export const teacherSchema = z.object({
   }).default('active'),
 })
 
-export const createTeacherSchema = teacherSchema
-
-export const updateTeacherSchema = teacherSchema.partial().extend({
+export const teacherCreateSchema = teacherSchema
+export const teacherUpdateSchema = teacherSchema.partial().extend({
   subjectIds: z.array(z.string()).optional(),
 })
+
+// Aliases for backward compatibility
+export const createTeacherSchema = teacherCreateSchema
+export const updateTeacherSchema = teacherUpdateSchema
 
 // Teacher with new user creation
 export const teacherWithUserSchema = z.object({

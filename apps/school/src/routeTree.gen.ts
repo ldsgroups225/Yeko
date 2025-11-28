@@ -16,10 +16,18 @@ import { Route as AuthAppHrRouteImport } from './routes/_auth/app/hr'
 import { Route as AuthAppDashboardRouteImport } from './routes/_auth/app/dashboard'
 import { Route as AuthAppHrIndexRouteImport } from './routes/_auth/app/hr/index'
 import { Route as AuthAppHrUsersIndexRouteImport } from './routes/_auth/app/hr/users/index'
+import { Route as AuthAppHrTeachersIndexRouteImport } from './routes/_auth/app/hr/teachers/index'
+import { Route as AuthAppHrStaffIndexRouteImport } from './routes/_auth/app/hr/staff/index'
 import { Route as AuthAppHrUsersNewRouteImport } from './routes/_auth/app/hr/users/new'
 import { Route as AuthAppHrUsersImportRouteImport } from './routes/_auth/app/hr/users/import'
+import { Route as AuthAppHrTeachersNewRouteImport } from './routes/_auth/app/hr/teachers/new'
+import { Route as AuthAppHrStaffNewRouteImport } from './routes/_auth/app/hr/staff/new'
 import { Route as AuthAppHrUsersUserIdIndexRouteImport } from './routes/_auth/app/hr/users/$userId/index'
+import { Route as AuthAppHrTeachersTeacherIdIndexRouteImport } from './routes/_auth/app/hr/teachers/$teacherId/index'
+import { Route as AuthAppHrStaffStaffIdIndexRouteImport } from './routes/_auth/app/hr/staff/$staffId/index'
 import { Route as AuthAppHrUsersUserIdEditRouteImport } from './routes/_auth/app/hr/users/$userId/edit'
+import { Route as AuthAppHrTeachersTeacherIdEditRouteImport } from './routes/_auth/app/hr/teachers/$teacherId/edit'
+import { Route as AuthAppHrStaffStaffIdEditRouteImport } from './routes/_auth/app/hr/staff/$staffId/edit'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
@@ -55,6 +63,16 @@ const AuthAppHrUsersIndexRoute = AuthAppHrUsersIndexRouteImport.update({
   path: '/users/',
   getParentRoute: () => AuthAppHrRoute,
 } as any)
+const AuthAppHrTeachersIndexRoute = AuthAppHrTeachersIndexRouteImport.update({
+  id: '/teachers/',
+  path: '/teachers/',
+  getParentRoute: () => AuthAppHrRoute,
+} as any)
+const AuthAppHrStaffIndexRoute = AuthAppHrStaffIndexRouteImport.update({
+  id: '/staff/',
+  path: '/staff/',
+  getParentRoute: () => AuthAppHrRoute,
+} as any)
 const AuthAppHrUsersNewRoute = AuthAppHrUsersNewRouteImport.update({
   id: '/users/new',
   path: '/users/new',
@@ -65,16 +83,50 @@ const AuthAppHrUsersImportRoute = AuthAppHrUsersImportRouteImport.update({
   path: '/users/import',
   getParentRoute: () => AuthAppHrRoute,
 } as any)
+const AuthAppHrTeachersNewRoute = AuthAppHrTeachersNewRouteImport.update({
+  id: '/teachers/new',
+  path: '/teachers/new',
+  getParentRoute: () => AuthAppHrRoute,
+} as any)
+const AuthAppHrStaffNewRoute = AuthAppHrStaffNewRouteImport.update({
+  id: '/staff/new',
+  path: '/staff/new',
+  getParentRoute: () => AuthAppHrRoute,
+} as any)
 const AuthAppHrUsersUserIdIndexRoute =
   AuthAppHrUsersUserIdIndexRouteImport.update({
     id: '/users/$userId/',
     path: '/users/$userId/',
     getParentRoute: () => AuthAppHrRoute,
   } as any)
+const AuthAppHrTeachersTeacherIdIndexRoute =
+  AuthAppHrTeachersTeacherIdIndexRouteImport.update({
+    id: '/teachers/$teacherId/',
+    path: '/teachers/$teacherId/',
+    getParentRoute: () => AuthAppHrRoute,
+  } as any)
+const AuthAppHrStaffStaffIdIndexRoute =
+  AuthAppHrStaffStaffIdIndexRouteImport.update({
+    id: '/staff/$staffId/',
+    path: '/staff/$staffId/',
+    getParentRoute: () => AuthAppHrRoute,
+  } as any)
 const AuthAppHrUsersUserIdEditRoute =
   AuthAppHrUsersUserIdEditRouteImport.update({
     id: '/users/$userId/edit',
     path: '/users/$userId/edit',
+    getParentRoute: () => AuthAppHrRoute,
+  } as any)
+const AuthAppHrTeachersTeacherIdEditRoute =
+  AuthAppHrTeachersTeacherIdEditRouteImport.update({
+    id: '/teachers/$teacherId/edit',
+    path: '/teachers/$teacherId/edit',
+    getParentRoute: () => AuthAppHrRoute,
+  } as any)
+const AuthAppHrStaffStaffIdEditRoute =
+  AuthAppHrStaffStaffIdEditRouteImport.update({
+    id: '/staff/$staffId/edit',
+    path: '/staff/$staffId/edit',
     getParentRoute: () => AuthAppHrRoute,
   } as any)
 
@@ -84,10 +136,18 @@ export interface FileRoutesByFullPath {
   '/app/dashboard': typeof AuthAppDashboardRoute
   '/app/hr': typeof AuthAppHrRouteWithChildren
   '/app/hr/': typeof AuthAppHrIndexRoute
+  '/app/hr/staff/new': typeof AuthAppHrStaffNewRoute
+  '/app/hr/teachers/new': typeof AuthAppHrTeachersNewRoute
   '/app/hr/users/import': typeof AuthAppHrUsersImportRoute
   '/app/hr/users/new': typeof AuthAppHrUsersNewRoute
+  '/app/hr/staff': typeof AuthAppHrStaffIndexRoute
+  '/app/hr/teachers': typeof AuthAppHrTeachersIndexRoute
   '/app/hr/users': typeof AuthAppHrUsersIndexRoute
+  '/app/hr/staff/$staffId/edit': typeof AuthAppHrStaffStaffIdEditRoute
+  '/app/hr/teachers/$teacherId/edit': typeof AuthAppHrTeachersTeacherIdEditRoute
   '/app/hr/users/$userId/edit': typeof AuthAppHrUsersUserIdEditRoute
+  '/app/hr/staff/$staffId': typeof AuthAppHrStaffStaffIdIndexRoute
+  '/app/hr/teachers/$teacherId': typeof AuthAppHrTeachersTeacherIdIndexRoute
   '/app/hr/users/$userId': typeof AuthAppHrUsersUserIdIndexRoute
 }
 export interface FileRoutesByTo {
@@ -95,10 +155,18 @@ export interface FileRoutesByTo {
   '/app': typeof AuthAppRouteWithChildren
   '/app/dashboard': typeof AuthAppDashboardRoute
   '/app/hr': typeof AuthAppHrIndexRoute
+  '/app/hr/staff/new': typeof AuthAppHrStaffNewRoute
+  '/app/hr/teachers/new': typeof AuthAppHrTeachersNewRoute
   '/app/hr/users/import': typeof AuthAppHrUsersImportRoute
   '/app/hr/users/new': typeof AuthAppHrUsersNewRoute
+  '/app/hr/staff': typeof AuthAppHrStaffIndexRoute
+  '/app/hr/teachers': typeof AuthAppHrTeachersIndexRoute
   '/app/hr/users': typeof AuthAppHrUsersIndexRoute
+  '/app/hr/staff/$staffId/edit': typeof AuthAppHrStaffStaffIdEditRoute
+  '/app/hr/teachers/$teacherId/edit': typeof AuthAppHrTeachersTeacherIdEditRoute
   '/app/hr/users/$userId/edit': typeof AuthAppHrUsersUserIdEditRoute
+  '/app/hr/staff/$staffId': typeof AuthAppHrStaffStaffIdIndexRoute
+  '/app/hr/teachers/$teacherId': typeof AuthAppHrTeachersTeacherIdIndexRoute
   '/app/hr/users/$userId': typeof AuthAppHrUsersUserIdIndexRoute
 }
 export interface FileRoutesById {
@@ -109,10 +177,18 @@ export interface FileRoutesById {
   '/_auth/app/dashboard': typeof AuthAppDashboardRoute
   '/_auth/app/hr': typeof AuthAppHrRouteWithChildren
   '/_auth/app/hr/': typeof AuthAppHrIndexRoute
+  '/_auth/app/hr/staff/new': typeof AuthAppHrStaffNewRoute
+  '/_auth/app/hr/teachers/new': typeof AuthAppHrTeachersNewRoute
   '/_auth/app/hr/users/import': typeof AuthAppHrUsersImportRoute
   '/_auth/app/hr/users/new': typeof AuthAppHrUsersNewRoute
+  '/_auth/app/hr/staff/': typeof AuthAppHrStaffIndexRoute
+  '/_auth/app/hr/teachers/': typeof AuthAppHrTeachersIndexRoute
   '/_auth/app/hr/users/': typeof AuthAppHrUsersIndexRoute
+  '/_auth/app/hr/staff/$staffId/edit': typeof AuthAppHrStaffStaffIdEditRoute
+  '/_auth/app/hr/teachers/$teacherId/edit': typeof AuthAppHrTeachersTeacherIdEditRoute
   '/_auth/app/hr/users/$userId/edit': typeof AuthAppHrUsersUserIdEditRoute
+  '/_auth/app/hr/staff/$staffId/': typeof AuthAppHrStaffStaffIdIndexRoute
+  '/_auth/app/hr/teachers/$teacherId/': typeof AuthAppHrTeachersTeacherIdIndexRoute
   '/_auth/app/hr/users/$userId/': typeof AuthAppHrUsersUserIdIndexRoute
 }
 export interface FileRouteTypes {
@@ -123,10 +199,18 @@ export interface FileRouteTypes {
     | '/app/dashboard'
     | '/app/hr'
     | '/app/hr/'
+    | '/app/hr/staff/new'
+    | '/app/hr/teachers/new'
     | '/app/hr/users/import'
     | '/app/hr/users/new'
+    | '/app/hr/staff'
+    | '/app/hr/teachers'
     | '/app/hr/users'
+    | '/app/hr/staff/$staffId/edit'
+    | '/app/hr/teachers/$teacherId/edit'
     | '/app/hr/users/$userId/edit'
+    | '/app/hr/staff/$staffId'
+    | '/app/hr/teachers/$teacherId'
     | '/app/hr/users/$userId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -134,10 +218,18 @@ export interface FileRouteTypes {
     | '/app'
     | '/app/dashboard'
     | '/app/hr'
+    | '/app/hr/staff/new'
+    | '/app/hr/teachers/new'
     | '/app/hr/users/import'
     | '/app/hr/users/new'
+    | '/app/hr/staff'
+    | '/app/hr/teachers'
     | '/app/hr/users'
+    | '/app/hr/staff/$staffId/edit'
+    | '/app/hr/teachers/$teacherId/edit'
     | '/app/hr/users/$userId/edit'
+    | '/app/hr/staff/$staffId'
+    | '/app/hr/teachers/$teacherId'
     | '/app/hr/users/$userId'
   id:
     | '__root__'
@@ -147,10 +239,18 @@ export interface FileRouteTypes {
     | '/_auth/app/dashboard'
     | '/_auth/app/hr'
     | '/_auth/app/hr/'
+    | '/_auth/app/hr/staff/new'
+    | '/_auth/app/hr/teachers/new'
     | '/_auth/app/hr/users/import'
     | '/_auth/app/hr/users/new'
+    | '/_auth/app/hr/staff/'
+    | '/_auth/app/hr/teachers/'
     | '/_auth/app/hr/users/'
+    | '/_auth/app/hr/staff/$staffId/edit'
+    | '/_auth/app/hr/teachers/$teacherId/edit'
     | '/_auth/app/hr/users/$userId/edit'
+    | '/_auth/app/hr/staff/$staffId/'
+    | '/_auth/app/hr/teachers/$teacherId/'
     | '/_auth/app/hr/users/$userId/'
   fileRoutesById: FileRoutesById
 }
@@ -210,6 +310,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAppHrUsersIndexRouteImport
       parentRoute: typeof AuthAppHrRoute
     }
+    '/_auth/app/hr/teachers/': {
+      id: '/_auth/app/hr/teachers/'
+      path: '/teachers'
+      fullPath: '/app/hr/teachers'
+      preLoaderRoute: typeof AuthAppHrTeachersIndexRouteImport
+      parentRoute: typeof AuthAppHrRoute
+    }
+    '/_auth/app/hr/staff/': {
+      id: '/_auth/app/hr/staff/'
+      path: '/staff'
+      fullPath: '/app/hr/staff'
+      preLoaderRoute: typeof AuthAppHrStaffIndexRouteImport
+      parentRoute: typeof AuthAppHrRoute
+    }
     '/_auth/app/hr/users/new': {
       id: '/_auth/app/hr/users/new'
       path: '/users/new'
@@ -224,11 +338,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAppHrUsersImportRouteImport
       parentRoute: typeof AuthAppHrRoute
     }
+    '/_auth/app/hr/teachers/new': {
+      id: '/_auth/app/hr/teachers/new'
+      path: '/teachers/new'
+      fullPath: '/app/hr/teachers/new'
+      preLoaderRoute: typeof AuthAppHrTeachersNewRouteImport
+      parentRoute: typeof AuthAppHrRoute
+    }
+    '/_auth/app/hr/staff/new': {
+      id: '/_auth/app/hr/staff/new'
+      path: '/staff/new'
+      fullPath: '/app/hr/staff/new'
+      preLoaderRoute: typeof AuthAppHrStaffNewRouteImport
+      parentRoute: typeof AuthAppHrRoute
+    }
     '/_auth/app/hr/users/$userId/': {
       id: '/_auth/app/hr/users/$userId/'
       path: '/users/$userId'
       fullPath: '/app/hr/users/$userId'
       preLoaderRoute: typeof AuthAppHrUsersUserIdIndexRouteImport
+      parentRoute: typeof AuthAppHrRoute
+    }
+    '/_auth/app/hr/teachers/$teacherId/': {
+      id: '/_auth/app/hr/teachers/$teacherId/'
+      path: '/teachers/$teacherId'
+      fullPath: '/app/hr/teachers/$teacherId'
+      preLoaderRoute: typeof AuthAppHrTeachersTeacherIdIndexRouteImport
+      parentRoute: typeof AuthAppHrRoute
+    }
+    '/_auth/app/hr/staff/$staffId/': {
+      id: '/_auth/app/hr/staff/$staffId/'
+      path: '/staff/$staffId'
+      fullPath: '/app/hr/staff/$staffId'
+      preLoaderRoute: typeof AuthAppHrStaffStaffIdIndexRouteImport
       parentRoute: typeof AuthAppHrRoute
     }
     '/_auth/app/hr/users/$userId/edit': {
@@ -238,24 +380,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAppHrUsersUserIdEditRouteImport
       parentRoute: typeof AuthAppHrRoute
     }
+    '/_auth/app/hr/teachers/$teacherId/edit': {
+      id: '/_auth/app/hr/teachers/$teacherId/edit'
+      path: '/teachers/$teacherId/edit'
+      fullPath: '/app/hr/teachers/$teacherId/edit'
+      preLoaderRoute: typeof AuthAppHrTeachersTeacherIdEditRouteImport
+      parentRoute: typeof AuthAppHrRoute
+    }
+    '/_auth/app/hr/staff/$staffId/edit': {
+      id: '/_auth/app/hr/staff/$staffId/edit'
+      path: '/staff/$staffId/edit'
+      fullPath: '/app/hr/staff/$staffId/edit'
+      preLoaderRoute: typeof AuthAppHrStaffStaffIdEditRouteImport
+      parentRoute: typeof AuthAppHrRoute
+    }
   }
 }
 
 interface AuthAppHrRouteChildren {
   AuthAppHrIndexRoute: typeof AuthAppHrIndexRoute
+  AuthAppHrStaffNewRoute: typeof AuthAppHrStaffNewRoute
+  AuthAppHrTeachersNewRoute: typeof AuthAppHrTeachersNewRoute
   AuthAppHrUsersImportRoute: typeof AuthAppHrUsersImportRoute
   AuthAppHrUsersNewRoute: typeof AuthAppHrUsersNewRoute
+  AuthAppHrStaffIndexRoute: typeof AuthAppHrStaffIndexRoute
+  AuthAppHrTeachersIndexRoute: typeof AuthAppHrTeachersIndexRoute
   AuthAppHrUsersIndexRoute: typeof AuthAppHrUsersIndexRoute
+  AuthAppHrStaffStaffIdEditRoute: typeof AuthAppHrStaffStaffIdEditRoute
+  AuthAppHrTeachersTeacherIdEditRoute: typeof AuthAppHrTeachersTeacherIdEditRoute
   AuthAppHrUsersUserIdEditRoute: typeof AuthAppHrUsersUserIdEditRoute
+  AuthAppHrStaffStaffIdIndexRoute: typeof AuthAppHrStaffStaffIdIndexRoute
+  AuthAppHrTeachersTeacherIdIndexRoute: typeof AuthAppHrTeachersTeacherIdIndexRoute
   AuthAppHrUsersUserIdIndexRoute: typeof AuthAppHrUsersUserIdIndexRoute
 }
 
 const AuthAppHrRouteChildren: AuthAppHrRouteChildren = {
   AuthAppHrIndexRoute: AuthAppHrIndexRoute,
+  AuthAppHrStaffNewRoute: AuthAppHrStaffNewRoute,
+  AuthAppHrTeachersNewRoute: AuthAppHrTeachersNewRoute,
   AuthAppHrUsersImportRoute: AuthAppHrUsersImportRoute,
   AuthAppHrUsersNewRoute: AuthAppHrUsersNewRoute,
+  AuthAppHrStaffIndexRoute: AuthAppHrStaffIndexRoute,
+  AuthAppHrTeachersIndexRoute: AuthAppHrTeachersIndexRoute,
   AuthAppHrUsersIndexRoute: AuthAppHrUsersIndexRoute,
+  AuthAppHrStaffStaffIdEditRoute: AuthAppHrStaffStaffIdEditRoute,
+  AuthAppHrTeachersTeacherIdEditRoute: AuthAppHrTeachersTeacherIdEditRoute,
   AuthAppHrUsersUserIdEditRoute: AuthAppHrUsersUserIdEditRoute,
+  AuthAppHrStaffStaffIdIndexRoute: AuthAppHrStaffStaffIdIndexRoute,
+  AuthAppHrTeachersTeacherIdIndexRoute: AuthAppHrTeachersTeacherIdIndexRoute,
   AuthAppHrUsersUserIdIndexRoute: AuthAppHrUsersUserIdIndexRoute,
 }
 
