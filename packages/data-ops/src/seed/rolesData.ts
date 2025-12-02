@@ -2,9 +2,9 @@ import type { RoleData } from '../drizzle/school-schema'
 
 export const defaultRoles: RoleData[] = [
   {
-    name: 'Administrateur Scolaire',
+    name: 'roles.school_administrator',
     slug: 'school_administrator',
-    description: 'Accès complet à tous les modules',
+    description: 'roles.descriptions.school_administrator',
     scope: 'school',
     permissions: {
       users: ['view', 'create', 'edit', 'delete'],
@@ -23,9 +23,9 @@ export const defaultRoles: RoleData[] = [
     },
   },
   {
-    name: 'Coordinateur Académique',
+    name: 'roles.academic_coordinator',
     slug: 'academic_coordinator',
-    description: 'Gestion du curriculum et validation des notes',
+    description: 'roles.descriptions.academic_coordinator',
     scope: 'school',
     permissions: {
       teachers: ['view'],
@@ -37,9 +37,9 @@ export const defaultRoles: RoleData[] = [
     },
   },
   {
-    name: 'Responsable Discipline',
+    name: 'roles.discipline_officer',
     slug: 'discipline_officer',
-    description: 'Gestion de la présence et de la conduite',
+    description: 'roles.descriptions.discipline_officer',
     scope: 'school',
     permissions: {
       students: ['view'],
@@ -49,9 +49,9 @@ export const defaultRoles: RoleData[] = [
     },
   },
   {
-    name: 'Comptable',
+    name: 'roles.accountant',
     slug: 'accountant',
-    description: 'Gestion financière et rapports',
+    description: 'roles.descriptions.accountant',
     scope: 'school',
     permissions: {
       students: ['view'],
@@ -60,9 +60,9 @@ export const defaultRoles: RoleData[] = [
     },
   },
   {
-    name: 'Caissier',
+    name: 'roles.cashier',
     slug: 'cashier',
-    description: 'Traitement des paiements uniquement',
+    description: 'roles.descriptions.cashier',
     scope: 'school',
     permissions: {
       students: ['view'],
@@ -70,9 +70,9 @@ export const defaultRoles: RoleData[] = [
     },
   },
   {
-    name: 'Registraire',
+    name: 'roles.registrar',
     slug: 'registrar',
-    description: 'Gestion des dossiers étudiants et inscriptions',
+    description: 'roles.descriptions.registrar',
     scope: 'school',
     permissions: {
       students: ['view', 'create', 'edit', 'enroll'],

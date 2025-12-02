@@ -1,67 +1,73 @@
 import { CheckCircle, FileText, UserPlus, Users } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 export function RegistrarDashboard() {
+  const { t } = useTranslation()
+
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Tableau de bord Registraire</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.registrar.title')}</h1>
         <p className="text-muted-foreground">
-          Gestion des dossiers étudiants et inscriptions
+          {t('dashboard.registrar.subtitle')}
         </p>
       </div>
 
       {/* Registration Metrics */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <MetricCard
-          title="Total Élèves"
+          title={t('dashboard.registrar.totalStudents')}
           value="1,234"
-          subtitle="Actifs"
+          subtitle={t('dashboard.registrar.active')}
           icon={Users}
         />
         <MetricCard
-          title="Nouvelles inscriptions"
+          title={t('dashboard.registrar.newEnrollments')}
           value="45"
-          subtitle="Ce mois"
+          subtitle={t('common.pending')}
           icon={UserPlus}
         />
         <MetricCard
-          title="Dossiers incomplets"
+          title={t('dashboard.registrar.incompleteFiles')}
           value="12"
-          subtitle="À compléter"
+          subtitle={t('common.pending')}
           icon={FileText}
         />
         <MetricCard
-          title="Inscriptions validées"
+          title={t('dashboard.registrar.enrollmentsValidated')}
           value="33"
-          subtitle="Ce mois"
+          subtitle={t('common.pending')}
           icon={CheckCircle}
         />
       </div>
 
       {/* Pending Enrollments */}
       <div className="rounded-lg border border-border/40 bg-card p-6">
-        <h2 className="mb-4 text-lg font-semibold">Inscriptions en Attente</h2>
+        <h2 className="mb-4 text-lg font-semibold">{t('dashboard.registrar.pendingEnrollments')}</h2>
         <div className="space-y-3">
           <EnrollmentItem
             name="Ibrahim Traoré"
             class="6ème A"
-            date="Il y a 2 heures"
+            date="2 hours ago"
             status="pending"
-            missingDocs={['Certificat de naissance', 'Photo']}
+            missingDocs={['Birth Certificate', 'Photo']}
+            t={t}
           />
           <EnrollmentItem
             name="Aisha Bamba"
             class="5ème B"
-            date="Il y a 5 heures"
+            date="5 hours ago"
             status="review"
             missingDocs={[]}
+            t={t}
           />
           <EnrollmentItem
             name="Yao Kouassi"
             class="4ème C"
-            date="Il y a 1 jour"
+            date="1 day ago"
             status="pending"
-            missingDocs={['Bulletin précédent']}
+            missingDocs={['Previous Report']}
+            t={t}
           />
         </div>
       </div>
@@ -69,7 +75,7 @@ export function RegistrarDashboard() {
       {/* Recent Activity & Statistics */}
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="rounded-lg border border-border/40 bg-card p-6">
-          <h2 className="mb-4 text-lg font-semibold">Activité Récente</h2>
+          <h2 className="mb-4 text-lg font-semibold">{t('dashboard.registrar.recentActivity')}</h2>
           <div className="space-y-3">
             <ActivityItem
               action="Inscription validée"
@@ -93,15 +99,15 @@ export function RegistrarDashboard() {
         </div>
 
         <div className="rounded-lg border border-border/40 bg-card p-6">
-          <h2 className="mb-4 text-lg font-semibold">Répartition par Niveau</h2>
+          <h2 className="mb-4 text-lg font-semibold">{t('dashboard.registrar.distributionByLevel')}</h2>
           <div className="space-y-4">
-            <LevelBar level="6ème" count={245} total={1234} />
-            <LevelBar level="5ème" count={218} total={1234} />
-            <LevelBar level="4ème" count={203} total={1234} />
-            <LevelBar level="3ème" count={189} total={1234} />
-            <LevelBar level="2nde" count={156} total={1234} />
-            <LevelBar level="1ère" count={134} total={1234} />
-            <LevelBar level="Tle" count={89} total={1234} />
+            <LevelBar level="6ème" count={245} total={1234} t={t} />
+            <LevelBar level="5ème" count={218} total={1234} t={t} />
+            <LevelBar level="4ème" count={203} total={1234} t={t} />
+            <LevelBar level="3ème" count={189} total={1234} t={t} />
+            <LevelBar level="2nde" count={156} total={1234} t={t} />
+            <LevelBar level="1ère" count={134} total={1234} t={t} />
+            <LevelBar level="Tle" count={89} total={1234} t={t} />
           </div>
         </div>
       </div>
@@ -137,9 +143,10 @@ interface EnrollmentItemProps {
   date: string
   status: 'pending' | 'review'
   missingDocs: string[]
+  t: (key: string) => string
 }
 
-function EnrollmentItem({ name, class: className, date, status, missingDocs }: EnrollmentItemProps) {
+function EnrollmentItem({ name, class: className, date, status, missingDocs, t }: EnrollmentItemProps) {
   return (
     <div className="rounded-md border border-border/40 bg-background p-4">
       <div className="flex items-start justify-between">
@@ -149,7 +156,8 @@ function EnrollmentItem({ name, class: className, date, status, missingDocs }: E
           <p className="text-xs text-muted-foreground">{date}</p>
           {missingDocs.length > 0 && (
             <p className="text-xs text-red-600 dark:text-red-400">
-              Manquant:
+              {t('dashboard.registrar.missing')}
+              :
               {' '}
               {missingDocs.join(', ')}
             </p>
@@ -159,9 +167,9 @@ function EnrollmentItem({ name, class: className, date, status, missingDocs }: E
           className={`rounded-full px-2 py-1 text-xs font-medium ${status === 'review'
             ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
             : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
-          }`}
+            }`}
         >
-          {status === 'review' ? 'À réviser' : 'En attente'}
+          {status === 'review' ? t('dashboard.registrar.toReview') : t('common.pending')}
         </span>
       </div>
     </div>
@@ -197,9 +205,10 @@ interface LevelBarProps {
   level: string
   count: number
   total: number
+  t: (key: string) => string
 }
 
-function LevelBar({ level, count, total }: LevelBarProps) {
+function LevelBar({ level, count, total, t }: LevelBarProps) {
   const percentage = (count / total) * 100
 
   return (
@@ -209,7 +218,7 @@ function LevelBar({ level, count, total }: LevelBarProps) {
         <span className="text-muted-foreground">
           {count}
           {' '}
-          élèves
+          {t('dashboard.registrar.students')}
         </span>
       </div>
       <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">

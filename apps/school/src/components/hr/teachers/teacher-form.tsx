@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
+import { DatePicker } from '@/components/ui/date-picker'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
@@ -38,18 +39,19 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
     resolver: zodResolver(teacherCreateSchema),
     defaultValues: teacher
       ? {
-          userId: teacher.userId,
-          specialization: teacher.specialization || '',
-          hireDate: teacher.hireDate
-            ? new Date(teacher.hireDate).toISOString().split('T')[0]
-            : '',
-          status: teacher.status,
-          subjectIds: teacher.subjectIds || [],
-        }
+        userId: teacher.userId,
+        specialization: teacher.specialization || '',
+        hireDate: teacher.hireDate
+          ? new Date(teacher.hireDate)
+          : undefined,
+        status: teacher.status,
+        subjectIds: teacher.subjectIds || [],
+      }
       : {
-          status: 'active',
-          subjectIds: [],
-        },
+        status: 'active',
+        subjectIds: [],
+        hireDate: undefined,
+      },
   })
 
   const createMutation = useMutation({
@@ -87,10 +89,10 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
   })
 
   const onSubmit = (data: any) => {
-    // Convert date string to Date object if present
+    // Date is already a Date object from DatePicker
     const formData = {
       ...data,
-      hireDate: data.hireDate ? new Date(data.hireDate) : null,
+      hireDate: data.hireDate || null,
     }
 
     if (isEditing) {
@@ -141,11 +143,11 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
 
           <div className="space-y-2">
             <Label htmlFor="hireDate">{t('hr.teachers.hireDate')}</Label>
-            <Input
-              id="hireDate"
-              type="date"
-              {...register('hireDate')}
-              max={new Date().toISOString().split('T')[0]}
+            <DatePicker
+              date={watch('hireDate')}
+              onSelect={date => setValue('hireDate', date)}
+              placeholder={t('hr.teachers.selectHireDate')}
+              maxDate={new Date()}
             />
           </div>
 

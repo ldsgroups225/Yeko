@@ -1,50 +1,53 @@
 import { CheckCircle, Clock, CreditCard, DollarSign } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 export function CashierDashboard() {
+  const { t } = useTranslation()
+
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Tableau de bord Caissier</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.cashier.title')}</h1>
         <p className="text-muted-foreground">
-          Traitement des paiements et gestion de caisse
+          {t('dashboard.cashier.subtitle')}
         </p>
       </div>
 
       {/* Daily Metrics */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <MetricCard
-          title="Encaissements aujourd'hui"
+          title={t('dashboard.cashier.dailyCollections')}
           value="180,000"
           currency="FCFA"
           icon={DollarSign}
         />
         <MetricCard
-          title="Transactions"
+          title={t('dashboard.cashier.transactions')}
           value="12"
-          currency="aujourd'hui"
+          currency={t('dashboard.cashier.today')}
           icon={CreditCard}
         />
         <MetricCard
-          title="Paiements validés"
+          title={t('dashboard.cashier.validated')}
           value="10"
-          currency="aujourd'hui"
+          currency={t('dashboard.cashier.today')}
           icon={CheckCircle}
         />
         <MetricCard
-          title="En attente"
+          title={t('dashboard.cashier.pending')}
           value="2"
-          currency="à traiter"
+          currency={t('common.pending')}
           icon={Clock}
         />
       </div>
 
       {/* Quick Payment Form */}
       <div className="rounded-lg border border-border/40 bg-card p-6">
-        <h2 className="mb-4 text-lg font-semibold">Enregistrer un Paiement</h2>
+        <h2 className="mb-4 text-lg font-semibold">{t('dashboard.cashier.recordPayment')}</h2>
         <div className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <label htmlFor="student-matricule" className="text-sm font-medium">Matricule Élève</label>
+              <label htmlFor="student-matricule" className="text-sm font-medium">{t('dashboard.cashier.studentMatricule')}</label>
               <input
                 id="student-matricule"
                 type="text"
@@ -53,7 +56,7 @@ export function CashierDashboard() {
               />
             </div>
             <div className="space-y-2">
-              <label htmlFor="payment-amount" className="text-sm font-medium">Montant (FCFA)</label>
+              <label htmlFor="payment-amount" className="text-sm font-medium">{t('dashboard.cashier.paymentAmount')}</label>
               <input
                 id="payment-amount"
                 type="number"
@@ -66,38 +69,41 @@ export function CashierDashboard() {
             type="button"
             className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
           >
-            Enregistrer le Paiement
+            {t('dashboard.cashier.recordPayment')}
           </button>
         </div>
       </div>
 
       {/* Recent Payments */}
       <div className="rounded-lg border border-border/40 bg-card p-6">
-        <h2 className="mb-4 text-lg font-semibold">Paiements Récents</h2>
+        <h2 className="mb-4 text-lg font-semibold">{t('dashboard.cashier.recentPayments')}</h2>
         <div className="space-y-3">
           <PaymentItem
             name="Jean Kouadio"
             matricule="AB2024C001"
             amount="45,000"
-            method="Espèces"
-            time="Il y a 10 min"
+            method={t('dashboard.cashier.cash')}
+            time="10 min ago"
             status="completed"
+            t={t}
           />
           <PaymentItem
             name="Marie Diallo"
             matricule="AB2024C002"
             amount="45,000"
-            method="Mobile Money"
-            time="Il y a 25 min"
+            method={t('dashboard.cashier.mobileMoney')}
+            time="25 min ago"
             status="completed"
+            t={t}
           />
           <PaymentItem
             name="Kofi Mensah"
             matricule="AB2024C003"
             amount="22,500"
-            method="Espèces"
-            time="Il y a 1 heure"
+            method={t('dashboard.cashier.cash')}
+            time="1 hour ago"
             status="pending"
+            t={t}
           />
         </div>
       </div>
@@ -134,9 +140,10 @@ interface PaymentItemProps {
   method: string
   time: string
   status: 'completed' | 'pending'
+  t: (key: string) => string
 }
 
-function PaymentItem({ name, matricule, amount, method, time, status }: PaymentItemProps) {
+function PaymentItem({ name, matricule, amount, method, time, status, t }: PaymentItemProps) {
   return (
     <div className="flex items-center justify-between rounded-md border border-border/40 bg-background p-4">
       <div className="space-y-1">
@@ -159,9 +166,9 @@ function PaymentItem({ name, matricule, amount, method, time, status }: PaymentI
           className={`text-xs ${status === 'completed'
             ? 'text-green-600 dark:text-green-400'
             : 'text-yellow-600 dark:text-yellow-400'
-          }`}
+            }`}
         >
-          {status === 'completed' ? 'Validé' : 'En attente'}
+          {status === 'completed' ? t('dashboard.cashier.completed') : t('dashboard.cashier.pending')}
         </span>
       </div>
     </div>

@@ -4,6 +4,7 @@ import { Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
+import { DatePicker } from '@/components/ui/date-picker'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
@@ -34,24 +35,25 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
     resolver: zodResolver(staffSchema),
     defaultValues: initialData
       ? {
-          userId: initialData.userId,
-          position: initialData.position,
-          department: initialData.department || '',
-          hireDate: initialData.hireDate
-            ? new Date(initialData.hireDate).toISOString().split('T')[0]
-            : '',
-          status: initialData.status,
-        }
+        userId: initialData.userId,
+        position: initialData.position,
+        department: initialData.department || '',
+        hireDate: initialData.hireDate
+          ? new Date(initialData.hireDate)
+          : undefined,
+        status: initialData.status,
+      }
       : {
-          status: 'active',
-        },
+        status: 'active',
+        hireDate: undefined,
+      },
   })
 
   const handleFormSubmit = async (data: any) => {
-    // Convert date string to Date object if present
+    // Date is already a Date object from DatePicker
     const formData = {
       ...data,
-      hireDate: data.hireDate ? new Date(data.hireDate) : null,
+      hireDate: data.hireDate || null,
     }
     await onSubmit(formData)
   }
@@ -120,11 +122,11 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
 
           <div className="space-y-2">
             <Label htmlFor="hireDate">{t('hr.staff.hireDate')}</Label>
-            <Input
-              id="hireDate"
-              type="date"
-              {...register('hireDate')}
-              max={new Date().toISOString().split('T')[0]}
+            <DatePicker
+              date={watch('hireDate')}
+              onSelect={date => setValue('hireDate', date)}
+              placeholder={t('hr.staff.selectHireDate')}
+              maxDate={new Date()}
             />
           </div>
 

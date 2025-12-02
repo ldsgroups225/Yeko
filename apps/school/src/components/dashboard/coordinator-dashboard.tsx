@@ -1,28 +1,31 @@
 import { BookOpen, ClipboardCheck, TrendingUp, Users } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 export function CoordinatorDashboard() {
+  const { t } = useTranslation()
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">
-          Tableau de bord Coordinateur Académique
+          {t('dashboard.coordinator.title')}
         </h1>
         <p className="text-muted-foreground">
-          Gestion du curriculum et suivi de la progression académique
+          {t('dashboard.coordinator.subtitle')}
         </p>
       </div>
 
       {/* Academic Metrics */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <MetricCard title="Matières" value="24" subtitle="8 niveaux" icon={BookOpen} />
-        <MetricCard title="Notes en attente" value="156" subtitle="À valider" icon={ClipboardCheck} />
-        <MetricCard title="Moyenne générale" value="12.8/20" subtitle="+0.5 pts" icon={TrendingUp} />
-        <MetricCard title="Enseignants" value="89" subtitle="Actifs" icon={Users} />
+        <MetricCard title={t('dashboard.coordinator.subjects')} value="24" subtitle="8 levels" icon={BookOpen} />
+        <MetricCard title={t('dashboard.coordinator.pendingGrades')} value="156" subtitle={t('common.pending')} icon={ClipboardCheck} />
+        <MetricCard title={t('dashboard.coordinator.averageGrade')} value="12.8/20" subtitle="+0.5 pts" icon={TrendingUp} />
+        <MetricCard title={t('dashboard.coordinator.teachers')} value="89" subtitle={t('common.active')} icon={Users} />
       </div>
 
       {/* Validation Queue */}
       <div className="rounded-lg border border-border/40 bg-card p-6">
-        <h2 className="mb-4 text-lg font-semibold">Notes à Valider</h2>
+        <h2 className="mb-4 text-lg font-semibold">{t('dashboard.coordinator.gradesToValidate')}</h2>
         <div className="space-y-3">
           <ValidationItem
             subject="Mathématiques"
@@ -51,7 +54,7 @@ export function CoordinatorDashboard() {
       {/* Performance Overview */}
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="rounded-lg border border-border/40 bg-card p-6">
-          <h2 className="mb-4 text-lg font-semibold">Performance par Niveau</h2>
+          <h2 className="mb-4 text-lg font-semibold">{t('dashboard.coordinator.performanceByLevel')}</h2>
           <div className="space-y-4">
             <PerformanceBar level="6ème" average="13.2" percentage={66} />
             <PerformanceBar level="5ème" average="12.8" percentage={64} />
@@ -61,11 +64,11 @@ export function CoordinatorDashboard() {
         </div>
 
         <div className="rounded-lg border border-border/40 bg-card p-6">
-          <h2 className="mb-4 text-lg font-semibold">Matières à Risque</h2>
+          <h2 className="mb-4 text-lg font-semibold">{t('dashboard.coordinator.atRiskSubjects')}</h2>
           <div className="space-y-3">
-            <RiskItem subject="Mathématiques 3ème" average="9.2/20" status="critical" />
-            <RiskItem subject="Physique 2nde" average="10.1/20" status="warning" />
-            <RiskItem subject="Anglais 4ème" average="10.8/20" status="warning" />
+            <RiskItem subject="Mathematics 3rd" average="9.2/20" status="critical" t={t} />
+            <RiskItem subject="Physics 2nd" average="10.1/20" status="warning" t={t} />
+            <RiskItem subject="English 4th" average="10.8/20" status="warning" t={t} />
           </div>
         </div>
       </div>
@@ -161,9 +164,10 @@ interface RiskItemProps {
   subject: string
   average: string
   status: 'critical' | 'warning'
+  t: (key: string) => string
 }
 
-function RiskItem({ subject, average, status }: RiskItemProps) {
+function RiskItem({ subject, average, status, t }: RiskItemProps) {
   const statusColors = {
     critical: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400',
     warning: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400',
@@ -174,12 +178,12 @@ function RiskItem({ subject, average, status }: RiskItemProps) {
       <div className="space-y-1">
         <p className="text-sm font-medium">{subject}</p>
         <p className="text-xs text-muted-foreground">
-          Moyenne:
+          Average:
           {average}
         </p>
       </div>
       <span className={`rounded-full px-2 py-1 text-xs font-medium ${statusColors[status]}`}>
-        {status === 'critical' ? 'Critique' : 'Attention'}
+        {status === 'critical' ? t('dashboard.coordinator.critical') : t('dashboard.coordinator.warning')}
       </span>
     </div>
   )
