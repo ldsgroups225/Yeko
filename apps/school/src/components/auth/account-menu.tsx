@@ -1,26 +1,36 @@
-import { LogOut, Settings, User } from 'lucide-react'
+import { Languages, LogOut, Palette, Settings, User } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+import { LanguageSwitcher } from '@/components/layout/language-switcher'
+import { ThemeToggle } from '@/components/theme/theme-toggle'
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { authClient, signOutWithCache } from '@/lib/auth-client'
-import { cn } from '@/lib/utils'
 
 export function AccountMenu() {
   const session = authClient.useSession()
+  const { t } = useTranslation()
 
   const handleSignOut = async () => {
     try {
       await signOutWithCache()
-      toast.success('Déconnexion réussie')
+      toast.success(t('auth.signOutSuccess'))
     }
     catch (error) {
-      toast.error('Erreur lors de la déconnexion')
+      toast.error(t('auth.signOutError'))
       console.error('Sign out error:', error)
     }
   }
@@ -31,48 +41,75 @@ export function AccountMenu() {
   const user = session.data.user
   const initials = user.name
     ? user.name
-        .split(' ')
-        .map(n => n[0])
-        .join('')
-        .toUpperCase()
-        .slice(0, 2)
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2)
     : user.email?.[0]?.toUpperCase() || 'U'
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button
-          type="button"
-          className={cn(
-            'inline-flex h-9 w-9 items-center justify-center rounded-full bg-muted text-sm font-medium transition-colors',
-            'hover:bg-accent hover:text-accent-foreground',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-          )}
-        >
-          <span className="text-sm font-semibold">{initials}</span>
-          <span className="sr-only">Menu utilisateur</span>
-        </button>
+        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+          <Avatar className="h-8 w-8">
+            <AvatarImage src={user.image || ''} alt={user.name || ''} />
+            <AvatarFallback>{initials}</AvatarFallback>
+          </Avatar>
+        </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel>
+      <DropdownMenuContent className="w-80" align="end" forceMount>
+        <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{user.name || 'Utilisateur'}</p>
-            <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+            <p className="text-sm font-medium leading-none">{user.name}</p>
+            <p className="text-xs leading-none text-muted-foreground">
+              {user.email}
+            </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <User className="mr-2 h-4 w-4" />
-          <span>Profil</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Settings className="mr-2 h-4 w-4" />
-          <span>Paramètres</span>
-        </DropdownMenuItem>
+        <DropdownMenuGroup>
+          <DropdownMenuItem>
+            <User className="mr-2 h-4 w-4" />
+            <span>{t('account.profile')}</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Settings className="mr-2 h-4 w-4" />
+            <span>{t('account.settings')}</span>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+
+        {/* Theme Toggle */}
+        <div className="px-2 py-2">
+          <div className="flex items-center justify-between py-2 px-2 rounded-lg border bg-card pointer-events-none">
+            <span className="text-sm font-medium flex items-center gap-2">
+              <Palette className="h-4 w-4" />
+              {t('account.theme')}
+            </span>
+            <div className="pointer-events-auto">
+              <ThemeToggle />
+            </div>
+          </div>
+        </div>
+
+        {/* Language Switcher */}
+        <div className="px-2 pb-2">
+          <div className="flex items-center justify-between py-2 px-2 rounded-lg border bg-card pointer-events-none">
+            <span className="text-sm font-medium flex items-center gap-2">
+              <Languages className="h-4 w-4" />
+              {t('account.language')}
+            </span>
+            <div className="pointer-events-auto">
+              <LanguageSwitcher />
+            </div>
+          </div>
+        </div>
+
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
           <LogOut className="mr-2 h-4 w-4" />
-          <span>Déconnexion</span>
+          <span>{t('auth.signOut')}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

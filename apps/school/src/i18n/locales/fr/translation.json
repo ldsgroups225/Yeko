@@ -80,77 +80,6 @@
       "current": "École actuelle"
     }
   },
-  "roles": {
-    "school_administrator": "Administrateur Scolaire",
-    "academic_coordinator": "Coordinateur Académique",
-    "discipline_officer": "Responsable Discipline",
-    "accountant": "Comptable",
-    "cashier": "Caissier",
-    "registrar": "Registraire"
-  },
-  "dashboard": {
-    "welcome": "Bienvenue",
-    "overview": "Vue d'ensemble",
-    "statistics": "Statistiques",
-    "recentActivity": "Activité récente",
-    "quickActions": "Actions rapides",
-    "alerts": "Alertes",
-    "admin": {
-      "title": "Tableau de bord Administrateur",
-      "students": "Élèves",
-      "teachers": "Enseignants",
-      "classes": "Classes",
-      "revenue": "Revenus",
-      "addUser": "Ajouter un utilisateur",
-      "enrollStudent": "Inscrire un élève",
-      "createClass": "Créer une classe",
-      "recordPayment": "Enregistrer un paiement"
-    },
-    "coordinator": {
-      "title": "Tableau de bord Coordinateur",
-      "subjects": "Matières",
-      "pendingGrades": "Notes en attente",
-      "average": "Moyenne",
-      "gradeValidation": "Validation des notes",
-      "performanceByLevel": "Performance par niveau",
-      "atRiskSubjects": "Matières à risque"
-    },
-    "discipline": {
-      "title": "Tableau de bord Discipline",
-      "attendanceRate": "Taux de présence",
-      "absences": "Absences",
-      "lateArrivals": "Retards",
-      "incidents": "Incidents",
-      "todayAbsences": "Absences du jour",
-      "conductIncidents": "Incidents de conduite",
-      "frequentLate": "Retards fréquents"
-    },
-    "accountant": {
-      "title": "Tableau de bord Comptable",
-      "monthlyRevenue": "Revenus mensuels",
-      "expenses": "Dépenses",
-      "balance": "Solde",
-      "unpaidFees": "Frais impayés",
-      "recentTransactions": "Transactions récentes",
-      "pendingPayments": "Paiements en attente"
-    },
-    "cashier": {
-      "title": "Tableau de bord Caissier",
-      "dailyCollections": "Encaissements du jour",
-      "transactions": "Transactions",
-      "validated": "Validées",
-      "quickPayment": "Paiement rapide",
-      "recentPayments": "Paiements récents"
-    },
-    "registrar": {
-      "title": "Tableau de bord Registraire",
-      "totalStudents": "Total élèves",
-      "newEnrollments": "Nouvelles inscriptions",
-      "incompleteFiles": "Dossiers incomplets",
-      "pendingEnrollments": "Inscriptions en attente",
-      "studentDistribution": "Répartition des élèves"
-    }
-  },
   "users": {
     "title": "Utilisateurs",
     "addUser": "Ajouter un utilisateur",
@@ -269,6 +198,7 @@
       "specialization": "Spécialisation",
       "specializationPlaceholder": "Ex: Mathématiques appliquées",
       "hireDate": "Date d'embauche",
+      "selectHireDate": "Sélectionner la date d'embauche",
       "noTeachers": "Aucun enseignant trouvé",
       "noTeachersDescription": "Ajoutez des enseignants pour commencer à gérer les matières et les classes",
       "assignedClasses": "Classes assignées",
@@ -323,6 +253,7 @@
       "userIdHelp": "Entrez l'ID d'un utilisateur existant ou créez-en un nouveau",
       "positionPlaceholder": "Sélectionner un poste",
       "departmentPlaceholder": "Ex: Administration",
+      "selectHireDate": "Sélectionner la date d'embauche",
       "createSuccess": "Personnel créé avec succès",
       "updateSuccess": "Personnel mis à jour avec succès",
       "createError": "Erreur lors de la création du personnel",
@@ -466,5 +397,94 @@
     "french": "Français",
     "english": "English",
     "switchLanguage": "Changer de langue"
+  },
+  "account": {
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "theme": "Thème",
+    "language": "Langue"
+  },
+  "auth": {
+    "signOut": "Déconnexion",
+    "signOutSuccess": "Déconnexion réussie",
+    "signOutError": "Erreur lors de la déconnexion"
+  },
+  "roles": {
+    "descriptions": {
+      "school_administrator": "Accès complet à tous les modules",
+      "academic_coordinator": "Gestion du curriculum et validation des notes",
+      "discipline_officer": "Gestion de la présence et de la conduite",
+      "accountant": "Gestion financière et rapports",
+      "cashier": "Traitement des paiements uniquement",
+      "registrar": "Gestion des dossiers étudiants et inscriptions"
+    }
+  },
+  "dashboard": {
+    "cashier": {
+      "title": "Tableau de bord Caissier",
+      "subtitle": "Traitement des paiements et gestion de caisse",
+      "recordPayment": "Enregistrer un Paiement",
+      "recentPayments": "Paiements Récents",
+      "dailyCollections": "Encaissements aujourd'hui",
+      "transactions": "Transactions",
+      "validated": "Paiements validés",
+      "studentMatricule": "Matricule Élève",
+      "paymentAmount": "Montant (FCFA)",
+      "paymentMethod": "Méthode de paiement",
+      "cash": "Espèces",
+      "mobileMoney": "Mobile Money",
+      "pending": "En attente",
+      "completed": "Validé"
+    },
+    "registrar": {
+      "title": "Tableau de bord Registraire",
+      "subtitle": "Gestion des dossiers étudiants et inscriptions",
+      "totalStudents": "Total Élèves",
+      "newEnrollments": "Nouvelles inscriptions",
+      "incompleteFiles": "Dossiers incomplets",
+      "enrollmentsValidated": "Inscriptions validées",
+      "pendingEnrollments": "Inscriptions en Attente",
+      "recentActivity": "Activité Récente",
+      "distributionByLevel": "Répartition par Niveau",
+      "enrollmentValidated": "Inscription validée",
+      "fileCompleted": "Dossier complété",
+      "parentAdded": "Parent ajouté",
+      "active": "Actifs",
+      "toReview": "À réviser",
+      "missing": "Manquant",
+      "students": "élèves"
+    },
+    "coordinator": {
+      "title": "Tableau de bord Coordinateur Académique",
+      "subtitle": "Gestion du curriculum et suivi de la progression académique",
+      "subjects": "Matières",
+      "pendingGrades": "Notes en attente",
+      "averageGrade": "Moyenne générale",
+      "teachers": "Enseignants",
+      "gradesToValidate": "Notes à Valider",
+      "performanceByLevel": "Performance par Niveau",
+      "atRiskSubjects": "Matières à Risque",
+      "validate": "Valider",
+      "critical": "Critique",
+      "warning": "Attention",
+      "attention": "Attention"
+    },
+    "accountant": {
+      "title": "Tableau de bord Comptable",
+      "subtitle": "Gestion financière et rapports comptables",
+      "monthlyRevenue": "Revenus ce mois",
+      "monthlyExpenses": "Dépenses ce mois",
+      "balance": "Solde",
+      "unpaidFees": "Impayés",
+      "recentTransactions": "Transactions Récentes",
+      "overduePayments": "Paiements en Retard",
+      "tuitionFees": "Frais de scolarité",
+      "teacherSalaries": "Salaire enseignants",
+      "registrationFees": "Frais d'inscription",
+      "daysLate": "Retard",
+      "today": "Aujourd'hui",
+      "yesterday": "Hier",
+      "daysAgo": "jours"
+    }
   }
 }

@@ -1,48 +1,21 @@
-import { Bell, Menu } from 'lucide-react'
+import { Bell } from 'lucide-react'
 import { AccountMenu } from '@/components/auth/account-menu'
-import { LanguageSwitcher } from '@/components/layout/language-switcher'
 import { SchoolSwitcher } from '@/components/school/school-switcher'
+import { SidebarTrigger } from '@/components/ui/sidebar'
 import { cn } from '@/lib/utils'
 
-interface HeaderProps {
-  onMenuClick?: () => void
-}
-
-export function Header({ onMenuClick }: HeaderProps) {
+export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="flex h-14 items-center gap-4 px-4">
         {/* Mobile menu button */}
-        <button
-          type="button"
-          onClick={onMenuClick}
-          className={cn(
-            'inline-flex h-9 w-9 items-center justify-center rounded-md text-sm font-medium transition-colors',
-            'hover:bg-accent hover:text-accent-foreground',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-            'lg:hidden',
-          )}
-        >
-          <Menu className="h-5 w-5" />
-          <span className="sr-only">Toggle menu</span>
-        </button>
-
-        {/* Logo */}
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <span className="text-sm font-bold">Y</span>
-          </div>
-          <span className="hidden font-semibold sm:inline-block">Yeko School</span>
-        </div>
-
-        {/* Spacer */}
-        <div className="flex-1" />
+        <SidebarTrigger className="lg:hidden" />
 
         {/* School Switcher */}
         <SchoolSwitcher />
 
-        {/* Language Switcher */}
-        <LanguageSwitcher />
+        {/* Spacer */}
+        <div className="flex-1" />
 
         {/* Notifications */}
         <button

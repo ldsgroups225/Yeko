@@ -9,6 +9,7 @@ import {
 } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { Toaster } from 'sonner'
+import { ThemeProvider } from '@/components/theme/theme-provider'
 import appCss from '@/styles.css?url'
 
 export const Route = createRootRouteWithContext<{
@@ -35,8 +36,10 @@ export const Route = createRootRouteWithContext<{
 function RootComponent() {
   return (
     <RootDocument>
-      <Outlet />
-      <Toaster position="top-right" richColors />
+      <ThemeProvider defaultTheme="system" storageKey="school-ui-theme">
+        <Outlet />
+        <Toaster position="top-right" richColors />
+      </ThemeProvider>
     </RootDocument>
   )
 }

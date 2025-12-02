@@ -80,77 +80,6 @@
       "current": "Current school"
     }
   },
-  "roles": {
-    "school_administrator": "School Administrator",
-    "academic_coordinator": "Academic Coordinator",
-    "discipline_officer": "Discipline Officer",
-    "accountant": "Accountant",
-    "cashier": "Cashier",
-    "registrar": "Registrar"
-  },
-  "dashboard": {
-    "welcome": "Welcome",
-    "overview": "Overview",
-    "statistics": "Statistics",
-    "recentActivity": "Recent Activity",
-    "quickActions": "Quick Actions",
-    "alerts": "Alerts",
-    "admin": {
-      "title": "Administrator Dashboard",
-      "students": "Students",
-      "teachers": "Teachers",
-      "classes": "Classes",
-      "revenue": "Revenue",
-      "addUser": "Add User",
-      "enrollStudent": "Enroll Student",
-      "createClass": "Create Class",
-      "recordPayment": "Record Payment"
-    },
-    "coordinator": {
-      "title": "Coordinator Dashboard",
-      "subjects": "Subjects",
-      "pendingGrades": "Pending Grades",
-      "average": "Average",
-      "gradeValidation": "Grade Validation",
-      "performanceByLevel": "Performance by Level",
-      "atRiskSubjects": "At-Risk Subjects"
-    },
-    "discipline": {
-      "title": "Discipline Dashboard",
-      "attendanceRate": "Attendance Rate",
-      "absences": "Absences",
-      "lateArrivals": "Late Arrivals",
-      "incidents": "Incidents",
-      "todayAbsences": "Today's Absences",
-      "conductIncidents": "Conduct Incidents",
-      "frequentLate": "Frequent Late"
-    },
-    "accountant": {
-      "title": "Accountant Dashboard",
-      "monthlyRevenue": "Monthly Revenue",
-      "expenses": "Expenses",
-      "balance": "Balance",
-      "unpaidFees": "Unpaid Fees",
-      "recentTransactions": "Recent Transactions",
-      "pendingPayments": "Pending Payments"
-    },
-    "cashier": {
-      "title": "Cashier Dashboard",
-      "dailyCollections": "Daily Collections",
-      "transactions": "Transactions",
-      "validated": "Validated",
-      "quickPayment": "Quick Payment",
-      "recentPayments": "Recent Payments"
-    },
-    "registrar": {
-      "title": "Registrar Dashboard",
-      "totalStudents": "Total Students",
-      "newEnrollments": "New Enrollments",
-      "incompleteFiles": "Incomplete Files",
-      "pendingEnrollments": "Pending Enrollments",
-      "studentDistribution": "Student Distribution"
-    }
-  },
   "users": {
     "title": "Users",
     "addUser": "Add User",
@@ -269,6 +198,7 @@
       "specialization": "Specialization",
       "specializationPlaceholder": "e.g., Applied Mathematics",
       "hireDate": "Hire Date",
+      "selectHireDate": "Select hire date",
       "noTeachers": "No teachers found",
       "noTeachersDescription": "Add teachers to start managing subjects and classes",
       "assignedClasses": "Assigned Classes",
@@ -323,6 +253,7 @@
       "userIdHelp": "Enter an existing user ID or create a new one",
       "positionPlaceholder": "Select a position",
       "departmentPlaceholder": "e.g., Administration",
+      "selectHireDate": "Select hire date",
       "createSuccess": "Staff member created successfully",
       "updateSuccess": "Staff member updated successfully",
       "createError": "Error creating staff member",
@@ -466,5 +397,94 @@
     "french": "Français",
     "english": "English",
     "switchLanguage": "Switch Language"
+  },
+  "account": {
+    "profile": "Profile",
+    "settings": "Settings",
+    "theme": "Theme",
+    "language": "Language"
+  },
+  "auth": {
+    "signOut": "Sign Out",
+    "signOutSuccess": "Successfully signed out",
+    "signOutError": "Error signing out"
+  },
+  "roles": {
+    "descriptions": {
+      "school_administrator": "Full access to all modules",
+      "academic_coordinator": "Curriculum management and grade validation",
+      "discipline_officer": "Attendance and conduct management",
+      "accountant": "Financial management and reports",
+      "cashier": "Payment processing only",
+      "registrar": "Student file management and enrollments"
+    }
+  },
+  "dashboard": {
+    "cashier": {
+      "title": "Cashier Dashboard",
+      "subtitle": "Payment processing and cash management",
+      "recordPayment": "Record Payment",
+      "recentPayments": "Recent Payments",
+      "dailyCollections": "Daily Collections",
+      "transactions": "Transactions",
+      "validated": "Validated",
+      "studentMatricule": "Student Matricule",
+      "paymentAmount": "Payment Amount (FCFA)",
+      "paymentMethod": "Payment Method",
+      "cash": "Cash",
+      "mobileMoney": "Mobile Money",
+      "pending": "Pending",
+      "completed": "Completed"
+    },
+    "registrar": {
+      "title": "Registrar Dashboard",
+      "subtitle": "Student file management and enrollments",
+      "totalStudents": "Total Students",
+      "newEnrollments": "New Enrollments",
+      "incompleteFiles": "Incomplete Files",
+      "enrollmentsValidated": "Enrollments Validated",
+      "pendingEnrollments": "Pending Enrollments",
+      "recentActivity": "Recent Activity",
+      "distributionByLevel": "Distribution by Level",
+      "enrollmentValidated": "Enrollment validated",
+      "fileCompleted": "File completed",
+      "parentAdded": "Parent added",
+      "active": "Active",
+      "toReview": "To review",
+      "missing": "Missing",
+      "students": "students"
+    },
+    "coordinator": {
+      "title": "Academic Coordinator Dashboard",
+      "subtitle": "Curriculum management and academic progress tracking",
+      "subjects": "Subjects",
+      "pendingGrades": "Pending Grades",
+      "averageGrade": "Average Grade",
+      "teachers": "Teachers",
+      "gradesToValidate": "Grades to Validate",
+      "performanceByLevel": "Performance by Level",
+      "atRiskSubjects": "At-Risk Subjects",
+      "validate": "Validate",
+      "critical": "Critical",
+      "warning": "Warning",
+      "attention": "Attention"
+    },
+    "accountant": {
+      "title": "Accountant Dashboard",
+      "subtitle": "Financial management and accounting reports",
+      "monthlyRevenue": "Monthly Revenue",
+      "monthlyExpenses": "Monthly Expenses",
+      "balance": "Balance",
+      "unpaidFees": "Unpaid Fees",
+      "recentTransactions": "Recent Transactions",
+      "overduePayments": "Overdue Payments",
+      "tuitionFees": "Tuition fees",
+      "teacherSalaries": "Teacher salaries",
+      "registrationFees": "Registration fees",
+      "daysLate": "Days late",
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "daysAgo": "days ago"
+    }
   }
 }
