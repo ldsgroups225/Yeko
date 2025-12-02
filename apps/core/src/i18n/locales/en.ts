@@ -131,206 +131,206 @@ export const en = {
         description: 'Teachers and parents can access everything from their smartphones, even with limited connectivity.',
       },
     },
+  },
 
-    // How It Works
-    howItWorks: {
-      title: 'How It Works',
-      subtitle: 'Get started in 3 simple steps',
-      steps: {
-        signup: {
-          title: 'Sign Up',
-          description: 'Create your account in 2 minutes',
-        },
-        setup: {
-          title: 'Setup',
-          description: 'Import your existing data',
-        },
-        launch: {
-          title: 'Launch',
-          description: 'Start saving time',
-        },
+  // How It Works
+  howItWorks: {
+    title: 'How It Works',
+    subtitle: 'Get started in 3 simple steps',
+    steps: {
+      signup: {
+        title: 'Sign Up',
+        description: 'Create your account in 2 minutes',
+      },
+      setup: {
+        title: 'Setup',
+        description: 'Import your existing data',
+      },
+      launch: {
+        title: 'Launch',
+        description: 'Start saving time',
       },
     },
+  },
 
-    // Benefits
-    benefits: {
-      title: 'Yeko Benefits',
-      subtitle: 'Transform your school management',
-      items: {
-        timeSaving: {
-          title: 'Time Saving',
-          description: 'Save 20+ hours per week',
-        },
-        costReduction: {
-          title: 'Cost Reduction',
-          description: 'Reduce administrative expenses by 40%',
-        },
-        satisfaction: {
-          title: 'Increased Satisfaction',
-          description: 'Happier parents and teachers',
-        },
-        growth: {
-          title: 'Growth',
-          description: 'Focus on education, not administration',
-        },
+  // Benefits
+  benefits: {
+    title: 'Yeko Benefits',
+    subtitle: 'Transform your school management',
+    items: {
+      timeSaving: {
+        title: 'Time Saving',
+        description: 'Save 20+ hours per week',
+      },
+      costReduction: {
+        title: 'Cost Reduction',
+        description: 'Reduce administrative expenses by 40%',
+      },
+      satisfaction: {
+        title: 'Increased Satisfaction',
+        description: 'Happier parents and teachers',
+      },
+      growth: {
+        title: 'Growth',
+        description: 'Focus on education, not administration',
       },
     },
+  },
 
-    // Pricing
-    pricing: {
-      title: 'Transparent Pricing',
-      subtitle: 'Choose the plan that fits your school',
-      monthly: 'Monthly',
-      yearly: 'Yearly',
-      save: 'Save 20%',
-      perMonth: '/month',
-      perStudent: 'per student',
-      plans: {
-        starter: {
-          name: 'Starter',
-          description: 'For small schools',
-          features: [
-            'Up to 100 students',
-            'Basic management',
-            'Email support',
-            '5 GB storage',
-          ],
-        },
-        professional: {
-          name: 'Professional',
-          description: 'For growing schools',
-          popular: 'Popular',
-          features: [
-            'Up to 500 students',
-            'All features',
-            'Priority support',
-            '50 GB storage',
-            'Advanced reports',
-          ],
-        },
-        enterprise: {
-          name: 'Enterprise',
-          description: 'For large institutions',
-          features: [
-            'Unlimited students',
-            'Custom features',
-            'Dedicated 24/7 support',
-            'Unlimited storage',
-            'API and integrations',
-          ],
-        },
+  // Pricing
+  pricing: {
+    title: 'Transparent Pricing',
+    subtitle: 'Choose the plan that fits your school',
+    monthly: 'Monthly',
+    yearly: 'Yearly',
+    save: 'Save 20%',
+    perMonth: '/month',
+    perStudent: 'per student',
+    plans: {
+      starter: {
+        name: 'Starter',
+        description: 'For small schools',
+        features: [
+          'Up to 100 students',
+          'Basic management',
+          'Email support',
+          '5 GB storage',
+        ],
       },
-      cta: 'Get Started',
-      contactUs: 'Contact Us',
-      footer: 'All plans include free onboarding and training • No credit card required for trial',
-    },
-
-    // Testimonials
-    testimonials: {
-      title: 'What Our Clients Say',
-      subtitle: 'Join hundreds of satisfied schools',
-    },
-
-    // FAQ
-    faq: {
-      title: 'Frequently Asked Questions',
-      subtitle: 'Everything you need to know about Yeko',
-      questions: {
-        q1: {
-          question: 'How long does setup take?',
-          answer: 'Most schools are up and running in less than 24 hours. Our team guides you through every step.',
-        },
-        q2: {
-          question: 'Is my data secure?',
-          answer: 'Absolutely. We use bank-level encryption and are GDPR compliant.',
-        },
-        q3: {
-          question: 'Can I cancel anytime?',
-          answer: 'Yes, you can cancel your subscription at any time with no additional fees.',
-        },
-        q4: {
-          question: 'Do you provide training?',
-          answer: 'Yes, we offer comprehensive training and ongoing support for your team.',
-        },
+      professional: {
+        name: 'Professional',
+        description: 'For growing schools',
+        popular: 'Popular',
+        features: [
+          'Up to 500 students',
+          'All features',
+          'Priority support',
+          '50 GB storage',
+          'Advanced reports',
+        ],
+      },
+      enterprise: {
+        name: 'Enterprise',
+        description: 'For large institutions',
+        features: [
+          'Unlimited students',
+          'Custom features',
+          'Dedicated 24/7 support',
+          'Unlimited storage',
+          'API and integrations',
+        ],
       },
     },
+    cta: 'Get Started',
+    contactUs: 'Contact Us',
+    footer: 'All plans include free onboarding and training • No credit card required for trial',
+  },
 
-    // CTA Section
-    cta: {
-      title: 'Ready to Transform Your School?',
-      subtitle: 'Join hundreds of schools saving time and money with Yeko',
-      button: 'Get Started Free',
-      trial: '14-day free trial • No credit card required',
-    },
+  // Testimonials
+  testimonials: {
+    title: 'What Our Clients Say',
+    subtitle: 'Join hundreds of satisfied schools',
+  },
 
-    // Footer
-    footer: {
-      description: 'The modern school management platform that saves schools time.',
-      product: {
-        title: 'Product',
-        features: 'Features',
-        pricing: 'Pricing',
-        demo: 'Demo',
+  // FAQ
+  faq: {
+    title: 'Frequently Asked Questions',
+    subtitle: 'Everything you need to know about Yeko',
+    questions: {
+      q1: {
+        question: 'How long does setup take?',
+        answer: 'Most schools are up and running in less than 24 hours. Our team guides you through every step.',
       },
-      company: {
-        title: 'Company',
-        about: 'About',
-        blog: 'Blog',
-        careers: 'Careers',
-        contact: 'Contact',
+      q2: {
+        question: 'Is my data secure?',
+        answer: 'Absolutely. We use bank-level encryption and are GDPR compliant.',
       },
-      legal: {
-        title: 'Legal',
-        privacy: 'Privacy',
-        terms: 'Terms',
-        security: 'Security',
+      q3: {
+        question: 'Can I cancel anytime?',
+        answer: 'Yes, you can cancel your subscription at any time with no additional fees.',
       },
-      rights: 'All rights reserved.',
+      q4: {
+        question: 'Do you provide training?',
+        answer: 'Yes, we offer comprehensive training and ongoing support for your team.',
+      },
     },
+  },
 
-    // Common
-    common: {
-      loading: 'Loading...',
-      error: 'An error occurred',
-      success: 'Success',
-      cancel: 'Cancel',
-      save: 'Save',
-      delete: 'Delete',
-      edit: 'Edit',
-      close: 'Close',
-      back: 'Back',
-      next: 'Next',
-      previous: 'Previous',
-      search: 'Search',
-      filter: 'Filter',
-      sort: 'Sort',
-      export: 'Export',
-      import: 'Import',
-    },
+  // CTA Section
+  cta: {
+    title: 'Ready to Transform Your School?',
+    subtitle: 'Join hundreds of schools saving time and money with Yeko',
+    button: 'Get Started Free',
+    trial: '14-day free trial • No credit card required',
+  },
 
-    // Footer Navigation
-    footerNav: {
-      product: {
-        title: 'Product',
-        features: 'Features',
-        pricing: 'Pricing',
-        about: 'About Us',
-        contact: 'Contact',
-      },
-      resources: {
-        title: 'Resources',
-        help: 'Help Center',
-        privacy: 'Privacy Policy',
-        terms: 'Terms of Service',
-        security: 'Security',
-      },
-      social: {
-        facebook: 'Facebook',
-        twitter: 'Twitter',
-        linkedin: 'LinkedIn',
-      },
-      tagline: 'Empowering Education Across Africa',
-      copyright: 'Yeko Platform. All rights reserved.',
+  // Footer
+  footer: {
+    description: 'The modern school management platform that saves schools time.',
+    product: {
+      title: 'Product',
+      features: 'Features',
+      pricing: 'Pricing',
+      demo: 'Demo',
     },
+    company: {
+      title: 'Company',
+      about: 'About',
+      blog: 'Blog',
+      careers: 'Careers',
+      contact: 'Contact',
+    },
+    legal: {
+      title: 'Legal',
+      privacy: 'Privacy',
+      terms: 'Terms',
+      security: 'Security',
+    },
+    rights: 'All rights reserved.',
+  },
+
+  // Common
+  common: {
+    loading: 'Loading...',
+    error: 'An error occurred',
+    success: 'Success',
+    cancel: 'Cancel',
+    save: 'Save',
+    delete: 'Delete',
+    edit: 'Edit',
+    close: 'Close',
+    back: 'Back',
+    next: 'Next',
+    previous: 'Previous',
+    search: 'Search',
+    filter: 'Filter',
+    sort: 'Sort',
+    export: 'Export',
+    import: 'Import',
+  },
+
+  // Footer Navigation
+  footerNav: {
+    product: {
+      title: 'Product',
+      features: 'Features',
+      pricing: 'Pricing',
+      about: 'About Us',
+      contact: 'Contact',
+    },
+    resources: {
+      title: 'Resources',
+      help: 'Help Center',
+      privacy: 'Privacy Policy',
+      terms: 'Terms of Service',
+      security: 'Security',
+    },
+    social: {
+      facebook: 'Facebook',
+      twitter: 'Twitter',
+      linkedin: 'LinkedIn',
+    },
+    tagline: 'Empowering Education Across Africa',
+    copyright: 'Yeko Platform. All rights reserved.',
   },
 }

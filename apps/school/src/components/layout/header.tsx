@@ -1,7 +1,8 @@
-import { Bell, Menu } from 'lucide-react';
-import { SchoolSwitcher } from '@/components/school/school-switcher';
-import { LanguageSwitcher } from '@/components/layout/language-switcher';
-import { cn } from '@/lib/utils';
+import { Bell, Menu } from 'lucide-react'
+import { SchoolSwitcher } from '@/components/school/school-switcher'
+import { LanguageSwitcher } from '@/components/layout/language-switcher'
+import { AccountMenu } from '@/components/auth/account-menu'
+import { cn } from '@/lib/utils'
 
 interface HeaderProps {
   onMenuClick?: () => void;
@@ -62,17 +63,7 @@ export function Header({ onMenuClick }: HeaderProps) {
         </button>
 
         {/* User menu */}
-        <button
-          type="button"
-          className={cn(
-            'inline-flex h-9 w-9 items-center justify-center rounded-full bg-muted text-sm font-medium transition-colors',
-            'hover:bg-accent hover:text-accent-foreground',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-          )}
-        >
-          <span className="text-sm font-semibold">U</span>
-          <span className="sr-only">User menu</span>
-        </button>
+        <AccountMenu />
       </div>
     </header>
   );

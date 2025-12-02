@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthAppRouteImport } from './routes/_auth/app'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as AuthAppHrRouteImport } from './routes/_auth/app/hr'
 import { Route as AuthAppDashboardRouteImport } from './routes/_auth/app/dashboard'
 import { Route as AuthAppHrIndexRouteImport } from './routes/_auth/app/hr/index'
@@ -46,6 +47,11 @@ const AuthAppRoute = AuthAppRouteImport.update({
   id: '/app',
   path: '/app',
   getParentRoute: () => AuthRoute,
+} as any)
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthAppHrRoute = AuthAppHrRouteImport.update({
   id: '/hr',
@@ -161,6 +167,7 @@ export interface FileRoutesByFullPath {
   '/app': typeof AuthAppRouteWithChildren
   '/app/dashboard': typeof AuthAppDashboardRoute
   '/app/hr': typeof AuthAppHrRouteWithChildren
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/app/hr/': typeof AuthAppHrIndexRoute
   '/app/hr/roles/new': typeof AuthAppHrRolesNewRoute
   '/app/hr/staff/new': typeof AuthAppHrStaffNewRoute
@@ -184,6 +191,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AuthAppRouteWithChildren
   '/app/dashboard': typeof AuthAppDashboardRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/app/hr': typeof AuthAppHrIndexRoute
   '/app/hr/roles/new': typeof AuthAppHrRolesNewRoute
   '/app/hr/staff/new': typeof AuthAppHrStaffNewRoute
@@ -210,6 +218,7 @@ export interface FileRoutesById {
   '/_auth/app': typeof AuthAppRouteWithChildren
   '/_auth/app/dashboard': typeof AuthAppDashboardRoute
   '/_auth/app/hr': typeof AuthAppHrRouteWithChildren
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/_auth/app/hr/': typeof AuthAppHrIndexRoute
   '/_auth/app/hr/roles/new': typeof AuthAppHrRolesNewRoute
   '/_auth/app/hr/staff/new': typeof AuthAppHrStaffNewRoute
@@ -236,6 +245,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/app/dashboard'
     | '/app/hr'
+    | '/api/auth/$'
     | '/app/hr/'
     | '/app/hr/roles/new'
     | '/app/hr/staff/new'
@@ -259,6 +269,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/app/dashboard'
+    | '/api/auth/$'
     | '/app/hr'
     | '/app/hr/roles/new'
     | '/app/hr/staff/new'
@@ -284,6 +295,7 @@ export interface FileRouteTypes {
     | '/_auth/app'
     | '/_auth/app/dashboard'
     | '/_auth/app/hr'
+    | '/api/auth/$'
     | '/_auth/app/hr/'
     | '/_auth/app/hr/roles/new'
     | '/_auth/app/hr/staff/new'
@@ -307,6 +319,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRouteWithChildren
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -331,6 +344,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app'
       preLoaderRoute: typeof AuthAppRouteImport
       parentRoute: typeof AuthRoute
+    }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_auth/app/hr': {
       id: '/_auth/app/hr'
@@ -547,6 +567,7 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRouteWithChildren,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

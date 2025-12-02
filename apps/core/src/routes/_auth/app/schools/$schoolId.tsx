@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import { CreateAdminDialog } from '@/components/schools/create-admin-dialog'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -295,10 +296,7 @@ function SchoolDetails() {
                     Administrateurs, enseignants et personnel rattachés à cette école.
                   </CardDescription>
                 </div>
-                <Button>
-                  <Users className="h-4 w-4 mr-2" />
-                  Ajouter un utilisateur
-                </Button>
+                <CreateAdminDialog schoolId={schoolId} schoolName={school.name} />
               </div>
             </CardHeader>
             <CardContent>
