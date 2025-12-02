@@ -6,6 +6,7 @@ import { CoordinatorDashboard } from '@/components/dashboard/coordinator-dashboa
 import { DisciplineDashboard } from '@/components/dashboard/discipline-dashboard'
 import { RegistrarDashboard } from '@/components/dashboard/registrar-dashboard'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useRole } from '@/hooks/use-role'
 
 export const Route = createFileRoute('/_auth/app/dashboard')({
@@ -17,10 +18,16 @@ function DashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <div className="text-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-          <p className="mt-4 text-sm text-muted-foreground">Chargement...</p>
+      <div className="space-y-6">
+        <Skeleton className="h-8 w-48" />
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-32 rounded-xl" />
+          ))}
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+          <Skeleton className="col-span-4 h-[400px] rounded-xl" />
+          <Skeleton className="col-span-3 h-[400px] rounded-xl" />
         </div>
       </div>
     )

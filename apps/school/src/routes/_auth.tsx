@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router'
 import { LoginForm } from '@/components/auth/login-form'
 import { AppLayout } from '@/components/layout/app-layout'
+import { Spinner } from '@/components/ui/spinner'
 import { authClient } from '@/lib/auth-client'
 
 export const Route = createFileRoute('/_auth')({
@@ -15,7 +16,7 @@ function AuthLayout() {
       {session.isPending
         ? (
             <div className="min-h-screen flex items-center justify-center bg-background">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+              <Spinner className="size-8 text-primary" />
             </div>
           )
         : session.data

@@ -11,17 +11,41 @@ import { format } from 'date-fns'
 import { Edit, Eye, MoreHorizontal, Search, Trash2, Users } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { EmptyState } from '@/components/hr/empty-state'
 import { TableSkeleton } from '@/components/hr/table-skeleton'
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty'
 import { Input } from '@/components/ui/input'
 import {
   Table,
@@ -57,6 +81,7 @@ export function UsersTable({ filters }: UsersTableProps) {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const [searchInput, setSearchInput] = useState(filters.search || '')
+  const [userToDelete, setUserToDelete] = useState<User | null>(null)
   const debouncedSearch = useDebounce(searchInput, 500)
 
   const { data, isLoading } = useQuery({
@@ -157,7 +182,10 @@ export function UsersTable({ filters }: UsersTableProps) {
                 <Edit className="mr-2 h-4 w-4" />
                 {t('common.edit')}
               </DropdownMenuItem>
-              <DropdownMenuItem className="text-destructive">
+              <DropdownMenuItem
+                className="text-destructive"
+                onClick={() => setUserToDelete(row.original)}
+              >
                 <Trash2 className="mr-2 h-4 w-4" />
                 {t('common.delete')}
               </DropdownMenuItem>
@@ -186,120 +214,160 @@ export function UsersTable({ filters }: UsersTableProps) {
 
   return (
     <div className="space-y-4">
-      {/* Search and Filters */}
-      <div className="flex items-center gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder={t('hr.users.searchPlaceholder')}
-            value={searchInput}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchInput(e.target.value)}
-            className="pl-9"
-          />
-        </div>
-      </div>
-
-      {/* Empty State */}
-      {hasNoData && !hasNoResults && (
-        <EmptyState
-          icon={Users}
-          title={t('hr.users.noUsers')}
-          description={t('hr.users.noUsersDescription')}
-          action={{
-            label: t('hr.users.addUser'),
-            onClick: () => navigate({ to: '/app/hr/users/new' }),
-          }}
-        />
-      )}
-
-      {/* No Results State */}
-      {hasNoResults && (
-        <EmptyState
-          icon={Search}
-          title={t('common.noResults')}
-          description={t('common.noResultsDescription')}
-        />
-      )}
-
-      {/* Table */}
-      {!hasNoData && (
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map(headerGroup => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map(header => (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows.map(row => (
-                <TableRow key={row.id}>
-                  {row.getVisibleCells().map(cell => (
-                    <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      )}
-
-      {/* Pagination */}
-      {!hasNoData && data && data.totalPages > 1 && (
-        <div className="flex items-center justify-between">
-          <div className="text-sm text-muted-foreground">
-            {t('common.showing')}
-            {' '}
-            {(data.page - 1) * data.limit + 1}
-            {' '}
-            -
-            {' '}
-            {Math.min(data.page * data.limit, data.total)}
-            {' '}
-            {t('common.of')}
-            {' '}
-            {data.total}
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('hr.users.listTitle')}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {/* Search and Filters */}
+          <div className="flex items-center gap-4 mb-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder={t('hr.users.searchPlaceholder')}
+                value={searchInput}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchInput(e.target.value)}
+                className="pl-9"
+              />
+            </div>
           </div>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() =>
-                navigate({
-                  to: '/app/hr/users',
-                  search: { ...filters, page: data.page - 1 },
-                })}
-              disabled={data.page === 1}
+
+          {/* Empty State */}
+          {hasNoData && !hasNoResults && (
+            <Empty>
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <Users />
+                </EmptyMedia>
+                <EmptyTitle>{t('hr.users.noUsers')}</EmptyTitle>
+                <EmptyDescription>{t('hr.users.noUsersDescription')}</EmptyDescription>
+              </EmptyHeader>
+              <EmptyContent>
+                <Button onClick={() => navigate({ to: '/app/hr/users/new' })}>
+                  {t('hr.users.addUser')}
+                </Button>
+              </EmptyContent>
+            </Empty>
+          )}
+
+          {/* No Results State */}
+          {hasNoResults && (
+            <Empty>
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <Search />
+                </EmptyMedia>
+                <EmptyTitle>{t('common.noResults')}</EmptyTitle>
+                <EmptyDescription>{t('common.noResultsDescription')}</EmptyDescription>
+              </EmptyHeader>
+            </Empty>
+          )}
+
+          {/* Table */}
+          {!hasNoData && (
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  {table.getHeaderGroups().map(headerGroup => (
+                    <TableRow key={headerGroup.id}>
+                      {headerGroup.headers.map(header => (
+                        <TableHead key={header.id}>
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext(),
+                              )}
+                        </TableHead>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableHeader>
+                <TableBody>
+                  {table.getRowModel().rows.map(row => (
+                    <TableRow key={row.id}>
+                      {row.getVisibleCells().map(cell => (
+                        <TableCell key={cell.id}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+
+          {/* Pagination */}
+          {!hasNoData && data && data.totalPages > 1 && (
+            <div className="flex items-center justify-between mt-4">
+              <div className="text-sm text-muted-foreground">
+                {t('common.showing')}
+                {' '}
+                {(data.page - 1) * data.limit + 1}
+                {' '}
+                -
+                {' '}
+                {Math.min(data.page * data.limit, data.total)}
+                {' '}
+                {t('common.of')}
+                {' '}
+                {data.total}
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    navigate({
+                      to: '/app/hr/users',
+                      search: { ...filters, page: data.page - 1 },
+                    })}
+                  disabled={data.page === 1}
+                >
+                  {t('common.previous')}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    navigate({
+                      to: '/app/hr/users',
+                      search: { ...filters, page: data.page + 1 },
+                    })}
+                  disabled={data.page === data.totalPages}
+                >
+                  {t('common.next')}
+                </Button>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Delete Dialog */}
+      <AlertDialog open={!!userToDelete} onOpenChange={open => !open && setUserToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('common.deleteConfirmTitle')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('common.deleteConfirmDescription', { name: userToDelete?.name })}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                // TODO: Implement delete user mutation
+                setUserToDelete(null)
+              }}
             >
-              {t('common.previous')}
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() =>
-                navigate({
-                  to: '/app/hr/users',
-                  search: { ...filters, page: data.page + 1 },
-                })}
-              disabled={data.page === data.totalPages}
-            >
-              {t('common.next')}
-            </Button>
-          </div>
-        </div>
-      )}
+              {t('common.delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
