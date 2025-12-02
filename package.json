@@ -8,6 +8,8 @@
     "build:logger": "pnpm run --filter @repo/logger build",
     "dev:yeko-core": "pnpm run --filter yeko-core dev",
     "deploy:yeko-core": "pnpm run build:data-ops && pnpm run build:logger && pnpm run --filter yeko-core deploy",
+    "dev:yeko-school": "pnpm run --filter yeko-school dev",
+    "deploy:yeko-school": "pnpm run build:data-ops && pnpm run build:logger && pnpm run --filter yeko-school deploy",
     "dev:data-service": "pnpm run --filter data-service dev",
     "deploy:data-service": "pnpm run build:data-ops && pnpm run build:logger && pnpm run --filter data-service deploy",
     "typecheck": "pnpm run --filter \"*\" typecheck || echo \"No typecheck script found\"",
