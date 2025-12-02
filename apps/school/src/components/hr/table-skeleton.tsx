@@ -1,4 +1,4 @@
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -6,11 +6,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from '@/components/ui/table'
+import { generateUUID } from '@/utils/generateUUID'
 
 interface TableSkeletonProps {
-  columns?: number;
-  rows?: number;
+  columns?: number
+  rows?: number
 }
 
 export function TableSkeleton({ columns = 6, rows = 5 }: TableSkeletonProps) {
@@ -26,8 +27,8 @@ export function TableSkeleton({ columns = 6, rows = 5 }: TableSkeletonProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              {Array.from({ length: columns }).map((_, i) => (
-                <TableHead key={i}>
+              {Array.from({ length: columns }).map(() => (
+                <TableHead key={generateUUID()}>
                   <Skeleton className="h-4 w-24" />
                 </TableHead>
               ))}
@@ -35,9 +36,9 @@ export function TableSkeleton({ columns = 6, rows = 5 }: TableSkeletonProps) {
           </TableHeader>
           <TableBody>
             {Array.from({ length: rows }).map((_, rowIndex) => (
-              <TableRow key={rowIndex}>
+              <TableRow key={`row-${rowIndex}`}>
                 {Array.from({ length: columns }).map((_, colIndex) => (
-                  <TableCell key={colIndex}>
+                  <TableCell key={`cell-${rowIndex}-${colIndex}`}>
                     <Skeleton className="h-4 w-full" />
                   </TableCell>
                 ))}
@@ -56,5 +57,5 @@ export function TableSkeleton({ columns = 6, rows = 5 }: TableSkeletonProps) {
         </div>
       </div>
     </div>
-  );
+  )
 }

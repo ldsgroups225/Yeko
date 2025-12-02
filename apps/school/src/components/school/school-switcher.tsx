@@ -1,18 +1,18 @@
-import { useQuery } from '@tanstack/react-query';
-import { Building2, ChevronsUpDown } from 'lucide-react';
-import { getUserSchools } from '@/school/functions/school-context';
-import { useSchoolContext } from '@/hooks/use-school-context';
-import { cn } from '@/lib/utils';
+import { useQuery } from '@tanstack/react-query'
+import { Building2, ChevronsUpDown } from 'lucide-react'
+import { useSchoolContext } from '@/hooks/use-school-context'
+import { cn } from '@/lib/utils'
+import { getUserSchools } from '@/school/functions/school-context'
 
 export function SchoolSwitcher() {
-  const { schoolId, isSwitching } = useSchoolContext();
+  const { schoolId, isSwitching } = useSchoolContext()
 
   const { data: schools, isLoading } = useQuery({
     queryKey: ['user-schools'],
     queryFn: async () => await getUserSchools(),
-  });
+  })
 
-  const currentSchool = schools?.find((school: { id: string }) => school.id === schoolId);
+  const currentSchool = schools?.find((school: { id: string }) => school.id === schoolId)
 
   if (isLoading) {
     return (
@@ -20,7 +20,7 @@ export function SchoolSwitcher() {
         <Building2 className="h-4 w-4 text-muted-foreground" />
         <span className="text-sm text-muted-foreground">Chargement...</span>
       </div>
-    );
+    )
   }
 
   if (!schools || schools.length === 0) {
@@ -29,7 +29,7 @@ export function SchoolSwitcher() {
         <Building2 className="h-4 w-4 text-muted-foreground" />
         <span className="text-sm text-muted-foreground">Aucune école</span>
       </div>
-    );
+    )
   }
 
   return (
@@ -54,5 +54,5 @@ export function SchoolSwitcher() {
       {/* TODO: Add dropdown menu with school list */}
       {/* For now, this is a placeholder. Will be implemented with Radix UI Select */}
     </div>
-  );
+  )
 }

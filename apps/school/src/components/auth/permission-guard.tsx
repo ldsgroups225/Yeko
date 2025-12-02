@@ -1,33 +1,33 @@
-import { ReactNode } from 'react';
-import { usePermissions } from '@/hooks/use-permissions';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { ShieldAlert } from 'lucide-react';
+import type { ReactNode } from 'react'
+import { ShieldAlert } from 'lucide-react'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { usePermissions } from '@/hooks/use-permissions'
 
 interface PermissionGuardProps {
   /** The action required (e.g., 'view', 'create', 'edit', 'delete') */
-  action: string;
+  action: string
   /** The resource to check (e.g., 'users', 'students', 'classes') */
-  resource: string;
+  resource: string
   /** Content to render if user has permission */
-  children: ReactNode;
+  children: ReactNode
   /** Optional fallback content if user doesn't have permission */
-  fallback?: ReactNode;
+  fallback?: ReactNode
   /** If true, shows an access denied message instead of hiding content */
-  showDenied?: boolean;
+  showDenied?: boolean
 }
 
 /**
  * Component to conditionally render content based on user permissions
- * 
+ *
  * @example
  * ```tsx
  * <PermissionGuard action="create" resource="users">
  *   <Button>Add User</Button>
  * </PermissionGuard>
- * 
- * <PermissionGuard 
- *   action="view" 
- *   resource="finance" 
+ *
+ * <PermissionGuard
+ *   action="view"
+ *   resource="finance"
  *   showDenied
  * >
  *   <FinanceDashboard />
@@ -41,15 +41,15 @@ export function PermissionGuard({
   fallback,
   showDenied = false,
 }: PermissionGuardProps) {
-  const { can, isLoading } = usePermissions();
+  const { can, isLoading } = usePermissions()
 
   // Show loading state
   if (isLoading) {
-    return null;
+    return null
   }
 
   // Check permission
-  const hasPermission = can(action, resource);
+  const hasPermission = can(action, resource)
 
   if (!hasPermission) {
     if (showDenied) {
@@ -61,34 +61,34 @@ export function PermissionGuard({
             Vous n'avez pas la permission d'accéder à cette ressource.
           </AlertDescription>
         </Alert>
-      );
+      )
     }
-    return fallback ? <>{fallback}</> : null;
+    return fallback ? <>{fallback}</> : null
   }
 
-  return <>{children}</>;
+  return <>{children}</>
 }
 
 interface MultiPermissionGuardProps {
   /** Array of actions to check */
-  actions: string[];
+  actions: string[]
   /** The resource to check */
-  resource: string;
+  resource: string
   /** If 'any', user needs at least one permission. If 'all', user needs all permissions */
-  mode?: 'any' | 'all';
+  mode?: 'any' | 'all'
   /** Content to render if user has permission */
-  children: ReactNode;
+  children: ReactNode
   /** Optional fallback content if user doesn't have permission */
-  fallback?: ReactNode;
+  fallback?: ReactNode
 }
 
 /**
  * Component to check multiple permissions at once
- * 
+ *
  * @example
  * ```tsx
- * <MultiPermissionGuard 
- *   actions={['edit', 'delete']} 
+ * <MultiPermissionGuard
+ *   actions={['edit', 'delete']}
  *   resource="users"
  *   mode="any"
  * >
@@ -103,19 +103,19 @@ export function MultiPermissionGuard({
   children,
   fallback,
 }: MultiPermissionGuardProps) {
-  const { canAny, canAll, isLoading } = usePermissions();
+  const { canAny, canAll, isLoading } = usePermissions()
 
   if (isLoading) {
-    return null;
+    return null
   }
 
   const hasPermission = mode === 'any'
     ? canAny(actions, resource)
-    : canAll(actions, resource);
+    : canAll(actions, resource)
 
   if (!hasPermission) {
-    return fallback ? <>{fallback}</> : null;
+    return fallback ? <>{fallback}</> : null
   }
 
-  return <>{children}</>;
+  return <>{children}</>
 }

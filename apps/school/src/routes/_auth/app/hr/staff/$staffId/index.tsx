@@ -1,34 +1,34 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
-import { Breadcrumbs } from '@/components/layout/breadcrumbs';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Edit, Trash2, User } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
-import { getStaffMember } from '@/school/functions/staff';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { Edit, Trash2, User } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { getStaffMember } from '@/school/functions/staff'
 
 export const Route = createFileRoute('/_auth/app/hr/staff/$staffId/')({
   component: StaffDetailPage,
   loader: async ({ params }) => {
-    return await getStaffMember({ data: params.staffId });
+    return await getStaffMember({ data: params.staffId })
   },
-});
+})
 
 function StaffDetailPage() {
-  const { t } = useTranslation();
-  const { staffId } = Route.useParams();
-  const staffData = Route.useLoaderData();
+  const { t } = useTranslation()
+  const { staffId } = Route.useParams()
+  const staffData = Route.useLoaderData()
 
   const { data: staff } = useSuspenseQuery({
     queryKey: ['staff', staffId],
     queryFn: () => getStaffMember({ data: staffId }),
     initialData: staffData,
-  });
+  })
 
   if (!staff) {
-    return <div>{t('hr.staff.notFound')}</div>;
+    return <div>{t('hr.staff.notFound')}</div>
   }
 
   const getStatusBadge = (status: string) => {
@@ -36,13 +36,13 @@ function StaffDetailPage() {
       active: 'default',
       inactive: 'secondary',
       on_leave: 'outline',
-    };
+    }
     return (
       <Badge variant={variants[status] || 'default'}>
         {t(`hr.status.${status}`)}
       </Badge>
-    );
-  };
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -126,5 +126,5 @@ function StaffDetailPage() {
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }

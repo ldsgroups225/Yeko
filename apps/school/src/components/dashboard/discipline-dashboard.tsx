@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle, Clock } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Clock } from 'lucide-react'
 
 export function DisciplineDashboard() {
   return (
@@ -108,15 +108,15 @@ export function DisciplineDashboard() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 interface MetricCardProps {
-  title: string;
-  value: string;
-  subtitle: string;
-  icon: React.ComponentType<{ className?: string }>;
-  trend: 'positive' | 'negative' | 'neutral';
+  title: string
+  value: string
+  subtitle: string
+  icon: React.ComponentType<{ className?: string }>
+  trend: 'positive' | 'negative' | 'neutral'
 }
 
 function MetricCard({ title, value, subtitle, icon: Icon, trend }: MetricCardProps) {
@@ -124,7 +124,7 @@ function MetricCard({ title, value, subtitle, icon: Icon, trend }: MetricCardPro
     positive: 'text-green-600 dark:text-green-400',
     negative: 'text-red-600 dark:text-red-400',
     neutral: 'text-muted-foreground',
-  };
+  }
 
   return (
     <div className="rounded-lg border border-border/40 bg-card p-6">
@@ -137,14 +137,14 @@ function MetricCard({ title, value, subtitle, icon: Icon, trend }: MetricCardPro
         <p className="text-xs text-muted-foreground">{subtitle}</p>
       </div>
     </div>
-  );
+  )
 }
 
 interface AbsenceItemProps {
-  name: string;
-  class: string;
-  status: 'justified' | 'unjustified' | 'pending';
-  reason: string;
+  name: string
+  class: string
+  status: 'justified' | 'unjustified' | 'pending'
+  reason: string
 }
 
 function AbsenceItem({ name, class: className, status, reason }: AbsenceItemProps) {
@@ -152,7 +152,7 @@ function AbsenceItem({ name, class: className, status, reason }: AbsenceItemProp
     justified: { label: 'Justifiée', color: 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' },
     unjustified: { label: 'Non justifiée', color: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400' },
     pending: { label: 'En attente', color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400' },
-  };
+  }
 
   return (
     <div className="flex items-center justify-between rounded-md border border-border/40 bg-background p-4">
@@ -165,15 +165,15 @@ function AbsenceItem({ name, class: className, status, reason }: AbsenceItemProp
         {statusConfig[status].label}
       </span>
     </div>
-  );
+  )
 }
 
 interface ConductItemProps {
-  name: string;
-  class: string;
-  incident: string;
-  severity: 'minor' | 'moderate' | 'major';
-  date: string;
+  name: string
+  class: string
+  incident: string
+  severity: 'minor' | 'moderate' | 'major'
+  date: string
 }
 
 function ConductItem({ name, class: className, incident, severity, date }: ConductItemProps) {
@@ -181,7 +181,7 @@ function ConductItem({ name, class: className, incident, severity, date }: Condu
     minor: { label: 'Mineur', color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400' },
     moderate: { label: 'Modéré', color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400' },
     major: { label: 'Grave', color: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400' },
-  };
+  }
 
   return (
     <div className="space-y-2 rounded-md border border-border/40 bg-background p-4">
@@ -197,14 +197,14 @@ function ConductItem({ name, class: className, incident, severity, date }: Condu
       <p className="text-sm">{incident}</p>
       <p className="text-xs text-muted-foreground">{date}</p>
     </div>
-  );
+  )
 }
 
 interface LateItemProps {
-  name: string;
-  class: string;
-  count: number;
-  period: string;
+  name: string
+  class: string
+  count: number
+  period: string
 }
 
 function LateItem({ name, class: className, count, period }: LateItemProps) {
@@ -215,9 +215,13 @@ function LateItem({ name, class: className, count, period }: LateItemProps) {
         <p className="text-xs text-muted-foreground">{className}</p>
       </div>
       <div className="text-right">
-        <p className="text-sm font-bold">{count} retards</p>
+        <p className="text-sm font-bold">
+          {count}
+          {' '}
+          retards
+        </p>
         <p className="text-xs text-muted-foreground">{period}</p>
       </div>
     </div>
-  );
+  )
 }

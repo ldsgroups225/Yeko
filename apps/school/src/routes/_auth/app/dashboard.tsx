@@ -1,19 +1,19 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { Breadcrumbs } from '@/components/layout/breadcrumbs';
-import { useRole } from '@/hooks/use-role';
-import { AdminDashboard } from '@/components/dashboard/admin-dashboard';
-import { CoordinatorDashboard } from '@/components/dashboard/coordinator-dashboard';
-import { DisciplineDashboard } from '@/components/dashboard/discipline-dashboard';
-import { AccountantDashboard } from '@/components/dashboard/accountant-dashboard';
-import { CashierDashboard } from '@/components/dashboard/cashier-dashboard';
-import { RegistrarDashboard } from '@/components/dashboard/registrar-dashboard';
+import { createFileRoute } from '@tanstack/react-router'
+import { AccountantDashboard } from '@/components/dashboard/accountant-dashboard'
+import { AdminDashboard } from '@/components/dashboard/admin-dashboard'
+import { CashierDashboard } from '@/components/dashboard/cashier-dashboard'
+import { CoordinatorDashboard } from '@/components/dashboard/coordinator-dashboard'
+import { DisciplineDashboard } from '@/components/dashboard/discipline-dashboard'
+import { RegistrarDashboard } from '@/components/dashboard/registrar-dashboard'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { useRole } from '@/hooks/use-role'
 
 export const Route = createFileRoute('/_auth/app/dashboard')({
   component: DashboardPage,
-});
+})
 
 function DashboardPage() {
-  const { role, isLoading } = useRole();
+  const { role, isLoading } = useRole()
 
   if (isLoading) {
     return (
@@ -23,7 +23,7 @@ function DashboardPage() {
           <p className="mt-4 text-sm text-muted-foreground">Chargement...</p>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -48,5 +48,5 @@ function DashboardPage() {
         </div>
       )}
     </div>
-  );
+  )
 }

@@ -1,31 +1,32 @@
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import type { UserFormData } from '@/schemas/user'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { Loader2 } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { userCreateSchema, type UserFormData } from '@/schemas/user';
-import { createNewUser, updateExistingUser } from '@/school/functions/users';
-import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
-import { Loader2 } from 'lucide-react';
+} from '@/components/ui/select'
+import { userCreateSchema } from '@/schemas/user'
+import { createNewUser, updateExistingUser } from '@/school/functions/users'
 
 interface UserFormProps {
-  user?: any;
-  onSuccess?: () => void;
+  user?: any
+  onSuccess?: () => void
 }
 
 export function UserForm({ user, onSuccess }: UserFormProps) {
-  const { t } = useTranslation();
-  const queryClient = useQueryClient();
-  const isEditing = !!user;
+  const { t } = useTranslation()
+  const queryClient = useQueryClient()
+  const isEditing = !!user
 
   const {
     register,
@@ -37,32 +38,32 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
     resolver: zodResolver(userCreateSchema),
     defaultValues: user
       ? {
-        name: user.name,
-        email: user.email,
-        phone: user.phone || '',
-        avatarUrl: user.avatarUrl || '',
-        status: user.status,
-        roleIds: user.roleIds || [],
-      }
+          name: user.name,
+          email: user.email,
+          phone: user.phone || '',
+          avatarUrl: user.avatarUrl || '',
+          status: user.status,
+          roleIds: user.roleIds || [],
+        }
       : {
-        status: 'active',
-        roleIds: [],
-      },
-  });
+          status: 'active',
+          roleIds: [],
+        },
+  })
 
   const createMutation = useMutation({
     mutationFn: async (data: UserFormData) => {
-      return await createNewUser({ data });
+      return await createNewUser({ data })
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
-      toast.success(t('hr.users.createSuccess'));
-      onSuccess?.();
+      queryClient.invalidateQueries({ queryKey: ['users'] })
+      toast.success(t('hr.users.createSuccess'))
+      onSuccess?.()
     },
     onError: (error: Error) => {
-      toast.error(error.message || t('errors.generic'));
+      toast.error(error.message || t('errors.generic'))
     },
-  });
+  })
 
   const updateMutation = useMutation({
     mutationFn: async (data: UserFormData) => {
@@ -71,28 +72,29 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
           userId: user.id,
           data,
         },
-      });
+      })
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
-      queryClient.invalidateQueries({ queryKey: ['user', user.id] });
-      toast.success(t('hr.users.updateSuccess'));
-      onSuccess?.();
+      queryClient.invalidateQueries({ queryKey: ['users'] })
+      queryClient.invalidateQueries({ queryKey: ['user', user.id] })
+      toast.success(t('hr.users.updateSuccess'))
+      onSuccess?.()
     },
     onError: (error: Error) => {
-      toast.error(error.message || t('errors.generic'));
+      toast.error(error.message || t('errors.generic'))
     },
-  });
+  })
 
   const onSubmit = (data: UserFormData) => {
     if (isEditing) {
-      updateMutation.mutate(data);
-    } else {
-      createMutation.mutate(data);
+      updateMutation.mutate(data)
     }
-  };
+    else {
+      createMutation.mutate(data)
+    }
+  }
 
-  const isLoading = createMutation.isPending || updateMutation.isPending;
+  const isLoading = createMutation.isPending || updateMutation.isPending
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -101,7 +103,9 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
         <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="name">
-              {t('hr.common.name')} <span className="text-destructive">*</span>
+              {t('hr.common.name')}
+              {' '}
+              <span className="text-destructive">*</span>
             </Label>
             <Input
               id="name"
@@ -116,7 +120,9 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
 
           <div className="space-y-2">
             <Label htmlFor="email">
-              {t('hr.common.email')} <span className="text-destructive">*</span>
+              {t('hr.common.email')}
+              {' '}
+              <span className="text-destructive">*</span>
             </Label>
             <Input
               id="email"
@@ -143,11 +149,13 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
 
           <div className="space-y-2">
             <Label htmlFor="status">
-              {t('hr.common.status')} <span className="text-destructive">*</span>
+              {t('hr.common.status')}
+              {' '}
+              <span className="text-destructive">*</span>
             </Label>
             <Select
               value={watch('status')}
-              onValueChange={(value) => setValue('status', value as any)}
+              onValueChange={value => setValue('status', value as any)}
             >
               <SelectTrigger>
                 <SelectValue />
@@ -201,5 +209,5 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
         </Button>
       </div>
     </form>
-  );
+  )
 }

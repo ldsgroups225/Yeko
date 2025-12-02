@@ -1,27 +1,28 @@
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import type { StaffFormData } from '@/schemas/staff'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Loader2 } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { staffSchema, staffPositions, type StaffFormData } from '@/schemas/staff';
-import { useTranslation } from 'react-i18next';
-import { Loader2 } from 'lucide-react';
+} from '@/components/ui/select'
+import { staffPositions, staffSchema } from '@/schemas/staff'
 
 interface StaffFormProps {
-  initialData?: any;
-  onSubmit: (data: StaffFormData) => Promise<void>;
+  initialData?: any
+  onSubmit: (data: StaffFormData) => Promise<void>
 }
 
 export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
-  const { t } = useTranslation();
-  const isEditing = !!initialData;
+  const { t } = useTranslation()
+  const isEditing = !!initialData
 
   const {
     register,
@@ -33,27 +34,27 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
     resolver: zodResolver(staffSchema),
     defaultValues: initialData
       ? {
-        userId: initialData.userId,
-        position: initialData.position,
-        department: initialData.department || '',
-        hireDate: initialData.hireDate
-          ? new Date(initialData.hireDate).toISOString().split('T')[0]
-          : '',
-        status: initialData.status,
-      }
+          userId: initialData.userId,
+          position: initialData.position,
+          department: initialData.department || '',
+          hireDate: initialData.hireDate
+            ? new Date(initialData.hireDate).toISOString().split('T')[0]
+            : '',
+          status: initialData.status,
+        }
       : {
-        status: 'active',
-      },
-  });
+          status: 'active',
+        },
+  })
 
   const handleFormSubmit = async (data: any) => {
     // Convert date string to Date object if present
     const formData = {
       ...data,
       hireDate: data.hireDate ? new Date(data.hireDate) : null,
-    };
-    await onSubmit(formData);
-  };
+    }
+    await onSubmit(formData)
+  }
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
@@ -63,7 +64,9 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
           {!isEditing && (
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="userId">
-                {t('hr.staff.selectUser')} <span className="text-destructive">*</span>
+                {t('hr.staff.selectUser')}
+                {' '}
+                <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="userId"
@@ -82,17 +85,19 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
 
           <div className="space-y-2">
             <Label htmlFor="position">
-              {t('hr.staff.position')} <span className="text-destructive">*</span>
+              {t('hr.staff.position')}
+              {' '}
+              <span className="text-destructive">*</span>
             </Label>
             <Select
               value={watch('position')}
-              onValueChange={(value) => setValue('position', value as any)}
+              onValueChange={value => setValue('position', value as any)}
             >
               <SelectTrigger>
                 <SelectValue placeholder={t('hr.staff.selectPosition')} />
               </SelectTrigger>
               <SelectContent>
-                {staffPositions.map((position) => (
+                {staffPositions.map(position => (
                   <SelectItem key={position} value={position}>
                     {t(`hr.positions.${position}`)}
                   </SelectItem>
@@ -125,11 +130,13 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
 
           <div className="space-y-2">
             <Label htmlFor="status">
-              {t('hr.common.status')} <span className="text-destructive">*</span>
+              {t('hr.common.status')}
+              {' '}
+              <span className="text-destructive">*</span>
             </Label>
             <Select
               value={watch('status')}
-              onValueChange={(value) => setValue('status', value as any)}
+              onValueChange={value => setValue('status', value as any)}
             >
               <SelectTrigger>
                 <SelectValue />
@@ -157,5 +164,5 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
         </Button>
       </div>
     </form>
-  );
+  )
 }

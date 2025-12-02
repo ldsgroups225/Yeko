@@ -1,25 +1,16 @@
-import { Link } from '@tanstack/react-router';
-import { X } from 'lucide-react';
-import {
-  LayoutDashboard,
-  Users,
-  GraduationCap,
-  BookOpen,
-  ClipboardCheck,
-  DollarSign,
-  Settings,
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Link } from '@tanstack/react-router'
+import { BookOpen, ClipboardCheck, DollarSign, GraduationCap, LayoutDashboard, Settings, Users, X } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface MobileSidebarProps {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen: boolean
+  onClose: () => void
 }
 
 interface NavItem {
-  title: string;
-  href: string;
-  icon: React.ComponentType<{ className?: string }>;
+  title: string
+  href: string
+  icon: React.ComponentType<{ className?: string }>
 }
 
 const navigationItems: NavItem[] = [
@@ -63,10 +54,11 @@ const navigationItems: NavItem[] = [
     href: '/app/settings',
     icon: Settings,
   },
-];
+]
 
 export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
-  if (!isOpen) return null;
+  if (!isOpen)
+    return null
 
   return (
     <>
@@ -74,6 +66,13 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
       <div
         className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm lg:hidden"
         onClick={onClose}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape')
+            onClose()
+        }}
+        role="button"
+        tabIndex={0}
+        aria-label="Close sidebar"
       />
 
       {/* Sidebar */}
@@ -105,7 +104,7 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
           <div className="flex-1 overflow-auto py-4">
             <nav className="grid gap-1 px-2">
               {navigationItems.map((item) => {
-                const Icon = item.icon;
+                const Icon = item.icon
                 return (
                   <Link
                     key={item.href}
@@ -120,12 +119,12 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                     <Icon className="h-4 w-4" />
                     <span>{item.title}</span>
                   </Link>
-                );
+                )
               })}
             </nav>
           </div>
         </div>
       </aside>
     </>
-  );
+  )
 }

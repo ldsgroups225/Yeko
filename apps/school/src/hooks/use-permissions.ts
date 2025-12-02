@@ -1,18 +1,18 @@
-import { useQuery } from '@tanstack/react-query';
-import { getUserPermissions } from '@/school/functions/permissions';
+import { useQuery } from '@tanstack/react-query'
+import { getUserPermissions } from '@/school/functions/permissions'
 
-export type Permissions = Record<string, string[]>;
+export type Permissions = Record<string, string[]>
 
 /**
  * Hook to access user permissions for the current school context
- * 
+ *
  * @example
  * ```tsx
  * function UserManagement() {
  *   const { can, canAny, canAll, isLoading } = usePermissions();
- * 
+ *
  *   if (isLoading) return <Spinner />;
- * 
+ *
  *   return (
  *     <div>
  *       {can('view', 'users') && <UsersList />}
@@ -30,7 +30,7 @@ export function usePermissions() {
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 30 * 60 * 1000, // 30 minutes
     refetchOnWindowFocus: false,
-  });
+  })
 
   /**
    * Check if user has a specific permission
@@ -39,9 +39,10 @@ export function usePermissions() {
    * @returns true if user has the permission, false otherwise
    */
   const can = (action: string, resource: string): boolean => {
-    if (!permissions) return false;
-    return permissions[resource]?.includes(action) ?? false;
-  };
+    if (!permissions)
+      return false
+    return permissions[resource]?.includes(action) ?? false
+  }
 
   /**
    * Check if user has ANY of the specified permissions
@@ -50,8 +51,8 @@ export function usePermissions() {
    * @returns true if user has at least one of the permissions
    */
   const canAny = (actions: string[], resource: string): boolean => {
-    return actions.some(action => can(action, resource));
-  };
+    return actions.some(action => can(action, resource))
+  }
 
   /**
    * Check if user has ALL of the specified permissions
@@ -60,8 +61,8 @@ export function usePermissions() {
    * @returns true if user has all of the permissions
    */
   const canAll = (actions: string[], resource: string): boolean => {
-    return actions.every(action => can(action, resource));
-  };
+    return actions.every(action => can(action, resource))
+  }
 
   return {
     permissions: permissions ?? {},
@@ -70,5 +71,5 @@ export function usePermissions() {
     canAll,
     isLoading,
     error,
-  };
+  }
 }

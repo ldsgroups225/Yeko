@@ -1,18 +1,18 @@
 /**
  * i18n Usage Examples
- * 
+ *
  * This file demonstrates how to use translations in Yeko School.
  * These examples can be used as reference when implementing features.
  */
 
-import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next'
+import { Button } from '@/components/ui/button'
 
 /**
  * Example 1: Basic translation usage
  */
 export function BasicTranslationExample() {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   return (
     <div className="space-y-4">
@@ -25,14 +25,14 @@ export function BasicTranslationExample() {
         <Button variant="destructive">{t('common.delete')}</Button>
       </div>
     </div>
-  );
+  )
 }
 
 /**
  * Example 2: Navigation with translations
  */
 export function NavigationExample() {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   const navItems = [
     { key: 'dashboard', icon: '📊' },
@@ -40,11 +40,11 @@ export function NavigationExample() {
     { key: 'students', icon: '🎓' },
     { key: 'teachers', icon: '👨‍🏫' },
     { key: 'finance', icon: '💰' },
-  ];
+  ]
 
   return (
     <nav className="space-y-2">
-      {navItems.map((item) => (
+      {navItems.map(item => (
         <a
           key={item.key}
           href={`/app/${item.key}`}
@@ -55,14 +55,14 @@ export function NavigationExample() {
         </a>
       ))}
     </nav>
-  );
+  )
 }
 
 /**
  * Example 3: Form with translated labels and validation
  */
 export function FormExample() {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   return (
     <form className="space-y-4">
@@ -110,20 +110,20 @@ export function FormExample() {
         <Button type="button" variant="outline">{t('common.cancel')}</Button>
       </div>
     </form>
-  );
+  )
 }
 
 /**
  * Example 4: Dashboard with translated metrics
  */
 export function DashboardExample() {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   const metrics = [
     { key: 'students', value: 320, icon: '🎓' },
     { key: 'teachers', value: 45, icon: '👨‍🏫' },
     { key: 'classes', value: 18, icon: '🏫' },
-  ];
+  ]
 
   return (
     <div>
@@ -132,7 +132,7 @@ export function DashboardExample() {
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {metrics.map((metric) => (
+        {metrics.map(metric => (
           <div key={metric.key} className="p-4 border rounded-lg">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-2xl">{metric.icon}</span>
@@ -156,22 +156,22 @@ export function DashboardExample() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 /**
  * Example 5: Status badges with translations
  */
 export function StatusBadgesExample() {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
-  const statuses = ['active', 'inactive', 'pending', 'validated', 'rejected'];
+  const statuses = ['active', 'inactive', 'pending', 'validated', 'rejected']
 
   return (
     <div className="space-y-4">
       <h3 className="font-semibold">{t('common.status')}</h3>
       <div className="flex flex-wrap gap-2">
-        {statuses.map((status) => (
+        {statuses.map(status => (
           <span
             key={status}
             className="px-3 py-1 rounded-full text-sm font-medium bg-accent"
@@ -181,14 +181,14 @@ export function StatusBadgesExample() {
         ))}
       </div>
     </div>
-  );
+  )
 }
 
 /**
  * Example 6: Error messages with translations
  */
 export function ErrorMessagesExample() {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   const errors = [
     'generic',
@@ -197,12 +197,12 @@ export function ErrorMessagesExample() {
     'forbidden',
     'serverError',
     'networkError',
-  ];
+  ]
 
   return (
     <div className="space-y-2">
       <h3 className="font-semibold">{t('common.error')}</h3>
-      {errors.map((error) => (
+      {errors.map(error => (
         <div
           key={error}
           className="p-3 border border-destructive rounded bg-destructive/10"
@@ -213,28 +213,28 @@ export function ErrorMessagesExample() {
         </div>
       ))}
     </div>
-  );
+  )
 }
 
 /**
  * Example 7: Interpolation with variables
  */
 export function InterpolationExample() {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   return (
     <div className="space-y-2">
       <p>{t('validation.minLength', { min: 8 })}</p>
       <p>{t('validation.maxLength', { max: 255 })}</p>
     </div>
-  );
+  )
 }
 
 /**
  * Example 8: Role-based dashboard titles
  */
 export function RoleDashboardExample() {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   const roles = [
     'school_administrator',
@@ -243,11 +243,11 @@ export function RoleDashboardExample() {
     'accountant',
     'cashier',
     'registrar',
-  ];
+  ]
 
   return (
     <div className="space-y-4">
-      {roles.map((role) => (
+      {roles.map(role => (
         <div key={role} className="p-4 border rounded-lg">
           <h3 className="font-semibold mb-2">{t(`roles.${role}`)}</h3>
           <p className="text-sm text-muted-foreground">
@@ -256,43 +256,45 @@ export function RoleDashboardExample() {
         </div>
       ))}
     </div>
-  );
+  )
 }
 
 /**
  * Example 9: Language-aware date formatting
  */
 export function DateFormattingExample() {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation()
 
-  const date = new Date();
+  const date = new Date()
   const formattedDate = new Intl.DateTimeFormat(i18n.language, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-  }).format(date);
+  }).format(date)
 
   return (
     <div>
       <p className="text-sm text-muted-foreground">{t('common.date')}</p>
       <p className="font-semibold">{formattedDate}</p>
     </div>
-  );
+  )
 }
 
 /**
  * Example 10: Conditional rendering based on language
  */
 export function LanguageConditionalExample() {
-  const { i18n } = useTranslation();
+  const { i18n } = useTranslation()
 
   return (
     <div>
-      {i18n.language === 'fr' ? (
-        <p>Contenu spécifique au français</p>
-      ) : (
-        <p>English-specific content</p>
-      )}
+      {i18n.language === 'fr'
+        ? (
+            <p>Contenu spécifique au français</p>
+          )
+        : (
+            <p>English-specific content</p>
+          )}
     </div>
-  );
+  )
 }

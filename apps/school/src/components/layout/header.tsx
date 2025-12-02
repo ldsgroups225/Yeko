@@ -1,11 +1,11 @@
 import { Bell, Menu } from 'lucide-react'
-import { SchoolSwitcher } from '@/components/school/school-switcher'
-import { LanguageSwitcher } from '@/components/layout/language-switcher'
 import { AccountMenu } from '@/components/auth/account-menu'
+import { LanguageSwitcher } from '@/components/layout/language-switcher'
+import { SchoolSwitcher } from '@/components/school/school-switcher'
 import { cn } from '@/lib/utils'
 
 interface HeaderProps {
-  onMenuClick?: () => void;
+  onMenuClick?: () => void
 }
 
 export function Header({ onMenuClick }: HeaderProps) {
@@ -66,5 +66,5 @@ export function Header({ onMenuClick }: HeaderProps) {
         <AccountMenu />
       </div>
     </header>
-  );
+  )
 }

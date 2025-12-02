@@ -1,16 +1,28 @@
-import { useState, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import type { ColumnDef } from '@tanstack/react-table'
+import { useQuery } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
 import {
-  useReactTable,
-  getCoreRowModel,
+
   flexRender,
-  type ColumnDef,
-} from '@tanstack/react-table';
-import { useNavigate } from '@tanstack/react-router';
-import { useTranslation } from 'react-i18next';
-import { getStaffList } from '@/school/functions/staff';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+  getCoreRowModel,
+  useReactTable,
+} from '@tanstack/react-table'
+import { format } from 'date-fns'
+import { Briefcase, Edit, Eye, MoreHorizontal, Search, Trash2 } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { EmptyState } from '@/components/hr/empty-state'
+import { TableSkeleton } from '@/components/hr/table-skeleton'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input'
 import {
   Table,
   TableBody,
@@ -18,46 +30,36 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Badge } from '@/components/ui/badge';
-import { MoreHorizontal, Eye, Edit, Trash2, Search, Briefcase } from 'lucide-react';
-import { useDebounce } from '@/hooks/use-debounce';
-import { format } from 'date-fns';
-import { TableSkeleton } from '@/components/hr/table-skeleton';
-import { EmptyState } from '@/components/hr/empty-state';
+} from '@/components/ui/table'
+import { useDebounce } from '@/hooks/use-debounce'
+import { getStaffList } from '@/school/functions/staff'
 
 interface StaffMember {
-  id: string;
+  id: string
   user: {
-    name: string;
-    email: string;
-  };
-  position: string;
-  department: string | null;
-  status: 'active' | 'inactive' | 'on_leave';
-  hireDate: Date | null;
+    name: string
+    email: string
+  }
+  position: string
+  department: string | null
+  status: 'active' | 'inactive' | 'on_leave'
+  hireDate: Date | null
 }
 
 interface StaffTableProps {
   filters: {
-    page?: number;
-    search?: string;
-    position?: string;
-    status?: 'active' | 'inactive' | 'on_leave';
-  };
+    page?: number
+    search?: string
+    position?: string
+    status?: 'active' | 'inactive' | 'on_leave'
+  }
 }
 
 export function StaffTable({ filters }: StaffTableProps) {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const [searchInput, setSearchInput] = useState(filters.search || '');
-  const debouncedSearch = useDebounce(searchInput, 500);
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  const [searchInput, setSearchInput] = useState(filters.search || '')
+  const debouncedSearch = useDebounce(searchInput, 500)
 
   const { data, isLoading } = useQuery({
     queryKey: ['staff', { ...filters, search: debouncedSearch }],
@@ -74,10 +76,10 @@ export function StaffTable({ filters }: StaffTableProps) {
             limit: 20,
           },
         },
-      });
-      return result;
+      })
+      return result
     },
-  });
+  })
 
   const columns = useMemo<ColumnDef<StaffMember>[]>(
     () => [
@@ -107,17 +109,17 @@ export function StaffTable({ filters }: StaffTableProps) {
         accessorKey: 'status',
         header: t('hr.staff.status'),
         cell: ({ row }) => {
-          const status = row.original.status;
+          const status = row.original.status
           const variants = {
             active: 'default',
             inactive: 'secondary',
             on_leave: 'outline',
-          } as const;
+          } as const
           return (
             <Badge variant={variants[status]}>
               {t(`hr.status.${status}`)}
             </Badge>
-          );
+          )
         },
       },
       {
@@ -146,8 +148,7 @@ export function StaffTable({ filters }: StaffTableProps) {
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() =>
-                  navigate({ to: `/app/hr/staff/${row.original.id}/edit` })
-                }
+                  navigate({ to: `/app/hr/staff/${row.original.id}/edit` })}
               >
                 <Edit className="mr-2 h-4 w-4" />
                 {t('common.edit')}
@@ -161,8 +162,8 @@ export function StaffTable({ filters }: StaffTableProps) {
         ),
       },
     ],
-    [t, navigate]
-  );
+    [t, navigate],
+  )
 
   const table = useReactTable({
     data: data?.staff || [],
@@ -170,14 +171,14 @@ export function StaffTable({ filters }: StaffTableProps) {
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
     pageCount: data?.totalPages || 0,
-  });
+  })
 
   if (isLoading) {
-    return <TableSkeleton columns={7} rows={5} />;
+    return <TableSkeleton columns={7} rows={5} />
   }
 
-  const hasNoData = !data?.staff || data.staff.length === 0;
-  const hasNoResults = hasNoData && (debouncedSearch || filters.position || filters.status);
+  const hasNoData = !data?.staff || data.staff.length === 0
+  const hasNoResults = hasNoData && (debouncedSearch || filters.position || filters.status)
 
   return (
     <div className="space-y-4">
@@ -189,8 +190,7 @@ export function StaffTable({ filters }: StaffTableProps) {
             placeholder={t('hr.staff.searchPlaceholder')}
             value={searchInput}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setSearchInput(e.target.value)
-            }
+              setSearchInput(e.target.value)}
             className="pl-9"
           />
         </div>
@@ -223,25 +223,25 @@ export function StaffTable({ filters }: StaffTableProps) {
         <div className="rounded-md border">
           <Table>
             <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
+              {table.getHeaderGroups().map(headerGroup => (
                 <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
+                  {headerGroup.headers.map(header => (
                     <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
               ))}
             </TableHeader>
             <TableBody>
-              {table.getRowModel().rows.map((row) => (
+              {table.getRowModel().rows.map(row => (
                 <TableRow key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
+                  {row.getVisibleCells().map(cell => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
@@ -257,8 +257,17 @@ export function StaffTable({ filters }: StaffTableProps) {
       {!hasNoData && data && data.totalPages > 1 && (
         <div className="flex items-center justify-between">
           <div className="text-sm text-muted-foreground">
-            {t('common.showing')} {(data.page - 1) * data.limit + 1} -{' '}
-            {Math.min(data.page * data.limit, data.total)} {t('common.of')} {data.total}
+            {t('common.showing')}
+            {' '}
+            {(data.page - 1) * data.limit + 1}
+            {' '}
+            -
+            {' '}
+            {Math.min(data.page * data.limit, data.total)}
+            {' '}
+            {t('common.of')}
+            {' '}
+            {data.total}
           </div>
           <div className="flex gap-2">
             <Button
@@ -268,8 +277,7 @@ export function StaffTable({ filters }: StaffTableProps) {
                 navigate({
                   to: '/app/hr/staff',
                   search: { ...filters, page: data.page - 1 },
-                })
-              }
+                })}
               disabled={data.page === 1}
             >
               {t('common.previous')}
@@ -281,8 +289,7 @@ export function StaffTable({ filters }: StaffTableProps) {
                 navigate({
                   to: '/app/hr/staff',
                   search: { ...filters, page: data.page + 1 },
-                })
-              }
+                })}
               disabled={data.page === data.totalPages}
             >
               {t('common.next')}
@@ -291,5 +298,5 @@ export function StaffTable({ filters }: StaffTableProps) {
         </div>
       )}
     </div>
-  );
+  )
 }

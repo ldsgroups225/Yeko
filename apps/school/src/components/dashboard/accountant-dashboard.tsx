@@ -1,4 +1,4 @@
-import { DollarSign, TrendingUp, AlertCircle, CheckCircle } from 'lucide-react';
+import { AlertCircle, CheckCircle, DollarSign, TrendingUp } from 'lucide-react'
 
 export function AccountantDashboard() {
   return (
@@ -93,15 +93,15 @@ export function AccountantDashboard() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 interface MetricCardProps {
-  title: string;
-  value: string;
-  currency: string;
-  icon: React.ComponentType<{ className?: string }>;
-  trend: 'positive' | 'negative' | 'neutral';
+  title: string
+  value: string
+  currency: string
+  icon: React.ComponentType<{ className?: string }>
+  trend: 'positive' | 'negative' | 'neutral'
 }
 
 function MetricCard({ title, value, currency, icon: Icon, trend }: MetricCardProps) {
@@ -109,7 +109,7 @@ function MetricCard({ title, value, currency, icon: Icon, trend }: MetricCardPro
     positive: 'text-green-600 dark:text-green-400',
     negative: 'text-red-600 dark:text-red-400',
     neutral: 'text-muted-foreground',
-  };
+  }
 
   return (
     <div className="rounded-lg border border-border/40 bg-card p-6">
@@ -122,14 +122,14 @@ function MetricCard({ title, value, currency, icon: Icon, trend }: MetricCardPro
         <p className="text-xs text-muted-foreground">{currency}</p>
       </div>
     </div>
-  );
+  )
 }
 
 interface TransactionItemProps {
-  type: 'income' | 'expense';
-  description: string;
-  amount: string;
-  date: string;
+  type: 'income' | 'expense'
+  description: string
+  amount: string
+  date: string
 }
 
 function TransactionItem({ type, description, amount, date }: TransactionItemProps) {
@@ -141,21 +141,24 @@ function TransactionItem({ type, description, amount, date }: TransactionItemPro
       </div>
       <p
         className={`text-sm font-bold ${type === 'income'
-            ? 'text-green-600 dark:text-green-400'
-            : 'text-red-600 dark:text-red-400'
-          }`}
+          ? 'text-green-600 dark:text-green-400'
+          : 'text-red-600 dark:text-red-400'
+        }`}
       >
-        {type === 'income' ? '+' : '-'}{amount} FCFA
+        {type === 'income' ? '+' : '-'}
+        {amount}
+        {' '}
+        FCFA
       </p>
     </div>
-  );
+  )
 }
 
 interface PendingPaymentItemProps {
-  name: string;
-  class: string;
-  amount: string;
-  daysLate: number;
+  name: string
+  class: string
+  amount: string
+  daysLate: number
 }
 
 function PendingPaymentItem({ name, class: className, amount, daysLate }: PendingPaymentItemProps) {
@@ -164,9 +167,18 @@ function PendingPaymentItem({ name, class: className, amount, daysLate }: Pendin
       <div className="space-y-1">
         <p className="text-sm font-medium">{name}</p>
         <p className="text-xs text-muted-foreground">{className}</p>
-        <p className="text-xs text-red-600 dark:text-red-400">Retard: {daysLate} jours</p>
+        <p className="text-xs text-red-600 dark:text-red-400">
+          Retard:
+          {daysLate}
+          {' '}
+          jours
+        </p>
       </div>
-      <p className="text-sm font-bold">{amount} FCFA</p>
+      <p className="text-sm font-bold">
+        {amount}
+        {' '}
+        FCFA
+      </p>
     </div>
-  );
+  )
 }

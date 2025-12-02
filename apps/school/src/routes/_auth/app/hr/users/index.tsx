@@ -1,26 +1,26 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { z } from 'zod';
-import { Breadcrumbs } from '@/components/layout/breadcrumbs';
-import { UsersTable } from '@/components/hr/users/users-table';
-import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+import { createFileRoute } from '@tanstack/react-router'
+import { Plus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { z } from 'zod'
+import { UsersTable } from '@/components/hr/users/users-table'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { Button } from '@/components/ui/button'
 
 const usersSearchSchema = z.object({
   page: z.number().min(1).catch(1),
   search: z.string().optional(),
   roleId: z.string().optional(),
   status: z.enum(['active', 'inactive', 'suspended']).optional(),
-});
+})
 
 export const Route = createFileRoute('/_auth/app/hr/users/')({
   component: UsersListPage,
   validateSearch: usersSearchSchema,
-});
+})
 
 function UsersListPage() {
-  const { t } = useTranslation();
-  const search = Route.useSearch();
+  const { t } = useTranslation()
+  const search = Route.useSearch()
 
   return (
     <div className="space-y-6">
@@ -46,5 +46,5 @@ function UsersListPage() {
 
       <UsersTable filters={search} />
     </div>
-  );
+  )
 }

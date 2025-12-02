@@ -1,37 +1,37 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
-import { useQuery } from '@tanstack/react-query';
-import { Breadcrumbs } from '@/components/layout/breadcrumbs';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { getUser, getUserActivity } from '@/school/functions/users';
-import { Edit, Trash2, Mail, Phone, Calendar } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
-import { format } from 'date-fns';
+import { useQuery } from '@tanstack/react-query'
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { format } from 'date-fns'
+import { Calendar, Edit, Mail, Phone, Trash2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { getUser, getUserActivity } from '@/school/functions/users'
 
 export const Route = createFileRoute('/_auth/app/hr/users/$userId/')({
   component: UserDetailsPage,
-});
+})
 
 function UserDetailsPage() {
-  const { userId } = Route.useParams();
-  const { t } = useTranslation();
+  const { userId } = Route.useParams()
+  const { t } = useTranslation()
 
   const { data: user, isLoading } = useQuery({
     queryKey: ['user', userId],
     queryFn: async () => {
-      const result = await getUser({ data: userId });
-      return result;
+      const result = await getUser({ data: userId })
+      return result
     },
-  });
+  })
 
   const { data: activity } = useQuery({
     queryKey: ['user-activity', userId],
     queryFn: async () => {
-      const result = await getUserActivity({ data: { userId, limit: 20 } });
-      return result;
+      const result = await getUserActivity({ data: { userId, limit: 20 } })
+      return result
     },
-  });
+  })
 
   if (isLoading) {
     return (
@@ -41,7 +41,7 @@ function UserDetailsPage() {
           <p className="mt-4 text-sm text-muted-foreground">{t('common.loading')}</p>
         </div>
       </div>
-    );
+    )
   }
 
   if (!user) {
@@ -56,7 +56,7 @@ function UserDetailsPage() {
           </Button>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -151,18 +151,20 @@ function UserDetailsPage() {
           <div className="rounded-lg border bg-card p-6">
             <h2 className="mb-4 text-lg font-semibold">{t('hr.users.assignedRoles')}</h2>
             <div className="space-y-3">
-              {user.roles && user.roles.length > 0 ? (
-                user.roles.map((role: string) => (
-                  <div key={role} className="flex items-center justify-between rounded-md border p-3">
-                    <div>
-                      <p className="font-medium">{role}</p>
-                    </div>
-                    <Badge variant="secondary">{t('hr.roles.systemRole')}</Badge>
-                  </div>
-                ))
-              ) : (
-                <p className="text-sm text-muted-foreground">{t('hr.users.noRoles')}</p>
-              )}
+              {user.roles && user.roles.length > 0
+                ? (
+                    user.roles.map((role: string) => (
+                      <div key={role} className="flex items-center justify-between rounded-md border p-3">
+                        <div>
+                          <p className="font-medium">{role}</p>
+                        </div>
+                        <Badge variant="secondary">{t('hr.roles.systemRole')}</Badge>
+                      </div>
+                    ))
+                  )
+                : (
+                    <p className="text-sm text-muted-foreground">{t('hr.users.noRoles')}</p>
+                  )}
             </div>
           </div>
         </TabsContent>
@@ -171,25 +173,27 @@ function UserDetailsPage() {
           <div className="rounded-lg border bg-card p-6">
             <h2 className="mb-4 text-lg font-semibold">{t('hr.users.recentActivity')}</h2>
             <div className="space-y-3">
-              {activity && activity.length > 0 ? (
-                activity.map((log: any) => (
-                  <div key={log.id} className="flex gap-3 border-b pb-3 last:border-0">
-                    <div className="mt-1 flex h-2 w-2 shrink-0 rounded-full bg-primary" />
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">{log.action}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {format(new Date(log.createdAt), 'dd/MM/yyyy HH:mm')}
-                      </p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p className="text-sm text-muted-foreground">{t('hr.users.noActivity')}</p>
-              )}
+              {activity && activity.length > 0
+                ? (
+                    activity.map((log: any) => (
+                      <div key={log.id} className="flex gap-3 border-b pb-3 last:border-0">
+                        <div className="mt-1 flex h-2 w-2 shrink-0 rounded-full bg-primary" />
+                        <div className="flex-1">
+                          <p className="text-sm font-medium">{log.action}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {format(new Date(log.createdAt), 'dd/MM/yyyy HH:mm')}
+                          </p>
+                        </div>
+                      </div>
+                    ))
+                  )
+                : (
+                    <p className="text-sm text-muted-foreground">{t('hr.users.noActivity')}</p>
+                  )}
             </div>
           </div>
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }

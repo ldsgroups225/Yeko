@@ -1,31 +1,32 @@
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import type { TeacherFormData } from '@/schemas/teacher'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { Loader2 } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { teacherCreateSchema, type TeacherFormData } from '@/schemas/teacher';
-import { createNewTeacher, updateExistingTeacher } from '@/school/functions/teachers';
-import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
-import { Loader2 } from 'lucide-react';
+} from '@/components/ui/select'
+import { teacherCreateSchema } from '@/schemas/teacher'
+import { createNewTeacher, updateExistingTeacher } from '@/school/functions/teachers'
 
 interface TeacherFormProps {
-  teacher?: any;
-  onSuccess?: () => void;
+  teacher?: any
+  onSuccess?: () => void
 }
 
 export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
-  const { t } = useTranslation();
-  const queryClient = useQueryClient();
-  const isEditing = !!teacher;
+  const { t } = useTranslation()
+  const queryClient = useQueryClient()
+  const isEditing = !!teacher
 
   const {
     register,
@@ -37,33 +38,33 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
     resolver: zodResolver(teacherCreateSchema),
     defaultValues: teacher
       ? {
-        userId: teacher.userId,
-        specialization: teacher.specialization || '',
-        hireDate: teacher.hireDate
-          ? new Date(teacher.hireDate).toISOString().split('T')[0]
-          : '',
-        status: teacher.status,
-        subjectIds: teacher.subjectIds || [],
-      }
+          userId: teacher.userId,
+          specialization: teacher.specialization || '',
+          hireDate: teacher.hireDate
+            ? new Date(teacher.hireDate).toISOString().split('T')[0]
+            : '',
+          status: teacher.status,
+          subjectIds: teacher.subjectIds || [],
+        }
       : {
-        status: 'active',
-        subjectIds: [],
-      },
-  });
+          status: 'active',
+          subjectIds: [],
+        },
+  })
 
   const createMutation = useMutation({
     mutationFn: async (data: TeacherFormData) => {
-      return await createNewTeacher({ data });
+      return await createNewTeacher({ data })
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['teachers'] });
-      toast.success(t('hr.teachers.createSuccess'));
-      onSuccess?.();
+      queryClient.invalidateQueries({ queryKey: ['teachers'] })
+      toast.success(t('hr.teachers.createSuccess'))
+      onSuccess?.()
     },
     onError: (error: Error) => {
-      toast.error(error.message || t('errors.generic'));
+      toast.error(error.message || t('errors.generic'))
     },
-  });
+  })
 
   const updateMutation = useMutation({
     mutationFn: async (data: TeacherFormData) => {
@@ -72,34 +73,35 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
           teacherId: teacher.id,
           data,
         },
-      });
+      })
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['teachers'] });
-      queryClient.invalidateQueries({ queryKey: ['teacher', teacher.id] });
-      toast.success(t('hr.teachers.updateSuccess'));
-      onSuccess?.();
+      queryClient.invalidateQueries({ queryKey: ['teachers'] })
+      queryClient.invalidateQueries({ queryKey: ['teacher', teacher.id] })
+      toast.success(t('hr.teachers.updateSuccess'))
+      onSuccess?.()
     },
     onError: (error: Error) => {
-      toast.error(error.message || t('errors.generic'));
+      toast.error(error.message || t('errors.generic'))
     },
-  });
+  })
 
   const onSubmit = (data: any) => {
     // Convert date string to Date object if present
     const formData = {
       ...data,
       hireDate: data.hireDate ? new Date(data.hireDate) : null,
-    };
+    }
 
     if (isEditing) {
-      updateMutation.mutate(formData);
-    } else {
-      createMutation.mutate(formData);
+      updateMutation.mutate(formData)
     }
-  };
+    else {
+      createMutation.mutate(formData)
+    }
+  }
 
-  const isLoading = createMutation.isPending || updateMutation.isPending;
+  const isLoading = createMutation.isPending || updateMutation.isPending
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -109,7 +111,9 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
           {!isEditing && (
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="userId">
-                {t('hr.teachers.selectUser')} <span className="text-destructive">*</span>
+                {t('hr.teachers.selectUser')}
+                {' '}
+                <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="userId"
@@ -147,11 +151,13 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
 
           <div className="space-y-2">
             <Label htmlFor="status">
-              {t('hr.common.status')} <span className="text-destructive">*</span>
+              {t('hr.common.status')}
+              {' '}
+              <span className="text-destructive">*</span>
             </Label>
             <Select
               value={watch('status')}
-              onValueChange={(value) => setValue('status', value as any)}
+              onValueChange={value => setValue('status', value as any)}
             >
               <SelectTrigger>
                 <SelectValue />
@@ -192,5 +198,5 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
         </Button>
       </div>
     </form>
-  );
+  )
 }

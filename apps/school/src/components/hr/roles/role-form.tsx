@@ -1,23 +1,24 @@
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { roleSchema, generateSlug, type RoleFormData } from '@/schemas/role';
-import { PermissionsMatrix } from './permissions-matrix';
-import { useTranslation } from 'react-i18next';
-import { Loader2 } from 'lucide-react';
-import { useEffect } from 'react';
+import type { RoleFormData } from '@/schemas/role'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Loader2 } from 'lucide-react'
+import { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { generateSlug, roleSchema } from '@/schemas/role'
+import { PermissionsMatrix } from './permissions-matrix'
 
 interface RoleFormProps {
-  initialData?: any;
-  onSubmit: (data: RoleFormData) => Promise<void>;
+  initialData?: any
+  onSubmit: (data: RoleFormData) => Promise<void>
 }
 
 export function RoleForm({ initialData, onSubmit }: RoleFormProps) {
-  const { t } = useTranslation();
-  const isEditing = !!initialData;
+  const { t } = useTranslation()
+  const isEditing = !!initialData
 
   const {
     register,
@@ -29,31 +30,31 @@ export function RoleForm({ initialData, onSubmit }: RoleFormProps) {
     resolver: zodResolver(roleSchema),
     defaultValues: initialData
       ? {
-        name: initialData.name,
-        slug: initialData.slug,
-        description: initialData.description || '',
-        permissions: initialData.permissions || {},
-        scope: initialData.scope || 'school',
-      }
+          name: initialData.name,
+          slug: initialData.slug,
+          description: initialData.description || '',
+          permissions: initialData.permissions || {},
+          scope: initialData.scope || 'school',
+        }
       : {
-        permissions: {},
-        scope: 'school',
-      },
-  });
+          permissions: {},
+          scope: 'school',
+        },
+  })
 
-  const name = watch('name');
-  const permissions = watch('permissions');
+  const name = watch('name')
+  const permissions = watch('permissions')
 
   // Auto-generate slug from name (only for new roles)
   useEffect(() => {
     if (!isEditing && name) {
-      setValue('slug', generateSlug(name));
+      setValue('slug', generateSlug(name))
     }
-  }, [name, isEditing, setValue]);
+  }, [name, isEditing, setValue])
 
   const handleFormSubmit = async (data: any) => {
-    await onSubmit(data);
-  };
+    await onSubmit(data)
+  }
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
@@ -62,7 +63,9 @@ export function RoleForm({ initialData, onSubmit }: RoleFormProps) {
         <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="name">
-              {t('hr.roles.name')} <span className="text-destructive">*</span>
+              {t('hr.roles.name')}
+              {' '}
+              <span className="text-destructive">*</span>
             </Label>
             <Input
               id="name"
@@ -77,7 +80,9 @@ export function RoleForm({ initialData, onSubmit }: RoleFormProps) {
 
           <div className="space-y-2">
             <Label htmlFor="slug">
-              {t('hr.roles.slug')} <span className="text-destructive">*</span>
+              {t('hr.roles.slug')}
+              {' '}
+              <span className="text-destructive">*</span>
             </Label>
             <Input
               id="slug"
@@ -116,7 +121,7 @@ export function RoleForm({ initialData, onSubmit }: RoleFormProps) {
         </p>
         <PermissionsMatrix
           value={permissions}
-          onChange={(newPermissions) => setValue('permissions', newPermissions)}
+          onChange={newPermissions => setValue('permissions', newPermissions)}
         />
       </div>
 
@@ -130,5 +135,5 @@ export function RoleForm({ initialData, onSubmit }: RoleFormProps) {
         </Button>
       </div>
     </form>
-  );
+  )
 }

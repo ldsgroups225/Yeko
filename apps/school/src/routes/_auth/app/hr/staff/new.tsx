@@ -1,28 +1,29 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { Breadcrumbs } from '@/components/layout/breadcrumbs';
-import { StaffForm } from '@/components/hr/staff/staff-form';
-import { useTranslation } from 'react-i18next';
-import { createNewStaff } from '@/school/functions/staff';
-import { toast } from 'sonner';
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { StaffForm } from '@/components/hr/staff/staff-form'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { createNewStaff } from '@/school/functions/staff'
 
 export const Route = createFileRoute('/_auth/app/hr/staff/new')({
   component: NewStaffPage,
-});
+})
 
 function NewStaffPage() {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
+  const { t } = useTranslation()
+  const navigate = useNavigate()
 
   const handleSubmit = async (data: any) => {
     try {
-      const result = await createNewStaff({ data });
-      toast.success(t('hr.staff.createSuccess'));
-      navigate({ to: '/app/hr/staff/$staffId', params: { staffId: result.id } });
-    } catch (error) {
-      toast.error(t('hr.staff.createError'));
-      throw error;
+      const result = await createNewStaff({ data })
+      toast.success(t('hr.staff.createSuccess'))
+      navigate({ to: '/app/hr/staff/$staffId', params: { staffId: result.id } })
     }
-  };
+    catch (error) {
+      toast.error(t('hr.staff.createError'))
+      throw error
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -41,5 +42,5 @@ function NewStaffPage() {
 
       <StaffForm onSubmit={handleSubmit} />
     </div>
-  );
+  )
 }

@@ -1,14 +1,14 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { Breadcrumbs } from '@/components/layout/breadcrumbs';
-import { BulkImportUsers } from '@/components/hr/users/bulk-import-users';
-import { useTranslation } from 'react-i18next';
+import { createFileRoute } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
+import { BulkImportUsers } from '@/components/hr/users/bulk-import-users'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 
 export const Route = createFileRoute('/_auth/app/hr/users/import')({
   component: ImportUsersPage,
-});
+})
 
 function ImportUsersPage() {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   return (
     <div className="space-y-6">
@@ -27,5 +27,5 @@ function ImportUsersPage() {
 
       <BulkImportUsers />
     </div>
-  );
+  )
 }

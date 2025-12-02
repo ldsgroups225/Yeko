@@ -1,30 +1,30 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { useQuery } from '@tanstack/react-query';
-import { Breadcrumbs } from '@/components/layout/breadcrumbs';
-import { TeacherForm } from '@/components/hr/teachers/teacher-form';
-import { getTeacher } from '@/school/functions/teachers';
-import { useTranslation } from 'react-i18next';
+import { useQuery } from '@tanstack/react-query'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
+import { TeacherForm } from '@/components/hr/teachers/teacher-form'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { getTeacher } from '@/school/functions/teachers'
 
 export const Route = createFileRoute('/_auth/app/hr/teachers/$teacherId/edit')({
   component: EditTeacherPage,
-});
+})
 
 function EditTeacherPage() {
-  const { teacherId } = Route.useParams();
-  const { t } = useTranslation();
-  const navigate = useNavigate();
+  const { teacherId } = Route.useParams()
+  const { t } = useTranslation()
+  const navigate = useNavigate()
 
   const { data: teacher, isLoading } = useQuery({
     queryKey: ['teacher', teacherId],
     queryFn: async () => {
-      const result = await getTeacher({ data: teacherId });
-      return result;
+      const result = await getTeacher({ data: teacherId })
+      return result
     },
-  });
+  })
 
   const handleSuccess = () => {
-    navigate({ to: `/app/hr/teachers/${teacherId}` });
-  };
+    navigate({ to: `/app/hr/teachers/${teacherId}` })
+  }
 
   if (isLoading) {
     return (
@@ -34,7 +34,7 @@ function EditTeacherPage() {
           <p className="mt-4 text-sm text-muted-foreground">{t('common.loading')}</p>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -58,5 +58,5 @@ function EditTeacherPage() {
 
       {teacher && <TeacherForm teacher={teacher} onSuccess={handleSuccess} />}
     </div>
-  );
+  )
 }

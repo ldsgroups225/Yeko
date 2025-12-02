@@ -1,10 +1,10 @@
 import {
-  Users,
-  GraduationCap,
+  AlertCircle,
   BookOpen,
   DollarSign,
-  AlertCircle,
-} from 'lucide-react';
+  GraduationCap,
+  Users,
+} from 'lucide-react'
 
 export function AdminDashboard() {
   return (
@@ -92,15 +92,15 @@ export function AdminDashboard() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 interface MetricCardProps {
-  title: string;
-  value: string;
-  change: string;
-  trend: 'up' | 'down' | 'neutral';
-  icon: React.ComponentType<{ className?: string }>;
+  title: string
+  value: string
+  change: string
+  trend: 'up' | 'down' | 'neutral'
+  icon: React.ComponentType<{ className?: string }>
 }
 
 function MetricCard({ title, value, change, trend, icon: Icon }: MetricCardProps) {
@@ -118,18 +118,18 @@ function MetricCard({ title, value, change, trend, icon: Icon }: MetricCardProps
             : trend === 'down'
               ? 'text-red-600 dark:text-red-400'
               : 'text-muted-foreground'
-            }`}
+          }`}
         >
           {change}
         </p>
       </div>
     </div>
-  );
+  )
 }
 
 interface QuickActionButtonProps {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
+  icon: React.ComponentType<{ className?: string }>
+  label: string
 }
 
 function QuickActionButton({ icon: Icon, label }: QuickActionButtonProps) {
@@ -141,13 +141,13 @@ function QuickActionButton({ icon: Icon, label }: QuickActionButtonProps) {
       <Icon className="h-4 w-4" />
       <span>{label}</span>
     </button>
-  );
+  )
 }
 
 interface ActivityItemProps {
-  title: string;
-  description: string;
-  time: string;
+  title: string
+  description: string
+  time: string
 }
 
 function ActivityItem({ title, description, time }: ActivityItemProps) {
@@ -160,13 +160,13 @@ function ActivityItem({ title, description, time }: ActivityItemProps) {
         <p className="text-xs text-muted-foreground">{time}</p>
       </div>
     </div>
-  );
+  )
 }
 
 interface AlertItemProps {
-  type: 'warning' | 'info' | 'error';
-  title: string;
-  description: string;
+  type: 'warning' | 'info' | 'error'
+  title: string
+  description: string
 }
 
 function AlertItem({ type, title, description }: AlertItemProps) {
@@ -174,7 +174,7 @@ function AlertItem({ type, title, description }: AlertItemProps) {
     warning: 'text-yellow-600 dark:text-yellow-400',
     info: 'text-blue-600 dark:text-blue-400',
     error: 'text-red-600 dark:text-red-400',
-  };
+  }
 
   return (
     <div className="flex gap-3">
@@ -184,5 +184,5 @@ function AlertItem({ type, title, description }: AlertItemProps) {
         <p className="text-xs text-muted-foreground">{description}</p>
       </div>
     </div>
-  );
+  )
 }

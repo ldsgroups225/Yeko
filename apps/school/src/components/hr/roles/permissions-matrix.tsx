@@ -1,11 +1,11 @@
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
-import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Label } from '@/components/ui/label'
 
 interface PermissionsMatrixProps {
-  value: Record<string, string[]>;
-  onChange: (permissions: Record<string, string[]>) => void;
+  value: Record<string, string[]>
+  onChange: (permissions: Record<string, string[]>) => void
 }
 
 // Define available resources and actions
@@ -19,52 +19,55 @@ const RESOURCES = [
   'finance',
   'reports',
   'settings',
-] as const;
+] as const
 
-const ACTIONS = ['view', 'create', 'edit', 'delete'] as const;
+const ACTIONS = ['view', 'create', 'edit', 'delete'] as const
 
 export function PermissionsMatrix({ value, onChange }: PermissionsMatrixProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   const handleToggle = (resource: string, action: string) => {
-    const currentActions = value[resource] || [];
+    const currentActions = value[resource] || []
     const newActions = currentActions.includes(action)
-      ? currentActions.filter((a) => a !== action)
-      : [...currentActions, action];
+      ? currentActions.filter(a => a !== action)
+      : [...currentActions, action]
 
     if (newActions.length === 0) {
-      const { [resource]: _, ...rest } = value;
-      onChange(rest);
-    } else {
+      const { [resource]: _removed, ...rest } = value
+      onChange(rest)
+    }
+    else {
       onChange({
         ...value,
         [resource]: newActions,
-      });
+      })
     }
-  };
+  }
 
   const handleSelectAll = (resource: string) => {
-    const currentActions = value[resource] || [];
+    const currentActions = value[resource] || []
     if (currentActions.length === ACTIONS.length) {
       // Deselect all
-      const { [resource]: _, ...rest } = value;
-      onChange(rest);
-    } else {
+
+      const { [resource]: _removed, ...rest } = value
+      onChange(rest)
+    }
+    else {
       // Select all
       onChange({
         ...value,
         [resource]: [...ACTIONS],
-      });
+      })
     }
-  };
+  }
 
   const isChecked = (resource: string, action: string) => {
-    return value[resource]?.includes(action) || false;
-  };
+    return value[resource]?.includes(action) || false
+  }
 
   const isAllSelected = (resource: string) => {
-    return value[resource]?.length === ACTIONS.length;
-  };
+    return value[resource]?.length === ACTIONS.length
+  }
 
   return (
     <div className="space-y-4">
@@ -75,7 +78,7 @@ export function PermissionsMatrix({ value, onChange }: PermissionsMatrixProps) {
               <th className="p-3 text-left text-sm font-medium">
                 {t('hr.roles.resource')}
               </th>
-              {ACTIONS.map((action) => (
+              {ACTIONS.map(action => (
                 <th key={action} className="p-3 text-center text-sm font-medium">
                   {t(`hr.actions.${action}`)}
                 </th>
@@ -86,14 +89,14 @@ export function PermissionsMatrix({ value, onChange }: PermissionsMatrixProps) {
             </tr>
           </thead>
           <tbody>
-            {RESOURCES.map((resource) => (
+            {RESOURCES.map(resource => (
               <tr key={resource} className="border-b hover:bg-muted/50">
                 <td className="p-3">
                   <Label className="font-medium">
                     {t(`hr.resources.${resource}`)}
                   </Label>
                 </td>
-                {ACTIONS.map((action) => (
+                {ACTIONS.map(action => (
                   <td key={action} className="p-3 text-center">
                     <Checkbox
                       checked={isChecked(resource, action)}
@@ -125,10 +128,10 @@ export function PermissionsMatrix({ value, onChange }: PermissionsMatrixProps) {
           {Object.keys(value).length === 0
             ? t('hr.roles.noPermissionsSelected')
             : t('hr.roles.permissionsCount', {
-              count: Object.values(value).flat().length,
-            })}
+                count: Object.values(value).flat().length,
+              })}
         </p>
       </div>
     </div>
-  );
+  )
 }

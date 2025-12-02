@@ -1,37 +1,37 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
-import { useQuery } from '@tanstack/react-query';
-import { Breadcrumbs } from '@/components/layout/breadcrumbs';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { getTeacher, getTeacherSubjectsList } from '@/school/functions/teachers';
-import { Edit, Trash2, Mail, Phone, Calendar, BookOpen } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
-import { format } from 'date-fns';
+import { useQuery } from '@tanstack/react-query'
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { format } from 'date-fns'
+import { BookOpen, Calendar, Edit, Mail, Phone, Trash2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { getTeacher, getTeacherSubjectsList } from '@/school/functions/teachers'
 
 export const Route = createFileRoute('/_auth/app/hr/teachers/$teacherId/')({
   component: TeacherDetailsPage,
-});
+})
 
 function TeacherDetailsPage() {
-  const { teacherId } = Route.useParams();
-  const { t } = useTranslation();
+  const { teacherId } = Route.useParams()
+  const { t } = useTranslation()
 
   const { data: teacher, isLoading } = useQuery({
     queryKey: ['teacher', teacherId],
     queryFn: async () => {
-      const result = await getTeacher({ data: teacherId });
-      return result;
+      const result = await getTeacher({ data: teacherId })
+      return result
     },
-  });
+  })
 
   const { data: subjects } = useQuery({
     queryKey: ['teacher-subjects', teacherId],
     queryFn: async () => {
-      const result = await getTeacherSubjectsList({ data: teacherId });
-      return result;
+      const result = await getTeacherSubjectsList({ data: teacherId })
+      return result
     },
-  });
+  })
 
   if (isLoading) {
     return (
@@ -41,7 +41,7 @@ function TeacherDetailsPage() {
           <p className="mt-4 text-sm text-muted-foreground">{t('common.loading')}</p>
         </div>
       </div>
-    );
+    )
   }
 
   if (!teacher) {
@@ -56,7 +56,7 @@ function TeacherDetailsPage() {
           </Button>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -165,15 +165,17 @@ function TeacherDetailsPage() {
           <div className="rounded-lg border bg-card p-6">
             <h2 className="mb-4 text-lg font-semibold">{t('hr.teachers.assignedSubjects')}</h2>
             <div className="flex flex-wrap gap-2">
-              {subjects && subjects.length > 0 ? (
-                subjects.map((subject: any) => (
-                  <Badge key={subject.id} variant="secondary" className="text-sm">
-                    {subject.name}
-                  </Badge>
-                ))
-              ) : (
-                <p className="text-sm text-muted-foreground">{t('hr.teachers.noSubjects')}</p>
-              )}
+              {subjects && subjects.length > 0
+                ? (
+                    subjects.map((subject: any) => (
+                      <Badge key={subject.id} variant="secondary" className="text-sm">
+                        {subject.name}
+                      </Badge>
+                    ))
+                  )
+                : (
+                    <p className="text-sm text-muted-foreground">{t('hr.teachers.noSubjects')}</p>
+                  )}
             </div>
           </div>
         </TabsContent>
@@ -193,5 +195,5 @@ function TeacherDetailsPage() {
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }

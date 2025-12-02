@@ -1,16 +1,28 @@
-import { useState, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import type { ColumnDef } from '@tanstack/react-table'
+import { useQuery } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
 import {
-  useReactTable,
-  getCoreRowModel,
+
   flexRender,
-  type ColumnDef,
-} from '@tanstack/react-table';
-import { useNavigate } from '@tanstack/react-router';
-import { useTranslation } from 'react-i18next';
-import { getUsers } from '@/school/functions/users';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+  getCoreRowModel,
+  useReactTable,
+} from '@tanstack/react-table'
+import { format } from 'date-fns'
+import { Edit, Eye, MoreHorizontal, Search, Trash2, Users } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { EmptyState } from '@/components/hr/empty-state'
+import { TableSkeleton } from '@/components/hr/table-skeleton'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input'
 import {
   Table,
   TableBody,
@@ -18,44 +30,34 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Badge } from '@/components/ui/badge';
-import { MoreHorizontal, Eye, Edit, Trash2, Search, Users } from 'lucide-react';
-import { useDebounce } from '@/hooks/use-debounce';
-import { format } from 'date-fns';
-import { TableSkeleton } from '@/components/hr/table-skeleton';
-import { EmptyState } from '@/components/hr/empty-state';
+} from '@/components/ui/table'
+import { useDebounce } from '@/hooks/use-debounce'
+import { getUsers } from '@/school/functions/users'
 
 interface User {
-  id: string;
-  name: string;
-  email: string;
-  phone: string | null;
-  status: 'active' | 'inactive' | 'suspended';
-  lastLoginAt: Date | null;
-  roles: string[];
+  id: string
+  name: string
+  email: string
+  phone: string | null
+  status: 'active' | 'inactive' | 'suspended'
+  lastLoginAt: Date | null
+  roles: string[]
 }
 
 interface UsersTableProps {
   filters: {
-    page?: number;
-    search?: string;
-    roleId?: string;
-    status?: 'active' | 'inactive' | 'suspended';
-  };
+    page?: number
+    search?: string
+    roleId?: string
+    status?: 'active' | 'inactive' | 'suspended'
+  }
 }
 
 export function UsersTable({ filters }: UsersTableProps) {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const [searchInput, setSearchInput] = useState(filters.search || '');
-  const debouncedSearch = useDebounce(searchInput, 500);
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  const [searchInput, setSearchInput] = useState(filters.search || '')
+  const debouncedSearch = useDebounce(searchInput, 500)
 
   const { data, isLoading } = useQuery({
     queryKey: ['users', { ...filters, search: debouncedSearch }],
@@ -72,10 +74,10 @@ export function UsersTable({ filters }: UsersTableProps) {
             limit: 20,
           },
         },
-      });
-      return result;
+      })
+      return result
     },
-  });
+  })
 
   const columns = useMemo<ColumnDef<User>[]>(
     () => [
@@ -100,7 +102,7 @@ export function UsersTable({ filters }: UsersTableProps) {
         header: t('hr.users.roles'),
         cell: ({ row }) => (
           <div className="flex flex-wrap gap-1">
-            {row.original.roles.map((role) => (
+            {row.original.roles.map(role => (
               <Badge key={role} variant="secondary" className="text-xs">
                 {role}
               </Badge>
@@ -112,17 +114,17 @@ export function UsersTable({ filters }: UsersTableProps) {
         accessorKey: 'status',
         header: t('hr.users.status'),
         cell: ({ row }) => {
-          const status = row.original.status;
+          const status = row.original.status
           const variants = {
             active: 'default',
             inactive: 'secondary',
             suspended: 'destructive',
-          } as const;
+          } as const
           return (
             <Badge variant={variants[status]}>
               {t(`hr.status.${status}`)}
             </Badge>
-          );
+          )
         },
       },
       {
@@ -164,8 +166,8 @@ export function UsersTable({ filters }: UsersTableProps) {
         ),
       },
     ],
-    [t, navigate]
-  );
+    [t, navigate],
+  )
 
   const table = useReactTable({
     data: data?.users || [],
@@ -173,14 +175,14 @@ export function UsersTable({ filters }: UsersTableProps) {
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
     pageCount: data?.totalPages || 0,
-  });
+  })
 
   if (isLoading) {
-    return <TableSkeleton columns={7} rows={5} />;
+    return <TableSkeleton columns={7} rows={5} />
   }
 
-  const hasNoData = !data?.users || data.users.length === 0;
-  const hasNoResults = hasNoData && (debouncedSearch || filters.roleId || filters.status);
+  const hasNoData = !data?.users || data.users.length === 0
+  const hasNoResults = hasNoData && (debouncedSearch || filters.roleId || filters.status)
 
   return (
     <div className="space-y-4">
@@ -224,25 +226,25 @@ export function UsersTable({ filters }: UsersTableProps) {
         <div className="rounded-md border">
           <Table>
             <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
+              {table.getHeaderGroups().map(headerGroup => (
                 <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
+                  {headerGroup.headers.map(header => (
                     <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
               ))}
             </TableHeader>
             <TableBody>
-              {table.getRowModel().rows.map((row) => (
+              {table.getRowModel().rows.map(row => (
                 <TableRow key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
+                  {row.getVisibleCells().map(cell => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
@@ -258,8 +260,17 @@ export function UsersTable({ filters }: UsersTableProps) {
       {!hasNoData && data && data.totalPages > 1 && (
         <div className="flex items-center justify-between">
           <div className="text-sm text-muted-foreground">
-            {t('common.showing')} {(data.page - 1) * data.limit + 1} -{' '}
-            {Math.min(data.page * data.limit, data.total)} {t('common.of')} {data.total}
+            {t('common.showing')}
+            {' '}
+            {(data.page - 1) * data.limit + 1}
+            {' '}
+            -
+            {' '}
+            {Math.min(data.page * data.limit, data.total)}
+            {' '}
+            {t('common.of')}
+            {' '}
+            {data.total}
           </div>
           <div className="flex gap-2">
             <Button
@@ -269,8 +280,7 @@ export function UsersTable({ filters }: UsersTableProps) {
                 navigate({
                   to: '/app/hr/users',
                   search: { ...filters, page: data.page - 1 },
-                })
-              }
+                })}
               disabled={data.page === 1}
             >
               {t('common.previous')}
@@ -282,8 +292,7 @@ export function UsersTable({ filters }: UsersTableProps) {
                 navigate({
                   to: '/app/hr/users',
                   search: { ...filters, page: data.page + 1 },
-                })
-              }
+                })}
               disabled={data.page === data.totalPages}
             >
               {t('common.next')}
@@ -292,5 +301,5 @@ export function UsersTable({ filters }: UsersTableProps) {
         </div>
       )}
     </div>
-  );
+  )
 }

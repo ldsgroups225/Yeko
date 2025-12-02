@@ -1,4 +1,5 @@
 import { LogOut, Settings, User } from 'lucide-react'
+import { toast } from 'sonner'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,7 +9,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { authClient, signOutWithCache } from '@/lib/auth-client'
-import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 
 export function AccountMenu() {
@@ -18,22 +18,24 @@ export function AccountMenu() {
     try {
       await signOutWithCache()
       toast.success('Déconnexion réussie')
-    } catch (error) {
+    }
+    catch (error) {
       toast.error('Erreur lors de la déconnexion')
       console.error('Sign out error:', error)
     }
   }
 
-  if (!session.data) return null
+  if (!session.data)
+    return null
 
   const user = session.data.user
   const initials = user.name
     ? user.name
-      .split(' ')
-      .map(n => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2)
+        .split(' ')
+        .map(n => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2)
     : user.email?.[0]?.toUpperCase() || 'U'
 
   return (

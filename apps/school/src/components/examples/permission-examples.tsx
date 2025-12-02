@@ -1,22 +1,22 @@
 /**
  * Permission System Usage Examples
- * 
+ *
  * This file demonstrates how to use the permission system in Yeko School.
  * These examples can be used as reference when implementing features.
  */
 
-import { usePermissions } from '@/hooks/use-permissions';
-import { PermissionGuard, MultiPermissionGuard } from '@/components/auth/permission-guard';
-import { Button } from '@/components/ui/button';
+import { MultiPermissionGuard, PermissionGuard } from '@/components/auth/permission-guard'
+import { Button } from '@/components/ui/button'
+import { usePermissions } from '@/hooks/use-permissions'
 
 /**
  * Example 1: Using the usePermissions hook directly
  */
 export function UserManagementExample() {
-  const { can, canAny, isLoading } = usePermissions();
+  const { can, canAny, isLoading } = usePermissions()
 
   if (isLoading) {
-    return <div>Loading permissions...</div>;
+    return <div>Loading permissions...</div>
   }
 
   return (
@@ -39,7 +39,7 @@ export function UserManagementExample() {
         <Button variant="outline">Manage Users</Button>
       )}
     </div>
-  );
+  )
 }
 
 /**
@@ -70,7 +70,7 @@ export function StudentManagementExample() {
         <Button variant="destructive">Delete Student</Button>
       </PermissionGuard>
     </div>
-  );
+  )
 }
 
 /**
@@ -106,18 +106,18 @@ export function FinanceManagementExample() {
         <Button>Process Payment</Button>
       </MultiPermissionGuard>
     </div>
-  );
+  )
 }
 
 /**
  * Example 4: Conditional rendering based on multiple resources
  */
 export function DashboardExample() {
-  const { can } = usePermissions();
+  const { can } = usePermissions()
 
-  const canViewUsers = can('view', 'users');
-  const canViewStudents = can('view', 'students');
-  const canViewFinance = can('view', 'finance');
+  const canViewUsers = can('view', 'users')
+  const canViewStudents = can('view', 'students')
+  const canViewFinance = can('view', 'finance')
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -142,28 +142,29 @@ export function DashboardExample() {
         </div>
       )}
     </div>
-  );
+  )
 }
 
 /**
  * Example 5: Permission-based navigation
  */
 export function NavigationExample() {
-  const { can } = usePermissions();
+  const { can } = usePermissions()
 
   const navItems = [
     { label: 'Users', href: '/app/hr/users', permission: { action: 'view', resource: 'users' } },
     { label: 'Students', href: '/app/students', permission: { action: 'view', resource: 'students' } },
     { label: 'Finance', href: '/app/finance', permission: { action: 'view', resource: 'finance' } },
     { label: 'Settings', href: '/app/settings', permission: { action: 'view', resource: 'settings' } },
-  ];
+  ]
 
   return (
     <nav className="space-y-2">
       {navItems.map((item) => {
-        const hasPermission = can(item.permission.action, item.permission.resource);
+        const hasPermission = can(item.permission.action, item.permission.resource)
 
-        if (!hasPermission) return null;
+        if (!hasPermission)
+          return null
 
         return (
           <a
@@ -173,36 +174,36 @@ export function NavigationExample() {
           >
             {item.label}
           </a>
-        );
+        )
       })}
     </nav>
-  );
+  )
 }
 
 /**
  * Example 6: Form with permission-based field visibility
  */
 export function UserFormExample() {
-  const { can } = usePermissions();
+  const { can } = usePermissions()
 
   return (
     <form className="space-y-4">
       {/* Basic fields - always visible */}
       <div>
-        <label>Name</label>
-        <input type="text" className="w-full border rounded px-3 py-2" />
+        <label htmlFor="user-name">Name</label>
+        <input id="user-name" type="text" className="w-full border rounded px-3 py-2" />
       </div>
 
       <div>
-        <label>Email</label>
-        <input type="email" className="w-full border rounded px-3 py-2" />
+        <label htmlFor="user-email">Email</label>
+        <input id="user-email" type="email" className="w-full border rounded px-3 py-2" />
       </div>
 
       {/* Role assignment - only for users with role management permission */}
       {can('edit', 'roles') && (
         <div>
-          <label>Assign Roles</label>
-          <select className="w-full border rounded px-3 py-2">
+          <label htmlFor="user-roles">Assign Roles</label>
+          <select id="user-roles" className="w-full border rounded px-3 py-2">
             <option>Administrator</option>
             <option>Teacher</option>
             <option>Registrar</option>
@@ -213,8 +214,8 @@ export function UserFormExample() {
       {/* Status field - only for admins */}
       {can('delete', 'users') && (
         <div>
-          <label>Status</label>
-          <select className="w-full border rounded px-3 py-2">
+          <label htmlFor="user-status">Status</label>
+          <select id="user-status" className="w-full border rounded px-3 py-2">
             <option>Active</option>
             <option>Inactive</option>
             <option>Suspended</option>
@@ -226,5 +227,5 @@ export function UserFormExample() {
         {can('edit', 'users') ? 'Update User' : 'View User'}
       </Button>
     </form>
-  );
+  )
 }

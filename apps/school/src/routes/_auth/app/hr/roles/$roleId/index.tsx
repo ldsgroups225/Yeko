@@ -1,36 +1,36 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
-import { Breadcrumbs } from '@/components/layout/breadcrumbs';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Edit, Trash2, Shield } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
-import { getRole } from '@/school/functions/roles';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { Edit, Shield, Trash2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { getRole } from '@/school/functions/roles'
 
 export const Route = createFileRoute('/_auth/app/hr/roles/$roleId/')({
   component: RoleDetailPage,
   loader: async ({ params }) => {
-    return await getRole({ data: params.roleId });
+    return await getRole({ data: params.roleId })
   },
-});
+})
 
 function RoleDetailPage() {
-  const { t } = useTranslation();
-  const { roleId } = Route.useParams();
-  const roleData = Route.useLoaderData();
+  const { t } = useTranslation()
+  const { roleId } = Route.useParams()
+  const roleData = Route.useLoaderData()
 
   const { data: role } = useSuspenseQuery({
     queryKey: ['role', roleId],
     queryFn: () => getRole({ data: roleId }),
     initialData: roleData,
-  });
+  })
 
   if (!role) {
-    return <div>{t('hr.roles.notFound')}</div>;
+    return <div>{t('hr.roles.notFound')}</div>
   }
 
-  const permissions = role.permissions as Record<string, string[]>;
+  const permissions = role.permissions as Record<string, string[]>
 
   return (
     <div className="space-y-6">
@@ -112,7 +112,7 @@ function RoleDetailPage() {
                 <div key={resource}>
                   <p className="mb-2 text-sm font-medium">{t(`hr.resources.${resource}`)}</p>
                   <div className="flex flex-wrap gap-1">
-                    {actions.map((action) => (
+                    {actions.map(action => (
                       <Badge key={action} variant="outline" className="text-xs">
                         {t(`hr.actions.${action}`)}
                       </Badge>
@@ -128,5 +128,5 @@ function RoleDetailPage() {
         </Card>
       </div>
     </div>
-  );
+  )
 }

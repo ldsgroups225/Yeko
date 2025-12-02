@@ -6,7 +6,7 @@ export const teacherSchema = z.object({
   subjectIds: z.array(z.string()).min(1, 'Au moins une matière requise'),
   specialization: z.string().optional().nullable(),
   hireDate: z.date().optional().nullable().refine(
-    (date) => !date || date <= new Date(),
+    date => !date || date <= new Date(),
     'La date d\'embauche ne peut pas être dans le futur',
   ),
   status: z.enum(['active', 'inactive', 'on_leave'], {

@@ -1,16 +1,28 @@
-import { useState, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import type { ColumnDef } from '@tanstack/react-table'
+import { useQuery } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
 import {
-  useReactTable,
-  getCoreRowModel,
+
   flexRender,
-  type ColumnDef,
-} from '@tanstack/react-table';
-import { useNavigate } from '@tanstack/react-router';
-import { useTranslation } from 'react-i18next';
-import { getTeachers } from '@/school/functions/teachers';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+  getCoreRowModel,
+  useReactTable,
+} from '@tanstack/react-table'
+import { format } from 'date-fns'
+import { Edit, Eye, GraduationCap, MoreHorizontal, Search, Trash2 } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { EmptyState } from '@/components/hr/empty-state'
+import { TableSkeleton } from '@/components/hr/table-skeleton'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input'
 import {
   Table,
   TableBody,
@@ -18,46 +30,36 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Badge } from '@/components/ui/badge';
-import { MoreHorizontal, Eye, Edit, Trash2, Search, GraduationCap } from 'lucide-react';
-import { useDebounce } from '@/hooks/use-debounce';
-import { format } from 'date-fns';
-import { TableSkeleton } from '@/components/hr/table-skeleton';
-import { EmptyState } from '@/components/hr/empty-state';
+} from '@/components/ui/table'
+import { useDebounce } from '@/hooks/use-debounce'
+import { getTeachers } from '@/school/functions/teachers'
 
 interface Teacher {
-  id: string;
+  id: string
   user: {
-    name: string;
-    email: string;
-  };
-  specialization: string | null;
-  status: 'active' | 'inactive' | 'on_leave';
-  hireDate: Date | null;
-  subjects: string[];
+    name: string
+    email: string
+  }
+  specialization: string | null
+  status: 'active' | 'inactive' | 'on_leave'
+  hireDate: Date | null
+  subjects: string[]
 }
 
 interface TeachersTableProps {
   filters: {
-    page?: number;
-    search?: string;
-    subjectId?: string;
-    status?: 'active' | 'inactive' | 'on_leave';
-  };
+    page?: number
+    search?: string
+    subjectId?: string
+    status?: 'active' | 'inactive' | 'on_leave'
+  }
 }
 
 export function TeachersTable({ filters }: TeachersTableProps) {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const [searchInput, setSearchInput] = useState(filters.search || '');
-  const debouncedSearch = useDebounce(searchInput, 500);
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  const [searchInput, setSearchInput] = useState(filters.search || '')
+  const debouncedSearch = useDebounce(searchInput, 500)
 
   const { data, isLoading } = useQuery({
     queryKey: ['teachers', { ...filters, search: debouncedSearch }],
@@ -74,10 +76,10 @@ export function TeachersTable({ filters }: TeachersTableProps) {
             limit: 20,
           },
         },
-      });
-      return result;
+      })
+      return result
     },
-  });
+  })
 
   const columns = useMemo<ColumnDef<Teacher>[]>(
     () => [
@@ -98,18 +100,21 @@ export function TeachersTable({ filters }: TeachersTableProps) {
         header: t('hr.teachers.subjects'),
         cell: ({ row }) => (
           <div className="flex flex-wrap gap-1">
-            {row.original.subjects && row.original.subjects.length > 0 ? (
-              row.original.subjects.slice(0, 3).map((subject, idx) => (
-                <Badge key={idx} variant="secondary" className="text-xs">
-                  {subject}
-                </Badge>
-              ))
-            ) : (
-              <span className="text-sm text-muted-foreground">-</span>
-            )}
+            {row.original.subjects && row.original.subjects.length > 0
+              ? (
+                  row.original.subjects.slice(0, 3).map(subject => (
+                    <Badge key={subject} variant="secondary" className="text-xs">
+                      {subject}
+                    </Badge>
+                  ))
+                )
+              : (
+                  <span className="text-sm text-muted-foreground">-</span>
+                )}
             {row.original.subjects && row.original.subjects.length > 3 && (
               <Badge variant="outline" className="text-xs">
-                +{row.original.subjects.length - 3}
+                +
+                {row.original.subjects.length - 3}
               </Badge>
             )}
           </div>
@@ -124,17 +129,17 @@ export function TeachersTable({ filters }: TeachersTableProps) {
         accessorKey: 'status',
         header: t('hr.teachers.status'),
         cell: ({ row }) => {
-          const status = row.original.status;
+          const status = row.original.status
           const variants = {
             active: 'default',
             inactive: 'secondary',
             on_leave: 'outline',
-          } as const;
+          } as const
           return (
             <Badge variant={variants[status]}>
               {t(`hr.status.${status}`)}
             </Badge>
-          );
+          )
         },
       },
       {
@@ -163,8 +168,7 @@ export function TeachersTable({ filters }: TeachersTableProps) {
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() =>
-                  navigate({ to: `/app/hr/teachers/${row.original.id}/edit` })
-                }
+                  navigate({ to: `/app/hr/teachers/${row.original.id}/edit` })}
               >
                 <Edit className="mr-2 h-4 w-4" />
                 {t('common.edit')}
@@ -178,8 +182,8 @@ export function TeachersTable({ filters }: TeachersTableProps) {
         ),
       },
     ],
-    [t, navigate]
-  );
+    [t, navigate],
+  )
 
   const table = useReactTable({
     data: data?.teachers || [],
@@ -187,14 +191,14 @@ export function TeachersTable({ filters }: TeachersTableProps) {
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
     pageCount: data?.totalPages || 0,
-  });
+  })
 
   if (isLoading) {
-    return <TableSkeleton columns={7} rows={5} />;
+    return <TableSkeleton columns={7} rows={5} />
   }
 
-  const hasNoData = !data?.teachers || data.teachers.length === 0;
-  const hasNoResults = hasNoData && (debouncedSearch || filters.subjectId || filters.status);
+  const hasNoData = !data?.teachers || data.teachers.length === 0
+  const hasNoResults = hasNoData && (debouncedSearch || filters.subjectId || filters.status)
 
   return (
     <div className="space-y-4">
@@ -206,8 +210,7 @@ export function TeachersTable({ filters }: TeachersTableProps) {
             placeholder={t('hr.teachers.searchPlaceholder')}
             value={searchInput}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setSearchInput(e.target.value)
-            }
+              setSearchInput(e.target.value)}
             className="pl-9"
           />
         </div>
@@ -240,25 +243,25 @@ export function TeachersTable({ filters }: TeachersTableProps) {
         <div className="rounded-md border">
           <Table>
             <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
+              {table.getHeaderGroups().map(headerGroup => (
                 <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
+                  {headerGroup.headers.map(header => (
                     <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
               ))}
             </TableHeader>
             <TableBody>
-              {table.getRowModel().rows.map((row) => (
+              {table.getRowModel().rows.map(row => (
                 <TableRow key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
+                  {row.getVisibleCells().map(cell => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
@@ -274,8 +277,17 @@ export function TeachersTable({ filters }: TeachersTableProps) {
       {!hasNoData && data && data.totalPages > 1 && (
         <div className="flex items-center justify-between">
           <div className="text-sm text-muted-foreground">
-            {t('common.showing')} {(data.page - 1) * data.limit + 1} -{' '}
-            {Math.min(data.page * data.limit, data.total)} {t('common.of')} {data.total}
+            {t('common.showing')}
+            {' '}
+            {(data.page - 1) * data.limit + 1}
+            {' '}
+            -
+            {' '}
+            {Math.min(data.page * data.limit, data.total)}
+            {' '}
+            {t('common.of')}
+            {' '}
+            {data.total}
           </div>
           <div className="flex gap-2">
             <Button
@@ -285,8 +297,7 @@ export function TeachersTable({ filters }: TeachersTableProps) {
                 navigate({
                   to: '/app/hr/teachers',
                   search: { ...filters, page: data.page - 1 },
-                })
-              }
+                })}
               disabled={data.page === 1}
             >
               {t('common.previous')}
@@ -298,8 +309,7 @@ export function TeachersTable({ filters }: TeachersTableProps) {
                 navigate({
                   to: '/app/hr/teachers',
                   search: { ...filters, page: data.page + 1 },
-                })
-              }
+                })}
               disabled={data.page === data.totalPages}
             >
               {t('common.next')}
@@ -308,5 +318,5 @@ export function TeachersTable({ filters }: TeachersTableProps) {
         </div>
       )}
     </div>
-  );
+  )
 }

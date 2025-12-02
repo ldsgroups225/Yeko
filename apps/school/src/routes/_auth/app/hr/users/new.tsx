@@ -1,19 +1,19 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { Breadcrumbs } from '@/components/layout/breadcrumbs';
-import { UserForm } from '@/components/hr/users/user-form';
-import { useTranslation } from 'react-i18next';
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
+import { UserForm } from '@/components/hr/users/user-form'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 
 export const Route = createFileRoute('/_auth/app/hr/users/new')({
   component: NewUserPage,
-});
+})
 
 function NewUserPage() {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
+  const { t } = useTranslation()
+  const navigate = useNavigate()
 
   const handleSuccess = () => {
-    navigate({ to: '/app/hr/users', search: { page: 1 } });
-  };
+    navigate({ to: '/app/hr/users', search: { page: 1 } })
+  }
 
   return (
     <div className="space-y-6">
@@ -32,5 +32,5 @@ function NewUserPage() {
 
       <UserForm onSuccess={handleSuccess} />
     </div>
-  );
+  )
 }

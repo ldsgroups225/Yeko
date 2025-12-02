@@ -1,16 +1,27 @@
-import { useState, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import type { ColumnDef } from '@tanstack/react-table'
+import { useQuery } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
 import {
-  useReactTable,
-  getCoreRowModel,
+
   flexRender,
-  type ColumnDef,
-} from '@tanstack/react-table';
-import { useNavigate } from '@tanstack/react-router';
-import { useTranslation } from 'react-i18next';
-import { getRoles } from '@/school/functions/roles';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+  getCoreRowModel,
+  useReactTable,
+} from '@tanstack/react-table'
+import { Edit, Eye, MoreHorizontal, Search, Shield, Trash2 } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { EmptyState } from '@/components/hr/empty-state'
+import { TableSkeleton } from '@/components/hr/table-skeleton'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input'
 import {
   Table,
   TableBody,
@@ -18,43 +29,34 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Badge } from '@/components/ui/badge';
-import { MoreHorizontal, Eye, Edit, Trash2, Search, Shield } from 'lucide-react';
-import { useDebounce } from '@/hooks/use-debounce';
-import { TableSkeleton } from '@/components/hr/table-skeleton';
-import { EmptyState } from '@/components/hr/empty-state';
+} from '@/components/ui/table'
+import { useDebounce } from '@/hooks/use-debounce'
+import { getRoles } from '@/school/functions/roles'
 
 interface Role {
-  id: string;
-  name: string;
-  slug: string;
-  description: string | null;
-  scope: 'school' | 'system';
-  isSystemRole: boolean;
-  userCount: number;
-  permissionCount: number;
+  id: string
+  name: string
+  slug: string
+  description: string | null
+  scope: 'school' | 'system'
+  isSystemRole: boolean
+  userCount: number
+  permissionCount: number
 }
 
 interface RolesTableProps {
   filters: {
-    page?: number;
-    search?: string;
-    scope?: 'school' | 'system';
-  };
+    page?: number
+    search?: string
+    scope?: 'school' | 'system'
+  }
 }
 
 export function RolesTable({ filters }: RolesTableProps) {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const [searchInput, setSearchInput] = useState(filters.search || '');
-  const debouncedSearch = useDebounce(searchInput, 500);
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  const [searchInput, setSearchInput] = useState(filters.search || '')
+  const debouncedSearch = useDebounce(searchInput, 500)
 
   const { data, isLoading } = useQuery({
     queryKey: ['roles', { ...filters, search: debouncedSearch }],
@@ -70,10 +72,10 @@ export function RolesTable({ filters }: RolesTableProps) {
             limit: 20,
           },
         },
-      });
-      return result;
+      })
+      return result
     },
-  });
+  })
 
   const columns = useMemo<ColumnDef<Role>[]>(
     () => [
@@ -136,8 +138,7 @@ export function RolesTable({ filters }: RolesTableProps) {
                 <>
                   <DropdownMenuItem
                     onClick={() =>
-                      navigate({ to: `/app/hr/roles/${row.original.id}/edit` })
-                    }
+                      navigate({ to: `/app/hr/roles/${row.original.id}/edit` })}
                   >
                     <Edit className="mr-2 h-4 w-4" />
                     {t('common.edit')}
@@ -153,8 +154,8 @@ export function RolesTable({ filters }: RolesTableProps) {
         ),
       },
     ],
-    [t, navigate]
-  );
+    [t, navigate],
+  )
 
   const table = useReactTable({
     data: data?.roles || [],
@@ -162,14 +163,14 @@ export function RolesTable({ filters }: RolesTableProps) {
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
     pageCount: data?.totalPages || 0,
-  });
+  })
 
   if (isLoading) {
-    return <TableSkeleton columns={6} rows={5} />;
+    return <TableSkeleton columns={6} rows={5} />
   }
 
-  const hasNoData = !data?.roles || data.roles.length === 0;
-  const hasNoResults = hasNoData && (debouncedSearch || filters.scope);
+  const hasNoData = !data?.roles || data.roles.length === 0
+  const hasNoResults = hasNoData && (debouncedSearch || filters.scope)
 
   return (
     <div className="space-y-4">
@@ -181,8 +182,7 @@ export function RolesTable({ filters }: RolesTableProps) {
             placeholder={t('hr.roles.searchPlaceholder')}
             value={searchInput}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setSearchInput(e.target.value)
-            }
+              setSearchInput(e.target.value)}
             className="pl-9"
           />
         </div>
@@ -215,25 +215,25 @@ export function RolesTable({ filters }: RolesTableProps) {
         <div className="rounded-md border">
           <Table>
             <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
+              {table.getHeaderGroups().map(headerGroup => (
                 <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
+                  {headerGroup.headers.map(header => (
                     <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
               ))}
             </TableHeader>
             <TableBody>
-              {table.getRowModel().rows.map((row) => (
+              {table.getRowModel().rows.map(row => (
                 <TableRow key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
+                  {row.getVisibleCells().map(cell => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
@@ -249,8 +249,17 @@ export function RolesTable({ filters }: RolesTableProps) {
       {!hasNoData && data && data.totalPages > 1 && (
         <div className="flex items-center justify-between">
           <div className="text-sm text-muted-foreground">
-            {t('common.showing')} {(data.page - 1) * data.limit + 1} -{' '}
-            {Math.min(data.page * data.limit, data.total)} {t('common.of')} {data.total}
+            {t('common.showing')}
+            {' '}
+            {(data.page - 1) * data.limit + 1}
+            {' '}
+            -
+            {' '}
+            {Math.min(data.page * data.limit, data.total)}
+            {' '}
+            {t('common.of')}
+            {' '}
+            {data.total}
           </div>
           <div className="flex gap-2">
             <Button
@@ -260,8 +269,7 @@ export function RolesTable({ filters }: RolesTableProps) {
                 navigate({
                   to: '/app/hr/roles',
                   search: { ...filters, page: data.page - 1 },
-                })
-              }
+                })}
               disabled={data.page === 1}
             >
               {t('common.previous')}
@@ -273,8 +281,7 @@ export function RolesTable({ filters }: RolesTableProps) {
                 navigate({
                   to: '/app/hr/roles',
                   search: { ...filters, page: data.page + 1 },
-                })
-              }
+                })}
               disabled={data.page === data.totalPages}
             >
               {t('common.next')}
@@ -283,5 +290,5 @@ export function RolesTable({ filters }: RolesTableProps) {
         </div>
       )}
     </div>
-  );
+  )
 }

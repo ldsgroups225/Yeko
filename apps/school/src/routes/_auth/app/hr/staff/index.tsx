@@ -1,26 +1,26 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
-import { z } from 'zod';
-import { Breadcrumbs } from '@/components/layout/breadcrumbs';
-import { StaffTable } from '@/components/hr/staff/staff-table';
-import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { Plus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { z } from 'zod'
+import { StaffTable } from '@/components/hr/staff/staff-table'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { Button } from '@/components/ui/button'
 
 const staffSearchSchema = z.object({
   page: z.number().min(1).catch(1),
   search: z.string().optional(),
   position: z.string().optional(),
   status: z.enum(['active', 'inactive', 'on_leave']).optional(),
-});
+})
 
 export const Route = createFileRoute('/_auth/app/hr/staff/')({
   component: StaffListPage,
   validateSearch: staffSearchSchema,
-});
+})
 
 function StaffListPage() {
-  const { t } = useTranslation();
-  const search = Route.useSearch();
+  const { t } = useTranslation()
+  const search = Route.useSearch()
 
   return (
     <div className="space-y-6">
@@ -48,5 +48,5 @@ function StaffListPage() {
 
       <StaffTable filters={search} />
     </div>
-  );
+  )
 }

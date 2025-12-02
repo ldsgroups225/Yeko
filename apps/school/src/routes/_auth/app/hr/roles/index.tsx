@@ -1,25 +1,25 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
-import { z } from 'zod';
-import { Breadcrumbs } from '@/components/layout/breadcrumbs';
-import { RolesTable } from '@/components/hr/roles/roles-table';
-import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { Plus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { z } from 'zod'
+import { RolesTable } from '@/components/hr/roles/roles-table'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { Button } from '@/components/ui/button'
 
 const rolesSearchSchema = z.object({
   page: z.number().min(1).catch(1),
   search: z.string().optional(),
   scope: z.enum(['school', 'system']).optional(),
-});
+})
 
 export const Route = createFileRoute('/_auth/app/hr/roles/')({
   component: RolesListPage,
   validateSearch: rolesSearchSchema,
-});
+})
 
 function RolesListPage() {
-  const { t } = useTranslation();
-  const search = Route.useSearch();
+  const { t } = useTranslation()
+  const search = Route.useSearch()
 
   return (
     <div className="space-y-6">
@@ -47,5 +47,5 @@ function RolesListPage() {
 
       <RolesTable filters={search} />
     </div>
-  );
+  )
 }

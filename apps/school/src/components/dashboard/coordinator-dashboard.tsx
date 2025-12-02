@@ -1,4 +1,4 @@
-import { BookOpen, ClipboardCheck, TrendingUp, Users } from 'lucide-react';
+import { BookOpen, ClipboardCheck, TrendingUp, Users } from 'lucide-react'
 
 export function CoordinatorDashboard() {
   return (
@@ -70,14 +70,14 @@ export function CoordinatorDashboard() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 interface MetricCardProps {
-  title: string;
-  value: string;
-  subtitle: string;
-  icon: React.ComponentType<{ className?: string }>;
+  title: string
+  value: string
+  subtitle: string
+  icon: React.ComponentType<{ className?: string }>
 }
 
 function MetricCard({ title, value, subtitle, icon: Icon }: MetricCardProps) {
@@ -92,15 +92,15 @@ function MetricCard({ title, value, subtitle, icon: Icon }: MetricCardProps) {
         <p className="text-xs text-muted-foreground">{subtitle}</p>
       </div>
     </div>
-  );
+  )
 }
 
 interface ValidationItemProps {
-  subject: string;
-  teacher: string;
-  class: string;
-  count: number;
-  date: string;
+  subject: string
+  teacher: string
+  class: string
+  count: number
+  date: string
 }
 
 function ValidationItem({ subject, teacher, class: className, count, date }: ValidationItemProps) {
@@ -109,7 +109,15 @@ function ValidationItem({ subject, teacher, class: className, count, date }: Val
       <div className="space-y-1">
         <p className="text-sm font-medium">{subject}</p>
         <p className="text-xs text-muted-foreground">
-          {teacher} • {className} • {count} notes
+          {teacher}
+          {' '}
+          •
+          {className}
+          {' '}
+          •
+          {count}
+          {' '}
+          notes
         </p>
         <p className="text-xs text-muted-foreground">{date}</p>
       </div>
@@ -120,13 +128,13 @@ function ValidationItem({ subject, teacher, class: className, count, date }: Val
         Valider
       </button>
     </div>
-  );
+  )
 }
 
 interface PerformanceBarProps {
-  level: string;
-  average: string;
-  percentage: number;
+  level: string
+  average: string
+  percentage: number
 }
 
 function PerformanceBar({ level, average, percentage }: PerformanceBarProps) {
@@ -134,7 +142,10 @@ function PerformanceBar({ level, average, percentage }: PerformanceBarProps) {
     <div className="space-y-2">
       <div className="flex items-center justify-between text-sm">
         <span className="font-medium">{level}</span>
-        <span className="text-muted-foreground">{average}/20</span>
+        <span className="text-muted-foreground">
+          {average}
+          /20
+        </span>
       </div>
       <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
         <div
@@ -143,30 +154,33 @@ function PerformanceBar({ level, average, percentage }: PerformanceBarProps) {
         />
       </div>
     </div>
-  );
+  )
 }
 
 interface RiskItemProps {
-  subject: string;
-  average: string;
-  status: 'critical' | 'warning';
+  subject: string
+  average: string
+  status: 'critical' | 'warning'
 }
 
 function RiskItem({ subject, average, status }: RiskItemProps) {
   const statusColors = {
     critical: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400',
     warning: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400',
-  };
+  }
 
   return (
     <div className="flex items-center justify-between">
       <div className="space-y-1">
         <p className="text-sm font-medium">{subject}</p>
-        <p className="text-xs text-muted-foreground">Moyenne: {average}</p>
+        <p className="text-xs text-muted-foreground">
+          Moyenne:
+          {average}
+        </p>
       </div>
       <span className={`rounded-full px-2 py-1 text-xs font-medium ${statusColors[status]}`}>
         {status === 'critical' ? 'Critique' : 'Attention'}
       </span>
     </div>
-  );
+  )
 }

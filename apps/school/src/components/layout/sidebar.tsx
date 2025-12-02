@@ -1,21 +1,21 @@
-import { Link } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router'
 import {
-  LayoutDashboard,
-  Users,
-  GraduationCap,
   BookOpen,
+  ChevronRight,
   ClipboardCheck,
   DollarSign,
+  GraduationCap,
+  LayoutDashboard,
   Settings,
-  ChevronRight,
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
+  Users,
+} from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface NavItem {
-  title: string;
-  href: string;
-  icon: React.ComponentType<{ className?: string }>;
-  children?: NavItem[];
+  title: string
+  href: string
+  icon: React.ComponentType<{ className?: string }>
+  children?: NavItem[]
 }
 
 // TODO: This will be role-based navigation
@@ -70,7 +70,7 @@ const navigationItems: NavItem[] = [
     href: '/app/settings',
     icon: Settings,
   },
-];
+]
 
 export function Sidebar() {
   return (
@@ -78,18 +78,18 @@ export function Sidebar() {
       <div className="flex h-full flex-col gap-2">
         <div className="flex-1 overflow-auto py-4">
           <nav className="grid gap-1 px-2">
-            {navigationItems.map((item) => (
-              <NavItem key={item.href} item={item} />
+            {navigationItems.map(item => (
+              <NavItemComponent key={item.href} item={item} />
             ))}
           </nav>
         </div>
       </div>
     </aside>
-  );
+  )
 }
 
-function NavItem({ item }: { item: NavItem }) {
-  const Icon = item.icon;
+function NavItemComponent({ item }: { item: NavItem }) {
+  const Icon = item.icon
 
   if (item.children) {
     return (
@@ -107,7 +107,7 @@ function NavItem({ item }: { item: NavItem }) {
           <ChevronRight className="h-4 w-4 opacity-50" />
         </button>
         <div className="ml-4 space-y-1 border-l border-border/40 pl-4">
-          {item.children.map((child) => (
+          {item.children.map(child => (
             <Link
               key={child.href}
               to={child.href}
@@ -123,7 +123,7 @@ function NavItem({ item }: { item: NavItem }) {
           ))}
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -138,5 +138,5 @@ function NavItem({ item }: { item: NavItem }) {
       <Icon className="h-4 w-4" />
       <span>{item.title}</span>
     </Link>
-  );
+  )
 }

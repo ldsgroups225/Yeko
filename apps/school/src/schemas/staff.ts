@@ -18,7 +18,7 @@ export const staffSchema = z.object({
   }),
   department: z.string().optional().nullable(),
   hireDate: z.date().optional().nullable().refine(
-    (date) => !date || date <= new Date(),
+    date => !date || date <= new Date(),
     'La date d\'embauche ne peut pas être dans le futur',
   ),
   status: z.enum(['active', 'inactive', 'on_leave'], {

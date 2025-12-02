@@ -17,14 +17,6 @@ export default antfu({
   // Configure formatters
   formatters: true,
 
-  // Enable stylistic formatting rules
-  stylistic: {
-    indent: 2,
-    quotes: 'single',
-    semi: false,
-    trailingComma: 'es5',
-  },
-
   // Configure ignore patterns
   ignores: [
     '**/dist/**',
@@ -35,15 +27,6 @@ export default antfu({
     '**/.output/**',
     '**/.turbo/**',
   ],
-
-  // Custom rules
-  rules: {
-    // Add any project-specific rule overrides here
-    'no-console': 'warn',
-    'prefer-const': 'error',
-    'no-unused-vars': 'off',
-    '@typescript-eslint/no-unused-vars': 'error',
-  },
 }, {
   // Better Tailwind CSS plugin configuration
   // Only apply to projects that have Tailwind CSS installed

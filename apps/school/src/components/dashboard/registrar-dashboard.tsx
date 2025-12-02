@@ -1,4 +1,4 @@
-import { Users, UserPlus, FileText, CheckCircle } from 'lucide-react';
+import { CheckCircle, FileText, UserPlus, Users } from 'lucide-react'
 
 export function RegistrarDashboard() {
   return (
@@ -106,14 +106,14 @@ export function RegistrarDashboard() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 interface MetricCardProps {
-  title: string;
-  value: string;
-  subtitle: string;
-  icon: React.ComponentType<{ className?: string }>;
+  title: string
+  value: string
+  subtitle: string
+  icon: React.ComponentType<{ className?: string }>
 }
 
 function MetricCard({ title, value, subtitle, icon: Icon }: MetricCardProps) {
@@ -128,15 +128,15 @@ function MetricCard({ title, value, subtitle, icon: Icon }: MetricCardProps) {
         <p className="text-xs text-muted-foreground">{subtitle}</p>
       </div>
     </div>
-  );
+  )
 }
 
 interface EnrollmentItemProps {
-  name: string;
-  class: string;
-  date: string;
-  status: 'pending' | 'review';
-  missingDocs: string[];
+  name: string
+  class: string
+  date: string
+  status: 'pending' | 'review'
+  missingDocs: string[]
 }
 
 function EnrollmentItem({ name, class: className, date, status, missingDocs }: EnrollmentItemProps) {
@@ -149,28 +149,30 @@ function EnrollmentItem({ name, class: className, date, status, missingDocs }: E
           <p className="text-xs text-muted-foreground">{date}</p>
           {missingDocs.length > 0 && (
             <p className="text-xs text-red-600 dark:text-red-400">
-              Manquant: {missingDocs.join(', ')}
+              Manquant:
+              {' '}
+              {missingDocs.join(', ')}
             </p>
           )}
         </div>
         <span
           className={`rounded-full px-2 py-1 text-xs font-medium ${status === 'review'
-              ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
-              : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
-            }`}
+            ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
+            : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
+          }`}
         >
           {status === 'review' ? 'À réviser' : 'En attente'}
         </span>
       </div>
     </div>
-  );
+  )
 }
 
 interface ActivityItemProps {
-  action: string;
-  name: string;
-  class: string;
-  time: string;
+  action: string
+  name: string
+  class: string
+  time: string
 }
 
 function ActivityItem({ action, name, class: className, time }: ActivityItemProps) {
@@ -180,28 +182,35 @@ function ActivityItem({ action, name, class: className, time }: ActivityItemProp
       <div className="flex-1 space-y-1">
         <p className="text-sm font-medium">{action}</p>
         <p className="text-xs text-muted-foreground">
-          {name} • {className}
+          {name}
+          {' '}
+          •
+          {className}
         </p>
         <p className="text-xs text-muted-foreground">{time}</p>
       </div>
     </div>
-  );
+  )
 }
 
 interface LevelBarProps {
-  level: string;
-  count: number;
-  total: number;
+  level: string
+  count: number
+  total: number
 }
 
 function LevelBar({ level, count, total }: LevelBarProps) {
-  const percentage = (count / total) * 100;
+  const percentage = (count / total) * 100
 
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between text-sm">
         <span className="font-medium">{level}</span>
-        <span className="text-muted-foreground">{count} élèves</span>
+        <span className="text-muted-foreground">
+          {count}
+          {' '}
+          élèves
+        </span>
       </div>
       <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
         <div
@@ -210,5 +219,5 @@ function LevelBar({ level, count, total }: LevelBarProps) {
         />
       </div>
     </div>
-  );
+  )
 }

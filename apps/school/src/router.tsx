@@ -1,7 +1,7 @@
-import type { ReactNode } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { createRouter as createTanStackRouter } from '@tanstack/react-router';
-import { routeTree } from './routeTree.gen';
+import type { ReactNode } from 'react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { createRouter as createTanStackRouter } from '@tanstack/react-router'
+import { routeTree } from './routeTree.gen'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -10,10 +10,10 @@ const queryClient = new QueryClient({
       gcTime: 30 * 60 * 1000, // 30 minutes
       refetchOnWindowFocus: false,
       retry: 3,
-      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+      retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
     },
   },
-});
+})
 
 export function getRouter() {
   return createTanStackRouter({
@@ -28,13 +28,13 @@ export function getRouter() {
         <QueryClientProvider client={queryClient}>
           {props.children}
         </QueryClientProvider>
-      );
+      )
     },
-  });
+  })
 }
 
 declare module '@tanstack/react-router' {
   interface Register {
-    router: ReturnType<typeof getRouter>;
+    router: ReturnType<typeof getRouter>
   }
 }

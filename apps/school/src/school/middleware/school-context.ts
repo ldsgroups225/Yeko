@@ -1,8 +1,7 @@
+import { getUserSchoolsByAuthUserId } from '@repo/data-ops/queries/school-admin/users'
 import { createServerFn } from '@tanstack/react-start'
 import { getRequest, setResponseHeader } from '@tanstack/react-start/server'
 import { getAuthContext } from './auth'
-import { getUserSchoolsByAuthUserId } from '@repo/data-ops/queries/school-admin/users'
-
 
 const SCHOOL_CONTEXT_COOKIE = 'yeko_school_id'
 
@@ -10,12 +9,13 @@ const SCHOOL_CONTEXT_COOKIE = 'yeko_school_id'
  * Parse cookies from request headers
  */
 function parseCookies(cookieHeader: string | null): Record<string, string> {
-  if (!cookieHeader) return {}
+  if (!cookieHeader)
+    return {}
   return Object.fromEntries(
-    cookieHeader.split(';').map(cookie => {
+    cookieHeader.split(';').map((cookie) => {
       const [key, ...value] = cookie.trim().split('=')
       return [key, value.join('=')]
-    })
+    }),
   )
 }
 
@@ -41,7 +41,7 @@ export const getSchoolContext = createServerFn().handler(async () => {
       const firstSchool = schools[0]
       setResponseHeader(
         'Set-Cookie',
-        `${SCHOOL_CONTEXT_COOKIE}=${firstSchool.id}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${60 * 60 * 24 * 30}`
+        `${SCHOOL_CONTEXT_COOKIE}=${firstSchool.id}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${60 * 60 * 24 * 30}`,
       )
       return { schoolId: firstSchool.id, userId: authContext.userId }
     }
@@ -56,7 +56,7 @@ export const getSchoolContext = createServerFn().handler(async () => {
     // Clear invalid cookie
     setResponseHeader(
       'Set-Cookie',
-      `${SCHOOL_CONTEXT_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`
+      `${SCHOOL_CONTEXT_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`,
     )
     return null
   }
@@ -86,7 +86,7 @@ export const setSchoolContext = createServerFn()
     // Set cookie
     setResponseHeader(
       'Set-Cookie',
-      `${SCHOOL_CONTEXT_COOKIE}=${schoolId}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${60 * 60 * 24 * 30}`
+      `${SCHOOL_CONTEXT_COOKIE}=${schoolId}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${60 * 60 * 24 * 30}`,
     )
 
     return { success: true, schoolId }

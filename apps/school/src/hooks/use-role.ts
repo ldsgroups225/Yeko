@@ -1,12 +1,12 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query'
 
-export type RoleSlug =
-  | 'school_administrator'
-  | 'academic_coordinator'
-  | 'discipline_officer'
-  | 'accountant'
-  | 'cashier'
-  | 'registrar';
+export type RoleSlug
+  = | 'school_administrator'
+    | 'academic_coordinator'
+    | 'discipline_officer'
+    | 'accountant'
+    | 'cashier'
+    | 'registrar'
 
 // TODO: Replace with actual server function to get user role
 async function getUserRole() {
@@ -15,7 +15,7 @@ async function getUserRole() {
     roleSlug: 'school_administrator' as RoleSlug,
     roleName: 'Administrateur Scolaire',
     permissions: {},
-  };
+  }
 }
 
 export function useRole() {
@@ -23,12 +23,12 @@ export function useRole() {
     queryKey: ['user-role'],
     queryFn: getUserRole,
     staleTime: 5 * 60 * 1000, // 5 minutes
-  });
+  })
 
   return {
     role: role?.roleSlug,
     roleName: role?.roleName,
     permissions: role?.permissions,
     isLoading,
-  };
+  }
 }

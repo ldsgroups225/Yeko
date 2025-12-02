@@ -1,4 +1,4 @@
-import { DollarSign, CreditCard, CheckCircle, Clock } from 'lucide-react';
+import { CheckCircle, Clock, CreditCard, DollarSign } from 'lucide-react'
 
 export function CashierDashboard() {
   return (
@@ -44,16 +44,18 @@ export function CashierDashboard() {
         <div className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Matricule Élève</label>
+              <label htmlFor="student-matricule" className="text-sm font-medium">Matricule Élève</label>
               <input
+                id="student-matricule"
                 type="text"
                 placeholder="AB2024C001"
                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">Montant (FCFA)</label>
+              <label htmlFor="payment-amount" className="text-sm font-medium">Montant (FCFA)</label>
               <input
+                id="payment-amount"
                 type="number"
                 placeholder="45000"
                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
@@ -100,14 +102,14 @@ export function CashierDashboard() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 interface MetricCardProps {
-  title: string;
-  value: string;
-  currency: string;
-  icon: React.ComponentType<{ className?: string }>;
+  title: string
+  value: string
+  currency: string
+  icon: React.ComponentType<{ className?: string }>
 }
 
 function MetricCard({ title, value, currency, icon: Icon }: MetricCardProps) {
@@ -122,16 +124,16 @@ function MetricCard({ title, value, currency, icon: Icon }: MetricCardProps) {
         <p className="text-xs text-muted-foreground">{currency}</p>
       </div>
     </div>
-  );
+  )
 }
 
 interface PaymentItemProps {
-  name: string;
-  matricule: string;
-  amount: string;
-  method: string;
-  time: string;
-  status: 'completed' | 'pending';
+  name: string
+  matricule: string
+  amount: string
+  method: string
+  time: string
+  status: 'completed' | 'pending'
 }
 
 function PaymentItem({ name, matricule, amount, method, time, status }: PaymentItemProps) {
@@ -141,20 +143,27 @@ function PaymentItem({ name, matricule, amount, method, time, status }: PaymentI
         <p className="text-sm font-medium">{name}</p>
         <p className="text-xs text-muted-foreground">{matricule}</p>
         <p className="text-xs text-muted-foreground">
-          {method} • {time}
+          {method}
+          {' '}
+          •
+          {time}
         </p>
       </div>
       <div className="text-right">
-        <p className="text-sm font-bold">{amount} FCFA</p>
+        <p className="text-sm font-bold">
+          {amount}
+          {' '}
+          FCFA
+        </p>
         <span
           className={`text-xs ${status === 'completed'
-              ? 'text-green-600 dark:text-green-400'
-              : 'text-yellow-600 dark:text-yellow-400'
-            }`}
+            ? 'text-green-600 dark:text-green-400'
+            : 'text-yellow-600 dark:text-yellow-400'
+          }`}
         >
           {status === 'completed' ? 'Validé' : 'En attente'}
         </span>
       </div>
     </div>
-  );
+  )
 }

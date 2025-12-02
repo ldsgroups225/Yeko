@@ -1,19 +1,19 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { Breadcrumbs } from '@/components/layout/breadcrumbs';
-import { TeacherForm } from '@/components/hr/teachers/teacher-form';
-import { useTranslation } from 'react-i18next';
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
+import { TeacherForm } from '@/components/hr/teachers/teacher-form'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 
 export const Route = createFileRoute('/_auth/app/hr/teachers/new')({
   component: NewTeacherPage,
-});
+})
 
 function NewTeacherPage() {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
+  const { t } = useTranslation()
+  const navigate = useNavigate()
 
   const handleSuccess = () => {
-    navigate({ to: '/app/hr/teachers', search: { page: 1 } });
-  };
+    navigate({ to: '/app/hr/teachers', search: { page: 1 } })
+  }
 
   return (
     <div className="space-y-6">
@@ -32,5 +32,5 @@ function NewTeacherPage() {
 
       <TeacherForm onSuccess={handleSuccess} />
     </div>
-  );
+  )
 }

@@ -1,17 +1,17 @@
-import { createServerFn } from '@tanstack/react-start';
-import { z } from 'zod';
 import {
-  getTeachersBySchool,
-  countTeachersBySchool,
-  getTeacherById,
-  createTeacher,
-  updateTeacher,
-  deleteTeacher,
   assignSubjectsToTeacher,
+  countTeachersBySchool,
+  createTeacher,
+  deleteTeacher,
+  getTeacherById,
+  getTeachersBySchool,
   getTeacherWithSubjects,
-} from '@repo/data-ops/queries/school-admin/teachers';
-import { getSchoolContext } from '../middleware/school-context';
-import { teacherCreateSchema, teacherUpdateSchema } from '@/schemas/teacher';
+  updateTeacher,
+} from '@repo/data-ops/queries/school-admin/teachers'
+import { createServerFn } from '@tanstack/react-start'
+import { z } from 'zod'
+import { teacherCreateSchema, teacherUpdateSchema } from '@/schemas/teacher'
+import { getSchoolContext } from '../middleware/school-context'
 
 /**
  * Filters for teacher queries
@@ -20,7 +20,7 @@ const teacherFiltersSchema = z.object({
   search: z.string().optional(),
   subjectId: z.string().optional(),
   status: z.enum(['active', 'inactive', 'on_leave']).optional(),
-});
+})
 
 /**
  * Pagination schema
@@ -28,7 +28,7 @@ const teacherFiltersSchema = z.object({
 const paginationSchema = z.object({
   page: z.number().min(1).default(1),
   limit: z.number().min(1).max(100).default(20),
-});
+})
 
 /**
  * Get teachers with pagination and filters
@@ -38,15 +38,16 @@ export const getTeachers = createServerFn()
     z.object({
       filters: teacherFiltersSchema.optional(),
       pagination: paginationSchema.optional(),
-    })
+    }),
   )
   .handler(async ({ data }) => {
-    const context = await getSchoolContext();
-    if (!context) throw new Error('No school context');
-    const { schoolId } = context;
-    const { filters = {}, pagination = { page: 1, limit: 20 } } = data;
+    const context = await getSchoolContext()
+    if (!context)
+      throw new Error('No school context')
+    const { schoolId } = context
+    const { filters = {}, pagination = { page: 1, limit: 20 } } = data
 
-    const offset = (pagination.page - 1) * pagination.limit;
+    const offset = (pagination.page - 1) * pagination.limit
 
     const [teachers, total] = await Promise.all([
       getTeachersBySchool(schoolId, {
@@ -55,7 +56,7 @@ export const getTeachers = createServerFn()
         offset,
       }),
       countTeachersBySchool(schoolId, filters),
-    ]);
+    ])
 
     return {
       teachers,
@@ -63,8 +64,8 @@ export const getTeachers = createServerFn()
       page: pagination.page,
       limit: pagination.limit,
       totalPages: Math.ceil(total / pagination.limit),
-    };
-  });
+    }
+  })
 
 /**
  * Get teacher by ID
@@ -72,11 +73,12 @@ export const getTeachers = createServerFn()
 export const getTeacher = createServerFn()
   .inputValidator(z.string())
   .handler(async ({ data: teacherId }) => {
-    const context = await getSchoolContext();
-    if (!context) throw new Error('No school context');
-    const { schoolId } = context;
-    return await getTeacherById(teacherId, schoolId);
-  });
+    const context = await getSchoolContext()
+    if (!context)
+      throw new Error('No school context')
+    const { schoolId } = context
+    return await getTeacherById(teacherId, schoolId)
+  })
 
 /**
  * Create new teacher
@@ -84,9 +86,10 @@ export const getTeacher = createServerFn()
 export const createNewTeacher = createServerFn()
   .inputValidator(teacherCreateSchema)
   .handler(async ({ data }) => {
-    const context = await getSchoolContext();
-    if (!context) throw new Error('No school context');
-    const { schoolId } = context;
+    const context = await getSchoolContext()
+    if (!context)
+      throw new Error('No school context')
+    const { schoolId } = context
 
     return await createTeacher({
       userId: data.userId,
@@ -94,8 +97,8 @@ export const createNewTeacher = createServerFn()
       specialization: data.specialization || undefined,
       hireDate: data.hireDate || undefined,
       subjectIds: data.subjectIds,
-    });
-  });
+    })
+  })
 
 /**
  * Update teacher
@@ -105,19 +108,20 @@ export const updateExistingTeacher = createServerFn()
     z.object({
       teacherId: z.string(),
       data: teacherUpdateSchema,
-    })
+    }),
   )
   .handler(async ({ data: { teacherId, data } }) => {
-    const context = await getSchoolContext();
-    if (!context) throw new Error('No school context');
-    const { schoolId } = context;
+    const context = await getSchoolContext()
+    if (!context)
+      throw new Error('No school context')
+    const { schoolId } = context
 
     return await updateTeacher(teacherId, schoolId, {
       specialization: data.specialization || undefined,
       hireDate: data.hireDate || undefined,
       status: data.status,
-    });
-  });
+    })
+  })
 
 /**
  * Delete teacher
@@ -125,11 +129,12 @@ export const updateExistingTeacher = createServerFn()
 export const deleteExistingTeacher = createServerFn()
   .inputValidator(z.string())
   .handler(async ({ data: teacherId }) => {
-    const context = await getSchoolContext();
-    if (!context) throw new Error('No school context');
-    const { schoolId } = context;
-    return await deleteTeacher(teacherId, schoolId);
-  });
+    const context = await getSchoolContext()
+    if (!context)
+      throw new Error('No school context')
+    const { schoolId } = context
+    return await deleteTeacher(teacherId, schoolId)
+  })
 
 /**
  * Assign subjects to teacher
@@ -139,14 +144,15 @@ export const assignSubjects = createServerFn()
     z.object({
       teacherId: z.string(),
       subjectIds: z.array(z.string()).min(1),
-    })
+    }),
   )
   .handler(async ({ data: { teacherId, subjectIds } }) => {
-    const context = await getSchoolContext();
-    if (!context) throw new Error('No school context');
-    const { schoolId } = context;
-    return await assignSubjectsToTeacher(teacherId, schoolId, subjectIds);
-  });
+    const context = await getSchoolContext()
+    if (!context)
+      throw new Error('No school context')
+    const { schoolId } = context
+    return await assignSubjectsToTeacher(teacherId, schoolId, subjectIds)
+  })
 
 /**
  * Get teacher subjects
@@ -154,8 +160,9 @@ export const assignSubjects = createServerFn()
 export const getTeacherSubjectsList = createServerFn()
   .inputValidator(z.string())
   .handler(async ({ data: teacherId }) => {
-    const context = await getSchoolContext();
-    if (!context) throw new Error('No school context');
-    const { schoolId } = context;
-    return await getTeacherWithSubjects(teacherId, schoolId);
-  });
+    const context = await getSchoolContext()
+    if (!context)
+      throw new Error('No school context')
+    const { schoolId } = context
+    return await getTeacherWithSubjects(teacherId, schoolId)
+  })

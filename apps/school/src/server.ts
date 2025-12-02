@@ -1,5 +1,5 @@
-import { initDatabase } from '@repo/data-ops/database/setup'
 import { setAuth } from '@repo/data-ops/auth/server'
+import { initDatabase } from '@repo/data-ops/database/setup'
 import handler from '@tanstack/react-start/server-entry'
 import { env } from 'cloudflare:workers'
 

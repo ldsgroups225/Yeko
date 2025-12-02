@@ -1,43 +1,44 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { Breadcrumbs } from '@/components/layout/breadcrumbs';
-import { RoleForm } from '@/components/hr/roles/role-form';
-import { useTranslation } from 'react-i18next';
-import { getRole, updateExistingRole } from '@/school/functions/roles';
-import { toast } from 'sonner';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { RoleForm } from '@/components/hr/roles/role-form'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { getRole, updateExistingRole } from '@/school/functions/roles'
 
 export const Route = createFileRoute('/_auth/app/hr/roles/$roleId/edit')({
   component: EditRolePage,
   loader: async ({ params }) => {
-    return await getRole({ data: params.roleId });
+    return await getRole({ data: params.roleId })
   },
-});
+})
 
 function EditRolePage() {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const { roleId } = Route.useParams();
-  const roleData = Route.useLoaderData();
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  const { roleId } = Route.useParams()
+  const roleData = Route.useLoaderData()
 
   const { data: role } = useSuspenseQuery({
     queryKey: ['role', roleId],
     queryFn: () => getRole({ data: roleId }),
     initialData: roleData,
-  });
+  })
 
   const handleSubmit = async (data: any) => {
     try {
-      await updateExistingRole({ data: { roleId, data } });
-      toast.success(t('hr.roles.updateSuccess'));
-      navigate({ to: '/app/hr/roles/$roleId', params: { roleId } });
-    } catch (error) {
-      toast.error(t('hr.roles.updateError'));
-      throw error;
+      await updateExistingRole({ data: { roleId, data } })
+      toast.success(t('hr.roles.updateSuccess'))
+      navigate({ to: '/app/hr/roles/$roleId', params: { roleId } })
     }
-  };
+    catch (error) {
+      toast.error(t('hr.roles.updateError'))
+      throw error
+    }
+  }
 
   if (!role) {
-    return <div>{t('hr.roles.notFound')}</div>;
+    return <div>{t('hr.roles.notFound')}</div>
   }
 
   if (role.isSystemRole) {
@@ -55,7 +56,7 @@ function EditRolePage() {
           <p className="mt-2 text-sm text-muted-foreground">{t('hr.roles.systemRoleDescription')}</p>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -76,5 +77,5 @@ function EditRolePage() {
 
       <RoleForm initialData={role} onSubmit={handleSubmit} />
     </div>
-  );
+  )
 }
