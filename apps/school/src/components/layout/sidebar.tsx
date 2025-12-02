@@ -1,7 +1,6 @@
-import { Link } from '@tanstack/react-router'
+import { Link, useLocation } from '@tanstack/react-router'
 import {
   BookOpen,
-  ChevronRight,
   ClipboardCheck,
   DollarSign,
   GraduationCap,
@@ -9,7 +8,24 @@ import {
   Settings,
   Users,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import * as React from 'react'
+
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+  SidebarRail,
+} from '@/components/ui/sidebar'
 
 interface NavItem {
   title: string
@@ -72,71 +88,76 @@ const navigationItems: NavItem[] = [
   },
 ]
 
-export function Sidebar() {
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const pathname = useLocation({ select: location => location.pathname })
+
   return (
-    <aside className="hidden w-64 border-r border-border/40 bg-background lg:block">
-      <div className="flex h-full flex-col gap-2">
-        <div className="flex-1 overflow-auto py-4">
-          <nav className="grid gap-1 px-2">
-            {navigationItems.map(item => (
-              <NavItemComponent key={item.href} item={item} />
-            ))}
-          </nav>
+    <Sidebar collapsible="icon" {...props}>
+      <SidebarHeader>
+        <div className="flex items-center gap-2 px-2 py-1">
+          <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+            <GraduationCap className="size-4" />
+          </div>
+          <div className="grid flex-1 text-left text-sm leading-tight">
+            <span className="truncate font-semibold">Yeko School</span>
+            <span className="truncate text-xs">Administration</span>
+          </div>
         </div>
-      </div>
-    </aside>
+      </SidebarHeader>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Menu Principal</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navigationItems.map(item => (
+                <SidebarMenuItem key={item.href}>
+                  {item.children
+                    ? (
+                        <SidebarMenuSubItemWrapper item={item} pathname={pathname} />
+                      )
+                    : (
+                        <SidebarMenuButton
+                          asChild
+                          isActive={pathname === item.href}
+                          tooltip={item.title}
+                        >
+                          <Link to={item.href}>
+                            <item.icon />
+                            <span>{item.title}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      )}
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+      <SidebarFooter />
+      <SidebarRail />
+    </Sidebar>
   )
 }
 
-function NavItemComponent({ item }: { item: NavItem }) {
-  const Icon = item.icon
-
-  if (item.children) {
-    return (
-      <div className="space-y-1">
-        <button
-          type="button"
-          className={cn(
-            'flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors',
-            'hover:bg-accent hover:text-accent-foreground',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-          )}
-        >
-          <Icon className="h-4 w-4" />
-          <span className="flex-1 text-left">{item.title}</span>
-          <ChevronRight className="h-4 w-4 opacity-50" />
-        </button>
-        <div className="ml-4 space-y-1 border-l border-border/40 pl-4">
-          {item.children.map(child => (
-            <Link
-              key={child.href}
-              to={child.href}
-              className={cn(
-                'flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors',
-                'hover:bg-accent hover:text-accent-foreground',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-              )}
-            >
-              <child.icon className="h-4 w-4" />
-              <span>{child.title}</span>
-            </Link>
-          ))}
-        </div>
-      </div>
-    )
-  }
-
+function SidebarMenuSubItemWrapper({ item, pathname }: { item: NavItem, pathname: string }) {
   return (
-    <Link
-      to={item.href}
-      className={cn(
-        'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors',
-        'hover:bg-accent hover:text-accent-foreground',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-      )}
-    >
-      <Icon className="h-4 w-4" />
-      <span>{item.title}</span>
-    </Link>
+    <>
+      <SidebarMenuButton tooltip={item.title}>
+        <item.icon />
+        <span>{item.title}</span>
+      </SidebarMenuButton>
+      <SidebarMenuSub>
+        {item.children?.map(child => (
+          <SidebarMenuSubItem key={child.href}>
+            <SidebarMenuSubButton asChild isActive={pathname === child.href}>
+              <Link to={child.href}>
+                <child.icon />
+                <span>{child.title}</span>
+              </Link>
+            </SidebarMenuSubButton>
+          </SidebarMenuSubItem>
+        ))}
+      </SidebarMenuSub>
+    </>
   )
 }
