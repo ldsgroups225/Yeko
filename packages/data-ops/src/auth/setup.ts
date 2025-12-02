@@ -4,13 +4,17 @@ import { betterAuth } from 'better-auth'
 export function createBetterAuth(config: {
   database: BetterAuthOptions['database']
   secret?: BetterAuthOptions['secret']
+  baseURL?: BetterAuthOptions['baseURL']
   socialProviders?: BetterAuthOptions['socialProviders']
+  emailAndPassword?: BetterAuthOptions['emailAndPassword']
 }): ReturnType<typeof betterAuth> {
   return betterAuth({
     database: config.database,
     secret: config.secret,
-    emailAndPassword: {
-      enabled: false,
+    baseURL: config.baseURL,
+    emailAndPassword: config.emailAndPassword ?? {
+      enabled: true,
+      requireEmailVerification: false,
     },
     socialProviders: config.socialProviders,
     user: {

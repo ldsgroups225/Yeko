@@ -1,5 +1,5 @@
 {
-  "id": "480ce3d2-36c0-4c05-9dde-8dfcf7ec6160",
+  "id": "a97fdff6-b541-4014-931c-3fde915e18db",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -88,7 +88,23 @@
           "notNull": true
         }
       },
-      "indexes": {},
+      "indexes": {
+        "auth_account_userId_idx": {
+          "name": "auth_account_userId_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "auth_account_user_id_auth_user_id_fk": {
           "name": "auth_account_user_id_auth_user_id_fk",
@@ -164,7 +180,23 @@
           "notNull": true
         }
       },
-      "indexes": {},
+      "indexes": {
+        "auth_session_userId_idx": {
+          "name": "auth_session_userId_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "auth_session_user_id_auth_user_id_fk": {
           "name": "auth_session_user_id_auth_user_id_fk",
@@ -303,7 +335,23 @@
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "auth_verification_identifier_idx": {
+          "name": "auth_verification_identifier_idx",
+          "columns": [
+            {
+              "expression": "identifier",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
@@ -2493,6 +2541,13 @@
           "primaryKey": false,
           "notNull": true
         },
+        "is_system_role": {
+          "name": "is_system_role",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -3903,6 +3958,12 @@
           "primaryKey": false,
           "notNull": true,
           "default": "'active'"
+        },
+        "last_login_at": {
+          "name": "last_login_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",

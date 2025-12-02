@@ -2,8 +2,8 @@ import { relations } from 'drizzle-orm'
 import { boolean, date, index, integer, jsonb, pgTable, smallint, text, timestamp, unique } from 'drizzle-orm/pg-core'
 
 // Import from core and auth schemas
-import { auth_user } from './auth-schema.js'
-import { coefficientTemplates, grades, schools, schoolYearTemplates, series, subjects, termTemplates } from './core-schema.js'
+import { auth_user } from './auth-schema'
+import { coefficientTemplates, grades, schools, schoolYearTemplates, series, subjects, termTemplates } from './core-schema'
 
 // --- Level 0: Identity & Access (Foundation) ---
 

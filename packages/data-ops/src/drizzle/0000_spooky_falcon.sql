@@ -258,6 +258,7 @@ CREATE TABLE "roles" (
 	"description" text,
 	"permissions" jsonb DEFAULT '{}'::jsonb NOT NULL,
 	"scope" text NOT NULL,
+	"is_system_role" boolean DEFAULT false NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "roles_slug_unique" UNIQUE("slug")
@@ -375,6 +376,7 @@ CREATE TABLE "users" (
 	"phone" text,
 	"avatar_url" text,
 	"status" text DEFAULT 'active' NOT NULL,
+	"last_login_at" timestamp,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"deleted_at" timestamp,
@@ -435,6 +437,9 @@ ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_school_id_schools_id_fk" FOR
 ALTER TABLE "user_schools" ADD CONSTRAINT "user_schools_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_schools" ADD CONSTRAINT "user_schools_school_id_schools_id_fk" FOREIGN KEY ("school_id") REFERENCES "public"."schools"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "users" ADD CONSTRAINT "users_auth_user_id_auth_user_id_fk" FOREIGN KEY ("auth_user_id") REFERENCES "public"."auth_user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "auth_account_userId_idx" ON "auth_account" USING btree ("user_id");--> statement-breakpoint
+CREATE INDEX "auth_session_userId_idx" ON "auth_session" USING btree ("user_id");--> statement-breakpoint
+CREATE INDEX "auth_verification_identifier_idx" ON "auth_verification" USING btree ("identifier");--> statement-breakpoint
 CREATE INDEX "idx_activity_user_time" ON "activity_logs" USING btree ("user_id","created_at" DESC NULLS LAST);--> statement-breakpoint
 CREATE INDEX "idx_activity_school_time" ON "activity_logs" USING btree ("school_id","created_at" DESC NULLS LAST);--> statement-breakpoint
 CREATE INDEX "idx_activity_action_time" ON "activity_logs" USING btree ("action","created_at" DESC NULLS LAST);--> statement-breakpoint

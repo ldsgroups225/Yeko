@@ -1,17 +1,18 @@
-import type { QueryClient } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import type { QueryClient } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import {
   createRootRouteWithContext,
   HeadContent,
   Outlet,
   Scripts,
-} from '@tanstack/react-router';
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
-import type { ReactNode } from 'react';
-import appCss from '@/styles.css?url';
+} from '@tanstack/react-router'
+import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+import type { ReactNode } from 'react'
+import { Toaster } from 'sonner'
+import appCss from '@/styles.css?url'
 
 export const Route = createRootRouteWithContext<{
-  queryClient: QueryClient;
+  queryClient: QueryClient
 }>()({
   head: () => ({
     meta: [
@@ -29,14 +30,15 @@ export const Route = createRootRouteWithContext<{
     links: [{ rel: 'stylesheet', href: appCss }],
   }),
   component: RootComponent,
-});
+})
 
 function RootComponent() {
   return (
     <RootDocument>
       <Outlet />
+      <Toaster position="top-right" richColors />
     </RootDocument>
-  );
+  )
 }
 
 function RootDocument({ children }: { children: ReactNode }) {
@@ -52,5 +54,5 @@ function RootDocument({ children }: { children: ReactNode }) {
         <Scripts />
       </body>
     </html>
-  );
+  )
 }
