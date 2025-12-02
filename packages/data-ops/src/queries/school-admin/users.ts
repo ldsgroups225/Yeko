@@ -332,6 +332,36 @@ export async function getUserSchoolsByUserId(userId: string) {
 }
 
 /**
+ * Get schools by auth user ID (Better Auth user ID)
+ * This is used to get schools for the currently logged-in user
+ */
+export async function getUserSchoolsByAuthUserId(authUserId: string) {
+  if (!authUserId) {
+    throw new Error('Auth User ID is required')
+  }
+
+  const db = getDb()
+
+  return db
+    .select({
+      id: schools.id,
+      name: schools.name,
+      code: schools.code,
+      status: schools.status,
+      logoUrl: schools.logoUrl,
+    })
+    .from(userSchools)
+    .innerJoin(schools, eq(userSchools.schoolId, schools.id))
+    .innerJoin(users, eq(userSchools.userId, users.id))
+    .where(and(
+      eq(users.authUserId, authUserId),
+      isNull(users.deletedAt),
+      eq(schools.status, 'active'),
+    ))
+    .orderBy(schools.name)
+}
+
+/**
  * Get user permissions for a specific school
  * Returns merged permissions from all user roles
  */
