@@ -13,11 +13,7 @@ export const roleSchema = z.object({
 
 export const createRoleSchema = roleSchema
 
-export const updateRoleSchema = roleSchema.partial().extend({
-  // Cannot update slug or scope after creation
-  slug: z.never().optional(),
-  scope: z.never().optional(),
-})
+export const updateRoleSchema = roleSchema.omit({ slug: true, scope: true }).partial()
 
 // Helper to generate slug from name
 export function generateSlug(name: string): string {
