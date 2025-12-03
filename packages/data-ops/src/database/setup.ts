@@ -1,7 +1,7 @@
 // packages/data-ops/src/database/setup.ts
 
-import { Pool as NeonPool } from '@neondatabase/serverless'
-import { drizzle as drizzleNeonServerless } from 'drizzle-orm/neon-serverless'
+import { neon } from '@neondatabase/serverless'
+import { drizzle as drizzleNeonHttp } from 'drizzle-orm/neon-http'
 import { drizzle as drizzlePg } from 'drizzle-orm/node-postgres'
 import { Pool } from 'pg'
 
@@ -12,20 +12,19 @@ export function initDatabase(connection: {
   username: string
   password: string
 }) {
-  if (db) {
-    return db
-  }
-
   const connectionString = `postgres://${connection.username}:${connection.password}@${connection.host}`
 
   // Check if it's a Neon connection (contains .neon.tech or sslmode=require)
   if (connection.host.includes('.neon.tech') || connection.host.includes('sslmode=')) {
-    // Use Neon serverless driver with WebSocket support for transactions
-    const pool = new NeonPool({ connectionString })
-    db = drizzleNeonServerless(pool)
+    // Use Neon HTTP driver for serverless/edge environments (no WebSocket needed)
+    const sql = neon(connectionString)
+    db = drizzleNeonHttp(sql)
   }
   else {
-    // Use standard PostgreSQL connection
+    // Use standard PostgreSQL connection (cached for non-serverless)
+    if (db) {
+      return db
+    }
     const pool = new Pool({ connectionString })
     db = drizzlePg(pool)
   }
