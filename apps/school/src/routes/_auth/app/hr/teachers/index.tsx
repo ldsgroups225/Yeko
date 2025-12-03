@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { Plus } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
@@ -37,9 +37,11 @@ function TeachersListPage() {
           <p className="text-muted-foreground">{t('hr.teachers.description')}</p>
         </div>
         <div className="flex gap-2">
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            {t('hr.teachers.addTeacher')}
+          <Button asChild>
+            <Link to="/app/hr/teachers/new">
+              <Plus className="mr-2 h-4 w-4" />
+              {t('hr.teachers.addTeacher')}
+            </Link>
           </Button>
         </div>
       </div>

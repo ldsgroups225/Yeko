@@ -32,7 +32,7 @@ export async function getTeachersBySchool(
     conditions.push(or(ilike(users.name, `%${options.search}%`), ilike(users.email, `%${options.search}%`))!)
   }
 
-  return db
+  const teachersList = await db
     .select({
       id: teachers.id,
       userId: teachers.userId,
@@ -54,6 +54,27 @@ export async function getTeachersBySchool(
     .orderBy(desc(teachers.createdAt))
     .limit(limit)
     .offset(offset)
+
+  // Fetch subjects for each teacher
+  const teachersWithSubjects = await Promise.all(
+    teachersList.map(async (teacher: typeof teachersList[0]) => {
+      const subjectsList = await db
+        .select({
+          name: subjects.name,
+          shortName: subjects.shortName,
+        })
+        .from(teacherSubjects)
+        .innerJoin(subjects, eq(teacherSubjects.subjectId, subjects.id))
+        .where(eq(teacherSubjects.teacherId, teacher.id))
+
+      return {
+        ...teacher,
+        subjects: subjectsList.map((s: { name: string, shortName: string }) => s.shortName),
+      }
+    }),
+  )
+
+  return teachersWithSubjects
 }
 
 export async function getTeacherById(teacherId: string, schoolId: string) {
@@ -113,33 +134,31 @@ export async function createTeacher(data: {
 
   const db = getDb()
 
-  return db.transaction(async (tx: any) => {
-    // Create teacher
-    const [teacher] = await tx
-      .insert(teachers)
-      .values({
+  // Create teacher
+  const [teacher] = await db
+    .insert(teachers)
+    .values({
+      id: crypto.randomUUID(),
+      userId: data.userId,
+      schoolId: data.schoolId,
+      specialization: data.specialization,
+      hireDate: data.hireDate,
+      status: 'active',
+    })
+    .returning()
+
+  // Assign subjects
+  if (data.subjectIds && data.subjectIds.length > 0) {
+    await db.insert(teacherSubjects).values(
+      data.subjectIds.map(subjectId => ({
         id: crypto.randomUUID(),
-        userId: data.userId,
-        schoolId: data.schoolId,
-        specialization: data.specialization,
-        hireDate: data.hireDate,
-        status: 'active',
-      })
-      .returning()
+        teacherId: teacher.id,
+        subjectId,
+      })),
+    )
+  }
 
-    // Assign subjects
-    if (data.subjectIds && data.subjectIds.length > 0) {
-      await tx.insert(teacherSubjects).values(
-        data.subjectIds.map(subjectId => ({
-          id: crypto.randomUUID(),
-          teacherId: teacher.id,
-          subjectId,
-        })),
-      )
-    }
-
-    return teacher
-  })
+  return teacher
 }
 
 export async function updateTeacher(
@@ -201,29 +220,27 @@ export async function assignSubjectsToTeacher(teacherId: string, schoolId: strin
 
   const db = getDb()
 
-  return db.transaction(async (tx: any) => {
-    // Verify teacher belongs to school
-    const teacher = await getTeacherById(teacherId, schoolId)
-    if (!teacher) {
-      throw new Error(SCHOOL_ERRORS.TEACHER_NOT_FOUND)
-    }
+  // Verify teacher belongs to school
+  const teacher = await getTeacherById(teacherId, schoolId)
+  if (!teacher) {
+    throw new Error(SCHOOL_ERRORS.TEACHER_NOT_FOUND)
+  }
 
-    // Remove existing subjects
-    await tx.delete(teacherSubjects).where(eq(teacherSubjects.teacherId, teacherId))
+  // Remove existing subjects
+  await db.delete(teacherSubjects).where(eq(teacherSubjects.teacherId, teacherId))
 
-    // Add new subjects
-    if (subjectIds.length > 0) {
-      await tx.insert(teacherSubjects).values(
-        subjectIds.map(subjectId => ({
-          id: crypto.randomUUID(),
-          teacherId,
-          subjectId,
-        })),
-      )
-    }
+  // Add new subjects
+  if (subjectIds.length > 0) {
+    await db.insert(teacherSubjects).values(
+      subjectIds.map(subjectId => ({
+        id: crypto.randomUUID(),
+        teacherId,
+        subjectId,
+      })),
+    )
+  }
 
-    return getTeacherWithSubjects(teacherId, schoolId)
-  })
+  return getTeacherWithSubjects(teacherId, schoolId)
 }
 
 // Phase 11: Count teachers for pagination

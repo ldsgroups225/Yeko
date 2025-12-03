@@ -5,6 +5,8 @@ import { Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+import { UserCombobox } from '@/components/hr/staff/user-combobox'
+import { SubjectMultiSelect } from '@/components/hr/teachers/subject-multi-select'
 import { Button } from '@/components/ui/button'
 import { DatePicker } from '@/components/ui/date-picker'
 import { Input } from '@/components/ui/input'
@@ -39,19 +41,20 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
     resolver: zodResolver(teacherCreateSchema),
     defaultValues: teacher
       ? {
-          userId: teacher.userId,
-          specialization: teacher.specialization || '',
-          hireDate: teacher.hireDate
-            ? new Date(teacher.hireDate)
-            : undefined,
-          status: teacher.status,
-          subjectIds: teacher.subjectIds || [],
-        }
+        userId: teacher.userId,
+        specialization: teacher.specialization || '',
+        hireDate: teacher.hireDate
+          ? new Date(teacher.hireDate)
+          : undefined,
+        status: teacher.status,
+        subjectIds: teacher.subjectIds || [],
+      }
       : {
-          status: 'active',
-          subjectIds: [],
-          hireDate: undefined,
-        },
+        userId: '',
+        status: 'active',
+        subjectIds: [],
+        hireDate: undefined,
+      },
   })
 
   const createMutation = useMutation({
@@ -117,18 +120,15 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
                 {' '}
                 <span className="text-destructive">*</span>
               </Label>
-              <Input
-                id="userId"
-                {...register('userId')}
-                placeholder={t('hr.teachers.userIdPlaceholder')}
-                aria-invalid={!!errors.userId}
+              <UserCombobox
+                value={watch('userId')}
+                onSelect={(userId) => {
+                  setValue('userId', userId, { shouldValidate: true })
+                }}
               />
               {errors.userId && (
                 <p className="text-sm text-destructive">{String(errors.userId.message)}</p>
               )}
-              <p className="text-xs text-muted-foreground">
-                {t('hr.teachers.userIdHelp')}
-              </p>
             </div>
           )}
 
@@ -183,10 +183,20 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
           {t('hr.teachers.subjectAssignmentDescription')}
         </p>
         <div className="space-y-2">
-          <Label>{t('hr.teachers.subjects')}</Label>
-          <p className="text-sm text-muted-foreground">
-            {t('hr.teachers.subjectSelectionPlaceholder')}
-          </p>
+          <Label htmlFor="subjectIds">
+            {t('hr.teachers.subjects')}
+            {' '}
+            <span className="text-destructive">*</span>
+          </Label>
+          <SubjectMultiSelect
+            value={watch('subjectIds') || []}
+            onChange={(subjectIds) => {
+              setValue('subjectIds', subjectIds, { shouldValidate: true })
+            }}
+          />
+          {errors.subjectIds && (
+            <p className="text-sm text-destructive">{String(errors.subjectIds.message)}</p>
+          )}
         </div>
       </div>
 
