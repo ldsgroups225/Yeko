@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Plus } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
@@ -20,6 +20,7 @@ export const Route = createFileRoute('/_auth/app/hr/users/')({
 
 function UsersListPage() {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const search = Route.useSearch()
 
   return (
@@ -37,7 +38,7 @@ function UsersListPage() {
           <p className="text-muted-foreground">{t('hr.users.description')}</p>
         </div>
         <div className="flex gap-2">
-          <Button>
+          <Button onClick={() => navigate({ to: '/app/hr/users/new' })}>
             <Plus className="mr-2 h-4 w-4" />
             {t('hr.users.addUser')}
           </Button>
