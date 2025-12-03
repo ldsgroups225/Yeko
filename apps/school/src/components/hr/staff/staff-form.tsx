@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { UserCombobox } from '@/components/hr/staff/user-combobox'
 import { Button } from '@/components/ui/button'
 import { DatePicker } from '@/components/ui/date-picker'
 import { Input } from '@/components/ui/input'
@@ -35,18 +36,21 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
     resolver: zodResolver(staffSchema),
     defaultValues: initialData
       ? {
-          userId: initialData.userId,
-          position: initialData.position,
-          department: initialData.department || '',
-          hireDate: initialData.hireDate
-            ? new Date(initialData.hireDate)
-            : undefined,
-          status: initialData.status,
-        }
+        userId: initialData.userId,
+        position: initialData.position,
+        department: initialData.department || '',
+        hireDate: initialData.hireDate
+          ? new Date(initialData.hireDate)
+          : undefined,
+        status: initialData.status,
+      }
       : {
-          status: 'active',
-          hireDate: undefined,
-        },
+        userId: '',
+        position: '' as any,
+        department: '',
+        status: 'active',
+        hireDate: undefined,
+      },
   })
 
   const handleFormSubmit = async (data: any) => {
@@ -70,18 +74,13 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
                 {' '}
                 <span className="text-destructive">*</span>
               </Label>
-              <Input
-                id="userId"
-                {...register('userId')}
-                placeholder={t('hr.staff.userIdPlaceholder')}
-                aria-invalid={!!errors.userId}
+              <UserCombobox
+                value={watch('userId')}
+                onSelect={userId => setValue('userId', userId)}
               />
               {errors.userId && (
                 <p className="text-sm text-destructive">{String(errors.userId.message)}</p>
               )}
-              <p className="text-xs text-muted-foreground">
-                {t('hr.staff.userIdHelp')}
-              </p>
             </div>
           )}
 
@@ -92,7 +91,7 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
               <span className="text-destructive">*</span>
             </Label>
             <Select
-              value={watch('position')}
+              value={watch('position') || ''}
               onValueChange={value => setValue('position', value as any)}
             >
               <SelectTrigger>
@@ -137,7 +136,7 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
               <span className="text-destructive">*</span>
             </Label>
             <Select
-              value={watch('status')}
+              value={watch('status') || ''}
               onValueChange={value => setValue('status', value as any)}
             >
               <SelectTrigger>
