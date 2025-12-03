@@ -23,7 +23,7 @@ function EditUserPage() {
   })
 
   const handleSuccess = () => {
-    navigate({ to: `/app/hr/users/${userId}` })
+    navigate({ to: '/app/hr/users/$userId', params: { userId } })
   }
 
   if (isLoading) {

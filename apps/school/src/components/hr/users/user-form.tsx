@@ -5,6 +5,7 @@ import { Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+import { RoleSelector } from '@/components/hr/users/role-selector'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -38,17 +39,21 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
     resolver: zodResolver(userCreateSchema),
     defaultValues: user
       ? {
-          name: user.name,
-          email: user.email,
-          phone: user.phone || '',
-          avatarUrl: user.avatarUrl || '',
-          status: user.status,
-          roleIds: user.roleIds || [],
-        }
+        name: user.name,
+        email: user.email,
+        phone: user.phone || '',
+        avatarUrl: user.avatarUrl || '',
+        status: user.status,
+        roleIds: user.roleIds || [],
+      }
       : {
-          status: 'active',
-          roleIds: [],
-        },
+        name: '',
+        email: '',
+        phone: '',
+        avatarUrl: '',
+        status: 'active',
+        roleIds: [],
+      },
   })
 
   const createMutation = useMutation({
@@ -61,7 +66,15 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
       onSuccess?.()
     },
     onError: (error: Error) => {
-      toast.error(error.message || t('errors.generic'))
+      const errorMessage = error.message || t('errors.generic')
+
+      // Check if it's an email uniqueness error
+      if (errorMessage.includes('Email already exists')) {
+        toast.error(t('hr.users.emailAlreadyExists'))
+      }
+      else {
+        toast.error(errorMessage)
+      }
     },
   })
 
@@ -81,7 +94,15 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
       onSuccess?.()
     },
     onError: (error: Error) => {
-      toast.error(error.message || t('errors.generic'))
+      const errorMessage = error.message || t('errors.generic')
+
+      // Check if it's an email uniqueness error
+      if (errorMessage.includes('Email already exists')) {
+        toast.error(t('hr.users.emailAlreadyExists'))
+      }
+      else {
+        toast.error(errorMessage)
+      }
     },
   })
 
@@ -135,6 +156,11 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
             {errors.email && (
               <p className="text-sm text-destructive">{errors.email.message}</p>
             )}
+            {!isEditing && (
+              <p className="text-xs text-muted-foreground">
+                {t('hr.users.emailUniqueHint')}
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -154,7 +180,7 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
               <span className="text-destructive">*</span>
             </Label>
             <Select
-              value={watch('status')}
+              value={watch('status') || ''}
               onValueChange={value => setValue('status', value as any)}
             >
               <SelectTrigger>
@@ -192,10 +218,19 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
           {t('hr.users.roleAssignmentDescription')}
         </p>
         <div className="space-y-2">
-          <Label>{t('hr.common.roles')}</Label>
-          <p className="text-sm text-muted-foreground">
-            {t('hr.users.roleSelectionPlaceholder')}
-          </p>
+          <Label>
+            {t('hr.common.roles')}
+            {' '}
+            <span className="text-destructive">*</span>
+          </Label>
+          <RoleSelector
+            selectedRoleIds={watch('roleIds') || []}
+            onChange={roleIds => setValue('roleIds', roleIds)}
+            disabled={isLoading}
+          />
+          {errors.roleIds && (
+            <p className="text-sm text-destructive">{errors.roleIds.message}</p>
+          )}
         </div>
       </div>
 

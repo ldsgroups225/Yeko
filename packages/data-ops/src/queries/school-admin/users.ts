@@ -172,7 +172,7 @@ export async function getUserWithRoles(userId: string, schoolId: string) {
 export async function createUserWithSchool(data: {
   email: string
   name: string
-  authUserId: string
+  authUserId: string | null
   schoolId: string
   roleIds: string[]
   phone?: string
@@ -184,39 +184,38 @@ export async function createUserWithSchool(data: {
 
   const db = getDb()
 
-  return db.transaction(async (tx: any) => {
-    // Create user
-    const [user] = await tx.insert(users).values({
-      id: crypto.randomUUID(),
-      email: data.email,
-      name: data.name,
-      authUserId: data.authUserId,
-      phone: data.phone,
-      avatarUrl: data.avatarUrl,
-      status: 'active',
-    }).returning()
+  // Note: neon-http driver doesn't support transactions
+  // Create user
+  const [user] = await db.insert(users).values({
+    id: crypto.randomUUID(),
+    email: data.email,
+    name: data.name,
+    authUserId: data.authUserId,
+    phone: data.phone,
+    avatarUrl: data.avatarUrl,
+    status: 'active',
+  }).returning()
 
-    // Link to school
-    await tx.insert(userSchools).values({
-      id: crypto.randomUUID(),
-      userId: user.id,
-      schoolId: data.schoolId,
-    })
-
-    // Assign roles
-    if (data.roleIds.length > 0) {
-      await tx.insert(userRoles).values(
-        data.roleIds.map(roleId => ({
-          id: crypto.randomUUID(),
-          userId: user.id,
-          roleId,
-          schoolId: data.schoolId,
-        })),
-      )
-    }
-
-    return user
+  // Link to school
+  await db.insert(userSchools).values({
+    id: crypto.randomUUID(),
+    userId: user.id,
+    schoolId: data.schoolId,
   })
+
+  // Assign roles
+  if (data.roleIds.length > 0) {
+    await db.insert(userRoles).values(
+      data.roleIds.map(roleId => ({
+        id: crypto.randomUUID(),
+        userId: user.id,
+        roleId,
+        schoolId: data.schoolId,
+      })),
+    )
+  }
+
+  return user
 }
 
 export async function updateUser(userId: string, schoolId: string, data: {

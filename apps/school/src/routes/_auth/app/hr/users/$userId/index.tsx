@@ -1,13 +1,16 @@
-import { useQuery } from '@tanstack/react-query'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { format } from 'date-fns'
 import { Calendar, Edit, Mail, Phone, Trash2 } from 'lucide-react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { getUser, getUserActivity } from '@/school/functions/users'
+import { deleteExistingUser, getUser, getUserActivity } from '@/school/functions/users'
 
 export const Route = createFileRoute('/_auth/app/hr/users/$userId/')({
   component: UserDetailsPage,
@@ -16,6 +19,9 @@ export const Route = createFileRoute('/_auth/app/hr/users/$userId/')({
 function UserDetailsPage() {
   const { userId } = Route.useParams()
   const { t } = useTranslation()
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
   const { data: user, isLoading } = useQuery({
     queryKey: ['user', userId],
@@ -30,6 +36,20 @@ function UserDetailsPage() {
     queryFn: async () => {
       const result = await getUserActivity({ data: { userId, limit: 20 } })
       return result
+    },
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: async () => {
+      return await deleteExistingUser({ data: userId })
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] })
+      toast.success(t('hr.users.deleteSuccess'))
+      navigate({ to: '/app/hr/users', search: { page: 1 } })
+    },
+    onError: () => {
+      toast.error(t('hr.users.deleteError'))
     },
   })
 
@@ -80,11 +100,18 @@ function UserDetailsPage() {
           </div>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowDeleteDialog(true)}
+          >
             <Trash2 className="mr-2 h-4 w-4" />
             {t('common.delete')}
           </Button>
-          <Button size="sm">
+          <Button
+            size="sm"
+            onClick={() => navigate({ to: '/app/hr/users/$userId/edit', params: { userId } })}
+          >
             <Edit className="mr-2 h-4 w-4" />
             {t('common.edit')}
           </Button>
@@ -153,18 +180,18 @@ function UserDetailsPage() {
             <div className="space-y-3">
               {user.roles && user.roles.length > 0
                 ? (
-                    user.roles.map((role: string) => (
-                      <div key={role} className="flex items-center justify-between rounded-md border p-3">
-                        <div>
-                          <p className="font-medium">{role}</p>
-                        </div>
-                        <Badge variant="secondary">{t('hr.roles.systemRole')}</Badge>
+                  user.roles.map((role: string) => (
+                    <div key={role} className="flex items-center justify-between rounded-md border p-3">
+                      <div>
+                        <p className="font-medium">{role}</p>
                       </div>
-                    ))
-                  )
+                      <Badge variant="secondary">{t('hr.roles.systemRole')}</Badge>
+                    </div>
+                  ))
+                )
                 : (
-                    <p className="text-sm text-muted-foreground">{t('hr.users.noRoles')}</p>
-                  )}
+                  <p className="text-sm text-muted-foreground">{t('hr.users.noRoles')}</p>
+                )}
             </div>
           </div>
         </TabsContent>
@@ -175,25 +202,35 @@ function UserDetailsPage() {
             <div className="space-y-3">
               {activity && activity.length > 0
                 ? (
-                    activity.map((log: any) => (
-                      <div key={log.id} className="flex gap-3 border-b pb-3 last:border-0">
-                        <div className="mt-1 flex h-2 w-2 shrink-0 rounded-full bg-primary" />
-                        <div className="flex-1">
-                          <p className="text-sm font-medium">{log.action}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {format(new Date(log.createdAt), 'dd/MM/yyyy HH:mm')}
-                          </p>
-                        </div>
+                  activity.map((log: any) => (
+                    <div key={log.id} className="flex gap-3 border-b pb-3 last:border-0">
+                      <div className="mt-1 flex h-2 w-2 shrink-0 rounded-full bg-primary" />
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">{log.action}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {format(new Date(log.createdAt), 'dd/MM/yyyy HH:mm')}
+                        </p>
                       </div>
-                    ))
-                  )
+                    </div>
+                  ))
+                )
                 : (
-                    <p className="text-sm text-muted-foreground">{t('hr.users.noActivity')}</p>
-                  )}
+                  <p className="text-sm text-muted-foreground">{t('hr.users.noActivity')}</p>
+                )}
             </div>
           </div>
         </TabsContent>
       </Tabs>
+
+      <DeleteConfirmationDialog
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        title={t('hr.users.deleteUser')}
+        description={t('hr.users.deleteConfirm')}
+        confirmText={user?.name}
+        onConfirm={() => deleteMutation.mutate()}
+        isLoading={deleteMutation.isPending}
+      />
     </div>
   )
 }

@@ -6,8 +6,8 @@ import {
   createUserWithSchool,
   deleteUser,
   getUserActivityLogs,
-  getUserById,
   getUsersBySchool,
+  getUserWithRoles,
   updateUser,
 } from '@repo/data-ops/queries/school-admin/users'
 import { createServerFn } from '@tanstack/react-start'
@@ -70,7 +70,7 @@ export const getUsers = createServerFn()
   })
 
 /**
- * Get user by ID
+ * Get user by ID with roles
  */
 export const getUser = createServerFn()
   .inputValidator(z.string())
@@ -79,7 +79,11 @@ export const getUser = createServerFn()
     if (!context)
       throw new Error('No school context')
     const { schoolId } = context
-    return await getUserById(userId, schoolId)
+    const user = await getUserWithRoles(userId, schoolId)
+    return {
+      ...user,
+      roleIds: user.roles.map((r: { roleId: string }) => r.roleId),
+    }
   })
 
 /**
@@ -93,16 +97,18 @@ export const createNewUser = createServerFn()
       throw new Error('No school context')
     const { schoolId } = context
 
-    // Check email uniqueness
-    const emailExists = await checkEmailUniqueness(data.email, schoolId)
-    if (emailExists) {
+    // Check email uniqueness (returns true if email is available)
+    const emailIsAvailable = await checkEmailUniqueness(data.email, schoolId)
+    if (!emailIsAvailable) {
       throw new Error('Email already exists in this school')
     }
 
+    // TODO: Create auth user account and get real authUserId
+    // For now, using null until user logs in for the first time
     return await createUserWithSchool({
       email: data.email,
       name: data.name,
-      authUserId: 'temp-auth-id', // TODO: Get from auth session
+      authUserId: null as unknown as string, // Will be set when user first logs in
       schoolId,
       roleIds: data.roleIds,
       phone: data.phone || undefined,
@@ -126,10 +132,10 @@ export const updateExistingUser = createServerFn()
       throw new Error('No school context')
     const { schoolId } = context
 
-    // Check email uniqueness if email is being changed
+    // Check email uniqueness if email is being changed (returns true if email is available)
     if (data.email) {
-      const emailExists = await checkEmailUniqueness(data.email, schoolId, userId)
-      if (emailExists) {
+      const emailIsAvailable = await checkEmailUniqueness(data.email, schoolId, userId)
+      if (!emailIsAvailable) {
         throw new Error('Email already exists in this school')
       }
     }
