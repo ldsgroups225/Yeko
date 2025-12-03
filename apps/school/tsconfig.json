@@ -17,7 +17,8 @@
       ]
     },
     "types": [
-      "vite/client"
+      "vite/client",
+      "vitest/globals"
     ],
     "allowImportingTsExtensions": true,
     "strict": true,

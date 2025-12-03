@@ -8,6 +8,13 @@
         "https://mcp.exa.ai/mcp"
       ]
     },
+    "vitest": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@djankies/vitest-mcp"
+      ]
+    },
     "time": {
       "command": "uvx",
       "args": [
@@ -19,13 +26,6 @@
       "args": [
         "-y",
         "@upstash/context7-mcp"
-      ]
-    },
-    "codanna": {
-      "command": "codanna",
-      "args": [
-        "serve",
-        "--watch"
       ]
     },
     "shadcn": {
