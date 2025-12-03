@@ -582,3 +582,36 @@ export async function updateLastLogin(userId: string) {
     })
     .where(eq(users.id, userId))
 }
+
+// Sync user auth data - updates authUserId and lastLoginAt when user logs in
+export async function syncUserAuthOnLogin(authUserId: string, email: string) {
+  const db = getDb()
+
+  // Find user by email
+  const [existingUser] = await db
+    .select({ id: users.id, authUserId: users.authUserId })
+    .from(users)
+    .where(and(eq(users.email, email), isNull(users.deletedAt)))
+    .limit(1)
+
+  if (!existingUser) {
+    return null // User doesn't exist in school system
+  }
+
+  // Update authUserId if different and update lastLoginAt
+  const updates: { authUserId?: string, lastLoginAt: Date, updatedAt: Date } = {
+    lastLoginAt: new Date(),
+    updatedAt: new Date(),
+  }
+
+  if (existingUser.authUserId !== authUserId) {
+    updates.authUserId = authUserId
+  }
+
+  await db
+    .update(users)
+    .set(updates)
+    .where(eq(users.id, existingUser.id))
+
+  return existingUser.id
+}

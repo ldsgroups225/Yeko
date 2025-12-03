@@ -1,4 +1,4 @@
-import { getUserSchoolsByAuthUserId } from '@repo/data-ops/queries/school-admin/users'
+import { getUserSchoolsByAuthUserId, syncUserAuthOnLogin } from '@repo/data-ops/queries/school-admin/users'
 import { createServerFn } from '@tanstack/react-start'
 import { getRequest, setResponseHeader } from '@tanstack/react-start/server'
 import { getAuthContext } from './auth'
@@ -29,6 +29,9 @@ export const getSchoolContext = createServerFn().handler(async () => {
     if (!authContext) {
       return null
     }
+
+    // Sync user auth data and update last login
+    await syncUserAuthOnLogin(authContext.userId, authContext.email)
 
     const req = getRequest()
     const cookies = parseCookies(req.headers.get('cookie'))
