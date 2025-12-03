@@ -180,18 +180,18 @@ function UserDetailsPage() {
             <div className="space-y-3">
               {user.roles && user.roles.length > 0
                 ? (
-                  user.roles.map((role: string) => (
-                    <div key={role} className="flex items-center justify-between rounded-md border p-3">
-                      <div>
-                        <p className="font-medium">{role}</p>
+                    user.roles.map((role: string) => (
+                      <div key={role} className="flex items-center justify-between rounded-md border p-3">
+                        <div>
+                          <p className="font-medium">{role}</p>
+                        </div>
+                        <Badge variant="secondary">{t('hr.roles.systemRole')}</Badge>
                       </div>
-                      <Badge variant="secondary">{t('hr.roles.systemRole')}</Badge>
-                    </div>
-                  ))
-                )
+                    ))
+                  )
                 : (
-                  <p className="text-sm text-muted-foreground">{t('hr.users.noRoles')}</p>
-                )}
+                    <p className="text-sm text-muted-foreground">{t('hr.users.noRoles')}</p>
+                  )}
             </div>
           </div>
         </TabsContent>
@@ -202,21 +202,21 @@ function UserDetailsPage() {
             <div className="space-y-3">
               {activity && activity.length > 0
                 ? (
-                  activity.map((log: any) => (
-                    <div key={log.id} className="flex gap-3 border-b pb-3 last:border-0">
-                      <div className="mt-1 flex h-2 w-2 shrink-0 rounded-full bg-primary" />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">{log.action}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {format(new Date(log.createdAt), 'dd/MM/yyyy HH:mm')}
-                        </p>
+                    activity.map((log: any) => (
+                      <div key={log.id} className="flex gap-3 border-b pb-3 last:border-0">
+                        <div className="mt-1 flex h-2 w-2 shrink-0 rounded-full bg-primary" />
+                        <div className="flex-1">
+                          <p className="text-sm font-medium">{log.action}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {format(new Date(log.createdAt), 'dd/MM/yyyy HH:mm')}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  ))
-                )
+                    ))
+                  )
                 : (
-                  <p className="text-sm text-muted-foreground">{t('hr.users.noActivity')}</p>
-                )}
+                    <p className="text-sm text-muted-foreground">{t('hr.users.noActivity')}</p>
+                  )}
             </div>
           </div>
         </TabsContent>

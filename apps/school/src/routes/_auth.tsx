@@ -34,19 +34,19 @@ function AuthLayout() {
     <>
       {session.isPending
         ? (
-          <div className="min-h-screen flex items-center justify-center bg-background">
-            <Spinner className="size-8 text-primary" />
-          </div>
-        )
+            <div className="min-h-screen flex items-center justify-center bg-background">
+              <Spinner className="size-8 text-primary" />
+            </div>
+          )
         : session.data
           ? (
-            <AppLayout>
-              <AnimatedOutlet />
-            </AppLayout>
-          )
+              <AppLayout>
+                <AnimatedOutlet />
+              </AppLayout>
+            )
           : (
-            <LoginForm />
-          )}
+              <LoginForm />
+            )}
     </>
   )
 }

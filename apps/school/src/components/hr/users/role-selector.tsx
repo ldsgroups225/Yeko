@@ -89,15 +89,17 @@ export function RoleSelector({
       {/* Quick Actions */}
       <div className="flex items-center justify-between">
         <div className="text-sm text-muted-foreground">
-          {selectedRoleIds.length > 0 ? (
-            <span>
-              {selectedRoleIds.length}
-              {' '}
-              {t('hr.roles.selected')}
-            </span>
-          ) : (
-            <span>{t('hr.roles.selectRoles')}</span>
-          )}
+          {selectedRoleIds.length > 0
+            ? (
+                <span>
+                  {selectedRoleIds.length}
+                  {' '}
+                  {t('hr.roles.selected')}
+                </span>
+              )
+            : (
+                <span>{t('hr.roles.selectRoles')}</span>
+              )}
         </div>
         <div className="flex gap-2">
           <Button
@@ -127,58 +129,68 @@ export function RoleSelector({
         <div className="space-y-2">
           <h3 className="text-sm font-medium">{t('hr.roles.available')}</h3>
           <div className="rounded-lg border bg-muted/30 p-3 min-h-[200px] max-h-[400px] overflow-y-auto">
-            {availableRoles.length === 0 ? (
-              <div className="flex items-center justify-center h-[180px] text-sm text-muted-foreground">
-                {t('hr.roles.allSelected')}
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {availableRoles.map(role => (
-                  <div
-                    key={role.id}
-                    className={cn(
-                      'group relative rounded-md border bg-card p-3 cursor-pointer transition-colors hover:bg-accent hover:border-accent-foreground/20',
-                      disabled && 'opacity-50 cursor-not-allowed',
-                    )}
-                    onClick={() => handleSelect(role.id)}
-                    onDoubleClick={() => handleSelect(role.id)}
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <p className="font-medium text-sm truncate">
-                            {role.name}
-                          </p>
-                          {role.scope === 'system' && (
-                            <Badge variant="secondary" className="text-xs">
-                              {t('hr.roles.system')}
-                            </Badge>
-                          )}
-                        </div>
-                        {role.description && (
-                          <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                            {role.description}
-                          </p>
-                        )}
-                      </div>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handleSelect(role.id)
-                        }}
-                        disabled={disabled}
-                      >
-                        <CheckIcon className="h-4 w-4" />
-                      </Button>
-                    </div>
+            {availableRoles.length === 0
+              ? (
+                  <div className="flex items-center justify-center h-[180px] text-sm text-muted-foreground">
+                    {t('hr.roles.allSelected')}
                   </div>
-                ))}
-              </div>
-            )}
+                )
+              : (
+                  <div className="space-y-2">
+                    {availableRoles.map(role => (
+                      <div
+                        key={role.id}
+                        className={cn(
+                          'group relative rounded-md border bg-card p-3 cursor-pointer transition-colors hover:bg-accent hover:border-accent-foreground/20',
+                          disabled && 'opacity-50 cursor-not-allowed',
+                        )}
+                        onClick={() => handleSelect(role.id)}
+                        onDoubleClick={() => handleSelect(role.id)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault()
+                            handleSelect(role.id)
+                          }
+                        }}
+                        role="button"
+                        tabIndex={0}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <p className="font-medium text-sm truncate">
+                                {role.name}
+                              </p>
+                              {role.scope === 'system' && (
+                                <Badge variant="secondary" className="text-xs">
+                                  {t('hr.roles.system')}
+                                </Badge>
+                              )}
+                            </div>
+                            {role.description && (
+                              <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                                {role.description}
+                              </p>
+                            )}
+                          </div>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleSelect(role.id)
+                            }}
+                            disabled={disabled}
+                          >
+                            <CheckIcon className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
           </div>
         </div>
 
@@ -186,58 +198,68 @@ export function RoleSelector({
         <div className="space-y-2">
           <h3 className="text-sm font-medium">{t('hr.roles.selectedRoles')}</h3>
           <div className="rounded-lg border bg-primary/5 p-3 min-h-[200px] max-h-[400px] overflow-y-auto">
-            {selectedRoles.length === 0 ? (
-              <div className="flex items-center justify-center h-[180px] text-sm text-muted-foreground">
-                {t('hr.roles.noRolesSelected')}
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {selectedRoles.map(role => (
-                  <div
-                    key={role.id}
-                    className={cn(
-                      'group relative rounded-md border border-primary/20 bg-card p-3 cursor-pointer transition-colors hover:bg-destructive/10 hover:border-destructive/30',
-                      disabled && 'opacity-50 cursor-not-allowed',
-                    )}
-                    onClick={() => handleDeselect(role.id)}
-                    onDoubleClick={() => handleDeselect(role.id)}
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <p className="font-medium text-sm truncate">
-                            {role.name}
-                          </p>
-                          {role.scope === 'system' && (
-                            <Badge variant="secondary" className="text-xs">
-                              {t('hr.roles.system')}
-                            </Badge>
-                          )}
-                        </div>
-                        {role.description && (
-                          <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                            {role.description}
-                          </p>
-                        )}
-                      </div>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handleDeselect(role.id)
-                        }}
-                        disabled={disabled}
-                      >
-                        <XIcon className="h-4 w-4" />
-                      </Button>
-                    </div>
+            {selectedRoles.length === 0
+              ? (
+                  <div className="flex items-center justify-center h-[180px] text-sm text-muted-foreground">
+                    {t('hr.roles.noRolesSelected')}
                   </div>
-                ))}
-              </div>
-            )}
+                )
+              : (
+                  <div className="space-y-2">
+                    {selectedRoles.map(role => (
+                      <div
+                        key={role.id}
+                        className={cn(
+                          'group relative rounded-md border border-primary/20 bg-card p-3 cursor-pointer transition-colors hover:bg-destructive/10 hover:border-destructive/30',
+                          disabled && 'opacity-50 cursor-not-allowed',
+                        )}
+                        onClick={() => handleDeselect(role.id)}
+                        onDoubleClick={() => handleDeselect(role.id)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault()
+                            handleDeselect(role.id)
+                          }
+                        }}
+                        role="button"
+                        tabIndex={0}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <p className="font-medium text-sm truncate">
+                                {role.name}
+                              </p>
+                              {role.scope === 'system' && (
+                                <Badge variant="secondary" className="text-xs">
+                                  {t('hr.roles.system')}
+                                </Badge>
+                              )}
+                            </div>
+                            {role.description && (
+                              <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                                {role.description}
+                              </p>
+                            )}
+                          </div>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleDeselect(role.id)
+                            }}
+                            disabled={disabled}
+                          >
+                            <XIcon className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
           </div>
         </div>
       </div>

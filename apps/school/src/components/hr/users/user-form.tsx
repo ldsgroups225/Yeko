@@ -39,21 +39,21 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
     resolver: zodResolver(userCreateSchema),
     defaultValues: user
       ? {
-        name: user.name,
-        email: user.email,
-        phone: user.phone || '',
-        avatarUrl: user.avatarUrl || '',
-        status: user.status,
-        roleIds: user.roleIds || [],
-      }
+          name: user.name,
+          email: user.email,
+          phone: user.phone || '',
+          avatarUrl: user.avatarUrl || '',
+          status: user.status,
+          roleIds: user.roleIds || [],
+        }
       : {
-        name: '',
-        email: '',
-        phone: '',
-        avatarUrl: '',
-        status: 'active',
-        roleIds: [],
-      },
+          name: '',
+          email: '',
+          phone: '',
+          avatarUrl: '',
+          status: 'active',
+          roleIds: [],
+        },
   })
 
   const createMutation = useMutation({

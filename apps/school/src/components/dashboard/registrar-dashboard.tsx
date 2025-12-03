@@ -197,7 +197,7 @@ function EnrollmentItem({ name, class: className, date, status, missingDocs, t }
           className={`rounded-full px-2 py-1 text-xs font-medium ${status === 'review'
             ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
             : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
-            }`}
+          }`}
         >
           {status === 'review' ? t('dashboard.registrar.toReview') : t('common.pending')}
         </span>

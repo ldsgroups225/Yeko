@@ -27,11 +27,13 @@ interface Subject {
 }
 
 interface SubjectMultiSelectProps {
-  value: string[]
+  value?: string[]
   onChange: (value: string[]) => void
 }
 
-export function SubjectMultiSelect({ value = [], onChange }: SubjectMultiSelectProps) {
+const DEFAULT_VALUE: string[] = []
+
+export function SubjectMultiSelect({ value = DEFAULT_VALUE, onChange }: SubjectMultiSelectProps) {
   const { t } = useTranslation()
   const [open, setOpen] = React.useState(false)
   const [search, setSearch] = React.useState('')
@@ -89,39 +91,39 @@ export function SubjectMultiSelect({ value = [], onChange }: SubjectMultiSelectP
             <CommandList>
               {isLoading
                 ? (
-                  <div className="flex items-center justify-center p-4">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  </div>
-                )
+                    <div className="flex items-center justify-center p-4">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    </div>
+                  )
                 : (
-                  <>
-                    <CommandEmpty>{t('common.noResults')}</CommandEmpty>
-                    <CommandGroup id="subject-list">
-                      {subjects.map((subject: Subject) => (
-                        <CommandItem
-                          key={subject.id}
-                          value={subject.id}
-                          onSelect={() => handleSelect(subject.id)}
-                        >
-                          <CheckIcon
-                            className={`mr-2 h-4 w-4 ${value.includes(subject.id) ? 'opacity-100' : 'opacity-0'
+                    <>
+                      <CommandEmpty>{t('common.noResults')}</CommandEmpty>
+                      <CommandGroup id="subject-list">
+                        {subjects.map((subject: Subject) => (
+                          <CommandItem
+                            key={subject.id}
+                            value={subject.id}
+                            onSelect={() => handleSelect(subject.id)}
+                          >
+                            <CheckIcon
+                              className={`mr-2 h-4 w-4 ${value.includes(subject.id) ? 'opacity-100' : 'opacity-0'
                               }`}
-                          />
-                          <div className="flex flex-col">
-                            <span>{subject.name}</span>
-                            <span className="text-xs text-muted-foreground">
-                              {subject.shortName}
-                              {' '}
-                              •
-                              {' '}
-                              {subject.category}
-                            </span>
-                          </div>
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </>
-                )}
+                            />
+                            <div className="flex flex-col">
+                              <span>{subject.name}</span>
+                              <span className="text-xs text-muted-foreground">
+                                {subject.shortName}
+                                {' '}
+                                •
+                                {' '}
+                                {subject.category}
+                              </span>
+                            </div>
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </>
+                  )}
             </CommandList>
           </Command>
         </PopoverContent>

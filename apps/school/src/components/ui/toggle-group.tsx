@@ -39,7 +39,7 @@ function ToggleGroup({
       )}
       {...props}
     >
-      <ToggleGroupContext value={{ variant, size, spacing }}>
+      <ToggleGroupContext value={React.useMemo(() => ({ variant, size, spacing }), [variant, size, spacing])}>
         {children}
       </ToggleGroupContext>
     </ToggleGroupPrimitive.Root>

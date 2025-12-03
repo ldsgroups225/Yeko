@@ -123,6 +123,9 @@ describe('roleForm Component', () => {
       await user.click(submitButton)
 
       // Should auto-generate slug, so form might submit
+      await waitFor(() => {
+        expect(mockOnSubmit).toHaveBeenCalled()
+      })
     })
   })
 

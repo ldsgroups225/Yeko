@@ -183,7 +183,7 @@ function TransactionItem({ type, description, amount, date }: TransactionItemPro
         className={`text-sm font-bold ${type === 'income'
           ? 'text-green-600 dark:text-green-400'
           : 'text-red-600 dark:text-red-400'
-          }`}
+        }`}
       >
         {type === 'income' ? '+' : '-'}
         {amount}

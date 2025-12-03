@@ -161,7 +161,7 @@ function MetricCard({ title, value, change, trend, icon: Icon }: MetricCardProps
             : trend === 'down'
               ? 'text-red-600 dark:text-red-400'
               : 'text-muted-foreground'
-            }`}
+          }`}
         >
           {change}
         </p>

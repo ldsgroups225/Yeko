@@ -71,20 +71,20 @@ export function UserCombobox({
         >
           {selectedUser
             ? (
-              <span className="truncate">
-                {selectedUser.name}
-                <span className="ml-2 text-muted-foreground">
-                  (
-                  {selectedUser.email}
-                  )
+                <span className="truncate">
+                  {selectedUser.name}
+                  <span className="ml-2 text-muted-foreground">
+                    (
+                    {selectedUser.email}
+                    )
+                  </span>
                 </span>
-              </span>
-            )
+              )
             : (
-              <span className="text-muted-foreground">
-                {placeholder || t('hr.staff.selectUser')}
-              </span>
-            )}
+                <span className="text-muted-foreground">
+                  {placeholder || t('hr.staff.selectUser')}
+                </span>
+              )}
           <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -98,41 +98,41 @@ export function UserCombobox({
           <CommandList id="user-combobox-list">
             {isLoading
               ? (
-                <div className="flex items-center justify-center py-6">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                </div>
-              )
+                  <div className="flex items-center justify-center py-6">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  </div>
+                )
               : users.length === 0
                 ? (
-                  <CommandEmpty>{t('hr.staff.noUsersFound')}</CommandEmpty>
-                )
+                    <CommandEmpty>{t('hr.staff.noUsersFound')}</CommandEmpty>
+                  )
                 : (
-                  <CommandGroup>
-                    {users.map(user => (
-                      <CommandItem
-                        key={user.id}
-                        value={user.id}
-                        onSelect={() => {
-                          onSelect(user.id)
-                          setOpen(false)
-                        }}
-                      >
-                        <CheckIcon
-                          className={cn(
-                            'mr-2 h-4 w-4',
-                            value === user.id ? 'opacity-100' : 'opacity-0',
-                          )}
-                        />
-                        <div className="flex flex-col">
-                          <span>{user.name}</span>
-                          <span className="text-xs text-muted-foreground">
-                            {user.email}
-                          </span>
-                        </div>
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                )}
+                    <CommandGroup>
+                      {users.map(user => (
+                        <CommandItem
+                          key={user.id}
+                          value={user.id}
+                          onSelect={() => {
+                            onSelect(user.id)
+                            setOpen(false)
+                          }}
+                        >
+                          <CheckIcon
+                            className={cn(
+                              'mr-2 h-4 w-4',
+                              value === user.id ? 'opacity-100' : 'opacity-0',
+                            )}
+                          />
+                          <div className="flex flex-col">
+                            <span>{user.name}</span>
+                            <span className="text-xs text-muted-foreground">
+                              {user.email}
+                            </span>
+                          </div>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  )}
           </CommandList>
         </Command>
       </PopoverContent>

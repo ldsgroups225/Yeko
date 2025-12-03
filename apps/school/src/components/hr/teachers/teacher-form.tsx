@@ -41,20 +41,20 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
     resolver: zodResolver(teacherCreateSchema),
     defaultValues: teacher
       ? {
-        userId: teacher.userId,
-        specialization: teacher.specialization || '',
-        hireDate: teacher.hireDate
-          ? new Date(teacher.hireDate)
-          : undefined,
-        status: teacher.status,
-        subjectIds: teacher.subjectIds || [],
-      }
+          userId: teacher.userId,
+          specialization: teacher.specialization || '',
+          hireDate: teacher.hireDate
+            ? new Date(teacher.hireDate)
+            : undefined,
+          status: teacher.status,
+          subjectIds: teacher.subjectIds || [],
+        }
       : {
-        userId: '',
-        status: 'active',
-        subjectIds: [],
-        hireDate: undefined,
-      },
+          userId: '',
+          status: 'active',
+          subjectIds: [],
+          hireDate: undefined,
+        },
   })
 
   const createMutation = useMutation({

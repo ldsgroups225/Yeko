@@ -41,16 +41,16 @@ export function TableSkeleton({ columns = 6, rows = 5 }: TableSkeletonProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {Array.from({ length: rows }).map((_, rowIndex) => (
+            {Array.from({ length: rows }, (_, i) => `row-${i}`).map((rowKey, rowIndex) => (
               <motion.tr
-                key={`row-${rowIndex}`}
+                key={rowKey}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: rowIndex * 0.05 }}
                 className="hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors"
               >
-                {Array.from({ length: columns }).map((_, colIndex) => (
-                  <TableCell key={`cell-${rowIndex}-${colIndex}`}>
+                {Array.from({ length: columns }, (_, i) => `${rowKey}-col-${i}`).map(cellKey => (
+                  <TableCell key={cellKey}>
                     <Skeleton className="h-4 w-full" />
                   </TableCell>
                 ))}
