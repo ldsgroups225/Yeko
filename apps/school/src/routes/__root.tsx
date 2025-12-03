@@ -28,7 +28,10 @@ export const Route = createRootRouteWithContext<{
         title: 'Yeko School - Smart School Management',
       },
     ],
-    links: [{ rel: 'stylesheet', href: appCss }],
+    links: [
+      { rel: 'stylesheet', href: appCss },
+      { rel: 'icon', href: '/favicon.ico' },
+    ],
   }),
   component: RootComponent,
 })
