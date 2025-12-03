@@ -1,11 +1,32 @@
 import { AlertCircle, CheckCircle, DollarSign, TrendingUp } from 'lucide-react'
+import { motion } from 'motion/react'
 import { useTranslation } from 'react-i18next'
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+}
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 },
+}
 
 export function AccountantDashboard() {
   const { t } = useTranslation()
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      className="space-y-6"
+      variants={container}
+      initial="hidden"
+      animate="show"
+    >
       <div>
         <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.accountant.title')}</h1>
         <p className="text-muted-foreground">
@@ -14,7 +35,12 @@ export function AccountantDashboard() {
       </div>
 
       {/* Financial Metrics */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <motion.div
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
+      >
         <MetricCard
           title={t('dashboard.accountant.monthlyRevenue')}
           value="2,450,000"
@@ -43,11 +69,11 @@ export function AccountantDashboard() {
           icon={AlertCircle}
           trend="negative"
         />
-      </div>
+      </motion.div>
 
       {/* Recent Transactions & Pending Payments */}
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-lg border border-border/40 bg-card p-6">
+        <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
           <h2 className="mb-4 text-lg font-semibold">{t('dashboard.accountant.recentTransactions')}</h2>
           <div className="space-y-3">
             <TransactionItem
@@ -72,9 +98,9 @@ export function AccountantDashboard() {
               t={t}
             />
           </div>
-        </div>
+        </motion.div>
 
-        <div className="rounded-lg border border-border/40 bg-card p-6">
+        <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
           <h2 className="mb-4 text-lg font-semibold">{t('dashboard.accountant.overduePayments')}</h2>
           <div className="space-y-3">
             <PendingPaymentItem
@@ -99,9 +125,9 @@ export function AccountantDashboard() {
               t={t}
             />
           </div>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   )
 }
 
@@ -121,7 +147,11 @@ function MetricCard({ title, value, currency, icon: Icon, trend }: MetricCardPro
   }
 
   return (
-    <div className="rounded-lg border border-border/40 bg-card p-6">
+    <motion.div
+      variants={item}
+      whileHover={{ y: -5, transition: { duration: 0.2 } }}
+      className="rounded-lg border border-border/40 bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
+    >
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
         <Icon className={`h-4 w-4 ${trendColors[trend]}`} />
@@ -130,7 +160,7 @@ function MetricCard({ title, value, currency, icon: Icon, trend }: MetricCardPro
         <div className="text-2xl font-bold">{value}</div>
         <p className="text-xs text-muted-foreground">{currency}</p>
       </div>
-    </div>
+    </motion.div>
   )
 }
 
@@ -153,7 +183,7 @@ function TransactionItem({ type, description, amount, date }: TransactionItemPro
         className={`text-sm font-bold ${type === 'income'
           ? 'text-green-600 dark:text-green-400'
           : 'text-red-600 dark:text-red-400'
-        }`}
+          }`}
       >
         {type === 'income' ? '+' : '-'}
         {amount}

@@ -1,11 +1,32 @@
 import { CheckCircle, Clock, CreditCard, DollarSign } from 'lucide-react'
+import { motion } from 'motion/react'
 import { useTranslation } from 'react-i18next'
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+}
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 },
+}
 
 export function CashierDashboard() {
   const { t } = useTranslation()
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      className="space-y-6"
+      variants={container}
+      initial="hidden"
+      animate="show"
+    >
       <div>
         <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.cashier.title')}</h1>
         <p className="text-muted-foreground">
@@ -14,7 +35,12 @@ export function CashierDashboard() {
       </div>
 
       {/* Daily Metrics */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <motion.div
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
+      >
         <MetricCard
           title={t('dashboard.cashier.dailyCollections')}
           value="180,000"
@@ -39,10 +65,10 @@ export function CashierDashboard() {
           currency={t('common.pending')}
           icon={Clock}
         />
-      </div>
+      </motion.div>
 
       {/* Quick Payment Form */}
-      <div className="rounded-lg border border-border/40 bg-card p-6">
+      <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
         <h2 className="mb-4 text-lg font-semibold">{t('dashboard.cashier.recordPayment')}</h2>
         <div className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
@@ -65,17 +91,19 @@ export function CashierDashboard() {
               />
             </div>
           </div>
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.95 }}
             type="button"
             className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
           >
             {t('dashboard.cashier.recordPayment')}
-          </button>
+          </motion.button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Recent Payments */}
-      <div className="rounded-lg border border-border/40 bg-card p-6">
+      <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
         <h2 className="mb-4 text-lg font-semibold">{t('dashboard.cashier.recentPayments')}</h2>
         <div className="space-y-3">
           <PaymentItem
@@ -106,8 +134,8 @@ export function CashierDashboard() {
             t={t}
           />
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }
 
@@ -120,7 +148,11 @@ interface MetricCardProps {
 
 function MetricCard({ title, value, currency, icon: Icon }: MetricCardProps) {
   return (
-    <div className="rounded-lg border border-border/40 bg-card p-6">
+    <motion.div
+      variants={item}
+      whileHover={{ y: -5, transition: { duration: 0.2 } }}
+      className="rounded-lg border border-border/40 bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
+    >
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
         <Icon className="h-4 w-4 text-muted-foreground" />
@@ -129,7 +161,7 @@ function MetricCard({ title, value, currency, icon: Icon }: MetricCardProps) {
         <div className="text-2xl font-bold">{value}</div>
         <p className="text-xs text-muted-foreground">{currency}</p>
       </div>
-    </div>
+    </motion.div>
   )
 }
 
@@ -166,7 +198,7 @@ function PaymentItem({ name, matricule, amount, method, time, status, t }: Payme
           className={`text-xs ${status === 'completed'
             ? 'text-green-600 dark:text-green-400'
             : 'text-yellow-600 dark:text-yellow-400'
-          }`}
+            }`}
         >
           {status === 'completed' ? t('dashboard.cashier.completed') : t('dashboard.cashier.pending')}
         </span>

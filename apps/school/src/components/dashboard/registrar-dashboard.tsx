@@ -1,11 +1,32 @@
 import { CheckCircle, FileText, UserPlus, Users } from 'lucide-react'
+import { motion } from 'motion/react'
 import { useTranslation } from 'react-i18next'
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+}
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 },
+}
 
 export function RegistrarDashboard() {
   const { t } = useTranslation()
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      className="space-y-6"
+      variants={container}
+      initial="hidden"
+      animate="show"
+    >
       <div>
         <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.registrar.title')}</h1>
         <p className="text-muted-foreground">
@@ -14,7 +35,12 @@ export function RegistrarDashboard() {
       </div>
 
       {/* Registration Metrics */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <motion.div
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
+      >
         <MetricCard
           title={t('dashboard.registrar.totalStudents')}
           value="1,234"
@@ -39,10 +65,10 @@ export function RegistrarDashboard() {
           subtitle={t('common.pending')}
           icon={CheckCircle}
         />
-      </div>
+      </motion.div>
 
       {/* Pending Enrollments */}
-      <div className="rounded-lg border border-border/40 bg-card p-6">
+      <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
         <h2 className="mb-4 text-lg font-semibold">{t('dashboard.registrar.pendingEnrollments')}</h2>
         <div className="space-y-3">
           <EnrollmentItem
@@ -70,11 +96,11 @@ export function RegistrarDashboard() {
             t={t}
           />
         </div>
-      </div>
+      </motion.div>
 
       {/* Recent Activity & Statistics */}
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-lg border border-border/40 bg-card p-6">
+        <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
           <h2 className="mb-4 text-lg font-semibold">{t('dashboard.registrar.recentActivity')}</h2>
           <div className="space-y-3">
             <ActivityItem
@@ -96,9 +122,9 @@ export function RegistrarDashboard() {
               time="Il y a 5 heures"
             />
           </div>
-        </div>
+        </motion.div>
 
-        <div className="rounded-lg border border-border/40 bg-card p-6">
+        <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
           <h2 className="mb-4 text-lg font-semibold">{t('dashboard.registrar.distributionByLevel')}</h2>
           <div className="space-y-4">
             <LevelBar level="6ème" count={245} total={1234} t={t} />
@@ -109,9 +135,9 @@ export function RegistrarDashboard() {
             <LevelBar level="1ère" count={134} total={1234} t={t} />
             <LevelBar level="Tle" count={89} total={1234} t={t} />
           </div>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   )
 }
 
@@ -124,7 +150,11 @@ interface MetricCardProps {
 
 function MetricCard({ title, value, subtitle, icon: Icon }: MetricCardProps) {
   return (
-    <div className="rounded-lg border border-border/40 bg-card p-6">
+    <motion.div
+      variants={item}
+      whileHover={{ y: -5, transition: { duration: 0.2 } }}
+      className="rounded-lg border border-border/40 bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
+    >
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
         <Icon className="h-4 w-4 text-muted-foreground" />
@@ -133,7 +163,7 @@ function MetricCard({ title, value, subtitle, icon: Icon }: MetricCardProps) {
         <div className="text-2xl font-bold">{value}</div>
         <p className="text-xs text-muted-foreground">{subtitle}</p>
       </div>
-    </div>
+    </motion.div>
   )
 }
 
@@ -167,7 +197,7 @@ function EnrollmentItem({ name, class: className, date, status, missingDocs, t }
           className={`rounded-full px-2 py-1 text-xs font-medium ${status === 'review'
             ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
             : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
-          }`}
+            }`}
         >
           {status === 'review' ? t('dashboard.registrar.toReview') : t('common.pending')}
         </span>
@@ -222,9 +252,11 @@ function LevelBar({ level, count, total, t }: LevelBarProps) {
         </span>
       </div>
       <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
-        <div
-          className="h-full bg-primary transition-all"
-          style={{ width: `${percentage}%` }}
+        <motion.div
+          className="h-full bg-primary"
+          initial={{ width: 0 }}
+          animate={{ width: `${percentage}%` }}
+          transition={{ duration: 1, ease: 'easeOut' }}
         />
       </div>
     </div>

@@ -1,11 +1,32 @@
 import { BookOpen, ClipboardCheck, TrendingUp, Users } from 'lucide-react'
+import { motion } from 'motion/react'
 import { useTranslation } from 'react-i18next'
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+}
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 },
+}
 
 export function CoordinatorDashboard() {
   const { t } = useTranslation()
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      className="space-y-6"
+      variants={container}
+      initial="hidden"
+      animate="show"
+    >
       <div>
         <h1 className="text-3xl font-bold tracking-tight">
           {t('dashboard.coordinator.title')}
@@ -16,15 +37,20 @@ export function CoordinatorDashboard() {
       </div>
 
       {/* Academic Metrics */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <motion.div
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
+      >
         <MetricCard title={t('dashboard.coordinator.subjects')} value="24" subtitle="8 levels" icon={BookOpen} />
         <MetricCard title={t('dashboard.coordinator.pendingGrades')} value="156" subtitle={t('common.pending')} icon={ClipboardCheck} />
         <MetricCard title={t('dashboard.coordinator.averageGrade')} value="12.8/20" subtitle="+0.5 pts" icon={TrendingUp} />
         <MetricCard title={t('dashboard.coordinator.teachers')} value="89" subtitle={t('common.active')} icon={Users} />
-      </div>
+      </motion.div>
 
       {/* Validation Queue */}
-      <div className="rounded-lg border border-border/40 bg-card p-6">
+      <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
         <h2 className="mb-4 text-lg font-semibold">{t('dashboard.coordinator.gradesToValidate')}</h2>
         <div className="space-y-3">
           <ValidationItem
@@ -49,11 +75,11 @@ export function CoordinatorDashboard() {
             date="Il y a 1 jour"
           />
         </div>
-      </div>
+      </motion.div>
 
       {/* Performance Overview */}
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-lg border border-border/40 bg-card p-6">
+        <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
           <h2 className="mb-4 text-lg font-semibold">{t('dashboard.coordinator.performanceByLevel')}</h2>
           <div className="space-y-4">
             <PerformanceBar level="6ème" average="13.2" percentage={66} />
@@ -61,18 +87,18 @@ export function CoordinatorDashboard() {
             <PerformanceBar level="4ème" average="12.5" percentage={62} />
             <PerformanceBar level="3ème" average="12.1" percentage={60} />
           </div>
-        </div>
+        </motion.div>
 
-        <div className="rounded-lg border border-border/40 bg-card p-6">
+        <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
           <h2 className="mb-4 text-lg font-semibold">{t('dashboard.coordinator.atRiskSubjects')}</h2>
           <div className="space-y-3">
             <RiskItem subject="Mathematics 3rd" average="9.2/20" status="critical" t={t} />
             <RiskItem subject="Physics 2nd" average="10.1/20" status="warning" t={t} />
             <RiskItem subject="English 4th" average="10.8/20" status="warning" t={t} />
           </div>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   )
 }
 
@@ -85,7 +111,11 @@ interface MetricCardProps {
 
 function MetricCard({ title, value, subtitle, icon: Icon }: MetricCardProps) {
   return (
-    <div className="rounded-lg border border-border/40 bg-card p-6">
+    <motion.div
+      variants={item}
+      whileHover={{ y: -5, transition: { duration: 0.2 } }}
+      className="rounded-lg border border-border/40 bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
+    >
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
         <Icon className="h-4 w-4 text-muted-foreground" />
@@ -94,7 +124,7 @@ function MetricCard({ title, value, subtitle, icon: Icon }: MetricCardProps) {
         <div className="text-2xl font-bold">{value}</div>
         <p className="text-xs text-muted-foreground">{subtitle}</p>
       </div>
-    </div>
+    </motion.div>
   )
 }
 
@@ -124,12 +154,14 @@ function ValidationItem({ subject, teacher, class: className, count, date }: Val
         </p>
         <p className="text-xs text-muted-foreground">{date}</p>
       </div>
-      <button
+      <motion.button
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.95 }}
         type="button"
         className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
       >
         Valider
-      </button>
+      </motion.button>
     </div>
   )
 }
@@ -151,9 +183,11 @@ function PerformanceBar({ level, average, percentage }: PerformanceBarProps) {
         </span>
       </div>
       <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
-        <div
-          className="h-full bg-primary transition-all"
-          style={{ width: `${percentage}%` }}
+        <motion.div
+          className="h-full bg-primary"
+          initial={{ width: 0 }}
+          animate={{ width: `${percentage}%` }}
+          transition={{ duration: 1, ease: 'easeOut' }}
         />
       </div>
     </div>

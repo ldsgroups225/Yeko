@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { ChevronRight, Home } from 'lucide-react'
+import { motion } from 'motion/react'
 import { cn } from '@/lib/utils'
 
 interface BreadcrumbItem {
@@ -13,7 +14,12 @@ interface BreadcrumbsProps {
 
 export function Breadcrumbs({ items }: BreadcrumbsProps) {
   return (
-    <nav className="flex items-center gap-2 text-sm text-muted-foreground">
+    <motion.nav
+      initial={{ opacity: 0, x: -10 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.3 }}
+      className="flex items-center gap-2 text-sm text-muted-foreground"
+    >
       <Link
         to="/app/dashboard"
         className={cn(
@@ -30,7 +36,13 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
         const isLast = index === items.length - 1
 
         return (
-          <div key={item.href || `breadcrumb-${index}`} className="flex items-center gap-2">
+          <motion.div
+            key={item.href || `breadcrumb-${index}`}
+            initial={{ opacity: 0, x: -5 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: index * 0.05, duration: 0.2 }}
+            className="flex items-center gap-2"
+          >
             <ChevronRight className="h-4 w-4" />
             {item.href && !isLast
               ? (
@@ -48,9 +60,9 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
               : (
                 <span className={cn(isLast && 'font-medium text-foreground')}>{item.label}</span>
               )}
-          </div>
+          </motion.div>
         )
       })}
-    </nav>
+    </motion.nav>
   )
 }

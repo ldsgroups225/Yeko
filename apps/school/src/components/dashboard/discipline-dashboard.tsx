@@ -1,8 +1,29 @@
 import { AlertTriangle, CheckCircle, Clock } from 'lucide-react'
+import { motion } from 'motion/react'
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+}
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 },
+}
 
 export function DisciplineDashboard() {
   return (
-    <div className="space-y-6">
+    <motion.div
+      className="space-y-6"
+      variants={container}
+      initial="hidden"
+      animate="show"
+    >
       <div>
         <h1 className="text-3xl font-bold tracking-tight">
           Tableau de bord Responsable Discipline
@@ -13,7 +34,12 @@ export function DisciplineDashboard() {
       </div>
 
       {/* Attendance Metrics */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <motion.div
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
+      >
         <MetricCard
           title="Taux de présence"
           value="94.5%"
@@ -42,10 +68,10 @@ export function DisciplineDashboard() {
           icon={AlertTriangle}
           trend="neutral"
         />
-      </div>
+      </motion.div>
 
       {/* Today's Absences */}
-      <div className="rounded-lg border border-border/40 bg-card p-6">
+      <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
         <h2 className="mb-4 text-lg font-semibold">Absences du Jour</h2>
         <div className="space-y-3">
           <AbsenceItem
@@ -67,11 +93,11 @@ export function DisciplineDashboard() {
             reason="En attente de justification"
           />
         </div>
-      </div>
+      </motion.div>
 
       {/* Conduct & Punctuality */}
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-lg border border-border/40 bg-card p-6">
+        <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
           <h2 className="mb-4 text-lg font-semibold">Incidents de Conduite</h2>
           <div className="space-y-3">
             <ConductItem
@@ -96,18 +122,18 @@ export function DisciplineDashboard() {
               date="Il y a 2 jours"
             />
           </div>
-        </div>
+        </motion.div>
 
-        <div className="rounded-lg border border-border/40 bg-card p-6">
+        <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
           <h2 className="mb-4 text-lg font-semibold">Retards Fréquents</h2>
           <div className="space-y-3">
             <LateItem name="Ibrahim Traoré" class="6ème A" count={8} period="Ce mois" />
             <LateItem name="Aisha Bamba" class="5ème B" count={6} period="Ce mois" />
             <LateItem name="Yao Kouassi" class="4ème C" count={5} period="Ce mois" />
           </div>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   )
 }
 
@@ -127,7 +153,11 @@ function MetricCard({ title, value, subtitle, icon: Icon, trend }: MetricCardPro
   }
 
   return (
-    <div className="rounded-lg border border-border/40 bg-card p-6">
+    <motion.div
+      variants={item}
+      whileHover={{ y: -5, transition: { duration: 0.2 } }}
+      className="rounded-lg border border-border/40 bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
+    >
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
         <Icon className={`h-4 w-4 ${trendColors[trend]}`} />
@@ -136,7 +166,7 @@ function MetricCard({ title, value, subtitle, icon: Icon, trend }: MetricCardPro
         <div className="text-2xl font-bold">{value}</div>
         <p className="text-xs text-muted-foreground">{subtitle}</p>
       </div>
-    </div>
+    </motion.div>
   )
 }
 

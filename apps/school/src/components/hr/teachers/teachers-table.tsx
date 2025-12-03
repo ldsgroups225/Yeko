@@ -9,6 +9,7 @@ import {
 } from '@tanstack/react-table'
 import { format } from 'date-fns'
 import { Edit, Eye, GraduationCap, MoreHorizontal, Search, Trash2 } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { TableSkeleton } from '@/components/hr/table-skeleton'
@@ -116,15 +117,15 @@ export function TeachersTable({ filters }: TeachersTableProps) {
           <div className="flex flex-wrap gap-1">
             {row.original.subjects && row.original.subjects.length > 0
               ? (
-                  row.original.subjects.slice(0, 3).map(subject => (
-                    <Badge key={subject} variant="secondary" className="text-xs">
-                      {subject}
-                    </Badge>
-                  ))
-                )
+                row.original.subjects.slice(0, 3).map(subject => (
+                  <Badge key={subject} variant="secondary" className="text-xs">
+                    {subject}
+                  </Badge>
+                ))
+              )
               : (
-                  <span className="text-sm text-muted-foreground">-</span>
-                )}
+                <span className="text-sm text-muted-foreground">-</span>
+              )}
             {row.original.subjects && row.original.subjects.length > 3 && (
               <Badge variant="outline" className="text-xs">
                 +
@@ -278,24 +279,33 @@ export function TeachersTable({ filters }: TeachersTableProps) {
                           {header.isPlaceholder
                             ? null
                             : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )}
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
                         </TableHead>
                       ))}
                     </TableRow>
                   ))}
                 </TableHeader>
                 <TableBody>
-                  {table.getRowModel().rows.map(row => (
-                    <TableRow key={row.id}>
-                      {row.getVisibleCells().map(cell => (
-                        <TableCell key={cell.id}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))}
+                  <AnimatePresence mode="wait">
+                    {table.getRowModel().rows.map((row, index) => (
+                      <motion.tr
+                        key={row.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.2, delay: index * 0.05 }}
+                        className="hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors"
+                      >
+                        {row.getVisibleCells().map(cell => (
+                          <TableCell key={cell.id}>
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </TableCell>
+                        ))}
+                      </motion.tr>
+                    ))}
+                  </AnimatePresence>
                 </TableBody>
               </Table>
             </div>
