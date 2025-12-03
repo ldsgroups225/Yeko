@@ -35,18 +35,18 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
     resolver: zodResolver(staffSchema),
     defaultValues: initialData
       ? {
-        userId: initialData.userId,
-        position: initialData.position,
-        department: initialData.department || '',
-        hireDate: initialData.hireDate
-          ? new Date(initialData.hireDate)
-          : undefined,
-        status: initialData.status,
-      }
+          userId: initialData.userId,
+          position: initialData.position,
+          department: initialData.department || '',
+          hireDate: initialData.hireDate
+            ? new Date(initialData.hireDate)
+            : undefined,
+          status: initialData.status,
+        }
       : {
-        status: 'active',
-        hireDate: undefined,
-      },
+          status: 'active',
+          hireDate: undefined,
+        },
   })
 
   const handleFormSubmit = async (data: any) => {

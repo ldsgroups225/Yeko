@@ -30,24 +30,24 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
         const isLast = index === items.length - 1
 
         return (
-          <div key={item.href} className="flex items-center gap-2">
+          <div key={item.href || `breadcrumb-${index}`} className="flex items-center gap-2">
             <ChevronRight className="h-4 w-4" />
             {item.href && !isLast
               ? (
-                  <Link
-                    to={item.href}
-                    className={cn(
-                      'transition-colors hover:text-foreground',
-                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-                      'rounded-sm',
-                    )}
-                  >
-                    {item.label}
-                  </Link>
-                )
+                <Link
+                  to={item.href}
+                  className={cn(
+                    'transition-colors hover:text-foreground',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+                    'rounded-sm',
+                  )}
+                >
+                  {item.label}
+                </Link>
+              )
               : (
-                  <span className={cn(isLast && 'font-medium text-foreground')}>{item.label}</span>
-                )}
+                <span className={cn(isLast && 'font-medium text-foreground')}>{item.label}</span>
+              )}
           </div>
         )
       })}
