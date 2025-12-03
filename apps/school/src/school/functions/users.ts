@@ -1,3 +1,4 @@
+import { queueAuditLog } from '@repo/background-tasks'
 import {
   bulkDeleteUsers,
   bulkUpdateUsersStatus,
@@ -95,7 +96,7 @@ export const createNewUser = createServerFn()
     const context = await getSchoolContext()
     if (!context)
       throw new Error('No school context')
-    const { schoolId } = context
+    const { schoolId, userId } = context
 
     // Check email uniqueness (returns true if email is available)
     const emailIsAvailable = await checkEmailUniqueness(data.email, schoolId)
@@ -105,7 +106,7 @@ export const createNewUser = createServerFn()
 
     // TODO: Create auth user account and get real authUserId
     // For now, using null until user logs in for the first time
-    return await createUserWithSchool({
+    const user = await createUserWithSchool({
       email: data.email,
       name: data.name,
       authUserId: null as unknown as string, // Will be set when user first logs in
@@ -114,6 +115,18 @@ export const createNewUser = createServerFn()
       phone: data.phone || undefined,
       avatarUrl: data.avatarUrl || undefined,
     })
+
+    // Log audit event (non-blocking via queue)
+    queueAuditLog({
+      schoolId,
+      userId,
+      action: 'create',
+      tableName: 'users',
+      recordId: user.id,
+      newValues: { name: data.name, email: data.email, roleIds: data.roleIds },
+    })
+
+    return user
   })
 
 /**
@@ -126,26 +139,38 @@ export const updateExistingUser = createServerFn()
       data: userUpdateSchema,
     }),
   )
-  .handler(async ({ data: { userId, data } }) => {
+  .handler(async ({ data: { userId: targetUserId, data } }) => {
     const context = await getSchoolContext()
     if (!context)
       throw new Error('No school context')
-    const { schoolId } = context
+    const { schoolId, userId } = context
 
     // Check email uniqueness if email is being changed (returns true if email is available)
     if (data.email) {
-      const emailIsAvailable = await checkEmailUniqueness(data.email, schoolId, userId)
+      const emailIsAvailable = await checkEmailUniqueness(data.email, schoolId, targetUserId)
       if (!emailIsAvailable) {
         throw new Error('Email already exists in this school')
       }
     }
 
-    return await updateUser(userId, schoolId, {
+    const result = await updateUser(targetUserId, schoolId, {
       name: data.name,
       phone: data.phone || undefined,
       avatarUrl: data.avatarUrl || undefined,
       status: data.status,
     })
+
+    // Log audit event (non-blocking via queue)
+    queueAuditLog({
+      schoolId,
+      userId,
+      action: 'update',
+      tableName: 'users',
+      recordId: targetUserId,
+      newValues: data as Record<string, unknown>,
+    })
+
+    return result
   })
 
 /**
@@ -153,12 +178,24 @@ export const updateExistingUser = createServerFn()
  */
 export const deleteExistingUser = createServerFn()
   .inputValidator(z.string())
-  .handler(async ({ data: userId }) => {
+  .handler(async ({ data: targetUserId }) => {
     const context = await getSchoolContext()
     if (!context)
       throw new Error('No school context')
-    const { schoolId } = context
-    return await deleteUser(userId, schoolId)
+    const { schoolId, userId } = context
+
+    const result = await deleteUser(targetUserId, schoolId)
+
+    // Log audit event (non-blocking via queue)
+    queueAuditLog({
+      schoolId,
+      userId,
+      action: 'delete',
+      tableName: 'users',
+      recordId: targetUserId,
+    })
+
+    return result
   })
 
 /**

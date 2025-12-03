@@ -1,0 +1,25 @@
+{
+  "name": "@repo/queue-worker",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "cf-typegen": "wrangler types --env-interface Env"
+  },
+  "dependencies": {
+    "@repo/background-tasks": "workspace:^",
+    "@repo/data-ops": "workspace:^"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250620.0",
+    "@yeko/eslint-config": "workspace:^",
+    "eslint": "^9.39.1",
+    "typescript": "^5.9.3",
+    "wrangler": "^4.47.0"
+  }
+}

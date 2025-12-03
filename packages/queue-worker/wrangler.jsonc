@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "yeko-queue-worker",
+  "main": "./src/index.ts",
+  "compatibility_date": "2025-09-02",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  // Queue consumer configuration
+  "queues": {
+    "consumers": [
+      {
+        "queue": "yeko-logs",
+        "max_batch_size": 100,
+        "max_batch_timeout": 30,
+        "max_retries": 3,
+        "dead_letter_queue": "yeko-logs-dlq"
+      }
+    ]
+  }
+}

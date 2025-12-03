@@ -12,6 +12,8 @@
     "deploy:yeko-school": "pnpm run build:data-ops && pnpm run build:logger && pnpm run --filter yeko-school deploy",
     "dev:data-service": "pnpm run --filter data-service dev",
     "deploy:data-service": "pnpm run build:data-ops && pnpm run build:logger && pnpm run --filter data-service deploy",
+    "dev:queue-worker": "pnpm run --filter @repo/queue-worker dev",
+    "deploy:queue-worker": "pnpm run build:data-ops && pnpm run --filter @repo/queue-worker deploy",
     "typecheck": "pnpm run --filter \"*\" typecheck || echo \"No typecheck script found\"",
     "lint": "pnpm run --filter \"*\" lint:fix || echo \"No lint script found\"",
     "test": "pnpm run --filter \"*\" test || echo \"No test script found\""

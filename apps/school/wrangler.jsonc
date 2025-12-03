@@ -17,5 +17,14 @@
   "vars": {
     "APP_NAME": "Yeko School",
     "APP_URL": "https://school.yeko.app"
+  },
+  // Queue producer binding for background logging
+  "queues": {
+    "producers": [
+      {
+        "queue": "yeko-logs",
+        "binding": "LOGS_QUEUE"
+      }
+    ]
   }
 }

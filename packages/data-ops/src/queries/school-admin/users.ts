@@ -4,6 +4,9 @@ import { schools } from '@/drizzle/core-schema'
 import { auditLogs, roles, userRoles, users, userSchools } from '@/drizzle/school-schema'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
 
+// Re-export audit functions for convenience
+export { createAuditLog, getAuditLogs, getRecordAuditLogs } from './audit'
+
 export async function getUsersBySchool(schoolId: string, options?: {
   search?: string
   status?: 'active' | 'inactive' | 'suspended'

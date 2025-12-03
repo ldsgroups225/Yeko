@@ -1,4 +1,5 @@
 import type { ActivityLogInsert, ApiMetricInsert } from '@/drizzle/core-schema'
+import { randomUUID } from 'node:crypto'
 import { and, count, desc, eq, gte, sql } from 'drizzle-orm'
 import { getDb } from '@/database/setup'
 import { activityLogs, apiMetrics } from '@/drizzle/core-schema'
@@ -6,23 +7,12 @@ import { activityLogs, apiMetrics } from '@/drizzle/core-schema'
 // ===== ACTIVITY LOGGING =====
 
 /**
- * Generate a simple UUID v4
- */
-function generateUUID(): string {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = Math.random() * 16 | 0
-    const v = c === 'x' ? r : (r & 0x3 | 0x8)
-    return v.toString(16)
-  })
-}
-
-/**
- * Log a user activity
+ * Log a user activity (direct insert - use queueActivityLog for non-blocking)
  */
 export async function logActivity(data: Omit<ActivityLogInsert, 'id' | 'createdAt'>) {
   const db = getDb()
 
-  const id = generateUUID()
+  const id = randomUUID()
 
   await db.insert(activityLogs).values({
     id,
@@ -33,12 +23,12 @@ export async function logActivity(data: Omit<ActivityLogInsert, 'id' | 'createdA
 }
 
 /**
- * Log an API request metric
+ * Log an API request metric (direct insert - use queueApiMetric for non-blocking)
  */
 export async function logApiMetric(data: Omit<ApiMetricInsert, 'id' | 'createdAt'>) {
   const db = getDb()
 
-  const id = generateUUID()
+  const id = randomUUID()
 
   await db.insert(apiMetrics).values({
     id,
@@ -46,6 +36,28 @@ export async function logApiMetric(data: Omit<ApiMetricInsert, 'id' | 'createdAt
   })
 
   return id
+}
+
+/**
+ * Bulk insert activity logs (used by queue consumer)
+ */
+export async function bulkInsertActivityLogs(logs: ActivityLogInsert[]): Promise<void> {
+  if (logs.length === 0)
+    return
+
+  const db = getDb()
+  await db.insert(activityLogs).values(logs)
+}
+
+/**
+ * Bulk insert API metrics (used by queue consumer)
+ */
+export async function bulkInsertApiMetrics(metrics: ApiMetricInsert[]): Promise<void> {
+  if (metrics.length === 0)
+    return
+
+  const db = getDb()
+  await db.insert(apiMetrics).values(metrics)
 }
 
 // ===== ACTIVITY QUERIES =====

@@ -1,3 +1,5 @@
+import type { LogsQueue } from '@repo/background-tasks'
+import { setExecutionContext, setQueueBinding } from '@repo/background-tasks'
 import { setAuth } from '@repo/data-ops/auth/server'
 import { initDatabase } from '@repo/data-ops/database/setup'
 import handler from '@tanstack/react-start/server-entry'
@@ -5,8 +7,13 @@ import { env } from 'cloudflare:workers'
 
 console.warn('[server-entry]: using custom server entry in \'src/server.ts\'')
 
+// Extended Env interface with queue binding
+interface ExtendedEnv extends Env {
+  LOGS_QUEUE?: LogsQueue
+}
+
 export default {
-  fetch(request: Request) {
+  fetch(request: Request, workerEnv: ExtendedEnv, ctx: ExecutionContext) {
     // Initialize database on each request
     const db = initDatabase({
       host: env.DATABASE_HOST,
@@ -33,6 +40,14 @@ export default {
         requireEmailVerification: false,
       },
     })
+
+    // Set execution context for waitUntil (background tasks)
+    setExecutionContext(ctx)
+
+    // Set queue binding for background logging (if available)
+    if (workerEnv.LOGS_QUEUE) {
+      setQueueBinding(workerEnv.LOGS_QUEUE)
+    }
 
     return handler.fetch(request)
   },

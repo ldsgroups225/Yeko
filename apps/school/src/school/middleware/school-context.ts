@@ -1,3 +1,4 @@
+import { runInBackground } from '@repo/background-tasks'
 import { getUserSchoolsByAuthUserId, syncUserAuthOnLogin } from '@repo/data-ops/queries/school-admin/users'
 import { createServerFn } from '@tanstack/react-start'
 import { getRequest, setResponseHeader } from '@tanstack/react-start/server'
@@ -30,8 +31,10 @@ export const getSchoolContext = createServerFn().handler(async () => {
       return null
     }
 
-    // Sync user auth data and update last login
-    await syncUserAuthOnLogin(authContext.userId, authContext.email)
+    // Sync user auth data and update last login (non-blocking via waitUntil)
+    runInBackground(async () => {
+      await syncUserAuthOnLogin(authContext.userId, authContext.email)
+    })
 
     const req = getRequest()
     const cookies = parseCookies(req.headers.get('cookie'))

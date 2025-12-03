@@ -41,6 +41,7 @@
     "@radix-ui/react-toggle": "^1.1.10",
     "@radix-ui/react-toggle-group": "^1.1.11",
     "@radix-ui/react-tooltip": "^1.2.8",
+    "@repo/background-tasks": "workspace:^",
     "@repo/data-ops": "workspace:^",
     "@repo/logger": "workspace:^",
     "@tailwindcss/typography": "^0.5.19",
