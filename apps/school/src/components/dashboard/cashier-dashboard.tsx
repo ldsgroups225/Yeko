@@ -166,7 +166,7 @@ function PaymentItem({ name, matricule, amount, method, time, status, t }: Payme
           className={`text-xs ${status === 'completed'
             ? 'text-green-600 dark:text-green-400'
             : 'text-yellow-600 dark:text-yellow-400'
-            }`}
+          }`}
         >
           {status === 'completed' ? t('dashboard.cashier.completed') : t('dashboard.cashier.pending')}
         </span>

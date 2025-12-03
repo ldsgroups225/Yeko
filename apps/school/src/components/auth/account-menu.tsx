@@ -41,11 +41,11 @@ export function AccountMenu() {
   const user = session.data.user
   const initials = user.name
     ? user.name
-      .split(' ')
-      .map(n => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2)
+        .split(' ')
+        .map(n => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2)
     : user.email?.[0]?.toUpperCase() || 'U'
 
   return (
