@@ -110,6 +110,23 @@
   },
   "hr": {
     "title": "Human Resources",
+    "resources": {
+      "users": "Users",
+      "teachers": "Teachers",
+      "staff": "Staff",
+      "students": "Students",
+      "classes": "Classes",
+      "grades": "Grades",
+      "finance": "Finance",
+      "reports": "Reports",
+      "settings": "Settings"
+    },
+    "actions": {
+      "view": "View",
+      "create": "Create",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
     "users": {
       "title": "Users",
       "description": "Manage school users",
@@ -249,8 +266,10 @@
       },
       "personalInfo": "Personal Information",
       "basicInfo": "Basic Information",
+      "selectUser": "Select User",
       "userIdPlaceholder": "User ID",
-      "userIdHelp": "Enter an existing user ID or create a new one",
+      "userIdHelp": "Enter the ID of an existing user",
+      "selectPosition": "Select position",
       "positionPlaceholder": "Select a position",
       "departmentPlaceholder": "e.g., Administration",
       "selectHireDate": "Select hire date",
@@ -275,7 +294,7 @@
       "noRolesDescription": "Create custom roles to manage your school's permissions",
       "addRoleDescription": "Create a new custom role",
       "editRoleDescription": "Edit role permissions",
-      "name": "Name",
+      "name": "Role Name",
       "slug": "Slug",
       "searchPlaceholder": "Search for a role...",
       "system": "System",
@@ -287,9 +306,19 @@
       "cannotDeleteSystem": "System roles cannot be deleted",
       "permissionsMatrix": "Permissions Matrix",
       "selectAll": "Select All",
+      "deselectAll": "Deselect All",
       "resource": "Resource",
       "actions": "Actions",
-      "description": "Description"
+      "description": "Description",
+      "permissionsDescription": "Select what this role can do",
+      "noPermissionsSelected": "No permissions selected",
+      "permissionsCount": "{{count}} permissions selected",
+      "selectedPermissions": "Selected Permissions",
+      "basicInfo": "Basic Information",
+      "slugHelp": "Auto-generated from role name",
+      "namePlaceholder": "Enter role name",
+      "slugPlaceholder": "role-slug",
+      "descriptionPlaceholder": "Enter description"
     },
     "positions": {
       "academic_coordinator": "Academic Coordinator",
@@ -297,6 +326,10 @@
       "accountant": "Accountant",
       "cashier": "Cashier",
       "registrar": "Registrar",
+      "secretary": "Secretary",
+      "librarian": "Librarian",
+      "security": "Security",
+      "maintenance": "Maintenance",
       "other": "Other"
     },
     "status": {

@@ -110,6 +110,23 @@
   },
   "hr": {
     "title": "Ressources Humaines",
+    "resources": {
+      "users": "Utilisateurs",
+      "teachers": "Enseignants",
+      "staff": "Personnel",
+      "students": "Élèves",
+      "classes": "Classes",
+      "grades": "Notes",
+      "finance": "Finance",
+      "reports": "Rapports",
+      "settings": "Paramètres"
+    },
+    "actions": {
+      "view": "Voir",
+      "create": "Créer",
+      "edit": "Modifier",
+      "delete": "Supprimer"
+    },
     "users": {
       "title": "Utilisateurs",
       "description": "Gérer les utilisateurs de l'école",
@@ -249,8 +266,10 @@
       },
       "personalInfo": "Informations personnelles",
       "basicInfo": "Informations de base",
+      "selectUser": "Sélectionner un utilisateur",
       "userIdPlaceholder": "ID de l'utilisateur",
-      "userIdHelp": "Entrez l'ID d'un utilisateur existant ou créez-en un nouveau",
+      "userIdHelp": "Entrez l'ID d'un utilisateur existant",
+      "selectPosition": "Sélectionner un poste",
       "positionPlaceholder": "Sélectionner un poste",
       "departmentPlaceholder": "Ex: Administration",
       "selectHireDate": "Sélectionner la date d'embauche",
@@ -275,7 +294,7 @@
       "noRolesDescription": "Créez des rôles personnalisés pour gérer les permissions de votre école",
       "addRoleDescription": "Créer un nouveau rôle personnalisé",
       "editRoleDescription": "Modifier les permissions du rôle",
-      "name": "Nom",
+      "name": "Nom du rôle",
       "slug": "Identifiant",
       "searchPlaceholder": "Rechercher un rôle...",
       "system": "Système",
@@ -287,9 +306,19 @@
       "cannotDeleteSystem": "Les rôles système ne peuvent pas être supprimés",
       "permissionsMatrix": "Matrice des permissions",
       "selectAll": "Tout sélectionner",
+      "deselectAll": "Tout désélectionner",
       "resource": "Ressource",
       "actions": "Actions",
-      "description": "Description"
+      "description": "Description",
+      "permissionsDescription": "Sélectionnez ce que ce rôle peut faire",
+      "noPermissionsSelected": "Aucune permission sélectionnée",
+      "permissionsCount": "{{count}} permissions sélectionnées",
+      "selectedPermissions": "Permissions sélectionnées",
+      "basicInfo": "Informations de base",
+      "slugHelp": "Généré automatiquement à partir du nom du rôle",
+      "namePlaceholder": "Entrez le nom du rôle",
+      "slugPlaceholder": "identifiant-role",
+      "descriptionPlaceholder": "Entrez la description"
     },
     "positions": {
       "academic_coordinator": "Coordinateur Académique",
@@ -297,6 +326,10 @@
       "accountant": "Comptable",
       "cashier": "Caissier",
       "registrar": "Registraire",
+      "secretary": "Secrétaire",
+      "librarian": "Bibliothécaire",
+      "security": "Agent de sécurité",
+      "maintenance": "Agent de maintenance",
       "other": "Autre"
     },
     "status": {
