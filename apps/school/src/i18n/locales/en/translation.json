@@ -210,6 +210,7 @@
     "teachers": {
       "title": "Teachers",
       "description": "Manage school teachers",
+      "listTitle": "Teachers List",
       "addTeacher": "Add Teacher",
       "addTeacherDescription": "Create a new teacher profile",
       "editTeacher": "Edit Teacher",
@@ -300,6 +301,7 @@
     },
     "roles": {
       "title": "Roles & Permissions",
+      "listTitle": "Roles List",
       "addRole": "Create Role",
       "editRole": "Edit Role",
       "deleteRole": "Delete Role",
@@ -311,6 +313,11 @@
       "noRolesDescription": "Create custom roles to manage your school's permissions",
       "addRoleDescription": "Create a new custom role",
       "editRoleDescription": "Edit role permissions",
+      "createDescription": "Create a new custom role",
+      "editDescription": "Update role permissions",
+      "information": "Information",
+      "scope": "Scope",
+      "permissionCount": "Permission Count",
       "name": "Role Name",
       "slug": "Slug",
       "searchPlaceholder": "Search for a role...",

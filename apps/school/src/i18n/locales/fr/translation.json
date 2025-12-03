@@ -210,6 +210,7 @@
     "teachers": {
       "title": "Enseignants",
       "description": "Gérer les enseignants de l'école",
+      "listTitle": "Liste des enseignants",
       "addTeacher": "Ajouter un enseignant",
       "addTeacherDescription": "Créer un nouveau profil d'enseignant",
       "editTeacher": "Modifier l'enseignant",
@@ -300,6 +301,7 @@
     },
     "roles": {
       "title": "Rôles & Permissions",
+      "listTitle": "Liste des rôles",
       "addRole": "Créer un rôle",
       "editRole": "Modifier le rôle",
       "deleteRole": "Supprimer le rôle",
@@ -311,6 +313,11 @@
       "noRolesDescription": "Créez des rôles personnalisés pour gérer les permissions de votre école",
       "addRoleDescription": "Créer un nouveau rôle personnalisé",
       "editRoleDescription": "Modifier les permissions du rôle",
+      "createDescription": "Créer un nouveau rôle personnalisé",
+      "editDescription": "Mettre à jour les permissions du rôle",
+      "information": "Informations",
+      "scope": "Portée",
+      "permissionCount": "Nombre de permissions",
       "name": "Nom du rôle",
       "slug": "Identifiant",
       "searchPlaceholder": "Rechercher un rôle...",
