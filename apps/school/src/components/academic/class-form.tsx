@@ -62,20 +62,27 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
     queryFn: () => getTeachers({ data: {} }),
   })
 
+  const defaultSchoolYearId = classData?.schoolYearId || schoolYear?.id || ''
+
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<ClassFormData>({
     resolver: zodResolver(classSchema),
-    defaultValues: classData || {
-      schoolYearId: schoolYear?.id || '',
-      status: 'active',
-      maxStudents: 40,
+    defaultValues: {
+      schoolYearId: defaultSchoolYearId,
+      gradeId: classData?.gradeId || '',
+      seriesId: classData?.seriesId || null,
+      section: classData?.section || '',
+      classroomId: classData?.classroomId || null,
+      homeroomTeacherId: classData?.homeroomTeacherId || null,
+      status: classData?.status || 'active',
+      maxStudents: classData?.maxStudents || 40,
     },
   })
 
   const mutation = useMutation({
-    mutationFn: (data: ClassFormData) =>
+    mutationFn: (formData: ClassFormData) =>
       isEditing
-        ? updateClass({ data: { id: classData.id, updates: data } })
-        : createClass({ data }),
+        ? updateClass({ data: { id: classData.id, updates: formData } })
+        : createClass({ data: formData }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['classes'] })
       toast.success(isEditing ? 'Class updated' : 'Class created')
@@ -90,12 +97,28 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
     mutation.mutate(data)
   }
 
+  const onFormError = (formErrors: Record<string, any>) => {
+    console.error('Form validation errors:', formErrors)
+    const firstError = Object.values(formErrors)[0]
+    if (firstError?.message) {
+      toast.error(String(firstError.message))
+    }
+  }
+
+  if (!schoolYear && !isEditing) {
+    return (
+      <div className="p-4 text-center text-muted-foreground">
+        <p>No active school year found. Please create an active school year first.</p>
+      </div>
+    )
+  }
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit, onFormError)} className="space-y-4">
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="gradeId">Grade *</Label>
-          <Select value={watch('gradeId')} onValueChange={v => setValue('gradeId', v)}>
+          <Select value={watch('gradeId') || ''} onValueChange={v => setValue('gradeId', v, { shouldValidate: true })}>
             <SelectTrigger>
               <SelectValue placeholder="Select grade" />
             </SelectTrigger>
@@ -145,11 +168,7 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
               <SelectItem value="__none__">None</SelectItem>
               {classrooms.map((c: any) => (
                 <SelectItem key={c.classroom.id} value={c.classroom.id}>
-                  {c.classroom.name}
-                  {' '}
-                  (
-                  {c.classroom.code}
-                  )
+                  {c.classroom.name} ({c.classroom.code})
                 </SelectItem>
               ))}
             </SelectContent>
@@ -175,7 +194,7 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
 
         <div className="space-y-2">
           <Label htmlFor="status">Status *</Label>
-          <Select value={watch('status')} onValueChange={v => setValue('status', v as any)}>
+          <Select value={watch('status') || 'active'} onValueChange={v => setValue('status', v as 'active' | 'archived')}>
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
