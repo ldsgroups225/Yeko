@@ -12,10 +12,15 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthAppRouteImport } from './routes/_auth/app'
+import { Route as AuthAppIndexRouteImport } from './routes/_auth/app/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
+import { Route as AuthAppSpacesRouteImport } from './routes/_auth/app/spaces'
 import { Route as AuthAppHrRouteImport } from './routes/_auth/app/hr'
 import { Route as AuthAppDashboardRouteImport } from './routes/_auth/app/dashboard'
+import { Route as AuthAppAcademicRouteImport } from './routes/_auth/app/academic'
+import { Route as AuthAppSpacesIndexRouteImport } from './routes/_auth/app/spaces/index'
 import { Route as AuthAppHrIndexRouteImport } from './routes/_auth/app/hr/index'
+import { Route as AuthAppAcademicIndexRouteImport } from './routes/_auth/app/academic/index'
 import { Route as AuthAppSpacesAvailabilityRouteImport } from './routes/_auth/app/spaces/availability'
 import { Route as AuthAppAcademicAssignmentsRouteImport } from './routes/_auth/app/academic/assignments'
 import { Route as AuthAppSpacesClassroomsIndexRouteImport } from './routes/_auth/app/spaces/classrooms/index'
@@ -56,10 +61,20 @@ const AuthAppRoute = AuthAppRouteImport.update({
   path: '/app',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthAppIndexRoute = AuthAppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthAppRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthAppSpacesRoute = AuthAppSpacesRouteImport.update({
+  id: '/spaces',
+  path: '/spaces',
+  getParentRoute: () => AuthAppRoute,
 } as any)
 const AuthAppHrRoute = AuthAppHrRouteImport.update({
   id: '/hr',
@@ -71,28 +86,43 @@ const AuthAppDashboardRoute = AuthAppDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthAppRoute,
 } as any)
+const AuthAppAcademicRoute = AuthAppAcademicRouteImport.update({
+  id: '/academic',
+  path: '/academic',
+  getParentRoute: () => AuthAppRoute,
+} as any)
+const AuthAppSpacesIndexRoute = AuthAppSpacesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthAppSpacesRoute,
+} as any)
 const AuthAppHrIndexRoute = AuthAppHrIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthAppHrRoute,
 } as any)
+const AuthAppAcademicIndexRoute = AuthAppAcademicIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthAppAcademicRoute,
+} as any)
 const AuthAppSpacesAvailabilityRoute =
   AuthAppSpacesAvailabilityRouteImport.update({
-    id: '/spaces/availability',
-    path: '/spaces/availability',
-    getParentRoute: () => AuthAppRoute,
+    id: '/availability',
+    path: '/availability',
+    getParentRoute: () => AuthAppSpacesRoute,
   } as any)
 const AuthAppAcademicAssignmentsRoute =
   AuthAppAcademicAssignmentsRouteImport.update({
-    id: '/academic/assignments',
-    path: '/academic/assignments',
-    getParentRoute: () => AuthAppRoute,
+    id: '/assignments',
+    path: '/assignments',
+    getParentRoute: () => AuthAppAcademicRoute,
   } as any)
 const AuthAppSpacesClassroomsIndexRoute =
   AuthAppSpacesClassroomsIndexRouteImport.update({
-    id: '/spaces/classrooms/',
-    path: '/spaces/classrooms/',
-    getParentRoute: () => AuthAppRoute,
+    id: '/classrooms/',
+    path: '/classrooms/',
+    getParentRoute: () => AuthAppSpacesRoute,
   } as any)
 const AuthAppHrUsersIndexRoute = AuthAppHrUsersIndexRouteImport.update({
   id: '/users/',
@@ -116,9 +146,9 @@ const AuthAppHrRolesIndexRoute = AuthAppHrRolesIndexRouteImport.update({
 } as any)
 const AuthAppAcademicClassesIndexRoute =
   AuthAppAcademicClassesIndexRouteImport.update({
-    id: '/academic/classes/',
-    path: '/academic/classes/',
-    getParentRoute: () => AuthAppRoute,
+    id: '/classes/',
+    path: '/classes/',
+    getParentRoute: () => AuthAppAcademicRoute,
   } as any)
 const AuthAppHrUsersNewRoute = AuthAppHrUsersNewRouteImport.update({
   id: '/users/new',
@@ -147,9 +177,9 @@ const AuthAppHrRolesNewRoute = AuthAppHrRolesNewRouteImport.update({
 } as any)
 const AuthAppSpacesClassroomsClassroomIdIndexRoute =
   AuthAppSpacesClassroomsClassroomIdIndexRouteImport.update({
-    id: '/spaces/classrooms/$classroomId/',
-    path: '/spaces/classrooms/$classroomId/',
-    getParentRoute: () => AuthAppRoute,
+    id: '/classrooms/$classroomId/',
+    path: '/classrooms/$classroomId/',
+    getParentRoute: () => AuthAppSpacesRoute,
   } as any)
 const AuthAppHrUsersUserIdIndexRoute =
   AuthAppHrUsersUserIdIndexRouteImport.update({
@@ -177,15 +207,15 @@ const AuthAppHrRolesRoleIdIndexRoute =
   } as any)
 const AuthAppAcademicClassesClassIdIndexRoute =
   AuthAppAcademicClassesClassIdIndexRouteImport.update({
-    id: '/academic/classes/$classId/',
-    path: '/academic/classes/$classId/',
-    getParentRoute: () => AuthAppRoute,
+    id: '/classes/$classId/',
+    path: '/classes/$classId/',
+    getParentRoute: () => AuthAppAcademicRoute,
   } as any)
 const AuthAppSpacesClassroomsClassroomIdEditRoute =
   AuthAppSpacesClassroomsClassroomIdEditRouteImport.update({
-    id: '/spaces/classrooms/$classroomId/edit',
-    path: '/spaces/classrooms/$classroomId/edit',
-    getParentRoute: () => AuthAppRoute,
+    id: '/classrooms/$classroomId/edit',
+    path: '/classrooms/$classroomId/edit',
+    getParentRoute: () => AuthAppSpacesRoute,
   } as any)
 const AuthAppHrUsersUserIdEditRoute =
   AuthAppHrUsersUserIdEditRouteImport.update({
@@ -213,20 +243,25 @@ const AuthAppHrRolesRoleIdEditRoute =
   } as any)
 const AuthAppAcademicClassesClassIdEditRoute =
   AuthAppAcademicClassesClassIdEditRouteImport.update({
-    id: '/academic/classes/$classId/edit',
-    path: '/academic/classes/$classId/edit',
-    getParentRoute: () => AuthAppRoute,
+    id: '/classes/$classId/edit',
+    path: '/classes/$classId/edit',
+    getParentRoute: () => AuthAppAcademicRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AuthAppRouteWithChildren
+  '/app/academic': typeof AuthAppAcademicRouteWithChildren
   '/app/dashboard': typeof AuthAppDashboardRoute
   '/app/hr': typeof AuthAppHrRouteWithChildren
+  '/app/spaces': typeof AuthAppSpacesRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/app/': typeof AuthAppIndexRoute
   '/app/academic/assignments': typeof AuthAppAcademicAssignmentsRoute
   '/app/spaces/availability': typeof AuthAppSpacesAvailabilityRoute
+  '/app/academic/': typeof AuthAppAcademicIndexRoute
   '/app/hr/': typeof AuthAppHrIndexRoute
+  '/app/spaces/': typeof AuthAppSpacesIndexRoute
   '/app/hr/roles/new': typeof AuthAppHrRolesNewRoute
   '/app/hr/staff/new': typeof AuthAppHrStaffNewRoute
   '/app/hr/teachers/new': typeof AuthAppHrTeachersNewRoute
@@ -253,12 +288,14 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/app': typeof AuthAppRouteWithChildren
   '/app/dashboard': typeof AuthAppDashboardRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/app': typeof AuthAppIndexRoute
   '/app/academic/assignments': typeof AuthAppAcademicAssignmentsRoute
   '/app/spaces/availability': typeof AuthAppSpacesAvailabilityRoute
+  '/app/academic': typeof AuthAppAcademicIndexRoute
   '/app/hr': typeof AuthAppHrIndexRoute
+  '/app/spaces': typeof AuthAppSpacesIndexRoute
   '/app/hr/roles/new': typeof AuthAppHrRolesNewRoute
   '/app/hr/staff/new': typeof AuthAppHrStaffNewRoute
   '/app/hr/teachers/new': typeof AuthAppHrTeachersNewRoute
@@ -288,12 +325,17 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteWithChildren
   '/_auth/app': typeof AuthAppRouteWithChildren
+  '/_auth/app/academic': typeof AuthAppAcademicRouteWithChildren
   '/_auth/app/dashboard': typeof AuthAppDashboardRoute
   '/_auth/app/hr': typeof AuthAppHrRouteWithChildren
+  '/_auth/app/spaces': typeof AuthAppSpacesRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/_auth/app/': typeof AuthAppIndexRoute
   '/_auth/app/academic/assignments': typeof AuthAppAcademicAssignmentsRoute
   '/_auth/app/spaces/availability': typeof AuthAppSpacesAvailabilityRoute
+  '/_auth/app/academic/': typeof AuthAppAcademicIndexRoute
   '/_auth/app/hr/': typeof AuthAppHrIndexRoute
+  '/_auth/app/spaces/': typeof AuthAppSpacesIndexRoute
   '/_auth/app/hr/roles/new': typeof AuthAppHrRolesNewRoute
   '/_auth/app/hr/staff/new': typeof AuthAppHrStaffNewRoute
   '/_auth/app/hr/teachers/new': typeof AuthAppHrTeachersNewRoute
@@ -323,12 +365,17 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/app'
+    | '/app/academic'
     | '/app/dashboard'
     | '/app/hr'
+    | '/app/spaces'
     | '/api/auth/$'
+    | '/app/'
     | '/app/academic/assignments'
     | '/app/spaces/availability'
+    | '/app/academic/'
     | '/app/hr/'
+    | '/app/spaces/'
     | '/app/hr/roles/new'
     | '/app/hr/staff/new'
     | '/app/hr/teachers/new'
@@ -355,12 +402,14 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/app'
     | '/app/dashboard'
     | '/api/auth/$'
+    | '/app'
     | '/app/academic/assignments'
     | '/app/spaces/availability'
+    | '/app/academic'
     | '/app/hr'
+    | '/app/spaces'
     | '/app/hr/roles/new'
     | '/app/hr/staff/new'
     | '/app/hr/teachers/new'
@@ -389,12 +438,17 @@ export interface FileRouteTypes {
     | '/'
     | '/_auth'
     | '/_auth/app'
+    | '/_auth/app/academic'
     | '/_auth/app/dashboard'
     | '/_auth/app/hr'
+    | '/_auth/app/spaces'
     | '/api/auth/$'
+    | '/_auth/app/'
     | '/_auth/app/academic/assignments'
     | '/_auth/app/spaces/availability'
+    | '/_auth/app/academic/'
     | '/_auth/app/hr/'
+    | '/_auth/app/spaces/'
     | '/_auth/app/hr/roles/new'
     | '/_auth/app/hr/staff/new'
     | '/_auth/app/hr/teachers/new'
@@ -449,12 +503,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAppRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/app/': {
+      id: '/_auth/app/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AuthAppIndexRouteImport
+      parentRoute: typeof AuthAppRoute
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
       fullPath: '/api/auth/$'
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_auth/app/spaces': {
+      id: '/_auth/app/spaces'
+      path: '/spaces'
+      fullPath: '/app/spaces'
+      preLoaderRoute: typeof AuthAppSpacesRouteImport
+      parentRoute: typeof AuthAppRoute
     }
     '/_auth/app/hr': {
       id: '/_auth/app/hr'
@@ -470,6 +538,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAppDashboardRouteImport
       parentRoute: typeof AuthAppRoute
     }
+    '/_auth/app/academic': {
+      id: '/_auth/app/academic'
+      path: '/academic'
+      fullPath: '/app/academic'
+      preLoaderRoute: typeof AuthAppAcademicRouteImport
+      parentRoute: typeof AuthAppRoute
+    }
+    '/_auth/app/spaces/': {
+      id: '/_auth/app/spaces/'
+      path: '/'
+      fullPath: '/app/spaces/'
+      preLoaderRoute: typeof AuthAppSpacesIndexRouteImport
+      parentRoute: typeof AuthAppSpacesRoute
+    }
     '/_auth/app/hr/': {
       id: '/_auth/app/hr/'
       path: '/'
@@ -477,26 +559,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAppHrIndexRouteImport
       parentRoute: typeof AuthAppHrRoute
     }
+    '/_auth/app/academic/': {
+      id: '/_auth/app/academic/'
+      path: '/'
+      fullPath: '/app/academic/'
+      preLoaderRoute: typeof AuthAppAcademicIndexRouteImport
+      parentRoute: typeof AuthAppAcademicRoute
+    }
     '/_auth/app/spaces/availability': {
       id: '/_auth/app/spaces/availability'
-      path: '/spaces/availability'
+      path: '/availability'
       fullPath: '/app/spaces/availability'
       preLoaderRoute: typeof AuthAppSpacesAvailabilityRouteImport
-      parentRoute: typeof AuthAppRoute
+      parentRoute: typeof AuthAppSpacesRoute
     }
     '/_auth/app/academic/assignments': {
       id: '/_auth/app/academic/assignments'
-      path: '/academic/assignments'
+      path: '/assignments'
       fullPath: '/app/academic/assignments'
       preLoaderRoute: typeof AuthAppAcademicAssignmentsRouteImport
-      parentRoute: typeof AuthAppRoute
+      parentRoute: typeof AuthAppAcademicRoute
     }
     '/_auth/app/spaces/classrooms/': {
       id: '/_auth/app/spaces/classrooms/'
-      path: '/spaces/classrooms'
+      path: '/classrooms'
       fullPath: '/app/spaces/classrooms'
       preLoaderRoute: typeof AuthAppSpacesClassroomsIndexRouteImport
-      parentRoute: typeof AuthAppRoute
+      parentRoute: typeof AuthAppSpacesRoute
     }
     '/_auth/app/hr/users/': {
       id: '/_auth/app/hr/users/'
@@ -528,10 +617,10 @@ declare module '@tanstack/react-router' {
     }
     '/_auth/app/academic/classes/': {
       id: '/_auth/app/academic/classes/'
-      path: '/academic/classes'
+      path: '/classes'
       fullPath: '/app/academic/classes'
       preLoaderRoute: typeof AuthAppAcademicClassesIndexRouteImport
-      parentRoute: typeof AuthAppRoute
+      parentRoute: typeof AuthAppAcademicRoute
     }
     '/_auth/app/hr/users/new': {
       id: '/_auth/app/hr/users/new'
@@ -570,10 +659,10 @@ declare module '@tanstack/react-router' {
     }
     '/_auth/app/spaces/classrooms/$classroomId/': {
       id: '/_auth/app/spaces/classrooms/$classroomId/'
-      path: '/spaces/classrooms/$classroomId'
+      path: '/classrooms/$classroomId'
       fullPath: '/app/spaces/classrooms/$classroomId'
       preLoaderRoute: typeof AuthAppSpacesClassroomsClassroomIdIndexRouteImport
-      parentRoute: typeof AuthAppRoute
+      parentRoute: typeof AuthAppSpacesRoute
     }
     '/_auth/app/hr/users/$userId/': {
       id: '/_auth/app/hr/users/$userId/'
@@ -605,17 +694,17 @@ declare module '@tanstack/react-router' {
     }
     '/_auth/app/academic/classes/$classId/': {
       id: '/_auth/app/academic/classes/$classId/'
-      path: '/academic/classes/$classId'
+      path: '/classes/$classId'
       fullPath: '/app/academic/classes/$classId'
       preLoaderRoute: typeof AuthAppAcademicClassesClassIdIndexRouteImport
-      parentRoute: typeof AuthAppRoute
+      parentRoute: typeof AuthAppAcademicRoute
     }
     '/_auth/app/spaces/classrooms/$classroomId/edit': {
       id: '/_auth/app/spaces/classrooms/$classroomId/edit'
-      path: '/spaces/classrooms/$classroomId/edit'
+      path: '/classrooms/$classroomId/edit'
       fullPath: '/app/spaces/classrooms/$classroomId/edit'
       preLoaderRoute: typeof AuthAppSpacesClassroomsClassroomIdEditRouteImport
-      parentRoute: typeof AuthAppRoute
+      parentRoute: typeof AuthAppSpacesRoute
     }
     '/_auth/app/hr/users/$userId/edit': {
       id: '/_auth/app/hr/users/$userId/edit'
@@ -647,13 +736,35 @@ declare module '@tanstack/react-router' {
     }
     '/_auth/app/academic/classes/$classId/edit': {
       id: '/_auth/app/academic/classes/$classId/edit'
-      path: '/academic/classes/$classId/edit'
+      path: '/classes/$classId/edit'
       fullPath: '/app/academic/classes/$classId/edit'
       preLoaderRoute: typeof AuthAppAcademicClassesClassIdEditRouteImport
-      parentRoute: typeof AuthAppRoute
+      parentRoute: typeof AuthAppAcademicRoute
     }
   }
 }
+
+interface AuthAppAcademicRouteChildren {
+  AuthAppAcademicAssignmentsRoute: typeof AuthAppAcademicAssignmentsRoute
+  AuthAppAcademicIndexRoute: typeof AuthAppAcademicIndexRoute
+  AuthAppAcademicClassesIndexRoute: typeof AuthAppAcademicClassesIndexRoute
+  AuthAppAcademicClassesClassIdEditRoute: typeof AuthAppAcademicClassesClassIdEditRoute
+  AuthAppAcademicClassesClassIdIndexRoute: typeof AuthAppAcademicClassesClassIdIndexRoute
+}
+
+const AuthAppAcademicRouteChildren: AuthAppAcademicRouteChildren = {
+  AuthAppAcademicAssignmentsRoute: AuthAppAcademicAssignmentsRoute,
+  AuthAppAcademicIndexRoute: AuthAppAcademicIndexRoute,
+  AuthAppAcademicClassesIndexRoute: AuthAppAcademicClassesIndexRoute,
+  AuthAppAcademicClassesClassIdEditRoute:
+    AuthAppAcademicClassesClassIdEditRoute,
+  AuthAppAcademicClassesClassIdIndexRoute:
+    AuthAppAcademicClassesClassIdIndexRoute,
+}
+
+const AuthAppAcademicRouteWithChildren = AuthAppAcademicRoute._addFileChildren(
+  AuthAppAcademicRouteChildren,
+)
 
 interface AuthAppHrRouteChildren {
   AuthAppHrIndexRoute: typeof AuthAppHrIndexRoute
@@ -701,34 +812,42 @@ const AuthAppHrRouteWithChildren = AuthAppHrRoute._addFileChildren(
   AuthAppHrRouteChildren,
 )
 
-interface AuthAppRouteChildren {
-  AuthAppDashboardRoute: typeof AuthAppDashboardRoute
-  AuthAppHrRoute: typeof AuthAppHrRouteWithChildren
-  AuthAppAcademicAssignmentsRoute: typeof AuthAppAcademicAssignmentsRoute
+interface AuthAppSpacesRouteChildren {
   AuthAppSpacesAvailabilityRoute: typeof AuthAppSpacesAvailabilityRoute
-  AuthAppAcademicClassesIndexRoute: typeof AuthAppAcademicClassesIndexRoute
+  AuthAppSpacesIndexRoute: typeof AuthAppSpacesIndexRoute
   AuthAppSpacesClassroomsIndexRoute: typeof AuthAppSpacesClassroomsIndexRoute
-  AuthAppAcademicClassesClassIdEditRoute: typeof AuthAppAcademicClassesClassIdEditRoute
   AuthAppSpacesClassroomsClassroomIdEditRoute: typeof AuthAppSpacesClassroomsClassroomIdEditRoute
-  AuthAppAcademicClassesClassIdIndexRoute: typeof AuthAppAcademicClassesClassIdIndexRoute
   AuthAppSpacesClassroomsClassroomIdIndexRoute: typeof AuthAppSpacesClassroomsClassroomIdIndexRoute
 }
 
-const AuthAppRouteChildren: AuthAppRouteChildren = {
-  AuthAppDashboardRoute: AuthAppDashboardRoute,
-  AuthAppHrRoute: AuthAppHrRouteWithChildren,
-  AuthAppAcademicAssignmentsRoute: AuthAppAcademicAssignmentsRoute,
+const AuthAppSpacesRouteChildren: AuthAppSpacesRouteChildren = {
   AuthAppSpacesAvailabilityRoute: AuthAppSpacesAvailabilityRoute,
-  AuthAppAcademicClassesIndexRoute: AuthAppAcademicClassesIndexRoute,
+  AuthAppSpacesIndexRoute: AuthAppSpacesIndexRoute,
   AuthAppSpacesClassroomsIndexRoute: AuthAppSpacesClassroomsIndexRoute,
-  AuthAppAcademicClassesClassIdEditRoute:
-    AuthAppAcademicClassesClassIdEditRoute,
   AuthAppSpacesClassroomsClassroomIdEditRoute:
     AuthAppSpacesClassroomsClassroomIdEditRoute,
-  AuthAppAcademicClassesClassIdIndexRoute:
-    AuthAppAcademicClassesClassIdIndexRoute,
   AuthAppSpacesClassroomsClassroomIdIndexRoute:
     AuthAppSpacesClassroomsClassroomIdIndexRoute,
+}
+
+const AuthAppSpacesRouteWithChildren = AuthAppSpacesRoute._addFileChildren(
+  AuthAppSpacesRouteChildren,
+)
+
+interface AuthAppRouteChildren {
+  AuthAppAcademicRoute: typeof AuthAppAcademicRouteWithChildren
+  AuthAppDashboardRoute: typeof AuthAppDashboardRoute
+  AuthAppHrRoute: typeof AuthAppHrRouteWithChildren
+  AuthAppSpacesRoute: typeof AuthAppSpacesRouteWithChildren
+  AuthAppIndexRoute: typeof AuthAppIndexRoute
+}
+
+const AuthAppRouteChildren: AuthAppRouteChildren = {
+  AuthAppAcademicRoute: AuthAppAcademicRouteWithChildren,
+  AuthAppDashboardRoute: AuthAppDashboardRoute,
+  AuthAppHrRoute: AuthAppHrRouteWithChildren,
+  AuthAppSpacesRoute: AuthAppSpacesRouteWithChildren,
+  AuthAppIndexRoute: AuthAppIndexRoute,
 }
 
 const AuthAppRouteWithChildren =
