@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -8,10 +8,11 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { createClass, updateClass } from '@/school/functions/classes'
 import { getClassrooms } from '@/school/functions/classrooms'
 import { getGrades } from '@/school/functions/grades'
-import { getActiveSchoolYear } from '@/school/functions/school-years'
+import { getSchoolYears } from '@/school/functions/school-years'
 import { getSeries } from '@/school/functions/series'
 import { getTeachers } from '@/school/functions/teachers'
 
@@ -36,11 +37,15 @@ interface ClassFormProps {
 export function ClassForm({ classData, onSuccess }: ClassFormProps) {
   const queryClient = useQueryClient()
   const isEditing = !!classData
+  const { schoolYearId } = useSchoolYearContext()
 
-  const { data: schoolYear } = useSuspenseQuery({
-    queryKey: ['activeSchoolYear'],
-    queryFn: () => getActiveSchoolYear({ data: {} }),
+  const { data: schoolYears } = useQuery({
+    queryKey: ['school-years'],
+    queryFn: () => getSchoolYears(),
   })
+
+  // Find the current school year from context or use the first one
+  const currentSchoolYear = schoolYears?.find((sy: any) => sy.id === schoolYearId) || schoolYears?.[0]
 
   const { data: grades } = useSuspenseQuery({
     queryKey: ['grades'],
@@ -62,7 +67,7 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
     queryFn: () => getTeachers({ data: {} }),
   })
 
-  const defaultSchoolYearId = classData?.schoolYearId || schoolYear?.id || ''
+  const defaultSchoolYearId = classData?.schoolYearId || schoolYearId || currentSchoolYear?.id || ''
 
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<ClassFormData>({
     resolver: zodResolver(classSchema),
@@ -105,10 +110,10 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
     }
   }
 
-  if (!schoolYear && !isEditing) {
+  if (!schoolYearId && !currentSchoolYear && !isEditing) {
     return (
       <div className="p-4 text-center text-muted-foreground">
-        <p>No active school year found. Please create an active school year first.</p>
+        <p>No school year selected. Please select a school year from the header.</p>
       </div>
     )
   }
@@ -168,7 +173,11 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
               <SelectItem value="__none__">None</SelectItem>
               {classrooms.map((c: any) => (
                 <SelectItem key={c.classroom.id} value={c.classroom.id}>
-                  {c.classroom.name} ({c.classroom.code})
+                  {c.classroom.name}
+                  {' '}
+                  (
+                  {c.classroom.code}
+                  )
                 </SelectItem>
               ))}
             </SelectContent>

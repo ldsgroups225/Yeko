@@ -207,23 +207,23 @@ export function ClassroomAvailability() {
                   <div className="w-24 text-right">
                     {isAvailable
                       ? (
-                        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                          Disponible
-                        </Badge>
-                      )
-                      : item.classroom.status !== 'active'
-                        ? (
-                          <Badge variant="secondary">
-                            {item.classroom.status === 'maintenance' ? 'Maintenance' : 'Inactive'}
+                          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                            Disponible
                           </Badge>
                         )
+                      : item.classroom.status !== 'active'
+                        ? (
+                            <Badge variant="secondary">
+                              {item.classroom.status === 'maintenance' ? 'Maintenance' : 'Inactive'}
+                            </Badge>
+                          )
                         : (
-                          <Badge variant="default">
-                            {item.assignedClassesCount}
-                            {' '}
-                            classe(s)
-                          </Badge>
-                        )}
+                            <Badge variant="default">
+                              {item.assignedClassesCount}
+                              {' '}
+                              classe(s)
+                            </Badge>
+                          )}
                   </div>
                 </div>
               )

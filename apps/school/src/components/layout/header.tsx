@@ -1,6 +1,7 @@
 import { Bell } from 'lucide-react'
 import { AccountMenu } from '@/components/auth/account-menu'
 import { SchoolSwitcher } from '@/components/school/school-switcher'
+import { SchoolYearSwitcher } from '@/components/school/school-year-switcher'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { cn } from '@/lib/utils'
 
@@ -13,6 +14,9 @@ export function Header() {
 
         {/* School Switcher */}
         <SchoolSwitcher />
+
+        {/* School Year Switcher */}
+        <SchoolYearSwitcher />
 
         {/* Spacer */}
         <div className="flex-1" />

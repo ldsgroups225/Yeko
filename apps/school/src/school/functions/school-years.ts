@@ -3,6 +3,13 @@ import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 import { getSchoolContext } from '../middleware/school-context'
 
+export const getSchoolYears = createServerFn().handler(async () => {
+  const context = await getSchoolContext()
+  if (!context)
+    throw new Error('No school context')
+  return await getSchoolYearsBySchool(context.schoolId, {})
+})
+
 export const getActiveSchoolYear = createServerFn()
   .inputValidator(z.object({}))
   .handler(async () => {

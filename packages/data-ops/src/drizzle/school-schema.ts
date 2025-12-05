@@ -130,12 +130,12 @@ export const classrooms = pgTable('classrooms', {
   floor: text('floor'),
   building: text('building'),
   equipment: jsonb('equipment').$type<{
-    projector?: boolean;
-    computers?: number;
-    whiteboard?: boolean;
-    smartboard?: boolean;
-    ac?: boolean;
-    other?: string[];
+    projector?: boolean
+    computers?: number
+    whiteboard?: boolean
+    smartboard?: boolean
+    ac?: boolean
+    other?: string[]
   }>(),
   status: text('status', { enum: ['active', 'maintenance', 'inactive'] }).default('active').notNull(),
   notes: text('notes'),
@@ -244,6 +244,21 @@ export const students = pgTable('students', {
   photoUrl: text('photo_url'),
   matricule: text('matricule').notNull(), // Format: AB2024C001
   status: text('status', { enum: ['active', 'graduated', 'transferred', 'withdrawn'] }).default('active').notNull(),
+  // Phase 13: Enhanced fields
+  birthPlace: text('birth_place'),
+  nationality: text('nationality').default('Ivoirien'),
+  address: text('address'),
+  emergencyContact: text('emergency_contact'),
+  emergencyPhone: text('emergency_phone'),
+  bloodType: text('blood_type', { enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] }),
+  medicalNotes: text('medical_notes'),
+  previousSchool: text('previous_school'),
+  admissionDate: date('admission_date'),
+  graduationDate: date('graduation_date'),
+  transferDate: date('transfer_date'),
+  transferReason: text('transfer_reason'),
+  withdrawalDate: date('withdrawal_date'),
+  withdrawalReason: text('withdrawal_reason'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at')
     .defaultNow()
@@ -255,13 +270,28 @@ export const students = pgTable('students', {
   statusIdx: index('idx_students_status').on(table.status),
   schoolStatusIdx: index('idx_students_school_status').on(table.schoolId, table.status),
   uniqueSchoolMatricule: unique('unique_school_matricule').on(table.schoolId, table.matricule),
+  // Phase 13: New indexes
+  nameIdx: index('idx_students_name').on(table.lastName, table.firstName),
+  dobIdx: index('idx_students_dob').on(table.dob),
+  admissionIdx: index('idx_students_admission').on(table.schoolId, table.admissionDate),
 }))
 
 export const parents = pgTable('parents', {
   id: text('id').primaryKey(),
-  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  userId: text('user_id').references(() => users.id, { onDelete: 'set null' }), // Made nullable for unregistered parents
+  // Phase 13: Enhanced fields
+  firstName: text('first_name').notNull(),
+  lastName: text('last_name').notNull(),
+  email: text('email'),
   phone: text('phone').notNull(),
+  phone2: text('phone_2'), // Secondary phone
   address: text('address'),
+  occupation: text('occupation'),
+  workplace: text('workplace'),
+  invitationStatus: text('invitation_status', { enum: ['pending', 'sent', 'accepted', 'expired'] }).default('pending'),
+  invitationSentAt: timestamp('invitation_sent_at'),
+  invitationToken: text('invitation_token'),
+  invitationExpiresAt: timestamp('invitation_expires_at'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at')
     .defaultNow()
@@ -270,19 +300,30 @@ export const parents = pgTable('parents', {
 }, table => ({
   userIdx: index('idx_parents_user').on(table.userId),
   phoneIdx: index('idx_parents_phone').on(table.phone),
+  // Phase 13: New indexes
+  emailIdx: index('idx_parents_email').on(table.email),
+  phone2Idx: index('idx_parents_phone2').on(table.phone2),
+  invitationStatusIdx: index('idx_parents_invitation_status').on(table.invitationStatus),
+  nameIdx: index('idx_parents_name').on(table.lastName, table.firstName),
 }))
 
 export const studentParents = pgTable('student_parents', {
   id: text('id').primaryKey(),
   studentId: text('student_id').notNull().references(() => students.id, { onDelete: 'cascade' }),
   parentId: text('parent_id').notNull().references(() => parents.id, { onDelete: 'cascade' }),
-  relationship: text('relationship', { enum: ['father', 'mother', 'guardian'] }).notNull(),
+  relationship: text('relationship', { enum: ['father', 'mother', 'guardian', 'grandparent', 'sibling', 'other'] }).notNull(),
   isPrimary: boolean('is_primary').default(false).notNull(),
+  // Phase 13: Enhanced fields
+  canPickup: boolean('can_pickup').default(true).notNull(), // Authorized to pick up student
+  receiveNotifications: boolean('receive_notifications').default(true).notNull(),
+  notes: text('notes'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 }, table => ({
   compositeIdx: index('idx_student_parents_composite').on(table.studentId, table.parentId),
   parentIdx: index('idx_student_parents_parent').on(table.parentId),
   uniqueStudentParent: unique('unique_student_parent').on(table.studentId, table.parentId),
+  // Phase 13: New index
+  primaryIdx: index('idx_student_parents_primary').on(table.studentId, table.isPrimary),
 }))
 
 export const enrollments = pgTable('enrollments', {
@@ -290,8 +331,19 @@ export const enrollments = pgTable('enrollments', {
   studentId: text('student_id').notNull().references(() => students.id, { onDelete: 'cascade' }),
   classId: text('class_id').notNull().references(() => classes.id, { onDelete: 'cascade' }),
   schoolYearId: text('school_year_id').notNull().references(() => schoolYears.id, { onDelete: 'cascade' }),
-  status: text('status', { enum: ['pending', 'confirmed', 'cancelled'] }).default('pending').notNull(),
+  status: text('status', { enum: ['pending', 'confirmed', 'cancelled', 'transferred'] }).default('pending').notNull(),
   enrollmentDate: date('enrollment_date').notNull(),
+  // Phase 13: Enhanced fields
+  confirmedAt: timestamp('confirmed_at'),
+  confirmedBy: text('confirmed_by').references(() => users.id, { onDelete: 'set null' }),
+  cancelledAt: timestamp('cancelled_at'),
+  cancelledBy: text('cancelled_by').references(() => users.id, { onDelete: 'set null' }),
+  cancellationReason: text('cancellation_reason'),
+  transferredAt: timestamp('transferred_at'),
+  transferredTo: text('transferred_to').references(() => classes.id, { onDelete: 'set null' }), // New class
+  transferReason: text('transfer_reason'),
+  previousEnrollmentId: text('previous_enrollment_id'), // Self-reference for re-enrollment tracking
+  rollNumber: integer('roll_number'), // Student number in class
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at')
     .defaultNow()
@@ -303,6 +355,28 @@ export const enrollments = pgTable('enrollments', {
   schoolYearIdx: index('idx_enrollments_school_year').on(table.schoolYearId),
   classYearStatusIdx: index('idx_enrollments_class_year_status').on(table.classId, table.schoolYearId, table.status),
   studentYearIdx: index('idx_enrollments_student_year').on(table.studentId, table.schoolYearId),
+  // Phase 13: New indexes
+  statusIdx: index('idx_enrollments_status').on(table.status),
+  confirmedByIdx: index('idx_enrollments_confirmed_by').on(table.confirmedBy),
+  rollNumberIdx: index('idx_enrollments_roll_number').on(table.classId, table.rollNumber),
+}))
+
+// Phase 13: Matricule Sequences for auto-generation
+export const matriculeSequences = pgTable('matricule_sequences', {
+  id: text('id').primaryKey(),
+  schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
+  schoolYearId: text('school_year_id').notNull().references(() => schoolYears.id, { onDelete: 'cascade' }),
+  prefix: text('prefix').notNull(), // e.g., "AB" for school code
+  lastNumber: integer('last_number').default(0).notNull(),
+  format: text('format').default('{prefix}{year}{sequence:4}').notNull(), // e.g., AB2024C001
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at')
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+}, table => ({
+  schoolYearIdx: index('idx_matricule_seq_school_year').on(table.schoolId, table.schoolYearId),
+  uniqueSchoolYear: unique('unique_matricule_seq_school_year').on(table.schoolId, table.schoolYearId),
 }))
 
 // --- Level 4: Audit & Security ---
@@ -539,6 +613,29 @@ export const enrollmentsRelations = relations(enrollments, ({ one }) => ({
     fields: [enrollments.schoolYearId],
     references: [schoolYears.id],
   }),
+  confirmedByUser: one(users, {
+    fields: [enrollments.confirmedBy],
+    references: [users.id],
+  }),
+  cancelledByUser: one(users, {
+    fields: [enrollments.cancelledBy],
+    references: [users.id],
+  }),
+  transferredToClass: one(classes, {
+    fields: [enrollments.transferredTo],
+    references: [classes.id],
+  }),
+}))
+
+export const matriculeSequencesRelations = relations(matriculeSequences, ({ one }) => ({
+  school: one(schools, {
+    fields: [matriculeSequences.schoolId],
+    references: [schools.id],
+  }),
+  schoolYear: one(schoolYears, {
+    fields: [matriculeSequences.schoolYearId],
+    references: [schoolYears.id],
+  }),
 }))
 
 export const auditLogsRelations = relations(auditLogs, ({ one }) => ({
@@ -584,6 +681,7 @@ export type StudentParentInsert = typeof studentParents.$inferInsert
 export type EnrollmentInsert = typeof enrollments.$inferInsert
 export type AuditLogInsert = typeof auditLogs.$inferInsert
 export type SchoolSubjectCoefficientInsert = typeof schoolSubjectCoefficients.$inferInsert
+export type MatriculeSequenceInsert = typeof matriculeSequences.$inferInsert
 
 // Data types (for seeding)
 export type RoleData = Omit<RoleInsert, 'id' | 'createdAt' | 'updatedAt'>
@@ -607,6 +705,7 @@ export type StudentParent = typeof studentParents.$inferSelect
 export type Enrollment = typeof enrollments.$inferSelect
 export type AuditLog = typeof auditLogs.$inferSelect
 export type SchoolSubjectCoefficient = typeof schoolSubjectCoefficients.$inferSelect
+export type MatriculeSequence = typeof matriculeSequences.$inferSelect
 
 // Enum types
 export type UserStatus = 'active' | 'inactive' | 'suspended'
@@ -618,7 +717,9 @@ export type ClassStatus = 'active' | 'archived'
 export type ClassSubjectStatus = 'active' | 'inactive'
 export type StudentStatus = 'active' | 'graduated' | 'transferred' | 'withdrawn'
 export type Gender = 'M' | 'F' | 'other'
-export type Relationship = 'father' | 'mother' | 'guardian'
-export type EnrollmentStatus = 'pending' | 'confirmed' | 'cancelled'
+export type Relationship = 'father' | 'mother' | 'guardian' | 'grandparent' | 'sibling' | 'other'
+export type EnrollmentStatus = 'pending' | 'confirmed' | 'cancelled' | 'transferred'
+export type BloodType = 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-'
+export type InvitationStatus = 'pending' | 'sent' | 'accepted' | 'expired'
 export type AuditAction = 'create' | 'update' | 'delete' | 'view'
 export type RoleScope = 'school' | 'system'
