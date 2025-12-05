@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Loader2, X } from 'lucide-react'
+import { AlertTriangle, Plus, Settings, X } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -33,6 +34,71 @@ import { getTeachers } from '@/school/functions/teachers'
 
 interface AssignmentMatrixProps {
   schoolYearId?: string
+}
+
+function MatrixSkeleton() {
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-6 w-48" />
+          <Skeleton className="h-5 w-32" />
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-3">
+          <div className="flex gap-2">
+            <Skeleton className="h-10 w-32" />
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Skeleton key={i} className="h-10 w-36" />
+            ))}
+          </div>
+          {Array.from({ length: 6 }).map((_, rowIndex) => (
+            <div key={rowIndex} className="flex gap-2">
+              <Skeleton className="h-10 w-32" />
+              {Array.from({ length: 5 }).map((_, colIndex) => (
+                <Skeleton key={colIndex} className="h-10 w-36" />
+              ))}
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+function EmptyState() {
+  return (
+    <Card>
+      <CardContent className="p-8">
+        <div className="flex flex-col items-center justify-center text-center space-y-4">
+          <div className="rounded-full bg-muted p-4">
+            <Settings className="h-8 w-8 text-muted-foreground" />
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-lg font-semibold">Aucune donnée disponible</h3>
+            <p className="text-sm text-muted-foreground max-w-md">
+              Créez d'abord des classes et configurez les matières pour commencer les affectations enseignants.
+            </p>
+          </div>
+          <div className="flex gap-2 pt-2">
+            <Button variant="outline" asChild>
+              <a href="/app/academic/classes">
+                <Plus className="mr-2 h-4 w-4" />
+                Créer une classe
+              </a>
+            </Button>
+            <Button variant="outline" asChild>
+              <a href="/app/settings/subjects">
+                <Settings className="mr-2 h-4 w-4" />
+                Configurer les matières
+              </a>
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
 }
 
 export function AssignmentMatrix({ schoolYearId: propSchoolYearId }: AssignmentMatrixProps) {
@@ -71,8 +137,16 @@ export function AssignmentMatrix({ schoolYearId: propSchoolYearId }: AssignmentM
       toast.success('Enseignant assigné')
       setEditingCell(null)
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Erreur lors de l\'assignation')
+    onError: (error: Error) => {
+      if (error.message.includes('not qualified')) {
+        toast.error('Cet enseignant n\'est pas qualifié pour cette matière')
+      }
+      else if (error.message.includes('permission')) {
+        toast.error('Vous n\'avez pas la permission d\'effectuer cette action')
+      }
+      else {
+        toast.error(error.message || 'Erreur lors de l\'assignation')
+      }
     },
   })
 
@@ -83,27 +157,35 @@ export function AssignmentMatrix({ schoolYearId: propSchoolYearId }: AssignmentM
       queryClient.invalidateQueries({ queryKey: ['assignmentMatrix'] })
       toast.success('Assignation supprimée')
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Erreur lors de la suppression')
+    onError: (error: Error) => {
+      if (error.message.includes('permission')) {
+        toast.error('Vous n\'avez pas la permission d\'effectuer cette action')
+      }
+      else {
+        toast.error(error.message || 'Erreur lors de la suppression')
+      }
     },
   })
 
+  // Calculate teacher workload for overload warnings
+  const teacherWorkload = new Map<string, number>()
+  matrixData?.forEach((item: any) => {
+    if (item.teacherId && item.hoursPerWeek) {
+      const current = teacherWorkload.get(item.teacherId) || 0
+      teacherWorkload.set(item.teacherId, current + item.hoursPerWeek)
+    }
+  })
+
+  const isTeacherOverloaded = (teacherId: string) => {
+    return (teacherWorkload.get(teacherId) || 0) > 30
+  }
+
   if (matrixLoading) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-      </div>
-    )
+    return <MatrixSkeleton />
   }
 
   if (!matrixData || matrixData.length === 0) {
-    return (
-      <Card>
-        <CardContent className="p-8 text-center">
-          <p className="text-muted-foreground">Aucune donnée disponible pour la matrice d'affectation.</p>
-        </CardContent>
-      </Card>
-    )
+    return <EmptyState />
   }
 
   // Build matrix structure
@@ -140,13 +222,15 @@ export function AssignmentMatrix({ schoolYearId: propSchoolYearId }: AssignmentM
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="overflow-x-auto">
-          <Table>
+        <div className="overflow-x-auto" role="region" aria-label="Matrice d'affectation enseignants">
+          <Table aria-label="Matrice d'affectation enseignants">
             <TableHeader>
               <TableRow>
-                <TableHead className="sticky left-0 bg-background z-10 min-w-[120px]">Classe</TableHead>
+                <TableHead className="sticky left-0 bg-background z-10 min-w-[120px]" scope="col">
+                  Classe
+                </TableHead>
                 {subjects.map((subject: any) => (
-                  <TableHead key={subject.id} className="text-center min-w-[150px]">
+                  <TableHead key={subject.id} className="text-center min-w-[150px]" scope="col">
                     {subject.name}
                   </TableHead>
                 ))}
@@ -155,79 +239,109 @@ export function AssignmentMatrix({ schoolYearId: propSchoolYearId }: AssignmentM
             <TableBody>
               {classes.map((cls: any) => (
                 <TableRow key={cls.id}>
-                  <TableCell className="sticky left-0 bg-background z-10 font-medium">
+                  <TableCell className="sticky left-0 bg-background z-10 font-medium" scope="row">
                     {cls.name}
                   </TableCell>
                   {subjects.map((subject: any) => {
                     const key = `${cls.id}-${subject.id}`
                     const assignment = assignmentMap.get(key)
                     const isEditing = editingCell?.classId === cls.id && editingCell?.subjectId === subject.id
+                    const teacherOverloaded = assignment?.teacherId ? isTeacherOverloaded(assignment.teacherId) : false
 
                     return (
                       <TableCell key={key} className="text-center p-1">
                         {isEditing
                           ? (
-                              <div className="flex items-center gap-1">
-                                <Select
-                                  onValueChange={(teacherId) => {
-                                    if (teacherId === 'none') {
-                                      removeMutation.mutate({ classId: cls.id, subjectId: subject.id })
-                                    }
-                                    else {
-                                      assignMutation.mutate({ classId: cls.id, subjectId: subject.id, teacherId })
-                                    }
-                                  }}
-                                  defaultValue={assignment?.teacherId || 'none'}
+                            <div className="flex items-center gap-1">
+                              <Select
+                                onValueChange={(teacherId) => {
+                                  if (teacherId === 'none') {
+                                    removeMutation.mutate({ classId: cls.id, subjectId: subject.id })
+                                  }
+                                  else {
+                                    assignMutation.mutate({ classId: cls.id, subjectId: subject.id, teacherId })
+                                  }
+                                }}
+                                defaultValue={assignment?.teacherId || 'none'}
+                              >
+                                <SelectTrigger
+                                  className="h-8 w-[140px]"
+                                  aria-label={`Sélectionner enseignant pour ${cls.name} - ${subject.name}`}
                                 >
-                                  <SelectTrigger className="h-8 w-[140px]">
-                                    <SelectValue placeholder="Sélectionner" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="none">Non assigné</SelectItem>
-                                    {teachers.map((teacher: any) => (
+                                  <SelectValue placeholder="Sélectionner" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="none">Non assigné</SelectItem>
+                                  {teachers.map((teacher: any) => {
+                                    const overloaded = isTeacherOverloaded(teacher.id)
+                                    return (
                                       <SelectItem key={teacher.id} value={teacher.id}>
-                                        {teacher.user.name}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-8 w-8"
-                                  onClick={() => setEditingCell(null)}
-                                >
-                                  <X className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            )
-                          : (
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <Button
-                                      variant={assignment?.teacherId ? 'secondary' : 'ghost'}
-                                      size="sm"
-                                      className={`h-8 w-full ${!assignment?.teacherId ? 'text-muted-foreground border-dashed border' : ''}`}
-                                      onClick={() => setEditingCell({ classId: cls.id, subjectId: subject.id })}
-                                    >
-                                      {assignment?.teacherId
-                                        ? (
-                                            <span className="truncate max-w-[120px]">{assignment.teacherName}</span>
-                                          )
-                                        : (
-                                            <span>—</span>
+                                        <span className="flex items-center gap-2">
+                                          {teacher.user.name}
+                                          {overloaded && (
+                                            <AlertTriangle className="h-3 w-3 text-destructive" aria-label="Enseignant surchargé" />
                                           )}
-                                    </Button>
-                                  </TooltipTrigger>
-                                  <TooltipContent>
+                                        </span>
+                                      </SelectItem>
+                                    )
+                                  })}
+                                </SelectContent>
+                              </Select>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8"
+                                onClick={() => setEditingCell(null)}
+                                aria-label="Annuler la modification"
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          )
+                          : (
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant={assignment?.teacherId ? 'secondary' : 'ghost'}
+                                    size="sm"
+                                    className={`h-8 w-full ${!assignment?.teacherId ? 'text-muted-foreground border-dashed border' : ''}`}
+                                    onClick={() => setEditingCell({ classId: cls.id, subjectId: subject.id })}
+                                    aria-label={
+                                      assignment?.teacherId
+                                        ? `${assignment.teacherName} enseigne ${subject.name} en ${cls.name}. Cliquer pour modifier`
+                                        : `Assigner un enseignant pour ${subject.name} en ${cls.name}`
+                                    }
+                                  >
                                     {assignment?.teacherId
-                                      ? `${assignment.teacherName} - Cliquer pour modifier`
-                                      : 'Cliquer pour assigner un enseignant'}
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                            )}
+                                      ? (
+                                        <span className="flex items-center gap-1 truncate max-w-[120px]">
+                                          {assignment.teacherName}
+                                          {teacherOverloaded && (
+                                            <AlertTriangle className="h-3 w-3 text-destructive shrink-0" aria-hidden="true" />
+                                          )}
+                                        </span>
+                                      )
+                                      : (
+                                        <span aria-hidden="true">—</span>
+                                      )}
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  {assignment?.teacherId
+                                    ? (
+                                      <span>
+                                        {assignment.teacherName}
+                                        {teacherOverloaded && ' (Surchargé)'}
+                                        {' '}
+                                        - Cliquer pour modifier
+                                      </span>
+                                    )
+                                    : 'Cliquer pour assigner un enseignant'}
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          )}
                       </TableCell>
                     )
                   })}
