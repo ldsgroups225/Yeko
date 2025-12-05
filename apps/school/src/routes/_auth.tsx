@@ -1,5 +1,4 @@
-import { createFileRoute, Outlet, useLocation } from '@tanstack/react-router'
-import { AnimatePresence, motion } from 'motion/react'
+import { createFileRoute, Outlet } from '@tanstack/react-router'
 import { LoginForm } from '@/components/auth/login-form'
 import { AppLayout } from '@/components/layout/app-layout'
 import { Spinner } from '@/components/ui/spinner'
@@ -9,44 +8,24 @@ export const Route = createFileRoute('/_auth')({
   component: AuthLayout,
 })
 
-function AnimatedOutlet() {
-  const location = useLocation()
-  return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={location.pathname}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        transition={{ duration: 0.2 }}
-        className="h-full"
-      >
-        <Outlet />
-      </motion.div>
-    </AnimatePresence>
-  )
-}
-
 function AuthLayout() {
   const session = authClient.useSession()
 
+  if (session.isPending) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Spinner className="size-8 text-primary" />
+      </div>
+    )
+  }
+
+  if (!session.data) {
+    return <LoginForm />
+  }
+
   return (
-    <>
-      {session.isPending
-        ? (
-            <div className="min-h-screen flex items-center justify-center bg-background">
-              <Spinner className="size-8 text-primary" />
-            </div>
-          )
-        : session.data
-          ? (
-              <AppLayout>
-                <AnimatedOutlet />
-              </AppLayout>
-            )
-          : (
-              <LoginForm />
-            )}
-    </>
+    <AppLayout>
+      <Outlet />
+    </AppLayout>
   )
 }
