@@ -1,6 +1,7 @@
 import { Link, useLocation } from '@tanstack/react-router'
 import {
   BookOpen,
+  Building2,
   ClipboardCheck,
   DollarSign,
   GraduationCap,
@@ -68,8 +69,18 @@ const navigationItems: NavItem[] = [
     icon: BookOpen,
     children: [
       { title: 'Classes', href: '/app/academic/classes', icon: BookOpen },
+      { title: 'Affectations', href: '/app/academic/assignments', icon: Users },
       { title: 'Matières', href: '/app/academic/subjects', icon: BookOpen },
       { title: 'Notes', href: '/app/academic/grades', icon: ClipboardCheck },
+    ],
+  },
+  {
+    title: 'Espaces',
+    href: '/app/spaces',
+    icon: Building2,
+    children: [
+      { title: 'Salles de classe', href: '/app/spaces/classrooms', icon: Building2 },
+      { title: 'Disponibilité', href: '/app/spaces/availability', icon: ClipboardCheck },
     ],
   },
   {
@@ -113,20 +124,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarMenuItem key={item.href}>
                   {item.children
                     ? (
-                        <SidebarMenuSubItemWrapper item={item} pathname={pathname} />
-                      )
+                      <SidebarMenuSubItemWrapper item={item} pathname={pathname} />
+                    )
                     : (
-                        <SidebarMenuButton
-                          asChild
-                          isActive={pathname === item.href}
-                          tooltip={item.title}
-                        >
-                          <Link to={item.href}>
-                            <item.icon />
-                            <span>{item.title}</span>
-                          </Link>
-                        </SidebarMenuButton>
-                      )}
+                      <SidebarMenuButton
+                        asChild
+                        isActive={pathname === item.href}
+                        tooltip={item.title}
+                      >
+                        <Link to={item.href}>
+                          <item.icon />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    )}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>

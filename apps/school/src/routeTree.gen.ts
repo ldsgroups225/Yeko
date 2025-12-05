@@ -1,4 +1,3 @@
-/* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 
 // @ts-nocheck
@@ -17,23 +16,31 @@ import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as AuthAppHrRouteImport } from './routes/_auth/app/hr'
 import { Route as AuthAppDashboardRouteImport } from './routes/_auth/app/dashboard'
 import { Route as AuthAppHrIndexRouteImport } from './routes/_auth/app/hr/index'
+import { Route as AuthAppSpacesAvailabilityRouteImport } from './routes/_auth/app/spaces/availability'
+import { Route as AuthAppAcademicAssignmentsRouteImport } from './routes/_auth/app/academic/assignments'
+import { Route as AuthAppSpacesClassroomsIndexRouteImport } from './routes/_auth/app/spaces/classrooms/index'
 import { Route as AuthAppHrUsersIndexRouteImport } from './routes/_auth/app/hr/users/index'
 import { Route as AuthAppHrTeachersIndexRouteImport } from './routes/_auth/app/hr/teachers/index'
 import { Route as AuthAppHrStaffIndexRouteImport } from './routes/_auth/app/hr/staff/index'
 import { Route as AuthAppHrRolesIndexRouteImport } from './routes/_auth/app/hr/roles/index'
+import { Route as AuthAppAcademicClassesIndexRouteImport } from './routes/_auth/app/academic/classes/index'
 import { Route as AuthAppHrUsersNewRouteImport } from './routes/_auth/app/hr/users/new'
 import { Route as AuthAppHrUsersImportRouteImport } from './routes/_auth/app/hr/users/import'
 import { Route as AuthAppHrTeachersNewRouteImport } from './routes/_auth/app/hr/teachers/new'
 import { Route as AuthAppHrStaffNewRouteImport } from './routes/_auth/app/hr/staff/new'
 import { Route as AuthAppHrRolesNewRouteImport } from './routes/_auth/app/hr/roles/new'
+import { Route as AuthAppSpacesClassroomsClassroomIdIndexRouteImport } from './routes/_auth/app/spaces/classrooms/$classroomId/index'
 import { Route as AuthAppHrUsersUserIdIndexRouteImport } from './routes/_auth/app/hr/users/$userId/index'
 import { Route as AuthAppHrTeachersTeacherIdIndexRouteImport } from './routes/_auth/app/hr/teachers/$teacherId/index'
 import { Route as AuthAppHrStaffStaffIdIndexRouteImport } from './routes/_auth/app/hr/staff/$staffId/index'
 import { Route as AuthAppHrRolesRoleIdIndexRouteImport } from './routes/_auth/app/hr/roles/$roleId/index'
+import { Route as AuthAppAcademicClassesClassIdIndexRouteImport } from './routes/_auth/app/academic/classes/$classId/index'
+import { Route as AuthAppSpacesClassroomsClassroomIdEditRouteImport } from './routes/_auth/app/spaces/classrooms/$classroomId/edit'
 import { Route as AuthAppHrUsersUserIdEditRouteImport } from './routes/_auth/app/hr/users/$userId/edit'
 import { Route as AuthAppHrTeachersTeacherIdEditRouteImport } from './routes/_auth/app/hr/teachers/$teacherId/edit'
 import { Route as AuthAppHrStaffStaffIdEditRouteImport } from './routes/_auth/app/hr/staff/$staffId/edit'
 import { Route as AuthAppHrRolesRoleIdEditRouteImport } from './routes/_auth/app/hr/roles/$roleId/edit'
+import { Route as AuthAppAcademicClassesClassIdEditRouteImport } from './routes/_auth/app/academic/classes/$classId/edit'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
@@ -69,6 +76,24 @@ const AuthAppHrIndexRoute = AuthAppHrIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthAppHrRoute,
 } as any)
+const AuthAppSpacesAvailabilityRoute =
+  AuthAppSpacesAvailabilityRouteImport.update({
+    id: '/spaces/availability',
+    path: '/spaces/availability',
+    getParentRoute: () => AuthAppRoute,
+  } as any)
+const AuthAppAcademicAssignmentsRoute =
+  AuthAppAcademicAssignmentsRouteImport.update({
+    id: '/academic/assignments',
+    path: '/academic/assignments',
+    getParentRoute: () => AuthAppRoute,
+  } as any)
+const AuthAppSpacesClassroomsIndexRoute =
+  AuthAppSpacesClassroomsIndexRouteImport.update({
+    id: '/spaces/classrooms/',
+    path: '/spaces/classrooms/',
+    getParentRoute: () => AuthAppRoute,
+  } as any)
 const AuthAppHrUsersIndexRoute = AuthAppHrUsersIndexRouteImport.update({
   id: '/users/',
   path: '/users/',
@@ -89,6 +114,12 @@ const AuthAppHrRolesIndexRoute = AuthAppHrRolesIndexRouteImport.update({
   path: '/roles/',
   getParentRoute: () => AuthAppHrRoute,
 } as any)
+const AuthAppAcademicClassesIndexRoute =
+  AuthAppAcademicClassesIndexRouteImport.update({
+    id: '/academic/classes/',
+    path: '/academic/classes/',
+    getParentRoute: () => AuthAppRoute,
+  } as any)
 const AuthAppHrUsersNewRoute = AuthAppHrUsersNewRouteImport.update({
   id: '/users/new',
   path: '/users/new',
@@ -114,6 +145,12 @@ const AuthAppHrRolesNewRoute = AuthAppHrRolesNewRouteImport.update({
   path: '/roles/new',
   getParentRoute: () => AuthAppHrRoute,
 } as any)
+const AuthAppSpacesClassroomsClassroomIdIndexRoute =
+  AuthAppSpacesClassroomsClassroomIdIndexRouteImport.update({
+    id: '/spaces/classrooms/$classroomId/',
+    path: '/spaces/classrooms/$classroomId/',
+    getParentRoute: () => AuthAppRoute,
+  } as any)
 const AuthAppHrUsersUserIdIndexRoute =
   AuthAppHrUsersUserIdIndexRouteImport.update({
     id: '/users/$userId/',
@@ -137,6 +174,18 @@ const AuthAppHrRolesRoleIdIndexRoute =
     id: '/roles/$roleId/',
     path: '/roles/$roleId/',
     getParentRoute: () => AuthAppHrRoute,
+  } as any)
+const AuthAppAcademicClassesClassIdIndexRoute =
+  AuthAppAcademicClassesClassIdIndexRouteImport.update({
+    id: '/academic/classes/$classId/',
+    path: '/academic/classes/$classId/',
+    getParentRoute: () => AuthAppRoute,
+  } as any)
+const AuthAppSpacesClassroomsClassroomIdEditRoute =
+  AuthAppSpacesClassroomsClassroomIdEditRouteImport.update({
+    id: '/spaces/classrooms/$classroomId/edit',
+    path: '/spaces/classrooms/$classroomId/edit',
+    getParentRoute: () => AuthAppRoute,
   } as any)
 const AuthAppHrUsersUserIdEditRoute =
   AuthAppHrUsersUserIdEditRouteImport.update({
@@ -162,6 +211,12 @@ const AuthAppHrRolesRoleIdEditRoute =
     path: '/roles/$roleId/edit',
     getParentRoute: () => AuthAppHrRoute,
   } as any)
+const AuthAppAcademicClassesClassIdEditRoute =
+  AuthAppAcademicClassesClassIdEditRouteImport.update({
+    id: '/academic/classes/$classId/edit',
+    path: '/academic/classes/$classId/edit',
+    getParentRoute: () => AuthAppRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -169,48 +224,64 @@ export interface FileRoutesByFullPath {
   '/app/dashboard': typeof AuthAppDashboardRoute
   '/app/hr': typeof AuthAppHrRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/app/academic/assignments': typeof AuthAppAcademicAssignmentsRoute
+  '/app/spaces/availability': typeof AuthAppSpacesAvailabilityRoute
   '/app/hr/': typeof AuthAppHrIndexRoute
   '/app/hr/roles/new': typeof AuthAppHrRolesNewRoute
   '/app/hr/staff/new': typeof AuthAppHrStaffNewRoute
   '/app/hr/teachers/new': typeof AuthAppHrTeachersNewRoute
   '/app/hr/users/import': typeof AuthAppHrUsersImportRoute
   '/app/hr/users/new': typeof AuthAppHrUsersNewRoute
+  '/app/academic/classes': typeof AuthAppAcademicClassesIndexRoute
   '/app/hr/roles': typeof AuthAppHrRolesIndexRoute
   '/app/hr/staff': typeof AuthAppHrStaffIndexRoute
   '/app/hr/teachers': typeof AuthAppHrTeachersIndexRoute
   '/app/hr/users': typeof AuthAppHrUsersIndexRoute
+  '/app/spaces/classrooms': typeof AuthAppSpacesClassroomsIndexRoute
+  '/app/academic/classes/$classId/edit': typeof AuthAppAcademicClassesClassIdEditRoute
   '/app/hr/roles/$roleId/edit': typeof AuthAppHrRolesRoleIdEditRoute
   '/app/hr/staff/$staffId/edit': typeof AuthAppHrStaffStaffIdEditRoute
   '/app/hr/teachers/$teacherId/edit': typeof AuthAppHrTeachersTeacherIdEditRoute
   '/app/hr/users/$userId/edit': typeof AuthAppHrUsersUserIdEditRoute
+  '/app/spaces/classrooms/$classroomId/edit': typeof AuthAppSpacesClassroomsClassroomIdEditRoute
+  '/app/academic/classes/$classId': typeof AuthAppAcademicClassesClassIdIndexRoute
   '/app/hr/roles/$roleId': typeof AuthAppHrRolesRoleIdIndexRoute
   '/app/hr/staff/$staffId': typeof AuthAppHrStaffStaffIdIndexRoute
   '/app/hr/teachers/$teacherId': typeof AuthAppHrTeachersTeacherIdIndexRoute
   '/app/hr/users/$userId': typeof AuthAppHrUsersUserIdIndexRoute
+  '/app/spaces/classrooms/$classroomId': typeof AuthAppSpacesClassroomsClassroomIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AuthAppRouteWithChildren
   '/app/dashboard': typeof AuthAppDashboardRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/app/academic/assignments': typeof AuthAppAcademicAssignmentsRoute
+  '/app/spaces/availability': typeof AuthAppSpacesAvailabilityRoute
   '/app/hr': typeof AuthAppHrIndexRoute
   '/app/hr/roles/new': typeof AuthAppHrRolesNewRoute
   '/app/hr/staff/new': typeof AuthAppHrStaffNewRoute
   '/app/hr/teachers/new': typeof AuthAppHrTeachersNewRoute
   '/app/hr/users/import': typeof AuthAppHrUsersImportRoute
   '/app/hr/users/new': typeof AuthAppHrUsersNewRoute
+  '/app/academic/classes': typeof AuthAppAcademicClassesIndexRoute
   '/app/hr/roles': typeof AuthAppHrRolesIndexRoute
   '/app/hr/staff': typeof AuthAppHrStaffIndexRoute
   '/app/hr/teachers': typeof AuthAppHrTeachersIndexRoute
   '/app/hr/users': typeof AuthAppHrUsersIndexRoute
+  '/app/spaces/classrooms': typeof AuthAppSpacesClassroomsIndexRoute
+  '/app/academic/classes/$classId/edit': typeof AuthAppAcademicClassesClassIdEditRoute
   '/app/hr/roles/$roleId/edit': typeof AuthAppHrRolesRoleIdEditRoute
   '/app/hr/staff/$staffId/edit': typeof AuthAppHrStaffStaffIdEditRoute
   '/app/hr/teachers/$teacherId/edit': typeof AuthAppHrTeachersTeacherIdEditRoute
   '/app/hr/users/$userId/edit': typeof AuthAppHrUsersUserIdEditRoute
+  '/app/spaces/classrooms/$classroomId/edit': typeof AuthAppSpacesClassroomsClassroomIdEditRoute
+  '/app/academic/classes/$classId': typeof AuthAppAcademicClassesClassIdIndexRoute
   '/app/hr/roles/$roleId': typeof AuthAppHrRolesRoleIdIndexRoute
   '/app/hr/staff/$staffId': typeof AuthAppHrStaffStaffIdIndexRoute
   '/app/hr/teachers/$teacherId': typeof AuthAppHrTeachersTeacherIdIndexRoute
   '/app/hr/users/$userId': typeof AuthAppHrUsersUserIdIndexRoute
+  '/app/spaces/classrooms/$classroomId': typeof AuthAppSpacesClassroomsClassroomIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -220,101 +291,133 @@ export interface FileRoutesById {
   '/_auth/app/dashboard': typeof AuthAppDashboardRoute
   '/_auth/app/hr': typeof AuthAppHrRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/_auth/app/academic/assignments': typeof AuthAppAcademicAssignmentsRoute
+  '/_auth/app/spaces/availability': typeof AuthAppSpacesAvailabilityRoute
   '/_auth/app/hr/': typeof AuthAppHrIndexRoute
   '/_auth/app/hr/roles/new': typeof AuthAppHrRolesNewRoute
   '/_auth/app/hr/staff/new': typeof AuthAppHrStaffNewRoute
   '/_auth/app/hr/teachers/new': typeof AuthAppHrTeachersNewRoute
   '/_auth/app/hr/users/import': typeof AuthAppHrUsersImportRoute
   '/_auth/app/hr/users/new': typeof AuthAppHrUsersNewRoute
+  '/_auth/app/academic/classes/': typeof AuthAppAcademicClassesIndexRoute
   '/_auth/app/hr/roles/': typeof AuthAppHrRolesIndexRoute
   '/_auth/app/hr/staff/': typeof AuthAppHrStaffIndexRoute
   '/_auth/app/hr/teachers/': typeof AuthAppHrTeachersIndexRoute
   '/_auth/app/hr/users/': typeof AuthAppHrUsersIndexRoute
+  '/_auth/app/spaces/classrooms/': typeof AuthAppSpacesClassroomsIndexRoute
+  '/_auth/app/academic/classes/$classId/edit': typeof AuthAppAcademicClassesClassIdEditRoute
   '/_auth/app/hr/roles/$roleId/edit': typeof AuthAppHrRolesRoleIdEditRoute
   '/_auth/app/hr/staff/$staffId/edit': typeof AuthAppHrStaffStaffIdEditRoute
   '/_auth/app/hr/teachers/$teacherId/edit': typeof AuthAppHrTeachersTeacherIdEditRoute
   '/_auth/app/hr/users/$userId/edit': typeof AuthAppHrUsersUserIdEditRoute
+  '/_auth/app/spaces/classrooms/$classroomId/edit': typeof AuthAppSpacesClassroomsClassroomIdEditRoute
+  '/_auth/app/academic/classes/$classId/': typeof AuthAppAcademicClassesClassIdIndexRoute
   '/_auth/app/hr/roles/$roleId/': typeof AuthAppHrRolesRoleIdIndexRoute
   '/_auth/app/hr/staff/$staffId/': typeof AuthAppHrStaffStaffIdIndexRoute
   '/_auth/app/hr/teachers/$teacherId/': typeof AuthAppHrTeachersTeacherIdIndexRoute
   '/_auth/app/hr/users/$userId/': typeof AuthAppHrUsersUserIdIndexRoute
+  '/_auth/app/spaces/classrooms/$classroomId/': typeof AuthAppSpacesClassroomsClassroomIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-  | '/'
-  | '/app'
-  | '/app/dashboard'
-  | '/app/hr'
-  | '/api/auth/$'
-  | '/app/hr/'
-  | '/app/hr/roles/new'
-  | '/app/hr/staff/new'
-  | '/app/hr/teachers/new'
-  | '/app/hr/users/import'
-  | '/app/hr/users/new'
-  | '/app/hr/roles'
-  | '/app/hr/staff'
-  | '/app/hr/teachers'
-  | '/app/hr/users'
-  | '/app/hr/roles/$roleId/edit'
-  | '/app/hr/staff/$staffId/edit'
-  | '/app/hr/teachers/$teacherId/edit'
-  | '/app/hr/users/$userId/edit'
-  | '/app/hr/roles/$roleId'
-  | '/app/hr/staff/$staffId'
-  | '/app/hr/teachers/$teacherId'
-  | '/app/hr/users/$userId'
+    | '/'
+    | '/app'
+    | '/app/dashboard'
+    | '/app/hr'
+    | '/api/auth/$'
+    | '/app/academic/assignments'
+    | '/app/spaces/availability'
+    | '/app/hr/'
+    | '/app/hr/roles/new'
+    | '/app/hr/staff/new'
+    | '/app/hr/teachers/new'
+    | '/app/hr/users/import'
+    | '/app/hr/users/new'
+    | '/app/academic/classes'
+    | '/app/hr/roles'
+    | '/app/hr/staff'
+    | '/app/hr/teachers'
+    | '/app/hr/users'
+    | '/app/spaces/classrooms'
+    | '/app/academic/classes/$classId/edit'
+    | '/app/hr/roles/$roleId/edit'
+    | '/app/hr/staff/$staffId/edit'
+    | '/app/hr/teachers/$teacherId/edit'
+    | '/app/hr/users/$userId/edit'
+    | '/app/spaces/classrooms/$classroomId/edit'
+    | '/app/academic/classes/$classId'
+    | '/app/hr/roles/$roleId'
+    | '/app/hr/staff/$staffId'
+    | '/app/hr/teachers/$teacherId'
+    | '/app/hr/users/$userId'
+    | '/app/spaces/classrooms/$classroomId'
   fileRoutesByTo: FileRoutesByTo
   to:
-  | '/'
-  | '/app'
-  | '/app/dashboard'
-  | '/api/auth/$'
-  | '/app/hr'
-  | '/app/hr/roles/new'
-  | '/app/hr/staff/new'
-  | '/app/hr/teachers/new'
-  | '/app/hr/users/import'
-  | '/app/hr/users/new'
-  | '/app/hr/roles'
-  | '/app/hr/staff'
-  | '/app/hr/teachers'
-  | '/app/hr/users'
-  | '/app/hr/roles/$roleId/edit'
-  | '/app/hr/staff/$staffId/edit'
-  | '/app/hr/teachers/$teacherId/edit'
-  | '/app/hr/users/$userId/edit'
-  | '/app/hr/roles/$roleId'
-  | '/app/hr/staff/$staffId'
-  | '/app/hr/teachers/$teacherId'
-  | '/app/hr/users/$userId'
+    | '/'
+    | '/app'
+    | '/app/dashboard'
+    | '/api/auth/$'
+    | '/app/academic/assignments'
+    | '/app/spaces/availability'
+    | '/app/hr'
+    | '/app/hr/roles/new'
+    | '/app/hr/staff/new'
+    | '/app/hr/teachers/new'
+    | '/app/hr/users/import'
+    | '/app/hr/users/new'
+    | '/app/academic/classes'
+    | '/app/hr/roles'
+    | '/app/hr/staff'
+    | '/app/hr/teachers'
+    | '/app/hr/users'
+    | '/app/spaces/classrooms'
+    | '/app/academic/classes/$classId/edit'
+    | '/app/hr/roles/$roleId/edit'
+    | '/app/hr/staff/$staffId/edit'
+    | '/app/hr/teachers/$teacherId/edit'
+    | '/app/hr/users/$userId/edit'
+    | '/app/spaces/classrooms/$classroomId/edit'
+    | '/app/academic/classes/$classId'
+    | '/app/hr/roles/$roleId'
+    | '/app/hr/staff/$staffId'
+    | '/app/hr/teachers/$teacherId'
+    | '/app/hr/users/$userId'
+    | '/app/spaces/classrooms/$classroomId'
   id:
-  | '__root__'
-  | '/'
-  | '/_auth'
-  | '/_auth/app'
-  | '/_auth/app/dashboard'
-  | '/_auth/app/hr'
-  | '/api/auth/$'
-  | '/_auth/app/hr/'
-  | '/_auth/app/hr/roles/new'
-  | '/_auth/app/hr/staff/new'
-  | '/_auth/app/hr/teachers/new'
-  | '/_auth/app/hr/users/import'
-  | '/_auth/app/hr/users/new'
-  | '/_auth/app/hr/roles/'
-  | '/_auth/app/hr/staff/'
-  | '/_auth/app/hr/teachers/'
-  | '/_auth/app/hr/users/'
-  | '/_auth/app/hr/roles/$roleId/edit'
-  | '/_auth/app/hr/staff/$staffId/edit'
-  | '/_auth/app/hr/teachers/$teacherId/edit'
-  | '/_auth/app/hr/users/$userId/edit'
-  | '/_auth/app/hr/roles/$roleId/'
-  | '/_auth/app/hr/staff/$staffId/'
-  | '/_auth/app/hr/teachers/$teacherId/'
-  | '/_auth/app/hr/users/$userId/'
+    | '__root__'
+    | '/'
+    | '/_auth'
+    | '/_auth/app'
+    | '/_auth/app/dashboard'
+    | '/_auth/app/hr'
+    | '/api/auth/$'
+    | '/_auth/app/academic/assignments'
+    | '/_auth/app/spaces/availability'
+    | '/_auth/app/hr/'
+    | '/_auth/app/hr/roles/new'
+    | '/_auth/app/hr/staff/new'
+    | '/_auth/app/hr/teachers/new'
+    | '/_auth/app/hr/users/import'
+    | '/_auth/app/hr/users/new'
+    | '/_auth/app/academic/classes/'
+    | '/_auth/app/hr/roles/'
+    | '/_auth/app/hr/staff/'
+    | '/_auth/app/hr/teachers/'
+    | '/_auth/app/hr/users/'
+    | '/_auth/app/spaces/classrooms/'
+    | '/_auth/app/academic/classes/$classId/edit'
+    | '/_auth/app/hr/roles/$roleId/edit'
+    | '/_auth/app/hr/staff/$staffId/edit'
+    | '/_auth/app/hr/teachers/$teacherId/edit'
+    | '/_auth/app/hr/users/$userId/edit'
+    | '/_auth/app/spaces/classrooms/$classroomId/edit'
+    | '/_auth/app/academic/classes/$classId/'
+    | '/_auth/app/hr/roles/$roleId/'
+    | '/_auth/app/hr/staff/$staffId/'
+    | '/_auth/app/hr/teachers/$teacherId/'
+    | '/_auth/app/hr/users/$userId/'
+    | '/_auth/app/spaces/classrooms/$classroomId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -374,6 +477,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAppHrIndexRouteImport
       parentRoute: typeof AuthAppHrRoute
     }
+    '/_auth/app/spaces/availability': {
+      id: '/_auth/app/spaces/availability'
+      path: '/spaces/availability'
+      fullPath: '/app/spaces/availability'
+      preLoaderRoute: typeof AuthAppSpacesAvailabilityRouteImport
+      parentRoute: typeof AuthAppRoute
+    }
+    '/_auth/app/academic/assignments': {
+      id: '/_auth/app/academic/assignments'
+      path: '/academic/assignments'
+      fullPath: '/app/academic/assignments'
+      preLoaderRoute: typeof AuthAppAcademicAssignmentsRouteImport
+      parentRoute: typeof AuthAppRoute
+    }
+    '/_auth/app/spaces/classrooms/': {
+      id: '/_auth/app/spaces/classrooms/'
+      path: '/spaces/classrooms'
+      fullPath: '/app/spaces/classrooms'
+      preLoaderRoute: typeof AuthAppSpacesClassroomsIndexRouteImport
+      parentRoute: typeof AuthAppRoute
+    }
     '/_auth/app/hr/users/': {
       id: '/_auth/app/hr/users/'
       path: '/users'
@@ -401,6 +525,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/hr/roles'
       preLoaderRoute: typeof AuthAppHrRolesIndexRouteImport
       parentRoute: typeof AuthAppHrRoute
+    }
+    '/_auth/app/academic/classes/': {
+      id: '/_auth/app/academic/classes/'
+      path: '/academic/classes'
+      fullPath: '/app/academic/classes'
+      preLoaderRoute: typeof AuthAppAcademicClassesIndexRouteImport
+      parentRoute: typeof AuthAppRoute
     }
     '/_auth/app/hr/users/new': {
       id: '/_auth/app/hr/users/new'
@@ -437,6 +568,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAppHrRolesNewRouteImport
       parentRoute: typeof AuthAppHrRoute
     }
+    '/_auth/app/spaces/classrooms/$classroomId/': {
+      id: '/_auth/app/spaces/classrooms/$classroomId/'
+      path: '/spaces/classrooms/$classroomId'
+      fullPath: '/app/spaces/classrooms/$classroomId'
+      preLoaderRoute: typeof AuthAppSpacesClassroomsClassroomIdIndexRouteImport
+      parentRoute: typeof AuthAppRoute
+    }
     '/_auth/app/hr/users/$userId/': {
       id: '/_auth/app/hr/users/$userId/'
       path: '/users/$userId'
@@ -465,6 +603,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAppHrRolesRoleIdIndexRouteImport
       parentRoute: typeof AuthAppHrRoute
     }
+    '/_auth/app/academic/classes/$classId/': {
+      id: '/_auth/app/academic/classes/$classId/'
+      path: '/academic/classes/$classId'
+      fullPath: '/app/academic/classes/$classId'
+      preLoaderRoute: typeof AuthAppAcademicClassesClassIdIndexRouteImport
+      parentRoute: typeof AuthAppRoute
+    }
+    '/_auth/app/spaces/classrooms/$classroomId/edit': {
+      id: '/_auth/app/spaces/classrooms/$classroomId/edit'
+      path: '/spaces/classrooms/$classroomId/edit'
+      fullPath: '/app/spaces/classrooms/$classroomId/edit'
+      preLoaderRoute: typeof AuthAppSpacesClassroomsClassroomIdEditRouteImport
+      parentRoute: typeof AuthAppRoute
+    }
     '/_auth/app/hr/users/$userId/edit': {
       id: '/_auth/app/hr/users/$userId/edit'
       path: '/users/$userId/edit'
@@ -492,6 +644,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/hr/roles/$roleId/edit'
       preLoaderRoute: typeof AuthAppHrRolesRoleIdEditRouteImport
       parentRoute: typeof AuthAppHrRoute
+    }
+    '/_auth/app/academic/classes/$classId/edit': {
+      id: '/_auth/app/academic/classes/$classId/edit'
+      path: '/academic/classes/$classId/edit'
+      fullPath: '/app/academic/classes/$classId/edit'
+      preLoaderRoute: typeof AuthAppAcademicClassesClassIdEditRouteImport
+      parentRoute: typeof AuthAppRoute
     }
   }
 }
@@ -545,11 +704,31 @@ const AuthAppHrRouteWithChildren = AuthAppHrRoute._addFileChildren(
 interface AuthAppRouteChildren {
   AuthAppDashboardRoute: typeof AuthAppDashboardRoute
   AuthAppHrRoute: typeof AuthAppHrRouteWithChildren
+  AuthAppAcademicAssignmentsRoute: typeof AuthAppAcademicAssignmentsRoute
+  AuthAppSpacesAvailabilityRoute: typeof AuthAppSpacesAvailabilityRoute
+  AuthAppAcademicClassesIndexRoute: typeof AuthAppAcademicClassesIndexRoute
+  AuthAppSpacesClassroomsIndexRoute: typeof AuthAppSpacesClassroomsIndexRoute
+  AuthAppAcademicClassesClassIdEditRoute: typeof AuthAppAcademicClassesClassIdEditRoute
+  AuthAppSpacesClassroomsClassroomIdEditRoute: typeof AuthAppSpacesClassroomsClassroomIdEditRoute
+  AuthAppAcademicClassesClassIdIndexRoute: typeof AuthAppAcademicClassesClassIdIndexRoute
+  AuthAppSpacesClassroomsClassroomIdIndexRoute: typeof AuthAppSpacesClassroomsClassroomIdIndexRoute
 }
 
 const AuthAppRouteChildren: AuthAppRouteChildren = {
   AuthAppDashboardRoute: AuthAppDashboardRoute,
   AuthAppHrRoute: AuthAppHrRouteWithChildren,
+  AuthAppAcademicAssignmentsRoute: AuthAppAcademicAssignmentsRoute,
+  AuthAppSpacesAvailabilityRoute: AuthAppSpacesAvailabilityRoute,
+  AuthAppAcademicClassesIndexRoute: AuthAppAcademicClassesIndexRoute,
+  AuthAppSpacesClassroomsIndexRoute: AuthAppSpacesClassroomsIndexRoute,
+  AuthAppAcademicClassesClassIdEditRoute:
+    AuthAppAcademicClassesClassIdEditRoute,
+  AuthAppSpacesClassroomsClassroomIdEditRoute:
+    AuthAppSpacesClassroomsClassroomIdEditRoute,
+  AuthAppAcademicClassesClassIdIndexRoute:
+    AuthAppAcademicClassesClassIdIndexRoute,
+  AuthAppSpacesClassroomsClassroomIdIndexRoute:
+    AuthAppSpacesClassroomsClassroomIdIndexRoute,
 }
 
 const AuthAppRouteWithChildren =

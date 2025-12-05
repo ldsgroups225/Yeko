@@ -125,9 +125,20 @@ export const classrooms = pgTable('classrooms', {
   schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
   name: text('name').notNull(),
   code: text('code').notNull(),
-  type: text('type', { enum: ['regular', 'lab', 'gym', 'library'] }).default('regular').notNull(),
-  capacity: integer('capacity'),
-  equipment: jsonb('equipment').$type<Record<string, any>>().default({}),
+  type: text('type', { enum: ['regular', 'lab', 'gym', 'library', 'auditorium'] }).default('regular').notNull(),
+  capacity: integer('capacity').notNull().default(30),
+  floor: text('floor'),
+  building: text('building'),
+  equipment: jsonb('equipment').$type<{
+    projector?: boolean;
+    computers?: number;
+    whiteboard?: boolean;
+    smartboard?: boolean;
+    ac?: boolean;
+    other?: string[];
+  }>(),
+  status: text('status', { enum: ['active', 'maintenance', 'inactive'] }).default('active').notNull(),
+  notes: text('notes'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at')
     .defaultNow()
@@ -135,7 +146,9 @@ export const classrooms = pgTable('classrooms', {
     .notNull(),
 }, table => ({
   schoolIdx: index('idx_classrooms_school').on(table.schoolId),
-  schoolCodeIdx: index('idx_classrooms_school_code').on(table.schoolId, table.code),
+  typeIdx: index('idx_classrooms_type').on(table.type),
+  statusIdx: index('idx_classrooms_status').on(table.status),
+  schoolStatusTypeIdx: index('idx_classrooms_school_status_type').on(table.schoolId, table.status, table.type),
   uniqueSchoolCode: unique('unique_school_code').on(table.schoolId, table.code),
 }))
 
@@ -181,8 +194,10 @@ export const classes = pgTable('classes', {
   gradeId: text('grade_id').notNull().references(() => grades.id),
   seriesId: text('series_id').references(() => series.id),
   section: text('section').notNull(), // "1", "2", "A", "B"
-  classroomId: text('classroom_id').references(() => classrooms.id),
-  homeroomTeacherId: text('homeroom_teacher_id').references(() => teachers.id),
+  classroomId: text('classroom_id').references(() => classrooms.id, { onDelete: 'set null' }),
+  homeroomTeacherId: text('homeroom_teacher_id').references(() => teachers.id, { onDelete: 'set null' }),
+  maxStudents: integer('max_students').notNull().default(40),
+  status: text('status', { enum: ['active', 'archived'] }).default('active').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at')
     .defaultNow()
@@ -192,8 +207,29 @@ export const classes = pgTable('classes', {
   schoolIdx: index('idx_classes_school').on(table.schoolId),
   schoolYearIdx: index('idx_classes_school_year').on(table.schoolYearId),
   homeroomIdx: index('idx_classes_homeroom').on(table.homeroomTeacherId),
+  classroomIdx: index('idx_classes_classroom').on(table.classroomId),
   schoolYearCompositeIdx: index('idx_classes_school_year_composite').on(table.schoolId, table.schoolYearId),
   gradeSeriesIdx: index('idx_classes_grade_series').on(table.gradeId, table.seriesId),
+}))
+
+export const classSubjects = pgTable('class_subjects', {
+  id: text('id').primaryKey(),
+  classId: text('class_id').notNull().references(() => classes.id, { onDelete: 'cascade' }),
+  subjectId: text('subject_id').notNull().references(() => subjects.id),
+  teacherId: text('teacher_id').references(() => teachers.id, { onDelete: 'set null' }),
+  coefficient: integer('coefficient').notNull().default(1),
+  hoursPerWeek: integer('hours_per_week').notNull().default(2),
+  status: text('status', { enum: ['active', 'inactive'] }).default('active').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at')
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+}, table => ({
+  teacherIdx: index('idx_class_subjects_teacher').on(table.teacherId),
+  classSubjectIdx: index('idx_class_subjects_class_subject').on(table.classId, table.subjectId),
+  teacherSubjectIdx: index('idx_class_subjects_teacher_subject').on(table.teacherId, table.subjectId),
+  uniqueClassSubject: unique('unique_class_subject').on(table.classId, table.subjectId),
 }))
 
 // --- Level 3: Student Management ---
@@ -444,6 +480,22 @@ export const classesRelations = relations(classes, ({ one, many }) => ({
     references: [teachers.id],
   }),
   enrollments: many(enrollments),
+  classSubjects: many(classSubjects),
+}))
+
+export const classSubjectsRelations = relations(classSubjects, ({ one }) => ({
+  class: one(classes, {
+    fields: [classSubjects.classId],
+    references: [classes.id],
+  }),
+  subject: one(subjects, {
+    fields: [classSubjects.subjectId],
+    references: [subjects.id],
+  }),
+  teacher: one(teachers, {
+    fields: [classSubjects.teacherId],
+    references: [teachers.id],
+  }),
 }))
 
 export const studentsRelations = relations(students, ({ one, many }) => ({
@@ -525,6 +577,7 @@ export type ClassroomInsert = typeof classrooms.$inferInsert
 export type SchoolYearInsert = typeof schoolYears.$inferInsert
 export type TermInsert = typeof terms.$inferInsert
 export type ClassInsert = typeof classes.$inferInsert
+export type ClassSubjectInsert = typeof classSubjects.$inferInsert
 export type StudentInsert = typeof students.$inferInsert
 export type ParentInsert = typeof parents.$inferInsert
 export type StudentParentInsert = typeof studentParents.$inferInsert
@@ -547,6 +600,7 @@ export type Classroom = typeof classrooms.$inferSelect
 export type SchoolYear = typeof schoolYears.$inferSelect
 export type Term = typeof terms.$inferSelect
 export type Class = typeof classes.$inferSelect
+export type ClassSubject = typeof classSubjects.$inferSelect
 export type Student = typeof students.$inferSelect
 export type Parent = typeof parents.$inferSelect
 export type StudentParent = typeof studentParents.$inferSelect
@@ -558,7 +612,10 @@ export type SchoolSubjectCoefficient = typeof schoolSubjectCoefficients.$inferSe
 export type UserStatus = 'active' | 'inactive' | 'suspended'
 export type TeacherStatus = 'active' | 'inactive' | 'on_leave'
 export type StaffStatus = 'active' | 'inactive' | 'on_leave'
-export type ClassroomType = 'regular' | 'lab' | 'gym' | 'library'
+export type ClassroomType = 'regular' | 'lab' | 'gym' | 'library' | 'auditorium'
+export type ClassroomStatus = 'active' | 'maintenance' | 'inactive'
+export type ClassStatus = 'active' | 'archived'
+export type ClassSubjectStatus = 'active' | 'inactive'
 export type StudentStatus = 'active' | 'graduated' | 'transferred' | 'withdrawn'
 export type Gender = 'M' | 'F' | 'other'
 export type Relationship = 'father' | 'mother' | 'guardian'
