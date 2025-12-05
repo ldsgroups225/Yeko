@@ -1,4 +1,3 @@
-import { runInBackground } from '@repo/background-tasks'
 import { getUserSchoolsByAuthUserId, syncUserAuthOnLogin } from '@repo/data-ops/queries/school-admin/users'
 import { createServerFn } from '@tanstack/react-start'
 import { getRequest, setResponseHeader } from '@tanstack/react-start/server'
@@ -32,9 +31,13 @@ export const getSchoolContext = createServerFn().handler(async () => {
     }
 
     // Sync user auth data and update last login (non-blocking via waitUntil)
-    runInBackground(async () => {
-      await syncUserAuthOnLogin(authContext.userId, authContext.email)
-    })
+    // This also returns the internal user ID
+    const internalUserId = await syncUserAuthOnLogin(authContext.userId, authContext.email)
+
+    if (!internalUserId) {
+      console.error('User not found in database for email:', authContext.email)
+      return null
+    }
 
     const req = getRequest()
     const cookies = parseCookies(req.headers.get('cookie'))
@@ -50,7 +53,7 @@ export const getSchoolContext = createServerFn().handler(async () => {
           'Set-Cookie',
           `${SCHOOL_CONTEXT_COOKIE}=${firstSchool.id}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${60 * 60 * 24 * 30}`,
         )
-        return { schoolId: firstSchool.id, userId: authContext.userId }
+        return { schoolId: firstSchool.id, userId: internalUserId }
       }
       return null
     }
@@ -68,7 +71,7 @@ export const getSchoolContext = createServerFn().handler(async () => {
       return null
     }
 
-    return { schoolId, userId: authContext.userId }
+    return { schoolId, userId: internalUserId }
   }
   catch (error) {
     console.error('Error getting school context:', error)
