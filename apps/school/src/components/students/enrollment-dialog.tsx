@@ -158,11 +158,11 @@ export function EnrollmentDialog({ open, onOpenChange, studentId, studentName }:
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {classesData?.data?.map((cls: any) => (
-                        <SelectItem key={cls.id} value={cls.id}>
+                      {classesData?.map((cls: any) => (
+                        <SelectItem key={cls.class.id} value={cls.class.id}>
                           {cls.grade?.name}
                           {' '}
-                          {cls.section}
+                          {cls.class.section}
                           {cls.series?.name && ` (${cls.series.name})`}
                         </SelectItem>
                       ))}
