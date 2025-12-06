@@ -2,8 +2,8 @@ import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import { CoefficientMatrix } from '@/components/academic/coefficients/coefficient-matrix'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { Card, CardContent } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getSchoolYears } from '@/school/functions/school-years'
@@ -40,38 +40,35 @@ function CoefficientsPage() {
   }
 
   return (
-    <div className="container py-6 space-y-6">
-      {/* Header */}
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight">Coefficient Management</h2>
-        <p className="text-muted-foreground">
-          Customize coefficients for subjects and grades. Override template values as needed.
-        </p>
-      </div>
+    <div className="space-y-6">
+      <Breadcrumbs
+        items={[
+          { label: 'Académique', href: '/app/academic' },
+          { label: 'Coefficients' },
+        ]}
+      />
 
-      {/* Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Filters</CardTitle>
-          <CardDescription>
-            Select school year and series to view coefficient matrix
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="school-year">School Year Template</Label>
-              {yearsLoading
-                ? (
+      <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Gestion des coefficients</h1>
+          <p className="text-muted-foreground">
+            Personnalisez les coefficients pour les matières et les classes.
+          </p>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-4 w-full xl:w-auto">
+          <div className="w-full sm:w-[250px]">
+            {yearsLoading
+              ? (
                   <Skeleton className="h-10 w-full" />
                 )
-                : (
+              : (
                   <Select
                     value={selectedYearTemplateId}
                     onValueChange={setSelectedYearTemplateId}
                   >
-                    <SelectTrigger id="school-year">
-                      <SelectValue placeholder="Select school year" />
+                    <SelectTrigger>
+                      <SelectValue placeholder="Année scolaire" />
                     </SelectTrigger>
                     <SelectContent>
                       {schoolYears?.map((year: {
@@ -92,24 +89,23 @@ function CoefficientsPage() {
                     </SelectContent>
                   </Select>
                 )}
-            </div>
+          </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="series">Series (Optional)</Label>
-              {seriesLoading
-                ? (
+          <div className="w-full sm:w-[200px]">
+            {seriesLoading
+              ? (
                   <Skeleton className="h-10 w-full" />
                 )
-                : (
+              : (
                   <Select
                     value={selectedSeriesId}
                     onValueChange={setSelectedSeriesId}
                   >
-                    <SelectTrigger id="series">
-                      <SelectValue placeholder="All series" />
+                    <SelectTrigger>
+                      <SelectValue placeholder="Toutes les séries" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Series</SelectItem>
+                      <SelectItem value="all">Toutes les séries</SelectItem>
                       {series?.map((s: { id: string, name: string, code: string }) => (
                         <SelectItem key={s.id} value={s.id}>
                           {s.name}
@@ -122,26 +118,25 @@ function CoefficientsPage() {
                     </SelectContent>
                   </Select>
                 )}
-            </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Matrix */}
       {selectedYearTemplateId
         ? (
-          <CoefficientMatrix
-            schoolYearTemplateId={selectedYearTemplateId}
-            seriesId={selectedSeriesId !== 'all' ? selectedSeriesId : null}
-          />
-        )
+            <CoefficientMatrix
+              schoolYearTemplateId={selectedYearTemplateId}
+              seriesId={selectedSeriesId !== 'all' ? selectedSeriesId : null}
+            />
+          )
         : (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-              <p>Please select a school year to view coefficients</p>
-            </CardContent>
-          </Card>
-        )}
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                <p>Veuillez sélectionner une année scolaire pour voir les coefficients</p>
+              </CardContent>
+            </Card>
+          )}
     </div>
   )
 }

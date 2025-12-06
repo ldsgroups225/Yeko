@@ -242,130 +242,130 @@ export function ParentsList() {
             <TableBody>
               {isLoading
                 ? (
-                  Array.from({ length: 5 }, () => (
-                    <TableRow key={`skeleton-${generateUUID()}`}>
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <Skeleton className="h-10 w-10 rounded-full" />
-                          <Skeleton className="h-4 w-32" />
-                        </div>
-                      </TableCell>
-                      <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                      <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                      <TableCell><Skeleton className="h-4 w-8" /></TableCell>
-                      <TableCell><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
-                      <TableCell><Skeleton className="h-8 w-8" /></TableCell>
-                    </TableRow>
-                  ))
-                )
-                : data?.data?.length === 0
-                  ? (
-                    <TableRow>
-                      <TableCell colSpan={6}>
-                        <EmptyState
-                          icon={Users}
-                          title={t('parents.noParents')}
-                          description={t('parents.noParentsDescription')}
-                          action={{
-                            label: t('parents.addParent'),
-                            onClick: () => setCreateDialogOpen(true),
-                          }}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  )
-                  : (
-                    data?.data?.map((item: any, index: number) => (
-                      <motion.tr
-                        key={item.parent.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.02 }}
-                        className="border-b"
-                      >
+                    Array.from({ length: 5 }, () => (
+                      <TableRow key={`skeleton-${generateUUID()}`}>
                         <TableCell>
                           <div className="flex items-center gap-3">
-                            <Avatar>
-                              <AvatarFallback>
-                                {item.parent.firstName?.[0]}
-                                {item.parent.lastName?.[0]}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <p className="font-medium">
-                                {item.parent.lastName}
-                                {' '}
-                                {item.parent.firstName}
-                              </p>
-                              {item.parent.occupation && (
-                                <p className="text-sm text-muted-foreground">
-                                  {item.parent.occupation}
-                                </p>
-                              )}
-                            </div>
+                            <Skeleton className="h-10 w-10 rounded-full" />
+                            <Skeleton className="h-4 w-32" />
                           </div>
                         </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-1">
-                            <Phone className="h-3 w-3 text-muted-foreground" />
-                            {item.parent.phone}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          {item.parent.email
-                            ? (
-                              <div className="flex items-center gap-1">
-                                <Mail className="h-3 w-3 text-muted-foreground" />
-                                {item.parent.email}
-                              </div>
-                            )
-                            : (
-                              <span className="text-muted-foreground">-</span>
-                            )}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="secondary">
-                            {item.childrenCount}
-                            {' '}
-                            {t('parents.childrenCount', { count: item.childrenCount })}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Badge className={invitationStatusColors[item.parent.invitationStatus || 'pending']}>
-                            {t(`parents.status${item.parent.invitationStatus?.charAt(0).toUpperCase()}${item.parent.invitationStatus?.slice(1) || 'Pending'}`)}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              {item.parent.invitationStatus !== 'accepted' && (
-                                <DropdownMenuItem
-                                  onClick={() => inviteMutation.mutate(item.parent.id)}
-                                  disabled={inviteMutation.isPending}
-                                >
-                                  <Send className="mr-2 h-4 w-4" />
-                                  {t('parents.sendInvitation')}
-                                </DropdownMenuItem>
-                              )}
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem
-                                className="text-destructive"
-                                onClick={() => handleDelete(item)}
-                              >
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                {t('common.delete')}
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </motion.tr>
+                        <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                        <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                        <TableCell><Skeleton className="h-4 w-8" /></TableCell>
+                        <TableCell><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
+                        <TableCell><Skeleton className="h-8 w-8" /></TableCell>
+                      </TableRow>
                     ))
-                  )}
+                  )
+                : data?.data?.length === 0
+                  ? (
+                      <TableRow>
+                        <TableCell colSpan={6}>
+                          <EmptyState
+                            icon={Users}
+                            title={t('parents.noParents')}
+                            description={t('parents.noParentsDescription')}
+                            action={{
+                              label: t('parents.addParent'),
+                              onClick: () => setCreateDialogOpen(true),
+                            }}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    )
+                  : (
+                      data?.data?.map((item: any, index: number) => (
+                        <motion.tr
+                          key={item.parent.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.02 }}
+                          className="border-b"
+                        >
+                          <TableCell>
+                            <div className="flex items-center gap-3">
+                              <Avatar>
+                                <AvatarFallback>
+                                  {item.parent.firstName?.[0]}
+                                  {item.parent.lastName?.[0]}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <p className="font-medium">
+                                  {item.parent.lastName}
+                                  {' '}
+                                  {item.parent.firstName}
+                                </p>
+                                {item.parent.occupation && (
+                                  <p className="text-sm text-muted-foreground">
+                                    {item.parent.occupation}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-1">
+                              <Phone className="h-3 w-3 text-muted-foreground" />
+                              {item.parent.phone}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            {item.parent.email
+                              ? (
+                                  <div className="flex items-center gap-1">
+                                    <Mail className="h-3 w-3 text-muted-foreground" />
+                                    {item.parent.email}
+                                  </div>
+                                )
+                              : (
+                                  <span className="text-muted-foreground">-</span>
+                                )}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="secondary">
+                              {item.childrenCount}
+                              {' '}
+                              {t('parents.childrenCount', { count: item.childrenCount })}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge className={invitationStatusColors[item.parent.invitationStatus || 'pending']}>
+                              {t(`parents.status${item.parent.invitationStatus?.charAt(0).toUpperCase()}${item.parent.invitationStatus?.slice(1) || 'Pending'}`)}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                {item.parent.invitationStatus !== 'accepted' && (
+                                  <DropdownMenuItem
+                                    onClick={() => inviteMutation.mutate(item.parent.id)}
+                                    disabled={inviteMutation.isPending}
+                                  >
+                                    <Send className="mr-2 h-4 w-4" />
+                                    {t('parents.sendInvitation')}
+                                  </DropdownMenuItem>
+                                )}
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                  className="text-destructive"
+                                  onClick={() => handleDelete(item)}
+                                >
+                                  <Trash2 className="mr-2 h-4 w-4" />
+                                  {t('common.delete')}
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </motion.tr>
+                      ))
+                    )}
             </TableBody>
           </Table>
 

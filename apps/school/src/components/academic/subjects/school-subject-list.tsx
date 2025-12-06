@@ -1,14 +1,24 @@
+import type { ColumnDef } from '@tanstack/react-table'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Filter, Plus, Search } from 'lucide-react'
+import {
+
+  flexRender,
+  getCoreRowModel,
+  getPaginationRowModel,
+  useReactTable,
+} from '@tanstack/react-table'
+import { BookOpen, Filter, Plus, Search } from 'lucide-react'
 import { motion } from 'motion/react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
+import { TableSkeleton } from '@/components/hr/table-skeleton'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { schoolSubjectsKeys, schoolSubjectsOptions } from '@/lib/queries/school-subjects'
 import { toggleSchoolSubjectStatus } from '@/school/functions/school-subjects'
 import { SubjectPickerDialog } from './subject-picker-dialog'
@@ -35,21 +45,6 @@ interface SchoolSubjectItem {
 }
 
 const CATEGORIES = ['Scientifique', 'Littéraire', 'Sportif', 'Autre'] as const
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.05,
-    },
-  },
-}
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 },
-}
 
 export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
   const [search, setSearch] = useState('')
@@ -80,49 +75,90 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
     },
   })
 
-  // Group subjects by category with proper typing
-  const subjects = (data?.subjects || []) as SchoolSubjectItem[]
-  const groupedSubjects: Record<string, SchoolSubjectItem[]> = {}
+  const columns = useMemo<ColumnDef<SchoolSubjectItem>[]>(
+    () => [
+      {
+        accessorKey: 'subject.name',
+        header: 'Subject Name',
+        cell: ({ row }) => (
+          <div>
+            <div className="font-medium">{row.original.subject.name}</div>
+            <div className="text-xs text-muted-foreground">{row.original.subject.shortName}</div>
+          </div>
+        ),
+      },
+      {
+        accessorKey: 'subject.category',
+        header: 'Category',
+        cell: ({ row }) => (
+          <Badge variant="secondary">
+            {row.original.subject.category || 'Autre'}
+          </Badge>
+        ),
+      },
+      {
+        accessorKey: 'status',
+        header: 'Status',
+        cell: ({ row }) => (
+          <SubjectStatusToggle
+            status={row.original.status}
+            onToggle={status =>
+              toggleStatusMutation.mutate({
+                id: row.original.id,
+                status,
+              })}
+            disabled={toggleStatusMutation.isPending}
+          />
+        ),
+      },
+    ],
+    [toggleStatusMutation],
+  )
 
-  for (const subject of subjects) {
-    const category = subject.subject.category || 'Autre'
-    if (!groupedSubjects[category]) {
-      groupedSubjects[category] = []
-    }
-    groupedSubjects[category].push(subject)
-  }
+  // Memoize data to avoid issues
+  const subjectsData = useMemo(() => (data?.subjects || []) as SchoolSubjectItem[], [data])
+
+  const table = useReactTable({
+    data: subjectsData,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    initialState: {
+      pagination: {
+        pageSize: 10,
+      },
+    },
+  })
 
   if (error) {
     return (
       <Card className="border-destructive">
         <CardHeader>
           <CardTitle className="text-destructive">Error Loading Subjects</CardTitle>
-          <CardDescription>{(error as Error).message}</CardDescription>
+          <CardContent>{(error as Error).message}</CardContent>
         </CardHeader>
       </Card>
     )
   }
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">School Subjects</h2>
-          <p className="text-muted-foreground">
-            Manage subjects available for your school
-          </p>
-        </div>
-        <Button onClick={() => setPickerOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Subjects
-        </Button>
-      </div>
+  if (isLoading) {
+    return <TableSkeleton columns={3} rows={5} />
+  }
 
-      {/* Filters */}
+  const hasNoData = subjectsData.length === 0
+
+  return (
+    <div className="space-y-4">
       <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-wrap gap-4">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+          <CardTitle>Subjects List</CardTitle>
+          <Button onClick={() => setPickerOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Subjects
+          </Button>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap gap-4 mb-4">
             <div className="relative flex-1 min-w-[200px]">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -140,7 +176,9 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
                 {CATEGORIES.map(cat => (
-                  <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                  <SelectItem key={cat} value={cat}>
+                    {cat}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -155,96 +193,97 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
               </SelectContent>
             </Select>
           </div>
+
+          {hasNoData
+            ? (
+                <Empty>
+                  <EmptyHeader>
+                    <EmptyMedia variant="icon">
+                      <BookOpen />
+                    </EmptyMedia>
+                    <EmptyTitle>No subjects found</EmptyTitle>
+                    <EmptyDescription>
+                      {search || categoryFilter !== 'all' || statusFilter !== 'all'
+                        ? 'Try adjusting your filters'
+                        : 'Add your first subject to get started'}
+                    </EmptyDescription>
+                  </EmptyHeader>
+                </Empty>
+              )
+            : (
+                <>
+                  <div className="rounded-md border">
+                    <Table>
+                      <TableHeader>
+                        {table.getHeaderGroups().map(headerGroup => (
+                          <TableRow key={headerGroup.id}>
+                            {headerGroup.headers.map(header => (
+                              <TableHead key={header.id}>
+                                {header.isPlaceholder
+                                  ? null
+                                  : flexRender(header.column.columnDef.header, header.getContext())}
+                              </TableHead>
+                            ))}
+                          </TableRow>
+                        ))}
+                      </TableHeader>
+                      <TableBody>
+                        {table.getRowModel().rows.map((row, index) => (
+                          <motion.tr
+                            key={row.id}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.15, delay: index * 0.03 }}
+                            className="hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors"
+                          >
+                            {row.getVisibleCells().map(cell => (
+                              <TableCell key={cell.id}>
+                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                              </TableCell>
+                            ))}
+                          </motion.tr>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                  <div className="flex items-center justify-between mt-4">
+                    <div className="text-sm text-muted-foreground">
+                      Showing
+                      {' '}
+                      {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1}
+                      {' '}
+                      -
+                      {' '}
+                      {Math.min((table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize, subjectsData.length)}
+                      {' '}
+                      of
+                      {' '}
+                      {subjectsData.length}
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => table.previousPage()}
+                        disabled={!table.getCanPreviousPage()}
+                      >
+                        Previous
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => table.nextPage()}
+                        disabled={!table.getCanNextPage()}
+                      >
+                        Next
+                      </Button>
+                    </div>
+                  </div>
+                </>
+              )}
         </CardContent>
       </Card>
 
-      {/* Loading State */}
-      {isLoading && (
-        <div className="space-y-4">
-          {[1, 2, 3].map(i => (
-            <Card key={i}>
-              <CardHeader>
-                <Skeleton className="h-6 w-[150px]" />
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {[1, 2, 3].map(j => (
-                    <Skeleton key={j} className="h-24 w-full" />
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-
-      {/* Subject List by Category */}
-      {!isLoading && (
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="space-y-6"
-        >
-          {Object.entries(groupedSubjects).map(([category, categorySubjects]) => (
-            <motion.div key={category} variants={itemVariants}>
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    {category}
-                    <Badge variant="secondary">{categorySubjects.length}</Badge>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {categorySubjects.map((subject: SchoolSubjectItem) => (
-                      <motion.div
-                        key={subject.id}
-                        variants={itemVariants}
-                        className="p-4 border rounded-lg hover:border-primary/50 transition-colors"
-                      >
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <h4 className="font-medium">{subject.subject.name}</h4>
-                            <p className="text-sm text-muted-foreground">
-                              {subject.subject.shortName}
-                            </p>
-                          </div>
-                          <SubjectStatusToggle
-                            status={subject.status}
-                            onToggle={status => toggleStatusMutation.mutate({
-                              id: subject.id,
-                              status,
-                            })}
-                            disabled={toggleStatusMutation.isPending}
-                          />
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-
-          {/* Empty State */}
-          {Object.keys(groupedSubjects).length === 0 && (
-            <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <p className="text-muted-foreground mb-4">
-                  No subjects configured yet
-                </p>
-                <Button onClick={() => setPickerOpen(true)}>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Your First Subject
-                </Button>
-              </CardContent>
-            </Card>
-          )}
-        </motion.div>
-      )}
-
-      {/* Subject Picker Dialog */}
       <SubjectPickerDialog
         open={pickerOpen}
         onOpenChange={setPickerOpen}

@@ -84,7 +84,7 @@ export function TeacherAssignmentDialog({
     const category = subject.subject?.category || 'Autre'
     if (!acc[category])
       acc[category] = []
-    acc[category].push(subject)
+    acc[category]?.push(subject)
     return acc
   }, {} as Record<string, any[]>)
 

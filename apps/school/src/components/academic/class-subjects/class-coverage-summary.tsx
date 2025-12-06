@@ -54,19 +54,19 @@ export function ClassCoverageSummary({ subjects }: ClassCoverageSummaryProps) {
         <div className="mt-4">
           {isComplete
             ? (
-              <div className="flex items-center text-xs text-green-600 font-medium">
-                <CheckCircle2 className="mr-1 h-3 w-3" />
-                All subjects assigned
-              </div>
-            )
+                <div className="flex items-center text-xs text-green-600 font-medium">
+                  <CheckCircle2 className="mr-1 h-3 w-3" />
+                  All subjects assigned
+                </div>
+              )
             : (
-              <div className="flex items-center text-xs text-amber-600 font-medium">
-                <AlertCircle className="mr-1 h-3 w-3" />
-                {totalSubjects - assignedSubjects}
-                {' '}
-                unassigned
-              </div>
-            )}
+                <div className="flex items-center text-xs text-amber-600 font-medium">
+                  <AlertCircle className="mr-1 h-3 w-3" />
+                  {totalSubjects - assignedSubjects}
+                  {' '}
+                  unassigned
+                </div>
+              )}
         </div>
       </div>
     </div>

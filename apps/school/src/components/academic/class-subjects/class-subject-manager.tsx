@@ -86,71 +86,71 @@ export function ClassSubjectManager({ classId, className }: ClassSubjectManagerP
               <TableBody>
                 {isLoading
                   ? (
-                    Array.from({ length: 3 }, (_, i) => (
-                      <TableRow key={`skeleton-${i}`}>
-                        <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                        <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                        <TableCell><Skeleton className="h-4 w-8 mx-auto" /></TableCell>
-                        <TableCell><Skeleton className="h-4 w-8 mx-auto" /></TableCell>
-                        <TableCell><Skeleton className="h-8 w-8 ml-auto" /></TableCell>
-                      </TableRow>
-                    ))
-                  )
-                  : subjects?.length === 0
-                    ? (
-                      <TableRow>
-                        <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
-                          No subjects configured for this class.
-                        </TableCell>
-                      </TableRow>
-                    )
-                    : (
-                      subjects?.map((item: any) => (
-                        <TableRow key={item.classSubject.id}>
-                          <TableCell className="font-medium">
-                            {item.subject.name}
-                            <span className="text-xs text-muted-foreground ml-2">
-                              (
-                              {item.subject.shortName}
-                              )
-                            </span>
-                          </TableCell>
-                          <TableCell>
-                            {item.teacher?.name
-                              ? (
-                                <span className="text-sm">{item.teacher.name}</span>
-                              )
-                              : (
-                                <span className="text-sm text-muted-foreground italic">Unassigned</span>
-                              )}
-                          </TableCell>
-                          <TableCell className="text-center">
-                            <Badge variant="outline">{item.classSubject.coefficient}</Badge>
-                          </TableCell>
-                          <TableCell className="text-center">
-                            <span className="text-sm">
-                              {item.classSubject.hoursPerWeek}
-                              h
-                            </span>
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                              onClick={() => {
-                                // eslint-disable-next-line no-alert
-                                if (confirm(`Remove ${item.subject.name} from class?`)) {
-                                  deleteMutation.mutate({ classId, subjectId: item.subject.id })
-                                }
-                              }}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </TableCell>
+                      Array.from({ length: 3 }, (_, i) => (
+                        <TableRow key={`skeleton-${i}`}>
+                          <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                          <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                          <TableCell><Skeleton className="h-4 w-8 mx-auto" /></TableCell>
+                          <TableCell><Skeleton className="h-4 w-8 mx-auto" /></TableCell>
+                          <TableCell><Skeleton className="h-8 w-8 ml-auto" /></TableCell>
                         </TableRow>
                       ))
-                    )}
+                    )
+                  : subjects?.length === 0
+                    ? (
+                        <TableRow>
+                          <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+                            No subjects configured for this class.
+                          </TableCell>
+                        </TableRow>
+                      )
+                    : (
+                        subjects?.map((item: any) => (
+                          <TableRow key={item.classSubject.id}>
+                            <TableCell className="font-medium">
+                              {item.subject.name}
+                              <span className="text-xs text-muted-foreground ml-2">
+                                (
+                                {item.subject.shortName}
+                                )
+                              </span>
+                            </TableCell>
+                            <TableCell>
+                              {item.teacher?.name
+                                ? (
+                                    <span className="text-sm">{item.teacher.name}</span>
+                                  )
+                                : (
+                                    <span className="text-sm text-muted-foreground italic">Unassigned</span>
+                                  )}
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Badge variant="outline">{item.classSubject.coefficient}</Badge>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <span className="text-sm">
+                                {item.classSubject.hoursPerWeek}
+                                h
+                              </span>
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                                onClick={() => {
+                                // eslint-disable-next-line no-alert
+                                  if (confirm(`Remove ${item.subject.name} from class?`)) {
+                                    deleteMutation.mutate({ classId, subjectId: item.subject.id })
+                                  }
+                                }}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
               </TableBody>
             </Table>
           </div>

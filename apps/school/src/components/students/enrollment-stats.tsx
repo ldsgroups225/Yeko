@@ -178,32 +178,32 @@ export function EnrollmentStats() {
             <div className="space-y-4">
               {byGrade.length === 0
                 ? (
-                  <p className="text-center text-sm text-muted-foreground">{t('students.noEnrollmentData')}</p>
-                )
+                    <p className="text-center text-sm text-muted-foreground">{t('students.noEnrollmentData')}</p>
+                  )
                 : (
-                  byGrade.map(grade => (
-                    <div key={grade.gradeId} className="space-y-2">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="font-medium">{grade.gradeName}</span>
-                        <span className="text-muted-foreground">
-                          {grade.count}
-                          {' '}
-                          (
-                          {grade.boys}
-                          M /
-                          {grade.girls}
-                          F)
-                        </span>
+                    byGrade.map(grade => (
+                      <div key={grade.gradeId} className="space-y-2">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="font-medium">{grade.gradeName}</span>
+                          <span className="text-muted-foreground">
+                            {grade.count}
+                            {' '}
+                            (
+                            {grade.boys}
+                            M /
+                            {grade.girls}
+                            F)
+                          </span>
+                        </div>
+                        <div className="flex gap-1">
+                          <Progress
+                            value={(Number(grade.boys) / Math.max(Number(grade.count), 1)) * 100}
+                            className="h-2 flex-1 bg-pink-100"
+                          />
+                        </div>
                       </div>
-                      <div className="flex gap-1">
-                        <Progress
-                          value={(Number(grade.boys) / Math.max(Number(grade.count), 1)) * 100}
-                          className="h-2 flex-1 bg-pink-100"
-                        />
-                      </div>
-                    </div>
-                  ))
-                )}
+                    ))
+                  )}
             </div>
           </CardContent>
         </Card>
@@ -218,32 +218,32 @@ export function EnrollmentStats() {
             <div className="max-h-[300px] space-y-3 overflow-y-auto">
               {byClass.length === 0
                 ? (
-                  <p className="text-center text-sm text-muted-foreground">{t('students.noEnrollmentData')}</p>
-                )
+                    <p className="text-center text-sm text-muted-foreground">{t('students.noEnrollmentData')}</p>
+                  )
                 : (
-                  byClass.map((cls) => {
-                    const fillPercent = (Number(cls.count) / cls.maxStudents) * 100
-                    const isNearCapacity = fillPercent >= 90
-                    const isOverCapacity = fillPercent > 100
+                    byClass.map((cls) => {
+                      const fillPercent = (Number(cls.count) / cls.maxStudents) * 100
+                      const isNearCapacity = fillPercent >= 90
+                      const isOverCapacity = fillPercent > 100
 
-                    return (
-                      <div key={cls.classId} className="space-y-1">
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="font-medium">{cls.className}</span>
-                          <span className={`text-xs ${isOverCapacity ? 'text-red-600' : isNearCapacity ? 'text-yellow-600' : 'text-muted-foreground'}`}>
-                            {cls.count}
-                            /
-                            {cls.maxStudents}
-                          </span>
+                      return (
+                        <div key={cls.classId} className="space-y-1">
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="font-medium">{cls.className}</span>
+                            <span className={`text-xs ${isOverCapacity ? 'text-red-600' : isNearCapacity ? 'text-yellow-600' : 'text-muted-foreground'}`}>
+                              {cls.count}
+                              /
+                              {cls.maxStudents}
+                            </span>
+                          </div>
+                          <Progress
+                            value={Math.min(fillPercent, 100)}
+                            className={`h-2 ${isOverCapacity ? '[&>div]:bg-red-500' : isNearCapacity ? '[&>div]:bg-yellow-500' : ''}`}
+                          />
                         </div>
-                        <Progress
-                          value={Math.min(fillPercent, 100)}
-                          className={`h-2 ${isOverCapacity ? '[&>div]:bg-red-500' : isNearCapacity ? '[&>div]:bg-yellow-500' : ''}`}
-                        />
-                      </div>
-                    )
-                  })
-                )}
+                      )
+                    })
+                  )}
             </div>
           </CardContent>
         </Card>
