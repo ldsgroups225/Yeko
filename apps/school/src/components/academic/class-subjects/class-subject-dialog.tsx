@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
@@ -32,6 +33,7 @@ export function ClassSubjectDialog({
   classId,
   className,
 }: ClassSubjectDialogProps) {
+  const { t } = useTranslation()
   const { schoolYearId } = useSchoolYearContext()
   const queryClient = useQueryClient()
   const [selectedSubjectId, setSelectedSubjectId] = useState<string | null>(null)
@@ -45,7 +47,9 @@ export function ClassSubjectDialog({
   })
 
   const saveMutation = useMutation({
-    mutationFn: (data: { subjectId: string, coefficient: number, hoursPerWeek: number }) =>
+    mutationFn: (
+      data: { subjectId: string, coefficient: number, hoursPerWeek: number },
+    ) =>
       saveClassSubject({
         data: {
           classId,
@@ -55,13 +59,15 @@ export function ClassSubjectDialog({
         },
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: classSubjectsKeys.list({ classId }) })
-      toast.success('Subject added to class')
+      queryClient.invalidateQueries({
+        queryKey: classSubjectsKeys.list({ classId }),
+      })
+      toast.success(t('academic.classes.addSubjectSuccess'))
       setSelectedSubjectId(null)
       onOpenChange(false)
     },
-    onError: (err: Error) => {
-      toast.error(err.message || 'Failed to add subject')
+    onError: () => {
+      toast.error(t('academic.classes.addSubjectError'))
     },
   })
 
@@ -79,9 +85,9 @@ export function ClassSubjectDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Add Subject to Class</DialogTitle>
+          <DialogTitle>{t('academic.classes.addSubjectTitle')}</DialogTitle>
           <DialogDescription>
-            Configure curriculum for
+            {t('academic.classes.addSubjectDescription')}
             {' '}
             <span className="font-medium">{className}</span>
           </DialogDescription>
@@ -89,11 +95,13 @@ export function ClassSubjectDialog({
 
         <div className="space-y-4 py-2">
           <div className="space-y-2">
-            <Label>Select Subject</Label>
+            <Label>{t('academic.classes.selectSubject')}</Label>
             <ScrollArea className="h-[200px] border rounded-md p-2">
               {isLoading
                 ? (
-                    <div className="flex justify-center p-4"><Loader2 className="animate-spin" /></div>
+                    <div className="flex justify-center p-4">
+                      <Loader2 className="animate-spin" />
+                    </div>
                   )
                 : (
                     <div className="space-y-1">
@@ -117,20 +125,21 @@ export function ClassSubjectDialog({
                           onClick={() => setSelectedSubjectId(item.subjectId)}
                         >
                           <span className="font-medium">{item.subject.name}</span>
-                          <span className={`text-xs ${selectedSubjectId === item.subjectId ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>
+                          <span
+                            className={`text-xs ${selectedSubjectId === item.subjectId ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}
+                          >
                             {item.subject.shortName}
                           </span>
                         </div>
                       ))}
                     </div>
                   )}
-
             </ScrollArea>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="coeff">Coefficient</Label>
+              <Label htmlFor="coeff">{t('academic.classes.coefficient')}</Label>
               <Input
                 id="coeff"
                 type="number"
@@ -141,7 +150,7 @@ export function ClassSubjectDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="hours">Hours / Week</Label>
+              <Label htmlFor="hours">{t('academic.classes.hoursPerWeek')}</Label>
               <Input
                 id="hours"
                 type="number"
@@ -155,13 +164,17 @@ export function ClassSubjectDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            {t('common.cancel')}
+          </Button>
           <Button
             onClick={handleSave}
             disabled={!selectedSubjectId || saveMutation.isPending}
           >
-            {saveMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Add Subject
+            {saveMutation.isPending && (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            )}
+            {t('academic.classes.addSubject')}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -2,8 +2,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import { zodI18nMap } from 'zod-i18n-map'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -23,12 +25,20 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { classSubjectsKeys } from '@/lib/queries/class-subjects'
 import { copyClassSubjects } from '@/school/functions/class-subjects'
 import { getClasses } from '@/school/functions/classes'
+
+z.setErrorMap(zodI18nMap)
 
 const copyFormSchema = z.object({
   sourceClassId: z.string().min(1, 'Select a source class'),
@@ -50,6 +60,7 @@ export function SubjectCopyDialog({
   targetClassId,
   targetClassName,
 }: SubjectCopyDialogProps) {
+  const { t } = useTranslation()
   const { schoolYearId } = useSchoolYearContext()
   const queryClient = useQueryClient()
 
@@ -61,7 +72,8 @@ export function SubjectCopyDialog({
   })
 
   // Filter out the current class from source options
-  const sourceClasses = classesData?.data?.filter((c: any) => c.id !== targetClassId) || []
+  const sourceClasses
+    = classesData?.data?.filter((c: any) => c.id !== targetClassId) || []
 
   const form = useForm({
     resolver: zodResolver(copyFormSchema),
@@ -81,13 +93,17 @@ export function SubjectCopyDialog({
         },
       }),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: classSubjectsKeys.list({ classId: targetClassId }) })
-      toast.success(`Copied ${data.count} subjects successfully`)
+      queryClient.invalidateQueries({
+        queryKey: classSubjectsKeys.list({ classId: targetClassId }),
+      })
+      toast.success(
+        t('academic.classes.copySubjectsSuccess', { count: data.count }),
+      )
       onOpenChange(false)
       form.reset()
     },
-    onError: (err: Error) => {
-      toast.error(err.message || 'Failed to copy subjects')
+    onError: () => {
+      toast.error(t('academic.classes.copySubjectsError'))
     },
   })
 
@@ -99,9 +115,9 @@ export function SubjectCopyDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Copy Subjects</DialogTitle>
+          <DialogTitle>{t('academic.classes.copySubjectsTitle')}</DialogTitle>
           <DialogDescription>
-            Copy subject configuration from another class to
+            {t('academic.classes.copySubjectsDescription')}
             {' '}
             {targetClassName}
             .
@@ -114,11 +130,18 @@ export function SubjectCopyDialog({
               name="sourceClassId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Source Class</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormLabel>{t('academic.classes.sourceClass')}</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger disabled={isLoadingClasses}>
-                        <SelectValue placeholder="Select a class to copy from" />
+                        <SelectValue
+                          placeholder={t(
+                            'academic.classes.selectSourceClass',
+                          )}
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -132,7 +155,7 @@ export function SubjectCopyDialog({
                     </SelectContent>
                   </Select>
                   <FormDescription>
-                    Choose a class that already has subjects configured.
+                    {t('academic.classes.sourceClassDescription')}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -145,9 +168,11 @@ export function SubjectCopyDialog({
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-base">Overwrite Existing</FormLabel>
+                    <FormLabel className="text-base">
+                      {t('academic.classes.overwriteExisting')}
+                    </FormLabel>
                     <FormDescription>
-                      Update configuration for subjects that already exist.
+                      {t('academic.classes.overwriteDescription')}
                     </FormDescription>
                   </div>
                   <FormControl>
@@ -161,12 +186,18 @@ export function SubjectCopyDialog({
             />
 
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                Cancel
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+              >
+                {t('common.cancel')}
               </Button>
               <Button type="submit" disabled={copyMutation.isPending}>
-                {copyMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Copy Subjects
+                {copyMutation.isPending && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                {t('academic.classes.copySubjects')}
               </Button>
             </DialogFooter>
           </form>

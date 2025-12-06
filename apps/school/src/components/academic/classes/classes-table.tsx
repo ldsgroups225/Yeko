@@ -87,7 +87,9 @@ interface ClassesTableProps {
   }
 }
 
-export function ClassesTable({ filters = {} }: ClassesTableProps) {
+const DEFAULT_FILTERS = {}
+
+export function ClassesTable({ filters = DEFAULT_FILTERS }: ClassesTableProps) {
   const navigate = useNavigate()
   const [searchInput, setSearchInput] = useState(filters.search || '')
   const [classToDelete, setClassToDelete] = useState<ClassItem | null>(null)

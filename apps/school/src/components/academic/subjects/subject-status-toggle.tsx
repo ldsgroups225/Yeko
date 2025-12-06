@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { cn } from '@/lib/utils'
@@ -15,6 +16,7 @@ export function SubjectStatusToggle({
   disabled = false,
   className,
 }: SubjectStatusToggleProps) {
+  const { t } = useTranslation()
   const isActive = status === 'active'
 
   return (
@@ -35,7 +37,9 @@ export function SubjectStatusToggle({
           isActive ? 'text-green-600' : 'text-muted-foreground',
         )}
       >
-        {isActive ? 'Active' : 'Inactive'}
+        {isActive
+          ? t('academic.subjects.status.active')
+          : t('academic.subjects.status.inactive')}
       </Label>
     </div>
   )

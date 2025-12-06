@@ -1,5 +1,6 @@
 import type { ClassSubject, Subject } from '@repo/data-ops'
 import { AlertCircle, CheckCircle2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Progress } from '@/components/ui/progress'
 
 interface ClassCoverageSummaryProps {
@@ -11,11 +12,18 @@ interface ClassCoverageSummaryProps {
 }
 
 export function ClassCoverageSummary({ subjects }: ClassCoverageSummaryProps) {
+  const { t } = useTranslation()
   const totalSubjects = subjects.length
   const assignedSubjects = subjects.filter(s => !!s.classSubject.teacherId).length
 
-  const totalHours = subjects.reduce((acc, curr) => acc + curr.classSubject.hoursPerWeek, 0)
-  const totalCoefficient = subjects.reduce((acc, curr) => acc + curr.classSubject.coefficient, 0)
+  const totalHours = subjects.reduce(
+    (acc, curr) => acc + curr.classSubject.hoursPerWeek,
+    0,
+  )
+  const totalCoefficient = subjects.reduce(
+    (acc, curr) => acc + curr.classSubject.coefficient,
+    0,
+  )
 
   const coveragePercentage = totalSubjects > 0
     ? Math.round((assignedSubjects / totalSubjects) * 100)
@@ -27,23 +35,31 @@ export function ClassCoverageSummary({ subjects }: ClassCoverageSummaryProps) {
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
       <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
         <div className="text-2xl font-bold">{totalSubjects}</div>
-        <p className="text-xs text-muted-foreground">Total Subjects</p>
+        <p className="text-xs text-muted-foreground">
+          {t('academic.classes.totalSubjects')}
+        </p>
       </div>
       <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
         <div className="text-2xl font-bold">{totalCoefficient}</div>
-        <p className="text-xs text-muted-foreground">Total Coefficient</p>
+        <p className="text-xs text-muted-foreground">
+          {t('academic.classes.totalCoefficient')}
+        </p>
       </div>
       <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
         <div className="text-2xl font-bold">
           {totalHours}
           h
         </div>
-        <p className="text-xs text-muted-foreground">Weekly Hours</p>
+        <p className="text-xs text-muted-foreground">
+          {t('academic.classes.weeklyHours')}
+        </p>
       </div>
       <div className="rounded-xl border bg-card text-card-foreground shadow p-6 flex flex-col justify-between">
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Assignment Coverage</span>
+            <span className="text-sm font-medium">
+              {t('academic.classes.assignmentCoverage')}
+            </span>
             <span className="text-sm text-muted-foreground">
               {coveragePercentage}
               %
@@ -56,15 +72,15 @@ export function ClassCoverageSummary({ subjects }: ClassCoverageSummaryProps) {
             ? (
                 <div className="flex items-center text-xs text-green-600 font-medium">
                   <CheckCircle2 className="mr-1 h-3 w-3" />
-                  All subjects assigned
+                  {t('academic.classes.allSubjectsAssigned')}
                 </div>
               )
             : (
                 <div className="flex items-center text-xs text-amber-600 font-medium">
                   <AlertCircle className="mr-1 h-3 w-3" />
-                  {totalSubjects - assignedSubjects}
-                  {' '}
-                  unassigned
+                  {t('academic.classes.unassignedCount', {
+                    count: totalSubjects - assignedSubjects,
+                  })}
                 </div>
               )}
         </div>

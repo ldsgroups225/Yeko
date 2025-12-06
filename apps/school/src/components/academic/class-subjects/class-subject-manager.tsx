@@ -1,10 +1,19 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Copy, Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog'
+
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
@@ -14,7 +23,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { classSubjectsKeys, classSubjectsOptions } from '@/lib/queries/class-subjects'
+import {
+  classSubjectsKeys,
+  classSubjectsOptions,
+} from '@/lib/queries/class-subjects'
 import { removeClassSubject } from '@/school/functions/class-subjects'
 import { ClassCoverageSummary } from './class-coverage-summary'
 import { ClassSubjectDialog } from './class-subject-dialog'
@@ -25,21 +37,34 @@ interface ClassSubjectManagerProps {
   className: string
 }
 
-export function ClassSubjectManager({ classId, className }: ClassSubjectManagerProps) {
+export function ClassSubjectManager({
+  classId,
+  className,
+}: ClassSubjectManagerProps) {
+  const { t } = useTranslation()
   const queryClient = useQueryClient()
-  const { data: subjects, isLoading } = useQuery(classSubjectsOptions.list({ classId }))
+  const { data: subjects, isLoading } = useQuery(
+    classSubjectsOptions.list({ classId }),
+  )
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isCopyDialogOpen, setIsCopyDialogOpen] = useState(false)
+  const [subjectToDelete, setSubjectToDelete] = useState<{
+    id: string
+    name: string
+  } | null>(null)
 
   const deleteMutation = useMutation({
     mutationFn: (data: { classId: string, subjectId: string }) =>
       removeClassSubject({ data }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: classSubjectsKeys.list({ classId }) })
-      toast.success('Subject removed from class')
+      queryClient.invalidateQueries({
+        queryKey: classSubjectsKeys.list({ classId }),
+      })
+      toast.success(t('academic.classes.removeSubjectSuccess'))
+      setSubjectToDelete(null)
     },
-    onError: (err: Error) => {
-      toast.error(err.message || 'Failed to remove subject')
+    onError: () => {
+      toast.error(t('academic.classes.removeSubjectError'))
     },
   })
 
@@ -53,21 +78,25 @@ export function ClassSubjectManager({ classId, className }: ClassSubjectManagerP
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <div>
-            <CardTitle>Subjects & Configuration</CardTitle>
+            <CardTitle>{t('academic.classes.subjectsTitle')}</CardTitle>
             <CardDescription>
-              Manage subjects, coefficients, and teachers for
+              {t('academic.classes.subjectsDescription')}
               {' '}
               {className}
             </CardDescription>
           </div>
           <div className="flex gap-2">
-            <Button onClick={() => setIsCopyDialogOpen(true)} variant="outline" size="sm">
+            <Button
+              onClick={() => setIsCopyDialogOpen(true)}
+              variant="outline"
+              size="sm"
+            >
               <Copy className="mr-2 h-4 w-4" />
-              Copy from...
+              {t('academic.classes.copyFrom')}
             </Button>
             <Button onClick={() => setIsDialogOpen(true)} size="sm">
               <Plus className="mr-2 h-4 w-4" />
-              Add Subject
+              {t('academic.classes.addSubject')}
             </Button>
           </div>
         </CardHeader>
@@ -76,11 +105,17 @@ export function ClassSubjectManager({ classId, className }: ClassSubjectManagerP
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Subject</TableHead>
-                  <TableHead>Teacher</TableHead>
-                  <TableHead className="text-center">Coeff.</TableHead>
-                  <TableHead className="text-center">Hours/Week</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>{t('academic.classes.subject')}</TableHead>
+                  <TableHead>{t('academic.classes.teacher')}</TableHead>
+                  <TableHead className="text-center">
+                    {t('academic.classes.coeff')}
+                  </TableHead>
+                  <TableHead className="text-center">
+                    {t('academic.classes.hoursPerWeek')}
+                  </TableHead>
+                  <TableHead className="text-right">
+                    {t('common.actions')}
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -88,19 +123,32 @@ export function ClassSubjectManager({ classId, className }: ClassSubjectManagerP
                   ? (
                       Array.from({ length: 3 }, (_, i) => (
                         <TableRow key={`skeleton-${i}`}>
-                          <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                          <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                          <TableCell><Skeleton className="h-4 w-8 mx-auto" /></TableCell>
-                          <TableCell><Skeleton className="h-4 w-8 mx-auto" /></TableCell>
-                          <TableCell><Skeleton className="h-8 w-8 ml-auto" /></TableCell>
+                          <TableCell>
+                            <Skeleton className="h-4 w-32" />
+                          </TableCell>
+                          <TableCell>
+                            <Skeleton className="h-4 w-24" />
+                          </TableCell>
+                          <TableCell>
+                            <Skeleton className="h-4 w-8 mx-auto" />
+                          </TableCell>
+                          <TableCell>
+                            <Skeleton className="h-4 w-8 mx-auto" />
+                          </TableCell>
+                          <TableCell>
+                            <Skeleton className="h-8 w-8 ml-auto" />
+                          </TableCell>
                         </TableRow>
                       ))
                     )
                   : subjects?.length === 0
                     ? (
                         <TableRow>
-                          <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
-                            No subjects configured for this class.
+                          <TableCell
+                            colSpan={5}
+                            className="h-24 text-center text-muted-foreground"
+                          >
+                            {t('academic.classes.noSubjects')}
                           </TableCell>
                         </TableRow>
                       )
@@ -118,14 +166,20 @@ export function ClassSubjectManager({ classId, className }: ClassSubjectManagerP
                             <TableCell>
                               {item.teacher?.name
                                 ? (
-                                    <span className="text-sm">{item.teacher.name}</span>
+                                    <span className="text-sm">
+                                      {item.teacher.name}
+                                    </span>
                                   )
                                 : (
-                                    <span className="text-sm text-muted-foreground italic">Unassigned</span>
+                                    <span className="text-sm text-muted-foreground italic">
+                                      {t('academic.classes.unassigned')}
+                                    </span>
                                   )}
                             </TableCell>
                             <TableCell className="text-center">
-                              <Badge variant="outline">{item.classSubject.coefficient}</Badge>
+                              <Badge variant="outline">
+                                {item.classSubject.coefficient}
+                              </Badge>
                             </TableCell>
                             <TableCell className="text-center">
                               <span className="text-sm">
@@ -139,10 +193,10 @@ export function ClassSubjectManager({ classId, className }: ClassSubjectManagerP
                                 size="icon"
                                 className="text-destructive hover:text-destructive hover:bg-destructive/10"
                                 onClick={() => {
-                                // eslint-disable-next-line no-alert
-                                  if (confirm(`Remove ${item.subject.name} from class?`)) {
-                                    deleteMutation.mutate({ classId, subjectId: item.subject.id })
-                                  }
+                                  setSubjectToDelete({
+                                    id: item.subject.id,
+                                    name: item.subject.name,
+                                  })
                                 }}
                               >
                                 <Trash2 className="h-4 w-4" />
@@ -168,6 +222,24 @@ export function ClassSubjectManager({ classId, className }: ClassSubjectManagerP
           onOpenChange={setIsCopyDialogOpen}
           targetClassId={classId}
           targetClassName={className}
+        />
+
+        <DeleteConfirmationDialog
+          open={!!subjectToDelete}
+          onOpenChange={open => !open && setSubjectToDelete(null)}
+          title={t('academic.classes.removeSubject')}
+          description={t('academic.classes.removeSubjectConfirmation', {
+            subjectName: subjectToDelete?.name,
+          })}
+          onConfirm={() => {
+            if (subjectToDelete) {
+              deleteMutation.mutate({
+                classId,
+                subjectId: subjectToDelete.id,
+              })
+            }
+          }}
+          isLoading={deleteMutation.isPending}
         />
       </Card>
     </div>

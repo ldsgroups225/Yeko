@@ -74,7 +74,9 @@ interface ClassroomsTableProps {
   }
 }
 
-export function ClassroomsTable({ filters = {} }: ClassroomsTableProps) {
+const DEFAULT_FILTERS = {}
+
+export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTableProps) {
   const navigate = useNavigate()
   const [searchInput, setSearchInput] = useState(filters.search || '')
   const [itemToDelete, setItemToDelete] = useState<ClassroomItem | null>(null)

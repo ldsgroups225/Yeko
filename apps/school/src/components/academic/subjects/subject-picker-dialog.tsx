@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Loader2, Search } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -15,9 +16,18 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
-import { schoolSubjectsKeys, schoolSubjectsOptions } from '@/lib/queries/school-subjects'
+import {
+  schoolSubjectsKeys,
+  schoolSubjectsOptions,
+} from '@/lib/queries/school-subjects'
 import { addSubjectsToSchool } from '@/school/functions/school-subjects'
 
 interface SubjectPickerDialogProps {
@@ -38,6 +48,7 @@ export function SubjectPickerDialog({
   onOpenChange,
   schoolYearId,
 }: SubjectPickerDialogProps) {
+  const { t } = useTranslation()
   const [search, setSearch] = useState('')
   const [categoryFilter, setCategoryFilter] = useState<string>('all')
   const [selectedIds, setSelectedIds] = useState(() => new Set<string>())
@@ -65,12 +76,14 @@ export function SubjectPickerDialog({
       }),
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: schoolSubjectsKeys.all })
-      toast.success(`Added ${result.length} subject(s) successfully`)
+      toast.success(
+        t('academic.subjects.messages.addSuccess', { count: result.length }),
+      )
       setSelectedIds(new Set())
       onOpenChange(false)
     },
-    onError: (err: Error) => {
-      toast.error(err.message || 'Failed to add subjects')
+    onError: () => {
+      toast.error(t('academic.subjects.messages.addError'))
     },
   })
 
@@ -86,8 +99,12 @@ export function SubjectPickerDialog({
   }
 
   const handleSelectAll = (category: string) => {
-    const categorySubjects = subjects.filter((s: CoreSubject) => (s.category || 'Autre') === category)
-    const allSelected = categorySubjects.every((s: CoreSubject) => selectedIds.has(s.id))
+    const categorySubjects = subjects.filter(
+      (s: CoreSubject) => (s.category || 'Autre') === category,
+    )
+    const allSelected = categorySubjects.every((s: CoreSubject) =>
+      selectedIds.has(s.id),
+    )
 
     const newSelected = new Set(selectedIds)
     if (allSelected) {
@@ -101,7 +118,7 @@ export function SubjectPickerDialog({
 
   const handleSubmit = () => {
     if (selectedIds.size === 0) {
-      toast.error('Please select at least one subject')
+      toast.error(t('academic.subjects.messages.selectAtLeastOne'))
       return
     }
     addMutation.mutate(Array.from(selectedIds))
@@ -121,9 +138,9 @@ export function SubjectPickerDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[80vh]">
         <DialogHeader>
-          <DialogTitle>Select Subjects from Catalog</DialogTitle>
+          <DialogTitle>{t('academic.subjects.picker.title')}</DialogTitle>
           <DialogDescription>
-            Choose subjects to add to your school's curriculum
+            {t('academic.subjects.picker.description')}
           </DialogDescription>
         </DialogHeader>
 
@@ -132,7 +149,7 @@ export function SubjectPickerDialog({
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search subjects..."
+              placeholder={t('academic.subjects.searchPlaceholder')}
               value={search}
               onChange={e => setSearch(e.target.value)}
               className="pl-10"
@@ -140,14 +157,26 @@ export function SubjectPickerDialog({
           </div>
           <Select value={categoryFilter} onValueChange={setCategoryFilter}>
             <SelectTrigger id="category-filter" className="w-[180px]">
-              <SelectValue placeholder="All Categories" />
+              <SelectValue
+                placeholder={t('academic.subjects.allCategories')}
+              />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
-              <SelectItem value="Scientifique">Scientifique</SelectItem>
-              <SelectItem value="Littéraire">Littéraire</SelectItem>
-              <SelectItem value="Sportif">Sportif</SelectItem>
-              <SelectItem value="Autre">Autre</SelectItem>
+              <SelectItem value="all">
+                {t('academic.subjects.allCategories')}
+              </SelectItem>
+              <SelectItem value="Scientifique">
+                {t('academic.subjects.categories.scientifique')}
+              </SelectItem>
+              <SelectItem value="Littéraire">
+                {t('academic.subjects.categories.litteraire')}
+              </SelectItem>
+              <SelectItem value="Sportif">
+                {t('academic.subjects.categories.sportif')}
+              </SelectItem>
+              <SelectItem value="Autre">
+                {t('academic.subjects.categories.autre')}
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -172,15 +201,24 @@ export function SubjectPickerDialog({
             : subjects.length === 0
               ? (
                   <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                    <p>No subjects available to add</p>
-                    <p className="text-sm">All subjects from the catalog have been added</p>
+                    <p>{t('academic.subjects.picker.noAvailable')}</p>
+                    <p className="text-sm">
+                      {t('academic.subjects.picker.noAvailableDescription')}
+                    </p>
                   </div>
                 )
               : (
                   <div className="space-y-6">
-                    {Object.entries(groupedSubjects).map(([category, categorySubjects]) => {
-                      const allSelected = categorySubjects.every((s: CoreSubject) => selectedIds.has(s.id))
-                      const someSelected = categorySubjects.some((s: CoreSubject) => selectedIds.has(s.id))
+                    {Object.entries(groupedSubjects).map(([
+                      category,
+                      categorySubjects,
+                    ]) => {
+                      const allSelected = categorySubjects.every(
+                        (s: CoreSubject) => selectedIds.has(s.id),
+                      )
+                      const someSelected = categorySubjects.some(
+                        (s: CoreSubject) => selectedIds.has(s.id),
+                      )
 
                       return (
                         <div key={category} className="space-y-3">
@@ -226,7 +264,9 @@ export function SubjectPickerDialog({
                                   htmlFor={subject.id}
                                   className="flex-1 cursor-pointer"
                                 >
-                                  <span className="font-medium">{subject.name}</span>
+                                  <span className="font-medium">
+                                    {subject.name}
+                                  </span>
                                   <span className="text-muted-foreground ml-2">
                                     (
                                     {subject.shortName}
@@ -245,13 +285,16 @@ export function SubjectPickerDialog({
 
         <DialogFooter className="flex items-center justify-between sm:justify-between">
           <div className="text-sm text-muted-foreground">
-            {selectedIds.size}
-            {' '}
-            subject(s) selected
+            {t('academic.subjects.picker.selected', {
+              count: selectedIds.size,
+            })}
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+            <Button
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
+              {t('common.cancel')}
             </Button>
             <Button
               onClick={handleSubmit}
@@ -260,7 +303,7 @@ export function SubjectPickerDialog({
               {addMutation.isPending && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
-              Add Selected
+              {t('academic.subjects.picker.addSelected')}
             </Button>
           </div>
         </DialogFooter>
