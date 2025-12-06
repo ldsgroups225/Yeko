@@ -65,6 +65,7 @@ import { classesOptions } from '@/lib/queries/classes'
 import { enrollmentsKeys, enrollmentsOptions } from '@/lib/queries/enrollments'
 import { cancelEnrollment, confirmEnrollment } from '@/school/functions/enrollments'
 
+import { generateUUID } from '@/utils/generateUUID'
 import { BulkReEnrollDialog } from './bulk-reenroll-dialog'
 import { EnrollmentStats } from './enrollment-stats'
 
@@ -223,8 +224,8 @@ export function EnrollmentsList() {
             <TableBody>
               {isLoading
                 ? (
-                  Array.from({ length: 5 }).map((_, i) => (
-                    <TableRow key={i}>
+                  Array.from({ length: 5 }, () => (
+                    <TableRow key={`skeleton-${generateUUID()}`}>
                       <TableCell>
                         <div className="flex items-center gap-3">
                           <Skeleton className="h-10 w-10 rounded-full" />

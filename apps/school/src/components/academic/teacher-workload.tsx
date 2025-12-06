@@ -16,8 +16,8 @@ function WorkloadSkeleton() {
   return (
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <Card key={i}>
+        {Array.from({ length: 6 }, (_, i) => (
+          <Card key={`skeleton-${i}`}>
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">

@@ -157,44 +157,47 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                     </AvatarFallback>
                   </Avatar>
                   <div className="space-y-2">
-                    {mode === 'edit' && student?.id ? (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => setShowPhotoDialog(true)}
-                      >
-                        <Upload className="mr-2 h-4 w-4" />
-                        {t('students.uploadPhoto')}
-                      </Button>
-                    ) : (
-                      <label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-                        <Upload className="h-4 w-4" />
-                        {t('students.uploadPhoto')}
-                        <input
-                          ref={fileInputRef}
-                          type="file"
-                          accept="image/jpeg,image/png,image/webp"
-                          className="sr-only"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0]
-                            if (!file) return
-                            if (!file.type.startsWith('image/')) {
-                              toast.error(t('students.invalidFileType'))
-                              return
-                            }
-                            if (file.size > 5 * 1024 * 1024) {
-                              toast.error(t('students.fileTooLarge'))
-                              return
-                            }
-                            const reader = new FileReader()
-                            reader.onload = () => {
-                              form.setValue('photoUrl', reader.result as string)
-                            }
-                            reader.readAsDataURL(file)
-                          }}
-                        />
-                      </label>
-                    )}
+                    {mode === 'edit' && student?.id
+                      ? (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => setShowPhotoDialog(true)}
+                          >
+                            <Upload className="mr-2 h-4 w-4" />
+                            {t('students.uploadPhoto')}
+                          </Button>
+                        )
+                      : (
+                          <label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                            <Upload className="h-4 w-4" />
+                            {t('students.uploadPhoto')}
+                            <input
+                              ref={fileInputRef}
+                              type="file"
+                              accept="image/jpeg,image/png,image/webp"
+                              className="sr-only"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0]
+                                if (!file)
+                                  return
+                                if (!file.type.startsWith('image/')) {
+                                  toast.error(t('students.invalidFileType'))
+                                  return
+                                }
+                                if (file.size > 5 * 1024 * 1024) {
+                                  toast.error(t('students.fileTooLarge'))
+                                  return
+                                }
+                                const reader = new FileReader()
+                                reader.onload = () => {
+                                  form.setValue('photoUrl', reader.result as string)
+                                }
+                                reader.readAsDataURL(file)
+                              }}
+                            />
+                          </label>
+                        )}
                     <p className="text-sm text-muted-foreground">
                       {t('students.photoRequirements')}
                     </p>
@@ -329,11 +332,11 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                             >
                               {generateMatriculeMutation.isPending
                                 ? (
-                                  <Loader2 className="h-4 w-4 animate-spin" />
-                                )
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                  )
                                 : (
-                                  <RefreshCw className="h-4 w-4" />
-                                )}
+                                    <RefreshCw className="h-4 w-4" />
+                                  )}
                             </Button>
                           )}
                         </div>

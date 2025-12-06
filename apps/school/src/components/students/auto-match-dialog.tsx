@@ -52,7 +52,7 @@ interface SelectedMatch {
 export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
-  const [selectedMatches, setSelectedMatches] = useState<Map<string, SelectedMatch>>(new Map())
+  const [selectedMatches, setSelectedMatches] = useState(() => new Map<string, SelectedMatch>())
   const [isProcessing, setIsProcessing] = useState(false)
   const [results, setResults] = useState<{ linked: number, created: number } | null>(null)
 

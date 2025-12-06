@@ -49,15 +49,15 @@ function MatrixSkeleton() {
         <div className="space-y-3">
           <div className="flex gap-2">
             <Skeleton className="h-10 w-32" />
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Skeleton key={i} className="h-10 w-36" />
+            {Array.from({ length: 5 }, (_, i) => (
+              <Skeleton key={`col-${i}`} className="h-10 w-36" />
             ))}
           </div>
-          {Array.from({ length: 6 }).map((_, rowIndex) => (
-            <div key={rowIndex} className="flex gap-2">
+          {Array.from({ length: 6 }, (_, rowIndex) => (
+            <div key={`row-${rowIndex}`} className="flex gap-2">
               <Skeleton className="h-10 w-32" />
-              {Array.from({ length: 5 }).map((_, colIndex) => (
-                <Skeleton key={colIndex} className="h-10 w-36" />
+              {Array.from({ length: 5 }, (_, colIndex) => (
+                <Skeleton key={`cell-${rowIndex}-${colIndex}`} className="h-10 w-36" />
               ))}
             </div>
           ))}

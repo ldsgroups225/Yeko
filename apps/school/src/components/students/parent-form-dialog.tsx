@@ -155,7 +155,11 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('parents.phone')} *</FormLabel>
+                    <FormLabel>
+                      {t('parents.phone')}
+                      {' '}
+                      *
+                    </FormLabel>
                     <FormControl>
                       <Input placeholder="+2250701020304" {...field} />
                     </FormControl>

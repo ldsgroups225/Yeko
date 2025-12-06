@@ -173,67 +173,68 @@ export function PhotoUploadDialog({
         <div className="space-y-4">
           {!imgSrc
             ? (
-              <div className="flex flex-col items-center gap-4">
-                <Avatar className="h-24 w-24">
-                  <AvatarImage src={currentPhotoUrl || undefined} />
-                  <AvatarFallback className="text-2xl">
-                    {entityName.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                  </AvatarFallback>
-                </Avatar>
+                <div className="flex flex-col items-center gap-4">
+                  <Avatar className="h-24 w-24">
+                    <AvatarImage src={currentPhotoUrl || undefined} />
+                    <AvatarFallback className="text-2xl">
+                      {entityName.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                    </AvatarFallback>
+                  </Avatar>
 
-                <label className="flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-8 transition-colors hover:border-primary hover:bg-muted/50">
-                  <Upload className="h-10 w-10 text-muted-foreground" />
-                  <p className="mt-2 font-medium">{t('students.clickToUpload')}</p>
-                  <p className="text-sm text-muted-foreground">{t('students.photoRequirements')}</p>
-                  <input
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp"
-                    onChange={handleFileSelect}
-                    className="sr-only"
-                  />
-                </label>
-              </div>
-            )
-            : (
-              <div className="space-y-4">
-                <div className="flex justify-center">
-                  <ReactCrop
-                    crop={crop}
-                    onChange={(_, percentCrop) => setCrop(percentCrop)}
-                    onComplete={c => setCompletedCrop(c)}
-                    aspect={ASPECT_RATIO}
-                    minWidth={MIN_DIMENSION}
-                    minHeight={MIN_DIMENSION}
-                    circularCrop
-                    className="max-h-[400px]"
-                  >
-                    <img
-                      ref={imgRef}
-                      src={imgSrc}
-                      alt="Crop preview"
-                      onLoad={onImageLoad}
-                      className="max-h-[400px]"
+                  <label className="flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-8 transition-colors hover:border-primary hover:bg-muted/50">
+                    <Upload className="h-10 w-10 text-muted-foreground" />
+                    <p className="mt-2 font-medium">{t('students.clickToUpload')}</p>
+                    <p className="text-sm text-muted-foreground">{t('students.photoRequirements')}</p>
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      onChange={handleFileSelect}
+                      className="sr-only"
                     />
-                  </ReactCrop>
+                  </label>
                 </div>
+              )
+            : (
+                <div className="space-y-4">
+                  <div className="flex justify-center">
+                    <ReactCrop
+                      crop={crop}
+                      onChange={(_, percentCrop) => setCrop(percentCrop)}
+                      onComplete={c => setCompletedCrop(c)}
+                      aspect={ASPECT_RATIO}
+                      minWidth={MIN_DIMENSION}
+                      minHeight={MIN_DIMENSION}
+                      circularCrop
+                      className="max-h-[400px]"
+                    >
+                      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
+                      <img
+                        ref={imgRef}
+                        src={imgSrc}
+                        alt="Crop preview"
+                        onLoad={onImageLoad}
+                        className="max-h-[400px]"
+                      />
+                    </ReactCrop>
+                  </div>
 
-                <div className="flex justify-center">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      setImgSrc('')
-                      setSelectedFile(null)
-                      setCrop(undefined)
-                      setCompletedCrop(undefined)
-                    }}
-                  >
-                    <X className="mr-2 h-4 w-4" />
-                    {t('students.chooseAnother')}
-                  </Button>
+                  <div className="flex justify-center">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setImgSrc('')
+                        setSelectedFile(null)
+                        setCrop(undefined)
+                        setCompletedCrop(undefined)
+                      }}
+                    >
+                      <X className="mr-2 h-4 w-4" />
+                      {t('students.chooseAnother')}
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
         </div>
 
         <DialogFooter>
@@ -246,11 +247,11 @@ export function PhotoUploadDialog({
           >
             {uploadMutation.isPending
               ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )
               : (
-                <Camera className="mr-2 h-4 w-4" />
-              )}
+                  <Camera className="mr-2 h-4 w-4" />
+                )}
             {t('students.savePhoto')}
           </Button>
         </DialogFooter>

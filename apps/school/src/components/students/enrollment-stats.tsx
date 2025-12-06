@@ -9,6 +9,7 @@ import { Progress } from '@/components/ui/progress'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { enrollmentsOptions } from '@/lib/queries/enrollments'
+import { generateUUID } from '@/utils/generateUUID'
 
 interface StatCardProps {
   title: string
@@ -84,8 +85,8 @@ export function EnrollmentStats() {
     return (
       <div className="space-y-4">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Card key={i}>
+          {Array.from({ length: 4 }, () => (
+            <Card key={`stat-${generateUUID()}`}>
               <CardHeader className="pb-2">
                 <Skeleton className="h-4 w-24" />
               </CardHeader>

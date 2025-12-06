@@ -64,6 +64,7 @@ import { useDebounce } from '@/hooks/use-debounce'
 import { parentsKeys, parentsOptions } from '@/lib/queries/parents'
 import { deleteParent, sendParentInvitation } from '@/school/functions/parents'
 
+import { generateUUID } from '@/utils/generateUUID'
 import { AutoMatchDialog } from './auto-match-dialog'
 import { ParentFormDialog } from './parent-form-dialog'
 
@@ -241,8 +242,8 @@ export function ParentsList() {
             <TableBody>
               {isLoading
                 ? (
-                  Array.from({ length: 5 }).map((_, i) => (
-                    <TableRow key={i}>
+                  Array.from({ length: 5 }, () => (
+                    <TableRow key={`skeleton-${generateUUID()}`}>
                       <TableCell>
                         <div className="flex items-center gap-3">
                           <Skeleton className="h-10 w-10 rounded-full" />

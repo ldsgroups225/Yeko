@@ -11,8 +11,8 @@ function AvailabilitySkeleton() {
   return (
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <Card key={i}>
+        {Array.from({ length: 4 }, (_, i) => (
+          <Card key={`card-${i}`}>
             <CardHeader className="pb-2">
               <Skeleton className="h-4 w-24" />
             </CardHeader>
@@ -31,8 +31,8 @@ function AvailabilitySkeleton() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="flex items-center gap-4">
+            {Array.from({ length: 5 }, (_, i) => (
+              <div key={`row-${i}`} className="flex items-center gap-4">
                 <div className="flex-1 space-y-2">
                   <Skeleton className="h-5 w-48" />
                   <Skeleton className="h-4 w-32" />

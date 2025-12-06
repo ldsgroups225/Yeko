@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
@@ -69,7 +69,7 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
 
   const defaultSchoolYearId = classData?.schoolYearId || schoolYearId || currentSchoolYear?.id || ''
 
-  const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<ClassFormData>({
+  const { register, handleSubmit, setValue, watch, formState: { errors }, control } = useForm<ClassFormData>({
     resolver: zodResolver(classSchema),
     defaultValues: {
       schoolYearId: defaultSchoolYearId,
@@ -123,16 +123,22 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="gradeId">Grade *</Label>
-          <Select value={watch('gradeId') || ''} onValueChange={v => setValue('gradeId', v, { shouldValidate: true })}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select grade" />
-            </SelectTrigger>
-            <SelectContent>
-              {grades.map((g: any) => (
-                <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Controller
+            name="gradeId"
+            control={control}
+            render={({ field }) => (
+              <Select value={field.value || ''} onValueChange={field.onChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select grade" />
+                </SelectTrigger>
+                <SelectContent>
+                  {grades.map((g: any) => (
+                    <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
           {errors.gradeId && <p className="text-sm text-destructive">{errors.gradeId.message}</p>}
         </div>
 
