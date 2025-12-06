@@ -3,6 +3,7 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { Edit, GraduationCap, Trash2, Users } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { ClassSubjectManager } from '@/components/academic/class-subjects/class-subject-manager'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -209,22 +210,7 @@ function ClassDetailPage() {
         </TabsContent>
 
         <TabsContent value="teachers" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Enseignants par matière</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground mb-4">
-                Les affectations enseignant-matière pour cette classe.
-              </p>
-              <Link
-                to="/app/academic/classes"
-                className="text-primary hover:underline text-sm"
-              >
-                Voir la matrice d'affectation complète →
-              </Link>
-            </CardContent>
-          </Card>
+          <ClassSubjectManager classId={classId} className={className} />
         </TabsContent>
       </Tabs>
 

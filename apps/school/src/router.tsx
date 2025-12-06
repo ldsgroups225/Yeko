@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { createRouter as createTanStackRouter, Navigate } from '@tanstack/react-router'
+import { createRouter as createTanStackRouter } from '@tanstack/react-router'
+import { DefaultNotFound } from './components/default-not-found'
 import { routeTree } from './routeTree.gen'
 
 const queryClient = new QueryClient({
@@ -14,10 +15,6 @@ const queryClient = new QueryClient({
     },
   },
 })
-
-function DefaultNotFound() {
-  return <Navigate to="/app/dashboard" replace />
-}
 
 export function getRouter() {
   return createTanStackRouter({

@@ -71,6 +71,7 @@ const navigationItems: NavItem[] = [
       { title: 'Classes', href: '/app/academic/classes', icon: BookOpen },
       { title: 'Affectations', href: '/app/academic/assignments', icon: Users },
       { title: 'Matières', href: '/app/academic/subjects', icon: BookOpen },
+      { title: 'Coefficients', href: '/app/academic/coefficients', icon: ClipboardCheck },
       { title: 'Notes', href: '/app/academic/grades', icon: ClipboardCheck },
     ],
   },

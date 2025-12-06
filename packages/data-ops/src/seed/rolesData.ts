@@ -20,6 +20,10 @@ export const defaultRoles: RoleData[] = [
       finance: ['view', 'create', 'edit', 'delete', 'process_payment'],
       reports: ['view', 'export'],
       settings: ['view', 'edit'],
+      // Phase 14: Academic Management
+      school_subjects: ['view', 'create', 'edit', 'delete'],
+      coefficients: ['view', 'edit'],
+      teacher_assignments: ['view', 'edit'],
     },
   },
   {
@@ -34,6 +38,10 @@ export const defaultRoles: RoleData[] = [
       grades: ['view', 'validate'],
       reports: ['view', 'export'],
       settings: ['view'],
+      // Phase 14: Academic Management
+      school_subjects: ['view', 'create', 'edit'],
+      coefficients: ['view', 'edit'],
+      teacher_assignments: ['view', 'edit'],
     },
   },
   {
@@ -46,6 +54,9 @@ export const defaultRoles: RoleData[] = [
       attendance: ['view', 'create', 'edit'],
       conduct: ['view', 'create', 'edit'],
       reports: ['view', 'export'],
+      // Phase 14: Academic Management (view only)
+      school_subjects: ['view'],
+      coefficients: ['view'],
     },
   },
   {
@@ -79,6 +90,9 @@ export const defaultRoles: RoleData[] = [
       parents: ['view', 'create', 'edit'],
       enrollments: ['view', 'create', 'edit'],
       reports: ['view', 'export'],
+      // Phase 14: Academic Management (view only)
+      school_subjects: ['view'],
+      coefficients: ['view'],
     },
   },
 ]

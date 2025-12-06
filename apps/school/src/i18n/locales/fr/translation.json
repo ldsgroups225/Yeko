@@ -60,7 +60,9 @@
     "enrollments": "Inscriptions",
     "academic": "Académique",
     "classes": "Classes",
+    "assignments": "Affectations",
     "subjects": "Matières",
+    "coefficients": "Coefficients",
     "grades": "Notes",
     "reportCards": "Bulletins",
     "progress": "Progression",
@@ -793,6 +795,113 @@
       "today": "Aujourd'hui",
       "yesterday": "Hier",
       "daysAgo": "jours"
+    }
+  },
+  "academic": {
+    "subjects": {
+      "title": "Matières Scolaires",
+      "description": "Gérer les matières disponibles pour votre école",
+      "addSubjects": "Ajouter des matières",
+      "addSubjectsDescription": "Sélectionner des matières du catalogue Yeko Core",
+      "noSubjects": "Aucune matière configurée",
+      "noSubjectsDescription": "Commencez par ajouter vos premières matières",
+      "searchPlaceholder": "Rechercher des matières...",
+      "filterByCategory": "Filtrer par catégorie",
+      "filterByStatus": "Filtrer par statut",
+      "allCategories": "Toutes les catégories",
+      "allStatus": "Tous les statuts",
+      "categories": {
+        "scientifique": "Scientifique",
+        "litteraire": "Littéraire",
+        "sportif": "Sportif",
+        "autre": "Autre"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "picker": {
+        "title": "Sélectionner des matières du catalogue",
+        "description": "Choisissez les matières à ajouter au curriculum de votre école",
+        "searchPlaceholder": "Rechercher des matières...",
+        "noAvailable": "Aucune matière disponible",
+        "noAvailableDescription": "Toutes les matières du catalogue ont été ajoutées",
+        "selected": "matière(s) sélectionnée(s)",
+        "addSelected": "Ajouter la sélection",
+        "selectAll": "Tout sélectionner",
+        "deselectAll": "Tout désélectionner"
+      },
+      "toggle": {
+        "activate": "Activer",
+        "deactivate": "Désactiver",
+        "cannotDeactivate": "Impossible de désactiver",
+        "inUseWarning": "Cette matière est utilisée par {{count}} classe(s)"
+      },
+      "delete": {
+        "title": "Supprimer la matière",
+        "description": "Êtes-vous sûr de vouloir supprimer cette matière ?",
+        "cannotDelete": "Impossible de supprimer",
+        "inUseWarning": "Cette matière est utilisée par {{count}} classe(s)"
+      },
+      "messages": {
+        "addSuccess": "{{count}} matière(s) ajoutée(s) avec succès",
+        "statusUpdated": "Statut de la matière mis à jour",
+        "deleteSuccess": "Matière supprimée avec succès",
+        "addError": "Erreur lors de l'ajout des matières",
+        "statusError": "Erreur lors de la mise à jour du statut",
+        "deleteError": "Erreur lors de la suppression",
+        "selectAtLeastOne": "Veuillez sélectionner au moins une matière"
+      }
+    },
+    "coefficients": {
+      "title": "Gestion des Coefficients",
+      "description": "Personnaliser les coefficients pour les matières et niveaux",
+      "descriptionLong": "Remplacer les valeurs des modèles selon les besoins",
+      "filters": {
+        "title": "Filtres",
+        "description": "Sélectionner l'année scolaire et la série pour voir la matrice",
+        "schoolYear": "Modèle d'année scolaire",
+        "selectSchoolYear": "Sélectionner l'année scolaire",
+        "series": "Série (Optionnel)",
+        "allSeries": "Toutes les séries",
+        "selectSeries": "Sélectionner une série"
+      },
+      "matrix": {
+        "title": "Matrice des Coefficients",
+        "description": "Modifier les coefficients pour chaque combinaison matière-niveau. Les valeurs remplacées sont mises en évidence.",
+        "subject": "Matière",
+        "noData": "Aucune donnée de coefficient disponible",
+        "noDataDescription": "Configurez d'abord les matières pour voir les coefficients",
+        "selectYear": "Veuillez sélectionner une année scolaire pour voir les coefficients"
+      },
+      "cell": {
+        "edit": "Modifier le Coefficient",
+        "template": "Modèle:",
+        "currentOverride": "Remplacement actuel:",
+        "newValue": "Nouvelle valeur (0-20)",
+        "save": "Enregistrer",
+        "cancel": "Annuler",
+        "reset": "Réinitialiser"
+      },
+      "legend": {
+        "override": "Remplacement (valeur personnalisée)",
+        "template": "Modèle (valeur par défaut)",
+        "edited": "Modifié (non enregistré)"
+      },
+      "bulk": {
+        "changes": "modification(s)",
+        "savePrompt": "Cliquez sur Enregistrer pour appliquer les modifications",
+        "discard": "Annuler",
+        "saveChanges": "Enregistrer les modifications",
+        "noChanges": "Aucune modification à enregistrer"
+      },
+      "messages": {
+        "updateSuccess": "Coefficients mis à jour avec succès",
+        "updateError": "Erreur lors de la mise à jour des coefficients",
+        "resetSuccess": "Réinitialisé à la valeur du modèle par défaut",
+        "resetError": "Erreur lors de la réinitialisation du coefficient",
+        "changesDiscarded": "Modifications annulées"
+      }
     }
   }
 }

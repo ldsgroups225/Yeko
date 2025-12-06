@@ -60,7 +60,9 @@
     "enrollments": "Enrollments",
     "academic": "Academic",
     "classes": "Classes",
+    "assignments": "Assignments",
     "subjects": "Subjects",
+    "coefficients": "Coefficients",
     "grades": "Grades",
     "reportCards": "Report Cards",
     "progress": "Progress",
@@ -793,6 +795,113 @@
       "today": "Today",
       "yesterday": "Yesterday",
       "daysAgo": "days ago"
+    }
+  },
+  "academic": {
+    "subjects": {
+      "title": "School Subjects",
+      "description": "Manage subjects available for your school",
+      "addSubjects": "Add Subjects",
+      "addSubjectsDescription": "Select subjects from the Yeko Core catalog",
+      "noSubjects": "No subjects configured",
+      "noSubjectsDescription": "Start by adding your first subjects",
+      "searchPlaceholder": "Search subjects...",
+      "filterByCategory": "Filter by category",
+      "filterByStatus": "Filter by status",
+      "allCategories": "All categories",
+      "allStatus": "All statuses",
+      "categories": {
+        "scientifique": "Science",
+        "litteraire": "Literature",
+        "sportif": "Sports",
+        "autre": "Other"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "picker": {
+        "title": "Select subjects from catalog",
+        "description": "Choose subjects to add to your school's curriculum",
+        "searchPlaceholder": "Search subjects...",
+        "noAvailable": "No subjects available",
+        "noAvailableDescription": "All catalog subjects have been added",
+        "selected": "subject(s) selected",
+        "addSelected": "Add Selected",
+        "selectAll": "Select All",
+        "deselectAll": "Deselect All"
+      },
+      "toggle": {
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "cannotDeactivate": "Cannot deactivate",
+        "inUseWarning": "This subject is used by {{count}} class(es)"
+      },
+      "delete": {
+        "title": "Delete Subject",
+        "description": "Are you sure you want to delete this subject?",
+        "cannotDelete": "Cannot delete",
+        "inUseWarning": "This subject is used by {{count}} class(es)"
+      },
+      "messages": {
+        "addSuccess": "{{count}} subject(s) added successfully",
+        "statusUpdated": "Subject status updated",
+        "deleteSuccess": "Subject deleted successfully",
+        "addError": "Error adding subjects",
+        "statusError": "Error updating status",
+        "deleteError": "Error deleting subject",
+        "selectAtLeastOne": "Please select at least one subject"
+      }
+    },
+    "coefficients": {
+      "title": "Coefficient Management",
+      "description": "Customize coefficients for subjects and grades",
+      "descriptionLong": "Override template values as needed",
+      "filters": {
+        "title": "Filters",
+        "description": "Select school year and series to view coefficient matrix",
+        "schoolYear": "School Year Template",
+        "selectSchoolYear": "Select school year",
+        "series": "Series (Optional)",
+        "allSeries": "All series",
+        "selectSeries": "Select a series"
+      },
+      "matrix": {
+        "title": "Coefficient Matrix",
+        "description": "Edit coefficients for each subject-grade combination. Override values are highlighted.",
+        "subject": "Subject",
+        "noData": "No coefficient data available",
+        "noDataDescription": "Configure subjects first to see coefficients",
+        "selectYear": "Please select a school year to view coefficients"
+      },
+      "cell": {
+        "edit": "Edit Coefficient",
+        "template": "Template:",
+        "currentOverride": "Current Override:",
+        "newValue": "New Value (0-20)",
+        "save": "Save",
+        "cancel": "Cancel",
+        "reset": "Reset"
+      },
+      "legend": {
+        "override": "Override (custom value)",
+        "template": "Template (default value)",
+        "edited": "Edited (unsaved)"
+      },
+      "bulk": {
+        "changes": "change(s)",
+        "savePrompt": "Click Save to apply changes",
+        "discard": "Discard",
+        "saveChanges": "Save Changes",
+        "noChanges": "No changes to save"
+      },
+      "messages": {
+        "updateSuccess": "Coefficients updated successfully",
+        "updateError": "Error updating coefficients",
+        "resetSuccess": "Reset to template default",
+        "resetError": "Error resetting coefficient",
+        "changesDiscarded": "Changes discarded"
+      }
     }
   }
 }

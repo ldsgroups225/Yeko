@@ -46,6 +46,7 @@ export async function getTeachersBySchool(
         name: users.name,
         email: users.email,
         phone: users.phone,
+        avatarUrl: users.avatarUrl,
       },
     })
     .from(teachers)

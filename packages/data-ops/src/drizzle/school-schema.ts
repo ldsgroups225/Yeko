@@ -417,6 +417,7 @@ export const schoolSubjectCoefficients = pgTable('school_subject_coefficients', 
 }, table => ({
   schoolIdx: index('idx_school_coeffs_school').on(table.schoolId),
   templateIdx: index('idx_school_coeffs_template').on(table.coefficientTemplateId),
+  lookupIdx: index('idx_school_coeffs_lookup').on(table.schoolId, table.coefficientTemplateId), // Phase 14: Added for fast lookup
   uniqueSchoolTemplate: unique('unique_school_template').on(table.schoolId, table.coefficientTemplateId),
 }))
 
@@ -653,6 +654,42 @@ export const auditLogsRelations = relations(auditLogs, ({ one }) => ({
   }),
 }))
 
+// Phase 14: School Subjects - Subjects activated for a specific school
+export const schoolSubjects = pgTable('school_subjects', {
+  id: text('id').primaryKey(),
+  schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
+  subjectId: text('subject_id').notNull().references(() => subjects.id, { onDelete: 'cascade' }),
+  schoolYearId: text('school_year_id').notNull().references(() => schoolYears.id, { onDelete: 'cascade' }),
+  status: text('status', { enum: ['active', 'inactive'] }).default('active').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at')
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+}, table => ({
+  schoolIdx: index('idx_school_subjects_school').on(table.schoolId),
+  yearIdx: index('idx_school_subjects_year').on(table.schoolYearId),
+  statusIdx: index('idx_school_subjects_status').on(table.status),
+  lookupIdx: index('idx_school_subjects_lookup').on(table.schoolId, table.schoolYearId, table.status),
+  uniqueSchoolSubjectYear: unique('unique_school_subject_year').on(table.schoolId, table.subjectId, table.schoolYearId),
+}))
+
+// Phase 14: School Subjects Relations
+export const schoolSubjectsRelations = relations(schoolSubjects, ({ one }) => ({
+  school: one(schools, {
+    fields: [schoolSubjects.schoolId],
+    references: [schools.id],
+  }),
+  subject: one(subjects, {
+    fields: [schoolSubjects.subjectId],
+    references: [subjects.id],
+  }),
+  schoolYear: one(schoolYears, {
+    fields: [schoolSubjects.schoolYearId],
+    references: [schoolYears.id],
+  }),
+}))
+
 export const schoolSubjectCoefficientsRelations = relations(schoolSubjectCoefficients, ({ one }) => ({
   school: one(schools, {
     fields: [schoolSubjectCoefficients.schoolId],
@@ -685,6 +722,7 @@ export type StudentParentInsert = typeof studentParents.$inferInsert
 export type EnrollmentInsert = typeof enrollments.$inferInsert
 export type AuditLogInsert = typeof auditLogs.$inferInsert
 export type SchoolSubjectCoefficientInsert = typeof schoolSubjectCoefficients.$inferInsert
+export type SchoolSubjectInsert = typeof schoolSubjects.$inferInsert
 export type MatriculeSequenceInsert = typeof matriculeSequences.$inferInsert
 
 // Data types (for seeding)
@@ -709,6 +747,7 @@ export type StudentParent = typeof studentParents.$inferSelect
 export type Enrollment = typeof enrollments.$inferSelect
 export type AuditLog = typeof auditLogs.$inferSelect
 export type SchoolSubjectCoefficient = typeof schoolSubjectCoefficients.$inferSelect
+export type SchoolSubject = typeof schoolSubjects.$inferSelect
 export type MatriculeSequence = typeof matriculeSequences.$inferSelect
 
 // Enum types

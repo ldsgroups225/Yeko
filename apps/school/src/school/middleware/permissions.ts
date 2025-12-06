@@ -17,6 +17,10 @@ export type PermissionResource
     | 'finance'
     | 'reports'
     | 'settings'
+  // Phase 14: Academic Management
+    | 'school_subjects'
+    | 'coefficients'
+    | 'teacher_assignments'
 
 /**
  * Check if the current user has a specific permission

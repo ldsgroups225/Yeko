@@ -27,6 +27,8 @@ import { Route as AuthAppStudentsParentsRouteImport } from './routes/_auth/app/s
 import { Route as AuthAppStudentsNewRouteImport } from './routes/_auth/app/students/new'
 import { Route as AuthAppStudentsEnrollmentsRouteImport } from './routes/_auth/app/students/enrollments'
 import { Route as AuthAppSpacesAvailabilityRouteImport } from './routes/_auth/app/spaces/availability'
+import { Route as AuthAppAcademicSubjectsRouteImport } from './routes/_auth/app/academic/subjects'
+import { Route as AuthAppAcademicCoefficientsRouteImport } from './routes/_auth/app/academic/coefficients'
 import { Route as AuthAppAcademicAssignmentsRouteImport } from './routes/_auth/app/academic/assignments'
 import { Route as AuthAppStudentsStudentIdIndexRouteImport } from './routes/_auth/app/students/$studentId/index'
 import { Route as AuthAppSpacesClassroomsIndexRouteImport } from './routes/_auth/app/spaces/classrooms/index'
@@ -144,6 +146,17 @@ const AuthAppSpacesAvailabilityRoute =
     id: '/availability',
     path: '/availability',
     getParentRoute: () => AuthAppSpacesRoute,
+  } as any)
+const AuthAppAcademicSubjectsRoute = AuthAppAcademicSubjectsRouteImport.update({
+  id: '/subjects',
+  path: '/subjects',
+  getParentRoute: () => AuthAppAcademicRoute,
+} as any)
+const AuthAppAcademicCoefficientsRoute =
+  AuthAppAcademicCoefficientsRouteImport.update({
+    id: '/coefficients',
+    path: '/coefficients',
+    getParentRoute: () => AuthAppAcademicRoute,
   } as any)
 const AuthAppAcademicAssignmentsRoute =
   AuthAppAcademicAssignmentsRouteImport.update({
@@ -304,6 +317,8 @@ export interface FileRoutesByFullPath {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/app/': typeof AuthAppIndexRoute
   '/app/academic/assignments': typeof AuthAppAcademicAssignmentsRoute
+  '/app/academic/coefficients': typeof AuthAppAcademicCoefficientsRoute
+  '/app/academic/subjects': typeof AuthAppAcademicSubjectsRoute
   '/app/spaces/availability': typeof AuthAppSpacesAvailabilityRoute
   '/app/students/enrollments': typeof AuthAppStudentsEnrollmentsRoute
   '/app/students/new': typeof AuthAppStudentsNewRoute
@@ -344,6 +359,8 @@ export interface FileRoutesByTo {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/app': typeof AuthAppIndexRoute
   '/app/academic/assignments': typeof AuthAppAcademicAssignmentsRoute
+  '/app/academic/coefficients': typeof AuthAppAcademicCoefficientsRoute
+  '/app/academic/subjects': typeof AuthAppAcademicSubjectsRoute
   '/app/spaces/availability': typeof AuthAppSpacesAvailabilityRoute
   '/app/students/enrollments': typeof AuthAppStudentsEnrollmentsRoute
   '/app/students/new': typeof AuthAppStudentsNewRoute
@@ -391,6 +408,8 @@ export interface FileRoutesById {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_auth/app/': typeof AuthAppIndexRoute
   '/_auth/app/academic/assignments': typeof AuthAppAcademicAssignmentsRoute
+  '/_auth/app/academic/coefficients': typeof AuthAppAcademicCoefficientsRoute
+  '/_auth/app/academic/subjects': typeof AuthAppAcademicSubjectsRoute
   '/_auth/app/spaces/availability': typeof AuthAppSpacesAvailabilityRoute
   '/_auth/app/students/enrollments': typeof AuthAppStudentsEnrollmentsRoute
   '/_auth/app/students/new': typeof AuthAppStudentsNewRoute
@@ -438,6 +457,8 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/app/'
     | '/app/academic/assignments'
+    | '/app/academic/coefficients'
+    | '/app/academic/subjects'
     | '/app/spaces/availability'
     | '/app/students/enrollments'
     | '/app/students/new'
@@ -478,6 +499,8 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/app'
     | '/app/academic/assignments'
+    | '/app/academic/coefficients'
+    | '/app/academic/subjects'
     | '/app/spaces/availability'
     | '/app/students/enrollments'
     | '/app/students/new'
@@ -524,6 +547,8 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/_auth/app/'
     | '/_auth/app/academic/assignments'
+    | '/_auth/app/academic/coefficients'
+    | '/_auth/app/academic/subjects'
     | '/_auth/app/spaces/availability'
     | '/_auth/app/students/enrollments'
     | '/_auth/app/students/new'
@@ -692,6 +717,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/spaces/availability'
       preLoaderRoute: typeof AuthAppSpacesAvailabilityRouteImport
       parentRoute: typeof AuthAppSpacesRoute
+    }
+    '/_auth/app/academic/subjects': {
+      id: '/_auth/app/academic/subjects'
+      path: '/subjects'
+      fullPath: '/app/academic/subjects'
+      preLoaderRoute: typeof AuthAppAcademicSubjectsRouteImport
+      parentRoute: typeof AuthAppAcademicRoute
+    }
+    '/_auth/app/academic/coefficients': {
+      id: '/_auth/app/academic/coefficients'
+      path: '/coefficients'
+      fullPath: '/app/academic/coefficients'
+      preLoaderRoute: typeof AuthAppAcademicCoefficientsRouteImport
+      parentRoute: typeof AuthAppAcademicRoute
     }
     '/_auth/app/academic/assignments': {
       id: '/_auth/app/academic/assignments'
@@ -880,6 +919,8 @@ declare module '@tanstack/react-router' {
 
 interface AuthAppAcademicRouteChildren {
   AuthAppAcademicAssignmentsRoute: typeof AuthAppAcademicAssignmentsRoute
+  AuthAppAcademicCoefficientsRoute: typeof AuthAppAcademicCoefficientsRoute
+  AuthAppAcademicSubjectsRoute: typeof AuthAppAcademicSubjectsRoute
   AuthAppAcademicIndexRoute: typeof AuthAppAcademicIndexRoute
   AuthAppAcademicClassesIndexRoute: typeof AuthAppAcademicClassesIndexRoute
   AuthAppAcademicClassesClassIdEditRoute: typeof AuthAppAcademicClassesClassIdEditRoute
@@ -888,6 +929,8 @@ interface AuthAppAcademicRouteChildren {
 
 const AuthAppAcademicRouteChildren: AuthAppAcademicRouteChildren = {
   AuthAppAcademicAssignmentsRoute: AuthAppAcademicAssignmentsRoute,
+  AuthAppAcademicCoefficientsRoute: AuthAppAcademicCoefficientsRoute,
+  AuthAppAcademicSubjectsRoute: AuthAppAcademicSubjectsRoute,
   AuthAppAcademicIndexRoute: AuthAppAcademicIndexRoute,
   AuthAppAcademicClassesIndexRoute: AuthAppAcademicClassesIndexRoute,
   AuthAppAcademicClassesClassIdEditRoute:
