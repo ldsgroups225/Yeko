@@ -478,7 +478,7 @@ export async function getEnrollmentStatistics(schoolId: string, schoolYearId: st
         eq(enrollments.status, 'confirmed'),
       ),
     )
-    .groupBy(classes.id, grades.name, classes.section, classes.maxStudents)
+    .groupBy(classes.id, grades.name, classes.section, classes.maxStudents, grades.order)
     .orderBy(grades.order, classes.section)
 
   // Enrollment trends (last 30 days)
