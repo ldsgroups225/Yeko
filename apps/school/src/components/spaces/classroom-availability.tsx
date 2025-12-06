@@ -1,46 +1,76 @@
 import { useQuery } from '@tanstack/react-query'
 import { Building2, CheckCircle, Plus, Users, XCircle } from 'lucide-react'
+import { TableSkeleton } from '@/components/hr/table-skeleton'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { Skeleton } from '@/components/ui/skeleton'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { getClassrooms } from '@/school/functions/classrooms'
 
-function AvailabilitySkeleton() {
+function StatsCards({ available, occupied, maintenance, inactive }: { available: number, occupied: number, maintenance: number, inactive: number }) {
   return (
-    <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-4">
-        {Array.from({ length: 4 }, (_, i) => (
-          <Card key={`card-${i}`}>
-            <CardHeader className="pb-2">
-              <Skeleton className="h-4 w-24" />
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-2">
-                <Skeleton className="h-5 w-5 rounded-full" />
-                <Skeleton className="h-8 w-12" />
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-      <Card>
-        <CardHeader>
-          <Skeleton className="h-6 w-32" />
+    <div className="grid gap-4 md:grid-cols-4" role="list" aria-label="Statistiques des salles">
+      <Card role="listitem">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium text-muted-foreground">Disponibles</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {Array.from({ length: 5 }, (_, i) => (
-              <div key={`row-${i}`} className="flex items-center gap-4">
-                <div className="flex-1 space-y-2">
-                  <Skeleton className="h-5 w-48" />
-                  <Skeleton className="h-4 w-32" />
-                </div>
-                <Skeleton className="h-2 w-32" />
-                <Skeleton className="h-6 w-24" />
-              </div>
-            ))}
+          <div className="flex items-center gap-2">
+            <CheckCircle className="h-5 w-5 text-green-500" aria-hidden="true" />
+            <span className="text-2xl font-bold" aria-label={`${available} salles disponibles`}>
+              {available}
+            </span>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card role="listitem">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium text-muted-foreground">Occupées</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-2">
+            <Users className="h-5 w-5 text-blue-500" aria-hidden="true" />
+            <span className="text-2xl font-bold" aria-label={`${occupied} salles occupées`}>
+              {occupied}
+            </span>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card role="listitem">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium text-muted-foreground">En maintenance</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-2">
+            <Building2 className="h-5 w-5 text-yellow-500" aria-hidden="true" />
+            <span className="text-2xl font-bold" aria-label={`${maintenance} salles en maintenance`}>
+              {maintenance}
+            </span>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card role="listitem">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium text-muted-foreground">Inactives</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-2">
+            <XCircle className="h-5 w-5 text-gray-500" aria-hidden="true" />
+            <span className="text-2xl font-bold" aria-label={`${inactive} salles inactives`}>
+              {inactive}
+            </span>
           </div>
         </CardContent>
       </Card>
@@ -81,7 +111,16 @@ export function ClassroomAvailability() {
   })
 
   if (isLoading) {
-    return <AvailabilitySkeleton />
+    return (
+      <div className="space-y-6">
+        <div className="grid gap-4 md:grid-cols-4">
+          {[1, 2, 3, 4].map(i => (
+            <Skeleton key={i} className="h-32 w-full" />
+          ))}
+        </div>
+        <TableSkeleton columns={5} rows={5} />
+      </div>
+    )
   }
 
   const classroomList = classrooms || []
@@ -97,137 +136,82 @@ export function ClassroomAvailability() {
 
   return (
     <div className="space-y-6" role="region" aria-label="Disponibilité des salles de classe">
-      <div className="grid gap-4 md:grid-cols-4" role="list" aria-label="Statistiques des salles">
-        <Card role="listitem">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Disponibles</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-green-500" aria-hidden="true" />
-              <span className="text-2xl font-bold" aria-label={`${availableCount} salles disponibles`}>
-                {availableCount}
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card role="listitem">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Occupées</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-blue-500" aria-hidden="true" />
-              <span className="text-2xl font-bold" aria-label={`${occupiedCount} salles occupées`}>
-                {occupiedCount}
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card role="listitem">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">En maintenance</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <Building2 className="h-5 w-5 text-yellow-500" aria-hidden="true" />
-              <span className="text-2xl font-bold" aria-label={`${maintenanceCount} salles en maintenance`}>
-                {maintenanceCount}
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card role="listitem">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Inactives</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <XCircle className="h-5 w-5 text-gray-500" aria-hidden="true" />
-              <span className="text-2xl font-bold" aria-label={`${inactiveCount} salles inactives`}>
-                {inactiveCount}
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <StatsCards
+        available={availableCount}
+        occupied={occupiedCount}
+        maintenance={maintenanceCount}
+        inactive={inactiveCount}
+      />
 
       <Card>
         <CardHeader>
           <CardTitle>Détail des salles</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4" role="list" aria-label="Liste des salles de classe">
-            {classroomList.map((item: any) => {
-              const isAvailable = item.assignedClassesCount === 0 && item.classroom.status === 'active'
-              const occupancyPercent = item.classroom.capacity > 0
-                ? Math.min(100, (item.assignedClassesCount / 1) * 100)
-                : 0
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Salle</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Occupation</TableHead>
+                  <TableHead className="w-[100px] text-right">Statut</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {classroomList.map((item: any) => {
+                  const isAvailable = item.assignedClassesCount === 0 && item.classroom.status === 'active'
+                  const occupancyPercent = item.classroom.capacity > 0
+                    ? Math.min(100, (item.assignedClassesCount / 1) * 100) // Assuming 1 class per room for visualization? Or is it logic dependent? logic says capacity vs count. The old code used this.
+                    : 0
 
-              return (
-                <div
-                  key={item.classroom.id}
-                  className="flex items-center gap-4"
-                  role="listitem"
-                  aria-label={`${item.classroom.name} - ${isAvailable ? 'Disponible' : item.classroom.status !== 'active' ? item.classroom.status : `${item.assignedClassesCount} classe(s) assignée(s)`}`}
-                >
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium truncate">{item.classroom.name}</span>
-                      <Badge variant="outline" className="text-xs">
-                        {item.classroom.code}
-                      </Badge>
-                      {item.classroom.status === 'maintenance' && (
-                        <Badge variant="secondary" className="text-xs">Maintenance</Badge>
-                      )}
-                      {item.classroom.status === 'inactive' && (
-                        <Badge variant="secondary" className="text-xs">Inactive</Badge>
-                      )}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Capacité:
-                      {' '}
-                      {item.classroom.capacity}
-                      {' '}
-                      • Type:
-                      {' '}
-                      {item.classroom.type}
-                    </div>
-                  </div>
-                  <div className="w-32">
-                    <Progress
-                      value={occupancyPercent}
-                      className="h-2"
-                      aria-label={`Taux d'occupation: ${occupancyPercent}%`}
-                    />
-                  </div>
-                  <div className="w-24 text-right">
-                    {isAvailable
-                      ? (
-                          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                            Disponible
-                          </Badge>
-                        )
-                      : item.classroom.status !== 'active'
-                        ? (
-                            <Badge variant="secondary">
-                              {item.classroom.status === 'maintenance' ? 'Maintenance' : 'Inactive'}
-                            </Badge>
-                          )
-                        : (
-                            <Badge variant="default">
-                              {item.assignedClassesCount}
-                              {' '}
-                              classe(s)
-                            </Badge>
-                          )}
-                  </div>
-                </div>
-              )
-            })}
+                  return (
+                    <TableRow key={item.classroom.id}>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">{item.classroom.name}</div>
+                          <div className="text-xs text-muted-foreground">{item.classroom.code}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="capitalize">{item.classroom.type}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-4">
+                          <Progress value={occupancyPercent} className="h-2 w-24" />
+                          <span className="text-sm text-muted-foreground">
+                            {item.assignedClassesCount}
+                            {' '}
+                            classe(s) /
+                            {' '}
+                            {item.classroom.capacity}
+                            {' '}
+                            cap.
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {isAvailable
+                          ? (
+                              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                                Disponible
+                              </Badge>
+                            )
+                          : item.classroom.status !== 'active'
+                            ? (
+                                <Badge variant="secondary">
+                                  {item.classroom.status === 'maintenance' ? 'Maintenance' : 'Inactive'}
+                                </Badge>
+                              )
+                            : (
+                                <Badge variant="default">
+                                  Occupé
+                                </Badge>
+                              )}
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
+              </TableBody>
+            </Table>
           </div>
         </CardContent>
       </Card>
