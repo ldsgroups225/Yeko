@@ -7,15 +7,31 @@ import { getSchoolContext } from '../middleware/school-context'
 
 // ==================== Schemas ====================
 
+// Phone validation regex for Ivory Coast format
+const phoneRegex = /^(\+225)?\d{10}$/
+
+// Simple HTML tag stripper for text sanitization
+function sanitizeText(text: string): string {
+  return text
+    .replace(/<[^>]*>/g, '') // Remove HTML tags
+    .replace(/&[^;]+;/g, '') // Remove HTML entities
+    .trim()
+}
+
+// Zod transform for sanitizing text fields
+function sanitizedString(maxLength: number) {
+  return z.string().max(maxLength).transform(val => sanitizeText(val))
+}
+
 const parentSchema = z.object({
-  firstName: z.string().min(1, 'First name is required').max(100),
-  lastName: z.string().min(1, 'Last name is required').max(100),
-  phone: z.string().min(8, 'Phone is required').max(20),
-  phone2: z.string().max(20).optional(),
+  firstName: z.string().min(1, 'First name is required').max(100).transform(val => sanitizeText(val)),
+  lastName: z.string().min(1, 'Last name is required').max(100).transform(val => sanitizeText(val)),
+  phone: z.string().min(10, 'Phone is required').max(20).regex(phoneRegex, 'Format invalide. Utilisez: +2250701020304 ou 0701020304'),
+  phone2: z.string().max(20).regex(phoneRegex, 'Format invalide').optional().or(z.literal('')),
   email: z.string().email().optional().or(z.literal('')),
-  address: z.string().max(500).optional(),
-  occupation: z.string().max(100).optional(),
-  workplace: z.string().max(200).optional(),
+  address: sanitizedString(500).optional(),
+  occupation: sanitizedString(100).optional(),
+  workplace: sanitizedString(200).optional(),
 })
 
 const linkParentSchema = z.object({
@@ -25,7 +41,7 @@ const linkParentSchema = z.object({
   isPrimary: z.boolean().optional(),
   canPickup: z.boolean().optional(),
   receiveNotifications: z.boolean().optional(),
-  notes: z.string().max(500).optional(),
+  notes: sanitizedString(500).optional(),
 })
 
 const parentFiltersSchema = z.object({

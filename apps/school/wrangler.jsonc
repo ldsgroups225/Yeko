@@ -26,5 +26,12 @@
         "binding": "LOGS_QUEUE"
       }
     ]
-  }
+  },
+  // R2 bucket for file storage (student photos, documents)
+  "r2_buckets": [
+    {
+      "binding": "STORAGE_BUCKET",
+      "bucket_name": "yeko-school-storage"
+    }
+  ]
 }

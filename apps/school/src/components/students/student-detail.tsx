@@ -1,6 +1,6 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import {
   Calendar,
@@ -24,10 +24,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { studentsOptions } from '@/lib/queries/students'
+import { studentsKeys, studentsOptions } from '@/lib/queries/students'
+import { updateStudent } from '@/school/functions/students'
 
 import { EnrollmentDialog } from './enrollment-dialog'
+import { EnrollmentTimeline } from './enrollment-timeline'
 import { ParentLinkDialog } from './parent-link-dialog'
+import { PhotoUploadDialog } from './photo-upload-dialog'
+import { TransferDialog } from './transfer-dialog'
 
 const statusColors = {
   active: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
@@ -42,9 +46,20 @@ interface StudentDetailProps {
 
 export function StudentDetail({ studentId }: StudentDetailProps) {
   const { t } = useTranslation()
+  const queryClient = useQueryClient()
   const { data, isLoading } = useQuery(studentsOptions.detail(studentId))
   const [parentDialogOpen, setParentDialogOpen] = useState(false)
   const [enrollmentDialogOpen, setEnrollmentDialogOpen] = useState(false)
+  const [transferDialogOpen, setTransferDialogOpen] = useState(false)
+  const [photoDialogOpen, setPhotoDialogOpen] = useState(false)
+
+  const updatePhotoMutation = useMutation({
+    mutationFn: (photoUrl: string) =>
+      updateStudent({ data: { id: studentId, updates: { photoUrl } } }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: studentsKeys.detail(studentId) })
+    },
+  })
 
   if (isLoading) {
     return <StudentDetailSkeleton />
@@ -65,13 +80,23 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-4">
-          <Avatar className="h-20 w-20">
-            <AvatarImage src={student.photoUrl || undefined} />
-            <AvatarFallback className="text-2xl">
-              {student.firstName[0]}
-              {student.lastName[0]}
-            </AvatarFallback>
-          </Avatar>
+          <button
+            type="button"
+            onClick={() => setPhotoDialogOpen(true)}
+            className="group relative cursor-pointer"
+            title={t('students.changePhoto')}
+          >
+            <Avatar className="h-20 w-20 transition-opacity group-hover:opacity-75">
+              <AvatarImage src={student.photoUrl || undefined} />
+              <AvatarFallback className="text-2xl">
+                {student.firstName[0]}
+                {student.lastName[0]}
+              </AvatarFallback>
+            </Avatar>
+            <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
+              <Edit className="h-6 w-6 text-white" />
+            </div>
+          </button>
           <div>
             <h1 className="text-2xl font-bold">
               {student.lastName}
@@ -127,7 +152,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                {currentClass
+                {currentClass?.gradeName && currentClass?.section
                   ? (
                       <>
                         <InfoRow
@@ -140,6 +165,16 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
                           label={t('students.enrollmentStatus')}
                           value={currentEnrollment?.status ? t(`students.enrollment${currentEnrollment.status.charAt(0).toUpperCase() + currentEnrollment.status.slice(1)}`) : '-'}
                         />
+                        {currentEnrollment?.status === 'confirmed' && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="mt-2 w-full"
+                            onClick={() => setTransferDialogOpen(true)}
+                          >
+                            {t('students.transferStudent')}
+                          </Button>
+                        )}
                       </>
                     )
                   : (
@@ -262,32 +297,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
               </Button>
             </CardHeader>
             <CardContent>
-              {enrollmentHistory && enrollmentHistory.length > 0
-                ? (
-                    <div className="space-y-4">
-                      {enrollmentHistory.map((item: any) => (
-                        <div key={item.enrollment.id} className="flex items-center justify-between rounded-lg border p-4">
-                          <div>
-                            <p className="font-medium">
-                              {item.class.gradeName}
-                              {' '}
-                              {item.class.section}
-                              {item.class.seriesName && ` (${item.class.seriesName})`}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              {new Date(item.enrollment.enrollmentDate).toLocaleDateString()}
-                            </p>
-                          </div>
-                          <Badge variant={item.enrollment.status === 'confirmed' ? 'default' : 'secondary'}>
-                            {t(`students.enrollment${item.enrollment.status.charAt(0).toUpperCase() + item.enrollment.status.slice(1)}`)}
-                          </Badge>
-                        </div>
-                      ))}
-                    </div>
-                  )
-                : (
-                    <p className="text-muted-foreground">{t('students.noEnrollmentHistory')}</p>
-                  )}
+              <EnrollmentTimeline enrollments={enrollmentHistory || []} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -304,6 +314,28 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
         onOpenChange={setEnrollmentDialogOpen}
         studentId={studentId}
         studentName={`${student.firstName} ${student.lastName}`}
+      />
+      {currentEnrollment && currentClass && (
+        <TransferDialog
+          open={transferDialogOpen}
+          onOpenChange={setTransferDialogOpen}
+          studentId={studentId}
+          studentName={`${student.firstName} ${student.lastName}`}
+          currentEnrollmentId={currentEnrollment.id}
+          currentClassName={`${currentClass.gradeName} ${currentClass.section}`}
+          schoolYearId={currentEnrollment.schoolYearId}
+        />
+      )}
+      <PhotoUploadDialog
+        open={photoDialogOpen}
+        onOpenChange={setPhotoDialogOpen}
+        currentPhotoUrl={student.photoUrl}
+        entityType="student"
+        entityId={studentId}
+        entityName={`${student.firstName} ${student.lastName}`}
+        onPhotoUploaded={(photoUrl) => {
+          updatePhotoMutation.mutate(photoUrl)
+        }}
       />
     </div>
   )

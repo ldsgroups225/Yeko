@@ -292,10 +292,16 @@ export async function updateParentLink(
 
 // ==================== Invitation System ====================
 
+// Hash token for secure storage
+function hashToken(token: string): string {
+  return crypto.createHash('sha256').update(token).digest('hex')
+}
+
 export async function sendParentInvitation(parentId: string) {
   const db = getDb()
   // Generate invitation token
   const token = crypto.randomBytes(32).toString('hex')
+  const hashedToken = hashToken(token) // Store hashed version for security
   const expiresAt = new Date()
   expiresAt.setDate(expiresAt.getDate() + 7) // 7 days expiry
 
@@ -303,7 +309,7 @@ export async function sendParentInvitation(parentId: string) {
     .update(parents)
     .set({
       invitationStatus: 'sent',
-      invitationToken: token,
+      invitationToken: hashedToken, // Store hashed token
       invitationSentAt: new Date(),
       invitationExpiresAt: expiresAt,
       updatedAt: new Date(),
@@ -314,15 +320,18 @@ export async function sendParentInvitation(parentId: string) {
   // TODO: Send SMS/Email with invitation link
   // This would integrate with notification service
 
+  // Return plain token to send via SMS/email (not stored)
   return { parent, token }
 }
 
 export async function acceptParentInvitation(token: string, userId: string) {
   const db = getDb()
+  // Hash the incoming token to compare with stored hash
+  const hashedToken = hashToken(token)
   const [parent] = await db
     .select()
     .from(parents)
-    .where(and(eq(parents.invitationToken, token), eq(parents.invitationStatus, 'sent')))
+    .where(and(eq(parents.invitationToken, hashedToken), eq(parents.invitationStatus, 'sent')))
 
   if (!parent) {
     throw new Error('Invalid or expired invitation')

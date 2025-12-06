@@ -16,6 +16,7 @@ import {
   Upload,
   Users,
   UserX,
+  Wand2,
 } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
@@ -38,9 +39,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useDebounce } from '@/hooks/use-debounce'
+import { downloadExcelFile, exportStudentsToExcel } from '@/lib/excel-export'
 import { studentsKeys, studentsOptions } from '@/lib/queries/students'
-import { deleteStudent, updateStudentStatus } from '@/school/functions/students'
+import { deleteStudent, exportStudents, updateStudentStatus } from '@/school/functions/students'
 
+import { AutoMatchDialog } from './auto-match-dialog'
+import { BulkReEnrollDialog } from './bulk-reenroll-dialog'
+import { ImportDialog } from './import-dialog'
 import { StudentStatusDialog } from './student-status-dialog'
 
 const statusColors = {
@@ -64,6 +69,10 @@ export function StudentsList() {
   const [selectedStudent, setSelectedStudent] = useState<any>(null)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [statusDialogOpen, setStatusDialogOpen] = useState(false)
+  const [reEnrollDialogOpen, setReEnrollDialogOpen] = useState(false)
+  const [importDialogOpen, setImportDialogOpen] = useState(false)
+  const [autoMatchDialogOpen, setAutoMatchDialogOpen] = useState(false)
+  const [isExporting, setIsExporting] = useState(false)
 
   const debouncedSearch = useDebounce(search, 500)
 
@@ -110,6 +119,50 @@ export function StudentsList() {
   const handleStatusChange = (student: any) => {
     setSelectedStudent(student)
     setStatusDialogOpen(true)
+  }
+
+  const handleExport = async () => {
+    setIsExporting(true)
+    try {
+      const exportData = await exportStudents({ data: filters })
+
+      if (exportData.length === 0) {
+        toast.error(t('students.noDataToExport'))
+        return
+      }
+
+      // Export to Excel with translated column names
+      const excelBuffer = exportStudentsToExcel(exportData as any, {
+        matricule: t('students.matricule'),
+        lastName: t('students.lastName'),
+        firstName: t('students.firstName'),
+        dateOfBirth: t('students.dateOfBirth'),
+        gender: t('students.gender'),
+        status: t('students.status'),
+        class: t('students.class'),
+        series: t('students.series'),
+        nationality: t('students.nationality'),
+        address: t('students.address'),
+        emergencyContact: t('students.emergencyContact'),
+        emergencyPhone: t('students.emergencyPhone'),
+        admissionDate: t('students.admissionDate'),
+        sheetName: t('students.title'),
+      })
+
+      // Download Excel file
+      downloadExcelFile(
+        excelBuffer,
+        `${t('students.title')}_${new Date().toISOString().split('T')[0]}.xlsx`,
+      )
+
+      toast.success(t('students.exportSuccess'))
+    }
+    catch (err) {
+      toast.error(err instanceof Error ? err.message : t('common.error'))
+    }
+    finally {
+      setIsExporting(false)
+    }
   }
 
   if (error) {
@@ -165,14 +218,22 @@ export function StudentsList() {
           </Select>
         </div>
 
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm">
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" size="sm" onClick={() => setAutoMatchDialogOpen(true)}>
+            <Wand2 className="mr-2 h-4 w-4" />
+            {t('students.autoMatch')}
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setReEnrollDialogOpen(true)}>
+            <Users className="mr-2 h-4 w-4" />
+            {t('students.bulkReEnroll')}
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setImportDialogOpen(true)}>
             <Upload className="mr-2 h-4 w-4" />
             {t('common.import')}
           </Button>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={handleExport} disabled={isExporting}>
             <Download className="mr-2 h-4 w-4" />
-            {t('common.export')}
+            {isExporting ? t('common.exporting') : t('common.export')}
           </Button>
           <Button size="sm" onClick={() => navigate({ to: '/app/students/new' })}>
             <Plus className="mr-2 h-4 w-4" />
@@ -181,8 +242,124 @@ export function StudentsList() {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="rounded-md border">
+      {/* Mobile Card View */}
+      <div className="space-y-3 md:hidden">
+        {isLoading
+          ? (
+              Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="rounded-lg border p-4">
+                  <div className="flex items-center gap-3">
+                    <Skeleton className="h-12 w-12 rounded-full" />
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-4 w-32" />
+                      <Skeleton className="h-3 w-24" />
+                    </div>
+                    <Skeleton className="h-8 w-8" />
+                  </div>
+                </div>
+              ))
+            )
+          : data?.data.length === 0
+            ? (
+                <div className="flex min-h-[300px] flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
+                  <Users className="mx-auto h-12 w-12 text-muted-foreground" />
+                  <h3 className="mt-4 text-lg font-semibold">{t('students.noStudents')}</h3>
+                  <p className="mt-2 max-w-sm text-sm text-muted-foreground">{t('students.noStudentsDescription')}</p>
+                  <Button onClick={() => navigate({ to: '/app/students/new' })} className="mt-6">
+                    <Plus className="mr-2 h-4 w-4" />
+                    {t('students.addStudent')}
+                  </Button>
+                </div>
+              )
+            : (
+                <AnimatePresence>
+                  {data?.data.map((item: any, index: number) => (
+                    <motion.div
+                      key={item.student.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ delay: index * 0.02 }}
+                      className="rounded-lg border p-4"
+                    >
+                      <div className="flex items-start justify-between">
+                        <Link
+                          to="/app/students/$studentId"
+                          params={{ studentId: item.student.id }}
+                          className="flex items-center gap-3"
+                        >
+                          <Avatar className="h-12 w-12">
+                            <AvatarImage src={item.student.photoUrl || undefined} />
+                            <AvatarFallback>
+                              {item.student.firstName[0]}
+                              {item.student.lastName[0]}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-medium">
+                              {item.student.lastName}
+                              {' '}
+                              {item.student.firstName}
+                            </p>
+                            <p className="font-mono text-sm text-muted-foreground">{item.student.matricule}</p>
+                          </div>
+                        </Link>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem asChild>
+                              <Link to="/app/students/$studentId" params={{ studentId: item.student.id }}>
+                                <Eye className="mr-2 h-4 w-4" />
+                                {t('common.view')}
+                              </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                              <Link to="/app/students/$studentId/edit" params={{ studentId: item.student.id }}>
+                                <Edit className="mr-2 h-4 w-4" />
+                                {t('common.edit')}
+                              </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleStatusChange(item)}>
+                              <Edit className="mr-2 h-4 w-4" />
+                              {t('students.changeStatus')}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => handleDelete(item)}
+                              className="text-destructive"
+                            >
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              {t('common.delete')}
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                      <div className="mt-3 flex flex-wrap items-center gap-2">
+                        <Badge className={statusColors[item.student.status as keyof typeof statusColors]}>
+                          {t(`students.status${item.student.status.charAt(0).toUpperCase() + item.student.status.slice(1)}`)}
+                        </Badge>
+                        {item.currentClass?.gradeName && item.currentClass?.section && (
+                          <Badge variant="outline">
+                            {item.currentClass.gradeName}
+                            {' '}
+                            {item.currentClass.section}
+                          </Badge>
+                        )}
+                        <span className="text-sm text-muted-foreground">
+                          {item.student.gender === 'M' ? t('students.male') : item.student.gender === 'F' ? t('students.female') : ''}
+                        </span>
+                      </div>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              )}
+      </div>
+
+      {/* Desktop Table View */}
+      <div className="hidden rounded-md border md:block">
         <Table>
           <TableHeader>
             <TableRow>
@@ -272,7 +449,7 @@ export function StudentsList() {
                           </TableCell>
                           <TableCell className="font-mono">{item.student.matricule}</TableCell>
                           <TableCell>
-                            {item.currentClass
+                            {item.currentClass?.gradeName && item.currentClass?.section
                               ? (
                                   <span>
                                     {item.currentClass.gradeName}
@@ -387,6 +564,24 @@ export function StudentsList() {
         onConfirm={(newStatus, reason) =>
           statusMutation.mutate({ id: selectedStudent?.student.id, status: newStatus as StudentStatus, reason })}
         isLoading={statusMutation.isPending}
+      />
+
+      {/* Bulk Re-enrollment Dialog */}
+      <BulkReEnrollDialog
+        open={reEnrollDialogOpen}
+        onOpenChange={setReEnrollDialogOpen}
+      />
+
+      {/* Import Dialog */}
+      <ImportDialog
+        open={importDialogOpen}
+        onOpenChange={setImportDialogOpen}
+      />
+
+      {/* Auto-Match Parents Dialog */}
+      <AutoMatchDialog
+        open={autoMatchDialogOpen}
+        onOpenChange={setAutoMatchDialogOpen}
       />
     </div>
   )

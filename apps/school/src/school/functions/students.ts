@@ -7,21 +7,37 @@ import { getSchoolContext, getSchoolYearContext } from '../middleware/school-con
 
 // ==================== Schemas ====================
 
+// Phone validation regex for Ivory Coast format
+const phoneRegex = /^(\+225)?\d{10}$/
+
+// Simple HTML tag stripper for text sanitization
+function sanitizeText(text: string): string {
+  return text
+    .replace(/<[^>]*>/g, '') // Remove HTML tags
+    .replace(/&[^;]+;/g, '') // Remove HTML entities
+    .trim()
+}
+
+// Zod transform for sanitizing text fields
+function sanitizedString(maxLength: number) {
+  return z.string().max(maxLength).transform(val => sanitizeText(val))
+}
+
 const studentSchema = z.object({
-  firstName: z.string().min(1, 'First name is required').max(100),
-  lastName: z.string().min(1, 'Last name is required').max(100),
+  firstName: z.string().min(1, 'First name is required').max(100).transform(val => sanitizeText(val)),
+  lastName: z.string().min(1, 'Last name is required').max(100).transform(val => sanitizeText(val)),
   dob: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format (YYYY-MM-DD)'),
   gender: z.enum(['M', 'F', 'other']).optional(),
   photoUrl: z.string().url().optional().or(z.literal('')),
   matricule: z.string().max(20).optional(),
-  birthPlace: z.string().max(100).optional(),
-  nationality: z.string().max(50).optional(),
-  address: z.string().max(500).optional(),
-  emergencyContact: z.string().max(100).optional(),
-  emergencyPhone: z.string().max(20).optional(),
+  birthPlace: sanitizedString(100).optional(),
+  nationality: sanitizedString(50).optional(),
+  address: sanitizedString(500).optional(),
+  emergencyContact: sanitizedString(100).optional(),
+  emergencyPhone: z.string().max(20).regex(phoneRegex, 'Format invalide. Utilisez: +2250701020304 ou 0701020304').optional().or(z.literal('')),
   bloodType: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']).optional(),
-  medicalNotes: z.string().max(1000).optional(),
-  previousSchool: z.string().max(200).optional(),
+  medicalNotes: sanitizedString(1000).optional(),
+  previousSchool: sanitizedString(200).optional(),
   admissionDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
 })
 

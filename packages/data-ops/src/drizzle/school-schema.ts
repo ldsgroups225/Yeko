@@ -359,6 +359,10 @@ export const enrollments = pgTable('enrollments', {
   statusIdx: index('idx_enrollments_status').on(table.status),
   confirmedByIdx: index('idx_enrollments_confirmed_by').on(table.confirmedBy),
   rollNumberIdx: index('idx_enrollments_roll_number').on(table.classId, table.rollNumber),
+  // NOTE: Partial unique index for active enrollments is enforced via:
+  // 1. Runtime check in createEnrollment() query
+  // 2. Custom SQL migration: CREATE UNIQUE INDEX unique_student_year_active
+  //    ON enrollments (student_id, school_year_id) WHERE status NOT IN ('cancelled', 'transferred');
 }))
 
 // Phase 13: Matricule Sequences for auto-generation

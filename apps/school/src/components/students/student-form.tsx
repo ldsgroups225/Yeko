@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { Loader2, RefreshCw, Upload } from 'lucide-react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -28,6 +28,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 import { studentsKeys } from '@/lib/queries/students'
 import { createStudent, generateMatricule, updateStudent } from '@/school/functions/students'
+import { PhotoUploadDialog } from './photo-upload-dialog'
 
 const studentSchema = z.object({
   firstName: z.string().min(1, 'First name is required').max(100),
@@ -58,7 +59,8 @@ export function StudentForm({ student, mode }: StudentFormProps) {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const [_showPhotoCropper, setShowPhotoCropper] = useState(false)
+  const [showPhotoDialog, setShowPhotoDialog] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const form = useForm<StudentFormData>({
     resolver: zodResolver(studentSchema),
@@ -155,14 +157,44 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                     </AvatarFallback>
                   </Avatar>
                   <div className="space-y-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setShowPhotoCropper(true)}
-                    >
-                      <Upload className="mr-2 h-4 w-4" />
-                      {t('students.uploadPhoto')}
-                    </Button>
+                    {mode === 'edit' && student?.id ? (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setShowPhotoDialog(true)}
+                      >
+                        <Upload className="mr-2 h-4 w-4" />
+                        {t('students.uploadPhoto')}
+                      </Button>
+                    ) : (
+                      <label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                        <Upload className="h-4 w-4" />
+                        {t('students.uploadPhoto')}
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                          className="sr-only"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0]
+                            if (!file) return
+                            if (!file.type.startsWith('image/')) {
+                              toast.error(t('students.invalidFileType'))
+                              return
+                            }
+                            if (file.size > 5 * 1024 * 1024) {
+                              toast.error(t('students.fileTooLarge'))
+                              return
+                            }
+                            const reader = new FileReader()
+                            reader.onload = () => {
+                              form.setValue('photoUrl', reader.result as string)
+                            }
+                            reader.readAsDataURL(file)
+                          }}
+                        />
+                      </label>
+                    )}
                     <p className="text-sm text-muted-foreground">
                       {t('students.photoRequirements')}
                     </p>
@@ -297,11 +329,11 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                             >
                               {generateMatriculeMutation.isPending
                                 ? (
-                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                  )
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                )
                                 : (
-                                    <RefreshCw className="h-4 w-4" />
-                                  )}
+                                  <RefreshCw className="h-4 w-4" />
+                                )}
                             </Button>
                           )}
                         </div>
@@ -464,6 +496,20 @@ export function StudentForm({ student, mode }: StudentFormProps) {
           </Button>
         </div>
       </form>
+
+      {mode === 'edit' && student?.id && (
+        <PhotoUploadDialog
+          open={showPhotoDialog}
+          onOpenChange={setShowPhotoDialog}
+          currentPhotoUrl={form.watch('photoUrl')}
+          entityType="student"
+          entityId={student.id}
+          entityName={`${form.watch('firstName')} ${form.watch('lastName')}`}
+          onPhotoUploaded={(photoUrl) => {
+            form.setValue('photoUrl', photoUrl)
+          }}
+        />
+      )}
     </Form>
   )
 }
