@@ -1,7 +1,8 @@
+import type { ClassroomInsert } from '../drizzle/school-schema'
+import { and, eq, ilike, or, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
-import { classrooms, classes, type ClassroomInsert } from '../drizzle/school-schema'
 import { grades, series } from '../drizzle/core-schema'
-import { eq, and, sql, or, ilike } from 'drizzle-orm'
+import { classes, classrooms } from '../drizzle/school-schema'
 
 export interface ClassroomFilters {
   schoolId: string
@@ -26,8 +27,8 @@ export async function getClassrooms(filters: ClassroomFilters) {
     conditions.push(
       or(
         ilike(classrooms.name, `%${filters.search}%`),
-        ilike(classrooms.code, `%${filters.search}%`)
-      )!
+        ilike(classrooms.code, `%${filters.search}%`),
+      )!,
     )
   }
 
@@ -108,8 +109,8 @@ export async function deleteClassroom(id: string) {
 
 export async function checkClassroomAvailability(
   classroomId: string,
-  schoolYearId: string
-): Promise<{ available: boolean; assignedTo?: string }> {
+  schoolYearId: string,
+): Promise<{ available: boolean, assignedTo?: string }> {
   const db = getDb()
   const [result] = await db
     .select({

@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod'
-import { zodI18nMap } from 'zod-i18n-map'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -37,8 +36,6 @@ import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { classSubjectsKeys } from '@/lib/queries/class-subjects'
 import { copyClassSubjects } from '@/school/functions/class-subjects'
 import { getClasses } from '@/school/functions/classes'
-
-z.setErrorMap(zodI18nMap)
 
 const copyFormSchema = z.object({
   sourceClassId: z.string().min(1, 'Select a source class'),

@@ -1,16 +1,17 @@
+import type { ClassInsert } from '../drizzle/school-schema'
+import { and, eq, ilike, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
+import { grades, series } from '../drizzle/core-schema'
 import {
   classes,
+
   classrooms,
-  teachers,
-  users,
   classSubjects,
   enrollments,
   students,
-  type ClassInsert,
+  teachers,
+  users,
 } from '../drizzle/school-schema'
-import { grades, series } from '../drizzle/core-schema'
-import { eq, and, sql, ilike } from 'drizzle-orm'
 import { checkClassroomAvailability } from './classrooms'
 
 export interface ClassFilters {
@@ -50,7 +51,7 @@ export async function getClasses(filters: ClassFilters) {
     .select({
       class: classes,
       grade: grades,
-      series: series,
+      series,
       classroom: classrooms,
       homeroomTeacher: {
         id: teachers.id,
@@ -67,7 +68,7 @@ export async function getClasses(filters: ClassFilters) {
     .leftJoin(users, eq(teachers.userId, users.id))
     .leftJoin(
       enrollments,
-      and(eq(enrollments.classId, classes.id), eq(enrollments.status, 'confirmed'))
+      and(eq(enrollments.classId, classes.id), eq(enrollments.status, 'confirmed')),
     )
     .leftJoin(classSubjects, eq(classSubjects.classId, classes.id))
     .where(and(...conditions))
@@ -81,7 +82,7 @@ export async function getClassById(id: string) {
     .select({
       class: classes,
       grade: grades,
-      series: series,
+      series,
       classroom: classrooms,
       homeroomTeacher: {
         id: teachers.id,
@@ -90,10 +91,10 @@ export async function getClassById(id: string) {
       },
       studentsCount: sql<number>`COUNT(DISTINCT ${enrollments.id})`.as('students_count'),
       boysCount: sql<number>`COUNT(DISTINCT CASE WHEN ${students.gender} = 'M' THEN ${students.id} END)`.as(
-        'boys_count'
+        'boys_count',
       ),
       girlsCount: sql<number>`COUNT(DISTINCT CASE WHEN ${students.gender} = 'F' THEN ${students.id} END)`.as(
-        'girls_count'
+        'girls_count',
       ),
     })
     .from(classes)
@@ -104,7 +105,7 @@ export async function getClassById(id: string) {
     .leftJoin(users, eq(teachers.userId, users.id))
     .leftJoin(
       enrollments,
-      and(eq(enrollments.classId, classes.id), eq(enrollments.status, 'confirmed'))
+      and(eq(enrollments.classId, classes.id), eq(enrollments.status, 'confirmed')),
     )
     .leftJoin(students, eq(enrollments.studentId, students.id))
     .where(eq(classes.id, id))
@@ -124,8 +125,8 @@ export async function createClass(data: ClassInsert) {
         eq(classes.schoolYearId, data.schoolYearId),
         eq(classes.gradeId, data.gradeId),
         data.seriesId ? eq(classes.seriesId, data.seriesId) : sql`${classes.seriesId} IS NULL`,
-        eq(classes.section, data.section)
-      )
+        eq(classes.section, data.section),
+      ),
     )
     .limit(1)
 

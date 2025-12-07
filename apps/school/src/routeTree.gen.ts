@@ -36,6 +36,7 @@ import { Route as AuthAppHrUsersIndexRouteImport } from './routes/_auth/app/hr/u
 import { Route as AuthAppHrTeachersIndexRouteImport } from './routes/_auth/app/hr/teachers/index'
 import { Route as AuthAppHrStaffIndexRouteImport } from './routes/_auth/app/hr/staff/index'
 import { Route as AuthAppHrRolesIndexRouteImport } from './routes/_auth/app/hr/roles/index'
+import { Route as AuthAppAcademicGradesIndexRouteImport } from './routes/_auth/app/academic/grades/index'
 import { Route as AuthAppAcademicClassesIndexRouteImport } from './routes/_auth/app/academic/classes/index'
 import { Route as AuthAppStudentsStudentIdEditRouteImport } from './routes/_auth/app/students/$studentId/edit'
 import { Route as AuthAppHrUsersNewRouteImport } from './routes/_auth/app/hr/users/new'
@@ -43,6 +44,9 @@ import { Route as AuthAppHrUsersImportRouteImport } from './routes/_auth/app/hr/
 import { Route as AuthAppHrTeachersNewRouteImport } from './routes/_auth/app/hr/teachers/new'
 import { Route as AuthAppHrStaffNewRouteImport } from './routes/_auth/app/hr/staff/new'
 import { Route as AuthAppHrRolesNewRouteImport } from './routes/_auth/app/hr/roles/new'
+import { Route as AuthAppAcademicGradesValidationsRouteImport } from './routes/_auth/app/academic/grades/validations'
+import { Route as AuthAppAcademicGradesStatisticsRouteImport } from './routes/_auth/app/academic/grades/statistics'
+import { Route as AuthAppAcademicGradesEntryRouteImport } from './routes/_auth/app/academic/grades/entry'
 import { Route as AuthAppSpacesClassroomsClassroomIdIndexRouteImport } from './routes/_auth/app/spaces/classrooms/$classroomId/index'
 import { Route as AuthAppHrUsersUserIdIndexRouteImport } from './routes/_auth/app/hr/users/$userId/index'
 import { Route as AuthAppHrTeachersTeacherIdIndexRouteImport } from './routes/_auth/app/hr/teachers/$teacherId/index'
@@ -196,6 +200,12 @@ const AuthAppHrRolesIndexRoute = AuthAppHrRolesIndexRouteImport.update({
   path: '/roles/',
   getParentRoute: () => AuthAppHrRoute,
 } as any)
+const AuthAppAcademicGradesIndexRoute =
+  AuthAppAcademicGradesIndexRouteImport.update({
+    id: '/grades/',
+    path: '/grades/',
+    getParentRoute: () => AuthAppAcademicRoute,
+  } as any)
 const AuthAppAcademicClassesIndexRoute =
   AuthAppAcademicClassesIndexRouteImport.update({
     id: '/classes/',
@@ -233,6 +243,24 @@ const AuthAppHrRolesNewRoute = AuthAppHrRolesNewRouteImport.update({
   path: '/roles/new',
   getParentRoute: () => AuthAppHrRoute,
 } as any)
+const AuthAppAcademicGradesValidationsRoute =
+  AuthAppAcademicGradesValidationsRouteImport.update({
+    id: '/grades/validations',
+    path: '/grades/validations',
+    getParentRoute: () => AuthAppAcademicRoute,
+  } as any)
+const AuthAppAcademicGradesStatisticsRoute =
+  AuthAppAcademicGradesStatisticsRouteImport.update({
+    id: '/grades/statistics',
+    path: '/grades/statistics',
+    getParentRoute: () => AuthAppAcademicRoute,
+  } as any)
+const AuthAppAcademicGradesEntryRoute =
+  AuthAppAcademicGradesEntryRouteImport.update({
+    id: '/grades/entry',
+    path: '/grades/entry',
+    getParentRoute: () => AuthAppAcademicRoute,
+  } as any)
 const AuthAppSpacesClassroomsClassroomIdIndexRoute =
   AuthAppSpacesClassroomsClassroomIdIndexRouteImport.update({
     id: '/classrooms/$classroomId/',
@@ -327,6 +355,9 @@ export interface FileRoutesByFullPath {
   '/app/hr/': typeof AuthAppHrIndexRoute
   '/app/spaces/': typeof AuthAppSpacesIndexRoute
   '/app/students/': typeof AuthAppStudentsIndexRoute
+  '/app/academic/grades/entry': typeof AuthAppAcademicGradesEntryRoute
+  '/app/academic/grades/statistics': typeof AuthAppAcademicGradesStatisticsRoute
+  '/app/academic/grades/validations': typeof AuthAppAcademicGradesValidationsRoute
   '/app/hr/roles/new': typeof AuthAppHrRolesNewRoute
   '/app/hr/staff/new': typeof AuthAppHrStaffNewRoute
   '/app/hr/teachers/new': typeof AuthAppHrTeachersNewRoute
@@ -334,6 +365,7 @@ export interface FileRoutesByFullPath {
   '/app/hr/users/new': typeof AuthAppHrUsersNewRoute
   '/app/students/$studentId/edit': typeof AuthAppStudentsStudentIdEditRoute
   '/app/academic/classes': typeof AuthAppAcademicClassesIndexRoute
+  '/app/academic/grades': typeof AuthAppAcademicGradesIndexRoute
   '/app/hr/roles': typeof AuthAppHrRolesIndexRoute
   '/app/hr/staff': typeof AuthAppHrStaffIndexRoute
   '/app/hr/teachers': typeof AuthAppHrTeachersIndexRoute
@@ -369,6 +401,9 @@ export interface FileRoutesByTo {
   '/app/hr': typeof AuthAppHrIndexRoute
   '/app/spaces': typeof AuthAppSpacesIndexRoute
   '/app/students': typeof AuthAppStudentsIndexRoute
+  '/app/academic/grades/entry': typeof AuthAppAcademicGradesEntryRoute
+  '/app/academic/grades/statistics': typeof AuthAppAcademicGradesStatisticsRoute
+  '/app/academic/grades/validations': typeof AuthAppAcademicGradesValidationsRoute
   '/app/hr/roles/new': typeof AuthAppHrRolesNewRoute
   '/app/hr/staff/new': typeof AuthAppHrStaffNewRoute
   '/app/hr/teachers/new': typeof AuthAppHrTeachersNewRoute
@@ -376,6 +411,7 @@ export interface FileRoutesByTo {
   '/app/hr/users/new': typeof AuthAppHrUsersNewRoute
   '/app/students/$studentId/edit': typeof AuthAppStudentsStudentIdEditRoute
   '/app/academic/classes': typeof AuthAppAcademicClassesIndexRoute
+  '/app/academic/grades': typeof AuthAppAcademicGradesIndexRoute
   '/app/hr/roles': typeof AuthAppHrRolesIndexRoute
   '/app/hr/staff': typeof AuthAppHrStaffIndexRoute
   '/app/hr/teachers': typeof AuthAppHrTeachersIndexRoute
@@ -418,6 +454,9 @@ export interface FileRoutesById {
   '/_auth/app/hr/': typeof AuthAppHrIndexRoute
   '/_auth/app/spaces/': typeof AuthAppSpacesIndexRoute
   '/_auth/app/students/': typeof AuthAppStudentsIndexRoute
+  '/_auth/app/academic/grades/entry': typeof AuthAppAcademicGradesEntryRoute
+  '/_auth/app/academic/grades/statistics': typeof AuthAppAcademicGradesStatisticsRoute
+  '/_auth/app/academic/grades/validations': typeof AuthAppAcademicGradesValidationsRoute
   '/_auth/app/hr/roles/new': typeof AuthAppHrRolesNewRoute
   '/_auth/app/hr/staff/new': typeof AuthAppHrStaffNewRoute
   '/_auth/app/hr/teachers/new': typeof AuthAppHrTeachersNewRoute
@@ -425,6 +464,7 @@ export interface FileRoutesById {
   '/_auth/app/hr/users/new': typeof AuthAppHrUsersNewRoute
   '/_auth/app/students/$studentId/edit': typeof AuthAppStudentsStudentIdEditRoute
   '/_auth/app/academic/classes/': typeof AuthAppAcademicClassesIndexRoute
+  '/_auth/app/academic/grades/': typeof AuthAppAcademicGradesIndexRoute
   '/_auth/app/hr/roles/': typeof AuthAppHrRolesIndexRoute
   '/_auth/app/hr/staff/': typeof AuthAppHrStaffIndexRoute
   '/_auth/app/hr/teachers/': typeof AuthAppHrTeachersIndexRoute
@@ -467,6 +507,9 @@ export interface FileRouteTypes {
     | '/app/hr/'
     | '/app/spaces/'
     | '/app/students/'
+    | '/app/academic/grades/entry'
+    | '/app/academic/grades/statistics'
+    | '/app/academic/grades/validations'
     | '/app/hr/roles/new'
     | '/app/hr/staff/new'
     | '/app/hr/teachers/new'
@@ -474,6 +517,7 @@ export interface FileRouteTypes {
     | '/app/hr/users/new'
     | '/app/students/$studentId/edit'
     | '/app/academic/classes'
+    | '/app/academic/grades'
     | '/app/hr/roles'
     | '/app/hr/staff'
     | '/app/hr/teachers'
@@ -509,6 +553,9 @@ export interface FileRouteTypes {
     | '/app/hr'
     | '/app/spaces'
     | '/app/students'
+    | '/app/academic/grades/entry'
+    | '/app/academic/grades/statistics'
+    | '/app/academic/grades/validations'
     | '/app/hr/roles/new'
     | '/app/hr/staff/new'
     | '/app/hr/teachers/new'
@@ -516,6 +563,7 @@ export interface FileRouteTypes {
     | '/app/hr/users/new'
     | '/app/students/$studentId/edit'
     | '/app/academic/classes'
+    | '/app/academic/grades'
     | '/app/hr/roles'
     | '/app/hr/staff'
     | '/app/hr/teachers'
@@ -557,6 +605,9 @@ export interface FileRouteTypes {
     | '/_auth/app/hr/'
     | '/_auth/app/spaces/'
     | '/_auth/app/students/'
+    | '/_auth/app/academic/grades/entry'
+    | '/_auth/app/academic/grades/statistics'
+    | '/_auth/app/academic/grades/validations'
     | '/_auth/app/hr/roles/new'
     | '/_auth/app/hr/staff/new'
     | '/_auth/app/hr/teachers/new'
@@ -564,6 +615,7 @@ export interface FileRouteTypes {
     | '/_auth/app/hr/users/new'
     | '/_auth/app/students/$studentId/edit'
     | '/_auth/app/academic/classes/'
+    | '/_auth/app/academic/grades/'
     | '/_auth/app/hr/roles/'
     | '/_auth/app/hr/staff/'
     | '/_auth/app/hr/teachers/'
@@ -781,6 +833,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAppHrRolesIndexRouteImport
       parentRoute: typeof AuthAppHrRoute
     }
+    '/_auth/app/academic/grades/': {
+      id: '/_auth/app/academic/grades/'
+      path: '/grades'
+      fullPath: '/app/academic/grades'
+      preLoaderRoute: typeof AuthAppAcademicGradesIndexRouteImport
+      parentRoute: typeof AuthAppAcademicRoute
+    }
     '/_auth/app/academic/classes/': {
       id: '/_auth/app/academic/classes/'
       path: '/classes'
@@ -829,6 +888,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/hr/roles/new'
       preLoaderRoute: typeof AuthAppHrRolesNewRouteImport
       parentRoute: typeof AuthAppHrRoute
+    }
+    '/_auth/app/academic/grades/validations': {
+      id: '/_auth/app/academic/grades/validations'
+      path: '/grades/validations'
+      fullPath: '/app/academic/grades/validations'
+      preLoaderRoute: typeof AuthAppAcademicGradesValidationsRouteImport
+      parentRoute: typeof AuthAppAcademicRoute
+    }
+    '/_auth/app/academic/grades/statistics': {
+      id: '/_auth/app/academic/grades/statistics'
+      path: '/grades/statistics'
+      fullPath: '/app/academic/grades/statistics'
+      preLoaderRoute: typeof AuthAppAcademicGradesStatisticsRouteImport
+      parentRoute: typeof AuthAppAcademicRoute
+    }
+    '/_auth/app/academic/grades/entry': {
+      id: '/_auth/app/academic/grades/entry'
+      path: '/grades/entry'
+      fullPath: '/app/academic/grades/entry'
+      preLoaderRoute: typeof AuthAppAcademicGradesEntryRouteImport
+      parentRoute: typeof AuthAppAcademicRoute
     }
     '/_auth/app/spaces/classrooms/$classroomId/': {
       id: '/_auth/app/spaces/classrooms/$classroomId/'
@@ -922,7 +1002,11 @@ interface AuthAppAcademicRouteChildren {
   AuthAppAcademicCoefficientsRoute: typeof AuthAppAcademicCoefficientsRoute
   AuthAppAcademicSubjectsRoute: typeof AuthAppAcademicSubjectsRoute
   AuthAppAcademicIndexRoute: typeof AuthAppAcademicIndexRoute
+  AuthAppAcademicGradesEntryRoute: typeof AuthAppAcademicGradesEntryRoute
+  AuthAppAcademicGradesStatisticsRoute: typeof AuthAppAcademicGradesStatisticsRoute
+  AuthAppAcademicGradesValidationsRoute: typeof AuthAppAcademicGradesValidationsRoute
   AuthAppAcademicClassesIndexRoute: typeof AuthAppAcademicClassesIndexRoute
+  AuthAppAcademicGradesIndexRoute: typeof AuthAppAcademicGradesIndexRoute
   AuthAppAcademicClassesClassIdEditRoute: typeof AuthAppAcademicClassesClassIdEditRoute
   AuthAppAcademicClassesClassIdIndexRoute: typeof AuthAppAcademicClassesClassIdIndexRoute
 }
@@ -932,7 +1016,11 @@ const AuthAppAcademicRouteChildren: AuthAppAcademicRouteChildren = {
   AuthAppAcademicCoefficientsRoute: AuthAppAcademicCoefficientsRoute,
   AuthAppAcademicSubjectsRoute: AuthAppAcademicSubjectsRoute,
   AuthAppAcademicIndexRoute: AuthAppAcademicIndexRoute,
+  AuthAppAcademicGradesEntryRoute: AuthAppAcademicGradesEntryRoute,
+  AuthAppAcademicGradesStatisticsRoute: AuthAppAcademicGradesStatisticsRoute,
+  AuthAppAcademicGradesValidationsRoute: AuthAppAcademicGradesValidationsRoute,
   AuthAppAcademicClassesIndexRoute: AuthAppAcademicClassesIndexRoute,
+  AuthAppAcademicGradesIndexRoute: AuthAppAcademicGradesIndexRoute,
   AuthAppAcademicClassesClassIdEditRoute:
     AuthAppAcademicClassesClassIdEditRoute,
   AuthAppAcademicClassesClassIdIndexRoute:

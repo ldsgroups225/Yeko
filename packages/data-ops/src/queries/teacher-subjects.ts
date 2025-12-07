@@ -1,4 +1,4 @@
-import { and, eq, inArray, sql } from 'drizzle-orm'
+import { and, eq, inArray } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import { subjects } from '../drizzle/core-schema'
 import { teachers, teacherSubjects } from '../drizzle/school-schema'

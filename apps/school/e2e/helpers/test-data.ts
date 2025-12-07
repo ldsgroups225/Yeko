@@ -110,3 +110,95 @@ export function generateEmail(name: string): string {
   const cleanName = name.toLowerCase().replace(/\s+/g, '.')
   return `${cleanName}.${timestamp}@yeko.test`
 }
+
+/**
+ * Grades test data for E2E tests
+ */
+export const gradesTestData = {
+  gradeTypes: {
+    quiz: 'Interrogation',
+    test: 'Devoir',
+    exam: 'Examen',
+    participation: 'Participation',
+    homework: 'Travail maison',
+    project: 'Projet',
+  },
+
+  gradeStatuses: {
+    draft: 'Brouillon',
+    submitted: 'Soumis',
+    validated: 'Validé',
+    rejected: 'Rejeté',
+  },
+
+  validGrades: {
+    excellent: 18.5,
+    good: 15,
+    average: 12,
+    passing: 10,
+    failing: 7.5,
+  },
+
+  invalidGrades: {
+    tooHigh: 25,
+    negative: -5,
+    notQuarterPoint: 10.33,
+  },
+
+  classes: {
+    terminaleC1: 'Terminale C1',
+    premiereD: 'Première D',
+    sixieme2: '6ème 2',
+  },
+
+  subjects: {
+    math: 'Mathématiques',
+    french: 'Français',
+    physics: 'Physique-Chimie',
+    english: 'Anglais',
+  },
+
+  terms: {
+    term1: '1er Trimestre',
+    term2: '2ème Trimestre',
+    term3: '3ème Trimestre',
+  },
+
+  students: {
+    student1: {
+      name: 'KOUASSI Aya',
+      matricule: 'YK2024001',
+    },
+    student2: {
+      name: 'KONÉ Ibrahim',
+      matricule: 'YK2024002',
+    },
+    student3: {
+      name: 'DIALLO Fatou',
+      matricule: 'YK2024003',
+    },
+  },
+
+  rejectionReasons: {
+    valid: 'Les notes semblent incorrectes. Veuillez vérifier les calculs et resoumettre.',
+    tooShort: 'Erreur',
+  },
+}
+
+/**
+ * Generate a random valid grade (0-20, quarter points)
+ */
+export function generateRandomGrade(): number {
+  const value = Math.random() * 20
+  return Math.round(value * 4) / 4 // Round to nearest quarter point
+}
+
+/**
+ * Generate grades for a class
+ */
+export function generateClassGrades(studentCount: number): Array<{ studentId: string, value: number }> {
+  return Array.from({ length: studentCount }, (_, i) => ({
+    studentId: `student-${i + 1}`,
+    value: generateRandomGrade(),
+  }))
+}

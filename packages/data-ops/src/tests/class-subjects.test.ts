@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, test } from 'vitest'
 import {
-  addSubjectToClass,
   assignTeacherToClassSubject,
   bulkAssignTeacher,
   copyClassSubjects,
@@ -10,7 +9,7 @@ import {
   removeTeacherFromClassSubject,
 } from '../queries/class-subjects'
 import { createClass, deleteClass } from '../queries/classes'
-import { createSchool, deleteSchool } from '../queries/schools'
+import { createSchool } from '../queries/schools'
 
 describe('class subjects queries', () => {
   let testSchoolId: string

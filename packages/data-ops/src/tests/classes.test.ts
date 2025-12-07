@@ -6,8 +6,8 @@ import {
   getClasses,
   updateClass,
 } from '../queries/classes'
-import { createClassroom, deleteClassroom } from '../queries/classrooms'
-import { createSchool, deleteSchool } from '../queries/schools'
+import { createClassroom } from '../queries/classrooms'
+import { createSchool } from '../queries/schools'
 
 describe('classes queries', () => {
   let testSchoolId: string

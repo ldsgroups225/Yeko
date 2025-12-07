@@ -934,6 +934,139 @@
       "copySubjectsError": "Failed to copy subjects",
       "selectSourceClassError": "Select a source class"
     },
+    "grades": {
+      "title": "Grade Management",
+      "description": "Enter and validate student grades",
+      "entry": {
+        "title": "Grade Entry",
+        "subtitle": "Select a class and subject to begin",
+        "parameters": "Parameters",
+        "studentGrades": "Student Grades",
+        "class": "Class",
+        "selectClass": "Select a class",
+        "subject": "Subject",
+        "selectSubject": "Select a subject",
+        "term": "Term",
+        "selectTerm": "Select a term",
+        "gradeType": "Grade Type",
+        "coefficient": "Coefficient",
+        "date": "Date",
+        "gradeDescription": "Description (optional)",
+        "descriptionPlaceholder": "E.g., Chapter 3 - Equations",
+        "enterGrade": "Enter grades"
+      },
+      "validations": {
+        "title": "Pending Validations",
+        "description": "Validate or reject grades submitted by teachers",
+        "noValidations": "No pending validations",
+        "allValidated": "All grades have been validated",
+        "viewDetails": "View details",
+        "validate": "Validate",
+        "reject": "Reject",
+        "validateTitle": "Validate Grades",
+        "validateDescription": "You are about to validate {{count}} grade(s). This action is irreversible.",
+        "rejectTitle": "Reject Grades",
+        "rejectDescription": "Please provide a reason for rejection. The teacher will be notified.",
+        "rejectReason": "Rejection reason",
+        "rejectReasonPlaceholder": "Explain why these grades are rejected...",
+        "comment": "Comment (optional)",
+        "commentPlaceholder": "Add a comment...",
+        "confirmValidate": "Confirm validation",
+        "confirmReject": "Confirm rejection",
+        "validateSuccess": "Grades validated successfully",
+        "rejectSuccess": "Grades rejected successfully",
+        "pendingCount": "{{count}} grade(s) pending",
+        "submittedBy": "Submitted by",
+        "submittedAt": "Submitted"
+      },
+      "statistics": {
+        "title": "Statistics",
+        "description": "View averages and rankings",
+        "classAverage": "Class avg.",
+        "passRate": "Pass rate",
+        "min": "Min",
+        "max": "Max",
+        "below10": "< 10",
+        "above15": "> 15",
+        "gradeCount": "Grade count"
+      },
+      "averages": {
+        "title": "Averages and Rankings",
+        "rank": "Rank",
+        "student": "Student",
+        "matricule": "ID",
+        "gradeCount": "Grades",
+        "average": "Average",
+        "weightedAverage": "Weighted Avg."
+      },
+      "filters": {
+        "title": "Filters",
+        "clear": "Clear",
+        "status": "Status",
+        "allStatuses": "All statuses",
+        "gradeType": "Grade type",
+        "allTypes": "All types"
+      },
+      "types": {
+        "quiz": "Quiz",
+        "test": "Test",
+        "exam": "Exam",
+        "participation": "Participation",
+        "homework": "Homework",
+        "project": "Project"
+      },
+      "status": {
+        "draft": "Draft",
+        "submitted": "Submitted",
+        "validated": "Validated",
+        "rejected": "Rejected"
+      },
+      "actions": {
+        "saveDraft": "Save Draft",
+        "submitForValidation": "Submit for Validation",
+        "submitSuccess": "Grades submitted for validation",
+        "saveSuccess": "Grades saved"
+      },
+      "errors": {
+        "invalidGrade": "Invalid grade (0-20)",
+        "gradeRequired": "Grade required",
+        "loadError": "Error loading grades",
+        "saveError": "Error saving grades"
+      },
+      "quickActions": {
+        "entry": "Grade entry",
+        "entryDescription": "Enter grades for a class and subject",
+        "validations": "Pending validations",
+        "validationsDescription": "Validate or reject submitted grades",
+        "statistics": "Statistics",
+        "statisticsDescription": "View averages and rankings",
+        "access": "Access"
+      },
+      "bulk": {
+        "title": "Bulk entry",
+        "description": "Enter grades for all students in the class",
+        "filled": "{{count}} / {{total}} grades entered"
+      },
+      "history": {
+        "empty": "No history available",
+        "by": "By {{name}}",
+        "actions": {
+          "submitted": "Submitted for validation",
+          "validated": "Validated",
+          "rejected": "Rejected",
+          "edited": "Edited"
+        }
+      },
+      "rank": "{{rank}}th of {{total}}",
+      "noGrades": "No grades recorded",
+      "pendingGrades": "{{count}} grade(s) pending validation",
+      "lastUpdated": "Last updated: {{date}}",
+      "autoSave": {
+        "saving": "Saving...",
+        "saved": "Saved",
+        "error": "Save error"
+      }
+    },
     "coefficients": {
       "title": "Coefficient Management",
       "description": "Customize coefficients for subjects and grades",

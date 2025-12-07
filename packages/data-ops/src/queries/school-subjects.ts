@@ -1,4 +1,4 @@
-import { and, count, desc, eq, isNull, notInArray, sql } from 'drizzle-orm'
+import { and, count, desc, eq, notInArray, sql } from 'drizzle-orm'
 import { getDb } from '@/database/setup'
 import { subjects } from '@/drizzle/core-schema'
 import { classSubjects, schoolSubjects, schoolYears } from '@/drizzle/school-schema'

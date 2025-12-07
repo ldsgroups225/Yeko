@@ -19,7 +19,6 @@ import {
   classes,
   gradeValidations,
   studentGrades,
-  students,
   teachers,
   users,
 } from '../drizzle/school-schema'
@@ -128,13 +127,13 @@ export async function getClassGradeStatistics(params: {
     .groupBy(studentGrades.subjectId, subjects.name, studentGrades.type)
 }
 
-export async function createGrade(data: StudentGradeInsert) {
+export async function createStudentGrade(data: StudentGradeInsert) {
   const db = getDb()
   const [grade] = await db.insert(studentGrades).values(data).returning()
   return grade
 }
 
-export async function updateGrade(id: string, data: Partial<StudentGradeInsert>) {
+export async function updateStudentGrade(id: string, data: Partial<StudentGradeInsert>) {
   const db = getDb()
   const [updated] = await db.update(studentGrades)
     .set({ ...data, updatedAt: new Date() })
@@ -143,7 +142,7 @@ export async function updateGrade(id: string, data: Partial<StudentGradeInsert>)
   return updated
 }
 
-export async function getGradeById(id: string) {
+export async function getStudentGradeById(id: string) {
   const db = getDb()
   return db.query.studentGrades.findFirst({
     where: eq(studentGrades.id, id),
@@ -175,4 +174,35 @@ export async function updateGradesStatus(gradeIds: string[], status: GradeStatus
     .set(updates)
     .where(inArray(studentGrades.id, gradeIds))
     .returning()
+}
+
+export async function getGradeValidationHistory(gradeId: string) {
+  const db = getDb()
+  return db.query.gradeValidations.findMany({
+    where: eq(gradeValidations.gradeId, gradeId),
+    with: {
+      validator: {
+        columns: { id: true, name: true },
+      },
+    },
+    orderBy: [desc(gradeValidations.createdAt)],
+  })
+}
+
+export async function getSubmittedGradeIds(params: {
+  classId: string
+  subjectId: string
+  termId: string
+}) {
+  const db = getDb()
+  const results = await db.select({ id: studentGrades.id })
+    .from(studentGrades)
+    .where(and(
+      eq(studentGrades.classId, params.classId),
+      eq(studentGrades.subjectId, params.subjectId),
+      eq(studentGrades.termId, params.termId),
+      eq(studentGrades.status, 'submitted'),
+    ))
+
+  return results.map((r: { id: string }) => r.id)
 }

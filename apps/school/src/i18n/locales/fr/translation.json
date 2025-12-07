@@ -937,6 +937,139 @@
       "copySubjectsError": "Échec de la copie des matières",
       "selectSourceClassError": "Sélectionner une classe source"
     },
+    "grades": {
+      "title": "Gestion des Notes",
+      "description": "Saisie et validation des notes des élèves",
+      "entry": {
+        "title": "Saisie des Notes",
+        "subtitle": "Sélectionnez une classe et une matière pour commencer",
+        "parameters": "Paramètres",
+        "studentGrades": "Notes des élèves",
+        "class": "Classe",
+        "selectClass": "Sélectionner une classe",
+        "subject": "Matière",
+        "selectSubject": "Sélectionner une matière",
+        "term": "Trimestre",
+        "selectTerm": "Sélectionner un trimestre",
+        "gradeType": "Type de note",
+        "coefficient": "Coefficient",
+        "date": "Date",
+        "gradeDescription": "Description (optionnel)",
+        "descriptionPlaceholder": "Ex: Chapitre 3 - Équations",
+        "enterGrade": "Saisir des notes"
+      },
+      "validations": {
+        "title": "Validations en attente",
+        "description": "Validez ou rejetez les notes soumises par les enseignants",
+        "noValidations": "Aucune validation en attente",
+        "allValidated": "Toutes les notes ont été validées",
+        "viewDetails": "Voir les détails",
+        "validate": "Valider",
+        "reject": "Rejeter",
+        "validateTitle": "Valider les notes",
+        "validateDescription": "Vous êtes sur le point de valider {{count}} note(s). Cette action est irréversible.",
+        "rejectTitle": "Rejeter les notes",
+        "rejectDescription": "Veuillez indiquer le motif du rejet. L'enseignant sera notifié.",
+        "rejectReason": "Motif du rejet",
+        "rejectReasonPlaceholder": "Expliquez pourquoi ces notes sont rejetées...",
+        "comment": "Commentaire (optionnel)",
+        "commentPlaceholder": "Ajouter un commentaire...",
+        "confirmValidate": "Confirmer la validation",
+        "confirmReject": "Confirmer le rejet",
+        "validateSuccess": "Notes validées avec succès",
+        "rejectSuccess": "Notes rejetées avec succès",
+        "pendingCount": "{{count}} note(s) en attente",
+        "submittedBy": "Soumis par",
+        "submittedAt": "Soumis"
+      },
+      "statistics": {
+        "title": "Statistiques",
+        "description": "Voir les moyennes et classements",
+        "classAverage": "Moy. classe",
+        "passRate": "Taux réussite",
+        "min": "Min",
+        "max": "Max",
+        "below10": "< 10",
+        "above15": "> 15",
+        "gradeCount": "Nombre de notes"
+      },
+      "averages": {
+        "title": "Moyennes et Classement",
+        "rank": "Rang",
+        "student": "Élève",
+        "matricule": "Matricule",
+        "gradeCount": "Notes",
+        "average": "Moyenne",
+        "weightedAverage": "Moy. Coef."
+      },
+      "filters": {
+        "title": "Filtres",
+        "clear": "Effacer",
+        "status": "Statut",
+        "allStatuses": "Tous les statuts",
+        "gradeType": "Type de note",
+        "allTypes": "Tous les types"
+      },
+      "types": {
+        "quiz": "Interrogation",
+        "test": "Devoir",
+        "exam": "Examen",
+        "participation": "Participation",
+        "homework": "Travail maison",
+        "project": "Projet"
+      },
+      "status": {
+        "draft": "Brouillon",
+        "submitted": "Soumis",
+        "validated": "Validé",
+        "rejected": "Rejeté"
+      },
+      "actions": {
+        "saveDraft": "Enregistrer Brouillon",
+        "submitForValidation": "Soumettre pour Validation",
+        "submitSuccess": "Notes soumises pour validation",
+        "saveSuccess": "Notes enregistrées"
+      },
+      "errors": {
+        "invalidGrade": "Note invalide (0-20)",
+        "gradeRequired": "Note requise",
+        "loadError": "Erreur de chargement des notes",
+        "saveError": "Erreur lors de l'enregistrement"
+      },
+      "quickActions": {
+        "entry": "Saisie des notes",
+        "entryDescription": "Entrer les notes pour une classe et une matière",
+        "validations": "Validations en attente",
+        "validationsDescription": "Valider ou rejeter les notes soumises",
+        "statistics": "Statistiques",
+        "statisticsDescription": "Voir les moyennes et classements",
+        "access": "Accéder"
+      },
+      "bulk": {
+        "title": "Saisie groupée",
+        "description": "Entrez les notes pour tous les élèves de la classe",
+        "filled": "{{count}} / {{total}} notes saisies"
+      },
+      "history": {
+        "empty": "Aucun historique disponible",
+        "by": "Par {{name}}",
+        "actions": {
+          "submitted": "Soumis pour validation",
+          "validated": "Validé",
+          "rejected": "Rejeté",
+          "edited": "Modifié"
+        }
+      },
+      "rank": "{{rank}}e sur {{total}}",
+      "noGrades": "Aucune note enregistrée",
+      "pendingGrades": "{{count}} note(s) en attente de validation",
+      "lastUpdated": "Dernière mise à jour: {{date}}",
+      "autoSave": {
+        "saving": "Enregistrement...",
+        "saved": "Enregistré",
+        "error": "Erreur d'enregistrement"
+      }
+    },
     "coefficients": {
       "title": "Gestion des Coefficients",
       "description": "Personnaliser les coefficients pour les matières et niveaux",

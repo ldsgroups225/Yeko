@@ -1,7 +1,7 @@
-import { and, count, eq, isNull, sql } from 'drizzle-orm'
+import { and, count, eq, isNull } from 'drizzle-orm'
 import { getDb } from '@/database/setup'
 import { coefficientTemplates, grades, series, subjects } from '@/drizzle/core-schema'
-import { schoolSubjectCoefficients, schoolYears } from '@/drizzle/school-schema'
+import { schoolSubjectCoefficients } from '@/drizzle/school-schema'
 
 // ===== SCHOOL COEFFICIENT OVERRIDES =====
 

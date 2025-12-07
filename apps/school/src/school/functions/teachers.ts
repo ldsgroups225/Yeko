@@ -4,6 +4,7 @@ import {
   createTeacher,
   deleteTeacher,
   getTeacherById,
+  getTeacherByUserId,
   getTeachersBySchool,
   getTeacherWithSubjects,
   updateTeacher,
@@ -165,4 +166,17 @@ export const getTeacherSubjectsList = createServerFn()
       throw new Error('No school context')
     const { schoolId } = context
     return await getTeacherWithSubjects(teacherId, schoolId)
+  })
+
+/**
+ * Get current teacher by user ID from session
+ */
+export const getCurrentTeacher = createServerFn()
+  .inputValidator(z.object({ userId: z.string() }))
+  .handler(async ({ data }) => {
+    const context = await getSchoolContext()
+    if (!context)
+      throw new Error('No school context')
+    const { schoolId } = context
+    return await getTeacherByUserId(data.userId, schoolId)
   })

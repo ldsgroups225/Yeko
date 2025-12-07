@@ -1,4 +1,3 @@
-import type { ClassSubjectInsert } from '../drizzle/school-schema'
 import { and, eq, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import { grades, subjects } from '../drizzle/core-schema'

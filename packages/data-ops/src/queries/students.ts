@@ -90,7 +90,7 @@ export async function getStudents(filters: StudentFilters) {
   }
 
   // Build query with joins for class/enrollment info
-  let query = db
+  const query = db
     .select({
       student: students,
       currentClass: {
