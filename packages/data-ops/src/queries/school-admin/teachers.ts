@@ -276,3 +276,19 @@ export async function countTeachersBySchool(
 
   return result?.count || 0
 }
+
+export async function getTeacherByUserId(userId: string, schoolId: string) {
+  if (!schoolId) {
+    throw new Error(SCHOOL_ERRORS.NO_SCHOOL_CONTEXT)
+  }
+
+  const db = getDb()
+
+  const result = await db
+    .select()
+    .from(teachers)
+    .where(and(eq(teachers.userId, userId), eq(teachers.schoolId, schoolId)))
+    .limit(1)
+
+  return result[0] || null
+}

@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm'
-import { boolean, date, index, integer, jsonb, pgTable, smallint, text, timestamp, unique } from 'drizzle-orm/pg-core'
+import { boolean, date, decimal, index, integer, jsonb, pgTable, smallint, text, timestamp, unique } from 'drizzle-orm/pg-core'
 
 // Import from core and auth schemas
 import { auth_user } from './auth-schema'
@@ -701,6 +701,138 @@ export const schoolSubjectCoefficientsRelations = relations(schoolSubjectCoeffic
   }),
 }))
 
+// --- Level 5: Grade Management ---
+
+export const gradeTypes = ['quiz', 'test', 'exam', 'participation', 'homework', 'project'] as const
+export type GradeType = typeof gradeTypes[number]
+
+export const gradeStatuses = ['draft', 'submitted', 'validated', 'rejected'] as const
+export type GradeStatus = typeof gradeStatuses[number]
+
+export const studentGrades = pgTable('student_grades', {
+  id: text('id').primaryKey(),
+  studentId: text('student_id').notNull().references(() => students.id, { onDelete: 'cascade' }),
+  classId: text('class_id').notNull().references(() => classes.id, { onDelete: 'cascade' }),
+  subjectId: text('subject_id').notNull().references(() => subjects.id),
+  termId: text('term_id').notNull().references(() => terms.id, { onDelete: 'cascade' }),
+  teacherId: text('teacher_id').notNull().references(() => teachers.id),
+
+  value: decimal('value', { precision: 5, scale: 2 }).notNull(), // 20.00
+  type: text('type', { enum: gradeTypes }).notNull(),
+  weight: smallint('weight').notNull().default(1),
+  description: text('description'),
+  gradeDate: date('grade_date').notNull().defaultNow(),
+
+  status: text('status', { enum: gradeStatuses }).notNull().default('draft'),
+  submittedAt: timestamp('submitted_at'),
+  validatedAt: timestamp('validated_at'),
+  validatedBy: text('validated_by').references(() => users.id),
+  rejectionReason: text('rejection_reason'),
+
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, table => ({
+  studentTermSubjectIdx: index('idx_grades_student_term_subject').on(table.studentId, table.termId, table.subjectId),
+  classSubjectTermIdx: index('idx_grades_class_subject_term').on(table.classId, table.subjectId, table.termId),
+  teacherIdx: index('idx_grades_teacher').on(table.teacherId),
+  statusIdx: index('idx_grades_status').on(table.status),
+  termStatusIdx: index('idx_grades_term_status').on(table.termId, table.status),
+  classTermIdx: index('idx_grades_class_term').on(table.classId, table.termId),
+}))
+
+export const gradeValidations = pgTable('grade_validations', {
+  id: text('id').primaryKey(),
+  gradeId: text('grade_id').notNull().references(() => studentGrades.id, { onDelete: 'cascade' }),
+  validatorId: text('validator_id').notNull().references(() => users.id),
+  action: text('action', { enum: ['submitted', 'validated', 'rejected', 'edited'] }).notNull(),
+  previousValue: decimal('previous_value', { precision: 5, scale: 2 }),
+  newValue: decimal('new_value', { precision: 5, scale: 2 }),
+  comment: text('comment'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, table => ({
+  gradeIdx: index('idx_validations_grade').on(table.gradeId),
+  validatorIdx: index('idx_validations_validator').on(table.validatorId),
+}))
+
+export const studentAverages = pgTable('student_averages', {
+  id: text('id').primaryKey(),
+  studentId: text('student_id').notNull().references(() => students.id, { onDelete: 'cascade' }),
+  termId: text('term_id').notNull().references(() => terms.id, { onDelete: 'cascade' }),
+  subjectId: text('subject_id').references(() => subjects.id),
+  classId: text('class_id').notNull().references(() => classes.id, { onDelete: 'cascade' }),
+
+  average: decimal('average', { precision: 5, scale: 2 }).notNull(),
+  weightedAverage: decimal('weighted_average', { precision: 5, scale: 2 }),
+  gradeCount: integer('grade_count').notNull().default(0),
+  rankInClass: smallint('rank_in_class'),
+  rankInGrade: smallint('rank_in_grade'),
+
+  calculatedAt: timestamp('calculated_at').defaultNow().notNull(),
+  isFinal: boolean('is_final').notNull().default(false),
+}, table => ({
+  studentTermIdx: index('idx_averages_student_term').on(table.studentId, table.termId),
+  classTermIdx: index('idx_averages_class_term').on(table.classId, table.termId),
+  uniqueStudentTermSubject: unique('unique_student_term_subject').on(table.studentId, table.termId, table.subjectId),
+}))
+
+export const studentGradesRelations = relations(studentGrades, ({ one, many }) => ({
+  student: one(students, {
+    fields: [studentGrades.studentId],
+    references: [students.id],
+  }),
+  class: one(classes, {
+    fields: [studentGrades.classId],
+    references: [classes.id],
+  }),
+  subject: one(subjects, {
+    fields: [studentGrades.subjectId],
+    references: [subjects.id],
+  }),
+  term: one(terms, {
+    fields: [studentGrades.termId],
+    references: [terms.id],
+  }),
+  teacher: one(teachers, {
+    fields: [studentGrades.teacherId],
+    references: [teachers.id],
+  }),
+  creator: one(users, {
+    fields: [studentGrades.validatedBy],
+    references: [users.id],
+  }),
+  validations: many(gradeValidations),
+}))
+
+export const gradeValidationsRelations = relations(gradeValidations, ({ one }) => ({
+  grade: one(studentGrades, {
+    fields: [gradeValidations.gradeId],
+    references: [studentGrades.id],
+  }),
+  validator: one(users, {
+    fields: [gradeValidations.validatorId],
+    references: [users.id],
+  }),
+}))
+
+export const studentAveragesRelations = relations(studentAverages, ({ one }) => ({
+  student: one(students, {
+    fields: [studentAverages.studentId],
+    references: [students.id],
+  }),
+  term: one(terms, {
+    fields: [studentAverages.termId],
+    references: [terms.id],
+  }),
+  subject: one(subjects, {
+    fields: [studentAverages.subjectId],
+    references: [subjects.id],
+  }),
+  class: one(classes, {
+    fields: [studentAverages.classId],
+    references: [classes.id],
+  }),
+}))
+
 // --- Type Exports ---
 
 // Insert types
@@ -724,6 +856,9 @@ export type AuditLogInsert = typeof auditLogs.$inferInsert
 export type SchoolSubjectCoefficientInsert = typeof schoolSubjectCoefficients.$inferInsert
 export type SchoolSubjectInsert = typeof schoolSubjects.$inferInsert
 export type MatriculeSequenceInsert = typeof matriculeSequences.$inferInsert
+export type StudentGradeInsert = typeof studentGrades.$inferInsert
+export type GradeValidationInsert = typeof gradeValidations.$inferInsert
+export type StudentAverageInsert = typeof studentAverages.$inferInsert
 
 // Data types (for seeding)
 export type RoleData = Omit<RoleInsert, 'id' | 'createdAt' | 'updatedAt'>
@@ -749,6 +884,9 @@ export type AuditLog = typeof auditLogs.$inferSelect
 export type SchoolSubjectCoefficient = typeof schoolSubjectCoefficients.$inferSelect
 export type SchoolSubject = typeof schoolSubjects.$inferSelect
 export type MatriculeSequence = typeof matriculeSequences.$inferSelect
+export type StudentGrade = typeof studentGrades.$inferSelect
+export type GradeValidation = typeof gradeValidations.$inferSelect
+export type StudentAverage = typeof studentAverages.$inferSelect
 
 // Enum types
 export type UserStatus = 'active' | 'inactive' | 'suspended'
