@@ -1,0 +1,13 @@
+{
+  "enabled": false,
+  "name": "Check Test Coverage",
+  "description": "Analyze test coverage and identify gaps (manually triggered)",
+  "version": "1",
+  "when": {
+    "type": "userTriggered"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Use vitest MCP analyze_coverage tool to check test coverage for the current project. Set project root first, then analyze coverage with detailed format. Identify files with low coverage (<80%) and suggest specific improvements."
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "enabled": true,
+  "name": "Run Tests on Save",
+  "description": "Automatically run related tests when a TypeScript/JavaScript file is saved",
+  "version": "1",
+  "when": {
+    "type": "onFileSave",
+    "filePattern": "**/*.{ts,tsx,js,jsx}"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A file was just saved at ${filePath}. Use vitest MCP to run tests for the modified file. If it's a test file, run that specific test. If it's a source file, find and run related tests in the same directory or with similar naming."
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Discover Test Files",
+  "description": "List all test files in the project and provide organization summary",
+  "version": "1",
+  "when": {
+    "type": "userTriggered"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Use vitest MCP list_tests tool to discover all test files in the project. Set project root first, then list tests. Provide a summary of test organization including: total test files, tests by directory, naming patterns used, and any gaps in test coverage."
+  }
+}

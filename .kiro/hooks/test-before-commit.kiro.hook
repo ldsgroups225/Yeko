@@ -1,0 +1,13 @@
+{
+  "enabled": false,
+  "name": "Run Tests Before Commit",
+  "description": "Run all tests before committing to ensure code quality",
+  "version": "1",
+  "when": {
+    "type": "userTriggered"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Run all tests using vitest MCP before committing. Set project root first, then run tests for the entire project with summary format. Report any failures and suggest fixes if tests fail."
+  }
+}
