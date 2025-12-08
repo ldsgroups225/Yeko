@@ -3,7 +3,7 @@ import { boolean, date, decimal, index, integer, jsonb, pgTable, smallint, text,
 
 // Import from core and auth schemas
 import { auth_user } from './auth-schema'
-import { coefficientTemplates, grades, schools, schoolYearTemplates, series, subjects, termTemplates } from './core-schema'
+import { coefficientTemplates, grades, programTemplateChapters, programTemplates, schools, schoolYearTemplates, series, subjects, termTemplates } from './core-schema'
 
 // --- Level 0: Identity & Access (Foundation) ---
 
@@ -833,6 +833,355 @@ export const studentAveragesRelations = relations(studentAverages, ({ one }) => 
   }),
 }))
 
+// --- Phase 16: Report Cards, Timetables, Curriculum Progress ---
+
+// Report Card Status Types
+export const reportCardStatuses = ['draft', 'generated', 'sent', 'delivered', 'viewed'] as const
+export type ReportCardStatus = typeof reportCardStatuses[number]
+
+export const deliveryMethods = ['email', 'in_app', 'sms', 'print'] as const
+export type DeliveryMethod = typeof deliveryMethods[number]
+
+// Report Card Templates
+export const reportCardTemplates = pgTable('report_card_templates', {
+  id: text('id').primaryKey(),
+  schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  isDefault: boolean('is_default').default(false),
+  config: jsonb('config').$type<{
+    showRank?: boolean
+    showAttendance?: boolean
+    showConduct?: boolean
+    showComments?: boolean
+    sections?: string[]
+    gradingScale?: { min: number, max: number, label: string }[]
+  }>().notNull().default({}),
+  primaryColor: text('primary_color').default('#1e40af'),
+  fontFamily: text('font_family').default('DM Sans'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, table => ({
+  schoolIdx: index('idx_report_templates_school').on(table.schoolId),
+}))
+
+// Report Cards
+export const reportCards = pgTable('report_cards', {
+  id: text('id').primaryKey(),
+  studentId: text('student_id').notNull().references(() => students.id, { onDelete: 'cascade' }),
+  classId: text('class_id').notNull().references(() => classes.id, { onDelete: 'cascade' }),
+  termId: text('term_id').notNull().references(() => terms.id, { onDelete: 'cascade' }),
+  schoolYearId: text('school_year_id').notNull().references(() => schoolYears.id, { onDelete: 'cascade' }),
+  templateId: text('template_id').references(() => reportCardTemplates.id, { onDelete: 'set null' }),
+
+  status: text('status', { enum: reportCardStatuses }).default('draft').notNull(),
+  generatedAt: timestamp('generated_at'),
+  generatedBy: text('generated_by').references(() => users.id, { onDelete: 'set null' }),
+
+  pdfUrl: text('pdf_url'),
+  pdfSize: integer('pdf_size'),
+
+  sentAt: timestamp('sent_at'),
+  sentTo: text('sent_to'),
+  deliveryMethod: text('delivery_method', { enum: deliveryMethods }),
+  deliveredAt: timestamp('delivered_at'),
+  viewedAt: timestamp('viewed_at'),
+  bounceReason: text('bounce_reason'),
+
+  homeroomComment: text('homeroom_comment'),
+  conductSummary: text('conduct_summary'),
+  attendanceSummary: jsonb('attendance_summary').$type<{
+    totalDays?: number
+    presentDays?: number
+    absentDays?: number
+    lateDays?: number
+  }>(),
+
+  templateVersion: text('template_version'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, table => ({
+  classTermIdx: index('idx_report_cards_class_term').on(table.classId, table.termId),
+  statusIdx: index('idx_report_cards_status').on(table.status),
+  studentIdx: index('idx_report_cards_student').on(table.studentId),
+  schoolYearIdx: index('idx_report_cards_school_year').on(table.schoolYearId),
+  uniqueStudentTerm: unique('unique_student_term').on(table.studentId, table.termId),
+}))
+
+// Teacher Comments (Subject-Specific)
+export const teacherComments = pgTable('teacher_comments', {
+  id: text('id').primaryKey(),
+  reportCardId: text('report_card_id').notNull().references(() => reportCards.id, { onDelete: 'cascade' }),
+  subjectId: text('subject_id').notNull().references(() => subjects.id, { onDelete: 'cascade' }),
+  teacherId: text('teacher_id').notNull().references(() => teachers.id, { onDelete: 'cascade' }),
+  comment: text('comment').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, table => ({
+  reportIdx: index('idx_teacher_comments_report').on(table.reportCardId),
+  teacherIdx: index('idx_teacher_comments_teacher').on(table.teacherId),
+  uniqueReportSubject: unique('unique_report_subject').on(table.reportCardId, table.subjectId),
+}))
+
+// Timetable Sessions
+export const timetableSessions = pgTable('timetable_sessions', {
+  id: text('id').primaryKey(),
+  schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
+  schoolYearId: text('school_year_id').notNull().references(() => schoolYears.id, { onDelete: 'cascade' }),
+  classId: text('class_id').notNull().references(() => classes.id, { onDelete: 'cascade' }),
+  subjectId: text('subject_id').notNull().references(() => subjects.id, { onDelete: 'cascade' }),
+  teacherId: text('teacher_id').notNull().references(() => teachers.id, { onDelete: 'cascade' }),
+  classroomId: text('classroom_id').references(() => classrooms.id, { onDelete: 'set null' }),
+
+  dayOfWeek: smallint('day_of_week').notNull(), // 1-7 (Monday-Sunday)
+  startTime: text('start_time').notNull(), // HH:MM format
+  endTime: text('end_time').notNull(), // HH:MM format
+
+  effectiveFrom: date('effective_from'),
+  effectiveUntil: date('effective_until'),
+  isRecurring: boolean('is_recurring').default(true),
+
+  notes: text('notes'),
+  color: text('color'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, table => ({
+  classDayIdx: index('idx_timetable_class_day').on(table.classId, table.dayOfWeek),
+  teacherDayIdx: index('idx_timetable_teacher_day').on(table.teacherId, table.dayOfWeek),
+  classroomDayIdx: index('idx_timetable_classroom_day').on(table.classroomId, table.dayOfWeek),
+  conflictsIdx: index('idx_timetable_conflicts').on(table.schoolId, table.dayOfWeek, table.startTime, table.endTime),
+  schoolYearIdx: index('idx_timetable_school_year').on(table.schoolId, table.schoolYearId),
+}))
+
+// Class Sessions (Actual Teaching Sessions)
+export const classSessionStatuses = ['scheduled', 'completed', 'cancelled', 'rescheduled'] as const
+export type ClassSessionStatus = typeof classSessionStatuses[number]
+
+export const classSessions = pgTable('class_sessions', {
+  id: text('id').primaryKey(),
+  classId: text('class_id').notNull().references(() => classes.id, { onDelete: 'cascade' }),
+  subjectId: text('subject_id').notNull().references(() => subjects.id, { onDelete: 'cascade' }),
+  teacherId: text('teacher_id').notNull().references(() => teachers.id, { onDelete: 'cascade' }),
+  chapterId: text('chapter_id').references(() => programTemplateChapters.id, { onDelete: 'set null' }),
+  timetableSessionId: text('timetable_session_id').references(() => timetableSessions.id, { onDelete: 'set null' }),
+
+  date: date('date').notNull(),
+  startTime: text('start_time').notNull(),
+  endTime: text('end_time').notNull(),
+  topic: text('topic'),
+  objectives: text('objectives'),
+  homework: text('homework'),
+
+  status: text('status', { enum: classSessionStatuses }).default('scheduled').notNull(),
+  completedAt: timestamp('completed_at'),
+
+  studentsPresent: integer('students_present'),
+  studentsAbsent: integer('students_absent'),
+  notes: text('notes'),
+  attachments: jsonb('attachments').$type<{ name: string, url: string, type: string }[]>(),
+
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, table => ({
+  classSubjectIdx: index('idx_class_sessions_class_subject').on(table.classId, table.subjectId),
+  chapterIdx: index('idx_class_sessions_chapter').on(table.chapterId),
+  dateIdx: index('idx_class_sessions_date').on(table.date),
+  teacherIdx: index('idx_class_sessions_teacher').on(table.teacherId),
+  statusIdx: index('idx_class_sessions_status').on(table.status),
+}))
+
+// Curriculum Progress
+export const progressStatuses = ['on_track', 'slightly_behind', 'significantly_behind', 'ahead'] as const
+export type ProgressStatus = typeof progressStatuses[number]
+
+export const curriculumProgress = pgTable('curriculum_progress', {
+  id: text('id').primaryKey(),
+  classId: text('class_id').notNull().references(() => classes.id, { onDelete: 'cascade' }),
+  subjectId: text('subject_id').notNull().references(() => subjects.id, { onDelete: 'cascade' }),
+  programTemplateId: text('program_template_id').notNull().references(() => programTemplates.id, { onDelete: 'cascade' }),
+  termId: text('term_id').notNull().references(() => terms.id, { onDelete: 'cascade' }),
+
+  totalChapters: integer('total_chapters').notNull().default(0),
+  completedChapters: integer('completed_chapters').notNull().default(0),
+  progressPercentage: decimal('progress_percentage', { precision: 5, scale: 2 }).notNull().default('0'),
+
+  expectedPercentage: decimal('expected_percentage', { precision: 5, scale: 2 }),
+  variance: decimal('variance', { precision: 5, scale: 2 }),
+
+  status: text('status', { enum: progressStatuses }).default('on_track').notNull(),
+
+  lastChapterCompletedAt: timestamp('last_chapter_completed_at'),
+  calculatedAt: timestamp('calculated_at').defaultNow().notNull(),
+}, table => ({
+  classIdx: index('idx_progress_class').on(table.classId),
+  statusIdx: index('idx_progress_status').on(table.status),
+  termIdx: index('idx_progress_term').on(table.termId),
+  subjectIdx: index('idx_progress_subject').on(table.subjectId),
+  uniqueClassSubjectTerm: unique('unique_class_subject_term').on(table.classId, table.subjectId, table.termId),
+}))
+
+// Chapter Completions
+export const chapterCompletions = pgTable('chapter_completions', {
+  id: text('id').primaryKey(),
+  classId: text('class_id').notNull().references(() => classes.id, { onDelete: 'cascade' }),
+  subjectId: text('subject_id').notNull().references(() => subjects.id, { onDelete: 'cascade' }),
+  chapterId: text('chapter_id').notNull().references(() => programTemplateChapters.id, { onDelete: 'cascade' }),
+  classSessionId: text('class_session_id').references(() => classSessions.id, { onDelete: 'set null' }),
+  teacherId: text('teacher_id').notNull().references(() => teachers.id, { onDelete: 'cascade' }),
+
+  completedAt: timestamp('completed_at').defaultNow().notNull(),
+  notes: text('notes'),
+}, table => ({
+  classSubjectIdx: index('idx_chapter_completions_class').on(table.classId, table.subjectId),
+  chapterIdx: index('idx_chapter_completions_chapter').on(table.chapterId),
+  uniqueClassChapter: unique('unique_class_chapter').on(table.classId, table.chapterId),
+}))
+
+// --- Phase 16 Relations ---
+
+export const reportCardTemplatesRelations = relations(reportCardTemplates, ({ one, many }) => ({
+  school: one(schools, {
+    fields: [reportCardTemplates.schoolId],
+    references: [schools.id],
+  }),
+  reportCards: many(reportCards),
+}))
+
+export const reportCardsRelations = relations(reportCards, ({ one, many }) => ({
+  student: one(students, {
+    fields: [reportCards.studentId],
+    references: [students.id],
+  }),
+  class: one(classes, {
+    fields: [reportCards.classId],
+    references: [classes.id],
+  }),
+  term: one(terms, {
+    fields: [reportCards.termId],
+    references: [terms.id],
+  }),
+  schoolYear: one(schoolYears, {
+    fields: [reportCards.schoolYearId],
+    references: [schoolYears.id],
+  }),
+  template: one(reportCardTemplates, {
+    fields: [reportCards.templateId],
+    references: [reportCardTemplates.id],
+  }),
+  generatedByUser: one(users, {
+    fields: [reportCards.generatedBy],
+    references: [users.id],
+  }),
+  teacherComments: many(teacherComments),
+}))
+
+export const teacherCommentsRelations = relations(teacherComments, ({ one }) => ({
+  reportCard: one(reportCards, {
+    fields: [teacherComments.reportCardId],
+    references: [reportCards.id],
+  }),
+  subject: one(subjects, {
+    fields: [teacherComments.subjectId],
+    references: [subjects.id],
+  }),
+  teacher: one(teachers, {
+    fields: [teacherComments.teacherId],
+    references: [teachers.id],
+  }),
+}))
+
+export const timetableSessionsRelations = relations(timetableSessions, ({ one, many }) => ({
+  school: one(schools, {
+    fields: [timetableSessions.schoolId],
+    references: [schools.id],
+  }),
+  schoolYear: one(schoolYears, {
+    fields: [timetableSessions.schoolYearId],
+    references: [schoolYears.id],
+  }),
+  class: one(classes, {
+    fields: [timetableSessions.classId],
+    references: [classes.id],
+  }),
+  subject: one(subjects, {
+    fields: [timetableSessions.subjectId],
+    references: [subjects.id],
+  }),
+  teacher: one(teachers, {
+    fields: [timetableSessions.teacherId],
+    references: [teachers.id],
+  }),
+  classroom: one(classrooms, {
+    fields: [timetableSessions.classroomId],
+    references: [classrooms.id],
+  }),
+  classSessions: many(classSessions),
+}))
+
+export const classSessionsRelations = relations(classSessions, ({ one }) => ({
+  class: one(classes, {
+    fields: [classSessions.classId],
+    references: [classes.id],
+  }),
+  subject: one(subjects, {
+    fields: [classSessions.subjectId],
+    references: [subjects.id],
+  }),
+  teacher: one(teachers, {
+    fields: [classSessions.teacherId],
+    references: [teachers.id],
+  }),
+  chapter: one(programTemplateChapters, {
+    fields: [classSessions.chapterId],
+    references: [programTemplateChapters.id],
+  }),
+  timetableSession: one(timetableSessions, {
+    fields: [classSessions.timetableSessionId],
+    references: [timetableSessions.id],
+  }),
+}))
+
+export const curriculumProgressRelations = relations(curriculumProgress, ({ one }) => ({
+  class: one(classes, {
+    fields: [curriculumProgress.classId],
+    references: [classes.id],
+  }),
+  subject: one(subjects, {
+    fields: [curriculumProgress.subjectId],
+    references: [subjects.id],
+  }),
+  programTemplate: one(programTemplates, {
+    fields: [curriculumProgress.programTemplateId],
+    references: [programTemplates.id],
+  }),
+  term: one(terms, {
+    fields: [curriculumProgress.termId],
+    references: [terms.id],
+  }),
+}))
+
+export const chapterCompletionsRelations = relations(chapterCompletions, ({ one }) => ({
+  class: one(classes, {
+    fields: [chapterCompletions.classId],
+    references: [classes.id],
+  }),
+  subject: one(subjects, {
+    fields: [chapterCompletions.subjectId],
+    references: [subjects.id],
+  }),
+  chapter: one(programTemplateChapters, {
+    fields: [chapterCompletions.chapterId],
+    references: [programTemplateChapters.id],
+  }),
+  classSession: one(classSessions, {
+    fields: [chapterCompletions.classSessionId],
+    references: [classSessions.id],
+  }),
+  teacher: one(teachers, {
+    fields: [chapterCompletions.teacherId],
+    references: [teachers.id],
+  }),
+}))
+
 // --- Type Exports ---
 
 // Insert types
@@ -859,6 +1208,14 @@ export type MatriculeSequenceInsert = typeof matriculeSequences.$inferInsert
 export type StudentGradeInsert = typeof studentGrades.$inferInsert
 export type GradeValidationInsert = typeof gradeValidations.$inferInsert
 export type StudentAverageInsert = typeof studentAverages.$inferInsert
+// Phase 16 Insert types
+export type ReportCardTemplateInsert = typeof reportCardTemplates.$inferInsert
+export type ReportCardInsert = typeof reportCards.$inferInsert
+export type TeacherCommentInsert = typeof teacherComments.$inferInsert
+export type TimetableSessionInsert = typeof timetableSessions.$inferInsert
+export type ClassSessionInsert = typeof classSessions.$inferInsert
+export type CurriculumProgressInsert = typeof curriculumProgress.$inferInsert
+export type ChapterCompletionInsert = typeof chapterCompletions.$inferInsert
 
 // Data types (for seeding)
 export type RoleData = Omit<RoleInsert, 'id' | 'createdAt' | 'updatedAt'>
@@ -887,6 +1244,14 @@ export type MatriculeSequence = typeof matriculeSequences.$inferSelect
 export type StudentGrade = typeof studentGrades.$inferSelect
 export type GradeValidation = typeof gradeValidations.$inferSelect
 export type StudentAverage = typeof studentAverages.$inferSelect
+// Phase 16 Select types
+export type ReportCardTemplate = typeof reportCardTemplates.$inferSelect
+export type ReportCard = typeof reportCards.$inferSelect
+export type TeacherComment = typeof teacherComments.$inferSelect
+export type TimetableSession = typeof timetableSessions.$inferSelect
+export type ClassSession = typeof classSessions.$inferSelect
+export type CurriculumProgress = typeof curriculumProgress.$inferSelect
+export type ChapterCompletion = typeof chapterCompletions.$inferSelect
 
 // Enum types
 export type UserStatus = 'active' | 'inactive' | 'suspended'

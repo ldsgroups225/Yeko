@@ -27,7 +27,10 @@ import { Route as AuthAppStudentsParentsRouteImport } from './routes/_auth/app/s
 import { Route as AuthAppStudentsNewRouteImport } from './routes/_auth/app/students/new'
 import { Route as AuthAppStudentsEnrollmentsRouteImport } from './routes/_auth/app/students/enrollments'
 import { Route as AuthAppSpacesAvailabilityRouteImport } from './routes/_auth/app/spaces/availability'
+import { Route as AuthAppAcademicTimetablesRouteImport } from './routes/_auth/app/academic/timetables'
 import { Route as AuthAppAcademicSubjectsRouteImport } from './routes/_auth/app/academic/subjects'
+import { Route as AuthAppAcademicReportCardsRouteImport } from './routes/_auth/app/academic/report-cards'
+import { Route as AuthAppAcademicCurriculumProgressRouteImport } from './routes/_auth/app/academic/curriculum-progress'
 import { Route as AuthAppAcademicCoefficientsRouteImport } from './routes/_auth/app/academic/coefficients'
 import { Route as AuthAppAcademicAssignmentsRouteImport } from './routes/_auth/app/academic/assignments'
 import { Route as AuthAppStudentsStudentIdIndexRouteImport } from './routes/_auth/app/students/$studentId/index'
@@ -151,11 +154,29 @@ const AuthAppSpacesAvailabilityRoute =
     path: '/availability',
     getParentRoute: () => AuthAppSpacesRoute,
   } as any)
+const AuthAppAcademicTimetablesRoute =
+  AuthAppAcademicTimetablesRouteImport.update({
+    id: '/timetables',
+    path: '/timetables',
+    getParentRoute: () => AuthAppAcademicRoute,
+  } as any)
 const AuthAppAcademicSubjectsRoute = AuthAppAcademicSubjectsRouteImport.update({
   id: '/subjects',
   path: '/subjects',
   getParentRoute: () => AuthAppAcademicRoute,
 } as any)
+const AuthAppAcademicReportCardsRoute =
+  AuthAppAcademicReportCardsRouteImport.update({
+    id: '/report-cards',
+    path: '/report-cards',
+    getParentRoute: () => AuthAppAcademicRoute,
+  } as any)
+const AuthAppAcademicCurriculumProgressRoute =
+  AuthAppAcademicCurriculumProgressRouteImport.update({
+    id: '/curriculum-progress',
+    path: '/curriculum-progress',
+    getParentRoute: () => AuthAppAcademicRoute,
+  } as any)
 const AuthAppAcademicCoefficientsRoute =
   AuthAppAcademicCoefficientsRouteImport.update({
     id: '/coefficients',
@@ -346,7 +367,10 @@ export interface FileRoutesByFullPath {
   '/app/': typeof AuthAppIndexRoute
   '/app/academic/assignments': typeof AuthAppAcademicAssignmentsRoute
   '/app/academic/coefficients': typeof AuthAppAcademicCoefficientsRoute
+  '/app/academic/curriculum-progress': typeof AuthAppAcademicCurriculumProgressRoute
+  '/app/academic/report-cards': typeof AuthAppAcademicReportCardsRoute
   '/app/academic/subjects': typeof AuthAppAcademicSubjectsRoute
+  '/app/academic/timetables': typeof AuthAppAcademicTimetablesRoute
   '/app/spaces/availability': typeof AuthAppSpacesAvailabilityRoute
   '/app/students/enrollments': typeof AuthAppStudentsEnrollmentsRoute
   '/app/students/new': typeof AuthAppStudentsNewRoute
@@ -392,7 +416,10 @@ export interface FileRoutesByTo {
   '/app': typeof AuthAppIndexRoute
   '/app/academic/assignments': typeof AuthAppAcademicAssignmentsRoute
   '/app/academic/coefficients': typeof AuthAppAcademicCoefficientsRoute
+  '/app/academic/curriculum-progress': typeof AuthAppAcademicCurriculumProgressRoute
+  '/app/academic/report-cards': typeof AuthAppAcademicReportCardsRoute
   '/app/academic/subjects': typeof AuthAppAcademicSubjectsRoute
+  '/app/academic/timetables': typeof AuthAppAcademicTimetablesRoute
   '/app/spaces/availability': typeof AuthAppSpacesAvailabilityRoute
   '/app/students/enrollments': typeof AuthAppStudentsEnrollmentsRoute
   '/app/students/new': typeof AuthAppStudentsNewRoute
@@ -445,7 +472,10 @@ export interface FileRoutesById {
   '/_auth/app/': typeof AuthAppIndexRoute
   '/_auth/app/academic/assignments': typeof AuthAppAcademicAssignmentsRoute
   '/_auth/app/academic/coefficients': typeof AuthAppAcademicCoefficientsRoute
+  '/_auth/app/academic/curriculum-progress': typeof AuthAppAcademicCurriculumProgressRoute
+  '/_auth/app/academic/report-cards': typeof AuthAppAcademicReportCardsRoute
   '/_auth/app/academic/subjects': typeof AuthAppAcademicSubjectsRoute
+  '/_auth/app/academic/timetables': typeof AuthAppAcademicTimetablesRoute
   '/_auth/app/spaces/availability': typeof AuthAppSpacesAvailabilityRoute
   '/_auth/app/students/enrollments': typeof AuthAppStudentsEnrollmentsRoute
   '/_auth/app/students/new': typeof AuthAppStudentsNewRoute
@@ -498,7 +528,10 @@ export interface FileRouteTypes {
     | '/app/'
     | '/app/academic/assignments'
     | '/app/academic/coefficients'
+    | '/app/academic/curriculum-progress'
+    | '/app/academic/report-cards'
     | '/app/academic/subjects'
+    | '/app/academic/timetables'
     | '/app/spaces/availability'
     | '/app/students/enrollments'
     | '/app/students/new'
@@ -544,7 +577,10 @@ export interface FileRouteTypes {
     | '/app'
     | '/app/academic/assignments'
     | '/app/academic/coefficients'
+    | '/app/academic/curriculum-progress'
+    | '/app/academic/report-cards'
     | '/app/academic/subjects'
+    | '/app/academic/timetables'
     | '/app/spaces/availability'
     | '/app/students/enrollments'
     | '/app/students/new'
@@ -596,7 +632,10 @@ export interface FileRouteTypes {
     | '/_auth/app/'
     | '/_auth/app/academic/assignments'
     | '/_auth/app/academic/coefficients'
+    | '/_auth/app/academic/curriculum-progress'
+    | '/_auth/app/academic/report-cards'
     | '/_auth/app/academic/subjects'
+    | '/_auth/app/academic/timetables'
     | '/_auth/app/spaces/availability'
     | '/_auth/app/students/enrollments'
     | '/_auth/app/students/new'
@@ -770,11 +809,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAppSpacesAvailabilityRouteImport
       parentRoute: typeof AuthAppSpacesRoute
     }
+    '/_auth/app/academic/timetables': {
+      id: '/_auth/app/academic/timetables'
+      path: '/timetables'
+      fullPath: '/app/academic/timetables'
+      preLoaderRoute: typeof AuthAppAcademicTimetablesRouteImport
+      parentRoute: typeof AuthAppAcademicRoute
+    }
     '/_auth/app/academic/subjects': {
       id: '/_auth/app/academic/subjects'
       path: '/subjects'
       fullPath: '/app/academic/subjects'
       preLoaderRoute: typeof AuthAppAcademicSubjectsRouteImport
+      parentRoute: typeof AuthAppAcademicRoute
+    }
+    '/_auth/app/academic/report-cards': {
+      id: '/_auth/app/academic/report-cards'
+      path: '/report-cards'
+      fullPath: '/app/academic/report-cards'
+      preLoaderRoute: typeof AuthAppAcademicReportCardsRouteImport
+      parentRoute: typeof AuthAppAcademicRoute
+    }
+    '/_auth/app/academic/curriculum-progress': {
+      id: '/_auth/app/academic/curriculum-progress'
+      path: '/curriculum-progress'
+      fullPath: '/app/academic/curriculum-progress'
+      preLoaderRoute: typeof AuthAppAcademicCurriculumProgressRouteImport
       parentRoute: typeof AuthAppAcademicRoute
     }
     '/_auth/app/academic/coefficients': {
@@ -1000,7 +1060,10 @@ declare module '@tanstack/react-router' {
 interface AuthAppAcademicRouteChildren {
   AuthAppAcademicAssignmentsRoute: typeof AuthAppAcademicAssignmentsRoute
   AuthAppAcademicCoefficientsRoute: typeof AuthAppAcademicCoefficientsRoute
+  AuthAppAcademicCurriculumProgressRoute: typeof AuthAppAcademicCurriculumProgressRoute
+  AuthAppAcademicReportCardsRoute: typeof AuthAppAcademicReportCardsRoute
   AuthAppAcademicSubjectsRoute: typeof AuthAppAcademicSubjectsRoute
+  AuthAppAcademicTimetablesRoute: typeof AuthAppAcademicTimetablesRoute
   AuthAppAcademicIndexRoute: typeof AuthAppAcademicIndexRoute
   AuthAppAcademicGradesEntryRoute: typeof AuthAppAcademicGradesEntryRoute
   AuthAppAcademicGradesStatisticsRoute: typeof AuthAppAcademicGradesStatisticsRoute
@@ -1014,7 +1077,11 @@ interface AuthAppAcademicRouteChildren {
 const AuthAppAcademicRouteChildren: AuthAppAcademicRouteChildren = {
   AuthAppAcademicAssignmentsRoute: AuthAppAcademicAssignmentsRoute,
   AuthAppAcademicCoefficientsRoute: AuthAppAcademicCoefficientsRoute,
+  AuthAppAcademicCurriculumProgressRoute:
+    AuthAppAcademicCurriculumProgressRoute,
+  AuthAppAcademicReportCardsRoute: AuthAppAcademicReportCardsRoute,
   AuthAppAcademicSubjectsRoute: AuthAppAcademicSubjectsRoute,
+  AuthAppAcademicTimetablesRoute: AuthAppAcademicTimetablesRoute,
   AuthAppAcademicIndexRoute: AuthAppAcademicIndexRoute,
   AuthAppAcademicGradesEntryRoute: AuthAppAcademicGradesEntryRoute,
   AuthAppAcademicGradesStatisticsRoute: AuthAppAcademicGradesStatisticsRoute,
