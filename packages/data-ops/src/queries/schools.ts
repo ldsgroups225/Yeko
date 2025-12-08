@@ -175,3 +175,85 @@ export async function searchSchools(query: string, limit: number = 10): Promise<
     )
     .limit(limit)
 }
+
+// Bulk create schools with transaction
+export async function bulkCreateSchools(
+  schoolsData: Array<Omit<SchoolInsert, 'id' | 'createdAt' | 'updatedAt'>>,
+  options?: { skipDuplicates?: boolean },
+): Promise<{ success: boolean, created: School[], errors: Array<{ index: number, code: string, error: string }> }> {
+  const db = getDb()
+  const created: School[] = []
+  const errors: Array<{ index: number, code: string, error: string }> = []
+
+  // Get existing codes to check for duplicates
+  const codes = schoolsData.map((s: Omit<SchoolInsert, 'id' | 'createdAt' | 'updatedAt'>) => s.code)
+  const existingSchools = await db
+    .select({ code: schools.code })
+    .from(schools)
+    .where(inArray(schools.code, codes))
+
+  const existingCodes = new Set(existingSchools.map((s: { code: string }) => s.code))
+
+  // Filter out duplicates if skipDuplicates is true
+  const schoolsToCreate: Array<{ index: number, data: Omit<SchoolInsert, 'id' | 'createdAt' | 'updatedAt'> }> = []
+
+  for (let i = 0; i < schoolsData.length; i++) {
+    const school = schoolsData[i]
+    if (!school)
+      continue
+
+    if (existingCodes.has(school.code)) {
+      if (options?.skipDuplicates) {
+        errors.push({ index: i, code: school.code, error: 'Code déjà existant (ignoré)' })
+        continue
+      }
+      else {
+        errors.push({ index: i, code: school.code, error: 'Code déjà existant' })
+      }
+    }
+    else {
+      schoolsToCreate.push({ index: i, data: school })
+    }
+  }
+
+  // If not skipping duplicates and there are errors, return early
+  if (!options?.skipDuplicates && errors.length > 0) {
+    return { success: false, created: [], errors }
+  }
+
+  // Create schools in transaction
+  if (schoolsToCreate.length > 0) {
+    try {
+      await db.transaction(async (tx: ReturnType<typeof getDb>) => {
+        for (const { data } of schoolsToCreate) {
+          const [newSchool] = await tx
+            .insert(schools)
+            .values({
+              id: crypto.randomUUID(),
+              ...data,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            })
+            .returning()
+
+          if (newSchool) {
+            created.push(newSchool)
+          }
+        }
+      })
+    }
+    catch (error) {
+      return {
+        success: false,
+        created: [],
+        errors: [{ index: -1, code: '', error: error instanceof Error ? error.message : 'Erreur lors de la création' }],
+      }
+    }
+  }
+
+  return {
+    success: errors.filter(e => !e.error.includes('ignoré')).length === 0,
+    created,
+    errors,
+  }
+}

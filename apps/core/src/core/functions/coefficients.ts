@@ -7,9 +7,17 @@ import {
   getCoefficientStats,
   getCoefficientTemplateById,
   getCoefficientTemplates,
+  getDb,
+  grades,
+  inArray,
+  schoolYearTemplates,
+  series,
+  subjects,
   updateCoefficientTemplate,
 } from '@repo/data-ops'
 import { createServerFn } from '@tanstack/react-start'
+import { z } from 'zod'
+import { COEFFICIENT_LIMITS } from '@/constants/coefficients'
 import { exampleMiddlewareWithContext } from '@/core/middleware/example-middleware'
 import {
   BulkCreateCoefficientsSchema,
@@ -88,19 +96,111 @@ export const coefficientStatsQuery = createServerFn()
     return await getCoefficientStats()
   })
 
+// Schema for coefficient import validation
+const CoefficientImportValidationSchema = z.object({
+  data: z.array(z.object({
+    schoolYearTemplateId: z.string().min(1),
+    subjectId: z.string().min(1),
+    gradeId: z.string().min(1),
+    seriesId: z.string().nullable().optional(),
+    weight: z.number(),
+  })),
+})
+
+export interface CoefficientValidationError {
+  row: number
+  field: string
+  message: string
+}
+
 export const validateCoefficientImportMutation = createServerFn()
   .middleware([exampleMiddlewareWithContext])
-  .handler(async () => {
-    // This will be called from the client with parsed Excel data
-    // to validate against existing data in the database
-    // const { data: _data } = ctx.data as { data: any[] }
+  .inputValidator(data => CoefficientImportValidationSchema.parse(data))
+  .handler(async (ctx) => {
+    const { data } = ctx.data
+    const errors: CoefficientValidationError[] = []
 
-    // TODO: Implement validation logic
-    // - Check if school years exist
-    // - Check if subjects exist
-    // - Check if grades exist
-    // - Check if series exist
-    // - Check for duplicates
+    if (data.length === 0) {
+      return { valid: false, errors: [{ row: 0, field: 'data', message: 'Aucune donnée à valider' }] }
+    }
 
-    return { valid: true, errors: [] }
+    const db = getDb()
+
+    // Extract unique IDs for batch validation
+    const uniqueYearIds = [...new Set(data.map(d => d.schoolYearTemplateId))]
+    const uniqueSubjectIds = [...new Set(data.map(d => d.subjectId))]
+    const uniqueGradeIds = [...new Set(data.map(d => d.gradeId))]
+    const uniqueSeriesIds = [...new Set(data.map(d => d.seriesId).filter((id): id is string => !!id))]
+
+    // Batch query database to check existence
+    const [existingYears, existingSubjects, existingGrades, existingSeries] = await Promise.all([
+      db.select({ id: schoolYearTemplates.id }).from(schoolYearTemplates).where(inArray(schoolYearTemplates.id, uniqueYearIds)),
+      db.select({ id: subjects.id }).from(subjects).where(inArray(subjects.id, uniqueSubjectIds)),
+      db.select({ id: grades.id }).from(grades).where(inArray(grades.id, uniqueGradeIds)),
+      uniqueSeriesIds.length > 0
+        ? db.select({ id: series.id }).from(series).where(inArray(series.id, uniqueSeriesIds))
+        : Promise.resolve([]),
+    ])
+
+    // Build lookup sets for fast validation
+    const yearIdSet = new Set(existingYears.map((y: { id: string }) => y.id))
+    const subjectIdSet = new Set(existingSubjects.map((s: { id: string }) => s.id))
+    const gradeIdSet = new Set(existingGrades.map((g: { id: string }) => g.id))
+    const seriesIdSet = new Set(existingSeries.map((s: { id: string }) => s.id))
+
+    // Track combinations for duplicate detection
+    const seenCombinations = new Set<string>()
+
+    // Validate each row
+    data.forEach((row, index) => {
+      const rowNum = index + 1
+
+      // Check school year exists
+      if (!yearIdSet.has(row.schoolYearTemplateId)) {
+        errors.push({ row: rowNum, field: 'schoolYearTemplateId', message: 'Année scolaire introuvable' })
+      }
+
+      // Check subject exists
+      if (!subjectIdSet.has(row.subjectId)) {
+        errors.push({ row: rowNum, field: 'subjectId', message: 'Matière introuvable' })
+      }
+
+      // Check grade exists
+      if (!gradeIdSet.has(row.gradeId)) {
+        errors.push({ row: rowNum, field: 'gradeId', message: 'Classe introuvable' })
+      }
+
+      // Check series exists (if provided)
+      if (row.seriesId && !seriesIdSet.has(row.seriesId)) {
+        errors.push({ row: rowNum, field: 'seriesId', message: 'Série introuvable' })
+      }
+
+      // Validate weight is in valid range
+      if (row.weight < COEFFICIENT_LIMITS.MIN || row.weight > COEFFICIENT_LIMITS.MAX) {
+        errors.push({
+          row: rowNum,
+          field: 'weight',
+          message: `Coefficient doit être entre ${COEFFICIENT_LIMITS.MIN} et ${COEFFICIENT_LIMITS.MAX}`,
+        })
+      }
+
+      // Check for duplicate combinations within import data
+      const combinationKey = `${row.schoolYearTemplateId}|${row.subjectId}|${row.gradeId}|${row.seriesId || ''}`
+      if (seenCombinations.has(combinationKey)) {
+        errors.push({ row: rowNum, field: 'combination', message: 'Combinaison déjà existante dans le fichier' })
+      }
+      else {
+        seenCombinations.add(combinationKey)
+      }
+    })
+
+    return {
+      valid: errors.length === 0,
+      errors,
+      summary: {
+        total: data.length,
+        valid: data.length - errors.length,
+        invalid: errors.length,
+      },
+    }
   })

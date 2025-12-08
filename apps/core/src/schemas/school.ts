@@ -69,8 +69,8 @@ export const ImportSchoolsSchema = z.object({
     phone: z.string().optional(),
     email: z.string().email().optional(),
   })).min(1, 'Au moins une école est requise'),
-  skipDuplicates: z.boolean().default(true),
-  generateCodes: z.boolean().default(false),
+  skipDuplicates: z.boolean().optional().default(true),
+  generateCodes: z.boolean().optional().default(false),
 })
 
 export const SchoolFiltersSchema = z.object({

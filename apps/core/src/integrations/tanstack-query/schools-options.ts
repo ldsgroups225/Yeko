@@ -1,10 +1,12 @@
 import type {
   BulkUpdateSchoolsInput,
   CreateSchoolInput,
+  ImportSchoolsInput,
   SchoolIdInput,
   UpdateSchoolInput,
 } from '@/schemas/school'
 import {
+  bulkCreateSchools,
   bulkUpdateSchools,
   createSchool,
   deleteSchool,
@@ -80,12 +82,10 @@ export const deleteSchoolMutationOptions = {
 
 export const bulkUpdateSchoolsMutationOptions = {
   mutationFn: (data: BulkUpdateSchoolsInput) => bulkUpdateSchools({ data }),
-  onSuccess: (data: unknown) => {
-    console.warn('Schools bulk updated successfully:', data)
-  },
-  onError: (error: Error) => {
-    console.error('Failed to bulk update schools:', error)
-  },
+}
+
+export const bulkCreateSchoolsMutationOptions = {
+  mutationFn: (data: ImportSchoolsInput) => bulkCreateSchools({ data }),
 }
 
 export const schoolQueries = {
@@ -95,4 +95,5 @@ export const schoolQueries = {
   update: updateSchoolMutationOptions,
   delete: deleteSchoolMutationOptions,
   bulkUpdate: bulkUpdateSchoolsMutationOptions,
+  bulkCreate: bulkCreateSchoolsMutationOptions,
 }

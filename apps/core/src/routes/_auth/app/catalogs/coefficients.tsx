@@ -30,12 +30,14 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { COEFFICIENT_LIMITS, COEFFICIENT_MESSAGES } from '@/constants/coefficients'
 import { gradesQueryOptions, seriesQueryOptions, subjectsQueryOptions } from '@/integrations/tanstack-query/catalogs-options'
 import {
+  bulkCreateCoefficientsMutationOptions,
   bulkUpdateCoefficientsMutationOptions,
   coefficientStatsQueryOptions,
   coefficientTemplatesQueryOptions,
   copyCoefficientsMutationOptions,
   createCoefficientTemplateMutationOptions,
   deleteCoefficientTemplateMutationOptions,
+  validateCoefficientImportMutationOptions,
 } from '@/integrations/tanstack-query/coefficients-options'
 import { schoolYearTemplatesQueryOptions } from '@/integrations/tanstack-query/programs-options'
 import { exportCoefficientsToExcel, generateCoefficientTemplate, parseCoefficientsExcel } from '@/lib/excel/coefficients-excel'
@@ -124,6 +126,24 @@ function CoefficientsCatalog() {
       const message = parseServerFnError(error, COEFFICIENT_MESSAGES.ERROR_BULK_UPDATE)
       toast.error(message)
       logger.error('Failed to bulk update coefficients', error)
+    },
+  })
+
+  const bulkCreateMutation = useMutation({
+    ...bulkCreateCoefficientsMutationOptions,
+    onError: (error) => {
+      const message = parseServerFnError(error, 'Erreur lors de l\'import des coefficients')
+      toast.error(message)
+      logger.error('Failed to bulk create coefficients', error)
+    },
+  })
+
+  const validateImportMutation = useMutation({
+    ...validateCoefficientImportMutationOptions,
+    onError: (error) => {
+      const message = parseServerFnError(error, 'Erreur lors de la validation')
+      toast.error(message)
+      logger.error('Failed to validate coefficient import', error)
     },
   })
 
@@ -260,14 +280,87 @@ function CoefficientsCatalog() {
         return
       }
 
-      // TODO: Map Excel data to coefficient IDs and bulk create
-      // For now, show success message
-      toast.success(`${data.length} coefficients prêts à être importés`, {
-        description: 'Fonctionnalité d\'import en cours de développement',
-      })
-      logger.info('Excel data parsed successfully', { count: data.length })
+      // Create lookup maps for name-to-ID mapping
+      const subjectMap = new Map<string, string>(subjects?.subjects.map(s => [s.name.toLowerCase().trim(), s.id]) || [])
+      const gradeMap = new Map<string, string>(grades?.map(g => [g.name.toLowerCase().trim(), g.id]) || [])
+      const seriesMap = new Map<string, string>(seriesData?.map(s => [s.name.toLowerCase().trim(), s.id]) || [])
+      const yearMap = new Map<string, string>(schoolYears?.map((y: { name: string, id: string }) => [y.name.trim(), y.id]) || [])
+
+      // Map Excel data to coefficient IDs
+      const mappingErrors: string[] = []
+      const mappedData = data.map((row, index) => {
+        const rowNum = index + 1
+        const subjectId = subjectMap.get(row['Matière'].toLowerCase().trim())
+        const gradeId = gradeMap.get(row.Classe.toLowerCase().trim())
+        const seriesId = row['Série'] ? seriesMap.get(row['Série'].toLowerCase().trim()) : null
+        const yearId = yearMap.get(row['Année Scolaire'].trim())
+
+        if (!yearId) {
+          mappingErrors.push(`Ligne ${rowNum}: Année scolaire "${row['Année Scolaire']}" introuvable`)
+        }
+        if (!subjectId) {
+          mappingErrors.push(`Ligne ${rowNum}: Matière "${row['Matière']}" introuvable`)
+        }
+        if (!gradeId) {
+          mappingErrors.push(`Ligne ${rowNum}: Classe "${row.Classe}" introuvable`)
+        }
+        if (row['Série'] && !seriesId) {
+          mappingErrors.push(`Ligne ${rowNum}: Série "${row['Série']}" introuvable`)
+        }
+
+        if (!yearId || !subjectId || !gradeId) {
+          return null
+        }
+
+        return {
+          weight: row.Coefficient,
+          schoolYearTemplateId: yearId,
+          subjectId,
+          gradeId,
+          seriesId: seriesId || null,
+        }
+      }).filter((item): item is NonNullable<typeof item> => item !== null)
+
+      // Show mapping errors if any
+      if (mappingErrors.length > 0) {
+        toast.error(`Erreurs de mapping: ${mappingErrors.length}`, {
+          description: mappingErrors.slice(0, 3).join('\n'),
+        })
+        logger.error('Excel mapping errors', new Error(mappingErrors.join('; ')))
+        setIsImporting(false)
+        return
+      }
+
+      // Validate mapped data against database
+      toast.loading('Validation en cours...')
+      const validationResult = await validateImportMutation.mutateAsync({ data: mappedData })
+
+      if (!validationResult.valid) {
+        toast.dismiss()
+        toast.error(`Erreurs de validation: ${validationResult.errors.length}`, {
+          description: validationResult.errors.slice(0, 3).map(e => `Ligne ${e.row}: ${e.message}`).join('\n'),
+        })
+        logger.error('Coefficient validation errors', new Error(JSON.stringify(validationResult.errors)))
+        setIsImporting(false)
+        return
+      }
+
+      toast.dismiss()
+
+      // Bulk create coefficients
+      toast.loading(`Import de ${mappedData.length} coefficients en cours...`)
+      await bulkCreateMutation.mutateAsync({ coefficients: mappedData })
+
+      toast.dismiss()
+      toast.success(`${mappedData.length} coefficients importés avec succès`)
+      logger.info('Coefficients imported successfully', { count: mappedData.length })
+
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['coefficient-templates'] })
+      queryClient.invalidateQueries({ queryKey: ['coefficient-stats'] })
     }
     catch (error) {
+      toast.dismiss()
       toast.error('Erreur lors de l\'import')
       logger.error('Failed to import coefficients', error instanceof Error ? error : new Error(String(error)))
     }
@@ -605,26 +698,26 @@ function CoefficientsCatalog() {
                           <td key={grade.id} className="text-center p-3">
                             {coef
                               ? (
-                                  <div className="flex flex-col items-center gap-1">
-                                    <Input
-                                      type="number"
-                                      value={coef.weight}
-                                      onChange={e => handleCellEdit(coef.id, Number.parseInt(e.target.value))}
-                                      className={`w-16 mx-auto text-center ${coef.weight === 0 ? 'border-secondary' : ''}`}
-                                      min={COEFFICIENT_LIMITS.MIN}
-                                      max={COEFFICIENT_LIMITS.MAX}
-                                    />
-                                    {coef.weight === 0 && (
-                                      <div className="flex items-center gap-1 text-xs text-secondary">
-                                        <AlertTriangle className="h-3 w-3" />
-                                        <span>Coef 0</span>
-                                      </div>
-                                    )}
-                                  </div>
-                                )
+                                <div className="flex flex-col items-center gap-1">
+                                  <Input
+                                    type="number"
+                                    value={coef.weight}
+                                    onChange={e => handleCellEdit(coef.id, Number.parseInt(e.target.value))}
+                                    className={`w-16 mx-auto text-center ${coef.weight === 0 ? 'border-secondary' : ''}`}
+                                    min={COEFFICIENT_LIMITS.MIN}
+                                    max={COEFFICIENT_LIMITS.MAX}
+                                  />
+                                  {coef.weight === 0 && (
+                                    <div className="flex items-center gap-1 text-xs text-secondary">
+                                      <AlertTriangle className="h-3 w-3" />
+                                      <span>Coef 0</span>
+                                    </div>
+                                  )}
+                                </div>
+                              )
                               : (
-                                  <span className="text-muted-foreground text-sm">-</span>
-                                )}
+                                <span className="text-muted-foreground text-sm">-</span>
+                              )}
                           </td>
                         )
                       })}
@@ -651,63 +744,63 @@ function CoefficientsCatalog() {
           <CardContent>
             {coefficientsLoading
               ? (
-                  <CatalogListSkeleton count={5} />
-                )
+                <CatalogListSkeleton count={5} />
+              )
               : !coefficientsData || coefficientsData.coefficients.length === 0
-                  ? (
-                      <div className="text-center py-8">
-                        <Calculator className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                        <h3 className="text-lg font-medium">Aucun coefficient trouvé</h3>
-                        <p className="text-muted-foreground">
-                          Commencez par créer votre premier coefficient.
-                        </p>
-                      </div>
-                    )
-                  : (
-                      <div className="space-y-4">
-                        <AnimatePresence mode="popLayout">
-                          {coefficientsData.coefficients.map((coef: any) => (
-                            <motion.div
-                              key={coef.id}
-                              layout
-                              initial={{ opacity: 0, y: 20 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, scale: 0.95 }}
-                              transition={{ duration: 0.2 }}
-                              className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
-                            >
-                              <div className="flex items-center gap-4 flex-1">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                                  <span className="text-lg font-bold text-primary">{coef.weight}</span>
-                                </div>
-                                <div className="flex-1">
-                                  <div className="flex items-center gap-2">
-                                    <h3 className="font-semibold">{coef.subject?.name}</h3>
-                                    <Badge variant="outline">{coef.grade?.name}</Badge>
-                                    {coef.series && (
-                                      <Badge variant="secondary">{coef.series.name}</Badge>
-                                    )}
-                                  </div>
-                                  <div className="text-sm text-muted-foreground mt-1">
-                                    {coef.schoolYearTemplate?.name}
-                                  </div>
-                                </div>
+                ? (
+                  <div className="text-center py-8">
+                    <Calculator className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-lg font-medium">Aucun coefficient trouvé</h3>
+                    <p className="text-muted-foreground">
+                      Commencez par créer votre premier coefficient.
+                    </p>
+                  </div>
+                )
+                : (
+                  <div className="space-y-4">
+                    <AnimatePresence mode="popLayout">
+                      {coefficientsData.coefficients.map((coef: any) => (
+                        <motion.div
+                          key={coef.id}
+                          layout
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, scale: 0.95 }}
+                          transition={{ duration: 0.2 }}
+                          className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
+                        >
+                          <div className="flex items-center gap-4 flex-1">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                              <span className="text-lg font-bold text-primary">{coef.weight}</span>
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <h3 className="font-semibold">{coef.subject?.name}</h3>
+                                <Badge variant="outline">{coef.grade?.name}</Badge>
+                                {coef.series && (
+                                  <Badge variant="secondary">{coef.series.name}</Badge>
+                                )}
                               </div>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => setDeletingCoefficient({
-                                  id: coef.id,
-                                  name: `${coef.subject?.name} - ${coef.grade?.name}`,
-                                })}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </motion.div>
-                          ))}
-                        </AnimatePresence>
-                      </div>
-                    )}
+                              <div className="text-sm text-muted-foreground mt-1">
+                                {coef.schoolYearTemplate?.name}
+                              </div>
+                            </div>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setDeletingCoefficient({
+                              id: coef.id,
+                              name: `${coef.subject?.name} - ${coef.grade?.name}`,
+                            })}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </div>
+                )}
           </CardContent>
         </Card>
       )}

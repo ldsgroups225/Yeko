@@ -5,12 +5,14 @@ import {
   getSchools as getSchoolsQuery,
   updateSchool as updateSchoolQuery,
 } from '@repo/data-ops'
+import { bulkCreateSchools as bulkCreateSchoolsQuery } from '@repo/data-ops/queries/schools'
 import { createServerFn } from '@tanstack/react-start'
 import { exampleMiddlewareWithContext } from '@/core/middleware/example-middleware'
 import {
   BulkUpdateSchoolsSchema,
   CreateSchoolSchema,
   GetSchoolsSchema,
+  ImportSchoolsSchema,
   SchoolIdSchema,
   UpdateSchoolSchema,
 } from '@/schemas/school'
@@ -126,4 +128,37 @@ export const bulkUpdateSchools = createServerFn()
     }
 
     return { success: true, count: schoolIds.length }
+  })
+
+// Bulk create schools from import
+export const bulkCreateSchools = createServerFn()
+  .middleware([
+    exampleMiddlewareWithContext,
+  ])
+  .inputValidator(data => ImportSchoolsSchema.parse(data))
+  .handler(async (ctx) => {
+    const { schools, skipDuplicates } = ctx.data
+
+    const result = await bulkCreateSchoolsQuery(
+      schools.map(school => ({
+        name: school.name,
+        code: school.code,
+        address: school.address,
+        phone: school.phone,
+        email: school.email,
+        status: 'active' as const,
+        settings: {},
+      })),
+      { skipDuplicates },
+    )
+
+    return {
+      success: result.success,
+      created: result.created.length,
+      errors: result.errors,
+      schools: result.created.map(s => ({
+        ...s,
+        settings: (s.settings as Record<string, object>) || {},
+      })),
+    }
   })

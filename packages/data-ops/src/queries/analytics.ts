@@ -1,6 +1,7 @@
 import { and, count, desc, eq, gte, sql } from 'drizzle-orm'
 import { getDb } from '@/database/setup'
 import { schools } from '@/drizzle/core-schema'
+import { students } from '@/drizzle/school-schema'
 import {
   getApiEndpointUsage,
   getAverageResponseTime,
@@ -168,17 +169,8 @@ export async function getSchoolsPerformance(timeRange: '7d' | '30d' | '90d' | '1
     .sort((a, b) => b.engagementScore - a.engagementScore)
     .slice(0, 5)
 
-  // Mock enrollment trends (TODO: Implement actual enrollment tracking)
-  const enrollmentDaysMap = { '7d': 7, '30d': 30, '90d': 90, '1y': 365 }
-  const enrollmentDays = enrollmentDaysMap[timeRange]
-  const enrollmentTrends = Array.from({ length: Math.min(enrollmentDays, 30) }, (_, i) => {
-    const date = new Date()
-    date.setDate(date.getDate() - (enrollmentDays - i))
-    return {
-      date: date.toISOString().split('T')[0]!,
-      count: Math.floor(Math.random() * 10) + 1,
-    }
-  })
+  // Get real enrollment trends from students table
+  const enrollmentTrends = await getEnrollmentTrends(timeRange)
 
   return {
     byStatus: {
@@ -268,5 +260,256 @@ export async function generateReportData(timeRange: '7d' | '30d' | '90d' | '1y')
     overview,
     schoolsPerformance,
     platformUsage,
+  }
+}
+
+export interface EnrollmentTrend {
+  date: string
+  count: number
+}
+
+export interface EnrollmentStats {
+  total: number
+  active: number
+  inactive: number
+  graduated: number
+  transferred: number
+  withdrawn: number
+  byGrade: Array<{ grade: string, count: number }>
+  bySeries: Array<{ series: string, count: number }>
+  trends: EnrollmentTrend[]
+  dropoutRate: number
+}
+
+/**
+ * Get enrollment trends over time
+ */
+export async function getEnrollmentTrends(
+  timeRange: '7d' | '30d' | '90d' | '1y',
+  schoolId?: string,
+): Promise<EnrollmentTrend[]> {
+  const db = getDb()
+
+  // Calculate date range
+  const now = new Date()
+  const daysMap = { '7d': 7, '30d': 30, '90d': 90, '1y': 365 }
+  const days = daysMap[timeRange]
+  const startDate = new Date(now.getTime() - days * 24 * 60 * 60 * 1000)
+
+  // Build conditions
+  const conditions = [gte(students.createdAt, startDate)]
+  if (schoolId) {
+    conditions.push(eq(students.schoolId, schoolId))
+  }
+
+  // Query daily enrollment counts
+  const trendsResults = await db
+    .select({
+      date: sql<string>`DATE(${students.createdAt})`,
+      count: count(),
+    })
+    .from(students)
+    .where(and(...conditions))
+    .groupBy(sql`DATE(${students.createdAt})`)
+    .orderBy(sql`DATE(${students.createdAt})`)
+
+  return trendsResults.map((r: { date: string, count: number }) => ({
+    date: r.date,
+    count: r.count,
+  }))
+}
+
+/**
+ * Get comprehensive enrollment statistics
+ */
+export async function getEnrollmentStats(
+  schoolId?: string,
+  timeRange: '7d' | '30d' | '90d' | '1y' = '30d',
+): Promise<EnrollmentStats> {
+  const db = getDb()
+
+  // Build base conditions
+  const baseConditions = schoolId ? [eq(students.schoolId, schoolId)] : []
+
+  // Total enrollments
+  const [totalResult] = await db
+    .select({ count: count() })
+    .from(students)
+    .where(baseConditions.length > 0 ? and(...baseConditions) : undefined)
+
+  // Active students
+  const [activeResult] = await db
+    .select({ count: count() })
+    .from(students)
+    .where(and(eq(students.status, 'active'), ...baseConditions))
+
+  // Graduated students
+  const [graduatedResult] = await db
+    .select({ count: count() })
+    .from(students)
+    .where(and(eq(students.status, 'graduated'), ...baseConditions))
+
+  // Transferred students
+  const [transferredResult] = await db
+    .select({ count: count() })
+    .from(students)
+    .where(and(eq(students.status, 'transferred'), ...baseConditions))
+
+  // Withdrawn students
+  const [withdrawnResult] = await db
+    .select({ count: count() })
+    .from(students)
+    .where(and(eq(students.status, 'withdrawn'), ...baseConditions))
+
+  // Calculate inactive (graduated + transferred + withdrawn)
+  const inactive = (graduatedResult?.count || 0) + (transferredResult?.count || 0) + (withdrawnResult?.count || 0)
+
+  // Get enrollment trends
+  const trends = await getEnrollmentTrends(timeRange, schoolId)
+
+  // Calculate dropout rate (withdrawn / total)
+  const total = totalResult?.count || 0
+  const withdrawn = withdrawnResult?.count || 0
+  const dropoutRate = total > 0 ? Math.round((withdrawn / total) * 100) : 0
+
+  // Note: byGrade and bySeries require joining with enrollments table
+  // For now, return empty arrays as students don't have direct grade/series references
+  // This would need to be implemented when enrollments are properly linked
+
+  return {
+    total,
+    active: activeResult?.count || 0,
+    inactive,
+    graduated: graduatedResult?.count || 0,
+    transferred: transferredResult?.count || 0,
+    withdrawn,
+    byGrade: [], // TODO: Implement when enrollments are linked
+    bySeries: [], // TODO: Implement when enrollments are linked
+    trends,
+    dropoutRate,
+  }
+}
+
+/**
+ * Get enrollment growth comparison between periods
+ */
+export interface EnrollmentGrowth {
+  current: number
+  previous: number
+  growth: number
+  growthPercentage: number
+}
+
+export async function getEnrollmentGrowth(
+  schoolId?: string,
+  timeRange: '7d' | '30d' | '90d' | '1y' = '30d',
+): Promise<EnrollmentGrowth> {
+  const db = getDb()
+
+  // Calculate date ranges
+  const now = new Date()
+  const daysMap = { '7d': 7, '30d': 30, '90d': 90, '1y': 365 }
+  const days = daysMap[timeRange]
+  const currentStartDate = new Date(now.getTime() - days * 24 * 60 * 60 * 1000)
+  const previousStartDate = new Date(currentStartDate.getTime() - days * 24 * 60 * 60 * 1000)
+
+  // Build conditions
+  const baseConditions = schoolId ? [eq(students.schoolId, schoolId)] : []
+
+  // Current period enrollments
+  const [currentResult] = await db
+    .select({ count: count() })
+    .from(students)
+    .where(and(gte(students.createdAt, currentStartDate), ...baseConditions))
+
+  // Previous period enrollments
+  const [previousResult] = await db
+    .select({ count: count() })
+    .from(students)
+    .where(
+      and(
+        gte(students.createdAt, previousStartDate),
+        sql`${students.createdAt} < ${currentStartDate}`,
+        ...baseConditions,
+      ),
+    )
+
+  const current = currentResult?.count || 0
+  const previous = previousResult?.count || 0
+  const growth = current - previous
+  const growthPercentage = previous > 0 ? Math.round((growth / previous) * 100) : (current > 0 ? 100 : 0)
+
+  return {
+    current,
+    previous,
+    growth,
+    growthPercentage,
+  }
+}
+
+/**
+ * Get enrollment patterns (monthly distribution)
+ */
+export interface EnrollmentPattern {
+  peakMonth: string
+  peakCount: number
+  averagePerMonth: number
+  monthlyDistribution: Array<{ month: string, count: number }>
+}
+
+export async function getEnrollmentPatterns(
+  schoolId?: string,
+  years: number = 1,
+): Promise<EnrollmentPattern> {
+  const db = getDb()
+
+  // Calculate date range
+  const now = new Date()
+  const startDate = new Date(now.getTime() - years * 365 * 24 * 60 * 60 * 1000)
+
+  // Build conditions
+  const conditions = [gte(students.createdAt, startDate)]
+  if (schoolId) {
+    conditions.push(eq(students.schoolId, schoolId))
+  }
+
+  // Query monthly enrollment counts
+  const monthlyResults = await db
+    .select({
+      month: sql<string>`TO_CHAR(${students.createdAt}, 'YYYY-MM')`,
+      count: count(),
+    })
+    .from(students)
+    .where(and(...conditions))
+    .groupBy(sql`TO_CHAR(${students.createdAt}, 'YYYY-MM')`)
+    .orderBy(sql`TO_CHAR(${students.createdAt}, 'YYYY-MM')`)
+
+  const monthlyDistribution = monthlyResults.map((r: { month: string, count: number }) => ({
+    month: r.month,
+    count: r.count,
+  }))
+
+  // Find peak month
+  let peakMonth = ''
+  let peakCount = 0
+  let totalCount = 0
+
+  for (const item of monthlyDistribution) {
+    totalCount += item.count
+    if (item.count > peakCount) {
+      peakCount = item.count
+      peakMonth = item.month
+    }
+  }
+
+  const averagePerMonth = monthlyDistribution.length > 0
+    ? Math.round(totalCount / monthlyDistribution.length)
+    : 0
+
+  return {
+    peakMonth,
+    peakCount,
+    averagePerMonth,
+    monthlyDistribution,
   }
 }

@@ -23,6 +23,7 @@ import {
   platformUsageQueryOptions,
   schoolsPerformanceQueryOptions,
 } from '@/integrations/tanstack-query/analytics-options'
+import { exportAnalyticsToExcel } from '@/lib/excel/analytics-excel'
 import { useLogger } from '@/lib/logger'
 import { generateUUID } from '@/utils/generateUUID'
 
@@ -60,11 +61,21 @@ function AnalyticsPage() {
 
   const handleExportReport = async (format: 'pdf' | 'excel') => {
     try {
-      toast.info(`Génération du rapport ${format.toUpperCase()}...`)
-      // TODO: Implement actual export
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      toast.success(`Rapport ${format.toUpperCase()} généré avec succès`)
-      logger.info('Report exported', { format, timeRange })
+      if (format === 'excel') {
+        if (!overview || !schoolsPerf || !platformUsage) {
+          toast.error('Données non disponibles pour l\'export')
+          return
+        }
+        toast.info('Génération du rapport Excel...')
+        exportAnalyticsToExcel(overview, schoolsPerf, platformUsage, timeRange)
+        toast.success('Rapport Excel généré avec succès')
+        logger.info('Report exported', { format, timeRange })
+      }
+      else {
+        // PDF export not yet implemented
+        toast.info('L\'export PDF sera disponible prochainement')
+        logger.info('PDF export requested but not implemented', { timeRange })
+      }
     }
     catch (error) {
       toast.error('Erreur lors de la génération du rapport')
@@ -119,83 +130,83 @@ function AnalyticsPage() {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {overviewLoading
               ? (
-                  Array.from({ length: 4 }).map(() => (
-                    <Card key={generateUUID()}>
-                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <Skeleton className="h-4 w-24" />
-                        <Skeleton className="h-4 w-4" />
-                      </CardHeader>
-                      <CardContent>
-                        <Skeleton className="h-8 w-16 mb-2" />
-                        <Skeleton className="h-3 w-32" />
-                      </CardContent>
-                    </Card>
-                  ))
-                )
+                Array.from({ length: 4 }).map(() => (
+                  <Card key={generateUUID()}>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <Skeleton className="h-4 w-24" />
+                      <Skeleton className="h-4 w-4" />
+                    </CardHeader>
+                    <CardContent>
+                      <Skeleton className="h-8 w-16 mb-2" />
+                      <Skeleton className="h-3 w-32" />
+                    </CardContent>
+                  </Card>
+                ))
+              )
               : (
-                  <>
-                    <Card>
-                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Total Écoles</CardTitle>
-                        <BarChart3 className="h-4 w-4 text-muted-foreground" />
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-2xl font-bold">{overview?.totalSchools || 0}</div>
-                        <p className="text-xs text-muted-foreground">
-                          +
-                          {overview?.schoolsGrowth || 0}
-                          % vs période précédente
-                        </p>
-                      </CardContent>
-                    </Card>
+                <>
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Total Écoles</CardTitle>
+                      <BarChart3 className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{overview?.totalSchools || 0}</div>
+                      <p className="text-xs text-muted-foreground">
+                        +
+                        {overview?.schoolsGrowth || 0}
+                        % vs période précédente
+                      </p>
+                    </CardContent>
+                  </Card>
 
-                    <Card>
-                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Utilisateurs Actifs</CardTitle>
-                        <Users className="h-4 w-4 text-muted-foreground" />
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-2xl font-bold">{overview?.activeUsers || 0}</div>
-                        <p className="text-xs text-muted-foreground">
-                          {overview?.userGrowth || 0}
-                          % de croissance
-                        </p>
-                      </CardContent>
-                    </Card>
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Utilisateurs Actifs</CardTitle>
+                      <Users className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{overview?.activeUsers || 0}</div>
+                      <p className="text-xs text-muted-foreground">
+                        {overview?.userGrowth || 0}
+                        % de croissance
+                      </p>
+                    </CardContent>
+                  </Card>
 
-                    <Card>
-                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Taux d'Engagement</CardTitle>
-                        <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-2xl font-bold">
-                          {overview?.engagementRate || 0}
-                          %
-                        </div>
-                        <p className="text-xs text-muted-foreground">
-                          Utilisateurs actifs quotidiens
-                        </p>
-                      </CardContent>
-                    </Card>
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Taux d'Engagement</CardTitle>
+                      <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">
+                        {overview?.engagementRate || 0}
+                        %
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Utilisateurs actifs quotidiens
+                      </p>
+                    </CardContent>
+                  </Card>
 
-                    <Card>
-                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Temps de Réponse</CardTitle>
-                        <PieChart className="h-4 w-4 text-muted-foreground" />
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-2xl font-bold">
-                          {overview?.avgResponseTime || 0}
-                          ms
-                        </div>
-                        <p className="text-xs text-muted-foreground">
-                          Temps de réponse moyen de l'API
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </>
-                )}
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Temps de Réponse</CardTitle>
+                      <PieChart className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">
+                        {overview?.avgResponseTime || 0}
+                        ms
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Temps de réponse moyen de l'API
+                      </p>
+                    </CardContent>
+                  </Card>
+                </>
+              )}
           </div>
 
           {/* Charts Placeholder */}
@@ -246,49 +257,49 @@ function AnalyticsPage() {
               <CardContent>
                 {schoolsPerfLoading
                   ? (
-                      <div className="space-y-2">
-                        {Array.from({ length: 3 }).map(() => (
-                          <Skeleton key={generateUUID()} className="h-12 w-full" />
-                        ))}
-                      </div>
-                    )
+                    <div className="space-y-2">
+                      {Array.from({ length: 3 }).map(() => (
+                        <Skeleton key={generateUUID()} className="h-12 w-full" />
+                      ))}
+                    </div>
+                  )
                   : (
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <Badge variant="default">Actives</Badge>
-                            <span className="text-sm text-muted-foreground">
-                              {schoolsPerf?.byStatus.active || 0}
-                              {' '}
-                              écoles
-                            </span>
-                          </div>
-                          <span className="text-2xl font-bold">{schoolsPerf?.byStatus.active || 0}</span>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Badge variant="default">Actives</Badge>
+                          <span className="text-sm text-muted-foreground">
+                            {schoolsPerf?.byStatus.active || 0}
+                            {' '}
+                            écoles
+                          </span>
                         </div>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <Badge variant="secondary">Inactives</Badge>
-                            <span className="text-sm text-muted-foreground">
-                              {schoolsPerf?.byStatus.inactive || 0}
-                              {' '}
-                              écoles
-                            </span>
-                          </div>
-                          <span className="text-2xl font-bold">{schoolsPerf?.byStatus.inactive || 0}</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <Badge variant="destructive">Suspendues</Badge>
-                            <span className="text-sm text-muted-foreground">
-                              {schoolsPerf?.byStatus.suspended || 0}
-                              {' '}
-                              écoles
-                            </span>
-                          </div>
-                          <span className="text-2xl font-bold">{schoolsPerf?.byStatus.suspended || 0}</span>
-                        </div>
+                        <span className="text-2xl font-bold">{schoolsPerf?.byStatus.active || 0}</span>
                       </div>
-                    )}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Badge variant="secondary">Inactives</Badge>
+                          <span className="text-sm text-muted-foreground">
+                            {schoolsPerf?.byStatus.inactive || 0}
+                            {' '}
+                            écoles
+                          </span>
+                        </div>
+                        <span className="text-2xl font-bold">{schoolsPerf?.byStatus.inactive || 0}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Badge variant="destructive">Suspendues</Badge>
+                          <span className="text-sm text-muted-foreground">
+                            {schoolsPerf?.byStatus.suspended || 0}
+                            {' '}
+                            écoles
+                          </span>
+                        </div>
+                        <span className="text-2xl font-bold">{schoolsPerf?.byStatus.suspended || 0}</span>
+                      </div>
+                    </div>
+                  )}
               </CardContent>
             </Card>
 
@@ -319,39 +330,39 @@ function AnalyticsPage() {
             <CardContent>
               {schoolsPerfLoading
                 ? (
-                    <div className="space-y-2">
-                      {Array.from({ length: 5 }).map(() => (
-                        <Skeleton key={generateUUID()} className="h-16 w-full" />
-                      ))}
-                    </div>
-                  )
+                  <div className="space-y-2">
+                    {Array.from({ length: 5 }).map(() => (
+                      <Skeleton key={generateUUID()} className="h-16 w-full" />
+                    ))}
+                  </div>
+                )
                 : (
-                    <div className="space-y-4">
-                      {schoolsPerf?.topSchools.map((school: { id: string, name: string, code: string, status: string, engagementScore: number }, index: number) => (
-                        <div key={school.id} className="flex items-center justify-between p-4 border rounded-lg">
-                          <div className="flex items-center gap-4">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                              <span className="text-lg font-bold text-primary">
-                                #
-                                {index + 1}
-                              </span>
-                            </div>
-                            <div>
-                              <p className="font-medium">{school.name}</p>
-                              <p className="text-sm text-muted-foreground">{school.code}</p>
-                            </div>
+                  <div className="space-y-4">
+                    {schoolsPerf?.topSchools.map((school: { id: string, name: string, code: string, status: string, engagementScore: number }, index: number) => (
+                      <div key={school.id} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div className="flex items-center gap-4">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                            <span className="text-lg font-bold text-primary">
+                              #
+                              {index + 1}
+                            </span>
                           </div>
-                          <div className="text-right">
-                            <p className="text-sm font-medium">
-                              {school.engagementScore}
-                              % engagement
-                            </p>
-                            <Badge variant="outline">{school.status}</Badge>
+                          <div>
+                            <p className="font-medium">{school.name}</p>
+                            <p className="text-sm text-muted-foreground">{school.code}</p>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  )}
+                        <div className="text-right">
+                          <p className="text-sm font-medium">
+                            {school.engagementScore}
+                            % engagement
+                          </p>
+                          <Badge variant="outline">{school.status}</Badge>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -368,28 +379,28 @@ function AnalyticsPage() {
               <CardContent>
                 {usageLoading
                   ? (
-                      <div className="space-y-2">
-                        {Array.from({ length: 3 }).map(() => (
-                          <Skeleton key={generateUUID()} className="h-12 w-full" />
-                        ))}
-                      </div>
-                    )
+                    <div className="space-y-2">
+                      {Array.from({ length: 3 }).map(() => (
+                        <Skeleton key={generateUUID()} className="h-12 w-full" />
+                      ))}
+                    </div>
+                  )
                   : (
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">Quotidiens (DAU)</span>
-                          <span className="text-2xl font-bold">{platformUsage?.dau || 0}</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">Hebdomadaires (WAU)</span>
-                          <span className="text-2xl font-bold">{platformUsage?.wau || 0}</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">Mensuels (MAU)</span>
-                          <span className="text-2xl font-bold">{platformUsage?.mau || 0}</span>
-                        </div>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">Quotidiens (DAU)</span>
+                        <span className="text-2xl font-bold">{platformUsage?.dau || 0}</span>
                       </div>
-                    )}
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">Hebdomadaires (WAU)</span>
+                        <span className="text-2xl font-bold">{platformUsage?.wau || 0}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">Mensuels (MAU)</span>
+                        <span className="text-2xl font-bold">{platformUsage?.mau || 0}</span>
+                      </div>
+                    </div>
+                  )}
               </CardContent>
             </Card>
 
@@ -402,33 +413,33 @@ function AnalyticsPage() {
               <CardContent>
                 {usageLoading
                   ? (
-                      <div className="space-y-2">
-                        {Array.from({ length: 5 }).map(() => (
-                          <Skeleton key={generateUUID()} className="h-8 w-full" />
-                        ))}
-                      </div>
-                    )
+                    <div className="space-y-2">
+                      {Array.from({ length: 5 }).map(() => (
+                        <Skeleton key={generateUUID()} className="h-8 w-full" />
+                      ))}
+                    </div>
+                  )
                   : (
-                      <div className="space-y-3">
-                        {platformUsage?.featureUsage.map((feature: { name: string, usage: number }) => (
-                          <div key={feature.name} className="space-y-1">
-                            <div className="flex items-center justify-between text-sm">
-                              <span>{feature.name}</span>
-                              <span className="font-medium">
-                                {feature.usage}
-                                %
-                              </span>
-                            </div>
-                            <div className="h-2 bg-muted rounded-full overflow-hidden">
-                              <div
-                                className="h-full bg-primary transition-all"
-                                style={{ width: `${feature.usage}%` }}
-                              />
-                            </div>
+                    <div className="space-y-3">
+                      {platformUsage?.featureUsage.map((feature: { name: string, usage: number }) => (
+                        <div key={feature.name} className="space-y-1">
+                          <div className="flex items-center justify-between text-sm">
+                            <span>{feature.name}</span>
+                            <span className="font-medium">
+                              {feature.usage}
+                              %
+                            </span>
                           </div>
-                        ))}
-                      </div>
-                    )}
+                          <div className="h-2 bg-muted rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-primary transition-all"
+                              style={{ width: `${feature.usage}%` }}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
               </CardContent>
             </Card>
           </div>

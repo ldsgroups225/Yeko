@@ -297,14 +297,30 @@ function hashToken(token: string): string {
   return crypto.createHash('sha256').update(token).digest('hex')
 }
 
-export async function sendParentInvitation(parentId: string) {
+export async function sendParentInvitation(parentId: string, schoolId: string) {
   const db = getDb()
+
+  // Get parent info first
+  const [existingParent] = await db
+    .select()
+    .from(parents)
+    .where(eq(parents.id, parentId))
+
+  if (!existingParent) {
+    throw new Error('Parent introuvable')
+  }
+
+  if (!existingParent.email) {
+    throw new Error('Le parent n\'a pas d\'adresse email')
+  }
+
   // Generate invitation token
   const token = crypto.randomBytes(32).toString('hex')
   const hashedToken = hashToken(token) // Store hashed version for security
   const expiresAt = new Date()
   expiresAt.setDate(expiresAt.getDate() + 7) // 7 days expiry
 
+  // Update parent with invitation info
   const [parent] = await db
     .update(parents)
     .set({
@@ -317,11 +333,60 @@ export async function sendParentInvitation(parentId: string) {
     .where(eq(parents.id, parentId))
     .returning()
 
-  // TODO: Send SMS/Email with invitation link
-  // This would integrate with notification service
+  if (!parent) {
+    throw new Error('Échec de la mise à jour du parent')
+  }
 
-  // Return plain token to send via SMS/email (not stored)
-  return { parent, token }
+  // Get linked children for email context
+  const children = await db
+    .select({
+      firstName: students.firstName,
+      lastName: students.lastName,
+    })
+    .from(studentParents)
+    .innerJoin(students, eq(studentParents.studentId, students.id))
+    .where(eq(studentParents.parentId, parentId))
+
+  if (children.length === 0) {
+    throw new Error('Aucun enfant lié au parent')
+  }
+
+  // Get school name - import schools table
+  const { schools } = await import('../drizzle/core-schema')
+  const [school] = await db
+    .select({ name: schools.name })
+    .from(schools)
+    .where(eq(schools.id, schoolId))
+
+  const schoolName = school?.name || 'École'
+  const studentNames = children.map((c: { firstName: string, lastName: string }) => `${c.firstName} ${c.lastName}`)
+  const parentName = `${parent.firstName} ${parent.lastName}`
+
+  // Send email invitation
+  const { sendParentInvitationEmail } = await import('../services/email')
+  const invitationUrl = `${process.env.APP_URL || 'https://parent.yeko.app'}/accept-invitation?token=${token}`
+
+  const emailResult = await sendParentInvitationEmail({
+    to: parent.email!,
+    parentName,
+    studentNames,
+    schoolName,
+    invitationUrl,
+    expiresAt,
+  })
+
+  if (!emailResult.success) {
+    // Update status to failed
+    await db
+      .update(parents)
+      .set({ invitationStatus: 'failed', updatedAt: new Date() })
+      .where(eq(parents.id, parentId))
+
+    throw new Error(`Échec de l'envoi de l'invitation: ${emailResult.error}`)
+  }
+
+  // Return plain token (for testing/debugging only)
+  return { parent, token, emailSent: true }
 }
 
 export async function acceptParentInvitation(token: string, userId: string) {

@@ -1,6 +1,8 @@
 import { getAuth } from '@repo/data-ops/auth/server'
 import { getRoleBySlug } from '@repo/data-ops/queries/school-admin/roles'
 import { createUserWithSchool } from '@repo/data-ops/queries/school-admin/users'
+import { getSchoolById } from '@repo/data-ops/queries/schools'
+import { sendWelcomeEmail } from '@repo/data-ops/services/email'
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 import { protectedFunctionMiddleware } from '@/core/middleware/auth'
@@ -70,21 +72,39 @@ export const createSchoolAdmin = createServerFn()
         roleIds: [adminRole.id],
       })
 
+      // Get school name for email
+      const school = await getSchoolById(schoolId)
+      const schoolName = school?.name || 'Votre école'
+
       // In development, log credentials to console
       const isDevelopment = import.meta.env.DEV
       if (isDevelopment) {
-        console.log('\n==============================================')
-        console.log('🔐 NEW SCHOOL ADMINISTRATOR ACCOUNT CREATED')
-        console.log('==============================================')
-        console.log(`Email:    ${email}`)
-        console.log(`Password: ${password}`)
-        console.log(`Name:     ${name}`)
-        console.log(`School:   ${schoolId}`)
-        console.log('==============================================\n')
+        console.warn('\n==============================================')
+        console.warn('🔐 NEW SCHOOL ADMINISTRATOR ACCOUNT CREATED')
+        console.warn('==============================================')
+        console.warn(`Email:    ${email}`)
+        console.warn(`Password: ${password}`)
+        console.warn(`Name:     ${name}`)
+        console.warn(`School:   ${schoolName}`)
+        console.warn('==============================================\n')
       }
+      else {
+        // Production: Send welcome email with credentials
+        const loginUrl = `${process.env.APP_URL || 'https://school.yeko.app'}/login`
+        const emailResult = await sendWelcomeEmail({
+          to: email,
+          name,
+          email,
+          password,
+          schoolName,
+          loginUrl,
+        })
 
-      // TODO: In production, send email with credentials
-      // await sendWelcomeEmail({ email, password, name })
+        if (!emailResult.success) {
+          // Log error but don't throw - user is created, just log the failure
+          console.error('Failed to send welcome email:', emailResult.error)
+        }
+      }
 
       return {
         success: true,

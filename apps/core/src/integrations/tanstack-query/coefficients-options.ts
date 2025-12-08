@@ -16,7 +16,19 @@ import {
   createCoefficientTemplateMutation,
   deleteCoefficientTemplateMutation,
   updateCoefficientTemplateMutation,
+  validateCoefficientImportMutation,
 } from '@/core/functions/coefficients'
+
+// Type for validation input
+interface ValidateCoefficientImportInput {
+  data: Array<{
+    schoolYearTemplateId: string
+    subjectId: string
+    gradeId: string
+    seriesId?: string | null
+    weight: number
+  }>
+}
 
 // ===== COEFFICIENT TEMPLATES =====
 
@@ -68,6 +80,10 @@ export const bulkUpdateCoefficientsMutationOptions = {
 
 export const copyCoefficientsMutationOptions = {
   mutationFn: (data: CopyCoefficientsInput) => copyCoefficientsMutation({ data }),
+}
+
+export const validateCoefficientImportMutationOptions = {
+  mutationFn: (data: ValidateCoefficientImportInput) => validateCoefficientImportMutation({ data }),
 }
 
 export function coefficientStatsQueryOptions() {
