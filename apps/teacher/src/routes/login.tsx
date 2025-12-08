@@ -1,4 +1,4 @@
-import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { GraduationCap, Loader2 } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -11,12 +11,8 @@ import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/login')({
   component: LoginPage,
-  beforeLoad: async ({ context }) => {
-    // If already authenticated, redirect to app
-    if (context?.session) {
-      throw redirect({ to: '/app' })
-    }
-  },
+  // Note: Auth check is handled in the component via useEffect
+  // Server-side auth check would require adding session to router context
 })
 
 function LoginPage() {
