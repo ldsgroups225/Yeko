@@ -44,6 +44,7 @@ export const fr = {
     homework: 'Devoirs',
     assignHomework: 'Assigner un devoir',
     history: 'Historique',
+    noHistory: 'Aucune session enregistrée',
     completed: 'Terminée',
     cancelled: 'Annulée',
   },

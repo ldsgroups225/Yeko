@@ -44,6 +44,7 @@ export const en = {
     homework: 'Homework',
     assignHomework: 'Assign Homework',
     history: 'History',
+    noHistory: 'No sessions recorded',
     completed: 'Completed',
     cancelled: 'Cancelled',
   },

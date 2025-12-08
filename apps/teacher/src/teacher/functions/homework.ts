@@ -1,4 +1,12 @@
+import {
+  createHomeworkAssignment,
+  deleteHomeworkAssignment,
+  getHomeworkById,
+  getTeacherHomework,
+  updateHomeworkAssignment,
+} from '@repo/data-ops/queries/teacher-app'
 import { createServerFn } from '@tanstack/react-start'
+
 import { z } from 'zod'
 
 import { homeworkSchema, homeworkUpdateSchema } from '@/schemas/homework'
@@ -6,11 +14,35 @@ import { homeworkSchema, homeworkUpdateSchema } from '@/schemas/homework'
 // Create homework assignment
 export const createHomework = createServerFn()
   .inputValidator(homeworkSchema)
-  .handler(async ({ data: _data }) => {
-    // TODO: Implement with actual database operations
-    return {
-      success: true,
-      homeworkId: 'mock-homework-id',
+  .handler(async ({ data }) => {
+    try {
+      const homework = await createHomeworkAssignment({
+        schoolId: data.schoolId,
+        classId: data.classId,
+        subjectId: data.subjectId,
+        teacherId: data.teacherId,
+        classSessionId: data.classSessionId,
+        title: data.title,
+        description: data.description,
+        instructions: data.instructions,
+        dueDate: data.dueDate,
+        dueTime: data.dueTime,
+        maxPoints: data.maxPoints,
+        isGraded: data.isGraded,
+        attachments: data.attachments,
+        status: data.status,
+      })
+
+      return {
+        success: true,
+        homeworkId: homework?.id,
+      }
+    }
+    catch (error: any) {
+      return {
+        success: false,
+        error: error.message || 'Failed to create homework',
+      }
     }
   })
 
@@ -26,57 +58,100 @@ export const getHomework = createServerFn()
       pageSize: z.number().int().min(1).max(50).default(20),
     }),
   )
-  .handler(async ({ data: _data }) => {
-    // TODO: Implement with actual database queries
+  .handler(async ({ data }) => {
+    const result = await getTeacherHomework({
+      teacherId: data.teacherId,
+      classId: data.classId,
+      subjectId: data.subjectId,
+      status: data.status,
+      page: data.page,
+      pageSize: data.pageSize,
+    })
+
     return {
-      homework: [] as Array<{
-        id: string
-        title: string
-        className: string
-        subjectName: string
-        dueDate: string
-        dueTime: string | null
-        status: 'draft' | 'active' | 'closed' | 'cancelled'
-        submissionCount: number
-        totalStudents: number
-      }>,
-      total: 0,
-      page: 1,
-      pageSize: 20,
+      homework: result.homework.map((h: any) => ({
+        id: h.id,
+        title: h.title,
+        className: h.className,
+        subjectName: h.subjectName,
+        dueDate: h.dueDate,
+        dueTime: h.dueTime,
+        status: h.status as 'draft' | 'active' | 'closed' | 'cancelled',
+        submissionCount: h.submissionCount,
+        totalStudents: 0, // TODO: Get from enrollment count
+      })),
+      total: result.total,
+      page: result.page,
+      pageSize: result.pageSize,
     }
   })
 
 // Get homework details
 export const getHomeworkDetails = createServerFn()
   .inputValidator(z.object({ homeworkId: z.string() }))
-  .handler(async ({ data: _data }) => {
-    // TODO: Implement with actual database queries
+  .handler(async ({ data }) => {
+    const homework = await getHomeworkById(data.homeworkId)
+
+    if (!homework) {
+      return { homework: null }
+    }
+
     return {
-      homework: null as {
-        id: string
-        title: string
-        description: string | null
-        instructions: string | null
-        className: string
-        subjectName: string
-        dueDate: string
-        dueTime: string | null
-        maxPoints: number | null
-        isGraded: boolean
-        attachments: Array<{ name: string, url: string, type: string, size: number }>
-        status: 'draft' | 'active' | 'closed' | 'cancelled'
-        createdAt: string
-      } | null,
+      homework: {
+        id: homework.id,
+        title: homework.title,
+        description: homework.description,
+        instructions: homework.instructions,
+        className: homework.className,
+        subjectName: homework.subjectName,
+        dueDate: homework.dueDate,
+        dueTime: homework.dueTime,
+        maxPoints: homework.maxPoints,
+        isGraded: homework.isGraded ?? false,
+        attachments: (homework.attachments ?? []) as Array<{
+          name: string
+          url: string
+          type: string
+          size: number
+        }>,
+        status: homework.status as 'draft' | 'active' | 'closed' | 'cancelled',
+        createdAt: homework.createdAt.toISOString(),
+      },
     }
   })
 
 // Update homework
 export const updateHomework = createServerFn()
-  .inputValidator(homeworkUpdateSchema)
-  .handler(async ({ data: _data }) => {
-    // TODO: Implement with actual database operations
-    return {
-      success: true,
+  .inputValidator(
+    homeworkUpdateSchema.extend({
+      teacherId: z.string(),
+    }),
+  )
+  .handler(async ({ data }) => {
+    try {
+      const updated = await updateHomeworkAssignment({
+        homeworkId: data.id,
+        teacherId: data.teacherId,
+        title: data.title,
+        description: data.description,
+        instructions: data.instructions,
+        dueDate: data.dueDate,
+        dueTime: data.dueTime,
+        maxPoints: data.maxPoints,
+        isGraded: data.isGraded,
+        attachments: data.attachments,
+        status: data.status,
+      })
+
+      return {
+        success: !!updated,
+      }
+    }
+    catch (error: any) {
+      return {
+        success: false,
+        error: error.message || 'Failed to update homework',
+      }
     }
   })
 
@@ -88,10 +163,21 @@ export const deleteHomework = createServerFn()
       teacherId: z.string(),
     }),
   )
-  .handler(async ({ data: _data }) => {
-    // TODO: Implement with actual database operations
-    // Soft delete (status = 'cancelled') or hard delete if draft
-    return {
-      success: true,
+  .handler(async ({ data }) => {
+    try {
+      const result = await deleteHomeworkAssignment({
+        homeworkId: data.homeworkId,
+        teacherId: data.teacherId,
+      })
+
+      return {
+        success: !!result,
+      }
+    }
+    catch (error: any) {
+      return {
+        success: false,
+        error: error.message || 'Failed to delete homework',
+      }
     }
   })

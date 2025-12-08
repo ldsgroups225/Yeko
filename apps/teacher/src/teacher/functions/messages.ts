@@ -1,4 +1,13 @@
+import {
+  getMessageDetailsQuery,
+  getMessageTemplatesQuery,
+  getTeacherMessagesQuery,
+  markMessageAsRead,
+  searchParentsForTeacher,
+  sendTeacherMessage,
+} from '@repo/data-ops/queries/teacher-app'
 import { createServerFn } from '@tanstack/react-start'
+
 import { z } from 'zod'
 
 import { messageFilterSchema, messageSchema } from '@/schemas/message'
@@ -6,25 +15,32 @@ import { messageFilterSchema, messageSchema } from '@/schemas/message'
 // Get teacher messages
 export const getTeacherMessages = createServerFn()
   .inputValidator(messageFilterSchema)
-  .handler(async ({ data: _data }) => {
-    // TODO: Implement with actual database queries
+  .handler(async ({ data }) => {
+    const result = await getTeacherMessagesQuery({
+      teacherId: data.teacherId,
+      folder: data.folder,
+      isRead: data.isRead,
+      page: data.page,
+      pageSize: data.pageSize,
+    })
+
     return {
-      messages: [] as Array<{
-        id: string
-        senderType: 'teacher' | 'parent'
-        senderName: string
-        recipientName: string
-        studentName: string | null
-        subject: string | null
-        preview: string
-        isRead: boolean
-        isStarred: boolean
-        createdAt: string
-        threadId: string | null
-      }>,
-      total: 0,
-      page: 1,
-      pageSize: 20,
+      messages: result.messages.map((m: any) => ({
+        id: m.id,
+        senderType: m.senderType as 'teacher' | 'parent',
+        senderName: m.senderType === 'teacher' ? 'You' : 'Parent', // TODO: Get actual name
+        recipientName: m.recipientType === 'teacher' ? 'You' : 'Parent',
+        studentName: m.studentName,
+        subject: m.subject,
+        preview: m.preview,
+        isRead: m.isRead ?? false,
+        isStarred: m.isStarred ?? false,
+        createdAt: m.createdAt.toISOString(),
+        threadId: m.threadId,
+      })),
+      total: result.total,
+      page: result.page,
+      pageSize: result.pageSize,
     }
   })
 
@@ -35,13 +51,30 @@ export const sendMessage = createServerFn()
       teacherId: z.string(),
     }),
   )
-  .handler(async ({ data: _data }) => {
-    // TODO: Implement with actual database operations
-    // 1. Create message record
-    // 2. Create notification for parent
-    return {
-      success: true,
-      messageId: 'mock-message-id',
+  .handler(async ({ data }) => {
+    try {
+      const message = await sendTeacherMessage({
+        schoolId: data.schoolId,
+        teacherId: data.teacherId,
+        recipientId: data.recipientId,
+        studentId: data.studentId,
+        classId: data.classId,
+        subject: data.subject,
+        content: data.content,
+        replyToId: data.replyToId,
+        attachments: data.attachments,
+      })
+
+      return {
+        success: true,
+        messageId: message?.id,
+      }
+    }
+    catch (error: any) {
+      return {
+        success: false,
+        error: error.message || 'Failed to send message',
+      }
     }
   })
 
@@ -53,31 +86,44 @@ export const getMessageDetails = createServerFn()
       teacherId: z.string(),
     }),
   )
-  .handler(async ({ data: _data }) => {
-    // TODO: Implement with actual database queries
+  .handler(async ({ data }) => {
+    const message = await getMessageDetailsQuery({
+      messageId: data.messageId,
+      teacherId: data.teacherId,
+    })
+
+    if (!message) {
+      return { message: null }
+    }
+
     return {
-      message: null as {
-        id: string
-        senderType: 'teacher' | 'parent'
-        senderName: string
-        recipientName: string
-        studentName: string | null
-        className: string | null
-        subject: string | null
-        content: string
-        attachments: Array<{ name: string, url: string, type: string, size: number }>
-        isRead: boolean
-        readAt: string | null
-        createdAt: string
-        threadId: string | null
-        thread: Array<{
-          id: string
-          senderType: 'teacher' | 'parent'
-          senderName: string
-          content: string
-          createdAt: string
-        }>
-      } | null,
+      message: {
+        id: message.id,
+        senderType: message.senderType as 'teacher' | 'parent',
+        senderName: message.senderType === 'teacher' ? 'You' : 'Parent',
+        recipientName: message.recipientType === 'teacher' ? 'You' : 'Parent',
+        studentName: message.studentName,
+        className: message.className,
+        subject: message.subject,
+        content: message.content,
+        attachments: (message.attachments ?? []) as Array<{
+          name: string
+          url: string
+          type: string
+          size: number
+        }>,
+        isRead: message.isRead ?? false,
+        readAt: message.readAt?.toISOString() ?? null,
+        createdAt: message.createdAt.toISOString(),
+        threadId: message.threadId,
+        thread: message.thread.map((t: any) => ({
+          id: t.id,
+          senderType: t.senderType as 'teacher' | 'parent',
+          senderName: t.senderType === 'teacher' ? 'You' : 'Parent',
+          content: t.content,
+          createdAt: t.createdAt.toISOString(),
+        })),
+      },
     }
   })
 
@@ -89,10 +135,20 @@ export const markMessageRead = createServerFn()
       teacherId: z.string(),
     }),
   )
-  .handler(async ({ data: _data }) => {
-    // TODO: Implement with actual database operations
-    return {
-      success: true,
+  .handler(async ({ data }) => {
+    try {
+      await markMessageAsRead({
+        messageId: data.messageId,
+        teacherId: data.teacherId,
+      })
+
+      return { success: true }
+    }
+    catch (error: any) {
+      return {
+        success: false,
+        error: error.message || 'Failed to mark message as read',
+      }
     }
   })
 
@@ -104,17 +160,21 @@ export const getMessageTemplates = createServerFn()
       category: z.string().optional(),
     }),
   )
-  .handler(async ({ data: _data }) => {
-    // TODO: Implement with actual database queries
+  .handler(async ({ data }) => {
+    const templates = await getMessageTemplatesQuery({
+      schoolId: data.schoolId,
+      category: data.category,
+    })
+
     return {
-      templates: [] as Array<{
-        id: string
-        name: string
-        category: string
-        subject: string | null
-        content: string
-        placeholders: string[]
-      }>,
+      templates: templates.map((t: any) => ({
+        id: t.id,
+        name: t.name,
+        category: t.category,
+        subject: t.subject,
+        content: t.content,
+        placeholders: t.placeholders ?? [],
+      })),
     }
   })
 
@@ -124,20 +184,27 @@ export const searchParents = createServerFn()
     z.object({
       teacherId: z.string(),
       schoolId: z.string(),
+      schoolYearId: z.string(),
       query: z.string().min(2),
       classId: z.string().optional(),
     }),
   )
-  .handler(async ({ data: _data }) => {
-    // TODO: Implement with actual database queries
-    // Only return parents of students in teacher's classes
+  .handler(async ({ data }) => {
+    const parents = await searchParentsForTeacher({
+      teacherId: data.teacherId,
+      schoolId: data.schoolId,
+      schoolYearId: data.schoolYearId,
+      query: data.query,
+      classId: data.classId,
+    })
+
     return {
-      parents: [] as Array<{
-        id: string
-        name: string
-        phone: string | null
-        studentName: string
-        className: string
-      }>,
+      parents: parents.map((p: any) => ({
+        id: p.id,
+        name: p.name,
+        phone: p.phone,
+        studentName: p.studentName,
+        className: p.className,
+      })),
     }
   })

@@ -14,8 +14,13 @@ import {
   classSessions,
   classSubjects,
   enrollments,
+  homework,
+  homeworkSubmissions,
+  messageTemplates,
+  parents,
   participationGrades,
   studentGrades,
+  studentParents,
   students,
   teacherMessages,
   teacherNotifications,
@@ -567,4 +572,561 @@ export async function getTeacherAssignedClasses(params: {
   }
 
   return Array.from(classMap.values())
+}
+
+/**
+ * Create a homework assignment
+ */
+export async function createHomeworkAssignment(params: {
+  schoolId: string
+  classId: string
+  subjectId: string
+  teacherId: string
+  classSessionId?: string
+  title: string
+  description?: string
+  instructions?: string
+  dueDate: string
+  dueTime?: string
+  maxPoints?: number
+  isGraded?: boolean
+  attachments?: Array<{ name: string, url: string, type: string, size: number }>
+  status?: 'draft' | 'active' | 'closed' | 'cancelled'
+}) {
+  const db = getDb()
+
+  const [created] = await db
+    .insert(homework)
+    .values({
+      id: nanoid(),
+      schoolId: params.schoolId,
+      classId: params.classId,
+      subjectId: params.subjectId,
+      teacherId: params.teacherId,
+      classSessionId: params.classSessionId,
+      title: params.title,
+      description: params.description,
+      instructions: params.instructions,
+      dueDate: params.dueDate,
+      dueTime: params.dueTime,
+      maxPoints: params.maxPoints,
+      isGraded: params.isGraded ?? false,
+      attachments: params.attachments ?? [],
+      status: params.status ?? 'active',
+    })
+    .returning()
+
+  return created
+}
+
+/**
+ * Get homework list for teacher
+ */
+export async function getTeacherHomework(params: {
+  teacherId: string
+  classId?: string
+  subjectId?: string
+  status?: 'draft' | 'active' | 'closed' | 'cancelled'
+  page?: number
+  pageSize?: number
+}) {
+  const db = getDb()
+  const page = params.page ?? 1
+  const pageSize = params.pageSize ?? 20
+
+  const conditions = [eq(homework.teacherId, params.teacherId)]
+  if (params.classId)
+    conditions.push(eq(homework.classId, params.classId))
+  if (params.subjectId)
+    conditions.push(eq(homework.subjectId, params.subjectId))
+  if (params.status)
+    conditions.push(eq(homework.status, params.status))
+
+  const [homeworkList, countResult] = await Promise.all([
+    db
+      .select({
+        id: homework.id,
+        title: homework.title,
+        className: sql<string>`(SELECT g.name || ' ' || c.section FROM classes c JOIN grades g ON c.grade_id = g.id WHERE c.id = ${homework.classId})`,
+        subjectName: subjects.name,
+        dueDate: homework.dueDate,
+        dueTime: homework.dueTime,
+        status: homework.status,
+        maxPoints: homework.maxPoints,
+        isGraded: homework.isGraded,
+        createdAt: homework.createdAt,
+      })
+      .from(homework)
+      .innerJoin(subjects, eq(homework.subjectId, subjects.id))
+      .where(and(...conditions))
+      .orderBy(desc(homework.dueDate))
+      .limit(pageSize)
+      .offset((page - 1) * pageSize),
+    db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(homework)
+      .where(and(...conditions)),
+  ])
+
+  // Get submission counts for each homework
+  const homeworkIds = homeworkList.map((h: { id: string }) => h.id)
+  const submissionCounts = homeworkIds.length > 0
+    ? await db
+      .select({
+        homeworkId: homeworkSubmissions.homeworkId,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(homeworkSubmissions)
+      .where(sql`${homeworkSubmissions.homeworkId} IN (${sql.join(homeworkIds.map((id: string) => sql`${id}`), sql`, `)})`)
+      .groupBy(homeworkSubmissions.homeworkId)
+    : []
+
+  const submissionMap = new Map(submissionCounts.map((s: { homeworkId: string, count: number }) => [s.homeworkId, s.count]))
+
+  return {
+    homework: homeworkList.map((h: any) => ({
+      ...h,
+      submissionCount: submissionMap.get(h.id) ?? 0,
+    })),
+    total: countResult[0]?.count ?? 0,
+    page,
+    pageSize,
+  }
+}
+
+/**
+ * Get homework details by ID
+ */
+export async function getHomeworkById(homeworkId: string) {
+  const db = getDb()
+
+  const result = await db
+    .select({
+      id: homework.id,
+      schoolId: homework.schoolId,
+      classId: homework.classId,
+      className: sql<string>`(SELECT g.name || ' ' || c.section FROM classes c JOIN grades g ON c.grade_id = g.id WHERE c.id = ${homework.classId})`,
+      subjectId: homework.subjectId,
+      subjectName: subjects.name,
+      teacherId: homework.teacherId,
+      classSessionId: homework.classSessionId,
+      title: homework.title,
+      description: homework.description,
+      instructions: homework.instructions,
+      dueDate: homework.dueDate,
+      dueTime: homework.dueTime,
+      maxPoints: homework.maxPoints,
+      isGraded: homework.isGraded,
+      attachments: homework.attachments,
+      status: homework.status,
+      createdAt: homework.createdAt,
+      updatedAt: homework.updatedAt,
+    })
+    .from(homework)
+    .innerJoin(subjects, eq(homework.subjectId, subjects.id))
+    .where(eq(homework.id, homeworkId))
+    .limit(1)
+
+  return result[0] ?? null
+}
+
+/**
+ * Update homework assignment
+ */
+export async function updateHomeworkAssignment(params: {
+  homeworkId: string
+  teacherId: string
+  title?: string
+  description?: string
+  instructions?: string
+  dueDate?: string
+  dueTime?: string
+  maxPoints?: number
+  isGraded?: boolean
+  attachments?: Array<{ name: string, url: string, type: string, size: number }>
+  status?: 'draft' | 'active' | 'closed' | 'cancelled'
+}) {
+  const db = getDb()
+
+  const updateData: Record<string, any> = {}
+  if (params.title !== undefined)
+    updateData.title = params.title
+  if (params.description !== undefined)
+    updateData.description = params.description
+  if (params.instructions !== undefined)
+    updateData.instructions = params.instructions
+  if (params.dueDate !== undefined)
+    updateData.dueDate = params.dueDate
+  if (params.dueTime !== undefined)
+    updateData.dueTime = params.dueTime
+  if (params.maxPoints !== undefined)
+    updateData.maxPoints = params.maxPoints
+  if (params.isGraded !== undefined)
+    updateData.isGraded = params.isGraded
+  if (params.attachments !== undefined)
+    updateData.attachments = params.attachments
+  if (params.status !== undefined)
+    updateData.status = params.status
+
+  const [updated] = await db
+    .update(homework)
+    .set(updateData)
+    .where(
+      and(
+        eq(homework.id, params.homeworkId),
+        eq(homework.teacherId, params.teacherId),
+      ),
+    )
+    .returning()
+
+  return updated
+}
+
+/**
+ * Delete homework (soft delete by setting status to cancelled, or hard delete if draft)
+ */
+export async function deleteHomeworkAssignment(params: {
+  homeworkId: string
+  teacherId: string
+}) {
+  const db = getDb()
+
+  // Check if homework is draft
+  const existing = await db
+    .select({ status: homework.status })
+    .from(homework)
+    .where(
+      and(
+        eq(homework.id, params.homeworkId),
+        eq(homework.teacherId, params.teacherId),
+      ),
+    )
+    .limit(1)
+
+  if (!existing[0])
+    return null
+
+  if (existing[0].status === 'draft') {
+    // Hard delete for drafts
+    await db
+      .delete(homework)
+      .where(eq(homework.id, params.homeworkId))
+    return { deleted: true }
+  }
+  else {
+    // Soft delete for active/closed
+    const [updated] = await db
+      .update(homework)
+      .set({ status: 'cancelled' })
+      .where(eq(homework.id, params.homeworkId))
+      .returning()
+    return updated
+  }
+}
+
+// ============================================
+// MESSAGING
+// ============================================
+
+/**
+ * Get teacher messages (inbox, sent, or archived)
+ */
+export async function getTeacherMessagesQuery(params: {
+  teacherId: string
+  folder: 'inbox' | 'sent' | 'archived'
+  isRead?: boolean
+  page?: number
+  pageSize?: number
+}) {
+  const db = getDb()
+  const page = params.page ?? 1
+  const pageSize = params.pageSize ?? 20
+
+  const conditions: any[] = []
+
+  if (params.folder === 'inbox') {
+    conditions.push(eq(teacherMessages.recipientType, 'teacher'))
+    conditions.push(eq(teacherMessages.recipientId, params.teacherId))
+    conditions.push(eq(teacherMessages.isArchived, false))
+  }
+  else if (params.folder === 'sent') {
+    conditions.push(eq(teacherMessages.senderType, 'teacher'))
+    conditions.push(eq(teacherMessages.senderId, params.teacherId))
+  }
+  else if (params.folder === 'archived') {
+    conditions.push(eq(teacherMessages.recipientType, 'teacher'))
+    conditions.push(eq(teacherMessages.recipientId, params.teacherId))
+    conditions.push(eq(teacherMessages.isArchived, true))
+  }
+
+  if (params.isRead !== undefined) {
+    conditions.push(eq(teacherMessages.isRead, params.isRead))
+  }
+
+  const [messages, countResult] = await Promise.all([
+    db
+      .select({
+        id: teacherMessages.id,
+        senderType: teacherMessages.senderType,
+        senderId: teacherMessages.senderId,
+        recipientType: teacherMessages.recipientType,
+        recipientId: teacherMessages.recipientId,
+        studentId: teacherMessages.studentId,
+        studentName: sql<string | null>`(SELECT first_name || ' ' || last_name FROM students WHERE id = ${teacherMessages.studentId})`,
+        subject: teacherMessages.subject,
+        content: teacherMessages.content,
+        isRead: teacherMessages.isRead,
+        isStarred: teacherMessages.isStarred,
+        threadId: teacherMessages.threadId,
+        createdAt: teacherMessages.createdAt,
+      })
+      .from(teacherMessages)
+      .where(and(...conditions))
+      .orderBy(desc(teacherMessages.createdAt))
+      .limit(pageSize)
+      .offset((page - 1) * pageSize),
+    db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(teacherMessages)
+      .where(and(...conditions)),
+  ])
+
+  return {
+    messages: messages.map((m: any) => ({
+      ...m,
+      preview: m.content.substring(0, 100) + (m.content.length > 100 ? '...' : ''),
+    })),
+    total: countResult[0]?.count ?? 0,
+    page,
+    pageSize,
+  }
+}
+
+/**
+ * Get message details with thread
+ */
+export async function getMessageDetailsQuery(params: {
+  messageId: string
+  teacherId: string
+}) {
+  const db = getDb()
+
+  const message = await db
+    .select({
+      id: teacherMessages.id,
+      schoolId: teacherMessages.schoolId,
+      senderType: teacherMessages.senderType,
+      senderId: teacherMessages.senderId,
+      recipientType: teacherMessages.recipientType,
+      recipientId: teacherMessages.recipientId,
+      studentId: teacherMessages.studentId,
+      studentName: sql<string | null>`(SELECT first_name || ' ' || last_name FROM students WHERE id = ${teacherMessages.studentId})`,
+      classId: teacherMessages.classId,
+      className: sql<string | null>`(SELECT g.name || ' ' || c.section FROM classes c JOIN grades g ON c.grade_id = g.id WHERE c.id = ${teacherMessages.classId})`,
+      threadId: teacherMessages.threadId,
+      subject: teacherMessages.subject,
+      content: teacherMessages.content,
+      attachments: teacherMessages.attachments,
+      isRead: teacherMessages.isRead,
+      readAt: teacherMessages.readAt,
+      createdAt: teacherMessages.createdAt,
+    })
+    .from(teacherMessages)
+    .where(eq(teacherMessages.id, params.messageId))
+    .limit(1)
+
+  if (!message[0])
+    return null
+
+  // Get thread messages if this is part of a thread
+  let thread: any[] = []
+  const threadId = message[0].threadId ?? message[0].id
+  if (threadId) {
+    thread = await db
+      .select({
+        id: teacherMessages.id,
+        senderType: teacherMessages.senderType,
+        senderId: teacherMessages.senderId,
+        content: teacherMessages.content,
+        createdAt: teacherMessages.createdAt,
+      })
+      .from(teacherMessages)
+      .where(eq(teacherMessages.threadId, threadId))
+      .orderBy(asc(teacherMessages.createdAt))
+  }
+
+  return {
+    ...message[0],
+    thread,
+  }
+}
+
+/**
+ * Send a message
+ */
+export async function sendTeacherMessage(params: {
+  schoolId: string
+  teacherId: string
+  recipientId: string
+  studentId?: string
+  classId?: string
+  subject?: string
+  content: string
+  replyToId?: string
+  attachments?: Array<{ name: string, url: string, type: string, size: number }>
+}) {
+  const db = getDb()
+
+  // Determine thread ID
+  let threadId = null
+  if (params.replyToId) {
+    const original = await db
+      .select({ threadId: teacherMessages.threadId, id: teacherMessages.id })
+      .from(teacherMessages)
+      .where(eq(teacherMessages.id, params.replyToId))
+      .limit(1)
+    threadId = original[0]?.threadId ?? original[0]?.id
+  }
+
+  const [created] = await db
+    .insert(teacherMessages)
+    .values({
+      id: nanoid(),
+      schoolId: params.schoolId,
+      senderType: 'teacher',
+      senderId: params.teacherId,
+      recipientType: 'parent',
+      recipientId: params.recipientId,
+      studentId: params.studentId,
+      classId: params.classId,
+      threadId,
+      replyToId: params.replyToId,
+      subject: params.subject,
+      content: params.content,
+      attachments: params.attachments ?? [],
+    })
+    .returning()
+
+  return created
+}
+
+/**
+ * Mark message as read
+ */
+export async function markMessageAsRead(params: {
+  messageId: string
+  teacherId: string
+}) {
+  const db = getDb()
+
+  const [updated] = await db
+    .update(teacherMessages)
+    .set({
+      isRead: true,
+      readAt: new Date(),
+    })
+    .where(
+      and(
+        eq(teacherMessages.id, params.messageId),
+        eq(teacherMessages.recipientType, 'teacher'),
+        eq(teacherMessages.recipientId, params.teacherId),
+      ),
+    )
+    .returning()
+
+  return updated
+}
+
+/**
+ * Get message templates
+ */
+export async function getMessageTemplatesQuery(params: {
+  schoolId: string
+  category?: string
+}) {
+  const db = getDb()
+
+  const conditions = [
+    eq(messageTemplates.schoolId, params.schoolId),
+    eq(messageTemplates.isActive, true),
+  ]
+  if (params.category) {
+    conditions.push(eq(messageTemplates.category, params.category as any))
+  }
+
+  return db
+    .select({
+      id: messageTemplates.id,
+      name: messageTemplates.name,
+      category: messageTemplates.category,
+      subject: messageTemplates.subject,
+      content: messageTemplates.content,
+      placeholders: messageTemplates.placeholders,
+    })
+    .from(messageTemplates)
+    .where(and(...conditions))
+    .orderBy(asc(messageTemplates.name))
+}
+
+/**
+ * Search parents that teacher can message (parents of students in teacher's classes)
+ */
+export async function searchParentsForTeacher(params: {
+  teacherId: string
+  schoolId: string
+  schoolYearId: string
+  query: string
+  classId?: string
+}) {
+  const db = getDb()
+
+  // Find parents of students in classes the teacher teaches using studentParents junction table
+  const conditions: any[] = [
+    eq(students.schoolId, params.schoolId),
+    sql`(${students.firstName} || ' ' || ${students.lastName}) ILIKE ${`%${params.query}%`}`,
+  ]
+
+  if (params.classId) {
+    conditions.push(eq(enrollments.classId, params.classId))
+  }
+
+  const results = await db
+    .select({
+      studentId: students.id,
+      studentName: sql<string>`${students.firstName} || ' ' || ${students.lastName}`,
+      className: sql<string>`(SELECT g.name || ' ' || c.section FROM classes c JOIN grades g ON c.grade_id = g.id WHERE c.id = ${enrollments.classId})`,
+      parentId: parents.id,
+      parentName: sql<string>`${parents.firstName} || ' ' || ${parents.lastName}`,
+      parentPhone: parents.phone,
+    })
+    .from(students)
+    .innerJoin(enrollments, eq(enrollments.studentId, students.id))
+    .innerJoin(classSubjects, eq(classSubjects.classId, enrollments.classId))
+    .innerJoin(studentParents, eq(studentParents.studentId, students.id))
+    .innerJoin(parents, eq(studentParents.parentId, parents.id))
+    .where(
+      and(
+        ...conditions,
+        eq(classSubjects.teacherId, params.teacherId),
+        eq(enrollments.schoolYearId, params.schoolYearId),
+        eq(enrollments.status, 'confirmed'),
+      ),
+    )
+    .limit(50)
+
+  // Dedupe by parent
+  const parentMap = new Map<string, any>()
+  for (const r of results) {
+    if (!parentMap.has(r.parentId)) {
+      parentMap.set(r.parentId, {
+        id: r.parentId,
+        name: r.parentName,
+        phone: r.parentPhone,
+        studentName: r.studentName,
+        className: r.className,
+      })
+    }
+  }
+
+  return Array.from(parentMap.values())
 }
