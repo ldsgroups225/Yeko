@@ -1,5 +1,5 @@
 import type { ColumnDef } from '@tanstack/react-table'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import {
 
@@ -12,8 +12,8 @@ import { Edit, Eye, MoreHorizontal, Search, Trash2, Users } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 import { TableSkeleton } from '@/components/hr/table-skeleton'
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,6 +26,7 @@ import {
 } from '@/components/ui/alert-dialog'
 
 import { Badge } from '@/components/ui/badge'
+
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -57,7 +58,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { useDebounce } from '@/hooks/use-debounce'
-import { getUsers } from '@/school/functions/users'
+import { deleteExistingUser, getUsers } from '@/school/functions/users'
 
 interface User {
   id: string
@@ -81,9 +82,22 @@ interface UsersTableProps {
 export function UsersTable({ filters }: UsersTableProps) {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const [searchInput, setSearchInput] = useState(filters.search || '')
   const [userToDelete, setUserToDelete] = useState<User | null>(null)
   const debouncedSearch = useDebounce(searchInput, 500)
+
+  const deleteMutation = useMutation({
+    mutationFn: (userId: string) => deleteExistingUser({ data: userId }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] })
+      toast.success(t('hr.users.deleteSuccess'))
+      setUserToDelete(null)
+    },
+    onError: () => {
+      toast.error(t('hr.users.deleteError'))
+    },
+  })
 
   const { data, isLoading } = useQuery({
     queryKey: ['users', { ...filters, search: debouncedSearch }],
@@ -276,9 +290,9 @@ export function UsersTable({ filters }: UsersTableProps) {
                           {header.isPlaceholder
                             ? null
                             : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )}
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
                         </TableHead>
                       ))}
                     </TableRow>
@@ -365,12 +379,14 @@ export function UsersTable({ filters }: UsersTableProps) {
             <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={deleteMutation.isPending}
               onClick={() => {
-                // TODO: Implement delete user mutation
-                setUserToDelete(null)
+                if (userToDelete) {
+                  deleteMutation.mutate(userToDelete.id)
+                }
               }}
             >
-              {t('common.delete')}
+              {deleteMutation.isPending ? t('common.deleting') : t('common.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

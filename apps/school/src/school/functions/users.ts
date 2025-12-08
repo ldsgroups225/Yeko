@@ -246,3 +246,36 @@ export const getUserActivity = createServerFn()
     const { schoolId } = context
     return await getUserActivityLogs(userId, schoolId, limit)
   })
+
+/**
+ * Get current user's role for the current school context
+ * Used by the useRole hook
+ */
+export const getCurrentUserRole = createServerFn()
+  .handler(async () => {
+    const context = await getSchoolContext()
+    if (!context?.schoolId || !context?.userId) {
+      return null
+    }
+
+    const { schoolId, userId } = context
+
+    try {
+      const user = await getUserWithRoles(userId, schoolId)
+      if (!user || user.roles.length === 0) {
+        return null
+      }
+
+      // Return the first role (primary role)
+      const primaryRole = user.roles[0]
+      return {
+        roleSlug: primaryRole.roleSlug,
+        roleName: primaryRole.roleName,
+        permissions: primaryRole.permissions || {},
+      }
+    }
+    catch (error) {
+      console.error('Error fetching current user role:', error)
+      return null
+    }
+  })

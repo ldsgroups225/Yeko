@@ -10,23 +10,14 @@ export type Permissions = Record<string, string[]>
  */
 export const getUserPermissions = createServerFn().handler(async () => {
   try {
-    // Get current school context
+    // Get current school context (includes userId from session)
     const context = await getCurrentSchoolContext()
-    if (!context?.schoolId) {
-      return {}
-    }
-
-    // TODO: Get current user ID from session
-    // For now, return empty permissions
-    // This will be implemented when auth is integrated
-    const userId = 'temp-user-id' // Replace with actual session user ID
-
-    if (!userId) {
+    if (!context?.schoolId || !context?.userId) {
       return {}
     }
 
     // Get user permissions from data-ops query
-    const permissions = await getUserPermissionsBySchool(userId, context.schoolId)
+    const permissions = await getUserPermissionsBySchool(context.userId, context.schoolId)
 
     return permissions
   }
