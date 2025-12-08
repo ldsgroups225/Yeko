@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect } from 'vitest'
 
 import {
   createTimetableSessionSchema,
@@ -13,7 +13,7 @@ import {
 
 describe('timetable Schemas', () => {
   describe('timeSchema', () => {
-    it('should validate valid time formats', () => {
+    test('should validate valid time formats', () => {
       const validTimes = ['00:00', '08:30', '12:00', '23:59', '14:45']
 
       for (const time of validTimes) {
@@ -22,7 +22,7 @@ describe('timetable Schemas', () => {
       }
     })
 
-    it('should reject invalid time formats', () => {
+    test('should reject invalid time formats', () => {
       const invalidTimes = ['24:00', '8:30', '12:60', '25:00', 'invalid', '12:5']
 
       for (const time of invalidTimes) {
@@ -33,7 +33,7 @@ describe('timetable Schemas', () => {
   })
 
   describe('getTimetableByClassSchema', () => {
-    it('should validate valid query params', () => {
+    test('should validate valid query params', () => {
       const validData = {
         classId: 'class-123',
         schoolYearId: 'year-123',
@@ -43,7 +43,7 @@ describe('timetable Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should reject missing classId', () => {
+    test('should reject missing classId', () => {
       const invalidData = {
         schoolYearId: 'year-123',
       }
@@ -52,7 +52,7 @@ describe('timetable Schemas', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should reject empty classId', () => {
+    test('should reject empty classId', () => {
       const invalidData = {
         classId: '',
         schoolYearId: 'year-123',
@@ -64,7 +64,7 @@ describe('timetable Schemas', () => {
   })
 
   describe('getTimetableByTeacherSchema', () => {
-    it('should validate valid query params', () => {
+    test('should validate valid query params', () => {
       const validData = {
         teacherId: 'teacher-123',
         schoolYearId: 'year-123',
@@ -76,7 +76,7 @@ describe('timetable Schemas', () => {
   })
 
   describe('getTimetableByClassroomSchema', () => {
-    it('should validate valid query params', () => {
+    test('should validate valid query params', () => {
       const validData = {
         classroomId: 'room-123',
         schoolYearId: 'year-123',
@@ -88,7 +88,7 @@ describe('timetable Schemas', () => {
   })
 
   describe('createTimetableSessionSchema', () => {
-    it('should validate valid session data', () => {
+    test('should validate valid session data', () => {
       const validData = {
         schoolId: 'school-123',
         schoolYearId: 'year-123',
@@ -107,7 +107,7 @@ describe('timetable Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should reject invalid day of week', () => {
+    test('should reject invalid day of week', () => {
       const invalidData = {
         schoolId: 'school-123',
         schoolYearId: 'year-123',
@@ -123,7 +123,7 @@ describe('timetable Schemas', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should reject day of week less than 1', () => {
+    test('should reject day of week less than 1', () => {
       const invalidData = {
         schoolId: 'school-123',
         schoolYearId: 'year-123',
@@ -139,7 +139,7 @@ describe('timetable Schemas', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should reject end time before start time', () => {
+    test('should reject end time before start time', () => {
       const invalidData = {
         schoolId: 'school-123',
         schoolYearId: 'year-123',
@@ -155,7 +155,7 @@ describe('timetable Schemas', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should reject equal start and end time', () => {
+    test('should reject equal start and end time', () => {
       const invalidData = {
         schoolId: 'school-123',
         schoolYearId: 'year-123',
@@ -171,7 +171,7 @@ describe('timetable Schemas', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should reject invalid color format', () => {
+    test('should reject invalid color format', () => {
       const invalidData = {
         schoolId: 'school-123',
         schoolYearId: 'year-123',
@@ -188,7 +188,7 @@ describe('timetable Schemas', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should accept valid date formats for effective dates', () => {
+    test('should accept valid date formats for effective dates', () => {
       const validData = {
         schoolId: 'school-123',
         schoolYearId: 'year-123',
@@ -206,7 +206,7 @@ describe('timetable Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should reject invalid date formats', () => {
+    test('should reject invalid date formats', () => {
       const invalidData = {
         schoolId: 'school-123',
         schoolYearId: 'year-123',
@@ -225,7 +225,7 @@ describe('timetable Schemas', () => {
   })
 
   describe('updateTimetableSessionSchema', () => {
-    it('should validate partial update', () => {
+    test('should validate partial update', () => {
       const validData = {
         id: 'session-123',
         startTime: '09:00',
@@ -236,7 +236,7 @@ describe('timetable Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should require id', () => {
+    test('should require id', () => {
       const invalidData = {
         startTime: '09:00',
       }
@@ -245,7 +245,7 @@ describe('timetable Schemas', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should accept null for optional fields', () => {
+    test('should accept null for optional fields', () => {
       const validData = {
         id: 'session-123',
         classroomId: null,
@@ -259,7 +259,7 @@ describe('timetable Schemas', () => {
   })
 
   describe('importTimetableSchema', () => {
-    it('should validate valid import data', () => {
+    test('should validate valid import data', () => {
       const validData = {
         schoolId: 'school-123',
         schoolYearId: 'year-123',
@@ -288,7 +288,7 @@ describe('timetable Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should reject empty sessions array', () => {
+    test('should reject empty sessions array', () => {
       const invalidData = {
         schoolId: 'school-123',
         schoolYearId: 'year-123',
@@ -301,7 +301,7 @@ describe('timetable Schemas', () => {
   })
 
   describe('detectConflictsSchema', () => {
-    it('should validate valid conflict detection params', () => {
+    test('should validate valid conflict detection params', () => {
       const validData = {
         schoolId: 'school-123',
         schoolYearId: 'year-123',
@@ -318,7 +318,7 @@ describe('timetable Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should accept minimal required fields', () => {
+    test('should accept minimal required fields', () => {
       const validData = {
         schoolId: 'school-123',
         schoolYearId: 'year-123',
@@ -333,7 +333,7 @@ describe('timetable Schemas', () => {
   })
 
   describe('day of Week Validation', () => {
-    it('should accept all valid days (1-7)', () => {
+    test('should accept all valid days (1-7)', () => {
       for (let day = 1; day <= 7; day++) {
         const validData = {
           schoolId: 'school-123',

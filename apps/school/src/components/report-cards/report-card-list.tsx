@@ -1,9 +1,10 @@
-import type { ReportCardStatus } from '@/schemas/report-card'
 import type { ReportCardData } from './report-card-card'
+import type { ReportCardStatus } from '@/schemas/report-card'
+import { FileX } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Skeleton } from '@/components/ui/skeleton'
+import { generateUUID } from '@/utils/generateUUID'
 import { ReportCardCard } from './report-card-card'
-import { FileX } from 'lucide-react'
 
 interface ReportCardListProps {
   reportCards: ReportCardData[]
@@ -54,8 +55,8 @@ export function ReportCardList({
   if (isLoading) {
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <ReportCardSkeleton key={i} />
+        {Array.from({ length: 6 }).map(() => (
+          <ReportCardSkeleton key={generateUUID()} />
         ))}
       </div>
     )

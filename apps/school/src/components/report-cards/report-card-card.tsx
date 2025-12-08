@@ -1,11 +1,11 @@
-import type { ReportCardStatus, DeliveryMethod } from '@/schemas/report-card'
+import type { DeliveryMethod, ReportCardStatus } from '@/schemas/report-card'
+import { Download, Eye, FileText, RefreshCw, Send } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import { ReportCardStatusBadge } from './report-card-status-badge'
 import { DeliveryStatusBadge } from './delivery-status-badge'
-import { Download, Eye, Send, RefreshCw, FileText } from 'lucide-react'
+import { ReportCardStatusBadge } from './report-card-status-badge'
 
 export interface ReportCardData {
   id: string
@@ -66,14 +66,27 @@ export function ReportCardCard({
         {reportCard.average !== undefined && (
           <div className="flex items-center gap-4 text-sm">
             <span>
-              <span className="text-muted-foreground">{t('reportCards.average')}:</span>{' '}
-              <span className="font-medium">{reportCard.average.toFixed(2)}/20</span>
+              <span className="text-muted-foreground">
+                {t('reportCards.average')}
+                :
+              </span>
+              {' '}
+              <span className="font-medium">
+                {reportCard.average.toFixed(2)}
+                /20
+              </span>
             </span>
             {reportCard.rank && reportCard.totalStudents && (
               <span>
-                <span className="text-muted-foreground">{t('reportCards.rank')}:</span>{' '}
+                <span className="text-muted-foreground">
+                  {t('reportCards.rank')}
+                  :
+                </span>
+                {' '}
                 <span className="font-medium">
-                  {reportCard.rank}/{reportCard.totalStudents}
+                  {reportCard.rank}
+                  /
+                  {reportCard.totalStudents}
                 </span>
               </span>
             )}

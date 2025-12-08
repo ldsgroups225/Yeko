@@ -95,15 +95,15 @@ export function ReportCardPreview({ data, isLoading }: ReportCardPreviewProps) {
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
               {data.student.photoUrl
                 ? (
-                  <img
-                    src={data.student.photoUrl}
-                    alt={data.student.name}
-                    className="h-16 w-16 rounded-full object-cover"
-                  />
-                )
+                    <img
+                      src={data.student.photoUrl}
+                      alt={data.student.name}
+                      className="h-16 w-16 rounded-full object-cover"
+                    />
+                  )
                 : (
-                  <User className="h-8 w-8 text-muted-foreground" />
-                )}
+                    <User className="h-8 w-8 text-muted-foreground" />
+                  )}
             </div>
             <div>
               <CardTitle className="text-xl">{data.student.name}</CardTitle>

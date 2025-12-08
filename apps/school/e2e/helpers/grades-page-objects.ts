@@ -155,7 +155,7 @@ export class GradeValidationsPage {
 
   constructor(page: Page) {
     this.page = page
-    this.pageTitle = page.getByRole('heading', { name: /validation|validations/i })
+    this.pageTitle = page.getByRole('heading', { name: /validation/i })
     this.filterButton = page.getByRole('button', { name: /filtres|filters/i })
     this.validationCards = page.locator('[data-slot="card"]')
     this.emptyState = page.getByText(/aucune validation|no validations/i)

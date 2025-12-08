@@ -14,6 +14,7 @@ import {
 import { Label } from '@/components/ui/label'
 import { Progress } from '@/components/ui/progress'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { generateUUID } from '@/utils/generateUUID'
 
 interface Student {
   id: string
@@ -207,11 +208,11 @@ export function BulkGenerationDialog({
             <div className="flex items-center justify-center">
               {result.failed === 0
                 ? (
-                  <CheckCircle2 className="h-12 w-12 text-green-500" />
-                )
+                    <CheckCircle2 className="h-12 w-12 text-green-500" />
+                  )
                 : (
-                  <AlertCircle className="h-12 w-12 text-yellow-500" />
-                )}
+                    <AlertCircle className="h-12 w-12 text-yellow-500" />
+                  )}
             </div>
 
             <div className="text-center space-y-1">
@@ -232,8 +233,8 @@ export function BulkGenerationDialog({
                   {t('reportCards.generationErrors', { count: result.failed })}
                 </p>
                 <ul className="text-sm text-destructive/80 space-y-1">
-                  {result.errors.slice(0, 3).map((err, i) => (
-                    <li key={i}>
+                  {result.errors.slice(0, 3).map(err => (
+                    <li key={generateUUID()}>
                       •
                       {err.error}
                     </li>

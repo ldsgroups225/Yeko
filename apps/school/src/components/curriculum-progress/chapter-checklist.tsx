@@ -38,7 +38,9 @@ export function ChapterChecklist({
       <div className="flex items-center justify-between">
         <h4 className="font-medium text-sm">{t('curriculum.chapters')}</h4>
         <span className="text-sm text-muted-foreground">
-          {completedCount}/{chapters.length}
+          {completedCount}
+          /
+          {chapters.length}
         </span>
       </div>
 
@@ -53,34 +55,42 @@ export function ChapterChecklist({
                 chapter.isCompleted && 'bg-green-50 dark:bg-green-900/10',
               )}
             >
-              {readOnly ? (
-                chapter.isCompleted ? (
-                  <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0" />
-                ) : (
-                  <Circle className="h-5 w-5 text-muted-foreground shrink-0" />
-                )
-              ) : (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6 shrink-0"
-                  disabled={isToggling === chapter.id}
-                  onClick={() => onToggle?.(chapter.id, !chapter.isCompleted)}
-                  aria-label={
+              {readOnly
+                ? (
                     chapter.isCompleted
-                      ? t('curriculum.markIncomplete')
-                      : t('curriculum.markComplete')
-                  }
-                >
-                  {isToggling === chapter.id ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : chapter.isCompleted ? (
-                    <CheckCircle2 className="h-5 w-5 text-green-500" />
-                  ) : (
-                    <Circle className="h-5 w-5 text-muted-foreground" />
+                      ? (
+                          <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0" />
+                        )
+                      : (
+                          <Circle className="h-5 w-5 text-muted-foreground shrink-0" />
+                        )
+                  )
+                : (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 shrink-0"
+                      disabled={isToggling === chapter.id}
+                      onClick={() => onToggle?.(chapter.id, !chapter.isCompleted)}
+                      aria-label={
+                        chapter.isCompleted
+                          ? t('curriculum.markIncomplete')
+                          : t('curriculum.markComplete')
+                      }
+                    >
+                      {isToggling === chapter.id
+                        ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          )
+                        : chapter.isCompleted
+                          ? (
+                              <CheckCircle2 className="h-5 w-5 text-green-500" />
+                            )
+                          : (
+                              <Circle className="h-5 w-5 text-muted-foreground" />
+                            )}
+                    </Button>
                   )}
-                </Button>
-              )}
 
               <div className="flex-1 min-w-0">
                 <p
@@ -89,7 +99,12 @@ export function ChapterChecklist({
                     chapter.isCompleted && 'text-muted-foreground line-through',
                   )}
                 >
-                  <span className="font-medium">{index + 1}.</span> {chapter.name}
+                  <span className="font-medium">
+                    {index + 1}
+                    .
+                  </span>
+                  {' '}
+                  {chapter.name}
                 </p>
               </div>
             </div>

@@ -30,7 +30,8 @@ export function BehindScheduleAlert({
 }: BehindScheduleAlertProps) {
   const { t } = useTranslation()
 
-  if (classes.length === 0) return null
+  if (classes.length === 0)
+    return null
 
   const significantlyBehind = classes.filter(c => c.status === 'significantly_behind')
   const slightlyBehind = classes.filter(c => c.status === 'slightly_behind')
@@ -54,13 +55,26 @@ export function BehindScheduleAlert({
           {significantlyBehind.length > 0 && (
             <div>
               <p className="font-medium text-sm mb-1">
-                {t('curriculum.significantlyBehind')} ({significantlyBehind.length})
+                {t('curriculum.significantlyBehind')}
+                {' '}
+                (
+                {significantlyBehind.length}
+                )
               </p>
               <ul className="text-sm space-y-1">
                 {significantlyBehind.slice(0, 3).map(c => (
                   <li key={`${c.classId}-${c.subjectName}`} className="flex items-center justify-between">
-                    <span>{c.className} - {c.subjectName}</span>
-                    <span className="font-medium">{c.variance.toFixed(0)}%</span>
+                    <span>
+                      {c.className}
+                      {' '}
+                      -
+                      {' '}
+                      {c.subjectName}
+                    </span>
+                    <span className="font-medium">
+                      {c.variance.toFixed(0)}
+                      %
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -70,13 +84,26 @@ export function BehindScheduleAlert({
           {slightlyBehind.length > 0 && (
             <div>
               <p className="font-medium text-sm mb-1">
-                {t('curriculum.slightlyBehind')} ({slightlyBehind.length})
+                {t('curriculum.slightlyBehind')}
+                {' '}
+                (
+                {slightlyBehind.length}
+                )
               </p>
               <ul className="text-sm space-y-1">
                 {slightlyBehind.slice(0, 3).map(c => (
                   <li key={`${c.classId}-${c.subjectName}`} className="flex items-center justify-between">
-                    <span>{c.className} - {c.subjectName}</span>
-                    <span className="font-medium">{c.variance.toFixed(0)}%</span>
+                    <span>
+                      {c.className}
+                      {' '}
+                      -
+                      {' '}
+                      {c.subjectName}
+                    </span>
+                    <span className="font-medium">
+                      {c.variance.toFixed(0)}
+                      %
+                    </span>
                   </li>
                 ))}
               </ul>

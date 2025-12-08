@@ -3,11 +3,11 @@ import { getCurrentUserRole } from '@/school/functions/users'
 
 export type RoleSlug
   = | 'school_administrator'
-  | 'academic_coordinator'
-  | 'discipline_officer'
-  | 'accountant'
-  | 'cashier'
-  | 'registrar'
+    | 'academic_coordinator'
+    | 'discipline_officer'
+    | 'accountant'
+    | 'cashier'
+    | 'registrar'
 
 export function useRole() {
   const { data: role, isLoading } = useQuery({

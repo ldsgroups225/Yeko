@@ -62,17 +62,43 @@ export function ProgressBar({
             </div>
             {showLabel && (
               <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span>{completed}/{total} {t('curriculum.chapters')}</span>
-                <span>{percentage}%</span>
+                <span>
+                  {completed}
+                  /
+                  {total}
+                  {' '}
+                  {t('curriculum.chapters')}
+                </span>
+                <span>
+                  {percentage}
+                  %
+                </span>
               </div>
             )}
           </div>
         </TooltipTrigger>
         <TooltipContent>
           <div className="text-sm space-y-1">
-            <p>{t('curriculum.completed')}: {completed}/{total} ({percentage}%)</p>
+            <p>
+              {t('curriculum.completed')}
+              :
+              {' '}
+              {completed}
+              /
+              {total}
+              {' '}
+              (
+              {percentage}
+              %)
+            </p>
             {expectedPercentage !== undefined && (
-              <p>{t('curriculum.expected')}: {expectedPercentage}%</p>
+              <p>
+                {t('curriculum.expected')}
+                :
+                {' '}
+                {expectedPercentage}
+                %
+              </p>
             )}
           </div>
         </TooltipContent>

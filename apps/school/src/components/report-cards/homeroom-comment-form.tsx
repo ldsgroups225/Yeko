@@ -55,7 +55,8 @@ export function HomeroomCommentForm({
         />
         <div className="flex items-center justify-between text-sm">
           <span id="comment-count" className="text-muted-foreground">
-            {charCount}/1000
+            {charCount}
+            /1000
           </span>
           {form.formState.errors.comment && (
             <span className="text-destructive">
@@ -67,11 +68,13 @@ export function HomeroomCommentForm({
 
       <div className="flex justify-end">
         <Button type="submit" disabled={isSubmitting || !form.formState.isDirty}>
-          {isSubmitting ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <Save className="mr-2 h-4 w-4" />
-          )}
+          {isSubmitting
+            ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )
+            : (
+                <Save className="mr-2 h-4 w-4" />
+              )}
           {t('common.save')}
         </Button>
       </div>

@@ -91,11 +91,11 @@ export function TeacherCommentForm({
         >
           {isSubmitting
             ? (
-              <Loader2 className="mr-1 h-3 w-3 animate-spin" />
-            )
+                <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+              )
             : (
-              <Save className="mr-1 h-3 w-3" />
-            )}
+                <Save className="mr-1 h-3 w-3" />
+              )}
           {t('common.save')}
         </Button>
       </div>

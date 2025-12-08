@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect } from 'vitest'
 
 import {
   bulkGenerateReportCardsSchema,
@@ -16,7 +16,7 @@ import {
 
 describe('report Card Schemas', () => {
   describe('reportCardTemplateConfigSchema', () => {
-    it('should validate valid config', () => {
+    test('should validate valid config', () => {
       const validConfig = {
         showRank: true,
         showAttendance: true,
@@ -34,14 +34,14 @@ describe('report Card Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should accept empty config', () => {
+    test('should accept empty config', () => {
       const result = reportCardTemplateConfigSchema.safeParse({})
       expect(result.success).toBe(true)
     })
   })
 
   describe('createReportCardTemplateSchema', () => {
-    it('should validate valid template data', () => {
+    test('should validate valid template data', () => {
       const validData = {
         schoolId: 'school-123',
         name: 'Bulletin Standard',
@@ -54,7 +54,7 @@ describe('report Card Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should reject missing schoolId', () => {
+    test('should reject missing schoolId', () => {
       const invalidData = {
         name: 'Bulletin Standard',
       }
@@ -63,7 +63,7 @@ describe('report Card Schemas', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should reject invalid color format', () => {
+    test('should reject invalid color format', () => {
       const invalidData = {
         schoolId: 'school-123',
         name: 'Bulletin',
@@ -74,7 +74,7 @@ describe('report Card Schemas', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should accept valid hex colors', () => {
+    test('should accept valid hex colors', () => {
       const validData = {
         schoolId: 'school-123',
         name: 'Bulletin',
@@ -87,7 +87,7 @@ describe('report Card Schemas', () => {
   })
 
   describe('updateReportCardTemplateSchema', () => {
-    it('should validate partial update', () => {
+    test('should validate partial update', () => {
       const validData = {
         id: 'template-123',
         name: 'Updated Name',
@@ -97,7 +97,7 @@ describe('report Card Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should require id', () => {
+    test('should require id', () => {
       const invalidData = {
         name: 'Updated Name',
       }
@@ -108,7 +108,7 @@ describe('report Card Schemas', () => {
   })
 
   describe('getReportCardsSchema', () => {
-    it('should validate valid query params', () => {
+    test('should validate valid query params', () => {
       const validData = {
         classId: 'class-123',
         termId: 'term-123',
@@ -119,7 +119,7 @@ describe('report Card Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should reject invalid status', () => {
+    test('should reject invalid status', () => {
       const invalidData = {
         classId: 'class-123',
         termId: 'term-123',
@@ -130,7 +130,7 @@ describe('report Card Schemas', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should accept all valid statuses', () => {
+    test('should accept all valid statuses', () => {
       const statuses = ['draft', 'generated', 'sent', 'delivered', 'viewed']
 
       for (const status of statuses) {
@@ -145,7 +145,7 @@ describe('report Card Schemas', () => {
   })
 
   describe('generateReportCardSchema', () => {
-    it('should validate valid generation data', () => {
+    test('should validate valid generation data', () => {
       const validData = {
         studentId: 'student-123',
         classId: 'class-123',
@@ -159,7 +159,7 @@ describe('report Card Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should reject missing required fields', () => {
+    test('should reject missing required fields', () => {
       const invalidData = {
         studentId: 'student-123',
         // Missing classId, termId, schoolYearId
@@ -169,7 +169,7 @@ describe('report Card Schemas', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should reject comment exceeding max length', () => {
+    test('should reject comment exceeding max length', () => {
       const invalidData = {
         studentId: 'student-123',
         classId: 'class-123',
@@ -184,7 +184,7 @@ describe('report Card Schemas', () => {
   })
 
   describe('bulkGenerateReportCardsSchema', () => {
-    it('should validate bulk generation data', () => {
+    test('should validate bulk generation data', () => {
       const validData = {
         classId: 'class-123',
         termId: 'term-123',
@@ -196,7 +196,7 @@ describe('report Card Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should accept empty studentIds array', () => {
+    test('should accept empty studentIds array', () => {
       const validData = {
         classId: 'class-123',
         termId: 'term-123',
@@ -210,7 +210,7 @@ describe('report Card Schemas', () => {
   })
 
   describe('sendReportCardSchema', () => {
-    it('should validate email delivery', () => {
+    test('should validate email delivery', () => {
       const validData = {
         reportCardId: 'rc-123',
         deliveryMethod: 'email',
@@ -221,7 +221,7 @@ describe('report Card Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should validate SMS delivery', () => {
+    test('should validate SMS delivery', () => {
       const validData = {
         reportCardId: 'rc-123',
         deliveryMethod: 'sms',
@@ -232,7 +232,7 @@ describe('report Card Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should reject invalid delivery method', () => {
+    test('should reject invalid delivery method', () => {
       const invalidData = {
         reportCardId: 'rc-123',
         deliveryMethod: 'pigeon',
@@ -242,7 +242,7 @@ describe('report Card Schemas', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should reject invalid email format', () => {
+    test('should reject invalid email format', () => {
       const invalidData = {
         reportCardId: 'rc-123',
         deliveryMethod: 'email',
@@ -255,7 +255,7 @@ describe('report Card Schemas', () => {
   })
 
   describe('bulkSendReportCardsSchema', () => {
-    it('should validate bulk send data', () => {
+    test('should validate bulk send data', () => {
       const validData = {
         reportCardIds: ['rc-1', 'rc-2', 'rc-3'],
         deliveryMethod: 'email',
@@ -265,7 +265,7 @@ describe('report Card Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should reject empty reportCardIds array', () => {
+    test('should reject empty reportCardIds array', () => {
       const invalidData = {
         reportCardIds: [],
         deliveryMethod: 'email',
@@ -277,7 +277,7 @@ describe('report Card Schemas', () => {
   })
 
   describe('updateHomeroomCommentSchema', () => {
-    it('should validate valid comment update', () => {
+    test('should validate valid comment update', () => {
       const validData = {
         reportCardId: 'rc-123',
         homeroomComment: 'Très bon trimestre.',
@@ -287,7 +287,7 @@ describe('report Card Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should reject comment exceeding max length', () => {
+    test('should reject comment exceeding max length', () => {
       const invalidData = {
         reportCardId: 'rc-123',
         homeroomComment: 'a'.repeat(1001),
@@ -299,7 +299,7 @@ describe('report Card Schemas', () => {
   })
 
   describe('createTeacherCommentSchema', () => {
-    it('should validate valid teacher comment', () => {
+    test('should validate valid teacher comment', () => {
       const validData = {
         reportCardId: 'rc-123',
         subjectId: 'subject-123',
@@ -311,7 +311,7 @@ describe('report Card Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should reject empty comment', () => {
+    test('should reject empty comment', () => {
       const invalidData = {
         reportCardId: 'rc-123',
         subjectId: 'subject-123',
@@ -323,7 +323,7 @@ describe('report Card Schemas', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should reject comment exceeding max length', () => {
+    test('should reject comment exceeding max length', () => {
       const invalidData = {
         reportCardId: 'rc-123',
         subjectId: 'subject-123',
@@ -337,7 +337,7 @@ describe('report Card Schemas', () => {
   })
 
   describe('updateTeacherCommentSchema', () => {
-    it('should validate valid update', () => {
+    test('should validate valid update', () => {
       const validData = {
         id: 'comment-123',
         comment: 'Updated comment.',

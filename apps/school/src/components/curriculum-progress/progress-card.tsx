@@ -86,7 +86,10 @@ export function ProgressCard({
 
         <div className="flex items-center justify-between text-sm">
           <span className="text-muted-foreground">
-            {t('curriculum.progress')}: {progressPercentage.toFixed(0)}%
+            {t('curriculum.progress')}
+            :
+            {progressPercentage.toFixed(0)}
+            %
           </span>
           {variance !== undefined && (
             <span
@@ -99,14 +102,19 @@ export function ProgressCard({
             >
               {isAhead && <TrendingUp className="h-4 w-4" />}
               {isBehind && <TrendingDown className="h-4 w-4" />}
-              {variance > 0 ? '+' : ''}{variance.toFixed(0)}%
+              {variance > 0 ? '+' : ''}
+              {variance.toFixed(0)}
+              %
             </span>
           )}
         </div>
 
         {expectedPercentage !== undefined && (
           <p className="text-xs text-muted-foreground">
-            {t('curriculum.expectedProgress')}: {expectedPercentage.toFixed(0)}%
+            {t('curriculum.expectedProgress')}
+            :
+            {expectedPercentage.toFixed(0)}
+            %
           </p>
         )}
       </CardContent>

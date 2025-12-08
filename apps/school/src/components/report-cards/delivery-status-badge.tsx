@@ -1,8 +1,8 @@
 import type { DeliveryMethod } from '@/schemas/report-card'
+import { Mail, MessageSquare, Printer, Smartphone } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import { deliveryMethodLabels } from '@/schemas/report-card'
-import { Mail, MessageSquare, Printer, Smartphone } from 'lucide-react'
 
 interface DeliveryStatusBadgeProps {
   method: DeliveryMethod

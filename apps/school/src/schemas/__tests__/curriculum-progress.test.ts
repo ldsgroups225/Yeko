@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect } from 'vitest'
 
 import {
   createClassSessionSchema,
@@ -15,7 +15,7 @@ import {
 
 describe('curriculum-progress Schemas', () => {
   describe('getClassSessionsSchema', () => {
-    it('should validate valid query params', () => {
+    test('should validate valid query params', () => {
       const validData = {
         classId: 'class-123',
         subjectId: 'subject-123',
@@ -28,7 +28,7 @@ describe('curriculum-progress Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should require classId', () => {
+    test('should require classId', () => {
       const invalidData = {
         subjectId: 'subject-123',
       }
@@ -37,7 +37,7 @@ describe('curriculum-progress Schemas', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should reject empty classId', () => {
+    test('should reject empty classId', () => {
       const invalidData = {
         classId: '',
       }
@@ -46,7 +46,7 @@ describe('curriculum-progress Schemas', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should accept minimal required fields', () => {
+    test('should accept minimal required fields', () => {
       const validData = {
         classId: 'class-123',
       }
@@ -55,7 +55,7 @@ describe('curriculum-progress Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should reject invalid date format', () => {
+    test('should reject invalid date format', () => {
       const invalidData = {
         classId: 'class-123',
         startDate: '01-09-2024', // Invalid format
@@ -66,9 +66,8 @@ describe('curriculum-progress Schemas', () => {
     })
   })
 
-
   describe('createClassSessionSchema', () => {
-    it('should validate valid session data', () => {
+    test('should validate valid session data', () => {
       const validData = {
         classId: 'class-123',
         subjectId: 'subject-123',
@@ -88,7 +87,7 @@ describe('curriculum-progress Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should require classId, subjectId, teacherId, date, startTime, endTime', () => {
+    test('should require classId, subjectId, teacherId, date, startTime, endTime', () => {
       const invalidData = {
         topic: 'Some topic',
       }
@@ -97,7 +96,7 @@ describe('curriculum-progress Schemas', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should reject invalid date format', () => {
+    test('should reject invalid date format', () => {
       const invalidData = {
         classId: 'class-123',
         subjectId: 'subject-123',
@@ -111,7 +110,7 @@ describe('curriculum-progress Schemas', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should reject invalid time format', () => {
+    test('should reject invalid time format', () => {
       const invalidData = {
         classId: 'class-123',
         subjectId: 'subject-123',
@@ -125,7 +124,7 @@ describe('curriculum-progress Schemas', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should reject time with invalid hours', () => {
+    test('should reject time with invalid hours', () => {
       const invalidData = {
         classId: 'class-123',
         subjectId: 'subject-123',
@@ -139,7 +138,7 @@ describe('curriculum-progress Schemas', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should reject time with invalid minutes', () => {
+    test('should reject time with invalid minutes', () => {
       const invalidData = {
         classId: 'class-123',
         subjectId: 'subject-123',
@@ -153,7 +152,7 @@ describe('curriculum-progress Schemas', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should reject topic exceeding max length', () => {
+    test('should reject topic exceeding max length', () => {
       const invalidData = {
         classId: 'class-123',
         subjectId: 'subject-123',
@@ -168,7 +167,7 @@ describe('curriculum-progress Schemas', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should accept valid time formats', () => {
+    test('should accept valid time formats', () => {
       const validTimes = ['00:00', '08:30', '12:00', '23:59', '14:45']
 
       for (const time of validTimes) {
@@ -188,7 +187,7 @@ describe('curriculum-progress Schemas', () => {
   })
 
   describe('updateClassSessionSchema', () => {
-    it('should validate partial update', () => {
+    test('should validate partial update', () => {
       const validData = {
         id: 'session-123',
         topic: 'Updated topic',
@@ -199,7 +198,7 @@ describe('curriculum-progress Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should require id', () => {
+    test('should require id', () => {
       const invalidData = {
         topic: 'Updated topic',
       }
@@ -208,7 +207,7 @@ describe('curriculum-progress Schemas', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should accept null for optional fields', () => {
+    test('should accept null for optional fields', () => {
       const validData = {
         id: 'session-123',
         chapterId: null,
@@ -222,7 +221,7 @@ describe('curriculum-progress Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should validate attendance numbers', () => {
+    test('should validate attendance numbers', () => {
       const validData = {
         id: 'session-123',
         studentsPresent: 25,
@@ -233,7 +232,7 @@ describe('curriculum-progress Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should reject negative attendance numbers', () => {
+    test('should reject negative attendance numbers', () => {
       const invalidData = {
         id: 'session-123',
         studentsPresent: -1,
@@ -243,7 +242,7 @@ describe('curriculum-progress Schemas', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should validate status enum', () => {
+    test('should validate status enum', () => {
       const statuses = ['scheduled', 'completed', 'cancelled', 'rescheduled'] as const
 
       for (const status of statuses) {
@@ -257,7 +256,7 @@ describe('curriculum-progress Schemas', () => {
       }
     })
 
-    it('should reject invalid status', () => {
+    test('should reject invalid status', () => {
       const invalidData = {
         id: 'session-123',
         status: 'invalid_status',
@@ -269,7 +268,7 @@ describe('curriculum-progress Schemas', () => {
   })
 
   describe('markSessionCompletedSchema', () => {
-    it('should validate valid completion data', () => {
+    test('should validate valid completion data', () => {
       const validData = {
         id: 'session-123',
         chapterId: 'chapter-123',
@@ -282,7 +281,7 @@ describe('curriculum-progress Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should require id', () => {
+    test('should require id', () => {
       const invalidData = {
         chapterId: 'chapter-123',
       }
@@ -291,7 +290,7 @@ describe('curriculum-progress Schemas', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should accept minimal required fields', () => {
+    test('should accept minimal required fields', () => {
       const validData = {
         id: 'session-123',
       }
@@ -302,7 +301,7 @@ describe('curriculum-progress Schemas', () => {
   })
 
   describe('markChapterCompleteSchema', () => {
-    it('should validate valid chapter completion data', () => {
+    test('should validate valid chapter completion data', () => {
       const validData = {
         classId: 'class-123',
         subjectId: 'subject-123',
@@ -316,7 +315,7 @@ describe('curriculum-progress Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should require classId, subjectId, chapterId, teacherId', () => {
+    test('should require classId, subjectId, chapterId, teacherId', () => {
       const invalidData = {
         notes: 'Some notes',
       }
@@ -325,7 +324,7 @@ describe('curriculum-progress Schemas', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should reject empty required fields', () => {
+    test('should reject empty required fields', () => {
       const invalidData = {
         classId: '',
         subjectId: 'subject-123',
@@ -339,7 +338,7 @@ describe('curriculum-progress Schemas', () => {
   })
 
   describe('unmarkChapterCompleteSchema', () => {
-    it('should validate valid unmark data', () => {
+    test('should validate valid unmark data', () => {
       const validData = {
         classId: 'class-123',
         chapterId: 'chapter-123',
@@ -349,7 +348,7 @@ describe('curriculum-progress Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should require both classId and chapterId', () => {
+    test('should require both classId and chapterId', () => {
       const invalidData = {
         classId: 'class-123',
       }
@@ -360,7 +359,7 @@ describe('curriculum-progress Schemas', () => {
   })
 
   describe('getProgressSchema', () => {
-    it('should validate valid progress query', () => {
+    test('should validate valid progress query', () => {
       const validData = {
         classId: 'class-123',
         termId: 'term-123',
@@ -371,7 +370,7 @@ describe('curriculum-progress Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should require classId and termId', () => {
+    test('should require classId and termId', () => {
       const invalidData = {
         subjectId: 'subject-123',
       }
@@ -380,7 +379,7 @@ describe('curriculum-progress Schemas', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should accept without optional subjectId', () => {
+    test('should accept without optional subjectId', () => {
       const validData = {
         classId: 'class-123',
         termId: 'term-123',
@@ -392,7 +391,7 @@ describe('curriculum-progress Schemas', () => {
   })
 
   describe('getProgressOverviewSchema', () => {
-    it('should validate valid overview query', () => {
+    test('should validate valid overview query', () => {
       const validData = {
         schoolId: 'school-123',
         schoolYearId: 'year-123',
@@ -403,7 +402,7 @@ describe('curriculum-progress Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should require schoolId and schoolYearId', () => {
+    test('should require schoolId and schoolYearId', () => {
       const invalidData = {
         termId: 'term-123',
       }
@@ -412,7 +411,7 @@ describe('curriculum-progress Schemas', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should accept without optional termId', () => {
+    test('should accept without optional termId', () => {
       const validData = {
         schoolId: 'school-123',
         schoolYearId: 'year-123',
@@ -424,7 +423,7 @@ describe('curriculum-progress Schemas', () => {
   })
 
   describe('getClassesBehindSchema', () => {
-    it('should validate valid query with threshold', () => {
+    test('should validate valid query with threshold', () => {
       const validData = {
         schoolId: 'school-123',
         termId: 'term-123',
@@ -435,7 +434,7 @@ describe('curriculum-progress Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should require schoolId and termId', () => {
+    test('should require schoolId and termId', () => {
       const invalidData = {
         threshold: -10,
       }
@@ -444,7 +443,7 @@ describe('curriculum-progress Schemas', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should accept without optional threshold', () => {
+    test('should accept without optional threshold', () => {
       const validData = {
         schoolId: 'school-123',
         termId: 'term-123',
@@ -456,7 +455,7 @@ describe('curriculum-progress Schemas', () => {
   })
 
   describe('recalculateProgressSchema', () => {
-    it('should validate valid recalculation params', () => {
+    test('should validate valid recalculation params', () => {
       const validData = {
         classId: 'class-123',
         subjectId: 'subject-123',
@@ -470,7 +469,7 @@ describe('curriculum-progress Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should require all fields', () => {
+    test('should require all fields', () => {
       const invalidData = {
         classId: 'class-123',
         subjectId: 'subject-123',
@@ -480,7 +479,7 @@ describe('curriculum-progress Schemas', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should reject invalid date formats', () => {
+    test('should reject invalid date formats', () => {
       const invalidData = {
         classId: 'class-123',
         subjectId: 'subject-123',
@@ -496,7 +495,7 @@ describe('curriculum-progress Schemas', () => {
   })
 
   describe('status Validation', () => {
-    it('should accept all valid class session statuses', () => {
+    test('should accept all valid class session statuses', () => {
       const statuses = ['scheduled', 'completed', 'cancelled', 'rescheduled'] as const
 
       for (const status of statuses) {
