@@ -463,7 +463,7 @@ export async function exportStudents(filters: StudentFilters) {
 
 // ==================== Statistics ====================
 
-export async function getStudentStatistics(schoolId: string, schoolYearId?: string) {
+export async function getStudentStatistics(schoolId: string) {
   const db = getDb()
   const conditions = [eq(students.schoolId, schoolId)]
 

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { beforeEach, describe, expect, test, vi } from 'vitest'
+import { beforeEach, describe, expect, it, test, vi } from 'vitest'
 import { MobileSidebar } from './mobile-sidebar'
 
 // Mock the router hooks
@@ -97,7 +97,7 @@ vi.mock('@/components/ui/sidebar', () => ({
   SidebarGroupLabel: ({ children }: any) => <div>{children}</div>,
   SidebarHeader: ({ children }: any) => <div>{children}</div>,
   SidebarMenu: ({ children }: any) => <ul>{children}</ul>,
-  SidebarMenuButton: ({ children, ...props }: any) => <button {...props}>{children}</button>,
+  SidebarMenuButton: ({ children, ...props }: any) => <button type="button" {...props}>{children}</button>,
   SidebarMenuItem: ({ children }: any) => <li>{children}</li>,
   SidebarProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   useSidebar: () => ({
@@ -159,7 +159,7 @@ describe('mobileSidebar Component', () => {
       expect(screen.getByText('Support')).toBeInTheDocument()
     })
 
-    test.skip('should render header with logo and title', () => {
+    it.todo('should render header with logo and title', () => {
       render(<MobileSidebar isOpen={true} onClose={mockOnClose} />)
 
       const logo = screen.getByAltText('Yeko Logo')
@@ -170,7 +170,7 @@ describe('mobileSidebar Component', () => {
       expect(screen.getByText('Super Administrateur')).toBeInTheDocument()
     })
 
-    test.skip('should show proper sheet header styling', () => {
+    it.todo('should show proper sheet header styling', () => {
       render(<MobileSidebar isOpen={true} onClose={mockOnClose} />)
 
       expect(screen.getByText('Utilisateur Admin')).toBeInTheDocument()
@@ -182,14 +182,14 @@ describe('mobileSidebar Component', () => {
       expect(screen.getByText('A')).toBeInTheDocument()
     })
 
-    test.skip('should show proper sheet header styling with classes', () => {
+    it.todo('should show proper sheet header styling with classes', () => {
       render(<MobileSidebar isOpen={true} onClose={mockOnClose} />)
 
       const sheetHeader = screen.getByTestId('sheet-header')
       expect(sheetHeader).toHaveClass('p-6', 'border-b')
     })
 
-    test.skip('should render scroll area for navigation', () => {
+    it.todo('should render scroll area for navigation', () => {
       render(<MobileSidebar isOpen={true} onClose={mockOnClose} />)
 
       const scrollArea = screen.getByTestId('scroll-area')
@@ -266,7 +266,7 @@ describe('mobileSidebar Component', () => {
   })
 
   describe('active State Display', () => {
-    test.skip('should highlight dashboard as active when on dashboard route', () => {
+    it.todo('should highlight dashboard as active when on dashboard route', () => {
       mockRouterState.location.pathname = '/dashboard'
       render(<MobileSidebar isOpen={true} onClose={mockOnClose} />)
 
@@ -274,7 +274,7 @@ describe('mobileSidebar Component', () => {
       expect(dashboardButton).toHaveClass('bg-primary', 'text-primary-foreground')
     })
 
-    test.skip('should highlight schools as active when on schools route', () => {
+    it.todo('should highlight schools as active when on schools route', () => {
       mockRouterState.location.pathname = '/schools'
       render(<MobileSidebar isOpen={true} onClose={mockOnClose} />)
 
@@ -282,7 +282,7 @@ describe('mobileSidebar Component', () => {
       expect(schoolsButton).toHaveClass('bg-primary', 'text-primary-foreground')
     })
 
-    test.skip('should highlight catalogs as active when on catalogs sub-routes', () => {
+    it.todo('should highlight catalogs as active when on catalogs sub-routes', () => {
       mockRouterState.location.pathname = '/catalogs/programs'
       render(<MobileSidebar isOpen={true} onClose={mockOnClose} />)
 
@@ -290,7 +290,7 @@ describe('mobileSidebar Component', () => {
       expect(catalogsButton).toHaveClass('bg-primary', 'text-primary-foreground')
     })
 
-    test.skip('should not highlight inactive items', () => {
+    it.todo('should not highlight inactive items', () => {
       mockRouterState.location.pathname = '/dashboard'
       render(<MobileSidebar isOpen={true} onClose={mockOnClose} />)
 
@@ -303,7 +303,7 @@ describe('mobileSidebar Component', () => {
   })
 
   describe('sheet Interaction', () => {
-    test.skip('should call onClose when sheet is closed', async () => {
+    it.todo('should call onClose when sheet is closed', async () => {
       const user = userEvent.setup()
       render(<MobileSidebar isOpen={true} onClose={mockOnClose} />)
 
@@ -313,7 +313,7 @@ describe('mobileSidebar Component', () => {
       expect(mockOnClose).toHaveBeenCalledWith(false)
     })
 
-    test.skip('should handle onOpenChange prop correctly', () => {
+    it.todo('should handle onOpenChange prop correctly', () => {
       const { rerender } = render(
         <MobileSidebar isOpen={false} onClose={mockOnClose} />,
       )
@@ -329,7 +329,7 @@ describe('mobileSidebar Component', () => {
   })
 
   describe('navigation Item Structure', () => {
-    test.skip('should render navigation items with proper styling', () => {
+    it.todo('should render navigation items with proper styling', () => {
       render(<MobileSidebar isOpen={true} onClose={mockOnClose} />)
 
       const allButtons = screen.getAllByRole('button')
@@ -355,7 +355,7 @@ describe('mobileSidebar Component', () => {
       })
     })
 
-    test.skip('should display descriptions for navigation items', () => {
+    it.todo('should display descriptions for navigation items', () => {
       render(<MobileSidebar isOpen={true} onClose={mockOnClose} />)
 
       expect(screen.getByText('Vue d\'ensemble du système')).toBeInTheDocument()
@@ -380,7 +380,7 @@ describe('mobileSidebar Component', () => {
   })
 
   describe('user Profile Section', () => {
-    test.skip('should render user profile with proper styling', () => {
+    it.todo('should render user profile with proper styling', () => {
       render(<MobileSidebar isOpen={true} onClose={mockOnClose} />)
 
       const userProfileContainer = document.querySelector('.mt-auto.pt-6.border-t')
@@ -474,7 +474,7 @@ describe('mobileSidebar Component', () => {
       }
     })
 
-    test.skip('should have proper heading structure', () => {
+    it.todo('should have proper heading structure', () => {
       render(<MobileSidebar isOpen={true} onClose={mockOnClose} />)
 
       const title = screen.getByRole('heading', { level: 2 })
@@ -484,14 +484,14 @@ describe('mobileSidebar Component', () => {
   })
 
   describe('responsive Design', () => {
-    test.skip('should have correct width for mobile sidebar', () => {
+    it.todo('should have correct width for mobile sidebar', () => {
       render(<MobileSidebar isOpen={true} onClose={mockOnClose} />)
 
       const sheetContent = screen.getByTestId('sheet-content')
       expect(sheetContent).toHaveClass('w-80')
     })
 
-    test.skip('should have proper padding for sheet content', () => {
+    it.todo('should have proper padding for sheet content', () => {
       render(<MobileSidebar isOpen={true} onClose={mockOnClose} />)
 
       const sheetContent = screen.getByTestId('sheet-content')
@@ -528,7 +528,7 @@ describe('mobileSidebar Component', () => {
   })
 
   describe('component Structure', () => {
-    test.skip('should render navigation within scroll area', () => {
+    it.todo('should render navigation within scroll area', () => {
       render(<MobileSidebar isOpen={true} onClose={mockOnClose} />)
 
       const scrollArea = screen.getByTestId('scroll-area')
@@ -538,7 +538,7 @@ describe('mobileSidebar Component', () => {
       expect(nav).toHaveClass('space-y-2')
     })
 
-    test.skip('should have proper sheet content structure', () => {
+    it.todo('should have proper sheet content structure', () => {
       render(<MobileSidebar isOpen={true} onClose={mockOnClose} />)
 
       const sheetContent = screen.getByTestId('sheet-content')
@@ -546,7 +546,7 @@ describe('mobileSidebar Component', () => {
       expect(screen.getByTestId('scroll-area')).toBeInTheDocument()
     })
 
-    test.skip('should have proper spacing between navigation items', () => {
+    it.todo('should have proper spacing between navigation items', () => {
       render(<MobileSidebar isOpen={true} onClose={mockOnClose} />)
 
       const nav = document.querySelector('nav')
@@ -555,7 +555,7 @@ describe('mobileSidebar Component', () => {
   })
 
   describe('integration with Router', () => {
-    test.skip('should update active state when route changes', () => {
+    it.todo('should update active state when route changes', () => {
       mockRouterState.location.pathname = '/dashboard'
 
       const { rerender } = render(<MobileSidebar isOpen={true} onClose={mockOnClose} />)
@@ -570,7 +570,7 @@ describe('mobileSidebar Component', () => {
       expect(schoolsButton).toHaveClass('bg-primary')
     })
 
-    test.skip('should handle partial route matches correctly', () => {
+    it.todo('should handle partial route matches correctly', () => {
       mockRouterState.location.pathname = '/schools/departments'
       render(<MobileSidebar isOpen={true} onClose={mockOnClose} />)
 

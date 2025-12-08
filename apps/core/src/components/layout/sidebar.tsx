@@ -171,6 +171,7 @@ export function Sidebar({ className }: SidebarProps) {
           </SidebarMenuButton>
           {hasChildren && !isCollapsed && (
             <button
+              type="button"
               onClick={(e) => {
                 e.stopPropagation()
                 toggleExpanded(item.href)
@@ -203,6 +204,7 @@ export function Sidebar({ className }: SidebarProps) {
                       isActive={currentPath === child.href}
                     >
                       <button
+                        type="button"
                         onClick={() => navigate({ to: child.href })}
                         className="cursor-pointer w-full"
                       >

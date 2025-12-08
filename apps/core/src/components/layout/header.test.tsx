@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { beforeEach, describe, expect, test, vi } from 'vitest'
+import { beforeEach, describe, expect, it, test, vi } from 'vitest'
 import { Header } from './header'
 
 // Mock auth client
@@ -91,7 +91,7 @@ vi.mock('@/lib/utils', () => ({
 // Mock SidebarProvider
 vi.mock('@/components/ui/sidebar', () => ({
   SidebarProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  SidebarTrigger: ({ children, ...props }: any) => <button {...props}>{children}</button>,
+  SidebarTrigger: ({ children, ...props }: any) => <button type="button" {...props}>{children}</button>,
   useSidebar: () => ({
     open: true,
     setOpen: vi.fn(),
@@ -465,7 +465,7 @@ describe('header Component', () => {
   })
 
   describe('accessibility', () => {
-    test.skip('should have proper button roles', () => {
+    it.todo('should have proper button roles', () => {
       render(<Header onMobileMenuToggle={mockOnMobileMenuToggle} />)
 
       const buttons = screen.getAllByRole('button')

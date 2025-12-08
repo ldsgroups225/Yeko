@@ -50,7 +50,7 @@ describe('school subjects queries', () => {
   describe('getAvailableCoreSubjects', () => {
     test('should return empty array when no active school year', async () => {
       const result = await getAvailableCoreSubjects({ schoolId: testSchoolId })
-      expect(result).toEqual([])
+      expect(result).toStrictEqual([])
     })
   })
 
@@ -60,7 +60,7 @@ describe('school subjects queries', () => {
         schoolId: testSchoolId,
         subjectIds: [],
       })
-      expect(result).toEqual([])
+      expect(result).toStrictEqual([])
     })
 
     test('should throw error when no active school year', async () => {

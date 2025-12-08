@@ -38,7 +38,7 @@ describe('teacher subjects queries', () => {
   describe('assignSubjectsToTeacher', () => {
     test('should return empty array when no subjects provided', async () => {
       const result = await assignSubjectsToTeacher(fakeTeacherId, [])
-      expect(result).toEqual([])
+      expect(result).toStrictEqual([])
     })
 
     test('should handle assignment attempt with non-existent teacher', async () => {
@@ -59,7 +59,7 @@ describe('teacher subjects queries', () => {
   describe('removeSubjectsFromTeacher', () => {
     test('should return empty array when no subjects provided', async () => {
       const result = await removeSubjectsFromTeacher(fakeTeacherId, [])
-      expect(result).toEqual([])
+      expect(result).toStrictEqual([])
     })
 
     test('should return empty array when removing non-existent assignments', async () => {

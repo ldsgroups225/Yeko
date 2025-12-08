@@ -74,7 +74,7 @@ describe('school coefficients queries', () => {
         schoolId: fakeSchoolId,
         updates: [],
       })
-      expect(result).toEqual([])
+      expect(result).toStrictEqual([])
     })
 
     test('should reject if any weight is above 20', async () => {

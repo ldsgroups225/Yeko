@@ -90,7 +90,7 @@ export const createSchoolAdmin = createServerFn()
       }
       else {
         // Production: Send welcome email with credentials
-        const loginUrl = `${process.env.APP_URL || 'https://school.yeko.app'}/login`
+        const loginUrl = `${import.meta.env.APP_URL || 'https://school.yeko.app'}/login`
         const emailResult = await sendWelcomeEmail({
           to: email,
           name,

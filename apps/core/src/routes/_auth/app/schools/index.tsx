@@ -390,165 +390,165 @@ function Schools() {
         <CardContent>
           {isLoading
             ? (
-              <div className="flex justify-center py-8">
-                <Loader2 className="h-8 w-8 animate-spin" />
-                <span className="ml-2">Chargement des écoles...</span>
-              </div>
-            )
+                <div className="flex justify-center py-8">
+                  <Loader2 className="h-8 w-8 animate-spin" />
+                  <span className="ml-2">Chargement des écoles...</span>
+                </div>
+              )
             : (
-              error
-                ? (
-                  <div className="text-center py-8">
-                    <XCircle className="h-8 w-8 text-destructive mx-auto mb-2" />
-                    <h3 className="text-lg font-medium text-destructive">Erreur de chargement</h3>
-                    <p className="text-muted-foreground">{error.message}</p>
-                    <Button
-                      variant="outline"
-                      onClick={() => window.location.reload()}
-                      className="mt-4"
-                    >
-                      Réessayer
-                    </Button>
-                  </div>
-                )
-                : (
-                  schools.length === 0
-                    ? (
+                error
+                  ? (
                       <div className="text-center py-8">
-                        <SchoolIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                        <h3 className="text-lg font-medium">Aucune école trouvée</h3>
-                        <p className="text-muted-foreground">
-                          {search || status !== 'all'
-                            ? 'Essayez de modifier vos filtres de recherche.'
-                            : 'Commencez par ajouter votre première école.'}
-                        </p>
-                        {(!search && status === 'all') && (
-                          <Link to="/app/schools/create">
-                            <Button className="mt-4">
-                              <Plus className="h-4 w-4 mr-2" />
-                              Ajouter une école
-                            </Button>
-                          </Link>
-                        )}
+                        <XCircle className="h-8 w-8 text-destructive mx-auto mb-2" />
+                        <h3 className="text-lg font-medium text-destructive">Erreur de chargement</h3>
+                        <p className="text-muted-foreground">{error.message}</p>
+                        <Button
+                          variant="outline"
+                          onClick={() => window.location.reload()}
+                          className="mt-4"
+                        >
+                          Réessayer
+                        </Button>
                       </div>
                     )
-                    : (
-                      <>
-                        <div className="space-y-4">
-                          {schools.map((school: any) => (
-                            <Link
-                              key={school.id}
-                              to="/app/schools/$schoolId"
-                              params={{ schoolId: school.id }}
-                              className="block"
-                            >
-                              <div className="flex items-center justify-between p-6 border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer">
-                                <div className="flex items-center space-x-4">
-                                  {/* School Logo/Avatar */}
-                                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                                    <SchoolIcon className="h-6 w-6 text-primary" />
-                                  </div>
+                  : (
+                      schools.length === 0
+                        ? (
+                            <div className="text-center py-8">
+                              <SchoolIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                              <h3 className="text-lg font-medium">Aucune école trouvée</h3>
+                              <p className="text-muted-foreground">
+                                {search || status !== 'all'
+                                  ? 'Essayez de modifier vos filtres de recherche.'
+                                  : 'Commencez par ajouter votre première école.'}
+                              </p>
+                              {(!search && status === 'all') && (
+                                <Link to="/app/schools/create">
+                                  <Button className="mt-4">
+                                    <Plus className="h-4 w-4 mr-2" />
+                                    Ajouter une école
+                                  </Button>
+                                </Link>
+                              )}
+                            </div>
+                          )
+                        : (
+                            <>
+                              <div className="space-y-4">
+                                {schools.map((school: any) => (
+                                  <Link
+                                    key={school.id}
+                                    to="/app/schools/$schoolId"
+                                    params={{ schoolId: school.id }}
+                                    className="block"
+                                  >
+                                    <div className="flex items-center justify-between p-6 border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer">
+                                      <div className="flex items-center space-x-4">
+                                        {/* School Logo/Avatar */}
+                                        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+                                          <SchoolIcon className="h-6 w-6 text-primary" />
+                                        </div>
 
-                                  {/* School Info */}
-                                  <div>
-                                    <div className="flex items-center gap-3">
-                                      <h3 className="text-lg font-semibold">{school.name}</h3>
-                                      {getStatusBadge(school.status)}
-                                    </div>
-                                    <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
-                                      <span className="font-mono bg-muted px-2 py-1 rounded">{school.code}</span>
-                                      {school.address && (
-                                        <div className="flex items-center gap-1">
-                                          <MapPin className="h-3 w-3" />
-                                          {school.address}
+                                        {/* School Info */}
+                                        <div>
+                                          <div className="flex items-center gap-3">
+                                            <h3 className="text-lg font-semibold">{school.name}</h3>
+                                            {getStatusBadge(school.status)}
+                                          </div>
+                                          <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+                                            <span className="font-mono bg-muted px-2 py-1 rounded">{school.code}</span>
+                                            {school.address && (
+                                              <div className="flex items-center gap-1">
+                                                <MapPin className="h-3 w-3" />
+                                                {school.address}
+                                              </div>
+                                            )}
+                                          </div>
+                                          <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+                                            {school.email && (
+                                              <div className="flex items-center gap-1">
+                                                <Mail className="h-3 w-3" />
+                                                {school.email}
+                                              </div>
+                                            )}
+                                            {school.phone && (
+                                              <div className="flex items-center gap-1">
+                                                <Phone className="h-3 w-3" />
+                                                {school.phone}
+                                              </div>
+                                            )}
+                                            <div className="flex items-center gap-1">
+                                              <Calendar className="h-3 w-3" />
+                                              Rejoint
+                                              {' '}
+                                              {new Date(school.createdAt).toLocaleDateString()}
+                                            </div>
+                                          </div>
                                         </div>
-                                      )}
-                                    </div>
-                                    <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
-                                      {school.email && (
-                                        <div className="flex items-center gap-1">
-                                          <Mail className="h-3 w-3" />
-                                          {school.email}
-                                        </div>
-                                      )}
-                                      {school.phone && (
-                                        <div className="flex items-center gap-1">
-                                          <Phone className="h-3 w-3" />
-                                          {school.phone}
-                                        </div>
-                                      )}
-                                      <div className="flex items-center gap-1">
-                                        <Calendar className="h-3 w-3" />
-                                        Rejoint
-                                        {' '}
-                                        {new Date(school.createdAt).toLocaleDateString()}
+                                      </div>
+
+                                      {/* Actions */}
+                                      <div className="flex items-center space-x-2">
+                                        <Button variant="ghost" size="icon">
+                                          <MoreHorizontal className="h-4 w-4" />
+                                        </Button>
                                       </div>
                                     </div>
+                                  </Link>
+                                ))}
+                              </div>
+
+                              {/* Pagination */}
+                              {pagination && pagination.totalPages > 1 && (
+                                <div className="flex items-center justify-between mt-6">
+                                  <div className="text-sm text-muted-foreground">
+                                    Affichage de
+                                    {' '}
+                                    {(page - 1) * limit + 1}
+                                    {' '}
+                                    à
+                                    {' '}
+                                    {Math.min(page * limit, pagination.total)}
+                                    {' '}
+                                    sur
+                                    {' '}
+                                    {pagination.total}
+                                    {' '}
+                                    écoles
+                                  </div>
+                                  <div className="flex items-center space-x-2">
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => handlePageChange(page - 1)}
+                                      disabled={!pagination.hasPrev}
+                                    >
+                                      Précédent
+                                    </Button>
+                                    <span className="text-sm">
+                                      Page
+                                      {' '}
+                                      {page}
+                                      {' '}
+                                      sur
+                                      {' '}
+                                      {pagination.totalPages}
+                                    </span>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => handlePageChange(page + 1)}
+                                      disabled={!pagination.hasNext}
+                                    >
+                                      Suivant
+                                    </Button>
                                   </div>
                                 </div>
-
-                                {/* Actions */}
-                                <div className="flex items-center space-x-2">
-                                  <Button variant="ghost" size="icon">
-                                    <MoreHorizontal className="h-4 w-4" />
-                                  </Button>
-                                </div>
-                              </div>
-                            </Link>
-                          ))}
-                        </div>
-
-                        {/* Pagination */}
-                        {pagination && pagination.totalPages > 1 && (
-                          <div className="flex items-center justify-between mt-6">
-                            <div className="text-sm text-muted-foreground">
-                              Affichage de
-                              {' '}
-                              {(page - 1) * limit + 1}
-                              {' '}
-                              à
-                              {' '}
-                              {Math.min(page * limit, pagination.total)}
-                              {' '}
-                              sur
-                              {' '}
-                              {pagination.total}
-                              {' '}
-                              écoles
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handlePageChange(page - 1)}
-                                disabled={!pagination.hasPrev}
-                              >
-                                Précédent
-                              </Button>
-                              <span className="text-sm">
-                                Page
-                                {' '}
-                                {page}
-                                {' '}
-                                sur
-                                {' '}
-                                {pagination.totalPages}
-                              </span>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handlePageChange(page + 1)}
-                                disabled={!pagination.hasNext}
-                              >
-                                Suivant
-                              </Button>
-                            </div>
-                          </div>
-                        )}
-                      </>
+                              )}
+                            </>
+                          )
                     )
-                )
-            )}
+              )}
         </CardContent>
       </Card>
     </div>

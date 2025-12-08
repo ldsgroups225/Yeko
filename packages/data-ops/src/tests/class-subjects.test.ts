@@ -261,7 +261,7 @@ describe('class subjects queries', () => {
 
     test('should return empty result if source has no subjects', async () => {
       const result = await copyClassSubjects(sourceClassId, testClassId)
-      expect(result).toEqual([])
+      expect(result).toStrictEqual([])
     })
 
     // More tests will be added pending subject creation capability in tests
