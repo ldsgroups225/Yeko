@@ -1551,6 +1551,578 @@ export const attendanceSettingsRelations = relations(attendanceSettings, ({ one 
   }),
 }))
 
+// --- Phase 18: Financial Management ---
+
+// Account Types
+export const accountTypes = ['asset', 'liability', 'equity', 'revenue', 'expense'] as const
+export type AccountType = (typeof accountTypes)[number]
+
+// Normal Balance Types
+export const normalBalances = ['debit', 'credit'] as const
+export type NormalBalance = (typeof normalBalances)[number]
+
+// Transaction Types
+export const transactionTypes = ['journal', 'payment', 'receipt', 'refund', 'adjustment', 'opening', 'closing'] as const
+export type TransactionType = (typeof transactionTypes)[number]
+
+// Transaction Statuses
+export const transactionStatuses = ['draft', 'posted', 'voided'] as const
+export type TransactionStatus = (typeof transactionStatuses)[number]
+
+// Fee Categories
+export const feeCategories = ['tuition', 'registration', 'exam', 'transport', 'uniform', 'books', 'meals', 'activities', 'other'] as const
+export type FeeCategory = (typeof feeCategories)[number]
+
+// Discount Types
+export const discountTypes = ['sibling', 'scholarship', 'staff', 'early_payment', 'financial_aid', 'other'] as const
+export type DiscountType = (typeof discountTypes)[number]
+
+// Calculation Types
+export const calculationTypes = ['percentage', 'fixed'] as const
+export type CalculationType = (typeof calculationTypes)[number]
+
+// Payment Methods
+export const paymentMethods = ['cash', 'bank_transfer', 'mobile_money', 'card', 'check', 'other'] as const
+export type PaymentMethod = (typeof paymentMethods)[number]
+
+// Mobile Providers (West Africa)
+export const mobileProviders = ['orange', 'mtn', 'moov', 'wave', 'other'] as const
+export type MobileProvider = (typeof mobileProviders)[number]
+
+// Fee Statuses
+export const feeStatuses = ['pending', 'partial', 'paid', 'waived', 'cancelled'] as const
+export type FeeStatus = (typeof feeStatuses)[number]
+
+// Installment Statuses
+export const installmentStatuses = ['pending', 'partial', 'paid', 'overdue', 'waived'] as const
+export type InstallmentStatus = (typeof installmentStatuses)[number]
+
+// Payment Statuses
+export const paymentStatuses = ['pending', 'completed', 'cancelled', 'refunded', 'partial_refund'] as const
+export type PaymentStatus = (typeof paymentStatuses)[number]
+
+// Payment Plan Statuses
+export const paymentPlanStatuses = ['active', 'completed', 'defaulted', 'cancelled'] as const
+export type PaymentPlanStatus = (typeof paymentPlanStatuses)[number]
+
+// Refund Statuses
+export const refundStatuses = ['pending', 'approved', 'rejected', 'processed', 'cancelled'] as const
+export type RefundStatus = (typeof refundStatuses)[number]
+
+// Refund Reason Categories
+export const refundReasonCategories = ['overpayment', 'withdrawal', 'transfer', 'error', 'other'] as const
+export type RefundReasonCategory = (typeof refundReasonCategories)[number]
+
+// Refund Methods
+export const refundMethods = ['cash', 'bank_transfer', 'mobile_money', 'check', 'credit'] as const
+export type RefundMethod = (typeof refundMethods)[number]
+
+// Fiscal Year Statuses
+export const fiscalYearStatuses = ['open', 'closed', 'locked'] as const
+export type FiscalYearStatus = (typeof fiscalYearStatuses)[number]
+
+// Student Discount Statuses
+export const studentDiscountStatuses = ['pending', 'approved', 'rejected'] as const
+export type StudentDiscountStatus = (typeof studentDiscountStatuses)[number]
+
+// Accounts Table (Chart of Accounts)
+export const accounts = pgTable('accounts', {
+  id: text('id').primaryKey(),
+  schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
+  code: text('code').notNull(),
+  name: text('name').notNull(),
+  nameEn: text('name_en'),
+  type: text('type', { enum: accountTypes }).notNull(),
+  parentId: text('parent_id'),
+  level: smallint('level').notNull().default(1),
+  isHeader: boolean('is_header').default(false),
+  balance: decimal('balance', { precision: 15, scale: 2 }).default('0'),
+  normalBalance: text('normal_balance', { enum: normalBalances }).notNull(),
+  description: text('description'),
+  isSystem: boolean('is_system').default(false),
+  status: text('status', { enum: ['active', 'inactive'] }).default('active'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, table => ({
+  schoolIdx: index('idx_accounts_school').on(table.schoolId),
+  parentIdx: index('idx_accounts_parent').on(table.parentId),
+  typeIdx: index('idx_accounts_type').on(table.type),
+  codeIdx: index('idx_accounts_code').on(table.schoolId, table.code),
+  hierarchyIdx: index('idx_accounts_hierarchy').on(table.schoolId, table.level, table.parentId),
+  uniqueSchoolCode: unique('unique_school_account_code').on(table.schoolId, table.code),
+}))
+
+// Fiscal Years Table
+export const fiscalYears = pgTable('fiscal_years', {
+  id: text('id').primaryKey(),
+  schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
+  schoolYearId: text('school_year_id').notNull().references(() => schoolYears.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  startDate: date('start_date').notNull(),
+  endDate: date('end_date').notNull(),
+  status: text('status', { enum: fiscalYearStatuses }).default('open'),
+  closedAt: timestamp('closed_at'),
+  closedBy: text('closed_by').references(() => users.id, { onDelete: 'set null' }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, table => ({
+  schoolIdx: index('idx_fiscal_years_school').on(table.schoolId),
+  statusIdx: index('idx_fiscal_years_status').on(table.status),
+  datesIdx: index('idx_fiscal_years_dates').on(table.schoolId, table.startDate, table.endDate),
+  uniqueSchoolYear: unique('unique_school_fiscal_year').on(table.schoolId, table.schoolYearId),
+}))
+
+// Fee Types Table
+export const feeTypes = pgTable('fee_types', {
+  id: text('id').primaryKey(),
+  schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
+  code: text('code').notNull(),
+  name: text('name').notNull(),
+  nameEn: text('name_en'),
+  category: text('category', { enum: feeCategories }).notNull(),
+  isMandatory: boolean('is_mandatory').default(true),
+  isRecurring: boolean('is_recurring').default(true),
+  revenueAccountId: text('revenue_account_id').references(() => accounts.id, { onDelete: 'set null' }),
+  receivableAccountId: text('receivable_account_id').references(() => accounts.id, { onDelete: 'set null' }),
+  displayOrder: smallint('display_order').default(0),
+  status: text('status', { enum: ['active', 'inactive'] }).default('active'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, table => ({
+  schoolIdx: index('idx_fee_types_school').on(table.schoolId),
+  categoryIdx: index('idx_fee_types_category').on(table.category),
+  statusIdx: index('idx_fee_types_status').on(table.status),
+  uniqueSchoolCode: unique('unique_school_fee_code').on(table.schoolId, table.code),
+}))
+
+// Fee Structures Table
+export const feeStructures = pgTable('fee_structures', {
+  id: text('id').primaryKey(),
+  schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
+  schoolYearId: text('school_year_id').notNull().references(() => schoolYears.id, { onDelete: 'cascade' }),
+  feeTypeId: text('fee_type_id').notNull().references(() => feeTypes.id, { onDelete: 'cascade' }),
+  gradeId: text('grade_id').references(() => grades.id, { onDelete: 'cascade' }),
+  seriesId: text('series_id').references(() => series.id, { onDelete: 'set null' }),
+  amount: decimal('amount', { precision: 15, scale: 2 }).notNull(),
+  currency: text('currency').default('XOF'),
+  newStudentAmount: decimal('new_student_amount', { precision: 15, scale: 2 }),
+  effectiveDate: date('effective_date'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, table => ({
+  schoolYearIdx: index('idx_fee_structures_school_year').on(table.schoolId, table.schoolYearId),
+  gradeIdx: index('idx_fee_structures_grade').on(table.gradeId),
+  feeTypeIdx: index('idx_fee_structures_fee_type').on(table.feeTypeId),
+  lookupIdx: index('idx_fee_structures_lookup').on(table.schoolId, table.schoolYearId, table.gradeId),
+  uniqueFeeStructure: unique('unique_fee_structure').on(table.schoolId, table.schoolYearId, table.feeTypeId, table.gradeId, table.seriesId),
+}))
+
+// Discounts Table
+export const discounts = pgTable('discounts', {
+  id: text('id').primaryKey(),
+  schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
+  code: text('code').notNull(),
+  name: text('name').notNull(),
+  nameEn: text('name_en'),
+  type: text('type', { enum: discountTypes }).notNull(),
+  calculationType: text('calculation_type', { enum: calculationTypes }).notNull(),
+  value: decimal('value', { precision: 10, scale: 2 }).notNull(),
+  appliesToFeeTypes: text('applies_to_fee_types').array(),
+  maxDiscountAmount: decimal('max_discount_amount', { precision: 15, scale: 2 }),
+  requiresApproval: boolean('requires_approval').default(false),
+  autoApply: boolean('auto_apply').default(false),
+  validFrom: date('valid_from'),
+  validUntil: date('valid_until'),
+  status: text('status', { enum: ['active', 'inactive'] }).default('active'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, table => ({
+  schoolIdx: index('idx_discounts_school').on(table.schoolId),
+  typeIdx: index('idx_discounts_type').on(table.type),
+  statusIdx: index('idx_discounts_status').on(table.status),
+  uniqueSchoolCode: unique('unique_school_discount_code').on(table.schoolId, table.code),
+}))
+
+// Payment Plan Templates Table
+export const paymentPlanTemplates = pgTable('payment_plan_templates', {
+  id: text('id').primaryKey(),
+  schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
+  schoolYearId: text('school_year_id').notNull().references(() => schoolYears.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  nameEn: text('name_en'),
+  installmentsCount: smallint('installments_count').notNull(),
+  schedule: jsonb('schedule').$type<{ number: number, percentage: number, dueDaysFromStart: number, label: string }[]>().notNull(),
+  isDefault: boolean('is_default').default(false),
+  status: text('status', { enum: ['active', 'inactive'] }).default('active'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, table => ({
+  schoolIdx: index('idx_payment_plan_templates_school').on(table.schoolId),
+  yearIdx: index('idx_payment_plan_templates_year').on(table.schoolYearId),
+}))
+
+// Payment Plans Table (Student-specific)
+export const paymentPlans = pgTable('payment_plans', {
+  id: text('id').primaryKey(),
+  studentId: text('student_id').notNull().references(() => students.id, { onDelete: 'cascade' }),
+  schoolYearId: text('school_year_id').notNull().references(() => schoolYears.id, { onDelete: 'cascade' }),
+  templateId: text('template_id').references(() => paymentPlanTemplates.id, { onDelete: 'set null' }),
+  totalAmount: decimal('total_amount', { precision: 15, scale: 2 }).notNull(),
+  paidAmount: decimal('paid_amount', { precision: 15, scale: 2 }).default('0'),
+  balance: decimal('balance', { precision: 15, scale: 2 }).notNull(),
+  status: text('status', { enum: paymentPlanStatuses }).default('active'),
+  notes: text('notes'),
+  createdBy: text('created_by').notNull().references(() => users.id),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, table => ({
+  studentIdx: index('idx_payment_plans_student').on(table.studentId),
+  yearIdx: index('idx_payment_plans_year').on(table.schoolYearId),
+  statusIdx: index('idx_payment_plans_status').on(table.status),
+  uniqueStudentYear: unique('unique_student_payment_plan').on(table.studentId, table.schoolYearId),
+}))
+
+// Installments Table
+export const installments = pgTable('installments', {
+  id: text('id').primaryKey(),
+  paymentPlanId: text('payment_plan_id').notNull().references(() => paymentPlans.id, { onDelete: 'cascade' }),
+  installmentNumber: smallint('installment_number').notNull(),
+  label: text('label'),
+  amount: decimal('amount', { precision: 15, scale: 2 }).notNull(),
+  paidAmount: decimal('paid_amount', { precision: 15, scale: 2 }).default('0'),
+  balance: decimal('balance', { precision: 15, scale: 2 }).notNull(),
+  dueDate: date('due_date').notNull(),
+  status: text('status', { enum: installmentStatuses }).default('pending'),
+  paidAt: timestamp('paid_at'),
+  daysOverdue: integer('days_overdue').default(0),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, table => ({
+  planIdx: index('idx_installments_plan').on(table.paymentPlanId),
+  dueDateIdx: index('idx_installments_due_date').on(table.dueDate),
+  statusIdx: index('idx_installments_status').on(table.status),
+}))
+
+// Student Fees Table
+export const studentFees = pgTable('student_fees', {
+  id: text('id').primaryKey(),
+  studentId: text('student_id').notNull().references(() => students.id, { onDelete: 'cascade' }),
+  enrollmentId: text('enrollment_id').notNull().references(() => enrollments.id, { onDelete: 'cascade' }),
+  feeStructureId: text('fee_structure_id').notNull().references(() => feeStructures.id, { onDelete: 'restrict' }),
+  originalAmount: decimal('original_amount', { precision: 15, scale: 2 }).notNull(),
+  discountAmount: decimal('discount_amount', { precision: 15, scale: 2 }).default('0'),
+  finalAmount: decimal('final_amount', { precision: 15, scale: 2 }).notNull(),
+  paidAmount: decimal('paid_amount', { precision: 15, scale: 2 }).default('0'),
+  balance: decimal('balance', { precision: 15, scale: 2 }).notNull(),
+  status: text('status', { enum: feeStatuses }).default('pending'),
+  waivedAt: timestamp('waived_at'),
+  waivedBy: text('waived_by').references(() => users.id, { onDelete: 'set null' }),
+  waiverReason: text('waiver_reason'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, table => ({
+  studentIdx: index('idx_student_fees_student').on(table.studentId),
+  enrollmentIdx: index('idx_student_fees_enrollment').on(table.enrollmentId),
+  statusIdx: index('idx_student_fees_status').on(table.status),
+  uniqueStudentFee: unique('unique_student_fee').on(table.studentId, table.enrollmentId, table.feeStructureId),
+}))
+
+// Student Discounts Table
+export const studentDiscounts = pgTable('student_discounts', {
+  id: text('id').primaryKey(),
+  studentId: text('student_id').notNull().references(() => students.id, { onDelete: 'cascade' }),
+  discountId: text('discount_id').notNull().references(() => discounts.id, { onDelete: 'restrict' }),
+  schoolYearId: text('school_year_id').notNull().references(() => schoolYears.id, { onDelete: 'cascade' }),
+  calculatedAmount: decimal('calculated_amount', { precision: 15, scale: 2 }).notNull(),
+  status: text('status', { enum: studentDiscountStatuses }).default('pending'),
+  approvedBy: text('approved_by').references(() => users.id, { onDelete: 'set null' }),
+  approvedAt: timestamp('approved_at'),
+  rejectionReason: text('rejection_reason'),
+  notes: text('notes'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, table => ({
+  studentIdx: index('idx_student_discounts_student').on(table.studentId),
+  yearIdx: index('idx_student_discounts_year').on(table.schoolYearId),
+  statusIdx: index('idx_student_discounts_status').on(table.status),
+  uniqueStudentDiscountYear: unique('unique_student_discount_year').on(table.studentId, table.discountId, table.schoolYearId),
+}))
+
+// Payments Table
+export const payments = pgTable('payments', {
+  id: text('id').primaryKey(),
+  schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
+  studentId: text('student_id').notNull().references(() => students.id, { onDelete: 'cascade' }),
+  paymentPlanId: text('payment_plan_id').references(() => paymentPlans.id, { onDelete: 'set null' }),
+  receiptNumber: text('receipt_number').notNull(),
+  amount: decimal('amount', { precision: 15, scale: 2 }).notNull(),
+  currency: text('currency').default('XOF'),
+  method: text('method', { enum: paymentMethods }).notNull(),
+  reference: text('reference'),
+  bankName: text('bank_name'),
+  mobileProvider: text('mobile_provider', { enum: mobileProviders }),
+  paymentDate: date('payment_date').notNull(),
+  payerName: text('payer_name'),
+  payerPhone: text('payer_phone'),
+  notes: text('notes'),
+  status: text('status', { enum: paymentStatuses }).default('completed'),
+  cancelledAt: timestamp('cancelled_at'),
+  cancelledBy: text('cancelled_by').references(() => users.id, { onDelete: 'set null' }),
+  cancellationReason: text('cancellation_reason'),
+  processedBy: text('processed_by').notNull().references(() => users.id),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, table => ({
+  schoolIdx: index('idx_payments_school').on(table.schoolId),
+  studentIdx: index('idx_payments_student').on(table.studentId),
+  planIdx: index('idx_payments_plan').on(table.paymentPlanId),
+  dateIdx: index('idx_payments_date').on(table.schoolId, table.paymentDate),
+  methodIdx: index('idx_payments_method').on(table.method),
+  statusIdx: index('idx_payments_status').on(table.status),
+  receiptIdx: index('idx_payments_receipt').on(table.schoolId, table.receiptNumber),
+  processedByIdx: index('idx_payments_processed_by').on(table.processedBy, table.paymentDate),
+  uniqueReceipt: unique('unique_receipt_number').on(table.schoolId, table.receiptNumber),
+}))
+
+// Payment Allocations Table
+export const paymentAllocations = pgTable('payment_allocations', {
+  id: text('id').primaryKey(),
+  paymentId: text('payment_id').notNull().references(() => payments.id, { onDelete: 'cascade' }),
+  studentFeeId: text('student_fee_id').notNull().references(() => studentFees.id, { onDelete: 'restrict' }),
+  installmentId: text('installment_id').references(() => installments.id, { onDelete: 'set null' }),
+  amount: decimal('amount', { precision: 15, scale: 2 }).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, table => ({
+  paymentIdx: index('idx_payment_allocations_payment').on(table.paymentId),
+  feeIdx: index('idx_payment_allocations_fee').on(table.studentFeeId),
+  installmentIdx: index('idx_payment_allocations_installment').on(table.installmentId),
+}))
+
+// Transactions Table (Accounting)
+export const transactions = pgTable('transactions', {
+  id: text('id').primaryKey(),
+  schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
+  fiscalYearId: text('fiscal_year_id').notNull().references(() => fiscalYears.id, { onDelete: 'restrict' }),
+  transactionNumber: text('transaction_number').notNull(),
+  date: date('date').notNull(),
+  type: text('type', { enum: transactionTypes }).notNull(),
+  description: text('description').notNull(),
+  reference: text('reference'),
+  totalAmount: decimal('total_amount', { precision: 15, scale: 2 }).notNull(),
+  currency: text('currency').default('XOF'),
+  studentId: text('student_id').references(() => students.id, { onDelete: 'set null' }),
+  paymentId: text('payment_id').references(() => payments.id, { onDelete: 'set null' }),
+  status: text('status', { enum: transactionStatuses }).default('posted'),
+  voidedAt: timestamp('voided_at'),
+  voidedBy: text('voided_by').references(() => users.id, { onDelete: 'set null' }),
+  voidReason: text('void_reason'),
+  createdBy: text('created_by').notNull().references(() => users.id),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, table => ({
+  schoolIdx: index('idx_transactions_school').on(table.schoolId),
+  fiscalYearIdx: index('idx_transactions_fiscal_year').on(table.fiscalYearId),
+  dateIdx: index('idx_transactions_date').on(table.schoolId, table.date),
+  typeIdx: index('idx_transactions_type').on(table.type),
+  statusIdx: index('idx_transactions_status').on(table.status),
+  uniqueTransactionNumber: unique('unique_transaction_number').on(table.schoolId, table.transactionNumber),
+}))
+
+// Transaction Lines Table (Double-Entry)
+export const transactionLines = pgTable('transaction_lines', {
+  id: text('id').primaryKey(),
+  transactionId: text('transaction_id').notNull().references(() => transactions.id, { onDelete: 'cascade' }),
+  accountId: text('account_id').notNull().references(() => accounts.id, { onDelete: 'restrict' }),
+  lineNumber: smallint('line_number').notNull(),
+  description: text('description'),
+  debitAmount: decimal('debit_amount', { precision: 15, scale: 2 }).default('0'),
+  creditAmount: decimal('credit_amount', { precision: 15, scale: 2 }).default('0'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, table => ({
+  transactionIdx: index('idx_transaction_lines_transaction').on(table.transactionId),
+  accountIdx: index('idx_transaction_lines_account').on(table.accountId),
+  amountsIdx: index('idx_transaction_lines_amounts').on(table.accountId, table.debitAmount, table.creditAmount),
+}))
+
+// Receipts Table
+export const receipts = pgTable('receipts', {
+  id: text('id').primaryKey(),
+  paymentId: text('payment_id').notNull().references(() => payments.id, { onDelete: 'cascade' }),
+  receiptNumber: text('receipt_number').notNull(),
+  studentName: text('student_name').notNull(),
+  studentMatricule: text('student_matricule').notNull(),
+  className: text('class_name').notNull(),
+  amount: decimal('amount', { precision: 15, scale: 2 }).notNull(),
+  amountInWords: text('amount_in_words'),
+  paymentMethod: text('payment_method').notNull(),
+  paymentReference: text('payment_reference'),
+  paymentDate: date('payment_date').notNull(),
+  feeDetails: jsonb('fee_details').$type<{ feeType: string, amount: number }[]>().notNull(),
+  schoolName: text('school_name').notNull(),
+  schoolAddress: text('school_address'),
+  schoolPhone: text('school_phone'),
+  schoolLogoUrl: text('school_logo_url'),
+  issuedBy: text('issued_by').notNull(),
+  issuedAt: timestamp('issued_at').defaultNow().notNull(),
+  reprintCount: integer('reprint_count').default(0),
+  lastReprintedAt: timestamp('last_reprinted_at'),
+  lastReprintedBy: text('last_reprinted_by').references(() => users.id, { onDelete: 'set null' }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, table => ({
+  paymentIdx: index('idx_receipts_payment').on(table.paymentId),
+  numberIdx: index('idx_receipts_number').on(table.receiptNumber),
+  dateIdx: index('idx_receipts_date').on(table.paymentDate),
+}))
+
+// Refunds Table
+export const refunds = pgTable('refunds', {
+  id: text('id').primaryKey(),
+  paymentId: text('payment_id').notNull().references(() => payments.id, { onDelete: 'restrict' }),
+  schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
+  refundNumber: text('refund_number').notNull(),
+  amount: decimal('amount', { precision: 15, scale: 2 }).notNull(),
+  reason: text('reason').notNull(),
+  reasonCategory: text('reason_category', { enum: refundReasonCategories }),
+  method: text('method', { enum: refundMethods }).notNull(),
+  reference: text('reference'),
+  status: text('status', { enum: refundStatuses }).default('pending'),
+  requestedBy: text('requested_by').notNull().references(() => users.id),
+  requestedAt: timestamp('requested_at').defaultNow().notNull(),
+  approvedBy: text('approved_by').references(() => users.id, { onDelete: 'set null' }),
+  approvedAt: timestamp('approved_at'),
+  rejectionReason: text('rejection_reason'),
+  processedBy: text('processed_by').references(() => users.id, { onDelete: 'set null' }),
+  processedAt: timestamp('processed_at'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, table => ({
+  paymentIdx: index('idx_refunds_payment').on(table.paymentId),
+  schoolIdx: index('idx_refunds_school').on(table.schoolId),
+  statusIdx: index('idx_refunds_status').on(table.status),
+  dateIdx: index('idx_refunds_date').on(table.schoolId, table.requestedAt),
+  uniqueRefundNumber: unique('unique_refund_number').on(table.schoolId, table.refundNumber),
+}))
+
+// --- Phase 18 Relations ---
+
+export const accountsRelations = relations(accounts, ({ one, many }) => ({
+  school: one(schools, { fields: [accounts.schoolId], references: [schools.id] }),
+  parent: one(accounts, { fields: [accounts.parentId], references: [accounts.id], relationName: 'accountHierarchy' }),
+  children: many(accounts, { relationName: 'accountHierarchy' }),
+  transactionLines: many(transactionLines),
+  feeTypesRevenue: many(feeTypes, { relationName: 'revenueAccount' }),
+  feeTypesReceivable: many(feeTypes, { relationName: 'receivableAccount' }),
+}))
+
+export const fiscalYearsRelations = relations(fiscalYears, ({ one, many }) => ({
+  school: one(schools, { fields: [fiscalYears.schoolId], references: [schools.id] }),
+  schoolYear: one(schoolYears, { fields: [fiscalYears.schoolYearId], references: [schoolYears.id] }),
+  closedByUser: one(users, { fields: [fiscalYears.closedBy], references: [users.id] }),
+  transactions: many(transactions),
+}))
+
+export const feeTypesRelations = relations(feeTypes, ({ one, many }) => ({
+  school: one(schools, { fields: [feeTypes.schoolId], references: [schools.id] }),
+  revenueAccount: one(accounts, { fields: [feeTypes.revenueAccountId], references: [accounts.id], relationName: 'revenueAccount' }),
+  receivableAccount: one(accounts, { fields: [feeTypes.receivableAccountId], references: [accounts.id], relationName: 'receivableAccount' }),
+  feeStructures: many(feeStructures),
+}))
+
+export const feeStructuresRelations = relations(feeStructures, ({ one, many }) => ({
+  school: one(schools, { fields: [feeStructures.schoolId], references: [schools.id] }),
+  schoolYear: one(schoolYears, { fields: [feeStructures.schoolYearId], references: [schoolYears.id] }),
+  feeType: one(feeTypes, { fields: [feeStructures.feeTypeId], references: [feeTypes.id] }),
+  grade: one(grades, { fields: [feeStructures.gradeId], references: [grades.id] }),
+  series: one(series, { fields: [feeStructures.seriesId], references: [series.id] }),
+  studentFees: many(studentFees),
+}))
+
+export const discountsRelations = relations(discounts, ({ one, many }) => ({
+  school: one(schools, { fields: [discounts.schoolId], references: [schools.id] }),
+  studentDiscounts: many(studentDiscounts),
+}))
+
+export const paymentPlanTemplatesRelations = relations(paymentPlanTemplates, ({ one, many }) => ({
+  school: one(schools, { fields: [paymentPlanTemplates.schoolId], references: [schools.id] }),
+  schoolYear: one(schoolYears, { fields: [paymentPlanTemplates.schoolYearId], references: [schoolYears.id] }),
+  paymentPlans: many(paymentPlans),
+}))
+
+export const paymentPlansRelations = relations(paymentPlans, ({ one, many }) => ({
+  student: one(students, { fields: [paymentPlans.studentId], references: [students.id] }),
+  schoolYear: one(schoolYears, { fields: [paymentPlans.schoolYearId], references: [schoolYears.id] }),
+  template: one(paymentPlanTemplates, { fields: [paymentPlans.templateId], references: [paymentPlanTemplates.id] }),
+  createdByUser: one(users, { fields: [paymentPlans.createdBy], references: [users.id] }),
+  installments: many(installments),
+  payments: many(payments),
+}))
+
+export const installmentsRelations = relations(installments, ({ one, many }) => ({
+  paymentPlan: one(paymentPlans, { fields: [installments.paymentPlanId], references: [paymentPlans.id] }),
+  paymentAllocations: many(paymentAllocations),
+}))
+
+export const studentFeesRelations = relations(studentFees, ({ one, many }) => ({
+  student: one(students, { fields: [studentFees.studentId], references: [students.id] }),
+  enrollment: one(enrollments, { fields: [studentFees.enrollmentId], references: [enrollments.id] }),
+  feeStructure: one(feeStructures, { fields: [studentFees.feeStructureId], references: [feeStructures.id] }),
+  waivedByUser: one(users, { fields: [studentFees.waivedBy], references: [users.id] }),
+  paymentAllocations: many(paymentAllocations),
+}))
+
+export const studentDiscountsRelations = relations(studentDiscounts, ({ one }) => ({
+  student: one(students, { fields: [studentDiscounts.studentId], references: [students.id] }),
+  discount: one(discounts, { fields: [studentDiscounts.discountId], references: [discounts.id] }),
+  schoolYear: one(schoolYears, { fields: [studentDiscounts.schoolYearId], references: [schoolYears.id] }),
+  approvedByUser: one(users, { fields: [studentDiscounts.approvedBy], references: [users.id] }),
+}))
+
+export const paymentsRelations = relations(payments, ({ one, many }) => ({
+  school: one(schools, { fields: [payments.schoolId], references: [schools.id] }),
+  student: one(students, { fields: [payments.studentId], references: [students.id] }),
+  paymentPlan: one(paymentPlans, { fields: [payments.paymentPlanId], references: [paymentPlans.id] }),
+  processedByUser: one(users, { fields: [payments.processedBy], references: [users.id] }),
+  cancelledByUser: one(users, { fields: [payments.cancelledBy], references: [users.id] }),
+  allocations: many(paymentAllocations),
+  receipts: many(receipts),
+  refunds: many(refunds),
+  transactions: many(transactions),
+}))
+
+export const paymentAllocationsRelations = relations(paymentAllocations, ({ one }) => ({
+  payment: one(payments, { fields: [paymentAllocations.paymentId], references: [payments.id] }),
+  studentFee: one(studentFees, { fields: [paymentAllocations.studentFeeId], references: [studentFees.id] }),
+  installment: one(installments, { fields: [paymentAllocations.installmentId], references: [installments.id] }),
+}))
+
+export const transactionsRelations = relations(transactions, ({ one, many }) => ({
+  school: one(schools, { fields: [transactions.schoolId], references: [schools.id] }),
+  fiscalYear: one(fiscalYears, { fields: [transactions.fiscalYearId], references: [fiscalYears.id] }),
+  student: one(students, { fields: [transactions.studentId], references: [students.id] }),
+  payment: one(payments, { fields: [transactions.paymentId], references: [payments.id] }),
+  createdByUser: one(users, { fields: [transactions.createdBy], references: [users.id] }),
+  voidedByUser: one(users, { fields: [transactions.voidedBy], references: [users.id] }),
+  lines: many(transactionLines),
+}))
+
+export const transactionLinesRelations = relations(transactionLines, ({ one }) => ({
+  transaction: one(transactions, { fields: [transactionLines.transactionId], references: [transactions.id] }),
+  account: one(accounts, { fields: [transactionLines.accountId], references: [accounts.id] }),
+}))
+
+export const receiptsRelations = relations(receipts, ({ one }) => ({
+  payment: one(payments, { fields: [receipts.paymentId], references: [payments.id] }),
+  lastReprintedByUser: one(users, { fields: [receipts.lastReprintedBy], references: [users.id] }),
+}))
+
+export const refundsRelations = relations(refunds, ({ one }) => ({
+  payment: one(payments, { fields: [refunds.paymentId], references: [payments.id] }),
+  school: one(schools, { fields: [refunds.schoolId], references: [schools.id] }),
+  requestedByUser: one(users, { fields: [refunds.requestedBy], references: [users.id] }),
+  approvedByUser: one(users, { fields: [refunds.approvedBy], references: [users.id] }),
+  processedByUser: one(users, { fields: [refunds.processedBy], references: [users.id] }),
+}))
+
 // --- Type Exports ---
 
 // Insert types
@@ -1635,6 +2207,40 @@ export type ConductRecord = typeof conductRecords.$inferSelect
 export type ConductFollowUp = typeof conductFollowUps.$inferSelect
 export type AttendanceAlert = typeof attendanceAlerts.$inferSelect
 export type AttendanceSettings = typeof attendanceSettings.$inferSelect
+// Phase 18 Insert types
+export type AccountInsert = typeof accounts.$inferInsert
+export type FiscalYearInsert = typeof fiscalYears.$inferInsert
+export type FeeTypeInsert = typeof feeTypes.$inferInsert
+export type FeeStructureInsert = typeof feeStructures.$inferInsert
+export type DiscountInsert = typeof discounts.$inferInsert
+export type PaymentPlanTemplateInsert = typeof paymentPlanTemplates.$inferInsert
+export type PaymentPlanInsert = typeof paymentPlans.$inferInsert
+export type InstallmentInsert = typeof installments.$inferInsert
+export type StudentFeeInsert = typeof studentFees.$inferInsert
+export type StudentDiscountInsert = typeof studentDiscounts.$inferInsert
+export type PaymentInsert = typeof payments.$inferInsert
+export type PaymentAllocationInsert = typeof paymentAllocations.$inferInsert
+export type TransactionInsert = typeof transactions.$inferInsert
+export type TransactionLineInsert = typeof transactionLines.$inferInsert
+export type ReceiptInsert = typeof receipts.$inferInsert
+export type RefundInsert = typeof refunds.$inferInsert
+// Phase 18 Select types
+export type Account = typeof accounts.$inferSelect
+export type FiscalYear = typeof fiscalYears.$inferSelect
+export type FeeType = typeof feeTypes.$inferSelect
+export type FeeStructure = typeof feeStructures.$inferSelect
+export type Discount = typeof discounts.$inferSelect
+export type PaymentPlanTemplate = typeof paymentPlanTemplates.$inferSelect
+export type PaymentPlan = typeof paymentPlans.$inferSelect
+export type Installment = typeof installments.$inferSelect
+export type StudentFee = typeof studentFees.$inferSelect
+export type StudentDiscount = typeof studentDiscounts.$inferSelect
+export type Payment = typeof payments.$inferSelect
+export type PaymentAllocation = typeof paymentAllocations.$inferSelect
+export type Transaction = typeof transactions.$inferSelect
+export type TransactionLine = typeof transactionLines.$inferSelect
+export type Receipt = typeof receipts.$inferSelect
+export type Refund = typeof refunds.$inferSelect
 
 // Enum types
 export type UserStatus = 'active' | 'inactive' | 'suspended'

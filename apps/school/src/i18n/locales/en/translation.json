@@ -49,7 +49,13 @@
     "comingSoon": "Coming soon...",
     "startDate": "Start Date",
     "endDate": "End Date",
-    "saving": "Saving..."
+    "saving": "Saving...",
+    "code": "Code",
+    "name": "Name",
+    "nameEn": "Name (English)",
+    "description": "Description",
+    "displayOrder": "Display Order",
+    "optionalEnglishName": "English name (optional)"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -673,7 +679,7 @@
     "studentCount": "Student Count"
   },
   "finance": {
-    "title": "Finance",
+    "title": "Financial Management",
     "income": "Income",
     "expense": "Expense",
     "payment": "Payment",
@@ -685,7 +691,137 @@
     "transfer": "Transfer",
     "mobile": "Mobile Money",
     "description": "Description",
-    "category": "Category"
+    "category": "Category",
+    "dashboard": {
+      "title": "Financial Dashboard",
+      "expectedRevenue": "Expected Revenue",
+      "collected": "Amount Collected",
+      "outstanding": "Outstanding Balance",
+      "paymentsThisMonth": "Payments This Month",
+      "collectionRate": "Collection Rate",
+      "collectionRateDescription": "Percentage of fees collected compared to expected fees",
+      "studentPaymentStatus": "Student Payment Status",
+      "totalStudents": "Total Students",
+      "withBalance": "With Balance",
+      "refundsPending": "refunds pending"
+    },
+    "payments": {
+      "title": "Payments",
+      "description": "Manage student payments",
+      "recordPayment": "Record Payment",
+      "recentPayments": "Recent Payments",
+      "noPayments": "No payments recorded",
+      "total": "{{count}} payment(s) total",
+      "status": {
+        "pending": "Pending",
+        "completed": "Completed",
+        "cancelled": "Cancelled",
+        "refunded": "Refunded"
+      }
+    },
+    "feeTypes": {
+      "title": "Fee Types",
+      "description": "Configure different types of school fees",
+      "create": "Create Fee Type",
+      "createDescription": "Add a new type of school fee",
+      "created": "Fee type created successfully",
+      "noFeeTypes": "No fee types configured",
+      "code": "Code",
+      "category": "Category",
+      "mandatory": "Mandatory",
+      "recurring": "Recurring"
+    },
+    "feeCategories": {
+      "tuition": "Tuition",
+      "registration": "Registration",
+      "exam": "Exam",
+      "transport": "Transport",
+      "uniform": "Uniform",
+      "books": "Books & Supplies",
+      "meals": "Meals",
+      "activities": "Activities",
+      "other": "Other"
+    },
+    "feeStructures": {
+      "title": "Fee Structures",
+      "description": "Configure fee amounts by grade and series",
+      "create": "Create Structure",
+      "noFeeStructures": "No fee structures configured",
+      "newStudentAmount": "New Student Amount"
+    },
+    "accounts": {
+      "title": "Chart of Accounts",
+      "description": "Manage the school's chart of accounts",
+      "create": "Create Account",
+      "createDescription": "Add a new account to the chart of accounts",
+      "created": "Account created successfully",
+      "noAccounts": "No accounts configured",
+      "type": "Account Type",
+      "normalBalance": "Normal Balance",
+      "isHeader": "Header Account",
+      "isHeaderDescription": "Cannot receive direct transactions"
+    },
+    "discounts": {
+      "title": "Discounts",
+      "description": "Manage discounts and scholarships",
+      "create": "Create Discount",
+      "createDescription": "Add a new discount or scholarship",
+      "created": "Discount created successfully",
+      "noDiscounts": "No discounts configured",
+      "code": "Code",
+      "type": "Discount Type",
+      "calculationType": "Calculation Type",
+      "value": "Value",
+      "requiresApproval": "Requires Approval",
+      "autoApply": "Auto Apply"
+    },
+    "discountTypes": {
+      "sibling": "Sibling",
+      "scholarship": "Scholarship",
+      "staff": "Staff",
+      "early_payment": "Early Payment",
+      "financial_aid": "Financial Aid",
+      "other": "Other"
+    },
+    "refunds": {
+      "title": "Refunds",
+      "description": "Manage refund requests",
+      "pendingCount": "{{count}} pending",
+      "noRefunds": "No refund requests",
+      "reason": "Reason",
+      "approve": "Approve",
+      "reject": "Reject",
+      "approved": "Refund approved",
+      "rejected": "Refund rejected",
+      "status": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "processed": "Processed"
+      }
+    },
+    "studentFees": {
+      "title": "Student Fees",
+      "description": "View fees assigned to students",
+      "noStudentFees": "No fees assigned",
+      "totalFees": "Total Fees",
+      "paidAmount": "Paid Amount",
+      "balance": "Balance"
+    },
+    "paymentPlans": {
+      "title": "Payment Plans",
+      "description": "Manage payment schedules",
+      "noPaymentPlans": "No payment plans",
+      "totalAmount": "Total Amount",
+      "progress": "Progress",
+      "installments": "Installments",
+      "status": {
+        "active": "Active",
+        "completed": "Completed",
+        "overdue": "Overdue",
+        "cancelled": "Cancelled"
+      }
+    }
   },
   "permissions": {
     "accessDenied": "Access Denied",

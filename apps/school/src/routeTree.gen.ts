@@ -18,18 +18,29 @@ import { Route as AuthAppStudentsRouteImport } from './routes/_auth/app/students
 import { Route as AuthAppSpacesRouteImport } from './routes/_auth/app/spaces'
 import { Route as AuthAppSchoolLifeRouteImport } from './routes/_auth/app/school-life'
 import { Route as AuthAppHrRouteImport } from './routes/_auth/app/hr'
+import { Route as AuthAppFinanceRouteImport } from './routes/_auth/app/finance'
 import { Route as AuthAppDashboardRouteImport } from './routes/_auth/app/dashboard'
 import { Route as AuthAppAcademicRouteImport } from './routes/_auth/app/academic'
 import { Route as AuthAppStudentsIndexRouteImport } from './routes/_auth/app/students/index'
 import { Route as AuthAppSpacesIndexRouteImport } from './routes/_auth/app/spaces/index'
 import { Route as AuthAppSchoolLifeIndexRouteImport } from './routes/_auth/app/school-life/index'
 import { Route as AuthAppHrIndexRouteImport } from './routes/_auth/app/hr/index'
+import { Route as AuthAppFinanceIndexRouteImport } from './routes/_auth/app/finance/index'
 import { Route as AuthAppAcademicIndexRouteImport } from './routes/_auth/app/academic/index'
 import { Route as AuthAppStudentsParentsRouteImport } from './routes/_auth/app/students/parents'
 import { Route as AuthAppStudentsNewRouteImport } from './routes/_auth/app/students/new'
 import { Route as AuthAppStudentsEnrollmentsRouteImport } from './routes/_auth/app/students/enrollments'
 import { Route as AuthAppSpacesAvailabilityRouteImport } from './routes/_auth/app/spaces/availability'
 import { Route as AuthAppSchoolLifeSettingsRouteImport } from './routes/_auth/app/school-life/settings'
+import { Route as AuthAppFinanceStudentFeesRouteImport } from './routes/_auth/app/finance/student-fees'
+import { Route as AuthAppFinanceRefundsRouteImport } from './routes/_auth/app/finance/refunds'
+import { Route as AuthAppFinancePaymentsRouteImport } from './routes/_auth/app/finance/payments'
+import { Route as AuthAppFinancePaymentPlansRouteImport } from './routes/_auth/app/finance/payment-plans'
+import { Route as AuthAppFinanceFeeTypesRouteImport } from './routes/_auth/app/finance/fee-types'
+import { Route as AuthAppFinanceFeeStructuresRouteImport } from './routes/_auth/app/finance/fee-structures'
+import { Route as AuthAppFinanceDiscountsRouteImport } from './routes/_auth/app/finance/discounts'
+import { Route as AuthAppFinanceDashboardRouteImport } from './routes/_auth/app/finance/dashboard'
+import { Route as AuthAppFinanceAccountsRouteImport } from './routes/_auth/app/finance/accounts'
 import { Route as AuthAppAcademicTimetablesRouteImport } from './routes/_auth/app/academic/timetables'
 import { Route as AuthAppAcademicSubjectsRouteImport } from './routes/_auth/app/academic/subjects'
 import { Route as AuthAppAcademicReportCardsRouteImport } from './routes/_auth/app/academic/report-cards'
@@ -120,6 +131,11 @@ const AuthAppHrRoute = AuthAppHrRouteImport.update({
   path: '/hr',
   getParentRoute: () => AuthAppRoute,
 } as any)
+const AuthAppFinanceRoute = AuthAppFinanceRouteImport.update({
+  id: '/finance',
+  path: '/finance',
+  getParentRoute: () => AuthAppRoute,
+} as any)
 const AuthAppDashboardRoute = AuthAppDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -149,6 +165,11 @@ const AuthAppHrIndexRoute = AuthAppHrIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthAppHrRoute,
+} as any)
+const AuthAppFinanceIndexRoute = AuthAppFinanceIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthAppFinanceRoute,
 } as any)
 const AuthAppAcademicIndexRoute = AuthAppAcademicIndexRouteImport.update({
   id: '/',
@@ -183,6 +204,54 @@ const AuthAppSchoolLifeSettingsRoute =
     path: '/settings',
     getParentRoute: () => AuthAppSchoolLifeRoute,
   } as any)
+const AuthAppFinanceStudentFeesRoute =
+  AuthAppFinanceStudentFeesRouteImport.update({
+    id: '/student-fees',
+    path: '/student-fees',
+    getParentRoute: () => AuthAppFinanceRoute,
+  } as any)
+const AuthAppFinanceRefundsRoute = AuthAppFinanceRefundsRouteImport.update({
+  id: '/refunds',
+  path: '/refunds',
+  getParentRoute: () => AuthAppFinanceRoute,
+} as any)
+const AuthAppFinancePaymentsRoute = AuthAppFinancePaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => AuthAppFinanceRoute,
+} as any)
+const AuthAppFinancePaymentPlansRoute =
+  AuthAppFinancePaymentPlansRouteImport.update({
+    id: '/payment-plans',
+    path: '/payment-plans',
+    getParentRoute: () => AuthAppFinanceRoute,
+  } as any)
+const AuthAppFinanceFeeTypesRoute = AuthAppFinanceFeeTypesRouteImport.update({
+  id: '/fee-types',
+  path: '/fee-types',
+  getParentRoute: () => AuthAppFinanceRoute,
+} as any)
+const AuthAppFinanceFeeStructuresRoute =
+  AuthAppFinanceFeeStructuresRouteImport.update({
+    id: '/fee-structures',
+    path: '/fee-structures',
+    getParentRoute: () => AuthAppFinanceRoute,
+  } as any)
+const AuthAppFinanceDiscountsRoute = AuthAppFinanceDiscountsRouteImport.update({
+  id: '/discounts',
+  path: '/discounts',
+  getParentRoute: () => AuthAppFinanceRoute,
+} as any)
+const AuthAppFinanceDashboardRoute = AuthAppFinanceDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthAppFinanceRoute,
+} as any)
+const AuthAppFinanceAccountsRoute = AuthAppFinanceAccountsRouteImport.update({
+  id: '/accounts',
+  path: '/accounts',
+  getParentRoute: () => AuthAppFinanceRoute,
+} as any)
 const AuthAppAcademicTimetablesRoute =
   AuthAppAcademicTimetablesRouteImport.update({
     id: '/timetables',
@@ -449,6 +518,7 @@ export interface FileRoutesByFullPath {
   '/app': typeof AuthAppRouteWithChildren
   '/app/academic': typeof AuthAppAcademicRouteWithChildren
   '/app/dashboard': typeof AuthAppDashboardRoute
+  '/app/finance': typeof AuthAppFinanceRouteWithChildren
   '/app/hr': typeof AuthAppHrRouteWithChildren
   '/app/school-life': typeof AuthAppSchoolLifeRouteWithChildren
   '/app/spaces': typeof AuthAppSpacesRouteWithChildren
@@ -461,12 +531,22 @@ export interface FileRoutesByFullPath {
   '/app/academic/report-cards': typeof AuthAppAcademicReportCardsRoute
   '/app/academic/subjects': typeof AuthAppAcademicSubjectsRoute
   '/app/academic/timetables': typeof AuthAppAcademicTimetablesRoute
+  '/app/finance/accounts': typeof AuthAppFinanceAccountsRoute
+  '/app/finance/dashboard': typeof AuthAppFinanceDashboardRoute
+  '/app/finance/discounts': typeof AuthAppFinanceDiscountsRoute
+  '/app/finance/fee-structures': typeof AuthAppFinanceFeeStructuresRoute
+  '/app/finance/fee-types': typeof AuthAppFinanceFeeTypesRoute
+  '/app/finance/payment-plans': typeof AuthAppFinancePaymentPlansRoute
+  '/app/finance/payments': typeof AuthAppFinancePaymentsRoute
+  '/app/finance/refunds': typeof AuthAppFinanceRefundsRoute
+  '/app/finance/student-fees': typeof AuthAppFinanceStudentFeesRoute
   '/app/school-life/settings': typeof AuthAppSchoolLifeSettingsRoute
   '/app/spaces/availability': typeof AuthAppSpacesAvailabilityRoute
   '/app/students/enrollments': typeof AuthAppStudentsEnrollmentsRoute
   '/app/students/new': typeof AuthAppStudentsNewRoute
   '/app/students/parents': typeof AuthAppStudentsParentsRoute
   '/app/academic/': typeof AuthAppAcademicIndexRoute
+  '/app/finance/': typeof AuthAppFinanceIndexRoute
   '/app/hr/': typeof AuthAppHrIndexRoute
   '/app/school-life/': typeof AuthAppSchoolLifeIndexRoute
   '/app/spaces/': typeof AuthAppSpacesIndexRoute
@@ -522,12 +602,22 @@ export interface FileRoutesByTo {
   '/app/academic/report-cards': typeof AuthAppAcademicReportCardsRoute
   '/app/academic/subjects': typeof AuthAppAcademicSubjectsRoute
   '/app/academic/timetables': typeof AuthAppAcademicTimetablesRoute
+  '/app/finance/accounts': typeof AuthAppFinanceAccountsRoute
+  '/app/finance/dashboard': typeof AuthAppFinanceDashboardRoute
+  '/app/finance/discounts': typeof AuthAppFinanceDiscountsRoute
+  '/app/finance/fee-structures': typeof AuthAppFinanceFeeStructuresRoute
+  '/app/finance/fee-types': typeof AuthAppFinanceFeeTypesRoute
+  '/app/finance/payment-plans': typeof AuthAppFinancePaymentPlansRoute
+  '/app/finance/payments': typeof AuthAppFinancePaymentsRoute
+  '/app/finance/refunds': typeof AuthAppFinanceRefundsRoute
+  '/app/finance/student-fees': typeof AuthAppFinanceStudentFeesRoute
   '/app/school-life/settings': typeof AuthAppSchoolLifeSettingsRoute
   '/app/spaces/availability': typeof AuthAppSpacesAvailabilityRoute
   '/app/students/enrollments': typeof AuthAppStudentsEnrollmentsRoute
   '/app/students/new': typeof AuthAppStudentsNewRoute
   '/app/students/parents': typeof AuthAppStudentsParentsRoute
   '/app/academic': typeof AuthAppAcademicIndexRoute
+  '/app/finance': typeof AuthAppFinanceIndexRoute
   '/app/hr': typeof AuthAppHrIndexRoute
   '/app/school-life': typeof AuthAppSchoolLifeIndexRoute
   '/app/spaces': typeof AuthAppSpacesIndexRoute
@@ -579,6 +669,7 @@ export interface FileRoutesById {
   '/_auth/app': typeof AuthAppRouteWithChildren
   '/_auth/app/academic': typeof AuthAppAcademicRouteWithChildren
   '/_auth/app/dashboard': typeof AuthAppDashboardRoute
+  '/_auth/app/finance': typeof AuthAppFinanceRouteWithChildren
   '/_auth/app/hr': typeof AuthAppHrRouteWithChildren
   '/_auth/app/school-life': typeof AuthAppSchoolLifeRouteWithChildren
   '/_auth/app/spaces': typeof AuthAppSpacesRouteWithChildren
@@ -591,12 +682,22 @@ export interface FileRoutesById {
   '/_auth/app/academic/report-cards': typeof AuthAppAcademicReportCardsRoute
   '/_auth/app/academic/subjects': typeof AuthAppAcademicSubjectsRoute
   '/_auth/app/academic/timetables': typeof AuthAppAcademicTimetablesRoute
+  '/_auth/app/finance/accounts': typeof AuthAppFinanceAccountsRoute
+  '/_auth/app/finance/dashboard': typeof AuthAppFinanceDashboardRoute
+  '/_auth/app/finance/discounts': typeof AuthAppFinanceDiscountsRoute
+  '/_auth/app/finance/fee-structures': typeof AuthAppFinanceFeeStructuresRoute
+  '/_auth/app/finance/fee-types': typeof AuthAppFinanceFeeTypesRoute
+  '/_auth/app/finance/payment-plans': typeof AuthAppFinancePaymentPlansRoute
+  '/_auth/app/finance/payments': typeof AuthAppFinancePaymentsRoute
+  '/_auth/app/finance/refunds': typeof AuthAppFinanceRefundsRoute
+  '/_auth/app/finance/student-fees': typeof AuthAppFinanceStudentFeesRoute
   '/_auth/app/school-life/settings': typeof AuthAppSchoolLifeSettingsRoute
   '/_auth/app/spaces/availability': typeof AuthAppSpacesAvailabilityRoute
   '/_auth/app/students/enrollments': typeof AuthAppStudentsEnrollmentsRoute
   '/_auth/app/students/new': typeof AuthAppStudentsNewRoute
   '/_auth/app/students/parents': typeof AuthAppStudentsParentsRoute
   '/_auth/app/academic/': typeof AuthAppAcademicIndexRoute
+  '/_auth/app/finance/': typeof AuthAppFinanceIndexRoute
   '/_auth/app/hr/': typeof AuthAppHrIndexRoute
   '/_auth/app/school-life/': typeof AuthAppSchoolLifeIndexRoute
   '/_auth/app/spaces/': typeof AuthAppSpacesIndexRoute
@@ -648,6 +749,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/app/academic'
     | '/app/dashboard'
+    | '/app/finance'
     | '/app/hr'
     | '/app/school-life'
     | '/app/spaces'
@@ -660,12 +762,22 @@ export interface FileRouteTypes {
     | '/app/academic/report-cards'
     | '/app/academic/subjects'
     | '/app/academic/timetables'
+    | '/app/finance/accounts'
+    | '/app/finance/dashboard'
+    | '/app/finance/discounts'
+    | '/app/finance/fee-structures'
+    | '/app/finance/fee-types'
+    | '/app/finance/payment-plans'
+    | '/app/finance/payments'
+    | '/app/finance/refunds'
+    | '/app/finance/student-fees'
     | '/app/school-life/settings'
     | '/app/spaces/availability'
     | '/app/students/enrollments'
     | '/app/students/new'
     | '/app/students/parents'
     | '/app/academic/'
+    | '/app/finance/'
     | '/app/hr/'
     | '/app/school-life/'
     | '/app/spaces/'
@@ -721,12 +833,22 @@ export interface FileRouteTypes {
     | '/app/academic/report-cards'
     | '/app/academic/subjects'
     | '/app/academic/timetables'
+    | '/app/finance/accounts'
+    | '/app/finance/dashboard'
+    | '/app/finance/discounts'
+    | '/app/finance/fee-structures'
+    | '/app/finance/fee-types'
+    | '/app/finance/payment-plans'
+    | '/app/finance/payments'
+    | '/app/finance/refunds'
+    | '/app/finance/student-fees'
     | '/app/school-life/settings'
     | '/app/spaces/availability'
     | '/app/students/enrollments'
     | '/app/students/new'
     | '/app/students/parents'
     | '/app/academic'
+    | '/app/finance'
     | '/app/hr'
     | '/app/school-life'
     | '/app/spaces'
@@ -777,6 +899,7 @@ export interface FileRouteTypes {
     | '/_auth/app'
     | '/_auth/app/academic'
     | '/_auth/app/dashboard'
+    | '/_auth/app/finance'
     | '/_auth/app/hr'
     | '/_auth/app/school-life'
     | '/_auth/app/spaces'
@@ -789,12 +912,22 @@ export interface FileRouteTypes {
     | '/_auth/app/academic/report-cards'
     | '/_auth/app/academic/subjects'
     | '/_auth/app/academic/timetables'
+    | '/_auth/app/finance/accounts'
+    | '/_auth/app/finance/dashboard'
+    | '/_auth/app/finance/discounts'
+    | '/_auth/app/finance/fee-structures'
+    | '/_auth/app/finance/fee-types'
+    | '/_auth/app/finance/payment-plans'
+    | '/_auth/app/finance/payments'
+    | '/_auth/app/finance/refunds'
+    | '/_auth/app/finance/student-fees'
     | '/_auth/app/school-life/settings'
     | '/_auth/app/spaces/availability'
     | '/_auth/app/students/enrollments'
     | '/_auth/app/students/new'
     | '/_auth/app/students/parents'
     | '/_auth/app/academic/'
+    | '/_auth/app/finance/'
     | '/_auth/app/hr/'
     | '/_auth/app/school-life/'
     | '/_auth/app/spaces/'
@@ -911,6 +1044,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAppHrRouteImport
       parentRoute: typeof AuthAppRoute
     }
+    '/_auth/app/finance': {
+      id: '/_auth/app/finance'
+      path: '/finance'
+      fullPath: '/app/finance'
+      preLoaderRoute: typeof AuthAppFinanceRouteImport
+      parentRoute: typeof AuthAppRoute
+    }
     '/_auth/app/dashboard': {
       id: '/_auth/app/dashboard'
       path: '/dashboard'
@@ -953,6 +1093,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAppHrIndexRouteImport
       parentRoute: typeof AuthAppHrRoute
     }
+    '/_auth/app/finance/': {
+      id: '/_auth/app/finance/'
+      path: '/'
+      fullPath: '/app/finance/'
+      preLoaderRoute: typeof AuthAppFinanceIndexRouteImport
+      parentRoute: typeof AuthAppFinanceRoute
+    }
     '/_auth/app/academic/': {
       id: '/_auth/app/academic/'
       path: '/'
@@ -994,6 +1141,69 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/school-life/settings'
       preLoaderRoute: typeof AuthAppSchoolLifeSettingsRouteImport
       parentRoute: typeof AuthAppSchoolLifeRoute
+    }
+    '/_auth/app/finance/student-fees': {
+      id: '/_auth/app/finance/student-fees'
+      path: '/student-fees'
+      fullPath: '/app/finance/student-fees'
+      preLoaderRoute: typeof AuthAppFinanceStudentFeesRouteImport
+      parentRoute: typeof AuthAppFinanceRoute
+    }
+    '/_auth/app/finance/refunds': {
+      id: '/_auth/app/finance/refunds'
+      path: '/refunds'
+      fullPath: '/app/finance/refunds'
+      preLoaderRoute: typeof AuthAppFinanceRefundsRouteImport
+      parentRoute: typeof AuthAppFinanceRoute
+    }
+    '/_auth/app/finance/payments': {
+      id: '/_auth/app/finance/payments'
+      path: '/payments'
+      fullPath: '/app/finance/payments'
+      preLoaderRoute: typeof AuthAppFinancePaymentsRouteImport
+      parentRoute: typeof AuthAppFinanceRoute
+    }
+    '/_auth/app/finance/payment-plans': {
+      id: '/_auth/app/finance/payment-plans'
+      path: '/payment-plans'
+      fullPath: '/app/finance/payment-plans'
+      preLoaderRoute: typeof AuthAppFinancePaymentPlansRouteImport
+      parentRoute: typeof AuthAppFinanceRoute
+    }
+    '/_auth/app/finance/fee-types': {
+      id: '/_auth/app/finance/fee-types'
+      path: '/fee-types'
+      fullPath: '/app/finance/fee-types'
+      preLoaderRoute: typeof AuthAppFinanceFeeTypesRouteImport
+      parentRoute: typeof AuthAppFinanceRoute
+    }
+    '/_auth/app/finance/fee-structures': {
+      id: '/_auth/app/finance/fee-structures'
+      path: '/fee-structures'
+      fullPath: '/app/finance/fee-structures'
+      preLoaderRoute: typeof AuthAppFinanceFeeStructuresRouteImport
+      parentRoute: typeof AuthAppFinanceRoute
+    }
+    '/_auth/app/finance/discounts': {
+      id: '/_auth/app/finance/discounts'
+      path: '/discounts'
+      fullPath: '/app/finance/discounts'
+      preLoaderRoute: typeof AuthAppFinanceDiscountsRouteImport
+      parentRoute: typeof AuthAppFinanceRoute
+    }
+    '/_auth/app/finance/dashboard': {
+      id: '/_auth/app/finance/dashboard'
+      path: '/dashboard'
+      fullPath: '/app/finance/dashboard'
+      preLoaderRoute: typeof AuthAppFinanceDashboardRouteImport
+      parentRoute: typeof AuthAppFinanceRoute
+    }
+    '/_auth/app/finance/accounts': {
+      id: '/_auth/app/finance/accounts'
+      path: '/accounts'
+      fullPath: '/app/finance/accounts'
+      preLoaderRoute: typeof AuthAppFinanceAccountsRouteImport
+      parentRoute: typeof AuthAppFinanceRoute
     }
     '/_auth/app/academic/timetables': {
       id: '/_auth/app/academic/timetables'
@@ -1354,6 +1564,36 @@ const AuthAppAcademicRouteWithChildren = AuthAppAcademicRoute._addFileChildren(
   AuthAppAcademicRouteChildren,
 )
 
+interface AuthAppFinanceRouteChildren {
+  AuthAppFinanceAccountsRoute: typeof AuthAppFinanceAccountsRoute
+  AuthAppFinanceDashboardRoute: typeof AuthAppFinanceDashboardRoute
+  AuthAppFinanceDiscountsRoute: typeof AuthAppFinanceDiscountsRoute
+  AuthAppFinanceFeeStructuresRoute: typeof AuthAppFinanceFeeStructuresRoute
+  AuthAppFinanceFeeTypesRoute: typeof AuthAppFinanceFeeTypesRoute
+  AuthAppFinancePaymentPlansRoute: typeof AuthAppFinancePaymentPlansRoute
+  AuthAppFinancePaymentsRoute: typeof AuthAppFinancePaymentsRoute
+  AuthAppFinanceRefundsRoute: typeof AuthAppFinanceRefundsRoute
+  AuthAppFinanceStudentFeesRoute: typeof AuthAppFinanceStudentFeesRoute
+  AuthAppFinanceIndexRoute: typeof AuthAppFinanceIndexRoute
+}
+
+const AuthAppFinanceRouteChildren: AuthAppFinanceRouteChildren = {
+  AuthAppFinanceAccountsRoute: AuthAppFinanceAccountsRoute,
+  AuthAppFinanceDashboardRoute: AuthAppFinanceDashboardRoute,
+  AuthAppFinanceDiscountsRoute: AuthAppFinanceDiscountsRoute,
+  AuthAppFinanceFeeStructuresRoute: AuthAppFinanceFeeStructuresRoute,
+  AuthAppFinanceFeeTypesRoute: AuthAppFinanceFeeTypesRoute,
+  AuthAppFinancePaymentPlansRoute: AuthAppFinancePaymentPlansRoute,
+  AuthAppFinancePaymentsRoute: AuthAppFinancePaymentsRoute,
+  AuthAppFinanceRefundsRoute: AuthAppFinanceRefundsRoute,
+  AuthAppFinanceStudentFeesRoute: AuthAppFinanceStudentFeesRoute,
+  AuthAppFinanceIndexRoute: AuthAppFinanceIndexRoute,
+}
+
+const AuthAppFinanceRouteWithChildren = AuthAppFinanceRoute._addFileChildren(
+  AuthAppFinanceRouteChildren,
+)
+
 interface AuthAppHrRouteChildren {
   AuthAppHrIndexRoute: typeof AuthAppHrIndexRoute
   AuthAppHrRolesNewRoute: typeof AuthAppHrRolesNewRoute
@@ -1485,6 +1725,7 @@ const AuthAppStudentsRouteWithChildren = AuthAppStudentsRoute._addFileChildren(
 interface AuthAppRouteChildren {
   AuthAppAcademicRoute: typeof AuthAppAcademicRouteWithChildren
   AuthAppDashboardRoute: typeof AuthAppDashboardRoute
+  AuthAppFinanceRoute: typeof AuthAppFinanceRouteWithChildren
   AuthAppHrRoute: typeof AuthAppHrRouteWithChildren
   AuthAppSchoolLifeRoute: typeof AuthAppSchoolLifeRouteWithChildren
   AuthAppSpacesRoute: typeof AuthAppSpacesRouteWithChildren
@@ -1495,6 +1736,7 @@ interface AuthAppRouteChildren {
 const AuthAppRouteChildren: AuthAppRouteChildren = {
   AuthAppAcademicRoute: AuthAppAcademicRouteWithChildren,
   AuthAppDashboardRoute: AuthAppDashboardRoute,
+  AuthAppFinanceRoute: AuthAppFinanceRouteWithChildren,
   AuthAppHrRoute: AuthAppHrRouteWithChildren,
   AuthAppSchoolLifeRoute: AuthAppSchoolLifeRouteWithChildren,
   AuthAppSpacesRoute: AuthAppSpacesRouteWithChildren,

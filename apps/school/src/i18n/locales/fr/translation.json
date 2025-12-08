@@ -49,7 +49,13 @@
     "comingSoon": "Bientôt disponible...",
     "startDate": "Date de début",
     "endDate": "Date de fin",
-    "saving": "Enregistrement..."
+    "saving": "Enregistrement...",
+    "code": "Code",
+    "name": "Nom",
+    "nameEn": "Nom (anglais)",
+    "description": "Description",
+    "displayOrder": "Ordre d'affichage",
+    "optionalEnglishName": "Nom en anglais (optionnel)"
   },
   "nav": {
     "dashboard": "Tableau de bord",
@@ -673,7 +679,7 @@
     "studentCount": "Nombre d'élèves"
   },
   "finance": {
-    "title": "Finance",
+    "title": "Gestion Financière",
     "income": "Revenus",
     "expense": "Dépenses",
     "payment": "Paiement",
@@ -685,7 +691,137 @@
     "transfer": "Virement",
     "mobile": "Mobile Money",
     "description": "Description",
-    "category": "Catégorie"
+    "category": "Catégorie",
+    "dashboard": {
+      "title": "Tableau de bord financier",
+      "expectedRevenue": "Revenus attendus",
+      "collected": "Montant collecté",
+      "outstanding": "Solde impayé",
+      "paymentsThisMonth": "Paiements ce mois",
+      "collectionRate": "Taux de recouvrement",
+      "collectionRateDescription": "Pourcentage des frais collectés par rapport aux frais attendus",
+      "studentPaymentStatus": "Statut des paiements élèves",
+      "totalStudents": "Total élèves",
+      "withBalance": "Avec solde",
+      "refundsPending": "remboursements en attente"
+    },
+    "payments": {
+      "title": "Paiements",
+      "description": "Gérer les paiements des élèves",
+      "recordPayment": "Enregistrer un paiement",
+      "recentPayments": "Paiements récents",
+      "noPayments": "Aucun paiement enregistré",
+      "total": "{{count}} paiement(s) au total",
+      "status": {
+        "pending": "En attente",
+        "completed": "Complété",
+        "cancelled": "Annulé",
+        "refunded": "Remboursé"
+      }
+    },
+    "feeTypes": {
+      "title": "Types de frais",
+      "description": "Configurer les différents types de frais scolaires",
+      "create": "Créer un type de frais",
+      "createDescription": "Ajouter un nouveau type de frais scolaires",
+      "created": "Type de frais créé avec succès",
+      "noFeeTypes": "Aucun type de frais configuré",
+      "code": "Code",
+      "category": "Catégorie",
+      "mandatory": "Obligatoire",
+      "recurring": "Récurrent"
+    },
+    "feeCategories": {
+      "tuition": "Scolarité",
+      "registration": "Inscription",
+      "exam": "Examen",
+      "transport": "Transport",
+      "uniform": "Uniforme",
+      "books": "Fournitures",
+      "meals": "Cantine",
+      "activities": "Activités",
+      "other": "Autre"
+    },
+    "feeStructures": {
+      "title": "Structures tarifaires",
+      "description": "Configurer les montants des frais par niveau et série",
+      "create": "Créer une structure",
+      "noFeeStructures": "Aucune structure tarifaire configurée",
+      "newStudentAmount": "Montant nouvel élève"
+    },
+    "accounts": {
+      "title": "Plan comptable",
+      "description": "Gérer le plan comptable de l'école",
+      "create": "Créer un compte",
+      "createDescription": "Ajouter un nouveau compte au plan comptable",
+      "created": "Compte créé avec succès",
+      "noAccounts": "Aucun compte configuré",
+      "type": "Type de compte",
+      "normalBalance": "Solde normal",
+      "isHeader": "Compte de regroupement",
+      "isHeaderDescription": "Ne peut pas recevoir de transactions directes"
+    },
+    "discounts": {
+      "title": "Réductions",
+      "description": "Gérer les réductions et bourses",
+      "create": "Créer une réduction",
+      "createDescription": "Ajouter une nouvelle réduction ou bourse",
+      "created": "Réduction créée avec succès",
+      "noDiscounts": "Aucune réduction configurée",
+      "code": "Code",
+      "type": "Type de réduction",
+      "calculationType": "Type de calcul",
+      "value": "Valeur",
+      "requiresApproval": "Nécessite approbation",
+      "autoApply": "Application automatique"
+    },
+    "discountTypes": {
+      "sibling": "Fratrie",
+      "scholarship": "Bourse",
+      "staff": "Personnel",
+      "early_payment": "Paiement anticipé",
+      "financial_aid": "Aide financière",
+      "other": "Autre"
+    },
+    "refunds": {
+      "title": "Remboursements",
+      "description": "Gérer les demandes de remboursement",
+      "pendingCount": "{{count}} en attente",
+      "noRefunds": "Aucune demande de remboursement",
+      "reason": "Motif",
+      "approve": "Approuver",
+      "reject": "Rejeter",
+      "approved": "Remboursement approuvé",
+      "rejected": "Remboursement rejeté",
+      "status": {
+        "pending": "En attente",
+        "approved": "Approuvé",
+        "rejected": "Rejeté",
+        "processed": "Traité"
+      }
+    },
+    "studentFees": {
+      "title": "Frais des élèves",
+      "description": "Consulter les frais assignés aux élèves",
+      "noStudentFees": "Aucun frais assigné",
+      "totalFees": "Total frais",
+      "paidAmount": "Montant payé",
+      "balance": "Solde"
+    },
+    "paymentPlans": {
+      "title": "Plans de paiement",
+      "description": "Gérer les échéanciers de paiement",
+      "noPaymentPlans": "Aucun plan de paiement",
+      "totalAmount": "Montant total",
+      "progress": "Progression",
+      "installments": "Versements",
+      "status": {
+        "active": "Actif",
+        "completed": "Terminé",
+        "overdue": "En retard",
+        "cancelled": "Annulé"
+      }
+    }
   },
   "permissions": {
     "accessDenied": "Accès refusé",
