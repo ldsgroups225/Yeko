@@ -14,10 +14,13 @@ import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthAppRouteImport } from './routes/_auth/app'
 import { Route as AuthAppIndexRouteImport } from './routes/_auth/app/index'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as AuthAppSessionsRouteImport } from './routes/_auth/app/sessions'
 import { Route as AuthAppScheduleRouteImport } from './routes/_auth/app/schedule'
+import { Route as AuthAppNotificationsRouteImport } from './routes/_auth/app/notifications'
 import { Route as AuthAppMessagesRouteImport } from './routes/_auth/app/messages'
 import { Route as AuthAppGradesRouteImport } from './routes/_auth/app/grades'
+import { Route as AuthAppSessionsSessionIdRouteImport } from './routes/_auth/app/sessions.$sessionId'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -43,6 +46,11 @@ const AuthAppIndexRoute = AuthAppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthAppRoute,
 } as any)
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthAppSessionsRoute = AuthAppSessionsRouteImport.update({
   id: '/sessions',
   path: '/sessions',
@@ -51,6 +59,11 @@ const AuthAppSessionsRoute = AuthAppSessionsRouteImport.update({
 const AuthAppScheduleRoute = AuthAppScheduleRouteImport.update({
   id: '/schedule',
   path: '/schedule',
+  getParentRoute: () => AuthAppRoute,
+} as any)
+const AuthAppNotificationsRoute = AuthAppNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
   getParentRoute: () => AuthAppRoute,
 } as any)
 const AuthAppMessagesRoute = AuthAppMessagesRouteImport.update({
@@ -63,6 +76,12 @@ const AuthAppGradesRoute = AuthAppGradesRouteImport.update({
   path: '/grades',
   getParentRoute: () => AuthAppRoute,
 } as any)
+const AuthAppSessionsSessionIdRoute =
+  AuthAppSessionsSessionIdRouteImport.update({
+    id: '/$sessionId',
+    path: '/$sessionId',
+    getParentRoute: () => AuthAppSessionsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -70,18 +89,24 @@ export interface FileRoutesByFullPath {
   '/app': typeof AuthAppRouteWithChildren
   '/app/grades': typeof AuthAppGradesRoute
   '/app/messages': typeof AuthAppMessagesRoute
+  '/app/notifications': typeof AuthAppNotificationsRoute
   '/app/schedule': typeof AuthAppScheduleRoute
-  '/app/sessions': typeof AuthAppSessionsRoute
+  '/app/sessions': typeof AuthAppSessionsRouteWithChildren
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/app/': typeof AuthAppIndexRoute
+  '/app/sessions/$sessionId': typeof AuthAppSessionsSessionIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/app/grades': typeof AuthAppGradesRoute
   '/app/messages': typeof AuthAppMessagesRoute
+  '/app/notifications': typeof AuthAppNotificationsRoute
   '/app/schedule': typeof AuthAppScheduleRoute
-  '/app/sessions': typeof AuthAppSessionsRoute
+  '/app/sessions': typeof AuthAppSessionsRouteWithChildren
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/app': typeof AuthAppIndexRoute
+  '/app/sessions/$sessionId': typeof AuthAppSessionsSessionIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -91,9 +116,12 @@ export interface FileRoutesById {
   '/_auth/app': typeof AuthAppRouteWithChildren
   '/_auth/app/grades': typeof AuthAppGradesRoute
   '/_auth/app/messages': typeof AuthAppMessagesRoute
+  '/_auth/app/notifications': typeof AuthAppNotificationsRoute
   '/_auth/app/schedule': typeof AuthAppScheduleRoute
-  '/_auth/app/sessions': typeof AuthAppSessionsRoute
+  '/_auth/app/sessions': typeof AuthAppSessionsRouteWithChildren
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/_auth/app/': typeof AuthAppIndexRoute
+  '/_auth/app/sessions/$sessionId': typeof AuthAppSessionsSessionIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -103,18 +131,24 @@ export interface FileRouteTypes {
     | '/app'
     | '/app/grades'
     | '/app/messages'
+    | '/app/notifications'
     | '/app/schedule'
     | '/app/sessions'
+    | '/api/auth/$'
     | '/app/'
+    | '/app/sessions/$sessionId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/login'
     | '/app/grades'
     | '/app/messages'
+    | '/app/notifications'
     | '/app/schedule'
     | '/app/sessions'
+    | '/api/auth/$'
     | '/app'
+    | '/app/sessions/$sessionId'
   id:
     | '__root__'
     | '/'
@@ -123,15 +157,19 @@ export interface FileRouteTypes {
     | '/_auth/app'
     | '/_auth/app/grades'
     | '/_auth/app/messages'
+    | '/_auth/app/notifications'
     | '/_auth/app/schedule'
     | '/_auth/app/sessions'
+    | '/api/auth/$'
     | '/_auth/app/'
+    | '/_auth/app/sessions/$sessionId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRouteWithChildren
   LoginRoute: typeof LoginRoute
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -171,6 +209,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAppIndexRouteImport
       parentRoute: typeof AuthAppRoute
     }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_auth/app/sessions': {
       id: '/_auth/app/sessions'
       path: '/sessions'
@@ -183,6 +228,13 @@ declare module '@tanstack/react-router' {
       path: '/schedule'
       fullPath: '/app/schedule'
       preLoaderRoute: typeof AuthAppScheduleRouteImport
+      parentRoute: typeof AuthAppRoute
+    }
+    '/_auth/app/notifications': {
+      id: '/_auth/app/notifications'
+      path: '/notifications'
+      fullPath: '/app/notifications'
+      preLoaderRoute: typeof AuthAppNotificationsRouteImport
       parentRoute: typeof AuthAppRoute
     }
     '/_auth/app/messages': {
@@ -199,22 +251,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAppGradesRouteImport
       parentRoute: typeof AuthAppRoute
     }
+    '/_auth/app/sessions/$sessionId': {
+      id: '/_auth/app/sessions/$sessionId'
+      path: '/$sessionId'
+      fullPath: '/app/sessions/$sessionId'
+      preLoaderRoute: typeof AuthAppSessionsSessionIdRouteImport
+      parentRoute: typeof AuthAppSessionsRoute
+    }
   }
 }
+
+interface AuthAppSessionsRouteChildren {
+  AuthAppSessionsSessionIdRoute: typeof AuthAppSessionsSessionIdRoute
+}
+
+const AuthAppSessionsRouteChildren: AuthAppSessionsRouteChildren = {
+  AuthAppSessionsSessionIdRoute: AuthAppSessionsSessionIdRoute,
+}
+
+const AuthAppSessionsRouteWithChildren = AuthAppSessionsRoute._addFileChildren(
+  AuthAppSessionsRouteChildren,
+)
 
 interface AuthAppRouteChildren {
   AuthAppGradesRoute: typeof AuthAppGradesRoute
   AuthAppMessagesRoute: typeof AuthAppMessagesRoute
+  AuthAppNotificationsRoute: typeof AuthAppNotificationsRoute
   AuthAppScheduleRoute: typeof AuthAppScheduleRoute
-  AuthAppSessionsRoute: typeof AuthAppSessionsRoute
+  AuthAppSessionsRoute: typeof AuthAppSessionsRouteWithChildren
   AuthAppIndexRoute: typeof AuthAppIndexRoute
 }
 
 const AuthAppRouteChildren: AuthAppRouteChildren = {
   AuthAppGradesRoute: AuthAppGradesRoute,
   AuthAppMessagesRoute: AuthAppMessagesRoute,
+  AuthAppNotificationsRoute: AuthAppNotificationsRoute,
   AuthAppScheduleRoute: AuthAppScheduleRoute,
-  AuthAppSessionsRoute: AuthAppSessionsRoute,
+  AuthAppSessionsRoute: AuthAppSessionsRouteWithChildren,
   AuthAppIndexRoute: AuthAppIndexRoute,
 }
 
@@ -235,6 +308,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRouteWithChildren,
   LoginRoute: LoginRoute,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

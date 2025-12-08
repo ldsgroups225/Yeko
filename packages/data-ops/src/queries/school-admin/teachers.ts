@@ -292,3 +292,38 @@ export async function getTeacherByUserId(userId: string, schoolId: string) {
 
   return result[0] || null
 }
+
+/**
+ * Get teacher by auth user ID (Better Auth user ID)
+ * Used by teacher app to get teacher context from logged-in user
+ */
+export async function getTeacherByAuthUserId(authUserId: string) {
+  if (!authUserId) {
+    return null
+  }
+
+  const db = getDb()
+
+  const result = await db
+    .select({
+      id: teachers.id,
+      userId: teachers.userId,
+      schoolId: teachers.schoolId,
+      specialization: teachers.specialization,
+      hireDate: teachers.hireDate,
+      status: teachers.status,
+      user: {
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        phone: users.phone,
+        avatarUrl: users.avatarUrl,
+      },
+    })
+    .from(teachers)
+    .innerJoin(users, eq(teachers.userId, users.id))
+    .where(and(eq(users.authUserId, authUserId), eq(teachers.status, 'active')))
+    .limit(1)
+
+  return result[0] || null
+}

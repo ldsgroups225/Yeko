@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { GraduationCap, Loader2 } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -11,6 +11,12 @@ import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/login')({
   component: LoginPage,
+  beforeLoad: async ({ context }) => {
+    // If already authenticated, redirect to app
+    if (context?.session) {
+      throw redirect({ to: '/app' })
+    }
+  },
 })
 
 function LoginPage() {
@@ -106,11 +112,11 @@ function LoginPage() {
           >
             {isLoading
               ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                )
+                <Loader2 className="h-4 w-4 animate-spin" />
+              )
               : (
-                  t('auth.loginButton')
-                )}
+                t('auth.loginButton')
+              )}
           </Button>
         </form>
 

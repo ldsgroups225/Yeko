@@ -1,11 +1,13 @@
 import { getAuth } from '@repo/data-ops/auth/server'
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
+import { getRequest } from '@tanstack/react-start/server'
 
 const getSession = createServerFn({ method: 'GET' }).handler(async () => {
   const auth = getAuth()
+  const request = getRequest()
   const session = await auth.api.getSession({
-    headers: new Headers(),
+    headers: request.headers,
   })
   return session
 })
