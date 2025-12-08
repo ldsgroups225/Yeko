@@ -48,7 +48,7 @@ export function BulkGenerationDialog({
   onGenerate,
 }: BulkGenerationDialogProps) {
   const { t } = useTranslation()
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(() =>
     new Set(students.map(s => s.id)),
   )
   const [state, setState] = useState<GenerationState>('idle')

@@ -37,25 +37,8 @@ export function TimetableSessionCard({
 }: TimetableSessionCardProps) {
   const bgColor = session.color ?? '#3b82f6'
 
-  return (
-    <div
-      role={onClick ? 'button' : undefined}
-      tabIndex={onClick ? 0 : undefined}
-      onClick={() => onClick?.(session)}
-      onKeyDown={(e) => {
-        if (onClick && (e.key === 'Enter' || e.key === ' ')) {
-          e.preventDefault()
-          onClick(session)
-        }
-      }}
-      className={cn(
-        'rounded-md p-2 text-white transition-all',
-        onClick && 'cursor-pointer hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2',
-        session.hasConflict && 'ring-2 ring-destructive ring-offset-1',
-        className,
-      )}
-      style={{ backgroundColor: bgColor }}
-    >
+  const content = (
+    <>
       {compact
         ? (
             <div className="text-xs">
@@ -90,6 +73,37 @@ export function TimetableSessionCard({
               {children}
             </div>
           )}
+    </>
+  )
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        onClick={() => onClick(session)}
+        className={cn(
+          'rounded-md p-2 text-white transition-all text-left w-full',
+          'cursor-pointer hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2',
+          session.hasConflict && 'ring-2 ring-destructive ring-offset-1',
+          className,
+        )}
+        style={{ backgroundColor: bgColor }}
+      >
+        {content}
+      </button>
+    )
+  }
+
+  return (
+    <div
+      className={cn(
+        'rounded-md p-2 text-white transition-all',
+        session.hasConflict && 'ring-2 ring-destructive ring-offset-1',
+        className,
+      )}
+      style={{ backgroundColor: bgColor }}
+    >
+      {content}
     </div>
   )
 }

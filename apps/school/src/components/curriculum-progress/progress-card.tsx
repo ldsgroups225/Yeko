@@ -49,6 +49,7 @@ export function ProgressCard({
   }
 
   return (
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <Card
       className={cn(
         'transition-shadow',
@@ -56,11 +57,10 @@ export function ProgressCard({
         className,
       )}
       onClick={onClick}
-      {...(onClick && {
-        role: 'button',
-        tabIndex: 0,
-        onKeyDown: handleKeyDown,
-      })}
+      role={onClick ? 'button' : undefined}
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={onClick ? handleKeyDown : undefined}
     >
       <CardHeader className="pb-2">
         <div className="flex items-start justify-between gap-2">

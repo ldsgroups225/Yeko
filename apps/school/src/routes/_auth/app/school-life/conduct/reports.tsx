@@ -27,6 +27,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { conductRecordsOptions } from '@/lib/queries/conduct-records'
+import { generateUUID } from '@/utils/generateUUID'
 
 export const Route = createFileRoute('/_auth/app/school-life/conduct/reports')({
   component: ConductReportsPage,
@@ -151,8 +152,8 @@ function ConductReportsPage() {
       {isLoading
         ? (
             <div className="grid gap-4 md:grid-cols-4">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={`skeleton-${i}`} className="h-24" />
+              {Array.from({ length: 4 }).map(() => (
+                <Skeleton key={`skeleton-${generateUUID()}`} className="h-24" />
               ))}
             </div>
           )

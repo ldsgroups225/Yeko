@@ -164,15 +164,16 @@ describe('timetables Integration', () => {
       expect(onSessionClick).toHaveBeenCalled()
     })
 
-    test('should call onSlotClick when empty slot clicked', () => {
+    test('should call onSlotClick when empty slot clicked', async () => {
       const onSlotClick = vi.fn()
       render(<TimetableGrid sessions={[]} onSlotClick={onSlotClick} />)
 
       // Find an empty slot and click it
-      const emptySlots = document.querySelectorAll('[role="button"]')
+      const emptySlots = screen.getAllByRole('button')
       if (emptySlots.length > 0) {
-        emptySlots[0]?.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+        await userEvent.click(emptySlots[0]!)
       }
+      expect(onSlotClick).toHaveBeenCalled()
     })
 
     test('should respect readOnly mode', () => {

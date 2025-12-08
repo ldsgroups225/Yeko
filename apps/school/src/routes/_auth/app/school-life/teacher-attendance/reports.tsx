@@ -17,6 +17,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { teacherPunctualityReportOptions } from '@/lib/queries/teacher-attendance'
+import { generateUUID } from '@/utils/generateUUID'
 
 export const Route = createFileRoute('/_auth/app/school-life/teacher-attendance/reports')({
   component: TeacherPunctualityReportsPage,
@@ -99,8 +100,8 @@ function TeacherPunctualityReportsPage() {
           {isLoading
             ? (
                 <div className="space-y-2">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Skeleton key={`skeleton-${i}`} className="h-12 w-full" />
+                  {Array.from({ length: 5 }).map(() => (
+                    <Skeleton key={`skeleton-${generateUUID()}`} className="h-12 w-full" />
                   ))}
                 </div>
               )

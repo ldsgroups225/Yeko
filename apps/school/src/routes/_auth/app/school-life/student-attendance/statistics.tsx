@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import { attendanceStatisticsOptions } from '@/lib/queries/student-attendance'
+import { generateUUID } from '@/utils/generateUUID'
 
 export const Route = createFileRoute('/_auth/app/school-life/student-attendance/statistics')({
   component: StudentAttendanceStatisticsPage,
@@ -101,8 +102,8 @@ function StudentAttendanceStatisticsPage() {
       {isLoading
         ? (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={`skeleton-${i}`} className="h-32" />
+              {Array.from({ length: 4 }).map(() => (
+                <Skeleton key={`skeleton-${generateUUID()}`} className="h-32" />
               ))}
             </div>
           )

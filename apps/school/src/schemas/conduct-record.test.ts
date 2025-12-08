@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect } from 'vitest'
 
 import {
   conductCategories,
@@ -22,108 +22,108 @@ describe('conductRecordSchema', () => {
     description: 'Student was disruptive during class.',
   }
 
-  it('should validate valid conduct record data', () => {
+  test('should validate valid conduct record data', () => {
     const result = conductRecordSchema.safeParse(validData)
     expect(result.success).toBe(true)
   })
 
-  it('should validate all conduct types', () => {
+  test('should validate all conduct types', () => {
     for (const type of conductTypes) {
       const result = conductRecordSchema.safeParse({ ...validData, type })
       expect(result.success).toBe(true)
     }
   })
 
-  it('should validate all conduct categories', () => {
+  test('should validate all conduct categories', () => {
     for (const category of conductCategories) {
       const result = conductRecordSchema.safeParse({ ...validData, category })
       expect(result.success).toBe(true)
     }
   })
 
-  it('should validate all severity levels', () => {
+  test('should validate all severity levels', () => {
     for (const severity of severityLevels) {
       const result = conductRecordSchema.safeParse({ ...validData, severity })
       expect(result.success).toBe(true)
     }
   })
 
-  it('should reject empty studentId', () => {
+  test('should reject empty studentId', () => {
     const result = conductRecordSchema.safeParse({ ...validData, studentId: '' })
     expect(result.success).toBe(false)
   })
 
-  it('should reject empty schoolYearId', () => {
+  test('should reject empty schoolYearId', () => {
     const result = conductRecordSchema.safeParse({ ...validData, schoolYearId: '' })
     expect(result.success).toBe(false)
   })
 
-  it('should reject empty title', () => {
+  test('should reject empty title', () => {
     const result = conductRecordSchema.safeParse({ ...validData, title: '' })
     expect(result.success).toBe(false)
   })
 
-  it('should reject title exceeding max length', () => {
+  test('should reject title exceeding max length', () => {
     const result = conductRecordSchema.safeParse({ ...validData, title: 'a'.repeat(201) })
     expect(result.success).toBe(false)
   })
 
-  it('should reject empty description', () => {
+  test('should reject empty description', () => {
     const result = conductRecordSchema.safeParse({ ...validData, description: '' })
     expect(result.success).toBe(false)
   })
 
-  it('should reject description exceeding max length', () => {
+  test('should reject description exceeding max length', () => {
     const result = conductRecordSchema.safeParse({ ...validData, description: 'a'.repeat(5001) })
     expect(result.success).toBe(false)
   })
 
-  it('should reject invalid type', () => {
+  test('should reject invalid type', () => {
     const result = conductRecordSchema.safeParse({ ...validData, type: 'invalid' })
     expect(result.success).toBe(false)
   })
 
-  it('should reject invalid category', () => {
+  test('should reject invalid category', () => {
     const result = conductRecordSchema.safeParse({ ...validData, category: 'invalid' })
     expect(result.success).toBe(false)
   })
 
-  it('should validate optional incidentDate', () => {
+  test('should validate optional incidentDate', () => {
     const result = conductRecordSchema.safeParse({ ...validData, incidentDate: '2025-12-08' })
     expect(result.success).toBe(true)
   })
 
-  it('should reject invalid incidentDate format', () => {
+  test('should reject invalid incidentDate format', () => {
     const result = conductRecordSchema.safeParse({ ...validData, incidentDate: '08-12-2025' })
     expect(result.success).toBe(false)
   })
 
-  it('should validate optional incidentTime', () => {
+  test('should validate optional incidentTime', () => {
     const result = conductRecordSchema.safeParse({ ...validData, incidentTime: '14:30' })
     expect(result.success).toBe(true)
   })
 
-  it('should reject invalid incidentTime format', () => {
+  test('should reject invalid incidentTime format', () => {
     const result = conductRecordSchema.safeParse({ ...validData, incidentTime: '2:30 PM' })
     expect(result.success).toBe(false)
   })
 
-  it('should validate optional classId', () => {
+  test('should validate optional classId', () => {
     const result = conductRecordSchema.safeParse({ ...validData, classId: 'class-456' })
     expect(result.success).toBe(true)
   })
 
-  it('should validate optional location', () => {
+  test('should validate optional location', () => {
     const result = conductRecordSchema.safeParse({ ...validData, location: 'Classroom 101' })
     expect(result.success).toBe(true)
   })
 
-  it('should reject location exceeding max length', () => {
+  test('should reject location exceeding max length', () => {
     const result = conductRecordSchema.safeParse({ ...validData, location: 'a'.repeat(201) })
     expect(result.success).toBe(false)
   })
 
-  it('should validate optional witnesses array', () => {
+  test('should validate optional witnesses array', () => {
     const result = conductRecordSchema.safeParse({
       ...validData,
       witnesses: ['Teacher A', 'Student B'],
@@ -131,7 +131,7 @@ describe('conductRecordSchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('should validate all sanction types', () => {
+  test('should validate all sanction types', () => {
     for (const sanctionType of sanctionTypes) {
       const result = conductRecordSchema.safeParse({
         ...validData,
@@ -142,7 +142,7 @@ describe('conductRecordSchema', () => {
     }
   })
 
-  it('should validate sanction dates', () => {
+  test('should validate sanction dates', () => {
     const result = conductRecordSchema.safeParse({
       ...validData,
       type: 'sanction',
@@ -153,7 +153,7 @@ describe('conductRecordSchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('should validate all reward types', () => {
+  test('should validate all reward types', () => {
     for (const rewardType of rewardTypes) {
       const result = conductRecordSchema.safeParse({
         ...validData,
@@ -164,7 +164,7 @@ describe('conductRecordSchema', () => {
     }
   })
 
-  it('should validate pointsAwarded for rewards', () => {
+  test('should validate pointsAwarded for rewards', () => {
     const result = conductRecordSchema.safeParse({
       ...validData,
       type: 'reward',
@@ -174,7 +174,7 @@ describe('conductRecordSchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('should reject negative pointsAwarded', () => {
+  test('should reject negative pointsAwarded', () => {
     const result = conductRecordSchema.safeParse({
       ...validData,
       type: 'reward',
@@ -183,7 +183,7 @@ describe('conductRecordSchema', () => {
     expect(result.success).toBe(false)
   })
 
-  it('should validate attachments array', () => {
+  test('should validate attachments array', () => {
     const result = conductRecordSchema.safeParse({
       ...validData,
       attachments: [
@@ -193,7 +193,7 @@ describe('conductRecordSchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('should reject attachment with invalid URL', () => {
+  test('should reject attachment with invalid URL', () => {
     const result = conductRecordSchema.safeParse({
       ...validData,
       attachments: [{ name: 'file.pdf', url: 'not-a-url', type: 'application/pdf' }],
@@ -201,7 +201,7 @@ describe('conductRecordSchema', () => {
     expect(result.success).toBe(false)
   })
 
-  it('should allow null for optional fields', () => {
+  test('should allow null for optional fields', () => {
     const result = conductRecordSchema.safeParse({
       ...validData,
       classId: null,
@@ -226,42 +226,42 @@ describe('conductFollowUpSchema', () => {
     action: 'Called parent for meeting',
   }
 
-  it('should validate valid follow-up data', () => {
+  test('should validate valid follow-up data', () => {
     const result = conductFollowUpSchema.safeParse(validData)
     expect(result.success).toBe(true)
   })
 
-  it('should reject empty conductRecordId', () => {
+  test('should reject empty conductRecordId', () => {
     const result = conductFollowUpSchema.safeParse({ ...validData, conductRecordId: '' })
     expect(result.success).toBe(false)
   })
 
-  it('should reject empty action', () => {
+  test('should reject empty action', () => {
     const result = conductFollowUpSchema.safeParse({ ...validData, action: '' })
     expect(result.success).toBe(false)
   })
 
-  it('should reject action exceeding max length', () => {
+  test('should reject action exceeding max length', () => {
     const result = conductFollowUpSchema.safeParse({ ...validData, action: 'a'.repeat(501) })
     expect(result.success).toBe(false)
   })
 
-  it('should validate optional notes', () => {
+  test('should validate optional notes', () => {
     const result = conductFollowUpSchema.safeParse({ ...validData, notes: 'Parent agreed to meeting' })
     expect(result.success).toBe(true)
   })
 
-  it('should validate optional outcome', () => {
+  test('should validate optional outcome', () => {
     const result = conductFollowUpSchema.safeParse({ ...validData, outcome: 'Meeting scheduled' })
     expect(result.success).toBe(true)
   })
 
-  it('should validate optional followUpDate', () => {
+  test('should validate optional followUpDate', () => {
     const result = conductFollowUpSchema.safeParse({ ...validData, followUpDate: '2025-12-15' })
     expect(result.success).toBe(true)
   })
 
-  it('should reject invalid followUpDate format', () => {
+  test('should reject invalid followUpDate format', () => {
     const result = conductFollowUpSchema.safeParse({ ...validData, followUpDate: 'Dec 15, 2025' })
     expect(result.success).toBe(false)
   })
@@ -273,29 +273,29 @@ describe('updateConductStatusSchema', () => {
     status: 'resolved' as const,
   }
 
-  it('should validate valid status update data', () => {
+  test('should validate valid status update data', () => {
     const result = updateConductStatusSchema.safeParse(validData)
     expect(result.success).toBe(true)
   })
 
-  it('should validate all conduct statuses', () => {
+  test('should validate all conduct statuses', () => {
     for (const status of conductStatuses) {
       const result = updateConductStatusSchema.safeParse({ ...validData, status })
       expect(result.success).toBe(true)
     }
   })
 
-  it('should reject empty id', () => {
+  test('should reject empty id', () => {
     const result = updateConductStatusSchema.safeParse({ ...validData, id: '' })
     expect(result.success).toBe(false)
   })
 
-  it('should reject invalid status', () => {
+  test('should reject invalid status', () => {
     const result = updateConductStatusSchema.safeParse({ ...validData, status: 'invalid' })
     expect(result.success).toBe(false)
   })
 
-  it('should validate optional resolutionNotes', () => {
+  test('should validate optional resolutionNotes', () => {
     const result = updateConductStatusSchema.safeParse({
       ...validData,
       resolutionNotes: 'Issue resolved after parent meeting',
@@ -303,7 +303,7 @@ describe('updateConductStatusSchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('should allow null for resolutionNotes', () => {
+  test('should allow null for resolutionNotes', () => {
     const result = updateConductStatusSchema.safeParse({ ...validData, resolutionNotes: null })
     expect(result.success).toBe(true)
   })

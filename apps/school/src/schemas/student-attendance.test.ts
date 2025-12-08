@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect } from 'vitest'
 
 import {
   absenceReasonCategories,
@@ -16,39 +16,39 @@ describe('studentAttendanceSchema', () => {
     status: 'present' as const,
   }
 
-  it('should validate valid student attendance data', () => {
+  test('should validate valid student attendance data', () => {
     const result = studentAttendanceSchema.safeParse(validData)
     expect(result.success).toBe(true)
   })
 
-  it('should validate all status types', () => {
+  test('should validate all status types', () => {
     for (const status of studentAttendanceStatuses) {
       const result = studentAttendanceSchema.safeParse({ ...validData, status })
       expect(result.success).toBe(true)
     }
   })
 
-  it('should reject empty studentId', () => {
+  test('should reject empty studentId', () => {
     const result = studentAttendanceSchema.safeParse({ ...validData, studentId: '' })
     expect(result.success).toBe(false)
   })
 
-  it('should reject empty classId', () => {
+  test('should reject empty classId', () => {
     const result = studentAttendanceSchema.safeParse({ ...validData, classId: '' })
     expect(result.success).toBe(false)
   })
 
-  it('should reject invalid date format', () => {
+  test('should reject invalid date format', () => {
     const result = studentAttendanceSchema.safeParse({ ...validData, date: '08/12/2025' })
     expect(result.success).toBe(false)
   })
 
-  it('should reject invalid status', () => {
+  test('should reject invalid status', () => {
     const result = studentAttendanceSchema.safeParse({ ...validData, status: 'unknown' })
     expect(result.success).toBe(false)
   })
 
-  it('should validate optional classSessionId', () => {
+  test('should validate optional classSessionId', () => {
     const result = studentAttendanceSchema.safeParse({
       ...validData,
       classSessionId: 'session-789',
@@ -56,17 +56,17 @@ describe('studentAttendanceSchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('should validate optional arrivalTime', () => {
+  test('should validate optional arrivalTime', () => {
     const result = studentAttendanceSchema.safeParse({ ...validData, arrivalTime: '08:30' })
     expect(result.success).toBe(true)
   })
 
-  it('should reject invalid arrivalTime format', () => {
+  test('should reject invalid arrivalTime format', () => {
     const result = studentAttendanceSchema.safeParse({ ...validData, arrivalTime: '8:30 AM' })
     expect(result.success).toBe(false)
   })
 
-  it('should validate all reason categories', () => {
+  test('should validate all reason categories', () => {
     for (const category of absenceReasonCategories) {
       const result = studentAttendanceSchema.safeParse({
         ...validData,
@@ -77,7 +77,7 @@ describe('studentAttendanceSchema', () => {
     }
   })
 
-  it('should allow null for optional fields', () => {
+  test('should allow null for optional fields', () => {
     const result = studentAttendanceSchema.safeParse({
       ...validData,
       classSessionId: null,
@@ -89,7 +89,7 @@ describe('studentAttendanceSchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('should reject reason exceeding max length', () => {
+  test('should reject reason exceeding max length', () => {
     const result = studentAttendanceSchema.safeParse({
       ...validData,
       reason: 'a'.repeat(501),
@@ -109,12 +109,12 @@ describe('bulkStudentAttendanceSchema', () => {
     ],
   }
 
-  it('should validate valid bulk attendance data', () => {
+  test('should validate valid bulk attendance data', () => {
     const result = bulkStudentAttendanceSchema.safeParse(validBulkData)
     expect(result.success).toBe(true)
   })
 
-  it('should validate with optional classSessionId', () => {
+  test('should validate with optional classSessionId', () => {
     const result = bulkStudentAttendanceSchema.safeParse({
       ...validBulkData,
       classSessionId: 'session-123',
@@ -122,7 +122,7 @@ describe('bulkStudentAttendanceSchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('should reject invalid date format', () => {
+  test('should reject invalid date format', () => {
     const result = bulkStudentAttendanceSchema.safeParse({
       ...validBulkData,
       date: 'invalid',
@@ -130,7 +130,7 @@ describe('bulkStudentAttendanceSchema', () => {
     expect(result.success).toBe(false)
   })
 
-  it('should reject entry with empty studentId', () => {
+  test('should reject entry with empty studentId', () => {
     const result = bulkStudentAttendanceSchema.safeParse({
       ...validBulkData,
       entries: [{ studentId: '', status: 'present' }],
@@ -146,27 +146,27 @@ describe('excuseAbsenceSchema', () => {
     reasonCategory: 'illness' as const,
   }
 
-  it('should validate valid excuse data', () => {
+  test('should validate valid excuse data', () => {
     const result = excuseAbsenceSchema.safeParse(validData)
     expect(result.success).toBe(true)
   })
 
-  it('should reject empty attendanceId', () => {
+  test('should reject empty attendanceId', () => {
     const result = excuseAbsenceSchema.safeParse({ ...validData, attendanceId: '' })
     expect(result.success).toBe(false)
   })
 
-  it('should reject empty reason', () => {
+  test('should reject empty reason', () => {
     const result = excuseAbsenceSchema.safeParse({ ...validData, reason: '' })
     expect(result.success).toBe(false)
   })
 
-  it('should reject invalid reasonCategory', () => {
+  test('should reject invalid reasonCategory', () => {
     const result = excuseAbsenceSchema.safeParse({ ...validData, reasonCategory: 'invalid' })
     expect(result.success).toBe(false)
   })
 
-  it('should validate all reason categories', () => {
+  test('should validate all reason categories', () => {
     for (const category of absenceReasonCategories) {
       const result = excuseAbsenceSchema.safeParse({ ...validData, reasonCategory: category })
       expect(result.success).toBe(true)

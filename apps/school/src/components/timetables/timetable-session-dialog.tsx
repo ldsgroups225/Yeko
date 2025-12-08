@@ -28,6 +28,8 @@ import { Textarea } from '@/components/ui/textarea'
 import { dayOfWeekLabels } from '@/schemas/timetable'
 import { ConflictIndicator } from './conflict-indicator'
 
+const defaultConflicts: Conflict[] = []
+
 const sessionFormSchema = z.object({
   subjectId: z.string().min(1, 'Matière requise'),
   teacherId: z.string().min(1, 'Enseignant requis'),
@@ -82,7 +84,7 @@ export function TimetableSessionDialog({
   subjects,
   teachers,
   classrooms,
-  conflicts = [],
+  conflicts = defaultConflicts,
   onSubmit,
   onDelete,
   isSubmitting,

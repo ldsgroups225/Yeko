@@ -11,6 +11,8 @@ import { dayOfWeekLabels, defaultTimeSlots } from '@/schemas/timetable'
 import { generateUUID } from '@/utils/generateUUID'
 import { TimetableSessionCard } from './timetable-session-card'
 
+const defaultDaysToShow = [1, 2, 3, 4, 5, 6]
+
 interface TimetableGridProps {
   sessions: TimetableSessionData[]
   isLoading?: boolean
@@ -42,7 +44,7 @@ export function TimetableGrid({
   onSessionClick,
   onSlotClick,
   readOnly = false,
-  daysToShow = [1, 2, 3, 4, 5, 6],
+  daysToShow = defaultDaysToShow,
   timeSlots = defaultTimeSlots,
 }: TimetableGridProps) {
   const { t } = useTranslation()
@@ -103,24 +105,26 @@ export function TimetableGrid({
             {daysToShow.map((day) => {
               const key = `${day}-${slot.start}`
               const slotSessions = sessionsBySlot.get(key) ?? []
+              const isClickable = !readOnly && onSlotClick && slotSessions.length === 0
 
               return (
+                // eslint-disable-next-line jsx-a11y/no-static-element-interactions
                 <div
                   key={key}
-                  role={!readOnly && onSlotClick ? 'button' : undefined}
-                  tabIndex={!readOnly && onSlotClick && slotSessions.length === 0 ? 0 : undefined}
-                  onClick={() => slotSessions.length === 0 && handleSlotClick(day, slot)}
-                  onKeyDown={(e) => {
-                    if (
-                      !readOnly
-                      && onSlotClick
-                      && slotSessions.length === 0
-                      && (e.key === 'Enter' || e.key === ' ')
-                    ) {
-                      e.preventDefault()
-                      handleSlotClick(day, slot)
-                    }
-                  }}
+                  role={isClickable ? 'button' : undefined}
+                  // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+                  tabIndex={isClickable ? 0 : undefined}
+                  onClick={isClickable ? () => handleSlotClick(day, slot) : undefined}
+                  onKeyDown={
+                    isClickable
+                      ? (e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault()
+                            handleSlotClick(day, slot)
+                          }
+                        }
+                      : undefined
+                  }
                   className={cn(
                     'h-20 rounded-md border border-dashed border-muted-foreground/20 p-1',
                     !readOnly && slotSessions.length === 0 && 'hover:bg-muted/50 cursor-pointer',

@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/empty'
 import { Skeleton } from '@/components/ui/skeleton'
 
+import { generateUUID } from '@/utils/generateUUID'
 import { ConductRecordCard } from './conduct-record-card'
 
 type ConductType = 'incident' | 'sanction' | 'reward' | 'note'
@@ -85,8 +86,8 @@ export function ConductRecordList({
 function ConductRecordListSkeleton() {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {Array.from({ length: 6 }).map((_, i) => (
-        <Skeleton key={i} className="h-48 w-full" />
+      {Array.from({ length: 6 }).map(() => (
+        <Skeleton key={generateUUID()} className="h-48 w-full" />
       ))}
     </div>
   )

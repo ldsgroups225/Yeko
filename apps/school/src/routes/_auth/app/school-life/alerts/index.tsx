@@ -19,6 +19,7 @@ import {
   dismissAlert,
   getActiveAlerts,
 } from '@/school/functions/attendance-alerts'
+import { generateUUID } from '@/utils/generateUUID'
 
 export const Route = createFileRoute('/_auth/app/school-life/alerts/')({
   component: AlertsPage,
@@ -89,8 +90,8 @@ function AlertsPage() {
           {isLoading
             ? (
                 <div className="space-y-4">
-                  {Array.from({ length: 3 }).map((_, i) => (
-                    <Skeleton key={`skeleton-${i}`} className="h-32 w-full" />
+                  {Array.from({ length: 3 }).map(() => (
+                    <Skeleton key={`skeleton-${generateUUID()}`} className="h-32 w-full" />
                   ))}
                 </div>
               )
