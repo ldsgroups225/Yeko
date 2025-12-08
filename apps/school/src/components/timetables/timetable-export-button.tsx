@@ -43,11 +43,11 @@ export function TimetableExportButton({
         <Button variant="outline" disabled={disabled || isExporting}>
           {isExporting
             ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            )
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )
             : (
-              <Download className="mr-2 h-4 w-4" />
-            )}
+                <Download className="mr-2 h-4 w-4" />
+              )}
           {t('common.export')}
         </Button>
       </DropdownMenuTrigger>

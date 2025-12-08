@@ -13,7 +13,7 @@ export const studentsKeys = {
   list: (filters: StudentFilters) => [...studentsKeys.lists(), filters] as const,
   details: () => [...studentsKeys.all, 'detail'] as const,
   detail: (id: string) => [...studentsKeys.details(), id] as const,
-  statistics: (schoolYearId?: string) => [...studentsKeys.all, 'statistics', schoolYearId] as const,
+  statistics: () => [...studentsKeys.all, 'statistics'] as const,
   export: (filters: StudentFilters) => [...studentsKeys.all, 'export', filters] as const,
   matricule: () => [...studentsKeys.all, 'matricule'] as const,
 }
@@ -49,10 +49,10 @@ export const studentsOptions = {
       enabled: !!id,
     }),
 
-  statistics: (schoolYearId?: string) =>
+  statistics: () =>
     queryOptions({
-      queryKey: studentsKeys.statistics(schoolYearId),
-      queryFn: () => getStudentStatistics({ data: schoolYearId }),
+      queryKey: studentsKeys.statistics(),
+      queryFn: () => getStudentStatistics(),
       staleTime: 10 * 60 * 1000, // 10 minutes
       gcTime: 30 * 60 * 1000,
     }),

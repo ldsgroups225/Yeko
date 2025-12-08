@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import { dayOfWeekLabels, defaultTimeSlots } from '@/schemas/timetable'
 
+import { generateUUID } from '@/utils/generateUUID'
 import { TimetableSessionCard } from './timetable-session-card'
 
 interface TimetableGridProps {
@@ -23,11 +24,11 @@ interface TimetableGridProps {
 function GridSkeleton() {
   return (
     <div className="space-y-2">
-      {Array.from({ length: 6 }).map((_, i) => (
-        <div key={i} className="flex gap-2">
+      {Array.from({ length: 6 }).map(() => (
+        <div key={generateUUID()} className="flex gap-2">
           <Skeleton className="h-16 w-16 shrink-0" />
-          {Array.from({ length: 6 }).map((_, j) => (
-            <Skeleton key={j} className="h-16 flex-1" />
+          {Array.from({ length: 6 }).map(() => (
+            <Skeleton key={generateUUID()} className="h-16 flex-1" />
           ))}
         </div>
       ))}
@@ -128,25 +129,25 @@ export function TimetableGrid({
                 >
                   {slotSessions.length > 0
                     ? (
-                      <div className="h-full space-y-1 overflow-hidden">
-                        {slotSessions.map(session => (
-                          <TimetableSessionCard
-                            key={session.id}
-                            session={session}
-                            onClick={onSessionClick}
-                            compact={slotSessions.length > 1}
-                            className="h-full"
-                          />
-                        ))}
-                      </div>
-                    )
-                    : (
-                      !readOnly && (
-                        <div className="h-full flex items-center justify-center text-xs text-muted-foreground opacity-0 hover:opacity-100 transition-opacity">
-                          {t('timetables.addSession')}
+                        <div className="h-full space-y-1 overflow-hidden">
+                          {slotSessions.map(session => (
+                            <TimetableSessionCard
+                              key={session.id}
+                              session={session}
+                              onClick={onSessionClick}
+                              compact={slotSessions.length > 1}
+                              className="h-full"
+                            />
+                          ))}
                         </div>
                       )
-                    )}
+                    : (
+                        !readOnly && (
+                          <div className="h-full flex items-center justify-center text-xs text-muted-foreground opacity-0 hover:opacity-100 transition-opacity">
+                            {t('timetables.addSession')}
+                          </div>
+                        )
+                      )}
                 </div>
               )
             })}

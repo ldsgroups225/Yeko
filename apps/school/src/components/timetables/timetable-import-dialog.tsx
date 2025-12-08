@@ -15,6 +15,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Progress } from '@/components/ui/progress'
+import { generateUUID } from '@/utils/generateUUID'
 
 interface ImportResult {
   total: number
@@ -176,11 +177,11 @@ export function TimetableImportDialog({
             <div className="flex items-center justify-center">
               {result.failed === 0
                 ? (
-                  <CheckCircle2 className="h-12 w-12 text-green-500" />
-                )
+                    <CheckCircle2 className="h-12 w-12 text-green-500" />
+                  )
                 : (
-                  <AlertCircle className="h-12 w-12 text-yellow-500" />
-                )}
+                    <AlertCircle className="h-12 w-12 text-yellow-500" />
+                  )}
             </div>
 
             <div className="text-center space-y-1">
@@ -199,8 +200,8 @@ export function TimetableImportDialog({
                   {t('timetables.importConflicts', { count: result.failed })}
                 </p>
                 <ul className="text-sm text-destructive/80 space-y-1">
-                  {result.conflicts.slice(0, 5).map((c, i) => (
-                    <li key={i}>
+                  {result.conflicts.slice(0, 5).map(c => (
+                    <li key={generateUUID()}>
                       •
                       {t('timetables.row')}
                       {' '}

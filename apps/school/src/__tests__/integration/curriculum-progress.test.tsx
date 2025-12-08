@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, expect, vi } from 'vitest'
 
 // Unmock react-hook-form to use real implementation
@@ -121,12 +122,14 @@ describe('curriculum Progress Integration', () => {
       expect(screen.getByText(/\+10%/)).toBeInTheDocument()
     })
 
-    test('should call onClick when clicked', () => {
+    test('should call onClick when clicked', async () => {
       const onClick = vi.fn()
       render(<ProgressCard {...mockProgress} onClick={onClick} />)
 
       const card = screen.getByText('Mathématiques').closest('[role="button"]')
-      card?.click()
+      if (card) {
+        await userEvent.click(card)
+      }
 
       expect(onClick).toHaveBeenCalled()
     })

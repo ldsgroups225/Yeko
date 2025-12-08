@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, expect, vi } from 'vitest'
 
 // Unmock react-hook-form to use real implementation
@@ -37,12 +38,14 @@ describe('timetables Integration', () => {
       expect(screen.getByText('Salle 101')).toBeInTheDocument()
     })
 
-    test('should call onClick when clicked', () => {
+    test('should call onClick when clicked', async () => {
       const onClick = vi.fn()
       render(<TimetableSessionCard session={mockSession} onClick={onClick} />)
 
       const card = screen.getByText('Mathématiques').closest('div[role="button"]')
-      card?.click()
+      if (card) {
+        await userEvent.click(card)
+      }
 
       expect(onClick).toHaveBeenCalledWith(mockSession)
     })
@@ -149,12 +152,14 @@ describe('timetables Integration', () => {
       expect(skeletons.length).toBeGreaterThan(0)
     })
 
-    test('should call onSessionClick when session clicked', () => {
+    test('should call onSessionClick when session clicked', async () => {
       const onSessionClick = vi.fn()
       render(<TimetableGrid sessions={mockSessions} onSessionClick={onSessionClick} />)
 
       const mathSession = screen.getByText('Mathématiques').closest('div[role="button"]')
-      mathSession?.click()
+      if (mathSession) {
+        await userEvent.click(mathSession)
+      }
 
       expect(onSessionClick).toHaveBeenCalled()
     })

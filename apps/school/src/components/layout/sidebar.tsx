@@ -1,5 +1,6 @@
 import { Link, useLocation } from '@tanstack/react-router'
 import {
+  AlertTriangle,
   BookOpen,
   Building2,
   ClipboardCheck,
@@ -7,6 +8,7 @@ import {
   GraduationCap,
   LayoutDashboard,
   Settings,
+  UserCheck,
   Users,
 } from 'lucide-react'
 import * as React from 'react'
@@ -82,6 +84,17 @@ const navigationItems: NavItem[] = [
     children: [
       { title: 'Salles de classe', href: '/app/spaces/classrooms', icon: Building2 },
       { title: 'Disponibilité', href: '/app/spaces/availability', icon: ClipboardCheck },
+    ],
+  },
+  {
+    title: 'Vie Scolaire',
+    href: '/app/school-life',
+    icon: UserCheck,
+    children: [
+      { title: 'Tableau de bord', href: '/app/school-life', icon: LayoutDashboard },
+      { title: 'Présence Enseignants', href: '/app/school-life/teacher-attendance', icon: UserCheck },
+      { title: 'Présence Élèves', href: '/app/school-life/student-attendance', icon: Users },
+      { title: 'Conduite', href: '/app/school-life/conduct', icon: AlertTriangle },
     ],
   },
   {

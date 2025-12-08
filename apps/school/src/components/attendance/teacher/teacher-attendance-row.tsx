@@ -1,0 +1,141 @@
+import { useTranslation } from 'react-i18next'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { TableCell, TableRow } from '@/components/ui/table'
+import { Textarea } from '@/components/ui/textarea'
+import { cn } from '@/lib/utils'
+
+type TeacherAttendanceStatus = 'present' | 'late' | 'absent' | 'excused' | 'on_leave'
+
+interface TeacherAttendanceEntry {
+  teacherId: string
+  teacherName: string
+  teacherPhoto?: string | null
+  department?: string | null
+  status: TeacherAttendanceStatus
+  arrivalTime?: string
+  lateMinutes?: number
+  reason?: string
+  notes?: string
+  lateCount?: number
+}
+
+interface TeacherAttendanceRowProps {
+  entry: TeacherAttendanceEntry
+  onChange: (entry: TeacherAttendanceEntry) => void
+}
+
+const statusButtons: { status: TeacherAttendanceStatus, label: string, shortLabel: string }[] = [
+  { status: 'present', label: 'attendance.status.present', shortLabel: 'P' },
+  { status: 'late', label: 'attendance.status.late', shortLabel: 'R' },
+  { status: 'absent', label: 'attendance.status.absent', shortLabel: 'A' },
+  { status: 'excused', label: 'attendance.status.excused', shortLabel: 'E' },
+  { status: 'on_leave', label: 'attendance.status.on_leave', shortLabel: 'C' },
+]
+
+const statusColors: Record<TeacherAttendanceStatus, string> = {
+  present: 'bg-green-500 hover:bg-green-600 text-white',
+  late: 'bg-amber-500 hover:bg-amber-600 text-white',
+  absent: 'bg-red-500 hover:bg-red-600 text-white',
+  excused: 'bg-blue-500 hover:bg-blue-600 text-white',
+  on_leave: 'bg-purple-500 hover:bg-purple-600 text-white',
+}
+
+export function TeacherAttendanceRow({ entry, onChange }: TeacherAttendanceRowProps) {
+  const { t } = useTranslation()
+
+  const handleStatusChange = (status: TeacherAttendanceStatus) => {
+    onChange({ ...entry, status })
+  }
+
+  const handleArrivalTimeChange = (arrivalTime: string) => {
+    onChange({ ...entry, arrivalTime })
+  }
+
+  const handleNotesChange = (notes: string) => {
+    onChange({ ...entry, notes })
+  }
+
+  const initials = entry.teacherName
+    .split(' ')
+    .map(n => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
+
+  return (
+    <TableRow>
+      <TableCell>
+        <div className="flex items-center gap-3">
+          <Avatar className="h-8 w-8">
+            <AvatarImage src={entry.teacherPhoto ?? undefined} alt={entry.teacherName} />
+            <AvatarFallback>{initials}</AvatarFallback>
+          </Avatar>
+          <div>
+            <div className="font-medium">{entry.teacherName}</div>
+            {entry.department && (
+              <div className="text-xs text-muted-foreground">{entry.department}</div>
+            )}
+          </div>
+          {entry.lateCount && entry.lateCount >= 3 && (
+            <Badge variant="destructive" className="ml-2 text-xs">
+              {entry.lateCount}
+              {' '}
+              {t('attendance.lateThisMonth')}
+            </Badge>
+          )}
+        </div>
+      </TableCell>
+      <TableCell>
+        <div className="flex gap-1">
+          {statusButtons.map(({ status, shortLabel }) => (
+            <Button
+              key={status}
+              size="sm"
+              variant={entry.status === status ? 'default' : 'outline'}
+              className={cn(
+                'h-8 w-8 p-0',
+                entry.status === status && statusColors[status],
+              )}
+              onClick={() => handleStatusChange(status)}
+              title={t(`attendance.status.${status}`)}
+            >
+              {shortLabel}
+            </Button>
+          ))}
+        </div>
+      </TableCell>
+      <TableCell>
+        {(entry.status === 'late' || entry.status === 'present') && (
+          <Input
+            type="time"
+            value={entry.arrivalTime ?? ''}
+            onChange={e => handleArrivalTimeChange(e.target.value)}
+            className="w-28"
+          />
+        )}
+      </TableCell>
+      <TableCell>
+        {entry.lateMinutes && entry.lateMinutes > 0 && (
+          <span className="text-amber-600 font-medium">
+            +
+            {entry.lateMinutes}
+            {' '}
+            min
+          </span>
+        )}
+      </TableCell>
+      <TableCell>
+        <Textarea
+          value={entry.notes ?? ''}
+          onChange={e => handleNotesChange(e.target.value)}
+          placeholder={t('attendance.notesPlaceholder')}
+          className="min-h-[36px] h-9 resize-none"
+          rows={1}
+        />
+      </TableCell>
+    </TableRow>
+  )
+}

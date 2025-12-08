@@ -9,6 +9,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
+import { generateUUID } from '@/utils/generateUUID'
 
 export type ConflictType = 'teacher' | 'classroom' | 'class'
 
@@ -51,8 +52,8 @@ export function ConflictIndicator({ conflicts, className }: ConflictIndicatorPro
         </TooltipTrigger>
         <TooltipContent side="bottom" className="max-w-xs">
           <ul className="space-y-1 text-sm">
-            {conflicts.map((conflict, i) => (
-              <li key={i} className="flex items-start gap-2">
+            {conflicts.map(conflict => (
+              <li key={generateUUID()} className="flex items-start gap-2">
                 <span className="font-medium">
                   {conflictLabels[conflict.type]}
                   :

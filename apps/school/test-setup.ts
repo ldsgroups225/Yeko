@@ -1,6 +1,6 @@
 import { cleanup } from '@testing-library/react'
 import { afterEach, beforeEach, vi } from 'vitest'
-import '@testing-library/jest-dom/vitest'
+import '@testing-library/jest-dom'
 
 // Mock ResizeObserver for jsdom (required by Radix UI components)
 class ResizeObserverMock {

@@ -93,8 +93,8 @@
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.14.2",
     "@playwright/test": "^1.57.0",
-    "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.0",
+    "@testing-library/jest-dom": "^6.4.6",
+    "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.6.1",
     "@types/node": "^22.19.1",
     "@types/react": "^19.2.5",

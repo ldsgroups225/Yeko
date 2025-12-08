@@ -16,17 +16,20 @@ import { Route as AuthAppIndexRouteImport } from './routes/_auth/app/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as AuthAppStudentsRouteImport } from './routes/_auth/app/students'
 import { Route as AuthAppSpacesRouteImport } from './routes/_auth/app/spaces'
+import { Route as AuthAppSchoolLifeRouteImport } from './routes/_auth/app/school-life'
 import { Route as AuthAppHrRouteImport } from './routes/_auth/app/hr'
 import { Route as AuthAppDashboardRouteImport } from './routes/_auth/app/dashboard'
 import { Route as AuthAppAcademicRouteImport } from './routes/_auth/app/academic'
 import { Route as AuthAppStudentsIndexRouteImport } from './routes/_auth/app/students/index'
 import { Route as AuthAppSpacesIndexRouteImport } from './routes/_auth/app/spaces/index'
+import { Route as AuthAppSchoolLifeIndexRouteImport } from './routes/_auth/app/school-life/index'
 import { Route as AuthAppHrIndexRouteImport } from './routes/_auth/app/hr/index'
 import { Route as AuthAppAcademicIndexRouteImport } from './routes/_auth/app/academic/index'
 import { Route as AuthAppStudentsParentsRouteImport } from './routes/_auth/app/students/parents'
 import { Route as AuthAppStudentsNewRouteImport } from './routes/_auth/app/students/new'
 import { Route as AuthAppStudentsEnrollmentsRouteImport } from './routes/_auth/app/students/enrollments'
 import { Route as AuthAppSpacesAvailabilityRouteImport } from './routes/_auth/app/spaces/availability'
+import { Route as AuthAppSchoolLifeSettingsRouteImport } from './routes/_auth/app/school-life/settings'
 import { Route as AuthAppAcademicTimetablesRouteImport } from './routes/_auth/app/academic/timetables'
 import { Route as AuthAppAcademicSubjectsRouteImport } from './routes/_auth/app/academic/subjects'
 import { Route as AuthAppAcademicReportCardsRouteImport } from './routes/_auth/app/academic/report-cards'
@@ -35,6 +38,10 @@ import { Route as AuthAppAcademicCoefficientsRouteImport } from './routes/_auth/
 import { Route as AuthAppAcademicAssignmentsRouteImport } from './routes/_auth/app/academic/assignments'
 import { Route as AuthAppStudentsStudentIdIndexRouteImport } from './routes/_auth/app/students/$studentId/index'
 import { Route as AuthAppSpacesClassroomsIndexRouteImport } from './routes/_auth/app/spaces/classrooms/index'
+import { Route as AuthAppSchoolLifeTeacherAttendanceIndexRouteImport } from './routes/_auth/app/school-life/teacher-attendance/index'
+import { Route as AuthAppSchoolLifeStudentAttendanceIndexRouteImport } from './routes/_auth/app/school-life/student-attendance/index'
+import { Route as AuthAppSchoolLifeConductIndexRouteImport } from './routes/_auth/app/school-life/conduct/index'
+import { Route as AuthAppSchoolLifeAlertsIndexRouteImport } from './routes/_auth/app/school-life/alerts/index'
 import { Route as AuthAppHrUsersIndexRouteImport } from './routes/_auth/app/hr/users/index'
 import { Route as AuthAppHrTeachersIndexRouteImport } from './routes/_auth/app/hr/teachers/index'
 import { Route as AuthAppHrStaffIndexRouteImport } from './routes/_auth/app/hr/staff/index'
@@ -42,6 +49,12 @@ import { Route as AuthAppHrRolesIndexRouteImport } from './routes/_auth/app/hr/r
 import { Route as AuthAppAcademicGradesIndexRouteImport } from './routes/_auth/app/academic/grades/index'
 import { Route as AuthAppAcademicClassesIndexRouteImport } from './routes/_auth/app/academic/classes/index'
 import { Route as AuthAppStudentsStudentIdEditRouteImport } from './routes/_auth/app/students/$studentId/edit'
+import { Route as AuthAppSchoolLifeTeacherAttendanceReportsRouteImport } from './routes/_auth/app/school-life/teacher-attendance/reports'
+import { Route as AuthAppSchoolLifeStudentAttendanceStatisticsRouteImport } from './routes/_auth/app/school-life/student-attendance/statistics'
+import { Route as AuthAppSchoolLifeStudentAttendanceHistoryRouteImport } from './routes/_auth/app/school-life/student-attendance/history'
+import { Route as AuthAppSchoolLifeConductReportsRouteImport } from './routes/_auth/app/school-life/conduct/reports'
+import { Route as AuthAppSchoolLifeConductNewRouteImport } from './routes/_auth/app/school-life/conduct/new'
+import { Route as AuthAppSchoolLifeConductRecordIdRouteImport } from './routes/_auth/app/school-life/conduct/$recordId'
 import { Route as AuthAppHrUsersNewRouteImport } from './routes/_auth/app/hr/users/new'
 import { Route as AuthAppHrUsersImportRouteImport } from './routes/_auth/app/hr/users/import'
 import { Route as AuthAppHrTeachersNewRouteImport } from './routes/_auth/app/hr/teachers/new'
@@ -97,6 +110,11 @@ const AuthAppSpacesRoute = AuthAppSpacesRouteImport.update({
   path: '/spaces',
   getParentRoute: () => AuthAppRoute,
 } as any)
+const AuthAppSchoolLifeRoute = AuthAppSchoolLifeRouteImport.update({
+  id: '/school-life',
+  path: '/school-life',
+  getParentRoute: () => AuthAppRoute,
+} as any)
 const AuthAppHrRoute = AuthAppHrRouteImport.update({
   id: '/hr',
   path: '/hr',
@@ -121,6 +139,11 @@ const AuthAppSpacesIndexRoute = AuthAppSpacesIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthAppSpacesRoute,
+} as any)
+const AuthAppSchoolLifeIndexRoute = AuthAppSchoolLifeIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthAppSchoolLifeRoute,
 } as any)
 const AuthAppHrIndexRoute = AuthAppHrIndexRouteImport.update({
   id: '/',
@@ -153,6 +176,12 @@ const AuthAppSpacesAvailabilityRoute =
     id: '/availability',
     path: '/availability',
     getParentRoute: () => AuthAppSpacesRoute,
+  } as any)
+const AuthAppSchoolLifeSettingsRoute =
+  AuthAppSchoolLifeSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthAppSchoolLifeRoute,
   } as any)
 const AuthAppAcademicTimetablesRoute =
   AuthAppAcademicTimetablesRouteImport.update({
@@ -201,6 +230,30 @@ const AuthAppSpacesClassroomsIndexRoute =
     path: '/classrooms/',
     getParentRoute: () => AuthAppSpacesRoute,
   } as any)
+const AuthAppSchoolLifeTeacherAttendanceIndexRoute =
+  AuthAppSchoolLifeTeacherAttendanceIndexRouteImport.update({
+    id: '/teacher-attendance/',
+    path: '/teacher-attendance/',
+    getParentRoute: () => AuthAppSchoolLifeRoute,
+  } as any)
+const AuthAppSchoolLifeStudentAttendanceIndexRoute =
+  AuthAppSchoolLifeStudentAttendanceIndexRouteImport.update({
+    id: '/student-attendance/',
+    path: '/student-attendance/',
+    getParentRoute: () => AuthAppSchoolLifeRoute,
+  } as any)
+const AuthAppSchoolLifeConductIndexRoute =
+  AuthAppSchoolLifeConductIndexRouteImport.update({
+    id: '/conduct/',
+    path: '/conduct/',
+    getParentRoute: () => AuthAppSchoolLifeRoute,
+  } as any)
+const AuthAppSchoolLifeAlertsIndexRoute =
+  AuthAppSchoolLifeAlertsIndexRouteImport.update({
+    id: '/alerts/',
+    path: '/alerts/',
+    getParentRoute: () => AuthAppSchoolLifeRoute,
+  } as any)
 const AuthAppHrUsersIndexRoute = AuthAppHrUsersIndexRouteImport.update({
   id: '/users/',
   path: '/users/',
@@ -238,6 +291,42 @@ const AuthAppStudentsStudentIdEditRoute =
     id: '/$studentId/edit',
     path: '/$studentId/edit',
     getParentRoute: () => AuthAppStudentsRoute,
+  } as any)
+const AuthAppSchoolLifeTeacherAttendanceReportsRoute =
+  AuthAppSchoolLifeTeacherAttendanceReportsRouteImport.update({
+    id: '/teacher-attendance/reports',
+    path: '/teacher-attendance/reports',
+    getParentRoute: () => AuthAppSchoolLifeRoute,
+  } as any)
+const AuthAppSchoolLifeStudentAttendanceStatisticsRoute =
+  AuthAppSchoolLifeStudentAttendanceStatisticsRouteImport.update({
+    id: '/student-attendance/statistics',
+    path: '/student-attendance/statistics',
+    getParentRoute: () => AuthAppSchoolLifeRoute,
+  } as any)
+const AuthAppSchoolLifeStudentAttendanceHistoryRoute =
+  AuthAppSchoolLifeStudentAttendanceHistoryRouteImport.update({
+    id: '/student-attendance/history',
+    path: '/student-attendance/history',
+    getParentRoute: () => AuthAppSchoolLifeRoute,
+  } as any)
+const AuthAppSchoolLifeConductReportsRoute =
+  AuthAppSchoolLifeConductReportsRouteImport.update({
+    id: '/conduct/reports',
+    path: '/conduct/reports',
+    getParentRoute: () => AuthAppSchoolLifeRoute,
+  } as any)
+const AuthAppSchoolLifeConductNewRoute =
+  AuthAppSchoolLifeConductNewRouteImport.update({
+    id: '/conduct/new',
+    path: '/conduct/new',
+    getParentRoute: () => AuthAppSchoolLifeRoute,
+  } as any)
+const AuthAppSchoolLifeConductRecordIdRoute =
+  AuthAppSchoolLifeConductRecordIdRouteImport.update({
+    id: '/conduct/$recordId',
+    path: '/conduct/$recordId',
+    getParentRoute: () => AuthAppSchoolLifeRoute,
   } as any)
 const AuthAppHrUsersNewRoute = AuthAppHrUsersNewRouteImport.update({
   id: '/users/new',
@@ -361,6 +450,7 @@ export interface FileRoutesByFullPath {
   '/app/academic': typeof AuthAppAcademicRouteWithChildren
   '/app/dashboard': typeof AuthAppDashboardRoute
   '/app/hr': typeof AuthAppHrRouteWithChildren
+  '/app/school-life': typeof AuthAppSchoolLifeRouteWithChildren
   '/app/spaces': typeof AuthAppSpacesRouteWithChildren
   '/app/students': typeof AuthAppStudentsRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -371,12 +461,14 @@ export interface FileRoutesByFullPath {
   '/app/academic/report-cards': typeof AuthAppAcademicReportCardsRoute
   '/app/academic/subjects': typeof AuthAppAcademicSubjectsRoute
   '/app/academic/timetables': typeof AuthAppAcademicTimetablesRoute
+  '/app/school-life/settings': typeof AuthAppSchoolLifeSettingsRoute
   '/app/spaces/availability': typeof AuthAppSpacesAvailabilityRoute
   '/app/students/enrollments': typeof AuthAppStudentsEnrollmentsRoute
   '/app/students/new': typeof AuthAppStudentsNewRoute
   '/app/students/parents': typeof AuthAppStudentsParentsRoute
   '/app/academic/': typeof AuthAppAcademicIndexRoute
   '/app/hr/': typeof AuthAppHrIndexRoute
+  '/app/school-life/': typeof AuthAppSchoolLifeIndexRoute
   '/app/spaces/': typeof AuthAppSpacesIndexRoute
   '/app/students/': typeof AuthAppStudentsIndexRoute
   '/app/academic/grades/entry': typeof AuthAppAcademicGradesEntryRoute
@@ -387,6 +479,12 @@ export interface FileRoutesByFullPath {
   '/app/hr/teachers/new': typeof AuthAppHrTeachersNewRoute
   '/app/hr/users/import': typeof AuthAppHrUsersImportRoute
   '/app/hr/users/new': typeof AuthAppHrUsersNewRoute
+  '/app/school-life/conduct/$recordId': typeof AuthAppSchoolLifeConductRecordIdRoute
+  '/app/school-life/conduct/new': typeof AuthAppSchoolLifeConductNewRoute
+  '/app/school-life/conduct/reports': typeof AuthAppSchoolLifeConductReportsRoute
+  '/app/school-life/student-attendance/history': typeof AuthAppSchoolLifeStudentAttendanceHistoryRoute
+  '/app/school-life/student-attendance/statistics': typeof AuthAppSchoolLifeStudentAttendanceStatisticsRoute
+  '/app/school-life/teacher-attendance/reports': typeof AuthAppSchoolLifeTeacherAttendanceReportsRoute
   '/app/students/$studentId/edit': typeof AuthAppStudentsStudentIdEditRoute
   '/app/academic/classes': typeof AuthAppAcademicClassesIndexRoute
   '/app/academic/grades': typeof AuthAppAcademicGradesIndexRoute
@@ -394,6 +492,10 @@ export interface FileRoutesByFullPath {
   '/app/hr/staff': typeof AuthAppHrStaffIndexRoute
   '/app/hr/teachers': typeof AuthAppHrTeachersIndexRoute
   '/app/hr/users': typeof AuthAppHrUsersIndexRoute
+  '/app/school-life/alerts': typeof AuthAppSchoolLifeAlertsIndexRoute
+  '/app/school-life/conduct': typeof AuthAppSchoolLifeConductIndexRoute
+  '/app/school-life/student-attendance': typeof AuthAppSchoolLifeStudentAttendanceIndexRoute
+  '/app/school-life/teacher-attendance': typeof AuthAppSchoolLifeTeacherAttendanceIndexRoute
   '/app/spaces/classrooms': typeof AuthAppSpacesClassroomsIndexRoute
   '/app/students/$studentId': typeof AuthAppStudentsStudentIdIndexRoute
   '/app/academic/classes/$classId/edit': typeof AuthAppAcademicClassesClassIdEditRoute
@@ -420,12 +522,14 @@ export interface FileRoutesByTo {
   '/app/academic/report-cards': typeof AuthAppAcademicReportCardsRoute
   '/app/academic/subjects': typeof AuthAppAcademicSubjectsRoute
   '/app/academic/timetables': typeof AuthAppAcademicTimetablesRoute
+  '/app/school-life/settings': typeof AuthAppSchoolLifeSettingsRoute
   '/app/spaces/availability': typeof AuthAppSpacesAvailabilityRoute
   '/app/students/enrollments': typeof AuthAppStudentsEnrollmentsRoute
   '/app/students/new': typeof AuthAppStudentsNewRoute
   '/app/students/parents': typeof AuthAppStudentsParentsRoute
   '/app/academic': typeof AuthAppAcademicIndexRoute
   '/app/hr': typeof AuthAppHrIndexRoute
+  '/app/school-life': typeof AuthAppSchoolLifeIndexRoute
   '/app/spaces': typeof AuthAppSpacesIndexRoute
   '/app/students': typeof AuthAppStudentsIndexRoute
   '/app/academic/grades/entry': typeof AuthAppAcademicGradesEntryRoute
@@ -436,6 +540,12 @@ export interface FileRoutesByTo {
   '/app/hr/teachers/new': typeof AuthAppHrTeachersNewRoute
   '/app/hr/users/import': typeof AuthAppHrUsersImportRoute
   '/app/hr/users/new': typeof AuthAppHrUsersNewRoute
+  '/app/school-life/conduct/$recordId': typeof AuthAppSchoolLifeConductRecordIdRoute
+  '/app/school-life/conduct/new': typeof AuthAppSchoolLifeConductNewRoute
+  '/app/school-life/conduct/reports': typeof AuthAppSchoolLifeConductReportsRoute
+  '/app/school-life/student-attendance/history': typeof AuthAppSchoolLifeStudentAttendanceHistoryRoute
+  '/app/school-life/student-attendance/statistics': typeof AuthAppSchoolLifeStudentAttendanceStatisticsRoute
+  '/app/school-life/teacher-attendance/reports': typeof AuthAppSchoolLifeTeacherAttendanceReportsRoute
   '/app/students/$studentId/edit': typeof AuthAppStudentsStudentIdEditRoute
   '/app/academic/classes': typeof AuthAppAcademicClassesIndexRoute
   '/app/academic/grades': typeof AuthAppAcademicGradesIndexRoute
@@ -443,6 +553,10 @@ export interface FileRoutesByTo {
   '/app/hr/staff': typeof AuthAppHrStaffIndexRoute
   '/app/hr/teachers': typeof AuthAppHrTeachersIndexRoute
   '/app/hr/users': typeof AuthAppHrUsersIndexRoute
+  '/app/school-life/alerts': typeof AuthAppSchoolLifeAlertsIndexRoute
+  '/app/school-life/conduct': typeof AuthAppSchoolLifeConductIndexRoute
+  '/app/school-life/student-attendance': typeof AuthAppSchoolLifeStudentAttendanceIndexRoute
+  '/app/school-life/teacher-attendance': typeof AuthAppSchoolLifeTeacherAttendanceIndexRoute
   '/app/spaces/classrooms': typeof AuthAppSpacesClassroomsIndexRoute
   '/app/students/$studentId': typeof AuthAppStudentsStudentIdIndexRoute
   '/app/academic/classes/$classId/edit': typeof AuthAppAcademicClassesClassIdEditRoute
@@ -466,6 +580,7 @@ export interface FileRoutesById {
   '/_auth/app/academic': typeof AuthAppAcademicRouteWithChildren
   '/_auth/app/dashboard': typeof AuthAppDashboardRoute
   '/_auth/app/hr': typeof AuthAppHrRouteWithChildren
+  '/_auth/app/school-life': typeof AuthAppSchoolLifeRouteWithChildren
   '/_auth/app/spaces': typeof AuthAppSpacesRouteWithChildren
   '/_auth/app/students': typeof AuthAppStudentsRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -476,12 +591,14 @@ export interface FileRoutesById {
   '/_auth/app/academic/report-cards': typeof AuthAppAcademicReportCardsRoute
   '/_auth/app/academic/subjects': typeof AuthAppAcademicSubjectsRoute
   '/_auth/app/academic/timetables': typeof AuthAppAcademicTimetablesRoute
+  '/_auth/app/school-life/settings': typeof AuthAppSchoolLifeSettingsRoute
   '/_auth/app/spaces/availability': typeof AuthAppSpacesAvailabilityRoute
   '/_auth/app/students/enrollments': typeof AuthAppStudentsEnrollmentsRoute
   '/_auth/app/students/new': typeof AuthAppStudentsNewRoute
   '/_auth/app/students/parents': typeof AuthAppStudentsParentsRoute
   '/_auth/app/academic/': typeof AuthAppAcademicIndexRoute
   '/_auth/app/hr/': typeof AuthAppHrIndexRoute
+  '/_auth/app/school-life/': typeof AuthAppSchoolLifeIndexRoute
   '/_auth/app/spaces/': typeof AuthAppSpacesIndexRoute
   '/_auth/app/students/': typeof AuthAppStudentsIndexRoute
   '/_auth/app/academic/grades/entry': typeof AuthAppAcademicGradesEntryRoute
@@ -492,6 +609,12 @@ export interface FileRoutesById {
   '/_auth/app/hr/teachers/new': typeof AuthAppHrTeachersNewRoute
   '/_auth/app/hr/users/import': typeof AuthAppHrUsersImportRoute
   '/_auth/app/hr/users/new': typeof AuthAppHrUsersNewRoute
+  '/_auth/app/school-life/conduct/$recordId': typeof AuthAppSchoolLifeConductRecordIdRoute
+  '/_auth/app/school-life/conduct/new': typeof AuthAppSchoolLifeConductNewRoute
+  '/_auth/app/school-life/conduct/reports': typeof AuthAppSchoolLifeConductReportsRoute
+  '/_auth/app/school-life/student-attendance/history': typeof AuthAppSchoolLifeStudentAttendanceHistoryRoute
+  '/_auth/app/school-life/student-attendance/statistics': typeof AuthAppSchoolLifeStudentAttendanceStatisticsRoute
+  '/_auth/app/school-life/teacher-attendance/reports': typeof AuthAppSchoolLifeTeacherAttendanceReportsRoute
   '/_auth/app/students/$studentId/edit': typeof AuthAppStudentsStudentIdEditRoute
   '/_auth/app/academic/classes/': typeof AuthAppAcademicClassesIndexRoute
   '/_auth/app/academic/grades/': typeof AuthAppAcademicGradesIndexRoute
@@ -499,6 +622,10 @@ export interface FileRoutesById {
   '/_auth/app/hr/staff/': typeof AuthAppHrStaffIndexRoute
   '/_auth/app/hr/teachers/': typeof AuthAppHrTeachersIndexRoute
   '/_auth/app/hr/users/': typeof AuthAppHrUsersIndexRoute
+  '/_auth/app/school-life/alerts/': typeof AuthAppSchoolLifeAlertsIndexRoute
+  '/_auth/app/school-life/conduct/': typeof AuthAppSchoolLifeConductIndexRoute
+  '/_auth/app/school-life/student-attendance/': typeof AuthAppSchoolLifeStudentAttendanceIndexRoute
+  '/_auth/app/school-life/teacher-attendance/': typeof AuthAppSchoolLifeTeacherAttendanceIndexRoute
   '/_auth/app/spaces/classrooms/': typeof AuthAppSpacesClassroomsIndexRoute
   '/_auth/app/students/$studentId/': typeof AuthAppStudentsStudentIdIndexRoute
   '/_auth/app/academic/classes/$classId/edit': typeof AuthAppAcademicClassesClassIdEditRoute
@@ -522,6 +649,7 @@ export interface FileRouteTypes {
     | '/app/academic'
     | '/app/dashboard'
     | '/app/hr'
+    | '/app/school-life'
     | '/app/spaces'
     | '/app/students'
     | '/api/auth/$'
@@ -532,12 +660,14 @@ export interface FileRouteTypes {
     | '/app/academic/report-cards'
     | '/app/academic/subjects'
     | '/app/academic/timetables'
+    | '/app/school-life/settings'
     | '/app/spaces/availability'
     | '/app/students/enrollments'
     | '/app/students/new'
     | '/app/students/parents'
     | '/app/academic/'
     | '/app/hr/'
+    | '/app/school-life/'
     | '/app/spaces/'
     | '/app/students/'
     | '/app/academic/grades/entry'
@@ -548,6 +678,12 @@ export interface FileRouteTypes {
     | '/app/hr/teachers/new'
     | '/app/hr/users/import'
     | '/app/hr/users/new'
+    | '/app/school-life/conduct/$recordId'
+    | '/app/school-life/conduct/new'
+    | '/app/school-life/conduct/reports'
+    | '/app/school-life/student-attendance/history'
+    | '/app/school-life/student-attendance/statistics'
+    | '/app/school-life/teacher-attendance/reports'
     | '/app/students/$studentId/edit'
     | '/app/academic/classes'
     | '/app/academic/grades'
@@ -555,6 +691,10 @@ export interface FileRouteTypes {
     | '/app/hr/staff'
     | '/app/hr/teachers'
     | '/app/hr/users'
+    | '/app/school-life/alerts'
+    | '/app/school-life/conduct'
+    | '/app/school-life/student-attendance'
+    | '/app/school-life/teacher-attendance'
     | '/app/spaces/classrooms'
     | '/app/students/$studentId'
     | '/app/academic/classes/$classId/edit'
@@ -581,12 +721,14 @@ export interface FileRouteTypes {
     | '/app/academic/report-cards'
     | '/app/academic/subjects'
     | '/app/academic/timetables'
+    | '/app/school-life/settings'
     | '/app/spaces/availability'
     | '/app/students/enrollments'
     | '/app/students/new'
     | '/app/students/parents'
     | '/app/academic'
     | '/app/hr'
+    | '/app/school-life'
     | '/app/spaces'
     | '/app/students'
     | '/app/academic/grades/entry'
@@ -597,6 +739,12 @@ export interface FileRouteTypes {
     | '/app/hr/teachers/new'
     | '/app/hr/users/import'
     | '/app/hr/users/new'
+    | '/app/school-life/conduct/$recordId'
+    | '/app/school-life/conduct/new'
+    | '/app/school-life/conduct/reports'
+    | '/app/school-life/student-attendance/history'
+    | '/app/school-life/student-attendance/statistics'
+    | '/app/school-life/teacher-attendance/reports'
     | '/app/students/$studentId/edit'
     | '/app/academic/classes'
     | '/app/academic/grades'
@@ -604,6 +752,10 @@ export interface FileRouteTypes {
     | '/app/hr/staff'
     | '/app/hr/teachers'
     | '/app/hr/users'
+    | '/app/school-life/alerts'
+    | '/app/school-life/conduct'
+    | '/app/school-life/student-attendance'
+    | '/app/school-life/teacher-attendance'
     | '/app/spaces/classrooms'
     | '/app/students/$studentId'
     | '/app/academic/classes/$classId/edit'
@@ -626,6 +778,7 @@ export interface FileRouteTypes {
     | '/_auth/app/academic'
     | '/_auth/app/dashboard'
     | '/_auth/app/hr'
+    | '/_auth/app/school-life'
     | '/_auth/app/spaces'
     | '/_auth/app/students'
     | '/api/auth/$'
@@ -636,12 +789,14 @@ export interface FileRouteTypes {
     | '/_auth/app/academic/report-cards'
     | '/_auth/app/academic/subjects'
     | '/_auth/app/academic/timetables'
+    | '/_auth/app/school-life/settings'
     | '/_auth/app/spaces/availability'
     | '/_auth/app/students/enrollments'
     | '/_auth/app/students/new'
     | '/_auth/app/students/parents'
     | '/_auth/app/academic/'
     | '/_auth/app/hr/'
+    | '/_auth/app/school-life/'
     | '/_auth/app/spaces/'
     | '/_auth/app/students/'
     | '/_auth/app/academic/grades/entry'
@@ -652,6 +807,12 @@ export interface FileRouteTypes {
     | '/_auth/app/hr/teachers/new'
     | '/_auth/app/hr/users/import'
     | '/_auth/app/hr/users/new'
+    | '/_auth/app/school-life/conduct/$recordId'
+    | '/_auth/app/school-life/conduct/new'
+    | '/_auth/app/school-life/conduct/reports'
+    | '/_auth/app/school-life/student-attendance/history'
+    | '/_auth/app/school-life/student-attendance/statistics'
+    | '/_auth/app/school-life/teacher-attendance/reports'
     | '/_auth/app/students/$studentId/edit'
     | '/_auth/app/academic/classes/'
     | '/_auth/app/academic/grades/'
@@ -659,6 +820,10 @@ export interface FileRouteTypes {
     | '/_auth/app/hr/staff/'
     | '/_auth/app/hr/teachers/'
     | '/_auth/app/hr/users/'
+    | '/_auth/app/school-life/alerts/'
+    | '/_auth/app/school-life/conduct/'
+    | '/_auth/app/school-life/student-attendance/'
+    | '/_auth/app/school-life/teacher-attendance/'
     | '/_auth/app/spaces/classrooms/'
     | '/_auth/app/students/$studentId/'
     | '/_auth/app/academic/classes/$classId/edit'
@@ -732,6 +897,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAppSpacesRouteImport
       parentRoute: typeof AuthAppRoute
     }
+    '/_auth/app/school-life': {
+      id: '/_auth/app/school-life'
+      path: '/school-life'
+      fullPath: '/app/school-life'
+      preLoaderRoute: typeof AuthAppSchoolLifeRouteImport
+      parentRoute: typeof AuthAppRoute
+    }
     '/_auth/app/hr': {
       id: '/_auth/app/hr'
       path: '/hr'
@@ -766,6 +938,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/spaces/'
       preLoaderRoute: typeof AuthAppSpacesIndexRouteImport
       parentRoute: typeof AuthAppSpacesRoute
+    }
+    '/_auth/app/school-life/': {
+      id: '/_auth/app/school-life/'
+      path: '/'
+      fullPath: '/app/school-life/'
+      preLoaderRoute: typeof AuthAppSchoolLifeIndexRouteImport
+      parentRoute: typeof AuthAppSchoolLifeRoute
     }
     '/_auth/app/hr/': {
       id: '/_auth/app/hr/'
@@ -808,6 +987,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/spaces/availability'
       preLoaderRoute: typeof AuthAppSpacesAvailabilityRouteImport
       parentRoute: typeof AuthAppSpacesRoute
+    }
+    '/_auth/app/school-life/settings': {
+      id: '/_auth/app/school-life/settings'
+      path: '/settings'
+      fullPath: '/app/school-life/settings'
+      preLoaderRoute: typeof AuthAppSchoolLifeSettingsRouteImport
+      parentRoute: typeof AuthAppSchoolLifeRoute
     }
     '/_auth/app/academic/timetables': {
       id: '/_auth/app/academic/timetables'
@@ -865,6 +1051,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAppSpacesClassroomsIndexRouteImport
       parentRoute: typeof AuthAppSpacesRoute
     }
+    '/_auth/app/school-life/teacher-attendance/': {
+      id: '/_auth/app/school-life/teacher-attendance/'
+      path: '/teacher-attendance'
+      fullPath: '/app/school-life/teacher-attendance'
+      preLoaderRoute: typeof AuthAppSchoolLifeTeacherAttendanceIndexRouteImport
+      parentRoute: typeof AuthAppSchoolLifeRoute
+    }
+    '/_auth/app/school-life/student-attendance/': {
+      id: '/_auth/app/school-life/student-attendance/'
+      path: '/student-attendance'
+      fullPath: '/app/school-life/student-attendance'
+      preLoaderRoute: typeof AuthAppSchoolLifeStudentAttendanceIndexRouteImport
+      parentRoute: typeof AuthAppSchoolLifeRoute
+    }
+    '/_auth/app/school-life/conduct/': {
+      id: '/_auth/app/school-life/conduct/'
+      path: '/conduct'
+      fullPath: '/app/school-life/conduct'
+      preLoaderRoute: typeof AuthAppSchoolLifeConductIndexRouteImport
+      parentRoute: typeof AuthAppSchoolLifeRoute
+    }
+    '/_auth/app/school-life/alerts/': {
+      id: '/_auth/app/school-life/alerts/'
+      path: '/alerts'
+      fullPath: '/app/school-life/alerts'
+      preLoaderRoute: typeof AuthAppSchoolLifeAlertsIndexRouteImport
+      parentRoute: typeof AuthAppSchoolLifeRoute
+    }
     '/_auth/app/hr/users/': {
       id: '/_auth/app/hr/users/'
       path: '/users'
@@ -913,6 +1127,48 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/students/$studentId/edit'
       preLoaderRoute: typeof AuthAppStudentsStudentIdEditRouteImport
       parentRoute: typeof AuthAppStudentsRoute
+    }
+    '/_auth/app/school-life/teacher-attendance/reports': {
+      id: '/_auth/app/school-life/teacher-attendance/reports'
+      path: '/teacher-attendance/reports'
+      fullPath: '/app/school-life/teacher-attendance/reports'
+      preLoaderRoute: typeof AuthAppSchoolLifeTeacherAttendanceReportsRouteImport
+      parentRoute: typeof AuthAppSchoolLifeRoute
+    }
+    '/_auth/app/school-life/student-attendance/statistics': {
+      id: '/_auth/app/school-life/student-attendance/statistics'
+      path: '/student-attendance/statistics'
+      fullPath: '/app/school-life/student-attendance/statistics'
+      preLoaderRoute: typeof AuthAppSchoolLifeStudentAttendanceStatisticsRouteImport
+      parentRoute: typeof AuthAppSchoolLifeRoute
+    }
+    '/_auth/app/school-life/student-attendance/history': {
+      id: '/_auth/app/school-life/student-attendance/history'
+      path: '/student-attendance/history'
+      fullPath: '/app/school-life/student-attendance/history'
+      preLoaderRoute: typeof AuthAppSchoolLifeStudentAttendanceHistoryRouteImport
+      parentRoute: typeof AuthAppSchoolLifeRoute
+    }
+    '/_auth/app/school-life/conduct/reports': {
+      id: '/_auth/app/school-life/conduct/reports'
+      path: '/conduct/reports'
+      fullPath: '/app/school-life/conduct/reports'
+      preLoaderRoute: typeof AuthAppSchoolLifeConductReportsRouteImport
+      parentRoute: typeof AuthAppSchoolLifeRoute
+    }
+    '/_auth/app/school-life/conduct/new': {
+      id: '/_auth/app/school-life/conduct/new'
+      path: '/conduct/new'
+      fullPath: '/app/school-life/conduct/new'
+      preLoaderRoute: typeof AuthAppSchoolLifeConductNewRouteImport
+      parentRoute: typeof AuthAppSchoolLifeRoute
+    }
+    '/_auth/app/school-life/conduct/$recordId': {
+      id: '/_auth/app/school-life/conduct/$recordId'
+      path: '/conduct/$recordId'
+      fullPath: '/app/school-life/conduct/$recordId'
+      preLoaderRoute: typeof AuthAppSchoolLifeConductRecordIdRouteImport
+      parentRoute: typeof AuthAppSchoolLifeRoute
     }
     '/_auth/app/hr/users/new': {
       id: '/_auth/app/hr/users/new'
@@ -1144,6 +1400,44 @@ const AuthAppHrRouteWithChildren = AuthAppHrRoute._addFileChildren(
   AuthAppHrRouteChildren,
 )
 
+interface AuthAppSchoolLifeRouteChildren {
+  AuthAppSchoolLifeSettingsRoute: typeof AuthAppSchoolLifeSettingsRoute
+  AuthAppSchoolLifeIndexRoute: typeof AuthAppSchoolLifeIndexRoute
+  AuthAppSchoolLifeConductRecordIdRoute: typeof AuthAppSchoolLifeConductRecordIdRoute
+  AuthAppSchoolLifeConductNewRoute: typeof AuthAppSchoolLifeConductNewRoute
+  AuthAppSchoolLifeConductReportsRoute: typeof AuthAppSchoolLifeConductReportsRoute
+  AuthAppSchoolLifeStudentAttendanceHistoryRoute: typeof AuthAppSchoolLifeStudentAttendanceHistoryRoute
+  AuthAppSchoolLifeStudentAttendanceStatisticsRoute: typeof AuthAppSchoolLifeStudentAttendanceStatisticsRoute
+  AuthAppSchoolLifeTeacherAttendanceReportsRoute: typeof AuthAppSchoolLifeTeacherAttendanceReportsRoute
+  AuthAppSchoolLifeAlertsIndexRoute: typeof AuthAppSchoolLifeAlertsIndexRoute
+  AuthAppSchoolLifeConductIndexRoute: typeof AuthAppSchoolLifeConductIndexRoute
+  AuthAppSchoolLifeStudentAttendanceIndexRoute: typeof AuthAppSchoolLifeStudentAttendanceIndexRoute
+  AuthAppSchoolLifeTeacherAttendanceIndexRoute: typeof AuthAppSchoolLifeTeacherAttendanceIndexRoute
+}
+
+const AuthAppSchoolLifeRouteChildren: AuthAppSchoolLifeRouteChildren = {
+  AuthAppSchoolLifeSettingsRoute: AuthAppSchoolLifeSettingsRoute,
+  AuthAppSchoolLifeIndexRoute: AuthAppSchoolLifeIndexRoute,
+  AuthAppSchoolLifeConductRecordIdRoute: AuthAppSchoolLifeConductRecordIdRoute,
+  AuthAppSchoolLifeConductNewRoute: AuthAppSchoolLifeConductNewRoute,
+  AuthAppSchoolLifeConductReportsRoute: AuthAppSchoolLifeConductReportsRoute,
+  AuthAppSchoolLifeStudentAttendanceHistoryRoute:
+    AuthAppSchoolLifeStudentAttendanceHistoryRoute,
+  AuthAppSchoolLifeStudentAttendanceStatisticsRoute:
+    AuthAppSchoolLifeStudentAttendanceStatisticsRoute,
+  AuthAppSchoolLifeTeacherAttendanceReportsRoute:
+    AuthAppSchoolLifeTeacherAttendanceReportsRoute,
+  AuthAppSchoolLifeAlertsIndexRoute: AuthAppSchoolLifeAlertsIndexRoute,
+  AuthAppSchoolLifeConductIndexRoute: AuthAppSchoolLifeConductIndexRoute,
+  AuthAppSchoolLifeStudentAttendanceIndexRoute:
+    AuthAppSchoolLifeStudentAttendanceIndexRoute,
+  AuthAppSchoolLifeTeacherAttendanceIndexRoute:
+    AuthAppSchoolLifeTeacherAttendanceIndexRoute,
+}
+
+const AuthAppSchoolLifeRouteWithChildren =
+  AuthAppSchoolLifeRoute._addFileChildren(AuthAppSchoolLifeRouteChildren)
+
 interface AuthAppSpacesRouteChildren {
   AuthAppSpacesAvailabilityRoute: typeof AuthAppSpacesAvailabilityRoute
   AuthAppSpacesIndexRoute: typeof AuthAppSpacesIndexRoute
@@ -1192,6 +1486,7 @@ interface AuthAppRouteChildren {
   AuthAppAcademicRoute: typeof AuthAppAcademicRouteWithChildren
   AuthAppDashboardRoute: typeof AuthAppDashboardRoute
   AuthAppHrRoute: typeof AuthAppHrRouteWithChildren
+  AuthAppSchoolLifeRoute: typeof AuthAppSchoolLifeRouteWithChildren
   AuthAppSpacesRoute: typeof AuthAppSpacesRouteWithChildren
   AuthAppStudentsRoute: typeof AuthAppStudentsRouteWithChildren
   AuthAppIndexRoute: typeof AuthAppIndexRoute
@@ -1201,6 +1496,7 @@ const AuthAppRouteChildren: AuthAppRouteChildren = {
   AuthAppAcademicRoute: AuthAppAcademicRouteWithChildren,
   AuthAppDashboardRoute: AuthAppDashboardRoute,
   AuthAppHrRoute: AuthAppHrRouteWithChildren,
+  AuthAppSchoolLifeRoute: AuthAppSchoolLifeRouteWithChildren,
   AuthAppSpacesRoute: AuthAppSpacesRouteWithChildren,
   AuthAppStudentsRoute: AuthAppStudentsRouteWithChildren,
   AuthAppIndexRoute: AuthAppIndexRoute,

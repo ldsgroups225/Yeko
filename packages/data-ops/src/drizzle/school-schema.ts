@@ -1182,6 +1182,375 @@ export const chapterCompletionsRelations = relations(chapterCompletions, ({ one 
   }),
 }))
 
+// --- Phase 17: School Life Management ---
+
+// Teacher Attendance Status Types
+export const teacherAttendanceStatuses = ['present', 'late', 'absent', 'excused', 'on_leave'] as const
+export type TeacherAttendanceStatus = (typeof teacherAttendanceStatuses)[number]
+
+// Student Attendance Status Types
+export const studentAttendanceStatuses = ['present', 'late', 'absent', 'excused'] as const
+export type StudentAttendanceStatus = (typeof studentAttendanceStatuses)[number]
+
+// Absence Reason Categories
+export const absenceReasonCategories = ['illness', 'family', 'transport', 'weather', 'other', 'unexcused'] as const
+export type AbsenceReasonCategory = (typeof absenceReasonCategories)[number]
+
+// Conduct Types
+export const conductTypes = ['incident', 'sanction', 'reward', 'note'] as const
+export type ConductType = (typeof conductTypes)[number]
+
+// Conduct Categories
+export const conductCategories = [
+  'behavior',
+  'academic',
+  'attendance',
+  'uniform',
+  'property',
+  'violence',
+  'bullying',
+  'cheating',
+  'achievement',
+  'improvement',
+  'other',
+] as const
+export type ConductCategory = (typeof conductCategories)[number]
+
+// Severity Levels
+export const severityLevels = ['low', 'medium', 'high', 'critical'] as const
+export type SeverityLevel = (typeof severityLevels)[number]
+
+// Sanction Types
+export const sanctionTypes = [
+  'verbal_warning',
+  'written_warning',
+  'detention',
+  'suspension',
+  'community_service',
+  'parent_meeting',
+  'expulsion',
+  'other',
+] as const
+export type SanctionType = (typeof sanctionTypes)[number]
+
+// Reward Types
+export const rewardTypes = [
+  'certificate',
+  'merit_points',
+  'public_recognition',
+  'prize',
+  'scholarship',
+  'other',
+] as const
+export type RewardType = (typeof rewardTypes)[number]
+
+// Conduct Status
+export const conductStatuses = ['open', 'investigating', 'pending_decision', 'resolved', 'closed', 'appealed'] as const
+export type ConductStatus = (typeof conductStatuses)[number]
+
+// Alert Types
+export const alertTypes = [
+  'teacher_repeated_lateness',
+  'teacher_absence_streak',
+  'student_chronic_absence',
+  'student_attendance_drop',
+  'class_low_attendance',
+] as const
+export type AlertType = (typeof alertTypes)[number]
+
+// Alert Status
+export const alertStatuses = ['active', 'acknowledged', 'resolved', 'dismissed'] as const
+export type AlertStatus = (typeof alertStatuses)[number]
+
+// Notification Methods
+export const notificationMethods = ['email', 'sms', 'in_app'] as const
+export type NotificationMethod = (typeof notificationMethods)[number]
+
+// Alert Severity
+export const alertSeverities = ['info', 'warning', 'critical'] as const
+export type AlertSeverity = (typeof alertSeverities)[number]
+
+// Teacher Attendance Table
+export const teacherAttendance = pgTable('teacher_attendance', {
+  id: text('id').primaryKey(),
+  teacherId: text('teacher_id').notNull().references(() => teachers.id, { onDelete: 'cascade' }),
+  schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
+  date: date('date').notNull(),
+  status: text('status', { enum: teacherAttendanceStatuses }).default('present').notNull(),
+  arrivalTime: text('arrival_time'),
+  departureTime: text('departure_time'),
+  lateMinutes: integer('late_minutes'),
+  reason: text('reason'),
+  notes: text('notes'),
+  recordedBy: text('recorded_by').references(() => users.id, { onDelete: 'set null' }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, table => ({
+  teacherDateIdx: index('idx_teacher_attendance_teacher_date').on(table.teacherId, table.date),
+  schoolDateIdx: index('idx_teacher_attendance_school_date').on(table.schoolId, table.date),
+  statusIdx: index('idx_teacher_attendance_status').on(table.status),
+  dateRangeIdx: index('idx_teacher_attendance_date_range').on(table.schoolId, table.date),
+  uniqueTeacherDate: unique('unique_teacher_date').on(table.teacherId, table.date),
+}))
+
+// Student Attendance Table
+export const studentAttendance = pgTable('student_attendance', {
+  id: text('id').primaryKey(),
+  studentId: text('student_id').notNull().references(() => students.id, { onDelete: 'cascade' }),
+  classId: text('class_id').notNull().references(() => classes.id, { onDelete: 'cascade' }),
+  schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
+  classSessionId: text('class_session_id').references(() => classSessions.id, { onDelete: 'set null' }),
+  date: date('date').notNull(),
+  status: text('status', { enum: studentAttendanceStatuses }).default('present').notNull(),
+  arrivalTime: text('arrival_time'),
+  lateMinutes: integer('late_minutes'),
+  reason: text('reason'),
+  reasonCategory: text('reason_category', { enum: absenceReasonCategories }),
+  excusedBy: text('excused_by').references(() => users.id, { onDelete: 'set null' }),
+  excusedAt: timestamp('excused_at'),
+  parentNotified: boolean('parent_notified').default(false),
+  notifiedAt: timestamp('notified_at'),
+  notificationMethod: text('notification_method', { enum: notificationMethods }),
+  notes: text('notes'),
+  recordedBy: text('recorded_by').references(() => users.id, { onDelete: 'set null' }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, table => ({
+  studentDateIdx: index('idx_student_attendance_student_date').on(table.studentId, table.date),
+  classDateIdx: index('idx_student_attendance_class_date').on(table.classId, table.date),
+  sessionIdx: index('idx_student_attendance_session').on(table.classSessionId),
+  statusIdx: index('idx_student_attendance_status').on(table.status),
+  schoolDateIdx: index('idx_student_attendance_school_date').on(table.schoolId, table.date),
+}))
+
+// Conduct Records Table
+export const conductRecords = pgTable('conduct_records', {
+  id: text('id').primaryKey(),
+  studentId: text('student_id').notNull().references(() => students.id, { onDelete: 'cascade' }),
+  schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
+  classId: text('class_id').references(() => classes.id, { onDelete: 'set null' }),
+  schoolYearId: text('school_year_id').notNull().references(() => schoolYears.id, { onDelete: 'cascade' }),
+  type: text('type', { enum: conductTypes }).notNull(),
+  category: text('category', { enum: conductCategories }).notNull(),
+  title: text('title').notNull(),
+  description: text('description').notNull(),
+  severity: text('severity', { enum: severityLevels }),
+  incidentDate: date('incident_date'),
+  incidentTime: text('incident_time'),
+  location: text('location'),
+  witnesses: text('witnesses').array(),
+  sanctionType: text('sanction_type', { enum: sanctionTypes }),
+  sanctionStartDate: date('sanction_start_date'),
+  sanctionEndDate: date('sanction_end_date'),
+  sanctionDetails: text('sanction_details'),
+  rewardType: text('reward_type', { enum: rewardTypes }),
+  pointsAwarded: integer('points_awarded'),
+  status: text('status', { enum: conductStatuses }).default('open').notNull(),
+  assignedTo: text('assigned_to').references(() => users.id, { onDelete: 'set null' }),
+  parentNotified: boolean('parent_notified').default(false),
+  parentNotifiedAt: timestamp('parent_notified_at'),
+  parentAcknowledged: boolean('parent_acknowledged').default(false),
+  parentAcknowledgedAt: timestamp('parent_acknowledged_at'),
+  parentResponse: text('parent_response'),
+  attachments: jsonb('attachments').$type<{ name: string, url: string, type: string }[]>().default([]),
+  recordedBy: text('recorded_by').notNull().references(() => users.id),
+  resolvedBy: text('resolved_by').references(() => users.id, { onDelete: 'set null' }),
+  resolvedAt: timestamp('resolved_at'),
+  resolutionNotes: text('resolution_notes'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, table => ({
+  studentIdx: index('idx_conduct_student').on(table.studentId),
+  schoolYearIdx: index('idx_conduct_school_year').on(table.schoolId, table.schoolYearId),
+  typeIdx: index('idx_conduct_type').on(table.type),
+  categoryIdx: index('idx_conduct_category').on(table.category),
+  statusIdx: index('idx_conduct_status').on(table.status),
+  severityIdx: index('idx_conduct_severity').on(table.severity),
+  dateIdx: index('idx_conduct_date').on(table.incidentDate),
+  studentYearIdx: index('idx_conduct_student_year').on(table.studentId, table.schoolYearId),
+}))
+
+// Conduct Follow-ups Table
+export const conductFollowUps = pgTable('conduct_follow_ups', {
+  id: text('id').primaryKey(),
+  conductRecordId: text('conduct_record_id').notNull().references(() => conductRecords.id, { onDelete: 'cascade' }),
+  action: text('action').notNull(),
+  notes: text('notes'),
+  outcome: text('outcome'),
+  followUpDate: date('follow_up_date'),
+  completedAt: timestamp('completed_at'),
+  createdBy: text('created_by').notNull().references(() => users.id),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, table => ({
+  conductIdx: index('idx_follow_ups_conduct').on(table.conductRecordId),
+  dateIdx: index('idx_follow_ups_date').on(table.followUpDate),
+}))
+
+// Attendance Alerts Table
+export const attendanceAlerts = pgTable('attendance_alerts', {
+  id: text('id').primaryKey(),
+  schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
+  alertType: text('alert_type', { enum: alertTypes }).notNull(),
+  teacherId: text('teacher_id').references(() => teachers.id, { onDelete: 'cascade' }),
+  studentId: text('student_id').references(() => students.id, { onDelete: 'cascade' }),
+  classId: text('class_id').references(() => classes.id, { onDelete: 'cascade' }),
+  severity: text('severity', { enum: alertSeverities }).notNull(),
+  title: text('title').notNull(),
+  message: text('message').notNull(),
+  data: jsonb('data').$type<Record<string, unknown>>().default({}),
+  status: text('status', { enum: alertStatuses }).default('active').notNull(),
+  acknowledgedBy: text('acknowledged_by').references(() => users.id, { onDelete: 'set null' }),
+  acknowledgedAt: timestamp('acknowledged_at'),
+  resolvedAt: timestamp('resolved_at'),
+  notifiedUsers: jsonb('notified_users').$type<string[]>().default([]),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  expiresAt: timestamp('expires_at'),
+}, table => ({
+  schoolIdx: index('idx_alerts_school').on(table.schoolId),
+  statusIdx: index('idx_alerts_status').on(table.status),
+  typeIdx: index('idx_alerts_type').on(table.alertType),
+  teacherIdx: index('idx_alerts_teacher').on(table.teacherId),
+  studentIdx: index('idx_alerts_student').on(table.studentId),
+  activeIdx: index('idx_alerts_active').on(table.schoolId, table.status),
+}))
+
+// Attendance Settings Table
+export const attendanceSettings = pgTable('attendance_settings', {
+  id: text('id').primaryKey(),
+  schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
+  teacherExpectedArrival: text('teacher_expected_arrival').default('07:30'),
+  teacherLateThresholdMinutes: integer('teacher_late_threshold_minutes').default(15),
+  teacherLatenessAlertCount: integer('teacher_lateness_alert_count').default(3),
+  studentLateThresholdMinutes: integer('student_late_threshold_minutes').default(10),
+  chronicAbsenceThresholdPercent: decimal('chronic_absence_threshold_percent', { precision: 5, scale: 2 }).default('10.00'),
+  notifyParentOnAbsence: boolean('notify_parent_on_absence').default(true),
+  notifyParentOnLate: boolean('notify_parent_on_late').default(false),
+  workingDays: smallint('working_days').array().default([1, 2, 3, 4, 5]),
+  notificationMethods: text('notification_methods').array().default(['email']),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, table => ({
+  schoolIdx: index('idx_attendance_settings_school').on(table.schoolId),
+  uniqueSchool: unique('unique_attendance_settings_school').on(table.schoolId),
+}))
+
+// --- Phase 17 Relations ---
+
+export const teacherAttendanceRelations = relations(teacherAttendance, ({ one }) => ({
+  teacher: one(teachers, {
+    fields: [teacherAttendance.teacherId],
+    references: [teachers.id],
+  }),
+  school: one(schools, {
+    fields: [teacherAttendance.schoolId],
+    references: [schools.id],
+  }),
+  recordedByUser: one(users, {
+    fields: [teacherAttendance.recordedBy],
+    references: [users.id],
+  }),
+}))
+
+export const studentAttendanceRelations = relations(studentAttendance, ({ one }) => ({
+  student: one(students, {
+    fields: [studentAttendance.studentId],
+    references: [students.id],
+  }),
+  class: one(classes, {
+    fields: [studentAttendance.classId],
+    references: [classes.id],
+  }),
+  school: one(schools, {
+    fields: [studentAttendance.schoolId],
+    references: [schools.id],
+  }),
+  classSession: one(classSessions, {
+    fields: [studentAttendance.classSessionId],
+    references: [classSessions.id],
+  }),
+  excusedByUser: one(users, {
+    fields: [studentAttendance.excusedBy],
+    references: [users.id],
+  }),
+  recordedByUser: one(users, {
+    fields: [studentAttendance.recordedBy],
+    references: [users.id],
+  }),
+}))
+
+export const conductRecordsRelations = relations(conductRecords, ({ one, many }) => ({
+  student: one(students, {
+    fields: [conductRecords.studentId],
+    references: [students.id],
+  }),
+  school: one(schools, {
+    fields: [conductRecords.schoolId],
+    references: [schools.id],
+  }),
+  class: one(classes, {
+    fields: [conductRecords.classId],
+    references: [classes.id],
+  }),
+  schoolYear: one(schoolYears, {
+    fields: [conductRecords.schoolYearId],
+    references: [schoolYears.id],
+  }),
+  assignedToUser: one(users, {
+    fields: [conductRecords.assignedTo],
+    references: [users.id],
+  }),
+  recordedByUser: one(users, {
+    fields: [conductRecords.recordedBy],
+    references: [users.id],
+  }),
+  resolvedByUser: one(users, {
+    fields: [conductRecords.resolvedBy],
+    references: [users.id],
+  }),
+  followUps: many(conductFollowUps),
+}))
+
+export const conductFollowUpsRelations = relations(conductFollowUps, ({ one }) => ({
+  conductRecord: one(conductRecords, {
+    fields: [conductFollowUps.conductRecordId],
+    references: [conductRecords.id],
+  }),
+  createdByUser: one(users, {
+    fields: [conductFollowUps.createdBy],
+    references: [users.id],
+  }),
+}))
+
+export const attendanceAlertsRelations = relations(attendanceAlerts, ({ one }) => ({
+  school: one(schools, {
+    fields: [attendanceAlerts.schoolId],
+    references: [schools.id],
+  }),
+  teacher: one(teachers, {
+    fields: [attendanceAlerts.teacherId],
+    references: [teachers.id],
+  }),
+  student: one(students, {
+    fields: [attendanceAlerts.studentId],
+    references: [students.id],
+  }),
+  class: one(classes, {
+    fields: [attendanceAlerts.classId],
+    references: [classes.id],
+  }),
+  acknowledgedByUser: one(users, {
+    fields: [attendanceAlerts.acknowledgedBy],
+    references: [users.id],
+  }),
+}))
+
+export const attendanceSettingsRelations = relations(attendanceSettings, ({ one }) => ({
+  school: one(schools, {
+    fields: [attendanceSettings.schoolId],
+    references: [schools.id],
+  }),
+}))
+
 // --- Type Exports ---
 
 // Insert types
@@ -1252,6 +1621,20 @@ export type TimetableSession = typeof timetableSessions.$inferSelect
 export type ClassSession = typeof classSessions.$inferSelect
 export type CurriculumProgress = typeof curriculumProgress.$inferSelect
 export type ChapterCompletion = typeof chapterCompletions.$inferSelect
+// Phase 17 Insert types
+export type TeacherAttendanceInsert = typeof teacherAttendance.$inferInsert
+export type StudentAttendanceInsert = typeof studentAttendance.$inferInsert
+export type ConductRecordInsert = typeof conductRecords.$inferInsert
+export type ConductFollowUpInsert = typeof conductFollowUps.$inferInsert
+export type AttendanceAlertInsert = typeof attendanceAlerts.$inferInsert
+export type AttendanceSettingsInsert = typeof attendanceSettings.$inferInsert
+// Phase 17 Select types
+export type TeacherAttendance = typeof teacherAttendance.$inferSelect
+export type StudentAttendance = typeof studentAttendance.$inferSelect
+export type ConductRecord = typeof conductRecords.$inferSelect
+export type ConductFollowUp = typeof conductFollowUps.$inferSelect
+export type AttendanceAlert = typeof attendanceAlerts.$inferSelect
+export type AttendanceSettings = typeof attendanceSettings.$inferSelect
 
 // Enum types
 export type UserStatus = 'active' | 'inactive' | 'suspended'

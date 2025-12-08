@@ -218,15 +218,13 @@ export const exportStudents = createServerFn()
     return await studentQueries.exportStudents({ ...data, schoolId: context.schoolId })
   })
 
-export const getStudentStatistics = createServerFn()
-  .inputValidator(z.string().optional())
-  .handler(async ({ data: schoolYearId }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
-    await requirePermission('students', 'view')
-    return await studentQueries.getStudentStatistics(context.schoolId, schoolYearId)
-  })
+export const getStudentStatistics = createServerFn().handler(async () => {
+  const context = await getSchoolContext()
+  if (!context)
+    throw new Error('No school context')
+  await requirePermission('students', 'view')
+  return await studentQueries.getStudentStatistics(context.schoolId)
+})
 
 export const generateMatricule = createServerFn().handler(async () => {
   const context = await getSchoolContext()

@@ -207,7 +207,7 @@ export const sendParentInvitation = createServerFn()
       throw new Error('No school context')
     await requirePermission('students', 'edit')
 
-    const result = await parentQueries.sendParentInvitation(parentId)
+    const result = await parentQueries.sendParentInvitation(parentId, context.schoolId)
 
     await createAuditLog({
       schoolId: context.schoolId,

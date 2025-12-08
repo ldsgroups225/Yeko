@@ -58,38 +58,38 @@ export function TimetableSessionCard({
     >
       {compact
         ? (
-          <div className="text-xs">
-            <p className="font-medium truncate">{session.subjectName}</p>
-            <p className="opacity-80 truncate">
-              {session.startTime}
-              -
-              {session.endTime}
-            </p>
-          </div>
-        )
-        : (
-          <div className="space-y-1">
-            <div className="flex items-start justify-between gap-1">
-              <p className="font-semibold text-sm leading-tight">{session.subjectName}</p>
-              {session.hasConflict && (
-                <span className="text-xs bg-destructive rounded px-1">!</span>
-              )}
-            </div>
-            <p className="text-xs opacity-90">{session.teacherName}</p>
-            <div className="flex items-center justify-between text-xs opacity-80">
-              <span>
-                {showDay && `${dayOfWeekShortLabels[session.dayOfWeek]} `}
+            <div className="text-xs">
+              <p className="font-medium truncate">{session.subjectName}</p>
+              <p className="opacity-80 truncate">
                 {session.startTime}
                 -
                 {session.endTime}
-              </span>
-              {session.classroomName && (
-                <span className="truncate ml-1">{session.classroomName}</span>
-              )}
+              </p>
             </div>
-            {children}
-          </div>
-        )}
+          )
+        : (
+            <div className="space-y-1">
+              <div className="flex items-start justify-between gap-1">
+                <p className="font-semibold text-sm leading-tight">{session.subjectName}</p>
+                {session.hasConflict && (
+                  <span className="text-xs bg-destructive rounded px-1">!</span>
+                )}
+              </div>
+              <p className="text-xs opacity-90">{session.teacherName}</p>
+              <div className="flex items-center justify-between text-xs opacity-80">
+                <span>
+                  {showDay && `${dayOfWeekShortLabels[session.dayOfWeek]} `}
+                  {session.startTime}
+                  -
+                  {session.endTime}
+                </span>
+                {session.classroomName && (
+                  <span className="truncate ml-1">{session.classroomName}</span>
+                )}
+              </div>
+              {children}
+            </div>
+          )}
     </div>
   )
 }
