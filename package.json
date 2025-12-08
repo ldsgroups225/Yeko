@@ -10,6 +10,8 @@
     "deploy:yeko-core": "pnpm run build:data-ops && pnpm run build:logger && pnpm run --filter yeko-core deploy",
     "dev:yeko-school": "pnpm run --filter yeko-school dev",
     "deploy:yeko-school": "pnpm run build:data-ops && pnpm run build:logger && pnpm run --filter yeko-school deploy",
+    "dev:yeko-teacher": "pnpm run --filter yeko-teacher dev",
+    "deploy:yeko-teacher": "pnpm run build:data-ops && pnpm run build:logger && pnpm run --filter yeko-teacher deploy",
     "dev:data-service": "pnpm run --filter data-service dev",
     "deploy:data-service": "pnpm run build:data-ops && pnpm run build:logger && pnpm run --filter data-service deploy",
     "dev:queue-worker": "pnpm run --filter @repo/queue-worker dev",

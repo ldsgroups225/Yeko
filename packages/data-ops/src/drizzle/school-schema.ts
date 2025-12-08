@@ -2258,3 +2258,206 @@ export type BloodType = 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-'
 export type InvitationStatus = 'pending' | 'sent' | 'accepted' | 'expired'
 export type AuditAction = 'create' | 'update' | 'delete' | 'view'
 export type RoleScope = 'school' | 'system'
+
+// --- Phase 19: Teacher App Tables ---
+
+// Participation Grades (Session Participation Tracking)
+export const participationGradeValues = [1, 2, 3, 4, 5] as const
+export type ParticipationGradeValue = typeof participationGradeValues[number]
+
+export const participationGrades = pgTable('participation_grades', {
+  id: text('id').primaryKey(),
+  studentId: text('student_id').notNull().references(() => students.id, { onDelete: 'cascade' }),
+  classSessionId: text('class_session_id').notNull().references(() => classSessions.id, { onDelete: 'cascade' }),
+  teacherId: text('teacher_id').notNull().references(() => teachers.id, { onDelete: 'cascade' }),
+  grade: smallint('grade').notNull(), // 1-5 scale
+  comment: text('comment'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, table => ({
+  sessionIdx: index('idx_participation_session').on(table.classSessionId),
+  studentIdx: index('idx_participation_student').on(table.studentId),
+  teacherIdx: index('idx_participation_teacher').on(table.teacherId),
+  uniqueStudentSession: unique('unique_student_session_participation').on(table.studentId, table.classSessionId),
+}))
+
+// Homework Assignments
+export const homeworkStatuses = ['draft', 'active', 'closed', 'cancelled'] as const
+export type HomeworkStatus = typeof homeworkStatuses[number]
+
+export const homework = pgTable('homework', {
+  id: text('id').primaryKey(),
+  schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
+  classId: text('class_id').notNull().references(() => classes.id, { onDelete: 'cascade' }),
+  subjectId: text('subject_id').notNull().references(() => subjects.id, { onDelete: 'cascade' }),
+  teacherId: text('teacher_id').notNull().references(() => teachers.id, { onDelete: 'cascade' }),
+  classSessionId: text('class_session_id').references(() => classSessions.id, { onDelete: 'set null' }),
+  title: text('title').notNull(),
+  description: text('description'),
+  instructions: text('instructions'),
+  dueDate: date('due_date').notNull(),
+  dueTime: text('due_time'), // HH:MM format
+  maxPoints: smallint('max_points'),
+  isGraded: boolean('is_graded').default(false),
+  attachments: jsonb('attachments').$type<{ name: string, url: string, type: string, size: number }[]>().default([]),
+  status: text('status', { enum: homeworkStatuses }).default('active').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, table => ({
+  classIdx: index('idx_homework_class').on(table.classId),
+  teacherIdx: index('idx_homework_teacher').on(table.teacherId),
+  dueDateIdx: index('idx_homework_due_date').on(table.dueDate),
+  statusIdx: index('idx_homework_status').on(table.status),
+  classDueIdx: index('idx_homework_class_due').on(table.classId, table.dueDate),
+}))
+
+// Homework Submissions (for future use)
+export const submissionStatuses = ['submitted', 'late', 'graded', 'returned'] as const
+export type SubmissionStatus = typeof submissionStatuses[number]
+
+export const homeworkSubmissions = pgTable('homework_submissions', {
+  id: text('id').primaryKey(),
+  homeworkId: text('homework_id').notNull().references(() => homework.id, { onDelete: 'cascade' }),
+  studentId: text('student_id').notNull().references(() => students.id, { onDelete: 'cascade' }),
+  submittedAt: timestamp('submitted_at').defaultNow().notNull(),
+  content: text('content'),
+  attachments: jsonb('attachments').$type<{ name: string, url: string, type: string, size: number }[]>().default([]),
+  grade: decimal('grade', { precision: 5, scale: 2 }),
+  gradedAt: timestamp('graded_at'),
+  gradedBy: text('graded_by').references(() => teachers.id, { onDelete: 'set null' }),
+  feedback: text('feedback'),
+  status: text('status', { enum: submissionStatuses }).default('submitted').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, table => ({
+  homeworkIdx: index('idx_submission_homework').on(table.homeworkId),
+  studentIdx: index('idx_submission_student').on(table.studentId),
+  uniqueHomeworkStudent: unique('unique_homework_student').on(table.homeworkId, table.studentId),
+}))
+
+// Teacher Messages (Parent-Teacher Communication)
+export const messageSenderTypes = ['teacher', 'parent'] as const
+export type MessageSenderType = typeof messageSenderTypes[number]
+
+export const teacherMessages = pgTable('teacher_messages', {
+  id: text('id').primaryKey(),
+  schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
+  senderType: text('sender_type', { enum: messageSenderTypes }).notNull(),
+  senderId: text('sender_id').notNull(),
+  recipientType: text('recipient_type', { enum: messageSenderTypes }).notNull(),
+  recipientId: text('recipient_id').notNull(),
+  studentId: text('student_id').references(() => students.id, { onDelete: 'set null' }),
+  classId: text('class_id').references(() => classes.id, { onDelete: 'set null' }),
+  threadId: text('thread_id'),
+  replyToId: text('reply_to_id'),
+  subject: text('subject'),
+  content: text('content').notNull(),
+  attachments: jsonb('attachments').$type<{ name: string, url: string, type: string, size: number }[]>().default([]),
+  isRead: boolean('is_read').default(false),
+  readAt: timestamp('read_at'),
+  isArchived: boolean('is_archived').default(false),
+  isStarred: boolean('is_starred').default(false),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, table => ({
+  senderIdx: index('idx_messages_sender').on(table.senderType, table.senderId),
+  recipientIdx: index('idx_messages_recipient').on(table.recipientType, table.recipientId),
+  threadIdx: index('idx_messages_thread').on(table.threadId),
+  createdIdx: index('idx_messages_created').on(table.createdAt),
+}))
+
+// Message Templates
+export const messageCategories = ['attendance', 'grades', 'behavior', 'general', 'reminder', 'congratulations'] as const
+export type MessageCategory = typeof messageCategories[number]
+
+export const messageTemplates = pgTable('message_templates', {
+  id: text('id').primaryKey(),
+  schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  nameEn: text('name_en'),
+  category: text('category', { enum: messageCategories }).notNull(),
+  subject: text('subject'),
+  content: text('content').notNull(),
+  placeholders: jsonb('placeholders').$type<string[]>().default([]),
+  isSystem: boolean('is_system').default(false),
+  isActive: boolean('is_active').default(true),
+  createdBy: text('created_by').references(() => users.id, { onDelete: 'set null' }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, table => ({
+  schoolIdx: index('idx_templates_school').on(table.schoolId),
+  categoryIdx: index('idx_templates_category').on(table.category),
+}))
+
+// Teacher Notifications
+export const notificationTypes = ['message', 'grade_validation', 'schedule_change', 'attendance_alert', 'system', 'reminder'] as const
+export type NotificationType = typeof notificationTypes[number]
+
+export const teacherNotifications = pgTable('teacher_notifications', {
+  id: text('id').primaryKey(),
+  teacherId: text('teacher_id').notNull().references(() => teachers.id, { onDelete: 'cascade' }),
+  type: text('type', { enum: notificationTypes }).notNull(),
+  title: text('title').notNull(),
+  body: text('body'),
+  actionType: text('action_type'),
+  actionData: jsonb('action_data').$type<{ route?: string, params?: Record<string, string> }>(),
+  relatedType: text('related_type'),
+  relatedId: text('related_id'),
+  isRead: boolean('is_read').default(false),
+  readAt: timestamp('read_at'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  expiresAt: timestamp('expires_at'),
+}, table => ({
+  teacherIdx: index('idx_notifications_teacher').on(table.teacherId),
+  createdIdx: index('idx_notifications_created').on(table.createdAt),
+}))
+
+// Phase 19 Relations
+export const participationGradesRelations = relations(participationGrades, ({ one }) => ({
+  student: one(students, { fields: [participationGrades.studentId], references: [students.id] }),
+  classSession: one(classSessions, { fields: [participationGrades.classSessionId], references: [classSessions.id] }),
+  teacher: one(teachers, { fields: [participationGrades.teacherId], references: [teachers.id] }),
+}))
+
+export const homeworkRelations = relations(homework, ({ one, many }) => ({
+  school: one(schools, { fields: [homework.schoolId], references: [schools.id] }),
+  class: one(classes, { fields: [homework.classId], references: [classes.id] }),
+  subject: one(subjects, { fields: [homework.subjectId], references: [subjects.id] }),
+  teacher: one(teachers, { fields: [homework.teacherId], references: [teachers.id] }),
+  classSession: one(classSessions, { fields: [homework.classSessionId], references: [classSessions.id] }),
+  submissions: many(homeworkSubmissions),
+}))
+
+export const homeworkSubmissionsRelations = relations(homeworkSubmissions, ({ one }) => ({
+  homework: one(homework, { fields: [homeworkSubmissions.homeworkId], references: [homework.id] }),
+  student: one(students, { fields: [homeworkSubmissions.studentId], references: [students.id] }),
+  gradedByTeacher: one(teachers, { fields: [homeworkSubmissions.gradedBy], references: [teachers.id] }),
+}))
+
+export const teacherMessagesRelations = relations(teacherMessages, ({ one }) => ({
+  school: one(schools, { fields: [teacherMessages.schoolId], references: [schools.id] }),
+  student: one(students, { fields: [teacherMessages.studentId], references: [students.id] }),
+  class: one(classes, { fields: [teacherMessages.classId], references: [classes.id] }),
+}))
+
+export const messageTemplatesRelations = relations(messageTemplates, ({ one }) => ({
+  school: one(schools, { fields: [messageTemplates.schoolId], references: [schools.id] }),
+  creator: one(users, { fields: [messageTemplates.createdBy], references: [users.id] }),
+}))
+
+export const teacherNotificationsRelations = relations(teacherNotifications, ({ one }) => ({
+  teacher: one(teachers, { fields: [teacherNotifications.teacherId], references: [teachers.id] }),
+}))
+
+// Phase 19 Type Exports
+export type ParticipationGrade = typeof participationGrades.$inferSelect
+export type ParticipationGradeInsert = typeof participationGrades.$inferInsert
+export type Homework = typeof homework.$inferSelect
+export type HomeworkInsert = typeof homework.$inferInsert
+export type HomeworkSubmission = typeof homeworkSubmissions.$inferSelect
+export type HomeworkSubmissionInsert = typeof homeworkSubmissions.$inferInsert
+export type TeacherMessage = typeof teacherMessages.$inferSelect
+export type TeacherMessageInsert = typeof teacherMessages.$inferInsert
+export type MessageTemplate = typeof messageTemplates.$inferSelect
+export type MessageTemplateInsert = typeof messageTemplates.$inferInsert
+export type TeacherNotification = typeof teacherNotifications.$inferSelect
+export type TeacherNotificationInsert = typeof teacherNotifications.$inferInsert
