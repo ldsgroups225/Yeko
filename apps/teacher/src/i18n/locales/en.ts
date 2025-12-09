@@ -91,6 +91,7 @@ export const en = {
     rejected: 'Rejected',
     submit: 'Submit for Validation',
     saveDraft: 'Save Draft',
+    noClasses: 'No classes assigned',
   },
   messages: {
     title: 'Messages',
@@ -138,6 +139,7 @@ export const en = {
     noResults: 'No results',
     pullToRefresh: 'Pull to refresh',
     refreshing: 'Refreshing...',
+    students: 'students',
   },
   errors: {
     unauthorized: 'Unauthorized',

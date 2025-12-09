@@ -123,6 +123,7 @@ export const getSessionDetails = createServerFn()
         id: session.id,
         classId: session.classId,
         className: session.className,
+        schoolYearId: session.schoolYearId,
         subjectId: session.subjectId,
         subjectName: session.subjectName,
         teacherId: session.teacherId,

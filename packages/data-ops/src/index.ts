@@ -35,7 +35,6 @@ export * from './queries/school-subjects'
 export * from './queries/schools'
 export * from './queries/student-attendance'
 export * from './queries/student-fees'
-export * from './queries/teacher-app'
 // Phase 19: Teacher App
 export * from './queries/teacher-app'
 export * from './queries/teacher-attendance'

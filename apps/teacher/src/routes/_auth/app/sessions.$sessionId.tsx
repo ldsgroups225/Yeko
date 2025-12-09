@@ -28,12 +28,12 @@ function SessionDetailPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
-  // Mock context - in real app, get from teacher context
-  const classId = 'mock-class-id'
-  const schoolYearId = 'mock-school-year-id'
-  const teacherId = 'mock-teacher-id'
-
   const { data: sessionData } = useQuery(sessionDetailsQueryOptions({ sessionId }))
+
+  // Get context from session data
+  const classId = sessionData?.session?.classId ?? ''
+  const schoolYearId = sessionData?.session?.schoolYearId ?? ''
+  const teacherId = sessionData?.session?.teacherId ?? ''
   const { data: studentsData } = useQuery(
     sessionStudentsQueryOptions({ classId, schoolYearId }),
   )

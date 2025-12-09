@@ -339,6 +339,7 @@ export async function getTeacherClassSessionById(sessionId: string) {
       id: classSessions.id,
       classId: classSessions.classId,
       className: sql<string>`(SELECT g.name || ' ' || c.section FROM classes c JOIN grades g ON c.grade_id = g.id WHERE c.id = ${classSessions.classId})`,
+      schoolYearId: sql<string>`(SELECT school_year_id FROM classes WHERE id = ${classSessions.classId})`,
       subjectId: classSessions.subjectId,
       subjectName: subjects.name,
       teacherId: classSessions.teacherId,

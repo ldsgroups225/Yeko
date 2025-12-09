@@ -1,27 +1,211 @@
+import type { Locale } from 'date-fns'
+import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { MessageSquare } from 'lucide-react'
+import { format } from 'date-fns'
+import { fr } from 'date-fns/locale'
+import {
+  Archive,
+  Inbox,
+  Mail,
+  MessageSquare,
+  PenSquare,
+  Send,
+  Star,
+} from 'lucide-react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
+import { teacherMessagesQueryOptions } from '@/lib/queries/messages'
 
 export const Route = createFileRoute('/_auth/app/messages')({
   component: MessagesPage,
 })
 
 function MessagesPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const locale = i18n.language === 'fr' ? fr : undefined
+  const [folder, setFolder] = useState<'inbox' | 'sent' | 'archived'>('inbox')
+
+  const { context, isLoading: contextLoading } = useRequiredTeacherContext()
+
+  const { data, isLoading: dataLoading } = useQuery({
+    ...teacherMessagesQueryOptions({
+      teacherId: context?.teacherId ?? '',
+      folder,
+    }),
+    enabled: !!context,
+  })
+
+  const isLoading = contextLoading || dataLoading
 
   return (
     <div className="flex flex-col gap-4 p-4 pb-20">
-      <h1 className="text-xl font-semibold">{t('messages.title')}</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-semibold">{t('messages.title')}</h1>
+        <Button size="sm">
+          <PenSquare className="mr-2 h-4 w-4" />
+          {t('messages.compose')}
+        </Button>
+      </div>
 
-      <Card>
-        <CardContent className="flex flex-col items-center justify-center py-12">
-          <MessageSquare className="h-12 w-12 text-muted-foreground/50" />
-          <p className="mt-4 text-sm text-muted-foreground">
-            {t('messages.noMessages')}
-          </p>
-        </CardContent>
-      </Card>
+      <Tabs value={folder} onValueChange={v => setFolder(v as typeof folder)}>
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="inbox" className="gap-1.5">
+            <Inbox className="h-4 w-4" />
+            <span className="hidden sm:inline">{t('messages.inbox')}</span>
+          </TabsTrigger>
+          <TabsTrigger value="sent" className="gap-1.5">
+            <Send className="h-4 w-4" />
+            <span className="hidden sm:inline">{t('messages.sent')}</span>
+          </TabsTrigger>
+          <TabsTrigger value="archived" className="gap-1.5">
+            <Archive className="h-4 w-4" />
+            <span className="hidden sm:inline">{t('messages.archived')}</span>
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value={folder} className="mt-4">
+          {isLoading
+            ? (
+              <MessagesSkeleton />
+            )
+            : data?.messages && data.messages.length > 0
+              ? (
+                <div className="space-y-2">
+                  {data.messages.map((message: any) => (
+                    <MessageItem
+                      key={message.id}
+                      message={message}
+                      locale={locale}
+                    />
+                  ))}
+                </div>
+              )
+              : (
+                <EmptyMessages folder={folder} />
+              )}
+        </TabsContent>
+      </Tabs>
+    </div>
+  )
+}
+
+interface MessageItemProps {
+  message: {
+    id: string
+    senderType: 'teacher' | 'parent'
+    senderName: string
+    recipientName: string
+    studentName: string | null
+    subject: string | null
+    preview: string
+    isRead: boolean
+    isStarred: boolean
+    createdAt: string
+  }
+  locale?: Locale
+}
+
+function MessageItem({ message, locale }: MessageItemProps) {
+  const date = new Date(message.createdAt)
+  const isToday = new Date().toDateString() === date.toDateString()
+
+  return (
+    <Card
+      className={`transition-colors hover:bg-muted/50 ${!message.isRead ? 'border-primary/50 bg-primary/5' : ''}`}
+    >
+      <CardContent className="p-3">
+        <div className="flex items-start gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted">
+            <Mail className="h-5 w-5 text-muted-foreground" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center justify-between gap-2">
+              <p
+                className={`truncate text-sm ${!message.isRead ? 'font-semibold' : 'font-medium'}`}
+              >
+                {message.senderType === 'parent'
+                  ? message.senderName
+                  : message.recipientName}
+              </p>
+              <span className="shrink-0 text-xs text-muted-foreground">
+                {isToday
+                  ? format(date, 'HH:mm')
+                  : format(date, 'd MMM', { locale })}
+              </span>
+            </div>
+            {message.studentName && (
+              <p className="text-xs text-muted-foreground">
+                {message.studentName}
+              </p>
+            )}
+            {message.subject && (
+              <p className="truncate text-sm text-muted-foreground">
+                {message.subject}
+              </p>
+            )}
+            <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
+              {message.preview}
+            </p>
+          </div>
+          <div className="flex flex-col items-center gap-1">
+            {message.isStarred && (
+              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+            )}
+            {!message.isRead && (
+              <Badge variant="default" className="h-2 w-2 rounded-full p-0" />
+            )}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+function EmptyMessages({ folder }: { folder: string }) {
+  const { t } = useTranslation()
+
+  return (
+    <Card>
+      <CardContent className="flex flex-col items-center justify-center py-12">
+        <MessageSquare className="h-12 w-12 text-muted-foreground/50" />
+        <p className="mt-4 text-sm text-muted-foreground">
+          {t('messages.noMessages')}
+        </p>
+        {folder === 'inbox' && (
+          <Button variant="outline" className="mt-4">
+            <PenSquare className="mr-2 h-4 w-4" />
+            {t('messages.compose')}
+          </Button>
+        )}
+      </CardContent>
+    </Card>
+  )
+}
+
+function MessagesSkeleton() {
+  return (
+    <div className="space-y-2">
+      {[1, 2, 3, 4, 5].map(i => (
+        <Card key={i}>
+          <CardContent className="p-3">
+            <div className="flex items-start gap-3">
+              <Skeleton className="h-10 w-10 rounded-full" />
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-3 w-48" />
+                <Skeleton className="h-3 w-full" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
     </div>
   )
 }

@@ -91,6 +91,7 @@ export const fr = {
     rejected: 'Rejetées',
     submit: 'Soumettre pour validation',
     saveDraft: 'Enregistrer le brouillon',
+    noClasses: 'Aucune classe assignée',
   },
   messages: {
     title: 'Messages',
@@ -138,6 +139,7 @@ export const fr = {
     noResults: 'Aucun résultat',
     pullToRefresh: 'Tirer pour actualiser',
     refreshing: 'Actualisation...',
+    students: 'élèves',
   },
   errors: {
     unauthorized: 'Non autorisé',
