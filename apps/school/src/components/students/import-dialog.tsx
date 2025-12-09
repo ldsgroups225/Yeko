@@ -1,5 +1,6 @@
 'use client'
 
+import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AlertCircle, CheckCircle2, Download, FileSpreadsheet, Loader2, Upload, X } from 'lucide-react'
 import { useCallback, useState } from 'react'
@@ -270,42 +271,83 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
   }
 
   const downloadTemplate = () => {
-    // Create template workbook with typed-xlsx style headers
-    const headers = [
-      'Nom',
-      'Prénom',
-      'Date de Naissance',
-      'Genre',
-      'Lieu de Naissance',
-      'Nationalité',
-      'Adresse',
-      'Contact d\'Urgence',
-      'Téléphone d\'Urgence',
-      'École Précédente',
+    // Template data with natural French column names
+    interface StudentTemplate {
+      'Nom': string
+      'Prénom': string
+      'Date de Naissance': string
+      'Genre': string
+      'Lieu de Naissance': string
+      'Nationalité': string
+      'Adresse': string
+      'Contact d\'Urgence': string
+      'Téléphone d\'Urgence': string
+      'École Précédente': string
+    }
+
+    const templateData: StudentTemplate[] = [
+      {
+        'Nom': 'Koné',
+        'Prénom': 'Aminata',
+        'Date de Naissance': '2010-05-15',
+        'Genre': 'F',
+        'Lieu de Naissance': 'Abidjan',
+        'Nationalité': 'Ivoirienne',
+        'Adresse': '123 Rue Example',
+        'Contact d\'Urgence': 'Papa Koné',
+        'Téléphone d\'Urgence': '+2250701020304',
+        'École Précédente': 'École Primaire ABC',
+      },
+      {
+        'Nom': 'Diallo',
+        'Prénom': 'Moussa',
+        'Date de Naissance': '2011-03-22',
+        'Genre': 'M',
+        'Lieu de Naissance': 'Bouaké',
+        'Nationalité': 'Ivoirien',
+        'Adresse': '456 Avenue Exemple',
+        'Contact d\'Urgence': 'Maman Diallo',
+        'Téléphone d\'Urgence': '+2250702030405',
+        'École Précédente': 'École Primaire XYZ',
+      },
     ]
-    const example = [
-      'Koné',
-      'Aminata',
-      '2010-05-15',
-      'F',
-      'Abidjan',
-      'Ivoirienne',
-      '123 Rue Example',
-      'Papa Koné',
-      '+2250701020304',
-      'École Primaire ABC',
-    ]
 
-    const ws = XLSX.utils.aoa_to_sheet([headers, example])
+    // Create schema with typed-xlsx
+    const schema = ExcelSchemaBuilder.create<StudentTemplate>()
+      .column('lastName', { key: 'Nom' })
+      .column('firstName', { key: 'Prénom' })
+      .column('dob', { key: 'Date de Naissance' })
+      .column('gender', { key: 'Genre' })
+      .column('birthPlace', { key: 'Lieu de Naissance' })
+      .column('nationality', { key: 'Nationalité' })
+      .column('address', { key: 'Adresse' })
+      .column('emergencyContact', { key: 'Contact d\'Urgence' })
+      .column('emergencyPhone', { key: 'Téléphone d\'Urgence' })
+      .column('previousSchool', { key: 'École Précédente' })
+      .build()
 
-    // Set column widths
-    ws['!cols'] = headers.map(() => ({ wch: 20 }))
+    // Build Excel file
+    const excelFile = ExcelBuilder.create()
+      .sheet('Modèle Import Élèves')
+      .addTable({
+        data: templateData,
+        schema,
+      })
+      .build({ output: 'buffer' })
 
-    const wb = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(wb, ws, 'Modèle Import Élèves')
-
-    // Generate and download
-    XLSX.writeFile(wb, 'modele_import_eleves.xlsx')
+    // Download file
+    const uint8Array = new Uint8Array(excelFile)
+    const blob = new Blob([uint8Array], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = 'modele_import_eleves.xlsx'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
   }
 
   return (
