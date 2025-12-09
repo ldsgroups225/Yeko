@@ -80,6 +80,7 @@ export const fr = {
     update: 'Mettre à jour',
     delete: 'Supprimer',
     confirmDelete: 'Êtes-vous sûr de vouloir supprimer ce devoir?',
+    noHomework: 'Aucun devoir',
   },
   grades: {
     title: 'Notes',
@@ -92,6 +93,10 @@ export const fr = {
     submit: 'Soumettre pour validation',
     saveDraft: 'Enregistrer le brouillon',
     noClasses: 'Aucune classe assignée',
+    noStudents: 'Aucun élève inscrit',
+    noGrades: 'Aucune note à enregistrer',
+    saved: 'Notes enregistrées',
+    subjects: 'matières',
   },
   messages: {
     title: 'Messages',

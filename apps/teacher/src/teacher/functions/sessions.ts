@@ -91,12 +91,13 @@ export const updateSessionAttendance = createServerFn()
     return { success: true }
   })
 
-// Get students for a class (for attendance/participation)
+// Get students for a class (for attendance/participation/grades)
 export const getSessionStudents = createServerFn()
   .inputValidator(
     z.object({
       classId: z.string(),
       schoolYearId: z.string(),
+      subjectId: z.string().optional(),
     }),
   )
   .handler(async ({ data }) => {
@@ -105,7 +106,21 @@ export const getSessionStudents = createServerFn()
       schoolYearId: data.schoolYearId,
     })
 
-    return { students }
+    // Get class/subject info if subjectId provided
+    let className: string | null = null
+    let subjectName: string | null = null
+
+    if (data.subjectId) {
+      const { getClassSubjectInfo } = await import('@repo/data-ops/queries/teacher-app')
+      const info = await getClassSubjectInfo({
+        classId: data.classId,
+        subjectId: data.subjectId,
+      })
+      className = info?.className ?? null
+      subjectName = info?.subjectName ?? null
+    }
+
+    return { students, className, subjectName }
   })
 
 // Get session details

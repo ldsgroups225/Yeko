@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { ChevronRight, GraduationCap } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
@@ -35,17 +35,21 @@ function GradesPage() {
 
       <p className="text-sm text-muted-foreground">{t('grades.selectClass')}</p>
 
-      {isLoading ? (
-        <GradesSkeleton />
-      ) : data?.classes && data.classes.length > 0 ? (
-        <div className="space-y-3">
-          {data.classes.map((cls: any) => (
-            <ClassCard key={cls.id} classData={cls} />
-          ))}
-        </div>
-      ) : (
-        <EmptyClasses />
-      )}
+      {isLoading
+        ? (
+          <GradesSkeleton />
+        )
+        : data?.classes && data.classes.length > 0
+          ? (
+            <div className="space-y-3">
+              {data.classes.map((cls: any) => (
+                <ClassCard key={cls.id} classData={cls} />
+              ))}
+            </div>
+          )
+          : (
+            <EmptyClasses />
+          )}
     </div>
   )
 }
@@ -73,20 +77,25 @@ function ClassCard({ classData }: ClassCardProps) {
           <div>
             <h3 className="font-semibold">{classData.name}</h3>
             <p className="text-xs text-muted-foreground">
-              {classData.studentCount} {t('common.students')}
+              {classData.studentCount}
+              {' '}
+              {t('common.students')}
             </p>
           </div>
-          <Badge variant="secondary">{classData.subjects.length} matières</Badge>
+          <Badge variant="secondary">
+            {classData.subjects.length}
+            {' '}
+            {t('grades.subjects', 'matières')}
+          </Badge>
         </div>
 
         <div className="space-y-2">
           {classData.subjects.map(subject => (
-            <button
+            <Link
               key={subject.id}
+              to="/app/grades/$classId/$subjectId"
+              params={{ classId: classData.id, subjectId: subject.id }}
               className="flex w-full items-center justify-between rounded-lg bg-muted/50 p-3 text-left transition-colors hover:bg-muted active:scale-[0.98]"
-              onClick={() => {
-                // TODO: Navigate to grade entry for this class/subject
-              }}
             >
               <div>
                 <p className="text-sm font-medium">{subject.name}</p>
@@ -97,7 +106,7 @@ function ClassCard({ classData }: ClassCardProps) {
                 )}
               </div>
               <ChevronRight className="h-4 w-4 text-muted-foreground" />
-            </button>
+            </Link>
           ))}
         </div>
       </CardContent>

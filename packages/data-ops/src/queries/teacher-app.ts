@@ -24,6 +24,7 @@ import {
   students,
   teacherMessages,
   teacherNotifications,
+  terms,
   timetableSessions,
 } from '../drizzle/school-schema'
 
@@ -1130,4 +1131,121 @@ export async function searchParentsForTeacher(params: {
   }
 
   return Array.from(parentMap.values())
+}
+
+// ============================================
+// STUDENT GRADES
+// ============================================
+
+/**
+ * Submit student grades for a class/subject
+ */
+export async function submitStudentGrades(params: {
+  teacherId: string
+  schoolId: string
+  classId: string
+  subjectId: string
+  termId: string
+  grades: Array<{
+    studentId: string
+    grade: number
+  }>
+  status: 'draft' | 'submitted'
+  gradeType?: 'quiz' | 'test' | 'exam' | 'participation' | 'homework' | 'project'
+}) {
+  const db = getDb()
+
+  const gradeType = params.gradeType ?? 'test'
+  const today = new Date().toISOString().split('T')[0]!
+
+  // Use transaction for atomicity
+  return db.transaction(async (tx: PgTransaction<any, any, any>) => {
+    const results = []
+
+    for (const grade of params.grades) {
+      // Insert new grade (no upsert since multiple grades per student/subject are allowed)
+      const [result] = await tx
+        .insert(studentGrades)
+        .values({
+          id: nanoid(),
+          studentId: grade.studentId,
+          classId: params.classId,
+          subjectId: params.subjectId,
+          termId: params.termId,
+          teacherId: params.teacherId,
+          value: grade.grade.toFixed(2),
+          type: gradeType,
+          weight: 1,
+          gradeDate: today,
+          status: params.status,
+          submittedAt: params.status === 'submitted' ? new Date() : null,
+        })
+        .returning()
+
+      results.push(result)
+    }
+
+    return { success: true, count: results.length }
+  })
+}
+
+/**
+ * Get class info with subject name for grade entry page
+ */
+export async function getClassSubjectInfo(params: {
+  classId: string
+  subjectId: string
+}) {
+  const db = getDb()
+
+  const result = await db
+    .select({
+      className: sql<string>`(SELECT g.name || ' ' || c.section FROM classes c JOIN grades g ON c.grade_id = g.id WHERE c.id = ${params.classId})`,
+      subjectName: subjects.name,
+    })
+    .from(subjects)
+    .where(eq(subjects.id, params.subjectId))
+    .limit(1)
+
+  return result[0] ?? null
+}
+
+/**
+ * Get current term for a school year (the one that's currently active based on dates)
+ */
+export async function getCurrentTermForSchoolYear(schoolYearId: string) {
+  const db = getDb()
+  const today = new Date().toISOString().split('T')[0]!
+
+  const result = await db
+    .select({
+      id: terms.id,
+      name: sql<string>`(SELECT name FROM term_templates WHERE id = ${terms.termTemplateId})`,
+    })
+    .from(terms)
+    .where(
+      and(
+        eq(terms.schoolYearId, schoolYearId),
+        lte(terms.startDate, today),
+        gte(terms.endDate, today),
+      ),
+    )
+    .limit(1)
+
+  // If no current term, get the first term of the school year
+  if (!result[0]) {
+    const firstTerm = await db
+      .select({
+        id: terms.id,
+        name: sql<string>`(SELECT name FROM term_templates WHERE id = ${terms.termTemplateId})`,
+      })
+      .from(terms)
+      .where(eq(terms.schoolYearId, schoolYearId))
+      .orderBy(asc(terms.startDate))
+      .limit(1)
+
+    return firstTerm[0] ?? null
+  }
+
+  return result[0]
 }

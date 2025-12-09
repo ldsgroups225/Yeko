@@ -72,3 +72,17 @@ export function participationGradesQueryOptions(params: ParticipationParams) {
     staleTime: 30 * 1000, // 30 seconds
   })
 }
+
+interface ClassStudentsParams {
+  classId: string
+  schoolYearId: string
+  subjectId?: string
+}
+
+export function classStudentsQueryOptions(params: ClassStudentsParams) {
+  return queryOptions({
+    queryKey: ['teacher', 'class', 'students', params.classId, params.subjectId],
+    queryFn: () => getSessionStudents({ data: params }),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  })
+}

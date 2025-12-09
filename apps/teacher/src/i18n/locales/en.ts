@@ -80,6 +80,7 @@ export const en = {
     update: 'Update',
     delete: 'Delete',
     confirmDelete: 'Are you sure you want to delete this homework?',
+    noHomework: 'No homework',
   },
   grades: {
     title: 'Grades',
@@ -92,6 +93,10 @@ export const en = {
     submit: 'Submit for Validation',
     saveDraft: 'Save Draft',
     noClasses: 'No classes assigned',
+    noStudents: 'No students enrolled',
+    noGrades: 'No grades to save',
+    saved: 'Grades saved',
+    subjects: 'subjects',
   },
   messages: {
     title: 'Messages',
