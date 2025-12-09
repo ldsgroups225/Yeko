@@ -190,6 +190,7 @@
     "selectSchoolYear": "Sélectionner l'année scolaire",
     "selectClass": "Sélectionner la classe",
     "selectSchoolYearFirst": "Veuillez d'abord sélectionner une année scolaire",
+    "noClassesForYear": "Aucune classe trouvée pour cette année scolaire",
     "rollNumberDescription": "Position de l'élève dans le registre de classe",
     "enroll": "Inscrire",
     "deleteSuccess": "Élève supprimé avec succès",

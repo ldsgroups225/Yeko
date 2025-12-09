@@ -187,6 +187,7 @@
     "selectSchoolYear": "Select school year",
     "selectClass": "Select class",
     "selectSchoolYearFirst": "Please select a school year first",
+    "noClassesForYear": "No classes found for this school year",
     "rollNumberDescription": "Student's position in the class roster",
     "enroll": "Enroll",
     "deleteSuccess": "Student deleted successfully",

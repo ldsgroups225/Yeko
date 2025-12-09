@@ -3,6 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -29,6 +30,7 @@ import {
 import { Input } from '@/components/ui/input'
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { classesOptions } from '@/lib/queries/classes'
 import { studentsKeys } from '@/lib/queries/students'
 import { createEnrollment } from '@/school/functions/enrollments'
@@ -53,12 +55,17 @@ interface EnrollmentDialogProps {
 export function EnrollmentDialog({ open, onOpenChange, studentId, studentName }: EnrollmentDialogProps) {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
+  const { schoolYearId: contextSchoolYearId } = useSchoolYearContext()
 
   const { data: schoolYears } = useQuery({
     queryKey: ['school-years'],
     queryFn: () => getSchoolYears(),
     enabled: open,
   })
+
+  // Find the active school year or use context school year
+  const activeSchoolYear = schoolYears?.find((sy: any) => sy.isActive)
+  const defaultSchoolYearId = contextSchoolYearId || activeSchoolYear?.id || ''
 
   const form = useForm<EnrollmentFormData>({
     resolver: zodResolver(enrollmentSchema),
@@ -70,9 +77,16 @@ export function EnrollmentDialog({ open, onOpenChange, studentId, studentName }:
     },
   })
 
+  // Auto-select school year when data loads
+  useEffect(() => {
+    if (open && defaultSchoolYearId && !form.getValues('schoolYearId')) {
+      form.setValue('schoolYearId', defaultSchoolYearId)
+    }
+  }, [open, defaultSchoolYearId, form])
+
   const selectedYearId = form.watch('schoolYearId')
 
-  const { data: classesData } = useQuery({
+  const { data: classesData, isLoading: classesLoading } = useQuery({
     ...classesOptions.list({ schoolYearId: selectedYearId }),
     enabled: open && !!selectedYearId,
   })
@@ -170,6 +184,8 @@ export function EnrollmentDialog({ open, onOpenChange, studentId, studentName }:
                   </Select>
                   <FormDescription>
                     {!selectedYearId && t('students.selectSchoolYearFirst')}
+                    {selectedYearId && classesLoading && t('common.loading')}
+                    {selectedYearId && !classesLoading && (!classesData || classesData.length === 0) && t('students.noClassesForYear')}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
