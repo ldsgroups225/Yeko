@@ -1,10 +1,7 @@
 import type { FormEvent } from 'react'
-import type {
-  CreateProgramTemplateInput,
-  CreateSchoolYearTemplateInput,
-} from '@/schemas/programs'
+import type { CreateProgramTemplateInput } from '@/schemas/programs'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import {
   BookOpen,
   Calendar,
@@ -35,7 +32,6 @@ import { gradesQueryOptions, subjectsQueryOptions } from '@/integrations/tanstac
 import {
   cloneProgramTemplateMutationOptions,
   createProgramTemplateMutationOptions,
-  createSchoolYearTemplateMutationOptions,
   deleteProgramTemplateMutationOptions,
   programStatsQueryOptions,
   programTemplatesQueryOptions,
@@ -53,7 +49,6 @@ function ProgramsCatalog() {
   const queryClient = useQueryClient()
   const navigate = useNavigate()
 
-  const [isCreatingYear, setIsCreatingYear] = useState(false)
   const [isCreatingProgram, setIsCreatingProgram] = useState(false)
   const [deletingProgram, setDeletingProgram] = useState<{ id: string, name: string } | null>(null)
   const [cloningProgram, setCloningProgram] = useState<{ id: string, name: string } | null>(null)
@@ -86,22 +81,6 @@ function ProgramsCatalog() {
   const { data: programsData, isLoading: programsLoading } = useQuery(programTemplatesQueryOptions(queryParams))
 
   // Mutations
-  const createYearMutation = useMutation({
-    ...createSchoolYearTemplateMutationOptions,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['school-year-templates'] })
-      queryClient.invalidateQueries({ queryKey: ['program-stats'] })
-      setIsCreatingYear(false)
-      toast.success('Année scolaire créée avec succès')
-      logger.info('School year template created')
-    },
-    onError: (error) => {
-      const message = parseServerFnError(error, 'Erreur lors de la création de l\'année scolaire')
-      toast.error(message)
-      logger.error('Failed to create school year template', error)
-    },
-  })
-
   const createProgramMutation = useMutation({
     ...createProgramTemplateMutationOptions,
     onSuccess: () => {
@@ -157,16 +136,6 @@ function ProgramsCatalog() {
       timestamp: new Date().toISOString(),
     })
   }, [logger])
-
-  const handleCreateYear = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const formData = new FormData(e.currentTarget)
-    const data: CreateSchoolYearTemplateInput = {
-      name: formData.get('name') as string,
-      isActive: formData.get('isActive') === 'true',
-    }
-    createYearMutation.mutate(data)
-  }
 
   const handleCreateProgram = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -225,16 +194,10 @@ function ProgramsCatalog() {
             Gérer les modèles de programmes et curricula pour différentes matières et classes
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => setIsCreatingYear(true)}>
-            <Calendar className="h-4 w-4 mr-2" />
-            Nouvelle Année
-          </Button>
-          <Button onClick={() => setIsCreatingProgram(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Créer un Programme
-          </Button>
-        </div>
+        <Button onClick={() => setIsCreatingProgram(true)}>
+          <Plus className="h-4 w-4 mr-2" />
+          Créer un Programme
+        </Button>
       </div>
 
       {/* Stats */}
@@ -261,16 +224,18 @@ function ProgramsCatalog() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Années Scolaires</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats?.schoolYears || 0}</div>
-            <p className="text-xs text-muted-foreground">Modèles d'années</p>
-          </CardContent>
-        </Card>
+        <Link to="/app/catalogs/school-years" className="block">
+          <Card className="hover:bg-accent/50 transition-colors cursor-pointer">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Années Scolaires</CardTitle>
+              <Calendar className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats?.schoolYears || 0}</div>
+              <p className="text-xs text-muted-foreground">Gérer les années et périodes →</p>
+            </CardContent>
+          </Card>
+        </Link>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -283,53 +248,6 @@ function ProgramsCatalog() {
           </CardContent>
         </Card>
       </div>
-
-      {/* Create School Year Form */}
-      {isCreatingYear && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Créer une Nouvelle Année Scolaire</CardTitle>
-            <CardDescription>Ajouter un modèle d'année scolaire</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleCreateYear} className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="year-name">Nom *</Label>
-                  <Input
-                    id="year-name"
-                    name="name"
-                    placeholder="2025-2026"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="year-isActive">Statut</Label>
-                  <Select name="isActive" defaultValue="false">
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="true">Active</SelectItem>
-                      <SelectItem value="false">Inactive</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button type="button" variant="outline" onClick={() => setIsCreatingYear(false)}>
-                  <X className="h-4 w-4 mr-2" />
-                  Annuler
-                </Button>
-                <Button type="submit" disabled={createYearMutation.isPending}>
-                  <Save className="h-4 w-4 mr-2" />
-                  {createYearMutation.isPending ? 'Création...' : 'Créer'}
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Create Program Form */}
       {isCreatingProgram && (
@@ -496,95 +414,95 @@ function ProgramsCatalog() {
         <CardContent>
           {programsLoading && page === 1
             ? (
-                <CatalogListSkeleton count={5} />
-              )
+              <CatalogListSkeleton count={5} />
+            )
             : !programsData || programsData.programs.length === 0
-                ? (
-                    <div className="text-center py-8">
-                      <Database className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                      <h3 className="text-lg font-medium">Aucun programme trouvé</h3>
-                      <p className="text-muted-foreground">
-                        {search || yearFilter !== 'all' || subjectFilter !== 'all' || gradeFilter !== 'all'
-                          ? 'Essayez de modifier vos filtres de recherche.'
-                          : 'Commencez par créer votre premier programme.'}
-                      </p>
-                    </div>
-                  )
-                : (
-                    <div className="space-y-4">
-                      <AnimatePresence mode="popLayout">
-                        {programsData.programs.map((program: any) => (
-                          <motion.div
-                            key={program.id}
-                            layout
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                            transition={{ duration: 0.2 }}
-                            className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer"
-                            onClick={() => navigate({ to: `/app/catalogs/programs/${program.id}` })}
+              ? (
+                <div className="text-center py-8">
+                  <Database className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-medium">Aucun programme trouvé</h3>
+                  <p className="text-muted-foreground">
+                    {search || yearFilter !== 'all' || subjectFilter !== 'all' || gradeFilter !== 'all'
+                      ? 'Essayez de modifier vos filtres de recherche.'
+                      : 'Commencez par créer votre premier programme.'}
+                  </p>
+                </div>
+              )
+              : (
+                <div className="space-y-4">
+                  <AnimatePresence mode="popLayout">
+                    {programsData.programs.map((program: any) => (
+                      <motion.div
+                        key={program.id}
+                        layout
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.2 }}
+                        className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer"
+                        onClick={() => navigate({ to: `/app/catalogs/programs/${program.id}` })}
+                      >
+                        <div className="flex items-center gap-4 flex-1">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                            <BookOpen className="h-5 w-5 text-primary" />
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <h3 className="font-semibold">{program.name}</h3>
+                              {program.status === 'published' && (
+                                <Badge variant="default" className="text-xs">Publié</Badge>
+                              )}
+                              {program.status === 'draft' && (
+                                <Badge variant="secondary" className="text-xs">Brouillon</Badge>
+                              )}
+                              {program.status === 'archived' && (
+                                <Badge variant="outline" className="text-xs">Archivé</Badge>
+                              )}
+                              {program.schoolYearTemplate?.isActive && (
+                                <Badge variant="default" className="text-xs">Active</Badge>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
+                              <span>{program.subject?.name}</span>
+                              <span>•</span>
+                              <span>{program.grade?.name}</span>
+                              <span>•</span>
+                              <span>{program.schoolYearTemplate?.name}</span>
+                            </div>
+                          </div>
+                          <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                        </div>
+                        <div
+                          className="flex gap-2"
+                          onClick={e => e.stopPropagation()}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.stopPropagation()
+                              e.preventDefault()
+                            }
+                          }}
+                          role="toolbar"
+                        >
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setCloningProgram({ id: program.id, name: program.name })}
                           >
-                            <div className="flex items-center gap-4 flex-1">
-                              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                                <BookOpen className="h-5 w-5 text-primary" />
-                              </div>
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2">
-                                  <h3 className="font-semibold">{program.name}</h3>
-                                  {program.status === 'published' && (
-                                    <Badge variant="default" className="text-xs">Publié</Badge>
-                                  )}
-                                  {program.status === 'draft' && (
-                                    <Badge variant="secondary" className="text-xs">Brouillon</Badge>
-                                  )}
-                                  {program.status === 'archived' && (
-                                    <Badge variant="outline" className="text-xs">Archivé</Badge>
-                                  )}
-                                  {program.schoolYearTemplate?.isActive && (
-                                    <Badge variant="default" className="text-xs">Active</Badge>
-                                  )}
-                                </div>
-                                <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
-                                  <span>{program.subject?.name}</span>
-                                  <span>•</span>
-                                  <span>{program.grade?.name}</span>
-                                  <span>•</span>
-                                  <span>{program.schoolYearTemplate?.name}</span>
-                                </div>
-                              </div>
-                              <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                            </div>
-                            <div
-                              className="flex gap-2"
-                              onClick={e => e.stopPropagation()}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter' || e.key === ' ') {
-                                  e.stopPropagation()
-                                  e.preventDefault()
-                                }
-                              }}
-                              role="toolbar"
-                            >
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => setCloningProgram({ id: program.id, name: program.name })}
-                              >
-                                <Copy className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => setDeletingProgram({ id: program.id, name: program.name })}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </motion.div>
-                        ))}
-                      </AnimatePresence>
-                    </div>
-                  )}
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setDeletingProgram({ id: program.id, name: program.name })}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
+              )}
         </CardContent>
       </Card>
 

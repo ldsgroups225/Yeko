@@ -7,6 +7,7 @@ import {
   programTemplateVersions,
   schoolYearTemplates,
   subjects,
+  termTemplates,
 } from '@/drizzle/core-schema'
 
 interface ProgramSnapshot {
@@ -568,4 +569,117 @@ export async function getProgramStats() {
     chapters: chaptersCount?.count || 0,
     schoolYears: schoolYearsCount?.count || 0,
   }
+}
+
+// ===== TERM TEMPLATES =====
+
+export async function getTermTemplates(schoolYearTemplateId?: string) {
+  const db = getDb()
+
+  if (schoolYearTemplateId) {
+    return db
+      .select()
+      .from(termTemplates)
+      .where(eq(termTemplates.schoolYearTemplateId, schoolYearTemplateId))
+      .orderBy(asc(termTemplates.order))
+  }
+
+  return db
+    .select()
+    .from(termTemplates)
+    .orderBy(asc(termTemplates.order))
+}
+
+export async function getTermTemplateById(id: string) {
+  const db = getDb()
+  const [template] = await db
+    .select()
+    .from(termTemplates)
+    .where(eq(termTemplates.id, id))
+  return template || null
+}
+
+export async function createTermTemplate(
+  data: Omit<typeof termTemplates.$inferInsert, 'id' | 'createdAt' | 'updatedAt'>,
+) {
+  const db = getDb()
+  const [newTemplate] = await db
+    .insert(termTemplates)
+    .values({
+      id: crypto.randomUUID(),
+      ...data,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })
+    .returning()
+  return newTemplate!
+}
+
+export async function updateTermTemplate(
+  id: string,
+  data: Partial<Omit<typeof termTemplates.$inferInsert, 'id' | 'createdAt' | 'updatedAt'>>,
+) {
+  const db = getDb()
+  const [updated] = await db
+    .update(termTemplates)
+    .set({
+      ...data,
+      updatedAt: new Date(),
+    })
+    .where(eq(termTemplates.id, id))
+    .returning()
+
+  if (!updated) {
+    throw new Error(`Term template with id ${id} not found`)
+  }
+
+  return updated
+}
+
+export async function deleteTermTemplate(id: string) {
+  const db = getDb()
+  await db.delete(termTemplates).where(eq(termTemplates.id, id))
+}
+
+export async function bulkCreateTermTemplates(
+  schoolYearTemplateId: string,
+  terms: { name: string, type: 'trimester' | 'semester', order: number }[],
+) {
+  const db = getDb()
+  if (terms.length === 0)
+    return []
+
+  const values = terms.map(term => ({
+    id: crypto.randomUUID(),
+    ...term,
+    schoolYearTemplateId,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  }))
+
+  const newTerms = await db
+    .insert(termTemplates)
+    .values(values)
+    .returning()
+
+  return newTerms
+}
+
+export async function getSchoolYearTemplatesWithTerms() {
+  const db = getDb()
+
+  const years = await db
+    .select()
+    .from(schoolYearTemplates)
+    .orderBy(desc(schoolYearTemplates.isActive), desc(schoolYearTemplates.name))
+
+  const terms = await db
+    .select()
+    .from(termTemplates)
+    .orderBy(asc(termTemplates.order))
+
+  return years.map((year: typeof schoolYearTemplates.$inferSelect) => ({
+    ...year,
+    terms: terms.filter((t: typeof termTemplates.$inferSelect) => t.schoolYearTemplateId === year.id),
+  }))
 }

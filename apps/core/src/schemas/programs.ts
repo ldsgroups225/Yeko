@@ -15,6 +15,36 @@ export const SchoolYearTemplateIdSchema = z.object({
   id: z.string().min(1),
 })
 
+// ===== TERM TEMPLATES =====
+
+export const CreateTermTemplateSchema = z.object({
+  name: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
+  type: z.enum(['trimester', 'semester']),
+  order: z.number().int().min(1),
+  schoolYearTemplateId: z.string().min(1, 'L\'année scolaire est requise'),
+})
+
+export const UpdateTermTemplateSchema = CreateTermTemplateSchema.partial().merge(z.object({
+  id: z.string().min(1),
+}))
+
+export const TermTemplateIdSchema = z.object({
+  id: z.string().min(1),
+})
+
+export const GetTermTemplatesSchema = z.object({
+  schoolYearTemplateId: z.string().optional(),
+})
+
+export const BulkCreateTermTemplatesSchema = z.object({
+  schoolYearTemplateId: z.string().min(1),
+  terms: z.array(z.object({
+    name: z.string().min(2),
+    type: z.enum(['trimester', 'semester']),
+    order: z.number().int().min(1),
+  })),
+})
+
 // ===== PROGRAM TEMPLATES =====
 
 export const CreateProgramTemplateSchema = z.object({
@@ -95,6 +125,12 @@ export const RestoreProgramVersionSchema = z.object({
 export type CreateSchoolYearTemplateInput = z.infer<typeof CreateSchoolYearTemplateSchema>
 export type UpdateSchoolYearTemplateInput = z.infer<typeof UpdateSchoolYearTemplateSchema>
 export type SchoolYearTemplateIdInput = z.infer<typeof SchoolYearTemplateIdSchema>
+
+export type CreateTermTemplateInput = z.infer<typeof CreateTermTemplateSchema>
+export type UpdateTermTemplateInput = z.infer<typeof UpdateTermTemplateSchema>
+export type TermTemplateIdInput = z.infer<typeof TermTemplateIdSchema>
+export type GetTermTemplatesInput = z.infer<typeof GetTermTemplatesSchema>
+export type BulkCreateTermTemplatesInput = z.infer<typeof BulkCreateTermTemplatesSchema>
 
 export type CreateProgramTemplateInput = z.infer<typeof CreateProgramTemplateSchema>
 export type UpdateProgramTemplateInput = z.infer<typeof UpdateProgramTemplateSchema>

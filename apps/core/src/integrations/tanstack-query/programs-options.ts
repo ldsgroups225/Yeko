@@ -1,29 +1,36 @@
 import type {
   BulkCreateChaptersInput,
+  BulkCreateTermTemplatesInput,
   BulkUpdateChaptersOrderInput,
   CloneProgramTemplateInput,
   CreateProgramTemplateChapterInput,
   CreateProgramTemplateInput,
   CreateSchoolYearTemplateInput,
+  CreateTermTemplateInput,
   ProgramTemplateChapterIdInput,
   ProgramTemplateIdInput,
   PublishProgramInput,
   RestoreProgramVersionInput,
   SchoolYearTemplateIdInput,
+  TermTemplateIdInput,
   UpdateProgramTemplateChapterInput,
   UpdateProgramTemplateInput,
   UpdateSchoolYearTemplateInput,
+  UpdateTermTemplateInput,
 } from '@/schemas/programs'
 import {
   bulkCreateChaptersMutation,
+  bulkCreateTermTemplatesMutation,
   bulkUpdateChaptersOrderMutation,
   cloneProgramTemplateMutation,
   createProgramTemplateChapterMutation,
   createProgramTemplateMutation,
   createSchoolYearTemplateMutation,
+  createTermTemplateMutation,
   deleteProgramTemplateChapterMutation,
   deleteProgramTemplateMutation,
   deleteSchoolYearTemplateMutation,
+  deleteTermTemplateMutation,
   getProgramVersionsQuery,
   programStatsQuery,
   programTemplateByIdQuery,
@@ -34,9 +41,13 @@ import {
   restoreProgramVersionMutation,
   schoolYearTemplateByIdQuery,
   schoolYearTemplatesQuery,
+  schoolYearTemplatesWithTermsQuery,
+  termTemplateByIdQuery,
+  termTemplatesQuery,
   updateProgramTemplateChapterMutation,
   updateProgramTemplateMutation,
   updateSchoolYearTemplateMutation,
+  updateTermTemplateMutation,
 } from '@/core/functions/programs'
 
 // ===== SCHOOL YEAR TEMPLATES =====
@@ -187,6 +198,52 @@ export function programStatsQueryOptions() {
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 15,
   }
+}
+
+// ===== TERM TEMPLATES =====
+
+export function termTemplatesQueryOptions(schoolYearTemplateId?: string) {
+  return {
+    queryKey: ['term-templates', schoolYearTemplateId],
+    queryFn: () => termTemplatesQuery({ data: { schoolYearTemplateId } }),
+    staleTime: 1000 * 60 * 10,
+    gcTime: 1000 * 60 * 30,
+  }
+}
+
+export function termTemplateByIdQueryOptions(id: string) {
+  return {
+    queryKey: ['term-template', id],
+    queryFn: () => termTemplateByIdQuery({ data: { id } }),
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 15,
+    enabled: !!id,
+  }
+}
+
+export function schoolYearTemplatesWithTermsQueryOptions() {
+  return {
+    queryKey: ['school-year-templates-with-terms'],
+    queryFn: () => schoolYearTemplatesWithTermsQuery(),
+    staleTime: 1000 * 60 * 10,
+    gcTime: 1000 * 60 * 30,
+  }
+}
+
+export const createTermTemplateMutationOptions = {
+  mutationFn: (data: CreateTermTemplateInput) => createTermTemplateMutation({ data }),
+}
+
+export const updateTermTemplateMutationOptions = {
+  mutationFn: (data: UpdateTermTemplateInput) => updateTermTemplateMutation({ data }),
+}
+
+export const deleteTermTemplateMutationOptions = {
+  mutationFn: (data: TermTemplateIdInput) => deleteTermTemplateMutation({ data }),
+}
+
+export const bulkCreateTermTemplatesMutationOptions = {
+  mutationFn: (data: BulkCreateTermTemplatesInput) => bulkCreateTermTemplatesMutation({ data }),
 }
 
 // Export all as a single object for convenience

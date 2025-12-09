@@ -1,13 +1,16 @@
 import {
   bulkCreateChapters,
+  bulkCreateTermTemplates,
   bulkUpdateChaptersOrder,
   cloneProgramTemplate,
   createProgramTemplate,
   createProgramTemplateChapter,
   createSchoolYearTemplate,
+  createTermTemplate,
   deleteProgramTemplate,
   deleteProgramTemplateChapter,
   deleteSchoolYearTemplate,
+  deleteTermTemplate,
   getProgramStats,
   getProgramTemplateById,
   getProgramTemplateChapterById,
@@ -16,30 +19,39 @@ import {
   getProgramVersions,
   getSchoolYearTemplateById,
   getSchoolYearTemplates,
+  getSchoolYearTemplatesWithTerms,
+  getTermTemplateById,
+  getTermTemplates,
   publishProgram,
   restoreProgramVersion,
   updateProgramTemplate,
   updateProgramTemplateChapter,
   updateSchoolYearTemplate,
+  updateTermTemplate,
 } from '@repo/data-ops'
 import { createServerFn } from '@tanstack/react-start'
 import { exampleMiddlewareWithContext } from '@/core/middleware/example-middleware'
 import {
   BulkCreateChaptersSchema,
+  BulkCreateTermTemplatesSchema,
   BulkUpdateChaptersOrderSchema,
   CloneProgramTemplateSchema,
   CreateProgramTemplateChapterSchema,
   CreateProgramTemplateSchema,
   CreateSchoolYearTemplateSchema,
+  CreateTermTemplateSchema,
   GetProgramTemplatesSchema,
+  GetTermTemplatesSchema,
   ProgramTemplateChapterIdSchema,
   ProgramTemplateIdSchema,
   PublishProgramSchema,
   RestoreProgramVersionSchema,
   SchoolYearTemplateIdSchema,
+  TermTemplateIdSchema,
   UpdateProgramTemplateChapterSchema,
   UpdateProgramTemplateSchema,
   UpdateSchoolYearTemplateSchema,
+  UpdateTermTemplateSchema,
 } from '@/schemas/programs'
 
 // ===== SCHOOL YEAR TEMPLATES =====
@@ -209,4 +221,56 @@ export const programStatsQuery = createServerFn()
   .middleware([exampleMiddlewareWithContext])
   .handler(async () => {
     return await getProgramStats()
+  })
+
+// ===== TERM TEMPLATES =====
+
+export const termTemplatesQuery = createServerFn()
+  .middleware([exampleMiddlewareWithContext])
+  .inputValidator(data => GetTermTemplatesSchema.parse(data))
+  .handler(async (ctx) => {
+    return await getTermTemplates(ctx.data.schoolYearTemplateId)
+  })
+
+export const termTemplateByIdQuery = createServerFn()
+  .middleware([exampleMiddlewareWithContext])
+  .inputValidator(data => TermTemplateIdSchema.parse(data))
+  .handler(async (ctx) => {
+    return await getTermTemplateById(ctx.data.id)
+  })
+
+export const createTermTemplateMutation = createServerFn()
+  .middleware([exampleMiddlewareWithContext])
+  .inputValidator(data => CreateTermTemplateSchema.parse(data))
+  .handler(async (ctx) => {
+    return await createTermTemplate(ctx.data)
+  })
+
+export const updateTermTemplateMutation = createServerFn()
+  .middleware([exampleMiddlewareWithContext])
+  .inputValidator(data => UpdateTermTemplateSchema.parse(data))
+  .handler(async (ctx) => {
+    const { id, ...updateData } = ctx.data
+    return await updateTermTemplate(id, updateData)
+  })
+
+export const deleteTermTemplateMutation = createServerFn()
+  .middleware([exampleMiddlewareWithContext])
+  .inputValidator(data => TermTemplateIdSchema.parse(data))
+  .handler(async (ctx) => {
+    await deleteTermTemplate(ctx.data.id)
+    return { success: true, id: ctx.data.id }
+  })
+
+export const bulkCreateTermTemplatesMutation = createServerFn()
+  .middleware([exampleMiddlewareWithContext])
+  .inputValidator(data => BulkCreateTermTemplatesSchema.parse(data))
+  .handler(async (ctx) => {
+    return await bulkCreateTermTemplates(ctx.data.schoolYearTemplateId, ctx.data.terms)
+  })
+
+export const schoolYearTemplatesWithTermsQuery = createServerFn()
+  .middleware([exampleMiddlewareWithContext])
+  .handler(async () => {
+    return await getSchoolYearTemplatesWithTerms()
   })
