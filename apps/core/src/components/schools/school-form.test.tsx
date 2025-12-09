@@ -779,7 +779,7 @@ describe('schoolForm Component', () => {
   })
 
   describe('logo Preview Tests', () => {
-    it.todo('should show logo preview when logoUrl is provided', () => {
+    test.todo('should show logo preview when logoUrl is provided', () => {
       // Update watch mock to return a logoUrl
       mockForm.watch = vi.fn((field: string) => {
         if (field === 'logoUrl')

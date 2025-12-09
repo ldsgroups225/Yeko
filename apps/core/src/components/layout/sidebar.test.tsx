@@ -146,7 +146,7 @@ describe('sidebar Component', () => {
       expect(icons.length).toBeGreaterThan(0)
     })
 
-    it.todo('should show active state indicators correctly', () => {
+    test.todo('should show active state indicators correctly', () => {
       mockRouterState.location.pathname = '/app/dashboard'
       render(<Sidebar />)
 
@@ -200,7 +200,7 @@ describe('sidebar Component', () => {
       }
     })
 
-    it.todo('should collapse sidebar and persist state', async () => {
+    test.todo('should collapse sidebar and persist state', async () => {
       const user = userEvent.setup()
       render(<Sidebar />)
 
@@ -246,7 +246,7 @@ describe('sidebar Component', () => {
   })
 
   describe('active State Logic', () => {
-    it.todo('should highlight dashboard as active when on dashboard route', () => {
+    test.todo('should highlight dashboard as active when on dashboard route', () => {
       mockRouterState.location.pathname = '/app/dashboard'
       render(<Sidebar />)
 
@@ -254,7 +254,7 @@ describe('sidebar Component', () => {
       expect(dashboardButton).toHaveClass('bg-primary')
     })
 
-    it.todo('should highlight schools as active when on schools route', () => {
+    test.todo('should highlight schools as active when on schools route', () => {
       mockRouterState.location.pathname = '/app/schools'
       render(<Sidebar />)
 
@@ -274,7 +274,7 @@ describe('sidebar Component', () => {
       expect(catalogsButton).toHaveClass('flex-1')
     })
 
-    it.todo('should highlight analytics as active when on analytics route', () => {
+    test.todo('should highlight analytics as active when on analytics route', () => {
       mockRouterState.location.pathname = '/app/analytics'
       render(<Sidebar />)
 
@@ -327,7 +327,7 @@ describe('sidebar Component', () => {
   })
 
   describe('accessibility', () => {
-    it.todo('should have proper button roles for navigation', () => {
+    test.todo('should have proper button roles for navigation', () => {
       render(<Sidebar />)
 
       const buttons = screen.getAllByRole('button')
@@ -413,14 +413,14 @@ describe('sidebar Component', () => {
   })
 
   describe('component Structure', () => {
-    it.todo('should render ScrollArea for navigation', () => {
+    test.todo('should render ScrollArea for navigation', () => {
       render(<Sidebar />)
 
       const scrollArea = screen.getByTestId('scroll-area')
       expect(scrollArea).toBeInTheDocument()
     })
 
-    it.todo('should have proper navigation structure', () => {
+    test.todo('should have proper navigation structure', () => {
       render(<Sidebar />)
 
       // Should have nav element with proper spacing
