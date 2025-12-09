@@ -80,10 +80,10 @@ const navigationItems: NavigationItem[] = [
         description: 'Filières d\'études',
       },
       {
-        name: 'Notes',
+        name: 'Niveaux',
         icon: Award,
         href: '/app/catalogs/grades',
-        description: 'Système de notation',
+        description: 'Niveaux et séries',
       },
       {
         name: 'Coefficients',
