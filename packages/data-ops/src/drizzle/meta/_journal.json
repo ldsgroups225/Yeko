@@ -5,36 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1764684869122,
-      "tag": "0000_spooky_falcon",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1764835304234,
-      "tag": "0001_needy_machine_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1764967814438,
-      "tag": "0002_mean_giant_girl",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1733400000000,
-      "tag": "0003_enrollment_unique_constraint",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1765016021458,
-      "tag": "0004_special_maximus",
+      "when": 1765296712763,
+      "tag": "0000_nifty_liz_osborn",
       "breakpoints": true
     }
   ]
