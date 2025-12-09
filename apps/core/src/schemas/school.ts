@@ -18,7 +18,10 @@ export const CreateSchoolSchema = z.object({
     .refine(val => !val || /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/.test(val), 'Email invalide'),
   logoUrl: z.string()
     .optional()
-    .refine(val => !val || /^https?:\/\/.+/.test(val), 'URL invalide pour le logo'),
+    .refine(
+      val => !val || /^https?:\/\/.+/.test(val) || /^data:image\/.+;base64,.+/.test(val),
+      'URL ou image invalide pour le logo',
+    ),
   status: z.enum(['active', 'inactive', 'suspended'])
     .default('active'),
   settings: z.record(z.string(), z.unknown()).default({}),

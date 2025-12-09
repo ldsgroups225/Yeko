@@ -1,12 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, Save, School } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { checkStorageConfigured, getPresignedUploadUrl } from '@/core/functions/storage'
 import { CreateSchoolSchema } from '@/schemas/school'
 
 interface SchoolFormProps {
@@ -26,6 +27,11 @@ export function SchoolForm({
 }: SchoolFormProps) {
   'use no memo'
 
+  const [storageConfigured, setStorageConfigured] = useState<boolean | null>(null)
+  const [isUploading, setIsUploading] = useState(false)
+  const [uploadError, setUploadError] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
   const form = useForm({
     resolver: zodResolver(CreateSchoolSchema),
     defaultValues: defaultValues || {
@@ -39,12 +45,77 @@ export function SchoolForm({
   const status = useWatch({ control, name: 'status' })
   const logoUrl = useWatch({ control, name: 'logoUrl' })
 
+  // Check if R2 storage is configured on mount
+  useEffect(() => {
+    checkStorageConfigured().then((result) => {
+      setStorageConfigured(result.configured)
+    }).catch(() => {
+      setStorageConfigured(false)
+    })
+  }, [])
+
   // Reset form when defaultValues change (for edit mode)
   useEffect(() => {
     if (defaultValues) {
       reset(defaultValues)
     }
   }, [defaultValues, reset])
+
+  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file)
+      return
+
+    setUploadError(null)
+    setIsUploading(true)
+
+    try {
+      // Get presigned URL from server
+      const result = await getPresignedUploadUrl({
+        data: {
+          filename: file.name,
+          contentType: file.type,
+          fileSize: file.size,
+          folder: 'logos',
+        },
+      })
+
+      if (!result.success) {
+        setUploadError(result.error)
+        setIsUploading(false)
+        return
+      }
+
+      // Upload file directly to R2
+      const uploadResponse = await fetch(result.presignedUrl, {
+        method: 'PUT',
+        body: file,
+        headers: {
+          'Content-Type': file.type,
+        },
+      })
+
+      if (!uploadResponse.ok) {
+        setUploadError('Erreur lors du téléversement du fichier.')
+        setIsUploading(false)
+        return
+      }
+
+      // Set the public URL in the form
+      setValue('logoUrl', result.publicUrl)
+      setIsUploading(false)
+    }
+    catch (error) {
+      console.error('Upload error:', error)
+      setUploadError('Erreur lors du téléversement du fichier.')
+      setIsUploading(false)
+    }
+
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -130,28 +201,28 @@ export function SchoolForm({
                 <div className="shrink-0">
                   {logoUrl
                     ? (
-                        <div className="relative w-24 h-24 border-2 border-dashed rounded-lg overflow-hidden">
-                          <img
-                            src={logoUrl}
-                            alt="Logo preview"
-                            className="w-full h-full object-cover"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setValue('logoUrl', '')}
-                            className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-1 hover:bg-destructive/90"
-                          >
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                          </button>
-                        </div>
-                      )
+                      <div className="relative w-24 h-24 border-2 border-dashed rounded-lg overflow-hidden">
+                        <img
+                          src={logoUrl}
+                          alt="Logo preview"
+                          className="w-full h-full object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setValue('logoUrl', '')}
+                          className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-1 hover:bg-destructive/90"
+                        >
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                    )
                     : (
-                        <div className="w-24 h-24 border-2 border-dashed rounded-lg flex items-center justify-center bg-muted">
-                          <School className="h-8 w-8 text-muted-foreground" />
-                        </div>
-                      )}
+                      <div className="w-24 h-24 border-2 border-dashed rounded-lg flex items-center justify-center bg-muted">
+                        <School className="h-8 w-8 text-muted-foreground" />
+                      </div>
+                    )}
                 </div>
 
                 {/* Upload options */}
@@ -160,28 +231,36 @@ export function SchoolForm({
                     <Label htmlFor="logoFile" className="text-sm text-muted-foreground">
                       Télécharger un fichier
                     </Label>
-                    <Input
-                      id="logoFile"
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0]
-                        if (file) {
-                          // Validate file size (max 2MB)
-                          if (file.size > 2 * 1024 * 1024) {
-                            console.error('Le fichier est trop volumineux. Taille maximale: 2MB')
-                            return
-                          }
-                          // Convert to base64
-                          const reader = new FileReader()
-                          reader.onloadend = () => {
-                            setValue('logoUrl', reader.result as string)
-                          }
-                          reader.readAsDataURL(file)
-                        }
-                      }}
-                      className="cursor-pointer"
-                    />
+                    <div className="flex gap-2">
+                      <Input
+                        ref={fileInputRef}
+                        id="logoFile"
+                        type="file"
+                        accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml"
+                        disabled={storageConfigured === false || isUploading}
+                        onChange={handleFileSelect}
+                        className={storageConfigured === false ? 'cursor-not-allowed opacity-50' : ''}
+                      />
+                      {isUploading && (
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <span>Téléversement...</span>
+                        </div>
+                      )}
+                    </div>
+                    {storageConfigured === false && (
+                      <p className="text-xs text-muted-foreground">
+                        Le téléversement de fichiers n'est pas configuré. Utilisez une URL pour l'instant.
+                      </p>
+                    )}
+                    {storageConfigured === null && (
+                      <p className="text-xs text-muted-foreground">
+                        Vérification de la configuration...
+                      </p>
+                    )}
+                    {uploadError && (
+                      <p className="text-xs text-destructive">{uploadError}</p>
+                    )}
                   </div>
                   <div className="relative">
                     <div className="absolute inset-0 flex items-center">
@@ -241,20 +320,20 @@ export function SchoolForm({
         >
           Annuler
         </Button>
-        <Button type="submit" disabled={isSubmitting} className="gap-2">
+        <Button type="submit" disabled={isSubmitting || isUploading} className="gap-2">
           {isSubmitting
             ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  {mode === 'create' ? 'Création en cours...' : 'Enregistrement...'}
-                </>
-              )
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                {mode === 'create' ? 'Création en cours...' : 'Enregistrement...'}
+              </>
+            )
             : (
-                <>
-                  <Save className="h-4 w-4" />
-                  {mode === 'create' ? 'Créer l\'École' : 'Enregistrer les modifications'}
-                </>
-              )}
+              <>
+                <Save className="h-4 w-4" />
+                {mode === 'create' ? 'Créer l\'École' : 'Enregistrer les modifications'}
+              </>
+            )}
         </Button>
       </div>
     </form>
