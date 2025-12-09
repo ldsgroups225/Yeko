@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { Edit, GraduationCap, Trash2, Users } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { ClassSubjectManager } from '@/components/academic/class-subjects/class-subject-manager'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
@@ -9,6 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { deleteClass, getClassById } from '@/school/functions/classes'
 
@@ -17,6 +19,7 @@ export const Route = createFileRoute('/_auth/app/academic/classes/$classId/')({
 })
 
 function ClassDetailPage() {
+  const { t } = useTranslation()
   const { classId } = Route.useParams()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -31,18 +34,28 @@ function ClassDetailPage() {
     mutationFn: () => deleteClass({ data: classId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['classes'] })
-      toast.success('Classe supprimée')
+      toast.success(t('academic.classes.deleteSuccess'))
       navigate({ to: '/app/academic/classes' })
     },
     onError: (error: any) => {
-      toast.error(error.message || 'Erreur lors de la suppression')
+      toast.error(error.message || t('academic.classes.deleteError'))
     },
   })
 
   if (isLoading) {
     return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      <div className="space-y-6">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-4">
+            <Skeleton className="h-16 w-16 rounded-full" />
+            <div className="space-y-2">
+              <Skeleton className="h-8 w-48" />
+              <Skeleton className="h-4 w-24" />
+            </div>
+          </div>
+          <Skeleton className="h-10 w-32" />
+        </div>
+        <Skeleton className="h-[400px] w-full" />
       </div>
     )
   }
@@ -51,9 +64,9 @@ function ClassDetailPage() {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-center">
-          <p className="text-lg font-medium">Classe non trouvée</p>
+          <p className="text-lg font-medium">{t('academic.classes.notFound')}</p>
           <Button asChild className="mt-4">
-            <Link to="/app/academic/classes">Retour</Link>
+            <Link to="/app/academic/classes">{t('common.back')}</Link>
           </Button>
         </div>
       </div>
@@ -67,8 +80,8 @@ function ClassDetailPage() {
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: 'Académique', href: '/app/academic/classes' },
-          { label: 'Classes', href: '/app/academic/classes' },
+          { label: t('nav.academic'), href: '/app/academic' },
+          { label: t('nav.classes'), href: '/app/academic/classes' },
           { label: className },
         ]}
       />
@@ -80,36 +93,48 @@ function ClassDetailPage() {
           </div>
           <div>
             <h1 className="text-3xl font-bold tracking-tight">{className}</h1>
-            {classroom && <p className="text-muted-foreground">{classroom.name}</p>}
+            {classroom
+              ? (
+                <Link
+                  to="/app/spaces/classrooms/$classroomId"
+                  params={{ classroomId: classroom.id }}
+                  className="text-muted-foreground hover:underline"
+                >
+                  {classroom.name}
+                </Link>
+              )
+              : (
+                <p className="text-muted-foreground">{t('academic.classes.noClassroom')}</p>
+              )}
           </div>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={() => setShowDeleteDialog(true)}>
             <Trash2 className="mr-2 h-4 w-4" />
-            Supprimer
+            {t('common.delete')}
           </Button>
           <Button
             size="sm"
             onClick={() => navigate({ to: '/app/academic/classes/$classId/edit', params: { classId } })}
           >
             <Edit className="mr-2 h-4 w-4" />
-            Modifier
+            {t('common.edit')}
           </Button>
         </div>
       </div>
 
       <Tabs defaultValue="info" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="info">Informations</TabsTrigger>
-          <TabsTrigger value="students">Élèves</TabsTrigger>
-          <TabsTrigger value="teachers">Enseignants</TabsTrigger>
+          <TabsTrigger value="info">{t('academic.classes.tabs.info')}</TabsTrigger>
+          <TabsTrigger value="students">{t('academic.classes.tabs.students')}</TabsTrigger>
+          <TabsTrigger value="teachers">{t('academic.classes.tabs.teachers')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="info" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-3">
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Élèves</CardTitle>
+                <CardTitle className="text-sm font-medium text-muted-foreground">{t('academic.classes.stats.students')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center gap-2">
@@ -121,72 +146,61 @@ function ClassDetailPage() {
                   </span>
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {boysCount}
-                  {' '}
-                  garçons,
-                  {girlsCount}
-                  {' '}
-                  filles
+                  {t('academic.classes.stats.genderBreakdown', { boys: boysCount, girls: girlsCount })}
                 </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Statut</CardTitle>
+                <CardTitle className="text-sm font-medium text-muted-foreground">{t('academic.classes.status')}</CardTitle>
               </CardHeader>
               <CardContent>
-                <Badge variant={classData.status === 'active' ? 'default' : 'secondary'} className="text-sm">
-                  {classData.status === 'active' ? 'Active' : 'Archivée'}
+                <Badge variant={classData.status === 'active' ? 'default' : 'secondary'}>
+                  {classData.status === 'active' ? t('common.active') : t('common.archived')}
                 </Badge>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Salle</CardTitle>
+                <CardTitle className="text-sm font-medium text-muted-foreground">{t('academic.classes.room')}</CardTitle>
               </CardHeader>
               <CardContent>
                 {classroom
                   ? (
-                      <Link
-                        to="/app/spaces/classrooms/$classroomId"
-                        params={{ classroomId: classroom.id }}
-                        className="text-primary hover:underline"
-                      >
-                        {classroom.name}
-                      </Link>
-                    )
+                    <span className="text-lg font-medium">{classroom.name}</span>
+                  )
                   : (
-                      <span className="text-muted-foreground">Non assignée</span>
-                    )}
+                    <span className="text-lg font-medium text-muted-foreground">-</span>
+                  )}
               </CardContent>
             </Card>
           </div>
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Détails</CardTitle>
+              <CardTitle>{t('academic.classes.details')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-6 md:grid-cols-2">
                 <div>
-                  <p className="text-sm text-muted-foreground">Niveau</p>
-                  <p className="font-medium">{grade.name}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('academic.classes.grade')}</p>
+                  <p className="text-base">{grade.name}</p>
                 </div>
                 {series && (
                   <div>
-                    <p className="text-sm text-muted-foreground">Série</p>
-                    <p className="font-medium">{series.name}</p>
+                    <p className="text-sm font-medium text-muted-foreground">{t('academic.classes.series')}</p>
+                    <p className="text-base">{series.name}</p>
                   </div>
                 )}
                 <div>
-                  <p className="text-sm text-muted-foreground">Section</p>
-                  <p className="font-medium">{classData.section}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('academic.classes.section')}</p>
+                  <p className="text-base">{classData.section}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Professeur principal</p>
-                  <p className="font-medium">{homeroomTeacher?.name || 'Non assigné'}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('academic.classes.homeroomTeacher')}</p>
+                  <p className="text-base">{homeroomTeacher?.name || t('common.unassigned')}</p>
                 </div>
               </div>
             </CardContent>
@@ -196,15 +210,18 @@ function ClassDetailPage() {
         <TabsContent value="students" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Élèves inscrits</CardTitle>
+              <CardTitle>{t('academic.classes.tabs.students')}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">
-                {studentsCount > 0
-                  ? `${studentsCount} élève(s) inscrit(s) dans cette classe.`
-                  : 'Aucun élève inscrit dans cette classe.'}
-              </p>
-              {/* TODO: Add student list when enrollment module is ready */}
+              {/* Placeholder for future implementation */}
+              <div className="flex flex-col items-center justify-center py-8 text-center">
+                <Users className="h-10 w-10 text-muted-foreground/50" />
+                <p className="mt-2 text-muted-foreground">
+                  {studentsCount > 0
+                    ? t('academic.classes.studentsList.enrolledCount', { count: studentsCount })
+                    : t('academic.classes.studentsList.empty')}
+                </p>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -217,8 +234,8 @@ function ClassDetailPage() {
       <DeleteConfirmationDialog
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
-        title="Supprimer la classe"
-        description="Cette action est irréversible. La classe sera définitivement supprimée."
+        title={t('academic.classes.deleteTitle')}
+        description={t('academic.classes.deleteDescription')}
         confirmText={className}
         onConfirm={() => deleteMutation.mutate()}
         isLoading={deleteMutation.isPending}

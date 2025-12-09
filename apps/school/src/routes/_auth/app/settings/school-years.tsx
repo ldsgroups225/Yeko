@@ -165,94 +165,100 @@ function SchoolYearsSettingsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {isLoading ? (
-            <div className="space-y-2">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <Skeleton key={i} className="h-12 w-full" />
-              ))}
-            </div>
-          ) : schoolYears && schoolYears.length > 0 ? (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t('settings.schoolYears.name')}</TableHead>
-                  <TableHead>{t('settings.schoolYears.startDate')}</TableHead>
-                  <TableHead>{t('settings.schoolYears.endDate')}</TableHead>
-                  <TableHead>{t('settings.schoolYears.status')}</TableHead>
-                  <TableHead className="text-right">{t('common.actions')}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {schoolYears.map(year => (
-                  <TableRow key={year.id}>
-                    <TableCell className="font-medium">
-                      {year.template?.name || 'N/A'}
-                    </TableCell>
-                    <TableCell>
-                      {format(new Date(year.startDate), 'dd MMM yyyy', { locale: fr })}
-                    </TableCell>
-                    <TableCell>
-                      {format(new Date(year.endDate), 'dd MMM yyyy', { locale: fr })}
-                    </TableCell>
-                    <TableCell>
-                      {year.isActive ? (
-                        <Badge variant="default" className="gap-1">
-                          <CheckCircle2 className="h-3 w-3" />
-                          {t('settings.schoolYears.active')}
-                        </Badge>
-                      ) : (
-                        <Badge variant="secondary">
-                          {t('settings.schoolYears.inactive')}
-                        </Badge>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          {!year.isActive && (
-                            <DropdownMenuItem
-                              onClick={() => setActiveMutation.mutate(year.id)}
-                              disabled={setActiveMutation.isPending}
-                            >
-                              <CheckCircle2 className="mr-2 h-4 w-4" />
-                              {t('settings.schoolYears.setActive')}
-                            </DropdownMenuItem>
-                          )}
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            className="text-destructive"
-                            onClick={() => setDeleteConfirmId(year.id)}
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            {t('common.delete')}
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
+          {isLoading
+            ? (
+              <div className="space-y-2">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <Skeleton key={i} className="h-12 w-full" />
                 ))}
-              </TableBody>
-            </Table>
-          ) : (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <Calendar className="h-12 w-12 text-muted-foreground" />
-              <h3 className="mt-4 text-lg font-semibold">
-                {t('settings.schoolYears.empty')}
-              </h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                {t('settings.schoolYears.emptyDescription')}
-              </p>
-              <Button className="mt-4" onClick={() => setIsCreateDialogOpen(true)}>
-                <Plus className="mr-2 h-4 w-4" />
-                {t('settings.schoolYears.create')}
-              </Button>
-            </div>
-          )}
+              </div>
+            )
+            : schoolYears && schoolYears.length > 0
+              ? (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>{t('settings.schoolYears.name')}</TableHead>
+                      <TableHead>{t('settings.schoolYears.startDate')}</TableHead>
+                      <TableHead>{t('settings.schoolYears.endDate')}</TableHead>
+                      <TableHead>{t('settings.schoolYears.status')}</TableHead>
+                      <TableHead className="text-right">{t('common.actions')}</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {schoolYears.map((year: any) => (
+                      <TableRow key={year.id}>
+                        <TableCell className="font-medium">
+                          {year.template?.name || 'N/A'}
+                        </TableCell>
+                        <TableCell>
+                          {format(new Date(year.startDate), 'dd MMM yyyy', { locale: fr })}
+                        </TableCell>
+                        <TableCell>
+                          {format(new Date(year.endDate), 'dd MMM yyyy', { locale: fr })}
+                        </TableCell>
+                        <TableCell>
+                          {year.isActive
+                            ? (
+                              <Badge variant="default" className="gap-1">
+                                <CheckCircle2 className="h-3 w-3" />
+                                {t('settings.schoolYears.active')}
+                              </Badge>
+                            )
+                            : (
+                              <Badge variant="secondary">
+                                {t('settings.schoolYears.inactive')}
+                              </Badge>
+                            )}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              {!year.isActive && (
+                                <DropdownMenuItem
+                                  onClick={() => setActiveMutation.mutate(year.id)}
+                                  disabled={setActiveMutation.isPending}
+                                >
+                                  <CheckCircle2 className="mr-2 h-4 w-4" />
+                                  {t('settings.schoolYears.setActive')}
+                                </DropdownMenuItem>
+                              )}
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                className="text-destructive"
+                                onClick={() => setDeleteConfirmId(year.id)}
+                              >
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                {t('common.delete')}
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )
+              : (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <Calendar className="h-12 w-12 text-muted-foreground" />
+                  <h3 className="mt-4 text-lg font-semibold">
+                    {t('settings.schoolYears.empty')}
+                  </h3>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {t('settings.schoolYears.emptyDescription')}
+                  </p>
+                  <Button className="mt-4" onClick={() => setIsCreateDialogOpen(true)}>
+                    <Plus className="mr-2 h-4 w-4" />
+                    {t('settings.schoolYears.create')}
+                  </Button>
+                </div>
+              )}
         </CardContent>
       </Card>
 
@@ -291,7 +297,6 @@ function SchoolYearsSettingsPage() {
   )
 }
 
-
 interface CreateSchoolYearDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -305,6 +310,13 @@ function CreateSchoolYearDialog({ open, onOpenChange, templates }: CreateSchoolY
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [isActive, setIsActive] = useState(false)
+
+  const resetForm = () => {
+    setTemplateId('')
+    setStartDate('')
+    setEndDate('')
+    setIsActive(false)
+  }
 
   const createMutation = useMutation({
     mutationFn: () =>
@@ -329,13 +341,6 @@ function CreateSchoolYearDialog({ open, onOpenChange, templates }: CreateSchoolY
       toast.error(t('settings.schoolYears.createdError'))
     },
   })
-
-  const resetForm = () => {
-    setTemplateId('')
-    setStartDate('')
-    setEndDate('')
-    setIsActive(false)
-  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()

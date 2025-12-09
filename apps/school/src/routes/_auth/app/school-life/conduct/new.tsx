@@ -1,13 +1,14 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { ArrowLeft } from 'lucide-react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { ConductRecordForm } from '@/components/conduct/conduct-record-form'
-import { Button } from '@/components/ui/button'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { createRecord } from '@/school/functions/conduct-records'
+import { getSchoolYears } from '@/school/functions/school-years'
 
 export const Route = createFileRoute('/_auth/app/school-life/conduct/new')({
   component: NewConductRecordPage,
@@ -17,6 +18,16 @@ function NewConductRecordPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const { schoolYearId: contextSchoolYearId } = useSchoolYearContext()
+
+  const { data: schoolYears } = useQuery({
+    queryKey: ['school-years'],
+    queryFn: () => getSchoolYears(),
+  })
+
+  // Find the active school year or use context school year
+  const activeSchoolYear = schoolYears?.find((sy: any) => sy.isActive)
+  const effectiveSchoolYearId = contextSchoolYearId || activeSchoolYear?.id
 
   const mutation = useMutation({
     mutationFn: createRecord,
@@ -42,13 +53,15 @@ function NewConductRecordPage() {
     location?: string
     witnesses?: string
   }) => {
-    // TODO: Get schoolYearId from context
-    const schoolYearId = 'current-year'
+    if (!effectiveSchoolYearId) {
+      toast.error(t('errors.noSchoolYear'))
+      return
+    }
 
     mutation.mutate({
       data: {
         studentId: data.studentId,
-        schoolYearId,
+        schoolYearId: effectiveSchoolYearId,
         type: data.type,
         category: data.category as 'behavior' | 'academic' | 'attendance' | 'uniform' | 'property' | 'violence' | 'bullying' | 'cheating' | 'achievement' | 'improvement' | 'other',
         title: data.title,
@@ -67,15 +80,17 @@ function NewConductRecordPage() {
   }
 
   return (
-    <div className="container py-6">
-      <div className="mb-6">
-        <Link to="/app/school-life/conduct">
-          <Button variant="ghost" size="sm" className="mb-4">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            {t('common.back')}
-          </Button>
-        </Link>
-        <h1 className="text-2xl font-bold">{t('conduct.newRecord')}</h1>
+    <div className="space-y-6">
+      <Breadcrumbs
+        items={[
+          { label: t('nav.schoolLife'), href: '/app/school-life' },
+          { label: t('nav.conduct'), href: '/app/school-life/conduct' },
+          { label: t('conduct.newRecord') },
+        ]}
+      />
+
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">{t('conduct.newRecord')}</h1>
         <p className="text-muted-foreground">{t('conduct.newRecordDescription')}</p>
       </div>
 

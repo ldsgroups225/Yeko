@@ -63,7 +63,7 @@ export function TransferDialog({
   const { t } = useTranslation()
   const queryClient = useQueryClient()
 
-  const { data: classesData } = useQuery({
+  const { data: classesData, isLoading: classesLoading } = useQuery({
     ...classesOptions.list({ schoolYearId }),
     enabled: open && !!schoolYearId,
   })
@@ -100,12 +100,26 @@ export function TransferDialog({
   })
 
   const onSubmit = (data: TransferFormData) => {
+    // Prevent transferring to the same class
+    const selectedClass = classesData?.find((c: any) => c.class.id === data.newClassId)
+    const newClassName = selectedClass
+      ? `${selectedClass.grade?.name} ${selectedClass.class.section}${selectedClass.series?.name ? ` (${selectedClass.series.name})` : ''}`
+      : ''
+
+    if (newClassName === currentClassName) {
+      form.setError('newClassId', {
+        type: 'manual',
+        message: t('students.cannotTransferToSameClass')
+      })
+      return
+    }
+
     transferMutation.mutate(data)
   }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>{t('students.transferStudent')}</DialogTitle>
           <DialogDescription>
@@ -123,20 +137,20 @@ export function TransferDialog({
                   <FormLabel>
                     {t('students.newClass')}
                     {' '}
-                    *
+                    <span className="text-destructive">*</span>
                   </FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder={t('students.selectNewClass')} />
+                        <SelectValue placeholder={classesLoading ? t('common.loading') : t('students.selectNewClass')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {classesData?.data?.map((cls: any) => (
-                        <SelectItem key={cls.id} value={cls.id}>
+                      {classesData?.map((cls: any) => (
+                        <SelectItem key={cls.class.id} value={cls.class.id}>
                           {cls.grade?.name}
                           {' '}
-                          {cls.section}
+                          {cls.class.section}
                           {cls.series?.name && ` (${cls.series.name})`}
                         </SelectItem>
                       ))}
@@ -155,7 +169,7 @@ export function TransferDialog({
                   <FormLabel>
                     {t('students.effectiveDate')}
                     {' '}
-                    *
+                    <span className="text-destructive">*</span>
                   </FormLabel>
                   <FormControl>
                     <Input type="date" {...field} />
@@ -175,6 +189,8 @@ export function TransferDialog({
                   <FormControl>
                     <Textarea
                       placeholder={t('students.transferReasonPlaceholder')}
+                      className="resize-none"
+                      rows={3}
                       {...field}
                     />
                   </FormControl>

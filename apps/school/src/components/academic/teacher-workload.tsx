@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { AlertTriangle, CheckCircle, Clock, Plus, User, Users } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -43,6 +44,7 @@ function WorkloadSkeleton() {
 }
 
 function EmptyState() {
+  const { t } = useTranslation()
   return (
     <Card>
       <CardContent className="p-8">
@@ -51,15 +53,15 @@ function EmptyState() {
             <Users className="h-8 w-8 text-muted-foreground" />
           </div>
           <div className="space-y-2">
-            <h3 className="text-lg font-semibold">Aucun enseignant</h3>
+            <h3 className="text-lg font-semibold">{t('workload.emptyTitle')}</h3>
             <p className="text-sm text-muted-foreground max-w-md">
-              Ajoutez des enseignants pour suivre leur charge de travail et gérer les affectations.
+              {t('workload.emptyDescription')}
             </p>
           </div>
           <Button asChild className="mt-2">
             <a href="/app/hr/teachers">
               <Plus className="mr-2 h-4 w-4" />
-              Ajouter un enseignant
+              {t('teachers.add')}
             </a>
           </Button>
         </div>
@@ -69,9 +71,10 @@ function EmptyState() {
 }
 
 export function TeacherWorkload() {
+  const { t } = useTranslation()
   const { data: schoolYear, isLoading: schoolYearLoading } = useQuery({
     queryKey: ['activeSchoolYear'],
-    queryFn: () => getActiveSchoolYear({ data: {} }),
+    queryFn: () => getActiveSchoolYear(),
   })
 
   const { data: teachersData, isLoading: teachersLoading } = useQuery({
@@ -116,29 +119,26 @@ export function TeacherWorkload() {
   const overloadedTeachers = teacherWorkloads.filter(tw => tw.isOverloaded)
 
   return (
-    <div className="space-y-6" role="region" aria-label="Charge de travail des enseignants">
+    <div className="space-y-6" role="region" aria-label={t('workload.ariaLabel')}>
       {overloadedTeachers.length > 0 && (
         <Alert variant="destructive" role="alert">
           <AlertTriangle className="h-4 w-4" aria-hidden="true" />
-          <AlertTitle>Surcharge détectée</AlertTitle>
+          <AlertTitle>{t('workload.overloadDetected')}</AlertTitle>
           <AlertDescription>
             {overloadedTeachers.length}
             {' '}
-            enseignant(s) dépassent
-            {' '}
-            {MAX_HOURS_PER_WEEK}
-            h/semaine.
+            {t('workload.teachersExceedingMax', { maxHours: MAX_HOURS_PER_WEEK })}
           </AlertDescription>
         </Alert>
       )}
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" role="list" aria-label="Liste des enseignants">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" role="list" aria-label={t('teachers.list')}>
         {teacherWorkloads.map(({ teacher, totalHours, classCount, isOverloaded }) => (
           <Card
             key={teacher.id}
             className={isOverloaded ? 'border-destructive' : ''}
             role="listitem"
-            aria-label={`${teacher.user.name} - ${totalHours}h/semaine - ${isOverloaded ? 'Surchargé' : 'OK'}`}
+            aria-label={`${teacher.user.name} - ${totalHours}h/${t('common.week')} - ${isOverloaded ? t('workload.overloaded') : 'OK'}`}
           >
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center justify-between text-base">
@@ -148,28 +148,28 @@ export function TeacherWorkload() {
                 </span>
                 {isOverloaded
                   ? (
-                      <Badge variant="destructive">
-                        <AlertTriangle className="h-3 w-3 mr-1" aria-hidden="true" />
-                        Surchargé
-                      </Badge>
-                    )
+                    <Badge variant="destructive">
+                      <AlertTriangle className="h-3 w-3 mr-1" aria-hidden="true" />
+                      {t('workload.overloaded')}
+                    </Badge>
+                  )
                   : totalHours > 0
                     ? (
-                        <Badge variant="secondary">
-                          <CheckCircle className="h-3 w-3 mr-1" aria-hidden="true" />
-                          OK
-                        </Badge>
-                      )
+                      <Badge variant="secondary">
+                        <CheckCircle className="h-3 w-3 mr-1" aria-hidden="true" />
+                        OK
+                      </Badge>
+                    )
                     : (
-                        <Badge variant="outline">Non assigné</Badge>
-                      )}
+                      <Badge variant="outline">{t('workload.notAssigned')}</Badge>
+                    )}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-center justify-between text-sm">
                 <span className="flex items-center gap-1 text-muted-foreground">
                   <Clock className="h-4 w-4" aria-hidden="true" />
-                  Heures/semaine
+                  {t('workload.hoursPerWeek')}
                 </span>
                 <span className={`font-medium ${isOverloaded ? 'text-destructive' : ''}`}>
                   {totalHours}
@@ -181,12 +181,12 @@ export function TeacherWorkload() {
               <Progress
                 value={(totalHours / MAX_HOURS_PER_WEEK) * 100}
                 className={isOverloaded ? '[&>div]:bg-destructive' : ''}
-                aria-label={`Charge: ${totalHours} heures sur ${MAX_HOURS_PER_WEEK} maximum`}
+                aria-label={`${t('workload.load')}: ${totalHours} ${t('common.hours')} ${t('common.on')} ${MAX_HOURS_PER_WEEK} ${t('common.maximum')}`}
               />
               <div className="text-sm text-muted-foreground">
                 {classCount}
                 {' '}
-                classe(s) assignée(s)
+                {t('workload.classesAssigned')}
               </div>
             </CardContent>
           </Card>

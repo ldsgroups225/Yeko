@@ -7,8 +7,8 @@ import { useCallback, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import ReactCrop, { centerCrop, makeAspectCrop } from 'react-image-crop'
 import { toast } from 'sonner'
-
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -193,7 +193,7 @@ export function PhotoUploadDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>{t('students.uploadPhoto')}</DialogTitle>
           <DialogDescription>
@@ -204,18 +204,18 @@ export function PhotoUploadDialog({
         <div className="space-y-4">
           {!imgSrc
             ? (
-              <div className="flex flex-col items-center gap-4">
-                <Avatar className="h-24 w-24">
+              <div className="flex flex-col items-center gap-4 py-6">
+                <Avatar className="h-32 w-32">
                   <AvatarImage src={currentPhotoUrl || undefined} />
-                  <AvatarFallback className="text-2xl">
+                  <AvatarFallback className="text-4xl bg-muted">
                     {entityName.split(' ').map(n => n[0]).join('').slice(0, 2)}
                   </AvatarFallback>
                 </Avatar>
 
                 <label className="flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-8 transition-colors hover:border-primary hover:bg-muted/50">
-                  <Upload className="h-10 w-10 text-muted-foreground" />
-                  <p className="mt-2 font-medium">{t('students.clickToUpload')}</p>
-                  <p className="text-sm text-muted-foreground">{t('students.photoRequirements')}</p>
+                  <Upload className="h-10 w-10 text-muted-foreground mb-4" />
+                  <p className="font-medium text-lg">{t('students.clickToUpload')}</p>
+                  <p className="text-sm text-muted-foreground text-center mt-2 max-w-xs">{t('students.photoRequirements')}</p>
                   <input
                     type="file"
                     accept="image/jpeg,image/png,image/webp"
@@ -226,8 +226,8 @@ export function PhotoUploadDialog({
               </div>
             )
             : (
-              <div className="space-y-4">
-                <div className="flex justify-center">
+              <div className="space-y-6">
+                <div className="flex justify-center bg-black/5 rounded-lg overflow-hidden p-4">
                   <ReactCrop
                     crop={crop}
                     onChange={(_, percentCrop) => setCrop(percentCrop)}
@@ -244,7 +244,7 @@ export function PhotoUploadDialog({
                       src={imgSrc}
                       alt="Crop preview"
                       onLoad={onImageLoad}
-                      className="max-h-[400px]"
+                      className="max-h-[400px] object-contain"
                     />
                   </ReactCrop>
                 </div>
@@ -274,7 +274,7 @@ export function PhotoUploadDialog({
           </Button>
           <Button
             onClick={handleUpload}
-            disabled={!completedCrop || uploadMutation.isPending}
+            disabled={(!completedCrop && !!imgSrc) || uploadMutation.isPending || (!imgSrc && !selectedFile)}
           >
             {uploadMutation.isPending
               ? (

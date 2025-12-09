@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { ClassroomForm } from '@/components/spaces/classroom-form'
 import { Button } from '@/components/ui/button'
@@ -11,6 +12,7 @@ export const Route = createFileRoute('/_auth/app/spaces/classrooms/$classroomId/
 })
 
 function EditClassroomPage() {
+  const { t } = useTranslation()
   const { classroomId } = Route.useParams()
   const navigate = useNavigate()
 
@@ -31,9 +33,9 @@ function EditClassroomPage() {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-center">
-          <p className="text-lg font-medium">Salle non trouvée</p>
+          <p className="text-lg font-medium">{t('spaces.classrooms.notFound')}</p>
           <Button asChild className="mt-4">
-            <Link to="/app/spaces/classrooms">Retour</Link>
+            <Link to="/app/spaces/classrooms">{t('common.back')}</Link>
           </Button>
         </div>
       </div>
@@ -46,24 +48,23 @@ function EditClassroomPage() {
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: 'Espaces', href: '/app/spaces/classrooms' },
-          { label: 'Salles de classe', href: '/app/spaces/classrooms' },
+          { label: t('nav.spaces'), href: '/app/spaces/classrooms' },
+          { label: t('nav.classrooms'), href: '/app/spaces/classrooms' },
           { label: classroom.name, href: `/app/spaces/classrooms/${classroomId}` },
-          { label: 'Modifier' },
+          { label: t('common.edit') },
         ]}
       />
 
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Modifier la salle</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t('spaces.classrooms.editClassroom')}</h1>
         <p className="text-muted-foreground">
-          Modifier les informations de
-          {classroom.name}
+          {t('spaces.classrooms.editClassroomDescription', { name: classroom.name })}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Informations de la salle</CardTitle>
+          <CardTitle>{t('spaces.classrooms.classroomInfo')}</CardTitle>
         </CardHeader>
         <CardContent>
           <ClassroomForm

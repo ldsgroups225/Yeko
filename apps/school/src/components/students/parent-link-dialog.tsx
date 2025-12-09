@@ -1,7 +1,7 @@
 'use client'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Loader2, Search, UserPlus } from 'lucide-react'
+import { Loader2, Search, User, UserPlus } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -130,7 +130,7 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>{t('students.linkParent')}</DialogTitle>
           <DialogDescription>{t('students.linkParentDescription')}</DialogDescription>
@@ -143,7 +143,7 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
           </TabsList>
 
           {/* Link Existing Parent */}
-          <TabsContent value="existing" className="space-y-4">
+          <TabsContent value="existing" className="space-y-4 pt-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
@@ -155,16 +155,26 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
             </div>
 
             {parentsLoading && (
-              <div className="flex justify-center py-4">
-                <Loader2 className="h-6 w-6 animate-spin" />
+              <div className="flex justify-center py-8">
+                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+              </div>
+            )}
+
+            {!parentsLoading && search.length >= 2 && parentsData?.data && parentsData.data.length === 0 && (
+              <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
+                <User className="h-8 w-8 opacity-50 mb-2" />
+                <p>{t('students.noParentsFound')}</p>
+                <Button variant="link" onClick={() => setTab('new')} className="mt-2">
+                  {t('students.createNewInstead')}
+                </Button>
               </div>
             )}
 
             {parentsData?.data && parentsData.data.length > 0 && (
-              <RadioGroup value={selectedParentId || ''} onValueChange={setSelectedParentId}>
+              <RadioGroup value={selectedParentId || ''} onValueChange={setSelectedParentId} className="max-h-[240px] overflow-y-auto pr-2">
                 <div className="space-y-2">
                   {parentsData.data.map((parent: any) => (
-                    <div key={parent.id} className="flex items-center space-x-3 rounded-lg border p-3">
+                    <div key={parent.id} className="flex items-center space-x-3 rounded-lg border p-3 transition-colors hover:bg-muted/50">
                       <RadioGroupItem value={parent.id} id={parent.id} />
                       <Label htmlFor={parent.id} className="flex flex-1 cursor-pointer items-center gap-3">
                         <Avatar className="h-10 w-10">
@@ -189,7 +199,7 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
             )}
 
             {selectedParentId && (
-              <div className="space-y-4 border-t pt-4">
+              <div className="space-y-4 rounded-lg border bg-muted/50 p-4">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
                     <Label>{t('students.relationship')}</Label>
@@ -207,7 +217,7 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="flex items-center space-x-2 pt-6">
+                  <div className="flex items-center space-x-2 pt-8">
                     <Switch checked={linkIsPrimary} onCheckedChange={setLinkIsPrimary} />
                     <Label>{t('students.primaryContact')}</Label>
                   </div>
@@ -216,7 +226,7 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
             )}
 
             <DialogFooter>
-              <Button variant="outline" onClick={() => onOpenChange(false)}>
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 {t('common.cancel')}
               </Button>
               <Button
@@ -230,13 +240,13 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
           </TabsContent>
 
           {/* Create New Parent */}
-          <TabsContent value="new" className="space-y-4">
+          <TabsContent value="new" className="space-y-4 pt-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label>
                   {t('students.lastName')}
                   {' '}
-                  *
+                  <span className="text-destructive">*</span>
                 </Label>
                 <Input value={lastName} onChange={e => setLastName(e.target.value)} />
               </div>
@@ -244,7 +254,7 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
                 <Label>
                   {t('students.firstName')}
                   {' '}
-                  *
+                  <span className="text-destructive">*</span>
                 </Label>
                 <Input value={firstName} onChange={e => setFirstName(e.target.value)} />
               </div>
@@ -252,7 +262,7 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
                 <Label>
                   {t('students.phone')}
                   {' '}
-                  *
+                  <span className="text-destructive">*</span>
                 </Label>
                 <Input value={phone} onChange={e => setPhone(e.target.value)} type="tel" />
               </div>
@@ -264,7 +274,7 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
                 <Label>
                   {t('students.relationship')}
                   {' '}
-                  *
+                  <span className="text-destructive">*</span>
                 </Label>
                 <Select value={newRelationship} onValueChange={v => setNewRelationship(v as Relationship)}>
                   <SelectTrigger>
@@ -286,18 +296,18 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-6 rounded-lg border bg-muted/50 p-4">
               <div className="flex items-center space-x-2">
                 <Switch checked={newIsPrimary} onCheckedChange={setNewIsPrimary} />
-                <Label>{t('students.primaryContact')}</Label>
+                <Label className="cursor-pointer" onClick={() => setNewIsPrimary(!newIsPrimary)}>{t('students.primaryContact')}</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <Switch checked={newCanPickup} onCheckedChange={setNewCanPickup} />
-                <Label>{t('students.canPickup')}</Label>
+                <Label className="cursor-pointer" onClick={() => setNewCanPickup(!newCanPickup)}>{t('students.canPickup')}</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <Switch checked={newReceiveNotifications} onCheckedChange={setNewReceiveNotifications} />
-                <Label>{t('students.receivesNotifications')}</Label>
+                <Label className="cursor-pointer" onClick={() => setNewReceiveNotifications(!newReceiveNotifications)}>{t('students.receivesNotifications')}</Label>
               </div>
             </div>
 
@@ -310,7 +320,7 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
                 disabled={!canSubmitNew || createAndLinkMutation.isPending}
               >
                 {createAndLinkMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                <UserPlus className="mr-2 h-4 w-4" />
+                {!createAndLinkMutation.isPending && <UserPlus className="mr-2 h-4 w-4" />}
                 {t('students.createAndLink')}
               </Button>
             </DialogFooter>

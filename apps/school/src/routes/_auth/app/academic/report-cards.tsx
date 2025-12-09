@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { getClasses } from '@/school/functions/classes'
 import { getSchoolYears } from '@/school/functions/school-years'
 import { getTerms } from '@/school/functions/terms'
@@ -24,9 +25,10 @@ export const Route = createFileRoute('/_auth/app/academic/report-cards')({
 
 function ReportCardsPage() {
   const { t } = useTranslation()
-  const [selectedYearId, setSelectedYearId] = useState<string>('')
+  const { schoolYearId: contextSchoolYearId } = useSchoolYearContext()
   const [selectedTermId, setSelectedTermId] = useState<string>('')
   const [selectedClassId, setSelectedClassId] = useState<string>('')
+  const [localYearId, setLocalYearId] = useState<string>('')
 
   // Fetch school years
   const { data: schoolYears, isLoading: yearsLoading } = useQuery({
@@ -35,31 +37,28 @@ function ReportCardsPage() {
     staleTime: 5 * 60 * 1000,
   })
 
+  // Determine effective year ID
+  // If context has an ID, use it. Otherwise fall back to local selection or active year.
+  const activeYear = schoolYears?.find((y: { isActive: boolean }) => y.isActive)
+  const effectiveYearId = contextSchoolYearId || localYearId || activeYear?.id || ''
+
   // Fetch terms for selected year
   const { data: terms, isLoading: termsLoading } = useQuery({
-    queryKey: ['terms', selectedYearId],
-    queryFn: () => getTerms({ data: { schoolYearId: selectedYearId } }),
-    enabled: !!selectedYearId,
+    queryKey: ['terms', effectiveYearId],
+    queryFn: () => getTerms({ data: { schoolYearId: effectiveYearId } }),
+    enabled: !!effectiveYearId,
     staleTime: 5 * 60 * 1000,
   })
 
   // Fetch classes for selected year
   const { data: classes, isLoading: classesLoading } = useQuery({
-    queryKey: ['classes', selectedYearId],
-    queryFn: () => getClasses({ data: { schoolYearId: selectedYearId } }),
-    enabled: !!selectedYearId,
+    queryKey: ['classes', effectiveYearId],
+    queryFn: () => getClasses({ data: { schoolYearId: effectiveYearId } }),
+    enabled: !!effectiveYearId,
     staleTime: 5 * 60 * 1000,
   })
 
-  // Auto-select active year
-  if (!selectedYearId && schoolYears) {
-    const activeYear = schoolYears.find((y: { isActive: boolean }) => y.isActive)
-    if (activeYear) {
-      setSelectedYearId(activeYear.id)
-    }
-  }
-
-  const canShowReportCards = selectedYearId && selectedTermId && selectedClassId
+  const canShowReportCards = effectiveYearId && selectedTermId && selectedClassId
 
   return (
     <div className="space-y-6">
@@ -81,21 +80,34 @@ function ReportCardsPage() {
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
-        {/* School Year */}
+        {/* School Year (Only show if not in context or if we want to allow override/viewing past)
+            For now, let's keep it sync with context if available, or independent.
+            Actually, commonly this page might want to see history regardless of context.
+            Let's stick to the pattern: if context is present, it drives.
+            But the UI showed a dropdown. Let's keep the dropdown but sync it with context if possible or just use local state if context is missing/not enforced.
+            Wait, if context hook is present, usually the header allows changing it.
+            If we want to allow overriding on this page specifically (viewing old report cards while working in current year), we can use local state.
+            Let's use `localYearId` to drive the selection if context is not used or if we want to decouple.
+            However, for consistency, let's allow the dropdown to switch years here.
+         */}
         <div className="w-full sm:w-[200px]">
           {yearsLoading
             ? (
               <Skeleton className="h-10 w-full" />
             )
             : (
-              <Select value={selectedYearId} onValueChange={setSelectedYearId}>
+              <Select
+                value={effectiveYearId}
+                onValueChange={(val) => setLocalYearId(val)}
+              // Disable if we want to enforce context, but here viewing history is valid
+              >
                 <SelectTrigger>
                   <SelectValue placeholder={t('schoolYear.select')} />
                 </SelectTrigger>
                 <SelectContent>
                   {schoolYears?.map((year: { id: string, name: string, isActive: boolean }) => (
                     <SelectItem key={year.id} value={year.id}>
-                      {year.template?.name || year.name}
+                      {year.name}
                       {' '}
                       {year.isActive && t('schoolYear.activeSuffix')}
                     </SelectItem>
@@ -115,7 +127,7 @@ function ReportCardsPage() {
               <Select
                 value={selectedTermId}
                 onValueChange={setSelectedTermId}
-                disabled={!selectedYearId}
+                disabled={!effectiveYearId}
               >
                 <SelectTrigger>
                   <SelectValue placeholder={t('terms.select')} />
@@ -141,7 +153,7 @@ function ReportCardsPage() {
               <Select
                 value={selectedClassId}
                 onValueChange={setSelectedClassId}
-                disabled={!selectedYearId}
+                disabled={!effectiveYearId}
               >
                 <SelectTrigger>
                   <SelectValue placeholder={t('classes.select')} />

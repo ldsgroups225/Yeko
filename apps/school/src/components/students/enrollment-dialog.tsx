@@ -111,7 +111,7 @@ export function EnrollmentDialog({ open, onOpenChange, studentId, studentName }:
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{t('students.enrollStudent')}</DialogTitle>
           <DialogDescription>
@@ -129,7 +129,7 @@ export function EnrollmentDialog({ open, onOpenChange, studentId, studentName }:
                   <FormLabel>
                     {t('students.schoolYear')}
                     {' '}
-                    *
+                    <span className="text-destructive">*</span>
                   </FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
@@ -140,7 +140,7 @@ export function EnrollmentDialog({ open, onOpenChange, studentId, studentName }:
                     <SelectContent>
                       {schoolYears?.map((year: any) => (
                         <SelectItem key={year.id} value={year.id}>
-                          {year.template?.name || year.name}
+                          {year.name}
                           {year.isActive && ` (${t('common.active')})`}
                         </SelectItem>
                       ))}
@@ -159,7 +159,7 @@ export function EnrollmentDialog({ open, onOpenChange, studentId, studentName }:
                   <FormLabel>
                     {t('students.class')}
                     {' '}
-                    *
+                    <span className="text-destructive">*</span>
                   </FormLabel>
                   <Select
                     onValueChange={field.onChange}
@@ -200,7 +200,7 @@ export function EnrollmentDialog({ open, onOpenChange, studentId, studentName }:
                   <FormLabel>
                     {t('students.enrollmentDate')}
                     {' '}
-                    *
+                    <span className="text-destructive">*</span>
                   </FormLabel>
                   <FormControl>
                     <Input type="date" {...field} />

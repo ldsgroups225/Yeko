@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 
-import { ConductRecordList } from '@/components/conduct/conduct-record-list'
+import { ConductRecordTable } from '@/components/conduct/conduct-record-table'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -16,7 +16,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { conductRecordsOptions } from '@/lib/queries/conduct-records'
+import { getSchoolYears } from '@/school/functions/school-years'
 
 const searchSchema = z.object({
   type: z.enum(['incident', 'sanction', 'reward', 'note']).optional(),
@@ -54,8 +56,10 @@ function ConductPage() {
 
   const [searchTerm, setSearchTerm] = useState(search.search ?? '')
 
-  // TODO: Get schoolYearId from context
-  const schoolYearId = 'current-year'
+  const { schoolYearId: contextSchoolYearId } = useSchoolYearContext()
+  const { data: schoolYears } = useQuery({ queryKey: ['school-years'], queryFn: () => getSchoolYears() })
+  const activeSchoolYear = schoolYears?.find((sy: any) => sy.isActive)
+  const schoolYearId = contextSchoolYearId || activeSchoolYear?.id || 'current-year'
 
   const { data, isLoading } = useQuery(
     conductRecordsOptions({
@@ -182,9 +186,12 @@ function ConductPage() {
         </Select>
       </div>
 
-      <ConductRecordList
+      <ConductRecordTable
         records={records}
         isLoading={isLoading}
+        onView={id => navigate({ to: `/app/school-life/conduct/${id}` })}
+        onEdit={id => navigate({ to: `/app/school-life/conduct/${id}/edit` })}
+      // onDelete is handled inside if we implement it, currently not in the list props but referenced
       />
     </div>
   )

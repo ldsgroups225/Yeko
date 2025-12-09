@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { timetablesOptions } from '@/lib/queries/timetables'
 import { getClasses } from '@/school/functions/classes'
 import { getSchoolYears } from '@/school/functions/school-years'
@@ -30,8 +31,9 @@ export const Route = createFileRoute('/_auth/app/academic/timetables')({
 
 function TimetablesPage() {
   const { t } = useTranslation()
+  const { schoolYearId: contextSchoolYearId } = useSchoolYearContext()
   const [viewMode, setViewMode] = useState<TimetableViewMode>('class')
-  const [selectedYearId, setSelectedYearId] = useState<string>('')
+  const [localYearId, setLocalYearId] = useState<string>('')
   const [selectedClassId, setSelectedClassId] = useState<string>('')
   const [selectedTeacherId, setSelectedTeacherId] = useState<string>('')
 
@@ -42,11 +44,15 @@ function TimetablesPage() {
     staleTime: 5 * 60 * 1000,
   })
 
+  // Determine effective year ID
+  const activeYear = schoolYears?.find((y: { isActive: boolean }) => y.isActive)
+  const effectiveYearId = contextSchoolYearId || localYearId || activeYear?.id || ''
+
   // Fetch classes for selected year
   const { data: classes, isLoading: classesLoading } = useQuery({
-    queryKey: ['classes', selectedYearId],
-    queryFn: () => getClasses({ data: { schoolYearId: selectedYearId } }),
-    enabled: !!selectedYearId,
+    queryKey: ['classes', effectiveYearId],
+    queryFn: () => getClasses({ data: { schoolYearId: effectiveYearId } }),
+    enabled: !!effectiveYearId,
     staleTime: 5 * 60 * 1000,
   })
 
@@ -60,26 +66,18 @@ function TimetablesPage() {
 
   // Fetch timetable for class view
   const { data: classTimetable, isLoading: classTimetableLoading } = useQuery({
-    ...timetablesOptions.byClass({ classId: selectedClassId, schoolYearId: selectedYearId }),
-    enabled: viewMode === 'class' && !!selectedClassId && !!selectedYearId,
+    ...timetablesOptions.byClass({ classId: selectedClassId, schoolYearId: effectiveYearId }),
+    enabled: viewMode === 'class' && !!selectedClassId && !!effectiveYearId,
   })
 
   // Fetch timetable for teacher view
   const { data: teacherTimetable, isLoading: teacherTimetableLoading } = useQuery({
-    ...timetablesOptions.byTeacher({ teacherId: selectedTeacherId, schoolYearId: selectedYearId }),
-    enabled: viewMode === 'teacher' && !!selectedTeacherId && !!selectedYearId,
+    ...timetablesOptions.byTeacher({ teacherId: selectedTeacherId, schoolYearId: effectiveYearId }),
+    enabled: viewMode === 'teacher' && !!selectedTeacherId && !!effectiveYearId,
   })
 
   const timetable = viewMode === 'class' ? classTimetable : teacherTimetable
   const timetableLoading = viewMode === 'class' ? classTimetableLoading : teacherTimetableLoading
-
-  // Auto-select active year
-  if (!selectedYearId && schoolYears) {
-    const activeYear = schoolYears.find((y: { isActive: boolean }) => y.isActive)
-    if (activeYear) {
-      setSelectedYearId(activeYear.id)
-    }
-  }
 
   const handleViewModeChange = (mode: TimetableViewMode) => {
     setViewMode(mode)
@@ -88,7 +86,7 @@ function TimetablesPage() {
   }
 
   const canShowTimetable
-    = selectedYearId
+    = effectiveYearId
     && ((viewMode === 'class' && selectedClassId)
       || (viewMode === 'teacher' && selectedTeacherId))
 
@@ -122,14 +120,14 @@ function TimetablesPage() {
                 <Skeleton className="h-10 w-full" />
               )
               : (
-                <Select value={selectedYearId} onValueChange={setSelectedYearId}>
+                <Select value={effectiveYearId} onValueChange={setLocalYearId}>
                   <SelectTrigger>
                     <SelectValue placeholder={t('schoolYear.select')} />
                   </SelectTrigger>
                   <SelectContent>
                     {schoolYears?.map((year: { id: string, name: string, isActive: boolean }) => (
                       <SelectItem key={year.id} value={year.id}>
-                        {year.template?.name || year.name}
+                        {year.name}
                         {' '}
                         {year.isActive && t('schoolYear.activeSuffix')}
                       </SelectItem>
@@ -150,7 +148,7 @@ function TimetablesPage() {
                   <Select
                     value={selectedClassId}
                     onValueChange={setSelectedClassId}
-                    disabled={!selectedYearId}
+                    disabled={!effectiveYearId}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder={t('classes.select')} />

@@ -1559,5 +1559,39 @@
     "notifyOnAbsenceDescription": "Envoyer une notification aux parents quand l'élève est absent",
     "notifyOnLate": "Notifier en cas de retard",
     "notifyOnLateDescription": "Envoyer une notification aux parents quand l'élève est en retard"
+  },
+  "coefficients": {
+    "title": "Gestion des coefficients",
+    "description": "Personnalisez les coefficients pour les matières et les classes.",
+    "allSeries": "Toutes les séries",
+    "selectYearPrompt": "Veuillez sélectionner une année scolaire pour voir les coefficients"
+  },
+  "assignmentMatrix": {
+    "title": "Matrice d'affectation",
+    "emptyTitle": "Aucune donnée disponible",
+    "emptyDescription": "Créez d'abord des classes et configurez les matières pour commencer les affectations enseignants.",
+    "assignedSuccess": "Enseignant assigné",
+    "errorNotQualified": "Cet enseignant n'est pas qualifié pour cette matière",
+    "removedSuccess": "Assignation supprimée",
+    "ariaLabel": "Matrice d'affectation enseignants",
+    "teacherOverloaded": "Enseignant surchargé",
+    "teaches": "enseigne",
+    "assignTeacherFor": "Assigner un enseignant pour",
+    "overloaded": "Surchargé",
+    "clickToAssign": "Cliquer pour assigner un enseignant",
+    "selectTeacherFor": "Sélectionner enseignant pour",
+    "notAssigned": "Non assigné"
+  },
+  "workload": {
+    "emptyTitle": "Aucun enseignant",
+    "emptyDescription": "Ajoutez des enseignants pour suivre leur charge de travail et gérer les affectations.",
+    "ariaLabel": "Charge de travail des enseignants",
+    "overloadDetected": "Surcharge détectée",
+    "teachersExceedingMax": "enseignant(s) dépassent {{maxHours}}h/semaine.",
+    "overloaded": "Surchargé",
+    "hoursPerWeek": "Heures/semaine",
+    "load": "Charge",
+    "classesAssigned": "classe(s) assignée(s)",
+    "notAssigned": "Non assigné"
   }
 }

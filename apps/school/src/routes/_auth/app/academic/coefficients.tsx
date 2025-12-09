@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { CoefficientMatrix } from '@/components/academic/coefficients/coefficient-matrix'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Card, CardContent } from '@/components/ui/card'
@@ -14,6 +15,7 @@ export const Route = createFileRoute('/_auth/app/academic/coefficients')({
 })
 
 function CoefficientsPage() {
+  const { t } = useTranslation()
   const [selectedYearTemplateId, setSelectedYearTemplateId] = useState<string>('')
   const [selectedSeriesId, setSelectedSeriesId] = useState<string>('all')
 
@@ -43,16 +45,16 @@ function CoefficientsPage() {
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: 'Académique', href: '/app/academic' },
-          { label: 'Coefficients' },
+          { label: t('nav.academic'), href: '/app/academic' },
+          { label: t('nav.coefficients') },
         ]}
       />
 
       <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Gestion des coefficients</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('coefficients.title')}</h1>
           <p className="text-muted-foreground">
-            Personnalisez les coefficients pour les matières et les classes.
+            {t('coefficients.description')}
           </p>
         </div>
 
@@ -68,7 +70,7 @@ function CoefficientsPage() {
                   onValueChange={setSelectedYearTemplateId}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Année scolaire" />
+                    <SelectValue placeholder={t('schoolYear.select')} />
                   </SelectTrigger>
                   <SelectContent>
                     {schoolYears?.map((year: {
@@ -81,9 +83,9 @@ function CoefficientsPage() {
                         key={year.id}
                         value={year.schoolYearTemplateId || ''}
                       >
-                        {year.template?.name || year.name}
+                        {(year as any).template?.name || year.name}
                         {' '}
-                        {year.isActive && '(Active)'}
+                        {year.isActive && t('schoolYear.activeSuffix')}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -102,10 +104,10 @@ function CoefficientsPage() {
                   onValueChange={setSelectedSeriesId}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Toutes les séries" />
+                    <SelectValue placeholder={t('coefficients.allSeries')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Toutes les séries</SelectItem>
+                    <SelectItem value="all">{t('coefficients.allSeries')}</SelectItem>
                     {series?.map((s: { id: string, name: string, code: string }) => (
                       <SelectItem key={s.id} value={s.id}>
                         {s.name}
@@ -133,7 +135,7 @@ function CoefficientsPage() {
         : (
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-              <p>Veuillez sélectionner une année scolaire pour voir les coefficients</p>
+              <p>{t('coefficients.selectYearPrompt')}</p>
             </CardContent>
           </Card>
         )}

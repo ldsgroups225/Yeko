@@ -4,22 +4,14 @@ import { Bell } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
-import { AttendanceAlertCard } from '@/components/attendance/alerts/attendance-alert-card'
+import { AlertsTable } from '@/components/attendance/alerts/alerts-table'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from '@/components/ui/empty'
-import { Skeleton } from '@/components/ui/skeleton'
 import {
   acknowledgeAlert,
   dismissAlert,
   getActiveAlerts,
 } from '@/school/functions/attendance-alerts'
-import { generateUUID } from '@/utils/generateUUID'
 
 export const Route = createFileRoute('/_auth/app/school-life/alerts/')({
   component: AlertsPage,
@@ -73,9 +65,16 @@ function AlertsPage() {
   }
 
   return (
-    <div className="container py-6">
+    <div className="space-y-6">
+      <Breadcrumbs
+        items={[
+          { label: t('nav.schoolLife'), href: '/app/school-life' },
+          { label: t('schoolLife.alerts') },
+        ]}
+      />
+
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">{t('schoolLife.alerts')}</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t('schoolLife.alerts')}</h1>
         <p className="text-muted-foreground">{t('alerts.description')}</p>
       </div>
 
@@ -87,48 +86,22 @@ function AlertsPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {isLoading
-            ? (
-                <div className="space-y-4">
-                  {Array.from({ length: 3 }).map(() => (
-                    <Skeleton key={`skeleton-${generateUUID()}`} className="h-32 w-full" />
-                  ))}
-                </div>
-              )
-            : alerts && alerts.length > 0
-              ? (
-                  <div className="space-y-4">
-                    {alerts.map((item: AlertData) => (
-                      <AttendanceAlertCard
-                        key={item.alert.id}
-                        alert={{
-                          id: item.alert.id,
-                          alertType: item.alert.alertType,
-                          severity: item.alert.severity as 'info' | 'warning' | 'critical',
-                          status: item.alert.status as 'active' | 'acknowledged' | 'resolved' | 'dismissed',
-                          title: item.alert.title,
-                          message: item.alert.message,
-                          createdAt: item.alert.createdAt.toISOString(),
-                          teacherName: item.teacherName,
-                          studentName: item.studentName,
-                        }}
-                        onAcknowledge={handleAcknowledge}
-                        onDismiss={handleDismiss}
-                      />
-                    ))}
-                  </div>
-                )
-              : (
-                  <Empty>
-                    <EmptyHeader>
-                      <EmptyMedia variant="icon">
-                        <Bell className="h-6 w-6" />
-                      </EmptyMedia>
-                      <EmptyTitle>{t('alerts.noAlerts')}</EmptyTitle>
-                      <EmptyDescription>{t('alerts.noAlertsDescription')}</EmptyDescription>
-                    </EmptyHeader>
-                  </Empty>
-                )}
+          <AlertsTable
+            alerts={alerts?.map((item: AlertData) => ({
+              id: item.alert.id,
+              alertType: item.alert.alertType,
+              severity: item.alert.severity as 'info' | 'warning' | 'critical',
+              status: item.alert.status as 'active' | 'acknowledged' | 'resolved' | 'dismissed',
+              title: item.alert.title,
+              message: item.alert.message,
+              createdAt: item.alert.createdAt.toISOString(),
+              teacherName: item.teacherName,
+              studentName: item.studentName,
+            })) || []}
+            isLoading={isLoading}
+            onAcknowledge={handleAcknowledge}
+            onDismiss={handleDismiss}
+          />
         </CardContent>
       </Card>
     </div>

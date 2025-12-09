@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { progressOptions } from '@/lib/queries/curriculum-progress'
 import { getClasses } from '@/school/functions/classes'
 import { getSchoolYears } from '@/school/functions/school-years'
@@ -30,7 +31,8 @@ export const Route = createFileRoute('/_auth/app/academic/curriculum-progress')(
 
 function CurriculumProgressPage() {
   const { t } = useTranslation()
-  const [selectedYearId, setSelectedYearId] = useState<string>('')
+  const { schoolYearId: contextSchoolYearId } = useSchoolYearContext()
+  const [localYearId, setLocalYearId] = useState<string>('')
   const [selectedTermId, setSelectedTermId] = useState<string>('')
   const [selectedClassId, setSelectedClassId] = useState<string>('')
 
@@ -41,19 +43,24 @@ function CurriculumProgressPage() {
     staleTime: 5 * 60 * 1000,
   })
 
+  // Determine effective year ID
+  // If context has an ID, use it. Otherwise fall back to local selection or active year.
+  const activeYear = schoolYears?.find((y: { isActive: boolean }) => y.isActive)
+  const effectiveYearId = contextSchoolYearId || localYearId || activeYear?.id || ''
+
   // Fetch terms for selected year
   const { data: terms, isLoading: termsLoading } = useQuery({
-    queryKey: ['terms', selectedYearId],
-    queryFn: () => getTerms({ data: { schoolYearId: selectedYearId } }),
-    enabled: !!selectedYearId,
+    queryKey: ['terms', effectiveYearId],
+    queryFn: () => getTerms({ data: { schoolYearId: effectiveYearId } }),
+    enabled: !!effectiveYearId,
     staleTime: 5 * 60 * 1000,
   })
 
   // Fetch classes for selected year
   const { data: classes, isLoading: classesLoading } = useQuery({
-    queryKey: ['classes', selectedYearId],
-    queryFn: () => getClasses({ data: { schoolYearId: selectedYearId } }),
-    enabled: !!selectedYearId,
+    queryKey: ['classes', effectiveYearId],
+    queryFn: () => getClasses({ data: { schoolYearId: effectiveYearId } }),
+    enabled: !!effectiveYearId,
     staleTime: 5 * 60 * 1000,
   })
 
@@ -63,15 +70,7 @@ function CurriculumProgressPage() {
     enabled: !!selectedClassId && !!selectedTermId,
   })
 
-  // Auto-select active year
-  if (!selectedYearId && schoolYears) {
-    const activeYear = schoolYears.find((y: { isActive: boolean }) => y.isActive)
-    if (activeYear) {
-      setSelectedYearId(activeYear.id)
-    }
-  }
-
-  const canShowProgress = selectedYearId && selectedTermId && selectedClassId
+  const canShowProgress = effectiveYearId && selectedTermId && selectedClassId
 
   // Mock overview data for now
   const overviewData = progress
@@ -118,14 +117,14 @@ function CurriculumProgressPage() {
               <Skeleton className="h-10 w-full" />
             )
             : (
-              <Select value={selectedYearId} onValueChange={setSelectedYearId}>
+              <Select value={effectiveYearId} onValueChange={setLocalYearId}>
                 <SelectTrigger>
                   <SelectValue placeholder={t('schoolYear.select')} />
                 </SelectTrigger>
                 <SelectContent>
                   {schoolYears?.map((year: any) => (
                     <SelectItem key={year.id} value={year.id}>
-                      {year.template?.name || year.name}
+                      {year.name}
                       {' '}
                       {year.isActive && t('schoolYear.activeSuffix')}
                     </SelectItem>
@@ -145,7 +144,7 @@ function CurriculumProgressPage() {
               <Select
                 value={selectedTermId}
                 onValueChange={setSelectedTermId}
-                disabled={!selectedYearId}
+                disabled={!effectiveYearId}
               >
                 <SelectTrigger>
                   <SelectValue placeholder={t('terms.select')} />
@@ -171,7 +170,7 @@ function CurriculumProgressPage() {
               <Select
                 value={selectedClassId}
                 onValueChange={setSelectedClassId}
-                disabled={!selectedYearId}
+                disabled={!effectiveYearId}
               >
                 <SelectTrigger>
                   <SelectValue placeholder={t('classes.select')} />

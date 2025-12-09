@@ -99,19 +99,21 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
             </div>
           </button>
           <div>
-            <h1 className="text-2xl font-bold">
+            <h1 className="text-3xl font-bold tracking-tight">
               {student.lastName}
               {' '}
               {student.firstName}
             </h1>
-            <p className="font-mono text-muted-foreground">{student.matricule}</p>
-            <Badge className={statusColors[student.status as keyof typeof statusColors]}>
-              {t(`students.status${student.status.charAt(0).toUpperCase() + student.status.slice(1)}`)}
-            </Badge>
+            <div className="flex items-center gap-2 mt-1">
+              <p className="font-mono text-sm text-muted-foreground">{student.matricule}</p>
+              <Badge variant="outline" className={statusColors[student.status as keyof typeof statusColors]}>
+                {t(`students.status${student.status.charAt(0).toUpperCase() + student.status.slice(1)}`)}
+              </Badge>
+            </div>
           </div>
         </div>
         <Button asChild>
-          <Link to={`/app/students/${studentId}/edit` as any}>
+          <Link to="/app/students/$studentId/edit" params={{ studentId }}>
             <Edit className="mr-2 h-4 w-4" />
             {t('common.edit')}
           </Link>
@@ -130,12 +132,12 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
           <div className="grid gap-4 md:grid-cols-2">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-lg">
                   <User className="h-5 w-5" />
                   {t('students.personalInfo')}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-4">
                 <InfoRow label={t('students.dateOfBirth')} value={new Date(student.dob).toLocaleDateString()} />
                 <InfoRow label={t('students.gender')} value={student.gender === 'M' ? t('students.male') : student.gender === 'F' ? t('students.female') : '-'} />
                 <InfoRow label={t('students.birthPlace')} value={student.birthPlace} />
@@ -147,12 +149,12 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
 
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-lg">
                   <GraduationCap className="h-5 w-5" />
                   {t('students.currentEnrollment')}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-4">
                 {currentClass?.gradeName && currentClass?.section
                   ? (
                     <>
@@ -186,12 +188,12 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
 
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-lg">
                   <MapPin className="h-5 w-5" />
                   {t('students.contactInfo')}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-4">
                 <InfoRow label={t('students.address')} value={student.address} />
                 <Separator />
                 <InfoRow label={t('students.emergencyContact')} value={student.emergencyContact} />
@@ -201,12 +203,12 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
 
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-lg">
                   <Heart className="h-5 w-5" />
                   {t('students.medicalInfo')}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-4">
                 <InfoRow label={t('students.bloodType')} value={student.bloodType} />
                 <InfoRow label={t('students.medicalNotes')} value={student.medicalNotes} />
               </CardContent>
@@ -219,7 +221,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-lg">
                   <Users className="h-5 w-5" />
                   {t('students.linkedParents')}
                 </CardTitle>
@@ -249,10 +251,12 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
                               {' '}
                               {item.parent.firstName}
                             </p>
-                            <p className="text-sm text-muted-foreground">
-                              {t(`students.relationship${item.relationship.charAt(0).toUpperCase() + item.relationship.slice(1)}`)}
-                              {item.isPrimary && ` • ${t('students.primaryContact')}`}
-                            </p>
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                              <span>{t(`students.relationship${item.relationship.charAt(0).toUpperCase() + item.relationship.slice(1)}`)}</span>
+                              {item.isPrimary && (
+                                <Badge variant="secondary" className="text-xs">{t('students.primaryContact')}</Badge>
+                              )}
+                            </div>
                             <div className="mt-1 flex items-center gap-4 text-sm text-muted-foreground">
                               {item.parent.phone && (
                                 <span className="flex items-center gap-1">
@@ -278,7 +282,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
                   </div>
                 )
                 : (
-                  <p className="text-muted-foreground">{t('students.noParentsLinked')}</p>
+                  <p className="text-muted-foreground py-4 text-center">{t('students.noParentsLinked')}</p>
                 )}
             </CardContent>
           </Card>
@@ -288,7 +292,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
         <TabsContent value="enrollments" className="space-y-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-lg">
                 <Calendar className="h-5 w-5" />
                 {t('students.enrollmentHistory')}
               </CardTitle>
@@ -343,9 +347,9 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
 
 function InfoRow({ label, value }: { label: string, value?: string | null }) {
   return (
-    <div className="flex justify-between">
-      <span className="text-muted-foreground">{label}</span>
-      <span className="font-medium">{value || '-'}</span>
+    <div className="flex justify-between items-center py-1">
+      <span className="text-sm text-muted-foreground">{label}</span>
+      <span className="font-medium text-sm">{value || '-'}</span>
     </div>
   )
 }
