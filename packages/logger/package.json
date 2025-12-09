@@ -2,7 +2,7 @@
   "name": "@repo/logger",
   "type": "module",
   "version": "1.0.0",
-  "packageManager": "pnpm@10.14.0",
+  "packageManager": "pnpm@10.25.0",
   "description": "Logger package for Yeko educational management platform using LogTape",
   "author": "Yeko Team",
   "license": "ISC",
@@ -39,13 +39,13 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@logtape/logtape": "^0.8.2"
+    "@logtape/logtape": "^1.2.2"
   },
   "devDependencies": {
     "@yeko/eslint-config": "workspace:^",
     "eslint": "^9.39.1",
-    "tsup": "^8.0.0",
-    "typescript": "^5.9.2"
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
   },
   "publishConfig": {
     "access": "restricted"
