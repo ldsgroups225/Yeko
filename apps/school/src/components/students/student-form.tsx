@@ -552,7 +552,6 @@ export function StudentForm({ student, mode }: StudentFormProps) {
           onOpenChange={setShowPhotoDialog}
           currentPhotoUrl={form.watch('photoUrl')}
           entityType="student"
-          entityId={student.id}
           entityName={`${form.watch('firstName')} ${form.watch('lastName')}`}
           onPhotoUploaded={(photoUrl) => {
             form.setValue('photoUrl', photoUrl)

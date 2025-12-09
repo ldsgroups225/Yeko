@@ -26,7 +26,6 @@ interface PhotoUploadDialogProps {
   onOpenChange: (open: boolean) => void
   currentPhotoUrl?: string | null
   entityType: 'student' | 'staff' | 'user'
-  entityId: string
   entityName: string
   onPhotoUploaded: (photoUrl: string) => void
 }
@@ -47,7 +46,6 @@ export function PhotoUploadDialog({
   onOpenChange,
   currentPhotoUrl,
   entityType,
-  entityId: _entityId,
   entityName,
   onPhotoUploaded,
 }: PhotoUploadDialogProps) {

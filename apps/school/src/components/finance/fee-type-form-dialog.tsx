@@ -49,7 +49,7 @@ const feeTypeFormSchema = z.object({
   displayOrder: z.coerce.number().int().min(0),
 })
 
-type FeeTypeFormData = z.infer<typeof feeTypeFormSchema>
+type FeeTypeFormData = z.output<typeof feeTypeFormSchema>
 
 interface FeeTypeFormDialogProps {
   open: boolean
@@ -61,7 +61,7 @@ export function FeeTypeFormDialog({ open, onOpenChange }: FeeTypeFormDialogProps
   const queryClient = useQueryClient()
 
   const form = useForm<FeeTypeFormData>({
-    resolver: zodResolver(feeTypeFormSchema),
+    resolver: zodResolver(feeTypeFormSchema) as never,
     defaultValues: {
       code: '',
       name: '',
