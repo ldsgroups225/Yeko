@@ -5,6 +5,7 @@ import { AlertCircle, CheckCircle2, Download, FileSpreadsheet, Loader2, Upload, 
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+import * as XLSX from 'xlsx'
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
@@ -44,95 +45,125 @@ interface ImportResult {
   errors: Array<{ row: number, error: string }>
 }
 
-const REQUIRED_COLUMNS = ['firstName', 'lastName', 'dob']
-const OPTIONAL_COLUMNS = ['gender', 'matricule', 'birthPlace', 'nationality', 'address', 'emergencyContact', 'emergencyPhone', 'previousSchool']
-const ALL_COLUMNS = [...REQUIRED_COLUMNS, ...OPTIONAL_COLUMNS]
-
-function parseCSV(text: string): { headers: string[], rows: string[][] } {
-  const lines = text.trim().split('\n')
-  const headers = lines[0]?.split(',').map(h => h.trim().replace(/^"|"$/g, '')) || []
-  const rows = lines.slice(1).map((line) => {
-    const values: string[] = []
-    let current = ''
-    let inQuotes = false
-
-    for (const char of line) {
-      if (char === '"') {
-        inQuotes = !inQuotes
-      }
-      else if (char === ',' && !inQuotes) {
-        values.push(current.trim())
-        current = ''
-      }
-      else {
-        current += char
-      }
-    }
-    values.push(current.trim())
-    return values
-  })
-
-  return { headers, rows }
+// Column mapping for flexible header matching
+const COLUMN_MAPPINGS: Record<string, string[]> = {
+  firstName: ['firstname', 'first_name', 'prenom', 'prénom', 'first name'],
+  lastName: ['lastname', 'last_name', 'nom', 'last name', 'nom de famille'],
+  dob: ['dob', 'dateofbirth', 'date_of_birth', 'datenaissance', 'date_naissance', 'naissance', 'date of birth', 'date de naissance'],
+  gender: ['gender', 'sexe', 'genre', 'sex'],
+  matricule: ['matricule', 'student_id', 'studentid', 'id'],
+  birthPlace: ['birthplace', 'birth_place', 'lieu_naissance', 'lieunaissance', 'lieu de naissance'],
+  nationality: ['nationality', 'nationalite', 'nationalité'],
+  address: ['address', 'adresse'],
+  emergencyContact: ['emergencycontact', 'emergency_contact', 'contact_urgence', 'contacturgence', 'contact d\'urgence'],
+  emergencyPhone: ['emergencyphone', 'emergency_phone', 'telephone_urgence', 'telephoneurgence', 'téléphone d\'urgence'],
+  previousSchool: ['previousschool', 'previous_school', 'ecole_precedente', 'ecoleprecedente', 'école précédente'],
 }
 
-function mapRowToStudent(headers: string[], row: string[]): ParsedStudent | null {
-  const data: Record<string, string> = {}
-  headers.forEach((header, index) => {
-    const normalizedHeader = header.toLowerCase().replace(/[_\s]/g, '')
-    const matchedColumn = ALL_COLUMNS.find(col =>
-      col.toLowerCase() === normalizedHeader
-      || normalizedHeader.includes(col.toLowerCase()),
-    )
-    if (matchedColumn && row[index]) {
-      data[matchedColumn] = row[index] || ''
+function normalizeHeader(header: string): string {
+  return header.toLowerCase().replace(/[_\s\-']/g, '').trim()
+}
+
+function findColumnMapping(header: string): string | null {
+  const normalized = normalizeHeader(header)
+  for (const [field, aliases] of Object.entries(COLUMN_MAPPINGS)) {
+    if (aliases.some(alias => normalizeHeader(alias) === normalized || normalized.includes(normalizeHeader(alias)))) {
+      return field
     }
-  })
+  }
+  return null
+}
+
+function normalizeDate(value: any): string {
+  if (!value)
+    return ''
+
+  // Handle Excel date serial numbers
+  if (typeof value === 'number') {
+    const date = XLSX.SSF.parse_date_code(value)
+    if (date) {
+      return `${date.y}-${String(date.m).padStart(2, '0')}-${String(date.d).padStart(2, '0')}`
+    }
+  }
+
+  const str = String(value).trim()
+
+  // Already in YYYY-MM-DD format
+  if (/^\d{4}-\d{2}-\d{2}$/.test(str))
+    return str
+
+  // DD/MM/YYYY or MM/DD/YYYY
+  if (str.includes('/')) {
+    const parts = str.split('/')
+    if (parts.length === 3) {
+      const [a, b, c] = parts
+      // Assume DD/MM/YYYY if first part > 12
+      if (Number(a) > 12) {
+        return `${c}-${b?.padStart(2, '0')}-${a?.padStart(2, '0')}`
+      }
+      // Otherwise assume MM/DD/YYYY
+      return `${c}-${a?.padStart(2, '0')}-${b?.padStart(2, '0')}`
+    }
+  }
+
+  // Try parsing as date
+  const date = new Date(str)
+  if (!Number.isNaN(date.getTime())) {
+    return date.toISOString().split('T')[0] || ''
+  }
+
+  return str
+}
+
+function normalizeGender(value: any): 'M' | 'F' | 'other' | undefined {
+  if (!value)
+    return undefined
+  const str = String(value).toUpperCase().trim()
+  if (['M', 'MALE', 'MASCULIN', 'H', 'HOMME', 'GARÇON', 'GARCON'].includes(str))
+    return 'M'
+  if (['F', 'FEMALE', 'FEMININ', 'FÉMININ', 'FEMME', 'FILLE'].includes(str))
+    return 'F'
+  return undefined
+}
+
+function parseExcelData(workbook: XLSX.WorkBook): { headers: string[], rows: Record<string, any>[] } {
+  const firstSheet = workbook.Sheets[workbook.SheetNames[0] || '']
+  if (!firstSheet)
+    return { headers: [], rows: [] }
+
+  const jsonData = XLSX.utils.sheet_to_json<Record<string, any>>(firstSheet, { defval: '' })
+  const headers = jsonData.length > 0 ? Object.keys(jsonData[0] || {}) : []
+
+  return { headers, rows: jsonData }
+}
+
+function mapRowToStudent(row: Record<string, any>, headerMapping: Record<string, string>): ParsedStudent | null {
+  const data: Record<string, any> = {}
+
+  for (const [originalHeader, value] of Object.entries(row)) {
+    const mappedField = headerMapping[originalHeader]
+    if (mappedField && value !== undefined && value !== '') {
+      data[mappedField] = value
+    }
+  }
 
   // Check required fields
   if (!data.firstName || !data.lastName || !data.dob) {
     return null
   }
 
-  // Normalize date format (try to parse various formats)
-  let dob = data.dob
-  if (dob.includes('/')) {
-    const parts = dob.split('/')
-    if (parts.length === 3) {
-      // Assume DD/MM/YYYY or MM/DD/YYYY
-      const [a, b, c] = parts
-      if (Number(a) > 12) {
-        dob = `${c}-${b?.padStart(2, '0')}-${a?.padStart(2, '0')}`
-      }
-      else {
-        dob = `${c}-${a?.padStart(2, '0')}-${b?.padStart(2, '0')}`
-      }
-    }
-  }
-
-  // Normalize gender
-  let gender: 'M' | 'F' | 'other' | undefined
-  if (data.gender) {
-    const g = data.gender.toUpperCase()
-    if (g === 'M' || g === 'MALE' || g === 'MASCULIN' || g === 'H' || g === 'HOMME') {
-      gender = 'M'
-    }
-    else if (g === 'F' || g === 'FEMALE' || g === 'FEMININ' || g === 'FEMME') {
-      gender = 'F'
-    }
-  }
-
   return {
-    firstName: data.firstName,
-    lastName: data.lastName,
-    dob,
-    gender,
-    matricule: data.matricule || undefined,
-    birthPlace: data.birthPlace || undefined,
-    nationality: data.nationality || undefined,
-    address: data.address || undefined,
-    emergencyContact: data.emergencyContact || undefined,
-    emergencyPhone: data.emergencyPhone || undefined,
-    previousSchool: data.previousSchool || undefined,
+    firstName: String(data.firstName).trim(),
+    lastName: String(data.lastName).trim(),
+    dob: normalizeDate(data.dob),
+    gender: normalizeGender(data.gender),
+    matricule: data.matricule ? String(data.matricule).trim() : undefined,
+    birthPlace: data.birthPlace ? String(data.birthPlace).trim() : undefined,
+    nationality: data.nationality ? String(data.nationality).trim() : undefined,
+    address: data.address ? String(data.address).trim() : undefined,
+    emergencyContact: data.emergencyContact ? String(data.emergencyContact).trim() : undefined,
+    emergencyPhone: data.emergencyPhone ? String(data.emergencyPhone).trim() : undefined,
+    previousSchool: data.previousSchool ? String(data.previousSchool).trim() : undefined,
   }
 }
 
@@ -141,6 +172,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
   const queryClient = useQueryClient()
   const [file, setFile] = useState<File | null>(null)
   const [preview, setPreview] = useState<ParsedStudent[]>([])
+  const [allParsed, setAllParsed] = useState<ParsedStudent[]>([])
   const [parseError, setParseError] = useState<string | null>(null)
   const [result, setResult] = useState<ImportResult | null>(null)
 
@@ -166,26 +198,45 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
     setFile(selectedFile)
     setParseError(null)
     setResult(null)
+    setPreview([])
+    setAllParsed([])
 
     const reader = new FileReader()
     reader.onload = (event) => {
       try {
-        const text = event.target?.result as string
-        const { headers, rows } = parseCSV(text)
+        const data = new Uint8Array(event.target?.result as ArrayBuffer)
+        const workbook = XLSX.read(data, { type: 'array', cellDates: true })
+
+        const { headers, rows } = parseExcelData(workbook)
+
+        if (headers.length === 0 || rows.length === 0) {
+          setParseError(t('students.importNoValidRows'))
+          return
+        }
+
+        // Create header mapping
+        const headerMapping: Record<string, string> = {}
+        for (const header of headers) {
+          const mapped = findColumnMapping(header)
+          if (mapped) {
+            headerMapping[header] = mapped
+          }
+        }
 
         // Check for required columns
-        const normalizedHeaders = headers.map(h => h.toLowerCase().replace(/[_\s]/g, ''))
-        const hasFirstName = normalizedHeaders.some(h => h.includes('firstname') || h === 'prenom' || h === 'prénom')
-        const hasLastName = normalizedHeaders.some(h => h.includes('lastname') || h === 'nom')
-        const hasDob = normalizedHeaders.some(h => h.includes('dob') || h.includes('dateofbirth') || h.includes('datenaissance') || h === 'naissance')
+        const mappedFields = Object.values(headerMapping)
+        const hasFirstName = mappedFields.includes('firstName')
+        const hasLastName = mappedFields.includes('lastName')
+        const hasDob = mappedFields.includes('dob')
 
         if (!hasFirstName || !hasLastName || !hasDob) {
           setParseError(t('students.importMissingColumns'))
           return
         }
 
+        // Parse all rows
         const parsed = rows
-          .map(row => mapRowToStudent(headers, row))
+          .map(row => mapRowToStudent(row, headerMapping))
           .filter((s): s is ParsedStudent => s !== null)
 
         if (parsed.length === 0) {
@@ -193,54 +244,68 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
           return
         }
 
+        setAllParsed(parsed)
         setPreview(parsed.slice(0, 5))
       }
       catch {
         setParseError(t('students.importParseError'))
       }
     }
-    reader.readAsText(selectedFile)
+    reader.readAsArrayBuffer(selectedFile)
   }, [t])
 
   const handleImport = () => {
-    if (!file)
+    if (allParsed.length === 0)
       return
-
-    const reader = new FileReader()
-    reader.onload = (event) => {
-      const text = event.target?.result as string
-      const { headers, rows } = parseCSV(text)
-      const students = rows
-        .map(row => mapRowToStudent(headers, row))
-        .filter((s): s is ParsedStudent => s !== null)
-
-      importMutation.mutate(students)
-    }
-    reader.readAsText(file)
+    importMutation.mutate(allParsed)
   }
 
   const handleClose = () => {
     setFile(null)
     setPreview([])
+    setAllParsed([])
     setParseError(null)
     setResult(null)
     onOpenChange(false)
   }
 
   const downloadTemplate = () => {
-    const headers = ['lastName', 'firstName', 'dob', 'gender', 'birthPlace', 'nationality', 'address', 'emergencyContact', 'emergencyPhone', 'previousSchool']
-    const example = ['Koné', 'Aminata', '2010-05-15', 'F', 'Abidjan', 'Ivoirien', '123 Rue Example', 'Papa Koné', '+2250701020304', 'École Primaire ABC']
-    const csv = [headers.join(','), example.join(',')].join('\n')
+    // Create template workbook with typed-xlsx style headers
+    const headers = [
+      'Nom',
+      'Prénom',
+      'Date de Naissance',
+      'Genre',
+      'Lieu de Naissance',
+      'Nationalité',
+      'Adresse',
+      'Contact d\'Urgence',
+      'Téléphone d\'Urgence',
+      'École Précédente',
+    ]
+    const example = [
+      'Koné',
+      'Aminata',
+      '2010-05-15',
+      'F',
+      'Abidjan',
+      'Ivoirienne',
+      '123 Rue Example',
+      'Papa Koné',
+      '+2250701020304',
+      'École Primaire ABC',
+    ]
 
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = 'students_import_template.csv'
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    URL.revokeObjectURL(url)
+    const ws = XLSX.utils.aoa_to_sheet([headers, example])
+
+    // Set column widths
+    ws['!cols'] = headers.map(() => ({ wch: 20 }))
+
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, 'Modèle Import Élèves')
+
+    // Generate and download
+    XLSX.writeFile(wb, 'modele_import_eleves.xlsx')
   }
 
   return (
@@ -248,134 +313,141 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>{t('students.importStudents')}</DialogTitle>
-          <DialogDescription>{t('students.importStudentsDescription')}</DialogDescription>
+          <DialogDescription>{t('students.importStudentsDescriptionExcel')}</DialogDescription>
         </DialogHeader>
 
         {result
           ? (
-              <div className="space-y-4">
-                <Alert variant={result.errors.length > 0 ? 'destructive' : 'default'}>
-                  {result.errors.length > 0 ? <AlertCircle className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
-                  <AlertTitle>{t('students.importComplete')}</AlertTitle>
-                  <AlertDescription>
-                    <ul className="mt-2 space-y-1 text-sm">
-                      <li>{t('students.importSuccessCount', { count: result.success })}</li>
-                      {result.errors.length > 0 && (
-                        <li className="text-destructive">{t('students.importErrorCount', { count: result.errors.length })}</li>
-                      )}
-                    </ul>
-                  </AlertDescription>
-                </Alert>
-
-                {result.errors.length > 0 && (
-                  <div className="max-h-40 overflow-y-auto rounded border p-3 text-sm">
-                    { }
-                    {result.errors.slice(0, 10).map(err => (
-
-                      <p key={`error-${generateUUID()}-${err.row}`} className="text-destructive">
-                        {t('students.importRowError', { row: err.row, error: err.error })}
-                      </p>
-                    ))}
-                    {result.errors.length > 10 && (
-                      <p className="mt-2 text-muted-foreground">{t('common.andMore', { count: result.errors.length - 10 })}</p>
+            <div className="space-y-4">
+              <Alert variant={result.errors.length > 0 ? 'destructive' : 'default'}>
+                {result.errors.length > 0 ? <AlertCircle className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
+                <AlertTitle>{t('students.importComplete')}</AlertTitle>
+                <AlertDescription>
+                  <ul className="mt-2 space-y-1 text-sm">
+                    <li>{t('students.importSuccessCount', { count: result.success })}</li>
+                    {result.errors.length > 0 && (
+                      <li className="text-destructive">{t('students.importErrorCount', { count: result.errors.length })}</li>
                     )}
-                  </div>
-                )}
+                  </ul>
+                </AlertDescription>
+              </Alert>
 
-                <DialogFooter>
-                  <Button onClick={handleClose}>{t('common.close')}</Button>
-                </DialogFooter>
-              </div>
-            )
+              {result.errors.length > 0 && (
+                <div className="max-h-40 overflow-y-auto rounded border p-3 text-sm">
+                  {result.errors.slice(0, 10).map(err => (
+                    <p key={`error-${generateUUID()}-${err.row}`} className="text-destructive">
+                      {t('students.importRowError', { row: err.row, error: err.error })}
+                    </p>
+                  ))}
+                  {result.errors.length > 10 && (
+                    <p className="mt-2 text-muted-foreground">{t('common.andMore', { count: result.errors.length - 10 })}</p>
+                  )}
+                </div>
+              )}
+
+              <DialogFooter>
+                <Button onClick={handleClose}>{t('common.close')}</Button>
+              </DialogFooter>
+            </div>
+          )
           : (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Button variant="outline" size="sm" onClick={downloadTemplate}>
-                    <Download className="mr-2 h-4 w-4" />
-                    {t('students.downloadTemplate')}
-                  </Button>
-                </div>
-
-                <div className="rounded-lg border-2 border-dashed p-6 text-center">
-                  {file
-                    ? (
-                        <div className="flex items-center justify-center gap-3">
-                          <FileSpreadsheet className="h-8 w-8 text-muted-foreground" />
-                          <div className="text-left">
-                            <p className="font-medium">{file.name}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {preview.length > 0 && t('students.importPreviewCount', { count: preview.length })}
-                            </p>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => {
-                              setFile(null)
-                              setPreview([])
-                              setParseError(null)
-                            }}
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      )
-                    : (
-                        <label className="cursor-pointer">
-                          <Upload className="mx-auto h-10 w-10 text-muted-foreground" />
-                          <p className="mt-2 font-medium">{t('students.importDropFile')}</p>
-                          <p className="text-sm text-muted-foreground">{t('students.importFileTypes')}</p>
-                          <input type="file" accept=".csv,.txt" onChange={handleFileChange} className="hidden" />
-                        </label>
-                      )}
-                </div>
-
-                {parseError && (
-                  <Alert variant="destructive">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>{parseError}</AlertDescription>
-                  </Alert>
-                )}
-
-                {preview.length > 0 && (
-                  <div className="rounded border">
-                    <div className="border-b bg-muted/50 px-3 py-2 text-sm font-medium">{t('students.importPreview')}</div>
-                    <div className="max-h-40 overflow-auto p-2">
-                      <table className="w-full text-sm">
-                        <thead>
-                          <tr className="border-b">
-                            <th className="px-2 py-1 text-left">{t('students.lastName')}</th>
-                            <th className="px-2 py-1 text-left">{t('students.firstName')}</th>
-                            <th className="px-2 py-1 text-left">{t('students.dateOfBirth')}</th>
-                            <th className="px-2 py-1 text-left">{t('students.gender')}</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          { }
-                          {preview.map((s, i) => (
-                          // eslint-disable-next-line react/no-array-index-key
-                            <tr key={`preview-${i}-${s.lastName}-${s.firstName}`} className="border-b last:border-0">
-                              <td className="px-2 py-1">{s.lastName}</td>
-                              <td className="px-2 py-1">{s.firstName}</td>
-                              <td className="px-2 py-1">{s.dob}</td>
-                              <td className="px-2 py-1">{s.gender || '-'}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                )}
-
-                <DialogFooter>
-                  <Button variant="outline" onClick={handleClose}>{t('common.cancel')}</Button>
-                  <Button onClick={handleImport} disabled={!file || preview.length === 0 || importMutation.isPending}>
-                    {importMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    {t('students.importStart')}
-                  </Button>
-                </DialogFooter>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Button variant="outline" size="sm" onClick={downloadTemplate}>
+                  <Download className="mr-2 h-4 w-4" />
+                  {t('students.downloadTemplate')}
+                </Button>
               </div>
-            )}
+
+              <div className="rounded-lg border-2 border-dashed p-6 text-center">
+                {file
+                  ? (
+                    <div className="flex items-center justify-center gap-3">
+                      <FileSpreadsheet className="h-8 w-8 text-muted-foreground" />
+                      <div className="text-left">
+                        <p className="font-medium">{file.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {allParsed.length > 0 && t('students.importPreviewCount', { count: allParsed.length })}
+                        </p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          setFile(null)
+                          setPreview([])
+                          setAllParsed([])
+                          setParseError(null)
+                        }}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )
+                  : (
+                    <label className="cursor-pointer">
+                      <Upload className="mx-auto h-10 w-10 text-muted-foreground" />
+                      <p className="mt-2 font-medium">{t('students.importDropFile')}</p>
+                      <p className="text-sm text-muted-foreground">{t('students.importFileTypesExcel')}</p>
+                      <input
+                        type="file"
+                        accept=".xlsx,.xls,.csv"
+                        onChange={handleFileChange}
+                        className="hidden"
+                      />
+                    </label>
+                  )}
+              </div>
+
+              {parseError && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{parseError}</AlertDescription>
+                </Alert>
+              )}
+
+              {preview.length > 0 && (
+                <div className="rounded border">
+                  <div className="border-b bg-muted/50 px-3 py-2 text-sm font-medium">{t('students.importPreview')}</div>
+                  <div className="max-h-40 overflow-auto p-2">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b">
+                          <th className="px-2 py-1 text-left">{t('students.lastName')}</th>
+                          <th className="px-2 py-1 text-left">{t('students.firstName')}</th>
+                          <th className="px-2 py-1 text-left">{t('students.dateOfBirth')}</th>
+                          <th className="px-2 py-1 text-left">{t('students.gender')}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {preview.map((s, i) => (
+                          <tr key={`preview-${i}-${s.lastName}-${s.firstName}`} className="border-b last:border-0">
+                            <td className="px-2 py-1">{s.lastName}</td>
+                            <td className="px-2 py-1">{s.firstName}</td>
+                            <td className="px-2 py-1">{s.dob}</td>
+                            <td className="px-2 py-1">{s.gender || '-'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  {allParsed.length > 5 && (
+                    <div className="border-t bg-muted/30 px-3 py-2 text-center text-sm text-muted-foreground">
+                      {t('students.importAndMoreRows', { count: allParsed.length - 5 })}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <DialogFooter>
+                <Button variant="outline" onClick={handleClose}>{t('common.cancel')}</Button>
+                <Button onClick={handleImport} disabled={allParsed.length === 0 || importMutation.isPending}>
+                  {importMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {t('students.importStart')}
+                </Button>
+              </DialogFooter>
+            </div>
+          )}
       </DialogContent>
     </Dialog>
   )
