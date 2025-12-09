@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { TeacherAttendanceGrid } from '@/components/attendance/teacher/teacher-attendance-grid'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Button } from '@/components/ui/button'
 import { dailyTeacherAttendanceOptions } from '@/lib/queries/teacher-attendance'
 import { bulkRecordAttendance } from '@/school/functions/teacher-attendance'
@@ -82,10 +83,17 @@ function TeacherAttendancePage() {
   }
 
   return (
-    <div className="container py-6">
-      <div className="mb-6 flex items-start justify-between">
+    <div className="space-y-6">
+      <Breadcrumbs
+        items={[
+          { label: t('nav.schoolLife'), href: '/app/school-life' },
+          { label: t('schoolLife.teacherAttendance') },
+        ]}
+      />
+
+      <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold">{t('schoolLife.teacherAttendance')}</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('schoolLife.teacherAttendance')}</h1>
           <p className="text-muted-foreground">{t('attendance.teacherAttendanceDescription')}</p>
         </div>
         <div className="flex gap-2">

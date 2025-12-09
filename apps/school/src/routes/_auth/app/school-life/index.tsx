@@ -2,6 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { AlertTriangle, Bell, Settings, UserCheck, Users } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 export const Route = createFileRoute('/_auth/app/school-life/')({
@@ -55,9 +56,15 @@ function SchoolLifeDashboard() {
   ]
 
   return (
-    <div className="container py-6">
+    <div className="space-y-6">
+      <Breadcrumbs
+        items={[
+          { label: t('nav.schoolLife') },
+        ]}
+      />
+
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">{t('schoolLife.title')}</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t('schoolLife.title')}</h1>
         <p className="text-muted-foreground">{t('schoolLife.description')}</p>
       </div>
 

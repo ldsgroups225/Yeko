@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { ClassAveragesTable, GradeStatisticsCard } from '@/components/grades'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
@@ -60,15 +61,23 @@ function GradeStatisticsPage() {
   }
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6">
+      <Breadcrumbs
+        items={[
+          { label: t('nav.academic'), href: '/app/academic' },
+          { label: t('nav.grades'), href: '/app/academic/grades' },
+          { label: t('academic.grades.statistics.title') },
+        ]}
+      />
+
       <div className="flex items-center gap-4">
-        <Link to="/app/academic/grades" className="[&.active]:font-bold">
+        <Link to="/app/academic/grades">
           <Button variant="ghost" size="icon" aria-label={t('common.back')}>
             <ArrowLeft className="size-4" />
           </Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold">{t('academic.grades.statistics.title')}</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('academic.grades.statistics.title')}</h1>
           <p className="text-muted-foreground">
             {t('academic.grades.statistics.description')}
           </p>
@@ -85,46 +94,46 @@ function GradeStatisticsPage() {
               <Label htmlFor="class-select">{t('academic.grades.entry.class')}</Label>
               {classesLoading
                 ? (
-                    <Skeleton className="h-10 w-full" />
-                  )
+                  <Skeleton className="h-10 w-full" />
+                )
                 : (
-                    <Select value={selectedClassId} onValueChange={setSelectedClassId}>
-                      <SelectTrigger id="class-select">
-                        <SelectValue placeholder={t('academic.grades.entry.selectClass')} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {classesData?.map((cls: Class & { grade?: { name: string } }) => (
-                          <SelectItem key={cls.id} value={cls.id}>
-                            {cls.grade?.name}
-                            {' '}
-                            {cls.section}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
+                  <Select value={selectedClassId} onValueChange={setSelectedClassId}>
+                    <SelectTrigger id="class-select">
+                      <SelectValue placeholder={t('academic.grades.entry.selectClass')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {classesData?.map((cls: Class & { grade?: { name: string } }) => (
+                        <SelectItem key={cls.id} value={cls.id}>
+                          {cls.grade?.name}
+                          {' '}
+                          {cls.section}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="term-select">{t('academic.grades.entry.term')}</Label>
               {termsLoading
                 ? (
-                    <Skeleton className="h-10 w-full" />
-                  )
+                  <Skeleton className="h-10 w-full" />
+                )
                 : (
-                    <Select value={selectedTermId} onValueChange={setSelectedTermId}>
-                      <SelectTrigger id="term-select">
-                        <SelectValue placeholder={t('academic.grades.entry.selectTerm')} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {termsData?.map((term: any) => (
-                          <SelectItem key={term.id} value={term.id}>
-                            {term.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
+                  <Select value={selectedTermId} onValueChange={setSelectedTermId}>
+                    <SelectTrigger id="term-select">
+                      <SelectValue placeholder={t('academic.grades.entry.selectTerm')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {termsData?.map((term: any) => (
+                        <SelectItem key={term.id} value={term.id}>
+                          {term.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
             </div>
           </div>
         </CardContent>
@@ -134,11 +143,11 @@ function GradeStatisticsPage() {
         <>
           {statsLoading
             ? (
-                <Skeleton className="h-32 w-full" />
-              )
+              <Skeleton className="h-32 w-full" />
+            )
             : (
-                <GradeStatisticsCard statistics={statistics} />
-              )}
+              <GradeStatisticsCard statistics={statistics} />
+            )}
 
           <ClassAveragesTable averages={[]} />
         </>

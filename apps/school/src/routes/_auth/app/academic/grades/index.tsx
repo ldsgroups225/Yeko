@@ -3,6 +3,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { AlertCircle, BarChart3, BookOpen, CheckCircle, ChevronRight, Clock, Plus } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -29,15 +30,20 @@ function GradesIndexPage() {
   ) ?? 0
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6">
+      <Breadcrumbs
+        items={[
+          { label: t('nav.academic'), href: '/app/academic' },
+          { label: t('nav.grades') },
+        ]}
+      />
+
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">{t('academic.grades.title')}</h1>
-          <p className="text-muted-foreground">
-            {t('academic.grades.description')}
-          </p>
+          <h1 className="text-3xl font-bold tracking-tight">{t('academic.grades.title')}</h1>
+          <p className="text-muted-foreground">{t('academic.grades.description')}</p>
         </div>
-        <Link to="/app/academic/grades/entry" className="[&.active]:font-bold">
+        <Link to="/app/academic/grades/entry">
           <Button>
             <Plus className="mr-2 size-4" />
             {t('academic.grades.entry.enterGrade')}
@@ -57,16 +63,16 @@ function GradesIndexPage() {
           <CardContent>
             {pendingLoading
               ? (
-                  <Skeleton className="h-8 w-16" />
-                )
+                <Skeleton className="h-8 w-16" />
+              )
               : (
-                  <>
-                    <div className="text-2xl font-bold">{pendingCount}</div>
-                    <p className="text-xs text-muted-foreground">
-                      {t('academic.grades.validations.pendingCount', { count: totalPendingGrades })}
-                    </p>
-                  </>
-                )}
+                <>
+                  <div className="text-2xl font-bold">{pendingCount}</div>
+                  <p className="text-xs text-muted-foreground">
+                    {t('academic.grades.validations.pendingCount', { count: totalPendingGrades })}
+                  </p>
+                </>
+              )}
           </CardContent>
         </Card>
 
@@ -166,7 +172,7 @@ function QuickActionCard({
 
   return (
     <Link to={href} className="[&.active]:font-bold">
-      <Card className="transition-colors hover:bg-muted/50">
+      <Card className="transition-colors hover:bg-muted/50 h-full">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <div className="flex items-center gap-2">
             <CardTitle className="text-sm font-medium">{title}</CardTitle>

@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 
 import { ConductRecordList } from '@/components/conduct/conduct-record-list'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -110,10 +111,17 @@ function ConductPage() {
   }))
 
   return (
-    <div className="container py-6">
-      <div className="mb-6 flex items-start justify-between">
+    <div className="space-y-6">
+      <Breadcrumbs
+        items={[
+          { label: t('nav.schoolLife'), href: '/app/school-life' },
+          { label: t('schoolLife.conduct') },
+        ]}
+      />
+
+      <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold">{t('schoolLife.conduct')}</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('schoolLife.conduct')}</h1>
           <p className="text-muted-foreground">{t('conduct.description')}</p>
         </div>
         <div className="flex gap-2">

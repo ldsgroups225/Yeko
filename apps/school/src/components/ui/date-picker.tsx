@@ -39,7 +39,7 @@ export function DatePicker({
           disabled={disabled}
           data-empty={!date}
           className={cn(
-            'data-[empty=true]:text-muted-foreground w-full justify-start text-left font-normal',
+            'data-[empty=true]:text-muted-foreground w-full justify-start text-left font-normal max-w-[180px]',
             className,
           )}
         >

@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { GradeEntryTable, GradeTypeSelector } from '@/components/grades'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -105,15 +106,23 @@ function GradeEntryPage() {
   }
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6">
+      <Breadcrumbs
+        items={[
+          { label: t('nav.academic'), href: '/app/academic' },
+          { label: t('nav.grades'), href: '/app/academic/grades' },
+          { label: t('academic.grades.entry.title') },
+        ]}
+      />
+
       <div className="flex items-center gap-4">
-        <Link to="/app/academic/grades" className="[&.active]:font-bold">
+        <Link to="/app/academic/grades">
           <Button variant="ghost" size="icon" aria-label={t('common.back')}>
             <ArrowLeft className="size-4" />
           </Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold">{t('academic.grades.entry.title')}</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('academic.grades.entry.title')}</h1>
           <p className="text-muted-foreground">
             {t('academic.grades.entry.subtitle')}
           </p>
@@ -130,76 +139,76 @@ function GradeEntryPage() {
               <Label htmlFor="class-select">{t('academic.grades.entry.class')}</Label>
               {classesLoading
                 ? (
-                    <Skeleton className="h-10 w-full" />
-                  )
+                  <Skeleton className="h-10 w-full" />
+                )
                 : (
-                    <Select value={selectedClassId} onValueChange={handleClassChange}>
-                      <SelectTrigger id="class-select">
-                        <SelectValue placeholder={t('academic.grades.entry.selectClass')} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {classesData?.map((cls: Class & { grade?: { name: string } }) => (
-                          <SelectItem key={cls.id} value={cls.id}>
-                            {cls.grade?.name}
-                            {' '}
-                            {cls.section}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
+                  <Select value={selectedClassId} onValueChange={handleClassChange}>
+                    <SelectTrigger id="class-select">
+                      <SelectValue placeholder={t('academic.grades.entry.selectClass')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {classesData?.map((cls: Class & { grade?: { name: string } }) => (
+                        <SelectItem key={cls.id} value={cls.id}>
+                          {cls.grade?.name}
+                          {' '}
+                          {cls.section}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="subject-select">{t('academic.grades.entry.subject')}</Label>
               {subjectsLoading
                 ? (
-                    <Skeleton className="h-10 w-full" />
-                  )
+                  <Skeleton className="h-10 w-full" />
+                )
                 : (
-                    <Select
-                      value={selectedSubjectId}
-                      onValueChange={setSelectedSubjectId}
-                      disabled={!selectedClassId || !classSubjectsData?.length}
-                    >
-                      <SelectTrigger id="subject-select">
-                        <SelectValue placeholder={t('academic.grades.entry.selectSubject')} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {classSubjectsData?.map((cs: any) => (
-                          <SelectItem key={cs.subject.id} value={cs.subject.id}>
-                            {cs.subject.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
+                  <Select
+                    value={selectedSubjectId}
+                    onValueChange={setSelectedSubjectId}
+                    disabled={!selectedClassId || !classSubjectsData?.length}
+                  >
+                    <SelectTrigger id="subject-select">
+                      <SelectValue placeholder={t('academic.grades.entry.selectSubject')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {classSubjectsData?.map((cs: any) => (
+                        <SelectItem key={cs.subject.id} value={cs.subject.id}>
+                          {cs.subject.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="term-select">{t('academic.grades.entry.term')}</Label>
               {termsLoading
                 ? (
-                    <Skeleton className="h-10 w-full" />
-                  )
+                  <Skeleton className="h-10 w-full" />
+                )
                 : (
-                    <Select
-                      value={selectedTermId}
-                      onValueChange={setSelectedTermId}
-                      disabled={!termsData?.length}
-                    >
-                      <SelectTrigger id="term-select">
-                        <SelectValue placeholder={t('academic.grades.entry.selectTerm')} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {termsData?.map((term: any) => (
-                          <SelectItem key={term.id} value={term.id}>
-                            {term.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
+                  <Select
+                    value={selectedTermId}
+                    onValueChange={setSelectedTermId}
+                    disabled={!termsData?.length}
+                  >
+                    <SelectTrigger id="term-select">
+                      <SelectValue placeholder={t('academic.grades.entry.selectTerm')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {termsData?.map((term: any) => (
+                        <SelectItem key={term.id} value={term.id}>
+                          {term.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
             </div>
 
             <div className="space-y-2">
@@ -255,26 +264,26 @@ function GradeEntryPage() {
           <CardContent>
             {gradesLoading || studentsLoading
               ? (
-                  <div className="space-y-2">
-                    {Array.from({ length: 5 }).map(() => (
-                      <Skeleton key={generateUUID()} className="h-12 w-full" />
-                    ))}
-                  </div>
-                )
+                <div className="space-y-2">
+                  {Array.from({ length: 5 }).map(() => (
+                    <Skeleton key={generateUUID()} className="h-12 w-full" />
+                  ))}
+                </div>
+              )
               : (
-                  <GradeEntryTable
-                    classId={selectedClassId}
-                    subjectId={selectedSubjectId}
-                    termId={selectedTermId}
-                    teacherId={currentTeacher?.id ?? ''}
-                    gradeType={gradeType}
-                    weight={weight}
-                    description={description}
-                    gradeDate={gradeDate}
-                    students={students}
-                    existingGrades={gradesData ?? []}
-                  />
-                )}
+                <GradeEntryTable
+                  classId={selectedClassId}
+                  subjectId={selectedSubjectId}
+                  termId={selectedTermId}
+                  teacherId={currentTeacher?.id ?? ''}
+                  gradeType={gradeType}
+                  weight={weight}
+                  description={description}
+                  gradeDate={gradeDate}
+                  students={students}
+                  existingGrades={gradesData ?? []}
+                />
+              )}
           </CardContent>
         </Card>
       )}

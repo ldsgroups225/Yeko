@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { GradeValidationCard, GradeValidationDialog } from '@/components/grades'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -132,15 +133,23 @@ function GradeValidationsPage() {
   const isMutating = validateMutation.isPending || rejectMutation.isPending
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6">
+      <Breadcrumbs
+        items={[
+          { label: t('nav.academic'), href: '/app/academic' },
+          { label: t('nav.grades'), href: '/app/academic/grades' },
+          { label: t('academic.grades.validations.title') },
+        ]}
+      />
+
       <div className="flex items-center gap-4">
-        <Link to="/app/academic/grades" className="[&.active]:font-bold">
+        <Link to="/app/academic/grades">
           <Button variant="ghost" size="icon" aria-label={t('common.back')}>
             <ArrowLeft className="size-4" />
           </Button>
         </Link>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold">{t('academic.grades.validations.title')}</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('academic.grades.validations.title')}</h1>
           <p className="text-muted-foreground">
             {t('academic.grades.validations.description')}
           </p>
@@ -153,39 +162,39 @@ function GradeValidationsPage() {
 
       {isLoading
         ? (
+          <div className="space-y-4">
+            {Array.from({ length: 3 }).map(() => (
+              <Skeleton key={generateUUID()} className="h-32 w-full" />
+            ))}
+          </div>
+        )
+        : pendingValidations && pendingValidations.length > 0
+          ? (
             <div className="space-y-4">
-              {Array.from({ length: 3 }).map(() => (
-                <Skeleton key={generateUUID()} className="h-32 w-full" />
+              {(pendingValidations as PendingValidation[]).map(validation => (
+                <GradeValidationCard
+                  key={`${validation.classId}-${validation.subjectId}-${validation.termId}`}
+                  validation={validation}
+                  onViewDetails={() => {
+                    // TODO: Navigate to detail view
+                  }}
+                  onValidate={() => handleValidate(validation)}
+                  onReject={() => handleReject(validation)}
+                  isLoading={isMutating}
+                />
               ))}
             </div>
           )
-        : pendingValidations && pendingValidations.length > 0
-          ? (
-              <div className="space-y-4">
-                {(pendingValidations as PendingValidation[]).map(validation => (
-                  <GradeValidationCard
-                    key={`${validation.classId}-${validation.subjectId}-${validation.termId}`}
-                    validation={validation}
-                    onViewDetails={() => {
-                    // TODO: Navigate to detail view
-                    }}
-                    onValidate={() => handleValidate(validation)}
-                    onReject={() => handleReject(validation)}
-                    isLoading={isMutating}
-                  />
-                ))}
-              </div>
-            )
           : (
-              <Card>
-                <CardContent className="flex flex-col items-center justify-center py-12">
-                  <p className="text-lg font-medium">{t('academic.grades.validations.noValidations')}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {t('academic.grades.validations.allValidated')}
-                  </p>
-                </CardContent>
-              </Card>
-            )}
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12">
+                <p className="text-lg font-medium">{t('academic.grades.validations.noValidations')}</p>
+                <p className="text-sm text-muted-foreground">
+                  {t('academic.grades.validations.allValidated')}
+                </p>
+              </CardContent>
+            </Card>
+          )}
 
       <GradeValidationDialog
         open={dialogOpen}

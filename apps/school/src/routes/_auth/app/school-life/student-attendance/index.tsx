@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { StudentAttendanceGrid } from '@/components/attendance/student/student-attendance-grid'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DatePicker } from '@/components/ui/date-picker'
@@ -92,10 +93,17 @@ function StudentAttendancePage() {
   }
 
   return (
-    <div className="container py-6">
-      <div className="mb-6 flex items-start justify-between">
+    <div className="space-y-6">
+      <Breadcrumbs
+        items={[
+          { label: t('nav.schoolLife'), href: '/app/school-life' },
+          { label: t('schoolLife.studentAttendance') },
+        ]}
+      />
+
+      <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold">{t('schoolLife.studentAttendance')}</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('schoolLife.studentAttendance')}</h1>
           <p className="text-muted-foreground">{t('attendance.studentAttendanceDescription')}</p>
         </div>
         <div className="flex gap-2">
@@ -114,7 +122,7 @@ function StudentAttendancePage() {
         </div>
       </div>
 
-      <Card className="mb-6">
+      <Card>
         <CardHeader>
           <CardTitle className="text-base">{t('attendance.selectClassAndDate')}</CardTitle>
         </CardHeader>

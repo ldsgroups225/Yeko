@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -51,14 +52,14 @@ function AttendanceSettingsPage() {
     resolver: zodResolver(settingsSchema) as never,
     values: settings
       ? {
-          teacherExpectedArrival: settings.teacherExpectedArrival ?? '07:30',
-          teacherLateThresholdMinutes: settings.teacherLateThresholdMinutes ?? 15,
-          teacherLatenessAlertCount: settings.teacherLatenessAlertCount ?? 3,
-          studentLateThresholdMinutes: settings.studentLateThresholdMinutes ?? 10,
-          chronicAbsenceThresholdPercent: Number(settings.chronicAbsenceThresholdPercent) || 10,
-          notifyParentOnAbsence: settings.notifyParentOnAbsence ?? true,
-          notifyParentOnLate: settings.notifyParentOnLate ?? false,
-        }
+        teacherExpectedArrival: settings.teacherExpectedArrival ?? '07:30',
+        teacherLateThresholdMinutes: settings.teacherLateThresholdMinutes ?? 15,
+        teacherLatenessAlertCount: settings.teacherLatenessAlertCount ?? 3,
+        studentLateThresholdMinutes: settings.studentLateThresholdMinutes ?? 10,
+        chronicAbsenceThresholdPercent: Number(settings.chronicAbsenceThresholdPercent) || 10,
+        notifyParentOnAbsence: settings.notifyParentOnAbsence ?? true,
+        notifyParentOnLate: settings.notifyParentOnLate ?? false,
+      }
       : undefined,
   })
 
@@ -88,9 +89,16 @@ function AttendanceSettingsPage() {
   }
 
   return (
-    <div className="container py-6">
+    <div className="space-y-6">
+      <Breadcrumbs
+        items={[
+          { label: t('nav.schoolLife'), href: '/app/school-life' },
+          { label: t('schoolLife.settings') },
+        ]}
+      />
+
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">{t('schoolLife.settings')}</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t('schoolLife.settings')}</h1>
         <p className="text-muted-foreground">{t('settings.attendanceDescription')}</p>
       </div>
 
@@ -240,7 +248,7 @@ function AttendanceSettingsPage() {
 
 function SettingsSkeleton() {
   return (
-    <div className="container py-6">
+    <div className="space-y-6">
       <Skeleton className="h-8 w-48 mb-2" />
       <Skeleton className="h-4 w-96 mb-6" />
       <div className="space-y-6">
