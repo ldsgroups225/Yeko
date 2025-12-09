@@ -1,7 +1,7 @@
 import type { FormEvent } from 'react'
 import type { CreateProgramTemplateInput } from '@/schemas/programs'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link, Outlet, useMatch, useNavigate } from '@tanstack/react-router'
 import {
   BookOpen,
   Calendar,
@@ -41,8 +41,24 @@ import { useLogger } from '@/lib/logger'
 import { parseServerFnError } from '@/utils/error-handlers'
 
 export const Route = createFileRoute('/_auth/app/catalogs/programs')({
-  component: ProgramsCatalog,
+  component: ProgramsLayout,
 })
+
+function ProgramsLayout() {
+  // Check if we're on a child route (program details)
+  const childMatch = useMatch({
+    from: '/_auth/app/catalogs/programs/$programId',
+    shouldThrow: false,
+  })
+
+  // If we're on a child route, render the Outlet (child component)
+  if (childMatch) {
+    return <Outlet />
+  }
+
+  // Otherwise, render the programs list
+  return <ProgramsCatalog />
+}
 
 function ProgramsCatalog() {
   const { logger } = useLogger()
