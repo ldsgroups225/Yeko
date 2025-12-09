@@ -113,11 +113,12 @@ export async function createSchoolYear(data: {
       })
       .returning()
 
-    // Get term templates
-    const termTemplatesList = await tx.query.termTemplates.findMany({
-      where: eq(termTemplates.schoolYearTemplateId, data.schoolYearTemplateId),
-      orderBy: [termTemplates.order],
-    })
+    // Get term templates using select instead of query (tx doesn't have query property)
+    const termTemplatesList = await tx
+      .select()
+      .from(termTemplates)
+      .where(eq(termTemplates.schoolYearTemplateId, data.schoolYearTemplateId))
+      .orderBy(termTemplates.order)
 
     // Create terms based on templates
     if (termTemplatesList.length > 0) {
