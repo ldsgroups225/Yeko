@@ -5,17 +5,14 @@ import type {
   CurriculumProgressInsert,
   ProgressStatus,
 } from '../drizzle/school-schema'
-import { and, asc, desc, eq, gte, inArray, lte, sql } from 'drizzle-orm'
+import { and, asc, desc, eq, gte, lte, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
-import { grades, programTemplateChapters, programTemplates, subjects } from '../drizzle/core-schema'
+import { grades, programTemplateChapters, subjects } from '../drizzle/core-schema'
 import {
   chapterCompletions,
   classes,
   classSessions,
   curriculumProgress,
-  teachers,
-  terms,
-  users,
 } from '../drizzle/school-schema'
 
 // ============================================
@@ -390,11 +387,14 @@ export async function calculateProgress(params: {
   let status: ProgressStatus
   if (variance >= 5) {
     status = 'ahead'
-  } else if (variance >= -5) {
+  }
+  else if (variance >= -5) {
     status = 'on_track'
-  } else if (variance >= -15) {
+  }
+  else if (variance >= -15) {
     status = 'slightly_behind'
-  } else {
+  }
+  else {
     status = 'significantly_behind'
   }
 

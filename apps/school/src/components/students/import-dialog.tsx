@@ -377,7 +377,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
               {result.errors.length > 0 && (
                 <div className="max-h-40 overflow-y-auto rounded border p-3 text-sm">
                   {result.errors.slice(0, 10).map(err => (
-                    <p key={`error-${generateUUID()}-${err.row}`} className="text-destructive">
+                    <p key={`error-${err.row}-${generateUUID()}`} className="text-destructive">
                       {t('students.importRowError', { row: err.row, error: err.error })}
                     </p>
                   ))}
@@ -462,8 +462,8 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
                         </tr>
                       </thead>
                       <tbody>
-                        {preview.map((s, i) => (
-                          <tr key={`preview-${i}-${s.lastName}-${s.firstName}`} className="border-b last:border-0">
+                        {preview.map(s => (
+                          <tr key={`preview-${generateUUID()}-${s.lastName}-${s.firstName}`} className="border-b last:border-0">
                             <td className="px-2 py-1">{s.lastName}</td>
                             <td className="px-2 py-1">{s.firstName}</td>
                             <td className="px-2 py-1">{s.dob}</td>

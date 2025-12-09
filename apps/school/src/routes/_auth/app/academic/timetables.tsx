@@ -87,8 +87,8 @@ function TimetablesPage() {
 
   const canShowTimetable
     = effectiveYearId
-    && ((viewMode === 'class' && selectedClassId)
-      || (viewMode === 'teacher' && selectedTeacherId))
+      && ((viewMode === 'class' && selectedClassId)
+        || (viewMode === 'teacher' && selectedTeacherId))
 
   return (
     <div className="space-y-6">
@@ -117,24 +117,24 @@ function TimetablesPage() {
           <div className="w-full sm:w-[200px]">
             {yearsLoading
               ? (
-                <Skeleton className="h-10 w-full" />
-              )
+                  <Skeleton className="h-10 w-full" />
+                )
               : (
-                <Select value={effectiveYearId} onValueChange={setLocalYearId}>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('schoolYear.select')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {schoolYears?.map((year: { id: string, name: string, isActive: boolean }) => (
-                      <SelectItem key={year.id} value={year.id}>
-                        {year.name}
-                        {' '}
-                        {year.isActive && t('schoolYear.activeSuffix')}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
+                  <Select value={effectiveYearId} onValueChange={setLocalYearId}>
+                    <SelectTrigger>
+                      <SelectValue placeholder={t('schoolYear.select')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {schoolYears?.map((year: { id: string, name: string, isActive: boolean }) => (
+                        <SelectItem key={year.id} value={year.id}>
+                          {year.name}
+                          {' '}
+                          {year.isActive && t('schoolYear.activeSuffix')}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
           </div>
 
           {/* Class selector (for class view) */}
@@ -142,26 +142,26 @@ function TimetablesPage() {
             <div className="w-full sm:w-[200px]">
               {classesLoading
                 ? (
-                  <Skeleton className="h-10 w-full" />
-                )
+                    <Skeleton className="h-10 w-full" />
+                  )
                 : (
-                  <Select
-                    value={selectedClassId}
-                    onValueChange={setSelectedClassId}
-                    disabled={!effectiveYearId}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={t('classes.select')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {classes?.map((cls: { id: string, name: string }) => (
-                        <SelectItem key={cls.id} value={cls.id}>
-                          {cls.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
+                    <Select
+                      value={selectedClassId}
+                      onValueChange={setSelectedClassId}
+                      disabled={!effectiveYearId}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('classes.select')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {classes?.map((cls: { id: string, name: string }) => (
+                          <SelectItem key={cls.id} value={cls.id}>
+                            {cls.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
             </div>
           )}
 
@@ -170,27 +170,27 @@ function TimetablesPage() {
             <div className="w-full sm:w-[200px]">
               {teachersLoading
                 ? (
-                  <Skeleton className="h-10 w-full" />
-                )
+                    <Skeleton className="h-10 w-full" />
+                  )
                 : (
-                  <Select
-                    value={selectedTeacherId}
-                    onValueChange={setSelectedTeacherId}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={t('teachers.select')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {teachers?.map((teacher: { id: string, firstName: string, lastName: string }) => (
-                        <SelectItem key={teacher.id} value={teacher.id}>
-                          {teacher.firstName}
-                          {' '}
-                          {teacher.lastName}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
+                    <Select
+                      value={selectedTeacherId}
+                      onValueChange={setSelectedTeacherId}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('teachers.select')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {teachers?.map((teacher: { id: string, firstName: string, lastName: string }) => (
+                          <SelectItem key={teacher.id} value={teacher.id}>
+                            {teacher.firstName}
+                            {' '}
+                            {teacher.lastName}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
             </div>
           )}
         </div>
@@ -199,19 +199,19 @@ function TimetablesPage() {
       {/* Timetable Grid */}
       {canShowTimetable
         ? (
-          <TimetableGrid
-            sessions={timetable ?? []}
-            isLoading={timetableLoading}
-            readOnly
-          />
-        )
+            <TimetableGrid
+              sessions={timetable ?? []}
+              isLoading={timetableLoading}
+              readOnly
+            />
+          )
         : (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-              <p>{t('timetables.selectFiltersPrompt')}</p>
-            </CardContent>
-          </Card>
-        )}
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                <p>{t('timetables.selectFiltersPrompt')}</p>
+              </CardContent>
+            </Card>
+          )}
     </div>
   )
 }

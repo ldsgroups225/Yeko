@@ -141,28 +141,28 @@ export function AlertsTable({
         cell: ({ row }) => (
           row.original.status === 'active'
             ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {onAcknowledge && (
-                    <DropdownMenuItem onClick={() => onAcknowledge(row.original.id)}>
-                      <Check className="mr-2 h-4 w-4" />
-                      {t('alerts.acknowledge')}
-                    </DropdownMenuItem>
-                  )}
-                  {onDismiss && (
-                    <DropdownMenuItem onClick={() => onDismiss(row.original.id)}>
-                      <X className="mr-2 h-4 w-4" />
-                      {t('alerts.dismiss')}
-                    </DropdownMenuItem>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {onAcknowledge && (
+                      <DropdownMenuItem onClick={() => onAcknowledge(row.original.id)}>
+                        <Check className="mr-2 h-4 w-4" />
+                        {t('alerts.acknowledge')}
+                      </DropdownMenuItem>
+                    )}
+                    {onDismiss && (
+                      <DropdownMenuItem onClick={() => onDismiss(row.original.id)}>
+                        <X className="mr-2 h-4 w-4" />
+                        {t('alerts.dismiss')}
+                      </DropdownMenuItem>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )
             : null
         ),
       },
@@ -211,9 +211,9 @@ export function AlertsTable({
                   {header.isPlaceholder
                     ? null
                     : flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    )}
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                 </TableHead>
               ))}
             </TableRow>

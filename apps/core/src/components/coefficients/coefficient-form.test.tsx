@@ -1,3 +1,4 @@
+import type { Mock } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
@@ -311,8 +312,8 @@ function CoefficientForm({
 }
 
 describe('coefficient Form Component', () => {
-  let mockOnSubmit: ReturnType<typeof vi.fn>
-  let mockOnCancel: ReturnType<typeof vi.fn>
+  let mockOnSubmit: Mock<(data: any) => Promise<void>>
+  let mockOnCancel: Mock<() => void>
   let mockGrades: Array<{ id: string, name: string, code: string }>
   let mockSubjects: Array<{ id: string, name: string, shortName?: string }>
   let mockSeries: Array<{ id: string, name: string, code: string }>

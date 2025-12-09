@@ -95,17 +95,17 @@ function ClassDetailPage() {
             <h1 className="text-3xl font-bold tracking-tight">{className}</h1>
             {classroom
               ? (
-                <Link
-                  to="/app/spaces/classrooms/$classroomId"
-                  params={{ classroomId: classroom.id }}
-                  className="text-muted-foreground hover:underline"
-                >
-                  {classroom.name}
-                </Link>
-              )
+                  <Link
+                    to="/app/spaces/classrooms/$classroomId"
+                    params={{ classroomId: classroom.id }}
+                    className="text-muted-foreground hover:underline"
+                  >
+                    {classroom.name}
+                  </Link>
+                )
               : (
-                <p className="text-muted-foreground">{t('academic.classes.noClassroom')}</p>
-              )}
+                  <p className="text-muted-foreground">{t('academic.classes.noClassroom')}</p>
+                )}
           </div>
         </div>
         <div className="flex gap-2">
@@ -169,11 +169,11 @@ function ClassDetailPage() {
               <CardContent>
                 {classroom
                   ? (
-                    <span className="text-lg font-medium">{classroom.name}</span>
-                  )
+                      <span className="text-lg font-medium">{classroom.name}</span>
+                    )
                   : (
-                    <span className="text-lg font-medium text-muted-foreground">-</span>
-                  )}
+                      <span className="text-lg font-medium text-muted-foreground">-</span>
+                    )}
               </CardContent>
             </Card>
           </div>

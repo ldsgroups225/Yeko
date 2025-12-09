@@ -75,23 +75,23 @@ function MessagesPage() {
         <TabsContent value={folder} className="mt-4">
           {isLoading
             ? (
-              <MessagesSkeleton />
-            )
+                <MessagesSkeleton />
+              )
             : data?.messages && data.messages.length > 0
               ? (
-                <div className="space-y-2">
-                  {data.messages.map((message: any) => (
-                    <MessageItem
-                      key={message.id}
-                      message={message}
-                      locale={locale}
-                    />
-                  ))}
-                </div>
-              )
+                  <div className="space-y-2">
+                    {data.messages.map((message: any) => (
+                      <MessageItem
+                        key={message.id}
+                        message={message}
+                        locale={locale}
+                      />
+                    ))}
+                  </div>
+                )
               : (
-                <EmptyMessages folder={folder} />
-              )}
+                  <EmptyMessages folder={folder} />
+                )}
         </TabsContent>
       </Tabs>
     </div>

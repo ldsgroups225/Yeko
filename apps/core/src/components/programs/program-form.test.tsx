@@ -1,3 +1,4 @@
+import type { Mock } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/react'
 import React from 'react'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
@@ -341,8 +342,8 @@ function ProgramForm({
 }
 
 describe('program Form Component', () => {
-  let mockOnSubmit: ReturnType<typeof vi.fn>
-  let mockOnCancel: ReturnType<typeof vi.fn>
+  let mockOnSubmit: Mock<(data: any) => Promise<void>>
+  let mockOnCancel: Mock<() => void>
 
   beforeEach(() => {
     mockOnSubmit = vi.fn()

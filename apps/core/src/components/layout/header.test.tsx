@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { beforeEach, describe, expect, it, test, vi } from 'vitest'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { Header } from './header'
 
 // Mock auth client
@@ -465,7 +465,7 @@ describe('header Component', () => {
   })
 
   describe('accessibility', () => {
-    it.todo('should have proper button roles', () => {
+    test.todo('should have proper button roles', () => {
       render(<Header onMobileMenuToggle={mockOnMobileMenuToggle} />)
 
       const buttons = screen.getAllByRole('button')

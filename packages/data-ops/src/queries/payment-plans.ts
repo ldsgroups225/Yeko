@@ -14,8 +14,10 @@ export async function getPaymentPlans(params: GetPaymentPlansParams): Promise<Pa
   const db = getDb()
   const { schoolYearId, studentId, status } = params
   const conditions = [eq(paymentPlans.schoolYearId, schoolYearId)]
-  if (studentId) conditions.push(eq(paymentPlans.studentId, studentId))
-  if (status) conditions.push(eq(paymentPlans.status, status))
+  if (studentId)
+    conditions.push(eq(paymentPlans.studentId, studentId))
+  if (status)
+    conditions.push(eq(paymentPlans.status, status))
 
   return db.select().from(paymentPlans).where(and(...conditions))
 }
@@ -62,7 +64,8 @@ export async function createPaymentPlanFromTemplate(
 
   return db.transaction(async (tx: typeof db) => {
     const [template] = await tx.select().from(paymentPlanTemplates).where(eq(paymentPlanTemplates.id, templateId)).limit(1)
-    if (!template) throw new Error('Payment plan template not found')
+    if (!template)
+      throw new Error('Payment plan template not found')
 
     const [plan] = await tx
       .insert(paymentPlans)

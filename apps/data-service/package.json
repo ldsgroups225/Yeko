@@ -14,16 +14,16 @@
   },
   "dependencies": {
     "@repo/data-ops": "workspace:*",
-    "hono": "^4.10.8",
-    "zod": "^4.1.13"
+    "hono": "workspace:*",
+    "zod": "workspace:*"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "^0.10.14",
-    "@types/node": "^22.19.2",
+    "@cloudflare/vitest-pool-workers": "workspace:*",
+    "@types/node": "workspace:*",
     "@yeko/eslint-config": "workspace:^",
-    "eslint": "^9.39.1",
-    "typescript": "^5.9.3",
-    "vitest": "~4.0.15",
-    "wrangler": "^4.53.0"
+    "eslint": "workspace:*",
+    "typescript": "workspace:*",
+    "vitest": "workspace:*",
+    "wrangler": "workspace:*"
   }
 }

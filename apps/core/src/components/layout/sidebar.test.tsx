@@ -74,14 +74,14 @@ vi.mock('@/components/ui/sidebar', () => ({
   SidebarGroupLabel: ({ children }: any) => <div>{children}</div>,
   SidebarHeader: ({ children }: any) => <div>{children}</div>,
   SidebarMenu: ({ children }: any) => <ul>{children}</ul>,
-  SidebarMenuButton: ({ children, ...props }: any) => <button {...props}>{children}</button>,
+  SidebarMenuButton: ({ children, ...props }: any) => <button type="button" {...props}>{children}</button>,
   SidebarMenuItem: ({ children }: any) => <li>{children}</li>,
   SidebarMenuSub: ({ children }: any) => <ul>{children}</ul>,
-  SidebarMenuSubButton: ({ children, ...props }: any) => <button {...props}>{children}</button>,
+  SidebarMenuSubButton: ({ children, ...props }: any) => <button type="button" {...props}>{children}</button>,
   SidebarMenuSubItem: ({ children }: any) => <li>{children}</li>,
   SidebarProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   SidebarRail: () => <div />,
-  SidebarTrigger: ({ children, ...props }: any) => <button {...props}>{children}</button>,
+  SidebarTrigger: ({ children, ...props }: any) => <button type="button" {...props}>{children}</button>,
   useSidebar: () => ({
     open: true,
     setOpen: vi.fn(),
@@ -96,7 +96,7 @@ vi.mock('@/components/ui/sidebar', () => ({
 vi.mock('@/components/ui/collapsible', () => ({
   Collapsible: ({ children, ...props }: any) => <div {...props}>{children}</div>,
   CollapsibleContent: ({ children }: any) => <div>{children}</div>,
-  CollapsibleTrigger: ({ children, ...props }: any) => <button {...props}>{children}</button>,
+  CollapsibleTrigger: ({ children, ...props }: any) => <button type="button" {...props}>{children}</button>,
 }))
 
 // Mock Tooltip

@@ -45,26 +45,26 @@ function SessionsPage() {
 
       {sessions.length > 0
         ? (
-          <div className="space-y-2">
-            {sessions.map((session: any) => (
-              <SessionHistoryCard
-                key={session.id}
-                session={session}
-                locale={locale}
-              />
-            ))}
-          </div>
-        )
+            <div className="space-y-2">
+              {sessions.map((session: any) => (
+                <SessionHistoryCard
+                  key={session.id}
+                  session={session}
+                  locale={locale}
+                />
+              ))}
+            </div>
+          )
         : (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <BookOpen className="h-12 w-12 text-muted-foreground/50" />
-              <p className="mt-4 text-sm text-muted-foreground">
-                {t('session.noHistory')}
-              </p>
-            </CardContent>
-          </Card>
-        )}
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12">
+                <BookOpen className="h-12 w-12 text-muted-foreground/50" />
+                <p className="mt-4 text-sm text-muted-foreground">
+                  {t('session.noHistory')}
+                </p>
+              </CardContent>
+            </Card>
+          )}
     </div>
   )
 }
@@ -139,15 +139,15 @@ function SessionHistoryCard({ session, locale }: SessionHistoryCardProps) {
               </Badge>
               {session.status === 'completed'
                 && session.studentsPresent !== null && (
-                  <span className="text-xs text-muted-foreground">
-                    {session.studentsPresent}
-                    {' '}
-                    présents
-                    {session.studentsAbsent
-                      ? ` / ${session.studentsAbsent} absents`
-                      : ''}
-                  </span>
-                )}
+                <span className="text-xs text-muted-foreground">
+                  {session.studentsPresent}
+                  {' '}
+                  présents
+                  {session.studentsAbsent
+                    ? ` / ${session.studentsAbsent} absents`
+                    : ''}
+                </span>
+              )}
             </div>
           </div>
         </CardContent>

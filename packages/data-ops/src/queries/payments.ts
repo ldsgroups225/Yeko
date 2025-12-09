@@ -106,7 +106,7 @@ export async function generateReceiptNumber(schoolId: string): Promise<string> {
   let nextNumber = 1
   if (lastPayment?.receiptNumber) {
     const lastNum = Number.parseInt(lastPayment.receiptNumber.replace(prefix, ''), 10)
-    if (!isNaN(lastNum))
+    if (!Number.isNaN(lastNum))
       nextNumber = lastNum + 1
   }
 

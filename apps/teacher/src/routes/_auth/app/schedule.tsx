@@ -55,16 +55,16 @@ function SchedulePage() {
   const isLoading = contextLoading || dataLoading
 
   // Filter sessions for selected day
-  const daySchedule =
-    data?.sessions.filter((s: any) => s.dayOfWeek === selectedDay) ?? []
+  const daySchedule
+    = data?.sessions.filter((s: any) => s.dayOfWeek === selectedDay) ?? []
 
   // Get dates for each day of the week
   const weekDates = DAYS_OF_WEEK.map((day, index) => ({
     ...day,
     date: addDays(weekStart, index),
     isToday:
-      format(addDays(weekStart, index), 'yyyy-MM-dd') ===
-      format(today, 'yyyy-MM-dd'),
+      format(addDays(weekStart, index), 'yyyy-MM-dd')
+      === format(today, 'yyyy-MM-dd'),
   }))
 
   if (isLoading) {
@@ -80,7 +80,7 @@ function SchedulePage() {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => setWeekOffset((prev) => prev - 1)}
+          onClick={() => setWeekOffset(prev => prev - 1)}
           aria-label="Semaine précédente"
         >
           <ChevronLeft className="h-5 w-5" />
@@ -88,13 +88,16 @@ function SchedulePage() {
         <span className="text-sm font-medium">
           {t('schedule.weekOf', {
             date: format(weekStart, 'd MMM', { locale }),
-          })}{' '}
-          - {format(weekEnd, 'd MMM yyyy', { locale })}
+          })}
+          {' '}
+          -
+          {' '}
+          {format(weekEnd, 'd MMM yyyy', { locale })}
         </span>
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => setWeekOffset((prev) => prev + 1)}
+          onClick={() => setWeekOffset(prev => prev + 1)}
           aria-label="Semaine suivante"
         >
           <ChevronRight className="h-5 w-5" />
@@ -103,17 +106,17 @@ function SchedulePage() {
 
       {/* Day Selector */}
       <div className="flex gap-1 overflow-x-auto pb-2">
-        {weekDates.map((day) => (
+        {weekDates.map(day => (
           <button
             key={day.key}
             type="button"
             onClick={() => setSelectedDay(day.key)}
             className={`flex min-w-[48px] flex-col items-center rounded-lg p-2 transition-colors ${selectedDay === day.key
-                ? 'bg-primary text-primary-foreground'
-                : day.isToday
-                  ? 'bg-primary/10 text-primary'
-                  : 'bg-muted/50 hover:bg-muted'
-              }`}
+              ? 'bg-primary text-primary-foreground'
+              : day.isToday
+                ? 'bg-primary/10 text-primary'
+                : 'bg-muted/50 hover:bg-muted'
+            }`}
           >
             <span className="text-xs font-medium">{day.label}</span>
             <span className="text-lg font-semibold">
@@ -131,22 +134,24 @@ function SchedulePage() {
           })}
         </h2>
 
-        {daySchedule.length > 0 ? (
-          <div className="space-y-2">
-            {daySchedule.map((session: any) => (
-              <ScheduleCard key={session.id} session={session} />
-            ))}
-          </div>
-        ) : (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <Calendar className="h-12 w-12 text-muted-foreground/50" />
-              <p className="mt-4 text-sm text-muted-foreground">
-                {t('schedule.noSessions')}
-              </p>
-            </CardContent>
-          </Card>
-        )}
+        {daySchedule.length > 0
+          ? (
+              <div className="space-y-2">
+                {daySchedule.map((session: any) => (
+                  <ScheduleCard key={session.id} session={session} />
+                ))}
+              </div>
+            )
+          : (
+              <Card>
+                <CardContent className="flex flex-col items-center justify-center py-12">
+                  <Calendar className="h-12 w-12 text-muted-foreground/50" />
+                  <p className="mt-4 text-sm text-muted-foreground">
+                    {t('schedule.noSessions')}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
       </div>
     </div>
   )
@@ -157,9 +162,9 @@ interface ScheduleCardProps {
     id: string
     startTime: string
     endTime: string
-    class: { id: string; name: string }
-    subject: { id: string; name: string; shortName: string | null }
-    classroom: { id: string; name: string; code: string | null } | null
+    class: { id: string, name: string }
+    subject: { id: string, name: string, shortName: string | null }
+    classroom: { id: string, name: string, code: string | null } | null
   }
 }
 
@@ -173,7 +178,10 @@ function ScheduleCard({ session }: ScheduleCardProps) {
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium text-muted-foreground">
-                {session.startTime} - {session.endTime}
+                {session.startTime}
+                {' '}
+                -
+                {session.endTime}
               </span>
             </div>
             <h3 className="font-semibold">{session.subject.name}</h3>
@@ -199,7 +207,7 @@ function ScheduleSkeleton() {
         <Skeleton className="h-10 w-10" />
       </div>
       <div className="flex gap-1">
-        {[1, 2, 3, 4, 5, 6].map((i) => (
+        {[1, 2, 3, 4, 5, 6].map(i => (
           <Skeleton key={i} className="h-16 w-12" />
         ))}
       </div>

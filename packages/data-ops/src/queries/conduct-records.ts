@@ -256,7 +256,6 @@ export async function markConductParentAcknowledged(id: string, response?: strin
   return result
 }
 
-
 // Get student conduct summary
 export async function getStudentConductSummary(studentId: string, schoolYearId: string) {
   const db = getDb()

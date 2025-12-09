@@ -63,6 +63,7 @@ function RootDocument({ children }: { children: ReactNode }) {
     <html lang="fr" suppressHydrationWarning>
       <head>
         <HeadContent />
+        {/* eslint-disable-next-line react-dom/no-dangerously-set-innerhtml */}
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>

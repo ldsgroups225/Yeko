@@ -37,19 +37,19 @@ function GradesPage() {
 
       {isLoading
         ? (
-          <GradesSkeleton />
-        )
+            <GradesSkeleton />
+          )
         : data?.classes && data.classes.length > 0
           ? (
-            <div className="space-y-3">
-              {data.classes.map((cls: any) => (
-                <ClassCard key={cls.id} classData={cls} />
-              ))}
-            </div>
-          )
+              <div className="space-y-3">
+                {data.classes.map((cls: any) => (
+                  <ClassCard key={cls.id} classData={cls} />
+                ))}
+              </div>
+            )
           : (
-            <EmptyClasses />
-          )}
+              <EmptyClasses />
+            )}
     </div>
   )
 }

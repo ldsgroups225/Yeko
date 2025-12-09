@@ -52,14 +52,14 @@ function AttendanceSettingsPage() {
     resolver: zodResolver(settingsSchema) as never,
     values: settings
       ? {
-        teacherExpectedArrival: settings.teacherExpectedArrival ?? '07:30',
-        teacherLateThresholdMinutes: settings.teacherLateThresholdMinutes ?? 15,
-        teacherLatenessAlertCount: settings.teacherLatenessAlertCount ?? 3,
-        studentLateThresholdMinutes: settings.studentLateThresholdMinutes ?? 10,
-        chronicAbsenceThresholdPercent: Number(settings.chronicAbsenceThresholdPercent) || 10,
-        notifyParentOnAbsence: settings.notifyParentOnAbsence ?? true,
-        notifyParentOnLate: settings.notifyParentOnLate ?? false,
-      }
+          teacherExpectedArrival: settings.teacherExpectedArrival ?? '07:30',
+          teacherLateThresholdMinutes: settings.teacherLateThresholdMinutes ?? 15,
+          teacherLatenessAlertCount: settings.teacherLatenessAlertCount ?? 3,
+          studentLateThresholdMinutes: settings.studentLateThresholdMinutes ?? 10,
+          chronicAbsenceThresholdPercent: Number(settings.chronicAbsenceThresholdPercent) || 10,
+          notifyParentOnAbsence: settings.notifyParentOnAbsence ?? true,
+          notifyParentOnLate: settings.notifyParentOnLate ?? false,
+        }
       : undefined,
   })
 

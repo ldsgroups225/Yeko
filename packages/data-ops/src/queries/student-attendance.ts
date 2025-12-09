@@ -186,7 +186,6 @@ export async function upsertStudentAttendance(data: {
   return result
 }
 
-
 // Bulk create/update class attendance
 export async function bulkUpsertClassAttendance(params: {
   classId: string
@@ -254,7 +253,8 @@ export async function bulkUpsertClassAttendance(params: {
           .where(and(...conditions))
           .returning()
 
-        if (updated) results.push(updated)
+        if (updated)
+          results.push(updated)
       }
     }
   })

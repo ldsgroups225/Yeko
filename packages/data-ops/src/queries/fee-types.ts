@@ -14,8 +14,10 @@ export async function getFeeTypes(params: GetFeeTypesParams): Promise<FeeType[]>
   const db = getDb()
   const { schoolId, category, includeInactive = false } = params
   const conditions = [eq(feeTypes.schoolId, schoolId)]
-  if (category) conditions.push(eq(feeTypes.category, category))
-  if (!includeInactive) conditions.push(eq(feeTypes.status, 'active'))
+  if (category)
+    conditions.push(eq(feeTypes.category, category))
+  if (!includeInactive)
+    conditions.push(eq(feeTypes.status, 'active'))
 
   return db.select().from(feeTypes).where(and(...conditions)).orderBy(asc(feeTypes.displayOrder), asc(feeTypes.name))
 }

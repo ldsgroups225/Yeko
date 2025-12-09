@@ -67,6 +67,7 @@ import {
   getSchoolYears,
   setActiveSchoolYear,
 } from '@/school/functions/school-years'
+import { generateUUID } from '@/utils/generateUUID'
 
 export const Route = createFileRoute('/_auth/app/settings/school-years')({
   component: SchoolYearsSettingsPage,
@@ -168,8 +169,8 @@ function SchoolYearsSettingsPage() {
           {isLoading
             ? (
               <div className="space-y-2">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <Skeleton key={i} className="h-12 w-full" />
+                {Array.from({ length: 3 }).map(() => (
+                  <Skeleton key={generateUUID()} className="h-12 w-full" />
                 ))}
               </div>
             )

@@ -14,8 +14,10 @@ export async function getDiscounts(params: GetDiscountsParams): Promise<Discount
   const db = getDb()
   const { schoolId, type, includeInactive = false } = params
   const conditions = [eq(discounts.schoolId, schoolId)]
-  if (type) conditions.push(eq(discounts.type, type))
-  if (!includeInactive) conditions.push(eq(discounts.status, 'active'))
+  if (type)
+    conditions.push(eq(discounts.type, type))
+  if (!includeInactive)
+    conditions.push(eq(discounts.status, 'active'))
 
   return db.select().from(discounts).where(and(...conditions)).orderBy(asc(discounts.name))
 }

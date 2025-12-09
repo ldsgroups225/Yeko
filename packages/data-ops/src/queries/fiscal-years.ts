@@ -13,7 +13,8 @@ export async function getFiscalYears(params: GetFiscalYearsParams): Promise<Fisc
   const db = getDb()
   const { schoolId, status } = params
   const conditions = [eq(fiscalYears.schoolId, schoolId)]
-  if (status) conditions.push(eq(fiscalYears.status, status))
+  if (status)
+    conditions.push(eq(fiscalYears.status, status))
 
   return db.select().from(fiscalYears).where(and(...conditions)).orderBy(desc(fiscalYears.startDate))
 }

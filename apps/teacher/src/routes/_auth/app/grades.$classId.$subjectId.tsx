@@ -111,62 +111,62 @@ function GradeEntryPage() {
         </div>
       </div>
 
-      {isLoading ? (
-        <GradeEntrySkeleton />
-      ) : data?.students && data.students.length > 0 ? (
-        <>
-          <Card>
-            <CardHeader className="pb-2">
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <Users className="h-4 w-4" />
-                  {t('common.students')}
-                </CardTitle>
-                <Badge variant="secondary">
-                  {data.students.length}
-                  {' '}
-                  {t('common.students')}
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {data.students.map((student: any) => (
-                <StudentGradeRow
-                  key={student.id}
-                  student={student}
-                  value={grades[student.id] ?? ''}
-                  onChange={value => handleGradeChange(student.id, value)}
-                />
-              ))}
-            </CardContent>
-          </Card>
+      {isLoading
+        ? <GradeEntrySkeleton />
+        : data?.students && data.students.length > 0
+          ? (
+              <>
+                <Card>
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="flex items-center gap-2 text-base">
+                        <Users className="h-4 w-4" />
+                        {t('common.students')}
+                      </CardTitle>
+                      <Badge variant="secondary">
+                        {data.students.length}
+                        {' '}
+                        {t('common.students')}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    {data.students.map((student: any) => (
+                      <StudentGradeRow
+                        key={student.id}
+                        student={student}
+                        value={grades[student.id] ?? ''}
+                        onChange={value => handleGradeChange(student.id, value)}
+                      />
+                    ))}
+                  </CardContent>
+                </Card>
 
-          {/* Fixed bottom action bar */}
-          <div className="fixed inset-x-0 bottom-16 border-t bg-background p-4">
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                className="flex-1"
-                onClick={() => handleSave('draft')}
-                disabled={!isDirty || submitMutation.isPending}
-              >
-                <Save className="mr-2 h-4 w-4" />
-                {t('grades.saveDraft')}
-              </Button>
-              <Button
-                className="flex-1"
-                onClick={() => handleSave('submitted')}
-                disabled={!isDirty || submitMutation.isPending}
-              >
-                <Check className="mr-2 h-4 w-4" />
-                {t('grades.submit')}
-              </Button>
-            </div>
-          </div>
-        </>
-      ) : (
-        <EmptyStudents />
-      )}
+                {/* Fixed bottom action bar */}
+                <div className="fixed inset-x-0 bottom-16 border-t bg-background p-4">
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      className="flex-1"
+                      onClick={() => handleSave('draft')}
+                      disabled={!isDirty || submitMutation.isPending}
+                    >
+                      <Save className="mr-2 h-4 w-4" />
+                      {t('grades.saveDraft')}
+                    </Button>
+                    <Button
+                      className="flex-1"
+                      onClick={() => handleSave('submitted')}
+                      disabled={!isDirty || submitMutation.isPending}
+                    >
+                      <Check className="mr-2 h-4 w-4" />
+                      {t('grades.submit')}
+                    </Button>
+                  </div>
+                </div>
+              </>
+            )
+          : <EmptyStudents />}
     </div>
   )
 }

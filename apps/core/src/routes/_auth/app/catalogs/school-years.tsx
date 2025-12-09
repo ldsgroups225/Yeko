@@ -64,7 +64,7 @@ function SchoolYearsCatalog() {
   const { logger } = useLogger()
   const queryClient = useQueryClient()
 
-  const [expandedYears, setExpandedYears] = useState<Set<string>>(new Set())
+  const [expandedYears, setExpandedYears] = useState<Set<string>>(() => new Set())
   const [isCreatingYear, setIsCreatingYear] = useState(false)
   const [editingYear, setEditingYear] = useState<string | null>(null)
   const [deletingYear, setDeletingYear] = useState<{ id: string, name: string } | null>(null)
@@ -369,332 +369,330 @@ function SchoolYearsCatalog() {
       <div className="space-y-4">
         {!schoolYears || schoolYears.length === 0
           ? (
-            <Card>
-              <CardContent className="py-12 text-center">
-                <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium">Aucune année scolaire</h3>
-                <p className="text-muted-foreground mb-4">
-                  Commencez par créer votre première année scolaire
-                </p>
-                <Button onClick={() => setIsCreatingYear(true)}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Créer une année
-                </Button>
-              </CardContent>
-            </Card>
-          )
+              <Card>
+                <CardContent className="py-12 text-center">
+                  <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-medium">Aucune année scolaire</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Commencez par créer votre première année scolaire
+                  </p>
+                  <Button onClick={() => setIsCreatingYear(true)}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Créer une année
+                  </Button>
+                </CardContent>
+              </Card>
+            )
           : (
-            <AnimatePresence mode="popLayout">
-              {schoolYears.map((year: SchoolYearWithTerms) => {
-                const isExpanded = expandedYears.has(year.id)
-                const isEditing = editingYear === year.id
+              <AnimatePresence mode="popLayout">
+                {schoolYears.map((year: SchoolYearWithTerms) => {
+                  const isExpanded = expandedYears.has(year.id)
+                  const isEditing = editingYear === year.id
 
-                return (
-                  <motion.div
-                    key={year.id}
-                    layout
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                  >
-                    <Card className={year.isActive ? 'border-primary' : ''}>
-                      <CardHeader className="pb-2">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <button
-                              type="button"
-                              onClick={() => toggleYearExpanded(year.id)}
-                              className="p-1 hover:bg-accent rounded"
-                              aria-label={isExpanded ? 'Réduire' : 'Développer'}
-                            >
-                              <motion.div
-                                animate={{ rotate: isExpanded ? 90 : 0 }}
-                                transition={{ duration: 0.2 }}
+                  return (
+                    <motion.div
+                      key={year.id}
+                      layout
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                    >
+                      <Card className={year.isActive ? 'border-primary' : ''}>
+                        <CardHeader className="pb-2">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <button
+                                type="button"
+                                onClick={() => toggleYearExpanded(year.id)}
+                                className="p-1 hover:bg-accent rounded"
+                                aria-label={isExpanded ? 'Réduire' : 'Développer'}
                               >
-                                <ChevronRight className="h-5 w-5" />
-                              </motion.div>
-                            </button>
-                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                              <Calendar className="h-5 w-5 text-primary" />
-                            </div>
-                            {isEditing
-                              ? (
-                                <form
-                                  onSubmit={e => handleUpdateYear(e, year.id)}
-                                  className="flex items-center gap-2"
+                                <motion.div
+                                  animate={{ rotate: isExpanded ? 90 : 0 }}
+                                  transition={{ duration: 0.2 }}
                                 >
-                                  <Input
-                                    name="name"
-                                    defaultValue={year.name}
-                                    className="w-32"
-                                    autoFocus
-                                  />
-                                  <Select name="isActive" defaultValue={year.isActive ? 'true' : 'false'}>
-                                    <SelectTrigger className="w-28">
-                                      <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      <SelectItem value="true">Active</SelectItem>
-                                      <SelectItem value="false">Inactive</SelectItem>
-                                    </SelectContent>
-                                  </Select>
-                                  <Button type="submit" size="sm" disabled={updateYearMutation.isPending}>
-                                    <Check className="h-4 w-4" />
-                                  </Button>
-                                  <Button
-                                    type="button"
-                                    size="sm"
-                                    variant="ghost"
-                                    onClick={() => setEditingYear(null)}
-                                  >
-                                    <X className="h-4 w-4" />
-                                  </Button>
-                                </form>
-                              )
-                              : (
-                                <div>
-                                  <div className="flex items-center gap-2">
-                                    <CardTitle className="text-xl">{year.name}</CardTitle>
-                                    {year.isActive && (
-                                      <Badge variant="default">Active</Badge>
-                                    )}
-                                  </div>
-                                  <CardDescription>
-                                    {year.terms.length}
-                                    {' '}
-                                    période(s) configurée(s)
-                                  </CardDescription>
-                                </div>
-                              )}
-                          </div>
-                          {!isEditing && (
-                            <div className="flex gap-2">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => setEditingYear(year.id)}
-                                aria-label="Modifier"
-                              >
-                                <Edit2 className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => setDeletingYear({ id: year.id, name: year.name })}
-                                aria-label="Supprimer"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          )}
-                        </div>
-                      </CardHeader>
-
-                      <AnimatePresence>
-                        {isExpanded && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: 'auto', opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.3 }}
-                          >
-                            <CardContent className="pt-4 border-t">
-                              <div className="space-y-4">
-                                <div className="flex items-center justify-between">
-                                  <h4 className="font-medium flex items-center gap-2">
-                                    <Clock className="h-4 w-4" />
-                                    Périodes (Trimestres/Semestres)
-                                  </h4>
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={() => setAddingTermToYear(year.id)}
-                                  >
-                                    <Plus className="h-4 w-4 mr-1" />
-                                    Ajouter
-                                  </Button>
-                                </div>
-
-                                {/* Add Term Form */}
-                                <AnimatePresence>
-                                  {addingTermToYear === year.id && (
-                                    <motion.div
-                                      initial={{ opacity: 0, height: 0 }}
-                                      animate={{ opacity: 1, height: 'auto' }}
-                                      exit={{ opacity: 0, height: 0 }}
-                                      className="p-4 bg-muted/50 rounded-lg"
-                                    >
-                                      <form
-                                        onSubmit={e => handleCreateTerm(e, year.id)}
-                                        className="space-y-4"
-                                      >
-                                        <div className="grid gap-4 md:grid-cols-3">
-                                          <div className="space-y-2">
-                                            <Label>Nom *</Label>
-                                            <Input
-                                              name="name"
-                                              placeholder="1er Trimestre"
-                                              required
-                                            />
-                                          </div>
-                                          <div className="space-y-2">
-                                            <Label>Type *</Label>
-                                            <Select name="type" defaultValue="trimester">
-                                              <SelectTrigger>
-                                                <SelectValue />
-                                              </SelectTrigger>
-                                              <SelectContent>
-                                                <SelectItem value="trimester">Trimestre</SelectItem>
-                                                <SelectItem value="semester">Semestre</SelectItem>
-                                              </SelectContent>
-                                            </Select>
-                                          </div>
-                                          <div className="space-y-2">
-                                            <Label>Ordre *</Label>
-                                            <Input
-                                              name="order"
-                                              type="number"
-                                              min="1"
-                                              defaultValue={year.terms.length + 1}
-                                              required
-                                            />
-                                          </div>
-                                        </div>
-                                        <div className="flex justify-end gap-2">
-                                          <Button
-                                            type="button"
-                                            variant="ghost"
-                                            size="sm"
-                                            onClick={() => setAddingTermToYear(null)}
-                                          >
-                                            Annuler
-                                          </Button>
-                                          <Button
-                                            type="submit"
-                                            size="sm"
-                                            disabled={createTermMutation.isPending}
-                                          >
-                                            {createTermMutation.isPending ? 'Création...' : 'Ajouter'}
-                                          </Button>
-                                        </div>
-                                      </form>
-                                    </motion.div>
-                                  )}
-                                </AnimatePresence>
-
-                                {/* Terms List */}
-                                {year.terms.length === 0
-                                  ? (
-                                    <div className="text-center py-6 text-muted-foreground">
-                                      <CalendarDays className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                                      <p>Aucune période configurée</p>
-                                      <p className="text-sm">
-                                        Ajoutez des trimestres ou semestres pour cette année
-                                      </p>
-                                    </div>
-                                  )
-                                  : (
-                                    <div className="space-y-2">
-                                      {year.terms
-                                        .sort((a: TermTemplate, b: TermTemplate) => a.order - b.order)
-                                        .map((term: TermTemplate) => (
-                                          <div
-                                            key={term.id}
-                                            className="flex items-center justify-between p-3 bg-background border rounded-lg"
-                                          >
-                                            {editingTerm?.id === term.id
-                                              ? (
-                                                <form
-                                                  onSubmit={handleUpdateTerm}
-                                                  className="flex items-center gap-2 flex-1"
-                                                >
-                                                  <Input
-                                                    name="name"
-                                                    defaultValue={term.name}
-                                                    className="w-40"
-                                                    autoFocus
-                                                  />
-                                                  <Select name="type" defaultValue={term.type}>
-                                                    <SelectTrigger className="w-32">
-                                                      <SelectValue />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                      <SelectItem value="trimester">Trimestre</SelectItem>
-                                                      <SelectItem value="semester">Semestre</SelectItem>
-                                                    </SelectContent>
-                                                  </Select>
-                                                  <Input
-                                                    name="order"
-                                                    type="number"
-                                                    min="1"
-                                                    defaultValue={term.order}
-                                                    className="w-20"
-                                                  />
-                                                  <Button
-                                                    type="submit"
-                                                    size="sm"
-                                                    disabled={updateTermMutation.isPending}
-                                                  >
-                                                    <Check className="h-4 w-4" />
-                                                  </Button>
-                                                  <Button
-                                                    type="button"
-                                                    size="sm"
-                                                    variant="ghost"
-                                                    onClick={() => setEditingTerm(null)}
-                                                  >
-                                                    <X className="h-4 w-4" />
-                                                  </Button>
-                                                </form>
-                                              )
-                                              : (
-                                                <>
-                                                  <div className="flex items-center gap-3">
-                                                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-xs font-medium">
-                                                      {term.order}
-                                                    </span>
-                                                    <span className="font-medium">{term.name}</span>
-                                                    <Badge variant="outline" className="text-xs">
-                                                      {term.type === 'trimester' ? 'Trimestre' : 'Semestre'}
-                                                    </Badge>
-                                                  </div>
-                                                  <div className="flex gap-1">
-                                                    <Button
-                                                      variant="ghost"
-                                                      size="icon"
-                                                      className="h-8 w-8"
-                                                      onClick={() => setEditingTerm(term)}
-                                                      aria-label="Modifier"
-                                                    >
-                                                      <Edit2 className="h-3 w-3" />
-                                                    </Button>
-                                                    <Button
-                                                      variant="ghost"
-                                                      size="icon"
-                                                      className="h-8 w-8"
-                                                      onClick={() => setDeletingTerm({ id: term.id, name: term.name })}
-                                                      aria-label="Supprimer"
-                                                    >
-                                                      <Trash2 className="h-3 w-3" />
-                                                    </Button>
-                                                  </div>
-                                                </>
-                                              )}
-                                          </div>
-                                        ))}
-                                    </div>
-                                  )}
+                                  <ChevronRight className="h-5 w-5" />
+                                </motion.div>
+                              </button>
+                              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                                <Calendar className="h-5 w-5 text-primary" />
                               </div>
-                            </CardContent>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </Card>
-                  </motion.div>
-                )
-              })}
-            </AnimatePresence>
-          )}
+                              {isEditing
+                                ? (
+                                    <form
+                                      onSubmit={e => handleUpdateYear(e, year.id)}
+                                      className="flex items-center gap-2"
+                                    >
+                                      <Input
+                                        name="name"
+                                        defaultValue={year.name}
+                                        className="w-32"
+                                      />
+                                      <Select name="isActive" defaultValue={year.isActive ? 'true' : 'false'}>
+                                        <SelectTrigger className="w-28">
+                                          <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          <SelectItem value="true">Active</SelectItem>
+                                          <SelectItem value="false">Inactive</SelectItem>
+                                        </SelectContent>
+                                      </Select>
+                                      <Button type="submit" size="sm" disabled={updateYearMutation.isPending}>
+                                        <Check className="h-4 w-4" />
+                                      </Button>
+                                      <Button
+                                        type="button"
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() => setEditingYear(null)}
+                                      >
+                                        <X className="h-4 w-4" />
+                                      </Button>
+                                    </form>
+                                  )
+                                : (
+                                    <div>
+                                      <div className="flex items-center gap-2">
+                                        <CardTitle className="text-xl">{year.name}</CardTitle>
+                                        {year.isActive && (
+                                          <Badge variant="default">Active</Badge>
+                                        )}
+                                      </div>
+                                      <CardDescription>
+                                        {year.terms.length}
+                                        {' '}
+                                        période(s) configurée(s)
+                                      </CardDescription>
+                                    </div>
+                                  )}
+                            </div>
+                            {!isEditing && (
+                              <div className="flex gap-2">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => setEditingYear(year.id)}
+                                  aria-label="Modifier"
+                                >
+                                  <Edit2 className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => setDeletingYear({ id: year.id, name: year.name })}
+                                  aria-label="Supprimer"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            )}
+                          </div>
+                        </CardHeader>
+
+                        <AnimatePresence>
+                          {isExpanded && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.3 }}
+                            >
+                              <CardContent className="pt-4 border-t">
+                                <div className="space-y-4">
+                                  <div className="flex items-center justify-between">
+                                    <h4 className="font-medium flex items-center gap-2">
+                                      <Clock className="h-4 w-4" />
+                                      Périodes (Trimestres/Semestres)
+                                    </h4>
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={() => setAddingTermToYear(year.id)}
+                                    >
+                                      <Plus className="h-4 w-4 mr-1" />
+                                      Ajouter
+                                    </Button>
+                                  </div>
+
+                                  {/* Add Term Form */}
+                                  <AnimatePresence>
+                                    {addingTermToYear === year.id && (
+                                      <motion.div
+                                        initial={{ opacity: 0, height: 0 }}
+                                        animate={{ opacity: 1, height: 'auto' }}
+                                        exit={{ opacity: 0, height: 0 }}
+                                        className="p-4 bg-muted/50 rounded-lg"
+                                      >
+                                        <form
+                                          onSubmit={e => handleCreateTerm(e, year.id)}
+                                          className="space-y-4"
+                                        >
+                                          <div className="grid gap-4 md:grid-cols-3">
+                                            <div className="space-y-2">
+                                              <Label>Nom *</Label>
+                                              <Input
+                                                name="name"
+                                                placeholder="1er Trimestre"
+                                                required
+                                              />
+                                            </div>
+                                            <div className="space-y-2">
+                                              <Label>Type *</Label>
+                                              <Select name="type" defaultValue="trimester">
+                                                <SelectTrigger>
+                                                  <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                  <SelectItem value="trimester">Trimestre</SelectItem>
+                                                  <SelectItem value="semester">Semestre</SelectItem>
+                                                </SelectContent>
+                                              </Select>
+                                            </div>
+                                            <div className="space-y-2">
+                                              <Label>Ordre *</Label>
+                                              <Input
+                                                name="order"
+                                                type="number"
+                                                min="1"
+                                                defaultValue={year.terms.length + 1}
+                                                required
+                                              />
+                                            </div>
+                                          </div>
+                                          <div className="flex justify-end gap-2">
+                                            <Button
+                                              type="button"
+                                              variant="ghost"
+                                              size="sm"
+                                              onClick={() => setAddingTermToYear(null)}
+                                            >
+                                              Annuler
+                                            </Button>
+                                            <Button
+                                              type="submit"
+                                              size="sm"
+                                              disabled={createTermMutation.isPending}
+                                            >
+                                              {createTermMutation.isPending ? 'Création...' : 'Ajouter'}
+                                            </Button>
+                                          </div>
+                                        </form>
+                                      </motion.div>
+                                    )}
+                                  </AnimatePresence>
+
+                                  {/* Terms List */}
+                                  {year.terms.length === 0
+                                    ? (
+                                        <div className="text-center py-6 text-muted-foreground">
+                                          <CalendarDays className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                                          <p>Aucune période configurée</p>
+                                          <p className="text-sm">
+                                            Ajoutez des trimestres ou semestres pour cette année
+                                          </p>
+                                        </div>
+                                      )
+                                    : (
+                                        <div className="space-y-2">
+                                          {year.terms
+                                            .sort((a: TermTemplate, b: TermTemplate) => a.order - b.order)
+                                            .map((term: TermTemplate) => (
+                                              <div
+                                                key={term.id}
+                                                className="flex items-center justify-between p-3 bg-background border rounded-lg"
+                                              >
+                                                {editingTerm?.id === term.id
+                                                  ? (
+                                                      <form
+                                                        onSubmit={handleUpdateTerm}
+                                                        className="flex items-center gap-2 flex-1"
+                                                      >
+                                                        <Input
+                                                          name="name"
+                                                          defaultValue={term.name}
+                                                          className="w-40"
+                                                        />
+                                                        <Select name="type" defaultValue={term.type}>
+                                                          <SelectTrigger className="w-32">
+                                                            <SelectValue />
+                                                          </SelectTrigger>
+                                                          <SelectContent>
+                                                            <SelectItem value="trimester">Trimestre</SelectItem>
+                                                            <SelectItem value="semester">Semestre</SelectItem>
+                                                          </SelectContent>
+                                                        </Select>
+                                                        <Input
+                                                          name="order"
+                                                          type="number"
+                                                          min="1"
+                                                          defaultValue={term.order}
+                                                          className="w-20"
+                                                        />
+                                                        <Button
+                                                          type="submit"
+                                                          size="sm"
+                                                          disabled={updateTermMutation.isPending}
+                                                        >
+                                                          <Check className="h-4 w-4" />
+                                                        </Button>
+                                                        <Button
+                                                          type="button"
+                                                          size="sm"
+                                                          variant="ghost"
+                                                          onClick={() => setEditingTerm(null)}
+                                                        >
+                                                          <X className="h-4 w-4" />
+                                                        </Button>
+                                                      </form>
+                                                    )
+                                                  : (
+                                                      <>
+                                                        <div className="flex items-center gap-3">
+                                                          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-xs font-medium">
+                                                            {term.order}
+                                                          </span>
+                                                          <span className="font-medium">{term.name}</span>
+                                                          <Badge variant="outline" className="text-xs">
+                                                            {term.type === 'trimester' ? 'Trimestre' : 'Semestre'}
+                                                          </Badge>
+                                                        </div>
+                                                        <div className="flex gap-1">
+                                                          <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            className="h-8 w-8"
+                                                            onClick={() => setEditingTerm(term)}
+                                                            aria-label="Modifier"
+                                                          >
+                                                            <Edit2 className="h-3 w-3" />
+                                                          </Button>
+                                                          <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            className="h-8 w-8"
+                                                            onClick={() => setDeletingTerm({ id: term.id, name: term.name })}
+                                                            aria-label="Supprimer"
+                                                          >
+                                                            <Trash2 className="h-3 w-3" />
+                                                          </Button>
+                                                        </div>
+                                                      </>
+                                                    )}
+                                              </div>
+                                            ))}
+                                        </div>
+                                      )}
+                                </div>
+                              </CardContent>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </Card>
+                    </motion.div>
+                  )
+                })}
+              </AnimatePresence>
+            )}
       </div>
 
       {/* Delete Year Dialog */}

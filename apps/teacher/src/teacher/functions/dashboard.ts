@@ -70,10 +70,10 @@ export const getTeacherDashboard = createServerFn()
       },
       classroom: session.classroom?.id
         ? {
-          id: session.classroom.id,
-          name: session.classroom.name,
-          code: session.classroom.code,
-        }
+            id: session.classroom.id,
+            name: session.classroom.name,
+            code: session.classroom.code,
+          }
         : null,
       date: today,
     }))
@@ -119,13 +119,13 @@ export const getTeacherDashboard = createServerFn()
       upcomingClasses,
       activeSession: activeSession
         ? {
-          id: activeSession.id,
-          classId: activeSession.classId,
-          className: activeSession.className,
-          subjectName: activeSession.subjectName,
-          startTime: activeSession.startTime,
-          startedAt: activeSession.startedAt?.toISOString() ?? new Date().toISOString(),
-        }
+            id: activeSession.id,
+            classId: activeSession.classId,
+            className: activeSession.className,
+            subjectName: activeSession.subjectName,
+            startTime: activeSession.startTime,
+            startedAt: activeSession.startedAt?.toISOString() ?? new Date().toISOString(),
+          }
         : null,
       pendingGrades,
       unreadMessages,
@@ -182,10 +182,10 @@ export const getTeacherSchedule = createServerFn()
       },
       classroom: session.classroom?.id
         ? {
-          id: session.classroom.id,
-          name: session.classroom.name,
-          code: session.classroom.code,
-        }
+            id: session.classroom.id,
+            name: session.classroom.name,
+            code: session.classroom.code,
+          }
         : null,
       date: '', // Will be calculated based on week
       hasSession: false,

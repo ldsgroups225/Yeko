@@ -704,78 +704,78 @@ function CoefficientsCatalog() {
           <CardContent>
             {matrixData.columns.length === 0
               ? (
-                <div className="text-center py-8">
-                  <Calculator className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-medium">Aucun coefficient trouvé</h3>
-                  <p className="text-muted-foreground">
-                    Commencez par créer votre premier coefficient.
-                  </p>
-                </div>
-              )
+                  <div className="text-center py-8">
+                    <Calculator className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-lg font-medium">Aucun coefficient trouvé</h3>
+                    <p className="text-muted-foreground">
+                      Commencez par créer votre premier coefficient.
+                    </p>
+                  </div>
+                )
               : (
-                <div className="overflow-x-auto">
-                  <table className="w-full border-collapse">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="text-left p-3 bg-muted sticky left-0 z-10">Matière</th>
-                        {matrixData.columns.map((columnKey) => {
-                          const info = matrixData.columnInfo[columnKey]
-                          return (
-                            <th key={columnKey} className="text-center p-3 bg-muted min-w-24">
-                              <div className="flex flex-col">
-                                <span>{info?.gradeName}</span>
-                                {info?.seriesName && (
-                                  <span className="text-xs font-normal text-muted-foreground">
-                                    {info.seriesName}
-                                  </span>
-                                )}
-                              </div>
-                            </th>
-                          )
-                        })}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Object.entries(matrixData.matrix).map(([subjectName, columnCoefs], index) => (
-                        <tr key={subjectName} className={index % 2 === 0 ? 'bg-muted/30' : ''}>
-                          <td className="font-medium p-3 border-r sticky left-0 bg-background">
-                            {subjectName}
-                          </td>
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse">
+                      <thead>
+                        <tr className="border-b">
+                          <th className="text-left p-3 bg-muted sticky left-0 z-10">Matière</th>
                           {matrixData.columns.map((columnKey) => {
-                            const coef = columnCoefs[columnKey]
+                            const info = matrixData.columnInfo[columnKey]
                             return (
-                              <td key={columnKey} className="text-center p-3">
-                                {coef
-                                  ? (
-                                    <div className="flex flex-col items-center gap-1">
-                                      <Input
-                                        type="number"
-                                        value={coef.weight}
-                                        onChange={e => handleCellEdit(coef.id, Number.parseInt(e.target.value))}
-                                        className={`w-16 mx-auto text-center ${coef.weight === 0 ? 'border-secondary' : ''}`}
-                                        min={COEFFICIENT_LIMITS.MIN}
-                                        max={COEFFICIENT_LIMITS.MAX}
-                                      />
-                                      {coef.weight === 0 && (
-                                        <div className="flex items-center gap-1 text-xs text-secondary">
-                                          <AlertTriangle className="h-3 w-3" />
-                                          <span>Coef 0</span>
-                                        </div>
-                                      )}
-                                    </div>
-                                  )
-                                  : (
-                                    <span className="text-muted-foreground text-sm">-</span>
+                              <th key={columnKey} className="text-center p-3 bg-muted min-w-24">
+                                <div className="flex flex-col">
+                                  <span>{info?.gradeName}</span>
+                                  {info?.seriesName && (
+                                    <span className="text-xs font-normal text-muted-foreground">
+                                      {info.seriesName}
+                                    </span>
                                   )}
-                              </td>
+                                </div>
+                              </th>
                             )
                           })}
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
+                      </thead>
+                      <tbody>
+                        {Object.entries(matrixData.matrix).map(([subjectName, columnCoefs], index) => (
+                          <tr key={subjectName} className={index % 2 === 0 ? 'bg-muted/30' : ''}>
+                            <td className="font-medium p-3 border-r sticky left-0 bg-background">
+                              {subjectName}
+                            </td>
+                            {matrixData.columns.map((columnKey) => {
+                              const coef = columnCoefs[columnKey]
+                              return (
+                                <td key={columnKey} className="text-center p-3">
+                                  {coef
+                                    ? (
+                                        <div className="flex flex-col items-center gap-1">
+                                          <Input
+                                            type="number"
+                                            value={coef.weight}
+                                            onChange={e => handleCellEdit(coef.id, Number.parseInt(e.target.value))}
+                                            className={`w-16 mx-auto text-center ${coef.weight === 0 ? 'border-secondary' : ''}`}
+                                            min={COEFFICIENT_LIMITS.MIN}
+                                            max={COEFFICIENT_LIMITS.MAX}
+                                          />
+                                          {coef.weight === 0 && (
+                                            <div className="flex items-center gap-1 text-xs text-secondary">
+                                              <AlertTriangle className="h-3 w-3" />
+                                              <span>Coef 0</span>
+                                            </div>
+                                          )}
+                                        </div>
+                                      )
+                                    : (
+                                        <span className="text-muted-foreground text-sm">-</span>
+                                      )}
+                                </td>
+                              )
+                            })}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
           </CardContent>
         </Card>
       )}
@@ -794,63 +794,63 @@ function CoefficientsCatalog() {
           <CardContent>
             {coefficientsLoading
               ? (
-                <CatalogListSkeleton count={5} />
-              )
-              : !coefficientsData || coefficientsData.coefficients.length === 0
-                ? (
-                  <div className="text-center py-8">
-                    <Calculator className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <h3 className="text-lg font-medium">Aucun coefficient trouvé</h3>
-                    <p className="text-muted-foreground">
-                      Commencez par créer votre premier coefficient.
-                    </p>
-                  </div>
+                  <CatalogListSkeleton count={5} />
                 )
-                : (
-                  <div className="space-y-4">
-                    <AnimatePresence mode="popLayout">
-                      {coefficientsData.coefficients.map((coef: any) => (
-                        <motion.div
-                          key={coef.id}
-                          layout
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, scale: 0.95 }}
-                          transition={{ duration: 0.2 }}
-                          className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
-                        >
-                          <div className="flex items-center gap-4 flex-1">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                              <span className="text-lg font-bold text-primary">{coef.weight}</span>
-                            </div>
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2">
-                                <h3 className="font-semibold">{coef.subject?.name}</h3>
-                                <Badge variant="outline">{coef.grade?.name}</Badge>
-                                {coef.series && (
-                                  <Badge variant="secondary">{coef.series.name}</Badge>
-                                )}
+              : !coefficientsData || coefficientsData.coefficients.length === 0
+                  ? (
+                      <div className="text-center py-8">
+                        <Calculator className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                        <h3 className="text-lg font-medium">Aucun coefficient trouvé</h3>
+                        <p className="text-muted-foreground">
+                          Commencez par créer votre premier coefficient.
+                        </p>
+                      </div>
+                    )
+                  : (
+                      <div className="space-y-4">
+                        <AnimatePresence mode="popLayout">
+                          {coefficientsData.coefficients.map((coef: any) => (
+                            <motion.div
+                              key={coef.id}
+                              layout
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, scale: 0.95 }}
+                              transition={{ duration: 0.2 }}
+                              className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
+                            >
+                              <div className="flex items-center gap-4 flex-1">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                                  <span className="text-lg font-bold text-primary">{coef.weight}</span>
+                                </div>
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2">
+                                    <h3 className="font-semibold">{coef.subject?.name}</h3>
+                                    <Badge variant="outline">{coef.grade?.name}</Badge>
+                                    {coef.series && (
+                                      <Badge variant="secondary">{coef.series.name}</Badge>
+                                    )}
+                                  </div>
+                                  <div className="text-sm text-muted-foreground mt-1">
+                                    {coef.schoolYearTemplate?.name}
+                                  </div>
+                                </div>
                               </div>
-                              <div className="text-sm text-muted-foreground mt-1">
-                                {coef.schoolYearTemplate?.name}
-                              </div>
-                            </div>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => setDeletingCoefficient({
-                              id: coef.id,
-                              name: `${coef.subject?.name} - ${coef.grade?.name}`,
-                            })}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </motion.div>
-                      ))}
-                    </AnimatePresence>
-                  </div>
-                )}
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setDeletingCoefficient({
+                                  id: coef.id,
+                                  name: `${coef.subject?.name} - ${coef.grade?.name}`,
+                                })}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </motion.div>
+                          ))}
+                        </AnimatePresence>
+                      </div>
+                    )}
           </CardContent>
         </Card>
       )}

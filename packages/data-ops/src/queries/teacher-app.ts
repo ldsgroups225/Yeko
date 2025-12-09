@@ -674,13 +674,13 @@ export async function getTeacherHomework(params: {
   const homeworkIds = homeworkList.map((h: { id: string }) => h.id)
   const submissionCounts = homeworkIds.length > 0
     ? await db
-      .select({
-        homeworkId: homeworkSubmissions.homeworkId,
-        count: sql<number>`count(*)::int`,
-      })
-      .from(homeworkSubmissions)
-      .where(sql`${homeworkSubmissions.homeworkId} IN (${sql.join(homeworkIds.map((id: string) => sql`${id}`), sql`, `)})`)
-      .groupBy(homeworkSubmissions.homeworkId)
+        .select({
+          homeworkId: homeworkSubmissions.homeworkId,
+          count: sql<number>`count(*)::int`,
+        })
+        .from(homeworkSubmissions)
+        .where(sql`${homeworkSubmissions.homeworkId} IN (${sql.join(homeworkIds.map((id: string) => sql`${id}`), sql`, `)})`)
+        .groupBy(homeworkSubmissions.homeworkId)
     : []
 
   const submissionMap = new Map(submissionCounts.map((s: { homeworkId: string, count: number }) => [s.homeworkId, s.count]))

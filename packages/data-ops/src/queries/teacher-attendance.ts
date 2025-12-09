@@ -43,14 +43,14 @@ export async function getDailyTeacherAttendance(schoolId: string, date: string) 
     specialization: r.teacher.specialization,
     attendance: r.attendance
       ? {
-        id: r.attendance.id,
-        status: r.attendance.status,
-        arrivalTime: r.attendance.arrivalTime,
-        departureTime: r.attendance.departureTime,
-        lateMinutes: r.attendance.lateMinutes,
-        reason: r.attendance.reason,
-        notes: r.attendance.notes,
-      }
+          id: r.attendance.id,
+          status: r.attendance.status,
+          arrivalTime: r.attendance.arrivalTime,
+          departureTime: r.attendance.departureTime,
+          lateMinutes: r.attendance.lateMinutes,
+          reason: r.attendance.reason,
+          notes: r.attendance.notes,
+        }
       : null,
   }))
 }

@@ -51,7 +51,7 @@ function MessageDetailPage() {
         },
       })
     }
-  }, [data?.message, context, messageId])
+  }, [data?.message, context, messageId, markReadMutation])
 
   const isLoading = contextLoading || dataLoading
   const message = data?.message
@@ -67,20 +67,24 @@ function MessageDetailPage() {
         <h1 className="text-lg font-semibold">{t('messages.title')}</h1>
       </div>
 
-      {isLoading ? (
-        <MessageDetailSkeleton />
-      ) : message ? (
-        <MessageContent message={message} locale={locale} />
-      ) : (
-        <Card>
-          <CardContent className="py-12 text-center">
-            <Mail className="mx-auto h-12 w-12 text-muted-foreground/50" />
-            <p className="mt-4 text-sm text-muted-foreground">
-              {t('errors.notFound')}
-            </p>
-          </CardContent>
-        </Card>
-      )}
+      {isLoading
+        ? (
+            <MessageDetailSkeleton />
+          )
+        : message
+          ? (
+              <MessageContent message={message} locale={locale} />
+            )
+          : (
+              <Card>
+                <CardContent className="py-12 text-center">
+                  <Mail className="mx-auto h-12 w-12 text-muted-foreground/50" />
+                  <p className="mt-4 text-sm text-muted-foreground">
+                    {t('errors.notFound')}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
     </div>
   )
 }

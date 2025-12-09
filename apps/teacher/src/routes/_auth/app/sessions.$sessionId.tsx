@@ -42,7 +42,7 @@ function SessionDetailPage() {
 
   const [localGrades, setLocalGrades] = useState<
     Map<string, { grade: number, comment: string | undefined }>
-  >(new Map())
+  >(() => new Map())
 
   const saveMutation = useMutation({
     mutationFn: async () => {

@@ -77,17 +77,17 @@ function DashboardPage() {
         <CardContent>
           {data?.todaySchedule && data.todaySchedule.length > 0
             ? (
-              <div className="space-y-2">
-                {data.todaySchedule.map((session: any) => (
-                  <ScheduleItem key={session.id} session={session} />
-                ))}
-              </div>
-            )
+                <div className="space-y-2">
+                  {data.todaySchedule.map((session: any) => (
+                    <ScheduleItem key={session.id} session={session} />
+                  ))}
+                </div>
+              )
             : (
-              <p className="text-sm text-muted-foreground">
-                {t('dashboard.noClassesToday')}
-              </p>
-            )}
+                <p className="text-sm text-muted-foreground">
+                  {t('dashboard.noClassesToday')}
+                </p>
+              )}
         </CardContent>
       </Card>
 
@@ -201,11 +201,11 @@ function ScheduleItem({ session }: ScheduleItemProps) {
   return (
     <div
       className={`flex items-center gap-3 rounded-lg border p-3 ${isCurrent
-          ? 'border-primary bg-primary/5'
-          : isPast
-            ? 'opacity-60'
-            : ''
-        }`}
+        ? 'border-primary bg-primary/5'
+        : isPast
+          ? 'opacity-60'
+          : ''
+      }`}
     >
       <div className="flex flex-col items-center">
         <span className="text-xs font-medium">{session.startTime}</span>

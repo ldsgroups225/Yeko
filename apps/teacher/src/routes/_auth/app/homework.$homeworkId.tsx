@@ -75,7 +75,6 @@ function HomeworkDetailPage() {
     }
   }
 
-
   const updateMutation = useMutation({
     mutationFn: updateHomework,
     onSuccess: (result) => {
@@ -83,7 +82,8 @@ function HomeworkDetailPage() {
         toast.success(t('homework.updated', 'Devoir mis à jour'))
         queryClient.invalidateQueries({ queryKey: ['teacher', 'homework'] })
         setIsEditing(false)
-      } else {
+      }
+      else {
         toast.error(t('errors.serverError'))
       }
     },
@@ -99,7 +99,8 @@ function HomeworkDetailPage() {
         toast.success(t('homework.deleted', 'Devoir supprimé'))
         queryClient.invalidateQueries({ queryKey: ['teacher', 'homework'] })
         navigate({ to: '/app/homework' })
-      } else {
+      }
+      else {
         toast.error(t('errors.serverError'))
       }
     },
@@ -109,7 +110,8 @@ function HomeworkDetailPage() {
   })
 
   const handleSave = (newStatus?: 'draft' | 'active' | 'closed') => {
-    if (!context || !homework) return
+    if (!context || !homework)
+      return
 
     updateMutation.mutate({
       data: {
@@ -125,7 +127,8 @@ function HomeworkDetailPage() {
   }
 
   const handleDelete = () => {
-    if (!context || !homework) return
+    if (!context || !homework)
+      return
     deleteMutation.mutate({
       data: {
         homeworkId: homework.id,
@@ -182,175 +185,180 @@ function HomeworkDetailPage() {
         )}
       </div>
 
-      {isEditing ? (
-        /* Edit Form */
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label>{t('homework.titleField')}</Label>
-            <Input
-              value={title}
-              onChange={e => setTitle(e.target.value)}
-              placeholder={t('homework.titleField')}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label>{t('homework.description')}</Label>
-            <Textarea
-              value={description}
-              onChange={e => setDescription(e.target.value)}
-              placeholder={t('homework.description')}
-              rows={4}
-              className="resize-none"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-2">
-              <Label>{t('homework.dueDate')}</Label>
-              <div className="relative">
-                <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+      {isEditing
+        ? (
+      /* Edit Form */
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>{t('homework.titleField')}</Label>
                 <Input
-                  type="date"
-                  value={dueDate}
-                  onChange={e => setDueDate(e.target.value)}
-                  className="pl-9"
+                  value={title}
+                  onChange={e => setTitle(e.target.value)}
+                  placeholder={t('homework.titleField')}
                 />
               </div>
-            </div>
-            <div className="space-y-2">
-              <Label>{t('homework.dueTime')}</Label>
-              <Input
-                type="time"
-                value={dueTime}
-                onChange={e => setDueTime(e.target.value)}
-              />
-            </div>
-          </div>
 
-          {/* Edit Actions */}
-          <div className="fixed inset-x-0 bottom-16 border-t bg-background p-4">
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                className="flex-1"
-                onClick={() => setIsEditing(false)}
-              >
-                <X className="mr-2 h-4 w-4" />
-                {t('common.cancel')}
-              </Button>
-              <Button
-                className="flex-1"
-                onClick={() => handleSave()}
-                disabled={!title.trim() || !dueDate || updateMutation.isPending}
-              >
-                <Save className="mr-2 h-4 w-4" />
-                {t('common.save')}
-              </Button>
-            </div>
-          </div>
-        </div>
-      ) : (
-        /* View Mode */
-        <div className="space-y-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <div className="flex items-start justify-between">
-                <CardTitle className="text-lg">{homework.title}</CardTitle>
-                <Badge variant={statusColors[homework.status] ?? 'default'}>
-                  {t(`homework.status.${homework.status}`)}
-                </Badge>
+              <div className="space-y-2">
+                <Label>{t('homework.description')}</Label>
+                <Textarea
+                  value={description}
+                  onChange={e => setDescription(e.target.value)}
+                  placeholder={t('homework.description')}
+                  rows={4}
+                  className="resize-none"
+                />
               </div>
-              <p className="text-sm text-muted-foreground">
-                {homework.className} • {homework.subjectName}
-              </p>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {homework.description && (
-                <div>
-                  <Label className="text-xs text-muted-foreground">
-                    {t('homework.description')}
-                  </Label>
-                  <p className="mt-1 whitespace-pre-wrap text-sm">{homework.description}</p>
-                </div>
-              )}
 
-              <div className="flex items-center gap-4 text-sm">
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                  <span>{format(dueDateTime, 'd MMMM yyyy', { locale })}</span>
-                </div>
-                {homework.dueTime && (
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span>{homework.dueTime}</span>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <Label>{t('homework.dueDate')}</Label>
+                  <div className="relative">
+                    <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                      type="date"
+                      value={dueDate}
+                      onChange={e => setDueDate(e.target.value)}
+                      className="pl-9"
+                    />
                   </div>
-                )}
+                </div>
+                <div className="space-y-2">
+                  <Label>{t('homework.dueTime')}</Label>
+                  <Input
+                    type="time"
+                    value={dueTime}
+                    onChange={e => setDueTime(e.target.value)}
+                  />
+                </div>
               </div>
 
-              {homework.instructions && (
-                <div>
-                  <Label className="text-xs text-muted-foreground">
-                    {t('homework.instructions', 'Instructions')}
-                  </Label>
-                  <p className="mt-1 whitespace-pre-wrap text-sm">{homework.instructions}</p>
+              {/* Edit Actions */}
+              <div className="fixed inset-x-0 bottom-16 border-t bg-background p-4">
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    className="flex-1"
+                    onClick={() => setIsEditing(false)}
+                  >
+                    <X className="mr-2 h-4 w-4" />
+                    {t('common.cancel')}
+                  </Button>
+                  <Button
+                    className="flex-1"
+                    onClick={() => handleSave()}
+                    disabled={!title.trim() || !dueDate || updateMutation.isPending}
+                  >
+                    <Save className="mr-2 h-4 w-4" />
+                    {t('common.save')}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )
+        : (
+      /* View Mode */
+            <div className="space-y-4">
+              <Card>
+                <CardHeader className="pb-2">
+                  <div className="flex items-start justify-between">
+                    <CardTitle className="text-lg">{homework.title}</CardTitle>
+                    <Badge variant={statusColors[homework.status] ?? 'default'}>
+                      {t(`homework.status.${homework.status}`)}
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {homework.className}
+                    {' '}
+                    •
+                    {homework.subjectName}
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {homework.description && (
+                    <div>
+                      <Label className="text-xs text-muted-foreground">
+                        {t('homework.description')}
+                      </Label>
+                      <p className="mt-1 whitespace-pre-wrap text-sm">{homework.description}</p>
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-4 text-sm">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                      <span>{format(dueDateTime, 'd MMMM yyyy', { locale })}</span>
+                    </div>
+                    {homework.dueTime && (
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-muted-foreground" />
+                        <span>{homework.dueTime}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {homework.instructions && (
+                    <div>
+                      <Label className="text-xs text-muted-foreground">
+                        {t('homework.instructions', 'Instructions')}
+                      </Label>
+                      <p className="mt-1 whitespace-pre-wrap text-sm">{homework.instructions}</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Actions */}
+              {homework.status !== 'cancelled' && (
+                <div className="fixed inset-x-0 bottom-16 border-t bg-background p-4">
+                  <div className="flex gap-2">
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="outline" size="icon" className="text-destructive">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>{t('homework.deleteConfirm', 'Supprimer ce devoir ?')}</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            {t('homework.deleteWarning', 'Cette action est irréversible.')}
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+                          <AlertDialogAction onClick={handleDelete}>
+                            {t('common.delete')}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+
+                    {homework.status === 'draft' && (
+                      <Button
+                        className="flex-1"
+                        onClick={() => handleSave('active')}
+                        disabled={updateMutation.isPending}
+                      >
+                        <Send className="mr-2 h-4 w-4" />
+                        {t('homework.publish', 'Publier')}
+                      </Button>
+                    )}
+
+                    {homework.status === 'active' && (
+                      <Button
+                        variant="secondary"
+                        className="flex-1"
+                        onClick={() => handleSave('closed')}
+                        disabled={updateMutation.isPending}
+                      >
+                        {t('homework.close', 'Clôturer')}
+                      </Button>
+                    )}
+                  </div>
                 </div>
               )}
-            </CardContent>
-          </Card>
-
-          {/* Actions */}
-          {homework.status !== 'cancelled' && (
-            <div className="fixed inset-x-0 bottom-16 border-t bg-background p-4">
-              <div className="flex gap-2">
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="outline" size="icon" className="text-destructive">
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>{t('homework.deleteConfirm', 'Supprimer ce devoir ?')}</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        {t('homework.deleteWarning', 'Cette action est irréversible.')}
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
-                      <AlertDialogAction onClick={handleDelete}>
-                        {t('common.delete')}
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-
-                {homework.status === 'draft' && (
-                  <Button
-                    className="flex-1"
-                    onClick={() => handleSave('active')}
-                    disabled={updateMutation.isPending}
-                  >
-                    <Send className="mr-2 h-4 w-4" />
-                    {t('homework.publish', 'Publier')}
-                  </Button>
-                )}
-
-                {homework.status === 'active' && (
-                  <Button
-                    variant="secondary"
-                    className="flex-1"
-                    onClick={() => handleSave('closed')}
-                    disabled={updateMutation.isPending}
-                  >
-                    {t('homework.close', 'Clôturer')}
-                  </Button>
-                )}
-              </div>
             </div>
           )}
-        </div>
-      )}
     </div>
   )
 }

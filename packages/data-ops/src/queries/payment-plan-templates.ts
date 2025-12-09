@@ -14,7 +14,8 @@ export async function getPaymentPlanTemplates(params: GetPaymentPlanTemplatesPar
   const db = getDb()
   const { schoolId, schoolYearId, includeInactive = false } = params
   const conditions = [eq(paymentPlanTemplates.schoolId, schoolId), eq(paymentPlanTemplates.schoolYearId, schoolYearId)]
-  if (!includeInactive) conditions.push(eq(paymentPlanTemplates.status, 'active'))
+  if (!includeInactive)
+    conditions.push(eq(paymentPlanTemplates.status, 'active'))
 
   return db.select().from(paymentPlanTemplates).where(and(...conditions))
 }

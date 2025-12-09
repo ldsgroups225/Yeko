@@ -1,3 +1,4 @@
+import type { Mock } from 'vitest'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
@@ -153,8 +154,8 @@ vi.mock('@/schemas/school', () => ({
 }))
 
 describe('schoolForm Component', () => {
-  let mockOnSubmit: ReturnType<typeof vi.fn>
-  let mockOnCancel: ReturnType<typeof vi.fn>
+  let mockOnSubmit: Mock<(data: any) => Promise<void>>
+  let mockOnCancel: Mock<() => void>
 
   beforeEach(() => {
     mockOnSubmit = vi.fn()

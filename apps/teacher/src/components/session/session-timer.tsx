@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks-extra/no-direct-set-state-in-use-effect */
 import { Clock } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -16,6 +17,7 @@ export function SessionTimer({ startedAt, className }: SessionTimerProps) {
     const updateElapsed = () => {
       setElapsed(Math.floor((Date.now() - startTime) / 1000))
     }
+
     updateElapsed()
     const interval = setInterval(updateElapsed, 1000)
     return () => clearInterval(interval)

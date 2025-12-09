@@ -63,16 +63,16 @@ function GradesIndexPage() {
           <CardContent>
             {pendingLoading
               ? (
-                <Skeleton className="h-8 w-16" />
-              )
+                  <Skeleton className="h-8 w-16" />
+                )
               : (
-                <>
-                  <div className="text-2xl font-bold">{pendingCount}</div>
-                  <p className="text-xs text-muted-foreground">
-                    {t('academic.grades.validations.pendingCount', { count: totalPendingGrades })}
-                  </p>
-                </>
-              )}
+                  <>
+                    <div className="text-2xl font-bold">{pendingCount}</div>
+                    <p className="text-xs text-muted-foreground">
+                      {t('academic.grades.validations.pendingCount', { count: totalPendingGrades })}
+                    </p>
+                  </>
+                )}
           </CardContent>
         </Card>
 

@@ -430,95 +430,95 @@ function ProgramsCatalog() {
         <CardContent>
           {programsLoading && page === 1
             ? (
-              <CatalogListSkeleton count={5} />
-            )
-            : !programsData || programsData.programs.length === 0
-              ? (
-                <div className="text-center py-8">
-                  <Database className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-medium">Aucun programme trouvé</h3>
-                  <p className="text-muted-foreground">
-                    {search || yearFilter !== 'all' || subjectFilter !== 'all' || gradeFilter !== 'all'
-                      ? 'Essayez de modifier vos filtres de recherche.'
-                      : 'Commencez par créer votre premier programme.'}
-                  </p>
-                </div>
+                <CatalogListSkeleton count={5} />
               )
-              : (
-                <div className="space-y-4">
-                  <AnimatePresence mode="popLayout">
-                    {programsData.programs.map((program: any) => (
-                      <motion.div
-                        key={program.id}
-                        layout
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        transition={{ duration: 0.2 }}
-                        className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer"
-                        onClick={() => navigate({ to: `/app/catalogs/programs/${program.id}` })}
-                      >
-                        <div className="flex items-center gap-4 flex-1">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                            <BookOpen className="h-5 w-5 text-primary" />
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <h3 className="font-semibold">{program.name}</h3>
-                              {program.status === 'published' && (
-                                <Badge variant="default" className="text-xs">Publié</Badge>
-                              )}
-                              {program.status === 'draft' && (
-                                <Badge variant="secondary" className="text-xs">Brouillon</Badge>
-                              )}
-                              {program.status === 'archived' && (
-                                <Badge variant="outline" className="text-xs">Archivé</Badge>
-                              )}
-                              {program.schoolYearTemplate?.isActive && (
-                                <Badge variant="default" className="text-xs">Active</Badge>
-                              )}
-                            </div>
-                            <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
-                              <span>{program.subject?.name}</span>
-                              <span>•</span>
-                              <span>{program.grade?.name}</span>
-                              <span>•</span>
-                              <span>{program.schoolYearTemplate?.name}</span>
-                            </div>
-                          </div>
-                          <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                        </div>
-                        <div
-                          className="flex gap-2"
-                          onClick={e => e.stopPropagation()}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              e.stopPropagation()
-                              e.preventDefault()
-                            }
-                          }}
-                          role="toolbar"
-                        >
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => setCloningProgram({ id: program.id, name: program.name })}
+            : !programsData || programsData.programs.length === 0
+                ? (
+                    <div className="text-center py-8">
+                      <Database className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                      <h3 className="text-lg font-medium">Aucun programme trouvé</h3>
+                      <p className="text-muted-foreground">
+                        {search || yearFilter !== 'all' || subjectFilter !== 'all' || gradeFilter !== 'all'
+                          ? 'Essayez de modifier vos filtres de recherche.'
+                          : 'Commencez par créer votre premier programme.'}
+                      </p>
+                    </div>
+                  )
+                : (
+                    <div className="space-y-4">
+                      <AnimatePresence mode="popLayout">
+                        {programsData.programs.map((program: any) => (
+                          <motion.div
+                            key={program.id}
+                            layout
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            transition={{ duration: 0.2 }}
+                            className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer"
+                            onClick={() => navigate({ to: `/app/catalogs/programs/${program.id}` })}
                           >
-                            <Copy className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => setDeletingProgram({ id: program.id, name: program.name })}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
-                </div>
-              )}
+                            <div className="flex items-center gap-4 flex-1">
+                              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                                <BookOpen className="h-5 w-5 text-primary" />
+                              </div>
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2">
+                                  <h3 className="font-semibold">{program.name}</h3>
+                                  {program.status === 'published' && (
+                                    <Badge variant="default" className="text-xs">Publié</Badge>
+                                  )}
+                                  {program.status === 'draft' && (
+                                    <Badge variant="secondary" className="text-xs">Brouillon</Badge>
+                                  )}
+                                  {program.status === 'archived' && (
+                                    <Badge variant="outline" className="text-xs">Archivé</Badge>
+                                  )}
+                                  {program.schoolYearTemplate?.isActive && (
+                                    <Badge variant="default" className="text-xs">Active</Badge>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
+                                  <span>{program.subject?.name}</span>
+                                  <span>•</span>
+                                  <span>{program.grade?.name}</span>
+                                  <span>•</span>
+                                  <span>{program.schoolYearTemplate?.name}</span>
+                                </div>
+                              </div>
+                              <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                            </div>
+                            <div
+                              className="flex gap-2"
+                              onClick={e => e.stopPropagation()}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.stopPropagation()
+                                  e.preventDefault()
+                                }
+                              }}
+                              role="toolbar"
+                            >
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setCloningProgram({ id: program.id, name: program.name })}
+                              >
+                                <Copy className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setDeletingProgram({ id: program.id, name: program.name })}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </AnimatePresence>
+                    </div>
+                  )}
         </CardContent>
       </Card>
 

@@ -379,7 +379,7 @@ describe('1.1 Core Schema Tests', () => {
       expect(columnNames).toContain('subject_id')
     })
 
-    test('index performance on filtered queries', async () => {
+    test('index performance on filtered queries', { timeout: 10000 }, async () => {
       // Insert test data for performance testing
       const testSchoolId = `test-school-${Date.now()}`
       await db.insert(schools).values({
@@ -409,7 +409,7 @@ describe('1.1 Core Schema Tests', () => {
 
       // Cleanup
       await db.delete(schools).where(eq(schools.id, testSchoolId))
-    }, { timeout: 10000 })
+    })
   })
 
   describe('1.1.3 Default Values', () => {
@@ -486,7 +486,7 @@ describe('1.1 Core Schema Tests', () => {
       await db.delete(subjects).where(eq(subjects.id, testSubjectId))
     })
 
-    test('updated_at triggers on record updates', async () => {
+    test('updated_at triggers on record updates', { timeout: 5000 }, async () => {
       const testSchoolId = `test-school-update-${Date.now()}`
 
       await db.insert(schools).values({
@@ -524,7 +524,7 @@ describe('1.1 Core Schema Tests', () => {
 
       // Cleanup
       await db.delete(schools).where(eq(schools.id, testSchoolId))
-    }, { timeout: 5000 })
+    })
   })
 
   describe('1.1.4 Relationships & Cascading', () => {
@@ -573,7 +573,7 @@ describe('1.1 Core Schema Tests', () => {
       ).rejects.toThrow()
     })
 
-    test('cascade delete behavior for program chapters', async () => {
+    test('cascade delete behavior for program chapters', { timeout: 10000 }, async () => {
       // Create test data
       const testSchoolId = `test-school-cascade-${Date.now()}`
       await db.insert(schools).values({
@@ -647,7 +647,7 @@ describe('1.1 Core Schema Tests', () => {
       await db.delete(schools).where(eq(schools.id, testSchoolId))
       await db.delete(subjects).where(eq(subjects.id, testSubjectId))
       await db.delete(schoolYearTemplates).where(eq(schoolYearTemplates.id, testYearId))
-    }, { timeout: 10000 })
+    })
   })
 
   describe('1.1.5 Data Type Validation', () => {

@@ -27,7 +27,8 @@ export async function getAccounts(params: GetAccountsParams): Promise<Account[]>
   if (parentId !== undefined) {
     if (parentId === null) {
       conditions.push(isNull(accounts.parentId))
-    } else {
+    }
+    else {
       conditions.push(eq(accounts.parentId, parentId))
     }
   }
@@ -67,7 +68,8 @@ export async function getAccountsTree(schoolId: string, includeInactive = false)
     const node = accountMap.get(account.id)!
     if (account.parentId && accountMap.has(account.parentId)) {
       accountMap.get(account.parentId)!.children.push(node)
-    } else {
+    }
+    else {
       rootAccounts.push(node)
     }
   }
@@ -125,7 +127,8 @@ export async function updateAccount(accountId: string, data: UpdateAccountData):
   if (data.parentId !== undefined) {
     if (data.parentId === null) {
       level = 1
-    } else {
+    }
+    else {
       const parent = await getAccountById(data.parentId)
       if (parent) {
         level = parent.level + 1
@@ -199,5 +202,5 @@ export async function getTotalBalanceByType(schoolId: string, type: AccountType)
     .from(accounts)
     .where(and(eq(accounts.schoolId, schoolId), eq(accounts.type, type), eq(accounts.status, 'active')))
 
-  return parseFloat(result?.total ?? '0')
+  return Number.parseFloat(result?.total ?? '0')
 }

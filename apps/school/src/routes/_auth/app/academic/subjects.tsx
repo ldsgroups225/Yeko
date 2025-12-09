@@ -60,44 +60,44 @@ function SchoolSubjectsPage() {
         <div className="w-full sm:w-[250px]">
           {yearsLoading
             ? (
-              <Skeleton className="h-10 w-full" />
-            )
+                <Skeleton className="h-10 w-full" />
+              )
             : (
-              <Select
-                value={selectedYearId}
-                onValueChange={setSelectedYearId}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={t('schoolYear.select')} />
-                </SelectTrigger>
-                <SelectContent>
-                  {schoolYears?.map(
-                    (year: any) => (
-                      <SelectItem key={year.id} value={year.id}>
-                        {year.template?.name || year.name}
-                        {' '}
-                        {year.isActive && t('schoolYear.activeSuffix')}
-                      </SelectItem>
-                    ),
-                  )}
-                </SelectContent>
-              </Select>
-            )}
+                <Select
+                  value={selectedYearId}
+                  onValueChange={setSelectedYearId}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('schoolYear.select')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {schoolYears?.map(
+                      (year: any) => (
+                        <SelectItem key={year.id} value={year.id}>
+                          {year.template?.name || year.name}
+                          {' '}
+                          {year.isActive && t('schoolYear.activeSuffix')}
+                        </SelectItem>
+                      ),
+                    )}
+                  </SelectContent>
+                </Select>
+              )}
         </div>
       </div>
 
       {/* Subject List */}
       {selectedYearId
         ? (
-          <SchoolSubjectList schoolYearId={selectedYearId} />
-        )
+            <SchoolSubjectList schoolYearId={selectedYearId} />
+          )
         : (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-              <p>{t('academic.subjects.messages.selectSchoolYearPrompt')}</p>
-            </CardContent>
-          </Card>
-        )}
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                <p>{t('academic.subjects.messages.selectSchoolYearPrompt')}</p>
+              </CardContent>
+            </Card>
+          )}
     </div>
   )
 }

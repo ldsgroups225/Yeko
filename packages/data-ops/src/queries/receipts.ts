@@ -16,9 +16,12 @@ export async function getReceipts(params: GetReceiptsParams): Promise<Receipt[]>
   const db = getDb()
   const { paymentId, startDate, endDate, page = 1, pageSize = 20 } = params
   const conditions = []
-  if (paymentId) conditions.push(eq(receipts.paymentId, paymentId))
-  if (startDate) conditions.push(gte(receipts.paymentDate, startDate))
-  if (endDate) conditions.push(lte(receipts.paymentDate, endDate))
+  if (paymentId)
+    conditions.push(eq(receipts.paymentId, paymentId))
+  if (startDate)
+    conditions.push(gte(receipts.paymentDate, startDate))
+  if (endDate)
+    conditions.push(lte(receipts.paymentDate, endDate))
 
   return db
     .select()
@@ -72,7 +75,8 @@ export async function recordReceiptReprint(receiptId: string, reprintedBy: strin
 export async function incrementReceiptReprint(receiptId: string, reprintedBy: string): Promise<Receipt> {
   const db = getDb()
   const existing = await getReceiptById(receiptId)
-  if (!existing) throw new Error('Receipt not found')
+  if (!existing)
+    throw new Error('Receipt not found')
 
   const [receipt] = await db
     .update(receipts)

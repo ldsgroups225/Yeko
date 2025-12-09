@@ -1,13 +1,9 @@
 import type { TimetableSessionInsert } from '../drizzle/school-schema'
-import { and, asc, eq, gte, lte, ne, or, sql } from 'drizzle-orm'
+import { and, asc, eq, ne, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
-import { subjects } from '../drizzle/core-schema'
 import {
   classes,
-  classrooms,
-  teachers,
   timetableSessions,
-  users,
 } from '../drizzle/school-schema'
 
 // ============================================
@@ -292,11 +288,14 @@ export async function getAllConflictsForSchool(schoolId: string, schoolYearId: s
       const s1 = sessions[i]
       const s2 = sessions[j]
 
-      if (!s1 || !s2) continue
-      if (s1.dayOfWeek !== s2.dayOfWeek) continue
+      if (!s1 || !s2)
+        continue
+      if (s1.dayOfWeek !== s2.dayOfWeek)
+        continue
 
       // Check time overlap
-      if (!(s1.startTime < s2.endTime && s2.startTime < s1.endTime)) continue
+      if (!(s1.startTime < s2.endTime && s2.startTime < s1.endTime))
+        continue
 
       // Check for conflicts
       if (s1.teacherId === s2.teacherId) {

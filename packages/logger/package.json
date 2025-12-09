@@ -39,13 +39,13 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@logtape/logtape": "^1.2.2"
+    "@logtape/logtape": "workspace:*"
   },
   "devDependencies": {
     "@yeko/eslint-config": "workspace:^",
-    "eslint": "^9.39.1",
-    "tsup": "^8.5.1",
-    "typescript": "^5.9.3"
+    "eslint": "workspace:*",
+    "tsup": "workspace:*",
+    "typescript": "workspace:*"
   },
   "publishConfig": {
     "access": "restricted"

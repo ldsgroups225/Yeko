@@ -15,11 +15,11 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-    "@cloudflare/workers-types": "^4.20251209.0"
+    "@cloudflare/workers-types": "workspace:*"
   },
   "devDependencies": {
     "@yeko/eslint-config": "workspace:^",
-    "eslint": "^9.39.1",
-    "typescript": "^5.9.3"
+    "eslint": "workspace:*",
+    "typescript": "workspace:*"
   }
 }

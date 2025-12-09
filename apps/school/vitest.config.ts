@@ -35,7 +35,6 @@ export default defineConfig({
         statements: 90,
       },
       // 2025: Enhanced coverage options
-      all: true,
       ignoreClassMethods: ['render', 'componentDidMount', 'componentDidUpdate'],
       cleanOnRerun: true,
     },

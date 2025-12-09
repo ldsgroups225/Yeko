@@ -34,7 +34,6 @@ interface SchoolsTableVirtualProps {
 export function SchoolsTableVirtual({ schools, onSchoolClick }: SchoolsTableVirtualProps) {
   const parentRef = useRef<HTMLDivElement>(null)
 
-  // eslint-disable-next-line react-hooks/incompatible-library
   const virtualizer = useVirtualizer({
     count: schools.length,
     getScrollElement: () => parentRef.current,

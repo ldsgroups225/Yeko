@@ -16,9 +16,12 @@ export async function getFeeStructures(params: GetFeeStructuresParams): Promise<
   const db = getDb()
   const { schoolId, schoolYearId, gradeId, seriesId, feeTypeId } = params
   const conditions = [eq(feeStructures.schoolId, schoolId), eq(feeStructures.schoolYearId, schoolYearId)]
-  if (gradeId) conditions.push(eq(feeStructures.gradeId, gradeId))
-  if (seriesId) conditions.push(eq(feeStructures.seriesId, seriesId))
-  if (feeTypeId) conditions.push(eq(feeStructures.feeTypeId, feeTypeId))
+  if (gradeId)
+    conditions.push(eq(feeStructures.gradeId, gradeId))
+  if (seriesId)
+    conditions.push(eq(feeStructures.seriesId, seriesId))
+  if (feeTypeId)
+    conditions.push(eq(feeStructures.feeTypeId, feeTypeId))
 
   return db.select().from(feeStructures).where(and(...conditions))
 }
@@ -43,7 +46,8 @@ export async function getFeeStructureForStudent(
     eq(feeStructures.gradeId, gradeId),
     eq(feeStructures.feeTypeId, feeTypeId),
   ]
-  if (seriesId) conditions.push(eq(feeStructures.seriesId, seriesId))
+  if (seriesId)
+    conditions.push(eq(feeStructures.seriesId, seriesId))
 
   const [feeStructure] = await db.select().from(feeStructures).where(and(...conditions)).limit(1)
   return feeStructure ?? null
@@ -59,7 +63,8 @@ export async function createFeeStructure(data: CreateFeeStructureData): Promise<
 
 export async function createFeeStructuresBulk(dataList: CreateFeeStructureData[]): Promise<FeeStructure[]> {
   const db = getDb()
-  if (dataList.length === 0) return []
+  if (dataList.length === 0)
+    return []
   const values = dataList.map(data => ({ id: nanoid(), ...data }))
   return db.insert(feeStructures).values(values).returning()
 }
@@ -90,7 +95,8 @@ export async function getFeeStructuresWithTypes(params: GetFeeStructuresParams):
   const db = getDb()
   const { schoolId, schoolYearId, gradeId } = params
   const conditions = [eq(feeStructures.schoolId, schoolId), eq(feeStructures.schoolYearId, schoolYearId)]
-  if (gradeId) conditions.push(eq(feeStructures.gradeId, gradeId))
+  if (gradeId)
+    conditions.push(eq(feeStructures.gradeId, gradeId))
 
   const result = await db
     .select({

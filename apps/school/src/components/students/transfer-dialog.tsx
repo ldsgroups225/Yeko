@@ -109,7 +109,7 @@ export function TransferDialog({
     if (newClassName === currentClassName) {
       form.setError('newClassId', {
         type: 'manual',
-        message: t('students.cannotTransferToSameClass')
+        message: t('students.cannotTransferToSameClass'),
       })
       return
     }

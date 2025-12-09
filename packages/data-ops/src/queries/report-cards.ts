@@ -6,17 +6,12 @@ import type {
 } from '../drizzle/school-schema'
 import { and, asc, desc, eq, inArray, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
-import { grades, subjects } from '../drizzle/core-schema'
 import {
-  classes,
   reportCards,
   reportCardTemplates,
   studentAverages,
   students,
   teacherComments,
-  teachers,
-  terms,
-  users,
 } from '../drizzle/school-schema'
 
 // ============================================

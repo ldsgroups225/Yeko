@@ -78,19 +78,19 @@ function HomeworkPage() {
         <TabsContent value={status} className="mt-4">
           {isLoading
             ? (
-              <HomeworkSkeleton />
-            )
+                <HomeworkSkeleton />
+              )
             : data?.homework && data.homework.length > 0
               ? (
-                <div className="space-y-2">
-                  {data.homework.map((hw: any) => (
-                    <HomeworkCard key={hw.id} homework={hw} locale={locale} />
-                  ))}
-                </div>
-              )
+                  <div className="space-y-2">
+                    {data.homework.map((hw: any) => (
+                      <HomeworkCard key={hw.id} homework={hw} locale={locale} />
+                    ))}
+                  </div>
+                )
               : (
-                <EmptyHomework status={status} />
-              )}
+                  <EmptyHomework status={status} />
+                )}
         </TabsContent>
       </Tabs>
     </div>
