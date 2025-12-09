@@ -60,64 +60,64 @@ function CoefficientsPage() {
           <div className="w-full sm:w-[250px]">
             {yearsLoading
               ? (
-                  <Skeleton className="h-10 w-full" />
-                )
+                <Skeleton className="h-10 w-full" />
+              )
               : (
-                  <Select
-                    value={selectedYearTemplateId}
-                    onValueChange={setSelectedYearTemplateId}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Année scolaire" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {schoolYears?.map((year: {
-                        id: string
-                        name: string
-                        isActive: boolean
-                        schoolYearTemplateId: string | null
-                      }) => (
-                        <SelectItem
-                          key={year.id}
-                          value={year.schoolYearTemplateId || ''}
-                        >
-                          {year.name}
-                          {' '}
-                          {year.isActive && '(Active)'}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
+                <Select
+                  value={selectedYearTemplateId}
+                  onValueChange={setSelectedYearTemplateId}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Année scolaire" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {schoolYears?.map((year: {
+                      id: string
+                      name: string
+                      isActive: boolean
+                      schoolYearTemplateId: string | null
+                    }) => (
+                      <SelectItem
+                        key={year.id}
+                        value={year.schoolYearTemplateId || ''}
+                      >
+                        {year.template?.name || year.name}
+                        {' '}
+                        {year.isActive && '(Active)'}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
           </div>
 
           <div className="w-full sm:w-[200px]">
             {seriesLoading
               ? (
-                  <Skeleton className="h-10 w-full" />
-                )
+                <Skeleton className="h-10 w-full" />
+              )
               : (
-                  <Select
-                    value={selectedSeriesId}
-                    onValueChange={setSelectedSeriesId}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Toutes les séries" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Toutes les séries</SelectItem>
-                      {series?.map((s: { id: string, name: string, code: string }) => (
-                        <SelectItem key={s.id} value={s.id}>
-                          {s.name}
-                          {' '}
-                          (
-                          {s.code}
-                          )
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
+                <Select
+                  value={selectedSeriesId}
+                  onValueChange={setSelectedSeriesId}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Toutes les séries" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Toutes les séries</SelectItem>
+                    {series?.map((s: { id: string, name: string, code: string }) => (
+                      <SelectItem key={s.id} value={s.id}>
+                        {s.name}
+                        {' '}
+                        (
+                        {s.code}
+                        )
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
           </div>
         </div>
       </div>
@@ -125,18 +125,18 @@ function CoefficientsPage() {
       {/* Matrix */}
       {selectedYearTemplateId
         ? (
-            <CoefficientMatrix
-              schoolYearTemplateId={selectedYearTemplateId}
-              seriesId={selectedSeriesId !== 'all' ? selectedSeriesId : null}
-            />
-          )
+          <CoefficientMatrix
+            schoolYearTemplateId={selectedYearTemplateId}
+            seriesId={selectedSeriesId !== 'all' ? selectedSeriesId : null}
+          />
+        )
         : (
-            <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                <p>Veuillez sélectionner une année scolaire pour voir les coefficients</p>
-              </CardContent>
-            </Card>
-          )}
+          <Card>
+            <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+              <p>Veuillez sélectionner une année scolaire pour voir les coefficients</p>
+            </CardContent>
+          </Card>
+        )}
     </div>
   )
 }

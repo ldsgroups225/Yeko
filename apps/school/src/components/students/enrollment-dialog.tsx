@@ -126,7 +126,7 @@ export function EnrollmentDialog({ open, onOpenChange, studentId, studentName }:
                     <SelectContent>
                       {schoolYears?.map((year: any) => (
                         <SelectItem key={year.id} value={year.id}>
-                          {year.name}
+                          {year.template?.name || year.name}
                           {year.isActive && ` (${t('common.active')})`}
                         </SelectItem>
                       ))}
