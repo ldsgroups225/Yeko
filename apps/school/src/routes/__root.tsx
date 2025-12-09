@@ -12,6 +12,17 @@ import { Toaster } from 'sonner'
 import { ThemeProvider } from '@/components/theme/theme-provider'
 import appCss from '@/styles.css?url'
 
+// Blocking script to prevent theme flash - runs before page renders
+const themeScript = `
+(function() {
+  const storageKey = 'school-ui-theme';
+  const theme = localStorage.getItem(storageKey);
+  const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const resolved = theme === 'dark' || theme === 'light' ? theme : (theme === 'system' || !theme) ? (systemDark ? 'dark' : 'light') : 'light';
+  document.documentElement.classList.add(resolved);
+})();
+`
+
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
 }>()({
@@ -49,9 +60,10 @@ function RootComponent() {
 
 function RootDocument({ children }: { children: ReactNode }) {
   return (
-    <html lang="fr">
+    <html lang="fr" suppressHydrationWarning>
       <head>
         <HeadContent />
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>
         {children}

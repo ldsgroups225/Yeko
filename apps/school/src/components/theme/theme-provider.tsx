@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react'
 import { ThemeProviderContext } from './theme-context'
 
 type Theme = 'dark' | 'light' | 'system'
@@ -13,6 +13,11 @@ interface ThemeProviderProps {
   disableTransitionOnChange?: boolean
 }
 
+// Hydration-safe mounted state using useSyncExternalStore
+const emptySubscribe = () => () => { }
+const getClientSnapshot = () => true
+const getServerSnapshot = () => false
+
 export function ThemeProvider({
   children,
   defaultTheme = 'system',
@@ -22,6 +27,9 @@ export function ThemeProvider({
   disableTransitionOnChange = false,
   ...props
 }: ThemeProviderProps) {
+  // Use useSyncExternalStore for hydration-safe mounted detection
+  const isMounted = useSyncExternalStore(emptySubscribe, getClientSnapshot, getServerSnapshot)
+
   const [theme, setThemeState] = useState<Theme>(() => {
     // During SSR, always return the default theme to avoid hydration mismatch
     if (typeof window === 'undefined') {
@@ -47,8 +55,6 @@ export function ThemeProvider({
     // Client-side: detect system theme
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
   })
-
-  const [isMounted, setIsMounted] = useState(false)
 
   const resolvedTheme = theme === 'system' ? systemTheme : theme
 
@@ -100,7 +106,7 @@ export function ThemeProvider({
     [attribute, disableTransitionOnChange],
   )
 
-  // Apply theme on mount and when resolvedTheme changes
+  // Apply theme when resolvedTheme changes (after initial mount)
   useEffect(() => {
     if (isMounted) {
       applyTheme(resolvedTheme)
@@ -124,20 +130,6 @@ export function ThemeProvider({
       mediaQuery.removeEventListener('change', handleSystemThemeChange)
     }
   }, [enableSystem])
-
-  // Hydration effect - apply theme immediately on client
-  useEffect(() => {
-    // Use a timeout to avoid synchronous setState during hydration
-    const timeoutId = setTimeout(() => {
-      setIsMounted(true)
-
-      // Apply the correct theme on hydration
-      const currentTheme = theme === 'system' ? systemTheme : theme
-      applyTheme(currentTheme)
-    }, 0)
-
-    return () => clearTimeout(timeoutId)
-  }, [theme, systemTheme, applyTheme])
 
   const value = useMemo(
     () => ({
