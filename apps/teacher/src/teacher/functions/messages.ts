@@ -198,13 +198,11 @@ export const searchParents = createServerFn()
       classId: data.classId,
     })
 
-    return {
-      parents: parents.map((p: any) => ({
-        id: p.id,
-        name: p.name,
-        phone: p.phone,
-        studentName: p.studentName,
-        className: p.className,
-      })),
-    }
+    return parents.map((p: any) => ({
+      id: p.id,
+      name: p.name,
+      phone: p.phone,
+      studentName: p.studentName,
+      className: p.className,
+    }))
   })

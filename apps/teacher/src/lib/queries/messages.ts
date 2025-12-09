@@ -4,6 +4,7 @@ import {
   getMessageDetails,
   getMessageTemplates,
   getTeacherMessages,
+  searchParents,
 } from '@/teacher/functions/messages'
 import { getTeacherNotifications } from '@/teacher/functions/notifications'
 
@@ -32,16 +33,33 @@ export function teacherMessagesQueryOptions(params: MessagesParams) {
   })
 }
 
-interface MessageDetailsParams {
+interface MessageDetailParams {
   messageId: string
   teacherId: string
 }
 
-export function messageDetailsQueryOptions(params: MessageDetailsParams) {
+export function messageDetailQueryOptions(params: MessageDetailParams) {
   return queryOptions({
     queryKey: ['teacher', 'message', params.messageId],
     queryFn: () => getMessageDetails({ data: params }),
     staleTime: 60 * 1000, // 1 minute
+  })
+}
+
+interface ParentSearchParams {
+  teacherId: string
+  schoolId: string
+  schoolYearId: string
+  query: string
+  classId?: string
+}
+
+export function parentSearchQueryOptions(params: ParentSearchParams) {
+  return queryOptions({
+    queryKey: ['teacher', 'parents', 'search', params.query],
+    queryFn: () => searchParents({ data: params }),
+    staleTime: 30 * 1000, // 30 seconds
+    enabled: params.query.length >= 2,
   })
 }
 

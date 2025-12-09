@@ -1,6 +1,6 @@
 import type { Locale } from 'date-fns'
 import { useQuery } from '@tanstack/react-query'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { format, isPast, isToday } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import {
@@ -48,10 +48,12 @@ function HomeworkPage() {
     <div className="flex flex-col gap-4 p-4 pb-20">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">{t('homework.title')}</h1>
-        <Button size="sm">
-          <Plus className="mr-2 h-4 w-4" />
-          {t('homework.new')}
-        </Button>
+        <Link to="/app/homework/new">
+          <Button size="sm">
+            <Plus className="mr-2 h-4 w-4" />
+            {t('homework.new')}
+          </Button>
+        </Link>
       </div>
 
       <Tabs
@@ -116,38 +118,40 @@ function HomeworkCard({ homework, locale }: HomeworkCardProps) {
   const isDueToday = isToday(dueDate)
 
   return (
-    <Card className={`transition-colors hover:bg-muted/50 ${isOverdue ? 'border-destructive/50' : ''}`}>
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0 flex-1 space-y-1">
-            <h3 className="truncate font-semibold">{homework.title}</h3>
-            <p className="text-sm text-muted-foreground">
-              {homework.className}
-              {' '}
-              •
-              {homework.subjectName}
-            </p>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <Calendar className="h-3.5 w-3.5" />
-              <span className={isOverdue ? 'text-destructive' : isDueToday ? 'text-warning' : ''}>
-                {format(dueDate, 'd MMM yyyy', { locale })}
-                {homework.dueTime && ` à ${homework.dueTime}`}
-              </span>
+    <Link to="/app/homework/$homeworkId" params={{ homeworkId: homework.id }}>
+      <Card className={`transition-colors hover:bg-muted/50 ${isOverdue ? 'border-destructive/50' : ''}`}>
+        <CardContent className="p-4">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0 flex-1 space-y-1">
+              <h3 className="truncate font-semibold">{homework.title}</h3>
+              <p className="text-sm text-muted-foreground">
+                {homework.className}
+                {' '}
+                •
+                {homework.subjectName}
+              </p>
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <Calendar className="h-3.5 w-3.5" />
+                <span className={isOverdue ? 'text-destructive' : isDueToday ? 'text-warning' : ''}>
+                  {format(dueDate, 'd MMM yyyy', { locale })}
+                  {homework.dueTime && ` à ${homework.dueTime}`}
+                </span>
+              </div>
+            </div>
+            <div className="flex flex-col items-end gap-2">
+              <StatusBadge status={homework.status} isOverdue={isOverdue} />
+              {homework.status === 'active' && (
+                <span className="text-xs text-muted-foreground">
+                  {homework.submissionCount}
+                  /
+                  {homework.totalStudents}
+                </span>
+              )}
             </div>
           </div>
-          <div className="flex flex-col items-end gap-2">
-            <StatusBadge status={homework.status} isOverdue={isOverdue} />
-            {homework.status === 'active' && (
-              <span className="text-xs text-muted-foreground">
-                {homework.submissionCount}
-                /
-                {homework.totalStudents}
-              </span>
-            )}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </Link>
   )
 }
 
@@ -192,10 +196,12 @@ function EmptyHomework({ status }: { status: string }) {
           {t('homework.noHomework')}
         </p>
         {status === 'active' && (
-          <Button variant="outline" className="mt-4">
-            <Plus className="mr-2 h-4 w-4" />
-            {t('homework.new')}
-          </Button>
+          <Link to="/app/homework/new">
+            <Button variant="outline" className="mt-4">
+              <Plus className="mr-2 h-4 w-4" />
+              {t('homework.new')}
+            </Button>
+          </Link>
         )}
       </CardContent>
     </Card>

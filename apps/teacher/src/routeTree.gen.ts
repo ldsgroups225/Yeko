@@ -22,6 +22,10 @@ import { Route as AuthAppMessagesRouteImport } from './routes/_auth/app/messages
 import { Route as AuthAppHomeworkRouteImport } from './routes/_auth/app/homework'
 import { Route as AuthAppGradesRouteImport } from './routes/_auth/app/grades'
 import { Route as AuthAppSessionsSessionIdRouteImport } from './routes/_auth/app/sessions.$sessionId'
+import { Route as AuthAppMessagesComposeRouteImport } from './routes/_auth/app/messages.compose'
+import { Route as AuthAppMessagesMessageIdRouteImport } from './routes/_auth/app/messages.$messageId'
+import { Route as AuthAppHomeworkNewRouteImport } from './routes/_auth/app/homework.new'
+import { Route as AuthAppHomeworkHomeworkIdRouteImport } from './routes/_auth/app/homework.$homeworkId'
 import { Route as AuthAppGradesClassIdSubjectIdRouteImport } from './routes/_auth/app/grades.$classId.$subjectId'
 
 const LoginRoute = LoginRouteImport.update({
@@ -89,6 +93,28 @@ const AuthAppSessionsSessionIdRoute =
     path: '/$sessionId',
     getParentRoute: () => AuthAppSessionsRoute,
   } as any)
+const AuthAppMessagesComposeRoute = AuthAppMessagesComposeRouteImport.update({
+  id: '/compose',
+  path: '/compose',
+  getParentRoute: () => AuthAppMessagesRoute,
+} as any)
+const AuthAppMessagesMessageIdRoute =
+  AuthAppMessagesMessageIdRouteImport.update({
+    id: '/$messageId',
+    path: '/$messageId',
+    getParentRoute: () => AuthAppMessagesRoute,
+  } as any)
+const AuthAppHomeworkNewRoute = AuthAppHomeworkNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AuthAppHomeworkRoute,
+} as any)
+const AuthAppHomeworkHomeworkIdRoute =
+  AuthAppHomeworkHomeworkIdRouteImport.update({
+    id: '/$homeworkId',
+    path: '/$homeworkId',
+    getParentRoute: () => AuthAppHomeworkRoute,
+  } as any)
 const AuthAppGradesClassIdSubjectIdRoute =
   AuthAppGradesClassIdSubjectIdRouteImport.update({
     id: '/$classId/$subjectId',
@@ -101,13 +127,17 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/app': typeof AuthAppRouteWithChildren
   '/app/grades': typeof AuthAppGradesRouteWithChildren
-  '/app/homework': typeof AuthAppHomeworkRoute
-  '/app/messages': typeof AuthAppMessagesRoute
+  '/app/homework': typeof AuthAppHomeworkRouteWithChildren
+  '/app/messages': typeof AuthAppMessagesRouteWithChildren
   '/app/notifications': typeof AuthAppNotificationsRoute
   '/app/schedule': typeof AuthAppScheduleRoute
   '/app/sessions': typeof AuthAppSessionsRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/app/': typeof AuthAppIndexRoute
+  '/app/homework/$homeworkId': typeof AuthAppHomeworkHomeworkIdRoute
+  '/app/homework/new': typeof AuthAppHomeworkNewRoute
+  '/app/messages/$messageId': typeof AuthAppMessagesMessageIdRoute
+  '/app/messages/compose': typeof AuthAppMessagesComposeRoute
   '/app/sessions/$sessionId': typeof AuthAppSessionsSessionIdRoute
   '/app/grades/$classId/$subjectId': typeof AuthAppGradesClassIdSubjectIdRoute
 }
@@ -115,13 +145,17 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/app/grades': typeof AuthAppGradesRouteWithChildren
-  '/app/homework': typeof AuthAppHomeworkRoute
-  '/app/messages': typeof AuthAppMessagesRoute
+  '/app/homework': typeof AuthAppHomeworkRouteWithChildren
+  '/app/messages': typeof AuthAppMessagesRouteWithChildren
   '/app/notifications': typeof AuthAppNotificationsRoute
   '/app/schedule': typeof AuthAppScheduleRoute
   '/app/sessions': typeof AuthAppSessionsRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/app': typeof AuthAppIndexRoute
+  '/app/homework/$homeworkId': typeof AuthAppHomeworkHomeworkIdRoute
+  '/app/homework/new': typeof AuthAppHomeworkNewRoute
+  '/app/messages/$messageId': typeof AuthAppMessagesMessageIdRoute
+  '/app/messages/compose': typeof AuthAppMessagesComposeRoute
   '/app/sessions/$sessionId': typeof AuthAppSessionsSessionIdRoute
   '/app/grades/$classId/$subjectId': typeof AuthAppGradesClassIdSubjectIdRoute
 }
@@ -132,13 +166,17 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/_auth/app': typeof AuthAppRouteWithChildren
   '/_auth/app/grades': typeof AuthAppGradesRouteWithChildren
-  '/_auth/app/homework': typeof AuthAppHomeworkRoute
-  '/_auth/app/messages': typeof AuthAppMessagesRoute
+  '/_auth/app/homework': typeof AuthAppHomeworkRouteWithChildren
+  '/_auth/app/messages': typeof AuthAppMessagesRouteWithChildren
   '/_auth/app/notifications': typeof AuthAppNotificationsRoute
   '/_auth/app/schedule': typeof AuthAppScheduleRoute
   '/_auth/app/sessions': typeof AuthAppSessionsRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_auth/app/': typeof AuthAppIndexRoute
+  '/_auth/app/homework/$homeworkId': typeof AuthAppHomeworkHomeworkIdRoute
+  '/_auth/app/homework/new': typeof AuthAppHomeworkNewRoute
+  '/_auth/app/messages/$messageId': typeof AuthAppMessagesMessageIdRoute
+  '/_auth/app/messages/compose': typeof AuthAppMessagesComposeRoute
   '/_auth/app/sessions/$sessionId': typeof AuthAppSessionsSessionIdRoute
   '/_auth/app/grades/$classId/$subjectId': typeof AuthAppGradesClassIdSubjectIdRoute
 }
@@ -156,6 +194,10 @@ export interface FileRouteTypes {
     | '/app/sessions'
     | '/api/auth/$'
     | '/app/'
+    | '/app/homework/$homeworkId'
+    | '/app/homework/new'
+    | '/app/messages/$messageId'
+    | '/app/messages/compose'
     | '/app/sessions/$sessionId'
     | '/app/grades/$classId/$subjectId'
   fileRoutesByTo: FileRoutesByTo
@@ -170,6 +212,10 @@ export interface FileRouteTypes {
     | '/app/sessions'
     | '/api/auth/$'
     | '/app'
+    | '/app/homework/$homeworkId'
+    | '/app/homework/new'
+    | '/app/messages/$messageId'
+    | '/app/messages/compose'
     | '/app/sessions/$sessionId'
     | '/app/grades/$classId/$subjectId'
   id:
@@ -186,6 +232,10 @@ export interface FileRouteTypes {
     | '/_auth/app/sessions'
     | '/api/auth/$'
     | '/_auth/app/'
+    | '/_auth/app/homework/$homeworkId'
+    | '/_auth/app/homework/new'
+    | '/_auth/app/messages/$messageId'
+    | '/_auth/app/messages/compose'
     | '/_auth/app/sessions/$sessionId'
     | '/_auth/app/grades/$classId/$subjectId'
   fileRoutesById: FileRoutesById
@@ -290,6 +340,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAppSessionsSessionIdRouteImport
       parentRoute: typeof AuthAppSessionsRoute
     }
+    '/_auth/app/messages/compose': {
+      id: '/_auth/app/messages/compose'
+      path: '/compose'
+      fullPath: '/app/messages/compose'
+      preLoaderRoute: typeof AuthAppMessagesComposeRouteImport
+      parentRoute: typeof AuthAppMessagesRoute
+    }
+    '/_auth/app/messages/$messageId': {
+      id: '/_auth/app/messages/$messageId'
+      path: '/$messageId'
+      fullPath: '/app/messages/$messageId'
+      preLoaderRoute: typeof AuthAppMessagesMessageIdRouteImport
+      parentRoute: typeof AuthAppMessagesRoute
+    }
+    '/_auth/app/homework/new': {
+      id: '/_auth/app/homework/new'
+      path: '/new'
+      fullPath: '/app/homework/new'
+      preLoaderRoute: typeof AuthAppHomeworkNewRouteImport
+      parentRoute: typeof AuthAppHomeworkRoute
+    }
+    '/_auth/app/homework/$homeworkId': {
+      id: '/_auth/app/homework/$homeworkId'
+      path: '/$homeworkId'
+      fullPath: '/app/homework/$homeworkId'
+      preLoaderRoute: typeof AuthAppHomeworkHomeworkIdRouteImport
+      parentRoute: typeof AuthAppHomeworkRoute
+    }
     '/_auth/app/grades/$classId/$subjectId': {
       id: '/_auth/app/grades/$classId/$subjectId'
       path: '/$classId/$subjectId'
@@ -312,6 +390,34 @@ const AuthAppGradesRouteWithChildren = AuthAppGradesRoute._addFileChildren(
   AuthAppGradesRouteChildren,
 )
 
+interface AuthAppHomeworkRouteChildren {
+  AuthAppHomeworkHomeworkIdRoute: typeof AuthAppHomeworkHomeworkIdRoute
+  AuthAppHomeworkNewRoute: typeof AuthAppHomeworkNewRoute
+}
+
+const AuthAppHomeworkRouteChildren: AuthAppHomeworkRouteChildren = {
+  AuthAppHomeworkHomeworkIdRoute: AuthAppHomeworkHomeworkIdRoute,
+  AuthAppHomeworkNewRoute: AuthAppHomeworkNewRoute,
+}
+
+const AuthAppHomeworkRouteWithChildren = AuthAppHomeworkRoute._addFileChildren(
+  AuthAppHomeworkRouteChildren,
+)
+
+interface AuthAppMessagesRouteChildren {
+  AuthAppMessagesMessageIdRoute: typeof AuthAppMessagesMessageIdRoute
+  AuthAppMessagesComposeRoute: typeof AuthAppMessagesComposeRoute
+}
+
+const AuthAppMessagesRouteChildren: AuthAppMessagesRouteChildren = {
+  AuthAppMessagesMessageIdRoute: AuthAppMessagesMessageIdRoute,
+  AuthAppMessagesComposeRoute: AuthAppMessagesComposeRoute,
+}
+
+const AuthAppMessagesRouteWithChildren = AuthAppMessagesRoute._addFileChildren(
+  AuthAppMessagesRouteChildren,
+)
+
 interface AuthAppSessionsRouteChildren {
   AuthAppSessionsSessionIdRoute: typeof AuthAppSessionsSessionIdRoute
 }
@@ -326,8 +432,8 @@ const AuthAppSessionsRouteWithChildren = AuthAppSessionsRoute._addFileChildren(
 
 interface AuthAppRouteChildren {
   AuthAppGradesRoute: typeof AuthAppGradesRouteWithChildren
-  AuthAppHomeworkRoute: typeof AuthAppHomeworkRoute
-  AuthAppMessagesRoute: typeof AuthAppMessagesRoute
+  AuthAppHomeworkRoute: typeof AuthAppHomeworkRouteWithChildren
+  AuthAppMessagesRoute: typeof AuthAppMessagesRouteWithChildren
   AuthAppNotificationsRoute: typeof AuthAppNotificationsRoute
   AuthAppScheduleRoute: typeof AuthAppScheduleRoute
   AuthAppSessionsRoute: typeof AuthAppSessionsRouteWithChildren
@@ -336,8 +442,8 @@ interface AuthAppRouteChildren {
 
 const AuthAppRouteChildren: AuthAppRouteChildren = {
   AuthAppGradesRoute: AuthAppGradesRouteWithChildren,
-  AuthAppHomeworkRoute: AuthAppHomeworkRoute,
-  AuthAppMessagesRoute: AuthAppMessagesRoute,
+  AuthAppHomeworkRoute: AuthAppHomeworkRouteWithChildren,
+  AuthAppMessagesRoute: AuthAppMessagesRouteWithChildren,
   AuthAppNotificationsRoute: AuthAppNotificationsRoute,
   AuthAppScheduleRoute: AuthAppScheduleRoute,
   AuthAppSessionsRoute: AuthAppSessionsRouteWithChildren,

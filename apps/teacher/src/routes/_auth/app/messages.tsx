@@ -1,6 +1,6 @@
 import type { Locale } from 'date-fns'
 import { useQuery } from '@tanstack/react-query'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import {
@@ -48,10 +48,12 @@ function MessagesPage() {
     <div className="flex flex-col gap-4 p-4 pb-20">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">{t('messages.title')}</h1>
-        <Button size="sm">
-          <PenSquare className="mr-2 h-4 w-4" />
-          {t('messages.compose')}
-        </Button>
+        <Link to="/app/messages/compose">
+          <Button size="sm">
+            <PenSquare className="mr-2 h-4 w-4" />
+            {t('messages.compose')}
+          </Button>
+        </Link>
       </div>
 
       <Tabs value={folder} onValueChange={v => setFolder(v as typeof folder)}>
@@ -117,54 +119,56 @@ function MessageItem({ message, locale }: MessageItemProps) {
   const isToday = new Date().toDateString() === date.toDateString()
 
   return (
-    <Card
-      className={`transition-colors hover:bg-muted/50 ${!message.isRead ? 'border-primary/50 bg-primary/5' : ''}`}
-    >
-      <CardContent className="p-3">
-        <div className="flex items-start gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted">
-            <Mail className="h-5 w-5 text-muted-foreground" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center justify-between gap-2">
-              <p
-                className={`truncate text-sm ${!message.isRead ? 'font-semibold' : 'font-medium'}`}
-              >
-                {message.senderType === 'parent'
-                  ? message.senderName
-                  : message.recipientName}
-              </p>
-              <span className="shrink-0 text-xs text-muted-foreground">
-                {isToday
-                  ? format(date, 'HH:mm')
-                  : format(date, 'd MMM', { locale })}
-              </span>
+    <Link to="/app/messages/$messageId" params={{ messageId: message.id }}>
+      <Card
+        className={`transition-colors hover:bg-muted/50 ${!message.isRead ? 'border-primary/50 bg-primary/5' : ''}`}
+      >
+        <CardContent className="p-3">
+          <div className="flex items-start gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted">
+              <Mail className="h-5 w-5 text-muted-foreground" />
             </div>
-            {message.studentName && (
-              <p className="text-xs text-muted-foreground">
-                {message.studentName}
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center justify-between gap-2">
+                <p
+                  className={`truncate text-sm ${!message.isRead ? 'font-semibold' : 'font-medium'}`}
+                >
+                  {message.senderType === 'parent'
+                    ? message.senderName
+                    : message.recipientName}
+                </p>
+                <span className="shrink-0 text-xs text-muted-foreground">
+                  {isToday
+                    ? format(date, 'HH:mm')
+                    : format(date, 'd MMM', { locale })}
+                </span>
+              </div>
+              {message.studentName && (
+                <p className="text-xs text-muted-foreground">
+                  {message.studentName}
+                </p>
+              )}
+              {message.subject && (
+                <p className="truncate text-sm text-muted-foreground">
+                  {message.subject}
+                </p>
+              )}
+              <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
+                {message.preview}
               </p>
-            )}
-            {message.subject && (
-              <p className="truncate text-sm text-muted-foreground">
-                {message.subject}
-              </p>
-            )}
-            <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
-              {message.preview}
-            </p>
+            </div>
+            <div className="flex flex-col items-center gap-1">
+              {message.isStarred && (
+                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+              )}
+              {!message.isRead && (
+                <Badge variant="default" className="h-2 w-2 rounded-full p-0" />
+              )}
+            </div>
           </div>
-          <div className="flex flex-col items-center gap-1">
-            {message.isStarred && (
-              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-            )}
-            {!message.isRead && (
-              <Badge variant="default" className="h-2 w-2 rounded-full p-0" />
-            )}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </Link>
   )
 }
 
@@ -179,10 +183,12 @@ function EmptyMessages({ folder }: { folder: string }) {
           {t('messages.noMessages')}
         </p>
         {folder === 'inbox' && (
-          <Button variant="outline" className="mt-4">
-            <PenSquare className="mr-2 h-4 w-4" />
-            {t('messages.compose')}
-          </Button>
+          <Link to="/app/messages/compose">
+            <Button variant="outline" className="mt-4">
+              <PenSquare className="mr-2 h-4 w-4" />
+              {t('messages.compose')}
+            </Button>
+          </Link>
         )}
       </CardContent>
     </Card>
