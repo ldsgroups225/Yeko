@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { ClassForm } from '@/components/academic/class-form'
 import { ClassesTable } from '@/components/academic/classes/classes-table'
@@ -19,6 +20,7 @@ export const Route = createFileRoute('/_auth/app/academic/classes/')({
 })
 
 function ClassesPage() {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const search = Route.useSearch()
 
@@ -26,27 +28,27 @@ function ClassesPage() {
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: 'Académique', href: '/app/academic' },
-          { label: 'Classes' },
+          { label: t('nav.academic'), href: '/app/academic' },
+          { label: t('nav.classes') },
         ]}
       />
 
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Classes</h1>
-          <p className="text-muted-foreground">Gérer les classes académiques</p>
+          <h1 className="text-3xl font-bold tracking-tight">{t('nav.classes')}</h1>
+          <p className="text-muted-foreground">{t('classes.description')}</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="mr-2 h-4 w-4" />
-              Nouvelle classe
+              {t('buttons.newClass')}
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Créer une classe</DialogTitle>
-              <DialogDescription>Remplissez les informations pour créer une nouvelle classe.</DialogDescription>
+              <DialogTitle>{t('dialogs.createClass.title')}</DialogTitle>
+              <DialogDescription>{t('dialogs.createClass.description')}</DialogDescription>
             </DialogHeader>
             <ClassForm onSuccess={() => setOpen(false)} />
           </DialogContent>

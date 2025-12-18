@@ -6,6 +6,7 @@ import {
   Users,
 } from 'lucide-react'
 import { motion } from 'motion/react'
+import { useTranslation } from 'react-i18next'
 
 const container = {
   hidden: { opacity: 0 },
@@ -23,6 +24,7 @@ const item = {
 }
 
 export function AdminDashboard() {
+  const { t } = useTranslation()
   return (
     <motion.div
       className="space-y-6"
@@ -31,9 +33,9 @@ export function AdminDashboard() {
       animate="show"
     >
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Tableau de bord Administrateur</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t('nav.dashboard')}</h1>
         <p className="text-muted-foreground">
-          Vue d'ensemble complète de l'établissement scolaire
+          {t('dashboard.description')}
         </p>
       </div>
 
@@ -46,28 +48,28 @@ export function AdminDashboard() {
         className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
       >
         <MetricCard
-          title="Total Élèves"
+          title={t('dashboard.totalStudents')}
           value="1,234"
           change="+12%"
           trend="up"
           icon={GraduationCap}
         />
         <MetricCard
-          title="Enseignants"
+          title={t('dashboard.teachers')}
           value="89"
           change="+3"
           trend="up"
           icon={Users}
         />
         <MetricCard
-          title="Classes Actives"
+          title={t('dashboard.activeClasses')}
           value="42"
           change="0"
           trend="neutral"
           icon={BookOpen}
         />
         <MetricCard
-          title="Revenus ce mois"
+          title={t('dashboard.revenueThisMonth')}
           value="245,000 FCFA"
           change="+8%"
           trend="up"
@@ -77,12 +79,12 @@ export function AdminDashboard() {
 
       {/* Quick Actions */}
       <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
-        <h2 className="mb-4 text-lg font-semibold">Actions Rapides</h2>
+        <h2 className="mb-4 text-lg font-semibold">{t('dashboard.quickActions')}</h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <QuickActionButton icon={Users} label="Ajouter Utilisateur" />
-          <QuickActionButton icon={GraduationCap} label="Inscrire Élève" />
-          <QuickActionButton icon={BookOpen} label="Créer Classe" />
-          <QuickActionButton icon={DollarSign} label="Enregistrer Paiement" />
+          <QuickActionButton icon={Users} label={t('dashboard.addUser')} />
+          <QuickActionButton icon={GraduationCap} label={t('dashboard.enrollStudent')} />
+          <QuickActionButton icon={BookOpen} label={t('dashboard.createClass')} />
+          <QuickActionButton icon={DollarSign} label={t('dashboard.recordPayment')} />
         </div>
       </motion.div>
 

@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,6 +32,7 @@ export function DeleteConfirmationDialog({
   onConfirm,
   isLoading = false,
 }: DeleteConfirmationDialogProps) {
+  const { t } = useTranslation()
   const [inputValue, setInputValue] = React.useState('')
   const isConfirmEnabled = confirmText ? inputValue === confirmText : true
 
@@ -52,11 +54,9 @@ export function DeleteConfirmationDialog({
         {confirmText && (
           <div className="space-y-2">
             <Label htmlFor="confirm-text">
-              Tapez
+              {t('common.typeToConfirm')}
               {' '}
               <span className="font-mono font-semibold">{confirmText}</span>
-              {' '}
-              pour confirmer
             </Label>
             <Input
               id="confirm-text"
@@ -75,7 +75,7 @@ export function DeleteConfirmationDialog({
         )}
 
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isLoading}>Annuler</AlertDialogCancel>
+          <AlertDialogCancel disabled={isLoading}>{t('dialogs.deleteConfirmation.cancel')}</AlertDialogCancel>
           <AlertDialogAction
             onClick={(e: React.MouseEvent) => {
               e.preventDefault()
@@ -86,7 +86,7 @@ export function DeleteConfirmationDialog({
             disabled={!isConfirmEnabled || isLoading}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
-            {isLoading ? 'Suppression...' : 'Supprimer'}
+            {isLoading ? t('dialogs.deleteConfirmation.deleting') : t('dialogs.deleteConfirmation.delete')}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

@@ -11,6 +11,7 @@ import {
 import { BookOpen, Eye, MoreHorizontal, Search, Trash2, Users } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { TableSkeleton } from '@/components/hr/table-skeleton'
 
@@ -90,6 +91,7 @@ interface ClassesTableProps {
 const DEFAULT_FILTERS = {}
 
 export function ClassesTable({ filters = DEFAULT_FILTERS }: ClassesTableProps) {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const [searchInput, setSearchInput] = useState(filters.search || '')
   const [classToDelete, setClassToDelete] = useState<ClassItem | null>(null)
@@ -113,11 +115,11 @@ export function ClassesTable({ filters = DEFAULT_FILTERS }: ClassesTableProps) {
       return
     try {
       await deleteClass({ data: classToDelete.class.id })
-      toast.success('Classe supprimée avec succès')
+      toast.success(t('common.deleteSuccess'))
       refetch()
     }
     catch {
-      toast.error('Erreur lors de la suppression de la classe')
+      toast.error(t('common.error'))
     }
     finally {
       setClassToDelete(null)
@@ -201,21 +203,21 @@ export function ClassesTable({ filters = DEFAULT_FILTERS }: ClassesTableProps) {
                 onClick={() => navigate({ to: `/app/academic/classes/${row.original.class.id}` })}
               >
                 <Eye className="mr-2 h-4 w-4" />
-                Voir
+                {t('common.view')}
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-destructive"
                 onClick={() => setClassToDelete(row.original)}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                Supprimer
+                {t('common.delete')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         ),
       },
     ],
-    [navigate],
+    [navigate, t],
   )
 
   const table = useReactTable({
@@ -241,14 +243,14 @@ export function ClassesTable({ filters = DEFAULT_FILTERS }: ClassesTableProps) {
     <div className="space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle>Liste des classes</CardTitle>
+          <CardTitle>{t('nav.classes')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4 mb-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Rechercher une classe..."
+                placeholder={t('common.search')}
                 value={searchInput}
                 onChange={e => setSearchInput(e.target.value)}
                 className="pl-9"
@@ -262,8 +264,8 @@ export function ClassesTable({ filters = DEFAULT_FILTERS }: ClassesTableProps) {
                 <EmptyMedia variant="icon">
                   <Users />
                 </EmptyMedia>
-                <EmptyTitle>Aucune classe trouvée</EmptyTitle>
-                <EmptyDescription>Créez votre première classe pour commencer</EmptyDescription>
+                <EmptyTitle>{t('tables.noClassesFound')}</EmptyTitle>
+                <EmptyDescription>{t('tables.createFirstClass')}</EmptyDescription>
               </EmptyHeader>
             </Empty>
           )}
@@ -274,8 +276,8 @@ export function ClassesTable({ filters = DEFAULT_FILTERS }: ClassesTableProps) {
                 <EmptyMedia variant="icon">
                   <Search />
                 </EmptyMedia>
-                <EmptyTitle>Aucun résultat</EmptyTitle>
-                <EmptyDescription>Essayez de modifier vos filtres</EmptyDescription>
+                <EmptyTitle>{t('empty.noResults')}</EmptyTitle>
+                <EmptyDescription>{t('empty.tryModifyingFilters')}</EmptyDescription>
               </EmptyHeader>
             </Empty>
           )}
@@ -291,9 +293,9 @@ export function ClassesTable({ filters = DEFAULT_FILTERS }: ClassesTableProps) {
                           {header.isPlaceholder
                             ? null
                             : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )}
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
                         </TableHead>
                       ))}
                     </TableRow>
@@ -323,7 +325,7 @@ export function ClassesTable({ filters = DEFAULT_FILTERS }: ClassesTableProps) {
           {!hasNoData && table.getPageCount() > 1 && (
             <div className="flex items-center justify-between mt-4">
               <div className="text-sm text-muted-foreground">
-                Affichage
+                {t('common.showing')}
                 {' '}
                 {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1}
                 {' '}
@@ -331,7 +333,7 @@ export function ClassesTable({ filters = DEFAULT_FILTERS }: ClassesTableProps) {
                 {' '}
                 {Math.min((table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize, data.length)}
                 {' '}
-                sur
+                {t('common.of')}
                 {' '}
                 {data.length}
               </div>
@@ -342,7 +344,7 @@ export function ClassesTable({ filters = DEFAULT_FILTERS }: ClassesTableProps) {
                   onClick={() => table.previousPage()}
                   disabled={!table.getCanPreviousPage()}
                 >
-                  Précédent
+                  {t('common.previous')}
                 </Button>
                 <Button
                   variant="outline"
@@ -350,7 +352,7 @@ export function ClassesTable({ filters = DEFAULT_FILTERS }: ClassesTableProps) {
                   onClick={() => table.nextPage()}
                   disabled={!table.getCanNextPage()}
                 >
-                  Suivant
+                  {t('common.next')}
                 </Button>
               </div>
             </div>
@@ -362,23 +364,20 @@ export function ClassesTable({ filters = DEFAULT_FILTERS }: ClassesTableProps) {
       <AlertDialog open={!!classToDelete} onOpenChange={open => !open && setClassToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
+            <AlertDialogTitle>{t('dialogs.deleteConfirmation.title')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Cette action est irréversible. Cela supprimera définitivement la classe
-              <span className="font-medium text-foreground">
-                {' '}
-                {classToDelete ? `${classToDelete.grade.name} ${classToDelete.class.section}` : ''}
-              </span>
-              .
+              {t('dialogs.deleteConfirmation.description', {
+                item: classToDelete ? `${classToDelete.grade.name} ${classToDelete.class.section}` : '',
+              })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogCancel>{t('dialogs.deleteConfirmation.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={handleDelete}
             >
-              Supprimer
+              {t('dialogs.deleteConfirmation.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -360,136 +360,136 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
 
         {result
           ? (
-            <div className="space-y-4">
-              <Alert variant={result.errors.length > 0 ? 'destructive' : 'default'}>
-                {result.errors.length > 0 ? <AlertCircle className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
-                <AlertTitle>{t('students.importComplete')}</AlertTitle>
-                <AlertDescription>
-                  <ul className="mt-2 space-y-1 text-sm">
-                    <li>{t('students.importSuccessCount', { count: result.success })}</li>
-                    {result.errors.length > 0 && (
-                      <li className="text-destructive">{t('students.importErrorCount', { count: result.errors.length })}</li>
-                    )}
-                  </ul>
-                </AlertDescription>
-              </Alert>
-
-              {result.errors.length > 0 && (
-                <div className="max-h-40 overflow-y-auto rounded border p-3 text-sm">
-                  {result.errors.slice(0, 10).map(err => (
-                    <p key={`error-${err.row}-${generateUUID()}`} className="text-destructive">
-                      {t('students.importRowError', { row: err.row, error: err.error })}
-                    </p>
-                  ))}
-                  {result.errors.length > 10 && (
-                    <p className="mt-2 text-muted-foreground">{t('common.andMore', { count: result.errors.length - 10 })}</p>
-                  )}
-                </div>
-              )}
-
-              <DialogFooter>
-                <Button onClick={handleClose}>{t('common.close')}</Button>
-              </DialogFooter>
-            </div>
-          )
-          : (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Button variant="outline" size="sm" onClick={downloadTemplate}>
-                  <Download className="mr-2 h-4 w-4" />
-                  {t('students.downloadTemplate')}
-                </Button>
-              </div>
-
-              <div className="rounded-lg border-2 border-dashed p-6 text-center">
-                {file
-                  ? (
-                    <div className="flex items-center justify-center gap-3">
-                      <FileSpreadsheet className="h-8 w-8 text-muted-foreground" />
-                      <div className="text-left">
-                        <p className="font-medium">{file.name}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {allParsed.length > 0 && t('students.importPreviewCount', { count: allParsed.length })}
-                        </p>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                          setFile(null)
-                          setPreview([])
-                          setAllParsed([])
-                          setParseError(null)
-                        }}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  )
-                  : (
-                    <label className="cursor-pointer">
-                      <Upload className="mx-auto h-10 w-10 text-muted-foreground" />
-                      <p className="mt-2 font-medium">{t('students.importDropFile')}</p>
-                      <p className="text-sm text-muted-foreground">{t('students.importFileTypesExcel')}</p>
-                      <input
-                        type="file"
-                        accept=".xlsx,.xls,.csv"
-                        onChange={handleFileChange}
-                        className="hidden"
-                      />
-                    </label>
-                  )}
-              </div>
-
-              {parseError && (
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>{parseError}</AlertDescription>
+              <div className="space-y-4">
+                <Alert variant={result.errors.length > 0 ? 'destructive' : 'default'}>
+                  {result.errors.length > 0 ? <AlertCircle className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
+                  <AlertTitle>{t('students.importComplete')}</AlertTitle>
+                  <AlertDescription>
+                    <ul className="mt-2 space-y-1 text-sm">
+                      <li>{t('students.importSuccessCount', { count: result.success })}</li>
+                      {result.errors.length > 0 && (
+                        <li className="text-destructive">{t('students.importErrorCount', { count: result.errors.length })}</li>
+                      )}
+                    </ul>
+                  </AlertDescription>
                 </Alert>
-              )}
 
-              {preview.length > 0 && (
-                <div className="rounded border">
-                  <div className="border-b bg-muted/50 px-3 py-2 text-sm font-medium">{t('students.importPreview')}</div>
-                  <div className="max-h-40 overflow-auto p-2">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b">
-                          <th className="px-2 py-1 text-left">{t('students.lastName')}</th>
-                          <th className="px-2 py-1 text-left">{t('students.firstName')}</th>
-                          <th className="px-2 py-1 text-left">{t('students.dateOfBirth')}</th>
-                          <th className="px-2 py-1 text-left">{t('students.gender')}</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {preview.map(s => (
-                          <tr key={`preview-${generateUUID()}-${s.lastName}-${s.firstName}`} className="border-b last:border-0">
-                            <td className="px-2 py-1">{s.lastName}</td>
-                            <td className="px-2 py-1">{s.firstName}</td>
-                            <td className="px-2 py-1">{s.dob}</td>
-                            <td className="px-2 py-1">{s.gender || '-'}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                {result.errors.length > 0 && (
+                  <div className="max-h-40 overflow-y-auto rounded border p-3 text-sm">
+                    {result.errors.slice(0, 10).map(err => (
+                      <p key={`error-${err.row}-${generateUUID()}`} className="text-destructive">
+                        {t('students.importRowError', { row: err.row, error: err.error })}
+                      </p>
+                    ))}
+                    {result.errors.length > 10 && (
+                      <p className="mt-2 text-muted-foreground">{t('common.andMore', { count: result.errors.length - 10 })}</p>
+                    )}
                   </div>
-                  {allParsed.length > 5 && (
-                    <div className="border-t bg-muted/30 px-3 py-2 text-center text-sm text-muted-foreground">
-                      {t('students.importAndMoreRows', { count: allParsed.length - 5 })}
-                    </div>
-                  )}
-                </div>
-              )}
+                )}
 
-              <DialogFooter>
-                <Button variant="outline" onClick={handleClose}>{t('common.cancel')}</Button>
-                <Button onClick={handleImport} disabled={allParsed.length === 0 || importMutation.isPending}>
-                  {importMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {t('students.importStart')}
-                </Button>
-              </DialogFooter>
-            </div>
-          )}
+                <DialogFooter>
+                  <Button onClick={handleClose}>{t('common.close')}</Button>
+                </DialogFooter>
+              </div>
+            )
+          : (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Button variant="outline" size="sm" onClick={downloadTemplate}>
+                    <Download className="mr-2 h-4 w-4" />
+                    {t('students.downloadTemplate')}
+                  </Button>
+                </div>
+
+                <div className="rounded-lg border-2 border-dashed p-6 text-center">
+                  {file
+                    ? (
+                        <div className="flex items-center justify-center gap-3">
+                          <FileSpreadsheet className="h-8 w-8 text-muted-foreground" />
+                          <div className="text-left">
+                            <p className="font-medium">{file.name}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {allParsed.length > 0 && t('students.importPreviewCount', { count: allParsed.length })}
+                            </p>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              setFile(null)
+                              setPreview([])
+                              setAllParsed([])
+                              setParseError(null)
+                            }}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      )
+                    : (
+                        <label className="cursor-pointer">
+                          <Upload className="mx-auto h-10 w-10 text-muted-foreground" />
+                          <p className="mt-2 font-medium">{t('students.importDropFile')}</p>
+                          <p className="text-sm text-muted-foreground">{t('students.importFileTypesExcel')}</p>
+                          <input
+                            type="file"
+                            accept=".xlsx,.xls,.csv"
+                            onChange={handleFileChange}
+                            className="hidden"
+                          />
+                        </label>
+                      )}
+                </div>
+
+                {parseError && (
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{parseError}</AlertDescription>
+                  </Alert>
+                )}
+
+                {preview.length > 0 && (
+                  <div className="rounded border">
+                    <div className="border-b bg-muted/50 px-3 py-2 text-sm font-medium">{t('students.importPreview')}</div>
+                    <div className="max-h-40 overflow-auto p-2">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b">
+                            <th className="px-2 py-1 text-left">{t('students.lastName')}</th>
+                            <th className="px-2 py-1 text-left">{t('students.firstName')}</th>
+                            <th className="px-2 py-1 text-left">{t('students.dateOfBirth')}</th>
+                            <th className="px-2 py-1 text-left">{t('students.gender')}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {preview.map(s => (
+                            <tr key={`preview-${generateUUID()}-${s.lastName}-${s.firstName}`} className="border-b last:border-0">
+                              <td className="px-2 py-1">{s.lastName}</td>
+                              <td className="px-2 py-1">{s.firstName}</td>
+                              <td className="px-2 py-1">{s.dob}</td>
+                              <td className="px-2 py-1">{s.gender || '-'}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    {allParsed.length > 5 && (
+                      <div className="border-t bg-muted/30 px-3 py-2 text-center text-sm text-muted-foreground">
+                        {t('students.importAndMoreRows', { count: allParsed.length - 5 })}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <DialogFooter>
+                  <Button variant="outline" onClick={handleClose}>{t('common.cancel')}</Button>
+                  <Button onClick={handleImport} disabled={allParsed.length === 0 || importMutation.isPending}>
+                    {importMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {t('students.importStart')}
+                  </Button>
+                </DialogFooter>
+              </div>
+            )}
       </DialogContent>
     </Dialog>
   )

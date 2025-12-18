@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Building2, CheckCircle, Plus, Users, XCircle } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { TableSkeleton } from '@/components/hr/table-skeleton'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -79,6 +80,7 @@ function StatsCards({ available, occupied, maintenance, inactive }: { available:
 }
 
 function EmptyState() {
+  const { t } = useTranslation()
   return (
     <Card>
       <CardContent className="p-8">
@@ -87,15 +89,15 @@ function EmptyState() {
             <Building2 className="h-8 w-8 text-muted-foreground" />
           </div>
           <div className="space-y-2">
-            <h3 className="text-lg font-semibold">Aucune salle de classe</h3>
+            <h3 className="text-lg font-semibold">{t('empty.noClassrooms')}</h3>
             <p className="text-sm text-muted-foreground max-w-md">
-              Commencez par créer des salles de classe pour gérer leur disponibilité et les assigner aux classes.
+              {t('empty.createClassroomsDescription')}
             </p>
           </div>
           <Button asChild className="mt-2">
             <a href="/app/spaces/classrooms">
               <Plus className="mr-2 h-4 w-4" />
-              Créer une salle
+              {t('empty.createClassroom')}
             </a>
           </Button>
         </div>

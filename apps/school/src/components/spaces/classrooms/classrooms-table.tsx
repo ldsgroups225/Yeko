@@ -10,6 +10,7 @@ import {
 import { Eye, Layers, MoreHorizontal, Search, Trash2, Users } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { TableSkeleton } from '@/components/hr/table-skeleton'
 import {
@@ -77,6 +78,7 @@ interface ClassroomsTableProps {
 const DEFAULT_FILTERS = {}
 
 export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTableProps) {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const [searchInput, setSearchInput] = useState(filters.search || '')
   const [itemToDelete, setItemToDelete] = useState<ClassroomItem | null>(null)
@@ -100,11 +102,11 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
       return
     try {
       await deleteClassroom({ data: itemToDelete.classroom.id })
-      toast.success('Salle supprimée avec succès')
+      toast.success(t('common.deleteSuccess'))
       refetch()
     }
     catch {
-      toast.error('Erreur lors de la suppression de la salle')
+      toast.error(t('common.error'))
     }
     finally {
       setItemToDelete(null)
@@ -174,7 +176,7 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
                 onClick={() => navigate({ to: `/app/spaces/classrooms/${row.original.classroom.id}` })}
               >
                 <Eye className="mr-2 h-4 w-4" />
-                Voir
+                {t('common.view')}
               </DropdownMenuItem>
               {/* Add Edit later when dialog support is better */}
               <DropdownMenuItem
@@ -182,14 +184,14 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
                 onClick={() => setItemToDelete(row.original)}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                Supprimer
+                {t('common.delete')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         ),
       },
     ],
-    [navigate],
+    [navigate, t],
   )
 
   const table = useReactTable({
@@ -215,14 +217,14 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
     <div className="space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle>Liste des salles</CardTitle>
+          <CardTitle>{t('spaces.title')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4 mb-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Rechercher une salle..."
+                placeholder={t('common.search')}
                 value={searchInput}
                 onChange={e => setSearchInput(e.target.value)}
                 className="pl-9"
@@ -236,8 +238,8 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
                 <EmptyMedia variant="icon">
                   <Layers />
                 </EmptyMedia>
-                <EmptyTitle>Aucune salle trouvée</EmptyTitle>
-                <EmptyDescription>Créez votre première salle pour commencer</EmptyDescription>
+                <EmptyTitle>{t('tables.noClassroomsFound')}</EmptyTitle>
+                <EmptyDescription>{t('tables.createFirstClassroom')}</EmptyDescription>
               </EmptyHeader>
             </Empty>
           )}
@@ -248,8 +250,8 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
                 <EmptyMedia variant="icon">
                   <Search />
                 </EmptyMedia>
-                <EmptyTitle>Aucun résultat</EmptyTitle>
-                <EmptyDescription>Essayez de modifier vos filtres</EmptyDescription>
+                <EmptyTitle>{t('empty.noResults')}</EmptyTitle>
+                <EmptyDescription>{t('empty.tryModifyingFilters')}</EmptyDescription>
               </EmptyHeader>
             </Empty>
           )}
@@ -265,9 +267,9 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
                           {header.isPlaceholder
                             ? null
                             : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )}
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
                         </TableHead>
                       ))}
                     </TableRow>
@@ -297,7 +299,7 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
           {!hasNoData && table.getPageCount() > 1 && (
             <div className="flex items-center justify-between mt-4">
               <div className="text-sm text-muted-foreground">
-                Affichage
+                {t('common.showing')}
                 {' '}
                 {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1}
                 {' '}
@@ -305,7 +307,7 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
                 {' '}
                 {Math.min((table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize, data.length)}
                 {' '}
-                sur
+                {t('common.of')}
                 {' '}
                 {data.length}
               </div>
@@ -316,7 +318,7 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
                   onClick={() => table.previousPage()}
                   disabled={!table.getCanPreviousPage()}
                 >
-                  Précédent
+                  {t('common.previous')}
                 </Button>
                 <Button
                   variant="outline"
@@ -324,7 +326,7 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
                   onClick={() => table.nextPage()}
                   disabled={!table.getCanNextPage()}
                 >
-                  Suivant
+                  {t('common.next')}
                 </Button>
               </div>
             </div>
@@ -336,23 +338,20 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
       <AlertDialog open={!!itemToDelete} onOpenChange={open => !open && setItemToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
+            <AlertDialogTitle>{t('dialogs.deleteConfirmation.title')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Cette action est irréversible. Cela supprimera définitivement la salle
-              <span className="font-medium text-foreground">
-                {' '}
-                {itemToDelete ? itemToDelete.classroom.name : ''}
-              </span>
-              .
+              {t('dialogs.deleteConfirmation.description', {
+                item: itemToDelete ? itemToDelete.classroom.name : '',
+              })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogCancel>{t('dialogs.deleteConfirmation.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={handleDelete}
             >
-              Supprimer
+              {t('dialogs.deleteConfirmation.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

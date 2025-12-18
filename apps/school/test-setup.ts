@@ -38,7 +38,7 @@ afterEach(() => {
 // Mock i18n - loads translations from actual translation files
 vi.mock('react-i18next', async () => {
   // Import actual English translations
-  const enTranslations = await import('./src/i18n/locales/en/translation.json')
+  const { en: enTranslations } = await import('./src/i18n/locales/en')
 
   // Helper function to get nested value from object using dot notation
   const getNestedValue = (obj: Record<string, unknown>, path: string): string => {
@@ -53,7 +53,7 @@ vi.mock('react-i18next', async () => {
 
   return {
     useTranslation: () => ({
-      t: (key: string) => getNestedValue(enTranslations.default || enTranslations, key),
+      t: (key: string) => getNestedValue(enTranslations, key),
     }),
   }
 })
