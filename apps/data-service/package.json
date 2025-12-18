@@ -13,17 +13,17 @@
     "cf-typegen": "wrangler types --env-interface BaseEnv"
   },
   "dependencies": {
-    "@repo/data-ops": "workspace:*",
-    "hono": "workspace:*",
-    "zod": "workspace:*"
+    "@repo/data-ops": "workspace:^",
+    "hono": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "workspace:*",
-    "@types/node": "workspace:*",
+    "@cloudflare/vitest-pool-workers": "catalog:",
+    "@types/node": "catalog:",
     "@yeko/eslint-config": "workspace:^",
-    "eslint": "workspace:*",
-    "typescript": "workspace:*",
-    "vitest": "workspace:*",
-    "wrangler": "workspace:*"
+    "eslint": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "wrangler": "catalog:"
   }
 }

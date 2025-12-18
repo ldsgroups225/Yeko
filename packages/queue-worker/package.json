@@ -16,10 +16,10 @@
     "@repo/data-ops": "workspace:^"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "workspace:*",
+    "@cloudflare/workers-types": "catalog:",
     "@yeko/eslint-config": "workspace:^",
-    "eslint": "workspace:*",
-    "typescript": "workspace:*",
-    "wrangler": "workspace:*"
+    "eslint": "catalog:",
+    "typescript": "catalog:",
+    "wrangler": "catalog:"
   }
 }
