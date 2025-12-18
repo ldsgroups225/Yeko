@@ -44,8 +44,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "seed": "node dist/seed/index.js",
-    "seed:fresh": "node dist/seed/index.js --fresh",
+    "seed": "npx tsx src/seed/index.ts",
+    "seed:fresh": "npx tsx src/seed/index.ts --fresh",
     "verify": "node dist/verify.js"
   },
   "dependencies": {
