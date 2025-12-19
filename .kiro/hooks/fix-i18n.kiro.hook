@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Fix i18n Issues",
+  "description": "Audit and fix internationalization issues - finds hardcoded text, validates translation keys, and auto-fixes problems",
+  "version": "1",
+  "when": {
+    "type": "userTriggered"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Perform a comprehensive i18n audit and fix for the Yeko project. Follow these steps:\n\n## Step 1: Detect i18n Configuration\n- Locate i18n config files in apps/core/src/i18n/ and apps/school/src/i18n/\n- Identify translation JSON files in locales/ directories (fr.json, en.json)\n- Note the i18n library used (i18next with react-i18next)\n\n## Step 2: Audit Target Files\nScan TypeScript/TSX files for:\n1. **Hardcoded text** - JSX content like `>Submit<`, `>Annuler<`\n2. **Hardcoded attributes** - `placeholder=\"Enter name\"`, `title=\"Click\"`, `aria-label=\"Close\"`\n3. **Common UI text** - \"Save\", \"Cancel\", \"Delete\", \"Edit\", \"Search\", \"Loading\"\n4. **French hardcoded text** - \"Enregistrer\", \"Supprimer\", \"Modifier\", \"Rechercher\"\n\n## Step 3: Validate Translation Keys\nFor each `t('key')` or `t(\"key\")` call:\n- Check if the key exists in fr.json (primary) and en.json\n- Report missing keys with file location and line number\n- Validate nested keys like `t('nav.items.dashboard')`\n\n## Step 4: Generate Fix Report\nCreate a summary with:\n- Total hardcoded text instances found\n- Missing translation keys count\n- Valid translation keys count\n- Priority action items\n\n## Step 5: Auto-Fix Issues\n1. **Add missing keys** to translation files with suggested French text\n2. **Replace hardcoded text** with appropriate `t()` calls\n3. **Add useTranslation import** where needed\n4. **Ensure consistency** between fr.json and en.json structure\n\n## Step 6: Verify Fixes\n- Run TypeScript check to ensure no syntax errors\n- Verify translation files are valid JSON\n- List all changes made for review\n\n## Key Patterns for Yeko:\n- Use `common.*` namespace for shared UI elements\n- Use `nav.*` for navigation items\n- Use `pages.[pageName].*` for page-specific text\n- Use `forms.*` for form labels and placeholders\n- Use `errors.*` for error messages\n- Use `validation.*` for validation messages\n\n## French-First Approach:\n- Primary language is French (fr)\n- Generate French translations first\n- Add English (en) translations as secondary\n- Respect existing translation structure and naming conventions\n\nFocus on the path provided by the user, or default to scanning apps/school/src/ and apps/core/src/ if no specific path is given."
+  }
+}
