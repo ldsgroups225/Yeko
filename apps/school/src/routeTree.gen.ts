@@ -32,8 +32,11 @@ import { Route as AuthAppAcademicIndexRouteImport } from './routes/_auth/app/aca
 import { Route as AuthAppStudentsParentsRouteImport } from './routes/_auth/app/students/parents'
 import { Route as AuthAppStudentsNewRouteImport } from './routes/_auth/app/students/new'
 import { Route as AuthAppStudentsEnrollmentsRouteImport } from './routes/_auth/app/students/enrollments'
+import { Route as AuthAppStudentsBulkOperationsRouteImport } from './routes/_auth/app/students/bulk-operations'
 import { Route as AuthAppSpacesAvailabilityRouteImport } from './routes/_auth/app/spaces/availability'
 import { Route as AuthAppSettingsSchoolYearsRouteImport } from './routes/_auth/app/settings/school-years'
+import { Route as AuthAppSettingsProfileRouteImport } from './routes/_auth/app/settings/profile'
+import { Route as AuthAppSettingsNotificationsRouteImport } from './routes/_auth/app/settings/notifications'
 import { Route as AuthAppSchoolLifeSettingsRouteImport } from './routes/_auth/app/school-life/settings'
 import { Route as AuthAppFinanceStudentFeesRouteImport } from './routes/_auth/app/finance/student-fees'
 import { Route as AuthAppFinanceRefundsRouteImport } from './routes/_auth/app/finance/refunds'
@@ -205,6 +208,12 @@ const AuthAppStudentsEnrollmentsRoute =
     path: '/enrollments',
     getParentRoute: () => AuthAppStudentsRoute,
   } as any)
+const AuthAppStudentsBulkOperationsRoute =
+  AuthAppStudentsBulkOperationsRouteImport.update({
+    id: '/bulk-operations',
+    path: '/bulk-operations',
+    getParentRoute: () => AuthAppStudentsRoute,
+  } as any)
 const AuthAppSpacesAvailabilityRoute =
   AuthAppSpacesAvailabilityRouteImport.update({
     id: '/availability',
@@ -215,6 +224,17 @@ const AuthAppSettingsSchoolYearsRoute =
   AuthAppSettingsSchoolYearsRouteImport.update({
     id: '/school-years',
     path: '/school-years',
+    getParentRoute: () => AuthAppSettingsRoute,
+  } as any)
+const AuthAppSettingsProfileRoute = AuthAppSettingsProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthAppSettingsRoute,
+} as any)
+const AuthAppSettingsNotificationsRoute =
+  AuthAppSettingsNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
     getParentRoute: () => AuthAppSettingsRoute,
   } as any)
 const AuthAppSchoolLifeSettingsRoute =
@@ -561,8 +581,11 @@ export interface FileRoutesByFullPath {
   '/app/finance/refunds': typeof AuthAppFinanceRefundsRoute
   '/app/finance/student-fees': typeof AuthAppFinanceStudentFeesRoute
   '/app/school-life/settings': typeof AuthAppSchoolLifeSettingsRoute
+  '/app/settings/notifications': typeof AuthAppSettingsNotificationsRoute
+  '/app/settings/profile': typeof AuthAppSettingsProfileRoute
   '/app/settings/school-years': typeof AuthAppSettingsSchoolYearsRoute
   '/app/spaces/availability': typeof AuthAppSpacesAvailabilityRoute
+  '/app/students/bulk-operations': typeof AuthAppStudentsBulkOperationsRoute
   '/app/students/enrollments': typeof AuthAppStudentsEnrollmentsRoute
   '/app/students/new': typeof AuthAppStudentsNewRoute
   '/app/students/parents': typeof AuthAppStudentsParentsRoute
@@ -634,8 +657,11 @@ export interface FileRoutesByTo {
   '/app/finance/refunds': typeof AuthAppFinanceRefundsRoute
   '/app/finance/student-fees': typeof AuthAppFinanceStudentFeesRoute
   '/app/school-life/settings': typeof AuthAppSchoolLifeSettingsRoute
+  '/app/settings/notifications': typeof AuthAppSettingsNotificationsRoute
+  '/app/settings/profile': typeof AuthAppSettingsProfileRoute
   '/app/settings/school-years': typeof AuthAppSettingsSchoolYearsRoute
   '/app/spaces/availability': typeof AuthAppSpacesAvailabilityRoute
+  '/app/students/bulk-operations': typeof AuthAppStudentsBulkOperationsRoute
   '/app/students/enrollments': typeof AuthAppStudentsEnrollmentsRoute
   '/app/students/new': typeof AuthAppStudentsNewRoute
   '/app/students/parents': typeof AuthAppStudentsParentsRoute
@@ -717,8 +743,11 @@ export interface FileRoutesById {
   '/_auth/app/finance/refunds': typeof AuthAppFinanceRefundsRoute
   '/_auth/app/finance/student-fees': typeof AuthAppFinanceStudentFeesRoute
   '/_auth/app/school-life/settings': typeof AuthAppSchoolLifeSettingsRoute
+  '/_auth/app/settings/notifications': typeof AuthAppSettingsNotificationsRoute
+  '/_auth/app/settings/profile': typeof AuthAppSettingsProfileRoute
   '/_auth/app/settings/school-years': typeof AuthAppSettingsSchoolYearsRoute
   '/_auth/app/spaces/availability': typeof AuthAppSpacesAvailabilityRoute
+  '/_auth/app/students/bulk-operations': typeof AuthAppStudentsBulkOperationsRoute
   '/_auth/app/students/enrollments': typeof AuthAppStudentsEnrollmentsRoute
   '/_auth/app/students/new': typeof AuthAppStudentsNewRoute
   '/_auth/app/students/parents': typeof AuthAppStudentsParentsRoute
@@ -800,8 +829,11 @@ export interface FileRouteTypes {
     | '/app/finance/refunds'
     | '/app/finance/student-fees'
     | '/app/school-life/settings'
+    | '/app/settings/notifications'
+    | '/app/settings/profile'
     | '/app/settings/school-years'
     | '/app/spaces/availability'
+    | '/app/students/bulk-operations'
     | '/app/students/enrollments'
     | '/app/students/new'
     | '/app/students/parents'
@@ -873,8 +905,11 @@ export interface FileRouteTypes {
     | '/app/finance/refunds'
     | '/app/finance/student-fees'
     | '/app/school-life/settings'
+    | '/app/settings/notifications'
+    | '/app/settings/profile'
     | '/app/settings/school-years'
     | '/app/spaces/availability'
+    | '/app/students/bulk-operations'
     | '/app/students/enrollments'
     | '/app/students/new'
     | '/app/students/parents'
@@ -955,8 +990,11 @@ export interface FileRouteTypes {
     | '/_auth/app/finance/refunds'
     | '/_auth/app/finance/student-fees'
     | '/_auth/app/school-life/settings'
+    | '/_auth/app/settings/notifications'
+    | '/_auth/app/settings/profile'
     | '/_auth/app/settings/school-years'
     | '/_auth/app/spaces/availability'
+    | '/_auth/app/students/bulk-operations'
     | '/_auth/app/students/enrollments'
     | '/_auth/app/students/new'
     | '/_auth/app/students/parents'
@@ -1177,6 +1215,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAppStudentsEnrollmentsRouteImport
       parentRoute: typeof AuthAppStudentsRoute
     }
+    '/_auth/app/students/bulk-operations': {
+      id: '/_auth/app/students/bulk-operations'
+      path: '/bulk-operations'
+      fullPath: '/app/students/bulk-operations'
+      preLoaderRoute: typeof AuthAppStudentsBulkOperationsRouteImport
+      parentRoute: typeof AuthAppStudentsRoute
+    }
     '/_auth/app/spaces/availability': {
       id: '/_auth/app/spaces/availability'
       path: '/availability'
@@ -1189,6 +1234,20 @@ declare module '@tanstack/react-router' {
       path: '/school-years'
       fullPath: '/app/settings/school-years'
       preLoaderRoute: typeof AuthAppSettingsSchoolYearsRouteImport
+      parentRoute: typeof AuthAppSettingsRoute
+    }
+    '/_auth/app/settings/profile': {
+      id: '/_auth/app/settings/profile'
+      path: '/profile'
+      fullPath: '/app/settings/profile'
+      preLoaderRoute: typeof AuthAppSettingsProfileRouteImport
+      parentRoute: typeof AuthAppSettingsRoute
+    }
+    '/_auth/app/settings/notifications': {
+      id: '/_auth/app/settings/notifications'
+      path: '/notifications'
+      fullPath: '/app/settings/notifications'
+      preLoaderRoute: typeof AuthAppSettingsNotificationsRouteImport
       parentRoute: typeof AuthAppSettingsRoute
     }
     '/_auth/app/school-life/settings': {
@@ -1735,11 +1794,15 @@ const AuthAppSchoolLifeRouteWithChildren =
   AuthAppSchoolLifeRoute._addFileChildren(AuthAppSchoolLifeRouteChildren)
 
 interface AuthAppSettingsRouteChildren {
+  AuthAppSettingsNotificationsRoute: typeof AuthAppSettingsNotificationsRoute
+  AuthAppSettingsProfileRoute: typeof AuthAppSettingsProfileRoute
   AuthAppSettingsSchoolYearsRoute: typeof AuthAppSettingsSchoolYearsRoute
   AuthAppSettingsIndexRoute: typeof AuthAppSettingsIndexRoute
 }
 
 const AuthAppSettingsRouteChildren: AuthAppSettingsRouteChildren = {
+  AuthAppSettingsNotificationsRoute: AuthAppSettingsNotificationsRoute,
+  AuthAppSettingsProfileRoute: AuthAppSettingsProfileRoute,
   AuthAppSettingsSchoolYearsRoute: AuthAppSettingsSchoolYearsRoute,
   AuthAppSettingsIndexRoute: AuthAppSettingsIndexRoute,
 }
@@ -1771,6 +1834,7 @@ const AuthAppSpacesRouteWithChildren = AuthAppSpacesRoute._addFileChildren(
 )
 
 interface AuthAppStudentsRouteChildren {
+  AuthAppStudentsBulkOperationsRoute: typeof AuthAppStudentsBulkOperationsRoute
   AuthAppStudentsEnrollmentsRoute: typeof AuthAppStudentsEnrollmentsRoute
   AuthAppStudentsNewRoute: typeof AuthAppStudentsNewRoute
   AuthAppStudentsParentsRoute: typeof AuthAppStudentsParentsRoute
@@ -1780,6 +1844,7 @@ interface AuthAppStudentsRouteChildren {
 }
 
 const AuthAppStudentsRouteChildren: AuthAppStudentsRouteChildren = {
+  AuthAppStudentsBulkOperationsRoute: AuthAppStudentsBulkOperationsRoute,
   AuthAppStudentsEnrollmentsRoute: AuthAppStudentsEnrollmentsRoute,
   AuthAppStudentsNewRoute: AuthAppStudentsNewRoute,
   AuthAppStudentsParentsRoute: AuthAppStudentsParentsRoute,

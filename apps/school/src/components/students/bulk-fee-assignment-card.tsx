@@ -1,0 +1,139 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Wallet } from 'lucide-react'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { useSchoolYearContext } from '@/hooks/use-school-year-context'
+import { classesOptions } from '@/lib/queries/classes'
+import { bulkAssignFees } from '@/school/functions/bulk-operations'
+
+interface ClassItem {
+  id: string
+  gradeId: string
+  gradeName: string
+  seriesName?: string | null
+  section: string
+}
+
+export function BulkFeeAssignmentCard() {
+  const { t } = useTranslation()
+  const queryClient = useQueryClient()
+  const { schoolYearId } = useSchoolYearContext()
+
+  const [selectedClassId, setSelectedClassId] = useState<string>('')
+  const [selectedGradeId, setSelectedGradeId] = useState<string>('')
+
+  const { data: classes } = useQuery(classesOptions.list()) as { data: ClassItem[] | undefined }
+
+  // Extract unique grades from classes
+  const grades = classes
+    ? [...new Map(classes.map((c: ClassItem) => [c.gradeId, { id: c.gradeId, name: c.gradeName }])).values()]
+    : []
+
+  const assignMutation = useMutation({
+    mutationFn: bulkAssignFees,
+    onSuccess: (result: { success: boolean, data?: { succeeded: number } }) => {
+      if (result.success && result.data) {
+        toast.success(
+          t('students.bulkOperations.feeAssignmentSuccess', {
+            count: result.data.succeeded,
+          }),
+        )
+        queryClient.invalidateQueries({ queryKey: ['student-fees'] })
+      }
+    },
+    onError: () => {
+      toast.error(t('students.bulkOperations.feeAssignmentError'))
+    },
+  })
+
+  const handleAssignFees = () => {
+    if (!schoolYearId)
+      return
+
+    assignMutation.mutate({
+      data: {
+        schoolYearId,
+        classId: selectedClassId || undefined,
+        gradeId: selectedGradeId || undefined,
+      },
+    })
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Wallet className="h-5 w-5" />
+          {t('students.bulkOperations.assignFees')}
+        </CardTitle>
+        <CardDescription>
+          {t('students.bulkOperations.assignFeesDescription')}
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <Label>{t('students.bulkOperations.filterByGrade')}</Label>
+          <Select value={selectedGradeId} onValueChange={setSelectedGradeId}>
+            <SelectTrigger>
+              <SelectValue placeholder={t('common.all')} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">{t('common.all')}</SelectItem>
+              {grades.map((g: { id: string, name: string }) => (
+                <SelectItem key={g.id} value={g.id}>
+                  {g.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-2">
+          <Label>{t('students.bulkOperations.filterByClass')}</Label>
+          <Select value={selectedClassId} onValueChange={setSelectedClassId}>
+            <SelectTrigger>
+              <SelectValue placeholder={t('common.all')} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">{t('common.all')}</SelectItem>
+              {classes
+                ?.filter((c: ClassItem) => !selectedGradeId || c.gradeId === selectedGradeId)
+                .map((c: ClassItem) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.gradeName}
+                    {' '}
+                    {c.seriesName ?? ''}
+                    {' '}
+                    -
+                    {' '}
+                    {c.section}
+                  </SelectItem>
+                ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <Button
+          onClick={handleAssignFees}
+          disabled={!schoolYearId || assignMutation.isPending}
+          className="w-full"
+        >
+          {assignMutation.isPending
+            ? t('common.loading')
+            : t('students.bulkOperations.startFeeAssignment')}
+        </Button>
+      </CardContent>
+    </Card>
+  )
+}

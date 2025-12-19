@@ -1,15 +1,23 @@
 import { Link, useLocation } from '@tanstack/react-router'
 import {
   AlertTriangle,
+  Bell,
   BookOpen,
   Building2,
+  Calendar,
   ClipboardCheck,
+  CreditCard,
   DollarSign,
+  FileText,
   GraduationCap,
+  Grid,
   LayoutDashboard,
+  Percent,
+  RotateCcw,
   Settings,
   UserCheck,
   Users,
+  Wallet,
 } from 'lucide-react'
 import * as React from 'react'
 
@@ -63,6 +71,7 @@ const navigationItems: NavItem[] = [
       { title: 'Liste des élèves', href: '/app/students', icon: GraduationCap },
       { title: 'Parents', href: '/app/students/parents', icon: Users },
       { title: 'Inscriptions', href: '/app/students/enrollments', icon: ClipboardCheck },
+      { title: 'Opérations en masse', href: '/app/students/bulk-operations', icon: FileText },
     ],
   },
   {
@@ -102,8 +111,15 @@ const navigationItems: NavItem[] = [
     href: '/app/finance',
     icon: DollarSign,
     children: [
-      { title: 'Comptabilité', href: '/app/finance/accounting', icon: DollarSign },
-      { title: 'Paiements', href: '/app/finance/payments', icon: DollarSign },
+      { title: 'Tableau de bord', href: '/app/finance/dashboard', icon: LayoutDashboard },
+      { title: 'Types de frais', href: '/app/finance/fee-types', icon: FileText },
+      { title: 'Grilles tarifaires', href: '/app/finance/fee-structures', icon: Grid },
+      { title: 'Frais élèves', href: '/app/finance/student-fees', icon: Users },
+      { title: 'Paiements', href: '/app/finance/payments', icon: CreditCard },
+      { title: 'Plans de paiement', href: '/app/finance/payment-plans', icon: Calendar },
+      { title: 'Remises', href: '/app/finance/discounts', icon: Percent },
+      { title: 'Remboursements', href: '/app/finance/refunds', icon: RotateCcw },
+      { title: 'Comptes', href: '/app/finance/accounts', icon: Wallet },
     ],
   },
   {
@@ -111,7 +127,9 @@ const navigationItems: NavItem[] = [
     href: '/app/settings',
     icon: Settings,
     children: [
-      { title: 'Années Scolaires', href: '/app/settings/school-years', icon: Settings },
+      { title: 'Profil école', href: '/app/settings/profile', icon: Building2 },
+      { title: 'Années scolaires', href: '/app/settings/school-years', icon: Calendar },
+      { title: 'Notifications', href: '/app/settings/notifications', icon: Bell },
     ],
   },
 ]
