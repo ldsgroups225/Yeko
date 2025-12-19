@@ -79,12 +79,12 @@ function StudentAttendanceStatisticsPage() {
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-4">
-            <Select value={classId} onValueChange={setClassId}>
+            <Select value={classId || 'all'} onValueChange={v => setClassId(v === 'all' ? '' : v)}>
               <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder={t('attendance.allClasses')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">{t('attendance.allClasses')}</SelectItem>
+                <SelectItem value="all">{t('attendance.allClasses')}</SelectItem>
                 <SelectItem value="class-1">6ème A</SelectItem>
                 <SelectItem value="class-2">6ème B</SelectItem>
               </SelectContent>

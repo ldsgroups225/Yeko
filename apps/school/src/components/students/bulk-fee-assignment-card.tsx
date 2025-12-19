@@ -106,7 +106,7 @@ export function BulkFeeAssignmentCard() {
               <SelectValue placeholder={t('common.all')} />
             </SelectTrigger>
             <SelectContent>
-              <SctIelectItem value="all">{t('common.all')}</SctIelectItem>
+              <SelectItem value="all">{t('common.all')}</SelectItem>
               {classes
                 ?.filter((c: ClassItem) => !selectedGradeId || c.gradeId === selectedGradeId)
                 .map((c: ClassItem) => (

@@ -190,14 +190,14 @@ export function TimetableSessionDialog({
             <div className="space-y-2">
               <Label htmlFor="classroomId">{t('classrooms.classroom')}</Label>
               <Select
-                value={form.watch('classroomId') ?? ''}
-                onValueChange={v => form.setValue('classroomId', v || undefined)}
+                value={form.watch('classroomId') ?? 'none'}
+                onValueChange={v => form.setValue('classroomId', v === 'none' ? undefined : v)}
               >
                 <SelectTrigger id="classroomId">
                   <SelectValue placeholder={t('common.optional')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">{t('common.none')}</SelectItem>
+                  <SelectItem value="none">{t('common.none')}</SelectItem>
                   {classrooms.map(c => (
                     <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
                   ))}
@@ -288,22 +288,22 @@ export function TimetableSessionDialog({
               >
                 {isDeleting
                   ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    )
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )
                   : (
-                      <Trash2 className="mr-2 h-4 w-4" />
-                    )}
+                    <Trash2 className="mr-2 h-4 w-4" />
+                  )}
                 {t('common.delete')}
               </Button>
             )}
             <Button type="submit" disabled={isSubmitting || isDeleting}>
               {isSubmitting
                 ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  )
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )
                 : (
-                    <Save className="mr-2 h-4 w-4" />
-                  )}
+                  <Save className="mr-2 h-4 w-4" />
+                )}
               {t('common.save')}
             </Button>
           </DialogFooter>

@@ -116,23 +116,23 @@ function ConductReportsPage() {
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-4">
-            <Select value={classId} onValueChange={setClassId}>
+            <Select value={classId || 'all'} onValueChange={v => setClassId(v === 'all' ? '' : v)}>
               <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder={t('conduct.allClasses')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">{t('conduct.allClasses')}</SelectItem>
+                <SelectItem value="all">{t('conduct.allClasses')}</SelectItem>
                 <SelectItem value="class-1">6ème A</SelectItem>
                 <SelectItem value="class-2">6ème B</SelectItem>
               </SelectContent>
             </Select>
 
-            <Select value={type ?? ''} onValueChange={v => setType(v as typeof type || undefined)}>
+            <Select value={type ?? 'all'} onValueChange={v => setType(v === 'all' ? undefined : v as typeof type)}>
               <SelectTrigger className="w-[150px]">
                 <SelectValue placeholder={t('conduct.allTypes')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">{t('conduct.allTypes')}</SelectItem>
+                <SelectItem value="all">{t('conduct.allTypes')}</SelectItem>
                 <SelectItem value="incident">{t('conduct.type.incident')}</SelectItem>
                 <SelectItem value="sanction">{t('conduct.type.sanction')}</SelectItem>
                 <SelectItem value="reward">{t('conduct.type.reward')}</SelectItem>
