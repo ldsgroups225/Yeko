@@ -47,7 +47,7 @@ export function NavigationExample() {
       {navItems.map(item => (
         <a
           key={item.key}
-          href={`/app/${item.key}`}
+          href={`/${item.key}`}
           className="flex items-center gap-2 px-4 py-2 rounded hover:bg-accent"
         >
           <span>{item.icon}</span>
@@ -290,11 +290,11 @@ export function LanguageConditionalExample() {
     <div>
       {i18n.language === 'fr'
         ? (
-            <p>Contenu spécifique au français</p>
-          )
+          <p>Contenu spécifique au français</p>
+        )
         : (
-            <p>English-specific content</p>
-          )}
+          <p>English-specific content</p>
+        )}
     </div>
   )
 }

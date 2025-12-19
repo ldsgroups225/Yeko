@@ -144,7 +144,7 @@ export function RolesTable({ filters }: RolesTableProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onClick={() => navigate({ to: `/app/hr/roles/${row.original.id}` })}
+                onClick={() => navigate({ to: `/users/roles/${row.original.id}` })}
               >
                 <Eye className="mr-2 h-4 w-4" />
                 {t('common.view')}
@@ -153,7 +153,7 @@ export function RolesTable({ filters }: RolesTableProps) {
                 <>
                   <DropdownMenuItem
                     onClick={() =>
-                      navigate({ to: `/app/hr/roles/${row.original.id}/edit` })}
+                      navigate({ to: `/users/roles/${row.original.id}/edit` })}
                   >
                     <Edit className="mr-2 h-4 w-4" />
                     {t('common.edit')}
@@ -219,7 +219,7 @@ export function RolesTable({ filters }: RolesTableProps) {
                 <EmptyDescription>{t('hr.roles.noRolesDescription')}</EmptyDescription>
               </EmptyHeader>
               <EmptyContent>
-                <Button onClick={() => navigate({ to: '/app/hr/roles/new' })}>
+                <Button onClick={() => navigate({ to: '/users/roles/new' })}>
                   {t('hr.roles.addRole')}
                 </Button>
               </EmptyContent>
@@ -251,9 +251,9 @@ export function RolesTable({ filters }: RolesTableProps) {
                           {header.isPlaceholder
                             ? null
                             : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )}
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
                         </TableHead>
                       ))}
                     </TableRow>
@@ -302,7 +302,7 @@ export function RolesTable({ filters }: RolesTableProps) {
                   size="sm"
                   onClick={() =>
                     navigate({
-                      to: '/app/hr/roles',
+                      to: '/users/roles',
                       search: { ...filters, page: data.page - 1 },
                     })}
                   disabled={data.page === 1}
@@ -314,7 +314,7 @@ export function RolesTable({ filters }: RolesTableProps) {
                   size="sm"
                   onClick={() =>
                     navigate({
-                      to: '/app/hr/roles',
+                      to: '/users/roles',
                       search: { ...filters, page: data.page + 1 },
                     })}
                   disabled={data.page === data.totalPages}

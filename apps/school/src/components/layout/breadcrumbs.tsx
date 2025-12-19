@@ -21,7 +21,7 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
       className="flex items-center gap-2 text-sm text-muted-foreground"
     >
       <Link
-        to="/app/dashboard"
+        to="/dashboard"
         className={cn(
           'inline-flex items-center gap-1 transition-colors hover:text-foreground',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
@@ -46,20 +46,20 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
             <ChevronRight className="h-4 w-4" />
             {item.href && !isLast
               ? (
-                  <Link
-                    to={item.href}
-                    className={cn(
-                      'transition-colors hover:text-foreground',
-                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-                      'rounded-sm',
-                    )}
-                  >
-                    {item.label}
-                  </Link>
-                )
+                <Link
+                  to={item.href}
+                  className={cn(
+                    'transition-colors hover:text-foreground',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+                    'rounded-sm',
+                  )}
+                >
+                  {item.label}
+                </Link>
+              )
               : (
-                  <span className={cn(isLast && 'font-medium text-foreground')}>{item.label}</span>
-                )}
+                <span className={cn(isLast && 'font-medium text-foreground')}>{item.label}</span>
+              )}
           </motion.div>
         )
       })}

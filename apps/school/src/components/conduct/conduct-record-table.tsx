@@ -110,7 +110,7 @@ export function ConductRecordTable({
             </Avatar>
             <div className="flex flex-col">
               <Link
-                to="/app/students/$studentId"
+                to="/students/$studentId"
                 params={{ studentId: row.original.studentId }}
                 className="font-medium hover:underline"
               >
@@ -233,9 +233,9 @@ export function ConductRecordTable({
                   {header.isPlaceholder
                     ? null
                     : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
+                      header.column.columnDef.header,
+                      header.getContext(),
+                    )}
                 </TableHead>
               ))}
             </TableRow>

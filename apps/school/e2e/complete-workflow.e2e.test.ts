@@ -255,23 +255,23 @@ test.describe('Complete HR Module Workflow', () => {
 
   test('should navigate between HR sections', async ({ authenticatedPage }) => {
     // Start at roles
-    await authenticatedPage.goto('/app/hr/roles')
+    await authenticatedPage.goto('/hr/roles')
     await expect(authenticatedPage).toHaveURL(/\/roles/)
 
     // Navigate to users
-    await authenticatedPage.goto('/app/hr/users')
+    await authenticatedPage.goto('/hr/users')
     await expect(authenticatedPage).toHaveURL(/\/users/)
 
     // Navigate to staff
-    await authenticatedPage.goto('/app/hr/staff')
+    await authenticatedPage.goto('/hr/staff')
     await expect(authenticatedPage).toHaveURL(/\/staff/)
 
     // Navigate to teachers
-    await authenticatedPage.goto('/app/hr/teachers')
+    await authenticatedPage.goto('/hr/teachers')
     await expect(authenticatedPage).toHaveURL(/\/teachers/)
 
     // Navigate back to dashboard
-    await authenticatedPage.goto('/app/dashboard')
+    await authenticatedPage.goto('/dashboard')
     await expect(authenticatedPage).toHaveURL(/\/dashboard/)
   })
 

@@ -31,7 +31,7 @@ export class RoleManagementPage {
   }
 
   async goto() {
-    await this.page.goto('/app/hr/roles')
+    await this.page.goto('/hr/roles')
     await this.page.waitForLoadState('networkidle')
   }
 
@@ -129,7 +129,7 @@ export class UserManagementPage {
   }
 
   async goto() {
-    await this.page.goto('/app/hr/users')
+    await this.page.goto('/hr/users')
     await this.page.waitForLoadState('networkidle')
   }
 
@@ -217,7 +217,7 @@ export class StaffManagementPage {
   }
 
   async goto() {
-    await this.page.goto('/app/hr/staff')
+    await this.page.goto('/hr/staff')
     await this.page.waitForLoadState('networkidle')
   }
 
@@ -275,7 +275,7 @@ export class TeacherManagementPage {
   }
 
   async goto() {
-    await this.page.goto('/app/hr/teachers')
+    await this.page.goto('/hr/teachers')
     await this.page.waitForLoadState('networkidle')
   }
 

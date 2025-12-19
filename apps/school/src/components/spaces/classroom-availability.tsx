@@ -95,7 +95,7 @@ function EmptyState() {
             </p>
           </div>
           <Button asChild className="mt-2">
-            <a href="/app/spaces/classrooms">
+            <a href="/spaces/classrooms">
               <Plus className="mr-2 h-4 w-4" />
               {t('empty.createClassroom')}
             </a>
@@ -193,21 +193,21 @@ export function ClassroomAvailability() {
                       <TableCell className="text-right">
                         {isAvailable
                           ? (
-                              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                                Disponible
-                              </Badge>
-                            )
+                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                              Disponible
+                            </Badge>
+                          )
                           : item.classroom.status !== 'active'
                             ? (
-                                <Badge variant="secondary">
-                                  {item.classroom.status === 'maintenance' ? 'Maintenance' : 'Inactive'}
-                                </Badge>
-                              )
+                              <Badge variant="secondary">
+                                {item.classroom.status === 'maintenance' ? 'Maintenance' : 'Inactive'}
+                              </Badge>
+                            )
                             : (
-                                <Badge variant="default">
-                                  Occupé
-                                </Badge>
-                              )}
+                              <Badge variant="default">
+                                Occupé
+                              </Badge>
+                            )}
                       </TableCell>
                     </TableRow>
                   )

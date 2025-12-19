@@ -86,13 +86,13 @@ function EmptyState() {
           </div>
           <div className="flex gap-2 pt-2">
             <Button variant="outline" asChild>
-              <a href="/app/academic/classes">
+              <a href="/classes">
                 <Plus className="mr-2 h-4 w-4" />
                 {t('classes.create')}
               </a>
             </Button>
             <Button variant="outline" asChild>
-              <a href="/app/settings/subjects">
+              <a href="/settings/subjects">
                 <Settings className="mr-2 h-4 w-4" />
                 {t('subjects.configure')}
               </a>
@@ -258,98 +258,98 @@ export function AssignmentMatrix({ schoolYearId: propSchoolYearId }: AssignmentM
                       <TableCell key={key} className="text-center p-1">
                         {isEditing
                           ? (
-                              <div className="flex items-center gap-1">
-                                <Select
-                                  onValueChange={(teacherId) => {
-                                    if (teacherId === 'none') {
-                                      removeMutation.mutate({ classId: cls.id, subjectId: subject.id })
-                                    }
-                                    else {
-                                      assignMutation.mutate({ classId: cls.id, subjectId: subject.id, teacherId })
-                                    }
-                                  }}
-                                  defaultValue={assignment?.teacherId || 'none'}
+                            <div className="flex items-center gap-1">
+                              <Select
+                                onValueChange={(teacherId) => {
+                                  if (teacherId === 'none') {
+                                    removeMutation.mutate({ classId: cls.id, subjectId: subject.id })
+                                  }
+                                  else {
+                                    assignMutation.mutate({ classId: cls.id, subjectId: subject.id, teacherId })
+                                  }
+                                }}
+                                defaultValue={assignment?.teacherId || 'none'}
+                              >
+                                <SelectTrigger
+                                  className="h-8 w-[140px]"
+                                  aria-label={`${t('assignmentMatrix.selectTeacherFor')} ${cls.name} - ${subject.name}`}
                                 >
-                                  <SelectTrigger
-                                    className="h-8 w-[140px]"
-                                    aria-label={`${t('assignmentMatrix.selectTeacherFor')} ${cls.name} - ${subject.name}`}
-                                  >
-                                    <SelectValue placeholder={t('common.select')} />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="none">{t('assignmentMatrix.notAssigned')}</SelectItem>
-                                    {teachers.map((teacher: any) => {
-                                      const overloaded = isTeacherOverloaded(teacher.id)
-                                      return (
-                                        <SelectItem key={teacher.id} value={teacher.id}>
-                                          <span className="flex items-center gap-2">
-                                            {teacher.user.name}
-                                            {overloaded && (
-                                              <AlertTriangle className="h-3 w-3 text-destructive" aria-label={t('assignmentMatrix.teacherOverloaded')} />
-                                            )}
-                                          </span>
-                                        </SelectItem>
-                                      )
-                                    })}
-                                  </SelectContent>
-                                </Select>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-8 w-8"
-                                  onClick={() => setEditingCell(null)}
-                                  aria-label={t('common.cancel')}
-                                >
-                                  <X className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            )
-                          : (
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <Button
-                                      variant={assignment?.teacherId ? 'secondary' : 'ghost'}
-                                      size="sm"
-                                      className={`h-8 w-full ${!assignment?.teacherId ? 'text-muted-foreground border-dashed border' : ''}`}
-                                      onClick={() => setEditingCell({ classId: cls.id, subjectId: subject.id })}
-                                      aria-label={
-                                        assignment?.teacherId
-                                          ? `${assignment.teacherName} ${t('assignmentMatrix.teaches')} ${subject.name} ${t('common.in')} ${cls.name}. ${t('common.clickToEdit')}`
-                                          : `${t('assignmentMatrix.assignTeacherFor')} ${subject.name} ${t('common.in')} ${cls.name}`
-                                      }
-                                    >
-                                      {assignment?.teacherId
-                                        ? (
-                                            <span className="flex items-center gap-1 truncate max-w-[120px]">
-                                              {assignment.teacherName}
-                                              {teacherOverloaded && (
-                                                <AlertTriangle className="h-3 w-3 text-destructive shrink-0" aria-hidden="true" />
-                                              )}
-                                            </span>
-                                          )
-                                        : (
-                                            <span aria-hidden="true">—</span>
+                                  <SelectValue placeholder={t('common.select')} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="none">{t('assignmentMatrix.notAssigned')}</SelectItem>
+                                  {teachers.map((teacher: any) => {
+                                    const overloaded = isTeacherOverloaded(teacher.id)
+                                    return (
+                                      <SelectItem key={teacher.id} value={teacher.id}>
+                                        <span className="flex items-center gap-2">
+                                          {teacher.user.name}
+                                          {overloaded && (
+                                            <AlertTriangle className="h-3 w-3 text-destructive" aria-label={t('assignmentMatrix.teacherOverloaded')} />
                                           )}
-                                    </Button>
-                                  </TooltipTrigger>
-                                  <TooltipContent>
+                                        </span>
+                                      </SelectItem>
+                                    )
+                                  })}
+                                </SelectContent>
+                              </Select>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8"
+                                onClick={() => setEditingCell(null)}
+                                aria-label={t('common.cancel')}
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          )
+                          : (
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant={assignment?.teacherId ? 'secondary' : 'ghost'}
+                                    size="sm"
+                                    className={`h-8 w-full ${!assignment?.teacherId ? 'text-muted-foreground border-dashed border' : ''}`}
+                                    onClick={() => setEditingCell({ classId: cls.id, subjectId: subject.id })}
+                                    aria-label={
+                                      assignment?.teacherId
+                                        ? `${assignment.teacherName} ${t('assignmentMatrix.teaches')} ${subject.name} ${t('common.in')} ${cls.name}. ${t('common.clickToEdit')}`
+                                        : `${t('assignmentMatrix.assignTeacherFor')} ${subject.name} ${t('common.in')} ${cls.name}`
+                                    }
+                                  >
                                     {assignment?.teacherId
                                       ? (
-                                          <span>
-                                            {assignment.teacherName}
-                                            {teacherOverloaded && ` (${t('assignmentMatrix.overloaded')})`}
-                                            {' '}
-                                            -
-                                            {' '}
-                                            {t('common.clickToEdit')}
-                                          </span>
-                                        )
-                                      : t('assignmentMatrix.clickToAssign')}
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                            )}
+                                        <span className="flex items-center gap-1 truncate max-w-[120px]">
+                                          {assignment.teacherName}
+                                          {teacherOverloaded && (
+                                            <AlertTriangle className="h-3 w-3 text-destructive shrink-0" aria-hidden="true" />
+                                          )}
+                                        </span>
+                                      )
+                                      : (
+                                        <span aria-hidden="true">—</span>
+                                      )}
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  {assignment?.teacherId
+                                    ? (
+                                      <span>
+                                        {assignment.teacherName}
+                                        {teacherOverloaded && ` (${t('assignmentMatrix.overloaded')})`}
+                                        {' '}
+                                        -
+                                        {' '}
+                                        {t('common.clickToEdit')}
+                                      </span>
+                                    )
+                                    : t('assignmentMatrix.clickToAssign')}
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          )}
                       </TableCell>
                     )
                   })}

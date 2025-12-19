@@ -22,7 +22,7 @@ export const test = base.extend<AuthFixtures>({
     await page.click('button[type="submit"]')
 
     // Wait for navigation to complete
-    await page.waitForURL('**/app/dashboard', { timeout: 10000 })
+    await page.waitForURL('**/dashboard', { timeout: 10000 })
 
     // Use the authenticated page
     await use(page)

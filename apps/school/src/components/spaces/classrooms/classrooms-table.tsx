@@ -173,7 +173,7 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onClick={() => navigate({ to: `/app/spaces/classrooms/${row.original.classroom.id}` })}
+                onClick={() => navigate({ to: `/spaces/classrooms/${row.original.classroom.id}` })}
               >
                 <Eye className="mr-2 h-4 w-4" />
                 {t('common.view')}
@@ -267,9 +267,9 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
                           {header.isPlaceholder
                             ? null
                             : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )}
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
                         </TableHead>
                       ))}
                     </TableRow>

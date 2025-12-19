@@ -11,87 +11,84 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthAppRouteImport } from './routes/_auth/app'
-import { Route as AuthAppIndexRouteImport } from './routes/_auth/app/index'
+import { Route as AuthUsersRouteImport } from './routes/_auth/users'
+import { Route as AuthStudentsRouteImport } from './routes/_auth/students'
+import { Route as AuthSpacesRouteImport } from './routes/_auth/spaces'
+import { Route as AuthSettingsRouteImport } from './routes/_auth/settings'
+import { Route as AuthSchedulesRouteImport } from './routes/_auth/schedules'
+import { Route as AuthGradesRouteImport } from './routes/_auth/grades'
+import { Route as AuthDashboardRouteImport } from './routes/_auth/dashboard'
+import { Route as AuthConductsRouteImport } from './routes/_auth/conducts'
+import { Route as AuthAccountingRouteImport } from './routes/_auth/accounting'
+import { Route as AuthUsersIndexRouteImport } from './routes/_auth/users/index'
+import { Route as AuthStudentsIndexRouteImport } from './routes/_auth/students/index'
+import { Route as AuthSpacesIndexRouteImport } from './routes/_auth/spaces/index'
+import { Route as AuthSettingsIndexRouteImport } from './routes/_auth/settings/index'
+import { Route as AuthGradesIndexRouteImport } from './routes/_auth/grades/index'
+import { Route as AuthConductsIndexRouteImport } from './routes/_auth/conducts/index'
+import { Route as AuthClassesIndexRouteImport } from './routes/_auth/classes/index'
+import { Route as AuthAccountingIndexRouteImport } from './routes/_auth/accounting/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
-import { Route as AuthAppStudentsRouteImport } from './routes/_auth/app/students'
-import { Route as AuthAppSpacesRouteImport } from './routes/_auth/app/spaces'
-import { Route as AuthAppSettingsRouteImport } from './routes/_auth/app/settings'
-import { Route as AuthAppSchoolLifeRouteImport } from './routes/_auth/app/school-life'
-import { Route as AuthAppHrRouteImport } from './routes/_auth/app/hr'
-import { Route as AuthAppFinanceRouteImport } from './routes/_auth/app/finance'
-import { Route as AuthAppDashboardRouteImport } from './routes/_auth/app/dashboard'
-import { Route as AuthAppAcademicRouteImport } from './routes/_auth/app/academic'
-import { Route as AuthAppStudentsIndexRouteImport } from './routes/_auth/app/students/index'
-import { Route as AuthAppSpacesIndexRouteImport } from './routes/_auth/app/spaces/index'
-import { Route as AuthAppSettingsIndexRouteImport } from './routes/_auth/app/settings/index'
-import { Route as AuthAppSchoolLifeIndexRouteImport } from './routes/_auth/app/school-life/index'
-import { Route as AuthAppHrIndexRouteImport } from './routes/_auth/app/hr/index'
-import { Route as AuthAppFinanceIndexRouteImport } from './routes/_auth/app/finance/index'
-import { Route as AuthAppAcademicIndexRouteImport } from './routes/_auth/app/academic/index'
-import { Route as AuthAppStudentsParentsRouteImport } from './routes/_auth/app/students/parents'
-import { Route as AuthAppStudentsNewRouteImport } from './routes/_auth/app/students/new'
-import { Route as AuthAppStudentsEnrollmentsRouteImport } from './routes/_auth/app/students/enrollments'
-import { Route as AuthAppStudentsBulkOperationsRouteImport } from './routes/_auth/app/students/bulk-operations'
-import { Route as AuthAppSpacesAvailabilityRouteImport } from './routes/_auth/app/spaces/availability'
-import { Route as AuthAppSettingsSchoolYearsRouteImport } from './routes/_auth/app/settings/school-years'
-import { Route as AuthAppSettingsProfileRouteImport } from './routes/_auth/app/settings/profile'
-import { Route as AuthAppSettingsNotificationsRouteImport } from './routes/_auth/app/settings/notifications'
-import { Route as AuthAppSchoolLifeSettingsRouteImport } from './routes/_auth/app/school-life/settings'
-import { Route as AuthAppFinanceStudentFeesRouteImport } from './routes/_auth/app/finance/student-fees'
-import { Route as AuthAppFinanceRefundsRouteImport } from './routes/_auth/app/finance/refunds'
-import { Route as AuthAppFinancePaymentsRouteImport } from './routes/_auth/app/finance/payments'
-import { Route as AuthAppFinancePaymentPlansRouteImport } from './routes/_auth/app/finance/payment-plans'
-import { Route as AuthAppFinanceFeeTypesRouteImport } from './routes/_auth/app/finance/fee-types'
-import { Route as AuthAppFinanceFeeStructuresRouteImport } from './routes/_auth/app/finance/fee-structures'
-import { Route as AuthAppFinanceDiscountsRouteImport } from './routes/_auth/app/finance/discounts'
-import { Route as AuthAppFinanceDashboardRouteImport } from './routes/_auth/app/finance/dashboard'
-import { Route as AuthAppFinanceAccountsRouteImport } from './routes/_auth/app/finance/accounts'
-import { Route as AuthAppAcademicTimetablesRouteImport } from './routes/_auth/app/academic/timetables'
-import { Route as AuthAppAcademicSubjectsRouteImport } from './routes/_auth/app/academic/subjects'
-import { Route as AuthAppAcademicReportCardsRouteImport } from './routes/_auth/app/academic/report-cards'
-import { Route as AuthAppAcademicCurriculumProgressRouteImport } from './routes/_auth/app/academic/curriculum-progress'
-import { Route as AuthAppAcademicCoefficientsRouteImport } from './routes/_auth/app/academic/coefficients'
-import { Route as AuthAppAcademicAssignmentsRouteImport } from './routes/_auth/app/academic/assignments'
-import { Route as AuthAppStudentsStudentIdIndexRouteImport } from './routes/_auth/app/students/$studentId/index'
-import { Route as AuthAppSpacesClassroomsIndexRouteImport } from './routes/_auth/app/spaces/classrooms/index'
-import { Route as AuthAppSchoolLifeTeacherAttendanceIndexRouteImport } from './routes/_auth/app/school-life/teacher-attendance/index'
-import { Route as AuthAppSchoolLifeStudentAttendanceIndexRouteImport } from './routes/_auth/app/school-life/student-attendance/index'
-import { Route as AuthAppSchoolLifeConductIndexRouteImport } from './routes/_auth/app/school-life/conduct/index'
-import { Route as AuthAppSchoolLifeAlertsIndexRouteImport } from './routes/_auth/app/school-life/alerts/index'
-import { Route as AuthAppHrUsersIndexRouteImport } from './routes/_auth/app/hr/users/index'
-import { Route as AuthAppHrTeachersIndexRouteImport } from './routes/_auth/app/hr/teachers/index'
-import { Route as AuthAppHrStaffIndexRouteImport } from './routes/_auth/app/hr/staff/index'
-import { Route as AuthAppHrRolesIndexRouteImport } from './routes/_auth/app/hr/roles/index'
-import { Route as AuthAppAcademicGradesIndexRouteImport } from './routes/_auth/app/academic/grades/index'
-import { Route as AuthAppAcademicClassesIndexRouteImport } from './routes/_auth/app/academic/classes/index'
-import { Route as AuthAppStudentsStudentIdEditRouteImport } from './routes/_auth/app/students/$studentId/edit'
-import { Route as AuthAppSchoolLifeTeacherAttendanceReportsRouteImport } from './routes/_auth/app/school-life/teacher-attendance/reports'
-import { Route as AuthAppSchoolLifeStudentAttendanceStatisticsRouteImport } from './routes/_auth/app/school-life/student-attendance/statistics'
-import { Route as AuthAppSchoolLifeStudentAttendanceHistoryRouteImport } from './routes/_auth/app/school-life/student-attendance/history'
-import { Route as AuthAppSchoolLifeConductReportsRouteImport } from './routes/_auth/app/school-life/conduct/reports'
-import { Route as AuthAppSchoolLifeConductNewRouteImport } from './routes/_auth/app/school-life/conduct/new'
-import { Route as AuthAppSchoolLifeConductRecordIdRouteImport } from './routes/_auth/app/school-life/conduct/$recordId'
-import { Route as AuthAppHrUsersNewRouteImport } from './routes/_auth/app/hr/users/new'
-import { Route as AuthAppHrUsersImportRouteImport } from './routes/_auth/app/hr/users/import'
-import { Route as AuthAppHrTeachersNewRouteImport } from './routes/_auth/app/hr/teachers/new'
-import { Route as AuthAppHrStaffNewRouteImport } from './routes/_auth/app/hr/staff/new'
-import { Route as AuthAppHrRolesNewRouteImport } from './routes/_auth/app/hr/roles/new'
-import { Route as AuthAppAcademicGradesValidationsRouteImport } from './routes/_auth/app/academic/grades/validations'
-import { Route as AuthAppAcademicGradesStatisticsRouteImport } from './routes/_auth/app/academic/grades/statistics'
-import { Route as AuthAppAcademicGradesEntryRouteImport } from './routes/_auth/app/academic/grades/entry'
-import { Route as AuthAppSpacesClassroomsClassroomIdIndexRouteImport } from './routes/_auth/app/spaces/classrooms/$classroomId/index'
-import { Route as AuthAppHrUsersUserIdIndexRouteImport } from './routes/_auth/app/hr/users/$userId/index'
-import { Route as AuthAppHrTeachersTeacherIdIndexRouteImport } from './routes/_auth/app/hr/teachers/$teacherId/index'
-import { Route as AuthAppHrStaffStaffIdIndexRouteImport } from './routes/_auth/app/hr/staff/$staffId/index'
-import { Route as AuthAppHrRolesRoleIdIndexRouteImport } from './routes/_auth/app/hr/roles/$roleId/index'
-import { Route as AuthAppAcademicClassesClassIdIndexRouteImport } from './routes/_auth/app/academic/classes/$classId/index'
-import { Route as AuthAppSpacesClassroomsClassroomIdEditRouteImport } from './routes/_auth/app/spaces/classrooms/$classroomId/edit'
-import { Route as AuthAppHrUsersUserIdEditRouteImport } from './routes/_auth/app/hr/users/$userId/edit'
-import { Route as AuthAppHrTeachersTeacherIdEditRouteImport } from './routes/_auth/app/hr/teachers/$teacherId/edit'
-import { Route as AuthAppHrStaffStaffIdEditRouteImport } from './routes/_auth/app/hr/staff/$staffId/edit'
-import { Route as AuthAppHrRolesRoleIdEditRouteImport } from './routes/_auth/app/hr/roles/$roleId/edit'
-import { Route as AuthAppAcademicClassesClassIdEditRouteImport } from './routes/_auth/app/academic/classes/$classId/edit'
+import { Route as AuthStudentsParentsRouteImport } from './routes/_auth/students/parents'
+import { Route as AuthStudentsNewRouteImport } from './routes/_auth/students/new'
+import { Route as AuthStudentsEnrollmentsRouteImport } from './routes/_auth/students/enrollments'
+import { Route as AuthStudentsBulkOperationsRouteImport } from './routes/_auth/students/bulk-operations'
+import { Route as AuthSpacesAvailabilityRouteImport } from './routes/_auth/spaces/availability'
+import { Route as AuthSettingsSchoolYearsRouteImport } from './routes/_auth/settings/school-years'
+import { Route as AuthSettingsProfileRouteImport } from './routes/_auth/settings/profile'
+import { Route as AuthSettingsNotificationsRouteImport } from './routes/_auth/settings/notifications'
+import { Route as AuthProgramsSubjectsRouteImport } from './routes/_auth/programs/subjects'
+import { Route as AuthProgramsCurriculumProgressRouteImport } from './routes/_auth/programs/curriculum-progress'
+import { Route as AuthProgramsCoefficientsRouteImport } from './routes/_auth/programs/coefficients'
+import { Route as AuthGradesValidationsRouteImport } from './routes/_auth/grades/validations'
+import { Route as AuthGradesStatisticsRouteImport } from './routes/_auth/grades/statistics'
+import { Route as AuthGradesReportCardsRouteImport } from './routes/_auth/grades/report-cards'
+import { Route as AuthGradesEntryRouteImport } from './routes/_auth/grades/entry'
+import { Route as AuthConductsSettingsRouteImport } from './routes/_auth/conducts/settings'
+import { Route as AuthClassesAssignmentsRouteImport } from './routes/_auth/classes/assignments'
+import { Route as AuthAccountingStudentFeesRouteImport } from './routes/_auth/accounting/student-fees'
+import { Route as AuthAccountingRefundsRouteImport } from './routes/_auth/accounting/refunds'
+import { Route as AuthAccountingPaymentsRouteImport } from './routes/_auth/accounting/payments'
+import { Route as AuthAccountingPaymentPlansRouteImport } from './routes/_auth/accounting/payment-plans'
+import { Route as AuthAccountingFeeTypesRouteImport } from './routes/_auth/accounting/fee-types'
+import { Route as AuthAccountingFeeStructuresRouteImport } from './routes/_auth/accounting/fee-structures'
+import { Route as AuthAccountingDiscountsRouteImport } from './routes/_auth/accounting/discounts'
+import { Route as AuthAccountingDashboardRouteImport } from './routes/_auth/accounting/dashboard'
+import { Route as AuthAccountingAccountsRouteImport } from './routes/_auth/accounting/accounts'
+import { Route as AuthUsersUsersIndexRouteImport } from './routes/_auth/users/users/index'
+import { Route as AuthUsersTeachersIndexRouteImport } from './routes/_auth/users/teachers/index'
+import { Route as AuthUsersStaffIndexRouteImport } from './routes/_auth/users/staff/index'
+import { Route as AuthUsersRolesIndexRouteImport } from './routes/_auth/users/roles/index'
+import { Route as AuthStudentsStudentIdIndexRouteImport } from './routes/_auth/students/$studentId/index'
+import { Route as AuthSpacesClassroomsIndexRouteImport } from './routes/_auth/spaces/classrooms/index'
+import { Route as AuthConductsTeacherAttendanceIndexRouteImport } from './routes/_auth/conducts/teacher-attendance/index'
+import { Route as AuthConductsStudentAttendanceIndexRouteImport } from './routes/_auth/conducts/student-attendance/index'
+import { Route as AuthConductsConductIndexRouteImport } from './routes/_auth/conducts/conduct/index'
+import { Route as AuthConductsAlertsIndexRouteImport } from './routes/_auth/conducts/alerts/index'
+import { Route as AuthClassesClassIdIndexRouteImport } from './routes/_auth/classes/$classId/index'
+import { Route as AuthUsersUsersNewRouteImport } from './routes/_auth/users/users/new'
+import { Route as AuthUsersUsersImportRouteImport } from './routes/_auth/users/users/import'
+import { Route as AuthUsersTeachersNewRouteImport } from './routes/_auth/users/teachers/new'
+import { Route as AuthUsersStaffNewRouteImport } from './routes/_auth/users/staff/new'
+import { Route as AuthUsersRolesNewRouteImport } from './routes/_auth/users/roles/new'
+import { Route as AuthStudentsStudentIdEditRouteImport } from './routes/_auth/students/$studentId/edit'
+import { Route as AuthConductsTeacherAttendanceReportsRouteImport } from './routes/_auth/conducts/teacher-attendance/reports'
+import { Route as AuthConductsStudentAttendanceStatisticsRouteImport } from './routes/_auth/conducts/student-attendance/statistics'
+import { Route as AuthConductsStudentAttendanceHistoryRouteImport } from './routes/_auth/conducts/student-attendance/history'
+import { Route as AuthConductsConductReportsRouteImport } from './routes/_auth/conducts/conduct/reports'
+import { Route as AuthConductsConductNewRouteImport } from './routes/_auth/conducts/conduct/new'
+import { Route as AuthConductsConductRecordIdRouteImport } from './routes/_auth/conducts/conduct/$recordId'
+import { Route as AuthClassesClassIdEditRouteImport } from './routes/_auth/classes/$classId/edit'
+import { Route as AuthUsersUsersUserIdIndexRouteImport } from './routes/_auth/users/users/$userId/index'
+import { Route as AuthUsersTeachersTeacherIdIndexRouteImport } from './routes/_auth/users/teachers/$teacherId/index'
+import { Route as AuthUsersStaffStaffIdIndexRouteImport } from './routes/_auth/users/staff/$staffId/index'
+import { Route as AuthUsersRolesRoleIdIndexRouteImport } from './routes/_auth/users/roles/$roleId/index'
+import { Route as AuthSpacesClassroomsClassroomIdIndexRouteImport } from './routes/_auth/spaces/classrooms/$classroomId/index'
+import { Route as AuthUsersUsersUserIdEditRouteImport } from './routes/_auth/users/users/$userId/edit'
+import { Route as AuthUsersTeachersTeacherIdEditRouteImport } from './routes/_auth/users/teachers/$teacherId/edit'
+import { Route as AuthUsersStaffStaffIdEditRouteImport } from './routes/_auth/users/staff/$staffId/edit'
+import { Route as AuthUsersRolesRoleIdEditRouteImport } from './routes/_auth/users/roles/$roleId/edit'
+import { Route as AuthSpacesClassroomsClassroomIdEditRouteImport } from './routes/_auth/spaces/classrooms/$classroomId/edit'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
@@ -102,948 +99,901 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthAppRoute = AuthAppRouteImport.update({
-  id: '/app',
-  path: '/app',
+const AuthUsersRoute = AuthUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
   getParentRoute: () => AuthRoute,
 } as any)
-const AuthAppIndexRoute = AuthAppIndexRouteImport.update({
+const AuthStudentsRoute = AuthStudentsRouteImport.update({
+  id: '/students',
+  path: '/students',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthSpacesRoute = AuthSpacesRouteImport.update({
+  id: '/spaces',
+  path: '/spaces',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthSettingsRoute = AuthSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthSchedulesRoute = AuthSchedulesRouteImport.update({
+  id: '/schedules',
+  path: '/schedules',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthGradesRoute = AuthGradesRouteImport.update({
+  id: '/grades',
+  path: '/grades',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthDashboardRoute = AuthDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthConductsRoute = AuthConductsRouteImport.update({
+  id: '/conducts',
+  path: '/conducts',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthAccountingRoute = AuthAccountingRouteImport.update({
+  id: '/accounting',
+  path: '/accounting',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthUsersIndexRoute = AuthUsersIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => AuthAppRoute,
+  getParentRoute: () => AuthUsersRoute,
+} as any)
+const AuthStudentsIndexRoute = AuthStudentsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthStudentsRoute,
+} as any)
+const AuthSpacesIndexRoute = AuthSpacesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthSpacesRoute,
+} as any)
+const AuthSettingsIndexRoute = AuthSettingsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthSettingsRoute,
+} as any)
+const AuthGradesIndexRoute = AuthGradesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthGradesRoute,
+} as any)
+const AuthConductsIndexRoute = AuthConductsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthConductsRoute,
+} as any)
+const AuthClassesIndexRoute = AuthClassesIndexRouteImport.update({
+  id: '/classes/',
+  path: '/classes/',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthAccountingIndexRoute = AuthAccountingIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthAccountingRoute,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthAppStudentsRoute = AuthAppStudentsRouteImport.update({
-  id: '/students',
-  path: '/students',
-  getParentRoute: () => AuthAppRoute,
-} as any)
-const AuthAppSpacesRoute = AuthAppSpacesRouteImport.update({
-  id: '/spaces',
-  path: '/spaces',
-  getParentRoute: () => AuthAppRoute,
-} as any)
-const AuthAppSettingsRoute = AuthAppSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => AuthAppRoute,
-} as any)
-const AuthAppSchoolLifeRoute = AuthAppSchoolLifeRouteImport.update({
-  id: '/school-life',
-  path: '/school-life',
-  getParentRoute: () => AuthAppRoute,
-} as any)
-const AuthAppHrRoute = AuthAppHrRouteImport.update({
-  id: '/hr',
-  path: '/hr',
-  getParentRoute: () => AuthAppRoute,
-} as any)
-const AuthAppFinanceRoute = AuthAppFinanceRouteImport.update({
-  id: '/finance',
-  path: '/finance',
-  getParentRoute: () => AuthAppRoute,
-} as any)
-const AuthAppDashboardRoute = AuthAppDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AuthAppRoute,
-} as any)
-const AuthAppAcademicRoute = AuthAppAcademicRouteImport.update({
-  id: '/academic',
-  path: '/academic',
-  getParentRoute: () => AuthAppRoute,
-} as any)
-const AuthAppStudentsIndexRoute = AuthAppStudentsIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthAppStudentsRoute,
-} as any)
-const AuthAppSpacesIndexRoute = AuthAppSpacesIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthAppSpacesRoute,
-} as any)
-const AuthAppSettingsIndexRoute = AuthAppSettingsIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthAppSettingsRoute,
-} as any)
-const AuthAppSchoolLifeIndexRoute = AuthAppSchoolLifeIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthAppSchoolLifeRoute,
-} as any)
-const AuthAppHrIndexRoute = AuthAppHrIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthAppHrRoute,
-} as any)
-const AuthAppFinanceIndexRoute = AuthAppFinanceIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthAppFinanceRoute,
-} as any)
-const AuthAppAcademicIndexRoute = AuthAppAcademicIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthAppAcademicRoute,
-} as any)
-const AuthAppStudentsParentsRoute = AuthAppStudentsParentsRouteImport.update({
+const AuthStudentsParentsRoute = AuthStudentsParentsRouteImport.update({
   id: '/parents',
   path: '/parents',
-  getParentRoute: () => AuthAppStudentsRoute,
+  getParentRoute: () => AuthStudentsRoute,
 } as any)
-const AuthAppStudentsNewRoute = AuthAppStudentsNewRouteImport.update({
+const AuthStudentsNewRoute = AuthStudentsNewRouteImport.update({
   id: '/new',
   path: '/new',
-  getParentRoute: () => AuthAppStudentsRoute,
+  getParentRoute: () => AuthStudentsRoute,
 } as any)
-const AuthAppStudentsEnrollmentsRoute =
-  AuthAppStudentsEnrollmentsRouteImport.update({
-    id: '/enrollments',
-    path: '/enrollments',
-    getParentRoute: () => AuthAppStudentsRoute,
-  } as any)
-const AuthAppStudentsBulkOperationsRoute =
-  AuthAppStudentsBulkOperationsRouteImport.update({
+const AuthStudentsEnrollmentsRoute = AuthStudentsEnrollmentsRouteImport.update({
+  id: '/enrollments',
+  path: '/enrollments',
+  getParentRoute: () => AuthStudentsRoute,
+} as any)
+const AuthStudentsBulkOperationsRoute =
+  AuthStudentsBulkOperationsRouteImport.update({
     id: '/bulk-operations',
     path: '/bulk-operations',
-    getParentRoute: () => AuthAppStudentsRoute,
+    getParentRoute: () => AuthStudentsRoute,
   } as any)
-const AuthAppSpacesAvailabilityRoute =
-  AuthAppSpacesAvailabilityRouteImport.update({
-    id: '/availability',
-    path: '/availability',
-    getParentRoute: () => AuthAppSpacesRoute,
-  } as any)
-const AuthAppSettingsSchoolYearsRoute =
-  AuthAppSettingsSchoolYearsRouteImport.update({
-    id: '/school-years',
-    path: '/school-years',
-    getParentRoute: () => AuthAppSettingsRoute,
-  } as any)
-const AuthAppSettingsProfileRoute = AuthAppSettingsProfileRouteImport.update({
+const AuthSpacesAvailabilityRoute = AuthSpacesAvailabilityRouteImport.update({
+  id: '/availability',
+  path: '/availability',
+  getParentRoute: () => AuthSpacesRoute,
+} as any)
+const AuthSettingsSchoolYearsRoute = AuthSettingsSchoolYearsRouteImport.update({
+  id: '/school-years',
+  path: '/school-years',
+  getParentRoute: () => AuthSettingsRoute,
+} as any)
+const AuthSettingsProfileRoute = AuthSettingsProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
-  getParentRoute: () => AuthAppSettingsRoute,
+  getParentRoute: () => AuthSettingsRoute,
 } as any)
-const AuthAppSettingsNotificationsRoute =
-  AuthAppSettingsNotificationsRouteImport.update({
+const AuthSettingsNotificationsRoute =
+  AuthSettingsNotificationsRouteImport.update({
     id: '/notifications',
     path: '/notifications',
-    getParentRoute: () => AuthAppSettingsRoute,
+    getParentRoute: () => AuthSettingsRoute,
   } as any)
-const AuthAppSchoolLifeSettingsRoute =
-  AuthAppSchoolLifeSettingsRouteImport.update({
-    id: '/settings',
-    path: '/settings',
-    getParentRoute: () => AuthAppSchoolLifeRoute,
+const AuthProgramsSubjectsRoute = AuthProgramsSubjectsRouteImport.update({
+  id: '/programs/subjects',
+  path: '/programs/subjects',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthProgramsCurriculumProgressRoute =
+  AuthProgramsCurriculumProgressRouteImport.update({
+    id: '/programs/curriculum-progress',
+    path: '/programs/curriculum-progress',
+    getParentRoute: () => AuthRoute,
   } as any)
-const AuthAppFinanceStudentFeesRoute =
-  AuthAppFinanceStudentFeesRouteImport.update({
+const AuthProgramsCoefficientsRoute =
+  AuthProgramsCoefficientsRouteImport.update({
+    id: '/programs/coefficients',
+    path: '/programs/coefficients',
+    getParentRoute: () => AuthRoute,
+  } as any)
+const AuthGradesValidationsRoute = AuthGradesValidationsRouteImport.update({
+  id: '/validations',
+  path: '/validations',
+  getParentRoute: () => AuthGradesRoute,
+} as any)
+const AuthGradesStatisticsRoute = AuthGradesStatisticsRouteImport.update({
+  id: '/statistics',
+  path: '/statistics',
+  getParentRoute: () => AuthGradesRoute,
+} as any)
+const AuthGradesReportCardsRoute = AuthGradesReportCardsRouteImport.update({
+  id: '/report-cards',
+  path: '/report-cards',
+  getParentRoute: () => AuthGradesRoute,
+} as any)
+const AuthGradesEntryRoute = AuthGradesEntryRouteImport.update({
+  id: '/entry',
+  path: '/entry',
+  getParentRoute: () => AuthGradesRoute,
+} as any)
+const AuthConductsSettingsRoute = AuthConductsSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthConductsRoute,
+} as any)
+const AuthClassesAssignmentsRoute = AuthClassesAssignmentsRouteImport.update({
+  id: '/classes/assignments',
+  path: '/classes/assignments',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthAccountingStudentFeesRoute =
+  AuthAccountingStudentFeesRouteImport.update({
     id: '/student-fees',
     path: '/student-fees',
-    getParentRoute: () => AuthAppFinanceRoute,
+    getParentRoute: () => AuthAccountingRoute,
   } as any)
-const AuthAppFinanceRefundsRoute = AuthAppFinanceRefundsRouteImport.update({
+const AuthAccountingRefundsRoute = AuthAccountingRefundsRouteImport.update({
   id: '/refunds',
   path: '/refunds',
-  getParentRoute: () => AuthAppFinanceRoute,
+  getParentRoute: () => AuthAccountingRoute,
 } as any)
-const AuthAppFinancePaymentsRoute = AuthAppFinancePaymentsRouteImport.update({
+const AuthAccountingPaymentsRoute = AuthAccountingPaymentsRouteImport.update({
   id: '/payments',
   path: '/payments',
-  getParentRoute: () => AuthAppFinanceRoute,
+  getParentRoute: () => AuthAccountingRoute,
 } as any)
-const AuthAppFinancePaymentPlansRoute =
-  AuthAppFinancePaymentPlansRouteImport.update({
+const AuthAccountingPaymentPlansRoute =
+  AuthAccountingPaymentPlansRouteImport.update({
     id: '/payment-plans',
     path: '/payment-plans',
-    getParentRoute: () => AuthAppFinanceRoute,
+    getParentRoute: () => AuthAccountingRoute,
   } as any)
-const AuthAppFinanceFeeTypesRoute = AuthAppFinanceFeeTypesRouteImport.update({
+const AuthAccountingFeeTypesRoute = AuthAccountingFeeTypesRouteImport.update({
   id: '/fee-types',
   path: '/fee-types',
-  getParentRoute: () => AuthAppFinanceRoute,
+  getParentRoute: () => AuthAccountingRoute,
 } as any)
-const AuthAppFinanceFeeStructuresRoute =
-  AuthAppFinanceFeeStructuresRouteImport.update({
+const AuthAccountingFeeStructuresRoute =
+  AuthAccountingFeeStructuresRouteImport.update({
     id: '/fee-structures',
     path: '/fee-structures',
-    getParentRoute: () => AuthAppFinanceRoute,
+    getParentRoute: () => AuthAccountingRoute,
   } as any)
-const AuthAppFinanceDiscountsRoute = AuthAppFinanceDiscountsRouteImport.update({
+const AuthAccountingDiscountsRoute = AuthAccountingDiscountsRouteImport.update({
   id: '/discounts',
   path: '/discounts',
-  getParentRoute: () => AuthAppFinanceRoute,
+  getParentRoute: () => AuthAccountingRoute,
 } as any)
-const AuthAppFinanceDashboardRoute = AuthAppFinanceDashboardRouteImport.update({
+const AuthAccountingDashboardRoute = AuthAccountingDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
-  getParentRoute: () => AuthAppFinanceRoute,
+  getParentRoute: () => AuthAccountingRoute,
 } as any)
-const AuthAppFinanceAccountsRoute = AuthAppFinanceAccountsRouteImport.update({
+const AuthAccountingAccountsRoute = AuthAccountingAccountsRouteImport.update({
   id: '/accounts',
   path: '/accounts',
-  getParentRoute: () => AuthAppFinanceRoute,
+  getParentRoute: () => AuthAccountingRoute,
 } as any)
-const AuthAppAcademicTimetablesRoute =
-  AuthAppAcademicTimetablesRouteImport.update({
-    id: '/timetables',
-    path: '/timetables',
-    getParentRoute: () => AuthAppAcademicRoute,
-  } as any)
-const AuthAppAcademicSubjectsRoute = AuthAppAcademicSubjectsRouteImport.update({
-  id: '/subjects',
-  path: '/subjects',
-  getParentRoute: () => AuthAppAcademicRoute,
-} as any)
-const AuthAppAcademicReportCardsRoute =
-  AuthAppAcademicReportCardsRouteImport.update({
-    id: '/report-cards',
-    path: '/report-cards',
-    getParentRoute: () => AuthAppAcademicRoute,
-  } as any)
-const AuthAppAcademicCurriculumProgressRoute =
-  AuthAppAcademicCurriculumProgressRouteImport.update({
-    id: '/curriculum-progress',
-    path: '/curriculum-progress',
-    getParentRoute: () => AuthAppAcademicRoute,
-  } as any)
-const AuthAppAcademicCoefficientsRoute =
-  AuthAppAcademicCoefficientsRouteImport.update({
-    id: '/coefficients',
-    path: '/coefficients',
-    getParentRoute: () => AuthAppAcademicRoute,
-  } as any)
-const AuthAppAcademicAssignmentsRoute =
-  AuthAppAcademicAssignmentsRouteImport.update({
-    id: '/assignments',
-    path: '/assignments',
-    getParentRoute: () => AuthAppAcademicRoute,
-  } as any)
-const AuthAppStudentsStudentIdIndexRoute =
-  AuthAppStudentsStudentIdIndexRouteImport.update({
-    id: '/$studentId/',
-    path: '/$studentId/',
-    getParentRoute: () => AuthAppStudentsRoute,
-  } as any)
-const AuthAppSpacesClassroomsIndexRoute =
-  AuthAppSpacesClassroomsIndexRouteImport.update({
-    id: '/classrooms/',
-    path: '/classrooms/',
-    getParentRoute: () => AuthAppSpacesRoute,
-  } as any)
-const AuthAppSchoolLifeTeacherAttendanceIndexRoute =
-  AuthAppSchoolLifeTeacherAttendanceIndexRouteImport.update({
-    id: '/teacher-attendance/',
-    path: '/teacher-attendance/',
-    getParentRoute: () => AuthAppSchoolLifeRoute,
-  } as any)
-const AuthAppSchoolLifeStudentAttendanceIndexRoute =
-  AuthAppSchoolLifeStudentAttendanceIndexRouteImport.update({
-    id: '/student-attendance/',
-    path: '/student-attendance/',
-    getParentRoute: () => AuthAppSchoolLifeRoute,
-  } as any)
-const AuthAppSchoolLifeConductIndexRoute =
-  AuthAppSchoolLifeConductIndexRouteImport.update({
-    id: '/conduct/',
-    path: '/conduct/',
-    getParentRoute: () => AuthAppSchoolLifeRoute,
-  } as any)
-const AuthAppSchoolLifeAlertsIndexRoute =
-  AuthAppSchoolLifeAlertsIndexRouteImport.update({
-    id: '/alerts/',
-    path: '/alerts/',
-    getParentRoute: () => AuthAppSchoolLifeRoute,
-  } as any)
-const AuthAppHrUsersIndexRoute = AuthAppHrUsersIndexRouteImport.update({
+const AuthUsersUsersIndexRoute = AuthUsersUsersIndexRouteImport.update({
   id: '/users/',
   path: '/users/',
-  getParentRoute: () => AuthAppHrRoute,
+  getParentRoute: () => AuthUsersRoute,
 } as any)
-const AuthAppHrTeachersIndexRoute = AuthAppHrTeachersIndexRouteImport.update({
+const AuthUsersTeachersIndexRoute = AuthUsersTeachersIndexRouteImport.update({
   id: '/teachers/',
   path: '/teachers/',
-  getParentRoute: () => AuthAppHrRoute,
+  getParentRoute: () => AuthUsersRoute,
 } as any)
-const AuthAppHrStaffIndexRoute = AuthAppHrStaffIndexRouteImport.update({
+const AuthUsersStaffIndexRoute = AuthUsersStaffIndexRouteImport.update({
   id: '/staff/',
   path: '/staff/',
-  getParentRoute: () => AuthAppHrRoute,
+  getParentRoute: () => AuthUsersRoute,
 } as any)
-const AuthAppHrRolesIndexRoute = AuthAppHrRolesIndexRouteImport.update({
+const AuthUsersRolesIndexRoute = AuthUsersRolesIndexRouteImport.update({
   id: '/roles/',
   path: '/roles/',
-  getParentRoute: () => AuthAppHrRoute,
+  getParentRoute: () => AuthUsersRoute,
 } as any)
-const AuthAppAcademicGradesIndexRoute =
-  AuthAppAcademicGradesIndexRouteImport.update({
-    id: '/grades/',
-    path: '/grades/',
-    getParentRoute: () => AuthAppAcademicRoute,
+const AuthStudentsStudentIdIndexRoute =
+  AuthStudentsStudentIdIndexRouteImport.update({
+    id: '/$studentId/',
+    path: '/$studentId/',
+    getParentRoute: () => AuthStudentsRoute,
   } as any)
-const AuthAppAcademicClassesIndexRoute =
-  AuthAppAcademicClassesIndexRouteImport.update({
-    id: '/classes/',
-    path: '/classes/',
-    getParentRoute: () => AuthAppAcademicRoute,
+const AuthSpacesClassroomsIndexRoute =
+  AuthSpacesClassroomsIndexRouteImport.update({
+    id: '/classrooms/',
+    path: '/classrooms/',
+    getParentRoute: () => AuthSpacesRoute,
   } as any)
-const AuthAppStudentsStudentIdEditRoute =
-  AuthAppStudentsStudentIdEditRouteImport.update({
-    id: '/$studentId/edit',
-    path: '/$studentId/edit',
-    getParentRoute: () => AuthAppStudentsRoute,
+const AuthConductsTeacherAttendanceIndexRoute =
+  AuthConductsTeacherAttendanceIndexRouteImport.update({
+    id: '/teacher-attendance/',
+    path: '/teacher-attendance/',
+    getParentRoute: () => AuthConductsRoute,
   } as any)
-const AuthAppSchoolLifeTeacherAttendanceReportsRoute =
-  AuthAppSchoolLifeTeacherAttendanceReportsRouteImport.update({
-    id: '/teacher-attendance/reports',
-    path: '/teacher-attendance/reports',
-    getParentRoute: () => AuthAppSchoolLifeRoute,
+const AuthConductsStudentAttendanceIndexRoute =
+  AuthConductsStudentAttendanceIndexRouteImport.update({
+    id: '/student-attendance/',
+    path: '/student-attendance/',
+    getParentRoute: () => AuthConductsRoute,
   } as any)
-const AuthAppSchoolLifeStudentAttendanceStatisticsRoute =
-  AuthAppSchoolLifeStudentAttendanceStatisticsRouteImport.update({
-    id: '/student-attendance/statistics',
-    path: '/student-attendance/statistics',
-    getParentRoute: () => AuthAppSchoolLifeRoute,
+const AuthConductsConductIndexRoute =
+  AuthConductsConductIndexRouteImport.update({
+    id: '/conduct/',
+    path: '/conduct/',
+    getParentRoute: () => AuthConductsRoute,
   } as any)
-const AuthAppSchoolLifeStudentAttendanceHistoryRoute =
-  AuthAppSchoolLifeStudentAttendanceHistoryRouteImport.update({
-    id: '/student-attendance/history',
-    path: '/student-attendance/history',
-    getParentRoute: () => AuthAppSchoolLifeRoute,
-  } as any)
-const AuthAppSchoolLifeConductReportsRoute =
-  AuthAppSchoolLifeConductReportsRouteImport.update({
-    id: '/conduct/reports',
-    path: '/conduct/reports',
-    getParentRoute: () => AuthAppSchoolLifeRoute,
-  } as any)
-const AuthAppSchoolLifeConductNewRoute =
-  AuthAppSchoolLifeConductNewRouteImport.update({
-    id: '/conduct/new',
-    path: '/conduct/new',
-    getParentRoute: () => AuthAppSchoolLifeRoute,
-  } as any)
-const AuthAppSchoolLifeConductRecordIdRoute =
-  AuthAppSchoolLifeConductRecordIdRouteImport.update({
-    id: '/conduct/$recordId',
-    path: '/conduct/$recordId',
-    getParentRoute: () => AuthAppSchoolLifeRoute,
-  } as any)
-const AuthAppHrUsersNewRoute = AuthAppHrUsersNewRouteImport.update({
+const AuthConductsAlertsIndexRoute = AuthConductsAlertsIndexRouteImport.update({
+  id: '/alerts/',
+  path: '/alerts/',
+  getParentRoute: () => AuthConductsRoute,
+} as any)
+const AuthClassesClassIdIndexRoute = AuthClassesClassIdIndexRouteImport.update({
+  id: '/classes/$classId/',
+  path: '/classes/$classId/',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthUsersUsersNewRoute = AuthUsersUsersNewRouteImport.update({
   id: '/users/new',
   path: '/users/new',
-  getParentRoute: () => AuthAppHrRoute,
+  getParentRoute: () => AuthUsersRoute,
 } as any)
-const AuthAppHrUsersImportRoute = AuthAppHrUsersImportRouteImport.update({
+const AuthUsersUsersImportRoute = AuthUsersUsersImportRouteImport.update({
   id: '/users/import',
   path: '/users/import',
-  getParentRoute: () => AuthAppHrRoute,
+  getParentRoute: () => AuthUsersRoute,
 } as any)
-const AuthAppHrTeachersNewRoute = AuthAppHrTeachersNewRouteImport.update({
+const AuthUsersTeachersNewRoute = AuthUsersTeachersNewRouteImport.update({
   id: '/teachers/new',
   path: '/teachers/new',
-  getParentRoute: () => AuthAppHrRoute,
+  getParentRoute: () => AuthUsersRoute,
 } as any)
-const AuthAppHrStaffNewRoute = AuthAppHrStaffNewRouteImport.update({
+const AuthUsersStaffNewRoute = AuthUsersStaffNewRouteImport.update({
   id: '/staff/new',
   path: '/staff/new',
-  getParentRoute: () => AuthAppHrRoute,
+  getParentRoute: () => AuthUsersRoute,
 } as any)
-const AuthAppHrRolesNewRoute = AuthAppHrRolesNewRouteImport.update({
+const AuthUsersRolesNewRoute = AuthUsersRolesNewRouteImport.update({
   id: '/roles/new',
   path: '/roles/new',
-  getParentRoute: () => AuthAppHrRoute,
+  getParentRoute: () => AuthUsersRoute,
 } as any)
-const AuthAppAcademicGradesValidationsRoute =
-  AuthAppAcademicGradesValidationsRouteImport.update({
-    id: '/grades/validations',
-    path: '/grades/validations',
-    getParentRoute: () => AuthAppAcademicRoute,
+const AuthStudentsStudentIdEditRoute =
+  AuthStudentsStudentIdEditRouteImport.update({
+    id: '/$studentId/edit',
+    path: '/$studentId/edit',
+    getParentRoute: () => AuthStudentsRoute,
   } as any)
-const AuthAppAcademicGradesStatisticsRoute =
-  AuthAppAcademicGradesStatisticsRouteImport.update({
-    id: '/grades/statistics',
-    path: '/grades/statistics',
-    getParentRoute: () => AuthAppAcademicRoute,
+const AuthConductsTeacherAttendanceReportsRoute =
+  AuthConductsTeacherAttendanceReportsRouteImport.update({
+    id: '/teacher-attendance/reports',
+    path: '/teacher-attendance/reports',
+    getParentRoute: () => AuthConductsRoute,
   } as any)
-const AuthAppAcademicGradesEntryRoute =
-  AuthAppAcademicGradesEntryRouteImport.update({
-    id: '/grades/entry',
-    path: '/grades/entry',
-    getParentRoute: () => AuthAppAcademicRoute,
+const AuthConductsStudentAttendanceStatisticsRoute =
+  AuthConductsStudentAttendanceStatisticsRouteImport.update({
+    id: '/student-attendance/statistics',
+    path: '/student-attendance/statistics',
+    getParentRoute: () => AuthConductsRoute,
   } as any)
-const AuthAppSpacesClassroomsClassroomIdIndexRoute =
-  AuthAppSpacesClassroomsClassroomIdIndexRouteImport.update({
-    id: '/classrooms/$classroomId/',
-    path: '/classrooms/$classroomId/',
-    getParentRoute: () => AuthAppSpacesRoute,
+const AuthConductsStudentAttendanceHistoryRoute =
+  AuthConductsStudentAttendanceHistoryRouteImport.update({
+    id: '/student-attendance/history',
+    path: '/student-attendance/history',
+    getParentRoute: () => AuthConductsRoute,
   } as any)
-const AuthAppHrUsersUserIdIndexRoute =
-  AuthAppHrUsersUserIdIndexRouteImport.update({
+const AuthConductsConductReportsRoute =
+  AuthConductsConductReportsRouteImport.update({
+    id: '/conduct/reports',
+    path: '/conduct/reports',
+    getParentRoute: () => AuthConductsRoute,
+  } as any)
+const AuthConductsConductNewRoute = AuthConductsConductNewRouteImport.update({
+  id: '/conduct/new',
+  path: '/conduct/new',
+  getParentRoute: () => AuthConductsRoute,
+} as any)
+const AuthConductsConductRecordIdRoute =
+  AuthConductsConductRecordIdRouteImport.update({
+    id: '/conduct/$recordId',
+    path: '/conduct/$recordId',
+    getParentRoute: () => AuthConductsRoute,
+  } as any)
+const AuthClassesClassIdEditRoute = AuthClassesClassIdEditRouteImport.update({
+  id: '/classes/$classId/edit',
+  path: '/classes/$classId/edit',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthUsersUsersUserIdIndexRoute =
+  AuthUsersUsersUserIdIndexRouteImport.update({
     id: '/users/$userId/',
     path: '/users/$userId/',
-    getParentRoute: () => AuthAppHrRoute,
+    getParentRoute: () => AuthUsersRoute,
   } as any)
-const AuthAppHrTeachersTeacherIdIndexRoute =
-  AuthAppHrTeachersTeacherIdIndexRouteImport.update({
+const AuthUsersTeachersTeacherIdIndexRoute =
+  AuthUsersTeachersTeacherIdIndexRouteImport.update({
     id: '/teachers/$teacherId/',
     path: '/teachers/$teacherId/',
-    getParentRoute: () => AuthAppHrRoute,
+    getParentRoute: () => AuthUsersRoute,
   } as any)
-const AuthAppHrStaffStaffIdIndexRoute =
-  AuthAppHrStaffStaffIdIndexRouteImport.update({
+const AuthUsersStaffStaffIdIndexRoute =
+  AuthUsersStaffStaffIdIndexRouteImport.update({
     id: '/staff/$staffId/',
     path: '/staff/$staffId/',
-    getParentRoute: () => AuthAppHrRoute,
+    getParentRoute: () => AuthUsersRoute,
   } as any)
-const AuthAppHrRolesRoleIdIndexRoute =
-  AuthAppHrRolesRoleIdIndexRouteImport.update({
+const AuthUsersRolesRoleIdIndexRoute =
+  AuthUsersRolesRoleIdIndexRouteImport.update({
     id: '/roles/$roleId/',
     path: '/roles/$roleId/',
-    getParentRoute: () => AuthAppHrRoute,
+    getParentRoute: () => AuthUsersRoute,
   } as any)
-const AuthAppAcademicClassesClassIdIndexRoute =
-  AuthAppAcademicClassesClassIdIndexRouteImport.update({
-    id: '/classes/$classId/',
-    path: '/classes/$classId/',
-    getParentRoute: () => AuthAppAcademicRoute,
+const AuthSpacesClassroomsClassroomIdIndexRoute =
+  AuthSpacesClassroomsClassroomIdIndexRouteImport.update({
+    id: '/classrooms/$classroomId/',
+    path: '/classrooms/$classroomId/',
+    getParentRoute: () => AuthSpacesRoute,
   } as any)
-const AuthAppSpacesClassroomsClassroomIdEditRoute =
-  AuthAppSpacesClassroomsClassroomIdEditRouteImport.update({
-    id: '/classrooms/$classroomId/edit',
-    path: '/classrooms/$classroomId/edit',
-    getParentRoute: () => AuthAppSpacesRoute,
-  } as any)
-const AuthAppHrUsersUserIdEditRoute =
-  AuthAppHrUsersUserIdEditRouteImport.update({
+const AuthUsersUsersUserIdEditRoute =
+  AuthUsersUsersUserIdEditRouteImport.update({
     id: '/users/$userId/edit',
     path: '/users/$userId/edit',
-    getParentRoute: () => AuthAppHrRoute,
+    getParentRoute: () => AuthUsersRoute,
   } as any)
-const AuthAppHrTeachersTeacherIdEditRoute =
-  AuthAppHrTeachersTeacherIdEditRouteImport.update({
+const AuthUsersTeachersTeacherIdEditRoute =
+  AuthUsersTeachersTeacherIdEditRouteImport.update({
     id: '/teachers/$teacherId/edit',
     path: '/teachers/$teacherId/edit',
-    getParentRoute: () => AuthAppHrRoute,
+    getParentRoute: () => AuthUsersRoute,
   } as any)
-const AuthAppHrStaffStaffIdEditRoute =
-  AuthAppHrStaffStaffIdEditRouteImport.update({
+const AuthUsersStaffStaffIdEditRoute =
+  AuthUsersStaffStaffIdEditRouteImport.update({
     id: '/staff/$staffId/edit',
     path: '/staff/$staffId/edit',
-    getParentRoute: () => AuthAppHrRoute,
+    getParentRoute: () => AuthUsersRoute,
   } as any)
-const AuthAppHrRolesRoleIdEditRoute =
-  AuthAppHrRolesRoleIdEditRouteImport.update({
+const AuthUsersRolesRoleIdEditRoute =
+  AuthUsersRolesRoleIdEditRouteImport.update({
     id: '/roles/$roleId/edit',
     path: '/roles/$roleId/edit',
-    getParentRoute: () => AuthAppHrRoute,
+    getParentRoute: () => AuthUsersRoute,
   } as any)
-const AuthAppAcademicClassesClassIdEditRoute =
-  AuthAppAcademicClassesClassIdEditRouteImport.update({
-    id: '/classes/$classId/edit',
-    path: '/classes/$classId/edit',
-    getParentRoute: () => AuthAppAcademicRoute,
+const AuthSpacesClassroomsClassroomIdEditRoute =
+  AuthSpacesClassroomsClassroomIdEditRouteImport.update({
+    id: '/classrooms/$classroomId/edit',
+    path: '/classrooms/$classroomId/edit',
+    getParentRoute: () => AuthSpacesRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/app': typeof AuthAppRouteWithChildren
-  '/app/academic': typeof AuthAppAcademicRouteWithChildren
-  '/app/dashboard': typeof AuthAppDashboardRoute
-  '/app/finance': typeof AuthAppFinanceRouteWithChildren
-  '/app/hr': typeof AuthAppHrRouteWithChildren
-  '/app/school-life': typeof AuthAppSchoolLifeRouteWithChildren
-  '/app/settings': typeof AuthAppSettingsRouteWithChildren
-  '/app/spaces': typeof AuthAppSpacesRouteWithChildren
-  '/app/students': typeof AuthAppStudentsRouteWithChildren
+  '/accounting': typeof AuthAccountingRouteWithChildren
+  '/conducts': typeof AuthConductsRouteWithChildren
+  '/dashboard': typeof AuthDashboardRoute
+  '/grades': typeof AuthGradesRouteWithChildren
+  '/schedules': typeof AuthSchedulesRoute
+  '/settings': typeof AuthSettingsRouteWithChildren
+  '/spaces': typeof AuthSpacesRouteWithChildren
+  '/students': typeof AuthStudentsRouteWithChildren
+  '/users': typeof AuthUsersRouteWithChildren
+  '/accounting/accounts': typeof AuthAccountingAccountsRoute
+  '/accounting/dashboard': typeof AuthAccountingDashboardRoute
+  '/accounting/discounts': typeof AuthAccountingDiscountsRoute
+  '/accounting/fee-structures': typeof AuthAccountingFeeStructuresRoute
+  '/accounting/fee-types': typeof AuthAccountingFeeTypesRoute
+  '/accounting/payment-plans': typeof AuthAccountingPaymentPlansRoute
+  '/accounting/payments': typeof AuthAccountingPaymentsRoute
+  '/accounting/refunds': typeof AuthAccountingRefundsRoute
+  '/accounting/student-fees': typeof AuthAccountingStudentFeesRoute
+  '/classes/assignments': typeof AuthClassesAssignmentsRoute
+  '/conducts/settings': typeof AuthConductsSettingsRoute
+  '/grades/entry': typeof AuthGradesEntryRoute
+  '/grades/report-cards': typeof AuthGradesReportCardsRoute
+  '/grades/statistics': typeof AuthGradesStatisticsRoute
+  '/grades/validations': typeof AuthGradesValidationsRoute
+  '/programs/coefficients': typeof AuthProgramsCoefficientsRoute
+  '/programs/curriculum-progress': typeof AuthProgramsCurriculumProgressRoute
+  '/programs/subjects': typeof AuthProgramsSubjectsRoute
+  '/settings/notifications': typeof AuthSettingsNotificationsRoute
+  '/settings/profile': typeof AuthSettingsProfileRoute
+  '/settings/school-years': typeof AuthSettingsSchoolYearsRoute
+  '/spaces/availability': typeof AuthSpacesAvailabilityRoute
+  '/students/bulk-operations': typeof AuthStudentsBulkOperationsRoute
+  '/students/enrollments': typeof AuthStudentsEnrollmentsRoute
+  '/students/new': typeof AuthStudentsNewRoute
+  '/students/parents': typeof AuthStudentsParentsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/app/': typeof AuthAppIndexRoute
-  '/app/academic/assignments': typeof AuthAppAcademicAssignmentsRoute
-  '/app/academic/coefficients': typeof AuthAppAcademicCoefficientsRoute
-  '/app/academic/curriculum-progress': typeof AuthAppAcademicCurriculumProgressRoute
-  '/app/academic/report-cards': typeof AuthAppAcademicReportCardsRoute
-  '/app/academic/subjects': typeof AuthAppAcademicSubjectsRoute
-  '/app/academic/timetables': typeof AuthAppAcademicTimetablesRoute
-  '/app/finance/accounts': typeof AuthAppFinanceAccountsRoute
-  '/app/finance/dashboard': typeof AuthAppFinanceDashboardRoute
-  '/app/finance/discounts': typeof AuthAppFinanceDiscountsRoute
-  '/app/finance/fee-structures': typeof AuthAppFinanceFeeStructuresRoute
-  '/app/finance/fee-types': typeof AuthAppFinanceFeeTypesRoute
-  '/app/finance/payment-plans': typeof AuthAppFinancePaymentPlansRoute
-  '/app/finance/payments': typeof AuthAppFinancePaymentsRoute
-  '/app/finance/refunds': typeof AuthAppFinanceRefundsRoute
-  '/app/finance/student-fees': typeof AuthAppFinanceStudentFeesRoute
-  '/app/school-life/settings': typeof AuthAppSchoolLifeSettingsRoute
-  '/app/settings/notifications': typeof AuthAppSettingsNotificationsRoute
-  '/app/settings/profile': typeof AuthAppSettingsProfileRoute
-  '/app/settings/school-years': typeof AuthAppSettingsSchoolYearsRoute
-  '/app/spaces/availability': typeof AuthAppSpacesAvailabilityRoute
-  '/app/students/bulk-operations': typeof AuthAppStudentsBulkOperationsRoute
-  '/app/students/enrollments': typeof AuthAppStudentsEnrollmentsRoute
-  '/app/students/new': typeof AuthAppStudentsNewRoute
-  '/app/students/parents': typeof AuthAppStudentsParentsRoute
-  '/app/academic/': typeof AuthAppAcademicIndexRoute
-  '/app/finance/': typeof AuthAppFinanceIndexRoute
-  '/app/hr/': typeof AuthAppHrIndexRoute
-  '/app/school-life/': typeof AuthAppSchoolLifeIndexRoute
-  '/app/settings/': typeof AuthAppSettingsIndexRoute
-  '/app/spaces/': typeof AuthAppSpacesIndexRoute
-  '/app/students/': typeof AuthAppStudentsIndexRoute
-  '/app/academic/grades/entry': typeof AuthAppAcademicGradesEntryRoute
-  '/app/academic/grades/statistics': typeof AuthAppAcademicGradesStatisticsRoute
-  '/app/academic/grades/validations': typeof AuthAppAcademicGradesValidationsRoute
-  '/app/hr/roles/new': typeof AuthAppHrRolesNewRoute
-  '/app/hr/staff/new': typeof AuthAppHrStaffNewRoute
-  '/app/hr/teachers/new': typeof AuthAppHrTeachersNewRoute
-  '/app/hr/users/import': typeof AuthAppHrUsersImportRoute
-  '/app/hr/users/new': typeof AuthAppHrUsersNewRoute
-  '/app/school-life/conduct/$recordId': typeof AuthAppSchoolLifeConductRecordIdRoute
-  '/app/school-life/conduct/new': typeof AuthAppSchoolLifeConductNewRoute
-  '/app/school-life/conduct/reports': typeof AuthAppSchoolLifeConductReportsRoute
-  '/app/school-life/student-attendance/history': typeof AuthAppSchoolLifeStudentAttendanceHistoryRoute
-  '/app/school-life/student-attendance/statistics': typeof AuthAppSchoolLifeStudentAttendanceStatisticsRoute
-  '/app/school-life/teacher-attendance/reports': typeof AuthAppSchoolLifeTeacherAttendanceReportsRoute
-  '/app/students/$studentId/edit': typeof AuthAppStudentsStudentIdEditRoute
-  '/app/academic/classes': typeof AuthAppAcademicClassesIndexRoute
-  '/app/academic/grades': typeof AuthAppAcademicGradesIndexRoute
-  '/app/hr/roles': typeof AuthAppHrRolesIndexRoute
-  '/app/hr/staff': typeof AuthAppHrStaffIndexRoute
-  '/app/hr/teachers': typeof AuthAppHrTeachersIndexRoute
-  '/app/hr/users': typeof AuthAppHrUsersIndexRoute
-  '/app/school-life/alerts': typeof AuthAppSchoolLifeAlertsIndexRoute
-  '/app/school-life/conduct': typeof AuthAppSchoolLifeConductIndexRoute
-  '/app/school-life/student-attendance': typeof AuthAppSchoolLifeStudentAttendanceIndexRoute
-  '/app/school-life/teacher-attendance': typeof AuthAppSchoolLifeTeacherAttendanceIndexRoute
-  '/app/spaces/classrooms': typeof AuthAppSpacesClassroomsIndexRoute
-  '/app/students/$studentId': typeof AuthAppStudentsStudentIdIndexRoute
-  '/app/academic/classes/$classId/edit': typeof AuthAppAcademicClassesClassIdEditRoute
-  '/app/hr/roles/$roleId/edit': typeof AuthAppHrRolesRoleIdEditRoute
-  '/app/hr/staff/$staffId/edit': typeof AuthAppHrStaffStaffIdEditRoute
-  '/app/hr/teachers/$teacherId/edit': typeof AuthAppHrTeachersTeacherIdEditRoute
-  '/app/hr/users/$userId/edit': typeof AuthAppHrUsersUserIdEditRoute
-  '/app/spaces/classrooms/$classroomId/edit': typeof AuthAppSpacesClassroomsClassroomIdEditRoute
-  '/app/academic/classes/$classId': typeof AuthAppAcademicClassesClassIdIndexRoute
-  '/app/hr/roles/$roleId': typeof AuthAppHrRolesRoleIdIndexRoute
-  '/app/hr/staff/$staffId': typeof AuthAppHrStaffStaffIdIndexRoute
-  '/app/hr/teachers/$teacherId': typeof AuthAppHrTeachersTeacherIdIndexRoute
-  '/app/hr/users/$userId': typeof AuthAppHrUsersUserIdIndexRoute
-  '/app/spaces/classrooms/$classroomId': typeof AuthAppSpacesClassroomsClassroomIdIndexRoute
+  '/accounting/': typeof AuthAccountingIndexRoute
+  '/classes': typeof AuthClassesIndexRoute
+  '/conducts/': typeof AuthConductsIndexRoute
+  '/grades/': typeof AuthGradesIndexRoute
+  '/settings/': typeof AuthSettingsIndexRoute
+  '/spaces/': typeof AuthSpacesIndexRoute
+  '/students/': typeof AuthStudentsIndexRoute
+  '/users/': typeof AuthUsersIndexRoute
+  '/classes/$classId/edit': typeof AuthClassesClassIdEditRoute
+  '/conducts/conduct/$recordId': typeof AuthConductsConductRecordIdRoute
+  '/conducts/conduct/new': typeof AuthConductsConductNewRoute
+  '/conducts/conduct/reports': typeof AuthConductsConductReportsRoute
+  '/conducts/student-attendance/history': typeof AuthConductsStudentAttendanceHistoryRoute
+  '/conducts/student-attendance/statistics': typeof AuthConductsStudentAttendanceStatisticsRoute
+  '/conducts/teacher-attendance/reports': typeof AuthConductsTeacherAttendanceReportsRoute
+  '/students/$studentId/edit': typeof AuthStudentsStudentIdEditRoute
+  '/users/roles/new': typeof AuthUsersRolesNewRoute
+  '/users/staff/new': typeof AuthUsersStaffNewRoute
+  '/users/teachers/new': typeof AuthUsersTeachersNewRoute
+  '/users/users/import': typeof AuthUsersUsersImportRoute
+  '/users/users/new': typeof AuthUsersUsersNewRoute
+  '/classes/$classId': typeof AuthClassesClassIdIndexRoute
+  '/conducts/alerts': typeof AuthConductsAlertsIndexRoute
+  '/conducts/conduct': typeof AuthConductsConductIndexRoute
+  '/conducts/student-attendance': typeof AuthConductsStudentAttendanceIndexRoute
+  '/conducts/teacher-attendance': typeof AuthConductsTeacherAttendanceIndexRoute
+  '/spaces/classrooms': typeof AuthSpacesClassroomsIndexRoute
+  '/students/$studentId': typeof AuthStudentsStudentIdIndexRoute
+  '/users/roles': typeof AuthUsersRolesIndexRoute
+  '/users/staff': typeof AuthUsersStaffIndexRoute
+  '/users/teachers': typeof AuthUsersTeachersIndexRoute
+  '/users/users': typeof AuthUsersUsersIndexRoute
+  '/spaces/classrooms/$classroomId/edit': typeof AuthSpacesClassroomsClassroomIdEditRoute
+  '/users/roles/$roleId/edit': typeof AuthUsersRolesRoleIdEditRoute
+  '/users/staff/$staffId/edit': typeof AuthUsersStaffStaffIdEditRoute
+  '/users/teachers/$teacherId/edit': typeof AuthUsersTeachersTeacherIdEditRoute
+  '/users/users/$userId/edit': typeof AuthUsersUsersUserIdEditRoute
+  '/spaces/classrooms/$classroomId': typeof AuthSpacesClassroomsClassroomIdIndexRoute
+  '/users/roles/$roleId': typeof AuthUsersRolesRoleIdIndexRoute
+  '/users/staff/$staffId': typeof AuthUsersStaffStaffIdIndexRoute
+  '/users/teachers/$teacherId': typeof AuthUsersTeachersTeacherIdIndexRoute
+  '/users/users/$userId': typeof AuthUsersUsersUserIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/app/dashboard': typeof AuthAppDashboardRoute
+  '/dashboard': typeof AuthDashboardRoute
+  '/schedules': typeof AuthSchedulesRoute
+  '/accounting/accounts': typeof AuthAccountingAccountsRoute
+  '/accounting/dashboard': typeof AuthAccountingDashboardRoute
+  '/accounting/discounts': typeof AuthAccountingDiscountsRoute
+  '/accounting/fee-structures': typeof AuthAccountingFeeStructuresRoute
+  '/accounting/fee-types': typeof AuthAccountingFeeTypesRoute
+  '/accounting/payment-plans': typeof AuthAccountingPaymentPlansRoute
+  '/accounting/payments': typeof AuthAccountingPaymentsRoute
+  '/accounting/refunds': typeof AuthAccountingRefundsRoute
+  '/accounting/student-fees': typeof AuthAccountingStudentFeesRoute
+  '/classes/assignments': typeof AuthClassesAssignmentsRoute
+  '/conducts/settings': typeof AuthConductsSettingsRoute
+  '/grades/entry': typeof AuthGradesEntryRoute
+  '/grades/report-cards': typeof AuthGradesReportCardsRoute
+  '/grades/statistics': typeof AuthGradesStatisticsRoute
+  '/grades/validations': typeof AuthGradesValidationsRoute
+  '/programs/coefficients': typeof AuthProgramsCoefficientsRoute
+  '/programs/curriculum-progress': typeof AuthProgramsCurriculumProgressRoute
+  '/programs/subjects': typeof AuthProgramsSubjectsRoute
+  '/settings/notifications': typeof AuthSettingsNotificationsRoute
+  '/settings/profile': typeof AuthSettingsProfileRoute
+  '/settings/school-years': typeof AuthSettingsSchoolYearsRoute
+  '/spaces/availability': typeof AuthSpacesAvailabilityRoute
+  '/students/bulk-operations': typeof AuthStudentsBulkOperationsRoute
+  '/students/enrollments': typeof AuthStudentsEnrollmentsRoute
+  '/students/new': typeof AuthStudentsNewRoute
+  '/students/parents': typeof AuthStudentsParentsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/app': typeof AuthAppIndexRoute
-  '/app/academic/assignments': typeof AuthAppAcademicAssignmentsRoute
-  '/app/academic/coefficients': typeof AuthAppAcademicCoefficientsRoute
-  '/app/academic/curriculum-progress': typeof AuthAppAcademicCurriculumProgressRoute
-  '/app/academic/report-cards': typeof AuthAppAcademicReportCardsRoute
-  '/app/academic/subjects': typeof AuthAppAcademicSubjectsRoute
-  '/app/academic/timetables': typeof AuthAppAcademicTimetablesRoute
-  '/app/finance/accounts': typeof AuthAppFinanceAccountsRoute
-  '/app/finance/dashboard': typeof AuthAppFinanceDashboardRoute
-  '/app/finance/discounts': typeof AuthAppFinanceDiscountsRoute
-  '/app/finance/fee-structures': typeof AuthAppFinanceFeeStructuresRoute
-  '/app/finance/fee-types': typeof AuthAppFinanceFeeTypesRoute
-  '/app/finance/payment-plans': typeof AuthAppFinancePaymentPlansRoute
-  '/app/finance/payments': typeof AuthAppFinancePaymentsRoute
-  '/app/finance/refunds': typeof AuthAppFinanceRefundsRoute
-  '/app/finance/student-fees': typeof AuthAppFinanceStudentFeesRoute
-  '/app/school-life/settings': typeof AuthAppSchoolLifeSettingsRoute
-  '/app/settings/notifications': typeof AuthAppSettingsNotificationsRoute
-  '/app/settings/profile': typeof AuthAppSettingsProfileRoute
-  '/app/settings/school-years': typeof AuthAppSettingsSchoolYearsRoute
-  '/app/spaces/availability': typeof AuthAppSpacesAvailabilityRoute
-  '/app/students/bulk-operations': typeof AuthAppStudentsBulkOperationsRoute
-  '/app/students/enrollments': typeof AuthAppStudentsEnrollmentsRoute
-  '/app/students/new': typeof AuthAppStudentsNewRoute
-  '/app/students/parents': typeof AuthAppStudentsParentsRoute
-  '/app/academic': typeof AuthAppAcademicIndexRoute
-  '/app/finance': typeof AuthAppFinanceIndexRoute
-  '/app/hr': typeof AuthAppHrIndexRoute
-  '/app/school-life': typeof AuthAppSchoolLifeIndexRoute
-  '/app/settings': typeof AuthAppSettingsIndexRoute
-  '/app/spaces': typeof AuthAppSpacesIndexRoute
-  '/app/students': typeof AuthAppStudentsIndexRoute
-  '/app/academic/grades/entry': typeof AuthAppAcademicGradesEntryRoute
-  '/app/academic/grades/statistics': typeof AuthAppAcademicGradesStatisticsRoute
-  '/app/academic/grades/validations': typeof AuthAppAcademicGradesValidationsRoute
-  '/app/hr/roles/new': typeof AuthAppHrRolesNewRoute
-  '/app/hr/staff/new': typeof AuthAppHrStaffNewRoute
-  '/app/hr/teachers/new': typeof AuthAppHrTeachersNewRoute
-  '/app/hr/users/import': typeof AuthAppHrUsersImportRoute
-  '/app/hr/users/new': typeof AuthAppHrUsersNewRoute
-  '/app/school-life/conduct/$recordId': typeof AuthAppSchoolLifeConductRecordIdRoute
-  '/app/school-life/conduct/new': typeof AuthAppSchoolLifeConductNewRoute
-  '/app/school-life/conduct/reports': typeof AuthAppSchoolLifeConductReportsRoute
-  '/app/school-life/student-attendance/history': typeof AuthAppSchoolLifeStudentAttendanceHistoryRoute
-  '/app/school-life/student-attendance/statistics': typeof AuthAppSchoolLifeStudentAttendanceStatisticsRoute
-  '/app/school-life/teacher-attendance/reports': typeof AuthAppSchoolLifeTeacherAttendanceReportsRoute
-  '/app/students/$studentId/edit': typeof AuthAppStudentsStudentIdEditRoute
-  '/app/academic/classes': typeof AuthAppAcademicClassesIndexRoute
-  '/app/academic/grades': typeof AuthAppAcademicGradesIndexRoute
-  '/app/hr/roles': typeof AuthAppHrRolesIndexRoute
-  '/app/hr/staff': typeof AuthAppHrStaffIndexRoute
-  '/app/hr/teachers': typeof AuthAppHrTeachersIndexRoute
-  '/app/hr/users': typeof AuthAppHrUsersIndexRoute
-  '/app/school-life/alerts': typeof AuthAppSchoolLifeAlertsIndexRoute
-  '/app/school-life/conduct': typeof AuthAppSchoolLifeConductIndexRoute
-  '/app/school-life/student-attendance': typeof AuthAppSchoolLifeStudentAttendanceIndexRoute
-  '/app/school-life/teacher-attendance': typeof AuthAppSchoolLifeTeacherAttendanceIndexRoute
-  '/app/spaces/classrooms': typeof AuthAppSpacesClassroomsIndexRoute
-  '/app/students/$studentId': typeof AuthAppStudentsStudentIdIndexRoute
-  '/app/academic/classes/$classId/edit': typeof AuthAppAcademicClassesClassIdEditRoute
-  '/app/hr/roles/$roleId/edit': typeof AuthAppHrRolesRoleIdEditRoute
-  '/app/hr/staff/$staffId/edit': typeof AuthAppHrStaffStaffIdEditRoute
-  '/app/hr/teachers/$teacherId/edit': typeof AuthAppHrTeachersTeacherIdEditRoute
-  '/app/hr/users/$userId/edit': typeof AuthAppHrUsersUserIdEditRoute
-  '/app/spaces/classrooms/$classroomId/edit': typeof AuthAppSpacesClassroomsClassroomIdEditRoute
-  '/app/academic/classes/$classId': typeof AuthAppAcademicClassesClassIdIndexRoute
-  '/app/hr/roles/$roleId': typeof AuthAppHrRolesRoleIdIndexRoute
-  '/app/hr/staff/$staffId': typeof AuthAppHrStaffStaffIdIndexRoute
-  '/app/hr/teachers/$teacherId': typeof AuthAppHrTeachersTeacherIdIndexRoute
-  '/app/hr/users/$userId': typeof AuthAppHrUsersUserIdIndexRoute
-  '/app/spaces/classrooms/$classroomId': typeof AuthAppSpacesClassroomsClassroomIdIndexRoute
+  '/accounting': typeof AuthAccountingIndexRoute
+  '/classes': typeof AuthClassesIndexRoute
+  '/conducts': typeof AuthConductsIndexRoute
+  '/grades': typeof AuthGradesIndexRoute
+  '/settings': typeof AuthSettingsIndexRoute
+  '/spaces': typeof AuthSpacesIndexRoute
+  '/students': typeof AuthStudentsIndexRoute
+  '/users': typeof AuthUsersIndexRoute
+  '/classes/$classId/edit': typeof AuthClassesClassIdEditRoute
+  '/conducts/conduct/$recordId': typeof AuthConductsConductRecordIdRoute
+  '/conducts/conduct/new': typeof AuthConductsConductNewRoute
+  '/conducts/conduct/reports': typeof AuthConductsConductReportsRoute
+  '/conducts/student-attendance/history': typeof AuthConductsStudentAttendanceHistoryRoute
+  '/conducts/student-attendance/statistics': typeof AuthConductsStudentAttendanceStatisticsRoute
+  '/conducts/teacher-attendance/reports': typeof AuthConductsTeacherAttendanceReportsRoute
+  '/students/$studentId/edit': typeof AuthStudentsStudentIdEditRoute
+  '/users/roles/new': typeof AuthUsersRolesNewRoute
+  '/users/staff/new': typeof AuthUsersStaffNewRoute
+  '/users/teachers/new': typeof AuthUsersTeachersNewRoute
+  '/users/users/import': typeof AuthUsersUsersImportRoute
+  '/users/users/new': typeof AuthUsersUsersNewRoute
+  '/classes/$classId': typeof AuthClassesClassIdIndexRoute
+  '/conducts/alerts': typeof AuthConductsAlertsIndexRoute
+  '/conducts/conduct': typeof AuthConductsConductIndexRoute
+  '/conducts/student-attendance': typeof AuthConductsStudentAttendanceIndexRoute
+  '/conducts/teacher-attendance': typeof AuthConductsTeacherAttendanceIndexRoute
+  '/spaces/classrooms': typeof AuthSpacesClassroomsIndexRoute
+  '/students/$studentId': typeof AuthStudentsStudentIdIndexRoute
+  '/users/roles': typeof AuthUsersRolesIndexRoute
+  '/users/staff': typeof AuthUsersStaffIndexRoute
+  '/users/teachers': typeof AuthUsersTeachersIndexRoute
+  '/users/users': typeof AuthUsersUsersIndexRoute
+  '/spaces/classrooms/$classroomId/edit': typeof AuthSpacesClassroomsClassroomIdEditRoute
+  '/users/roles/$roleId/edit': typeof AuthUsersRolesRoleIdEditRoute
+  '/users/staff/$staffId/edit': typeof AuthUsersStaffStaffIdEditRoute
+  '/users/teachers/$teacherId/edit': typeof AuthUsersTeachersTeacherIdEditRoute
+  '/users/users/$userId/edit': typeof AuthUsersUsersUserIdEditRoute
+  '/spaces/classrooms/$classroomId': typeof AuthSpacesClassroomsClassroomIdIndexRoute
+  '/users/roles/$roleId': typeof AuthUsersRolesRoleIdIndexRoute
+  '/users/staff/$staffId': typeof AuthUsersStaffStaffIdIndexRoute
+  '/users/teachers/$teacherId': typeof AuthUsersTeachersTeacherIdIndexRoute
+  '/users/users/$userId': typeof AuthUsersUsersUserIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteWithChildren
-  '/_auth/app': typeof AuthAppRouteWithChildren
-  '/_auth/app/academic': typeof AuthAppAcademicRouteWithChildren
-  '/_auth/app/dashboard': typeof AuthAppDashboardRoute
-  '/_auth/app/finance': typeof AuthAppFinanceRouteWithChildren
-  '/_auth/app/hr': typeof AuthAppHrRouteWithChildren
-  '/_auth/app/school-life': typeof AuthAppSchoolLifeRouteWithChildren
-  '/_auth/app/settings': typeof AuthAppSettingsRouteWithChildren
-  '/_auth/app/spaces': typeof AuthAppSpacesRouteWithChildren
-  '/_auth/app/students': typeof AuthAppStudentsRouteWithChildren
+  '/_auth/accounting': typeof AuthAccountingRouteWithChildren
+  '/_auth/conducts': typeof AuthConductsRouteWithChildren
+  '/_auth/dashboard': typeof AuthDashboardRoute
+  '/_auth/grades': typeof AuthGradesRouteWithChildren
+  '/_auth/schedules': typeof AuthSchedulesRoute
+  '/_auth/settings': typeof AuthSettingsRouteWithChildren
+  '/_auth/spaces': typeof AuthSpacesRouteWithChildren
+  '/_auth/students': typeof AuthStudentsRouteWithChildren
+  '/_auth/users': typeof AuthUsersRouteWithChildren
+  '/_auth/accounting/accounts': typeof AuthAccountingAccountsRoute
+  '/_auth/accounting/dashboard': typeof AuthAccountingDashboardRoute
+  '/_auth/accounting/discounts': typeof AuthAccountingDiscountsRoute
+  '/_auth/accounting/fee-structures': typeof AuthAccountingFeeStructuresRoute
+  '/_auth/accounting/fee-types': typeof AuthAccountingFeeTypesRoute
+  '/_auth/accounting/payment-plans': typeof AuthAccountingPaymentPlansRoute
+  '/_auth/accounting/payments': typeof AuthAccountingPaymentsRoute
+  '/_auth/accounting/refunds': typeof AuthAccountingRefundsRoute
+  '/_auth/accounting/student-fees': typeof AuthAccountingStudentFeesRoute
+  '/_auth/classes/assignments': typeof AuthClassesAssignmentsRoute
+  '/_auth/conducts/settings': typeof AuthConductsSettingsRoute
+  '/_auth/grades/entry': typeof AuthGradesEntryRoute
+  '/_auth/grades/report-cards': typeof AuthGradesReportCardsRoute
+  '/_auth/grades/statistics': typeof AuthGradesStatisticsRoute
+  '/_auth/grades/validations': typeof AuthGradesValidationsRoute
+  '/_auth/programs/coefficients': typeof AuthProgramsCoefficientsRoute
+  '/_auth/programs/curriculum-progress': typeof AuthProgramsCurriculumProgressRoute
+  '/_auth/programs/subjects': typeof AuthProgramsSubjectsRoute
+  '/_auth/settings/notifications': typeof AuthSettingsNotificationsRoute
+  '/_auth/settings/profile': typeof AuthSettingsProfileRoute
+  '/_auth/settings/school-years': typeof AuthSettingsSchoolYearsRoute
+  '/_auth/spaces/availability': typeof AuthSpacesAvailabilityRoute
+  '/_auth/students/bulk-operations': typeof AuthStudentsBulkOperationsRoute
+  '/_auth/students/enrollments': typeof AuthStudentsEnrollmentsRoute
+  '/_auth/students/new': typeof AuthStudentsNewRoute
+  '/_auth/students/parents': typeof AuthStudentsParentsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/_auth/app/': typeof AuthAppIndexRoute
-  '/_auth/app/academic/assignments': typeof AuthAppAcademicAssignmentsRoute
-  '/_auth/app/academic/coefficients': typeof AuthAppAcademicCoefficientsRoute
-  '/_auth/app/academic/curriculum-progress': typeof AuthAppAcademicCurriculumProgressRoute
-  '/_auth/app/academic/report-cards': typeof AuthAppAcademicReportCardsRoute
-  '/_auth/app/academic/subjects': typeof AuthAppAcademicSubjectsRoute
-  '/_auth/app/academic/timetables': typeof AuthAppAcademicTimetablesRoute
-  '/_auth/app/finance/accounts': typeof AuthAppFinanceAccountsRoute
-  '/_auth/app/finance/dashboard': typeof AuthAppFinanceDashboardRoute
-  '/_auth/app/finance/discounts': typeof AuthAppFinanceDiscountsRoute
-  '/_auth/app/finance/fee-structures': typeof AuthAppFinanceFeeStructuresRoute
-  '/_auth/app/finance/fee-types': typeof AuthAppFinanceFeeTypesRoute
-  '/_auth/app/finance/payment-plans': typeof AuthAppFinancePaymentPlansRoute
-  '/_auth/app/finance/payments': typeof AuthAppFinancePaymentsRoute
-  '/_auth/app/finance/refunds': typeof AuthAppFinanceRefundsRoute
-  '/_auth/app/finance/student-fees': typeof AuthAppFinanceStudentFeesRoute
-  '/_auth/app/school-life/settings': typeof AuthAppSchoolLifeSettingsRoute
-  '/_auth/app/settings/notifications': typeof AuthAppSettingsNotificationsRoute
-  '/_auth/app/settings/profile': typeof AuthAppSettingsProfileRoute
-  '/_auth/app/settings/school-years': typeof AuthAppSettingsSchoolYearsRoute
-  '/_auth/app/spaces/availability': typeof AuthAppSpacesAvailabilityRoute
-  '/_auth/app/students/bulk-operations': typeof AuthAppStudentsBulkOperationsRoute
-  '/_auth/app/students/enrollments': typeof AuthAppStudentsEnrollmentsRoute
-  '/_auth/app/students/new': typeof AuthAppStudentsNewRoute
-  '/_auth/app/students/parents': typeof AuthAppStudentsParentsRoute
-  '/_auth/app/academic/': typeof AuthAppAcademicIndexRoute
-  '/_auth/app/finance/': typeof AuthAppFinanceIndexRoute
-  '/_auth/app/hr/': typeof AuthAppHrIndexRoute
-  '/_auth/app/school-life/': typeof AuthAppSchoolLifeIndexRoute
-  '/_auth/app/settings/': typeof AuthAppSettingsIndexRoute
-  '/_auth/app/spaces/': typeof AuthAppSpacesIndexRoute
-  '/_auth/app/students/': typeof AuthAppStudentsIndexRoute
-  '/_auth/app/academic/grades/entry': typeof AuthAppAcademicGradesEntryRoute
-  '/_auth/app/academic/grades/statistics': typeof AuthAppAcademicGradesStatisticsRoute
-  '/_auth/app/academic/grades/validations': typeof AuthAppAcademicGradesValidationsRoute
-  '/_auth/app/hr/roles/new': typeof AuthAppHrRolesNewRoute
-  '/_auth/app/hr/staff/new': typeof AuthAppHrStaffNewRoute
-  '/_auth/app/hr/teachers/new': typeof AuthAppHrTeachersNewRoute
-  '/_auth/app/hr/users/import': typeof AuthAppHrUsersImportRoute
-  '/_auth/app/hr/users/new': typeof AuthAppHrUsersNewRoute
-  '/_auth/app/school-life/conduct/$recordId': typeof AuthAppSchoolLifeConductRecordIdRoute
-  '/_auth/app/school-life/conduct/new': typeof AuthAppSchoolLifeConductNewRoute
-  '/_auth/app/school-life/conduct/reports': typeof AuthAppSchoolLifeConductReportsRoute
-  '/_auth/app/school-life/student-attendance/history': typeof AuthAppSchoolLifeStudentAttendanceHistoryRoute
-  '/_auth/app/school-life/student-attendance/statistics': typeof AuthAppSchoolLifeStudentAttendanceStatisticsRoute
-  '/_auth/app/school-life/teacher-attendance/reports': typeof AuthAppSchoolLifeTeacherAttendanceReportsRoute
-  '/_auth/app/students/$studentId/edit': typeof AuthAppStudentsStudentIdEditRoute
-  '/_auth/app/academic/classes/': typeof AuthAppAcademicClassesIndexRoute
-  '/_auth/app/academic/grades/': typeof AuthAppAcademicGradesIndexRoute
-  '/_auth/app/hr/roles/': typeof AuthAppHrRolesIndexRoute
-  '/_auth/app/hr/staff/': typeof AuthAppHrStaffIndexRoute
-  '/_auth/app/hr/teachers/': typeof AuthAppHrTeachersIndexRoute
-  '/_auth/app/hr/users/': typeof AuthAppHrUsersIndexRoute
-  '/_auth/app/school-life/alerts/': typeof AuthAppSchoolLifeAlertsIndexRoute
-  '/_auth/app/school-life/conduct/': typeof AuthAppSchoolLifeConductIndexRoute
-  '/_auth/app/school-life/student-attendance/': typeof AuthAppSchoolLifeStudentAttendanceIndexRoute
-  '/_auth/app/school-life/teacher-attendance/': typeof AuthAppSchoolLifeTeacherAttendanceIndexRoute
-  '/_auth/app/spaces/classrooms/': typeof AuthAppSpacesClassroomsIndexRoute
-  '/_auth/app/students/$studentId/': typeof AuthAppStudentsStudentIdIndexRoute
-  '/_auth/app/academic/classes/$classId/edit': typeof AuthAppAcademicClassesClassIdEditRoute
-  '/_auth/app/hr/roles/$roleId/edit': typeof AuthAppHrRolesRoleIdEditRoute
-  '/_auth/app/hr/staff/$staffId/edit': typeof AuthAppHrStaffStaffIdEditRoute
-  '/_auth/app/hr/teachers/$teacherId/edit': typeof AuthAppHrTeachersTeacherIdEditRoute
-  '/_auth/app/hr/users/$userId/edit': typeof AuthAppHrUsersUserIdEditRoute
-  '/_auth/app/spaces/classrooms/$classroomId/edit': typeof AuthAppSpacesClassroomsClassroomIdEditRoute
-  '/_auth/app/academic/classes/$classId/': typeof AuthAppAcademicClassesClassIdIndexRoute
-  '/_auth/app/hr/roles/$roleId/': typeof AuthAppHrRolesRoleIdIndexRoute
-  '/_auth/app/hr/staff/$staffId/': typeof AuthAppHrStaffStaffIdIndexRoute
-  '/_auth/app/hr/teachers/$teacherId/': typeof AuthAppHrTeachersTeacherIdIndexRoute
-  '/_auth/app/hr/users/$userId/': typeof AuthAppHrUsersUserIdIndexRoute
-  '/_auth/app/spaces/classrooms/$classroomId/': typeof AuthAppSpacesClassroomsClassroomIdIndexRoute
+  '/_auth/accounting/': typeof AuthAccountingIndexRoute
+  '/_auth/classes/': typeof AuthClassesIndexRoute
+  '/_auth/conducts/': typeof AuthConductsIndexRoute
+  '/_auth/grades/': typeof AuthGradesIndexRoute
+  '/_auth/settings/': typeof AuthSettingsIndexRoute
+  '/_auth/spaces/': typeof AuthSpacesIndexRoute
+  '/_auth/students/': typeof AuthStudentsIndexRoute
+  '/_auth/users/': typeof AuthUsersIndexRoute
+  '/_auth/classes/$classId/edit': typeof AuthClassesClassIdEditRoute
+  '/_auth/conducts/conduct/$recordId': typeof AuthConductsConductRecordIdRoute
+  '/_auth/conducts/conduct/new': typeof AuthConductsConductNewRoute
+  '/_auth/conducts/conduct/reports': typeof AuthConductsConductReportsRoute
+  '/_auth/conducts/student-attendance/history': typeof AuthConductsStudentAttendanceHistoryRoute
+  '/_auth/conducts/student-attendance/statistics': typeof AuthConductsStudentAttendanceStatisticsRoute
+  '/_auth/conducts/teacher-attendance/reports': typeof AuthConductsTeacherAttendanceReportsRoute
+  '/_auth/students/$studentId/edit': typeof AuthStudentsStudentIdEditRoute
+  '/_auth/users/roles/new': typeof AuthUsersRolesNewRoute
+  '/_auth/users/staff/new': typeof AuthUsersStaffNewRoute
+  '/_auth/users/teachers/new': typeof AuthUsersTeachersNewRoute
+  '/_auth/users/users/import': typeof AuthUsersUsersImportRoute
+  '/_auth/users/users/new': typeof AuthUsersUsersNewRoute
+  '/_auth/classes/$classId/': typeof AuthClassesClassIdIndexRoute
+  '/_auth/conducts/alerts/': typeof AuthConductsAlertsIndexRoute
+  '/_auth/conducts/conduct/': typeof AuthConductsConductIndexRoute
+  '/_auth/conducts/student-attendance/': typeof AuthConductsStudentAttendanceIndexRoute
+  '/_auth/conducts/teacher-attendance/': typeof AuthConductsTeacherAttendanceIndexRoute
+  '/_auth/spaces/classrooms/': typeof AuthSpacesClassroomsIndexRoute
+  '/_auth/students/$studentId/': typeof AuthStudentsStudentIdIndexRoute
+  '/_auth/users/roles/': typeof AuthUsersRolesIndexRoute
+  '/_auth/users/staff/': typeof AuthUsersStaffIndexRoute
+  '/_auth/users/teachers/': typeof AuthUsersTeachersIndexRoute
+  '/_auth/users/users/': typeof AuthUsersUsersIndexRoute
+  '/_auth/spaces/classrooms/$classroomId/edit': typeof AuthSpacesClassroomsClassroomIdEditRoute
+  '/_auth/users/roles/$roleId/edit': typeof AuthUsersRolesRoleIdEditRoute
+  '/_auth/users/staff/$staffId/edit': typeof AuthUsersStaffStaffIdEditRoute
+  '/_auth/users/teachers/$teacherId/edit': typeof AuthUsersTeachersTeacherIdEditRoute
+  '/_auth/users/users/$userId/edit': typeof AuthUsersUsersUserIdEditRoute
+  '/_auth/spaces/classrooms/$classroomId/': typeof AuthSpacesClassroomsClassroomIdIndexRoute
+  '/_auth/users/roles/$roleId/': typeof AuthUsersRolesRoleIdIndexRoute
+  '/_auth/users/staff/$staffId/': typeof AuthUsersStaffStaffIdIndexRoute
+  '/_auth/users/teachers/$teacherId/': typeof AuthUsersTeachersTeacherIdIndexRoute
+  '/_auth/users/users/$userId/': typeof AuthUsersUsersUserIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/app'
-    | '/app/academic'
-    | '/app/dashboard'
-    | '/app/finance'
-    | '/app/hr'
-    | '/app/school-life'
-    | '/app/settings'
-    | '/app/spaces'
-    | '/app/students'
+    | '/accounting'
+    | '/conducts'
+    | '/dashboard'
+    | '/grades'
+    | '/schedules'
+    | '/settings'
+    | '/spaces'
+    | '/students'
+    | '/users'
+    | '/accounting/accounts'
+    | '/accounting/dashboard'
+    | '/accounting/discounts'
+    | '/accounting/fee-structures'
+    | '/accounting/fee-types'
+    | '/accounting/payment-plans'
+    | '/accounting/payments'
+    | '/accounting/refunds'
+    | '/accounting/student-fees'
+    | '/classes/assignments'
+    | '/conducts/settings'
+    | '/grades/entry'
+    | '/grades/report-cards'
+    | '/grades/statistics'
+    | '/grades/validations'
+    | '/programs/coefficients'
+    | '/programs/curriculum-progress'
+    | '/programs/subjects'
+    | '/settings/notifications'
+    | '/settings/profile'
+    | '/settings/school-years'
+    | '/spaces/availability'
+    | '/students/bulk-operations'
+    | '/students/enrollments'
+    | '/students/new'
+    | '/students/parents'
     | '/api/auth/$'
-    | '/app/'
-    | '/app/academic/assignments'
-    | '/app/academic/coefficients'
-    | '/app/academic/curriculum-progress'
-    | '/app/academic/report-cards'
-    | '/app/academic/subjects'
-    | '/app/academic/timetables'
-    | '/app/finance/accounts'
-    | '/app/finance/dashboard'
-    | '/app/finance/discounts'
-    | '/app/finance/fee-structures'
-    | '/app/finance/fee-types'
-    | '/app/finance/payment-plans'
-    | '/app/finance/payments'
-    | '/app/finance/refunds'
-    | '/app/finance/student-fees'
-    | '/app/school-life/settings'
-    | '/app/settings/notifications'
-    | '/app/settings/profile'
-    | '/app/settings/school-years'
-    | '/app/spaces/availability'
-    | '/app/students/bulk-operations'
-    | '/app/students/enrollments'
-    | '/app/students/new'
-    | '/app/students/parents'
-    | '/app/academic/'
-    | '/app/finance/'
-    | '/app/hr/'
-    | '/app/school-life/'
-    | '/app/settings/'
-    | '/app/spaces/'
-    | '/app/students/'
-    | '/app/academic/grades/entry'
-    | '/app/academic/grades/statistics'
-    | '/app/academic/grades/validations'
-    | '/app/hr/roles/new'
-    | '/app/hr/staff/new'
-    | '/app/hr/teachers/new'
-    | '/app/hr/users/import'
-    | '/app/hr/users/new'
-    | '/app/school-life/conduct/$recordId'
-    | '/app/school-life/conduct/new'
-    | '/app/school-life/conduct/reports'
-    | '/app/school-life/student-attendance/history'
-    | '/app/school-life/student-attendance/statistics'
-    | '/app/school-life/teacher-attendance/reports'
-    | '/app/students/$studentId/edit'
-    | '/app/academic/classes'
-    | '/app/academic/grades'
-    | '/app/hr/roles'
-    | '/app/hr/staff'
-    | '/app/hr/teachers'
-    | '/app/hr/users'
-    | '/app/school-life/alerts'
-    | '/app/school-life/conduct'
-    | '/app/school-life/student-attendance'
-    | '/app/school-life/teacher-attendance'
-    | '/app/spaces/classrooms'
-    | '/app/students/$studentId'
-    | '/app/academic/classes/$classId/edit'
-    | '/app/hr/roles/$roleId/edit'
-    | '/app/hr/staff/$staffId/edit'
-    | '/app/hr/teachers/$teacherId/edit'
-    | '/app/hr/users/$userId/edit'
-    | '/app/spaces/classrooms/$classroomId/edit'
-    | '/app/academic/classes/$classId'
-    | '/app/hr/roles/$roleId'
-    | '/app/hr/staff/$staffId'
-    | '/app/hr/teachers/$teacherId'
-    | '/app/hr/users/$userId'
-    | '/app/spaces/classrooms/$classroomId'
+    | '/accounting/'
+    | '/classes'
+    | '/conducts/'
+    | '/grades/'
+    | '/settings/'
+    | '/spaces/'
+    | '/students/'
+    | '/users/'
+    | '/classes/$classId/edit'
+    | '/conducts/conduct/$recordId'
+    | '/conducts/conduct/new'
+    | '/conducts/conduct/reports'
+    | '/conducts/student-attendance/history'
+    | '/conducts/student-attendance/statistics'
+    | '/conducts/teacher-attendance/reports'
+    | '/students/$studentId/edit'
+    | '/users/roles/new'
+    | '/users/staff/new'
+    | '/users/teachers/new'
+    | '/users/users/import'
+    | '/users/users/new'
+    | '/classes/$classId'
+    | '/conducts/alerts'
+    | '/conducts/conduct'
+    | '/conducts/student-attendance'
+    | '/conducts/teacher-attendance'
+    | '/spaces/classrooms'
+    | '/students/$studentId'
+    | '/users/roles'
+    | '/users/staff'
+    | '/users/teachers'
+    | '/users/users'
+    | '/spaces/classrooms/$classroomId/edit'
+    | '/users/roles/$roleId/edit'
+    | '/users/staff/$staffId/edit'
+    | '/users/teachers/$teacherId/edit'
+    | '/users/users/$userId/edit'
+    | '/spaces/classrooms/$classroomId'
+    | '/users/roles/$roleId'
+    | '/users/staff/$staffId'
+    | '/users/teachers/$teacherId'
+    | '/users/users/$userId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/app/dashboard'
+    | '/dashboard'
+    | '/schedules'
+    | '/accounting/accounts'
+    | '/accounting/dashboard'
+    | '/accounting/discounts'
+    | '/accounting/fee-structures'
+    | '/accounting/fee-types'
+    | '/accounting/payment-plans'
+    | '/accounting/payments'
+    | '/accounting/refunds'
+    | '/accounting/student-fees'
+    | '/classes/assignments'
+    | '/conducts/settings'
+    | '/grades/entry'
+    | '/grades/report-cards'
+    | '/grades/statistics'
+    | '/grades/validations'
+    | '/programs/coefficients'
+    | '/programs/curriculum-progress'
+    | '/programs/subjects'
+    | '/settings/notifications'
+    | '/settings/profile'
+    | '/settings/school-years'
+    | '/spaces/availability'
+    | '/students/bulk-operations'
+    | '/students/enrollments'
+    | '/students/new'
+    | '/students/parents'
     | '/api/auth/$'
-    | '/app'
-    | '/app/academic/assignments'
-    | '/app/academic/coefficients'
-    | '/app/academic/curriculum-progress'
-    | '/app/academic/report-cards'
-    | '/app/academic/subjects'
-    | '/app/academic/timetables'
-    | '/app/finance/accounts'
-    | '/app/finance/dashboard'
-    | '/app/finance/discounts'
-    | '/app/finance/fee-structures'
-    | '/app/finance/fee-types'
-    | '/app/finance/payment-plans'
-    | '/app/finance/payments'
-    | '/app/finance/refunds'
-    | '/app/finance/student-fees'
-    | '/app/school-life/settings'
-    | '/app/settings/notifications'
-    | '/app/settings/profile'
-    | '/app/settings/school-years'
-    | '/app/spaces/availability'
-    | '/app/students/bulk-operations'
-    | '/app/students/enrollments'
-    | '/app/students/new'
-    | '/app/students/parents'
-    | '/app/academic'
-    | '/app/finance'
-    | '/app/hr'
-    | '/app/school-life'
-    | '/app/settings'
-    | '/app/spaces'
-    | '/app/students'
-    | '/app/academic/grades/entry'
-    | '/app/academic/grades/statistics'
-    | '/app/academic/grades/validations'
-    | '/app/hr/roles/new'
-    | '/app/hr/staff/new'
-    | '/app/hr/teachers/new'
-    | '/app/hr/users/import'
-    | '/app/hr/users/new'
-    | '/app/school-life/conduct/$recordId'
-    | '/app/school-life/conduct/new'
-    | '/app/school-life/conduct/reports'
-    | '/app/school-life/student-attendance/history'
-    | '/app/school-life/student-attendance/statistics'
-    | '/app/school-life/teacher-attendance/reports'
-    | '/app/students/$studentId/edit'
-    | '/app/academic/classes'
-    | '/app/academic/grades'
-    | '/app/hr/roles'
-    | '/app/hr/staff'
-    | '/app/hr/teachers'
-    | '/app/hr/users'
-    | '/app/school-life/alerts'
-    | '/app/school-life/conduct'
-    | '/app/school-life/student-attendance'
-    | '/app/school-life/teacher-attendance'
-    | '/app/spaces/classrooms'
-    | '/app/students/$studentId'
-    | '/app/academic/classes/$classId/edit'
-    | '/app/hr/roles/$roleId/edit'
-    | '/app/hr/staff/$staffId/edit'
-    | '/app/hr/teachers/$teacherId/edit'
-    | '/app/hr/users/$userId/edit'
-    | '/app/spaces/classrooms/$classroomId/edit'
-    | '/app/academic/classes/$classId'
-    | '/app/hr/roles/$roleId'
-    | '/app/hr/staff/$staffId'
-    | '/app/hr/teachers/$teacherId'
-    | '/app/hr/users/$userId'
-    | '/app/spaces/classrooms/$classroomId'
+    | '/accounting'
+    | '/classes'
+    | '/conducts'
+    | '/grades'
+    | '/settings'
+    | '/spaces'
+    | '/students'
+    | '/users'
+    | '/classes/$classId/edit'
+    | '/conducts/conduct/$recordId'
+    | '/conducts/conduct/new'
+    | '/conducts/conduct/reports'
+    | '/conducts/student-attendance/history'
+    | '/conducts/student-attendance/statistics'
+    | '/conducts/teacher-attendance/reports'
+    | '/students/$studentId/edit'
+    | '/users/roles/new'
+    | '/users/staff/new'
+    | '/users/teachers/new'
+    | '/users/users/import'
+    | '/users/users/new'
+    | '/classes/$classId'
+    | '/conducts/alerts'
+    | '/conducts/conduct'
+    | '/conducts/student-attendance'
+    | '/conducts/teacher-attendance'
+    | '/spaces/classrooms'
+    | '/students/$studentId'
+    | '/users/roles'
+    | '/users/staff'
+    | '/users/teachers'
+    | '/users/users'
+    | '/spaces/classrooms/$classroomId/edit'
+    | '/users/roles/$roleId/edit'
+    | '/users/staff/$staffId/edit'
+    | '/users/teachers/$teacherId/edit'
+    | '/users/users/$userId/edit'
+    | '/spaces/classrooms/$classroomId'
+    | '/users/roles/$roleId'
+    | '/users/staff/$staffId'
+    | '/users/teachers/$teacherId'
+    | '/users/users/$userId'
   id:
     | '__root__'
     | '/'
     | '/_auth'
-    | '/_auth/app'
-    | '/_auth/app/academic'
-    | '/_auth/app/dashboard'
-    | '/_auth/app/finance'
-    | '/_auth/app/hr'
-    | '/_auth/app/school-life'
-    | '/_auth/app/settings'
-    | '/_auth/app/spaces'
-    | '/_auth/app/students'
+    | '/_auth/accounting'
+    | '/_auth/conducts'
+    | '/_auth/dashboard'
+    | '/_auth/grades'
+    | '/_auth/schedules'
+    | '/_auth/settings'
+    | '/_auth/spaces'
+    | '/_auth/students'
+    | '/_auth/users'
+    | '/_auth/accounting/accounts'
+    | '/_auth/accounting/dashboard'
+    | '/_auth/accounting/discounts'
+    | '/_auth/accounting/fee-structures'
+    | '/_auth/accounting/fee-types'
+    | '/_auth/accounting/payment-plans'
+    | '/_auth/accounting/payments'
+    | '/_auth/accounting/refunds'
+    | '/_auth/accounting/student-fees'
+    | '/_auth/classes/assignments'
+    | '/_auth/conducts/settings'
+    | '/_auth/grades/entry'
+    | '/_auth/grades/report-cards'
+    | '/_auth/grades/statistics'
+    | '/_auth/grades/validations'
+    | '/_auth/programs/coefficients'
+    | '/_auth/programs/curriculum-progress'
+    | '/_auth/programs/subjects'
+    | '/_auth/settings/notifications'
+    | '/_auth/settings/profile'
+    | '/_auth/settings/school-years'
+    | '/_auth/spaces/availability'
+    | '/_auth/students/bulk-operations'
+    | '/_auth/students/enrollments'
+    | '/_auth/students/new'
+    | '/_auth/students/parents'
     | '/api/auth/$'
-    | '/_auth/app/'
-    | '/_auth/app/academic/assignments'
-    | '/_auth/app/academic/coefficients'
-    | '/_auth/app/academic/curriculum-progress'
-    | '/_auth/app/academic/report-cards'
-    | '/_auth/app/academic/subjects'
-    | '/_auth/app/academic/timetables'
-    | '/_auth/app/finance/accounts'
-    | '/_auth/app/finance/dashboard'
-    | '/_auth/app/finance/discounts'
-    | '/_auth/app/finance/fee-structures'
-    | '/_auth/app/finance/fee-types'
-    | '/_auth/app/finance/payment-plans'
-    | '/_auth/app/finance/payments'
-    | '/_auth/app/finance/refunds'
-    | '/_auth/app/finance/student-fees'
-    | '/_auth/app/school-life/settings'
-    | '/_auth/app/settings/notifications'
-    | '/_auth/app/settings/profile'
-    | '/_auth/app/settings/school-years'
-    | '/_auth/app/spaces/availability'
-    | '/_auth/app/students/bulk-operations'
-    | '/_auth/app/students/enrollments'
-    | '/_auth/app/students/new'
-    | '/_auth/app/students/parents'
-    | '/_auth/app/academic/'
-    | '/_auth/app/finance/'
-    | '/_auth/app/hr/'
-    | '/_auth/app/school-life/'
-    | '/_auth/app/settings/'
-    | '/_auth/app/spaces/'
-    | '/_auth/app/students/'
-    | '/_auth/app/academic/grades/entry'
-    | '/_auth/app/academic/grades/statistics'
-    | '/_auth/app/academic/grades/validations'
-    | '/_auth/app/hr/roles/new'
-    | '/_auth/app/hr/staff/new'
-    | '/_auth/app/hr/teachers/new'
-    | '/_auth/app/hr/users/import'
-    | '/_auth/app/hr/users/new'
-    | '/_auth/app/school-life/conduct/$recordId'
-    | '/_auth/app/school-life/conduct/new'
-    | '/_auth/app/school-life/conduct/reports'
-    | '/_auth/app/school-life/student-attendance/history'
-    | '/_auth/app/school-life/student-attendance/statistics'
-    | '/_auth/app/school-life/teacher-attendance/reports'
-    | '/_auth/app/students/$studentId/edit'
-    | '/_auth/app/academic/classes/'
-    | '/_auth/app/academic/grades/'
-    | '/_auth/app/hr/roles/'
-    | '/_auth/app/hr/staff/'
-    | '/_auth/app/hr/teachers/'
-    | '/_auth/app/hr/users/'
-    | '/_auth/app/school-life/alerts/'
-    | '/_auth/app/school-life/conduct/'
-    | '/_auth/app/school-life/student-attendance/'
-    | '/_auth/app/school-life/teacher-attendance/'
-    | '/_auth/app/spaces/classrooms/'
-    | '/_auth/app/students/$studentId/'
-    | '/_auth/app/academic/classes/$classId/edit'
-    | '/_auth/app/hr/roles/$roleId/edit'
-    | '/_auth/app/hr/staff/$staffId/edit'
-    | '/_auth/app/hr/teachers/$teacherId/edit'
-    | '/_auth/app/hr/users/$userId/edit'
-    | '/_auth/app/spaces/classrooms/$classroomId/edit'
-    | '/_auth/app/academic/classes/$classId/'
-    | '/_auth/app/hr/roles/$roleId/'
-    | '/_auth/app/hr/staff/$staffId/'
-    | '/_auth/app/hr/teachers/$teacherId/'
-    | '/_auth/app/hr/users/$userId/'
-    | '/_auth/app/spaces/classrooms/$classroomId/'
+    | '/_auth/accounting/'
+    | '/_auth/classes/'
+    | '/_auth/conducts/'
+    | '/_auth/grades/'
+    | '/_auth/settings/'
+    | '/_auth/spaces/'
+    | '/_auth/students/'
+    | '/_auth/users/'
+    | '/_auth/classes/$classId/edit'
+    | '/_auth/conducts/conduct/$recordId'
+    | '/_auth/conducts/conduct/new'
+    | '/_auth/conducts/conduct/reports'
+    | '/_auth/conducts/student-attendance/history'
+    | '/_auth/conducts/student-attendance/statistics'
+    | '/_auth/conducts/teacher-attendance/reports'
+    | '/_auth/students/$studentId/edit'
+    | '/_auth/users/roles/new'
+    | '/_auth/users/staff/new'
+    | '/_auth/users/teachers/new'
+    | '/_auth/users/users/import'
+    | '/_auth/users/users/new'
+    | '/_auth/classes/$classId/'
+    | '/_auth/conducts/alerts/'
+    | '/_auth/conducts/conduct/'
+    | '/_auth/conducts/student-attendance/'
+    | '/_auth/conducts/teacher-attendance/'
+    | '/_auth/spaces/classrooms/'
+    | '/_auth/students/$studentId/'
+    | '/_auth/users/roles/'
+    | '/_auth/users/staff/'
+    | '/_auth/users/teachers/'
+    | '/_auth/users/users/'
+    | '/_auth/spaces/classrooms/$classroomId/edit'
+    | '/_auth/users/roles/$roleId/edit'
+    | '/_auth/users/staff/$staffId/edit'
+    | '/_auth/users/teachers/$teacherId/edit'
+    | '/_auth/users/users/$userId/edit'
+    | '/_auth/spaces/classrooms/$classroomId/'
+    | '/_auth/users/roles/$roleId/'
+    | '/_auth/users/staff/$staffId/'
+    | '/_auth/users/teachers/$teacherId/'
+    | '/_auth/users/users/$userId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1068,19 +1018,124 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_auth/app': {
-      id: '/_auth/app'
-      path: '/app'
-      fullPath: '/app'
-      preLoaderRoute: typeof AuthAppRouteImport
+    '/_auth/users': {
+      id: '/_auth/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof AuthUsersRouteImport
       parentRoute: typeof AuthRoute
     }
-    '/_auth/app/': {
-      id: '/_auth/app/'
+    '/_auth/students': {
+      id: '/_auth/students'
+      path: '/students'
+      fullPath: '/students'
+      preLoaderRoute: typeof AuthStudentsRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/spaces': {
+      id: '/_auth/spaces'
+      path: '/spaces'
+      fullPath: '/spaces'
+      preLoaderRoute: typeof AuthSpacesRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/settings': {
+      id: '/_auth/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthSettingsRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/schedules': {
+      id: '/_auth/schedules'
+      path: '/schedules'
+      fullPath: '/schedules'
+      preLoaderRoute: typeof AuthSchedulesRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/grades': {
+      id: '/_auth/grades'
+      path: '/grades'
+      fullPath: '/grades'
+      preLoaderRoute: typeof AuthGradesRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/dashboard': {
+      id: '/_auth/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthDashboardRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/conducts': {
+      id: '/_auth/conducts'
+      path: '/conducts'
+      fullPath: '/conducts'
+      preLoaderRoute: typeof AuthConductsRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/accounting': {
+      id: '/_auth/accounting'
+      path: '/accounting'
+      fullPath: '/accounting'
+      preLoaderRoute: typeof AuthAccountingRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/users/': {
+      id: '/_auth/users/'
       path: '/'
-      fullPath: '/app/'
-      preLoaderRoute: typeof AuthAppIndexRouteImport
-      parentRoute: typeof AuthAppRoute
+      fullPath: '/users/'
+      preLoaderRoute: typeof AuthUsersIndexRouteImport
+      parentRoute: typeof AuthUsersRoute
+    }
+    '/_auth/students/': {
+      id: '/_auth/students/'
+      path: '/'
+      fullPath: '/students/'
+      preLoaderRoute: typeof AuthStudentsIndexRouteImport
+      parentRoute: typeof AuthStudentsRoute
+    }
+    '/_auth/spaces/': {
+      id: '/_auth/spaces/'
+      path: '/'
+      fullPath: '/spaces/'
+      preLoaderRoute: typeof AuthSpacesIndexRouteImport
+      parentRoute: typeof AuthSpacesRoute
+    }
+    '/_auth/settings/': {
+      id: '/_auth/settings/'
+      path: '/'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof AuthSettingsIndexRouteImport
+      parentRoute: typeof AuthSettingsRoute
+    }
+    '/_auth/grades/': {
+      id: '/_auth/grades/'
+      path: '/'
+      fullPath: '/grades/'
+      preLoaderRoute: typeof AuthGradesIndexRouteImport
+      parentRoute: typeof AuthGradesRoute
+    }
+    '/_auth/conducts/': {
+      id: '/_auth/conducts/'
+      path: '/'
+      fullPath: '/conducts/'
+      preLoaderRoute: typeof AuthConductsIndexRouteImport
+      parentRoute: typeof AuthConductsRoute
+    }
+    '/_auth/classes/': {
+      id: '/_auth/classes/'
+      path: '/classes'
+      fullPath: '/classes'
+      preLoaderRoute: typeof AuthClassesIndexRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/accounting/': {
+      id: '/_auth/accounting/'
+      path: '/'
+      fullPath: '/accounting/'
+      preLoaderRoute: typeof AuthAccountingIndexRouteImport
+      parentRoute: typeof AuthAccountingRoute
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -1089,807 +1144,664 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_auth/app/students': {
-      id: '/_auth/app/students'
-      path: '/students'
-      fullPath: '/app/students'
-      preLoaderRoute: typeof AuthAppStudentsRouteImport
-      parentRoute: typeof AuthAppRoute
-    }
-    '/_auth/app/spaces': {
-      id: '/_auth/app/spaces'
-      path: '/spaces'
-      fullPath: '/app/spaces'
-      preLoaderRoute: typeof AuthAppSpacesRouteImport
-      parentRoute: typeof AuthAppRoute
-    }
-    '/_auth/app/settings': {
-      id: '/_auth/app/settings'
-      path: '/settings'
-      fullPath: '/app/settings'
-      preLoaderRoute: typeof AuthAppSettingsRouteImport
-      parentRoute: typeof AuthAppRoute
-    }
-    '/_auth/app/school-life': {
-      id: '/_auth/app/school-life'
-      path: '/school-life'
-      fullPath: '/app/school-life'
-      preLoaderRoute: typeof AuthAppSchoolLifeRouteImport
-      parentRoute: typeof AuthAppRoute
-    }
-    '/_auth/app/hr': {
-      id: '/_auth/app/hr'
-      path: '/hr'
-      fullPath: '/app/hr'
-      preLoaderRoute: typeof AuthAppHrRouteImport
-      parentRoute: typeof AuthAppRoute
-    }
-    '/_auth/app/finance': {
-      id: '/_auth/app/finance'
-      path: '/finance'
-      fullPath: '/app/finance'
-      preLoaderRoute: typeof AuthAppFinanceRouteImport
-      parentRoute: typeof AuthAppRoute
-    }
-    '/_auth/app/dashboard': {
-      id: '/_auth/app/dashboard'
-      path: '/dashboard'
-      fullPath: '/app/dashboard'
-      preLoaderRoute: typeof AuthAppDashboardRouteImport
-      parentRoute: typeof AuthAppRoute
-    }
-    '/_auth/app/academic': {
-      id: '/_auth/app/academic'
-      path: '/academic'
-      fullPath: '/app/academic'
-      preLoaderRoute: typeof AuthAppAcademicRouteImport
-      parentRoute: typeof AuthAppRoute
-    }
-    '/_auth/app/students/': {
-      id: '/_auth/app/students/'
-      path: '/'
-      fullPath: '/app/students/'
-      preLoaderRoute: typeof AuthAppStudentsIndexRouteImport
-      parentRoute: typeof AuthAppStudentsRoute
-    }
-    '/_auth/app/spaces/': {
-      id: '/_auth/app/spaces/'
-      path: '/'
-      fullPath: '/app/spaces/'
-      preLoaderRoute: typeof AuthAppSpacesIndexRouteImport
-      parentRoute: typeof AuthAppSpacesRoute
-    }
-    '/_auth/app/settings/': {
-      id: '/_auth/app/settings/'
-      path: '/'
-      fullPath: '/app/settings/'
-      preLoaderRoute: typeof AuthAppSettingsIndexRouteImport
-      parentRoute: typeof AuthAppSettingsRoute
-    }
-    '/_auth/app/school-life/': {
-      id: '/_auth/app/school-life/'
-      path: '/'
-      fullPath: '/app/school-life/'
-      preLoaderRoute: typeof AuthAppSchoolLifeIndexRouteImport
-      parentRoute: typeof AuthAppSchoolLifeRoute
-    }
-    '/_auth/app/hr/': {
-      id: '/_auth/app/hr/'
-      path: '/'
-      fullPath: '/app/hr/'
-      preLoaderRoute: typeof AuthAppHrIndexRouteImport
-      parentRoute: typeof AuthAppHrRoute
-    }
-    '/_auth/app/finance/': {
-      id: '/_auth/app/finance/'
-      path: '/'
-      fullPath: '/app/finance/'
-      preLoaderRoute: typeof AuthAppFinanceIndexRouteImport
-      parentRoute: typeof AuthAppFinanceRoute
-    }
-    '/_auth/app/academic/': {
-      id: '/_auth/app/academic/'
-      path: '/'
-      fullPath: '/app/academic/'
-      preLoaderRoute: typeof AuthAppAcademicIndexRouteImport
-      parentRoute: typeof AuthAppAcademicRoute
-    }
-    '/_auth/app/students/parents': {
-      id: '/_auth/app/students/parents'
+    '/_auth/students/parents': {
+      id: '/_auth/students/parents'
       path: '/parents'
-      fullPath: '/app/students/parents'
-      preLoaderRoute: typeof AuthAppStudentsParentsRouteImport
-      parentRoute: typeof AuthAppStudentsRoute
+      fullPath: '/students/parents'
+      preLoaderRoute: typeof AuthStudentsParentsRouteImport
+      parentRoute: typeof AuthStudentsRoute
     }
-    '/_auth/app/students/new': {
-      id: '/_auth/app/students/new'
+    '/_auth/students/new': {
+      id: '/_auth/students/new'
       path: '/new'
-      fullPath: '/app/students/new'
-      preLoaderRoute: typeof AuthAppStudentsNewRouteImport
-      parentRoute: typeof AuthAppStudentsRoute
+      fullPath: '/students/new'
+      preLoaderRoute: typeof AuthStudentsNewRouteImport
+      parentRoute: typeof AuthStudentsRoute
     }
-    '/_auth/app/students/enrollments': {
-      id: '/_auth/app/students/enrollments'
+    '/_auth/students/enrollments': {
+      id: '/_auth/students/enrollments'
       path: '/enrollments'
-      fullPath: '/app/students/enrollments'
-      preLoaderRoute: typeof AuthAppStudentsEnrollmentsRouteImport
-      parentRoute: typeof AuthAppStudentsRoute
+      fullPath: '/students/enrollments'
+      preLoaderRoute: typeof AuthStudentsEnrollmentsRouteImport
+      parentRoute: typeof AuthStudentsRoute
     }
-    '/_auth/app/students/bulk-operations': {
-      id: '/_auth/app/students/bulk-operations'
+    '/_auth/students/bulk-operations': {
+      id: '/_auth/students/bulk-operations'
       path: '/bulk-operations'
-      fullPath: '/app/students/bulk-operations'
-      preLoaderRoute: typeof AuthAppStudentsBulkOperationsRouteImport
-      parentRoute: typeof AuthAppStudentsRoute
+      fullPath: '/students/bulk-operations'
+      preLoaderRoute: typeof AuthStudentsBulkOperationsRouteImport
+      parentRoute: typeof AuthStudentsRoute
     }
-    '/_auth/app/spaces/availability': {
-      id: '/_auth/app/spaces/availability'
+    '/_auth/spaces/availability': {
+      id: '/_auth/spaces/availability'
       path: '/availability'
-      fullPath: '/app/spaces/availability'
-      preLoaderRoute: typeof AuthAppSpacesAvailabilityRouteImport
-      parentRoute: typeof AuthAppSpacesRoute
+      fullPath: '/spaces/availability'
+      preLoaderRoute: typeof AuthSpacesAvailabilityRouteImport
+      parentRoute: typeof AuthSpacesRoute
     }
-    '/_auth/app/settings/school-years': {
-      id: '/_auth/app/settings/school-years'
+    '/_auth/settings/school-years': {
+      id: '/_auth/settings/school-years'
       path: '/school-years'
-      fullPath: '/app/settings/school-years'
-      preLoaderRoute: typeof AuthAppSettingsSchoolYearsRouteImport
-      parentRoute: typeof AuthAppSettingsRoute
+      fullPath: '/settings/school-years'
+      preLoaderRoute: typeof AuthSettingsSchoolYearsRouteImport
+      parentRoute: typeof AuthSettingsRoute
     }
-    '/_auth/app/settings/profile': {
-      id: '/_auth/app/settings/profile'
+    '/_auth/settings/profile': {
+      id: '/_auth/settings/profile'
       path: '/profile'
-      fullPath: '/app/settings/profile'
-      preLoaderRoute: typeof AuthAppSettingsProfileRouteImport
-      parentRoute: typeof AuthAppSettingsRoute
+      fullPath: '/settings/profile'
+      preLoaderRoute: typeof AuthSettingsProfileRouteImport
+      parentRoute: typeof AuthSettingsRoute
     }
-    '/_auth/app/settings/notifications': {
-      id: '/_auth/app/settings/notifications'
+    '/_auth/settings/notifications': {
+      id: '/_auth/settings/notifications'
       path: '/notifications'
-      fullPath: '/app/settings/notifications'
-      preLoaderRoute: typeof AuthAppSettingsNotificationsRouteImport
-      parentRoute: typeof AuthAppSettingsRoute
+      fullPath: '/settings/notifications'
+      preLoaderRoute: typeof AuthSettingsNotificationsRouteImport
+      parentRoute: typeof AuthSettingsRoute
     }
-    '/_auth/app/school-life/settings': {
-      id: '/_auth/app/school-life/settings'
-      path: '/settings'
-      fullPath: '/app/school-life/settings'
-      preLoaderRoute: typeof AuthAppSchoolLifeSettingsRouteImport
-      parentRoute: typeof AuthAppSchoolLifeRoute
+    '/_auth/programs/subjects': {
+      id: '/_auth/programs/subjects'
+      path: '/programs/subjects'
+      fullPath: '/programs/subjects'
+      preLoaderRoute: typeof AuthProgramsSubjectsRouteImport
+      parentRoute: typeof AuthRoute
     }
-    '/_auth/app/finance/student-fees': {
-      id: '/_auth/app/finance/student-fees'
-      path: '/student-fees'
-      fullPath: '/app/finance/student-fees'
-      preLoaderRoute: typeof AuthAppFinanceStudentFeesRouteImport
-      parentRoute: typeof AuthAppFinanceRoute
+    '/_auth/programs/curriculum-progress': {
+      id: '/_auth/programs/curriculum-progress'
+      path: '/programs/curriculum-progress'
+      fullPath: '/programs/curriculum-progress'
+      preLoaderRoute: typeof AuthProgramsCurriculumProgressRouteImport
+      parentRoute: typeof AuthRoute
     }
-    '/_auth/app/finance/refunds': {
-      id: '/_auth/app/finance/refunds'
-      path: '/refunds'
-      fullPath: '/app/finance/refunds'
-      preLoaderRoute: typeof AuthAppFinanceRefundsRouteImport
-      parentRoute: typeof AuthAppFinanceRoute
+    '/_auth/programs/coefficients': {
+      id: '/_auth/programs/coefficients'
+      path: '/programs/coefficients'
+      fullPath: '/programs/coefficients'
+      preLoaderRoute: typeof AuthProgramsCoefficientsRouteImport
+      parentRoute: typeof AuthRoute
     }
-    '/_auth/app/finance/payments': {
-      id: '/_auth/app/finance/payments'
-      path: '/payments'
-      fullPath: '/app/finance/payments'
-      preLoaderRoute: typeof AuthAppFinancePaymentsRouteImport
-      parentRoute: typeof AuthAppFinanceRoute
+    '/_auth/grades/validations': {
+      id: '/_auth/grades/validations'
+      path: '/validations'
+      fullPath: '/grades/validations'
+      preLoaderRoute: typeof AuthGradesValidationsRouteImport
+      parentRoute: typeof AuthGradesRoute
     }
-    '/_auth/app/finance/payment-plans': {
-      id: '/_auth/app/finance/payment-plans'
-      path: '/payment-plans'
-      fullPath: '/app/finance/payment-plans'
-      preLoaderRoute: typeof AuthAppFinancePaymentPlansRouteImport
-      parentRoute: typeof AuthAppFinanceRoute
+    '/_auth/grades/statistics': {
+      id: '/_auth/grades/statistics'
+      path: '/statistics'
+      fullPath: '/grades/statistics'
+      preLoaderRoute: typeof AuthGradesStatisticsRouteImport
+      parentRoute: typeof AuthGradesRoute
     }
-    '/_auth/app/finance/fee-types': {
-      id: '/_auth/app/finance/fee-types'
-      path: '/fee-types'
-      fullPath: '/app/finance/fee-types'
-      preLoaderRoute: typeof AuthAppFinanceFeeTypesRouteImport
-      parentRoute: typeof AuthAppFinanceRoute
-    }
-    '/_auth/app/finance/fee-structures': {
-      id: '/_auth/app/finance/fee-structures'
-      path: '/fee-structures'
-      fullPath: '/app/finance/fee-structures'
-      preLoaderRoute: typeof AuthAppFinanceFeeStructuresRouteImport
-      parentRoute: typeof AuthAppFinanceRoute
-    }
-    '/_auth/app/finance/discounts': {
-      id: '/_auth/app/finance/discounts'
-      path: '/discounts'
-      fullPath: '/app/finance/discounts'
-      preLoaderRoute: typeof AuthAppFinanceDiscountsRouteImport
-      parentRoute: typeof AuthAppFinanceRoute
-    }
-    '/_auth/app/finance/dashboard': {
-      id: '/_auth/app/finance/dashboard'
-      path: '/dashboard'
-      fullPath: '/app/finance/dashboard'
-      preLoaderRoute: typeof AuthAppFinanceDashboardRouteImport
-      parentRoute: typeof AuthAppFinanceRoute
-    }
-    '/_auth/app/finance/accounts': {
-      id: '/_auth/app/finance/accounts'
-      path: '/accounts'
-      fullPath: '/app/finance/accounts'
-      preLoaderRoute: typeof AuthAppFinanceAccountsRouteImport
-      parentRoute: typeof AuthAppFinanceRoute
-    }
-    '/_auth/app/academic/timetables': {
-      id: '/_auth/app/academic/timetables'
-      path: '/timetables'
-      fullPath: '/app/academic/timetables'
-      preLoaderRoute: typeof AuthAppAcademicTimetablesRouteImport
-      parentRoute: typeof AuthAppAcademicRoute
-    }
-    '/_auth/app/academic/subjects': {
-      id: '/_auth/app/academic/subjects'
-      path: '/subjects'
-      fullPath: '/app/academic/subjects'
-      preLoaderRoute: typeof AuthAppAcademicSubjectsRouteImport
-      parentRoute: typeof AuthAppAcademicRoute
-    }
-    '/_auth/app/academic/report-cards': {
-      id: '/_auth/app/academic/report-cards'
+    '/_auth/grades/report-cards': {
+      id: '/_auth/grades/report-cards'
       path: '/report-cards'
-      fullPath: '/app/academic/report-cards'
-      preLoaderRoute: typeof AuthAppAcademicReportCardsRouteImport
-      parentRoute: typeof AuthAppAcademicRoute
+      fullPath: '/grades/report-cards'
+      preLoaderRoute: typeof AuthGradesReportCardsRouteImport
+      parentRoute: typeof AuthGradesRoute
     }
-    '/_auth/app/academic/curriculum-progress': {
-      id: '/_auth/app/academic/curriculum-progress'
-      path: '/curriculum-progress'
-      fullPath: '/app/academic/curriculum-progress'
-      preLoaderRoute: typeof AuthAppAcademicCurriculumProgressRouteImport
-      parentRoute: typeof AuthAppAcademicRoute
+    '/_auth/grades/entry': {
+      id: '/_auth/grades/entry'
+      path: '/entry'
+      fullPath: '/grades/entry'
+      preLoaderRoute: typeof AuthGradesEntryRouteImport
+      parentRoute: typeof AuthGradesRoute
     }
-    '/_auth/app/academic/coefficients': {
-      id: '/_auth/app/academic/coefficients'
-      path: '/coefficients'
-      fullPath: '/app/academic/coefficients'
-      preLoaderRoute: typeof AuthAppAcademicCoefficientsRouteImport
-      parentRoute: typeof AuthAppAcademicRoute
+    '/_auth/conducts/settings': {
+      id: '/_auth/conducts/settings'
+      path: '/settings'
+      fullPath: '/conducts/settings'
+      preLoaderRoute: typeof AuthConductsSettingsRouteImport
+      parentRoute: typeof AuthConductsRoute
     }
-    '/_auth/app/academic/assignments': {
-      id: '/_auth/app/academic/assignments'
-      path: '/assignments'
-      fullPath: '/app/academic/assignments'
-      preLoaderRoute: typeof AuthAppAcademicAssignmentsRouteImport
-      parentRoute: typeof AuthAppAcademicRoute
+    '/_auth/classes/assignments': {
+      id: '/_auth/classes/assignments'
+      path: '/classes/assignments'
+      fullPath: '/classes/assignments'
+      preLoaderRoute: typeof AuthClassesAssignmentsRouteImport
+      parentRoute: typeof AuthRoute
     }
-    '/_auth/app/students/$studentId/': {
-      id: '/_auth/app/students/$studentId/'
-      path: '/$studentId'
-      fullPath: '/app/students/$studentId'
-      preLoaderRoute: typeof AuthAppStudentsStudentIdIndexRouteImport
-      parentRoute: typeof AuthAppStudentsRoute
+    '/_auth/accounting/student-fees': {
+      id: '/_auth/accounting/student-fees'
+      path: '/student-fees'
+      fullPath: '/accounting/student-fees'
+      preLoaderRoute: typeof AuthAccountingStudentFeesRouteImport
+      parentRoute: typeof AuthAccountingRoute
     }
-    '/_auth/app/spaces/classrooms/': {
-      id: '/_auth/app/spaces/classrooms/'
-      path: '/classrooms'
-      fullPath: '/app/spaces/classrooms'
-      preLoaderRoute: typeof AuthAppSpacesClassroomsIndexRouteImport
-      parentRoute: typeof AuthAppSpacesRoute
+    '/_auth/accounting/refunds': {
+      id: '/_auth/accounting/refunds'
+      path: '/refunds'
+      fullPath: '/accounting/refunds'
+      preLoaderRoute: typeof AuthAccountingRefundsRouteImport
+      parentRoute: typeof AuthAccountingRoute
     }
-    '/_auth/app/school-life/teacher-attendance/': {
-      id: '/_auth/app/school-life/teacher-attendance/'
-      path: '/teacher-attendance'
-      fullPath: '/app/school-life/teacher-attendance'
-      preLoaderRoute: typeof AuthAppSchoolLifeTeacherAttendanceIndexRouteImport
-      parentRoute: typeof AuthAppSchoolLifeRoute
+    '/_auth/accounting/payments': {
+      id: '/_auth/accounting/payments'
+      path: '/payments'
+      fullPath: '/accounting/payments'
+      preLoaderRoute: typeof AuthAccountingPaymentsRouteImport
+      parentRoute: typeof AuthAccountingRoute
     }
-    '/_auth/app/school-life/student-attendance/': {
-      id: '/_auth/app/school-life/student-attendance/'
-      path: '/student-attendance'
-      fullPath: '/app/school-life/student-attendance'
-      preLoaderRoute: typeof AuthAppSchoolLifeStudentAttendanceIndexRouteImport
-      parentRoute: typeof AuthAppSchoolLifeRoute
+    '/_auth/accounting/payment-plans': {
+      id: '/_auth/accounting/payment-plans'
+      path: '/payment-plans'
+      fullPath: '/accounting/payment-plans'
+      preLoaderRoute: typeof AuthAccountingPaymentPlansRouteImport
+      parentRoute: typeof AuthAccountingRoute
     }
-    '/_auth/app/school-life/conduct/': {
-      id: '/_auth/app/school-life/conduct/'
-      path: '/conduct'
-      fullPath: '/app/school-life/conduct'
-      preLoaderRoute: typeof AuthAppSchoolLifeConductIndexRouteImport
-      parentRoute: typeof AuthAppSchoolLifeRoute
+    '/_auth/accounting/fee-types': {
+      id: '/_auth/accounting/fee-types'
+      path: '/fee-types'
+      fullPath: '/accounting/fee-types'
+      preLoaderRoute: typeof AuthAccountingFeeTypesRouteImport
+      parentRoute: typeof AuthAccountingRoute
     }
-    '/_auth/app/school-life/alerts/': {
-      id: '/_auth/app/school-life/alerts/'
-      path: '/alerts'
-      fullPath: '/app/school-life/alerts'
-      preLoaderRoute: typeof AuthAppSchoolLifeAlertsIndexRouteImport
-      parentRoute: typeof AuthAppSchoolLifeRoute
+    '/_auth/accounting/fee-structures': {
+      id: '/_auth/accounting/fee-structures'
+      path: '/fee-structures'
+      fullPath: '/accounting/fee-structures'
+      preLoaderRoute: typeof AuthAccountingFeeStructuresRouteImport
+      parentRoute: typeof AuthAccountingRoute
     }
-    '/_auth/app/hr/users/': {
-      id: '/_auth/app/hr/users/'
+    '/_auth/accounting/discounts': {
+      id: '/_auth/accounting/discounts'
+      path: '/discounts'
+      fullPath: '/accounting/discounts'
+      preLoaderRoute: typeof AuthAccountingDiscountsRouteImport
+      parentRoute: typeof AuthAccountingRoute
+    }
+    '/_auth/accounting/dashboard': {
+      id: '/_auth/accounting/dashboard'
+      path: '/dashboard'
+      fullPath: '/accounting/dashboard'
+      preLoaderRoute: typeof AuthAccountingDashboardRouteImport
+      parentRoute: typeof AuthAccountingRoute
+    }
+    '/_auth/accounting/accounts': {
+      id: '/_auth/accounting/accounts'
+      path: '/accounts'
+      fullPath: '/accounting/accounts'
+      preLoaderRoute: typeof AuthAccountingAccountsRouteImport
+      parentRoute: typeof AuthAccountingRoute
+    }
+    '/_auth/users/users/': {
+      id: '/_auth/users/users/'
       path: '/users'
-      fullPath: '/app/hr/users'
-      preLoaderRoute: typeof AuthAppHrUsersIndexRouteImport
-      parentRoute: typeof AuthAppHrRoute
+      fullPath: '/users/users'
+      preLoaderRoute: typeof AuthUsersUsersIndexRouteImport
+      parentRoute: typeof AuthUsersRoute
     }
-    '/_auth/app/hr/teachers/': {
-      id: '/_auth/app/hr/teachers/'
+    '/_auth/users/teachers/': {
+      id: '/_auth/users/teachers/'
       path: '/teachers'
-      fullPath: '/app/hr/teachers'
-      preLoaderRoute: typeof AuthAppHrTeachersIndexRouteImport
-      parentRoute: typeof AuthAppHrRoute
+      fullPath: '/users/teachers'
+      preLoaderRoute: typeof AuthUsersTeachersIndexRouteImport
+      parentRoute: typeof AuthUsersRoute
     }
-    '/_auth/app/hr/staff/': {
-      id: '/_auth/app/hr/staff/'
+    '/_auth/users/staff/': {
+      id: '/_auth/users/staff/'
       path: '/staff'
-      fullPath: '/app/hr/staff'
-      preLoaderRoute: typeof AuthAppHrStaffIndexRouteImport
-      parentRoute: typeof AuthAppHrRoute
+      fullPath: '/users/staff'
+      preLoaderRoute: typeof AuthUsersStaffIndexRouteImport
+      parentRoute: typeof AuthUsersRoute
     }
-    '/_auth/app/hr/roles/': {
-      id: '/_auth/app/hr/roles/'
+    '/_auth/users/roles/': {
+      id: '/_auth/users/roles/'
       path: '/roles'
-      fullPath: '/app/hr/roles'
-      preLoaderRoute: typeof AuthAppHrRolesIndexRouteImport
-      parentRoute: typeof AuthAppHrRoute
+      fullPath: '/users/roles'
+      preLoaderRoute: typeof AuthUsersRolesIndexRouteImport
+      parentRoute: typeof AuthUsersRoute
     }
-    '/_auth/app/academic/grades/': {
-      id: '/_auth/app/academic/grades/'
-      path: '/grades'
-      fullPath: '/app/academic/grades'
-      preLoaderRoute: typeof AuthAppAcademicGradesIndexRouteImport
-      parentRoute: typeof AuthAppAcademicRoute
+    '/_auth/students/$studentId/': {
+      id: '/_auth/students/$studentId/'
+      path: '/$studentId'
+      fullPath: '/students/$studentId'
+      preLoaderRoute: typeof AuthStudentsStudentIdIndexRouteImport
+      parentRoute: typeof AuthStudentsRoute
     }
-    '/_auth/app/academic/classes/': {
-      id: '/_auth/app/academic/classes/'
-      path: '/classes'
-      fullPath: '/app/academic/classes'
-      preLoaderRoute: typeof AuthAppAcademicClassesIndexRouteImport
-      parentRoute: typeof AuthAppAcademicRoute
+    '/_auth/spaces/classrooms/': {
+      id: '/_auth/spaces/classrooms/'
+      path: '/classrooms'
+      fullPath: '/spaces/classrooms'
+      preLoaderRoute: typeof AuthSpacesClassroomsIndexRouteImport
+      parentRoute: typeof AuthSpacesRoute
     }
-    '/_auth/app/students/$studentId/edit': {
-      id: '/_auth/app/students/$studentId/edit'
-      path: '/$studentId/edit'
-      fullPath: '/app/students/$studentId/edit'
-      preLoaderRoute: typeof AuthAppStudentsStudentIdEditRouteImport
-      parentRoute: typeof AuthAppStudentsRoute
+    '/_auth/conducts/teacher-attendance/': {
+      id: '/_auth/conducts/teacher-attendance/'
+      path: '/teacher-attendance'
+      fullPath: '/conducts/teacher-attendance'
+      preLoaderRoute: typeof AuthConductsTeacherAttendanceIndexRouteImport
+      parentRoute: typeof AuthConductsRoute
     }
-    '/_auth/app/school-life/teacher-attendance/reports': {
-      id: '/_auth/app/school-life/teacher-attendance/reports'
-      path: '/teacher-attendance/reports'
-      fullPath: '/app/school-life/teacher-attendance/reports'
-      preLoaderRoute: typeof AuthAppSchoolLifeTeacherAttendanceReportsRouteImport
-      parentRoute: typeof AuthAppSchoolLifeRoute
+    '/_auth/conducts/student-attendance/': {
+      id: '/_auth/conducts/student-attendance/'
+      path: '/student-attendance'
+      fullPath: '/conducts/student-attendance'
+      preLoaderRoute: typeof AuthConductsStudentAttendanceIndexRouteImport
+      parentRoute: typeof AuthConductsRoute
     }
-    '/_auth/app/school-life/student-attendance/statistics': {
-      id: '/_auth/app/school-life/student-attendance/statistics'
-      path: '/student-attendance/statistics'
-      fullPath: '/app/school-life/student-attendance/statistics'
-      preLoaderRoute: typeof AuthAppSchoolLifeStudentAttendanceStatisticsRouteImport
-      parentRoute: typeof AuthAppSchoolLifeRoute
+    '/_auth/conducts/conduct/': {
+      id: '/_auth/conducts/conduct/'
+      path: '/conduct'
+      fullPath: '/conducts/conduct'
+      preLoaderRoute: typeof AuthConductsConductIndexRouteImport
+      parentRoute: typeof AuthConductsRoute
     }
-    '/_auth/app/school-life/student-attendance/history': {
-      id: '/_auth/app/school-life/student-attendance/history'
-      path: '/student-attendance/history'
-      fullPath: '/app/school-life/student-attendance/history'
-      preLoaderRoute: typeof AuthAppSchoolLifeStudentAttendanceHistoryRouteImport
-      parentRoute: typeof AuthAppSchoolLifeRoute
+    '/_auth/conducts/alerts/': {
+      id: '/_auth/conducts/alerts/'
+      path: '/alerts'
+      fullPath: '/conducts/alerts'
+      preLoaderRoute: typeof AuthConductsAlertsIndexRouteImport
+      parentRoute: typeof AuthConductsRoute
     }
-    '/_auth/app/school-life/conduct/reports': {
-      id: '/_auth/app/school-life/conduct/reports'
-      path: '/conduct/reports'
-      fullPath: '/app/school-life/conduct/reports'
-      preLoaderRoute: typeof AuthAppSchoolLifeConductReportsRouteImport
-      parentRoute: typeof AuthAppSchoolLifeRoute
-    }
-    '/_auth/app/school-life/conduct/new': {
-      id: '/_auth/app/school-life/conduct/new'
-      path: '/conduct/new'
-      fullPath: '/app/school-life/conduct/new'
-      preLoaderRoute: typeof AuthAppSchoolLifeConductNewRouteImport
-      parentRoute: typeof AuthAppSchoolLifeRoute
-    }
-    '/_auth/app/school-life/conduct/$recordId': {
-      id: '/_auth/app/school-life/conduct/$recordId'
-      path: '/conduct/$recordId'
-      fullPath: '/app/school-life/conduct/$recordId'
-      preLoaderRoute: typeof AuthAppSchoolLifeConductRecordIdRouteImport
-      parentRoute: typeof AuthAppSchoolLifeRoute
-    }
-    '/_auth/app/hr/users/new': {
-      id: '/_auth/app/hr/users/new'
-      path: '/users/new'
-      fullPath: '/app/hr/users/new'
-      preLoaderRoute: typeof AuthAppHrUsersNewRouteImport
-      parentRoute: typeof AuthAppHrRoute
-    }
-    '/_auth/app/hr/users/import': {
-      id: '/_auth/app/hr/users/import'
-      path: '/users/import'
-      fullPath: '/app/hr/users/import'
-      preLoaderRoute: typeof AuthAppHrUsersImportRouteImport
-      parentRoute: typeof AuthAppHrRoute
-    }
-    '/_auth/app/hr/teachers/new': {
-      id: '/_auth/app/hr/teachers/new'
-      path: '/teachers/new'
-      fullPath: '/app/hr/teachers/new'
-      preLoaderRoute: typeof AuthAppHrTeachersNewRouteImport
-      parentRoute: typeof AuthAppHrRoute
-    }
-    '/_auth/app/hr/staff/new': {
-      id: '/_auth/app/hr/staff/new'
-      path: '/staff/new'
-      fullPath: '/app/hr/staff/new'
-      preLoaderRoute: typeof AuthAppHrStaffNewRouteImport
-      parentRoute: typeof AuthAppHrRoute
-    }
-    '/_auth/app/hr/roles/new': {
-      id: '/_auth/app/hr/roles/new'
-      path: '/roles/new'
-      fullPath: '/app/hr/roles/new'
-      preLoaderRoute: typeof AuthAppHrRolesNewRouteImport
-      parentRoute: typeof AuthAppHrRoute
-    }
-    '/_auth/app/academic/grades/validations': {
-      id: '/_auth/app/academic/grades/validations'
-      path: '/grades/validations'
-      fullPath: '/app/academic/grades/validations'
-      preLoaderRoute: typeof AuthAppAcademicGradesValidationsRouteImport
-      parentRoute: typeof AuthAppAcademicRoute
-    }
-    '/_auth/app/academic/grades/statistics': {
-      id: '/_auth/app/academic/grades/statistics'
-      path: '/grades/statistics'
-      fullPath: '/app/academic/grades/statistics'
-      preLoaderRoute: typeof AuthAppAcademicGradesStatisticsRouteImport
-      parentRoute: typeof AuthAppAcademicRoute
-    }
-    '/_auth/app/academic/grades/entry': {
-      id: '/_auth/app/academic/grades/entry'
-      path: '/grades/entry'
-      fullPath: '/app/academic/grades/entry'
-      preLoaderRoute: typeof AuthAppAcademicGradesEntryRouteImport
-      parentRoute: typeof AuthAppAcademicRoute
-    }
-    '/_auth/app/spaces/classrooms/$classroomId/': {
-      id: '/_auth/app/spaces/classrooms/$classroomId/'
-      path: '/classrooms/$classroomId'
-      fullPath: '/app/spaces/classrooms/$classroomId'
-      preLoaderRoute: typeof AuthAppSpacesClassroomsClassroomIdIndexRouteImport
-      parentRoute: typeof AuthAppSpacesRoute
-    }
-    '/_auth/app/hr/users/$userId/': {
-      id: '/_auth/app/hr/users/$userId/'
-      path: '/users/$userId'
-      fullPath: '/app/hr/users/$userId'
-      preLoaderRoute: typeof AuthAppHrUsersUserIdIndexRouteImport
-      parentRoute: typeof AuthAppHrRoute
-    }
-    '/_auth/app/hr/teachers/$teacherId/': {
-      id: '/_auth/app/hr/teachers/$teacherId/'
-      path: '/teachers/$teacherId'
-      fullPath: '/app/hr/teachers/$teacherId'
-      preLoaderRoute: typeof AuthAppHrTeachersTeacherIdIndexRouteImport
-      parentRoute: typeof AuthAppHrRoute
-    }
-    '/_auth/app/hr/staff/$staffId/': {
-      id: '/_auth/app/hr/staff/$staffId/'
-      path: '/staff/$staffId'
-      fullPath: '/app/hr/staff/$staffId'
-      preLoaderRoute: typeof AuthAppHrStaffStaffIdIndexRouteImport
-      parentRoute: typeof AuthAppHrRoute
-    }
-    '/_auth/app/hr/roles/$roleId/': {
-      id: '/_auth/app/hr/roles/$roleId/'
-      path: '/roles/$roleId'
-      fullPath: '/app/hr/roles/$roleId'
-      preLoaderRoute: typeof AuthAppHrRolesRoleIdIndexRouteImport
-      parentRoute: typeof AuthAppHrRoute
-    }
-    '/_auth/app/academic/classes/$classId/': {
-      id: '/_auth/app/academic/classes/$classId/'
+    '/_auth/classes/$classId/': {
+      id: '/_auth/classes/$classId/'
       path: '/classes/$classId'
-      fullPath: '/app/academic/classes/$classId'
-      preLoaderRoute: typeof AuthAppAcademicClassesClassIdIndexRouteImport
-      parentRoute: typeof AuthAppAcademicRoute
+      fullPath: '/classes/$classId'
+      preLoaderRoute: typeof AuthClassesClassIdIndexRouteImport
+      parentRoute: typeof AuthRoute
     }
-    '/_auth/app/spaces/classrooms/$classroomId/edit': {
-      id: '/_auth/app/spaces/classrooms/$classroomId/edit'
-      path: '/classrooms/$classroomId/edit'
-      fullPath: '/app/spaces/classrooms/$classroomId/edit'
-      preLoaderRoute: typeof AuthAppSpacesClassroomsClassroomIdEditRouteImport
-      parentRoute: typeof AuthAppSpacesRoute
+    '/_auth/users/users/new': {
+      id: '/_auth/users/users/new'
+      path: '/users/new'
+      fullPath: '/users/users/new'
+      preLoaderRoute: typeof AuthUsersUsersNewRouteImport
+      parentRoute: typeof AuthUsersRoute
     }
-    '/_auth/app/hr/users/$userId/edit': {
-      id: '/_auth/app/hr/users/$userId/edit'
-      path: '/users/$userId/edit'
-      fullPath: '/app/hr/users/$userId/edit'
-      preLoaderRoute: typeof AuthAppHrUsersUserIdEditRouteImport
-      parentRoute: typeof AuthAppHrRoute
+    '/_auth/users/users/import': {
+      id: '/_auth/users/users/import'
+      path: '/users/import'
+      fullPath: '/users/users/import'
+      preLoaderRoute: typeof AuthUsersUsersImportRouteImport
+      parentRoute: typeof AuthUsersRoute
     }
-    '/_auth/app/hr/teachers/$teacherId/edit': {
-      id: '/_auth/app/hr/teachers/$teacherId/edit'
-      path: '/teachers/$teacherId/edit'
-      fullPath: '/app/hr/teachers/$teacherId/edit'
-      preLoaderRoute: typeof AuthAppHrTeachersTeacherIdEditRouteImport
-      parentRoute: typeof AuthAppHrRoute
+    '/_auth/users/teachers/new': {
+      id: '/_auth/users/teachers/new'
+      path: '/teachers/new'
+      fullPath: '/users/teachers/new'
+      preLoaderRoute: typeof AuthUsersTeachersNewRouteImport
+      parentRoute: typeof AuthUsersRoute
     }
-    '/_auth/app/hr/staff/$staffId/edit': {
-      id: '/_auth/app/hr/staff/$staffId/edit'
-      path: '/staff/$staffId/edit'
-      fullPath: '/app/hr/staff/$staffId/edit'
-      preLoaderRoute: typeof AuthAppHrStaffStaffIdEditRouteImport
-      parentRoute: typeof AuthAppHrRoute
+    '/_auth/users/staff/new': {
+      id: '/_auth/users/staff/new'
+      path: '/staff/new'
+      fullPath: '/users/staff/new'
+      preLoaderRoute: typeof AuthUsersStaffNewRouteImport
+      parentRoute: typeof AuthUsersRoute
     }
-    '/_auth/app/hr/roles/$roleId/edit': {
-      id: '/_auth/app/hr/roles/$roleId/edit'
-      path: '/roles/$roleId/edit'
-      fullPath: '/app/hr/roles/$roleId/edit'
-      preLoaderRoute: typeof AuthAppHrRolesRoleIdEditRouteImport
-      parentRoute: typeof AuthAppHrRoute
+    '/_auth/users/roles/new': {
+      id: '/_auth/users/roles/new'
+      path: '/roles/new'
+      fullPath: '/users/roles/new'
+      preLoaderRoute: typeof AuthUsersRolesNewRouteImport
+      parentRoute: typeof AuthUsersRoute
     }
-    '/_auth/app/academic/classes/$classId/edit': {
-      id: '/_auth/app/academic/classes/$classId/edit'
+    '/_auth/students/$studentId/edit': {
+      id: '/_auth/students/$studentId/edit'
+      path: '/$studentId/edit'
+      fullPath: '/students/$studentId/edit'
+      preLoaderRoute: typeof AuthStudentsStudentIdEditRouteImport
+      parentRoute: typeof AuthStudentsRoute
+    }
+    '/_auth/conducts/teacher-attendance/reports': {
+      id: '/_auth/conducts/teacher-attendance/reports'
+      path: '/teacher-attendance/reports'
+      fullPath: '/conducts/teacher-attendance/reports'
+      preLoaderRoute: typeof AuthConductsTeacherAttendanceReportsRouteImport
+      parentRoute: typeof AuthConductsRoute
+    }
+    '/_auth/conducts/student-attendance/statistics': {
+      id: '/_auth/conducts/student-attendance/statistics'
+      path: '/student-attendance/statistics'
+      fullPath: '/conducts/student-attendance/statistics'
+      preLoaderRoute: typeof AuthConductsStudentAttendanceStatisticsRouteImport
+      parentRoute: typeof AuthConductsRoute
+    }
+    '/_auth/conducts/student-attendance/history': {
+      id: '/_auth/conducts/student-attendance/history'
+      path: '/student-attendance/history'
+      fullPath: '/conducts/student-attendance/history'
+      preLoaderRoute: typeof AuthConductsStudentAttendanceHistoryRouteImport
+      parentRoute: typeof AuthConductsRoute
+    }
+    '/_auth/conducts/conduct/reports': {
+      id: '/_auth/conducts/conduct/reports'
+      path: '/conduct/reports'
+      fullPath: '/conducts/conduct/reports'
+      preLoaderRoute: typeof AuthConductsConductReportsRouteImport
+      parentRoute: typeof AuthConductsRoute
+    }
+    '/_auth/conducts/conduct/new': {
+      id: '/_auth/conducts/conduct/new'
+      path: '/conduct/new'
+      fullPath: '/conducts/conduct/new'
+      preLoaderRoute: typeof AuthConductsConductNewRouteImport
+      parentRoute: typeof AuthConductsRoute
+    }
+    '/_auth/conducts/conduct/$recordId': {
+      id: '/_auth/conducts/conduct/$recordId'
+      path: '/conduct/$recordId'
+      fullPath: '/conducts/conduct/$recordId'
+      preLoaderRoute: typeof AuthConductsConductRecordIdRouteImport
+      parentRoute: typeof AuthConductsRoute
+    }
+    '/_auth/classes/$classId/edit': {
+      id: '/_auth/classes/$classId/edit'
       path: '/classes/$classId/edit'
-      fullPath: '/app/academic/classes/$classId/edit'
-      preLoaderRoute: typeof AuthAppAcademicClassesClassIdEditRouteImport
-      parentRoute: typeof AuthAppAcademicRoute
+      fullPath: '/classes/$classId/edit'
+      preLoaderRoute: typeof AuthClassesClassIdEditRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/users/users/$userId/': {
+      id: '/_auth/users/users/$userId/'
+      path: '/users/$userId'
+      fullPath: '/users/users/$userId'
+      preLoaderRoute: typeof AuthUsersUsersUserIdIndexRouteImport
+      parentRoute: typeof AuthUsersRoute
+    }
+    '/_auth/users/teachers/$teacherId/': {
+      id: '/_auth/users/teachers/$teacherId/'
+      path: '/teachers/$teacherId'
+      fullPath: '/users/teachers/$teacherId'
+      preLoaderRoute: typeof AuthUsersTeachersTeacherIdIndexRouteImport
+      parentRoute: typeof AuthUsersRoute
+    }
+    '/_auth/users/staff/$staffId/': {
+      id: '/_auth/users/staff/$staffId/'
+      path: '/staff/$staffId'
+      fullPath: '/users/staff/$staffId'
+      preLoaderRoute: typeof AuthUsersStaffStaffIdIndexRouteImport
+      parentRoute: typeof AuthUsersRoute
+    }
+    '/_auth/users/roles/$roleId/': {
+      id: '/_auth/users/roles/$roleId/'
+      path: '/roles/$roleId'
+      fullPath: '/users/roles/$roleId'
+      preLoaderRoute: typeof AuthUsersRolesRoleIdIndexRouteImport
+      parentRoute: typeof AuthUsersRoute
+    }
+    '/_auth/spaces/classrooms/$classroomId/': {
+      id: '/_auth/spaces/classrooms/$classroomId/'
+      path: '/classrooms/$classroomId'
+      fullPath: '/spaces/classrooms/$classroomId'
+      preLoaderRoute: typeof AuthSpacesClassroomsClassroomIdIndexRouteImport
+      parentRoute: typeof AuthSpacesRoute
+    }
+    '/_auth/users/users/$userId/edit': {
+      id: '/_auth/users/users/$userId/edit'
+      path: '/users/$userId/edit'
+      fullPath: '/users/users/$userId/edit'
+      preLoaderRoute: typeof AuthUsersUsersUserIdEditRouteImport
+      parentRoute: typeof AuthUsersRoute
+    }
+    '/_auth/users/teachers/$teacherId/edit': {
+      id: '/_auth/users/teachers/$teacherId/edit'
+      path: '/teachers/$teacherId/edit'
+      fullPath: '/users/teachers/$teacherId/edit'
+      preLoaderRoute: typeof AuthUsersTeachersTeacherIdEditRouteImport
+      parentRoute: typeof AuthUsersRoute
+    }
+    '/_auth/users/staff/$staffId/edit': {
+      id: '/_auth/users/staff/$staffId/edit'
+      path: '/staff/$staffId/edit'
+      fullPath: '/users/staff/$staffId/edit'
+      preLoaderRoute: typeof AuthUsersStaffStaffIdEditRouteImport
+      parentRoute: typeof AuthUsersRoute
+    }
+    '/_auth/users/roles/$roleId/edit': {
+      id: '/_auth/users/roles/$roleId/edit'
+      path: '/roles/$roleId/edit'
+      fullPath: '/users/roles/$roleId/edit'
+      preLoaderRoute: typeof AuthUsersRolesRoleIdEditRouteImport
+      parentRoute: typeof AuthUsersRoute
+    }
+    '/_auth/spaces/classrooms/$classroomId/edit': {
+      id: '/_auth/spaces/classrooms/$classroomId/edit'
+      path: '/classrooms/$classroomId/edit'
+      fullPath: '/spaces/classrooms/$classroomId/edit'
+      preLoaderRoute: typeof AuthSpacesClassroomsClassroomIdEditRouteImport
+      parentRoute: typeof AuthSpacesRoute
     }
   }
 }
 
-interface AuthAppAcademicRouteChildren {
-  AuthAppAcademicAssignmentsRoute: typeof AuthAppAcademicAssignmentsRoute
-  AuthAppAcademicCoefficientsRoute: typeof AuthAppAcademicCoefficientsRoute
-  AuthAppAcademicCurriculumProgressRoute: typeof AuthAppAcademicCurriculumProgressRoute
-  AuthAppAcademicReportCardsRoute: typeof AuthAppAcademicReportCardsRoute
-  AuthAppAcademicSubjectsRoute: typeof AuthAppAcademicSubjectsRoute
-  AuthAppAcademicTimetablesRoute: typeof AuthAppAcademicTimetablesRoute
-  AuthAppAcademicIndexRoute: typeof AuthAppAcademicIndexRoute
-  AuthAppAcademicGradesEntryRoute: typeof AuthAppAcademicGradesEntryRoute
-  AuthAppAcademicGradesStatisticsRoute: typeof AuthAppAcademicGradesStatisticsRoute
-  AuthAppAcademicGradesValidationsRoute: typeof AuthAppAcademicGradesValidationsRoute
-  AuthAppAcademicClassesIndexRoute: typeof AuthAppAcademicClassesIndexRoute
-  AuthAppAcademicGradesIndexRoute: typeof AuthAppAcademicGradesIndexRoute
-  AuthAppAcademicClassesClassIdEditRoute: typeof AuthAppAcademicClassesClassIdEditRoute
-  AuthAppAcademicClassesClassIdIndexRoute: typeof AuthAppAcademicClassesClassIdIndexRoute
+interface AuthAccountingRouteChildren {
+  AuthAccountingAccountsRoute: typeof AuthAccountingAccountsRoute
+  AuthAccountingDashboardRoute: typeof AuthAccountingDashboardRoute
+  AuthAccountingDiscountsRoute: typeof AuthAccountingDiscountsRoute
+  AuthAccountingFeeStructuresRoute: typeof AuthAccountingFeeStructuresRoute
+  AuthAccountingFeeTypesRoute: typeof AuthAccountingFeeTypesRoute
+  AuthAccountingPaymentPlansRoute: typeof AuthAccountingPaymentPlansRoute
+  AuthAccountingPaymentsRoute: typeof AuthAccountingPaymentsRoute
+  AuthAccountingRefundsRoute: typeof AuthAccountingRefundsRoute
+  AuthAccountingStudentFeesRoute: typeof AuthAccountingStudentFeesRoute
+  AuthAccountingIndexRoute: typeof AuthAccountingIndexRoute
 }
 
-const AuthAppAcademicRouteChildren: AuthAppAcademicRouteChildren = {
-  AuthAppAcademicAssignmentsRoute: AuthAppAcademicAssignmentsRoute,
-  AuthAppAcademicCoefficientsRoute: AuthAppAcademicCoefficientsRoute,
-  AuthAppAcademicCurriculumProgressRoute:
-    AuthAppAcademicCurriculumProgressRoute,
-  AuthAppAcademicReportCardsRoute: AuthAppAcademicReportCardsRoute,
-  AuthAppAcademicSubjectsRoute: AuthAppAcademicSubjectsRoute,
-  AuthAppAcademicTimetablesRoute: AuthAppAcademicTimetablesRoute,
-  AuthAppAcademicIndexRoute: AuthAppAcademicIndexRoute,
-  AuthAppAcademicGradesEntryRoute: AuthAppAcademicGradesEntryRoute,
-  AuthAppAcademicGradesStatisticsRoute: AuthAppAcademicGradesStatisticsRoute,
-  AuthAppAcademicGradesValidationsRoute: AuthAppAcademicGradesValidationsRoute,
-  AuthAppAcademicClassesIndexRoute: AuthAppAcademicClassesIndexRoute,
-  AuthAppAcademicGradesIndexRoute: AuthAppAcademicGradesIndexRoute,
-  AuthAppAcademicClassesClassIdEditRoute:
-    AuthAppAcademicClassesClassIdEditRoute,
-  AuthAppAcademicClassesClassIdIndexRoute:
-    AuthAppAcademicClassesClassIdIndexRoute,
+const AuthAccountingRouteChildren: AuthAccountingRouteChildren = {
+  AuthAccountingAccountsRoute: AuthAccountingAccountsRoute,
+  AuthAccountingDashboardRoute: AuthAccountingDashboardRoute,
+  AuthAccountingDiscountsRoute: AuthAccountingDiscountsRoute,
+  AuthAccountingFeeStructuresRoute: AuthAccountingFeeStructuresRoute,
+  AuthAccountingFeeTypesRoute: AuthAccountingFeeTypesRoute,
+  AuthAccountingPaymentPlansRoute: AuthAccountingPaymentPlansRoute,
+  AuthAccountingPaymentsRoute: AuthAccountingPaymentsRoute,
+  AuthAccountingRefundsRoute: AuthAccountingRefundsRoute,
+  AuthAccountingStudentFeesRoute: AuthAccountingStudentFeesRoute,
+  AuthAccountingIndexRoute: AuthAccountingIndexRoute,
 }
 
-const AuthAppAcademicRouteWithChildren = AuthAppAcademicRoute._addFileChildren(
-  AuthAppAcademicRouteChildren,
+const AuthAccountingRouteWithChildren = AuthAccountingRoute._addFileChildren(
+  AuthAccountingRouteChildren,
 )
 
-interface AuthAppFinanceRouteChildren {
-  AuthAppFinanceAccountsRoute: typeof AuthAppFinanceAccountsRoute
-  AuthAppFinanceDashboardRoute: typeof AuthAppFinanceDashboardRoute
-  AuthAppFinanceDiscountsRoute: typeof AuthAppFinanceDiscountsRoute
-  AuthAppFinanceFeeStructuresRoute: typeof AuthAppFinanceFeeStructuresRoute
-  AuthAppFinanceFeeTypesRoute: typeof AuthAppFinanceFeeTypesRoute
-  AuthAppFinancePaymentPlansRoute: typeof AuthAppFinancePaymentPlansRoute
-  AuthAppFinancePaymentsRoute: typeof AuthAppFinancePaymentsRoute
-  AuthAppFinanceRefundsRoute: typeof AuthAppFinanceRefundsRoute
-  AuthAppFinanceStudentFeesRoute: typeof AuthAppFinanceStudentFeesRoute
-  AuthAppFinanceIndexRoute: typeof AuthAppFinanceIndexRoute
+interface AuthConductsRouteChildren {
+  AuthConductsSettingsRoute: typeof AuthConductsSettingsRoute
+  AuthConductsIndexRoute: typeof AuthConductsIndexRoute
+  AuthConductsConductRecordIdRoute: typeof AuthConductsConductRecordIdRoute
+  AuthConductsConductNewRoute: typeof AuthConductsConductNewRoute
+  AuthConductsConductReportsRoute: typeof AuthConductsConductReportsRoute
+  AuthConductsStudentAttendanceHistoryRoute: typeof AuthConductsStudentAttendanceHistoryRoute
+  AuthConductsStudentAttendanceStatisticsRoute: typeof AuthConductsStudentAttendanceStatisticsRoute
+  AuthConductsTeacherAttendanceReportsRoute: typeof AuthConductsTeacherAttendanceReportsRoute
+  AuthConductsAlertsIndexRoute: typeof AuthConductsAlertsIndexRoute
+  AuthConductsConductIndexRoute: typeof AuthConductsConductIndexRoute
+  AuthConductsStudentAttendanceIndexRoute: typeof AuthConductsStudentAttendanceIndexRoute
+  AuthConductsTeacherAttendanceIndexRoute: typeof AuthConductsTeacherAttendanceIndexRoute
 }
 
-const AuthAppFinanceRouteChildren: AuthAppFinanceRouteChildren = {
-  AuthAppFinanceAccountsRoute: AuthAppFinanceAccountsRoute,
-  AuthAppFinanceDashboardRoute: AuthAppFinanceDashboardRoute,
-  AuthAppFinanceDiscountsRoute: AuthAppFinanceDiscountsRoute,
-  AuthAppFinanceFeeStructuresRoute: AuthAppFinanceFeeStructuresRoute,
-  AuthAppFinanceFeeTypesRoute: AuthAppFinanceFeeTypesRoute,
-  AuthAppFinancePaymentPlansRoute: AuthAppFinancePaymentPlansRoute,
-  AuthAppFinancePaymentsRoute: AuthAppFinancePaymentsRoute,
-  AuthAppFinanceRefundsRoute: AuthAppFinanceRefundsRoute,
-  AuthAppFinanceStudentFeesRoute: AuthAppFinanceStudentFeesRoute,
-  AuthAppFinanceIndexRoute: AuthAppFinanceIndexRoute,
+const AuthConductsRouteChildren: AuthConductsRouteChildren = {
+  AuthConductsSettingsRoute: AuthConductsSettingsRoute,
+  AuthConductsIndexRoute: AuthConductsIndexRoute,
+  AuthConductsConductRecordIdRoute: AuthConductsConductRecordIdRoute,
+  AuthConductsConductNewRoute: AuthConductsConductNewRoute,
+  AuthConductsConductReportsRoute: AuthConductsConductReportsRoute,
+  AuthConductsStudentAttendanceHistoryRoute:
+    AuthConductsStudentAttendanceHistoryRoute,
+  AuthConductsStudentAttendanceStatisticsRoute:
+    AuthConductsStudentAttendanceStatisticsRoute,
+  AuthConductsTeacherAttendanceReportsRoute:
+    AuthConductsTeacherAttendanceReportsRoute,
+  AuthConductsAlertsIndexRoute: AuthConductsAlertsIndexRoute,
+  AuthConductsConductIndexRoute: AuthConductsConductIndexRoute,
+  AuthConductsStudentAttendanceIndexRoute:
+    AuthConductsStudentAttendanceIndexRoute,
+  AuthConductsTeacherAttendanceIndexRoute:
+    AuthConductsTeacherAttendanceIndexRoute,
 }
 
-const AuthAppFinanceRouteWithChildren = AuthAppFinanceRoute._addFileChildren(
-  AuthAppFinanceRouteChildren,
+const AuthConductsRouteWithChildren = AuthConductsRoute._addFileChildren(
+  AuthConductsRouteChildren,
 )
 
-interface AuthAppHrRouteChildren {
-  AuthAppHrIndexRoute: typeof AuthAppHrIndexRoute
-  AuthAppHrRolesNewRoute: typeof AuthAppHrRolesNewRoute
-  AuthAppHrStaffNewRoute: typeof AuthAppHrStaffNewRoute
-  AuthAppHrTeachersNewRoute: typeof AuthAppHrTeachersNewRoute
-  AuthAppHrUsersImportRoute: typeof AuthAppHrUsersImportRoute
-  AuthAppHrUsersNewRoute: typeof AuthAppHrUsersNewRoute
-  AuthAppHrRolesIndexRoute: typeof AuthAppHrRolesIndexRoute
-  AuthAppHrStaffIndexRoute: typeof AuthAppHrStaffIndexRoute
-  AuthAppHrTeachersIndexRoute: typeof AuthAppHrTeachersIndexRoute
-  AuthAppHrUsersIndexRoute: typeof AuthAppHrUsersIndexRoute
-  AuthAppHrRolesRoleIdEditRoute: typeof AuthAppHrRolesRoleIdEditRoute
-  AuthAppHrStaffStaffIdEditRoute: typeof AuthAppHrStaffStaffIdEditRoute
-  AuthAppHrTeachersTeacherIdEditRoute: typeof AuthAppHrTeachersTeacherIdEditRoute
-  AuthAppHrUsersUserIdEditRoute: typeof AuthAppHrUsersUserIdEditRoute
-  AuthAppHrRolesRoleIdIndexRoute: typeof AuthAppHrRolesRoleIdIndexRoute
-  AuthAppHrStaffStaffIdIndexRoute: typeof AuthAppHrStaffStaffIdIndexRoute
-  AuthAppHrTeachersTeacherIdIndexRoute: typeof AuthAppHrTeachersTeacherIdIndexRoute
-  AuthAppHrUsersUserIdIndexRoute: typeof AuthAppHrUsersUserIdIndexRoute
+interface AuthGradesRouteChildren {
+  AuthGradesEntryRoute: typeof AuthGradesEntryRoute
+  AuthGradesReportCardsRoute: typeof AuthGradesReportCardsRoute
+  AuthGradesStatisticsRoute: typeof AuthGradesStatisticsRoute
+  AuthGradesValidationsRoute: typeof AuthGradesValidationsRoute
+  AuthGradesIndexRoute: typeof AuthGradesIndexRoute
 }
 
-const AuthAppHrRouteChildren: AuthAppHrRouteChildren = {
-  AuthAppHrIndexRoute: AuthAppHrIndexRoute,
-  AuthAppHrRolesNewRoute: AuthAppHrRolesNewRoute,
-  AuthAppHrStaffNewRoute: AuthAppHrStaffNewRoute,
-  AuthAppHrTeachersNewRoute: AuthAppHrTeachersNewRoute,
-  AuthAppHrUsersImportRoute: AuthAppHrUsersImportRoute,
-  AuthAppHrUsersNewRoute: AuthAppHrUsersNewRoute,
-  AuthAppHrRolesIndexRoute: AuthAppHrRolesIndexRoute,
-  AuthAppHrStaffIndexRoute: AuthAppHrStaffIndexRoute,
-  AuthAppHrTeachersIndexRoute: AuthAppHrTeachersIndexRoute,
-  AuthAppHrUsersIndexRoute: AuthAppHrUsersIndexRoute,
-  AuthAppHrRolesRoleIdEditRoute: AuthAppHrRolesRoleIdEditRoute,
-  AuthAppHrStaffStaffIdEditRoute: AuthAppHrStaffStaffIdEditRoute,
-  AuthAppHrTeachersTeacherIdEditRoute: AuthAppHrTeachersTeacherIdEditRoute,
-  AuthAppHrUsersUserIdEditRoute: AuthAppHrUsersUserIdEditRoute,
-  AuthAppHrRolesRoleIdIndexRoute: AuthAppHrRolesRoleIdIndexRoute,
-  AuthAppHrStaffStaffIdIndexRoute: AuthAppHrStaffStaffIdIndexRoute,
-  AuthAppHrTeachersTeacherIdIndexRoute: AuthAppHrTeachersTeacherIdIndexRoute,
-  AuthAppHrUsersUserIdIndexRoute: AuthAppHrUsersUserIdIndexRoute,
+const AuthGradesRouteChildren: AuthGradesRouteChildren = {
+  AuthGradesEntryRoute: AuthGradesEntryRoute,
+  AuthGradesReportCardsRoute: AuthGradesReportCardsRoute,
+  AuthGradesStatisticsRoute: AuthGradesStatisticsRoute,
+  AuthGradesValidationsRoute: AuthGradesValidationsRoute,
+  AuthGradesIndexRoute: AuthGradesIndexRoute,
 }
 
-const AuthAppHrRouteWithChildren = AuthAppHrRoute._addFileChildren(
-  AuthAppHrRouteChildren,
+const AuthGradesRouteWithChildren = AuthGradesRoute._addFileChildren(
+  AuthGradesRouteChildren,
 )
 
-interface AuthAppSchoolLifeRouteChildren {
-  AuthAppSchoolLifeSettingsRoute: typeof AuthAppSchoolLifeSettingsRoute
-  AuthAppSchoolLifeIndexRoute: typeof AuthAppSchoolLifeIndexRoute
-  AuthAppSchoolLifeConductRecordIdRoute: typeof AuthAppSchoolLifeConductRecordIdRoute
-  AuthAppSchoolLifeConductNewRoute: typeof AuthAppSchoolLifeConductNewRoute
-  AuthAppSchoolLifeConductReportsRoute: typeof AuthAppSchoolLifeConductReportsRoute
-  AuthAppSchoolLifeStudentAttendanceHistoryRoute: typeof AuthAppSchoolLifeStudentAttendanceHistoryRoute
-  AuthAppSchoolLifeStudentAttendanceStatisticsRoute: typeof AuthAppSchoolLifeStudentAttendanceStatisticsRoute
-  AuthAppSchoolLifeTeacherAttendanceReportsRoute: typeof AuthAppSchoolLifeTeacherAttendanceReportsRoute
-  AuthAppSchoolLifeAlertsIndexRoute: typeof AuthAppSchoolLifeAlertsIndexRoute
-  AuthAppSchoolLifeConductIndexRoute: typeof AuthAppSchoolLifeConductIndexRoute
-  AuthAppSchoolLifeStudentAttendanceIndexRoute: typeof AuthAppSchoolLifeStudentAttendanceIndexRoute
-  AuthAppSchoolLifeTeacherAttendanceIndexRoute: typeof AuthAppSchoolLifeTeacherAttendanceIndexRoute
+interface AuthSettingsRouteChildren {
+  AuthSettingsNotificationsRoute: typeof AuthSettingsNotificationsRoute
+  AuthSettingsProfileRoute: typeof AuthSettingsProfileRoute
+  AuthSettingsSchoolYearsRoute: typeof AuthSettingsSchoolYearsRoute
+  AuthSettingsIndexRoute: typeof AuthSettingsIndexRoute
 }
 
-const AuthAppSchoolLifeRouteChildren: AuthAppSchoolLifeRouteChildren = {
-  AuthAppSchoolLifeSettingsRoute: AuthAppSchoolLifeSettingsRoute,
-  AuthAppSchoolLifeIndexRoute: AuthAppSchoolLifeIndexRoute,
-  AuthAppSchoolLifeConductRecordIdRoute: AuthAppSchoolLifeConductRecordIdRoute,
-  AuthAppSchoolLifeConductNewRoute: AuthAppSchoolLifeConductNewRoute,
-  AuthAppSchoolLifeConductReportsRoute: AuthAppSchoolLifeConductReportsRoute,
-  AuthAppSchoolLifeStudentAttendanceHistoryRoute:
-    AuthAppSchoolLifeStudentAttendanceHistoryRoute,
-  AuthAppSchoolLifeStudentAttendanceStatisticsRoute:
-    AuthAppSchoolLifeStudentAttendanceStatisticsRoute,
-  AuthAppSchoolLifeTeacherAttendanceReportsRoute:
-    AuthAppSchoolLifeTeacherAttendanceReportsRoute,
-  AuthAppSchoolLifeAlertsIndexRoute: AuthAppSchoolLifeAlertsIndexRoute,
-  AuthAppSchoolLifeConductIndexRoute: AuthAppSchoolLifeConductIndexRoute,
-  AuthAppSchoolLifeStudentAttendanceIndexRoute:
-    AuthAppSchoolLifeStudentAttendanceIndexRoute,
-  AuthAppSchoolLifeTeacherAttendanceIndexRoute:
-    AuthAppSchoolLifeTeacherAttendanceIndexRoute,
+const AuthSettingsRouteChildren: AuthSettingsRouteChildren = {
+  AuthSettingsNotificationsRoute: AuthSettingsNotificationsRoute,
+  AuthSettingsProfileRoute: AuthSettingsProfileRoute,
+  AuthSettingsSchoolYearsRoute: AuthSettingsSchoolYearsRoute,
+  AuthSettingsIndexRoute: AuthSettingsIndexRoute,
 }
 
-const AuthAppSchoolLifeRouteWithChildren =
-  AuthAppSchoolLifeRoute._addFileChildren(AuthAppSchoolLifeRouteChildren)
-
-interface AuthAppSettingsRouteChildren {
-  AuthAppSettingsNotificationsRoute: typeof AuthAppSettingsNotificationsRoute
-  AuthAppSettingsProfileRoute: typeof AuthAppSettingsProfileRoute
-  AuthAppSettingsSchoolYearsRoute: typeof AuthAppSettingsSchoolYearsRoute
-  AuthAppSettingsIndexRoute: typeof AuthAppSettingsIndexRoute
-}
-
-const AuthAppSettingsRouteChildren: AuthAppSettingsRouteChildren = {
-  AuthAppSettingsNotificationsRoute: AuthAppSettingsNotificationsRoute,
-  AuthAppSettingsProfileRoute: AuthAppSettingsProfileRoute,
-  AuthAppSettingsSchoolYearsRoute: AuthAppSettingsSchoolYearsRoute,
-  AuthAppSettingsIndexRoute: AuthAppSettingsIndexRoute,
-}
-
-const AuthAppSettingsRouteWithChildren = AuthAppSettingsRoute._addFileChildren(
-  AuthAppSettingsRouteChildren,
+const AuthSettingsRouteWithChildren = AuthSettingsRoute._addFileChildren(
+  AuthSettingsRouteChildren,
 )
 
-interface AuthAppSpacesRouteChildren {
-  AuthAppSpacesAvailabilityRoute: typeof AuthAppSpacesAvailabilityRoute
-  AuthAppSpacesIndexRoute: typeof AuthAppSpacesIndexRoute
-  AuthAppSpacesClassroomsIndexRoute: typeof AuthAppSpacesClassroomsIndexRoute
-  AuthAppSpacesClassroomsClassroomIdEditRoute: typeof AuthAppSpacesClassroomsClassroomIdEditRoute
-  AuthAppSpacesClassroomsClassroomIdIndexRoute: typeof AuthAppSpacesClassroomsClassroomIdIndexRoute
+interface AuthSpacesRouteChildren {
+  AuthSpacesAvailabilityRoute: typeof AuthSpacesAvailabilityRoute
+  AuthSpacesIndexRoute: typeof AuthSpacesIndexRoute
+  AuthSpacesClassroomsIndexRoute: typeof AuthSpacesClassroomsIndexRoute
+  AuthSpacesClassroomsClassroomIdEditRoute: typeof AuthSpacesClassroomsClassroomIdEditRoute
+  AuthSpacesClassroomsClassroomIdIndexRoute: typeof AuthSpacesClassroomsClassroomIdIndexRoute
 }
 
-const AuthAppSpacesRouteChildren: AuthAppSpacesRouteChildren = {
-  AuthAppSpacesAvailabilityRoute: AuthAppSpacesAvailabilityRoute,
-  AuthAppSpacesIndexRoute: AuthAppSpacesIndexRoute,
-  AuthAppSpacesClassroomsIndexRoute: AuthAppSpacesClassroomsIndexRoute,
-  AuthAppSpacesClassroomsClassroomIdEditRoute:
-    AuthAppSpacesClassroomsClassroomIdEditRoute,
-  AuthAppSpacesClassroomsClassroomIdIndexRoute:
-    AuthAppSpacesClassroomsClassroomIdIndexRoute,
+const AuthSpacesRouteChildren: AuthSpacesRouteChildren = {
+  AuthSpacesAvailabilityRoute: AuthSpacesAvailabilityRoute,
+  AuthSpacesIndexRoute: AuthSpacesIndexRoute,
+  AuthSpacesClassroomsIndexRoute: AuthSpacesClassroomsIndexRoute,
+  AuthSpacesClassroomsClassroomIdEditRoute:
+    AuthSpacesClassroomsClassroomIdEditRoute,
+  AuthSpacesClassroomsClassroomIdIndexRoute:
+    AuthSpacesClassroomsClassroomIdIndexRoute,
 }
 
-const AuthAppSpacesRouteWithChildren = AuthAppSpacesRoute._addFileChildren(
-  AuthAppSpacesRouteChildren,
+const AuthSpacesRouteWithChildren = AuthSpacesRoute._addFileChildren(
+  AuthSpacesRouteChildren,
 )
 
-interface AuthAppStudentsRouteChildren {
-  AuthAppStudentsBulkOperationsRoute: typeof AuthAppStudentsBulkOperationsRoute
-  AuthAppStudentsEnrollmentsRoute: typeof AuthAppStudentsEnrollmentsRoute
-  AuthAppStudentsNewRoute: typeof AuthAppStudentsNewRoute
-  AuthAppStudentsParentsRoute: typeof AuthAppStudentsParentsRoute
-  AuthAppStudentsIndexRoute: typeof AuthAppStudentsIndexRoute
-  AuthAppStudentsStudentIdEditRoute: typeof AuthAppStudentsStudentIdEditRoute
-  AuthAppStudentsStudentIdIndexRoute: typeof AuthAppStudentsStudentIdIndexRoute
+interface AuthStudentsRouteChildren {
+  AuthStudentsBulkOperationsRoute: typeof AuthStudentsBulkOperationsRoute
+  AuthStudentsEnrollmentsRoute: typeof AuthStudentsEnrollmentsRoute
+  AuthStudentsNewRoute: typeof AuthStudentsNewRoute
+  AuthStudentsParentsRoute: typeof AuthStudentsParentsRoute
+  AuthStudentsIndexRoute: typeof AuthStudentsIndexRoute
+  AuthStudentsStudentIdEditRoute: typeof AuthStudentsStudentIdEditRoute
+  AuthStudentsStudentIdIndexRoute: typeof AuthStudentsStudentIdIndexRoute
 }
 
-const AuthAppStudentsRouteChildren: AuthAppStudentsRouteChildren = {
-  AuthAppStudentsBulkOperationsRoute: AuthAppStudentsBulkOperationsRoute,
-  AuthAppStudentsEnrollmentsRoute: AuthAppStudentsEnrollmentsRoute,
-  AuthAppStudentsNewRoute: AuthAppStudentsNewRoute,
-  AuthAppStudentsParentsRoute: AuthAppStudentsParentsRoute,
-  AuthAppStudentsIndexRoute: AuthAppStudentsIndexRoute,
-  AuthAppStudentsStudentIdEditRoute: AuthAppStudentsStudentIdEditRoute,
-  AuthAppStudentsStudentIdIndexRoute: AuthAppStudentsStudentIdIndexRoute,
+const AuthStudentsRouteChildren: AuthStudentsRouteChildren = {
+  AuthStudentsBulkOperationsRoute: AuthStudentsBulkOperationsRoute,
+  AuthStudentsEnrollmentsRoute: AuthStudentsEnrollmentsRoute,
+  AuthStudentsNewRoute: AuthStudentsNewRoute,
+  AuthStudentsParentsRoute: AuthStudentsParentsRoute,
+  AuthStudentsIndexRoute: AuthStudentsIndexRoute,
+  AuthStudentsStudentIdEditRoute: AuthStudentsStudentIdEditRoute,
+  AuthStudentsStudentIdIndexRoute: AuthStudentsStudentIdIndexRoute,
 }
 
-const AuthAppStudentsRouteWithChildren = AuthAppStudentsRoute._addFileChildren(
-  AuthAppStudentsRouteChildren,
+const AuthStudentsRouteWithChildren = AuthStudentsRoute._addFileChildren(
+  AuthStudentsRouteChildren,
 )
 
-interface AuthAppRouteChildren {
-  AuthAppAcademicRoute: typeof AuthAppAcademicRouteWithChildren
-  AuthAppDashboardRoute: typeof AuthAppDashboardRoute
-  AuthAppFinanceRoute: typeof AuthAppFinanceRouteWithChildren
-  AuthAppHrRoute: typeof AuthAppHrRouteWithChildren
-  AuthAppSchoolLifeRoute: typeof AuthAppSchoolLifeRouteWithChildren
-  AuthAppSettingsRoute: typeof AuthAppSettingsRouteWithChildren
-  AuthAppSpacesRoute: typeof AuthAppSpacesRouteWithChildren
-  AuthAppStudentsRoute: typeof AuthAppStudentsRouteWithChildren
-  AuthAppIndexRoute: typeof AuthAppIndexRoute
+interface AuthUsersRouteChildren {
+  AuthUsersIndexRoute: typeof AuthUsersIndexRoute
+  AuthUsersRolesNewRoute: typeof AuthUsersRolesNewRoute
+  AuthUsersStaffNewRoute: typeof AuthUsersStaffNewRoute
+  AuthUsersTeachersNewRoute: typeof AuthUsersTeachersNewRoute
+  AuthUsersUsersImportRoute: typeof AuthUsersUsersImportRoute
+  AuthUsersUsersNewRoute: typeof AuthUsersUsersNewRoute
+  AuthUsersRolesIndexRoute: typeof AuthUsersRolesIndexRoute
+  AuthUsersStaffIndexRoute: typeof AuthUsersStaffIndexRoute
+  AuthUsersTeachersIndexRoute: typeof AuthUsersTeachersIndexRoute
+  AuthUsersUsersIndexRoute: typeof AuthUsersUsersIndexRoute
+  AuthUsersRolesRoleIdEditRoute: typeof AuthUsersRolesRoleIdEditRoute
+  AuthUsersStaffStaffIdEditRoute: typeof AuthUsersStaffStaffIdEditRoute
+  AuthUsersTeachersTeacherIdEditRoute: typeof AuthUsersTeachersTeacherIdEditRoute
+  AuthUsersUsersUserIdEditRoute: typeof AuthUsersUsersUserIdEditRoute
+  AuthUsersRolesRoleIdIndexRoute: typeof AuthUsersRolesRoleIdIndexRoute
+  AuthUsersStaffStaffIdIndexRoute: typeof AuthUsersStaffStaffIdIndexRoute
+  AuthUsersTeachersTeacherIdIndexRoute: typeof AuthUsersTeachersTeacherIdIndexRoute
+  AuthUsersUsersUserIdIndexRoute: typeof AuthUsersUsersUserIdIndexRoute
 }
 
-const AuthAppRouteChildren: AuthAppRouteChildren = {
-  AuthAppAcademicRoute: AuthAppAcademicRouteWithChildren,
-  AuthAppDashboardRoute: AuthAppDashboardRoute,
-  AuthAppFinanceRoute: AuthAppFinanceRouteWithChildren,
-  AuthAppHrRoute: AuthAppHrRouteWithChildren,
-  AuthAppSchoolLifeRoute: AuthAppSchoolLifeRouteWithChildren,
-  AuthAppSettingsRoute: AuthAppSettingsRouteWithChildren,
-  AuthAppSpacesRoute: AuthAppSpacesRouteWithChildren,
-  AuthAppStudentsRoute: AuthAppStudentsRouteWithChildren,
-  AuthAppIndexRoute: AuthAppIndexRoute,
+const AuthUsersRouteChildren: AuthUsersRouteChildren = {
+  AuthUsersIndexRoute: AuthUsersIndexRoute,
+  AuthUsersRolesNewRoute: AuthUsersRolesNewRoute,
+  AuthUsersStaffNewRoute: AuthUsersStaffNewRoute,
+  AuthUsersTeachersNewRoute: AuthUsersTeachersNewRoute,
+  AuthUsersUsersImportRoute: AuthUsersUsersImportRoute,
+  AuthUsersUsersNewRoute: AuthUsersUsersNewRoute,
+  AuthUsersRolesIndexRoute: AuthUsersRolesIndexRoute,
+  AuthUsersStaffIndexRoute: AuthUsersStaffIndexRoute,
+  AuthUsersTeachersIndexRoute: AuthUsersTeachersIndexRoute,
+  AuthUsersUsersIndexRoute: AuthUsersUsersIndexRoute,
+  AuthUsersRolesRoleIdEditRoute: AuthUsersRolesRoleIdEditRoute,
+  AuthUsersStaffStaffIdEditRoute: AuthUsersStaffStaffIdEditRoute,
+  AuthUsersTeachersTeacherIdEditRoute: AuthUsersTeachersTeacherIdEditRoute,
+  AuthUsersUsersUserIdEditRoute: AuthUsersUsersUserIdEditRoute,
+  AuthUsersRolesRoleIdIndexRoute: AuthUsersRolesRoleIdIndexRoute,
+  AuthUsersStaffStaffIdIndexRoute: AuthUsersStaffStaffIdIndexRoute,
+  AuthUsersTeachersTeacherIdIndexRoute: AuthUsersTeachersTeacherIdIndexRoute,
+  AuthUsersUsersUserIdIndexRoute: AuthUsersUsersUserIdIndexRoute,
 }
 
-const AuthAppRouteWithChildren =
-  AuthAppRoute._addFileChildren(AuthAppRouteChildren)
+const AuthUsersRouteWithChildren = AuthUsersRoute._addFileChildren(
+  AuthUsersRouteChildren,
+)
 
 interface AuthRouteChildren {
-  AuthAppRoute: typeof AuthAppRouteWithChildren
+  AuthAccountingRoute: typeof AuthAccountingRouteWithChildren
+  AuthConductsRoute: typeof AuthConductsRouteWithChildren
+  AuthDashboardRoute: typeof AuthDashboardRoute
+  AuthGradesRoute: typeof AuthGradesRouteWithChildren
+  AuthSchedulesRoute: typeof AuthSchedulesRoute
+  AuthSettingsRoute: typeof AuthSettingsRouteWithChildren
+  AuthSpacesRoute: typeof AuthSpacesRouteWithChildren
+  AuthStudentsRoute: typeof AuthStudentsRouteWithChildren
+  AuthUsersRoute: typeof AuthUsersRouteWithChildren
+  AuthClassesAssignmentsRoute: typeof AuthClassesAssignmentsRoute
+  AuthProgramsCoefficientsRoute: typeof AuthProgramsCoefficientsRoute
+  AuthProgramsCurriculumProgressRoute: typeof AuthProgramsCurriculumProgressRoute
+  AuthProgramsSubjectsRoute: typeof AuthProgramsSubjectsRoute
+  AuthClassesIndexRoute: typeof AuthClassesIndexRoute
+  AuthClassesClassIdEditRoute: typeof AuthClassesClassIdEditRoute
+  AuthClassesClassIdIndexRoute: typeof AuthClassesClassIdIndexRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
-  AuthAppRoute: AuthAppRouteWithChildren,
+  AuthAccountingRoute: AuthAccountingRouteWithChildren,
+  AuthConductsRoute: AuthConductsRouteWithChildren,
+  AuthDashboardRoute: AuthDashboardRoute,
+  AuthGradesRoute: AuthGradesRouteWithChildren,
+  AuthSchedulesRoute: AuthSchedulesRoute,
+  AuthSettingsRoute: AuthSettingsRouteWithChildren,
+  AuthSpacesRoute: AuthSpacesRouteWithChildren,
+  AuthStudentsRoute: AuthStudentsRouteWithChildren,
+  AuthUsersRoute: AuthUsersRouteWithChildren,
+  AuthClassesAssignmentsRoute: AuthClassesAssignmentsRoute,
+  AuthProgramsCoefficientsRoute: AuthProgramsCoefficientsRoute,
+  AuthProgramsCurriculumProgressRoute: AuthProgramsCurriculumProgressRoute,
+  AuthProgramsSubjectsRoute: AuthProgramsSubjectsRoute,
+  AuthClassesIndexRoute: AuthClassesIndexRoute,
+  AuthClassesClassIdEditRoute: AuthClassesClassIdEditRoute,
+  AuthClassesClassIdIndexRoute: AuthClassesClassIdIndexRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)

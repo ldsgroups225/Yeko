@@ -186,13 +186,13 @@ export function UsersTable({ filters }: UsersTableProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onClick={() => navigate({ to: `/app/hr/users/${row.original.id}` })}
+                onClick={() => navigate({ to: `/users/users/${row.original.id}` })}
               >
                 <Eye className="mr-2 h-4 w-4" />
                 {t('common.view')}
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => navigate({ to: `/app/hr/users/${row.original.id}/edit` })}
+                onClick={() => navigate({ to: `/users/users/${row.original.id}/edit` })}
               >
                 <Edit className="mr-2 h-4 w-4" />
                 {t('common.edit')}
@@ -258,7 +258,7 @@ export function UsersTable({ filters }: UsersTableProps) {
                 <EmptyDescription>{t('hr.users.noUsersDescription')}</EmptyDescription>
               </EmptyHeader>
               <EmptyContent>
-                <Button onClick={() => navigate({ to: '/app/hr/users/new' })}>
+                <Button onClick={() => navigate({ to: '/users/users/new' })}>
                   {t('hr.users.addUser')}
                 </Button>
               </EmptyContent>
@@ -290,9 +290,9 @@ export function UsersTable({ filters }: UsersTableProps) {
                           {header.isPlaceholder
                             ? null
                             : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )}
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
                         </TableHead>
                       ))}
                     </TableRow>
@@ -341,7 +341,7 @@ export function UsersTable({ filters }: UsersTableProps) {
                   size="sm"
                   onClick={() =>
                     navigate({
-                      to: '/app/hr/users',
+                      to: '/users/users',
                       search: { ...filters, page: data.page - 1 },
                     })}
                   disabled={data.page === 1}
@@ -353,7 +353,7 @@ export function UsersTable({ filters }: UsersTableProps) {
                   size="sm"
                   onClick={() =>
                     navigate({
-                      to: '/app/hr/users',
+                      to: '/users/users',
                       search: { ...filters, page: data.page + 1 },
                     })}
                   disabled={data.page === data.totalPages}

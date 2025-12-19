@@ -200,7 +200,7 @@ export function ClassesTable({ filters = DEFAULT_FILTERS }: ClassesTableProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onClick={() => navigate({ to: `/app/academic/classes/${row.original.class.id}` })}
+                onClick={() => navigate({ to: `/classes/${row.original.class.id}` })}
               >
                 <Eye className="mr-2 h-4 w-4" />
                 {t('common.view')}
@@ -293,9 +293,9 @@ export function ClassesTable({ filters = DEFAULT_FILTERS }: ClassesTableProps) {
                           {header.isPlaceholder
                             ? null
                             : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )}
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
                         </TableHead>
                       ))}
                     </TableRow>

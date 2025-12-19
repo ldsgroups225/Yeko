@@ -84,12 +84,12 @@ export function BulkFeeAssignmentCard() {
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <Label>{t('students.bulkOperations.filterByGrade')}</Label>
-          <Select value={selectedGradeId} onValueChange={setSelectedGradeId}>
+          <Select value={selectedGradeId || 'all'} onValueChange={v => setSelectedGradeId(v === 'all' ? '' : v)}>
             <SelectTrigger>
               <SelectValue placeholder={t('common.all')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">{t('common.all')}</SelectItem>
+              <SelectItem value="all">{t('common.all')}</SelectItem>
               {grades.map((g: { id: string, name: string }) => (
                 <SelectItem key={g.id} value={g.id}>
                   {g.name}
@@ -101,12 +101,12 @@ export function BulkFeeAssignmentCard() {
 
         <div className="space-y-2">
           <Label>{t('students.bulkOperations.filterByClass')}</Label>
-          <Select value={selectedClassId} onValueChange={setSelectedClassId}>
+          <Select value={selectedClassId || 'all'} onValueChange={v => setSelectedClassId(v === 'all' ? '' : v)}>
             <SelectTrigger>
               <SelectValue placeholder={t('common.all')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">{t('common.all')}</SelectItem>
+              <SctIelectItem value="all">{t('common.all')}</SctIelectItem>
               {classes
                 ?.filter((c: ClassItem) => !selectedGradeId || c.gradeId === selectedGradeId)
                 .map((c: ClassItem) => (

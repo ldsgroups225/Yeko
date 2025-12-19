@@ -156,14 +156,14 @@ export function StaffTable({ filters }: StaffTableProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onClick={() => navigate({ to: `/app/hr/staff/${row.original.id}` })}
+                onClick={() => navigate({ to: `/users/staff/${row.original.id}` })}
               >
                 <Eye className="mr-2 h-4 w-4" />
                 {t('common.view')}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() =>
-                  navigate({ to: `/app/hr/staff/${row.original.id}/edit` })}
+                  navigate({ to: `/users/staff/${row.original.id}/edit` })}
               >
                 <Edit className="mr-2 h-4 w-4" />
                 {t('common.edit')}
@@ -227,7 +227,7 @@ export function StaffTable({ filters }: StaffTableProps) {
                 <EmptyDescription>{t('hr.staff.noStaffDescription')}</EmptyDescription>
               </EmptyHeader>
               <EmptyContent>
-                <Button onClick={() => navigate({ to: '/app/hr/staff/new' })}>
+                <Button onClick={() => navigate({ to: '/users/staff/new' })}>
                   {t('hr.staff.addStaff')}
                 </Button>
               </EmptyContent>
@@ -259,9 +259,9 @@ export function StaffTable({ filters }: StaffTableProps) {
                           {header.isPlaceholder
                             ? null
                             : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )}
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
                         </TableHead>
                       ))}
                     </TableRow>
@@ -310,7 +310,7 @@ export function StaffTable({ filters }: StaffTableProps) {
                   size="sm"
                   onClick={() =>
                     navigate({
-                      to: '/app/hr/staff',
+                      to: '/users/staff',
                       search: { ...filters, page: data.page - 1 },
                     })}
                   disabled={data.page === 1}
@@ -322,7 +322,7 @@ export function StaffTable({ filters }: StaffTableProps) {
                   size="sm"
                   onClick={() =>
                     navigate({
-                      to: '/app/hr/staff',
+                      to: '/users/staff',
                       search: { ...filters, page: data.page + 1 },
                     })}
                   disabled={data.page === data.totalPages}

@@ -5,6 +5,7 @@ import {
   BookOpen,
   Building2,
   Calendar,
+  ChevronDown,
   ClipboardCheck,
   CreditCard,
   DollarSign,
@@ -42,94 +43,118 @@ interface NavItem {
   title: string
   href: string
   icon: React.ComponentType<{ className?: string }>
+  badge?: string
   children?: NavItem[]
 }
 
-// TODO: This will be role-based navigation
+// Navigation organized into 11 simplified, cognitive-friendly sections
+// Following UX best practices: clear hierarchy, collapsable sections, semantic grouping
 const navigationItems: NavItem[] = [
   {
     title: 'Tableau de bord',
-    href: '/app/dashboard',
+    href: '/dashboard',
     icon: LayoutDashboard,
   },
   {
-    title: 'Ressources Humaines',
-    href: '/app/hr',
+    title: 'Utilisateurs',
+    href: '/users',
     icon: Users,
     children: [
-      { title: 'Utilisateurs', href: '/app/hr/users', icon: Users },
-      { title: 'Enseignants', href: '/app/hr/teachers', icon: GraduationCap },
-      { title: 'Personnel', href: '/app/hr/staff', icon: Users },
-      { title: 'Rôles', href: '/app/hr/roles', icon: Users },
+      { title: 'Personnel', href: '/users/staff', icon: Users },
+      { title: 'Enseignants', href: '/users/teachers', icon: GraduationCap },
+      { title: 'Rôles', href: '/users/roles', icon: UserCheck },
     ],
   },
   {
     title: 'Élèves',
-    href: '/app/students',
+    href: '/students',
     icon: GraduationCap,
     children: [
-      { title: 'Liste des élèves', href: '/app/students', icon: GraduationCap },
-      { title: 'Parents', href: '/app/students/parents', icon: Users },
-      { title: 'Inscriptions', href: '/app/students/enrollments', icon: ClipboardCheck },
-      { title: 'Opérations en masse', href: '/app/students/bulk-operations', icon: FileText },
+      { title: 'Liste', href: '/students', icon: GraduationCap },
+      { title: 'Parents', href: '/students/parents', icon: Users },
+      { title: 'Inscriptions', href: '/students/enrollments', icon: ClipboardCheck },
+      { title: 'Opérations groupées', href: '/students/bulk-operations', icon: FileText },
     ],
   },
   {
-    title: 'Académique',
-    href: '/app/academic',
+    title: 'Classes',
+    href: '/classes',
     icon: BookOpen,
     children: [
-      { title: 'Classes', href: '/app/academic/classes', icon: BookOpen },
-      { title: 'Affectations', href: '/app/academic/assignments', icon: Users },
-      { title: 'Matières', href: '/app/academic/subjects', icon: BookOpen },
-      { title: 'Coefficients', href: '/app/academic/coefficients', icon: ClipboardCheck },
-      { title: 'Notes', href: '/app/academic/grades', icon: ClipboardCheck },
+      { title: 'Liste des classes', href: '/classes', icon: BookOpen },
+      { title: 'Affectations', href: '/classes/assignments', icon: Users },
     ],
   },
   {
-    title: 'Espaces',
-    href: '/app/spaces',
-    icon: Building2,
+    title: 'Notes & Moyennes',
+    href: '/grades',
+    icon: ClipboardCheck,
     children: [
-      { title: 'Salles de classe', href: '/app/spaces/classrooms', icon: Building2 },
-      { title: 'Disponibilité', href: '/app/spaces/availability', icon: ClipboardCheck },
+      { title: 'Saisie des notes', href: '/grades/entry', icon: FileText },
+      { title: 'Statistiques', href: '/grades/statistics', icon: Grid },
+      { title: 'Validations', href: '/grades/validations', icon: ClipboardCheck },
+      { title: 'Bulletins', href: '/grades/report-cards', icon: FileText },
     ],
   },
   {
-    title: 'Vie Scolaire',
-    href: '/app/school-life',
-    icon: UserCheck,
+    title: 'Conduites',
+    href: '/conducts',
+    icon: AlertTriangle,
     children: [
-      { title: 'Tableau de bord', href: '/app/school-life', icon: LayoutDashboard },
-      { title: 'Présence Enseignants', href: '/app/school-life/teacher-attendance', icon: UserCheck },
-      { title: 'Présence Élèves', href: '/app/school-life/student-attendance', icon: Users },
-      { title: 'Conduite', href: '/app/school-life/conduct', icon: AlertTriangle },
-    ],
-  },
-  {
-    title: 'Finance',
-    href: '/app/finance',
-    icon: DollarSign,
-    children: [
-      { title: 'Tableau de bord', href: '/app/finance/dashboard', icon: LayoutDashboard },
-      { title: 'Types de frais', href: '/app/finance/fee-types', icon: FileText },
-      { title: 'Grilles tarifaires', href: '/app/finance/fee-structures', icon: Grid },
-      { title: 'Frais élèves', href: '/app/finance/student-fees', icon: Users },
-      { title: 'Paiements', href: '/app/finance/payments', icon: CreditCard },
-      { title: 'Plans de paiement', href: '/app/finance/payment-plans', icon: Calendar },
-      { title: 'Remises', href: '/app/finance/discounts', icon: Percent },
-      { title: 'Remboursements', href: '/app/finance/refunds', icon: RotateCcw },
-      { title: 'Comptes', href: '/app/finance/accounts', icon: Wallet },
+      { title: 'Présence Élèves', href: '/conducts/student-attendance', icon: UserCheck },
+      { title: 'Présence Enseignants', href: '/conducts/teacher-attendance', icon: UserCheck },
+      { title: 'Conduite', href: '/conducts/conduct', icon: AlertTriangle },
+      { title: 'Alertes', href: '/conducts/alerts', icon: Bell },
     ],
   },
   {
     title: 'Paramètres',
-    href: '/app/settings',
+    href: '/settings',
     icon: Settings,
     children: [
-      { title: 'Profil école', href: '/app/settings/profile', icon: Building2 },
-      { title: 'Années scolaires', href: '/app/settings/school-years', icon: Calendar },
-      { title: 'Notifications', href: '/app/settings/notifications', icon: Bell },
+      { title: 'Profil école', href: '/settings/profile', icon: Building2 },
+      { title: 'Années scolaires', href: '/settings/school-years', icon: Calendar },
+      { title: 'Notifications', href: '/settings/notifications', icon: Bell },
+    ],
+  },
+  {
+    title: 'Comptabilité',
+    href: '/accounting',
+    icon: DollarSign,
+    children: [
+      { title: 'Tableau de bord', href: '/accounting/dashboard', icon: LayoutDashboard },
+      { title: 'Types de frais', href: '/accounting/fee-types', icon: FileText },
+      { title: 'Grilles tarifaires', href: '/accounting/fee-structures', icon: Grid },
+      { title: 'Frais élèves', href: '/accounting/student-fees', icon: Users },
+      { title: 'Paiements', href: '/accounting/payments', icon: CreditCard },
+      { title: 'Plans de paiement', href: '/accounting/payment-plans', icon: Calendar },
+      { title: 'Remises', href: '/accounting/discounts', icon: Percent },
+      { title: 'Remboursements', href: '/accounting/refunds', icon: RotateCcw },
+      { title: 'Comptes', href: '/accounting/accounts', icon: Wallet },
+    ],
+  },
+  {
+    title: 'Emplois du temps',
+    href: '/schedules',
+    icon: Calendar,
+  },
+  {
+    title: 'Programmes',
+    href: '/programs',
+    icon: BookOpen,
+    children: [
+      { title: 'Matières', href: '/programs/subjects', icon: BookOpen },
+      { title: 'Coefficients', href: '/programs/coefficients', icon: Percent },
+      { title: 'Progression', href: '/programs/curriculum-progress', icon: Grid },
+    ],
+  },
+  {
+    title: 'Espaces',
+    href: '/spaces',
+    icon: Building2,
+    children: [
+      { title: 'Salles de classe', href: '/spaces/classrooms', icon: Building2 },
+      { title: 'Disponibilité', href: '/spaces/availability', icon: Calendar },
     ],
   },
 ]
@@ -159,20 +184,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarMenuItem key={item.href}>
                   {item.children
                     ? (
-                        <SidebarMenuSubItemWrapper item={item} pathname={pathname} />
-                      )
+                      <SidebarMenuSubItemWrapper item={item} pathname={pathname} />
+                    )
                     : (
-                        <SidebarMenuButton
-                          asChild
-                          isActive={pathname === item.href}
-                          tooltip={item.title}
-                        >
-                          <Link to={item.href}>
-                            <item.icon />
-                            <span>{item.title}</span>
-                          </Link>
-                        </SidebarMenuButton>
-                      )}
+                      <SidebarMenuButton
+                        asChild
+                        isActive={pathname === item.href}
+                        tooltip={item.title}
+                      >
+                        <Link to={item.href}>
+                          <item.icon />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    )}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -186,24 +211,43 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 }
 
 function SidebarMenuSubItemWrapper({ item, pathname }: { item: NavItem, pathname: string }) {
+  const [isOpen, setIsOpen] = React.useState(false)
+
+  // Auto-expand if any child is active
+  const hasActiveChild = item.children?.some(child => pathname.startsWith(child.href))
+
+  React.useEffect(() => {
+    if (hasActiveChild) {
+      setIsOpen(true)
+    }
+  }, [hasActiveChild])
+
   return (
     <>
-      <SidebarMenuButton tooltip={item.title}>
+      <SidebarMenuButton
+        tooltip={item.title}
+        onClick={() => setIsOpen(!isOpen)}
+        isActive={hasActiveChild}
+        className="group/collapsable"
+      >
         <item.icon />
         <span>{item.title}</span>
+        <ChevronDown className={`ml-auto transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
       </SidebarMenuButton>
-      <SidebarMenuSub>
-        {item.children?.map(child => (
-          <SidebarMenuSubItem key={child.href}>
-            <SidebarMenuSubButton asChild isActive={pathname === child.href}>
-              <Link to={child.href}>
-                <child.icon />
-                <span>{child.title}</span>
-              </Link>
-            </SidebarMenuSubButton>
-          </SidebarMenuSubItem>
-        ))}
-      </SidebarMenuSub>
+      {isOpen && (
+        <SidebarMenuSub>
+          {item.children?.map(child => (
+            <SidebarMenuSubItem key={child.href}>
+              <SidebarMenuSubButton asChild isActive={pathname === child.href}>
+                <Link to={child.href}>
+                  <child.icon />
+                  <span>{child.title}</span>
+                </Link>
+              </SidebarMenuSubButton>
+            </SidebarMenuSubItem>
+          ))}
+        </SidebarMenuSub>
+      )}
     </>
   )
 }

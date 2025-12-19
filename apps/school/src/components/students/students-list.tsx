@@ -236,7 +236,7 @@ export function StudentsList() {
             <Download className="mr-2 h-4 w-4" />
             {isExporting ? t('common.exporting') : t('common.export')}
           </Button>
-          <Button size="sm" onClick={() => navigate({ to: '/app/students/new' })}>
+          <Button size="sm" onClick={() => navigate({ to: '/students/new' })}>
             <Plus className="mr-2 h-4 w-4" />
             {t('students.addStudent')}
           </Button>
@@ -247,116 +247,116 @@ export function StudentsList() {
       <div className="space-y-3 md:hidden">
         {isLoading
           ? (
-              Array.from({ length: 5 }, () => (
-                <div key={`card-skeleton-${generateUUID()}`} className="rounded-lg border p-4">
-                  <div className="flex items-center gap-3">
-                    <Skeleton className="h-12 w-12 rounded-full" />
-                    <div className="flex-1 space-y-2">
-                      <Skeleton className="h-4 w-32" />
-                      <Skeleton className="h-3 w-24" />
-                    </div>
-                    <Skeleton className="h-8 w-8" />
+            Array.from({ length: 5 }, () => (
+              <div key={`card-skeleton-${generateUUID()}`} className="rounded-lg border p-4">
+                <div className="flex items-center gap-3">
+                  <Skeleton className="h-12 w-12 rounded-full" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-3 w-24" />
                   </div>
+                  <Skeleton className="h-8 w-8" />
                 </div>
-              ))
-            )
+              </div>
+            ))
+          )
           : data?.data.length === 0
             ? (
-                <div className="flex min-h-[300px] flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
-                  <Users className="mx-auto h-12 w-12 text-muted-foreground" />
-                  <h3 className="mt-4 text-lg font-semibold">{t('students.noStudents')}</h3>
-                  <p className="mt-2 max-w-sm text-sm text-muted-foreground">{t('students.noStudentsDescription')}</p>
-                  <Button onClick={() => navigate({ to: '/app/students/new' })} className="mt-6">
-                    <Plus className="mr-2 h-4 w-4" />
-                    {t('students.addStudent')}
-                  </Button>
-                </div>
-              )
+              <div className="flex min-h-[300px] flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
+                <Users className="mx-auto h-12 w-12 text-muted-foreground" />
+                <h3 className="mt-4 text-lg font-semibold">{t('students.noStudents')}</h3>
+                <p className="mt-2 max-w-sm text-sm text-muted-foreground">{t('students.noStudentsDescription')}</p>
+                <Button onClick={() => navigate({ to: '/students/new' })} className="mt-6">
+                  <Plus className="mr-2 h-4 w-4" />
+                  {t('students.addStudent')}
+                </Button>
+              </div>
+            )
             : (
-                <AnimatePresence>
-                  {data?.data.map((item: any, index: number) => (
-                    <motion.div
-                      key={item.student.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ delay: index * 0.02 }}
-                      className="rounded-lg border p-4"
-                    >
-                      <div className="flex items-start justify-between">
-                        <Link
-                          to="/app/students/$studentId"
-                          params={{ studentId: item.student.id }}
-                          className="flex items-center gap-3"
-                        >
-                          <Avatar className="h-12 w-12">
-                            <AvatarImage src={item.student.photoUrl || undefined} />
-                            <AvatarFallback>
-                              {item.student.firstName[0]}
-                              {item.student.lastName[0]}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="font-medium">
-                              {item.student.lastName}
-                              {' '}
-                              {item.student.firstName}
-                            </p>
-                            <p className="font-mono text-sm text-muted-foreground">{item.student.matricule}</p>
-                          </div>
-                        </Link>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem asChild>
-                              <Link to="/app/students/$studentId" params={{ studentId: item.student.id }}>
-                                <Eye className="mr-2 h-4 w-4" />
-                                {t('common.view')}
-                              </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
-                              <Link to="/app/students/$studentId/edit" params={{ studentId: item.student.id }}>
-                                <Edit className="mr-2 h-4 w-4" />
-                                {t('common.edit')}
-                              </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleStatusChange(item)}>
-                              <Edit className="mr-2 h-4 w-4" />
-                              {t('students.changeStatus')}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => handleDelete(item)}
-                              className="text-destructive"
-                            >
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              {t('common.delete')}
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                      <div className="mt-3 flex flex-wrap items-center gap-2">
-                        <Badge className={statusColors[item.student.status as keyof typeof statusColors]}>
-                          {t(`students.status${item.student.status.charAt(0).toUpperCase() + item.student.status.slice(1)}`)}
-                        </Badge>
-                        {item.currentClass?.gradeName && item.currentClass?.section && (
-                          <Badge variant="outline">
-                            {item.currentClass.gradeName}
+              <AnimatePresence>
+                {data?.data.map((item: any, index: number) => (
+                  <motion.div
+                    key={item.student.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ delay: index * 0.02 }}
+                    className="rounded-lg border p-4"
+                  >
+                    <div className="flex items-start justify-between">
+                      <Link
+                        to="/students/$studentId"
+                        params={{ studentId: item.student.id }}
+                        className="flex items-center gap-3"
+                      >
+                        <Avatar className="h-12 w-12">
+                          <AvatarImage src={item.student.photoUrl || undefined} />
+                          <AvatarFallback>
+                            {item.student.firstName[0]}
+                            {item.student.lastName[0]}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="font-medium">
+                            {item.student.lastName}
                             {' '}
-                            {item.currentClass.section}
-                          </Badge>
-                        )}
-                        <span className="text-sm text-muted-foreground">
-                          {item.student.gender === 'M' ? t('students.male') : item.student.gender === 'F' ? t('students.female') : ''}
-                        </span>
-                      </div>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              )}
+                            {item.student.firstName}
+                          </p>
+                          <p className="font-mono text-sm text-muted-foreground">{item.student.matricule}</p>
+                        </div>
+                      </Link>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem asChild>
+                            <Link to="/students/$studentId" params={{ studentId: item.student.id }}>
+                              <Eye className="mr-2 h-4 w-4" />
+                              {t('common.view')}
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Link to="/students/$studentId/edit" params={{ studentId: item.student.id }}>
+                              <Edit className="mr-2 h-4 w-4" />
+                              {t('common.edit')}
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleStatusChange(item)}>
+                            <Edit className="mr-2 h-4 w-4" />
+                            {t('students.changeStatus')}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => handleDelete(item)}
+                            className="text-destructive"
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            {t('common.delete')}
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
+                      <Badge className={statusColors[item.student.status as keyof typeof statusColors]}>
+                        {t(`students.status${item.student.status.charAt(0).toUpperCase() + item.student.status.slice(1)}`)}
+                      </Badge>
+                      {item.currentClass?.gradeName && item.currentClass?.section && (
+                        <Badge variant="outline">
+                          {item.currentClass.gradeName}
+                          {' '}
+                          {item.currentClass.section}
+                        </Badge>
+                      )}
+                      <span className="text-sm text-muted-foreground">
+                        {item.student.gender === 'M' ? t('students.male') : item.student.gender === 'F' ? t('students.female') : ''}
+                      </span>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            )}
       </div>
 
       {/* Desktop Table View */}
@@ -376,144 +376,144 @@ export function StudentsList() {
           <TableBody>
             {isLoading
               ? (
-                  Array.from({ length: 10 }, () => (
-                    <TableRow key={`table-skeleton-${generateUUID()}`}>
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <Skeleton className="h-10 w-10 rounded-full" />
-                          <div className="space-y-1">
-                            <Skeleton className="h-4 w-32" />
-                            <Skeleton className="h-3 w-24" />
-                          </div>
+                Array.from({ length: 10 }, () => (
+                  <TableRow key={`table-skeleton-${generateUUID()}`}>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <Skeleton className="h-10 w-10 rounded-full" />
+                        <div className="space-y-1">
+                          <Skeleton className="h-4 w-32" />
+                          <Skeleton className="h-3 w-24" />
                         </div>
-                      </TableCell>
-                      <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                      <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                      <TableCell><Skeleton className="h-4 w-12" /></TableCell>
-                      <TableCell><Skeleton className="h-6 w-16 rounded-full" /></TableCell>
-                      <TableCell><Skeleton className="h-4 w-8" /></TableCell>
-                      <TableCell><Skeleton className="h-8 w-8" /></TableCell>
-                    </TableRow>
-                  ))
-                )
+                      </div>
+                    </TableCell>
+                    <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-12" /></TableCell>
+                    <TableCell><Skeleton className="h-6 w-16 rounded-full" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-8" /></TableCell>
+                    <TableCell><Skeleton className="h-8 w-8" /></TableCell>
+                  </TableRow>
+                ))
+              )
               : data?.data.length === 0
                 ? (
-                    <TableRow>
-                      <TableCell colSpan={7}>
-                        <div className="flex min-h-[300px] flex-col items-center justify-center p-8 text-center">
-                          <Users className="mx-auto h-12 w-12 text-muted-foreground" />
-                          <h3 className="mt-4 text-lg font-semibold">{t('students.noStudents')}</h3>
-                          <p className="mt-2 max-w-sm text-sm text-muted-foreground">{t('students.noStudentsDescription')}</p>
-                          <Button onClick={() => navigate({ to: '/app/students/new' })} className="mt-6">
-                            <Plus className="mr-2 h-4 w-4" />
-                            {t('students.addStudent')}
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  )
+                  <TableRow>
+                    <TableCell colSpan={7}>
+                      <div className="flex min-h-[300px] flex-col items-center justify-center p-8 text-center">
+                        <Users className="mx-auto h-12 w-12 text-muted-foreground" />
+                        <h3 className="mt-4 text-lg font-semibold">{t('students.noStudents')}</h3>
+                        <p className="mt-2 max-w-sm text-sm text-muted-foreground">{t('students.noStudentsDescription')}</p>
+                        <Button onClick={() => navigate({ to: '/students/new' })} className="mt-6">
+                          <Plus className="mr-2 h-4 w-4" />
+                          {t('students.addStudent')}
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )
                 : (
-                    <AnimatePresence>
-                      {data?.data.map((item: any, index: number) => (
-                        <motion.tr
-                          key={item.student.id}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -10 }}
-                          transition={{ delay: index * 0.02 }}
-                          className="border-b"
-                        >
-                          <TableCell>
-                            <div className="flex items-center gap-3">
-                              <Avatar>
-                                <AvatarImage src={item.student.photoUrl || undefined} />
-                                <AvatarFallback>
-                                  {item.student.firstName[0]}
-                                  {item.student.lastName[0]}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div>
-                                <Link
-                                  to="/app/students/$studentId"
-                                  params={{ studentId: item.student.id }}
-                                  className="font-medium hover:underline"
-                                >
-                                  {item.student.lastName}
-                                  {' '}
-                                  {item.student.firstName}
-                                </Link>
-                                <p className="text-sm text-muted-foreground">
-                                  {new Date(item.student.dob).toLocaleDateString()}
-                                </p>
-                              </div>
+                  <AnimatePresence>
+                    {data?.data.map((item: any, index: number) => (
+                      <motion.tr
+                        key={item.student.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ delay: index * 0.02 }}
+                        className="border-b"
+                      >
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <Avatar>
+                              <AvatarImage src={item.student.photoUrl || undefined} />
+                              <AvatarFallback>
+                                {item.student.firstName[0]}
+                                {item.student.lastName[0]}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <Link
+                                to="/students/$studentId"
+                                params={{ studentId: item.student.id }}
+                                className="font-medium hover:underline"
+                              >
+                                {item.student.lastName}
+                                {' '}
+                                {item.student.firstName}
+                              </Link>
+                              <p className="text-sm text-muted-foreground">
+                                {new Date(item.student.dob).toLocaleDateString()}
+                              </p>
                             </div>
-                          </TableCell>
-                          <TableCell className="font-mono">{item.student.matricule}</TableCell>
-                          <TableCell>
-                            {item.currentClass?.gradeName && item.currentClass?.section
-                              ? (
-                                  <span>
-                                    {item.currentClass.gradeName}
-                                    {' '}
-                                    {item.currentClass.section}
-                                    {item.currentClass.seriesName && ` (${item.currentClass.seriesName})`}
-                                  </span>
-                                )
-                              : (
-                                  <span className="text-muted-foreground">-</span>
-                                )}
-                          </TableCell>
-                          <TableCell>
-                            {item.student.gender === 'M'
-                              ? t('students.male')
-                              : item.student.gender === 'F'
-                                ? t('students.female')
-                                : '-'}
-                          </TableCell>
-                          <TableCell>
-                            <Badge className={statusColors[item.student.status as keyof typeof statusColors]}>
-                              {t(`students.status${item.student.status.charAt(0).toUpperCase() + item.student.status.slice(1)}`)}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>{item.parentsCount}</TableCell>
-                          <TableCell>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon">
-                                  <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem asChild>
-                                  <Link to="/app/students/$studentId" params={{ studentId: item.student.id }}>
-                                    <Eye className="mr-2 h-4 w-4" />
-                                    {t('common.view')}
-                                  </Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem asChild>
-                                  <Link to="/app/students/$studentId/edit" params={{ studentId: item.student.id }}>
-                                    <Edit className="mr-2 h-4 w-4" />
-                                    {t('common.edit')}
-                                  </Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleStatusChange(item)}>
+                          </div>
+                        </TableCell>
+                        <TableCell className="font-mono">{item.student.matricule}</TableCell>
+                        <TableCell>
+                          {item.currentClass?.gradeName && item.currentClass?.section
+                            ? (
+                              <span>
+                                {item.currentClass.gradeName}
+                                {' '}
+                                {item.currentClass.section}
+                                {item.currentClass.seriesName && ` (${item.currentClass.seriesName})`}
+                              </span>
+                            )
+                            : (
+                              <span className="text-muted-foreground">-</span>
+                            )}
+                        </TableCell>
+                        <TableCell>
+                          {item.student.gender === 'M'
+                            ? t('students.male')
+                            : item.student.gender === 'F'
+                              ? t('students.female')
+                              : '-'}
+                        </TableCell>
+                        <TableCell>
+                          <Badge className={statusColors[item.student.status as keyof typeof statusColors]}>
+                            {t(`students.status${item.student.status.charAt(0).toUpperCase() + item.student.status.slice(1)}`)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{item.parentsCount}</TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem asChild>
+                                <Link to="/students/$studentId" params={{ studentId: item.student.id }}>
+                                  <Eye className="mr-2 h-4 w-4" />
+                                  {t('common.view')}
+                                </Link>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem asChild>
+                                <Link to="/students/$studentId/edit" params={{ studentId: item.student.id }}>
                                   <Edit className="mr-2 h-4 w-4" />
-                                  {t('students.changeStatus')}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  onClick={() => handleDelete(item)}
-                                  className="text-destructive"
-                                >
-                                  <Trash2 className="mr-2 h-4 w-4" />
-                                  {t('common.delete')}
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </TableCell>
-                        </motion.tr>
-                      ))}
-                    </AnimatePresence>
-                  )}
+                                  {t('common.edit')}
+                                </Link>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleStatusChange(item)}>
+                                <Edit className="mr-2 h-4 w-4" />
+                                {t('students.changeStatus')}
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => handleDelete(item)}
+                                className="text-destructive"
+                              >
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                {t('common.delete')}
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </motion.tr>
+                    ))}
+                  </AnimatePresence>
+                )}
           </TableBody>
         </Table>
       </div>

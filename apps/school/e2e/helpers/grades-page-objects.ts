@@ -31,7 +31,7 @@ export class GradesDashboardPage {
   }
 
   async goto() {
-    await this.page.goto('/app/academic/grades')
+    await this.page.goto('/academic/grades')
     await this.page.waitForLoadState('networkidle')
   }
 
@@ -89,7 +89,7 @@ export class GradeEntryPage {
   }
 
   async goto() {
-    await this.page.goto('/app/academic/grades/entry')
+    await this.page.goto('/academic/grades/entry')
     await this.page.waitForLoadState('networkidle')
   }
 
@@ -163,7 +163,7 @@ export class GradeValidationsPage {
   }
 
   async goto() {
-    await this.page.goto('/app/academic/grades/validations')
+    await this.page.goto('/academic/grades/validations')
     await this.page.waitForLoadState('networkidle')
   }
 
@@ -228,7 +228,7 @@ export class GradeStatisticsPage {
   }
 
   async goto() {
-    await this.page.goto('/app/academic/grades/statistics')
+    await this.page.goto('/academic/grades/statistics')
     await this.page.waitForLoadState('networkidle')
   }
 
