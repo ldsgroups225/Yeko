@@ -144,7 +144,7 @@ export function SchoolProfileForm({
               id="email"
               type="email"
               {...form.register('email')}
-              placeholder="contact@ecole.ci"
+              placeholder={t('placeholders.schoolEmail')}
             />
             {form.formState.errors.email && (
               <p className="text-sm text-destructive">

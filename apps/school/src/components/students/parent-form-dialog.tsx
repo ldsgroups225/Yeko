@@ -128,7 +128,7 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
                   <FormItem>
                     <FormLabel>{t('parents.lastName')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Kouadio" {...field} />
+                      <Input placeholder={t('parents.placeholders.lastName')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -141,7 +141,7 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
                   <FormItem>
                     <FormLabel>{t('parents.firstName')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Jean" {...field} />
+                      <Input placeholder={t('parents.placeholders.firstName')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -161,7 +161,7 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
                       *
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="+2250701020304" {...field} />
+                      <Input placeholder={t('parents.placeholders.phone')} {...field} />
                     </FormControl>
                     <FormDescription>
                       {t('parents.phoneDescription')}
@@ -177,7 +177,7 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
                   <FormItem>
                     <FormLabel>{t('parents.phone2')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="+2250701020305" {...field} />
+                      <Input placeholder={t('parents.placeholders.phone')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -192,7 +192,7 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
                 <FormItem>
                   <FormLabel>{t('parents.email')}</FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder="parent@example.com" {...field} />
+                    <Input type="email" placeholder={t('parents.placeholders.email')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -206,7 +206,7 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
                 <FormItem>
                   <FormLabel>{t('parents.address')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Cocody, Abidjan" {...field} />
+                    <Input placeholder={t('parents.placeholders.address')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -221,7 +221,7 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
                   <FormItem>
                     <FormLabel>{t('parents.occupation')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ingénieur" {...field} />
+                      <Input placeholder={t('parents.placeholders.occupation')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -234,7 +234,7 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
                   <FormItem>
                     <FormLabel>{t('parents.workplace')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Orange CI" {...field} />
+                      <Input placeholder={t('parents.placeholders.workplace')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

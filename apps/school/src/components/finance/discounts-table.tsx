@@ -86,8 +86,8 @@ export function DiscountsTable({
         <TableRow>
           <TableHead>{t('finance.discounts.code')}</TableHead>
           <TableHead>{t('common.name')}</TableHead>
-          <TableHead>Type</TableHead>
-          <TableHead>Valeur</TableHead>
+          <TableHead>{t('finance.discounts.type')}</TableHead>
+          <TableHead>{t('finance.discounts.value')}</TableHead>
           <TableHead>{t('common.status')}</TableHead>
           <TableHead className="text-right">{t('common.actions')}</TableHead>
         </TableRow>

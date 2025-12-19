@@ -148,7 +148,7 @@ export function GradeCell({
           getValueColor(value),
           error && 'border-red-500 focus-visible:ring-red-500',
         )}
-        aria-label="Note"
+        aria-label={t('ui.grade')}
         aria-invalid={!!error}
       />
       {error && (

@@ -16,6 +16,7 @@ import {
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { classesOptions } from '@/lib/queries/classes'
 import { bulkAssignFees } from '@/school/functions/bulk-operations'
+import { generateUUID } from '@/utils/generateUUID'
 
 interface ClassItem {
   id: string
@@ -91,7 +92,7 @@ export function BulkFeeAssignmentCard() {
             <SelectContent>
               <SelectItem value="all">{t('common.all')}</SelectItem>
               {grades.map((g: { id: string, name: string }) => (
-                <SelectItem key={g.id} value={g.id}>
+                <SelectItem key={generateUUID()} value={g.id}>
                   {g.name}
                 </SelectItem>
               ))}
@@ -110,7 +111,7 @@ export function BulkFeeAssignmentCard() {
               {classes
                 ?.filter((c: ClassItem) => !selectedGradeId || c.gradeId === selectedGradeId)
                 .map((c: ClassItem) => (
-                  <SelectItem key={c.id} value={c.id}>
+                  <SelectItem key={generateUUID()} value={c.id}>
                     {c.gradeName}
                     {' '}
                     {c.seriesName ?? ''}

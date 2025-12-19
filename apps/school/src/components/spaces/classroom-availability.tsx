@@ -18,11 +18,12 @@ import {
 import { getClassrooms } from '@/school/functions/classrooms'
 
 function StatsCards({ available, occupied, maintenance, inactive }: { available: number, occupied: number, maintenance: number, inactive: number }) {
+  const { t } = useTranslation()
   return (
     <div className="grid gap-4 md:grid-cols-4" role="list" aria-label="Statistiques des salles">
       <Card role="listitem">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">Disponibles</CardTitle>
+          <CardTitle className="text-sm font-medium text-muted-foreground">{t('spaces.classrooms.available')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-2">
@@ -36,7 +37,7 @@ function StatsCards({ available, occupied, maintenance, inactive }: { available:
 
       <Card role="listitem">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">Occupées</CardTitle>
+          <CardTitle className="text-sm font-medium text-muted-foreground">{t('spaces.classrooms.occupied')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-2">
@@ -50,7 +51,7 @@ function StatsCards({ available, occupied, maintenance, inactive }: { available:
 
       <Card role="listitem">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">En maintenance</CardTitle>
+          <CardTitle className="text-sm font-medium text-muted-foreground">{t('spaces.classrooms.maintenance')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-2">
@@ -64,7 +65,7 @@ function StatsCards({ available, occupied, maintenance, inactive }: { available:
 
       <Card role="listitem">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">Inactives</CardTitle>
+          <CardTitle className="text-sm font-medium text-muted-foreground">{t('spaces.classrooms.inactive')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-2">
@@ -81,6 +82,7 @@ function StatsCards({ available, occupied, maintenance, inactive }: { available:
 
 function EmptyState() {
   const { t } = useTranslation()
+
   return (
     <Card>
       <CardContent className="p-8">
@@ -107,6 +109,8 @@ function EmptyState() {
 }
 
 export function ClassroomAvailability() {
+  const { t } = useTranslation()
+
   const { data: classrooms, isLoading } = useQuery({
     queryKey: ['classrooms'],
     queryFn: () => getClassrooms({ data: {} }),
@@ -147,17 +151,17 @@ export function ClassroomAvailability() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Détail des salles</CardTitle>
+          <CardTitle>{t('spaces.classrooms.details')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Salle</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Occupation</TableHead>
-                  <TableHead className="w-[100px] text-right">Statut</TableHead>
+                  <TableHead>{t('spaces.classrooms.classroom')}</TableHead>
+                  <TableHead>{t('spaces.classrooms.type')}</TableHead>
+                  <TableHead>{t('spaces.classrooms.occupation')}</TableHead>
+                  <TableHead className="w-[100px] text-right">{t('common.status')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -182,11 +186,13 @@ export function ClassroomAvailability() {
                           <span className="text-sm text-muted-foreground">
                             {item.assignedClassesCount}
                             {' '}
-                            classe(s) /
+                            {t('spaces.classrooms.classes')}
+                            {' '}
+                            /
                             {' '}
                             {item.classroom.capacity}
                             {' '}
-                            cap.
+                            {t('spaces.classrooms.capacity')}
                           </span>
                         </div>
                       </TableCell>
@@ -194,18 +200,18 @@ export function ClassroomAvailability() {
                         {isAvailable
                           ? (
                             <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                              Disponible
+                              {t('spaces.classrooms.available')}
                             </Badge>
                           )
                           : item.classroom.status !== 'active'
                             ? (
                               <Badge variant="secondary">
-                                {item.classroom.status === 'maintenance' ? 'Maintenance' : 'Inactive'}
+                                {item.classroom.status === 'maintenance' ? t('spaces.classrooms.maintenance') : t('spaces.classrooms.inactive')}
                               </Badge>
                             )
                             : (
                               <Badge variant="default">
-                                Occupé
+                                {t('spaces.classrooms.occupied')}
                               </Badge>
                             )}
                       </TableCell>

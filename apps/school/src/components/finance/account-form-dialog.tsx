@@ -192,7 +192,7 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
                     *
                   </FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Caisse" />
+                    <Input {...field} placeholder={t('finance.accounts.placeholders.name')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -206,7 +206,7 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
                 <FormItem>
                   <FormLabel>{t('common.nameEn')}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Cash" />
+                    <Input {...field} placeholder={t('finance.accounts.placeholders.nameEn')} />
                   </FormControl>
                   <FormDescription>
                     {t('common.optionalEnglishName')}

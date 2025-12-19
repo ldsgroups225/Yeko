@@ -223,12 +223,12 @@ export function PaymentFormDialog({
               name="reference"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Référence</FormLabel>
+                  <FormLabel>{t('finance.payments.reference')}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="N° transaction, chèque..." />
+                    <Input {...field} placeholder={t('finance.payments.referencePlaceholder')} />
                   </FormControl>
                   <FormDescription>
-                    Numéro de transaction ou référence externe
+                    {t('finance.payments.referenceDescription')}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

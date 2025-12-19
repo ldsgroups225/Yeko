@@ -138,7 +138,7 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
                       *
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="SIBLING" />
+                      <Input {...field} placeholder={t('finance.discounts.placeholders.code')} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -186,7 +186,7 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
                     *
                   </FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Réduction fratrie" />
+                    <Input {...field} placeholder={t('finance.discounts.placeholders.name')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -200,7 +200,7 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
                 <FormItem>
                   <FormLabel>{t('common.nameEn')}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Sibling Discount" />
+                    <Input {...field} placeholder={t('finance.discounts.placeholders.nameEn')} />
                   </FormControl>
                   <FormDescription>
                     {t('common.optionalEnglishName')}

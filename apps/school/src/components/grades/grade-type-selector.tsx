@@ -1,4 +1,5 @@
 import type { GradeType } from '@/schemas/grade'
+import { useTranslation } from 'react-i18next'
 import {
   Select,
   SelectContent,
@@ -21,6 +22,8 @@ export function GradeTypeSelector({
   disabled,
   className,
 }: GradeTypeSelectorProps) {
+  const { t } = useTranslation()
+
   return (
     <Select
       value={value}
@@ -28,7 +31,7 @@ export function GradeTypeSelector({
       disabled={disabled}
     >
       <SelectTrigger className={className}>
-        <SelectValue placeholder="Type de note" />
+        <SelectValue placeholder={t('academic.grades.entry.selectGradeType')} />
       </SelectTrigger>
       <SelectContent>
         {gradeTypes.map(type => (

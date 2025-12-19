@@ -137,7 +137,7 @@ export function PaymentsTable({
             </TableCell>
             <TableCell>
               <span className="font-medium">{formatCurrency(payment.amount)}</span>
-              <span className="ml-1 text-sm text-muted-foreground">FCFA</span>
+              <span className="ml-1 text-sm text-muted-foreground">{t('common.currency')}</span>
             </TableCell>
             <TableCell>{getMethodLabel(payment.method)}</TableCell>
             <TableCell>

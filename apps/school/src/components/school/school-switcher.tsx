@@ -1,10 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 import { Building2, ChevronsUpDown } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useSchoolContext } from '@/hooks/use-school-context'
 import { cn } from '@/lib/utils'
 import { getUserSchools } from '@/school/functions/school-context'
 
 export function SchoolSwitcher() {
+  const { t } = useTranslation()
   const { schoolId, isSwitching } = useSchoolContext()
 
   const { data: schools, isLoading } = useQuery({
@@ -18,7 +20,7 @@ export function SchoolSwitcher() {
     return (
       <div className="flex h-10 w-[200px] items-center gap-2 rounded-md border border-input bg-background px-3">
         <Building2 className="h-4 w-4 text-muted-foreground" />
-        <span className="text-sm text-muted-foreground">Chargement...</span>
+        <span className="text-sm text-muted-foreground">{t('common.loading')}</span>
       </div>
     )
   }
@@ -27,7 +29,7 @@ export function SchoolSwitcher() {
     return (
       <div className="flex h-10 w-[200px] items-center gap-2 rounded-md border border-input bg-background px-3">
         <Building2 className="h-4 w-4 text-muted-foreground" />
-        <span className="text-sm text-muted-foreground">Aucune école</span>
+        <span className="text-sm text-muted-foreground">{t('common.noSchool')}</span>
       </div>
     )
   }
@@ -46,7 +48,7 @@ export function SchoolSwitcher() {
       >
         <div className="flex items-center gap-2 overflow-hidden">
           <Building2 className="h-4 w-4 shrink-0 text-muted-foreground" />
-          <span className="truncate">{currentSchool?.name || 'Sélectionner'}</span>
+          <span className="truncate">{currentSchool?.name || t('common.select')}</span>
         </div>
         <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
       </button>

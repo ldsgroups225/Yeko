@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { ChevronRight, Home } from 'lucide-react'
 import { motion } from 'motion/react'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 
 interface BreadcrumbItem {
@@ -13,6 +14,8 @@ interface BreadcrumbsProps {
 }
 
 export function Breadcrumbs({ items }: BreadcrumbsProps) {
+  const { t } = useTranslation()
+
   return (
     <motion.nav
       initial={{ opacity: 0, x: -10 }}
@@ -29,7 +32,7 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
         )}
       >
         <Home className="h-4 w-4" />
-        <span className="sr-only">Accueil</span>
+        <span className="sr-only">{t('common.home')}</span>
       </Link>
 
       {items.map((item, index) => {

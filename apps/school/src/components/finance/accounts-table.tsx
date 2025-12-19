@@ -104,10 +104,10 @@ export function AccountsTable({
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-[120px]">Code</TableHead>
-          <TableHead>Compte</TableHead>
-          <TableHead>Type</TableHead>
-          <TableHead className="text-right">Solde</TableHead>
+          <TableHead className="w-[120px]">{t('finance.accounts.code')}</TableHead>
+          <TableHead>{t('finance.accounts.account')}</TableHead>
+          <TableHead>{t('finance.accounts.type')}</TableHead>
+          <TableHead className="text-right">{t('finance.accounts.balance')}</TableHead>
           <TableHead className="text-right">{t('common.actions')}</TableHead>
         </TableRow>
       </TableHeader>
@@ -137,7 +137,7 @@ export function AccountsTable({
               {!account.isHeader && (
                 <>
                   {formatCurrency(account.balance)}
-                  <span className="ml-1 text-sm text-muted-foreground">FCFA</span>
+                  <span className="ml-1 text-sm text-muted-foreground">{t('common.currency')}</span>
                 </>
               )}
             </TableCell>

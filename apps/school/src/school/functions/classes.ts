@@ -19,7 +19,7 @@ const classSchema = z.object({
 export const getClasses = createServerFn()
   .inputValidator(
     z.object({
-      schoolYearId: z.string().optional(),
+      schoolYearId: z.string().nullish(),
       gradeId: z.string().optional(),
       seriesId: z.string().optional(),
       status: z.string().optional(),
@@ -31,7 +31,15 @@ export const getClasses = createServerFn()
     if (!context)
       throw new Error('No school context')
     await requirePermission('classes', 'view')
-    return await classQueries.getClasses({ ...data, schoolId: context.schoolId })
+
+    // Filter out null values to match ClassFilters type
+    const filters = {
+      ...data,
+      schoolId: context.schoolId,
+      schoolYearId: data.schoolYearId ?? undefined,
+    }
+
+    return await classQueries.getClasses(filters)
   })
 
 export const getClassById = createServerFn()

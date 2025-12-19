@@ -21,6 +21,7 @@ import {
   Wallet,
 } from 'lucide-react'
 import * as React from 'react'
+import { useTranslation } from 'react-i18next'
 
 import {
   Sidebar,
@@ -167,6 +168,7 @@ const navigationItems: NavItem[] = [
 ]
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { t } = useTranslation()
   const pathname = useLocation({ select: location => location.pathname })
 
   return (
@@ -177,15 +179,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <GraduationCap className="size-4" />
           </div>
           <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-semibold">Yeko School</span>
-            <span className="truncate text-xs">Administration</span>
+            <span className="truncate font-semibold">{t('sidebar.schoolName')}</span>
+            <span className="truncate text-xs">{t('sidebar.schoolSubtitle')}</span>
           </div>
         </div>
       </SidebarHeader>
       <SidebarContent>
         {/* CORE DAILY OPERATIONS */}
         <SidebarGroup>
-          <SidebarGroupLabel>Opérations Quotidiennes</SidebarGroupLabel>
+          <SidebarGroupLabel>{t('sidebar.dailyOperations')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {navigationItems.slice(0, 4).map(item => (
@@ -214,7 +216,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
         {/* ACADEMIC OPERATIONS */}
         <SidebarGroup>
-          <SidebarGroupLabel>Opérations Académiques</SidebarGroupLabel>
+          <SidebarGroupLabel>{t('sidebar.academicOperations')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {navigationItems.slice(4, 8).map(item => (
@@ -243,7 +245,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
         {/* ADMINISTRATIVE */}
         <SidebarGroup>
-          <SidebarGroupLabel>Administration</SidebarGroupLabel>
+          <SidebarGroupLabel>{t('sidebar.administration')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {navigationItems.slice(8, 10).map(item => (
@@ -272,7 +274,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
         {/* CONFIGURATION */}
         <SidebarGroup>
-          <SidebarGroupLabel>Configuration</SidebarGroupLabel>
+          <SidebarGroupLabel>{t('sidebar.configuration')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {navigationItems.slice(10).map(item => (

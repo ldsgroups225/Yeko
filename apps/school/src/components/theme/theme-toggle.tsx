@@ -1,4 +1,5 @@
 import { Check, Monitor, Moon, Sun } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -22,6 +23,7 @@ export function ThemeToggle({
   showLabel = false,
   align = 'end',
 }: ThemeToggleProps) {
+  const { t } = useTranslation()
   const { theme, setTheme, resolvedTheme } = useTheme()
 
   const getCurrentIcon = () => {
@@ -88,7 +90,7 @@ export function ThemeToggle({
             focus:ring-2 focus:ring-ring focus:ring-offset-2
             ${showLabel ? 'gap-2' : 'aspect-square'}
           `}
-          aria-label="Toggle theme"
+          aria-label={t('ui.toggleTheme')}
         >
           <div className="relative flex items-center justify-center">
             {getCurrentIcon()}

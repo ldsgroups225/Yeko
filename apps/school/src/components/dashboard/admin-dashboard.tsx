@@ -91,43 +91,43 @@ export function AdminDashboard() {
       {/* Recent Activity & Alerts */}
       <div className="grid gap-4 lg:grid-cols-2">
         <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
-          <h2 className="mb-4 text-lg font-semibold">Activité Récente</h2>
+          <h2 className="mb-4 text-lg font-semibold">{t('dashboard.recentActivity')}</h2>
           <div className="space-y-3">
             <ActivityItem
-              title="Nouvel enseignant ajouté"
+              title={t('dashboard.activity.teacherAdded')}
               description="Marie Kouassi - Mathématiques"
-              time="Il y a 2 heures"
+              time={t('common.timeAgo', { time: '2 heures' })}
             />
             <ActivityItem
-              title="15 élèves inscrits"
+              title={t('dashboard.activity.studentsEnrolled', { count: 15 })}
               description="Classe de 6ème A"
-              time="Il y a 5 heures"
+              time={t('common.timeAgo', { time: '5 heures' })}
             />
             <ActivityItem
-              title="Paiement reçu"
+              title={t('dashboard.activity.paymentReceived')}
               description="45,000 FCFA - Jean Kouadio"
-              time="Il y a 1 jour"
+              time={t('common.timeAgo', { time: '1 jour' })}
             />
           </div>
         </motion.div>
 
         <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
-          <h2 className="mb-4 text-lg font-semibold">Alertes</h2>
+          <h2 className="mb-4 text-lg font-semibold">{t('dashboard.alerts')}</h2>
           <div className="space-y-3">
             <AlertItem
               type="warning"
-              title="Paiements en retard"
-              description="23 élèves ont des frais impayés"
+              title={t('dashboard.alertsSection.overduePayments')}
+              description={t('dashboard.alertsSection.overduePaymentsDesc', { count: 23 })}
             />
             <AlertItem
               type="info"
-              title="Fin du trimestre"
-              description="Dans 15 jours - Préparer les bulletins"
+              title={t('dashboard.alertsSection.termEnd')}
+              description={t('dashboard.alertsSection.termEndDesc', { days: 15 })}
             />
             <AlertItem
               type="warning"
-              title="Capacité des classes"
-              description="3 classes dépassent la capacité recommandée"
+              title={t('dashboard.alertsSection.classCapacity')}
+              description={t('dashboard.alertsSection.classCapacityDesc', { count: 3 })}
             />
           </div>
         </motion.div>
@@ -163,7 +163,7 @@ function MetricCard({ title, value, change, trend, icon: Icon }: MetricCardProps
             : trend === 'down'
               ? 'text-red-600 dark:text-red-400'
               : 'text-muted-foreground'
-          }`}
+            }`}
         >
           {change}
         </p>

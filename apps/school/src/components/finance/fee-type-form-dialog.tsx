@@ -125,7 +125,7 @@ export function FeeTypeFormDialog({ open, onOpenChange }: FeeTypeFormDialogProps
                       *
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="TUITION" />
+                      <Input {...field} placeholder={t('finance.feeTypes.placeholders.code')} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -173,7 +173,7 @@ export function FeeTypeFormDialog({ open, onOpenChange }: FeeTypeFormDialogProps
                     *
                   </FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Frais de scolarité" />
+                    <Input {...field} placeholder={t('finance.feeTypes.placeholders.name')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -187,7 +187,7 @@ export function FeeTypeFormDialog({ open, onOpenChange }: FeeTypeFormDialogProps
                 <FormItem>
                   <FormLabel>{t('common.nameEn')}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Tuition Fee" />
+                    <Input {...field} placeholder={t('finance.feeTypes.placeholders.nameEn')} />
                   </FormControl>
                   <FormDescription>
                     {t('common.optionalEnglishName')}

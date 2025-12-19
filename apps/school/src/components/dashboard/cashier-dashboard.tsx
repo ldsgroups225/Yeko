@@ -77,7 +77,7 @@ export function CashierDashboard() {
               <input
                 id="student-matricule"
                 type="text"
-                placeholder="AB2024C001"
+                placeholder={t('placeholders.studentMatricule')}
                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               />
             </div>
@@ -198,7 +198,7 @@ function PaymentItem({ name, matricule, amount, method, time, status, t }: Payme
           className={`text-xs ${status === 'completed'
             ? 'text-green-600 dark:text-green-400'
             : 'text-yellow-600 dark:text-yellow-400'
-          }`}
+            }`}
         >
           {status === 'completed' ? t('dashboard.cashier.completed') : t('dashboard.cashier.pending')}
         </span>

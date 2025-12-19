@@ -18,6 +18,7 @@ import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { classesOptions } from '@/lib/queries/classes'
 import { bulkEnrollStudents } from '@/school/functions/bulk-operations'
 import { getStudents } from '@/school/functions/students'
+import { generateUUID } from '@/utils/generateUUID'
 
 export function BulkEnrollmentCard() {
   const { t } = useTranslation()
@@ -93,7 +94,7 @@ export function BulkEnrollmentCard() {
             </SelectTrigger>
             <SelectContent>
               {classes?.map((c: any) => (
-                <SelectItem key={c.id} value={c.id}>
+                <SelectItem key={generateUUID()} value={c.id}>
                   {c.gradeName}
                   {' '}
                   {c.seriesName ?? ''}

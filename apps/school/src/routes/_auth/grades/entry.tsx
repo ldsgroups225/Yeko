@@ -131,7 +131,7 @@ function GradeEntryPage() {
                     </SelectTrigger>
                     <SelectContent>
                       {classesData?.map((cls: Class & { grade?: { name: string } }) => (
-                        <SelectItem key={cls.id} value={cls.id}>
+                        <SelectItem key={generateUUID()} value={cls.id}>
                           {cls.grade?.name}
                           {' '}
                           {cls.section}

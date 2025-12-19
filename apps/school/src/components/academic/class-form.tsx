@@ -169,7 +169,7 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
             {' '}
             *
           </Label>
-          <Input id="section" {...register('section')} placeholder="A, B, C..." />
+          <Input id="section" {...register('section')} placeholder={t('placeholders.classSection')} />
           {errors.section && <p className="text-sm text-destructive">{errors.section.message}</p>}
         </div>
 

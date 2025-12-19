@@ -1,9 +1,11 @@
 import type { ReactNode } from 'react'
+import type { WithTranslation } from 'react-i18next'
 import { AlertTriangle } from 'lucide-react'
 import { Component } from 'react'
+import { withTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 
-interface Props {
+interface Props extends WithTranslation {
   children: ReactNode
   fallback?: ReactNode
 }
@@ -13,7 +15,7 @@ interface State {
   error?: Error
 }
 
-export class ErrorBoundary extends Component<Props, State> {
+class ErrorBoundaryComponent extends Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = { hasError: false }
@@ -38,16 +40,16 @@ export class ErrorBoundary extends Component<Props, State> {
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
             <AlertTriangle className="h-6 w-6 text-destructive" />
           </div>
-          <h3 className="mt-4 text-lg font-semibold">Something went wrong</h3>
+          <h3 className="mt-4 text-lg font-semibold">{this.props.t('common.somethingWentWrong')}</h3>
           <p className="mt-2 text-sm text-muted-foreground max-w-sm">
-            {this.state.error?.message || 'An unexpected error occurred'}
+            {this.state.error?.message || this.props.t('common.unexpectedError')}
           </p>
           <Button
             onClick={() => this.setState({ hasError: false, error: undefined })}
             className="mt-6"
             variant="outline"
           >
-            Try again
+            {this.props.t('common.tryAgain')}
           </Button>
         </div>
       )
@@ -56,3 +58,5 @@ export class ErrorBoundary extends Component<Props, State> {
     return this.props.children
   }
 }
+
+export const ErrorBoundary = withTranslation()(ErrorBoundaryComponent)
