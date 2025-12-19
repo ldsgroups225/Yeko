@@ -12,11 +12,13 @@ export async function getTermsBySchoolYear(schoolYearId: string, schoolId: strin
   const db = getDb()
 
   // Verify school year belongs to school
-  const schoolYear = await db.query.schoolYears.findFirst({
-    where: and(eq(schoolYears.id, schoolYearId), eq(schoolYears.schoolId, schoolId)),
-  })
+  const schoolYearResult = await db
+    .select()
+    .from(schoolYears)
+    .where(and(eq(schoolYears.id, schoolYearId), eq(schoolYears.schoolId, schoolId)))
+    .limit(1)
 
-  if (!schoolYear) {
+  if (!schoolYearResult[0]) {
     throw new Error(SCHOOL_ERRORS.SCHOOL_YEAR_NOT_FOUND)
   }
 
