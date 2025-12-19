@@ -99,47 +99,47 @@ function TeacherPunctualityReportsPage() {
         <CardContent>
           {isLoading
             ? (
-              <div className="space-y-2">
-                {Array.from({ length: 5 }).map(() => (
-                  <Skeleton key={`skeleton-${generateUUID()}`} className="h-12 w-full" />
-                ))}
-              </div>
-            )
-            : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{t('attendance.teacher')}</TableHead>
-                    <TableHead className="text-center">{t('attendance.totalDays')}</TableHead>
-                    <TableHead className="text-center">{t('attendance.status.present')}</TableHead>
-                    <TableHead className="text-center">{t('attendance.status.late')}</TableHead>
-                    <TableHead className="text-center">{t('attendance.status.absent')}</TableHead>
-                    <TableHead className="text-center">{t('attendance.avgLateMinutes')}</TableHead>
-                    <TableHead className="text-center">{t('attendance.punctualityRate')}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {records.map(record => (
-                    <TableRow key={record.teacherId}>
-                      <TableCell className="font-medium">{record.teacherName}</TableCell>
-                      <TableCell className="text-center">{record.totalDays}</TableCell>
-                      <TableCell className="text-center text-green-600">{record.presentDays}</TableCell>
-                      <TableCell className="text-center text-amber-600">{record.lateDays}</TableCell>
-                      <TableCell className="text-center text-red-600">{record.absentDays}</TableCell>
-                      <TableCell className="text-center">
-                        {record.averageLateMinutes.toFixed(0)}
-                        {' '}
-                        min
-                      </TableCell>
-                      <TableCell className="text-center font-medium">
-                        {record.punctualityRate.toFixed(1)}
-                        %
-                      </TableCell>
-                    </TableRow>
+                <div className="space-y-2">
+                  {Array.from({ length: 5 }).map(() => (
+                    <Skeleton key={`skeleton-${generateUUID()}`} className="h-12 w-full" />
                   ))}
-                </TableBody>
-              </Table>
-            )}
+                </div>
+              )
+            : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>{t('attendance.teacher')}</TableHead>
+                      <TableHead className="text-center">{t('attendance.totalDays')}</TableHead>
+                      <TableHead className="text-center">{t('attendance.status.present')}</TableHead>
+                      <TableHead className="text-center">{t('attendance.status.late')}</TableHead>
+                      <TableHead className="text-center">{t('attendance.status.absent')}</TableHead>
+                      <TableHead className="text-center">{t('attendance.avgLateMinutes')}</TableHead>
+                      <TableHead className="text-center">{t('attendance.punctualityRate')}</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {records.map(record => (
+                      <TableRow key={record.teacherId}>
+                        <TableCell className="font-medium">{record.teacherName}</TableCell>
+                        <TableCell className="text-center">{record.totalDays}</TableCell>
+                        <TableCell className="text-center text-green-600">{record.presentDays}</TableCell>
+                        <TableCell className="text-center text-amber-600">{record.lateDays}</TableCell>
+                        <TableCell className="text-center text-red-600">{record.absentDays}</TableCell>
+                        <TableCell className="text-center">
+                          {record.averageLateMinutes.toFixed(0)}
+                          {' '}
+                          min
+                        </TableCell>
+                        <TableCell className="text-center font-medium">
+                          {record.punctualityRate.toFixed(1)}
+                          %
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
         </CardContent>
       </Card>
     </div>

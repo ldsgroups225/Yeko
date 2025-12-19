@@ -124,7 +124,7 @@ function CurriculumProgressPage() {
                 <SelectContent>
                   {schoolYears?.map((year: any) => (
                     <SelectItem key={year.id} value={year.id}>
-                      {year.name}
+                      {year.template?.name}
                       {' '}
                       {year.isActive && t('schoolYear.activeSuffix')}
                     </SelectItem>
@@ -177,7 +177,7 @@ function CurriculumProgressPage() {
                 </SelectTrigger>
                 <SelectContent>
                   {classes?.map((cls: { id: string, name: string }) => (
-                    <SelectItem key={cls.id} value={cls.id}>
+                    <SelectItem key={generateUUID()} value={cls.id}>
                       {cls.name}
                     </SelectItem>
                   ))}

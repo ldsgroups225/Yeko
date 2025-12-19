@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
+import * as React from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -50,8 +51,21 @@ function AttendanceSettingsPage() {
 
   const form = useForm<SettingsFormValues>({
     resolver: zodResolver(settingsSchema) as never,
-    values: settings
-      ? {
+    defaultValues: {
+      teacherExpectedArrival: '07:30',
+      teacherLateThresholdMinutes: 15,
+      teacherLatenessAlertCount: 3,
+      studentLateThresholdMinutes: 10,
+      chronicAbsenceThresholdPercent: 10,
+      notifyParentOnAbsence: true,
+      notifyParentOnLate: false,
+    },
+  })
+
+  // Update form values when settings data loads
+  React.useEffect(() => {
+    if (settings) {
+      form.reset({
         teacherExpectedArrival: settings.teacherExpectedArrival ?? '07:30',
         teacherLateThresholdMinutes: settings.teacherLateThresholdMinutes ?? 15,
         teacherLatenessAlertCount: settings.teacherLatenessAlertCount ?? 3,
@@ -59,9 +73,9 @@ function AttendanceSettingsPage() {
         chronicAbsenceThresholdPercent: Number(settings.chronicAbsenceThresholdPercent) || 10,
         notifyParentOnAbsence: settings.notifyParentOnAbsence ?? true,
         notifyParentOnLate: settings.notifyParentOnLate ?? false,
-      }
-      : undefined,
-  })
+      })
+    }
+  }, [settings, form])
 
   const mutation = useMutation({
     mutationFn: (values: SettingsFormValues) =>

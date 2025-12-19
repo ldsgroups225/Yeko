@@ -290,11 +290,11 @@ export function LanguageConditionalExample() {
     <div>
       {i18n.language === 'fr'
         ? (
-          <p>Contenu spécifique au français</p>
-        )
+            <p>Contenu spécifique au français</p>
+          )
         : (
-          <p>English-specific content</p>
-        )}
+            <p>English-specific content</p>
+          )}
     </div>
   )
 }

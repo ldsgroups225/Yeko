@@ -24,6 +24,11 @@ const config = defineConfig({
       },
     }),
   ],
+  server: {
+    hmr: {
+      port: 3002, // Use different port for HMR to avoid conflicts
+    },
+  },
 })
 
 export default config

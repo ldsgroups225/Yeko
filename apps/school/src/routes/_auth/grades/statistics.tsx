@@ -21,6 +21,7 @@ import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { classesOptions } from '@/lib/queries/classes'
 import { gradesOptions } from '@/lib/queries/grades'
 import { termsOptions } from '@/lib/queries/terms'
+import { generateUUID } from '@/utils/generateUUID'
 
 export const Route = createFileRoute('/_auth/grades/statistics')({
   component: GradeStatisticsPage,
@@ -86,7 +87,7 @@ function GradeStatisticsPage() {
                     </SelectTrigger>
                     <SelectContent>
                       {classesData?.map((cls: Class & { grade?: { name: string } }) => (
-                        <SelectItem key={cls.id} value={cls.id}>
+                        <SelectItem key={generateUUID()} value={cls.id}>
                           {cls.grade?.name}
                           {' '}
                           {cls.section}

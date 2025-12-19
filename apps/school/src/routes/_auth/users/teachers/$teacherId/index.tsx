@@ -167,15 +167,15 @@ function TeacherDetailsPage() {
             <div className="flex flex-wrap gap-2">
               {subjects && subjects.length > 0
                 ? (
-                  subjects.map((subject: any) => (
-                    <Badge key={subject.id} variant="secondary" className="text-sm">
-                      {subject.name}
-                    </Badge>
-                  ))
-                )
+                    subjects.map((subject: any) => (
+                      <Badge key={subject.id} variant="secondary" className="text-sm">
+                        {subject.name}
+                      </Badge>
+                    ))
+                  )
                 : (
-                  <p className="text-sm text-muted-foreground">{t('hr.teachers.noSubjects')}</p>
-                )}
+                    <p className="text-sm text-muted-foreground">{t('hr.teachers.noSubjects')}</p>
+                  )}
             </div>
           </div>
         </TabsContent>

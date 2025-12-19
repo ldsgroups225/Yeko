@@ -288,22 +288,22 @@ export function TimetableSessionDialog({
               >
                 {isDeleting
                   ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  )
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )
                   : (
-                    <Trash2 className="mr-2 h-4 w-4" />
-                  )}
+                      <Trash2 className="mr-2 h-4 w-4" />
+                    )}
                 {t('common.delete')}
               </Button>
             )}
             <Button type="submit" disabled={isSubmitting || isDeleting}>
               {isSubmitting
                 ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )
                 : (
-                  <Save className="mr-2 h-4 w-4" />
-                )}
+                    <Save className="mr-2 h-4 w-4" />
+                  )}
               {t('common.save')}
             </Button>
           </DialogFooter>

@@ -44,15 +44,15 @@ function AccountsPage() {
 
   const accountsList = accountsTree
     ? flattenAccounts(accountsTree as AccountNode[]).map(acc => ({
-      id: acc.id,
-      code: acc.code,
-      name: acc.name,
-      type: acc.type,
-      level: acc.level,
-      balance: Number(acc.balance ?? 0),
-      isHeader: acc.isHeader ?? false,
-      status: acc.status ?? 'active',
-    }))
+        id: acc.id,
+        code: acc.code,
+        name: acc.name,
+        type: acc.type,
+        level: acc.level,
+        balance: Number(acc.balance ?? 0),
+        isHeader: acc.isHeader ?? false,
+        status: acc.status ?? 'active',
+      }))
     : []
 
   return (

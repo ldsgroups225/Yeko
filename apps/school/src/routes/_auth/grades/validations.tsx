@@ -147,39 +147,39 @@ function GradeValidationsPage() {
 
       {isLoading
         ? (
-          <div className="space-y-4">
-            {Array.from({ length: 3 }).map(() => (
-              <Skeleton key={generateUUID()} className="h-32 w-full" />
-            ))}
-          </div>
-        )
-        : pendingValidations && pendingValidations.length > 0
-          ? (
             <div className="space-y-4">
-              {(pendingValidations as PendingValidation[]).map(validation => (
-                <GradeValidationCard
-                  key={`${validation.classId}-${validation.subjectId}-${validation.termId}`}
-                  validation={validation}
-                  onViewDetails={() => {
-                    // TODO: Navigate to detail view
-                  }}
-                  onValidate={() => handleValidate(validation)}
-                  onReject={() => handleReject(validation)}
-                  isLoading={isMutating}
-                />
+              {Array.from({ length: 3 }).map(() => (
+                <Skeleton key={generateUUID()} className="h-32 w-full" />
               ))}
             </div>
           )
+        : pendingValidations && pendingValidations.length > 0
+          ? (
+              <div className="space-y-4">
+                {(pendingValidations as PendingValidation[]).map(validation => (
+                  <GradeValidationCard
+                    key={`${validation.classId}-${validation.subjectId}-${validation.termId}`}
+                    validation={validation}
+                    onViewDetails={() => {
+                    // TODO: Navigate to detail view
+                    }}
+                    onValidate={() => handleValidate(validation)}
+                    onReject={() => handleReject(validation)}
+                    isLoading={isMutating}
+                  />
+                ))}
+              </div>
+            )
           : (
-            <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <p className="text-lg font-medium">{t('academic.grades.validations.noValidations')}</p>
-                <p className="text-sm text-muted-foreground">
-                  {t('academic.grades.validations.allValidated')}
-                </p>
-              </CardContent>
-            </Card>
-          )}
+              <Card>
+                <CardContent className="flex flex-col items-center justify-center py-12">
+                  <p className="text-lg font-medium">{t('academic.grades.validations.noValidations')}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t('academic.grades.validations.allValidated')}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
 
       <GradeValidationDialog
         open={dialogOpen}

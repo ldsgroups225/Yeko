@@ -101,101 +101,101 @@ function StudentAttendanceStatisticsPage() {
 
       {isLoading
         ? (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {Array.from({ length: 4 }).map(() => (
-              <Skeleton key={`skeleton-${generateUUID()}`} className="h-32" />
-            ))}
-          </div>
-        )
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              {Array.from({ length: 4 }).map(() => (
+                <Skeleton key={`skeleton-${generateUUID()}`} className="h-32" />
+              ))}
+            </div>
+          )
         : stats
           ? (
-            <>
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">
-                      {t('attendance.attendanceRate')}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">
-                      {stats.attendanceRate.toFixed(1)}
-                      %
-                    </div>
-                    <Progress value={stats.attendanceRate} className="mt-2" />
-                  </CardContent>
-                </Card>
+              <>
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium text-muted-foreground">
+                        {t('attendance.attendanceRate')}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">
+                        {stats.attendanceRate.toFixed(1)}
+                        %
+                      </div>
+                      <Progress value={stats.attendanceRate} className="mt-2" />
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium text-muted-foreground">
+                        {t('attendance.status.present')}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold text-green-600">{stats.presentCount}</div>
+                      <p className="text-xs text-muted-foreground">
+                        {((stats.presentCount / (stats.totalStudents * stats.totalDays)) * 100).toFixed(1)}
+                        %
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium text-muted-foreground">
+                        {t('attendance.status.absent')}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold text-red-600">{stats.absentCount}</div>
+                      <p className="text-xs text-muted-foreground">
+                        {((stats.absentCount / (stats.totalStudents * stats.totalDays)) * 100).toFixed(1)}
+                        %
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium text-muted-foreground">
+                        {t('attendance.chronicAbsentees')}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold text-amber-600">{stats.chronicAbsentees}</div>
+                      <p className="text-xs text-muted-foreground">{t('attendance.studentsAtRisk')}</p>
+                    </CardContent>
+                  </Card>
+                </div>
 
                 <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">
-                      {t('attendance.status.present')}
-                    </CardTitle>
+                  <CardHeader>
+                    <CardTitle>{t('attendance.breakdown')}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-green-600">{stats.presentCount}</div>
-                    <p className="text-xs text-muted-foreground">
-                      {((stats.presentCount / (stats.totalStudents * stats.totalDays)) * 100).toFixed(1)}
-                      %
-                    </p>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <span>{t('attendance.status.present')}</span>
+                        <span className="font-medium">{stats.presentCount}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span>{t('attendance.status.late')}</span>
+                        <span className="font-medium">{stats.lateCount}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span>{t('attendance.status.absent')}</span>
+                        <span className="font-medium">{stats.absentCount}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span>{t('attendance.status.excused')}</span>
+                        <span className="font-medium">{stats.excusedCount}</span>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
-
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">
-                      {t('attendance.status.absent')}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-red-600">{stats.absentCount}</div>
-                    <p className="text-xs text-muted-foreground">
-                      {((stats.absentCount / (stats.totalStudents * stats.totalDays)) * 100).toFixed(1)}
-                      %
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">
-                      {t('attendance.chronicAbsentees')}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-amber-600">{stats.chronicAbsentees}</div>
-                    <p className="text-xs text-muted-foreground">{t('attendance.studentsAtRisk')}</p>
-                  </CardContent>
-                </Card>
-              </div>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('attendance.breakdown')}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span>{t('attendance.status.present')}</span>
-                      <span className="font-medium">{stats.presentCount}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span>{t('attendance.status.late')}</span>
-                      <span className="font-medium">{stats.lateCount}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span>{t('attendance.status.absent')}</span>
-                      <span className="font-medium">{stats.absentCount}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span>{t('attendance.status.excused')}</span>
-                      <span className="font-medium">{stats.excusedCount}</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </>
-          )
+              </>
+            )
           : null}
     </div>
   )

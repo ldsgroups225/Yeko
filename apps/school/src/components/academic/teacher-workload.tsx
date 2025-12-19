@@ -148,21 +148,21 @@ export function TeacherWorkload() {
                 </span>
                 {isOverloaded
                   ? (
-                    <Badge variant="destructive">
-                      <AlertTriangle className="h-3 w-3 mr-1" aria-hidden="true" />
-                      {t('workload.overloaded')}
-                    </Badge>
-                  )
-                  : totalHours > 0
-                    ? (
-                      <Badge variant="secondary">
-                        <CheckCircle className="h-3 w-3 mr-1" aria-hidden="true" />
-                        OK
+                      <Badge variant="destructive">
+                        <AlertTriangle className="h-3 w-3 mr-1" aria-hidden="true" />
+                        {t('workload.overloaded')}
                       </Badge>
                     )
+                  : totalHours > 0
+                    ? (
+                        <Badge variant="secondary">
+                          <CheckCircle className="h-3 w-3 mr-1" aria-hidden="true" />
+                          OK
+                        </Badge>
+                      )
                     : (
-                      <Badge variant="outline">{t('workload.notAssigned')}</Badge>
-                    )}
+                        <Badge variant="outline">{t('workload.notAssigned')}</Badge>
+                      )}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">

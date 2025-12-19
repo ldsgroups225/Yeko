@@ -194,20 +194,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarMenuItem key={item.href}>
                   {item.children
                     ? (
-                      <SidebarMenuSubItemWrapper item={item} pathname={pathname} />
-                    )
+                        <SidebarMenuSubItemWrapper item={item} pathname={pathname} />
+                      )
                     : (
-                      <SidebarMenuButton
-                        asChild
-                        isActive={pathname === item.href}
-                        tooltip={item.title}
-                      >
-                        <Link to={item.href}>
-                          <item.icon />
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    )}
+                        <SidebarMenuButton
+                          asChild
+                          isActive={pathname === item.href}
+                          tooltip={item.title}
+                        >
+                          <Link to={item.href}>
+                            <item.icon />
+                            <span>{item.title}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      )}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -223,20 +223,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarMenuItem key={item.href}>
                   {item.children
                     ? (
-                      <SidebarMenuSubItemWrapper item={item} pathname={pathname} />
-                    )
+                        <SidebarMenuSubItemWrapper item={item} pathname={pathname} />
+                      )
                     : (
-                      <SidebarMenuButton
-                        asChild
-                        isActive={pathname === item.href}
-                        tooltip={item.title}
-                      >
-                        <Link to={item.href}>
-                          <item.icon />
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    )}
+                        <SidebarMenuButton
+                          asChild
+                          isActive={pathname === item.href}
+                          tooltip={item.title}
+                        >
+                          <Link to={item.href}>
+                            <item.icon />
+                            <span>{item.title}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      )}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -252,20 +252,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarMenuItem key={item.href}>
                   {item.children
                     ? (
-                      <SidebarMenuSubItemWrapper item={item} pathname={pathname} />
-                    )
+                        <SidebarMenuSubItemWrapper item={item} pathname={pathname} />
+                      )
                     : (
-                      <SidebarMenuButton
-                        asChild
-                        isActive={pathname === item.href}
-                        tooltip={item.title}
-                      >
-                        <Link to={item.href}>
-                          <item.icon />
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    )}
+                        <SidebarMenuButton
+                          asChild
+                          isActive={pathname === item.href}
+                          tooltip={item.title}
+                        >
+                          <Link to={item.href}>
+                            <item.icon />
+                            <span>{item.title}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      )}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -281,20 +281,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarMenuItem key={item.href}>
                   {item.children
                     ? (
-                      <SidebarMenuSubItemWrapper item={item} pathname={pathname} />
-                    )
+                        <SidebarMenuSubItemWrapper item={item} pathname={pathname} />
+                      )
                     : (
-                      <SidebarMenuButton
-                        asChild
-                        isActive={pathname === item.href}
-                        tooltip={item.title}
-                      >
-                        <Link to={item.href}>
-                          <item.icon />
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    )}
+                        <SidebarMenuButton
+                          asChild
+                          isActive={pathname === item.href}
+                          tooltip={item.title}
+                        >
+                          <Link to={item.href}>
+                            <item.icon />
+                            <span>{item.title}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      )}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>

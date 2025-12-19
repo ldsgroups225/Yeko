@@ -62,64 +62,64 @@ function CoefficientsPage() {
           <div className="w-full sm:w-[250px]">
             {yearsLoading
               ? (
-                <Skeleton className="h-10 w-full" />
-              )
+                  <Skeleton className="h-10 w-full" />
+                )
               : (
-                <Select
-                  value={selectedYearTemplateId}
-                  onValueChange={setSelectedYearTemplateId}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('schoolYear.select')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {schoolYears?.map((year: {
-                      id: string
-                      name: string
-                      isActive: boolean
-                      schoolYearTemplateId: string | null
-                    }) => (
-                      <SelectItem
-                        key={year.id}
-                        value={year.schoolYearTemplateId || ''}
-                      >
-                        {(year as any).template?.name || year.name}
-                        {' '}
-                        {year.isActive && t('schoolYear.activeSuffix')}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
+                  <Select
+                    value={selectedYearTemplateId}
+                    onValueChange={setSelectedYearTemplateId}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={t('schoolYear.select')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {schoolYears?.map((year: {
+                        id: string
+                        name: string
+                        isActive: boolean
+                        schoolYearTemplateId: string | null
+                      }) => (
+                        <SelectItem
+                          key={year.id}
+                          value={year.schoolYearTemplateId || ''}
+                        >
+                          {(year as any).template?.name || year.name}
+                          {' '}
+                          {year.isActive && t('schoolYear.activeSuffix')}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
           </div>
 
           <div className="w-full sm:w-[200px]">
             {seriesLoading
               ? (
-                <Skeleton className="h-10 w-full" />
-              )
+                  <Skeleton className="h-10 w-full" />
+                )
               : (
-                <Select
-                  value={selectedSeriesId}
-                  onValueChange={setSelectedSeriesId}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('coefficients.allSeries')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">{t('coefficients.allSeries')}</SelectItem>
-                    {series?.map((s: { id: string, name: string, code: string }) => (
-                      <SelectItem key={s.id} value={s.id}>
-                        {s.name}
-                        {' '}
-                        (
-                        {s.code}
-                        )
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
+                  <Select
+                    value={selectedSeriesId}
+                    onValueChange={setSelectedSeriesId}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={t('coefficients.allSeries')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{t('coefficients.allSeries')}</SelectItem>
+                      {series?.map((s: { id: string, name: string, code: string }) => (
+                        <SelectItem key={s.id} value={s.id}>
+                          {s.name}
+                          {' '}
+                          (
+                          {s.code}
+                          )
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
           </div>
         </div>
       </div>
@@ -127,18 +127,18 @@ function CoefficientsPage() {
       {/* Matrix */}
       {selectedYearTemplateId
         ? (
-          <CoefficientMatrix
-            schoolYearTemplateId={selectedYearTemplateId}
-            seriesId={selectedSeriesId !== 'all' ? selectedSeriesId : null}
-          />
-        )
+            <CoefficientMatrix
+              schoolYearTemplateId={selectedYearTemplateId}
+              seriesId={selectedSeriesId !== 'all' ? selectedSeriesId : null}
+            />
+          )
         : (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-              <p>{t('coefficients.selectYearPrompt')}</p>
-            </CardContent>
-          </Card>
-        )}
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                <p>{t('coefficients.selectYearPrompt')}</p>
+              </CardContent>
+            </Card>
+          )}
     </div>
   )
 }

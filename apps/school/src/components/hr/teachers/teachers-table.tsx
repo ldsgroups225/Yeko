@@ -117,15 +117,15 @@ export function TeachersTable({ filters }: TeachersTableProps) {
           <div className="flex flex-wrap gap-1">
             {row.original.subjects && row.original.subjects.length > 0
               ? (
-                row.original.subjects.slice(0, 3).map(subject => (
-                  <Badge key={subject} variant="secondary" className="text-xs">
-                    {subject}
-                  </Badge>
-                ))
-              )
+                  row.original.subjects.slice(0, 3).map(subject => (
+                    <Badge key={subject} variant="secondary" className="text-xs">
+                      {subject}
+                    </Badge>
+                  ))
+                )
               : (
-                <span className="text-sm text-muted-foreground">-</span>
-              )}
+                  <span className="text-sm text-muted-foreground">-</span>
+                )}
             {row.original.subjects && row.original.subjects.length > 3 && (
               <Badge variant="outline" className="text-xs">
                 +
@@ -279,9 +279,9 @@ export function TeachersTable({ filters }: TeachersTableProps) {
                           {header.isPlaceholder
                             ? null
                             : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext(),
-                            )}
+                                header.column.columnDef.header,
+                                header.getContext(),
+                              )}
                         </TableHead>
                       ))}
                     </TableRow>

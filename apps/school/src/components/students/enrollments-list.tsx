@@ -224,150 +224,150 @@ export function EnrollmentsList() {
             <TableBody>
               {isLoading
                 ? (
-                  Array.from({ length: 5 }, () => (
-                    <TableRow key={`skeleton-${generateUUID()}`}>
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <Skeleton className="h-10 w-10 rounded-full" />
-                          <div className="space-y-1">
-                            <Skeleton className="h-4 w-32" />
-                            <Skeleton className="h-3 w-20" />
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                      <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                      <TableCell><Skeleton className="h-4 w-8" /></TableCell>
-                      <TableCell><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
-                      <TableCell><Skeleton className="h-8 w-8" /></TableCell>
-                    </TableRow>
-                  ))
-                )
-                : data?.data?.length === 0
-                  ? (
-                    <TableRow>
-                      <TableCell colSpan={6}>
-                        <EmptyState
-                          icon={ClipboardCheck}
-                          title={t('enrollments.noEnrollments')}
-                          description={t('enrollments.noEnrollmentsDescription')}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  )
-                  : (
-                    data?.data?.map((item: any, index: number) => (
-                      <motion.tr
-                        key={item.enrollment.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.02 }}
-                        className="border-b"
-                      >
+                    Array.from({ length: 5 }, () => (
+                      <TableRow key={`skeleton-${generateUUID()}`}>
                         <TableCell>
                           <div className="flex items-center gap-3">
-                            <Avatar>
-                              <AvatarImage src={item.student?.photoUrl || undefined} />
-                              <AvatarFallback>
-                                {item.student?.firstName?.[0]}
-                                {item.student?.lastName?.[0]}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <Link
-                                to="/students/$studentId"
-                                params={{ studentId: item.student?.id }}
-                                className="font-medium hover:underline"
-                              >
-                                {item.student?.lastName}
-                                {' '}
-                                {item.student?.firstName}
-                              </Link>
-                              <p className="text-sm text-muted-foreground font-mono">
-                                {item.student?.matricule}
-                              </p>
+                            <Skeleton className="h-10 w-10 rounded-full" />
+                            <div className="space-y-1">
+                              <Skeleton className="h-4 w-32" />
+                              <Skeleton className="h-3 w-20" />
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell>
-                          {item.class?.gradeName}
-                          {' '}
-                          {item.class?.section}
-                          {item.class?.seriesName && (
-                            <span className="text-muted-foreground">
-                              {' '}
-                              (
-                              {item.class.seriesName}
-                              )
-                            </span>
-                          )}
+                        <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                        <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                        <TableCell><Skeleton className="h-4 w-8" /></TableCell>
+                        <TableCell><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
+                        <TableCell><Skeleton className="h-8 w-8" /></TableCell>
+                      </TableRow>
+                    ))
+                  )
+                : data?.data?.length === 0
+                  ? (
+                      <TableRow>
+                        <TableCell colSpan={6}>
+                          <EmptyState
+                            icon={ClipboardCheck}
+                            title={t('enrollments.noEnrollments')}
+                            description={t('enrollments.noEnrollmentsDescription')}
+                          />
                         </TableCell>
-                        <TableCell>
-                          {item.enrollment.enrollmentDate
-                            ? new Date(item.enrollment.enrollmentDate).toLocaleDateString('fr-FR')
-                            : '-'}
-                        </TableCell>
-                        <TableCell>
-                          {item.enrollment.rollNumber || '-'}
-                        </TableCell>
-                        <TableCell>
-                          <Badge className={statusColors[item.enrollment.status]}>
-                            {t(`enrollments.status${item.enrollment.status.charAt(0).toUpperCase()}${item.enrollment.status.slice(1)}`)}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem asChild>
+                      </TableRow>
+                    )
+                  : (
+                      data?.data?.map((item: any, index: number) => (
+                        <motion.tr
+                          key={item.enrollment.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.02 }}
+                          className="border-b"
+                        >
+                          <TableCell>
+                            <div className="flex items-center gap-3">
+                              <Avatar>
+                                <AvatarImage src={item.student?.photoUrl || undefined} />
+                                <AvatarFallback>
+                                  {item.student?.firstName?.[0]}
+                                  {item.student?.lastName?.[0]}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div>
                                 <Link
                                   to="/students/$studentId"
                                   params={{ studentId: item.student?.id }}
+                                  className="font-medium hover:underline"
                                 >
-                                  {t('enrollments.viewStudent')}
+                                  {item.student?.lastName}
+                                  {' '}
+                                  {item.student?.firstName}
                                 </Link>
-                              </DropdownMenuItem>
-                              {item.enrollment.status === 'pending' && (
-                                <>
-                                  <DropdownMenuSeparator />
-                                  <DropdownMenuItem
-                                    onClick={() => confirmMutation.mutate(item.enrollment.id)}
-                                    disabled={confirmMutation.isPending}
+                                <p className="text-sm text-muted-foreground font-mono">
+                                  {item.student?.matricule}
+                                </p>
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            {item.class?.gradeName}
+                            {' '}
+                            {item.class?.section}
+                            {item.class?.seriesName && (
+                              <span className="text-muted-foreground">
+                                {' '}
+                                (
+                                {item.class.seriesName}
+                                )
+                              </span>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {item.enrollment.enrollmentDate
+                              ? new Date(item.enrollment.enrollmentDate).toLocaleDateString('fr-FR')
+                              : '-'}
+                          </TableCell>
+                          <TableCell>
+                            {item.enrollment.rollNumber || '-'}
+                          </TableCell>
+                          <TableCell>
+                            <Badge className={statusColors[item.enrollment.status]}>
+                              {t(`enrollments.status${item.enrollment.status.charAt(0).toUpperCase()}${item.enrollment.status.slice(1)}`)}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem asChild>
+                                  <Link
+                                    to="/students/$studentId"
+                                    params={{ studentId: item.student?.id }}
                                   >
-                                    <Check className="mr-2 h-4 w-4 text-green-600" />
-                                    {t('enrollments.confirm')}
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem
-                                    className="text-destructive"
-                                    onClick={() => handleCancel(item)}
-                                  >
-                                    <X className="mr-2 h-4 w-4" />
-                                    {t('enrollments.cancel')}
-                                  </DropdownMenuItem>
-                                </>
-                              )}
-                              {item.enrollment.status === 'confirmed' && (
-                                <>
-                                  <DropdownMenuSeparator />
-                                  <DropdownMenuItem
-                                    className="text-destructive"
-                                    onClick={() => handleCancel(item)}
-                                  >
-                                    <X className="mr-2 h-4 w-4" />
-                                    {t('enrollments.cancel')}
-                                  </DropdownMenuItem>
-                                </>
-                              )}
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </motion.tr>
-                    ))
-                  )}
+                                    {t('enrollments.viewStudent')}
+                                  </Link>
+                                </DropdownMenuItem>
+                                {item.enrollment.status === 'pending' && (
+                                  <>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem
+                                      onClick={() => confirmMutation.mutate(item.enrollment.id)}
+                                      disabled={confirmMutation.isPending}
+                                    >
+                                      <Check className="mr-2 h-4 w-4 text-green-600" />
+                                      {t('enrollments.confirm')}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                      className="text-destructive"
+                                      onClick={() => handleCancel(item)}
+                                    >
+                                      <X className="mr-2 h-4 w-4" />
+                                      {t('enrollments.cancel')}
+                                    </DropdownMenuItem>
+                                  </>
+                                )}
+                                {item.enrollment.status === 'confirmed' && (
+                                  <>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem
+                                      className="text-destructive"
+                                      onClick={() => handleCancel(item)}
+                                    >
+                                      <X className="mr-2 h-4 w-4" />
+                                      {t('enrollments.cancel')}
+                                    </DropdownMenuItem>
+                                  </>
+                                )}
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </motion.tr>
+                      ))
+                    )}
             </TableBody>
           </Table>
 

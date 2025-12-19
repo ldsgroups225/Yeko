@@ -151,150 +151,150 @@ function ConductReportsPage() {
 
       {isLoading
         ? (
-          <div className="grid gap-4 md:grid-cols-4">
-            {Array.from({ length: 4 }).map(() => (
-              <Skeleton key={`skeleton-${generateUUID()}`} className="h-24" />
-            ))}
-          </div>
-        )
-        : (
-          <>
-            <div className="grid gap-4 md:grid-cols-4 mb-6">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
-                    {t('conduct.totalRecords')}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{stats.total}</div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
-                    {t('conduct.type.incident')}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-red-600">{stats.incidents}</div>
-                  <Progress
-                    value={stats.total > 0 ? (stats.incidents / stats.total) * 100 : 0}
-                    className="mt-2"
-                  />
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
-                    {t('conduct.type.sanction')}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-amber-600">{stats.sanctions}</div>
-                  <Progress
-                    value={stats.total > 0 ? (stats.sanctions / stats.total) * 100 : 0}
-                    className="mt-2"
-                  />
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
-                    {t('conduct.type.reward')}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-green-600">{stats.rewards}</div>
-                  <Progress
-                    value={stats.total > 0 ? (stats.rewards / stats.total) * 100 : 0}
-                    className="mt-2"
-                  />
-                </CardContent>
-              </Card>
+            <div className="grid gap-4 md:grid-cols-4">
+              {Array.from({ length: 4 }).map(() => (
+                <Skeleton key={`skeleton-${generateUUID()}`} className="h-24" />
+              ))}
             </div>
+          )
+        : (
+            <>
+              <div className="grid gap-4 md:grid-cols-4 mb-6">
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium text-muted-foreground">
+                      {t('conduct.totalRecords')}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{stats.total}</div>
+                  </CardContent>
+                </Card>
 
-            <div className="grid gap-6 md:grid-cols-2 mb-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('conduct.bySeverity')}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {(['low', 'medium', 'high', 'critical'] as const).map(severity => (
-                      <div key={severity} className="flex items-center justify-between">
-                        <ConductSeverityBadge severity={severity} />
-                        <span className="font-medium">{stats.bySeverity[severity]}</span>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium text-muted-foreground">
+                      {t('conduct.type.incident')}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-red-600">{stats.incidents}</div>
+                    <Progress
+                      value={stats.total > 0 ? (stats.incidents / stats.total) * 100 : 0}
+                      className="mt-2"
+                    />
+                  </CardContent>
+                </Card>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('conduct.byCategory')}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    {Object.entries(stats.byCategory)
-                      .sort((a, b) => b[1] - a[1])
-                      .slice(0, 5)
-                      .map(([category, count]) => (
-                        <div key={category} className="flex items-center justify-between">
-                          <span className="text-sm">{t(`conduct.category.${category}`)}</span>
-                          <span className="font-medium">{count}</span>
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium text-muted-foreground">
+                      {t('conduct.type.sanction')}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-amber-600">{stats.sanctions}</div>
+                    <Progress
+                      value={stats.total > 0 ? (stats.sanctions / stats.total) * 100 : 0}
+                      className="mt-2"
+                    />
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium text-muted-foreground">
+                      {t('conduct.type.reward')}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-green-600">{stats.rewards}</div>
+                    <Progress
+                      value={stats.total > 0 ? (stats.rewards / stats.total) * 100 : 0}
+                      className="mt-2"
+                    />
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="grid gap-6 md:grid-cols-2 mb-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>{t('conduct.bySeverity')}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {(['low', 'medium', 'high', 'critical'] as const).map(severity => (
+                        <div key={severity} className="flex items-center justify-between">
+                          <ConductSeverityBadge severity={severity} />
+                          <span className="font-medium">{stats.bySeverity[severity]}</span>
                         </div>
                       ))}
-                  </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>{t('conduct.byCategory')}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      {Object.entries(stats.byCategory)
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, 5)
+                        .map(([category, count]) => (
+                          <div key={category} className="flex items-center justify-between">
+                            <span className="text-sm">{t(`conduct.category.${category}`)}</span>
+                            <span className="font-medium">{count}</span>
+                          </div>
+                        ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('conduct.recentRecords')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>{t('conduct.date')}</TableHead>
+                        <TableHead>{t('conduct.student')}</TableHead>
+                        <TableHead>{t('conduct.type.label')}</TableHead>
+                        <TableHead>{t('conduct.title')}</TableHead>
+                        <TableHead>{t('conduct.severity.label')}</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {rawRecords.slice(0, 10).map(record => (
+                        <TableRow key={record.id}>
+                          <TableCell>
+                            {record.incidentDate
+                              ? new Date(record.incidentDate).toLocaleDateString('fr-FR')
+                              : new Date(record.createdAt).toLocaleDateString('fr-FR')}
+                          </TableCell>
+                          <TableCell>{record.student?.user?.name ?? 'Unknown'}</TableCell>
+                          <TableCell>
+                            <ConductTypeBadge type={record.type as 'incident' | 'sanction' | 'reward' | 'note'} />
+                          </TableCell>
+                          <TableCell className="max-w-[200px] truncate">{record.title}</TableCell>
+                          <TableCell>
+                            {record.severity && (
+                              <ConductSeverityBadge severity={record.severity as 'low' | 'medium' | 'high' | 'critical'} />
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 </CardContent>
               </Card>
-            </div>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('conduct.recentRecords')}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>{t('conduct.date')}</TableHead>
-                      <TableHead>{t('conduct.student')}</TableHead>
-                      <TableHead>{t('conduct.type.label')}</TableHead>
-                      <TableHead>{t('conduct.title')}</TableHead>
-                      <TableHead>{t('conduct.severity.label')}</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {rawRecords.slice(0, 10).map(record => (
-                      <TableRow key={record.id}>
-                        <TableCell>
-                          {record.incidentDate
-                            ? new Date(record.incidentDate).toLocaleDateString('fr-FR')
-                            : new Date(record.createdAt).toLocaleDateString('fr-FR')}
-                        </TableCell>
-                        <TableCell>{record.student?.user?.name ?? 'Unknown'}</TableCell>
-                        <TableCell>
-                          <ConductTypeBadge type={record.type as 'incident' | 'sanction' | 'reward' | 'note'} />
-                        </TableCell>
-                        <TableCell className="max-w-[200px] truncate">{record.title}</TableCell>
-                        <TableCell>
-                          {record.severity && (
-                            <ConductSeverityBadge severity={record.severity as 'low' | 'medium' | 'high' | 'critical'} />
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </>
-        )}
+            </>
+          )}
     </div>
   )
 }

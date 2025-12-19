@@ -18,6 +18,7 @@ import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { getClasses } from '@/school/functions/classes'
 import { getSchoolYears } from '@/school/functions/school-years'
 import { getTerms } from '@/school/functions/terms'
+import { generateUUID } from '@/utils/generateUUID'
 
 export const Route = createFileRoute('/_auth/grades/report-cards')({
   component: ReportCardsPage,
@@ -150,7 +151,7 @@ function ReportCardsPage() {
                 </SelectTrigger>
                 <SelectContent>
                   {classes?.map((cls: { id: string, name: string }) => (
-                    <SelectItem key={cls.id} value={cls.id}>
+                    <SelectItem key={generateUUID()} value={cls.id}>
                       {cls.name}
                     </SelectItem>
                   ))}

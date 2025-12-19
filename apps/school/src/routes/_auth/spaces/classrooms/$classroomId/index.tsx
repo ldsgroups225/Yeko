@@ -199,30 +199,30 @@ function ClassroomDetailPage() {
             <CardContent>
               {assignedClasses && assignedClasses.length > 0
                 ? (
-                  <div className="space-y-2">
-                    {assignedClasses.map((cls: any) => (
-                      <div key={cls.id} className="flex items-center justify-between rounded-md border p-3">
-                        <span className="font-medium">
-                          {cls.gradeName}
-                          {' '}
-                          {cls.seriesName}
-                          {' '}
-                          {cls.section}
-                        </span>
-                        <Link
-                          to="/classes/$classId"
-                          params={{ classId: cls.id }}
-                          className="text-sm text-primary hover:underline"
-                        >
-                          {t('common.view')}
-                        </Link>
-                      </div>
-                    ))}
-                  </div>
-                )
+                    <div className="space-y-2">
+                      {assignedClasses.map((cls: any) => (
+                        <div key={cls.id} className="flex items-center justify-between rounded-md border p-3">
+                          <span className="font-medium">
+                            {cls.gradeName}
+                            {' '}
+                            {cls.seriesName}
+                            {' '}
+                            {cls.section}
+                          </span>
+                          <Link
+                            to="/classes/$classId"
+                            params={{ classId: cls.id }}
+                            className="text-sm text-primary hover:underline"
+                          >
+                            {t('common.view')}
+                          </Link>
+                        </div>
+                      ))}
+                    </div>
+                  )
                 : (
-                  <p className="text-sm text-muted-foreground">{t('spaces.classroom.noAssignedClasses')}</p>
-                )}
+                    <p className="text-sm text-muted-foreground">{t('spaces.classroom.noAssignedClasses')}</p>
+                  )}
             </CardContent>
           </Card>
         </TabsContent>

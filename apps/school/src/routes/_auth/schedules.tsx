@@ -24,6 +24,7 @@ import { timetablesOptions } from '@/lib/queries/timetables'
 import { getClasses } from '@/school/functions/classes'
 import { getSchoolYears } from '@/school/functions/school-years'
 import { getTeachers } from '@/school/functions/teachers'
+import { generateUUID } from '@/utils/generateUUID'
 
 export const Route = createFileRoute('/_auth/schedules')({
   component: TimetablesPage,
@@ -155,7 +156,7 @@ function TimetablesPage() {
                     </SelectTrigger>
                     <SelectContent>
                       {classes?.map((cls: { id: string, name: string }) => (
-                        <SelectItem key={cls.id} value={cls.id}>
+                        <SelectItem key={generateUUID()} value={cls.id}>
                           {cls.name}
                         </SelectItem>
                       ))}

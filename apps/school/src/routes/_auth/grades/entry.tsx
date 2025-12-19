@@ -122,76 +122,76 @@ function GradeEntryPage() {
               <Label htmlFor="class-select">{t('academic.grades.entry.class')}</Label>
               {classesLoading
                 ? (
-                  <Skeleton className="h-10 w-full" />
-                )
+                    <Skeleton className="h-10 w-full" />
+                  )
                 : (
-                  <Select value={selectedClassId} onValueChange={handleClassChange}>
-                    <SelectTrigger id="class-select">
-                      <SelectValue placeholder={t('academic.grades.entry.selectClass')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {classesData?.map((cls: Class & { grade?: { name: string } }) => (
-                        <SelectItem key={generateUUID()} value={cls.id}>
-                          {cls.grade?.name}
-                          {' '}
-                          {cls.section}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
+                    <Select value={selectedClassId} onValueChange={handleClassChange}>
+                      <SelectTrigger id="class-select">
+                        <SelectValue placeholder={t('academic.grades.entry.selectClass')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {classesData?.map((cls: Class & { grade?: { name: string } }) => (
+                          <SelectItem key={generateUUID()} value={cls.id}>
+                            {cls.grade?.name}
+                            {' '}
+                            {cls.section}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="subject-select">{t('academic.grades.entry.subject')}</Label>
               {subjectsLoading
                 ? (
-                  <Skeleton className="h-10 w-full" />
-                )
+                    <Skeleton className="h-10 w-full" />
+                  )
                 : (
-                  <Select
-                    value={selectedSubjectId}
-                    onValueChange={setSelectedSubjectId}
-                    disabled={!selectedClassId || !classSubjectsData?.length}
-                  >
-                    <SelectTrigger id="subject-select">
-                      <SelectValue placeholder={t('academic.grades.entry.selectSubject')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {classSubjectsData?.map((cs: any) => (
-                        <SelectItem key={cs.subject.id} value={cs.subject.id}>
-                          {cs.subject.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
+                    <Select
+                      value={selectedSubjectId}
+                      onValueChange={setSelectedSubjectId}
+                      disabled={!selectedClassId || !classSubjectsData?.length}
+                    >
+                      <SelectTrigger id="subject-select">
+                        <SelectValue placeholder={t('academic.grades.entry.selectSubject')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {classSubjectsData?.map((cs: any) => (
+                          <SelectItem key={cs.subject.id} value={cs.subject.id}>
+                            {cs.subject.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="term-select">{t('academic.grades.entry.term')}</Label>
               {termsLoading
                 ? (
-                  <Skeleton className="h-10 w-full" />
-                )
+                    <Skeleton className="h-10 w-full" />
+                  )
                 : (
-                  <Select
-                    value={selectedTermId}
-                    onValueChange={setSelectedTermId}
-                    disabled={!termsData?.length}
-                  >
-                    <SelectTrigger id="term-select">
-                      <SelectValue placeholder={t('academic.grades.entry.selectTerm')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {termsData?.map((term: any) => (
-                        <SelectItem key={term.id} value={term.id}>
-                          {term.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
+                    <Select
+                      value={selectedTermId}
+                      onValueChange={setSelectedTermId}
+                      disabled={!termsData?.length}
+                    >
+                      <SelectTrigger id="term-select">
+                        <SelectValue placeholder={t('academic.grades.entry.selectTerm')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {termsData?.map((term: any) => (
+                          <SelectItem key={term.id} value={term.id}>
+                            {term.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
             </div>
 
             <div className="space-y-2">
@@ -247,26 +247,26 @@ function GradeEntryPage() {
           <CardContent>
             {gradesLoading || studentsLoading
               ? (
-                <div className="space-y-2">
-                  {Array.from({ length: 5 }).map(() => (
-                    <Skeleton key={generateUUID()} className="h-12 w-full" />
-                  ))}
-                </div>
-              )
+                  <div className="space-y-2">
+                    {Array.from({ length: 5 }).map(() => (
+                      <Skeleton key={generateUUID()} className="h-12 w-full" />
+                    ))}
+                  </div>
+                )
               : (
-                <GradeEntryTable
-                  classId={selectedClassId}
-                  subjectId={selectedSubjectId}
-                  termId={selectedTermId}
-                  teacherId={currentTeacher?.id ?? ''}
-                  gradeType={gradeType}
-                  weight={weight}
-                  description={description}
-                  gradeDate={gradeDate}
-                  students={students}
-                  existingGrades={gradesData ?? []}
-                />
-              )}
+                  <GradeEntryTable
+                    classId={selectedClassId}
+                    subjectId={selectedSubjectId}
+                    termId={selectedTermId}
+                    teacherId={currentTeacher?.id ?? ''}
+                    gradeType={gradeType}
+                    weight={weight}
+                    description={description}
+                    gradeDate={gradeDate}
+                    students={students}
+                    existingGrades={gradesData ?? []}
+                  />
+                )}
           </CardContent>
         </Card>
       )}

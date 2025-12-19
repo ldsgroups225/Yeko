@@ -157,32 +157,32 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
               <CardContent className="space-y-4">
                 {currentClass?.gradeName && currentClass?.section
                   ? (
-                    <>
-                      <InfoRow
-                        label={t('students.class')}
-                        value={`${currentClass.gradeName} ${currentClass.section}${currentClass.seriesName ? ` (${currentClass.seriesName})` : ''}`}
-                      />
-                      <InfoRow label={t('students.enrollmentDate')} value={currentEnrollment?.enrollmentDate ? new Date(currentEnrollment.enrollmentDate).toLocaleDateString() : '-'} />
-                      <InfoRow label={t('students.rollNumber')} value={currentEnrollment?.rollNumber?.toString()} />
-                      <InfoRow
-                        label={t('students.enrollmentStatus')}
-                        value={currentEnrollment?.status ? t(`students.enrollment${currentEnrollment.status.charAt(0).toUpperCase() + currentEnrollment.status.slice(1)}`) : '-'}
-                      />
-                      {currentEnrollment?.status === 'confirmed' && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="mt-2 w-full"
-                          onClick={() => setTransferDialogOpen(true)}
-                        >
-                          {t('students.transferStudent')}
-                        </Button>
-                      )}
-                    </>
-                  )
+                      <>
+                        <InfoRow
+                          label={t('students.class')}
+                          value={`${currentClass.gradeName} ${currentClass.section}${currentClass.seriesName ? ` (${currentClass.seriesName})` : ''}`}
+                        />
+                        <InfoRow label={t('students.enrollmentDate')} value={currentEnrollment?.enrollmentDate ? new Date(currentEnrollment.enrollmentDate).toLocaleDateString() : '-'} />
+                        <InfoRow label={t('students.rollNumber')} value={currentEnrollment?.rollNumber?.toString()} />
+                        <InfoRow
+                          label={t('students.enrollmentStatus')}
+                          value={currentEnrollment?.status ? t(`students.enrollment${currentEnrollment.status.charAt(0).toUpperCase() + currentEnrollment.status.slice(1)}`) : '-'}
+                        />
+                        {currentEnrollment?.status === 'confirmed' && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="mt-2 w-full"
+                            onClick={() => setTransferDialogOpen(true)}
+                          >
+                            {t('students.transferStudent')}
+                          </Button>
+                        )}
+                      </>
+                    )
                   : (
-                    <p className="text-muted-foreground">{t('students.notEnrolled')}</p>
-                  )}
+                      <p className="text-muted-foreground">{t('students.notEnrolled')}</p>
+                    )}
               </CardContent>
             </Card>
 
@@ -235,55 +235,55 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
             <CardContent>
               {parents && parents.length > 0
                 ? (
-                  <div className="space-y-4">
-                    {parents.map((item: any) => (
-                      <div key={item.parent.id} className="flex items-center justify-between rounded-lg border p-4">
-                        <div className="flex items-center gap-4">
-                          <Avatar>
-                            <AvatarFallback>
-                              {item.parent.firstName[0]}
-                              {item.parent.lastName[0]}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="font-medium">
-                              {item.parent.lastName}
-                              {' '}
-                              {item.parent.firstName}
-                            </p>
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <span>{t(`students.relationship${item.relationship.charAt(0).toUpperCase() + item.relationship.slice(1)}`)}</span>
-                              {item.isPrimary && (
-                                <Badge variant="secondary" className="text-xs">{t('students.primaryContact')}</Badge>
-                              )}
-                            </div>
-                            <div className="mt-1 flex items-center gap-4 text-sm text-muted-foreground">
-                              {item.parent.phone && (
-                                <span className="flex items-center gap-1">
-                                  <Phone className="h-3 w-3" />
-                                  {item.parent.phone}
-                                </span>
-                              )}
-                              {item.parent.email && (
-                                <span className="flex items-center gap-1">
-                                  <Mail className="h-3 w-3" />
-                                  {item.parent.email}
-                                </span>
-                              )}
+                    <div className="space-y-4">
+                      {parents.map((item: any) => (
+                        <div key={item.parent.id} className="flex items-center justify-between rounded-lg border p-4">
+                          <div className="flex items-center gap-4">
+                            <Avatar>
+                              <AvatarFallback>
+                                {item.parent.firstName[0]}
+                                {item.parent.lastName[0]}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="font-medium">
+                                {item.parent.lastName}
+                                {' '}
+                                {item.parent.firstName}
+                              </p>
+                              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                <span>{t(`students.relationship${item.relationship.charAt(0).toUpperCase() + item.relationship.slice(1)}`)}</span>
+                                {item.isPrimary && (
+                                  <Badge variant="secondary" className="text-xs">{t('students.primaryContact')}</Badge>
+                                )}
+                              </div>
+                              <div className="mt-1 flex items-center gap-4 text-sm text-muted-foreground">
+                                {item.parent.phone && (
+                                  <span className="flex items-center gap-1">
+                                    <Phone className="h-3 w-3" />
+                                    {item.parent.phone}
+                                  </span>
+                                )}
+                                {item.parent.email && (
+                                  <span className="flex items-center gap-1">
+                                    <Mail className="h-3 w-3" />
+                                    {item.parent.email}
+                                  </span>
+                                )}
+                              </div>
                             </div>
                           </div>
+                          <div className="flex items-center gap-2">
+                            {item.canPickup && <Badge variant="outline">{t('students.canPickup')}</Badge>}
+                            {item.receiveNotifications && <Badge variant="outline">{t('students.receivesNotifications')}</Badge>}
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          {item.canPickup && <Badge variant="outline">{t('students.canPickup')}</Badge>}
-                          {item.receiveNotifications && <Badge variant="outline">{t('students.receivesNotifications')}</Badge>}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )
+                      ))}
+                    </div>
+                  )
                 : (
-                  <p className="text-muted-foreground py-4 text-center">{t('students.noParentsLinked')}</p>
-                )}
+                    <p className="text-muted-foreground py-4 text-center">{t('students.noParentsLinked')}</p>
+                  )}
             </CardContent>
           </Card>
         </TabsContent>

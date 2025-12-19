@@ -199,21 +199,21 @@ export function ClassroomAvailability() {
                       <TableCell className="text-right">
                         {isAvailable
                           ? (
-                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                              {t('spaces.classrooms.available')}
-                            </Badge>
-                          )
-                          : item.classroom.status !== 'active'
-                            ? (
-                              <Badge variant="secondary">
-                                {item.classroom.status === 'maintenance' ? t('spaces.classrooms.maintenance') : t('spaces.classrooms.inactive')}
+                              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                                {t('spaces.classrooms.available')}
                               </Badge>
                             )
+                          : item.classroom.status !== 'active'
+                            ? (
+                                <Badge variant="secondary">
+                                  {item.classroom.status === 'maintenance' ? t('spaces.classrooms.maintenance') : t('spaces.classrooms.inactive')}
+                                </Badge>
+                              )
                             : (
-                              <Badge variant="default">
-                                {t('spaces.classrooms.occupied')}
-                              </Badge>
-                            )}
+                                <Badge variant="default">
+                                  {t('spaces.classrooms.occupied')}
+                                </Badge>
+                              )}
                       </TableCell>
                     </TableRow>
                   )

@@ -80,16 +80,16 @@ function StudentAttendanceHistoryPage() {
       {studentId && (
         isLoading
           ? (
-            <Skeleton className="h-96 w-full max-w-md" />
-          )
+              <Skeleton className="h-96 w-full max-w-md" />
+            )
           : (
-            <AttendanceCalendar
-              studentName={studentName || studentId}
-              month={month}
-              onMonthChange={setMonth}
-              attendanceData={attendanceData}
-            />
-          )
+              <AttendanceCalendar
+                studentName={studentName || studentId}
+                month={month}
+                onMonthChange={setMonth}
+                attendanceData={attendanceData}
+              />
+            )
       )}
     </div>
   )
