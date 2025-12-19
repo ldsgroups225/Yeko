@@ -8,6 +8,6 @@
   },
   "then": {
     "type": "askAgent",
-    "prompt": "Run all tests using vitest MCP before committing. Set project root first, then run tests for the entire project with summary format. Report any failures and suggest fixes if tests fail."
+    "prompt": "Run comprehensive tests before committing to Yeko project. Follow these steps:\n1. Use vitest MCP to run all tests with --run flag\n2. Check git status to see what files are staged\n3. Run tests for the entire project with summary format\n4. Verify code quality checklist:\n   - TypeScript compilation passes\n   - ESLint rules pass\n   - All tests pass\n   - No console.log statements\n   - i18n strings are properly used\n5. If tests fail, provide specific fixes and suggest running lint:fix\n6. Check for proper commit message format (feat:, fix:, etc.)"
   }
 }

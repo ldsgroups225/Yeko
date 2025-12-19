@@ -8,6 +8,6 @@
   },
   "then": {
     "type": "askAgent",
-    "prompt": "Use vitest MCP list_tests tool to discover all test files in the project. Set project root first, then list tests. Provide a summary of test organization including: total test files, tests by directory, naming patterns used, and any gaps in test coverage."
+    "prompt": "Use vitest MCP to discover and analyze test files in the Yeko project. Follow these steps:\n1. Set project root to current workspace\n2. List all test files across apps/ and packages/\n3. Analyze test organization by:\n   - Total test files per app (core, school, data-service)\n   - Tests by directory structure\n   - Naming patterns (.test.ts vs .spec.ts)\n   - Co-location vs separate test directories\n4. Identify gaps in test coverage for:\n   - Database schemas and queries\n   - Server functions\n   - React components\n   - Multi-tenant functionality\n5. Suggest improvements for test organization and missing test areas"
   }
 }

@@ -59,13 +59,29 @@ type SchoolData = Omit<SchoolInsert, 'id' | 'createdAt' | 'updatedAt'>
 ### Server Function Types
 ```typescript
 import { createServerFn } from '@tanstack/react-start'
+import { z } from 'zod'
+
+// Input validation schema
+const createSchoolSchema = z.object({
+  name: z.string().min(1),
+  code: z.string().min(1),
+  status: z.enum(['active', 'inactive']),
+})
 
 export const createSchool = createServerFn({ method: 'POST' })
-  .validator(schoolSchema) // Zod schema for validation
+  .validator(createSchoolSchema)
   .handler(async ({ data }) => {
-    // data is typed from validator
-    return await insertSchool(data)
+    // data is automatically typed from validator
+    try {
+      const result = await insertSchool(data)
+      return { success: true, data: result }
+    } catch (error) {
+      return { success: false, error: 'Failed to create school' }
+    }
   })
+
+// Type-safe response handling
+type ServerFnResult<T> = { success: true; data: T } | { success: false; error: string }
 ```
 
 ### React Component Props

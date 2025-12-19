@@ -179,9 +179,71 @@ pnpm run test -- --coverage
 pnpm run test -- schools.test.ts
 ```
 
+## Property-Based Testing
+
+For critical business logic, use property-based testing with fast-check:
+
+```typescript
+import fc from 'fast-check'
+
+// Property: Grade calculations are consistent
+test('grade calculation properties', () => {
+  fc.assert(
+    fc.property(
+      fc.array(fc.record({
+        score: fc.float({ min: 0, max: 20 }), // French grading scale
+        coefficient: fc.float({ min: 0.5, max: 3 })
+      }), { minLength: 1 }),
+      (assignments) => {
+        const average = calculateWeightedAverage(assignments)
+        return average >= 0 && average <= 20
+      }
+    ),
+    { numRuns: 100 }
+  )
+})
+
+// Property: Multi-tenant data isolation
+test('school data isolation', async () => {
+  await fc.assert(
+    fc.asyncProperty(
+      fc.uuid(),
+      fc.uuid(),
+      fc.record({ name: fc.string({ minLength: 1 }) }),
+      async (schoolId1, schoolId2, studentData) => {
+        fc.pre(schoolId1 !== schoolId2) // Precondition
+        
+        const student = await createStudent(schoolId1, studentData)
+        const result = await getStudent(schoolId2, student.id)
+        
+        return result === null || result.error === 'UNAUTHORIZED'
+      }
+    )
+  )
+})
+```
+
+## Kiro Integration
+
+### Using Vitest MCP
+```bash
+# Run tests through Kiro
+/mcp vitest run_tests --project-root . --pattern "**/*.test.ts"
+
+# Get coverage
+/mcp vitest get_coverage --format detailed
+```
+
+### Test Discovery
+Use Kiro hooks to automatically discover and run tests:
+- `run-tests-on-save.kiro.hook`: Auto-run related tests
+- `coverage-check.kiro.hook`: Analyze coverage gaps
+- `test-before-commit.kiro.hook`: Pre-commit validation
+
 ## Coverage Goals
 
-- Schemas: 100% coverage
+- Schemas: 100% coverage (use property-based tests)
 - Query functions: 80%+ coverage
 - Components: 70%+ coverage
-- Focus on critical business logic
+- Critical business logic: Property-based testing
+- Multi-tenant isolation: Comprehensive edge case testing

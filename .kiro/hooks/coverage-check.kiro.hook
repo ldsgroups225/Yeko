@@ -8,6 +8,6 @@
   },
   "then": {
     "type": "askAgent",
-    "prompt": "Use vitest MCP analyze_coverage tool to check test coverage for the current project. Set project root first, then analyze coverage with detailed format. Identify files with low coverage (<80%) and suggest specific improvements."
+    "prompt": "Use vitest MCP to analyze test coverage for the Yeko project. Follow these steps:\n1. Set project root to current workspace\n2. Run coverage analysis with detailed format\n3. Focus on critical areas: schemas (aim for 100%), query functions (80%+), components (70%+)\n4. Identify files with low coverage and suggest specific improvements\n5. Check for untested edge cases in multi-tenant functionality\n6. Verify i18n edge cases are covered\n7. Suggest property-based tests for critical business logic (grades, fees, attendance)"
   }
 }
