@@ -47,23 +47,14 @@ interface NavItem {
   children?: NavItem[]
 }
 
-// Navigation organized into 11 simplified, cognitive-friendly sections
-// Following UX best practices: clear hierarchy, collapsable sections, semantic grouping
+// Navigation optimized by usage frequency and UX best practices
+// CORE DAILY OPERATIONS → ACADEMIC → ADMINISTRATIVE → CONFIGURATION
 const navigationItems: NavItem[] = [
+  // CORE DAILY OPERATIONS (Top - Most Frequent)
   {
     title: 'Tableau de bord',
     href: '/dashboard',
     icon: LayoutDashboard,
-  },
-  {
-    title: 'Utilisateurs',
-    href: '/users',
-    icon: Users,
-    children: [
-      { title: 'Personnel', href: '/users/staff', icon: Users },
-      { title: 'Enseignants', href: '/users/teachers', icon: GraduationCap },
-      { title: 'Rôles', href: '/users/roles', icon: UserCheck },
-    ],
   },
   {
     title: 'Élèves',
@@ -85,6 +76,18 @@ const navigationItems: NavItem[] = [
       { title: 'Affectations', href: '/classes/assignments', icon: Users },
     ],
   },
+  {
+    title: 'Utilisateurs',
+    href: '/users',
+    icon: Users,
+    children: [
+      { title: 'Personnel', href: '/users/staff', icon: Users },
+      { title: 'Enseignants', href: '/users/teachers', icon: GraduationCap },
+      { title: 'Rôles', href: '/users/roles', icon: UserCheck },
+    ],
+  },
+
+  // ACADEMIC OPERATIONS (Middle)
   {
     title: 'Notes & Moyennes',
     href: '/grades',
@@ -108,15 +111,22 @@ const navigationItems: NavItem[] = [
     ],
   },
   {
-    title: 'Paramètres',
-    href: '/settings',
-    icon: Settings,
+    title: 'Emplois du temps',
+    href: '/schedules',
+    icon: Calendar,
+  },
+  {
+    title: 'Programmes',
+    href: '/programs',
+    icon: BookOpen,
     children: [
-      { title: 'Profil école', href: '/settings/profile', icon: Building2 },
-      { title: 'Années scolaires', href: '/settings/school-years', icon: Calendar },
-      { title: 'Notifications', href: '/settings/notifications', icon: Bell },
+      { title: 'Matières', href: '/programs/subjects', icon: BookOpen },
+      { title: 'Coefficients', href: '/programs/coefficients', icon: Percent },
+      { title: 'Progression', href: '/programs/curriculum-progress', icon: Grid },
     ],
   },
+
+  // ADMINISTRATIVE (Lower)
   {
     title: 'Comptabilité',
     href: '/accounting',
@@ -134,27 +144,24 @@ const navigationItems: NavItem[] = [
     ],
   },
   {
-    title: 'Emplois du temps',
-    href: '/schedules',
-    icon: Calendar,
-  },
-  {
-    title: 'Programmes',
-    href: '/programs',
-    icon: BookOpen,
-    children: [
-      { title: 'Matières', href: '/programs/subjects', icon: BookOpen },
-      { title: 'Coefficients', href: '/programs/coefficients', icon: Percent },
-      { title: 'Progression', href: '/programs/curriculum-progress', icon: Grid },
-    ],
-  },
-  {
     title: 'Espaces',
     href: '/spaces',
     icon: Building2,
     children: [
       { title: 'Salles de classe', href: '/spaces/classrooms', icon: Building2 },
       { title: 'Disponibilité', href: '/spaces/availability', icon: Calendar },
+    ],
+  },
+
+  // CONFIGURATION (Bottom - Least Frequent)
+  {
+    title: 'Paramètres',
+    href: '/settings',
+    icon: Settings,
+    children: [
+      { title: 'Profil école', href: '/settings/profile', icon: Building2 },
+      { title: 'Années scolaires', href: '/settings/school-years', icon: Calendar },
+      { title: 'Notifications', href: '/settings/notifications', icon: Bell },
     ],
   },
 ]
@@ -176,11 +183,99 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </div>
       </SidebarHeader>
       <SidebarContent>
+        {/* CORE DAILY OPERATIONS */}
         <SidebarGroup>
-          <SidebarGroupLabel>Menu Principal</SidebarGroupLabel>
+          <SidebarGroupLabel>Opérations Quotidiennes</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navigationItems.map(item => (
+              {navigationItems.slice(0, 4).map(item => (
+                <SidebarMenuItem key={item.href}>
+                  {item.children
+                    ? (
+                      <SidebarMenuSubItemWrapper item={item} pathname={pathname} />
+                    )
+                    : (
+                      <SidebarMenuButton
+                        asChild
+                        isActive={pathname === item.href}
+                        tooltip={item.title}
+                      >
+                        <Link to={item.href}>
+                          <item.icon />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    )}
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* ACADEMIC OPERATIONS */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Opérations Académiques</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navigationItems.slice(4, 8).map(item => (
+                <SidebarMenuItem key={item.href}>
+                  {item.children
+                    ? (
+                      <SidebarMenuSubItemWrapper item={item} pathname={pathname} />
+                    )
+                    : (
+                      <SidebarMenuButton
+                        asChild
+                        isActive={pathname === item.href}
+                        tooltip={item.title}
+                      >
+                        <Link to={item.href}>
+                          <item.icon />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    )}
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* ADMINISTRATIVE */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Administration</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navigationItems.slice(8, 10).map(item => (
+                <SidebarMenuItem key={item.href}>
+                  {item.children
+                    ? (
+                      <SidebarMenuSubItemWrapper item={item} pathname={pathname} />
+                    )
+                    : (
+                      <SidebarMenuButton
+                        asChild
+                        isActive={pathname === item.href}
+                        tooltip={item.title}
+                      >
+                        <Link to={item.href}>
+                          <item.icon />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    )}
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* CONFIGURATION */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Configuration</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navigationItems.slice(10).map(item => (
                 <SidebarMenuItem key={item.href}>
                   {item.children
                     ? (
