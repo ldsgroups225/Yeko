@@ -3,6 +3,7 @@
 **Role**: Expert test automation engineer specializing in EdTech testing frameworks and comprehensive quality assurance.
 
 **Expertise**:
+
 - Vitest + React Testing Library for component testing
 - Playwright for E2E testing of school management workflows
 - Multi-tenant testing strategies
@@ -12,6 +13,7 @@
 ## Core Responsibilities
 
 ### Test Framework Architecture
+
 - Design comprehensive testing strategy for Yeko platform
 - Implement unit, integration, and E2E test suites
 - Create test utilities for EdTech domain objects
@@ -19,6 +21,7 @@
 - Maintain test data factories and fixtures
 
 ### EdTech-Specific Testing
+
 - Student information system workflows
 - Grade calculation and reporting accuracy
 - Multi-tenant data isolation verification
@@ -27,6 +30,7 @@
 - French-language UI validation
 
 ### Quality Assurance
+
 - Automated regression testing
 - Performance testing for African network conditions
 - Accessibility testing (WCAG compliance)
@@ -36,6 +40,7 @@
 ## Testing Architecture
 
 ### Test Structure
+
 ```
 tests/
 ├── unit/                    # Unit tests
@@ -59,6 +64,7 @@ tests/
 ## Unit Testing
 
 ### Component Testing
+
 ```typescript
 // tests/unit/components/grades/student-grades-table.test.tsx
 import { describe, it, expect, vi } from 'vitest'
@@ -136,6 +142,7 @@ describe('StudentGradesTable', () => {
 ```
 
 ### Server Function Testing
+
 ```typescript
 // tests/unit/functions/grades.test.ts
 import { describe, it, expect, beforeEach, vi } from 'vitest'
@@ -212,6 +219,7 @@ describe('createGradeServerFn', () => {
 ```
 
 ### Database Query Testing
+
 ```typescript
 // tests/unit/queries/grades.test.ts
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
@@ -359,6 +367,7 @@ describe('Grade Queries', () => {
 ## Integration Testing
 
 ### API Integration Tests
+
 ```typescript
 // tests/integration/api/grades-api.test.ts
 import { describe, it, expect, beforeEach } from 'vitest'
@@ -430,6 +439,7 @@ describe('Grades API Integration', () => {
 ## End-to-End Testing
 
 ### Teacher Workflow Tests
+
 ```typescript
 // tests/e2e/teacher-workflows/grade-management.spec.ts
 import { test, expect } from '@playwright/test'
@@ -449,13 +459,13 @@ test.describe('Teacher Grade Management', () => {
     await page.fill('[data-testid="password-input"]', teacher.password)
     await page.click('[data-testid="login-button"]')
     
-    await expect(page).toHaveURL('/app/dashboard')
+    await expect(page).toHaveURL('/dashboard')
   })
 
   test('teacher can create and view student grades', async ({ page }) => {
     // Navigate to grades section
     await page.click('[data-testid="nav-grades"]')
-    await expect(page).toHaveURL('/app/grades')
+    await expect(page).toHaveURL('/grades')
 
     // Select student
     await page.click(`[data-testid="student-${student.id}"]`)
@@ -494,7 +504,7 @@ test.describe('Teacher Grade Management', () => {
     })
 
     // Navigate to grades
-    await page.goto('/app/grades')
+    await page.goto('/grades')
     await page.click(`[data-testid="student-${student.id}"]`)
     
     // Edit grade
@@ -508,7 +518,7 @@ test.describe('Teacher Grade Management', () => {
   })
 
   test('displays French language interface correctly', async ({ page }) => {
-    await page.goto('/app/grades')
+    await page.goto('/grades')
     
     // Verify French labels
     await expect(page.locator('h1')).toContainText('Gestion des Notes')
@@ -524,6 +534,7 @@ test.describe('Teacher Grade Management', () => {
 ```
 
 ### Multi-Tenant Security Tests
+
 ```typescript
 // tests/e2e/security/multi-tenant-isolation.spec.ts
 import { test, expect } from '@playwright/test'
@@ -560,17 +571,17 @@ test.describe('Multi-Tenant Security', () => {
     await page.click('[data-testid="login-button"]')
 
     // Navigate to grades
-    await page.goto('/app/grades')
+    await page.goto('/grades')
     
     // Should only see school1 students
     await expect(page.locator('[data-testid="students-list"]')).toContainText(school1Student.name)
     await expect(page.locator('[data-testid="students-list"]')).not.toContainText(school2Student.name)
     
     // Try to access school2 student directly via URL
-    await page.goto(`/app/students/${school2Student.id}/grades`)
+    await page.goto(`/students/${school2Student.id}/grades`)
     
     // Should be redirected or show error
-    await expect(page).toHaveURL('/app/dashboard')
+    await expect(page).toHaveURL('/dashboard')
     await expect(page.locator('[data-testid="error-toast"]')).toContainText('Accès non autorisé')
   })
 })
@@ -579,6 +590,7 @@ test.describe('Multi-Tenant Security', () => {
 ## Test Utilities and Factories
 
 ### Test Factories
+
 ```typescript
 // tests/factories/grade-factory.ts
 import { faker } from '@faker-js/faker/locale/fr'
@@ -619,6 +631,7 @@ export function createMockGrades(count: number): Grade[] {
 ```
 
 ### Test Utilities
+
 ```typescript
 // tests/utils/test-setup.ts
 import { beforeEach, afterEach } from 'vitest'
@@ -662,6 +675,7 @@ export function renderWithProviders(
 ## CI/CD Integration
 
 ### GitHub Actions Workflow
+
 ```yaml
 # .github/workflows/test.yml
 name: Test Suite
@@ -736,6 +750,7 @@ jobs:
 ## Performance Testing
 
 ### Load Testing
+
 ```typescript
 // tests/performance/grade-creation-load.test.ts
 import { test, expect } from '@playwright/test'
@@ -755,7 +770,7 @@ test.describe('Grade Creation Performance', () => {
     // Create grades for all students concurrently
     const gradePromises = students.map(async (student, index) => {
       const newPage = await context.newPage()
-      await newPage.goto('/app/grades')
+      await newPage.goto('/grades')
       await createGradeForStudent(newPage, student.id, {
         value: 10 + (index % 10),
         subject: 'math-subject-id',

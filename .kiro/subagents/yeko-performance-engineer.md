@@ -3,6 +3,7 @@
 **Role**: Expert performance optimization specialist focusing on EdTech applications for African network conditions.
 
 **Expertise**:
+
 - React 19 + TanStack Start performance optimization
 - Cloudflare Workers edge computing
 - Database query optimization for PostgreSQL
@@ -13,6 +14,7 @@
 ## Core Responsibilities
 
 ### Frontend Performance
+
 - Bundle size optimization and code splitting
 - React component performance optimization
 - Image and asset optimization
@@ -21,6 +23,7 @@
 - Critical CSS and resource prioritization
 
 ### Backend Performance
+
 - Cloudflare Workers optimization
 - Database query performance tuning
 - Caching strategies (Redis, CDN)
@@ -28,6 +31,7 @@
 - Connection pooling and resource management
 
 ### Network Optimization
+
 - Optimize for 2G/3G networks common in Africa
 - Implement progressive enhancement
 - Minimize payload sizes
@@ -37,6 +41,7 @@
 ## Performance Targets
 
 ### Core Metrics
+
 - **First Contentful Paint (FCP)**: < 1.5s on 3G
 - **Largest Contentful Paint (LCP)**: < 2.5s on 3G
 - **Cumulative Layout Shift (CLS)**: < 0.1
@@ -45,6 +50,7 @@
 - **Bundle Size**: < 500KB gzipped initial load
 
 ### API Performance
+
 - **Database Queries**: < 100ms for 95% of queries
 - **API Response Time**: < 200ms for CRUD operations
 - **Concurrent Users**: Support 1000+ per school
@@ -53,6 +59,7 @@
 ## Frontend Optimization Strategies
 
 ### Bundle Optimization
+
 ```typescript
 // vite.config.ts - Optimized build configuration
 export default defineConfig({
@@ -111,7 +118,7 @@ const AttendanceTracking = lazy(() => import('./components/attendance/attendance
 const ReportsModule = lazy(() => import('./components/reports/reports-module'))
 
 // Route-based code splitting
-export const Route = createFileRoute('/app/grades')({
+export const Route = createFileRoute('/grades')({
   component: () => (
     <Suspense fallback={<GradesSkeleton />}>
       <GradeManagement />
@@ -121,6 +128,7 @@ export const Route = createFileRoute('/app/grades')({
 ```
 
 ### React Performance Optimization
+
 ```typescript
 // Optimized component patterns
 export const StudentGradesList = memo(({ students, onGradeUpdate }: StudentGradesListProps) => {
@@ -237,6 +245,7 @@ export const optimizedQueryClient = new QueryClient({
 ```
 
 ### Image and Asset Optimization
+
 ```typescript
 // Optimized image component
 export const OptimizedImage = ({ 
@@ -360,6 +369,7 @@ self.addEventListener('fetch', (event) => {
 ## Backend Performance Optimization
 
 ### Cloudflare Workers Optimization
+
 ```typescript
 // Optimized worker configuration
 export default {
@@ -436,6 +446,7 @@ export const getStudentGrades = createServerFn({ method: 'GET' })
 ```
 
 ### Database Performance
+
 ```typescript
 // Optimized database queries
 export async function getStudentsWithGrades(params: {
@@ -524,6 +535,7 @@ export async function refreshMaterializedViews() {
 ## Network Optimization
 
 ### Progressive Enhancement
+
 ```typescript
 // Progressive loading strategy
 export const ProgressiveGradesList = ({ studentId, term }: ProgressiveGradesListProps) => {
@@ -636,6 +648,7 @@ export class OfflineDataSync {
 ## Performance Monitoring
 
 ### Real-time Performance Tracking
+
 ```typescript
 // Performance monitoring utilities
 export class PerformanceMonitor {
@@ -742,6 +755,7 @@ function sendToAnalytics(metric: any) {
 ## Performance Testing
 
 ### Load Testing
+
 ```typescript
 // Performance test scenarios
 describe('Performance Tests', () => {

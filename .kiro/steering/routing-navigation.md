@@ -9,30 +9,32 @@ description: TanStack Router patterns, file-based routing, and navigation standa
 ## TanStack Router (File-Based)
 
 ### Route File Structure
+
 ```
 apps/core/src/routes/
   __root.tsx           # Root layout
   index.tsx            # Landing page (/)
   demo-request.tsx     # /demo-request
   _auth/               # Auth layout group
-    app/               # /app routes
+                   # /app routes
       index.tsx        # /app (dashboard)
-      schools.tsx      # /app/schools
-      schools.$schoolId.tsx  # /app/schools/:schoolId
+      schools.tsx      # /schools
+      schools.$schoolId.tsx  # /schools/:schoolId
       catalogs/
-        index.tsx      # /app/catalogs
-        programs.tsx   # /app/catalogs/programs
+        index.tsx      # /catalogs
+        programs.tsx   # /catalogs/programs
         coefficients.tsx
-      analytics.tsx    # /app/analytics
+      analytics.tsx    # /analytics
   api/                 # API routes
     auth.$.ts          # /api/auth/*
 ```
 
 ### Route Component Pattern
+
 ```typescript
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/_auth/app/schools')({
+export const Route = createFileRoute('/_auth/schools')({
   component: SchoolsPage,
   loader: async () => {
     // Prefetch data
@@ -47,11 +49,12 @@ function SchoolsPage() {
 ```
 
 ### Dynamic Routes
+
 ```typescript
 // schools.$schoolId.tsx
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/_auth/app/schools/$schoolId')({
+export const Route = createFileRoute('/_auth/schools/$schoolId')({
   component: SchoolDetailPage,
   loader: async ({ params }) => {
     return { school: await getSchoolById({ id: params.schoolId }) }
@@ -66,6 +69,7 @@ function SchoolDetailPage() {
 ```
 
 ### Layout Routes
+
 ```typescript
 // _auth.tsx - Protected layout
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
@@ -95,25 +99,26 @@ function AuthLayout() {
 ## Navigation
 
 ### Link Component
+
 ```typescript
 import { Link } from '@tanstack/react-router'
 
 // Basic link
-<Link to="/app/schools">{t('navigation.schools')}</Link>
+<Link to="/schools">{t('navigation.schools')}</Link>
 
 // With params
-<Link to="/app/schools/$schoolId" params={{ schoolId: school.id }}>
+<Link to="/schools/$schoolId" params={{ schoolId: school.id }}>
   {school.name}
 </Link>
 
 // With search params
-<Link to="/app/schools" search={{ status: 'active' }}>
+<Link to="/schools" search={{ status: 'active' }}>
   {t('schools.activeOnly')}
 </Link>
 
 // Active state styling
 <Link
-  to="/app/schools"
+  to="/schools"
   className="text-muted-foreground"
   activeProps={{ className: 'text-foreground font-medium' }}
 >
@@ -122,6 +127,7 @@ import { Link } from '@tanstack/react-router'
 ```
 
 ### Programmatic Navigation
+
 ```typescript
 import { useNavigate, useRouter } from '@tanstack/react-router'
 
@@ -131,7 +137,7 @@ function Component() {
   
   // Navigate to route
   const handleClick = () => {
-    navigate({ to: '/app/schools/$schoolId', params: { schoolId: '123' } })
+    navigate({ to: '/schools/$schoolId', params: { schoolId: '123' } })
   }
   
   // Go back
@@ -141,12 +147,13 @@ function Component() {
   
   // Replace current route
   const handleReplace = () => {
-    navigate({ to: '/app/schools', replace: true })
+    navigate({ to: '/schools', replace: true })
   }
 }
 ```
 
 ### Search Params
+
 ```typescript
 import { createFileRoute } from '@tanstack/react-router'
 import { z } from 'zod'
@@ -157,7 +164,7 @@ const searchSchema = z.object({
   page: z.number().optional().default(1),
 })
 
-export const Route = createFileRoute('/_auth/app/schools')({
+export const Route = createFileRoute('/_auth/schools')({
   validateSearch: searchSchema,
   component: SchoolsPage,
 })
@@ -214,7 +221,7 @@ function Breadcrumbs() {
 
 ```typescript
 // Route error boundary
-export const Route = createFileRoute('/_auth/app/schools')({
+export const Route = createFileRoute('/_auth/schools')({
   component: SchoolsPage,
   errorComponent: SchoolsError,
   pendingComponent: SchoolsLoading,
