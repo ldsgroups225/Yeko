@@ -1,9 +1,20 @@
 import type { ReactNode } from 'react'
 import type { Locales, TranslationFunctions, Translations } from './i18n-types'
 import { createContext, use, useEffect, useState } from 'react'
+import { initFormatters as initBaseFormatters } from './formatters.js'
+import baseTranslations from './fr/index.js'
 import { baseLocale, i18nObject, isLocale, loadedFormatters, loadedLocales } from './i18n-util'
 
-// Import locale loaders
+// Preload base locale synchronously so initial render has translations
+if (!loadedLocales[baseLocale]) {
+  loadedLocales[baseLocale] = baseTranslations as Translations
+}
+
+if (!loadedFormatters[baseLocale]) {
+  loadedFormatters[baseLocale] = initBaseFormatters(baseLocale)
+}
+
+// Import locale loaders for dynamic locales
 async function loadLocale(locale: Locales): Promise<Translations> {
   switch (locale) {
     case 'fr':
@@ -52,15 +63,13 @@ interface I18nProviderProps {
 }
 
 export function I18nProvider({ children, locale: initialLocale }: I18nProviderProps) {
-  // Detect initial locale
   const detectedLocale = initialLocale || detectBrowserLocale()
+  const hasDetectedLocaleLoaded = Boolean(loadedLocales[detectedLocale])
+  const initialResolvedLocale = hasDetectedLocaleLoaded ? detectedLocale : baseLocale
 
-  const [locale, setLocaleState] = useState<Locales>(detectedLocale)
-  const [t, setT] = useState<TranslationFunctions>(() => {
-    // Return empty object initially, will be loaded in useEffect
-    return {} as TranslationFunctions
-  })
-  const [isLoading, setIsLoading] = useState(true)
+  const [locale, setLocaleState] = useState<Locales>(initialResolvedLocale)
+  const [t, setT] = useState<TranslationFunctions>(() => i18nObject(initialResolvedLocale))
+  const [isLoading, setIsLoading] = useState(!hasDetectedLocaleLoaded)
 
   const setLocale = async (newLocale: Locales) => {
     if (!isLocale(newLocale)) {
@@ -68,7 +77,10 @@ export function I18nProvider({ children, locale: initialLocale }: I18nProviderPr
       newLocale = baseLocale
     }
 
-    setIsLoading(true)
+    const localeAlreadyLoaded = loadedLocales[newLocale]
+    if (!localeAlreadyLoaded) {
+      setIsLoading(true)
+    }
 
     try {
       // Load translations if not already loaded
@@ -102,8 +114,10 @@ export function I18nProvider({ children, locale: initialLocale }: I18nProviderPr
 
   // Load initial locale
   useEffect(() => {
-    setLocale(locale)
-  }, [])
+    if (!hasDetectedLocaleLoaded) {
+      setLocale(detectedLocale)
+    }
+  }, [detectedLocale, hasDetectedLocaleLoaded])
 
   const contextValue: I18nContextValue = {
     locale,

@@ -71,7 +71,7 @@ interface SchoolSubjectItem {
   }
 }
 
-const CATEGORIES = ['Scientifique', 'Littéraire', 'Sportif', 'Autre'] as const
+const SUBJECT_CATEGORY_KEYS = ['litteraire', 'scientifique', 'sportif', 'autre'] as const
 
 export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
   const t = useTranslations()
@@ -87,7 +87,7 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
     search: search || undefined,
     category:
       categoryFilter !== 'all'
-        ? (categoryFilter as typeof CATEGORIES[number])
+        ? (categoryFilter as (typeof SUBJECT_CATEGORY_KEYS)[number])
         : undefined,
     status:
       statusFilter !== 'all'
@@ -222,7 +222,7 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
                 <SelectItem value="all">
                   {t.academic.subjects.allCategories()}
                 </SelectItem>
-                {CATEGORIES.map((cat) => {
+                {SUBJECT_CATEGORY_KEYS.map((cat) => {
                   const categoryTranslations = {
                     scientifique:
                       t.academic.subjects.categories.scientifique,
@@ -232,11 +232,7 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
                   }
                   return (
                     <SelectItem key={cat} value={cat}>
-                      {
-                        categoryTranslations[
-                          cat.toLowerCase() as keyof typeof categoryTranslations
-                        ]()
-                      }
+                      {categoryTranslations[cat]()}
                     </SelectItem>
                   )
                 })}
