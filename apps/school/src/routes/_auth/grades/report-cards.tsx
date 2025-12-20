@@ -18,7 +18,6 @@ import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { getClasses } from '@/school/functions/classes'
 import { getSchoolYears } from '@/school/functions/school-years'
 import { getTerms } from '@/school/functions/terms'
-import { generateUUID } from '@/utils/generateUUID'
 
 export const Route = createFileRoute('/_auth/grades/report-cards')({
   component: ReportCardsPage,
@@ -84,98 +83,100 @@ function ReportCardsPage() {
         <div className="w-full sm:w-[200px]">
           {yearsLoading
             ? (
-              <Skeleton className="h-10 w-full" />
-            )
+                <Skeleton className="h-10 w-full" />
+              )
             : (
-              <Select
-                value={effectiveYearId}
-                onValueChange={val => setLocalYearId(val)}
-              // Disable if we want to enforce context, but here viewing history is valid
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={t('schoolYear.select')} />
-                </SelectTrigger>
-                <SelectContent>
-                  {schoolYears?.map((year: { id: string, name: string, isActive: boolean }) => (
-                    <SelectItem key={year.id} value={year.id}>
-                      {year.name}
-                      {' '}
-                      {year.isActive && t('schoolYear.activeSuffix')}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
+                <Select
+                  value={effectiveYearId}
+                  onValueChange={val => setLocalYearId(val)}
+                  // Disable if we want to enforce context, but here viewing history is valid
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('schoolYear.select')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {schoolYears?.map(year => (
+                      <SelectItem key={year.id} value={year.id}>
+                        {year.template.name}
+                        {' '}
+                        {year.isActive && t('schoolYear.activeSuffix')}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
         </div>
 
         {/* Term */}
         <div className="w-full sm:w-[200px]">
           {termsLoading
             ? (
-              <Skeleton className="h-10 w-full" />
-            )
+                <Skeleton className="h-10 w-full" />
+              )
             : (
-              <Select
-                value={selectedTermId}
-                onValueChange={setSelectedTermId}
-                disabled={!effectiveYearId}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={t('terms.select')} />
-                </SelectTrigger>
-                <SelectContent>
-                  {terms?.map((term: { id: string, name: string }) => (
-                    <SelectItem key={term.id} value={term.id}>
-                      {term.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
+                <Select
+                  value={selectedTermId}
+                  onValueChange={setSelectedTermId}
+                  disabled={!effectiveYearId}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('terms.select')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {terms?.map(term => (
+                      <SelectItem key={term.id} value={term.id}>
+                        {term.template.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
         </div>
 
         {/* Class */}
         <div className="w-full sm:w-[200px]">
           {classesLoading
             ? (
-              <Skeleton className="h-10 w-full" />
-            )
+                <Skeleton className="h-10 w-full" />
+              )
             : (
-              <Select
-                value={selectedClassId}
-                onValueChange={setSelectedClassId}
-                disabled={!effectiveYearId}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={t('classes.select')} />
-                </SelectTrigger>
-                <SelectContent>
-                  {classes?.map((cls: { id: string, name: string }) => (
-                    <SelectItem key={generateUUID()} value={cls.id}>
-                      {cls.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
+                <Select
+                  value={selectedClassId}
+                  onValueChange={setSelectedClassId}
+                  disabled={!effectiveYearId}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('classes.select')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {classes?.map(item => (
+                      <SelectItem key={item.class.id} value={item.class.id}>
+                        {item.grade.name}
+                        {' '}
+                        {item.class.section}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
         </div>
       </div>
 
       {/* Report Cards List */}
       {canShowReportCards
         ? (
-          <ReportCardList
-            reportCards={[]}
-            isLoading={false}
-          />
-        )
+            <ReportCardList
+              reportCards={[]}
+              isLoading={false}
+            />
+          )
         : (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-              <p>{t('reportCards.selectFiltersPrompt')}</p>
-            </CardContent>
-          </Card>
-        )}
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                <p>{t('reportCards.selectFiltersPrompt')}</p>
+              </CardContent>
+            </Card>
+          )}
     </div>
   )
 }

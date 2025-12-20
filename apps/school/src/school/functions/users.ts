@@ -213,7 +213,7 @@ export const bulkUpdateStatus = createServerFn()
     if (!context)
       throw new Error('No school context')
     const { schoolId } = context
-    return await bulkUpdateUsersStatus(userIds, status, schoolId, 'system')
+    return await bulkUpdateUsersStatus(userIds, schoolId, status, 'system')
   })
 
 /**
@@ -267,7 +267,7 @@ export const getCurrentUserRole = createServerFn()
       }
 
       // Return the first role (primary role)
-      const primaryRole = user.roles[0]
+      const primaryRole = user.roles[0]!
       return {
         roleSlug: primaryRole.roleSlug,
         roleName: primaryRole.roleName,

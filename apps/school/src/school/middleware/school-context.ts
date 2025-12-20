@@ -50,7 +50,7 @@ export const getSchoolContext = createServerFn().handler(async () => {
       const schools = await getUserSchoolsByAuthUserId(authContext.userId)
       if (schools.length > 0) {
         // Auto-select first school and set cookie
-        const firstSchool = schools[0]
+        const firstSchool = schools[0]!
         setResponseHeader(
           'Set-Cookie',
           `${SCHOOL_CONTEXT_COOKIE}=${firstSchool.id}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${60 * 60 * 24 * 30}`,
@@ -127,7 +127,7 @@ export const getSchoolYearContext = createServerFn().handler(async () => {
       // Try to auto-select the active school year
       const schoolYears = await getSchoolYearsBySchool(schoolContext.schoolId, { isActive: true, limit: 1 })
       if (schoolYears.length > 0) {
-        const activeYear = schoolYears[0]
+        const activeYear = schoolYears[0]!
         setResponseHeader(
           'Set-Cookie',
           `${SCHOOL_YEAR_CONTEXT_COOKIE}=${activeYear.id}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${60 * 60 * 24 * 30}`,
@@ -147,9 +147,9 @@ export const getSchoolYearContext = createServerFn().handler(async () => {
       if (activeYears.length > 0) {
         setResponseHeader(
           'Set-Cookie',
-          `${SCHOOL_YEAR_CONTEXT_COOKIE}=${activeYears[0].id}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${60 * 60 * 24 * 30}`,
+          `${SCHOOL_YEAR_CONTEXT_COOKIE}=${activeYears[0]!.id}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${60 * 60 * 24 * 30}`,
         )
-        return { schoolYearId: activeYears[0].id, schoolId: schoolContext.schoolId }
+        return { schoolYearId: activeYears[0]!.id, schoolId: schoolContext.schoolId }
       }
       setResponseHeader(
         'Set-Cookie',

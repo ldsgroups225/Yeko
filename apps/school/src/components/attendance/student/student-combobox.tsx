@@ -63,7 +63,17 @@ export function StudentCombobox({
           limit: 50,
         },
       })
-      return result.data as Student[]
+      return result.data.map((item: any) => ({
+        id: item.student.id,
+        matricule: item.student.matricule,
+        user: {
+          name: `${item.student.firstName} ${item.student.lastName}`,
+          image: item.student.photoUrl,
+        },
+        currentEnrollment: item.currentClass
+          ? { class: { name: item.currentClass.name } }
+          : null,
+      })) as Student[]
     },
   })
 

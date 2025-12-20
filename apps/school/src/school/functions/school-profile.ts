@@ -60,7 +60,9 @@ export const updateSchoolProfile = createServerFn()
       .where(eq(schools.id, context.schoolId))
       .returning()
 
-    return updated
+    if (!updated)
+      return undefined
+    return { ...updated, settings: updated.settings as Record<string, any> | null }
   })
 
 /**
@@ -95,7 +97,9 @@ export const updateSchoolSettings = createServerFn()
       .where(eq(schools.id, context.schoolId))
       .returning()
 
-    return updated
+    if (!updated)
+      return undefined
+    return { ...updated, settings: updated.settings as Record<string, any> | null }
   })
 
 /**
@@ -115,7 +119,9 @@ export const updateSchoolLogo = createServerFn()
       .where(eq(schools.id, context.schoolId))
       .returning()
 
-    return updated
+    if (!updated)
+      return undefined
+    return { ...updated, settings: updated.settings as Record<string, any> | null }
   })
 
 /**
@@ -133,5 +139,7 @@ export const removeSchoolLogo = createServerFn().handler(async () => {
     .where(eq(schools.id, context.schoolId))
     .returning()
 
-  return updated
+  if (!updated)
+    return undefined
+  return { ...updated, settings: updated.settings as Record<string, any> | null }
 })

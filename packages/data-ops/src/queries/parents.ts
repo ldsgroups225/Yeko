@@ -1,4 +1,4 @@
-import type { ParentInsert } from '../drizzle/school-schema'
+import type { Parent, ParentInsert } from '../drizzle/school-schema'
 import crypto from 'node:crypto'
 import { and, eq, ilike, isNull, or, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
@@ -190,7 +190,7 @@ export async function autoMatchParents(schoolId: string) {
 
 // ==================== CRUD Operations ====================
 
-export async function createParent(data: CreateParentInput) {
+export async function createParent(data: CreateParentInput): Promise<Parent> {
   const db = getDb()
   // Check if parent with same phone exists
   const existing = await findParentByPhone(data.phone)
@@ -206,6 +206,10 @@ export async function createParent(data: CreateParentInput) {
       invitationStatus: 'pending',
     } as ParentInsert)
     .returning()
+
+  if (!parent) {
+    throw new Error('Failed to create parent')
+  }
 
   return parent
 }
@@ -379,7 +383,7 @@ export async function sendParentInvitation(parentId: string, schoolId: string) {
     // Update status to failed
     await db
       .update(parents)
-      .set({ invitationStatus: 'failed', updatedAt: new Date() })
+      .set({ invitationStatus: 'expired', updatedAt: new Date() })
       .where(eq(parents.id, parentId))
 
     throw new Error(`Échec de l'envoi de l'invitation: ${emailResult.error}`)
@@ -444,7 +448,7 @@ export async function bulkImportParents(
       }
 
       // Link to student if matricule provided
-      if (studentMatricule) {
+      if (studentMatricule && parent) {
         const [student] = await db.select().from(students).where(eq(students.matricule, studentMatricule))
 
         if (student) {

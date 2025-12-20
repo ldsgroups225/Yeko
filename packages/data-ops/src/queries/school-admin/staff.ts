@@ -94,11 +94,13 @@ export async function createStaff(data: {
       schoolId: data.schoolId,
       position: data.position,
       department: data.department,
-      hireDate: data.hireDate,
+      hireDate: data.hireDate?.toISOString(),
       status: 'active',
     })
     .returning()
-
+  if (!newStaff) {
+    throw new Error('Failed to create staff')
+  }
   return newStaff
 }
 
@@ -123,11 +125,13 @@ export async function updateStaff(
   if (!staffMember) {
     throw new Error(SCHOOL_ERRORS.USER_NOT_FOUND)
   }
+  const { hireDate, ...rest } = data
 
   const [updated] = await db
     .update(staff)
     .set({
-      ...data,
+      ...rest,
+      ...(hireDate && { hireDate: hireDate.toISOString() }),
       updatedAt: new Date(),
     })
     .where(eq(staff.id, staffId))

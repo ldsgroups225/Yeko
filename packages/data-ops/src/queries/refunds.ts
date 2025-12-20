@@ -76,10 +76,13 @@ export async function createRefund(data: CreateRefundData): Promise<Refund> {
   const db = getDb()
   const refundNumber = await generateRefundNumber(data.schoolId)
   const [refund] = await db.insert(refunds).values({ id: nanoid(), refundNumber, ...data }).returning()
+  if (!refund) {
+    throw new Error('Failed to create refund')
+  }
   return refund
 }
 
-export async function approveRefund(refundId: string, approvedBy: string): Promise<Refund> {
+export async function approveRefund(refundId: string, approvedBy: string): Promise<Refund | undefined> {
   const db = getDb()
   const [refund] = await db
     .update(refunds)
@@ -89,7 +92,7 @@ export async function approveRefund(refundId: string, approvedBy: string): Promi
   return refund
 }
 
-export async function rejectRefund(refundId: string, rejectionReason: string): Promise<Refund> {
+export async function rejectRefund(refundId: string, rejectionReason: string): Promise<Refund | undefined> {
   const db = getDb()
   const [refund] = await db
     .update(refunds)
@@ -99,9 +102,13 @@ export async function rejectRefund(refundId: string, rejectionReason: string): P
   return refund
 }
 
-export async function processRefund(refundId: string, processedBy: string, reference?: string): Promise<Refund> {
+export async function processRefund(
+  refundId: string,
+  processedBy: string,
+  reference?: string,
+): Promise<Refund | undefined> {
   const db = getDb()
-  return db.transaction(async (tx: typeof db) => {
+  return db.transaction(async (tx: any) => {
     const refund = await getRefundById(refundId)
     if (!refund)
       throw new Error('Refund not found')
@@ -123,12 +130,14 @@ export async function processRefund(refundId: string, processedBy: string, refer
       .set({ status: 'processed', processedBy, processedAt: new Date(), reference, updatedAt: new Date() })
       .where(eq(refunds.id, refundId))
       .returning()
-
+    if (!processedRefund) {
+      throw new Error('Failed to process refund')
+    }
     return processedRefund
   })
 }
 
-export async function cancelRefund(refundId: string): Promise<Refund> {
+export async function cancelRefund(refundId: string): Promise<Refund | undefined> {
   const db = getDb()
   const [refund] = await db
     .update(refunds)

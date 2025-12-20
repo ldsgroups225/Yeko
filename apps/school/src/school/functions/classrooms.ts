@@ -70,7 +70,7 @@ export const createClassroom = createServerFn()
       userId: context.userId,
       action: 'create',
       tableName: 'classrooms',
-      recordId: classroom.id,
+      recordId: classroom!.id,
       newValues: data,
     })
 

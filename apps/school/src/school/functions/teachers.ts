@@ -3,7 +3,6 @@ import {
   countTeachersBySchool,
   createTeacher,
   deleteTeacher,
-  getTeacherById,
   getTeacherByUserId,
   getTeachersBySchool,
   getTeacherWithSubjects,
@@ -78,7 +77,7 @@ export const getTeacher = createServerFn()
     if (!context)
       throw new Error('No school context')
     const { schoolId } = context
-    return await getTeacherById(teacherId, schoolId)
+    return await getTeacherWithSubjects(teacherId, schoolId)
   })
 
 /**

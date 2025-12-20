@@ -49,6 +49,9 @@ describe('classes queries', () => {
       capacity: 40,
       status: 'active',
     })
+    if (!classroom) {
+      throw new Error('Failed to create classroom for test')
+    }
     testClassroomId = classroom.id
 
     // Note: In a real test environment, we would create or use existing
@@ -70,7 +73,10 @@ describe('classes queries', () => {
         section: 'A',
         status: 'active',
       })
-      testClassIds.push(testClass!.id)
+      if (!testClass) {
+        throw new Error('Failed to create test class')
+      }
+      testClassIds.push(testClass.id)
 
       const result = await getClasses({ schoolId: testSchoolId })
 
@@ -87,7 +93,10 @@ describe('classes queries', () => {
         section: 'B',
         status: 'active',
       })
-      testClassIds.push(testClass!.id)
+      if (!testClass) {
+        throw new Error('Failed to create test class')
+      }
+      testClassIds.push(testClass.id)
 
       const result = await getClasses({
         schoolId: testSchoolId,
@@ -106,7 +115,10 @@ describe('classes queries', () => {
         section: 'C',
         status: 'active',
       })
-      testClassIds.push(testClass!.id)
+      if (!testClass) {
+        throw new Error('Failed to create test class')
+      }
+      testClassIds.push(testClass.id)
 
       const result = await getClasses({
         schoolId: testSchoolId,
@@ -126,7 +138,10 @@ describe('classes queries', () => {
         section: 'D',
         status: 'active',
       })
-      testClassIds.push(testClass!.id)
+      if (!testClass) {
+        throw new Error('Failed to create test class')
+      }
+      testClassIds.push(testClass.id)
 
       const result = await getClasses({
         schoolId: testSchoolId,
@@ -145,7 +160,10 @@ describe('classes queries', () => {
         section: 'E',
         status: 'active',
       })
-      testClassIds.push(testClass!.id)
+      if (!testClass) {
+        throw new Error('Failed to create test class')
+      }
+      testClassIds.push(testClass.id)
 
       const result = await getClasses({ schoolId: testSchoolId })
 
@@ -168,12 +186,15 @@ describe('classes queries', () => {
         section: 'F',
         status: 'active',
       })
-      testClassIds.push(testClass!.id)
+      if (!testClass) {
+        throw new Error('Failed to create test class')
+      }
+      testClassIds.push(testClass.id)
 
-      const result = await getClassById(testClass!.id)
+      const result = await getClassById(testClass.id)
 
       expect(result).toBeDefined()
-      expect(result?.class.id).toBe(testClass!.id)
+      expect(result?.class.id).toBe(testClass.id)
       expect(result?.class.section).toBe('F')
     })
 
@@ -192,9 +213,12 @@ describe('classes queries', () => {
         section: 'G',
         status: 'active',
       })
-      testClassIds.push(testClass!.id)
+      if (!testClass) {
+        throw new Error('Failed to create test class')
+      }
+      testClassIds.push(testClass.id)
 
-      const result = await getClassById(testClass!.id)
+      const result = await getClassById(testClass.id)
 
       expect(result).toHaveProperty('boysCount')
       expect(result).toHaveProperty('girlsCount')
@@ -213,11 +237,13 @@ describe('classes queries', () => {
       }
 
       const newClass = await createClass(classData)
-
+      if (!newClass) {
+        throw new Error('Failed to create new class')
+      }
       expect(newClass).toBeDefined()
-      expect(newClass!.id).toBe(classData.id)
-      expect(newClass!.section).toBe(classData.section)
-      testClassIds.push(newClass!.id)
+      expect(newClass.id).toBe(classData.id)
+      expect(newClass.section).toBe(classData.section)
+      testClassIds.push(newClass.id)
     })
 
     test('should reject duplicate grade/series/section combination', async () => {
@@ -231,7 +257,10 @@ describe('classes queries', () => {
         section,
         status: 'active',
       })
-      testClassIds.push(class1!.id)
+      if (!class1) {
+        throw new Error('Failed to create class1 for test')
+      }
+      testClassIds.push(class1.id)
 
       await expect(
         createClass({
@@ -256,7 +285,10 @@ describe('classes queries', () => {
         section: `CR1-${Date.now()}`,
         status: 'active',
       })
-      testClassIds.push(class1!.id)
+      if (!class1) {
+        throw new Error('Failed to create class1 for test')
+      }
+      testClassIds.push(class1.id)
 
       // Try to create second class with same classroom
       await expect(
@@ -281,10 +313,12 @@ describe('classes queries', () => {
         section: `NC-${Date.now()}`,
         status: 'active',
       })
-
+      if (!newClass) {
+        throw new Error('Failed to create new class')
+      }
       expect(newClass).toBeDefined()
-      expect(newClass!.classroomId).toBeNull()
-      testClassIds.push(newClass!.id)
+      expect(newClass.classroomId).toBeNull()
+      testClassIds.push(newClass.id)
     })
   })
 
@@ -298,15 +332,20 @@ describe('classes queries', () => {
         section: 'I',
         status: 'active',
       })
-      testClassIds.push(testClass!.id)
+      if (!testClass) {
+        throw new Error('Failed to create test class')
+      }
+      testClassIds.push(testClass.id)
 
-      const updated = await updateClass(testClass!.id, {
+      const updated = await updateClass(testClass.id, {
         section: 'I-Updated',
         status: 'archived',
       })
-
-      expect(updated!.section).toBe('I-Updated')
-      expect(updated!.status).toBe('archived')
+      if (!updated) {
+        throw new Error('Failed to update class')
+      }
+      expect(updated.section).toBe('I-Updated')
+      expect(updated.status).toBe('archived')
     })
 
     test('should update classroom assignment', async () => {
@@ -318,13 +357,18 @@ describe('classes queries', () => {
         section: 'J',
         status: 'active',
       })
-      testClassIds.push(testClass!.id)
+      if (!testClass) {
+        throw new Error('Failed to create test class')
+      }
+      testClassIds.push(testClass.id)
 
-      const updated = await updateClass(testClass!.id, {
+      const updated = await updateClass(testClass.id, {
         classroomId: testClassroomId,
       })
-
-      expect(updated!.classroomId).toBe(testClassroomId)
+      if (!updated) {
+        throw new Error('Failed to update class')
+      }
+      expect(updated.classroomId).toBe(testClassroomId)
     })
   })
 
@@ -338,10 +382,12 @@ describe('classes queries', () => {
         section: `DEL-${Date.now()}`,
         status: 'active',
       })
+      if (!testClass) {
+        throw new Error('Failed to create test class')
+      }
+      await deleteClass(testClass.id)
 
-      await deleteClass(testClass!.id)
-
-      const result = await getClassById(testClass!.id)
+      const result = await getClassById(testClass.id)
       expect(result).toBeUndefined()
     })
 

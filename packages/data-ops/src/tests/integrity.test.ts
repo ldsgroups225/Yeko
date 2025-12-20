@@ -57,7 +57,9 @@ describe('7.1 Constraint Validation', () => {
       phone: '+1234567890',
       status: 'active',
     })
-
+    const [eduLevel] = await db.select().from(educationLevels).limit(1)
+    if (!eduLevel)
+      throw new Error('No education level found')
     // Get or create test track
     const tracksResult = await db.select().from(tracks).limit(1)
     if (tracksResult.length > 0) {
@@ -70,6 +72,7 @@ describe('7.1 Constraint Validation', () => {
           id: crypto.randomUUID(),
           name: 'Test Track',
           code: 'TT001',
+          educationLevelId: eduLevel.id,
           createdAt: new Date(),
           updatedAt: new Date(),
         })
@@ -88,8 +91,6 @@ describe('7.1 Constraint Validation', () => {
         .values({
           id: crypto.randomUUID(),
           name: 'Test Year',
-          startDate: new Date(),
-          endDate: new Date(),
           isActive: true,
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -204,6 +205,8 @@ describe('7.1 Constraint Validation', () => {
 
       // Get an education level to use
       const [eduLevel] = await db.select().from(educationLevels).limit(1)
+      if (!eduLevel)
+        throw new Error('No education level found')
 
       const track1 = await db
         .insert(tracks)
@@ -471,7 +474,8 @@ describe('7.1 Constraint Validation', () => {
 
       // Get an education level to use
       const [eduLevel] = await db.select().from(educationLevels).limit(1)
-
+      if (!eduLevel)
+        throw new Error('No education level found')
       // Create a new track with grades
       const [newTrack] = await db
         .insert(tracks)
@@ -484,7 +488,8 @@ describe('7.1 Constraint Validation', () => {
           updatedAt: new Date(),
         })
         .returning()
-
+      if (!newTrack)
+        throw new Error('Failed to create newTrack')
       const grade = await createGrade({
         name: 'Cascade Grade',
         code: 'CG001',
@@ -509,7 +514,8 @@ describe('7.1 Constraint Validation', () => {
 
       // Get an education level to use
       const [eduLevel] = await db.select().from(educationLevels).limit(1)
-
+      if (!eduLevel)
+        throw new Error('No education level found')
       // Create a new track with series
       const [newTrack] = await db
         .insert(tracks)
@@ -522,7 +528,8 @@ describe('7.1 Constraint Validation', () => {
           updatedAt: new Date(),
         })
         .returning()
-
+      if (!newTrack)
+        throw new Error('Failed to create newTrack')
       const serie = await createSerie({
         name: 'Cascade Series',
         code: 'CS001',
@@ -600,7 +607,8 @@ describe('7.1 Constraint Validation', () => {
           updatedAt: new Date(),
         })
         .returning()
-
+      if (!newSubject)
+        throw new Error('Failed to create newSubject')
       // Create coefficient
       const coeff = await createCoefficientTemplate({
         schoolYearTemplateId: testYear.id,

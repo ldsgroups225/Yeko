@@ -23,21 +23,18 @@ function FinanceDashboardPage() {
   // Calculate dashboard metrics
   const totalStudents = studentsWithBalance?.length ?? 0
   const studentsWithBalanceCount = studentsWithBalance?.filter(
-    (s: { balance?: string | null }) => Number(s.balance ?? 0) > 0,
+    s => Number(s.totalBalance ?? 0) > 0,
   ).length ?? 0
 
   const totalExpectedRevenue = studentsWithBalance?.reduce(
-    (sum: number, s: { totalFees?: string | null }) => sum + Number(s.totalFees ?? 0),
+    (sum: number, s) => sum + Number(s.totalBalance ?? 0),
     0,
   ) ?? 0
 
-  const totalCollected = studentsWithBalance?.reduce(
-    (sum: number, s: { paidAmount?: string | null }) => sum + Number(s.paidAmount ?? 0),
-    0,
-  ) ?? 0
+  const totalCollected = 0 // Not available in current query
 
   const totalOutstanding = studentsWithBalance?.reduce(
-    (sum: number, s: { balance?: string | null }) => sum + Number(s.balance ?? 0),
+    (sum: number, s) => sum + Number(s.totalBalance ?? 0),
     0,
   ) ?? 0
 

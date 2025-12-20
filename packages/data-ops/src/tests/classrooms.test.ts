@@ -52,6 +52,8 @@ describe('classrooms queries', () => {
         ac: true,
       },
     })
+    if (!classroom1)
+      throw new Error('Failed to create classroom1')
     testClassroomIds.push(classroom1.id)
 
     const classroom2 = await createClassroom({
@@ -70,6 +72,8 @@ describe('classrooms queries', () => {
         smartboard: true,
       },
     })
+    if (!classroom2)
+      throw new Error('Failed to create classroom2')
     testClassroomIds.push(classroom2.id)
 
     const classroom3 = await createClassroom({
@@ -83,6 +87,8 @@ describe('classrooms queries', () => {
       building: 'Sports Complex',
       status: 'maintenance',
     })
+    if (!classroom3)
+      throw new Error('Failed to create classroom3')
     testClassroomIds.push(classroom3.id)
   })
 
@@ -164,7 +170,8 @@ describe('classrooms queries', () => {
       }
 
       const classroom = await createClassroom(classroomData)
-
+      if (!classroom)
+        throw new Error('Failed to create classroom')
       expect(classroom).toBeDefined()
       expect(classroom.id).toBe(classroomData.id)
       expect(classroom.name).toBe(classroomData.name)
@@ -218,6 +225,8 @@ describe('classrooms queries', () => {
         capacity: 30,
         status: 'active',
       })
+      if (!classroom1)
+        throw new Error('Failed to create classroom1')
       testClassroomIds.push(classroom1.id)
 
       const classroom2 = await createClassroom({
@@ -229,7 +238,8 @@ describe('classrooms queries', () => {
         capacity: 30,
         status: 'active',
       })
-
+      if (!classroom2)
+        throw new Error('Failed to create classroom2')
       expect(classroom1.code).toBe(sharedCode)
       expect(classroom2.code).toBe(sharedCode)
       expect(classroom1.schoolId).not.toBe(classroom2.schoolId)
@@ -249,7 +259,8 @@ describe('classrooms queries', () => {
         capacity: 40,
         status: 'maintenance',
       })
-
+      if (!updated)
+        throw new Error('Failed to update classroom')
       expect(updated.name).toBe('Updated Room 101')
       expect(updated.capacity).toBe(40)
       expect(updated.status).toBe('maintenance')
@@ -266,7 +277,8 @@ describe('classrooms queries', () => {
           ac: false,
         },
       })
-
+      if (!updated)
+        throw new Error('Failed to update classroom')
       expect(updated.equipment).toHaveProperty('computers', 10)
       expect(updated.equipment).toHaveProperty('smartboard', true)
     })
@@ -283,7 +295,8 @@ describe('classrooms queries', () => {
         capacity: 30,
         status: 'active',
       })
-
+      if (!classroom)
+        throw new Error('Failed to create classroom')
       await deleteClassroom(classroom.id)
 
       const result = await getClassroomById(classroom.id)

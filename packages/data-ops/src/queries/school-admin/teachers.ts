@@ -70,7 +70,7 @@ export async function getTeachersBySchool(
 
       return {
         ...teacher,
-        subjects: subjectsList.map((s: { name: string, shortName: string }) => s.shortName),
+        subjects: subjectsList.map(s => s.shortName).filter(Boolean) as string[],
       }
     }),
   )
@@ -143,10 +143,14 @@ export async function createTeacher(data: {
       userId: data.userId,
       schoolId: data.schoolId,
       specialization: data.specialization,
-      hireDate: data.hireDate,
+      hireDate: data.hireDate?.toISOString(),
       status: 'active',
     })
     .returning()
+
+  if (!teacher) {
+    throw new Error('Failed to create teacher')
+  }
 
   // Assign subjects
   if (data.subjectIds && data.subjectIds.length > 0) {
@@ -182,11 +186,12 @@ export async function updateTeacher(
   if (!teacher) {
     throw new Error(SCHOOL_ERRORS.TEACHER_NOT_FOUND)
   }
-
+  const { hireDate, ...rest } = data
   const [updated] = await db
     .update(teachers)
     .set({
-      ...data,
+      ...rest,
+      ...(hireDate && { hireDate: hireDate.toISOString() }),
       updatedAt: new Date(),
     })
     .where(eq(teachers.id, teacherId))

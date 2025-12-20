@@ -87,8 +87,8 @@ describe('6.1 Authorization & Access Control', () => {
         .limit(1)
 
       expect(result).toHaveLength(1)
-      expect(result[0].id).toBe(schoolA.id)
-      expect(result[0].name).toBe('School A')
+      expect(result[0]!.id).toBe(schoolA.id)
+      expect(result[0]!.name).toBe('School A')
     })
 
     test('should not expose sensitive school data in list', async () => {
@@ -173,9 +173,9 @@ describe('6.1 Authorization & Access Control', () => {
         .where(eq(schools.id, schoolB.id))
 
       // Verify data is isolated
-      expect(schoolAData[0].id).not.toBe(schoolBData[0].id)
-      expect(schoolAData[0].name).toBe('School A')
-      expect(schoolBData[0].name).toBe('School B')
+      expect(schoolAData[0]!.id).not.toBe(schoolBData[0]!.id)
+      expect(schoolAData[0]!.name).toBe('School A')
+      expect(schoolBData[0]!.name).toBe('School B')
     })
 
     test('should isolate grade data by school', async () => {
@@ -186,7 +186,7 @@ describe('6.1 Authorization & Access Control', () => {
         return
       }
 
-      const trackId = tracks[0].trackId
+      const trackId = tracks[0]!.trackId
 
       // Create grades for testing
       const grade1 = await createGrade({
@@ -542,7 +542,7 @@ describe('6.2 Input Validation & Sanitization', () => {
         return
       }
 
-      const trackId = tracks[0].trackId
+      const trackId = tracks[0]!.trackId
 
       try {
         await createGrade({
@@ -762,7 +762,7 @@ describe('6.2 Input Validation & Sanitization', () => {
       const gradesResult = await db.select().from(grades).limit(1)
 
       if (gradesResult.length > 0) {
-        const grade = gradesResult[0]
+        const grade = gradesResult[0]!
         expect(typeof grade.order).toBe('number')
       }
     })
@@ -773,7 +773,7 @@ describe('6.2 Input Validation & Sanitization', () => {
       const years = await db.select().from(schoolYearTemplates).limit(1)
 
       if (years.length > 0) {
-        const year = years[0]
+        const year = years[0]!
         expect(typeof year.isActive).toBe('boolean')
       }
     })

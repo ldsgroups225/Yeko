@@ -1244,7 +1244,7 @@ describe('coefficient Management Workflows', () => {
       ]
 
       vi.mocked(dataOps.getCoefficientTemplates).mockResolvedValue(previousYearCoefficients as any)
-      vi.mocked(dataOps.copyCoefficientTemplates).mockResolvedValue(undefined)
+      vi.mocked(dataOps.copyCoefficientTemplates).mockResolvedValue([])
 
       const CopyYearForm = () => {
         const [coefficients, setCoefficients] = React.useState<any[]>([])

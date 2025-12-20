@@ -93,7 +93,9 @@ export interface CreateTransactionWithLinesData extends CreateTransactionData {
   lines: CreateTransactionLineData[]
 }
 
-export async function createTransactionWithLines(data: CreateTransactionWithLinesData): Promise<{ transaction: Transaction, lines: TransactionLine[] }> {
+export async function createTransactionWithLines(
+  data: CreateTransactionWithLinesData,
+): Promise<{ transaction: Transaction, lines: TransactionLine[] }> {
   const db = getDb()
   const { lines: linesData, ...transactionData } = data
 
@@ -104,13 +106,16 @@ export async function createTransactionWithLines(data: CreateTransactionWithLine
     throw new Error(`Transaction not balanced: debits (${totalDebits}) != credits (${totalCredits})`)
   }
 
-  return db.transaction(async (tx: typeof db) => {
+  return db.transaction(async (tx: any) => {
     const transactionNumber = await generateTransactionNumber(transactionData.schoolId)
 
     const [transaction] = await tx
       .insert(transactions)
       .values({ id: nanoid(), transactionNumber, ...transactionData })
       .returning()
+    if (!transaction) {
+      throw new Error('Failed to create transaction')
+    }
 
     const createdLines: TransactionLine[] = []
     for (let i = 0; i < linesData.length; i++) {
@@ -119,6 +124,9 @@ export async function createTransactionWithLines(data: CreateTransactionWithLine
         .insert(transactionLines)
         .values({ id: nanoid(), transactionId: transaction.id, ...lineData, lineNumber: i + 1 })
         .returning()
+      if (!line) {
+        throw new Error('Failed to create transaction line')
+      }
       createdLines.push(line)
 
       // Update account balance
@@ -138,9 +146,13 @@ export async function createTransactionWithLines(data: CreateTransactionWithLine
   })
 }
 
-export async function voidTransaction(transactionId: string, voidedBy: string, voidReason: string): Promise<Transaction> {
+export async function voidTransaction(
+  transactionId: string,
+  voidedBy: string,
+  voidReason: string,
+): Promise<Transaction | undefined> {
   const db = getDb()
-  return db.transaction(async (tx: typeof db) => {
+  return db.transaction(async (tx: any) => {
     const txnWithLines = await getTransactionWithLines(transactionId)
     if (!txnWithLines)
       throw new Error('Transaction not found')
@@ -166,7 +178,9 @@ export async function voidTransaction(transactionId: string, voidedBy: string, v
       .set({ status: 'voided', voidedAt: new Date(), voidedBy, voidReason, updatedAt: new Date() })
       .where(eq(transactions.id, transactionId))
       .returning()
-
+    if (!voidedTxn) {
+      throw new Error('Failed to void transaction')
+    }
     return voidedTxn
   })
 }

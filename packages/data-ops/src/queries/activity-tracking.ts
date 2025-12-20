@@ -163,7 +163,7 @@ export async function getFeatureUsage(startDate: Date): Promise<FeatureUsage[]> 
     subject: 'Matières',
   }
 
-  return results.map((r: { resource?: string, count: number }) => ({
+  return results.map(r => ({
     name: resourceNameMap[r.resource || ''] || r.resource || 'Autre',
     usage: total > 0 ? Math.round((r.count / total) * 100) : 0,
   }))
@@ -193,7 +193,7 @@ export async function getApiEndpointUsage(startDate: Date): Promise<ApiEndpointU
     .orderBy(desc(count()))
     .limit(10)
 
-  return results.map((r: { endpoint: string, requests: number, avgResponseTime?: string }) => ({
+  return results.map(r => ({
     endpoint: r.endpoint,
     requests: r.requests,
     avgResponseTime: Number(r.avgResponseTime || 0),
@@ -222,7 +222,7 @@ export async function getPeakUsageTimes(startDate: Date): Promise<PeakUsageTime[
     .orderBy(sql`EXTRACT(HOUR FROM ${activityLogs.createdAt})`)
 
   // Fill in missing hours with 0
-  const hourMap = new Map(results.map((r: { hour: string, requests: number }) => [Number(r.hour), r.requests]))
+  const hourMap = new Map(results.map(r => [Number(r.hour), r.requests]))
 
   return Array.from({ length: 24 }, (_, hour) => ({
     hour,

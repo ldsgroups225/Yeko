@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { format } from 'date-fns'
-import { BookOpen, Calendar, Edit, Mail, Phone, Trash2 } from 'lucide-react'
+import { BookOpen, Calendar, Edit, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { getTeacher, getTeacherSubjectsList } from '@/school/functions/teachers'
+import { getTeacher } from '@/school/functions/teachers'
 
 export const Route = createFileRoute('/_auth/users/teachers/$teacherId/')({
   component: TeacherDetailsPage,
@@ -21,14 +21,6 @@ function TeacherDetailsPage() {
     queryKey: ['teacher', teacherId],
     queryFn: async () => {
       const result = await getTeacher({ data: teacherId })
-      return result
-    },
-  })
-
-  const { data: subjects } = useQuery({
-    queryKey: ['teacher-subjects', teacherId],
-    queryFn: async () => {
-      const result = await getTeacherSubjectsList({ data: teacherId })
       return result
     },
   })
@@ -65,18 +57,18 @@ function TeacherDetailsPage() {
         items={[
           { label: t('hr.title'), href: '/users' },
           { label: t('hr.teachers.title'), href: '/users/teachers' },
-          { label: teacher.user?.name || teacherId },
+          { label: teacherId },
         ]}
       />
 
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-4">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-2xl font-bold text-primary">
-            {teacher.user?.name?.charAt(0).toUpperCase()}
+            {teacher.specialization?.charAt(0).toUpperCase() ?? 'T'}
           </div>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">{teacher.user?.name}</h1>
-            <p className="text-muted-foreground">{teacher.user?.email}</p>
+            <h1 className="text-3xl font-bold tracking-tight">{t('hr.teachers.teacherDetails')}</h1>
+            <p className="text-muted-foreground">{teacher.specialization ?? t('hr.teachers.noSpecialization')}</p>
           </div>
         </div>
         <div className="flex gap-2">
@@ -103,22 +95,6 @@ function TeacherDetailsPage() {
           <div className="rounded-lg border bg-card p-6">
             <h2 className="mb-4 text-lg font-semibold">{t('hr.teachers.personalInfo')}</h2>
             <div className="grid gap-4 md:grid-cols-2">
-              <div className="flex items-center gap-3">
-                <Mail className="h-4 w-4 text-muted-foreground" />
-                <div>
-                  <p className="text-sm text-muted-foreground">{t('hr.common.email')}</p>
-                  <p className="font-medium">{teacher.user?.email}</p>
-                </div>
-              </div>
-              {teacher.user?.phone && (
-                <div className="flex items-center gap-3">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">{t('hr.common.phone')}</p>
-                    <p className="font-medium">{teacher.user.phone}</p>
-                  </div>
-                </div>
-              )}
               {teacher.hireDate && (
                 <div className="flex items-center gap-3">
                   <Calendar className="h-4 w-4 text-muted-foreground" />
@@ -165,11 +141,11 @@ function TeacherDetailsPage() {
           <div className="rounded-lg border bg-card p-6">
             <h2 className="mb-4 text-lg font-semibold">{t('hr.teachers.assignedSubjects')}</h2>
             <div className="flex flex-wrap gap-2">
-              {subjects && subjects.length > 0
+              {teacher.subjects && teacher.subjects.length > 0
                 ? (
-                    subjects.map((subject: any) => (
-                      <Badge key={subject.id} variant="secondary" className="text-sm">
-                        {subject.name}
+                    teacher.subjects.map(subject => (
+                      <Badge key={subject.subjectId} variant="secondary" className="text-sm">
+                        {subject.subjectName}
                       </Badge>
                     ))
                   )

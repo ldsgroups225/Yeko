@@ -37,8 +37,10 @@ export interface SystemHealth {
 
 export interface ActivityItem {
   id: string
-  type: 'school_created' | 'user_login' | 'settings_updated' | 'school_updated' | 'report_generated'
+  type: string
   description: string
   timestamp: string
   user: string
+  resource?: string
+  resourceId?: string
 }

@@ -1397,7 +1397,7 @@ export const attendanceAlerts = pgTable('attendance_alerts', {
   severity: text('severity', { enum: alertSeverities }).notNull(),
   title: text('title').notNull(),
   message: text('message').notNull(),
-  data: jsonb('data').$type<Record<string, unknown>>().default({}),
+  data: jsonb('data').$type<Record<string, unknown> | null>(),
   status: text('status', { enum: alertStatuses }).default('active').notNull(),
   acknowledgedBy: text('acknowledged_by').references(() => users.id, { onDelete: 'set null' }),
   acknowledgedAt: timestamp('acknowledged_at'),

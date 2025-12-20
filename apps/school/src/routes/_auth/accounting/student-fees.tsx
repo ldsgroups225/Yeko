@@ -15,15 +15,15 @@ function StudentFeesPage() {
 
   const { data: studentsWithBalance, isLoading } = useQuery(studentFeesOptions.withBalance())
 
-  const studentFeesList = (studentsWithBalance ?? []).map((s: { studentId: string, firstName: string, lastName: string, matricule: string | null, className: string | null, totalFees: string | null, paidAmount: string | null, balance: string | null }) => ({
+  const studentFeesList = (studentsWithBalance ?? []).map(s => ({
     id: s.studentId,
-    studentName: `${s.firstName} ${s.lastName}`,
-    matricule: s.matricule ?? '',
-    className: s.className ?? '',
-    totalFees: Number(s.totalFees ?? 0),
-    paidAmount: Number(s.paidAmount ?? 0),
-    balance: Number(s.balance ?? 0),
-    status: Number(s.balance ?? 0) === 0 ? 'paid' : Number(s.paidAmount ?? 0) > 0 ? 'partial' : 'pending',
+    studentName: s.studentId,
+    matricule: '',
+    className: '',
+    totalFees: Number(s.totalBalance ?? 0),
+    paidAmount: 0,
+    balance: Number(s.totalBalance ?? 0),
+    status: Number(s.totalBalance ?? 0) === 0 ? 'paid' : 'pending',
   }))
 
   return (

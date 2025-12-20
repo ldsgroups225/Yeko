@@ -180,10 +180,10 @@ function UserDetailsPage() {
             <div className="space-y-3">
               {user.roles && user.roles.length > 0
                 ? (
-                    user.roles.map((role: string) => (
-                      <div key={role} className="flex items-center justify-between rounded-md border p-3">
+                    user.roles.map(role => (
+                      <div key={role.roleId} className="flex items-center justify-between rounded-md border p-3">
                         <div>
-                          <p className="font-medium">{role}</p>
+                          <p className="font-medium">{role.roleName}</p>
                         </div>
                         <Badge variant="secondary">{t('hr.roles.systemRole')}</Badge>
                       </div>

@@ -46,12 +46,18 @@ export type CreatePaymentPlanTemplateData = Omit<PaymentPlanTemplateInsert, 'id'
 export async function createPaymentPlanTemplate(data: CreatePaymentPlanTemplateData): Promise<PaymentPlanTemplate> {
   const db = getDb()
   const [template] = await db.insert(paymentPlanTemplates).values({ id: nanoid(), ...data }).returning()
+  if (!template) {
+    throw new Error('Failed to create payment plan template')
+  }
   return template
 }
 
 export type UpdatePaymentPlanTemplateData = Partial<Omit<PaymentPlanTemplateInsert, 'id' | 'schoolId' | 'createdAt' | 'updatedAt'>>
 
-export async function updatePaymentPlanTemplate(templateId: string, data: UpdatePaymentPlanTemplateData): Promise<PaymentPlanTemplate> {
+export async function updatePaymentPlanTemplate(
+  templateId: string,
+  data: UpdatePaymentPlanTemplateData,
+): Promise<PaymentPlanTemplate | undefined> {
   const db = getDb()
   const [template] = await db
     .update(paymentPlanTemplates)
@@ -66,9 +72,13 @@ export async function deletePaymentPlanTemplate(templateId: string): Promise<voi
   await db.delete(paymentPlanTemplates).where(eq(paymentPlanTemplates.id, templateId))
 }
 
-export async function setDefaultPaymentPlanTemplate(schoolId: string, schoolYearId: string, templateId: string): Promise<void> {
+export async function setDefaultPaymentPlanTemplate(
+  schoolId: string,
+  schoolYearId: string,
+  templateId: string,
+): Promise<void> {
   const db = getDb()
-  await db.transaction(async (tx: typeof db) => {
+  await db.transaction(async (tx: any) => {
     // Remove default from all templates for this school/year
     await tx
       .update(paymentPlanTemplates)

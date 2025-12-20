@@ -161,14 +161,16 @@ export const saveClassSubject = createServerFn()
 
     const result = await classSubjectQueries.addSubjectToClass(data)
 
-    await createAuditLog({
-      schoolId: context.schoolId,
-      userId: context.userId,
-      action: 'update',
-      tableName: 'class_subjects',
-      recordId: result.id,
-      newValues: data,
-    })
+    if (result) {
+      await createAuditLog({
+        schoolId: context.schoolId,
+        userId: context.userId,
+        action: 'update',
+        tableName: 'class_subjects',
+        recordId: result.id,
+        newValues: data,
+      })
+    }
 
     return result
   })
@@ -186,16 +188,22 @@ export const updateClassSubjectConfig = createServerFn()
       throw new Error('No school context')
     await requirePermission('classes', 'edit')
 
-    const result = await classSubjectQueries.updateClassSubjectDetails(data.id, data)
-
-    await createAuditLog({
-      schoolId: context.schoolId,
-      userId: context.userId,
-      action: 'update',
-      tableName: 'class_subjects',
-      recordId: result.id,
-      newValues: data,
+    const result = await classSubjectQueries.updateClassSubjectDetails(data.id, {
+      coefficient: data.coefficient,
+      hoursPerWeek: data.hoursPerWeek,
+      status: data.status,
     })
+
+    if (result) {
+      await createAuditLog({
+        schoolId: context.schoolId,
+        userId: context.userId,
+        action: 'update',
+        tableName: 'class_subjects',
+        recordId: result.id,
+        newValues: data,
+      })
+    }
 
     return result
   })

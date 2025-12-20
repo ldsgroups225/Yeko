@@ -1,4 +1,3 @@
-import type { Class } from '@repo/data-ops'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
@@ -21,7 +20,6 @@ import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { classesOptions } from '@/lib/queries/classes'
 import { gradesOptions } from '@/lib/queries/grades'
 import { termsOptions } from '@/lib/queries/terms'
-import { generateUUID } from '@/utils/generateUUID'
 
 export const Route = createFileRoute('/_auth/grades/statistics')({
   component: GradeStatisticsPage,
@@ -34,7 +32,7 @@ function GradeStatisticsPage() {
   const [selectedTermId, setSelectedTermId] = useState<string>('')
 
   const { data: classesData, isLoading: classesLoading } = useQuery(
-    classesOptions.list({ schoolYearId, status: 'active' }),
+    classesOptions.list({ schoolYearId: schoolYearId ?? undefined, status: 'active' }),
   )
 
   const { data: termsData, isLoading: termsLoading } = useQuery(
@@ -78,46 +76,46 @@ function GradeStatisticsPage() {
               <Label htmlFor="class-select">{t('academic.grades.entry.class')}</Label>
               {classesLoading
                 ? (
-                  <Skeleton className="h-10 w-full" />
-                )
+                    <Skeleton className="h-10 w-full" />
+                  )
                 : (
-                  <Select value={selectedClassId} onValueChange={setSelectedClassId}>
-                    <SelectTrigger id="class-select">
-                      <SelectValue placeholder={t('academic.grades.entry.selectClass')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {classesData?.map((cls: Class & { grade?: { name: string } }) => (
-                        <SelectItem key={generateUUID()} value={cls.id}>
-                          {cls.grade?.name}
-                          {' '}
-                          {cls.section}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
+                    <Select value={selectedClassId} onValueChange={setSelectedClassId}>
+                      <SelectTrigger id="class-select">
+                        <SelectValue placeholder={t('academic.grades.entry.selectClass')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {classesData?.map(item => (
+                          <SelectItem key={item.class.id} value={item.class.id}>
+                            {item.grade.name}
+                            {' '}
+                            {item.class.section}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="term-select">{t('academic.grades.entry.term')}</Label>
               {termsLoading
                 ? (
-                  <Skeleton className="h-10 w-full" />
-                )
+                    <Skeleton className="h-10 w-full" />
+                  )
                 : (
-                  <Select value={selectedTermId} onValueChange={setSelectedTermId}>
-                    <SelectTrigger id="term-select">
-                      <SelectValue placeholder={t('academic.grades.entry.selectTerm')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {termsData?.map((term: any) => (
-                        <SelectItem key={term.id} value={term.id}>
-                          {term.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
+                    <Select value={selectedTermId} onValueChange={setSelectedTermId}>
+                      <SelectTrigger id="term-select">
+                        <SelectValue placeholder={t('academic.grades.entry.selectTerm')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {termsData?.map((term: any) => (
+                          <SelectItem key={term.id} value={term.id}>
+                            {term.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
             </div>
           </div>
         </CardContent>
@@ -127,11 +125,11 @@ function GradeStatisticsPage() {
         <>
           {statsLoading
             ? (
-              <Skeleton className="h-32 w-full" />
-            )
+                <Skeleton className="h-32 w-full" />
+              )
             : (
-              <GradeStatisticsCard statistics={statistics} />
-            )}
+                <GradeStatisticsCard statistics={statistics} />
+              )}
 
           <ClassAveragesTable averages={[]} />
         </>

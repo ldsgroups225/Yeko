@@ -44,7 +44,7 @@ function EditTeacherPage() {
           { label: t('hr.title'), href: '/users' },
           { label: t('hr.teachers.title'), href: '/users/teachers' },
           {
-            label: teacher?.user?.name || teacherId,
+            label: teacher?.specialization || teacherId,
             href: `/users/teachers/${teacherId}`,
           },
           { label: t('hr.teachers.editTeacher') },

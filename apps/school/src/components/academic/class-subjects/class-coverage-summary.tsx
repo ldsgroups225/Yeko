@@ -7,7 +7,7 @@ interface ClassCoverageSummaryProps {
   subjects: Array<{
     classSubject: ClassSubject
     subject: Subject
-    teacher?: { id: string, name: string } | null
+    teacher?: { id: string | null, name: string | null } | null
   }>
 }
 

@@ -1,7 +1,7 @@
 import { and, count, desc, eq, notInArray, sql } from 'drizzle-orm'
 import { getDb } from '@/database/setup'
 import { subjects } from '@/drizzle/core-schema'
-import { classSubjects, schoolSubjects, schoolYears } from '@/drizzle/school-schema'
+import { classes, classSubjects, schoolSubjects, schoolYears } from '@/drizzle/school-schema'
 
 // ===== SCHOOL SUBJECTS =====
 
@@ -226,6 +226,10 @@ export async function addSubjectsToSchool(options: {
     .onConflictDoNothing()
     .returning()
 
+  if (!inserted) {
+    throw new Error('Failed to add subjects')
+  }
+
   return inserted
 }
 
@@ -246,7 +250,9 @@ export async function toggleSchoolSubjectStatus(
     })
     .where(eq(schoolSubjects.id, id))
     .returning()
-
+  if (!updated) {
+    throw new Error('Failed to toggle subject status')
+  }
   return updated
 }
 
@@ -361,13 +367,14 @@ export async function checkSubjectInUse(options: {
     })
     .from(classSubjects)
     .innerJoin(
-      sql`classes ON ${classSubjects.classId} = classes.id`,
+      classes,
+      eq(classSubjects.classId, classes.id),
     )
     .where(and(
       eq(classSubjects.subjectId, subjectId),
       eq(classSubjects.status, 'active'),
-      schoolYearId ? sql`classes.school_year_id = ${schoolYearId}` : sql`1=1`,
-      sql`classes.school_id = ${schoolId}`,
+      schoolYearId ? eq(classes.schoolYearId, schoolYearId) : sql`1=1`,
+      eq(classes.schoolId, schoolId),
     ))
 
   return {

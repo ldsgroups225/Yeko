@@ -94,14 +94,16 @@ export const createStudent = createServerFn()
       schoolYearId,
     })
 
-    await createAuditLog({
-      schoolId: context.schoolId,
-      userId: context.userId,
-      action: 'create',
-      tableName: 'students',
-      recordId: student.id,
-      newValues: data,
-    })
+    if (student) {
+      await createAuditLog({
+        schoolId: context.schoolId,
+        userId: context.userId,
+        action: 'create',
+        tableName: 'students',
+        recordId: student.id,
+        newValues: data,
+      })
+    }
 
     return student
   })

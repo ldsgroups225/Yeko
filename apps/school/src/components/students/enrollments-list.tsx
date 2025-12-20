@@ -184,11 +184,11 @@ export function EnrollmentsList() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t('common.all')}</SelectItem>
-              {classesData?.data?.map((cls: any) => (
-                <SelectItem key={cls.id} value={cls.id}>
-                  {cls.grade?.name}
+              {classesData?.map(cls => (
+                <SelectItem key={cls.class.id} value={cls.class.id}>
+                  {cls.grade.name}
                   {' '}
-                  {cls.section}
+                  {cls.class.section}
                   {cls.series?.name ? ` (${cls.series.name})` : ''}
                 </SelectItem>
               ))}

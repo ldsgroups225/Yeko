@@ -163,16 +163,7 @@ export async function getRecentActivity(
   }
 
   // Format activities for display
-  return activities.map((activity: {
-    id: string
-    action: string
-    resource: string | null
-    resourceId: string | null
-    metadata: unknown
-    createdAt: Date
-    userName: string | null
-    userEmail: string | null
-  }) => ({
+  return activities.map(activity => ({
     id: activity.id,
     type: activity.action,
     description: formatActivityDescription(
@@ -228,7 +219,7 @@ export async function getActivityStats(
     .groupBy(activityLogs.action)
 
   const byAction: Record<string, number> = {}
-  byActionResults.forEach((result: { action: string, count: number }) => {
+  byActionResults.forEach((result) => {
     if (result.action) {
       byAction[result.action] = result.count
     }
@@ -250,7 +241,7 @@ export async function getActivityStats(
     .groupBy(activityLogs.resource)
 
   const byResource: Record<string, number> = {}
-  byResourceResults.forEach((result: { resource: string | null, count: number }) => {
+  byResourceResults.forEach((result) => {
     if (result.resource) {
       byResource[result.resource] = result.count
     }
@@ -272,7 +263,7 @@ export async function getActivityStats(
     .groupBy(sql`DATE(${activityLogs.createdAt})`)
     .orderBy(sql`DATE(${activityLogs.createdAt})`)
 
-  const trend = trendResults.map((result: { date: string, count: number }) => ({
+  const trend = trendResults.map(result => ({
     date: result.date,
     count: result.count,
   }))
@@ -337,7 +328,7 @@ export async function getUserActivitySummary(
   return {
     totalActions: totalResult?.count || 0,
     lastActive: lastActiveResult?.createdAt || null,
-    topActions: topActionsResults.map((r: { action: string, count: number }) => ({
+    topActions: topActionsResults.map(r => ({
       action: r.action,
       count: r.count,
     })),

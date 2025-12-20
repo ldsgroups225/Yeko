@@ -55,24 +55,16 @@ export type CreateReceiptData = Omit<ReceiptInsert, 'id' | 'createdAt'>
 export async function createReceipt(data: CreateReceiptData): Promise<Receipt> {
   const db = getDb()
   const [receipt] = await db.insert(receipts).values({ id: nanoid(), ...data }).returning()
+  if (!receipt) {
+    throw new Error('Failed to create receipt')
+  }
   return receipt
 }
 
-export async function recordReceiptReprint(receiptId: string, reprintedBy: string): Promise<Receipt> {
-  const db = getDb()
-  const [receipt] = await db
-    .update(receipts)
-    .set({
-      reprintCount: db.select({ count: receipts.reprintCount }).from(receipts).where(eq(receipts.id, receiptId)),
-      lastReprintedAt: new Date(),
-      lastReprintedBy: reprintedBy,
-    })
-    .where(eq(receipts.id, receiptId))
-    .returning()
-  return receipt
-}
-
-export async function incrementReceiptReprint(receiptId: string, reprintedBy: string): Promise<Receipt> {
+export async function incrementReceiptReprint(
+  receiptId: string,
+  reprintedBy: string,
+): Promise<Receipt | undefined> {
   const db = getDb()
   const existing = await getReceiptById(receiptId)
   if (!existing)

@@ -75,7 +75,7 @@ describe('7.2 Transaction Testing', () => {
           id: crypto.randomUUID(),
           name: 'Transaction Track',
           code: 'TT001',
-          educationLevelId: eduLevel.id,
+          educationLevelId: eduLevel!.id,
           createdAt: new Date(),
           updatedAt: new Date(),
         })
@@ -94,8 +94,6 @@ describe('7.2 Transaction Testing', () => {
         .values({
           id: crypto.randomUUID(),
           name: 'Transaction Year',
-          startDate: new Date(),
-          endDate: new Date(),
           isActive: true,
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -374,7 +372,7 @@ describe('7.2 Transaction Testing', () => {
           id: crypto.randomUUID(),
           name: 'Atomic Cascade Track',
           code: `ACT${Date.now()}`,
-          educationLevelId: eduLevel.id,
+          educationLevelId: eduLevel!.id,
           createdAt: new Date(),
           updatedAt: new Date(),
         })
@@ -385,36 +383,36 @@ describe('7.2 Transaction Testing', () => {
         name: 'Atomic Grade 1',
         code: 'AG001',
         order: 1,
-        trackId: newTrack.id,
+        trackId: newTrack!.id,
       })
 
       await createGrade({
         name: 'Atomic Grade 2',
         code: 'AG002',
         order: 2,
-        trackId: newTrack.id,
+        trackId: newTrack!.id,
       })
 
       // Create series
       await createSerie({
         name: 'Atomic Series 1',
         code: `AS${Date.now()}`,
-        trackId: newTrack.id,
+        trackId: newTrack!.id,
       })
 
       // Verify all records exist
-      const gradesBeforeDelete = await getGrades({ trackId: newTrack.id })
-      const _seriesBeforeDelete = await getSeries({ trackId: newTrack.id })
+      const gradesBeforeDelete = await getGrades({ trackId: newTrack!.id })
+      const _seriesBeforeDelete = await getSeries({ trackId: newTrack!.id })
 
       expect(gradesBeforeDelete).toHaveLength(2)
       expect(_seriesBeforeDelete).toHaveLength(1)
 
       // Delete track (should cascade)
-      await db.delete(tracks).where(eq(tracks.id, newTrack.id))
+      await db.delete(tracks).where(eq(tracks.id, newTrack!.id))
 
       // Verify all related records are deleted
-      const gradesAfterDelete = await getGrades({ trackId: newTrack.id })
-      const _seriesAfterDelete = await getSeries({ trackId: newTrack.id })
+      const gradesAfterDelete = await getGrades({ trackId: newTrack!.id })
+      const _seriesAfterDelete = await getSeries({ trackId: newTrack!.id })
 
       expect(gradesAfterDelete).toHaveLength(0)
       expect(_seriesAfterDelete).toHaveLength(0)

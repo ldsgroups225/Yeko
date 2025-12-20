@@ -58,6 +58,9 @@ export type CreateFeeStructureData = Omit<FeeStructureInsert, 'id' | 'createdAt'
 export async function createFeeStructure(data: CreateFeeStructureData): Promise<FeeStructure> {
   const db = getDb()
   const [feeStructure] = await db.insert(feeStructures).values({ id: nanoid(), ...data }).returning()
+  if (!feeStructure) {
+    throw new Error('Failed to create fee structure')
+  }
   return feeStructure
 }
 
@@ -71,7 +74,10 @@ export async function createFeeStructuresBulk(dataList: CreateFeeStructureData[]
 
 export type UpdateFeeStructureData = Partial<Omit<FeeStructureInsert, 'id' | 'schoolId' | 'createdAt' | 'updatedAt'>>
 
-export async function updateFeeStructure(feeStructureId: string, data: UpdateFeeStructureData): Promise<FeeStructure> {
+export async function updateFeeStructure(
+  feeStructureId: string,
+  data: UpdateFeeStructureData,
+): Promise<FeeStructure | undefined> {
   const db = getDb()
   const [feeStructure] = await db
     .update(feeStructures)
@@ -108,5 +114,5 @@ export async function getFeeStructuresWithTypes(params: GetFeeStructuresParams):
     .innerJoin(feeTypes, eq(feeStructures.feeTypeId, feeTypes.id))
     .where(and(...conditions))
 
-  return result.map((r: { feeStructure: FeeStructure, feeTypeName: string, feeTypeCode: string }) => ({ ...r.feeStructure, feeTypeName: r.feeTypeName, feeTypeCode: r.feeTypeCode }))
+  return result.map(r => ({ ...r.feeStructure, feeTypeName: r.feeTypeName, feeTypeCode: r.feeTypeCode }))
 }

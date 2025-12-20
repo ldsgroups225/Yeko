@@ -187,7 +187,9 @@ export async function createCoefficientOverride(options: {
       updatedAt: new Date(),
     })
     .returning()
-
+  if (!inserted) {
+    throw new Error('Failed to create coefficient override')
+  }
   return inserted
 }
 
@@ -213,7 +215,9 @@ export async function updateCoefficientOverride(
     })
     .where(eq(schoolSubjectCoefficients.id, id))
     .returning()
-
+  if (!updated) {
+    throw new Error('Failed to update coefficient override')
+  }
   return updated
 }
 
@@ -259,7 +263,9 @@ export async function upsertCoefficientOverride(options: {
       },
     })
     .returning()
-
+  if (!result) {
+    throw new Error('Failed to upsert coefficient override')
+  }
   return result
 }
 
@@ -287,7 +293,7 @@ export async function bulkUpdateSchoolCoefficients(options: {
     }
   }
 
-  const results = await db.transaction(async (tx: ReturnType<typeof getDb>) => {
+  const results = await db.transaction(async (tx: any) => {
     const insertedOrUpdated = []
     for (const update of updates) {
       const [result] = await tx
@@ -392,7 +398,7 @@ export async function getCoefficientMatrix(options: {
       subjectsMap.set(row.subjectId, {
         id: row.subjectId,
         name: row.subjectName,
-        shortName: row.subjectShortName,
+        shortName: row.subjectShortName || '',
         category: row.subjectCategory,
       })
     }
@@ -472,7 +478,7 @@ export async function copySchoolCoefficientsFromYear(options: {
   }
 
   // Find matching templates in target year
-  const results = await db.transaction(async (tx: ReturnType<typeof getDb>) => {
+  const results = await db.transaction(async (tx: any) => {
     const inserted = []
 
     for (const override of sourceOverrides) {

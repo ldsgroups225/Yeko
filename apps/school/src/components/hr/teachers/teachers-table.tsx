@@ -49,18 +49,6 @@ import {
 import { useDebounce } from '@/hooks/use-debounce'
 import { getTeachers } from '@/school/functions/teachers'
 
-interface Teacher {
-  id: string
-  user: {
-    name: string
-    email: string
-  }
-  specialization: string | null
-  status: 'active' | 'inactive' | 'on_leave'
-  hireDate: Date | null
-  subjects: string[]
-}
-
 interface TeachersTableProps {
   filters: {
     page?: number
@@ -96,7 +84,7 @@ export function TeachersTable({ filters }: TeachersTableProps) {
     },
   })
 
-  const columns = useMemo<ColumnDef<Teacher>[]>(
+  const columns = useMemo<ColumnDef<any>[]>(
     () => [
       {
         accessorKey: 'user.name',
@@ -117,7 +105,7 @@ export function TeachersTable({ filters }: TeachersTableProps) {
           <div className="flex flex-wrap gap-1">
             {row.original.subjects && row.original.subjects.length > 0
               ? (
-                  row.original.subjects.slice(0, 3).map(subject => (
+                  row.original.subjects.slice(0, 3).map((subject: string) => (
                     <Badge key={subject} variant="secondary" className="text-xs">
                       {subject}
                     </Badge>
@@ -144,7 +132,7 @@ export function TeachersTable({ filters }: TeachersTableProps) {
         accessorKey: 'status',
         header: t('hr.teachers.status'),
         cell: ({ row }) => {
-          const status = row.original.status
+          const status = row.original.status as 'active' | 'inactive' | 'on_leave'
           const variants = {
             active: 'default',
             inactive: 'secondary',

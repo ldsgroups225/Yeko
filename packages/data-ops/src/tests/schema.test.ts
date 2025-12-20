@@ -64,7 +64,7 @@ describe('1.1 Core Schema Tests', () => {
         AND schemaname = 'public'
       `)
 
-      const actualIndexes: string[] = result.rows.map((row: { indexname: string }) => row.indexname)
+      const actualIndexes: string[] = result.rows.map((row: any) => row.indexname)
 
       // Check that all expected indexes exist
       expectedIndexes.forEach((expectedIndex) => {

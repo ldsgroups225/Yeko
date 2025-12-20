@@ -43,6 +43,9 @@ export type CreatePaymentPlanData = Omit<PaymentPlanInsert, 'id' | 'createdAt' |
 export async function createPaymentPlan(data: CreatePaymentPlanData): Promise<PaymentPlan> {
   const db = getDb()
   const [plan] = await db.insert(paymentPlans).values({ id: nanoid(), ...data }).returning()
+  if (!plan) {
+    throw new Error('Failed to create payment plan')
+  }
   return plan
 }
 
@@ -62,7 +65,7 @@ export async function createPaymentPlanFromTemplate(
   const db = getDb()
   const { studentId, schoolYearId, templateId, totalAmount, createdBy, startDate, notes } = data
 
-  return db.transaction(async (tx: typeof db) => {
+  return db.transaction(async (tx: any) => {
     const [template] = await tx.select().from(paymentPlanTemplates).where(eq(paymentPlanTemplates.id, templateId)).limit(1)
     if (!template)
       throw new Error('Payment plan template not found')
@@ -80,6 +83,10 @@ export async function createPaymentPlanFromTemplate(
         notes,
       })
       .returning()
+
+    if (!plan) {
+      throw new Error('Failed to create payment plan from template')
+    }
 
     const totalAmountNum = Number.parseFloat(totalAmount)
     const startDateObj = new Date(startDate)
@@ -102,6 +109,9 @@ export async function createPaymentPlanFromTemplate(
           dueDate: dueDate.toISOString().split('T')[0]!,
         })
         .returning()
+      if (!installment) {
+        throw new Error('Failed to create installment from template')
+      }
       createdInstallments.push(installment)
     }
 
@@ -111,7 +121,10 @@ export async function createPaymentPlanFromTemplate(
 
 export type UpdatePaymentPlanData = Partial<Pick<PaymentPlanInsert, 'status' | 'notes'>>
 
-export async function updatePaymentPlan(paymentPlanId: string, data: UpdatePaymentPlanData): Promise<PaymentPlan> {
+export async function updatePaymentPlan(
+  paymentPlanId: string,
+  data: UpdatePaymentPlanData,
+): Promise<PaymentPlan | undefined> {
   const db = getDb()
   const [plan] = await db
     .update(paymentPlans)
@@ -121,7 +134,7 @@ export async function updatePaymentPlan(paymentPlanId: string, data: UpdatePayme
   return plan
 }
 
-export async function cancelPaymentPlan(paymentPlanId: string): Promise<PaymentPlan> {
+export async function cancelPaymentPlan(paymentPlanId: string): Promise<PaymentPlan | undefined> {
   return updatePaymentPlan(paymentPlanId, { status: 'cancelled' })
 }
 

@@ -116,12 +116,19 @@ export async function createAccount(data: CreateAccountData): Promise<Account> {
     .values({ id: nanoid(), ...data, level })
     .returning()
 
+  if (!account) {
+    throw new Error('Failed to create account')
+  }
+
   return account
 }
 
 export type UpdateAccountData = Partial<Omit<AccountInsert, 'id' | 'schoolId' | 'createdAt' | 'updatedAt'>>
 
-export async function updateAccount(accountId: string, data: UpdateAccountData): Promise<Account> {
+export async function updateAccount(
+  accountId: string,
+  data: UpdateAccountData,
+): Promise<Account | undefined> {
   const db = getDb()
   let level: number | undefined
   if (data.parentId !== undefined) {
@@ -145,7 +152,10 @@ export async function updateAccount(accountId: string, data: UpdateAccountData):
   return account
 }
 
-export async function updateAccountBalance(accountId: string, amount: string): Promise<Account> {
+export async function updateAccountBalance(
+  accountId: string,
+  amount: string,
+): Promise<Account | undefined> {
   const db = getDb()
   const [account] = await db
     .update(accounts)
@@ -161,7 +171,7 @@ export async function deleteAccount(accountId: string): Promise<void> {
   await db.delete(accounts).where(eq(accounts.id, accountId))
 }
 
-export async function deactivateAccount(accountId: string): Promise<Account> {
+export async function deactivateAccount(accountId: string): Promise<Account | undefined> {
   return updateAccount(accountId, { status: 'inactive' })
 }
 

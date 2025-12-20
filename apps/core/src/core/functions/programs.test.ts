@@ -376,7 +376,7 @@ describe('programs Server Functions', () => {
       const result = await createProgramTemplateChapterMutation({ data: chapterWithDuration })
 
       expect(result.durationHours).toBe(150)
-      expect(result.durationHours / 60).toBe(2.5) // 2.5 hours
+      expect((result.durationHours ?? 0) / 60).toBe(2.5) // 2.5 hours
     })
 
     test('should update chapter details', async () => {
@@ -450,7 +450,7 @@ describe('programs Server Functions', () => {
 
         expect(dataOps.bulkCreateChapters).toHaveBeenCalledWith('1', chaptersData.chapters)
         expect(result).toHaveLength(2)
-        expect(result[0].title).toBe('Chapter 1')
+        expect(result[0]!.title).toBe('Chapter 1')
       })
 
       test('should handle error for malformed data during import', async () => {
@@ -493,7 +493,7 @@ describe('programs Server Functions', () => {
         const versionData = {
           id: 'v1',
           programTemplateId: programId,
-          version: 1,
+          versionNumber: 1,
           status: 'published',
           createdAt: new Date(),
         }
@@ -518,8 +518,8 @@ describe('programs Server Functions', () => {
 
     test('should get program versions history', async () => {
       const mockVersions = [
-        { id: 'v1', programTemplateId: '1', version: 1, status: 'published' },
-        { id: 'v2', programTemplateId: '1', version: 2, status: 'published' },
+        { id: 'v1', programTemplateId: '1', versionNumber: 1, status: 'published' },
+        { id: 'v2', programTemplateId: '1', versionNumber: 2, status: 'published' },
       ]
 
       vi.mocked(dataOps.getProgramVersions).mockResolvedValue(mockVersions as any)
@@ -528,8 +528,8 @@ describe('programs Server Functions', () => {
 
       expect(dataOps.getProgramVersions).toHaveBeenCalledWith('1')
       expect(result).toHaveLength(2)
-      expect(result[0].version).toBe(1)
-      expect(result[1].version).toBe(2)
+      expect(result[0]!.versionNumber).toBe(1)
+      expect(result[1]!.versionNumber).toBe(2)
     })
 
     describe('restoreProgramVersion', () => {

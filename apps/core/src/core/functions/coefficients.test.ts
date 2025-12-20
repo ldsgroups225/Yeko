@@ -351,12 +351,12 @@ describe('coefficients Server Functions', () => {
 
       vi.mocked(dataOps.copyCoefficientTemplates).mockResolvedValue(copiedCoefficients as any)
 
-      const result = await copyCoefficientsMutation({ data: copyData })
+      const result = await copyCoefficientsMutation({ data: copyData }) as any[]
 
       expect(dataOps.copyCoefficientTemplates).toHaveBeenCalledWith('2023', '2024')
       expect(result).toHaveLength(2)
-      expect(result[0].schoolYearTemplateId).toBe('2024')
-      expect(result[0].sourceId).toBe('old1')
+      expect(result[0]!.schoolYearTemplateId).toBe('2024')
+      expect(result[0]!.sourceId).toBe('old1')
     })
 
     test('should handle missing subjects/grades during copy', async () => {
@@ -379,12 +379,12 @@ describe('coefficients Server Functions', () => {
         },
       ] as any)
 
-      const result = await copyCoefficientsMutation({ data: copyData })
+      const result = await copyCoefficientsMutation({ data: copyData }) as any[]
 
       expect(result).toHaveLength(2)
-      expect(result[0].status).toBe('copied')
-      expect(result[1].status).toBe('skipped')
-      expect(result[1].reason).toBe('Subject not found in target year')
+      expect(result[0]!.status).toBe('copied')
+      expect(result[1]!.status).toBe('skipped')
+      expect(result[1]!.reason).toBe('Subject not found in target year')
     })
 
     test('should maintain relationships during copy', async () => {
@@ -407,10 +407,10 @@ describe('coefficients Server Functions', () => {
 
       vi.mocked(dataOps.copyCoefficientTemplates).mockResolvedValue(copiedCoefficients as any)
 
-      const result = await copyCoefficientsMutation({ data: copyData })
+      const result = await copyCoefficientsMutation({ data: copyData }) as any[]
 
-      expect(result[0].relationships.subject.name).toBe('Mathematics')
-      expect(result[0].relationships.grade.name).toBe('Grade 1')
+      expect(result[0]!.relationships.subject.name).toBe('Mathematics')
+      expect(result[0]!.relationships.grade.name).toBe('Grade 1')
     })
   })
 

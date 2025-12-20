@@ -70,7 +70,7 @@ export function SubjectCopyDialog({
 
   // Filter out the current class from source options
   const sourceClasses
-    = classesData?.data?.filter((c: any) => c.id !== targetClassId) || []
+    = classesData?.filter((c: any) => c.id !== targetClassId) || []
 
   const form = useForm({
     resolver: zodResolver(copyFormSchema),

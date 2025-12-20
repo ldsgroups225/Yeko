@@ -60,10 +60,16 @@ export type CreateFiscalYearData = Omit<FiscalYearInsert, 'id' | 'createdAt' | '
 export async function createFiscalYear(data: CreateFiscalYearData): Promise<FiscalYear> {
   const db = getDb()
   const [fiscalYear] = await db.insert(fiscalYears).values({ id: nanoid(), ...data }).returning()
+  if (!fiscalYear) {
+    throw new Error('Failed to create fiscal year')
+  }
   return fiscalYear
 }
 
-export async function closeFiscalYear(fiscalYearId: string, closedBy: string): Promise<FiscalYear> {
+export async function closeFiscalYear(
+  fiscalYearId: string,
+  closedBy: string,
+): Promise<FiscalYear | undefined> {
   const db = getDb()
   const [fiscalYear] = await db
     .update(fiscalYears)
@@ -73,7 +79,7 @@ export async function closeFiscalYear(fiscalYearId: string, closedBy: string): P
   return fiscalYear
 }
 
-export async function lockFiscalYear(fiscalYearId: string): Promise<FiscalYear> {
+export async function lockFiscalYear(fiscalYearId: string): Promise<FiscalYear | undefined> {
   const db = getDb()
   const [fiscalYear] = await db
     .update(fiscalYears)
@@ -83,7 +89,7 @@ export async function lockFiscalYear(fiscalYearId: string): Promise<FiscalYear> 
   return fiscalYear
 }
 
-export async function reopenFiscalYear(fiscalYearId: string): Promise<FiscalYear> {
+export async function reopenFiscalYear(fiscalYearId: string): Promise<FiscalYear | undefined> {
   const db = getDb()
   const [fiscalYear] = await db
     .update(fiscalYears)

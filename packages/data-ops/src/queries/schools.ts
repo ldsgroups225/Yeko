@@ -105,8 +105,10 @@ export async function createSchool(data: Omit<SchoolInsert, 'id' | 'createdAt' |
       updatedAt: new Date(),
     })
     .returning()
-
-  return newSchools[0]!
+  if (!newSchools[0]) {
+    throw new Error('Failed to create school')
+  }
+  return newSchools[0]
 }
 
 // Update an existing school
@@ -224,7 +226,7 @@ export async function bulkCreateSchools(
   // Create schools in transaction
   if (schoolsToCreate.length > 0) {
     try {
-      await db.transaction(async (tx: ReturnType<typeof getDb>) => {
+      await db.transaction(async (tx: any) => {
         for (const { data } of schoolsToCreate) {
           const [newSchool] = await tx
             .insert(schools)

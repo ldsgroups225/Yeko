@@ -17,7 +17,7 @@ function NewRolePage() {
     try {
       const result = await createNewRole({ data })
       toast.success(t('hr.roles.createSuccess'))
-      navigate({ to: '/users/roles/$roleId', params: { roleId: result.id } })
+      navigate({ to: '/users/roles/$roleId', params: { roleId: result?.id ?? '' } })
     }
     catch (error) {
       toast.error(t('hr.roles.createError'))

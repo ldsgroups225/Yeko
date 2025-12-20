@@ -91,6 +91,14 @@ export async function getParentWithChildren(parentId: string, schoolId: string) 
 export async function createParent(data: { userId: string, phone: string, address?: string }) {
   const db = getDb()
 
+  const [user] = await db.select().from(users).where(eq(users.id, data.userId)).limit(1)
+  if (!user) {
+    throw new Error('User not found')
+  }
+  const nameParts = user.name?.split(' ') || []
+  const firstName = nameParts[0] || ''
+  const lastName = nameParts.slice(1).join(' ')
+
   const [parent] = await db
     .insert(parents)
     .values({
@@ -98,9 +106,13 @@ export async function createParent(data: { userId: string, phone: string, addres
       userId: data.userId,
       phone: data.phone,
       address: data.address,
+      firstName,
+      lastName,
     })
     .returning()
-
+  if (!parent) {
+    throw new Error('Failed to create parent')
+  }
   return parent
 }
 

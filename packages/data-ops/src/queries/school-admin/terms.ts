@@ -80,10 +80,14 @@ export async function updateTerm(
     throw new Error(SCHOOL_ERRORS.TERM_NOT_FOUND)
   }
 
+  const { startDate, endDate, ...rest } = data
+
   const [updated] = await db
     .update(terms)
     .set({
-      ...data,
+      ...rest,
+      ...(startDate && { startDate: startDate.toISOString() }),
+      ...(endDate && { endDate: endDate.toISOString() }),
       updatedAt: new Date(),
     })
     .where(eq(terms.id, termId))

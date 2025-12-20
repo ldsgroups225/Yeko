@@ -84,6 +84,9 @@ export type CreateStudentFeeData = Omit<StudentFeeInsert, 'id' | 'createdAt' | '
 export async function createStudentFee(data: CreateStudentFeeData): Promise<StudentFee> {
   const db = getDb()
   const [studentFee] = await db.insert(studentFees).values({ id: nanoid(), ...data }).returning()
+  if (!studentFee) {
+    throw new Error('Failed to create student fee')
+  }
   return studentFee
 }
 
@@ -95,7 +98,11 @@ export async function createStudentFeesBulk(dataList: CreateStudentFeeData[]): P
   return db.insert(studentFees).values(values).returning()
 }
 
-export async function waiveStudentFee(studentFeeId: string, waivedBy: string, reason: string): Promise<StudentFee> {
+export async function waiveStudentFee(
+  studentFeeId: string,
+  waivedBy: string,
+  reason: string,
+): Promise<StudentFee | undefined> {
   const db = getDb()
   const [studentFee] = await db
     .update(studentFees)

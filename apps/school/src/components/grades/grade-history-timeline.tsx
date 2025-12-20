@@ -16,7 +16,7 @@ interface ValidationEntry {
   previousValue: string | null
   newValue: string | null
   comment: string | null
-  createdAt: string
+  createdAt: Date
   validator: {
     name: string
   }

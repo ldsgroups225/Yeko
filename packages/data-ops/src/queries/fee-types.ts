@@ -43,12 +43,15 @@ export type CreateFeeTypeData = Omit<FeeTypeInsert, 'id' | 'createdAt' | 'update
 export async function createFeeType(data: CreateFeeTypeData): Promise<FeeType> {
   const db = getDb()
   const [feeType] = await db.insert(feeTypes).values({ id: nanoid(), ...data }).returning()
+  if (!feeType) {
+    throw new Error('Failed to create fee type')
+  }
   return feeType
 }
 
 export type UpdateFeeTypeData = Partial<Omit<FeeTypeInsert, 'id' | 'schoolId' | 'createdAt' | 'updatedAt'>>
 
-export async function updateFeeType(feeTypeId: string, data: UpdateFeeTypeData): Promise<FeeType> {
+export async function updateFeeType(feeTypeId: string, data: UpdateFeeTypeData): Promise<FeeType | undefined> {
   const db = getDb()
   const [feeType] = await db
     .update(feeTypes)
@@ -63,6 +66,6 @@ export async function deleteFeeType(feeTypeId: string): Promise<void> {
   await db.delete(feeTypes).where(eq(feeTypes.id, feeTypeId))
 }
 
-export async function deactivateFeeType(feeTypeId: string): Promise<FeeType> {
+export async function deactivateFeeType(feeTypeId: string): Promise<FeeType | undefined> {
   return updateFeeType(feeTypeId, { status: 'inactive' })
 }

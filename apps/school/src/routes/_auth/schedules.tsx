@@ -24,7 +24,6 @@ import { timetablesOptions } from '@/lib/queries/timetables'
 import { getClasses } from '@/school/functions/classes'
 import { getSchoolYears } from '@/school/functions/school-years'
 import { getTeachers } from '@/school/functions/teachers'
-import { generateUUID } from '@/utils/generateUUID'
 
 export const Route = createFileRoute('/_auth/schedules')({
   component: TimetablesPage,
@@ -88,8 +87,31 @@ function TimetablesPage() {
 
   const canShowTimetable
     = effectiveYearId
-    && ((viewMode === 'class' && selectedClassId)
-      || (viewMode === 'teacher' && selectedTeacherId))
+      && ((viewMode === 'class' && selectedClassId)
+        || (viewMode === 'teacher' && selectedTeacherId))
+
+  // Transform timetable data to match TimetableSessionData interface
+  const transformedTimetable = timetable?.map((session) => {
+    // Handle different data structures for class vs teacher views
+    const teacherName = 'teacher' in session && session.teacher?.user?.name
+      ? session.teacher.user.name
+      : 'Unknown Teacher'
+
+    return {
+      id: session.id,
+      subjectId: session.subjectId,
+      subjectName: session.subject?.name || '',
+      teacherId: session.teacherId,
+      teacherName,
+      classroomId: session.classroomId,
+      classroomName: session.classroom?.name || null,
+      dayOfWeek: session.dayOfWeek,
+      startTime: session.startTime,
+      endTime: session.endTime,
+      color: session.color,
+      hasConflict: false, // TODO: Add conflict detection
+    }
+  }) || []
 
   return (
     <div className="space-y-6">
@@ -118,24 +140,24 @@ function TimetablesPage() {
           <div className="w-full sm:w-[200px]">
             {yearsLoading
               ? (
-                <Skeleton className="h-10 w-full" />
-              )
+                  <Skeleton className="h-10 w-full" />
+                )
               : (
-                <Select value={effectiveYearId} onValueChange={setLocalYearId}>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('schoolYear.select')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {schoolYears?.map((year: { id: string, name: string, isActive: boolean }) => (
-                      <SelectItem key={year.id} value={year.id}>
-                        {year.name}
-                        {' '}
-                        {year.isActive && t('schoolYear.activeSuffix')}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
+                  <Select value={effectiveYearId} onValueChange={setLocalYearId}>
+                    <SelectTrigger>
+                      <SelectValue placeholder={t('schoolYear.select')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {schoolYears?.map(year => (
+                        <SelectItem key={year.id} value={year.id}>
+                          {year.template.name}
+                          {' '}
+                          {year.isActive && t('schoolYear.activeSuffix')}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
           </div>
 
           {/* Class selector (for class view) */}
@@ -143,26 +165,28 @@ function TimetablesPage() {
             <div className="w-full sm:w-[200px]">
               {classesLoading
                 ? (
-                  <Skeleton className="h-10 w-full" />
-                )
+                    <Skeleton className="h-10 w-full" />
+                  )
                 : (
-                  <Select
-                    value={selectedClassId}
-                    onValueChange={setSelectedClassId}
-                    disabled={!effectiveYearId}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={t('classes.select')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {classes?.map((cls: { id: string, name: string }) => (
-                        <SelectItem key={generateUUID()} value={cls.id}>
-                          {cls.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
+                    <Select
+                      value={selectedClassId}
+                      onValueChange={setSelectedClassId}
+                      disabled={!effectiveYearId}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('classes.select')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {classes?.map(item => (
+                          <SelectItem key={item.class.id} value={item.class.id}>
+                            {item.grade.name}
+                            {' '}
+                            {item.class.section}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
             </div>
           )}
 
@@ -171,27 +195,25 @@ function TimetablesPage() {
             <div className="w-full sm:w-[200px]">
               {teachersLoading
                 ? (
-                  <Skeleton className="h-10 w-full" />
-                )
+                    <Skeleton className="h-10 w-full" />
+                  )
                 : (
-                  <Select
-                    value={selectedTeacherId}
-                    onValueChange={setSelectedTeacherId}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={t('teachers.select')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {teachers?.map((teacher: { id: string, firstName: string, lastName: string }) => (
-                        <SelectItem key={teacher.id} value={teacher.id}>
-                          {teacher.firstName}
-                          {' '}
-                          {teacher.lastName}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
+                    <Select
+                      value={selectedTeacherId}
+                      onValueChange={setSelectedTeacherId}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('teachers.select')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {teachers?.map(teacher => (
+                          <SelectItem key={teacher.id} value={teacher.id}>
+                            {teacher.user.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
             </div>
           )}
         </div>
@@ -200,19 +222,19 @@ function TimetablesPage() {
       {/* Timetable Grid */}
       {canShowTimetable
         ? (
-          <TimetableGrid
-            sessions={timetable ?? []}
-            isLoading={timetableLoading}
-            readOnly
-          />
-        )
+            <TimetableGrid
+              sessions={transformedTimetable}
+              isLoading={timetableLoading}
+              readOnly
+            />
+          )
         : (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-              <p>{t('timetables.selectFiltersPrompt')}</p>
-            </CardContent>
-          </Card>
-        )}
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                <p>{t('timetables.selectFiltersPrompt')}</p>
+              </CardContent>
+            </Card>
+          )}
     </div>
   )
 }

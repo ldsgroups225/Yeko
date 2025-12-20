@@ -32,23 +32,6 @@ export const Route = createFileRoute('/_auth/conducts/conduct/')({
   component: ConductPage,
 })
 
-interface ConductRecordData {
-  id: string
-  studentId: string
-  type: string
-  category: string
-  title: string
-  description: string
-  severity?: string | null
-  status: string
-  incidentDate?: string | null
-  location?: string | null
-  createdAt: string
-  student?: {
-    user?: { name?: string | null, image?: string | null }
-  }
-}
-
 function ConductPage() {
   const { t } = useTranslation()
   const search = Route.useSearch()
@@ -97,12 +80,12 @@ function ConductPage() {
     })
   }
 
-  const rawRecords = (data as { data?: ConductRecordData[] })?.data ?? []
+  const rawRecords = data?.data ?? []
   const records = rawRecords.map(record => ({
     id: record.id,
     studentId: record.studentId,
-    studentName: record.student?.user?.name ?? 'Unknown',
-    studentPhoto: record.student?.user?.image ?? undefined,
+    studentName: record.studentName ?? 'Unknown',
+    studentPhoto: record.studentMatricule ?? undefined,
     type: record.type as 'incident' | 'sanction' | 'reward' | 'note',
     category: record.category,
     title: record.title,
@@ -111,7 +94,7 @@ function ConductPage() {
     status: record.status as 'open' | 'investigating' | 'pending_decision' | 'resolved' | 'closed' | 'appealed',
     incidentDate: record.incidentDate ?? undefined,
     location: record.location ?? undefined,
-    createdAt: record.createdAt,
+    createdAt: record.createdAt instanceof Date ? record.createdAt.toISOString() : record.createdAt,
   }))
 
   return (

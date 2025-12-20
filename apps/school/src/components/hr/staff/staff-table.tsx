@@ -49,17 +49,8 @@ import {
 import { useDebounce } from '@/hooks/use-debounce'
 import { getStaffList } from '@/school/functions/staff'
 
-interface StaffMember {
-  id: string
-  user: {
-    name: string
-    email: string
-  }
-  position: string
-  department: string | null
-  status: 'active' | 'inactive' | 'on_leave'
-  hireDate: Date | null
-}
+type StaffListResponse = Awaited<ReturnType<typeof getStaffList>>
+type StaffMember = StaffListResponse['staff'][number]
 
 interface StaffTableProps {
   filters: {

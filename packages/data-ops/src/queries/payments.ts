@@ -119,6 +119,9 @@ export async function createPayment(data: CreatePaymentData): Promise<Payment> {
   const db = getDb()
   const receiptNumber = await generateReceiptNumber(data.schoolId)
   const [payment] = await db.insert(payments).values({ id: nanoid(), receiptNumber, ...data }).returning()
+  if (!payment) {
+    throw new Error('Failed to create payment')
+  }
   return payment
 }
 
@@ -132,20 +135,25 @@ export async function createPaymentWithAllocations(
   const db = getDb()
   const { allocations: allocationData, ...paymentData } = data
 
-  return db.transaction(async (tx: typeof db) => {
+  return db.transaction(async (tx: any) => {
     const receiptNumber = await generateReceiptNumber(paymentData.schoolId)
 
     const [payment] = await tx
       .insert(payments)
       .values({ id: nanoid(), receiptNumber, ...paymentData })
       .returning()
-
+    if (!payment) {
+      throw new Error('Failed to create payment')
+    }
     const allocations: PaymentAllocation[] = []
     for (const alloc of allocationData) {
       const [allocation] = await tx
         .insert(paymentAllocations)
         .values({ id: nanoid(), paymentId: payment.id, ...alloc })
         .returning()
+      if (!allocation) {
+        throw new Error('Failed to create payment allocation')
+      }
       allocations.push(allocation)
 
       await tx
@@ -188,13 +196,17 @@ export async function createPaymentWithAllocations(
   })
 }
 
-export async function cancelPayment(paymentId: string, cancelledBy: string, reason: string): Promise<Payment> {
+export async function cancelPayment(
+  paymentId: string,
+  cancelledBy: string,
+  reason: string,
+): Promise<Payment | undefined> {
   const db = getDb()
   const payment = await getPaymentById(paymentId)
   if (!payment)
     throw new Error('Payment not found')
 
-  return db.transaction(async (tx: typeof db) => {
+  return db.transaction(async (tx: any) => {
     const allocs = await tx.select().from(paymentAllocations).where(eq(paymentAllocations.paymentId, paymentId))
 
     for (const alloc of allocs) {
@@ -240,6 +252,9 @@ export async function cancelPayment(paymentId: string, cancelledBy: string, reas
       .where(eq(payments.id, paymentId))
       .returning()
 
+    if (!cancelledPayment) {
+      throw new Error('Failed to cancel payment')
+    }
     return cancelledPayment
   })
 }

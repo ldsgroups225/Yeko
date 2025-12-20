@@ -72,7 +72,7 @@ export const bulkEnrollStudents = createServerFn()
 
     const alreadyEnrolled = new Set(existingEnrollments.map((e: { studentId: string }) => e.studentId))
 
-    const today = new Date().toISOString().split('T')[0]
+    const today = new Date().toISOString().split('T')[0] ?? new Date().toISOString().slice(0, 10)
 
     for (const studentId of data.studentIds) {
       if (alreadyEnrolled.has(studentId)) {
@@ -167,7 +167,7 @@ export const bulkReEnrollFromPreviousYear = createServerFn()
       ))
 
     const alreadyEnrolled = new Set(existingEnrollmentsTarget.map((e: { studentId: string }) => e.studentId))
-    const today = new Date().toISOString().split('T')[0]
+    const today = new Date().toISOString().split('T')[0] ?? new Date().toISOString().slice(0, 10)
 
     for (const enrollment of sourceEnrollments) {
       if (alreadyEnrolled.has(enrollment.studentId)) {
@@ -177,8 +177,11 @@ export const bulkReEnrollFromPreviousYear = createServerFn()
 
       // Find target class (same grade/series or mapped)
       let targetGradeId = enrollment.gradeId
-      if (data.gradeMapping && data.gradeMapping[enrollment.gradeId]) {
-        targetGradeId = data.gradeMapping[enrollment.gradeId]
+      if (data.gradeMapping) {
+        const mapped = data.gradeMapping[enrollment.gradeId]
+        if (mapped) {
+          targetGradeId = mapped
+        }
       }
 
       const classKey = `${targetGradeId}-${enrollment.seriesId ?? 'null'}`
@@ -280,7 +283,7 @@ export const bulkTransferStudents = createServerFn()
           classId: data.newClassId,
           schoolYearId: yearContext.schoolYearId,
           status: 'confirmed',
-          enrollmentDate: now.toISOString().split('T')[0],
+          enrollmentDate: now.toISOString().split('T')[0] ?? now.toISOString().slice(0, 10),
           confirmedAt: now,
           previousEnrollmentId: currentEnrollment.id,
         })
@@ -501,7 +504,7 @@ export const importStudents = createServerFn()
       classLookup.set(key, c.id)
     }
 
-    const today = new Date().toISOString().split('T')[0]
+    const today = new Date().toISOString().split('T')[0] ?? new Date().toISOString().slice(0, 10)
 
     for (let i = 0; i < data.rows.length; i++) {
       const row = data.rows[i]

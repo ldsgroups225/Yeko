@@ -15,7 +15,7 @@ export const schools = pgTable('schools', {
   email: text('email'),
   logoUrl: text('logo_url'),
   status: text('status', { enum: ['active', 'inactive', 'suspended'] }).default('active').notNull(),
-  settings: jsonb('settings'),
+  settings: jsonb('settings').$type<Record<string, unknown>>(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at')
     .defaultNow()

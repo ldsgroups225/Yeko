@@ -75,20 +75,27 @@ function CurriculumProgressPage() {
   // Mock overview data for now
   const overviewData = progress
     ? {
-      totalClasses: classes?.length ?? 0,
-      onTrack: progress.filter((p: { status: string }) => p.status === 'on_track').length,
-      slightlyBehind: progress.filter((p: { status: string }) => p.status === 'slightly_behind').length,
-      significantlyBehind: progress.filter((p: { status: string }) => p.status === 'significantly_behind').length,
-      ahead: progress.filter((p: { status: string }) => p.status === 'ahead').length,
-      averageProgress: progress.length > 0
-        ? progress.reduce((sum: number, p: { progressPercentage: number }) => sum + p.progressPercentage, 0) / progress.length
-        : 0,
-    }
+        totalClasses: classes?.length ?? 0,
+        onTrack: progress.filter((p: { status: string }) => p.status === 'on_track').length,
+        slightlyBehind: progress.filter((p: { status: string }) => p.status === 'slightly_behind').length,
+        significantlyBehind: progress.filter((p: { status: string }) => p.status === 'significantly_behind').length,
+        ahead: progress.filter((p: { status: string }) => p.status === 'ahead').length,
+        averageProgress: progress.length > 0
+          ? progress.reduce((sum: number, p) => sum + Number(p.progressPercentage), 0) / progress.length
+          : 0,
+      }
     : null
 
   const behindClasses = progress?.filter(
     (p: { status: string }) => p.status === 'slightly_behind' || p.status === 'significantly_behind',
-  ) ?? []
+  ).map(p => ({
+    ...p,
+    className: classes?.find(c => c.class.id === p.classId)?.grade.name ?? '',
+    subjectName: p.programTemplate?.name ?? '',
+    progressPercentage: Number(p.progressPercentage),
+    expectedPercentage: p.expectedPercentage ? Number(p.expectedPercentage) : 0,
+    variance: p.variance ? Number(p.variance) : 0,
+  })) ?? []
 
   return (
     <div className="space-y-6">
@@ -114,136 +121,126 @@ function CurriculumProgressPage() {
         <div className="w-full sm:w-[200px]">
           {yearsLoading
             ? (
-              <Skeleton className="h-10 w-full" />
-            )
+                <Skeleton className="h-10 w-full" />
+              )
             : (
-              <Select value={effectiveYearId} onValueChange={setLocalYearId}>
-                <SelectTrigger>
-                  <SelectValue placeholder={t('schoolYear.select')} />
-                </SelectTrigger>
-                <SelectContent>
-                  {schoolYears?.map((year: any) => (
-                    <SelectItem key={year.id} value={year.id}>
-                      {year.template?.name}
-                      {' '}
-                      {year.isActive && t('schoolYear.activeSuffix')}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
+                <Select value={effectiveYearId} onValueChange={setLocalYearId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('schoolYear.select')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {schoolYears?.map((year: any) => (
+                      <SelectItem key={year.id} value={year.id}>
+                        {year.template?.name}
+                        {' '}
+                        {year.isActive && t('schoolYear.activeSuffix')}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
         </div>
 
         {/* Term */}
         <div className="w-full sm:w-[200px]">
           {termsLoading
             ? (
-              <Skeleton className="h-10 w-full" />
-            )
+                <Skeleton className="h-10 w-full" />
+              )
             : (
-              <Select
-                value={selectedTermId}
-                onValueChange={setSelectedTermId}
-                disabled={!effectiveYearId}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={t('terms.select')} />
-                </SelectTrigger>
-                <SelectContent>
-                  {terms?.map((term: { id: string, name: string }) => (
-                    <SelectItem key={term.id} value={term.id}>
-                      {term.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
+                <Select
+                  value={selectedTermId}
+                  onValueChange={setSelectedTermId}
+                  disabled={!effectiveYearId}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('terms.select')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {terms?.map(term => (
+                      <SelectItem key={term.id} value={term.id}>
+                        {term.template.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
         </div>
 
         {/* Class */}
         <div className="w-full sm:w-[200px]">
           {classesLoading
             ? (
-              <Skeleton className="h-10 w-full" />
-            )
+                <Skeleton className="h-10 w-full" />
+              )
             : (
-              <Select
-                value={selectedClassId}
-                onValueChange={setSelectedClassId}
-                disabled={!effectiveYearId}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={t('classes.select')} />
-                </SelectTrigger>
-                <SelectContent>
-                  {classes?.map((cls: { id: string, name: string }) => (
-                    <SelectItem key={generateUUID()} value={cls.id}>
-                      {cls.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
+                <Select
+                  value={selectedClassId}
+                  onValueChange={setSelectedClassId}
+                  disabled={!effectiveYearId}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('classes.select')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {classes?.map(item => (
+                      <SelectItem key={item.class.id} value={item.class.id}>
+                        {item.grade.name}
+                        {' '}
+                        {item.class.section}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
         </div>
       </div>
 
       {/* Content */}
       {canShowProgress
         ? (
-          <div className="space-y-6">
-            {/* Overview Cards */}
-            <ProgressOverviewCards data={overviewData} isLoading={progressLoading} />
+            <div className="space-y-6">
+              {/* Overview Cards */}
+              <ProgressOverviewCards data={overviewData} isLoading={progressLoading} />
 
-            {/* Behind Schedule Alert */}
-            {behindClasses.length > 0 && (
-              <BehindScheduleAlert classes={behindClasses} />
-            )}
+              {/* Behind Schedule Alert */}
+              {behindClasses.length > 0 && (
+                <BehindScheduleAlert classes={behindClasses} />
+              )}
 
-            {/* Progress Cards Grid */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {progressLoading
-                ? (
-                  Array.from({ length: 6 }).map(() => (
-                    <Skeleton key={generateUUID()} className="h-48" />
-                  ))
-                )
-                : (
-                  progress?.map((item: {
-                    id: string
-                    subjectName: string
-                    teacherName?: string
-                    completedChapters: number
-                    totalChapters: number
-                    expectedChapters?: number
-                    progressPercentage: number
-                    expectedPercentage?: number
-                    variance?: number
-                    status: 'on_track' | 'slightly_behind' | 'significantly_behind' | 'ahead'
-                  }) => (
-                    <ProgressCard
-                      key={item.id}
-                      subjectName={item.subjectName}
-                      teacherName={item.teacherName}
-                      completedChapters={item.completedChapters}
-                      totalChapters={item.totalChapters}
-                      expectedChapters={item.expectedChapters}
-                      progressPercentage={item.progressPercentage}
-                      expectedPercentage={item.expectedPercentage}
-                      variance={item.variance}
-                      status={item.status}
-                    />
-                  ))
-                )}
+              {/* Progress Cards Grid */}
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {progressLoading
+                  ? (
+                      Array.from({ length: 6 }).map(() => (
+                        <Skeleton key={generateUUID()} className="h-48" />
+                      ))
+                    )
+                  : (
+                      progress?.map(item => (
+                        <ProgressCard
+                          key={item.id}
+                          subjectName={item.programTemplate?.name ?? ''}
+                          completedChapters={item.completedChapters}
+                          totalChapters={item.totalChapters}
+                          expectedChapters={item.totalChapters ?? undefined}
+                          progressPercentage={Number(item.progressPercentage)}
+                          expectedPercentage={item.expectedPercentage ? Number(item.expectedPercentage) : undefined}
+                          variance={item.variance ? Number(item.variance) : undefined}
+                          status={item.status}
+                        />
+                      ))
+                    )}
+              </div>
             </div>
-          </div>
-        )
+          )
         : (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-              <p>{t('curriculum.selectFiltersPrompt')}</p>
-            </CardContent>
-          </Card>
-        )}
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                <p>{t('curriculum.selectFiltersPrompt')}</p>
+              </CardContent>
+            </Card>
+          )}
     </div>
   )
 }

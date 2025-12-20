@@ -90,7 +90,9 @@ export function StudentForm({ student, mode }: StudentFormProps) {
     onSuccess: (newStudent) => {
       queryClient.invalidateQueries({ queryKey: studentsKeys.all })
       toast.success(t('students.createSuccess'))
-      navigate({ to: '/students/$studentId', params: { studentId: newStudent.id } })
+      if (newStudent) {
+        navigate({ to: '/students/$studentId', params: { studentId: newStudent.id } })
+      }
     },
     onError: (err: Error) => {
       toast.error(err.message)

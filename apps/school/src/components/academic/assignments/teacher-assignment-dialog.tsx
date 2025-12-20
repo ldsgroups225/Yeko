@@ -41,7 +41,7 @@ export function TeacherAssignmentDialog({
 
   // Fetch available subjects (not yet assigned)
   const { data: availableSubjects, isLoading } = useQuery({
-    ...teacherSubjectsOptions.available(teacherId, schoolYearId),
+    ...teacherSubjectsOptions.available(teacherId ?? undefined, schoolYearId ?? undefined),
     enabled: open && !!schoolYearId,
   })
 

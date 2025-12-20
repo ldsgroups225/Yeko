@@ -158,7 +158,7 @@ export const linkParentToStudent = createServerFn()
       userId: context.userId,
       action: 'create',
       tableName: 'student_parents',
-      recordId: link.id,
+      recordId: link!.id,
       newValues: data,
     })
 

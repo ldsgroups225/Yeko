@@ -61,7 +61,7 @@ function ConductRecordDetailPage() {
     )
   }
 
-  const initials = (record.student?.user?.name ?? 'U')
+  const initials = (record.studentName ?? 'U')
     .split(' ')
     .map((n: string) => n[0])
     .join('')
@@ -162,12 +162,12 @@ function ConductRecordDetailPage() {
             <CardContent>
               <div className="flex items-center gap-3">
                 <Avatar className="h-12 w-12">
-                  <AvatarImage src={record.student?.user?.image ?? undefined} />
+                  <AvatarImage src={record.studentPhoto ?? undefined} />
                   <AvatarFallback>{initials}</AvatarFallback>
                 </Avatar>
                 <div>
-                  <div className="font-medium">{record.student?.user?.name ?? 'Unknown'}</div>
-                  <div className="text-sm text-muted-foreground">{record.class?.name}</div>
+                  <div className="font-medium">{record.studentName ?? 'Unknown'}</div>
+                  <div className="text-sm text-muted-foreground">{record.studentMatricule}</div>
                 </div>
               </div>
             </CardContent>
@@ -180,7 +180,7 @@ function ConductRecordDetailPage() {
             <CardContent>
               <div className="flex items-center gap-2 text-sm">
                 <User className="h-4 w-4" />
-                <span>{record.recordedByUser?.name ?? 'Unknown'}</span>
+                <span>{record.recordedByName ?? 'Unknown'}</span>
               </div>
               <div className="text-xs text-muted-foreground mt-1">
                 {new Date(record.createdAt).toLocaleDateString('fr-FR', {

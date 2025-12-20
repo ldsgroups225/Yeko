@@ -1,4 +1,4 @@
-import type { EnrollmentInsert } from '../drizzle/school-schema'
+import type { Enrollment, EnrollmentInsert } from '../drizzle/school-schema'
 import crypto from 'node:crypto'
 import { and, desc, eq, ne, or, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
@@ -6,9 +6,7 @@ import { grades, series } from '../drizzle/core-schema'
 import { classes, enrollments, schoolYears, students, users } from '../drizzle/school-schema'
 
 const nanoid = () => crypto.randomUUID()
-
 // ==================== Types ====================
-
 export interface EnrollmentFilters {
   schoolId: string
   schoolYearId?: string
@@ -18,7 +16,6 @@ export interface EnrollmentFilters {
   page?: number
   limit?: number
 }
-
 export interface CreateEnrollmentInput {
   studentId: string
   classId: string
@@ -26,34 +23,26 @@ export interface CreateEnrollmentInput {
   enrollmentDate?: string
   rollNumber?: number
 }
-
 export interface TransferInput {
   enrollmentId: string
   newClassId: string
   reason?: string
   effectiveDate?: string
 }
-
 // ==================== Queries ====================
-
 export async function getEnrollments(filters: EnrollmentFilters) {
   const db = getDb()
   const { schoolId, schoolYearId, classId, status, search, page = 1, limit = 20 } = filters
-
   const conditions = []
-
   if (schoolYearId) {
     conditions.push(eq(enrollments.schoolYearId, schoolYearId))
   }
-
   if (classId) {
     conditions.push(eq(enrollments.classId, classId))
   }
-
   if (status) {
     conditions.push(eq(enrollments.status, status as any))
   }
-
   if (search) {
     conditions.push(
       or(
@@ -63,7 +52,6 @@ export async function getEnrollments(filters: EnrollmentFilters) {
       ),
     )
   }
-
   const query = db
     .select({
       enrollment: enrollments,
@@ -94,17 +82,14 @@ export async function getEnrollments(filters: EnrollmentFilters) {
     .leftJoin(users, eq(enrollments.confirmedBy, users.id))
     .where(and(eq(students.schoolId, schoolId), ...conditions))
     .orderBy(desc(enrollments.enrollmentDate))
-
   const offset = (page - 1) * limit
   const data = await query.limit(limit).offset(offset)
-
   // Get total count
   const countResult = await db
     .select({ count: sql<number>`COUNT(*)` })
     .from(enrollments)
     .innerJoin(students, eq(enrollments.studentId, students.id))
     .where(and(eq(students.schoolId, schoolId), ...conditions))
-
   return {
     data,
     total: Number(countResult[0]?.count || 0),
@@ -112,7 +97,6 @@ export async function getEnrollments(filters: EnrollmentFilters) {
     totalPages: Math.ceil(Number(countResult[0]?.count || 0) / limit),
   }
 }
-
 export async function getEnrollmentById(id: string) {
   const db = getDb()
   const [enrollment] = await db
@@ -137,13 +121,10 @@ export async function getEnrollmentById(id: string) {
     .innerJoin(schoolYears, eq(enrollments.schoolYearId, schoolYears.id))
     .leftJoin(users, eq(enrollments.confirmedBy, users.id))
     .where(eq(enrollments.id, id))
-
   return enrollment
 }
-
 // ==================== CRUD Operations ====================
-
-export async function createEnrollment(data: CreateEnrollmentInput) {
+export async function createEnrollment(data: CreateEnrollmentInput): Promise<Enrollment> {
   const db = getDb()
   // Check if student already enrolled in this year
   const [existing] = await db
@@ -156,11 +137,9 @@ export async function createEnrollment(data: CreateEnrollmentInput) {
         ne(enrollments.status, 'cancelled'),
       ),
     )
-
   if (existing) {
     throw new Error('Student is already enrolled for this school year')
   }
-
   // Check class capacity
   const classCapacity = await db
     .select({
@@ -171,11 +150,9 @@ export async function createEnrollment(data: CreateEnrollmentInput) {
     .leftJoin(enrollments, and(eq(enrollments.classId, classes.id), eq(enrollments.status, 'confirmed')))
     .where(eq(classes.id, data.classId))
     .groupBy(classes.id)
-
   if (classCapacity[0] && Number(classCapacity[0].currentCount) >= classCapacity[0].maxStudents) {
     throw new Error('Class has reached maximum capacity')
   }
-
   // Generate roll number
   let rollNumber = data.rollNumber
   if (!rollNumber) {
@@ -185,7 +162,6 @@ export async function createEnrollment(data: CreateEnrollmentInput) {
       .where(and(eq(enrollments.classId, data.classId), eq(enrollments.status, 'confirmed')))
     rollNumber = (lastRoll[0]?.maxRoll || 0) + 1
   }
-
   const [enrollment] = await db
     .insert(enrollments)
     .values({
@@ -196,11 +172,12 @@ export async function createEnrollment(data: CreateEnrollmentInput) {
       status: 'pending',
     } as EnrollmentInsert)
     .returning()
-
+  if (!enrollment) {
+    throw new Error('Failed to create enrollment')
+  }
   return enrollment
 }
-
-export async function confirmEnrollment(id: string, userId: string) {
+export async function confirmEnrollment(id: string, userId: string): Promise<Enrollment> {
   const db = getDb()
   const [enrollment] = await db
     .update(enrollments)
@@ -212,11 +189,12 @@ export async function confirmEnrollment(id: string, userId: string) {
     })
     .where(eq(enrollments.id, id))
     .returning()
-
+  if (!enrollment) {
+    throw new Error('Failed to confirm enrollment')
+  }
   return enrollment
 }
-
-export async function cancelEnrollment(id: string, userId: string, reason?: string) {
+export async function cancelEnrollment(id: string, userId: string, reason?: string): Promise<Enrollment> {
   const db = getDb()
   const [enrollment] = await db
     .update(enrollments)
@@ -229,39 +207,32 @@ export async function cancelEnrollment(id: string, userId: string, reason?: stri
     })
     .where(eq(enrollments.id, id))
     .returning()
-
+  if (!enrollment) {
+    throw new Error('Failed to cancel enrollment')
+  }
   return enrollment
 }
-
 export async function deleteEnrollment(id: string) {
   const db = getDb()
   // Only allow deletion of pending enrollments
   const [enrollment] = await db.select().from(enrollments).where(eq(enrollments.id, id))
-
   if (enrollment?.status !== 'pending') {
     throw new Error('Can only delete pending enrollments. Use cancel for confirmed enrollments.')
   }
-
   await db.delete(enrollments).where(eq(enrollments.id, id))
 }
-
 // ==================== Transfer ====================
-
-export async function transferStudent(data: TransferInput, userId: string) {
+export async function transferStudent(data: TransferInput, userId: string): Promise<Enrollment> {
   const db = getDb()
   const { enrollmentId, newClassId, reason, effectiveDate } = data
-
   // Get current enrollment
   const [currentEnrollment] = await db.select().from(enrollments).where(eq(enrollments.id, enrollmentId))
-
   if (!currentEnrollment) {
     throw new Error('Enrollment not found')
   }
-
   if (currentEnrollment.status !== 'confirmed') {
     throw new Error('Can only transfer confirmed enrollments')
   }
-
   // Check new class capacity
   const classCapacity = await db
     .select({
@@ -272,11 +243,9 @@ export async function transferStudent(data: TransferInput, userId: string) {
     .leftJoin(enrollments, and(eq(enrollments.classId, classes.id), eq(enrollments.status, 'confirmed')))
     .where(eq(classes.id, newClassId))
     .groupBy(classes.id)
-
   if (classCapacity[0] && Number(classCapacity[0].currentCount) >= classCapacity[0].maxStudents) {
     throw new Error('Target class has reached maximum capacity')
   }
-
   // Update current enrollment to transferred
   await db
     .update(enrollments)
@@ -288,13 +257,11 @@ export async function transferStudent(data: TransferInput, userId: string) {
       updatedAt: new Date(),
     })
     .where(eq(enrollments.id, enrollmentId))
-
   // Generate new roll number
   const lastRoll = await db
     .select({ maxRoll: sql<number>`MAX(${enrollments.rollNumber})` })
     .from(enrollments)
     .where(and(eq(enrollments.classId, newClassId), eq(enrollments.status, 'confirmed')))
-
   // Create new enrollment
   const [newEnrollment] = await db
     .insert(enrollments)
@@ -303,7 +270,7 @@ export async function transferStudent(data: TransferInput, userId: string) {
       studentId: currentEnrollment.studentId,
       classId: newClassId,
       schoolYearId: currentEnrollment.schoolYearId,
-      enrollmentDate: effectiveDate || new Date().toISOString().split('T')[0],
+      enrollmentDate: effectiveDate || new Date().toISOString().split('T[0]'),
       rollNumber: (lastRoll[0]?.maxRoll || 0) + 1,
       status: 'confirmed',
       confirmedAt: new Date(),
@@ -311,7 +278,9 @@ export async function transferStudent(data: TransferInput, userId: string) {
       previousEnrollmentId: enrollmentId,
     } as EnrollmentInsert)
     .returning()
-
+  if (!newEnrollment) {
+    throw new Error('Failed to create new enrollment for transfer')
+  }
   return newEnrollment
 }
 

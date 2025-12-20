@@ -7,6 +7,7 @@
 import {
   createSchool,
   deleteSchool,
+  eq,
   getDb,
   getSchools,
   schools,
@@ -345,7 +346,7 @@ describe('8.2 API Errors', () => {
       const result = await db
         .select()
         .from(schools)
-        .where((s: any) => s.id === 'non-existent-id')
+        .where(eq(schools.id, 'non-existent-id'))
 
       // The mock returns an object, not an array, so update expectation
       expect(result).toBeDefined()
@@ -367,7 +368,7 @@ describe('8.2 API Errors', () => {
       const result = await db
         .select()
         .from(schools)
-        .where((s: any) => s.id === 'non-existent')
+        .where(eq(schools.id, 'non-existent'))
 
       // The mock returns an object, not an array, so update expectation
       expect(result).toBeDefined()

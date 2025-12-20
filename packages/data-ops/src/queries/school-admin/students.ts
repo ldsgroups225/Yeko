@@ -87,12 +87,16 @@ export async function createStudent(data: {
     schoolId: data.schoolId,
     firstName: data.firstName,
     lastName: data.lastName,
-    dob: data.dob,
+    dob: data.dob.toISOString(),
     gender: data.gender,
     matricule: data.matricule,
     photoUrl: data.photoUrl,
     status: 'active',
   }).returning()
+
+  if (!student) {
+    throw new Error('Failed to create student')
+  }
 
   return student
 }
@@ -116,11 +120,13 @@ export async function updateStudent(studentId: string, schoolId: string, data: {
   }
 
   const db = getDb()
+  const { dob, ...rest } = data
 
   const [updated] = await db
     .update(students)
     .set({
-      ...data,
+      ...rest,
+      ...(dob && { dob: dob.toISOString() }),
       updatedAt: new Date(),
     })
     .where(eq(students.id, studentId))

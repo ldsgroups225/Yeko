@@ -1,4 +1,3 @@
-import type { Class } from '@repo/data-ops'
 import type { GradeType } from '@/schemas/grade'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
@@ -48,7 +47,7 @@ function GradeEntryPage() {
 
   // Fetch classes for current school year
   const { data: classesData, isLoading: classesLoading } = useQuery(
-    classesOptions.list({ schoolYearId, status: 'active' }),
+    classesOptions.list({ schoolYearId: schoolYearId ?? undefined, status: 'active' }),
   )
 
   // Fetch subjects for selected class
@@ -130,11 +129,11 @@ function GradeEntryPage() {
                         <SelectValue placeholder={t('academic.grades.entry.selectClass')} />
                       </SelectTrigger>
                       <SelectContent>
-                        {classesData?.map((cls: Class & { grade?: { name: string } }) => (
-                          <SelectItem key={generateUUID()} value={cls.id}>
-                            {cls.grade?.name}
+                        {classesData?.map(item => (
+                          <SelectItem key={item.class.id} value={item.class.id}>
+                            {item.grade.name}
                             {' '}
-                            {cls.section}
+                            {item.class.section}
                           </SelectItem>
                         ))}
                       </SelectContent>

@@ -302,7 +302,17 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
               </Button>
             </CardHeader>
             <CardContent>
-              <EnrollmentTimeline enrollments={enrollmentHistory || []} />
+              <EnrollmentTimeline
+                enrollments={enrollmentHistory?.map(item => ({
+                  ...item,
+                  enrollment: {
+                    ...item.enrollment,
+                    confirmedAt: item.enrollment.confirmedAt?.toISOString() || null,
+                    cancelledAt: item.enrollment.cancelledAt?.toISOString() || null,
+                    transferredAt: item.enrollment.transferredAt?.toISOString() || null,
+                  },
+                })) || []}
+              />
             </CardContent>
           </Card>
         </TabsContent>

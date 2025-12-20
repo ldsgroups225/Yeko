@@ -1,4 +1,5 @@
 import { and, eq, sql } from 'drizzle-orm'
+import { nanoid } from 'nanoid'
 import { getDb } from '../database/setup'
 import { grades, subjects } from '../drizzle/core-schema'
 import {
@@ -116,7 +117,7 @@ export async function assignTeacherToClassSubject(classId: string, subjectId: st
   }
   else {
     // Create new assignment
-    const [created] = await db.insert(classSubjects).values({ classId, subjectId, teacherId }).returning()
+    const [created] = await db.insert(classSubjects).values({ id: nanoid(), classId, subjectId, teacherId }).returning()
     return created
   }
 }
@@ -156,7 +157,7 @@ export async function bulkAssignTeacher(
         results.push(updated)
       }
       else {
-        const [created] = await tx.insert(classSubjects).values(assignment).returning()
+        const [created] = await tx.insert(classSubjects).values({ id: nanoid(), ...assignment }).returning()
         results.push(created)
       }
     }

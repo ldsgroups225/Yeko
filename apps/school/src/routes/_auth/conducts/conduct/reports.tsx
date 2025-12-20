@@ -33,22 +33,6 @@ export const Route = createFileRoute('/_auth/conducts/conduct/reports')({
   component: ConductReportsPage,
 })
 
-interface ConductRecordData {
-  id: string
-  studentId: string
-  type: string
-  category: string
-  title: string
-  severity?: string | null
-  status: string
-  incidentDate?: string | null
-  createdAt: string
-  student?: {
-    user?: { name?: string | null }
-  }
-  class?: { name?: string | null }
-}
-
 function ConductReportsPage() {
   const { t } = useTranslation()
   const [classId, setClassId] = useState('')
@@ -77,7 +61,7 @@ function ConductReportsPage() {
     }),
   )
 
-  const rawRecords = (data as { data?: ConductRecordData[] })?.data ?? []
+  const rawRecords = data?.data ?? []
 
   // Calculate statistics
   const stats = {
@@ -277,7 +261,7 @@ function ConductReportsPage() {
                               ? new Date(record.incidentDate).toLocaleDateString('fr-FR')
                               : new Date(record.createdAt).toLocaleDateString('fr-FR')}
                           </TableCell>
-                          <TableCell>{record.student?.user?.name ?? 'Unknown'}</TableCell>
+                          <TableCell>{record.studentName ?? 'Unknown'}</TableCell>
                           <TableCell>
                             <ConductTypeBadge type={record.type as 'incident' | 'sanction' | 'reward' | 'note'} />
                           </TableCell>

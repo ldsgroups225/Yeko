@@ -10,7 +10,6 @@ import { getDb } from '../database/setup'
 import { subjects } from '../drizzle/core-schema'
 import {
   classes,
-  classrooms,
   classSessions,
   classSubjects,
   enrollments,
@@ -23,240 +22,8 @@ import {
   studentParents,
   students,
   teacherMessages,
-  teacherNotifications,
-  terms,
-  timetableSessions,
 } from '../drizzle/school-schema'
 
-// ============================================
-// TEACHER DASHBOARD
-// ============================================
-
-/**
- * Get teacher's schedule for a specific day
- */
-export async function getTeacherDaySchedule(params: {
-  teacherId: string
-  schoolYearId: string
-  dayOfWeek: number
-}) {
-  const db = getDb()
-
-  return db
-    .select({
-      id: timetableSessions.id,
-      dayOfWeek: timetableSessions.dayOfWeek,
-      startTime: timetableSessions.startTime,
-      endTime: timetableSessions.endTime,
-      class: {
-        id: classes.id,
-        section: classes.section,
-        gradeName: sql<string>`(SELECT name FROM grades WHERE id = ${classes.gradeId})`,
-      },
-      subject: {
-        id: subjects.id,
-        name: subjects.name,
-        shortName: subjects.shortName,
-      },
-      classroom: {
-        id: classrooms.id,
-        name: classrooms.name,
-        code: classrooms.code,
-      },
-    })
-    .from(timetableSessions)
-    .innerJoin(classes, eq(timetableSessions.classId, classes.id))
-    .innerJoin(subjects, eq(timetableSessions.subjectId, subjects.id))
-    .leftJoin(classrooms, eq(timetableSessions.classroomId, classrooms.id))
-    .where(
-      and(
-        eq(timetableSessions.teacherId, params.teacherId),
-        eq(timetableSessions.schoolYearId, params.schoolYearId),
-        eq(timetableSessions.dayOfWeek, params.dayOfWeek),
-      ),
-    )
-    .orderBy(asc(timetableSessions.startTime))
-}
-
-/**
- * Get teacher's weekly schedule
- */
-export async function getTeacherWeeklySchedule(params: {
-  teacherId: string
-  schoolYearId: string
-}) {
-  const db = getDb()
-
-  return db
-    .select({
-      id: timetableSessions.id,
-      dayOfWeek: timetableSessions.dayOfWeek,
-      startTime: timetableSessions.startTime,
-      endTime: timetableSessions.endTime,
-      class: {
-        id: classes.id,
-        section: classes.section,
-        gradeName: sql<string>`(SELECT name FROM grades WHERE id = ${classes.gradeId})`,
-      },
-      subject: {
-        id: subjects.id,
-        name: subjects.name,
-        shortName: subjects.shortName,
-      },
-      classroom: {
-        id: classrooms.id,
-        name: classrooms.name,
-        code: classrooms.code,
-      },
-    })
-    .from(timetableSessions)
-    .innerJoin(classes, eq(timetableSessions.classId, classes.id))
-    .innerJoin(subjects, eq(timetableSessions.subjectId, subjects.id))
-    .leftJoin(classrooms, eq(timetableSessions.classroomId, classrooms.id))
-    .where(
-      and(
-        eq(timetableSessions.teacherId, params.teacherId),
-        eq(timetableSessions.schoolYearId, params.schoolYearId),
-      ),
-    )
-    .orderBy(asc(timetableSessions.dayOfWeek), asc(timetableSessions.startTime))
-}
-
-/**
- * Get active session for teacher (if any)
- */
-export async function getTeacherActiveSession(params: {
-  teacherId: string
-  date: string
-}) {
-  const db = getDb()
-
-  const result = await db
-    .select({
-      id: classSessions.id,
-      classId: classSessions.classId,
-      className: sql<string>`(SELECT g.name || ' ' || c.section FROM classes c JOIN grades g ON c.grade_id = g.id WHERE c.id = ${classSessions.classId})`,
-      subjectId: classSessions.subjectId,
-      subjectName: subjects.name,
-      startTime: classSessions.startTime,
-      startedAt: classSessions.createdAt,
-      status: classSessions.status,
-    })
-    .from(classSessions)
-    .innerJoin(subjects, eq(classSessions.subjectId, subjects.id))
-    .where(
-      and(
-        eq(classSessions.teacherId, params.teacherId),
-        eq(classSessions.date, params.date),
-        eq(classSessions.status, 'scheduled'),
-      ),
-    )
-    .limit(1)
-
-  return result[0] ?? null
-}
-
-/**
- * Get count of pending grade validations for teacher
- */
-export async function getTeacherPendingGradesCount(teacherId: string) {
-  const db = getDb()
-
-  const result = await db
-    .select({ count: sql<number>`count(*)::int` })
-    .from(studentGrades)
-    .where(
-      and(
-        eq(studentGrades.teacherId, teacherId),
-        eq(studentGrades.status, 'submitted'),
-      ),
-    )
-
-  return result[0]?.count ?? 0
-}
-
-/**
- * Get count of unread messages for teacher
- */
-export async function getTeacherUnreadMessagesCount(teacherId: string) {
-  const db = getDb()
-
-  const result = await db
-    .select({ count: sql<number>`count(*)::int` })
-    .from(teacherMessages)
-    .where(
-      and(
-        eq(teacherMessages.recipientType, 'teacher'),
-        eq(teacherMessages.recipientId, teacherId),
-        eq(teacherMessages.isRead, false),
-      ),
-    )
-
-  return result[0]?.count ?? 0
-}
-
-/**
- * Get recent messages for teacher
- */
-export async function getTeacherRecentMessages(params: {
-  teacherId: string
-  limit?: number
-}) {
-  const db = getDb()
-  const limit = params.limit ?? 5
-
-  return db
-    .select({
-      id: teacherMessages.id,
-      senderType: teacherMessages.senderType,
-      senderId: teacherMessages.senderId,
-      subject: teacherMessages.subject,
-      content: teacherMessages.content,
-      isRead: teacherMessages.isRead,
-      createdAt: teacherMessages.createdAt,
-    })
-    .from(teacherMessages)
-    .where(
-      and(
-        eq(teacherMessages.recipientType, 'teacher'),
-        eq(teacherMessages.recipientId, params.teacherId),
-      ),
-    )
-    .orderBy(desc(teacherMessages.createdAt))
-    .limit(limit)
-}
-
-/**
- * Get unread notifications for teacher
- */
-export async function getTeacherNotificationsQuery(params: {
-  teacherId: string
-  unreadOnly?: boolean
-  limit?: number
-}) {
-  const db = getDb()
-  const limit = params.limit ?? 20
-
-  const conditions = [eq(teacherNotifications.teacherId, params.teacherId)]
-  if (params.unreadOnly) {
-    conditions.push(eq(teacherNotifications.isRead, false))
-  }
-
-  return db
-    .select()
-    .from(teacherNotifications)
-    .where(and(...conditions))
-    .orderBy(desc(teacherNotifications.createdAt))
-    .limit(limit)
-}
-
-// ============================================
-// SESSION MANAGEMENT
-// ============================================
-
-/**
- * Start a class session
- */
 export async function createTeacherClassSession(params: {
   timetableSessionId: string
   teacherId: string
@@ -275,7 +42,6 @@ export async function createTeacherClassSession(params: {
     .insert(classSessions)
     .values({
       id: nanoid(),
-      schoolId: params.schoolId,
       classId: params.classId,
       subjectId: params.subjectId,
       teacherId: params.teacherId,
@@ -288,7 +54,9 @@ export async function createTeacherClassSession(params: {
       status: 'scheduled',
     })
     .returning()
-
+  if (!session) {
+    throw new Error('Failed to create class session')
+  }
   return session
 }
 
@@ -325,7 +93,9 @@ export async function completeTeacherClassSession(params: {
       ),
     )
     .returning()
-
+  if (!updated) {
+    throw new Error('Failed to complete class session')
+  }
   return updated
 }
 
@@ -617,7 +387,9 @@ export async function createHomeworkAssignment(params: {
       status: params.status ?? 'active',
     })
     .returning()
-
+  if (!created) {
+    throw new Error('Failed to create homework assignment')
+  }
   return created
 }
 
@@ -780,7 +552,9 @@ export async function updateHomeworkAssignment(params: {
       ),
     )
     .returning()
-
+  if (!updated) {
+    throw new Error('Failed to update homework assignment')
+  }
   return updated
 }
 
@@ -822,6 +596,9 @@ export async function deleteHomeworkAssignment(params: {
       .set({ status: 'cancelled' })
       .where(eq(homework.id, params.homeworkId))
       .returning()
+    if (!updated) {
+      throw new Error('Failed to delete homework assignment')
+    }
     return updated
   }
 }
@@ -1008,7 +785,9 @@ export async function sendTeacherMessage(params: {
       attachments: params.attachments ?? [],
     })
     .returning()
-
+  if (!created) {
+    throw new Error('Failed to send message')
+  }
   return created
 }
 
@@ -1035,7 +814,9 @@ export async function markMessageAsRead(params: {
       ),
     )
     .returning()
-
+  if (!updated) {
+    throw new Error('Failed to mark message as read')
+  }
   return updated
 }
 
@@ -1181,71 +962,12 @@ export async function submitStudentGrades(params: {
           submittedAt: params.status === 'submitted' ? new Date() : null,
         })
         .returning()
-
+      if (!result) {
+        throw new Error('Failed to submit grade')
+      }
       results.push(result)
     }
 
     return { success: true, count: results.length }
   })
-}
-
-/**
- * Get class info with subject name for grade entry page
- */
-export async function getClassSubjectInfo(params: {
-  classId: string
-  subjectId: string
-}) {
-  const db = getDb()
-
-  const result = await db
-    .select({
-      className: sql<string>`(SELECT g.name || ' ' || c.section FROM classes c JOIN grades g ON c.grade_id = g.id WHERE c.id = ${params.classId})`,
-      subjectName: subjects.name,
-    })
-    .from(subjects)
-    .where(eq(subjects.id, params.subjectId))
-    .limit(1)
-
-  return result[0] ?? null
-}
-
-/**
- * Get current term for a school year (the one that's currently active based on dates)
- */
-export async function getCurrentTermForSchoolYear(schoolYearId: string) {
-  const db = getDb()
-  const today = new Date().toISOString().split('T')[0]!
-
-  const result = await db
-    .select({
-      id: terms.id,
-      name: sql<string>`(SELECT name FROM term_templates WHERE id = ${terms.termTemplateId})`,
-    })
-    .from(terms)
-    .where(
-      and(
-        eq(terms.schoolYearId, schoolYearId),
-        lte(terms.startDate, today),
-        gte(terms.endDate, today),
-      ),
-    )
-    .limit(1)
-
-  // If no current term, get the first term of the school year
-  if (!result[0]) {
-    const firstTerm = await db
-      .select({
-        id: terms.id,
-        name: sql<string>`(SELECT name FROM term_templates WHERE id = ${terms.termTemplateId})`,
-      })
-      .from(terms)
-      .where(eq(terms.schoolYearId, schoolYearId))
-      .orderBy(asc(terms.startDate))
-      .limit(1)
-
-    return firstTerm[0] ?? null
-  }
-
-  return result[0]
 }

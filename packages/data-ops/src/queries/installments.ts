@@ -39,6 +39,9 @@ export type CreateInstallmentData = Omit<InstallmentInsert, 'id' | 'createdAt' |
 export async function createInstallment(data: CreateInstallmentData): Promise<Installment> {
   const db = getDb()
   const [installment] = await db.insert(installments).values({ id: nanoid(), ...data }).returning()
+  if (!installment) {
+    throw new Error('Failed to create installment')
+  }
   return installment
 }
 
@@ -50,7 +53,7 @@ export async function createInstallmentsBulk(dataList: CreateInstallmentData[]):
   return db.insert(installments).values(values).returning()
 }
 
-export async function waiveInstallment(installmentId: string): Promise<Installment> {
+export async function waiveInstallment(installmentId: string): Promise<Installment | undefined> {
   const db = getDb()
   const [installment] = await db
     .update(installments)
@@ -77,7 +80,7 @@ export async function getOverdueInstallments(schoolYearId: string): Promise<Arra
       eq(installments.status, 'pending'),
     ))
 
-  return result.map((r: { installment: Installment, studentId: string }) => ({ ...r.installment, studentId: r.studentId }))
+  return result.map(r => ({ ...r.installment, studentId: r.studentId }))
 }
 
 export async function updateOverdueInstallments(schoolYearId: string): Promise<number> {
@@ -139,7 +142,7 @@ export async function getOverdueInstallmentsWithStudents(schoolYearId: string): 
     .innerJoin(students, eq(paymentPlans.studentId, students.id))
     .where(and(eq(paymentPlans.schoolYearId, schoolYearId), eq(installments.status, 'overdue')))
 
-  return result.map((r: { installmentId: string, studentId: string, firstName: string, lastName: string, amount: string, balance: string, dueDate: string, daysOverdue: number | null }) => ({
+  return result.map(r => ({
     installmentId: r.installmentId,
     studentId: r.studentId,
     studentName: `${r.lastName} ${r.firstName}`,

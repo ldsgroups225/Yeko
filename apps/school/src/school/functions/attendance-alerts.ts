@@ -22,7 +22,11 @@ export const getActiveAlerts = createServerFn()
     if (!context)
       throw new Error('No school context')
 
-    return getActiveAlertsQuery(context.schoolId)
+    const alerts = await getActiveAlertsQuery(context.schoolId)
+    return alerts.map(a => ({
+      ...a,
+      alert: { ...a.alert, data: a.alert.data as Record<string, any> | null },
+    }))
   })
 
 /**
@@ -40,10 +44,17 @@ export const getAlerts = createServerFn()
     if (!context)
       throw new Error('No school context')
 
-    return getAlertsQuery({
+    const result = await getAlertsQuery({
       schoolId: context.schoolId,
       ...data,
     })
+    return {
+      ...result,
+      data: result.data.map(alert => ({
+        ...alert,
+        data: alert.data as Record<string, any> | null,
+      })),
+    }
   })
 
 /**
@@ -56,7 +67,10 @@ export const acknowledgeAlert = createServerFn()
     if (!context)
       throw new Error('No school context')
 
-    return acknowledgeAlertQuery(data.id, context.userId)
+    const alert = await acknowledgeAlertQuery(data.id, context.userId)
+    if (!alert)
+      return undefined
+    return { ...alert, data: alert.data as Record<string, any> | null }
   })
 
 /**
@@ -69,7 +83,10 @@ export const dismissAlert = createServerFn()
     if (!context)
       throw new Error('No school context')
 
-    return dismissAlertQuery(data.id, context.userId)
+    const alert = await dismissAlertQuery(data.id, context.userId)
+    if (!alert)
+      return undefined
+    return { ...alert, data: alert.data as Record<string, any> | null }
   })
 
 /**
@@ -82,5 +99,8 @@ export const resolveAlert = createServerFn()
     if (!context)
       throw new Error('No school context')
 
-    return resolveAlertQuery(data.id)
+    const alert = await resolveAlertQuery(data.id)
+    if (!alert)
+      return undefined
+    return { ...alert, data: alert.data as Record<string, any> | null }
   })

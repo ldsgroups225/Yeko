@@ -51,12 +51,18 @@ export type CreateDiscountData = Omit<DiscountInsert, 'id' | 'createdAt' | 'upda
 export async function createDiscount(data: CreateDiscountData): Promise<Discount> {
   const db = getDb()
   const [discount] = await db.insert(discounts).values({ id: nanoid(), ...data }).returning()
+  if (!discount) {
+    throw new Error('Failed to create discount')
+  }
   return discount
 }
 
 export type UpdateDiscountData = Partial<Omit<DiscountInsert, 'id' | 'schoolId' | 'createdAt' | 'updatedAt'>>
 
-export async function updateDiscount(discountId: string, data: UpdateDiscountData): Promise<Discount> {
+export async function updateDiscount(
+  discountId: string,
+  data: UpdateDiscountData,
+): Promise<Discount | undefined> {
   const db = getDb()
   const [discount] = await db
     .update(discounts)
@@ -71,6 +77,6 @@ export async function deleteDiscount(discountId: string): Promise<void> {
   await db.delete(discounts).where(eq(discounts.id, discountId))
 }
 
-export async function deactivateDiscount(discountId: string): Promise<Discount> {
+export async function deactivateDiscount(discountId: string): Promise<Discount | undefined> {
   return updateDiscount(discountId, { status: 'inactive' })
 }

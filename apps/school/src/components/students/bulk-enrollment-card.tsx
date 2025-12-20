@@ -18,7 +18,6 @@ import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { classesOptions } from '@/lib/queries/classes'
 import { bulkEnrollStudents } from '@/school/functions/bulk-operations'
 import { getStudents } from '@/school/functions/students'
-import { generateUUID } from '@/utils/generateUUID'
 
 export function BulkEnrollmentCard() {
   const { t } = useTranslation()
@@ -62,7 +61,7 @@ export function BulkEnrollmentCard() {
       return
     }
 
-    const studentIds = studentsResult.data.map((s: { id: string }) => s.id)
+    const studentIds = studentsResult.data.map(s => s.student.id)
 
     enrollMutation.mutate({
       data: {
@@ -93,15 +92,15 @@ export function BulkEnrollmentCard() {
               <SelectValue placeholder={t('students.selectClass')} />
             </SelectTrigger>
             <SelectContent>
-              {classes?.map((c: any) => (
-                <SelectItem key={generateUUID()} value={c.id}>
-                  {c.gradeName}
+              {classes?.map(c => (
+                <SelectItem key={c.class.id} value={c.class.id}>
+                  {c.grade.name}
                   {' '}
-                  {c.seriesName ?? ''}
+                  {c.series?.name ?? ''}
                   {' '}
                   -
                   {' '}
-                  {c.section}
+                  {c.class.section}
                 </SelectItem>
               ))}
             </SelectContent>

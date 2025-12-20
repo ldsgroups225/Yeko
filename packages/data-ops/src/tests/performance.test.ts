@@ -86,26 +86,26 @@ describe('query performance', () => {
 
     // Get or create track
     const tracksResult = await db.select().from(grades).limit(1)
-    if (tracksResult.length > 0) {
+    if (tracksResult.length > 0 && tracksResult[0]) {
       testTrackId = tracksResult[0].trackId
       testGradeId = tracksResult[0].id
     }
 
     // Get series
     const seriesResult = await db.select().from(series).limit(1)
-    if (seriesResult.length > 0) {
+    if (seriesResult.length > 0 && seriesResult[0]) {
       testSeriesId = seriesResult[0].id
     }
 
     // Get subject
     const subjectsResult = await db.select().from(subjects).limit(1)
-    if (subjectsResult.length > 0) {
+    if (subjectsResult.length > 0 && subjectsResult[0]) {
       testSubjectId = subjectsResult[0].id
     }
 
     // Get or create school year
     const yearResult = await db.select().from(schoolYearTemplates).limit(1)
-    if (yearResult.length > 0) {
+    if (yearResult.length > 0 && yearResult[0]) {
       testSchoolYearId = yearResult[0].id
     }
     else {
@@ -114,14 +114,14 @@ describe('query performance', () => {
         .values({
           id: crypto.randomUUID(),
           name: 'Test Year',
-          startDate: new Date(),
-          endDate: new Date(),
           isActive: true,
           createdAt: new Date(),
           updatedAt: new Date(),
         })
         .returning()
-      testSchoolYearId = newYear!.id
+      if (!newYear)
+        throw new Error('Failed to create newYear')
+      testSchoolYearId = newYear.id
     }
 
     // Create test program
@@ -138,7 +138,9 @@ describe('query performance', () => {
         updatedAt: new Date(),
       })
       .returning()
-    testProgramId = newProgram!.id
+    if (!newProgram)
+      throw new Error('Failed to create newProgram')
+    testProgramId = newProgram.id
   })
 
   afterAll(async () => {

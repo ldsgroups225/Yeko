@@ -404,7 +404,7 @@ export const applySiblingDiscount = createServerFn()
       return { success: false as const, error: 'No parents linked to student' }
     }
 
-    const parentIds = studentParentLinks.rows.map((r: { parent_id: string }) => r.parent_id)
+    const parentIds = studentParentLinks.rows.map((r: any) => r.parent_id)
 
     // Count siblings enrolled this year
     const siblingsCount = await db.execute(sql`

@@ -179,7 +179,7 @@ export const deleteSchoolSubject = createServerFn()
       action: 'delete',
       tableName: 'school_subjects',
       recordId: id,
-      oldValues: existing,
+      oldValues: existing ?? undefined,
     })
 
     return { success: true }

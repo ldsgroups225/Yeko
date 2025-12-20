@@ -73,17 +73,12 @@ function CoefficientsPage() {
                       <SelectValue placeholder={t('schoolYear.select')} />
                     </SelectTrigger>
                     <SelectContent>
-                      {schoolYears?.map((year: {
-                        id: string
-                        name: string
-                        isActive: boolean
-                        schoolYearTemplateId: string | null
-                      }) => (
+                      {schoolYears?.map(year => (
                         <SelectItem
                           key={year.id}
                           value={year.schoolYearTemplateId || ''}
                         >
-                          {(year as any).template?.name || year.name}
+                          {year.template.name}
                           {' '}
                           {year.isActive && t('schoolYear.activeSuffix')}
                         </SelectItem>
