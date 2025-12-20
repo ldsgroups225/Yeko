@@ -1,0 +1,9 @@
+{
+  "baseLocale": "fr",
+  "outputPath": "./src/i18n",
+  "typesFileName": "i18n-types",
+  "utilFileName": "i18n-util",
+  "formattersTemplateFileName": "formatters",
+  "esmImports": true,
+  "$schema": "https://unpkg.com/typesafe-i18n@5.26.2/schema/typesafe-i18n.json"
+}

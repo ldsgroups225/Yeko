@@ -1,6 +1,5 @@
 'use client'
 
-import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
@@ -11,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useTranslations } from '@/i18n'
 import { generateUUID } from '@/utils/generateUUID'
 
 interface StudentFee {
@@ -52,7 +52,7 @@ function formatCurrency(amount: number) {
 }
 
 export function StudentFeesTable({ studentFees, isLoading }: StudentFeesTableProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   if (isLoading) {
     return (
@@ -67,7 +67,7 @@ export function StudentFeesTable({ studentFees, isLoading }: StudentFeesTablePro
   if (studentFees.length === 0) {
     return (
       <div className="py-8 text-center text-muted-foreground">
-        {t('finance.studentFees.noStudentFees')}
+        {t.finance.studentFees.noStudentFees()}
       </div>
     )
   }
@@ -76,13 +76,13 @@ export function StudentFeesTable({ studentFees, isLoading }: StudentFeesTablePro
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>{t('students.matricule')}</TableHead>
-          <TableHead>{t('students.name')}</TableHead>
-          <TableHead>{t('classes.class')}</TableHead>
-          <TableHead className="text-right">{t('finance.studentFees.totalFees')}</TableHead>
-          <TableHead className="text-right">{t('finance.studentFees.paidAmount')}</TableHead>
-          <TableHead className="text-right">{t('finance.studentFees.balance')}</TableHead>
-          <TableHead>{t('common.status')}</TableHead>
+          <TableHead>{t.students.matricule()}</TableHead>
+          <TableHead>{t.students.name()}</TableHead>
+          <TableHead>{t.students.class()}</TableHead>
+          <TableHead className="text-right">{t.finance.studentFees.totalFees()}</TableHead>
+          <TableHead className="text-right">{t.finance.studentFees.paidAmount()}</TableHead>
+          <TableHead className="text-right">{t.finance.studentFees.balance()}</TableHead>
+          <TableHead>{t.common.status()}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -108,7 +108,15 @@ export function StudentFeesTable({ studentFees, isLoading }: StudentFeesTablePro
             </TableCell>
             <TableCell>
               <Badge variant={getStatusVariant(fee.status)}>
-                {t(`finance.payments.status.${fee.status}`)}
+                {{
+                  pending: t.finance.payments.status.pending,
+                  completed: t.finance.payments.status.completed,
+                  cancelled: t.finance.payments.status.cancelled,
+                  refunded: t.finance.payments.status.refunded,
+                  paid: t.finance.payments.status.completed,
+                  partial: t.finance.payments.status.pending,
+                  waived: t.finance.payments.status.cancelled,
+                }[fee.status as 'pending' | 'completed' | 'cancelled' | 'refunded' | 'paid' | 'partial' | 'waived']()}
               </Badge>
             </TableCell>
           </TableRow>

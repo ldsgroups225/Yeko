@@ -2,9 +2,8 @@
 
 import { Loader2 } from 'lucide-react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-
 import { Button } from '@/components/ui/button'
+
 import {
   Dialog,
   DialogContent,
@@ -16,6 +15,7 @@ import {
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { useTranslations } from '@/i18n'
 
 interface StudentStatusDialogProps {
   open: boolean
@@ -37,7 +37,7 @@ export function StudentStatusDialog({
   onConfirm,
   isLoading,
 }: StudentStatusDialogProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const [status, setStatus] = useState(student?.status || 'active')
   const [reason, setReason] = useState('')
 
@@ -51,37 +51,35 @@ export function StudentStatusDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{t('students.changeStatus')}</DialogTitle>
+          <DialogTitle>{t.students.changeStatus()}</DialogTitle>
           <DialogDescription>
-            {t('students.changeStatusDescription', {
-              name: student ? `${student.firstName} ${student.lastName}` : '',
-            })}
+            {student ? `${student.firstName} ${student.lastName}` : ''}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label>{t('students.newStatus')}</Label>
+            <Label>{t.students.newStatus()}</Label>
             <Select value={status} onValueChange={setStatus}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="active">{t('students.statusActive')}</SelectItem>
-                <SelectItem value="graduated">{t('students.statusGraduated')}</SelectItem>
-                <SelectItem value="transferred">{t('students.statusTransferred')}</SelectItem>
-                <SelectItem value="withdrawn">{t('students.statusWithdrawn')}</SelectItem>
+                <SelectItem value="active">{t.students.statusActive()}</SelectItem>
+                <SelectItem value="graduated">{t.students.statusGraduated()}</SelectItem>
+                <SelectItem value="transferred">{t.students.statusTransferred()}</SelectItem>
+                <SelectItem value="withdrawn">{t.students.statusWithdrawn()}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           {requiresReason && (
             <div className="space-y-2">
-              <Label>{t('students.reason')}</Label>
+              <Label>{t.students.reason()}</Label>
               <Textarea
                 value={reason}
                 onChange={e => setReason(e.target.value)}
-                placeholder={t('students.reasonPlaceholder')}
+                placeholder={t.students.reasonPlaceholder()}
                 rows={3}
               />
             </div>
@@ -90,11 +88,11 @@ export function StudentStatusDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
-            {t('common.cancel')}
+            {t.common.cancel()}
           </Button>
           <Button onClick={handleConfirm} disabled={isLoading || (requiresReason && !reason)}>
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {t('common.confirm')}
+            {t.common.confirm()}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -1,10 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { RefundsTable } from '@/components/finance'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useTranslations } from '@/i18n'
 import { refundsKeys, refundsOptions } from '@/lib/queries'
 import { approveExistingRefund, rejectExistingRefund } from '@/school/functions/refunds'
 
@@ -13,7 +13,7 @@ export const Route = createFileRoute('/_auth/accounting/refunds')({
 })
 
 function RefundsPage() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
 
   const { data: refunds, isLoading } = useQuery(refundsOptions.list())
@@ -22,7 +22,7 @@ function RefundsPage() {
     mutationFn: (id: string) => approveExistingRefund({ data: { refundId: id } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: refundsKeys.all })
-      toast.success(t('finance.refunds.approved'))
+      toast.success(t.finance.refunds.approved())
     },
     onError: (err: Error) => toast.error(err.message),
   })
@@ -31,7 +31,7 @@ function RefundsPage() {
     mutationFn: (id: string) => rejectExistingRefund({ data: { refundId: id, rejectionReason: 'Rejected by admin' } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: refundsKeys.all })
-      toast.success(t('finance.refunds.rejected'))
+      toast.success(t.finance.refunds.rejected())
     },
     onError: (err: Error) => toast.error(err.message),
   })
@@ -49,23 +49,23 @@ function RefundsPage() {
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t('nav.finance'), href: '/accounting' },
-          { label: t('finance.refunds.title') },
+          { label: t.nav.finance(), href: '/accounting' },
+          { label: t.finance.refunds.title() },
         ]}
       />
 
       <div>
         <h1 className="text-3xl font-bold tracking-tight">
-          {t('finance.refunds.title')}
+          {t.finance.refunds.title()}
         </h1>
         <p className="text-muted-foreground">
-          {t('finance.refunds.description')}
+          {t.finance.refunds.description()}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>{t('finance.refunds.title')}</CardTitle>
+          <CardTitle>{t.finance.refunds.title()}</CardTitle>
         </CardHeader>
         <CardContent>
           <RefundsTable

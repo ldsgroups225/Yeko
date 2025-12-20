@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Copy, Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -13,8 +12,8 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog'
-
 import { Skeleton } from '@/components/ui/skeleton'
+
 import {
   Table,
   TableBody,
@@ -23,6 +22,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useTranslations } from '@/i18n'
 import {
   classSubjectsKeys,
   classSubjectsOptions,
@@ -41,7 +41,7 @@ export function ClassSubjectManager({
   classId,
   className,
 }: ClassSubjectManagerProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
   const { data: subjects, isLoading } = useQuery(
     classSubjectsOptions.list({ classId }),
@@ -60,11 +60,11 @@ export function ClassSubjectManager({
       queryClient.invalidateQueries({
         queryKey: classSubjectsKeys.list({ classId }),
       })
-      toast.success(t('academic.classes.removeSubjectSuccess'))
+      toast.success(t.academic.classes.removeSubjectSuccess())
       setSubjectToDelete(null)
     },
     onError: () => {
-      toast.error(t('academic.classes.removeSubjectError'))
+      toast.error(t.academic.classes.removeSubjectError())
     },
   })
 
@@ -78,9 +78,9 @@ export function ClassSubjectManager({
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <div>
-            <CardTitle>{t('academic.classes.subjectsTitle')}</CardTitle>
+            <CardTitle>{t.academic.classes.subjectsTitle()}</CardTitle>
             <CardDescription>
-              {t('academic.classes.subjectsDescription')}
+              {t.academic.classes.subjectsDescription()}
               {' '}
               {className}
             </CardDescription>
@@ -92,11 +92,11 @@ export function ClassSubjectManager({
               size="sm"
             >
               <Copy className="mr-2 h-4 w-4" />
-              {t('academic.classes.copyFrom')}
+              {t.academic.classes.copyFrom()}
             </Button>
             <Button onClick={() => setIsDialogOpen(true)} size="sm">
               <Plus className="mr-2 h-4 w-4" />
-              {t('academic.classes.addSubject')}
+              {t.academic.classes.addSubject()}
             </Button>
           </div>
         </CardHeader>
@@ -105,16 +105,16 @@ export function ClassSubjectManager({
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>{t('academic.classes.subject')}</TableHead>
-                  <TableHead>{t('academic.classes.teacher')}</TableHead>
+                  <TableHead>{t.academic.classes.subject()}</TableHead>
+                  <TableHead>{t.academic.classes.teacher()}</TableHead>
                   <TableHead className="text-center">
-                    {t('academic.classes.coeff')}
+                    {t.academic.classes.coeff()}
                   </TableHead>
                   <TableHead className="text-center">
-                    {t('academic.classes.hoursPerWeek')}
+                    {t.academic.classes.hoursPerWeek()}
                   </TableHead>
                   <TableHead className="text-right">
-                    {t('common.actions')}
+                    {t.common.actions()}
                   </TableHead>
                 </TableRow>
               </TableHeader>
@@ -148,7 +148,7 @@ export function ClassSubjectManager({
                             colSpan={5}
                             className="h-24 text-center text-muted-foreground"
                           >
-                            {t('academic.classes.noSubjects')}
+                            {t.academic.classes.noSubjects()}
                           </TableCell>
                         </TableRow>
                       )
@@ -172,7 +172,7 @@ export function ClassSubjectManager({
                                   )
                                 : (
                                     <span className="text-sm text-muted-foreground italic">
-                                      {t('academic.classes.unassigned')}
+                                      {t.academic.classes.unassigned()}
                                     </span>
                                   )}
                             </TableCell>
@@ -227,8 +227,8 @@ export function ClassSubjectManager({
         <DeleteConfirmationDialog
           open={!!subjectToDelete}
           onOpenChange={open => !open && setSubjectToDelete(null)}
-          title={t('academic.classes.removeSubject')}
-          description={t('academic.classes.removeSubjectConfirmation', {
+          title={t.classes.removeSubject()}
+          description={t.academic.classes.removeSubjectConfirmation({
             subjectName: subjectToDelete?.name,
           })}
           onConfirm={() => {

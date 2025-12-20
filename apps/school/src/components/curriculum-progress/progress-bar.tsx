@@ -1,14 +1,14 @@
 import type { ProgressStatus } from '@/schemas/curriculum-progress'
 
-import { useTranslation } from 'react-i18next'
-
 import { Progress } from '@/components/ui/progress'
+
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
 interface ProgressBarProps {
@@ -35,7 +35,7 @@ export function ProgressBar({
   showLabel = true,
   className,
 }: ProgressBarProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   const percentage = total > 0 ? Math.round((completed / total) * 100) : 0
   const expectedPercentage = expected !== undefined && total > 0
@@ -67,7 +67,7 @@ export function ProgressBar({
                   /
                   {total}
                   {' '}
-                  {t('curriculum.chapters')}
+                  {t.curriculum.chapters()}
                 </span>
                 <span>
                   {percentage}
@@ -80,7 +80,7 @@ export function ProgressBar({
         <TooltipContent>
           <div className="text-sm space-y-1">
             <p>
-              {t('curriculum.completed')}
+              {t.curriculum.completed()}
               :
               {' '}
               {completed}
@@ -93,7 +93,7 @@ export function ProgressBar({
             </p>
             {expectedPercentage !== undefined && (
               <p>
-                {t('curriculum.expected')}
+                {t.curriculum.expected()}
                 :
                 {' '}
                 {expectedPercentage}

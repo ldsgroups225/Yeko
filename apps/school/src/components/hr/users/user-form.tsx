@@ -3,7 +3,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { RoleSelector } from '@/components/hr/users/role-selector'
 import { Button } from '@/components/ui/button'
@@ -16,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useTranslations } from '@/i18n'
 import { userCreateSchema } from '@/schemas/user'
 import { createNewUser, updateExistingUser } from '@/school/functions/users'
 
@@ -25,7 +25,7 @@ interface UserFormProps {
 }
 
 export function UserForm({ user, onSuccess }: UserFormProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
   const isEditing = !!user
 
@@ -62,15 +62,15 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] })
-      toast.success(t('hr.users.createSuccess'))
+      toast.success(t.hr.users.createSuccess())
       onSuccess?.()
     },
     onError: (error: Error) => {
-      const errorMessage = error.message || t('errors.generic')
+      const errorMessage = error.message || t.errors.generic()
 
       // Check if it's an email uniqueness error
       if (errorMessage.includes('Email already exists')) {
-        toast.error(t('hr.users.emailAlreadyExists'))
+        toast.error(t.hr.users.emailAlreadyExists())
       }
       else {
         toast.error(errorMessage)
@@ -90,15 +90,15 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] })
       queryClient.invalidateQueries({ queryKey: ['user', user.id] })
-      toast.success(t('hr.users.updateSuccess'))
+      toast.success(t.hr.users.updateSuccess())
       onSuccess?.()
     },
     onError: (error: Error) => {
-      const errorMessage = error.message || t('errors.generic')
+      const errorMessage = error.message || t.errors.generic()
 
       // Check if it's an email uniqueness error
       if (errorMessage.includes('Email already exists')) {
-        toast.error(t('hr.users.emailAlreadyExists'))
+        toast.error(t.hr.users.emailAlreadyExists())
       }
       else {
         toast.error(errorMessage)
@@ -120,18 +120,18 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="rounded-lg border bg-card p-6">
-        <h2 className="mb-4 text-lg font-semibold">{t('hr.users.basicInfo')}</h2>
+        <h2 className="mb-4 text-lg font-semibold">{t.hr.users.basicInfo()}</h2>
         <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="name">
-              {t('hr.common.name')}
+              {t.hr.common.name()}
               {' '}
               <span className="text-destructive">*</span>
             </Label>
             <Input
               id="name"
               {...register('name')}
-              placeholder={t('hr.users.namePlaceholder')}
+              placeholder={t.hr.users.namePlaceholder()}
               aria-invalid={!!errors.name}
             />
             {errors.name && (
@@ -141,7 +141,7 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
 
           <div className="space-y-2">
             <Label htmlFor="email">
-              {t('hr.common.email')}
+              {t.hr.common.email()}
               {' '}
               <span className="text-destructive">*</span>
             </Label>
@@ -149,7 +149,7 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
               id="email"
               type="email"
               {...register('email')}
-              placeholder={t('hr.users.emailPlaceholder')}
+              placeholder={t.hr.users.emailPlaceholder()}
               aria-invalid={!!errors.email}
               disabled={isEditing}
             />
@@ -158,24 +158,24 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
             )}
             {!isEditing && (
               <p className="text-xs text-muted-foreground">
-                {t('hr.users.emailUniqueHint')}
+                {t.hr.users.emailUniqueHint()}
               </p>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="phone">{t('hr.common.phone')}</Label>
+            <Label htmlFor="phone">{t.hr.common.phone()}</Label>
             <Input
               id="phone"
               type="tel"
               {...register('phone')}
-              placeholder={t('hr.users.phonePlaceholder')}
+              placeholder={t.hr.users.phonePlaceholder()}
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="status">
-              {t('hr.common.status')}
+              {t.hr.common.status()}
               {' '}
               <span className="text-destructive">*</span>
             </Label>
@@ -187,9 +187,9 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="active">{t('hr.status.active')}</SelectItem>
-                <SelectItem value="inactive">{t('hr.status.inactive')}</SelectItem>
-                <SelectItem value="suspended">{t('hr.status.suspended')}</SelectItem>
+                <SelectItem value="active">{t.hr.status.active()}</SelectItem>
+                <SelectItem value="inactive">{t.hr.status.inactive()}</SelectItem>
+                <SelectItem value="suspended">{t.hr.status.suspended()}</SelectItem>
               </SelectContent>
             </Select>
             {errors.status && (
@@ -198,12 +198,12 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
           </div>
 
           <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="avatarUrl">{t('hr.common.avatar')}</Label>
+            <Label htmlFor="avatarUrl">{t.hr.common.avatar()}</Label>
             <Input
               id="avatarUrl"
               type="url"
               {...register('avatarUrl')}
-              placeholder={t('hr.users.avatarPlaceholder')}
+              placeholder={t.hr.users.avatarPlaceholder()}
             />
             {errors.avatarUrl && (
               <p className="text-sm text-destructive">{errors.avatarUrl.message}</p>
@@ -213,13 +213,13 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
       </div>
 
       <div className="rounded-lg border bg-card p-6">
-        <h2 className="mb-4 text-lg font-semibold">{t('hr.users.roleAssignment')}</h2>
+        <h2 className="mb-4 text-lg font-semibold">{t.hr.users.roleAssignment()}</h2>
         <p className="mb-4 text-sm text-muted-foreground">
-          {t('hr.users.roleAssignmentDescription')}
+          {t.hr.users.roleAssignmentDescription()}
         </p>
         <div className="space-y-2">
           <Label>
-            {t('hr.common.roles')}
+            {t.hr.common.roles()}
             {' '}
             <span className="text-destructive">*</span>
           </Label>
@@ -236,11 +236,11 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={() => onSuccess?.()}>
-          {t('common.cancel')}
+          {t.common.cancel()}
         </Button>
         <Button type="submit" disabled={isLoading}>
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {isEditing ? t('common.save') : t('common.create')}
+          {isEditing ? t.common.save() : t.common.create()}
         </Button>
       </div>
     </form>

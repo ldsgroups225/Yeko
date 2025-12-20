@@ -1,8 +1,8 @@
 import type { DeliveryMethod, ReportCardStatus } from '@/schemas/report-card'
 import { Download, Eye, FileText, RefreshCw, Send } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { DeliveryStatusBadge } from './delivery-status-badge'
 import { ReportCardStatusBadge } from './report-card-status-badge'
@@ -39,7 +39,7 @@ export function ReportCardCard({
   onResend,
   className,
 }: ReportCardCardProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   const canSend = reportCard.status === 'generated'
   const canResend = reportCard.status === 'sent' || reportCard.status === 'delivered'
@@ -67,7 +67,7 @@ export function ReportCardCard({
           <div className="flex items-center gap-4 text-sm">
             <span>
               <span className="text-muted-foreground">
-                {t('reportCards.average')}
+                {t.reportCards.average()}
                 :
               </span>
               {' '}
@@ -79,7 +79,7 @@ export function ReportCardCard({
             {reportCard.rank && reportCard.totalStudents && (
               <span>
                 <span className="text-muted-foreground">
-                  {t('reportCards.rank')}
+                  {t.reportCards.rank()}
                   :
                 </span>
                 {' '}
@@ -105,25 +105,25 @@ export function ReportCardCard({
           {onPreview && (
             <Button variant="outline" size="sm" onClick={() => onPreview(reportCard.id)}>
               <Eye className="mr-1 h-4 w-4" />
-              {t('common.preview')}
+              {t.common.preview()}
             </Button>
           )}
           {canDownload && onDownload && (
             <Button variant="outline" size="sm" onClick={() => onDownload(reportCard.id)}>
               <Download className="mr-1 h-4 w-4" />
-              {t('common.download')}
+              {t.common.download()}
             </Button>
           )}
           {canSend && onSend && (
             <Button variant="default" size="sm" onClick={() => onSend(reportCard.id)}>
               <Send className="mr-1 h-4 w-4" />
-              {t('reportCards.send')}
+              {t.reportCards.send()}
             </Button>
           )}
           {canResend && onResend && (
             <Button variant="outline" size="sm" onClick={() => onResend(reportCard.id)}>
               <RefreshCw className="mr-1 h-4 w-4" />
-              {t('reportCards.resend')}
+              {t.reportCards.resend()}
             </Button>
           )}
         </div>

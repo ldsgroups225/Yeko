@@ -15,15 +15,15 @@ import {
   Users,
 } from 'lucide-react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useTranslations } from '@/i18n'
 import { studentsKeys, studentsOptions } from '@/lib/queries/students'
 import { updateStudent } from '@/school/functions/students'
 
@@ -46,7 +46,7 @@ interface StudentDetailProps {
 }
 
 export function StudentDetail({ studentId }: StudentDetailProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
   const { data, isLoading } = useQuery(studentsOptions.detail(studentId))
   const [parentDialogOpen, setParentDialogOpen] = useState(false)
@@ -69,7 +69,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
   if (!data) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className="text-muted-foreground">{t('students.notFound')}</p>
+        <p className="text-muted-foreground">{t.students.notFound()}</p>
       </div>
     )
   }
@@ -85,7 +85,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
             type="button"
             onClick={() => setPhotoDialogOpen(true)}
             className="group relative cursor-pointer"
-            title={t('students.changePhoto')}
+            title={t.students.changePhoto()}
           >
             <Avatar className="h-20 w-20 transition-opacity group-hover:opacity-75">
               <AvatarImage src={student.photoUrl || undefined} />
@@ -107,7 +107,12 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
             <div className="flex items-center gap-2 mt-1">
               <p className="font-mono text-sm text-muted-foreground">{student.matricule}</p>
               <Badge variant="outline" className={statusColors[student.status as keyof typeof statusColors]}>
-                {t(`students.status${student.status.charAt(0).toUpperCase() + student.status.slice(1)}`)}
+                {{
+                  active: t.students.statusActive,
+                  graduated: t.students.statusGraduated,
+                  transferred: t.students.statusTransferred,
+                  withdrawn: t.students.statusWithdrawn,
+                }[student.status as 'active' | 'graduated' | 'transferred' | 'withdrawn']()}
               </Badge>
             </div>
           </div>
@@ -115,16 +120,16 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
         <Button asChild>
           <Link to="/students/$studentId/edit" params={{ studentId }}>
             <Edit className="mr-2 h-4 w-4" />
-            {t('common.edit')}
+            {t.common.edit()}
           </Link>
         </Button>
       </div>
 
       <Tabs defaultValue="info" className="w-full">
         <TabsList>
-          <TabsTrigger value="info">{t('students.personalInfo')}</TabsTrigger>
-          <TabsTrigger value="parents">{t('students.parents')}</TabsTrigger>
-          <TabsTrigger value="enrollments">{t('students.enrollmentHistory')}</TabsTrigger>
+          <TabsTrigger value="info">{t.students.personalInfo()}</TabsTrigger>
+          <TabsTrigger value="parents">{t.students.parents()}</TabsTrigger>
+          <TabsTrigger value="enrollments">{t.students.enrollmentHistory()}</TabsTrigger>
         </TabsList>
 
         {/* Personal Info Tab */}
@@ -134,16 +139,16 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <User className="h-5 w-5" />
-                  {t('students.personalInfo')}
+                  {t.students.personalInfo()}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <InfoRow label={t('students.dateOfBirth')} value={new Date(student.dob).toLocaleDateString()} />
-                <InfoRow label={t('students.gender')} value={student.gender === 'M' ? t('students.male') : student.gender === 'F' ? t('students.female') : '-'} />
-                <InfoRow label={t('students.birthPlace')} value={student.birthPlace} />
-                <InfoRow label={t('students.nationality')} value={student.nationality} />
-                <InfoRow label={t('students.admissionDate')} value={student.admissionDate ? new Date(student.admissionDate).toLocaleDateString() : '-'} />
-                <InfoRow label={t('students.previousSchool')} value={student.previousSchool} />
+                <InfoRow label={t.students.dateOfBirth()} value={new Date(student.dob).toLocaleDateString()} />
+                <InfoRow label={t.students.gender()} value={student.gender === 'M' ? t.students.male() : student.gender === 'F' ? t.students.female() : '-'} />
+                <InfoRow label={t.students.birthPlace()} value={student.birthPlace} />
+                <InfoRow label={t.students.nationality()} value={student.nationality} />
+                <InfoRow label={t.students.admissionDate()} value={student.admissionDate ? new Date(student.admissionDate).toLocaleDateString() : '-'} />
+                <InfoRow label={t.students.previousSchool()} value={student.previousSchool} />
               </CardContent>
             </Card>
 
@@ -151,7 +156,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <GraduationCap className="h-5 w-5" />
-                  {t('students.currentEnrollment')}
+                  {t.students.currentEnrollment()}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -159,14 +164,30 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
                   ? (
                       <>
                         <InfoRow
-                          label={t('students.class')}
+                          label={t.students.class()}
                           value={`${currentClass.gradeName} ${currentClass.section}${currentClass.seriesName ? ` (${currentClass.seriesName})` : ''}`}
                         />
-                        <InfoRow label={t('students.enrollmentDate')} value={currentEnrollment?.enrollmentDate ? new Date(currentEnrollment.enrollmentDate).toLocaleDateString() : '-'} />
-                        <InfoRow label={t('students.rollNumber')} value={currentEnrollment?.rollNumber?.toString()} />
+                        <InfoRow label={t.students.enrollmentDate()} value={currentEnrollment?.enrollmentDate ? new Date(currentEnrollment.enrollmentDate).toLocaleDateString() : '-'} />
+                        <InfoRow label={t.students.rollNumber()} value={currentEnrollment?.rollNumber?.toString()} />
                         <InfoRow
-                          label={t('students.enrollmentStatus')}
-                          value={currentEnrollment?.status ? t(`students.enrollment${currentEnrollment.status.charAt(0).toUpperCase() + currentEnrollment.status.slice(1)}`) : '-'}
+                          label={t.students.enrollmentStatus()}
+                          value={
+                            currentEnrollment?.status
+                              ? {
+                                  confirmed: t.students.enrollmentConfirmed,
+                                  pending: t.students.enrollmentPending,
+                                  cancelled: t.students.enrollmentCancelled,
+                                  transferred:
+                                    t.students.enrollmentTransferred,
+                                }[
+                                  currentEnrollment.status as
+                                  | 'confirmed'
+                                  | 'pending'
+                                  | 'cancelled'
+                                  | 'transferred'
+                                ]()
+                              : '-'
+                          }
                         />
                         {currentEnrollment?.status === 'confirmed' && (
                           <Button
@@ -175,13 +196,13 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
                             className="mt-2 w-full"
                             onClick={() => setTransferDialogOpen(true)}
                           >
-                            {t('students.transferStudent')}
+                            {t.students.transferStudent()}
                           </Button>
                         )}
                       </>
                     )
                   : (
-                      <p className="text-muted-foreground">{t('students.notEnrolled')}</p>
+                      <p className="text-muted-foreground">{t.students.notEnrolled()}</p>
                     )}
               </CardContent>
             </Card>
@@ -190,14 +211,14 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <MapPin className="h-5 w-5" />
-                  {t('students.contactInfo')}
+                  {t.students.contactInfo()}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <InfoRow label={t('students.address')} value={student.address} />
+                <InfoRow label={t.students.address()} value={student.address} />
                 <Separator />
-                <InfoRow label={t('students.emergencyContact')} value={student.emergencyContact} />
-                <InfoRow label={t('students.emergencyPhone')} value={student.emergencyPhone} />
+                <InfoRow label={t.students.emergencyContact()} value={student.emergencyContact} />
+                <InfoRow label={t.students.emergencyPhone()} value={student.emergencyPhone} />
               </CardContent>
             </Card>
 
@@ -205,12 +226,12 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Heart className="h-5 w-5" />
-                  {t('students.medicalInfo')}
+                  {t.students.medicalInfo()}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <InfoRow label={t('students.bloodType')} value={student.bloodType} />
-                <InfoRow label={t('students.medicalNotes')} value={student.medicalNotes} />
+                <InfoRow label={t.students.bloodType()} value={student.bloodType} />
+                <InfoRow label={t.students.medicalNotes()} value={student.medicalNotes} />
               </CardContent>
             </Card>
           </div>
@@ -223,13 +244,13 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
               <div>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Users className="h-5 w-5" />
-                  {t('students.linkedParents')}
+                  {t.students.linkedParents()}
                 </CardTitle>
-                <CardDescription>{t('students.linkedParentsDescription')}</CardDescription>
+                <CardDescription>{t.students.linkedParentsDescription()}</CardDescription>
               </div>
               <Button size="sm" onClick={() => setParentDialogOpen(true)}>
                 <Plus className="mr-2 h-4 w-4" />
-                {t('students.linkParent')}
+                {t.students.linkParent()}
               </Button>
             </CardHeader>
             <CardContent>
@@ -252,9 +273,24 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
                                 {item.parent.firstName}
                               </p>
                               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                <span>{t(`students.relationship${item.relationship.charAt(0).toUpperCase() + item.relationship.slice(1)}`)}</span>
+                                <span>
+                                  {{
+                                    father: t.parents.relationshipFather,
+                                    mother: t.parents.relationshipMother,
+                                    guardian: t.parents.relationshipGuardian,
+                                    grandparent:
+                                      t.parents.relationshipGrandparent,
+                                    sibling: t.parents.relationshipSibling,
+                                    other: t.parents.relationshipOther,
+                                  }[item.relationship as 'father' | 'mother' | 'guardian' | 'grandparent' | 'sibling' | 'other']()}
+                                </span>
                                 {item.isPrimary && (
-                                  <Badge variant="secondary" className="text-xs">{t('students.primaryContact')}</Badge>
+                                  <Badge
+                                    variant="secondary"
+                                    className="text-xs"
+                                  >
+                                    {t.students.primaryContact()}
+                                  </Badge>
                                 )}
                               </div>
                               <div className="mt-1 flex items-center gap-4 text-sm text-muted-foreground">
@@ -274,15 +310,15 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
-                            {item.canPickup && <Badge variant="outline">{t('students.canPickup')}</Badge>}
-                            {item.receiveNotifications && <Badge variant="outline">{t('students.receivesNotifications')}</Badge>}
+                            {item.canPickup && <Badge variant="outline">{t.students.canPickup()}</Badge>}
+                            {item.receiveNotifications && <Badge variant="outline">{t.students.receivesNotifications()}</Badge>}
                           </div>
                         </div>
                       ))}
                     </div>
                   )
                 : (
-                    <p className="text-muted-foreground py-4 text-center">{t('students.noParentsLinked')}</p>
+                    <p className="text-muted-foreground py-4 text-center">{t.students.noParentsLinked()}</p>
                   )}
             </CardContent>
           </Card>
@@ -294,11 +330,11 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="flex items-center gap-2 text-lg">
                 <Calendar className="h-5 w-5" />
-                {t('students.enrollmentHistory')}
+                {t.students.enrollmentHistory()}
               </CardTitle>
               <Button size="sm" onClick={() => setEnrollmentDialogOpen(true)}>
                 <Plus className="mr-2 h-4 w-4" />
-                {t('students.enrollStudent')}
+                {t.students.enrollStudent()}
               </Button>
             </CardHeader>
             <CardContent>

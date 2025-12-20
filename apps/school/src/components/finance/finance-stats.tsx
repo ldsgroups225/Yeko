@@ -4,9 +4,9 @@ import {
   Receipt,
   TrendingUp,
 } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useTranslations } from '@/i18n'
 import { generateUUID } from '@/utils/generateUUID'
 
 interface FinanceStatsProps {
@@ -24,7 +24,7 @@ export function FinanceStats({
   overdueAmount = 0,
   isLoading = false,
 }: FinanceStatsProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('fr-FR', {
@@ -36,7 +36,7 @@ export function FinanceStats({
 
   const stats = [
     {
-      title: t('finance.income'),
+      title: t.finance.income(),
       value: formatCurrency(totalRevenue),
       suffix: 'FCFA',
       icon: TrendingUp,
@@ -44,14 +44,14 @@ export function FinanceStats({
       bgColor: 'bg-green-100 dark:bg-green-900/20',
     },
     {
-      title: t('finance.payments.title'),
+      title: t.finance.payments.title(),
       value: totalPayments.toString(),
       icon: CreditCard,
       color: 'text-blue-600',
       bgColor: 'bg-blue-100 dark:bg-blue-900/20',
     },
     {
-      title: t('finance.payments.status.pending'),
+      title: t.finance.payments.status.pending(),
       value: formatCurrency(pendingPayments),
       suffix: 'FCFA',
       icon: Receipt,
@@ -59,7 +59,7 @@ export function FinanceStats({
       bgColor: 'bg-yellow-100 dark:bg-yellow-900/20',
     },
     {
-      title: t('dashboard.accountant.unpaidFees'),
+      title: t.dashboard.accountant.unpaidFees(),
       value: formatCurrency(overdueAmount),
       suffix: 'FCFA',
       icon: Banknote,

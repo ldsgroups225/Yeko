@@ -1,8 +1,7 @@
 import { AlertCircle, CheckCircle2, FileSpreadsheet, Loader2, Upload } from 'lucide-react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-
 import { Button } from '@/components/ui/button'
+
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog,
@@ -15,6 +14,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Progress } from '@/components/ui/progress'
+import { useTranslations } from '@/i18n'
 import { generateUUID } from '@/utils/generateUUID'
 
 interface ImportResult {
@@ -37,7 +37,7 @@ export function TimetableImportDialog({
   onOpenChange,
   onImport,
 }: TimetableImportDialogProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const [file, setFile] = useState<File | null>(null)
   const [replaceExisting, setReplaceExisting] = useState(false)
   const [state, setState] = useState<ImportState>('idle')
@@ -90,10 +90,10 @@ export function TimetableImportDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <FileSpreadsheet className="h-5 w-5" />
-            {t('timetables.importTimetable')}
+            {t.timetables.importTimetable()}
           </DialogTitle>
           <DialogDescription>
-            {t('timetables.importDescription')}
+            {t.timetables.importDescription()}
           </DialogDescription>
         </DialogHeader>
 
@@ -101,7 +101,7 @@ export function TimetableImportDialog({
           <>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="file">{t('common.selectFile')}</Label>
+                <Label htmlFor="file">{t.common.selectFile()}</Label>
                 <Input
                   id="file"
                   type="file"
@@ -109,7 +109,7 @@ export function TimetableImportDialog({
                   onChange={handleFileChange}
                 />
                 <p className="text-xs text-muted-foreground">
-                  {t('timetables.supportedFormats')}
+                  {t.timetables.supportedFormats()}
                 </p>
               </div>
 
@@ -134,25 +134,25 @@ export function TimetableImportDialog({
                   onCheckedChange={checked => setReplaceExisting(checked === true)}
                 />
                 <Label htmlFor="replaceExisting" className="text-sm cursor-pointer">
-                  {t('timetables.replaceExisting')}
+                  {t.timetables.replaceExisting()}
                 </Label>
               </div>
 
               {replaceExisting && (
                 <div className="rounded-md bg-yellow-50 dark:bg-yellow-900/20 p-3 text-sm text-yellow-800 dark:text-yellow-200">
                   <AlertCircle className="h-4 w-4 inline mr-2" />
-                  {t('timetables.replaceWarning')}
+                  {t.timetables.replaceWarning()}
                 </div>
               )}
             </div>
 
             <DialogFooter>
               <Button variant="outline" onClick={handleClose}>
-                {t('common.cancel')}
+                {t.common.cancel()}
               </Button>
               <Button onClick={handleImport} disabled={!file}>
                 <Upload className="mr-2 h-4 w-4" />
-                {t('common.import')}
+                {t.common.import()}
               </Button>
             </DialogFooter>
           </>
@@ -166,8 +166,8 @@ export function TimetableImportDialog({
             <Progress value={progress} className="w-full" />
             <p className="text-center text-sm text-muted-foreground">
               {state === 'uploading'
-                ? t('timetables.uploading')
-                : t('timetables.processing')}
+                ? t.timetables.uploading()
+                : t.timetables.processing()}
             </p>
           </div>
         )}
@@ -185,9 +185,9 @@ export function TimetableImportDialog({
             </div>
 
             <div className="text-center space-y-1">
-              <p className="font-semibold">{t('timetables.importComplete')}</p>
+              <p className="font-semibold">{t.timetables.importComplete()}</p>
               <p className="text-sm text-muted-foreground">
-                {t('timetables.importSummary', {
+                {t.timetables.importSummary({
                   success: result.success,
                   total: result.total,
                 })}
@@ -197,13 +197,13 @@ export function TimetableImportDialog({
             {result.conflicts.length > 0 && (
               <div className="rounded-md bg-destructive/10 p-3 max-h-32 overflow-y-auto">
                 <p className="text-sm font-medium text-destructive mb-2">
-                  {t('timetables.importConflicts', { count: result.failed })}
+                  {t.timetables.importConflicts({ count: result.failed })}
                 </p>
                 <ul className="text-sm text-destructive/80 space-y-1">
                   {result.conflicts.slice(0, 5).map(c => (
                     <li key={generateUUID()}>
                       •
-                      {t('timetables.row')}
+                      {t.timetables.row()}
                       {' '}
                       {c.index + 1}
                       :
@@ -214,7 +214,7 @@ export function TimetableImportDialog({
                   {result.conflicts.length > 5 && (
                     <li>
                       •
-                      {t('common.andMore', { count: result.conflicts.length - 5 })}
+                      {t.common.andMore({ count: result.conflicts.length - 5 })}
                     </li>
                   )}
                 </ul>
@@ -222,7 +222,7 @@ export function TimetableImportDialog({
             )}
 
             <DialogFooter>
-              <Button onClick={handleClose}>{t('common.close')}</Button>
+              <Button onClick={handleClose}>{t.common.close()}</Button>
             </DialogFooter>
           </div>
         )}

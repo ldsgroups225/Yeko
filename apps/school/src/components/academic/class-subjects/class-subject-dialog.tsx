@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
@@ -16,6 +15,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
+import { useTranslations } from '@/i18n'
 import { classSubjectsKeys } from '@/lib/queries/class-subjects'
 import { saveClassSubject } from '@/school/functions/class-subjects'
 import { getSchoolSubjects } from '@/school/functions/school-subjects' // Use school-subjects directly or via query options if available
@@ -33,7 +33,7 @@ export function ClassSubjectDialog({
   classId,
   className,
 }: ClassSubjectDialogProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const { schoolYearId } = useSchoolYearContext()
   const queryClient = useQueryClient()
   const [selectedSubjectId, setSelectedSubjectId] = useState<string | null>(null)
@@ -62,12 +62,12 @@ export function ClassSubjectDialog({
       queryClient.invalidateQueries({
         queryKey: classSubjectsKeys.list({ classId }),
       })
-      toast.success(t('academic.classes.addSubjectSuccess'))
+      toast.success(t.academic.classes.addSubjectSuccess())
       setSelectedSubjectId(null)
       onOpenChange(false)
     },
     onError: () => {
-      toast.error(t('academic.classes.addSubjectError'))
+      toast.error(t.academic.classes.addSubjectError())
     },
   })
 
@@ -85,9 +85,9 @@ export function ClassSubjectDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>{t('academic.classes.addSubjectTitle')}</DialogTitle>
+          <DialogTitle>{t.academic.classes.addSubjectTitle()}</DialogTitle>
           <DialogDescription>
-            {t('academic.classes.addSubjectDescription')}
+            {t.academic.classes.addSubjectDescription()}
             {' '}
             <span className="font-medium">{className}</span>
           </DialogDescription>
@@ -95,7 +95,7 @@ export function ClassSubjectDialog({
 
         <div className="space-y-4 py-2">
           <div className="space-y-2">
-            <Label>{t('academic.classes.selectSubject')}</Label>
+            <Label>{t.academic.classes.selectSubject()}</Label>
             <ScrollArea className="h-[200px] border rounded-md p-2">
               {isLoading
                 ? (
@@ -139,7 +139,7 @@ export function ClassSubjectDialog({
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="coeff">{t('academic.classes.coefficient')}</Label>
+              <Label htmlFor="coeff">{t.academic.classes.coefficient()}</Label>
               <Input
                 id="coeff"
                 type="number"
@@ -150,7 +150,7 @@ export function ClassSubjectDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="hours">{t('academic.classes.hoursPerWeek')}</Label>
+              <Label htmlFor="hours">{t.academic.classes.hoursPerWeek()}</Label>
               <Input
                 id="hours"
                 type="number"
@@ -165,7 +165,7 @@ export function ClassSubjectDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            {t('common.cancel')}
+            {t.common.cancel()}
           </Button>
           <Button
             onClick={handleSave}
@@ -174,7 +174,7 @@ export function ClassSubjectDialog({
             {saveMutation.isPending && (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             )}
-            {t('academic.classes.addSubject')}
+            {t.academic.classes.addSubject()}
           </Button>
         </DialogFooter>
       </DialogContent>

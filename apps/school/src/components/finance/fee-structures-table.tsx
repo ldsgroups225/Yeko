@@ -1,7 +1,6 @@
 'use client'
 
 import { Pencil, Trash2 } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -13,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useTranslations } from '@/i18n'
 import { generateUUID } from '@/utils/generateUUID'
 
 interface FeeStructure {
@@ -38,7 +38,7 @@ function formatCurrency(amount: number, currency: string = 'XOF') {
 }
 
 export function FeeStructuresTable({ feeStructures, isLoading, onEdit, onDelete }: FeeStructuresTableProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   if (isLoading) {
     return (
@@ -53,7 +53,7 @@ export function FeeStructuresTable({ feeStructures, isLoading, onEdit, onDelete 
   if (feeStructures.length === 0) {
     return (
       <div className="py-8 text-center text-muted-foreground">
-        {t('finance.feeStructures.noFeeStructures')}
+        {t.finance.feeStructures.noFeeStructures()}
       </div>
     )
   }
@@ -62,12 +62,12 @@ export function FeeStructuresTable({ feeStructures, isLoading, onEdit, onDelete 
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>{t('finance.feeTypes.title')}</TableHead>
-          <TableHead>{t('grades.grade')}</TableHead>
-          <TableHead>{t('series.series')}</TableHead>
-          <TableHead className="text-right">{t('finance.amount')}</TableHead>
-          <TableHead className="text-right">{t('finance.feeStructures.newStudentAmount')}</TableHead>
-          <TableHead className="text-right">{t('common.actions')}</TableHead>
+          <TableHead>{t.finance.feeTypes.title()}</TableHead>
+          <TableHead>{t.grades.grade()}</TableHead>
+          <TableHead>{t.classes.series()}</TableHead>
+          <TableHead className="text-right">{t.finance.amount()}</TableHead>
+          <TableHead className="text-right">{t.finance.feeStructures.newStudentAmount()}</TableHead>
+          <TableHead className="text-right">{t.common.actions()}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -98,7 +98,7 @@ export function FeeStructuresTable({ feeStructures, isLoading, onEdit, onDelete 
                   size="icon"
                   className="h-8 w-8"
                   onClick={() => onEdit?.(structure.id)}
-                  aria-label={t('common.edit')}
+                  aria-label={t.common.edit()}
                 >
                   <Pencil className="h-4 w-4" />
                 </Button>
@@ -107,7 +107,7 @@ export function FeeStructuresTable({ feeStructures, isLoading, onEdit, onDelete 
                   size="icon"
                   className="h-8 w-8 text-destructive hover:text-destructive"
                   onClick={() => onDelete?.(structure.id)}
-                  aria-label={t('common.delete')}
+                  aria-label={t.common.delete()}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>

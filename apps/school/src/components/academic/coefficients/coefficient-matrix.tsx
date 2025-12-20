@@ -2,7 +2,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { AlertCircle, Save } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -22,6 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useTranslations } from '@/i18n'
 import {
   schoolCoefficientsKeys,
   schoolCoefficientsOptions,
@@ -41,7 +41,7 @@ export function CoefficientMatrix({
   schoolYearTemplateId,
   seriesId,
 }: CoefficientMatrixProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const [editedCells, setEditedCells] = useState(() => new Map<string, number>())
   const queryClient = useQueryClient()
 
@@ -55,11 +55,11 @@ export function CoefficientMatrix({
     ) => bulkUpdateSchoolCoefficients({ data: { updates } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: schoolCoefficientsKeys.all })
-      toast.success(t('academic.coefficients.messages.updateSuccess'))
+      toast.success(t.academic.coefficients.messages.updateSuccess())
       setEditedCells(new Map())
     },
     onError: () => {
-      toast.error(t('academic.coefficients.messages.updateError'))
+      toast.error(t.academic.coefficients.messages.updateError())
     },
   })
 
@@ -68,10 +68,10 @@ export function CoefficientMatrix({
       deleteCoefficientOverride({ data: overrideId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: schoolCoefficientsKeys.all })
-      toast.success(t('academic.coefficients.messages.resetSuccess'))
+      toast.success(t.academic.coefficients.messages.resetSuccess())
     },
     onError: () => {
-      toast.error(t('academic.coefficients.messages.resetError'))
+      toast.error(t.academic.coefficients.messages.resetError())
     },
   })
 
@@ -83,7 +83,7 @@ export function CoefficientMatrix({
 
   const handleSaveChanges = () => {
     if (editedCells.size === 0) {
-      toast.error(t('academic.coefficients.bulk.noChanges'))
+      toast.error(t.academic.coefficients.bulk.noChanges())
       return
     }
 
@@ -103,7 +103,7 @@ export function CoefficientMatrix({
 
   const handleDiscardChanges = () => {
     setEditedCells(new Map())
-    toast.info(t('academic.coefficients.messages.changesDiscarded'))
+    toast.info(t.academic.coefficients.messages.changesDiscarded())
   }
 
   if (error) {
@@ -112,7 +112,7 @@ export function CoefficientMatrix({
         <CardHeader>
           <CardTitle className="text-destructive flex items-center gap-2">
             <AlertCircle className="h-5 w-5" />
-            {t('academic.coefficients.messages.matrixError')}
+            {t.academic.coefficients.messages.matrixError()}
           </CardTitle>
           <CardDescription>{(error as Error).message}</CardDescription>
         </CardHeader>
@@ -151,12 +151,12 @@ export function CoefficientMatrix({
         >
           <div className="flex items-center gap-2">
             <Badge variant="secondary">
-              {t('academic.coefficients.bulk.changes', {
-                count: editedCells.size,
-              })}
+              {editedCells.size}
+              {' '}
+              {t.academic.coefficients.bulk.changes()}
             </Badge>
             <span className="text-sm text-muted-foreground">
-              {t('academic.coefficients.bulk.savePrompt')}
+              {t.academic.coefficients.bulk.savePrompt()}
             </span>
           </div>
           <div className="flex gap-2">
@@ -165,7 +165,7 @@ export function CoefficientMatrix({
               size="sm"
               onClick={handleDiscardChanges}
             >
-              {t('academic.coefficients.bulk.discard')}
+              {t.academic.coefficients.bulk.discard()}
             </Button>
             <Button
               size="sm"
@@ -173,7 +173,7 @@ export function CoefficientMatrix({
               disabled={bulkUpdateMutation.isPending}
             >
               <Save className="mr-2 h-4 w-4" />
-              {t('academic.coefficients.bulk.saveChanges')}
+              {t.academic.coefficients.bulk.saveChanges()}
             </Button>
           </div>
         </motion.div>
@@ -182,9 +182,9 @@ export function CoefficientMatrix({
       {/* Matrix Table */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('academic.coefficients.matrix.title')}</CardTitle>
+          <CardTitle>{t.academic.coefficients.matrix.title()}</CardTitle>
           <CardDescription>
-            {t('academic.coefficients.matrix.description')}
+            {t.academic.coefficients.matrix.description()}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -193,7 +193,7 @@ export function CoefficientMatrix({
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[200px] sticky left-0 bg-background z-10">
-                    {t('academic.coefficients.matrix.subject')}
+                    {t.academic.coefficients.matrix.subject()}
                   </TableHead>
                   {grades.map(grade => (
                     <TableHead
@@ -263,9 +263,9 @@ export function CoefficientMatrix({
           {/* Empty State */}
           {subjects.length === 0 && (
             <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-              <p>{t('academic.coefficients.matrix.noData')}</p>
+              <p>{t.academic.coefficients.matrix.noData()}</p>
               <p className="text-sm">
-                {t('academic.coefficients.matrix.noDataDescription')}
+                {t.academic.coefficients.matrix.noDataDescription()}
               </p>
             </div>
           )}
@@ -278,15 +278,15 @@ export function CoefficientMatrix({
           <div className="flex flex-wrap gap-6 text-sm">
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 rounded border-2 border-primary bg-primary/10" />
-              <span>{t('academic.coefficients.legend.override')}</span>
+              <span>{t.academic.coefficients.legend.override()}</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 rounded border" />
-              <span>{t('academic.coefficients.legend.template')}</span>
+              <span>{t.academic.coefficients.legend.template()}</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 rounded border-2 border-amber-500 bg-amber-500/10" />
-              <span>{t('academic.coefficients.legend.edited')}</span>
+              <span>{t.academic.coefficients.legend.edited()}</span>
             </div>
           </div>
         </CardContent>

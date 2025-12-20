@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { SchoolSubjectList } from '@/components/academic/subjects/school-subject-list'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Card, CardContent } from '@/components/ui/card'
@@ -13,6 +12,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useTranslations } from '@/i18n'
 import { getSchoolYears } from '@/school/functions/school-years'
 
 export const Route = createFileRoute('/_auth/programs/subjects')({
@@ -20,7 +20,7 @@ export const Route = createFileRoute('/_auth/programs/subjects')({
 })
 
 function SchoolSubjectsPage() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const [selectedYearId, setSelectedYearId] = useState<string>('')
 
   // Fetch school years
@@ -42,18 +42,18 @@ function SchoolSubjectsPage() {
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t('nav.academic'), href: '/academic' },
-          { label: t('nav.subjects') },
+          { label: t.nav.academic(), href: '/academic' },
+          { label: t.nav.subjects() },
         ]}
       />
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
-            {t('academic.subjects.title')}
+            {t.academic.subjects.title()}
           </h1>
           <p className="text-muted-foreground">
-            {t('academic.subjects.description')}
+            {t.academic.subjects.description()}
           </p>
         </div>
 
@@ -68,7 +68,7 @@ function SchoolSubjectsPage() {
                   onValueChange={setSelectedYearId}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={t('schoolYear.select')} />
+                    <SelectValue placeholder={t.schoolYear.select()} />
                   </SelectTrigger>
                   <SelectContent>
                     {schoolYears?.map(
@@ -76,7 +76,7 @@ function SchoolSubjectsPage() {
                         <SelectItem key={year.id} value={year.id}>
                           {year.template?.name || year.name}
                           {' '}
-                          {year.isActive && t('schoolYear.activeSuffix')}
+                          {year.isActive && t.schoolYear.activeSuffix()}
                         </SelectItem>
                       ),
                     )}
@@ -94,7 +94,7 @@ function SchoolSubjectsPage() {
         : (
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                <p>{t('academic.subjects.messages.selectSchoolYearPrompt')}</p>
+                <p>{t.academic.subjects.messages.selectSchoolYearPrompt()}</p>
               </CardContent>
             </Card>
           )}

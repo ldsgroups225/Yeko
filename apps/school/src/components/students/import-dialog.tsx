@@ -4,11 +4,10 @@ import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AlertCircle, CheckCircle2, Download, FileSpreadsheet, Loader2, Upload, X } from 'lucide-react'
 import { useCallback, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import * as XLSX from 'xlsx'
-
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -18,6 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { useTranslations } from '@/i18n'
 import { studentsKeys } from '@/lib/queries/students'
 import { bulkImportStudents } from '@/school/functions/students'
 import { generateUUID } from '@/utils/generateUUID'
@@ -169,7 +169,7 @@ function mapRowToStudent(row: Record<string, any>, headerMapping: Record<string,
 }
 
 export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
   const [file, setFile] = useState<File | null>(null)
   const [preview, setPreview] = useState<ParsedStudent[]>([])
@@ -183,7 +183,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
       setResult(data)
       queryClient.invalidateQueries({ queryKey: studentsKeys.all })
       if (data.success > 0) {
-        toast.success(t('students.importSuccess', { count: data.success }))
+        toast.success(t.students.importSuccess({ count: data.success }))
       }
     },
     onError: (err: Error) => {
@@ -211,7 +211,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
         const { headers, rows } = parseExcelData(workbook)
 
         if (headers.length === 0 || rows.length === 0) {
-          setParseError(t('students.importNoValidRows'))
+          setParseError(t.students.importNoValidRows())
           return
         }
 
@@ -231,7 +231,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
         const hasDob = mappedFields.includes('dob')
 
         if (!hasFirstName || !hasLastName || !hasDob) {
-          setParseError(t('students.importMissingColumns'))
+          setParseError(t.students.importMissingColumns())
           return
         }
 
@@ -241,7 +241,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
           .filter((s): s is ParsedStudent => s !== null)
 
         if (parsed.length === 0) {
-          setParseError(t('students.importNoValidRows'))
+          setParseError(t.students.importNoValidRows())
           return
         }
 
@@ -249,7 +249,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
         setPreview(parsed.slice(0, 5))
       }
       catch {
-        setParseError(t('students.importParseError'))
+        setParseError(t.students.importParseError())
       }
     }
     reader.readAsArrayBuffer(selectedFile)
@@ -354,8 +354,8 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>{t('students.importStudents')}</DialogTitle>
-          <DialogDescription>{t('students.importStudentsDescriptionExcel')}</DialogDescription>
+          <DialogTitle>{t.students.importStudents()}</DialogTitle>
+          <DialogDescription>{t.students.importStudentsDescriptionExcel()}</DialogDescription>
         </DialogHeader>
 
         {result
@@ -363,12 +363,12 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
               <div className="space-y-4">
                 <Alert variant={result.errors.length > 0 ? 'destructive' : 'default'}>
                   {result.errors.length > 0 ? <AlertCircle className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
-                  <AlertTitle>{t('students.importComplete')}</AlertTitle>
+                  <AlertTitle>{t.students.importComplete()}</AlertTitle>
                   <AlertDescription>
                     <ul className="mt-2 space-y-1 text-sm">
-                      <li>{t('students.importSuccessCount', { count: result.success })}</li>
+                      <li>{t.students.importSuccessCount({ count: result.success })}</li>
                       {result.errors.length > 0 && (
-                        <li className="text-destructive">{t('students.importErrorCount', { count: result.errors.length })}</li>
+                        <li className="text-destructive">{t.students.importErrorCount({ count: result.errors.length })}</li>
                       )}
                     </ul>
                   </AlertDescription>
@@ -378,17 +378,17 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
                   <div className="max-h-40 overflow-y-auto rounded border p-3 text-sm">
                     {result.errors.slice(0, 10).map(err => (
                       <p key={`error-${err.row}-${generateUUID()}`} className="text-destructive">
-                        {t('students.importRowError', { row: err.row, error: err.error })}
+                        {t.students.importRowError({ row: err.row, error: err.error })}
                       </p>
                     ))}
                     {result.errors.length > 10 && (
-                      <p className="mt-2 text-muted-foreground">{t('common.andMore', { count: result.errors.length - 10 })}</p>
+                      <p className="mt-2 text-muted-foreground">{t.common.andMore({ count: result.errors.length - 10 })}</p>
                     )}
                   </div>
                 )}
 
                 <DialogFooter>
-                  <Button onClick={handleClose}>{t('common.close')}</Button>
+                  <Button onClick={handleClose}>{t.common.close()}</Button>
                 </DialogFooter>
               </div>
             )
@@ -397,7 +397,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
                 <div className="flex items-center justify-between">
                   <Button variant="outline" size="sm" onClick={downloadTemplate}>
                     <Download className="mr-2 h-4 w-4" />
-                    {t('students.downloadTemplate')}
+                    {t.students.downloadTemplate()}
                   </Button>
                 </div>
 
@@ -409,7 +409,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
                           <div className="text-left">
                             <p className="font-medium">{file.name}</p>
                             <p className="text-sm text-muted-foreground">
-                              {allParsed.length > 0 && t('students.importPreviewCount', { count: allParsed.length })}
+                              {allParsed.length > 0 && t.students.importPreviewCount({ count: allParsed.length })}
                             </p>
                           </div>
                           <Button
@@ -429,8 +429,8 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
                     : (
                         <label className="cursor-pointer">
                           <Upload className="mx-auto h-10 w-10 text-muted-foreground" />
-                          <p className="mt-2 font-medium">{t('students.importDropFile')}</p>
-                          <p className="text-sm text-muted-foreground">{t('students.importFileTypesExcel')}</p>
+                          <p className="mt-2 font-medium">{t.students.importDropFile()}</p>
+                          <p className="text-sm text-muted-foreground">{t.students.importFileTypesExcel()}</p>
                           <input
                             type="file"
                             accept=".xlsx,.xls,.csv"
@@ -450,15 +450,15 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
 
                 {preview.length > 0 && (
                   <div className="rounded border">
-                    <div className="border-b bg-muted/50 px-3 py-2 text-sm font-medium">{t('students.importPreview')}</div>
+                    <div className="border-b bg-muted/50 px-3 py-2 text-sm font-medium">{t.students.importPreview()}</div>
                     <div className="max-h-40 overflow-auto p-2">
                       <table className="w-full text-sm">
                         <thead>
                           <tr className="border-b">
-                            <th className="px-2 py-1 text-left">{t('students.lastName')}</th>
-                            <th className="px-2 py-1 text-left">{t('students.firstName')}</th>
-                            <th className="px-2 py-1 text-left">{t('students.dateOfBirth')}</th>
-                            <th className="px-2 py-1 text-left">{t('students.gender')}</th>
+                            <th className="px-2 py-1 text-left">{t.students.lastName()}</th>
+                            <th className="px-2 py-1 text-left">{t.students.firstName()}</th>
+                            <th className="px-2 py-1 text-left">{t.students.dateOfBirth()}</th>
+                            <th className="px-2 py-1 text-left">{t.students.gender()}</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -475,17 +475,17 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
                     </div>
                     {allParsed.length > 5 && (
                       <div className="border-t bg-muted/30 px-3 py-2 text-center text-sm text-muted-foreground">
-                        {t('students.importAndMoreRows', { count: allParsed.length - 5 })}
+                        {t.students.importAndMoreRows({ count: allParsed.length - 5 })}
                       </div>
                     )}
                   </div>
                 )}
 
                 <DialogFooter>
-                  <Button variant="outline" onClick={handleClose}>{t('common.cancel')}</Button>
+                  <Button variant="outline" onClick={handleClose}>{t.common.cancel()}</Button>
                   <Button onClick={handleImport} disabled={allParsed.length === 0 || importMutation.isPending}>
                     {importMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    {t('students.importStart')}
+                    {t.students.importStart()}
                   </Button>
                 </DialogFooter>
               </div>

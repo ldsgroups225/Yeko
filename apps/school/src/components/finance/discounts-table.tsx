@@ -1,5 +1,4 @@
 import { Edit, MoreHorizontal, Trash2 } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -18,6 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useTranslations } from '@/i18n'
 import { generateUUID } from '@/utils/generateUUID'
 
 interface Discount {
@@ -45,11 +45,18 @@ export function DiscountsTable({
   onEdit,
   onDelete,
 }: DiscountsTableProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   const getTypeLabel = (type: string) => {
-    const key = `finance.discountTypes.${type}` as const
-    return t(key)
+    const typeTranslations = {
+      sibling: t.finance.discountTypes.sibling,
+      scholarship: t.finance.discountTypes.scholarship,
+      staff: t.finance.discountTypes.staff,
+      early_payment: t.finance.discountTypes.early_payment,
+      financial_aid: t.finance.discountTypes.financial_aid,
+      other: t.finance.discountTypes.other,
+    }
+    return typeTranslations[type as keyof typeof typeTranslations]()
   }
 
   const formatValue = (discount: Discount) => {
@@ -75,7 +82,7 @@ export function DiscountsTable({
   if (discounts.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
-        <p className="text-muted-foreground">{t('finance.discounts.noDiscounts')}</p>
+        <p className="text-muted-foreground">{t.finance.discounts.noDiscounts()}</p>
       </div>
     )
   }
@@ -84,12 +91,12 @@ export function DiscountsTable({
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>{t('finance.discounts.code')}</TableHead>
-          <TableHead>{t('common.name')}</TableHead>
-          <TableHead>{t('finance.discounts.type')}</TableHead>
-          <TableHead>{t('finance.discounts.value')}</TableHead>
-          <TableHead>{t('common.status')}</TableHead>
-          <TableHead className="text-right">{t('common.actions')}</TableHead>
+          <TableHead>{t.finance.discounts.code()}</TableHead>
+          <TableHead>{t.common.name()}</TableHead>
+          <TableHead>{t.finance.discounts.type()}</TableHead>
+          <TableHead>{t.finance.discounts.value()}</TableHead>
+          <TableHead>{t.common.status()}</TableHead>
+          <TableHead className="text-right">{t.common.actions()}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -117,20 +124,20 @@ export function DiscountsTable({
             <TableCell className="font-medium">{formatValue(discount)}</TableCell>
             <TableCell>
               <Badge variant={discount.status === 'active' ? 'default' : 'secondary'}>
-                {discount.status === 'active' ? t('common.active') : t('common.inactive')}
+                {discount.status === 'active' ? t.common.active() : t.common.inactive()}
               </Badge>
             </TableCell>
             <TableCell className="text-right">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" aria-label={t('common.actions')}>
+                  <Button variant="ghost" size="icon" aria-label={t.common.actions()}>
                     <MoreHorizontal className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={() => onEdit?.(discount)}>
                     <Edit className="mr-2 h-4 w-4" />
-                    {t('common.edit')}
+                    {t.common.edit()}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
@@ -138,7 +145,7 @@ export function DiscountsTable({
                     className="text-destructive"
                   >
                     <Trash2 className="mr-2 h-4 w-4" />
-                    {t('common.delete')}
+                    {t.common.delete()}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

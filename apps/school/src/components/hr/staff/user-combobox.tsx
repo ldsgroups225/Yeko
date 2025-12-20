@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { CheckIcon, ChevronsUpDownIcon, Loader2 } from 'lucide-react'
 import * as React from 'react'
-import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import {
   Command,
@@ -16,6 +15,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { getUsers } from '@/school/functions/users'
 
@@ -38,7 +38,7 @@ export function UserCombobox({
   placeholder,
   disabled,
 }: UserComboboxProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const [open, setOpen] = React.useState(false)
   const [search, setSearch] = React.useState('')
 
@@ -82,7 +82,7 @@ export function UserCombobox({
               )
             : (
                 <span className="text-muted-foreground">
-                  {placeholder || t('hr.staff.selectUser')}
+                  {placeholder || t.hr.staff.selectUser()}
                 </span>
               )}
           <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -91,7 +91,7 @@ export function UserCombobox({
       <PopoverContent className="w-[400px] p-0" align="start">
         <Command shouldFilter={false}>
           <CommandInput
-            placeholder={t('hr.staff.searchUser')}
+            placeholder={t.hr.staff.searchUser()}
             value={search}
             onValueChange={setSearch}
           />
@@ -104,7 +104,7 @@ export function UserCombobox({
                 )
               : users.length === 0
                 ? (
-                    <CommandEmpty>{t('hr.staff.noUsersFound')}</CommandEmpty>
+                    <CommandEmpty>{t.hr.staff.noUsersFound()}</CommandEmpty>
                   )
                 : (
                     <CommandGroup>

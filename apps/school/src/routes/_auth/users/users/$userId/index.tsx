@@ -3,13 +3,13 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { format } from 'date-fns'
 import { Calendar, Edit, Mail, Phone, Trash2 } from 'lucide-react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useTranslations } from '@/i18n'
 import { deleteExistingUser, getUser, getUserActivity } from '@/school/functions/users'
 
 export const Route = createFileRoute('/_auth/users/users/$userId/')({
@@ -18,7 +18,7 @@ export const Route = createFileRoute('/_auth/users/users/$userId/')({
 
 function UserDetailsPage() {
   const { userId } = Route.useParams()
-  const { t } = useTranslation()
+  const t = useTranslations()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
@@ -45,11 +45,11 @@ function UserDetailsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] })
-      toast.success(t('hr.users.deleteSuccess'))
+      toast.success(t.hr.users.deleteSuccess())
       navigate({ to: '/users/users', search: { page: 1 } })
     },
     onError: () => {
-      toast.error(t('hr.users.deleteError'))
+      toast.error(t.hr.users.deleteError())
     },
   })
 
@@ -58,7 +58,7 @@ function UserDetailsPage() {
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-center">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-          <p className="mt-4 text-sm text-muted-foreground">{t('common.loading')}</p>
+          <p className="mt-4 text-sm text-muted-foreground">{t.common.loading()}</p>
         </div>
       </div>
     )
@@ -68,10 +68,10 @@ function UserDetailsPage() {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-center">
-          <p className="text-lg font-medium">{t('errors.notFound')}</p>
+          <p className="text-lg font-medium">{t.errors.notFound()}</p>
           <Button asChild className="mt-4">
             <Link to="/users/users" search={{ page: 1 }}>
-              {t('common.back')}
+              {t.common.back()}
             </Link>
           </Button>
         </div>
@@ -83,8 +83,8 @@ function UserDetailsPage() {
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t('hr.title'), href: '/users' },
-          { label: t('hr.users.title'), href: '/users/users' },
+          { label: t.hr.title(), href: '/users' },
+          { label: t.hr.users.title(), href: '/users/users' },
           { label: user.name },
         ]}
       />
@@ -106,33 +106,33 @@ function UserDetailsPage() {
             onClick={() => setShowDeleteDialog(true)}
           >
             <Trash2 className="mr-2 h-4 w-4" />
-            {t('common.delete')}
+            {t.common.delete()}
           </Button>
           <Button
             size="sm"
             onClick={() => navigate({ to: '/users/users/$userId/edit', params: { userId } })}
           >
             <Edit className="mr-2 h-4 w-4" />
-            {t('common.edit')}
+            {t.common.edit()}
           </Button>
         </div>
       </div>
 
       <Tabs defaultValue="info" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="info">{t('hr.users.tabs.info')}</TabsTrigger>
-          <TabsTrigger value="roles">{t('hr.users.tabs.roles')}</TabsTrigger>
-          <TabsTrigger value="activity">{t('hr.users.tabs.activity')}</TabsTrigger>
+          <TabsTrigger value="info">{t.hr.users.tabs.info()}</TabsTrigger>
+          <TabsTrigger value="roles">{t.hr.users.tabs.roles()}</TabsTrigger>
+          <TabsTrigger value="activity">{t.hr.users.tabs.activity()}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="info" className="space-y-4">
           <div className="rounded-lg border bg-card p-6">
-            <h2 className="mb-4 text-lg font-semibold">{t('hr.users.personalInfo')}</h2>
+            <h2 className="mb-4 text-lg font-semibold">{t.hr.users.personalInfo()}</h2>
             <div className="grid gap-4 md:grid-cols-2">
               <div className="flex items-center gap-3">
                 <Mail className="h-4 w-4 text-muted-foreground" />
                 <div>
-                  <p className="text-sm text-muted-foreground">{t('hr.common.email')}</p>
+                  <p className="text-sm text-muted-foreground">{t.hr.common.email()}</p>
                   <p className="font-medium">{user.email}</p>
                 </div>
               </div>
@@ -140,7 +140,7 @@ function UserDetailsPage() {
                 <div className="flex items-center gap-3">
                   <Phone className="h-4 w-4 text-muted-foreground" />
                   <div>
-                    <p className="text-sm text-muted-foreground">{t('hr.common.phone')}</p>
+                    <p className="text-sm text-muted-foreground">{t.hr.common.phone()}</p>
                     <p className="font-medium">{user.phone}</p>
                   </div>
                 </div>
@@ -148,7 +148,7 @@ function UserDetailsPage() {
               <div className="flex items-center gap-3">
                 <Calendar className="h-4 w-4 text-muted-foreground" />
                 <div>
-                  <p className="text-sm text-muted-foreground">{t('hr.common.createdAt')}</p>
+                  <p className="text-sm text-muted-foreground">{t.hr.common.createdAt()}</p>
                   <p className="font-medium">
                     {format(new Date(user.createdAt), 'dd/MM/yyyy')}
                   </p>
@@ -156,7 +156,7 @@ function UserDetailsPage() {
               </div>
               <div className="flex items-center gap-3">
                 <div>
-                  <p className="text-sm text-muted-foreground">{t('hr.users.status')}</p>
+                  <p className="text-sm text-muted-foreground">{t.hr.users.status()}</p>
                   <Badge
                     variant={
                       user.status === 'active'
@@ -166,7 +166,18 @@ function UserDetailsPage() {
                           : 'secondary'
                     }
                   >
-                    {t(`hr.status.${user.status}`)}
+                    {(() => {
+                      switch (user.status) {
+                        case 'active':
+                          return t.hr.status.active()
+                        case 'inactive':
+                          return t.hr.status.inactive()
+                        case 'suspended':
+                          return t.hr.status.suspended()
+                        default:
+                          return user.status
+                      }
+                    })()}
                   </Badge>
                 </div>
               </div>
@@ -176,7 +187,7 @@ function UserDetailsPage() {
 
         <TabsContent value="roles" className="space-y-4">
           <div className="rounded-lg border bg-card p-6">
-            <h2 className="mb-4 text-lg font-semibold">{t('hr.users.assignedRoles')}</h2>
+            <h2 className="mb-4 text-lg font-semibold">{t.hr.users.assignedRoles()}</h2>
             <div className="space-y-3">
               {user.roles && user.roles.length > 0
                 ? (
@@ -185,12 +196,12 @@ function UserDetailsPage() {
                         <div>
                           <p className="font-medium">{role.roleName}</p>
                         </div>
-                        <Badge variant="secondary">{t('hr.roles.systemRole')}</Badge>
+                        <Badge variant="secondary">{t.hr.roles.systemRole()}</Badge>
                       </div>
                     ))
                   )
                 : (
-                    <p className="text-sm text-muted-foreground">{t('hr.users.noRoles')}</p>
+                    <p className="text-sm text-muted-foreground">{t.hr.users.noRoles()}</p>
                   )}
             </div>
           </div>
@@ -198,7 +209,7 @@ function UserDetailsPage() {
 
         <TabsContent value="activity" className="space-y-4">
           <div className="rounded-lg border bg-card p-6">
-            <h2 className="mb-4 text-lg font-semibold">{t('hr.users.recentActivity')}</h2>
+            <h2 className="mb-4 text-lg font-semibold">{t.hr.users.recentActivity()}</h2>
             <div className="space-y-3">
               {activity && activity.length > 0
                 ? (
@@ -215,7 +226,7 @@ function UserDetailsPage() {
                     ))
                   )
                 : (
-                    <p className="text-sm text-muted-foreground">{t('hr.users.noActivity')}</p>
+                    <p className="text-sm text-muted-foreground">{t.hr.users.noActivity()}</p>
                   )}
             </div>
           </div>
@@ -225,8 +236,8 @@ function UserDetailsPage() {
       <DeleteConfirmationDialog
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
-        title={t('hr.users.deleteUser')}
-        description={t('hr.users.deleteConfirm')}
+        title={t.hr.users.deleteUser()}
+        description={t.hr.users.deleteConfirm()}
         confirmText={user?.name}
         onConfirm={() => deleteMutation.mutate()}
         isLoading={deleteMutation.isPending}

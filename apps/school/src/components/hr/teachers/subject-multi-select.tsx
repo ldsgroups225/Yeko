@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { CheckIcon, ChevronsUpDownIcon, Loader2, XIcon } from 'lucide-react'
 import * as React from 'react'
-import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -17,6 +16,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { useTranslations } from '@/i18n'
 import { getAllSubjects } from '@/school/functions/subjects'
 
 interface Subject {
@@ -34,7 +34,7 @@ interface SubjectMultiSelectProps {
 const DEFAULT_VALUE: string[] = []
 
 export function SubjectMultiSelect({ value = DEFAULT_VALUE, onChange }: SubjectMultiSelectProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const [open, setOpen] = React.useState(false)
   const [search, setSearch] = React.useState('')
 
@@ -75,8 +75,8 @@ export function SubjectMultiSelect({ value = DEFAULT_VALUE, onChange }: SubjectM
           >
             <span className="truncate">
               {value.length > 0
-                ? `${value.length} ${t('hr.teachers.subjects').toLowerCase()}`
-                : t('hr.teachers.selectSubjects')}
+                ? `${value.length} ${t.hr.teachers.subjects().toLowerCase()}`
+                : t.hr.teachers.selectSubjects()}
             </span>
             <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
@@ -84,7 +84,7 @@ export function SubjectMultiSelect({ value = DEFAULT_VALUE, onChange }: SubjectM
         <PopoverContent className="w-full p-0" align="start">
           <Command>
             <CommandInput
-              placeholder={t('common.search')}
+              placeholder={t.common.search()}
               value={search}
               onValueChange={setSearch}
             />
@@ -97,7 +97,7 @@ export function SubjectMultiSelect({ value = DEFAULT_VALUE, onChange }: SubjectM
                   )
                 : (
                     <>
-                      <CommandEmpty>{t('common.noResults')}</CommandEmpty>
+                      <CommandEmpty>{t.common.noResults()}</CommandEmpty>
                       <CommandGroup id="subject-list">
                         {subjects.map((subject: Subject) => (
                           <CommandItem

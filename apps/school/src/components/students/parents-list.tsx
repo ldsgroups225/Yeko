@@ -14,10 +14,9 @@ import {
 } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-
 import { EmptyState } from '@/components/hr/empty-state'
+
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -61,6 +60,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { useDebounce } from '@/hooks/use-debounce'
+import { useTranslations } from '@/i18n'
 import { parentsKeys, parentsOptions } from '@/lib/queries/parents'
 import { deleteParent, sendParentInvitation } from '@/school/functions/parents'
 
@@ -76,7 +76,7 @@ const invitationStatusColors: Record<string, string> = {
 }
 
 export function ParentsList() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
 
   const [search, setSearch] = useState('')
@@ -103,7 +103,7 @@ export function ParentsList() {
     mutationFn: (id: string) => deleteParent({ data: id }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: parentsKeys.all })
-      toast.success(t('parents.deleteSuccess'))
+      toast.success(t.parents.deleteSuccess())
       setDeleteDialogOpen(false)
       setSelectedParent(null)
     },
@@ -116,7 +116,7 @@ export function ParentsList() {
     mutationFn: (id: string) => sendParentInvitation({ data: id }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: parentsKeys.all })
-      toast.success(t('parents.invitationSent'))
+      toast.success(t.parents.invitationSent())
     },
     onError: (error: Error) => {
       toast.error(error.message)
@@ -135,7 +135,7 @@ export function ParentsList() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              {t('parents.totalParents')}
+              {t.parents.totalParents()}
             </CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -146,7 +146,7 @@ export function ParentsList() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              {t('parents.invitationPending')}
+              {t.parents.invitationPending()}
             </CardTitle>
             <Mail className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -159,7 +159,7 @@ export function ParentsList() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              {t('parents.invitationSentCount')}
+              {t.parents.invitationSentCount()}
             </CardTitle>
             <Send className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -172,7 +172,7 @@ export function ParentsList() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              {t('parents.registered')}
+              {t.parents.registered()}
             </CardTitle>
             <UserPlus className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -190,7 +190,7 @@ export function ParentsList() {
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder={t('parents.searchPlaceholder')}
+              placeholder={t.parents.searchPlaceholder()}
               value={search}
               onChange={e => setSearch(e.target.value)}
               className="pl-9"
@@ -198,25 +198,25 @@ export function ParentsList() {
           </div>
           <Select value={invitationStatus} onValueChange={setInvitationStatus}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder={t('parents.filterByStatus')} />
+              <SelectValue placeholder={t.parents.filterByStatus()} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">{t('common.all')}</SelectItem>
-              <SelectItem value="pending">{t('parents.statusPending')}</SelectItem>
-              <SelectItem value="sent">{t('parents.statusSent')}</SelectItem>
-              <SelectItem value="accepted">{t('parents.statusAccepted')}</SelectItem>
-              <SelectItem value="expired">{t('parents.statusExpired')}</SelectItem>
+              <SelectItem value="all">{t.common.all()}</SelectItem>
+              <SelectItem value="pending">{t.parents.statusPending()}</SelectItem>
+              <SelectItem value="sent">{t.parents.statusSent()}</SelectItem>
+              <SelectItem value="accepted">{t.parents.statusAccepted()}</SelectItem>
+              <SelectItem value="expired">{t.parents.statusExpired()}</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => setAutoMatchDialogOpen(true)}>
             <UserPlus className="mr-2 h-4 w-4" />
-            {t('students.autoMatch')}
+            {t.students.autoMatch()}
           </Button>
           <Button onClick={() => setCreateDialogOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
-            {t('parents.addParent')}
+            {t.parents.addParent()}
           </Button>
         </div>
       </div>
@@ -224,18 +224,18 @@ export function ParentsList() {
       {/* Table */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('parents.list')}</CardTitle>
-          <CardDescription>{t('parents.listDescription')}</CardDescription>
+          <CardTitle>{t.parents.list()}</CardTitle>
+          <CardDescription>{t.parents.listDescription()}</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t('parents.parent')}</TableHead>
-                <TableHead>{t('parents.phone')}</TableHead>
-                <TableHead>{t('parents.email')}</TableHead>
-                <TableHead>{t('parents.children')}</TableHead>
-                <TableHead>{t('parents.invitationStatus')}</TableHead>
+                <TableHead>{t.parents.parent()}</TableHead>
+                <TableHead>{t.parents.phone()}</TableHead>
+                <TableHead>{t.parents.email()}</TableHead>
+                <TableHead>{t.parents.children()}</TableHead>
+                <TableHead>{t.parents.invitationStatus()}</TableHead>
                 <TableHead className="w-[70px]" />
               </TableRow>
             </TableHeader>
@@ -264,10 +264,10 @@ export function ParentsList() {
                         <TableCell colSpan={6}>
                           <EmptyState
                             icon={Users}
-                            title={t('parents.noParents')}
-                            description={t('parents.noParentsDescription')}
+                            title={t.parents.noParents()}
+                            description={t.parents.noParentsDescription()}
                             action={{
-                              label: t('parents.addParent'),
+                              label: t.parents.addParent(),
                               onClick: () => setCreateDialogOpen(true),
                             }}
                           />
@@ -327,12 +327,17 @@ export function ParentsList() {
                             <Badge variant="secondary">
                               {item.childrenCount}
                               {' '}
-                              {t('parents.childrenCount', { count: item.childrenCount })}
+                              {t.parents.childrenCount()}
                             </Badge>
                           </TableCell>
                           <TableCell>
                             <Badge className={invitationStatusColors[item.parent.invitationStatus || 'pending']}>
-                              {t(`parents.status${item.parent.invitationStatus?.charAt(0).toUpperCase()}${item.parent.invitationStatus?.slice(1) || 'Pending'}`)}
+                              {{
+                                pending: t.parents.statusPending,
+                                sent: t.parents.statusSent,
+                                accepted: t.parents.statusAccepted,
+                                expired: t.parents.statusExpired,
+                              }[item.parent.invitationStatus as 'pending' | 'sent' | 'accepted' | 'expired']()}
                             </Badge>
                           </TableCell>
                           <TableCell>
@@ -349,7 +354,7 @@ export function ParentsList() {
                                     disabled={inviteMutation.isPending}
                                   >
                                     <Send className="mr-2 h-4 w-4" />
-                                    {t('parents.sendInvitation')}
+                                    {t.parents.sendInvitation()}
                                   </DropdownMenuItem>
                                 )}
                                 <DropdownMenuSeparator />
@@ -358,7 +363,7 @@ export function ParentsList() {
                                   onClick={() => handleDelete(item)}
                                 >
                                   <Trash2 className="mr-2 h-4 w-4" />
-                                  {t('common.delete')}
+                                  {t.common.delete()}
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
@@ -373,13 +378,13 @@ export function ParentsList() {
           {data && data.totalPages > 1 && (
             <div className="flex items-center justify-between mt-4">
               <p className="text-sm text-muted-foreground">
-                {t('common.showing')}
+                {t.common.showing()}
                 {' '}
                 {((page - 1) * 20) + 1}
                 -
                 {Math.min(page * 20, data.total)}
                 {' '}
-                {t('common.of')}
+                {t.common.of()}
                 {' '}
                 {data.total}
               </p>
@@ -390,7 +395,7 @@ export function ParentsList() {
                   onClick={() => setPage(p => Math.max(1, p - 1))}
                   disabled={page === 1}
                 >
-                  {t('common.previous')}
+                  {t.common.previous()}
                 </Button>
                 <Button
                   variant="outline"
@@ -398,7 +403,7 @@ export function ParentsList() {
                   onClick={() => setPage(p => Math.min(data.totalPages, p + 1))}
                   disabled={page === data.totalPages}
                 >
-                  {t('common.next')}
+                  {t.common.next()}
                 </Button>
               </div>
             </div>
@@ -422,23 +427,23 @@ export function ParentsList() {
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('parents.deleteTitle')}</DialogTitle>
+            <DialogTitle>{t.parents.deleteTitle()}</DialogTitle>
             <DialogDescription>
-              {t('parents.deleteDescription', {
+              {t.parents.deleteDescription({
                 name: `${selectedParent?.parent?.lastName} ${selectedParent?.parent?.firstName}`,
               })}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
-              {t('common.cancel')}
+              {t.common.cancel()}
             </Button>
             <Button
               variant="destructive"
               onClick={() => selectedParent && deleteMutation.mutate(selectedParent.parent.id)}
               disabled={deleteMutation.isPending}
             >
-              {t('common.delete')}
+              {t.common.delete()}
             </Button>
           </DialogFooter>
         </DialogContent>

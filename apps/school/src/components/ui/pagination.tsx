@@ -6,17 +6,17 @@ import {
 } from 'lucide-react'
 
 import * as React from 'react'
-import { useTranslation } from 'react-i18next'
 import { buttonVariants } from '@/components/ui/button'
+import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
 function Pagination({ className, ...props }: React.ComponentProps<'nav'>) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   return (
     <nav
       role="navigation"
-      aria-label={t('ui.pagination.label')}
+      aria-label={t.ui.pagination.label()}
       data-slot="pagination"
       className={cn('mx-auto flex w-full justify-center', className)}
       {...props}
@@ -76,17 +76,17 @@ function PaginationPrevious({
   className,
   ...props
 }: React.ComponentProps<typeof PaginationLink>) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   return (
     <PaginationLink
-      aria-label={t('ui.pagination.previous')}
+      aria-label={t.ui.pagination.previous()}
       size="default"
       className={cn('gap-1 px-2.5 sm:pl-2.5', className)}
       {...props}
     >
       <ChevronLeftIcon />
-      <span className="hidden sm:block">{t('common.previous')}</span>
+      <span className="hidden sm:block">{t.common.previous()}</span>
     </PaginationLink>
   )
 }
@@ -95,16 +95,16 @@ function PaginationNext({
   className,
   ...props
 }: React.ComponentProps<typeof PaginationLink>) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   return (
     <PaginationLink
-      aria-label={t('ui.pagination.next')}
+      aria-label={t.ui.pagination.next()}
       size="default"
       className={cn('gap-1 px-2.5 sm:pr-2.5', className)}
       {...props}
     >
-      <span className="hidden sm:block">{t('common.next')}</span>
+      <span className="hidden sm:block">{t.common.next()}</span>
       <ChevronRightIcon />
     </PaginationLink>
   )
@@ -114,7 +114,7 @@ function PaginationEllipsis({
   className,
   ...props
 }: React.ComponentProps<'span'>) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   return (
     <span
@@ -124,7 +124,7 @@ function PaginationEllipsis({
       {...props}
     >
       <MoreHorizontalIcon className="size-4" />
-      <span className="sr-only">{t('common.morePages')}</span>
+      <span className="sr-only">{t.common.morePages()}</span>
     </span>
   )
 }

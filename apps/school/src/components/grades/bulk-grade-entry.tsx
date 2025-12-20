@@ -2,9 +2,8 @@ import type { GradeType } from '@/schemas/grade'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { FileSpreadsheet, Loader2, Upload } from 'lucide-react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-
 import { Button } from '@/components/ui/button'
+
 import {
   Dialog,
   DialogContent,
@@ -23,6 +22,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useTranslations } from '@/i18n'
 import { gradesKeys } from '@/lib/queries/grades'
 import { createBulkGrades } from '@/school/functions/student-grades'
 
@@ -58,7 +58,7 @@ export function BulkGradeEntry({
   students,
   onSuccess,
 }: BulkGradeEntryProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
   const [open, setOpen] = useState(false)
   const [entries, setEntries] = useState<Map<string, number | null>>(() => new Map())
@@ -113,14 +113,14 @@ export function BulkGradeEntry({
       <DialogTrigger asChild>
         <Button variant="outline">
           <FileSpreadsheet className="mr-2 size-4" />
-          {t('academic.grades.bulk.title')}
+          {t.academic.grades.bulk.title()}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-h-[80vh] max-w-2xl overflow-hidden">
         <DialogHeader>
-          <DialogTitle>{t('academic.grades.bulk.title')}</DialogTitle>
+          <DialogTitle>{t.academic.grades.bulk.title()}</DialogTitle>
           <DialogDescription>
-            {t('academic.grades.bulk.description')}
+            {t.academic.grades.bulk.description()}
           </DialogDescription>
         </DialogHeader>
 
@@ -128,9 +128,9 @@ export function BulkGradeEntry({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t('academic.grades.averages.student')}</TableHead>
-                <TableHead className="w-24">{t('academic.grades.averages.matricule')}</TableHead>
-                <TableHead className="w-28 text-center">{t('academic.grades.averages.average')}</TableHead>
+                <TableHead>{t.academic.grades.averages.student()}</TableHead>
+                <TableHead className="w-24">{t.academic.grades.averages.matricule()}</TableHead>
+                <TableHead className="w-28 text-center">{t.academic.grades.averages.average()}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -154,7 +154,7 @@ export function BulkGradeEntry({
                       className="h-8 w-20 text-center"
                       value={entries.get(student.id) ?? ''}
                       onChange={e => handleValueChange(student.id, e.target.value)}
-                      aria-label={`${t('academic.grades.averages.average')} ${student.lastName}`}
+                      aria-label={`${t.academic.grades.averages.average()} ${student.lastName}`}
                     />
                   </TableCell>
                 </TableRow>
@@ -165,11 +165,11 @@ export function BulkGradeEntry({
 
         <DialogFooter className="flex-col gap-2 sm:flex-row sm:justify-between">
           <p className="text-sm text-muted-foreground">
-            {t('academic.grades.bulk.filled', { count: filledCount, total: students.length })}
+            {t.academic.grades.bulk.filled({ count: filledCount, total: students.length })}
           </p>
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => setOpen(false)}>
-              {t('common.cancel')}
+              {t.common.cancel()}
             </Button>
             <Button
               onClick={handleSubmit}
@@ -182,7 +182,7 @@ export function BulkGradeEntry({
                 : (
                     <Upload className="mr-2 size-4" />
                   )}
-              {t('common.save')}
+              {t.common.save()}
             </Button>
           </div>
         </DialogFooter>

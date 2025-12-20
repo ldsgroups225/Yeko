@@ -2,12 +2,12 @@ import type { UpdateSchoolProfileInput } from '@/schemas/school-profile'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Building2, Upload } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { useTranslations } from '@/i18n'
 import {
 
   updateSchoolProfileSchema,
@@ -33,7 +33,7 @@ export function SchoolProfileForm({
   onSubmit,
   isSubmitting,
 }: SchoolProfileFormProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   const form = useForm<UpdateSchoolProfileInput>({
     resolver: zodResolver(updateSchoolProfileSchema),
@@ -70,7 +70,7 @@ export function SchoolProfileForm({
           </AvatarFallback>
         </Avatar>
         <div className="space-y-2">
-          <Label htmlFor="logo">{t('settings.profile.logo')}</Label>
+          <Label htmlFor="logo">{t.settings.profile.logo()}</Label>
           <div className="flex items-center gap-2">
             <Input
               id="logo"
@@ -86,22 +86,22 @@ export function SchoolProfileForm({
               onClick={() => document.getElementById('logo')?.click()}
             >
               <Upload className="mr-2 h-4 w-4" />
-              {t('settings.profile.uploadLogo')}
+              {t.settings.profile.uploadLogo()}
             </Button>
           </div>
           <p className="text-xs text-muted-foreground">
-            {t('settings.profile.logoHint')}
+            {t.settings.profile.logoHint()}
           </p>
         </div>
       </div>
 
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="name">{t('settings.profile.schoolName')}</Label>
+          <Label htmlFor="name">{t.settings.profile.schoolName()}</Label>
           <Input
             id="name"
             {...form.register('name')}
-            placeholder={t('settings.profile.schoolNamePlaceholder')}
+            placeholder={t.settings.profile.schoolNamePlaceholder()}
           />
           {form.formState.errors.name && (
             <p className="text-sm text-destructive">
@@ -111,26 +111,26 @@ export function SchoolProfileForm({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="code">{t('settings.profile.schoolCode')}</Label>
+          <Label htmlFor="code">{t.settings.profile.schoolCode()}</Label>
           <Input id="code" value={school.code} disabled />
           <p className="text-xs text-muted-foreground">
-            {t('settings.profile.schoolCodeHint')}
+            {t.settings.profile.schoolCodeHint()}
           </p>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="address">{t('settings.profile.address')}</Label>
+          <Label htmlFor="address">{t.settings.profile.address()}</Label>
           <Textarea
             id="address"
             {...form.register('address')}
-            placeholder={t('settings.profile.addressPlaceholder')}
+            placeholder={t.settings.profile.addressPlaceholder()}
             rows={2}
           />
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="phone">{t('settings.profile.phone')}</Label>
+            <Label htmlFor="phone">{t.settings.profile.phone()}</Label>
             <Input
               id="phone"
               {...form.register('phone')}
@@ -139,12 +139,12 @@ export function SchoolProfileForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">{t('settings.profile.email')}</Label>
+            <Label htmlFor="email">{t.settings.profile.email()}</Label>
             <Input
               id="email"
               type="email"
               {...form.register('email')}
-              placeholder={t('placeholders.schoolEmail')}
+              placeholder={t.placeholders.schoolEmail()}
             />
             {form.formState.errors.email && (
               <p className="text-sm text-destructive">
@@ -157,7 +157,7 @@ export function SchoolProfileForm({
 
       <div className="flex justify-end">
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? t('common.saving') : t('common.save')}
+          {isSubmitting ? t.common.saving() : t.common.save()}
         </Button>
       </div>
     </form>

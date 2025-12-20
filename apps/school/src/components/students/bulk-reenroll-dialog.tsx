@@ -5,11 +5,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { AlertCircle, CheckCircle2, Loader2 } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod'
-
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -30,6 +29,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useTranslations } from '@/i18n'
 import { studentsKeys } from '@/lib/queries/students'
 import { bulkReEnroll } from '@/school/functions/enrollments'
 import { getSchoolYears } from '@/school/functions/school-years'
@@ -55,7 +55,7 @@ interface ReEnrollResult {
 }
 
 export function BulkReEnrollDialog({ open, onOpenChange }: BulkReEnrollDialogProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
   const [result, setResult] = useState<ReEnrollResult | null>(null)
 
@@ -80,7 +80,7 @@ export function BulkReEnrollDialog({ open, onOpenChange }: BulkReEnrollDialogPro
       setResult(data)
       queryClient.invalidateQueries({ queryKey: studentsKeys.all })
       if (data.success > 0) {
-        toast.success(t('students.reEnrollSuccess', { count: data.success }))
+        toast.success(t.students.reEnrollSuccess({ count: data.success }))
       }
     },
     onError: (err: Error) => {
@@ -105,9 +105,9 @@ export function BulkReEnrollDialog({ open, onOpenChange }: BulkReEnrollDialogPro
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>{t('students.bulkReEnroll')}</DialogTitle>
+          <DialogTitle>{t.students.bulkReEnroll()}</DialogTitle>
           <DialogDescription>
-            {t('students.bulkReEnrollDescription')}
+            {t.students.bulkReEnrollDescription()}
           </DialogDescription>
         </DialogHeader>
 
@@ -122,14 +122,14 @@ export function BulkReEnrollDialog({ open, onOpenChange }: BulkReEnrollDialogPro
                     : (
                         <CheckCircle2 className="h-4 w-4" />
                       )}
-                  <AlertTitle>{t('students.reEnrollComplete')}</AlertTitle>
+                  <AlertTitle>{t.students.reEnrollComplete()}</AlertTitle>
                   <AlertDescription>
                     <ul className="mt-2 space-y-1 text-sm">
-                      <li>{t('students.reEnrollSuccessCount', { count: result.success })}</li>
-                      <li>{t('students.reEnrollSkippedCount', { count: result.skipped })}</li>
+                      <li>{t.students.reEnrollSuccessCount({ count: result.success })}</li>
+                      <li>{t.students.reEnrollSkippedCount({ count: result.skipped })}</li>
                       {result.errors.length > 0 && (
                         <li className="text-destructive">
-                          {t('students.reEnrollErrorCount', { count: result.errors.length })}
+                          {t.students.reEnrollErrorCount({ count: result.errors.length })}
                         </li>
                       )}
                     </ul>
@@ -144,14 +144,14 @@ export function BulkReEnrollDialog({ open, onOpenChange }: BulkReEnrollDialogPro
                     ))}
                     {result.errors.length > 5 && (
                       <p className="text-muted-foreground">
-                        {t('common.andMore', { count: result.errors.length - 5 })}
+                        {t.common.andMore({ count: result.errors.length - 5 })}
                       </p>
                     )}
                   </div>
                 )}
 
                 <DialogFooter>
-                  <Button onClick={handleClose}>{t('common.close')}</Button>
+                  <Button onClick={handleClose}>{t.common.close()}</Button>
                 </DialogFooter>
               </div>
             )
@@ -164,14 +164,14 @@ export function BulkReEnrollDialog({ open, onOpenChange }: BulkReEnrollDialogPro
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          {t('students.fromSchoolYear')}
+                          {t.students.fromSchoolYear()}
                           {' '}
                           *
                         </FormLabel>
                         <Select onValueChange={field.onChange} value={field.value}>
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder={t('students.selectSourceYear')} />
+                              <SelectValue placeholder={t.students.selectSourceYear()} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -182,7 +182,7 @@ export function BulkReEnrollDialog({ open, onOpenChange }: BulkReEnrollDialogPro
                             ))}
                           </SelectContent>
                         </Select>
-                        <FormDescription>{t('students.fromSchoolYearDescription')}</FormDescription>
+                        <FormDescription>{t.students.fromSchoolYearDescription()}</FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -194,7 +194,7 @@ export function BulkReEnrollDialog({ open, onOpenChange }: BulkReEnrollDialogPro
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          {t('students.toSchoolYear')}
+                          {t.students.toSchoolYear()}
                           {' '}
                           *
                         </FormLabel>
@@ -205,7 +205,7 @@ export function BulkReEnrollDialog({ open, onOpenChange }: BulkReEnrollDialogPro
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder={t('students.selectTargetYear')} />
+                              <SelectValue placeholder={t.students.selectTargetYear()} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -214,12 +214,12 @@ export function BulkReEnrollDialog({ open, onOpenChange }: BulkReEnrollDialogPro
                               .map((year: any) => (
                                 <SelectItem key={year.id} value={year.id}>
                                   {year.template?.name || year.name}
-                                  {year.isActive && ` (${t('common.active')})`}
+                                  {year.isActive && ` (${t.common.active()})`}
                                 </SelectItem>
                               ))}
                           </SelectContent>
                         </Select>
-                        <FormDescription>{t('students.toSchoolYearDescription')}</FormDescription>
+                        <FormDescription>{t.students.toSchoolYearDescription()}</FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -237,9 +237,9 @@ export function BulkReEnrollDialog({ open, onOpenChange }: BulkReEnrollDialogPro
                           />
                         </FormControl>
                         <div className="space-y-1 leading-none">
-                          <FormLabel>{t('students.autoConfirmEnrollments')}</FormLabel>
+                          <FormLabel>{t.students.autoConfirmEnrollments()}</FormLabel>
                           <FormDescription>
-                            {t('students.autoConfirmEnrollmentsDescription')}
+                            {t.students.autoConfirmEnrollmentsDescription()}
                           </FormDescription>
                         </div>
                       </FormItem>
@@ -248,11 +248,11 @@ export function BulkReEnrollDialog({ open, onOpenChange }: BulkReEnrollDialogPro
 
                   <DialogFooter>
                     <Button type="button" variant="outline" onClick={handleClose}>
-                      {t('common.cancel')}
+                      {t.common.cancel()}
                     </Button>
                     <Button type="submit" disabled={reEnrollMutation.isPending}>
                       {reEnrollMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                      {t('students.startReEnrollment')}
+                      {t.students.startReEnrollment()}
                     </Button>
                   </DialogFooter>
                 </form>

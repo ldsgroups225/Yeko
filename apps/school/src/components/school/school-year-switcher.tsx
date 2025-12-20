@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Calendar, Check, ChevronsUpDown } from 'lucide-react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import {
   Command,
@@ -12,6 +11,7 @@ import {
 } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
+import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { getSchoolYears } from '@/school/functions/school-years'
 
@@ -25,7 +25,7 @@ interface SchoolYear {
 }
 
 export function SchoolYearSwitcher() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const { schoolYearId, switchSchoolYear, isSwitching } = useSchoolYearContext()
   const [open, setOpen] = useState(false)
 
@@ -47,7 +47,7 @@ export function SchoolYearSwitcher() {
     return (
       <div className="flex h-9 w-[156px] items-center gap-2 rounded-md border border-input bg-background px-3">
         <Calendar className="h-4 w-4 text-muted-foreground" />
-        <span className="text-sm text-muted-foreground">{t('common.loading')}</span>
+        <span className="text-sm text-muted-foreground">{t.common.loading()}</span>
       </div>
     )
   }
@@ -56,7 +56,7 @@ export function SchoolYearSwitcher() {
     return (
       <div className="flex h-9 w-[156px] items-center gap-2 rounded-md border border-input bg-background px-3">
         <Calendar className="h-4 w-4 text-muted-foreground" />
-        <span className="text-xs text-muted-foreground">{t('schoolYear.noYears')}</span>
+        <span className="text-xs text-muted-foreground">{t.schoolYear.noYears()}</span>
       </div>
     )
   }
@@ -77,7 +77,7 @@ export function SchoolYearSwitcher() {
           <div className="flex items-center gap-2 overflow-hidden">
             <Calendar className="h-4 w-4 shrink-0 text-muted-foreground" />
             <span className="truncate text-sm">
-              {currentYear?.template?.name || t('schoolYear.select')}
+              {currentYear?.template?.name || t.schoolYear.select()}
             </span>
           </div>
           <ChevronsUpDown className="ml-1 h-4 w-4 shrink-0 opacity-50" />
@@ -86,7 +86,7 @@ export function SchoolYearSwitcher() {
       <PopoverContent className="w-[200px] p-0" align="start">
         <Command>
           <CommandList id={listboxId}>
-            <CommandEmpty>{t('schoolYear.noYears')}</CommandEmpty>
+            <CommandEmpty>{t.schoolYear.noYears()}</CommandEmpty>
             <CommandGroup>
               {schoolYears.map((year: SchoolYear) => (
                 <CommandItem
@@ -99,7 +99,7 @@ export function SchoolYearSwitcher() {
                     <span>{year.template?.name}</span>
                     {year.isActive && (
                       <span className="rounded bg-green-500/20 px-1.5 py-0.5 text-xs text-green-600">
-                        {t('schoolYear.active')}
+                        {t.schoolYear.active()}
                       </span>
                     )}
                   </div>

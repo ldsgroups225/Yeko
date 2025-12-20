@@ -1,9 +1,9 @@
 'use client'
 
 import { ArrowRight, Calendar, CheckCircle2, Clock, GraduationCap, XCircle } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
-
 import { Badge } from '@/components/ui/badge'
+
+import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
 interface EnrollmentItem {
@@ -60,13 +60,13 @@ const statusConfig = {
 }
 
 export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   if (!enrollments || enrollments.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-8 text-center">
         <GraduationCap className="h-12 w-12 text-muted-foreground" />
-        <p className="mt-2 text-muted-foreground">{t('students.noEnrollmentHistory')}</p>
+        <p className="mt-2 text-muted-foreground">{t.students.noEnrollmentHistory()}</p>
       </div>
     )
   }
@@ -128,7 +128,12 @@ export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
                     )}
                   </div>
                   <Badge className={cn(config.bgColor, config.color, 'border-0')}>
-                    {t(`students.enrollment${status.charAt(0).toUpperCase() + status.slice(1)}`)}
+                    {{
+                      confirmed: t.students.enrollmentConfirmed,
+                      pending: t.students.enrollmentPending,
+                      cancelled: t.students.enrollmentCancelled,
+                      transferred: t.students.enrollmentTransferred,
+                    }[status]()}
                   </Badge>
                 </div>
 
@@ -136,7 +141,7 @@ export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
                   <div className="flex items-center gap-1">
                     <Calendar className="h-3.5 w-3.5" />
                     <span>
-                      {t('students.enrolled')}
+                      {t.students.enrolled()}
                       :
                       {' '}
                       {new Date(item.enrollment.enrollmentDate).toLocaleDateString()}
@@ -145,7 +150,7 @@ export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
                   {item.enrollment.rollNumber && (
                     <div className="flex items-center gap-1">
                       <span>
-                        {t('students.rollNumber')}
+                        {t.students.rollNumber()}
                         : #
                         {item.enrollment.rollNumber}
                       </span>
@@ -155,7 +160,7 @@ export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
                     <div className="flex items-center gap-1">
                       <CheckCircle2 className="h-3.5 w-3.5 text-green-600" />
                       <span>
-                        {t('students.confirmedOn')}
+                        {t.students.confirmedOn()}
                         :
                         {' '}
                         {new Date(item.enrollment.confirmedAt).toLocaleDateString()}
@@ -166,7 +171,7 @@ export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
                     <div className="flex items-center gap-1">
                       <ArrowRight className="h-3.5 w-3.5 text-blue-600" />
                       <span>
-                        {t('students.transferredOn')}
+                        {t.students.transferredOn()}
                         :
                         {' '}
                         {new Date(item.enrollment.transferredAt).toLocaleDateString()}
@@ -177,7 +182,7 @@ export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
                     <div className="flex items-center gap-1">
                       <XCircle className="h-3.5 w-3.5 text-red-600" />
                       <span>
-                        {t('students.cancelledOn')}
+                        {t.students.cancelledOn()}
                         :
                         {' '}
                         {new Date(item.enrollment.cancelledAt).toLocaleDateString()}

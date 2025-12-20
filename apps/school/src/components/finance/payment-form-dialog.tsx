@@ -4,11 +4,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod'
-
 import { Button } from '@/components/ui/button'
+
 import {
   Dialog,
   DialogContent,
@@ -35,6 +34,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { useTranslations } from '@/i18n'
 import { paymentsKeys } from '@/lib/queries/payments'
 import { paymentMethodLabels, paymentMethods } from '@/schemas/payment'
 import { recordPayment } from '@/school/functions/payments'
@@ -64,7 +64,7 @@ export function PaymentFormDialog({
   studentName,
   outstandingBalance,
 }: PaymentFormDialogProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
 
   const form = useForm<PaymentFormData>({
@@ -93,7 +93,7 @@ export function PaymentFormDialog({
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: paymentsKeys.all })
-      toast.success(t('finance.payments.recordPayment'))
+      toast.success(t.finance.payments.recordPayment())
       form.reset()
       onOpenChange(false)
     },
@@ -117,7 +117,7 @@ export function PaymentFormDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>{t('finance.payments.recordPayment')}</DialogTitle>
+          <DialogTitle>{t.finance.payments.recordPayment()}</DialogTitle>
           <DialogDescription>
             {studentName && (
               <span>
@@ -129,7 +129,7 @@ export function PaymentFormDialog({
                     {' '}
                     FCFA
                     {' '}
-                    {t('dashboard.accountant.unpaidFees')}
+                    {t.dashboard.accountant.unpaidFees()}
                     )
                   </span>
                 )}
@@ -147,12 +147,12 @@ export function PaymentFormDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      {t('students.student')}
+                      {t.students.student()}
                       {' '}
                       *
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder={t('students.searchPlaceholder')} />
+                      <Input {...field} placeholder={t.students.searchPlaceholder()} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -166,7 +166,7 @@ export function PaymentFormDialog({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    {t('finance.amount')}
+                    {t.finance.amount()}
                     {' '}
                     *
                   </FormLabel>
@@ -195,7 +195,7 @@ export function PaymentFormDialog({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    {t('finance.method')}
+                    {t.finance.method()}
                     {' '}
                     *
                   </FormLabel>
@@ -223,12 +223,12 @@ export function PaymentFormDialog({
               name="reference"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('finance.payments.reference')}</FormLabel>
+                  <FormLabel>{t.finance.payments.reference()}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder={t('finance.payments.referencePlaceholder')} />
+                    <Input {...field} placeholder={t.finance.payments.referencePlaceholder()} />
                   </FormControl>
                   <FormDescription>
-                    {t('finance.payments.referenceDescription')}
+                    {t.finance.payments.referenceDescription()}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -240,7 +240,7 @@ export function PaymentFormDialog({
               name="notes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('finance.description')}</FormLabel>
+                  <FormLabel>{t.finance.description()}</FormLabel>
                   <FormControl>
                     <Textarea {...field} rows={2} />
                   </FormControl>
@@ -255,13 +255,13 @@ export function PaymentFormDialog({
                 variant="outline"
                 onClick={() => onOpenChange(false)}
               >
-                {t('common.cancel')}
+                {t.common.cancel()}
               </Button>
               <Button type="submit" disabled={mutation.isPending}>
                 {mutation.isPending && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                {t('common.save')}
+                {t.common.save()}
               </Button>
             </DialogFooter>
           </form>

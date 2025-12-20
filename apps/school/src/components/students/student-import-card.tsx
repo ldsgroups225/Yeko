@@ -1,12 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Download, FileSpreadsheet, Upload } from 'lucide-react'
 import { useCallback, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
+import { useTranslations } from '@/i18n'
 import { importStudents, validateImportData } from '@/school/functions/bulk-operations'
 import { generateUUID } from '@/utils/generateUUID'
 
@@ -25,7 +25,7 @@ interface ImportResult {
 }
 
 export function StudentImportCard() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
   const { schoolYearId } = useSchoolYearContext()
 
@@ -38,7 +38,7 @@ export function StudentImportCard() {
       if (result.success && result.data) {
         setValidationResult(result.data)
         if (!result.data.isValid) {
-          toast.error(t('students.importParseError'))
+          toast.error(t.students.importParseError())
         }
       }
     },
@@ -49,7 +49,7 @@ export function StudentImportCard() {
     onSuccess: (result: { success: boolean, data?: ImportResult }) => {
       if (result.success && result.data) {
         toast.success(
-          t('students.importSuccess', { count: result.data.succeeded }),
+          t.students.importSuccess({ count: result.data.succeeded }),
         )
         queryClient.invalidateQueries({ queryKey: ['students'] })
         setFile(null)
@@ -57,7 +57,7 @@ export function StudentImportCard() {
       }
     },
     onError: () => {
-      toast.error(t('students.importParseError'))
+      toast.error(t.students.importParseError())
     },
   })
 
@@ -168,16 +168,16 @@ export function StudentImportCard() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <FileSpreadsheet className="h-5 w-5" />
-          {t('students.importStudents')}
+          {t.students.importStudents()}
         </CardTitle>
         <CardDescription>
-          {t('students.importStudentsDescription')}
+          {t.students.importStudentsDescription()}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <Button variant="outline" onClick={downloadTemplate} className="w-full">
           <Download className="mr-2 h-4 w-4" />
-          {t('students.downloadTemplate')}
+          {t.students.downloadTemplate()}
         </Button>
 
         <div className="space-y-2">
@@ -195,14 +195,14 @@ export function StudentImportCard() {
             disabled={validateMutation.isPending}
           >
             <Upload className="mr-2 h-4 w-4" />
-            {file ? file.name : t('students.importDropFile')}
+            {file ? file.name : t.students.importDropFile()}
           </Button>
         </div>
 
         {validationResult && (
           <div className="space-y-2 rounded-lg border p-4">
             <div className="flex justify-between text-sm">
-              <span>{t('students.importPreviewCount', { count: validationResult.totalRows })}</span>
+              <span>{t.students.importPreviewCount({ count: validationResult.totalRows })}</span>
               <span className={validationResult.isValid ? 'text-green-600' : 'text-red-600'}>
                 {validationResult.validRows}
                 {' '}
@@ -217,11 +217,11 @@ export function StudentImportCard() {
               <div className="mt-2 max-h-32 overflow-y-auto text-sm text-red-600">
                 {validationResult.errors.slice(0, 5).map(err => (
                   <p key={generateUUID()}>
-                    {t('students.importRowError', { row: err.row, error: err.message })}
+                    {t.students.importRowError({ row: err.row, error: err.message })}
                   </p>
                 ))}
                 {validationResult.errors.length > 5 && (
-                  <p>{t('common.andMore', { count: validationResult.errors.length - 5 })}</p>
+                  <p>{t.common.andMore({ count: validationResult.errors.length - 5 })}</p>
                 )}
               </div>
             )}
@@ -238,8 +238,8 @@ export function StudentImportCard() {
           className="w-full"
         >
           {importMutation.isPending
-            ? t('common.loading')
-            : t('students.importStart')}
+            ? t.common.loading()
+            : t.students.importStart()}
         </Button>
       </CardContent>
     </Card>

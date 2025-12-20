@@ -2,7 +2,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { Edit, GraduationCap, Trash2, Users } from 'lucide-react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { ClassSubjectManager } from '@/components/academic/class-subjects/class-subject-manager'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
@@ -12,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useTranslations } from '@/i18n'
 import { deleteClass, getClassById } from '@/school/functions/classes'
 
 export const Route = createFileRoute('/_auth/classes/$classId/')({
@@ -19,7 +19,7 @@ export const Route = createFileRoute('/_auth/classes/$classId/')({
 })
 
 function ClassDetailPage() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const { classId } = Route.useParams()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -34,11 +34,11 @@ function ClassDetailPage() {
     mutationFn: () => deleteClass({ data: classId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['classes'] })
-      toast.success(t('academic.classes.deleteSuccess'))
+      toast.success(t.classes.deleteSuccess())
       navigate({ to: '/classes' })
     },
     onError: (error: any) => {
-      toast.error(error.message || t('academic.classes.deleteError'))
+      toast.error(error.message || t.classes.deleteError())
     },
   })
 
@@ -64,9 +64,9 @@ function ClassDetailPage() {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-center">
-          <p className="text-lg font-medium">{t('academic.classes.notFound')}</p>
+          <p className="text-lg font-medium">{t.classes.notFound()}</p>
           <Button asChild className="mt-4">
-            <Link to="/classes">{t('common.back')}</Link>
+            <Link to="/classes">{t.common.back()}</Link>
           </Button>
         </div>
       </div>
@@ -80,8 +80,8 @@ function ClassDetailPage() {
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t('nav.academic'), href: '/academic' },
-          { label: t('nav.classes'), href: '/classes' },
+          { label: t.nav.academic(), href: '/academic' },
+          { label: t.nav.classes(), href: '/classes' },
           { label: className },
         ]}
       />
@@ -104,37 +104,37 @@ function ClassDetailPage() {
                   </Link>
                 )
               : (
-                  <p className="text-muted-foreground">{t('academic.classes.noClassroom')}</p>
+                  <p className="text-muted-foreground">{t.classes.noClassroom()}</p>
                 )}
           </div>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={() => setShowDeleteDialog(true)}>
             <Trash2 className="mr-2 h-4 w-4" />
-            {t('common.delete')}
+            {t.common.delete()}
           </Button>
           <Button
             size="sm"
             onClick={() => navigate({ to: '/classes/$classId/edit', params: { classId } })}
           >
             <Edit className="mr-2 h-4 w-4" />
-            {t('common.edit')}
+            {t.common.edit()}
           </Button>
         </div>
       </div>
 
       <Tabs defaultValue="info" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="info">{t('academic.classes.tabs.info')}</TabsTrigger>
-          <TabsTrigger value="students">{t('academic.classes.tabs.students')}</TabsTrigger>
-          <TabsTrigger value="teachers">{t('academic.classes.tabs.teachers')}</TabsTrigger>
+          <TabsTrigger value="info">{t.classes.tabs.stats()}</TabsTrigger>
+          <TabsTrigger value="students">{t.students.studentsList()}</TabsTrigger>
+          <TabsTrigger value="teachers">Teachers</TabsTrigger>
         </TabsList>
 
         <TabsContent value="info" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-3">
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">{t('academic.classes.stats.students')}</CardTitle>
+                <CardTitle className="text-sm font-medium text-muted-foreground">{t.classes.studentCount()}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center gap-2">
@@ -146,25 +146,29 @@ function ClassDetailPage() {
                   </span>
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {t('academic.classes.stats.genderBreakdown', { boys: boysCount, girls: girlsCount })}
+                  Boys:
+                  {boysCount}
+                  {' '}
+                  / Girls:
+                  {girlsCount}
                 </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">{t('academic.classes.status')}</CardTitle>
+                <CardTitle className="text-sm font-medium text-muted-foreground">{t.classes.status()}</CardTitle>
               </CardHeader>
               <CardContent>
                 <Badge variant={classData.status === 'active' ? 'default' : 'secondary'}>
-                  {classData.status === 'active' ? t('common.active') : t('common.archived')}
+                  {classData.status === 'active' ? t.common.active() : t.common.archived()}
                 </Badge>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">{t('academic.classes.room')}</CardTitle>
+                <CardTitle className="text-sm font-medium text-muted-foreground">{t.classes.room()}</CardTitle>
               </CardHeader>
               <CardContent>
                 {classroom
@@ -180,27 +184,27 @@ function ClassDetailPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>{t('academic.classes.details')}</CardTitle>
+              <CardTitle>{t.classes.details()}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-6 md:grid-cols-2">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">{t('academic.classes.grade')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t.classes.grade()}</p>
                   <p className="text-base">{grade.name}</p>
                 </div>
                 {series && (
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">{t('academic.classes.series')}</p>
+                    <p className="text-sm font-medium text-muted-foreground">{t.classes.series()}</p>
                     <p className="text-base">{series.name}</p>
                   </div>
                 )}
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">{t('academic.classes.section')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t.classes.section()}</p>
                   <p className="text-base">{classData.section}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">{t('academic.classes.homeroomTeacher')}</p>
-                  <p className="text-base">{homeroomTeacher?.name || t('common.unassigned')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t.classes.homeroomTeacher()}</p>
+                  <p className="text-base">{homeroomTeacher?.name || t.common.unassigned()}</p>
                 </div>
               </div>
             </CardContent>
@@ -210,7 +214,7 @@ function ClassDetailPage() {
         <TabsContent value="students" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>{t('academic.classes.tabs.students')}</CardTitle>
+              <CardTitle>{t.students.studentsList()}</CardTitle>
             </CardHeader>
             <CardContent>
               {/* Placeholder for future implementation */}
@@ -218,8 +222,8 @@ function ClassDetailPage() {
                 <Users className="h-10 w-10 text-muted-foreground/50" />
                 <p className="mt-2 text-muted-foreground">
                   {studentsCount > 0
-                    ? t('academic.classes.studentsList.enrolledCount', { count: studentsCount })
-                    : t('academic.classes.studentsList.empty')}
+                    ? `${studentsCount} students enrolled`
+                    : 'No students'}
                 </p>
               </div>
             </CardContent>
@@ -234,8 +238,8 @@ function ClassDetailPage() {
       <DeleteConfirmationDialog
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
-        title={t('academic.classes.deleteTitle')}
-        description={t('academic.classes.deleteDescription')}
+        title={t.common.deleteConfirmTitle()}
+        description={t.common.deleteConfirmDescription({ name: className })}
         confirmText={className}
         onConfirm={() => deleteMutation.mutate()}
         isLoading={deleteMutation.isPending}

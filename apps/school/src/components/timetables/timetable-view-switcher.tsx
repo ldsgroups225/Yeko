@@ -1,7 +1,7 @@
 import { Building2, GraduationCap, Users } from 'lucide-react'
 
-import { useTranslation } from 'react-i18next'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+import { useTranslations } from '@/i18n'
 
 export type TimetableViewMode = 'class' | 'teacher' | 'classroom'
 
@@ -16,7 +16,7 @@ export function TimetableViewSwitcher({
   onChange,
   disabled,
 }: TimetableViewSwitcherProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   return (
     <ToggleGroup
@@ -25,17 +25,17 @@ export function TimetableViewSwitcher({
       onValueChange={v => v && onChange(v as TimetableViewMode)}
       disabled={disabled}
     >
-      <ToggleGroupItem value="class" aria-label={t('timetables.viewByClass')}>
+      <ToggleGroupItem value="class" aria-label={t.timetables.viewByClass()}>
         <Users className="h-4 w-4 mr-2" />
-        {t('timetables.class')}
+        {t.timetables.class()}
       </ToggleGroupItem>
-      <ToggleGroupItem value="teacher" aria-label={t('timetables.viewByTeacher')}>
+      <ToggleGroupItem value="teacher" aria-label={t.timetables.viewByTeacher()}>
         <GraduationCap className="h-4 w-4 mr-2" />
-        {t('timetables.teacher')}
+        {t.timetables.teacher()}
       </ToggleGroupItem>
-      <ToggleGroupItem value="classroom" aria-label={t('timetables.viewByClassroom')}>
+      <ToggleGroupItem value="classroom" aria-label={t.timetables.viewByClassroom()}>
         <Building2 className="h-4 w-4 mr-2" />
-        {t('timetables.classroom')}
+        {t.timetables.classroom()}
       </ToggleGroupItem>
     </ToggleGroup>
   )

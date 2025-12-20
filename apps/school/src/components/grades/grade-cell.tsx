@@ -1,13 +1,13 @@
 import type { GradeStatus } from '@/schemas/grade'
 import { useCallback, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-
 import { Input } from '@/components/ui/input'
+
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
 interface GradeCellProps {
@@ -48,7 +48,7 @@ export function GradeCell({
   rejectionReason,
   className,
 }: GradeCellProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   // Use value as initial state - component should be keyed by studentId for proper reset
   const [localValue, setLocalValue] = useState(() => value?.toString() ?? '')
   const [error, setError] = useState<string | null>(null)
@@ -63,18 +63,18 @@ export function GradeCell({
     const numValue = Number.parseFloat(inputValue)
 
     if (Number.isNaN(numValue)) {
-      setError(t('academic.grades.errors.invalidGrade'))
+      setError(t.academic.grades.errors.invalidGrade())
       return
     }
 
     if (numValue < 0 || numValue > 20) {
-      setError(t('academic.grades.errors.invalidGrade'))
+      setError(t.academic.grades.errors.invalidGrade())
       return
     }
 
     // Check quarter points
     if ((numValue * 4) % 1 !== 0) {
-      setError(t('academic.grades.errors.invalidGrade'))
+      setError(t.academic.grades.errors.invalidGrade())
       return
     }
 
@@ -148,7 +148,7 @@ export function GradeCell({
           getValueColor(value),
           error && 'border-red-500 focus-visible:ring-red-500',
         )}
-        aria-label={t('ui.grade')}
+        aria-label={t.ui.grade()}
         aria-invalid={!!error}
       />
       {error && (
@@ -167,7 +167,7 @@ export function GradeCell({
         </TooltipTrigger>
         <TooltipContent side="top" className="max-w-xs">
           <p className="text-sm font-medium">
-            {t('academic.grades.validations.rejectReason')}
+            {t.academic.grades.validations.rejectReason()}
             :
           </p>
           <p className="text-sm text-muted-foreground">{rejectionReason}</p>

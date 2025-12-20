@@ -1,10 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowLeft, Calendar, MapPin, User } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-
 import { ConductSeverityBadge } from '@/components/conduct/conduct-severity-badge'
+
 import { ConductStatusBadge } from '@/components/conduct/conduct-status-badge'
 import { ConductTypeBadge } from '@/components/conduct/conduct-type-badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -18,6 +17,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useTranslations } from '@/i18n'
 import { conductRecordOptions } from '@/lib/queries/conduct-records'
 import { changeStatus } from '@/school/functions/conduct-records'
 
@@ -26,7 +26,7 @@ export const Route = createFileRoute('/_auth/conducts/conduct/$recordId')({
 })
 
 function ConductRecordDetailPage() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const { recordId } = Route.useParams()
   const queryClient = useQueryClient()
 
@@ -36,7 +36,7 @@ function ConductRecordDetailPage() {
     mutationFn: changeStatus,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['conduct-records'] })
-      toast.success(t('conduct.statusUpdated'))
+      toast.success(t.conduct.statusUpdated())
     },
   })
 
@@ -56,7 +56,7 @@ function ConductRecordDetailPage() {
   if (!record) {
     return (
       <div className="container py-6">
-        <p>{t('conduct.notFound')}</p>
+        <p>{t.conduct.notFound()}</p>
       </div>
     )
   }
@@ -74,7 +74,7 @@ function ConductRecordDetailPage() {
         <Link to="/conducts/conduct">
           <Button variant="ghost" size="sm">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            {t('common.back')}
+            {t.common.back()}
           </Button>
         </Link>
       </div>
@@ -99,11 +99,11 @@ function ConductRecordDetailPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="open">{t('conduct.status.open')}</SelectItem>
-                    <SelectItem value="investigating">{t('conduct.status.investigating')}</SelectItem>
-                    <SelectItem value="pending_decision">{t('conduct.status.pending_decision')}</SelectItem>
-                    <SelectItem value="resolved">{t('conduct.status.resolved')}</SelectItem>
-                    <SelectItem value="closed">{t('conduct.status.closed')}</SelectItem>
+                    <SelectItem value="open">{t.conduct.status.open()}</SelectItem>
+                    <SelectItem value="investigating">{t.conduct.status.investigating()}</SelectItem>
+                    <SelectItem value="pending_decision">{t.conduct.status.pending_decision()}</SelectItem>
+                    <SelectItem value="resolved">{t.conduct.status.resolved()}</SelectItem>
+                    <SelectItem value="closed">{t.conduct.status.closed()}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -129,7 +129,7 @@ function ConductRecordDetailPage() {
 
               {record.witnesses && record.witnesses.length > 0 && (
                 <div className="mt-4">
-                  <h4 className="text-sm font-medium mb-2">{t('conduct.form.witnesses')}</h4>
+                  <h4 className="text-sm font-medium mb-2">{t.conduct.form.witnesses()}</h4>
                   <div className="flex flex-wrap gap-2">
                     {record.witnesses.map((witness: string) => (
                       <span key={witness} className="text-sm bg-muted px-2 py-1 rounded">
@@ -145,7 +145,7 @@ function ConductRecordDetailPage() {
           {record.resolutionNotes && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">{t('conduct.resolution')}</CardTitle>
+                <CardTitle className="text-base">{t.conduct.resolution()}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">{record.resolutionNotes}</p>
@@ -157,7 +157,7 @@ function ConductRecordDetailPage() {
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">{t('conduct.student')}</CardTitle>
+              <CardTitle className="text-base">{t.conduct.student()}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-3">
@@ -175,7 +175,7 @@ function ConductRecordDetailPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">{t('conduct.recordedBy')}</CardTitle>
+              <CardTitle className="text-base">{t.conduct.recordedBy()}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-2 text-sm">

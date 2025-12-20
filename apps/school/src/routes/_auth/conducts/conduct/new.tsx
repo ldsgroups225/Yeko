@@ -1,12 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-
 import { ConductRecordForm } from '@/components/conduct/conduct-record-form'
+
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
+import { useTranslations } from '@/i18n'
 import { createRecord } from '@/school/functions/conduct-records'
 import { getSchoolYears } from '@/school/functions/school-years'
 
@@ -15,7 +15,7 @@ export const Route = createFileRoute('/_auth/conducts/conduct/new')({
 })
 
 function NewConductRecordPage() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const { schoolYearId: contextSchoolYearId } = useSchoolYearContext()
@@ -33,11 +33,11 @@ function NewConductRecordPage() {
     mutationFn: createRecord,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['conduct-records'] })
-      toast.success(t('conduct.created'))
+      toast.success(t.conduct.created())
       navigate({ to: '/conducts/conduct' })
     },
     onError: () => {
-      toast.error(t('conduct.createFailed'))
+      toast.error(t.conduct.createFailed())
     },
   })
 
@@ -54,7 +54,7 @@ function NewConductRecordPage() {
     witnesses?: string
   }) => {
     if (!effectiveSchoolYearId) {
-      toast.error(t('errors.noSchoolYear'))
+      toast.error(t.classes.noSchoolYear())
       return
     }
 
@@ -83,20 +83,20 @@ function NewConductRecordPage() {
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t('nav.schoolLife'), href: '/conducts' },
-          { label: t('nav.conduct'), href: '/conducts/conduct' },
-          { label: t('conduct.newRecord') },
+          { label: t.nav.schoolLife(), href: '/conducts' },
+          { label: t.nav.conduct(), href: '/conducts/conduct' },
+          { label: t.conduct.newRecord() },
         ]}
       />
 
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">{t('conduct.newRecord')}</h1>
-        <p className="text-muted-foreground">{t('conduct.newRecordDescription')}</p>
+        <h1 className="text-3xl font-bold tracking-tight">{t.conduct.newRecord()}</h1>
+        <p className="text-muted-foreground">{t.conduct.newRecordDescription()}</p>
       </div>
 
       <Card className="max-w-2xl">
         <CardHeader>
-          <CardTitle>{t('conduct.form.title')}</CardTitle>
+          <CardTitle>{t.conduct.form.title()}</CardTitle>
         </CardHeader>
         <CardContent>
           <ConductRecordForm

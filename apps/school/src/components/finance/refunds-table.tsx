@@ -1,7 +1,6 @@
 'use client'
 
 import { Check, X } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -13,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useTranslations } from '@/i18n'
 import { generateUUID } from '@/utils/generateUUID'
 
 interface Refund {
@@ -62,7 +62,7 @@ function formatDate(dateStr: string) {
 }
 
 export function RefundsTable({ refunds, isLoading, onApprove, onReject }: RefundsTableProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   if (isLoading) {
     return (
@@ -77,7 +77,7 @@ export function RefundsTable({ refunds, isLoading, onApprove, onReject }: Refund
   if (refunds.length === 0) {
     return (
       <div className="py-8 text-center text-muted-foreground">
-        {t('finance.refunds.noRefunds')}
+        {t.finance.refunds.noRefunds()}
       </div>
     )
   }
@@ -86,12 +86,12 @@ export function RefundsTable({ refunds, isLoading, onApprove, onReject }: Refund
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>{t('students.student')}</TableHead>
-          <TableHead className="text-right">{t('finance.amount')}</TableHead>
-          <TableHead>{t('finance.refunds.reason')}</TableHead>
-          <TableHead>{t('common.date')}</TableHead>
-          <TableHead>{t('common.status')}</TableHead>
-          <TableHead className="text-right">{t('common.actions')}</TableHead>
+          <TableHead>{t.students.student()}</TableHead>
+          <TableHead className="text-right">{t.finance.amount()}</TableHead>
+          <TableHead>{t.finance.refunds.reason()}</TableHead>
+          <TableHead>{t.common.date()}</TableHead>
+          <TableHead>{t.common.status()}</TableHead>
+          <TableHead className="text-right">{t.common.actions()}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -107,9 +107,15 @@ export function RefundsTable({ refunds, isLoading, onApprove, onReject }: Refund
             <TableCell>{formatDate(refund.requestedAt)}</TableCell>
             <TableCell>
               <Badge variant={getStatusVariant(refund.status)}>
-                {t(`finance.refunds.status.${refund.status}`)}
+                {{
+                  pending: t.finance.refunds.status.pending,
+                  approved: t.finance.refunds.status.approved,
+                  rejected: t.finance.refunds.status.rejected,
+                  processed: t.finance.refunds.status.processed,
+                }[refund.status as 'pending' | 'approved' | 'rejected' | 'processed']()}
               </Badge>
             </TableCell>
+            {' '}
             <TableCell className="text-right">
               {refund.status === 'pending' && (
                 <div className="flex justify-end gap-1">
@@ -118,7 +124,7 @@ export function RefundsTable({ refunds, isLoading, onApprove, onReject }: Refund
                     size="icon"
                     className="h-8 w-8 text-green-600 hover:text-green-700"
                     onClick={() => onApprove?.(refund.id)}
-                    aria-label={t('finance.refunds.approve')}
+                    aria-label={t.finance.refunds.approve()}
                   >
                     <Check className="h-4 w-4" />
                   </Button>
@@ -127,7 +133,7 @@ export function RefundsTable({ refunds, isLoading, onApprove, onReject }: Refund
                     size="icon"
                     className="h-8 w-8 text-red-600 hover:text-red-700"
                     onClick={() => onReject?.(refund.id)}
-                    aria-label={t('finance.refunds.reject')}
+                    aria-label={t.finance.refunds.reject()}
                   >
                     <X className="h-4 w-4" />
                   </Button>

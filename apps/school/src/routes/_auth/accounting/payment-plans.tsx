@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { useTranslation } from 'react-i18next'
 import { PaymentPlansTable } from '@/components/finance'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useTranslations } from '@/i18n'
 import { paymentPlansOptions } from '@/lib/queries'
 
 export const Route = createFileRoute('/_auth/accounting/payment-plans')({
@@ -11,7 +11,7 @@ export const Route = createFileRoute('/_auth/accounting/payment-plans')({
 })
 
 function PaymentPlansPage() {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   const { data: paymentPlans, isLoading } = useQuery(paymentPlansOptions.list())
 
@@ -30,23 +30,23 @@ function PaymentPlansPage() {
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t('nav.finance'), href: '/accounting' },
-          { label: t('finance.paymentPlans.title') },
+          { label: t.nav.finance(), href: '/accounting' },
+          { label: t.finance.paymentPlans.title() },
         ]}
       />
 
       <div>
         <h1 className="text-3xl font-bold tracking-tight">
-          {t('finance.paymentPlans.title')}
+          {t.finance.paymentPlans.title()}
         </h1>
         <p className="text-muted-foreground">
-          {t('finance.paymentPlans.description')}
+          {t.finance.paymentPlans.description()}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>{t('finance.paymentPlans.title')}</CardTitle>
+          <CardTitle>{t.finance.paymentPlans.title()}</CardTitle>
         </CardHeader>
         <CardContent>
           <PaymentPlansTable

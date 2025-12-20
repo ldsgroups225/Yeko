@@ -4,11 +4,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod'
-
 import { Button } from '@/components/ui/button'
+
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog,
@@ -35,6 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useTranslations } from '@/i18n'
 import { feeTypesKeys } from '@/lib/queries/fee-types'
 import { feeCategories, feeCategoryLabels } from '@/schemas/fee-type'
 import { createNewFeeType } from '@/school/functions/fee-types'
@@ -57,7 +57,7 @@ interface FeeTypeFormDialogProps {
 }
 
 export function FeeTypeFormDialog({ open, onOpenChange }: FeeTypeFormDialogProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
 
   const form = useForm<FeeTypeFormData>({
@@ -88,7 +88,7 @@ export function FeeTypeFormDialog({ open, onOpenChange }: FeeTypeFormDialogProps
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: feeTypesKeys.all })
-      toast.success(t('finance.feeTypes.created'))
+      toast.success(t.finance.feeTypes.created())
       form.reset()
       onOpenChange(false)
     },
@@ -105,9 +105,9 @@ export function FeeTypeFormDialog({ open, onOpenChange }: FeeTypeFormDialogProps
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>{t('finance.feeTypes.create')}</DialogTitle>
+          <DialogTitle>{t.finance.feeTypes.create()}</DialogTitle>
           <DialogDescription>
-            {t('finance.feeTypes.createDescription')}
+            {t.finance.feeTypes.createDescription()}
           </DialogDescription>
         </DialogHeader>
 
@@ -120,12 +120,12 @@ export function FeeTypeFormDialog({ open, onOpenChange }: FeeTypeFormDialogProps
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      {t('common.code')}
+                      {t.common.code()}
                       {' '}
                       *
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder={t('finance.feeTypes.placeholders.code')} />
+                      <Input {...field} placeholder={t.finance.feeTypes.placeholders.code()} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -138,7 +138,7 @@ export function FeeTypeFormDialog({ open, onOpenChange }: FeeTypeFormDialogProps
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      {t('finance.feeTypes.category')}
+                      {t.finance.feeTypes.category()}
                       {' '}
                       *
                     </FormLabel>
@@ -168,12 +168,12 @@ export function FeeTypeFormDialog({ open, onOpenChange }: FeeTypeFormDialogProps
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    {t('common.name')}
+                    {t.common.name()}
                     {' '}
                     *
                   </FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder={t('finance.feeTypes.placeholders.name')} />
+                    <Input {...field} placeholder={t.finance.feeTypes.placeholders.name()} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -185,12 +185,12 @@ export function FeeTypeFormDialog({ open, onOpenChange }: FeeTypeFormDialogProps
               name="nameEn"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('common.nameEn')}</FormLabel>
+                  <FormLabel>{t.common.nameEn()}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder={t('finance.feeTypes.placeholders.nameEn')} />
+                    <Input {...field} placeholder={t.finance.feeTypes.placeholders.nameEn()} />
                   </FormControl>
                   <FormDescription>
-                    {t('common.optionalEnglishName')}
+                    {t.common.optionalEnglishName()}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -202,7 +202,7 @@ export function FeeTypeFormDialog({ open, onOpenChange }: FeeTypeFormDialogProps
               name="displayOrder"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('common.displayOrder')}</FormLabel>
+                  <FormLabel>{t.common.displayOrder()}</FormLabel>
                   <FormControl>
                     <Input type="number" min={0} {...field} />
                   </FormControl>
@@ -224,7 +224,7 @@ export function FeeTypeFormDialog({ open, onOpenChange }: FeeTypeFormDialogProps
                       />
                     </FormControl>
                     <FormLabel className="font-normal">
-                      {t('finance.feeTypes.mandatory')}
+                      {t.finance.feeTypes.mandatory()}
                     </FormLabel>
                   </FormItem>
                 )}
@@ -242,7 +242,7 @@ export function FeeTypeFormDialog({ open, onOpenChange }: FeeTypeFormDialogProps
                       />
                     </FormControl>
                     <FormLabel className="font-normal">
-                      {t('finance.feeTypes.recurring')}
+                      {t.finance.feeTypes.recurring()}
                     </FormLabel>
                   </FormItem>
                 )}
@@ -255,13 +255,13 @@ export function FeeTypeFormDialog({ open, onOpenChange }: FeeTypeFormDialogProps
                 variant="outline"
                 onClick={() => onOpenChange(false)}
               >
-                {t('common.cancel')}
+                {t.common.cancel()}
               </Button>
               <Button type="submit" disabled={mutation.isPending}>
                 {mutation.isPending && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                {t('common.save')}
+                {t.common.save()}
               </Button>
             </DialogFooter>
           </form>

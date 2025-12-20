@@ -3,9 +3,8 @@ import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-
 import { GradeEntryTable, GradeTypeSelector } from '@/components/grades'
+
 import { SectionHeader } from '@/components/layout/page-layout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -20,6 +19,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 import { useCurrentTeacher } from '@/hooks/use-current-teacher'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
+import { useTranslations } from '@/i18n'
 import { classSubjectsKeys } from '@/lib/queries/class-subjects'
 import { classesOptions } from '@/lib/queries/classes'
 import { enrollmentsOptions } from '@/lib/queries/enrollments'
@@ -34,7 +34,7 @@ export const Route = createFileRoute('/_auth/grades/entry')({
 })
 
 function GradeEntryPage() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const { schoolYearId } = useSchoolYearContext()
   const { data: currentTeacher } = useCurrentTeacher()
   const [selectedClassId, setSelectedClassId] = useState<string>('')
@@ -106,19 +106,19 @@ function GradeEntryPage() {
   return (
     <div className="space-y-6">
       <SectionHeader
-        title={t('academic.grades.entry.title')}
-        description={t('academic.grades.entry.subtitle')}
+        title={t.academic.grades.entry.title()}
+        description={t.academic.grades.entry.subtitle()}
         className="mb-4"
       />
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">{t('academic.grades.entry.parameters')}</CardTitle>
+          <CardTitle className="text-lg">{t.academic.grades.entry.parameters()}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div className="space-y-2">
-              <Label htmlFor="class-select">{t('academic.grades.entry.class')}</Label>
+              <Label htmlFor="class-select">{t.academic.grades.entry.class()}</Label>
               {classesLoading
                 ? (
                     <Skeleton className="h-10 w-full" />
@@ -126,7 +126,7 @@ function GradeEntryPage() {
                 : (
                     <Select value={selectedClassId} onValueChange={handleClassChange}>
                       <SelectTrigger id="class-select">
-                        <SelectValue placeholder={t('academic.grades.entry.selectClass')} />
+                        <SelectValue placeholder={t.academic.grades.entry.selectClass()} />
                       </SelectTrigger>
                       <SelectContent>
                         {classesData?.map(item => (
@@ -142,7 +142,7 @@ function GradeEntryPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="subject-select">{t('academic.grades.entry.subject')}</Label>
+              <Label htmlFor="subject-select">{t.academic.grades.entry.subject()}</Label>
               {subjectsLoading
                 ? (
                     <Skeleton className="h-10 w-full" />
@@ -154,7 +154,7 @@ function GradeEntryPage() {
                       disabled={!selectedClassId || !classSubjectsData?.length}
                     >
                       <SelectTrigger id="subject-select">
-                        <SelectValue placeholder={t('academic.grades.entry.selectSubject')} />
+                        <SelectValue placeholder={t.academic.grades.entry.selectSubject()} />
                       </SelectTrigger>
                       <SelectContent>
                         {classSubjectsData?.map((cs: any) => (
@@ -168,7 +168,7 @@ function GradeEntryPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="term-select">{t('academic.grades.entry.term')}</Label>
+              <Label htmlFor="term-select">{t.academic.grades.entry.term()}</Label>
               {termsLoading
                 ? (
                     <Skeleton className="h-10 w-full" />
@@ -180,7 +180,7 @@ function GradeEntryPage() {
                       disabled={!termsData?.length}
                     >
                       <SelectTrigger id="term-select">
-                        <SelectValue placeholder={t('academic.grades.entry.selectTerm')} />
+                        <SelectValue placeholder={t.academic.grades.entry.selectTerm()} />
                       </SelectTrigger>
                       <SelectContent>
                         {termsData?.map((term: any) => (
@@ -194,7 +194,7 @@ function GradeEntryPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="grade-type-select">{t('academic.grades.entry.gradeType')}</Label>
+              <Label htmlFor="grade-type-select">{t.academic.grades.entry.gradeType()}</Label>
               <GradeTypeSelector
                 value={gradeType}
                 onValueChange={handleGradeTypeChange}
@@ -204,7 +204,7 @@ function GradeEntryPage() {
 
           <div className="mt-4 grid gap-4 sm:grid-cols-3">
             <div className="space-y-2">
-              <Label htmlFor="coefficient-input">{t('academic.grades.entry.coefficient')}</Label>
+              <Label htmlFor="coefficient-input">{t.academic.grades.entry.coefficient()}</Label>
               <Input
                 id="coefficient-input"
                 type="number"
@@ -216,7 +216,7 @@ function GradeEntryPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="date-input">{t('academic.grades.entry.date')}</Label>
+              <Label htmlFor="date-input">{t.academic.grades.entry.date()}</Label>
               <Input
                 id="date-input"
                 type="date"
@@ -226,10 +226,10 @@ function GradeEntryPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description-input">{t('academic.grades.entry.gradeDescription')}</Label>
+              <Label htmlFor="description-input">{t.academic.grades.entry.gradeDescription()}</Label>
               <Input
                 id="description-input"
-                placeholder={t('academic.grades.entry.descriptionPlaceholder')}
+                placeholder={t.academic.grades.entry.descriptionPlaceholder()}
                 value={description}
                 onChange={e => setDescription(e.target.value)}
               />
@@ -241,7 +241,7 @@ function GradeEntryPage() {
       {canFetchGrades && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">{t('academic.grades.entry.studentGrades')}</CardTitle>
+            <CardTitle className="text-lg">{t.academic.grades.entry.studentGrades()}</CardTitle>
           </CardHeader>
           <CardContent>
             {gradesLoading || studentsLoading

@@ -1,6 +1,6 @@
 import { AlertTriangle, CheckCircle, Circle, Clock, Search, XCircle } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/badge'
+import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
 type ConductStatus = 'open' | 'investigating' | 'pending_decision' | 'resolved' | 'closed' | 'appealed'
@@ -28,14 +28,23 @@ export function ConductStatusBadge({
   showIcon = true,
   className,
 }: ConductStatusBadgeProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const config = statusConfig[status]
   const Icon = config.icon
+
+  const statusTranslations = {
+    open: t.conduct.status.open,
+    investigating: t.conduct.status.investigating,
+    pending_decision: t.conduct.status.pending_decision,
+    resolved: t.conduct.status.resolved,
+    closed: t.conduct.status.closed,
+    appealed: t.conduct.status.appealed,
+  }
 
   return (
     <Badge variant="outline" className={cn(config.colorClass, className)}>
       {showIcon && <Icon className="mr-1 h-3 w-3" />}
-      {t(`conduct.status.${status}`)}
+      {statusTranslations[status]()}
     </Badge>
   )
 }

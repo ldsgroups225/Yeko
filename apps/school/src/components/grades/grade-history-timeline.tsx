@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { CheckCircle2, Clock, Edit3, Send, XCircle } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
-
 import { Skeleton } from '@/components/ui/skeleton'
+
+import { useTranslations } from '@/i18n'
 import { gradesOptions } from '@/lib/queries/grades'
 import { cn } from '@/lib/utils'
 
@@ -37,7 +37,7 @@ const actionColors = {
 }
 
 export function GradeHistoryTimeline({ gradeId }: GradeHistoryTimelineProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   const { data: history, isLoading } = useQuery(gradesOptions.history(gradeId))
 
@@ -61,7 +61,7 @@ export function GradeHistoryTimeline({ gradeId }: GradeHistoryTimelineProps) {
     return (
       <div className="flex items-center justify-center py-8 text-muted-foreground">
         <Clock className="mr-2 size-4" />
-        {t('academic.grades.history.empty')}
+        {t.academic.grades.history.empty()}
       </div>
     )
   }
@@ -91,9 +91,14 @@ export function GradeHistoryTimeline({ gradeId }: GradeHistoryTimelineProps) {
             {/* Content */}
             <div className={cn('flex-1 pb-4', isLast && 'pb-0')}>
               <div className="flex items-center gap-2">
-                <span className="font-medium">
-                  {t(`academic.grades.history.actions.${entry.action}`)}
-                </span>
+                <div className="font-medium">
+                  {{
+                    submitted: t.academic.grades.history.actions.submitted,
+                    validated: t.academic.grades.history.actions.validated,
+                    rejected: t.academic.grades.history.actions.rejected,
+                    edited: t.academic.grades.history.actions.edited,
+                  }[entry.action]()}
+                </div>
                 <span className="text-sm text-muted-foreground">
                   {new Date(entry.createdAt).toLocaleDateString('fr-FR', {
                     day: 'numeric',
@@ -106,7 +111,7 @@ export function GradeHistoryTimeline({ gradeId }: GradeHistoryTimelineProps) {
               </div>
 
               <p className="text-sm text-muted-foreground">
-                {t('academic.grades.history.by', { name: entry.validator.name })}
+                {t.academic.grades.history.by({ name: entry.validator.name })}
               </p>
 
               {entry.action === 'edited' && entry.previousValue && entry.newValue && (

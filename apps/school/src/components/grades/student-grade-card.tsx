@@ -1,9 +1,10 @@
+import type { TranslationFunctions } from '@/i18n/i18n-types'
 import { BookOpen, Calendar, TrendingDown, TrendingUp, User } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
-
 import { Badge } from '@/components/ui/badge'
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
+import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
 import { GradeStatusBadge } from './grade-status-badge'
@@ -45,14 +46,14 @@ function getGradeColor(value: number): string {
   return 'text-red-500'
 }
 
-function getGradeLabel(type: string, t: (key: string) => string): string {
+function getGradeLabel(type: string, t: TranslationFunctions): string {
   const labels: Record<string, string> = {
-    quiz: t('academic.grades.types.quiz'),
-    test: t('academic.grades.types.test'),
-    exam: t('academic.grades.types.exam'),
-    participation: t('academic.grades.types.participation'),
-    homework: t('academic.grades.types.homework'),
-    project: t('academic.grades.types.project'),
+    quiz: t.academic.grades.types.quiz(),
+    test: t.academic.grades.types.test(),
+    exam: t.academic.grades.types.exam(),
+    participation: t.academic.grades.types.participation(),
+    homework: t.academic.grades.types.homework(),
+    project: t.academic.grades.types.project(),
   }
   return labels[type] ?? type
 }
@@ -65,7 +66,7 @@ export function StudentGradeCard({
   totalStudents,
   className,
 }: StudentGradeCardProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   const validatedGrades = grades.filter(g => g.status === 'validated')
   const pendingGrades = grades.filter(g => g.status !== 'validated')
@@ -125,7 +126,7 @@ export function StudentGradeCard({
                   )
                 : null}
             <span className="text-sm">
-              {t('academic.grades.rank', { rank, total: totalStudents })}
+              {t.academic.grades.rank({ rank, total: totalStudents })}
             </span>
             <Progress value={(1 - rank / totalStudents) * 100} className="h-2 flex-1" />
           </div>
@@ -136,7 +137,7 @@ export function StudentGradeCard({
         {Object.keys(gradesBySubject).length === 0
           ? (
               <p className="py-4 text-center text-muted-foreground">
-                {t('academic.grades.noGrades')}
+                {t.academic.grades.noGrades()}
               </p>
             )
           : (
@@ -171,7 +172,7 @@ export function StudentGradeCard({
         {pendingGrades.length > 0 && (
           <div className="mt-4 border-t pt-4">
             <p className="mb-2 text-sm font-medium text-muted-foreground">
-              {t('academic.grades.pendingGrades', { count: pendingGrades.length })}
+              {t.academic.grades.pendingGrades({ count: pendingGrades.length })}
             </p>
             <div className="flex flex-wrap gap-2">
               {pendingGrades.map(grade => (
@@ -192,7 +193,7 @@ export function StudentGradeCard({
         {grades.length > 0 && (
           <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
             <Calendar className="size-3" />
-            {t('academic.grades.lastUpdated', {
+            {t.academic.grades.lastUpdated({
               date: new Date(
                 Math.max(...grades.map(g => new Date(g.gradeDate).getTime())),
               ).toLocaleDateString('fr-FR'),

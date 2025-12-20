@@ -1,9 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { CheckIcon, ChevronsUpDownIcon, Loader2 } from 'lucide-react'
 import * as React from 'react'
-import { useTranslation } from 'react-i18next'
-
 import { Button } from '@/components/ui/button'
+
 import {
   Command,
   CommandEmpty,
@@ -17,6 +16,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { getStudents } from '@/school/functions/students'
 
@@ -47,7 +47,7 @@ export function StudentCombobox({
   disabled,
   classId,
 }: StudentComboboxProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const [open, setOpen] = React.useState(false)
   const [search, setSearch] = React.useState('')
 
@@ -106,7 +106,7 @@ export function StudentCombobox({
               )
             : (
                 <span className="text-muted-foreground">
-                  {placeholder ?? t('attendance.selectStudent')}
+                  {placeholder ?? t.attendance.selectStudent()}
                 </span>
               )}
           <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -115,7 +115,7 @@ export function StudentCombobox({
       <PopoverContent className="w-[400px] p-0" align="start">
         <Command shouldFilter={false}>
           <CommandInput
-            placeholder={t('attendance.searchStudent')}
+            placeholder={t.attendance.searchStudent()}
             value={search}
             onValueChange={setSearch}
           />
@@ -128,7 +128,7 @@ export function StudentCombobox({
                 )
               : students.length === 0
                 ? (
-                    <CommandEmpty>{t('students.noStudents')}</CommandEmpty>
+                    <CommandEmpty>{t.students.noStudents()}</CommandEmpty>
                   )
                 : (
                     <CommandGroup>

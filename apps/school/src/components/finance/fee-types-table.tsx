@@ -1,5 +1,4 @@
 import { Edit, MoreHorizontal, Trash2 } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -18,6 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useTranslations } from '@/i18n'
 import { generateUUID } from '@/utils/generateUUID'
 
 interface FeeType {
@@ -43,11 +43,21 @@ export function FeeTypesTable({
   onEdit,
   onDelete,
 }: FeeTypesTableProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   const getCategoryLabel = (category: string) => {
-    const key = `finance.feeCategories.${category}` as const
-    return t(key)
+    const categoryTranslations = {
+      tuition: t.finance.feeCategories.tuition,
+      registration: t.finance.feeCategories.registration,
+      exam: t.finance.feeCategories.exam,
+      transport: t.finance.feeCategories.transport,
+      uniform: t.finance.feeCategories.uniform,
+      books: t.finance.feeCategories.books,
+      meals: t.finance.feeCategories.meals,
+      activities: t.finance.feeCategories.activities,
+      other: t.finance.feeCategories.other,
+    }
+    return categoryTranslations[category as keyof typeof categoryTranslations]()
   }
 
   if (isLoading) {
@@ -63,7 +73,7 @@ export function FeeTypesTable({
   if (feeTypes.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
-        <p className="text-muted-foreground">{t('finance.feeTypes.noFeeTypes')}</p>
+        <p className="text-muted-foreground">{t.finance.feeTypes.noFeeTypes()}</p>
       </div>
     )
   }
@@ -72,11 +82,11 @@ export function FeeTypesTable({
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>{t('finance.feeTypes.code')}</TableHead>
-          <TableHead>{t('common.name')}</TableHead>
-          <TableHead>{t('finance.feeTypes.category')}</TableHead>
-          <TableHead>{t('common.status')}</TableHead>
-          <TableHead className="text-right">{t('common.actions')}</TableHead>
+          <TableHead>{t.finance.feeTypes.code()}</TableHead>
+          <TableHead>{t.common.name()}</TableHead>
+          <TableHead>{t.finance.feeTypes.category()}</TableHead>
+          <TableHead>{t.common.status()}</TableHead>
+          <TableHead className="text-right">{t.common.actions()}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -103,20 +113,20 @@ export function FeeTypesTable({
             <TableCell>{getCategoryLabel(feeType.category)}</TableCell>
             <TableCell>
               <Badge variant={feeType.status === 'active' ? 'default' : 'secondary'}>
-                {feeType.status === 'active' ? t('common.active') : t('common.inactive')}
+                {feeType.status === 'active' ? t.common.active() : t.common.inactive()}
               </Badge>
             </TableCell>
             <TableCell className="text-right">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" aria-label={t('common.actions')}>
+                  <Button variant="ghost" size="icon" aria-label={t.common.actions()}>
                     <MoreHorizontal className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={() => onEdit?.(feeType)}>
                     <Edit className="mr-2 h-4 w-4" />
-                    {t('common.edit')}
+                    {t.common.edit()}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
@@ -124,7 +134,7 @@ export function FeeTypesTable({
                     className="text-destructive"
                   >
                     <Trash2 className="mr-2 h-4 w-4" />
-                    {t('common.delete')}
+                    {t.common.delete()}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

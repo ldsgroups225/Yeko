@@ -2,7 +2,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
@@ -10,6 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { useTranslations } from '@/i18n'
 import { createClassroom, updateClassroom } from '@/school/functions/classrooms'
 
 const classroomSchema = z.object({
@@ -31,7 +31,7 @@ interface ClassroomFormProps {
 }
 
 export function ClassroomForm({ classroom, onSuccess }: ClassroomFormProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
   const isEditing = !!classroom
 
@@ -51,11 +51,11 @@ export function ClassroomForm({ classroom, onSuccess }: ClassroomFormProps) {
         : createClassroom({ data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['classrooms'] })
-      toast.success(isEditing ? t('spaces.classrooms.updateSuccess') : t('spaces.classrooms.createSuccess'))
+      toast.success(isEditing ? t.spaces.classrooms.updateSuccess() : t.spaces.classrooms.createSuccess())
       onSuccess?.()
     },
     onError: (error: any) => {
-      toast.error(error.message || t('spaces.classrooms.saveFailed'))
+      toast.error(error.message || t.spaces.classrooms.saveFailed())
     },
   })
 
@@ -68,27 +68,27 @@ export function ClassroomForm({ classroom, onSuccess }: ClassroomFormProps) {
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="name">
-            {t('spaces.classrooms.name')}
+            {t.spaces.classrooms.name()}
             {' '}
             *
           </Label>
-          <Input id="name" {...register('name')} placeholder={t('spaces.classrooms.namePlaceholder')} />
+          <Input id="name" {...register('name')} placeholder={t.spaces.classrooms.namePlaceholder()} />
           {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="code">
-            {t('spaces.classrooms.code')}
+            {t.spaces.classrooms.code()}
             {' '}
             *
           </Label>
-          <Input id="code" {...register('code')} placeholder={t('spaces.classrooms.codePlaceholder')} />
+          <Input id="code" {...register('code')} placeholder={t.spaces.classrooms.codePlaceholder()} />
           {errors.code && <p className="text-sm text-destructive">{errors.code.message}</p>}
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="type">
-            {t('spaces.classrooms.type')}
+            {t.spaces.classrooms.type()}
             {' '}
             *
           </Label>
@@ -97,18 +97,18 @@ export function ClassroomForm({ classroom, onSuccess }: ClassroomFormProps) {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="regular">{t('spaces.classrooms.types.regular')}</SelectItem>
-              <SelectItem value="lab">{t('spaces.classrooms.types.lab')}</SelectItem>
-              <SelectItem value="gym">{t('spaces.classrooms.types.gym')}</SelectItem>
-              <SelectItem value="library">{t('spaces.classrooms.types.library')}</SelectItem>
-              <SelectItem value="auditorium">{t('spaces.classrooms.types.auditorium')}</SelectItem>
+              <SelectItem value="regular">{t.spaces.classrooms.types.regular()}</SelectItem>
+              <SelectItem value="lab">{t.spaces.classrooms.types.lab()}</SelectItem>
+              <SelectItem value="gym">{t.spaces.classrooms.types.gym()}</SelectItem>
+              <SelectItem value="library">{t.spaces.classrooms.types.library()}</SelectItem>
+              <SelectItem value="auditorium">{t.spaces.classrooms.types.auditorium()}</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="capacity">
-            {t('spaces.classrooms.capacity')}
+            {t.spaces.classrooms.capacity()}
             {' '}
             *
           </Label>
@@ -117,18 +117,18 @@ export function ClassroomForm({ classroom, onSuccess }: ClassroomFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="floor">{t('spaces.classrooms.floor')}</Label>
-          <Input id="floor" {...register('floor')} placeholder={t('spaces.classrooms.floorPlaceholder')} />
+          <Label htmlFor="floor">{t.spaces.classrooms.floor()}</Label>
+          <Input id="floor" {...register('floor')} placeholder={t.spaces.classrooms.floorPlaceholder()} />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="building">{t('spaces.classrooms.building')}</Label>
-          <Input id="building" {...register('building')} placeholder={t('spaces.classrooms.buildingPlaceholder')} />
+          <Label htmlFor="building">{t.spaces.classrooms.building()}</Label>
+          <Input id="building" {...register('building')} placeholder={t.spaces.classrooms.buildingPlaceholder()} />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="status">
-            {t('common.status')}
+            {t.common.status()}
             {' '}
             *
           </Label>
@@ -137,23 +137,23 @@ export function ClassroomForm({ classroom, onSuccess }: ClassroomFormProps) {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="active">{t('common.active')}</SelectItem>
-              <SelectItem value="maintenance">{t('spaces.classrooms.status.maintenance')}</SelectItem>
-              <SelectItem value="inactive">{t('common.inactive')}</SelectItem>
+              <SelectItem value="active">{t.common.active()}</SelectItem>
+              <SelectItem value="maintenance">{t.spaces.classrooms.status.maintenance()}</SelectItem>
+              <SelectItem value="inactive">{t.common.inactive()}</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="notes">{t('common.notes')}</Label>
-        <Textarea id="notes" {...register('notes')} rows={3} placeholder={t('spaces.classrooms.notesPlaceholder')} />
+        <Label htmlFor="notes">{t.common.notes()}</Label>
+        <Textarea id="notes" {...register('notes')} rows={3} placeholder={t.spaces.classrooms.notesPlaceholder()} />
       </div>
 
       <div className="flex justify-end gap-2">
         <Button type="submit" disabled={mutation.isPending}>
           {mutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {isEditing ? t('common.update') : t('common.create')}
+          {isEditing ? t.common.update() : t.common.create()}
         </Button>
       </div>
     </form>

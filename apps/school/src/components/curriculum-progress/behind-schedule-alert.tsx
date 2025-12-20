@@ -1,10 +1,10 @@
 import type { ProgressStatus } from '@/schemas/curriculum-progress'
 
 import { AlertTriangle, TrendingDown } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
-
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+
 import { Button } from '@/components/ui/button'
+import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
 interface BehindScheduleClass {
@@ -28,7 +28,7 @@ export function BehindScheduleAlert({
   onViewDetails,
   className,
 }: BehindScheduleAlertProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   if (classes.length === 0)
     return null
@@ -48,14 +48,14 @@ export function BehindScheduleAlert({
       <AlertTriangle className="h-4 w-4" />
       <AlertTitle className="flex items-center gap-2">
         <TrendingDown className="h-4 w-4" />
-        {t('curriculum.behindScheduleAlert', { count: classes.length })}
+        {t.curriculum.behindScheduleAlert({ count: classes.length })}
       </AlertTitle>
       <AlertDescription className="mt-2">
         <div className="space-y-2">
           {significantlyBehind.length > 0 && (
             <div>
               <p className="font-medium text-sm mb-1">
-                {t('curriculum.significantlyBehind')}
+                {t.curriculum.significantlyBehind()}
                 {' '}
                 (
                 {significantlyBehind.length}
@@ -84,7 +84,7 @@ export function BehindScheduleAlert({
           {slightlyBehind.length > 0 && (
             <div>
               <p className="font-medium text-sm mb-1">
-                {t('curriculum.slightlyBehind')}
+                {t.curriculum.slightlyBehind()}
                 {' '}
                 (
                 {slightlyBehind.length}
@@ -117,7 +117,7 @@ export function BehindScheduleAlert({
               className="mt-2"
               onClick={() => onViewDetails(classes[0]?.classId ?? '')}
             >
-              {t('common.viewDetails')}
+              {t.common.viewDetails()}
             </Button>
           )}
         </div>

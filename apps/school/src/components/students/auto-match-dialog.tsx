@@ -3,10 +3,9 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { CheckCircle2, Loader2, UserPlus, Users, Wand2 } from 'lucide-react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -20,6 +19,7 @@ import {
 } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useTranslations } from '@/i18n'
 import { parentsOptions } from '@/lib/queries/parents'
 import { studentsKeys } from '@/lib/queries/students'
 import { createParent, linkParentToStudent } from '@/school/functions/parents'
@@ -50,7 +50,7 @@ interface SelectedMatch {
 }
 
 export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
   const [selectedMatches, setSelectedMatches] = useState(() => new Map<string, SelectedMatch>())
   const [isProcessing, setIsProcessing] = useState(false)
@@ -124,7 +124,7 @@ export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
           const nameParts = suggestion.studentName.split(' ')
           const parent = await createParent({
             data: {
-              firstName: t('students.emergencyContact'),
+              firstName: t.students.emergencyContact(),
               lastName: nameParts[0] || '',
               phone: suggestion.phone,
             },
@@ -148,10 +148,10 @@ export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
 
       setResults({ linked, created })
       queryClient.invalidateQueries({ queryKey: studentsKeys.all })
-      toast.success(t('students.autoMatchSuccess', { count: linked }))
+      toast.success(t.students.autoMatchSuccess({ count: linked }))
     }
     catch (err) {
-      toast.error(err instanceof Error ? err.message : t('common.error'))
+      toast.error(err instanceof Error ? err.message : t.common.error())
     }
     finally {
       setIsProcessing(false)
@@ -170,9 +170,9 @@ export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Wand2 className="h-5 w-5" />
-            {t('students.autoMatchParents')}
+            {t.students.autoMatchParents()}
           </DialogTitle>
-          <DialogDescription>{t('students.autoMatchDescription')}</DialogDescription>
+          <DialogDescription>{t.students.autoMatchDescription()}</DialogDescription>
         </DialogHeader>
 
         {results
@@ -180,16 +180,16 @@ export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
               <div className="space-y-4 py-4">
                 <div className="flex flex-col items-center justify-center gap-3 rounded-lg border bg-muted/50 p-6">
                   <CheckCircle2 className="h-12 w-12 text-green-500" />
-                  <h3 className="text-lg font-semibold">{t('students.autoMatchComplete')}</h3>
+                  <h3 className="text-lg font-semibold">{t.students.autoMatchComplete()}</h3>
                   <div className="text-center text-sm text-muted-foreground">
-                    <p>{t('students.autoMatchLinked', { count: results.linked })}</p>
+                    <p>{t.students.autoMatchLinked({ count: results.linked })}</p>
                     {results.created > 0 && (
-                      <p>{t('students.autoMatchCreated', { count: results.created })}</p>
+                      <p>{t.students.autoMatchCreated({ count: results.created })}</p>
                     )}
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button onClick={handleClose}>{t('common.close')}</Button>
+                  <Button onClick={handleClose}>{t.common.close()}</Button>
                 </DialogFooter>
               </div>
             )
@@ -203,10 +203,10 @@ export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
               ? (
                   <div className="flex flex-col items-center justify-center gap-3 py-8 text-center">
                     <Users className="h-12 w-12 text-muted-foreground" />
-                    <h3 className="font-semibold">{t('students.noMatchSuggestions')}</h3>
-                    <p className="text-sm text-muted-foreground">{t('students.noMatchSuggestionsDescription')}</p>
+                    <h3 className="font-semibold">{t.students.noMatchSuggestions()}</h3>
+                    <p className="text-sm text-muted-foreground">{t.students.noMatchSuggestionsDescription()}</p>
                     <DialogFooter className="mt-4">
-                      <Button variant="outline" onClick={handleClose}>{t('common.close')}</Button>
+                      <Button variant="outline" onClick={handleClose}>{t.common.close()}</Button>
                     </DialogFooter>
                   </div>
                 )
@@ -214,14 +214,14 @@ export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <p className="text-sm text-muted-foreground">
-                        {t('students.matchSuggestionsCount', { count: suggestions.length })}
+                        {t.students.matchSuggestionsCount({ count: suggestions.length })}
                       </p>
                       <div className="flex gap-2">
                         <Button variant="outline" size="sm" onClick={selectAll}>
-                          {t('common.selectAll')}
+                          {t.common.selectAll()}
                         </Button>
                         <Button variant="outline" size="sm" onClick={deselectAll}>
-                          {t('common.deselectAll')}
+                          {t.common.deselectAll()}
                         </Button>
                       </div>
                     </div>
@@ -252,11 +252,11 @@ export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
                                     ? (
                                         <Badge variant="secondary" className="flex items-center gap-1">
                                           <UserPlus className="h-3 w-3" />
-                                          {t('students.existingParentFound')}
+                                          {t.students.existingParentFound()}
                                         </Badge>
                                       )
                                     : (
-                                        <Badge variant="outline">{t('students.willCreateParent')}</Badge>
+                                        <Badge variant="outline">{t.students.willCreateParent()}</Badge>
                                       )}
                                 </div>
 
@@ -282,7 +282,7 @@ export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
                                 {isSelected && (
                                   <div className="flex items-center gap-2 pt-1">
                                     <Label className="text-sm">
-                                      {t('students.relationship')}
+                                      {t.students.relationship()}
                                       :
                                     </Label>
                                     <Select
@@ -293,11 +293,11 @@ export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
                                         <SelectValue />
                                       </SelectTrigger>
                                       <SelectContent>
-                                        <SelectItem value="father">{t('students.relationshipFather')}</SelectItem>
-                                        <SelectItem value="mother">{t('students.relationshipMother')}</SelectItem>
-                                        <SelectItem value="guardian">{t('students.relationshipGuardian')}</SelectItem>
-                                        <SelectItem value="grandparent">{t('students.relationshipGrandparent')}</SelectItem>
-                                        <SelectItem value="other">{t('students.relationshipOther')}</SelectItem>
+                                        <SelectItem value="father">{t.parents.relationshipFather()}</SelectItem>
+                                        <SelectItem value="mother">{t.parents.relationshipMother()}</SelectItem>
+                                        <SelectItem value="guardian">{t.parents.relationshipGuardian()}</SelectItem>
+                                        <SelectItem value="grandparent">{t.parents.relationshipGrandparent()}</SelectItem>
+                                        <SelectItem value="other">{t.parents.relationshipOther()}</SelectItem>
                                       </SelectContent>
                                     </Select>
                                   </div>
@@ -310,14 +310,14 @@ export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
                     </div>
 
                     <DialogFooter>
-                      <Button variant="outline" onClick={handleClose}>{t('common.cancel')}</Button>
+                      <Button variant="outline" onClick={handleClose}>{t.common.cancel()}</Button>
                       <Button
                         onClick={processMatches}
                         disabled={selectedMatches.size === 0 || isProcessing}
                       >
                         {isProcessing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                         <Wand2 className="mr-2 h-4 w-4" />
-                        {t('students.linkSelected', { count: selectedMatches.size })}
+                        {t.students.linkSelected({ count: selectedMatches.size })}
                       </Button>
                     </DialogFooter>
                   </div>

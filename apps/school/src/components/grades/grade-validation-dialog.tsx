@@ -1,10 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
-
 import { Button } from '@/components/ui/button'
+
 import {
   Dialog,
   DialogContent,
@@ -23,6 +22,7 @@ import {
 } from '@/components/ui/form'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { useTranslations } from '@/i18n'
 
 const rejectSchema = z.object({
   reason: z.string()
@@ -49,7 +49,7 @@ export function GradeValidationDialog({
   onConfirm,
   isLoading,
 }: GradeValidationDialogProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const [comment, setComment] = useState('')
 
   const form = useForm<RejectFormValues>({
@@ -82,13 +82,13 @@ export function GradeValidationDialog({
         <DialogHeader>
           <DialogTitle>
             {mode === 'validate'
-              ? t('academic.grades.validations.validateTitle')
-              : t('academic.grades.validations.rejectTitle')}
+              ? t.academic.grades.validations.validateTitle()
+              : t.academic.grades.validations.rejectTitle()}
           </DialogTitle>
           <DialogDescription>
             {mode === 'validate'
-              ? t('academic.grades.validations.validateDescription', { count: gradeCount })
-              : t('academic.grades.validations.rejectDescription')}
+              ? t.academic.grades.validations.validateDescription({ count: gradeCount })
+              : t.academic.grades.validations.rejectDescription()}
           </DialogDescription>
         </DialogHeader>
 
@@ -102,13 +102,13 @@ export function GradeValidationDialog({
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          {t('academic.grades.validations.rejectReason')}
+                          {t.academic.grades.validations.rejectReason()}
                           {' '}
                           *
                         </FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder={t('academic.grades.validations.rejectReasonPlaceholder')}
+                            placeholder={t.academic.grades.validations.rejectReasonPlaceholder()}
                             className="min-h-[100px]"
                             {...field}
                           />
@@ -123,11 +123,11 @@ export function GradeValidationDialog({
           : (
               <div className="space-y-2">
                 <Label htmlFor="comment">
-                  {t('academic.grades.validations.comment')}
+                  {t.academic.grades.validations.comment()}
                 </Label>
                 <Textarea
                   id="comment"
-                  placeholder={t('academic.grades.validations.commentPlaceholder')}
+                  placeholder={t.academic.grades.validations.commentPlaceholder()}
                   value={comment}
                   onChange={e => setComment(e.target.value)}
                   className="min-h-[80px]"
@@ -141,7 +141,7 @@ export function GradeValidationDialog({
             onClick={() => handleOpenChange(false)}
             disabled={isLoading}
           >
-            {t('common.cancel')}
+            {t.common.cancel()}
           </Button>
           <Button
             variant={mode === 'reject' ? 'destructive' : 'default'}
@@ -150,10 +150,10 @@ export function GradeValidationDialog({
             className={mode === 'validate' ? 'bg-green-600 hover:bg-green-700' : ''}
           >
             {isLoading
-              ? t('common.loading')
+              ? t.common.loading()
               : mode === 'validate'
-                ? t('academic.grades.validations.confirmValidate')
-                : t('academic.grades.validations.confirmReject')}
+                ? t.academic.grades.validations.confirmValidate()
+                : t.academic.grades.validations.confirmReject()}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -1,6 +1,5 @@
 import { AlertCircle, CheckCircle2, FileText, Loader2 } from 'lucide-react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -14,6 +13,7 @@ import {
 import { Label } from '@/components/ui/label'
 import { Progress } from '@/components/ui/progress'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { useTranslations } from '@/i18n'
 import { generateUUID } from '@/utils/generateUUID'
 
 interface Student {
@@ -47,7 +47,7 @@ export function BulkGenerationDialog({
   termName,
   onGenerate,
 }: BulkGenerationDialogProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() =>
     new Set(students.map(s => s.id)),
   )
@@ -115,10 +115,10 @@ export function BulkGenerationDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
-            {t('reportCards.bulkGeneration')}
+            {t.reportCards.bulkGeneration()}
           </DialogTitle>
           <DialogDescription>
-            {t('reportCards.bulkGenerationDescription', { className, termName })}
+            {t.reportCards.bulkGenerationDescription({ className, termName })}
           </DialogDescription>
         </DialogHeader>
 
@@ -127,7 +127,7 @@ export function BulkGenerationDialog({
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <Label className="text-sm font-medium">
-                  {t('reportCards.selectStudents')}
+                  {t.reportCards.selectStudents()}
                   {' '}
                   (
                   {selectedIds.size}
@@ -137,8 +137,8 @@ export function BulkGenerationDialog({
                 </Label>
                 <Button variant="ghost" size="sm" onClick={toggleAll}>
                   {selectedIds.size === students.length
-                    ? t('common.deselectAll')
-                    : t('common.selectAll')}
+                    ? t.common.deselectAll()
+                    : t.common.selectAll()}
                 </Button>
               </div>
 
@@ -178,10 +178,10 @@ export function BulkGenerationDialog({
 
             <DialogFooter>
               <Button variant="outline" onClick={handleClose}>
-                {t('common.cancel')}
+                {t.common.cancel()}
               </Button>
               <Button onClick={handleGenerate} disabled={selectedIds.size === 0}>
-                {t('reportCards.generate')}
+                {t.reportCards.generate()}
                 {' '}
                 (
                 {selectedIds.size}
@@ -198,7 +198,7 @@ export function BulkGenerationDialog({
             </div>
             <Progress value={progress} className="w-full" />
             <p className="text-center text-sm text-muted-foreground">
-              {t('reportCards.generatingProgress', { progress: Math.round(progress) })}
+              {t.reportCards.generatingProgress({ progress: Math.round(progress) })}
             </p>
           </div>
         )}
@@ -217,10 +217,10 @@ export function BulkGenerationDialog({
 
             <div className="text-center space-y-1">
               <p className="font-semibold">
-                {t('reportCards.generationComplete')}
+                {t.reportCards.generationComplete()}
               </p>
               <p className="text-sm text-muted-foreground">
-                {t('reportCards.generationSummary', {
+                {t.reportCards.generationSummary({
                   success: result.success,
                   total: result.total,
                 })}
@@ -230,7 +230,7 @@ export function BulkGenerationDialog({
             {result.errors.length > 0 && (
               <div className="rounded-md bg-destructive/10 p-3">
                 <p className="text-sm font-medium text-destructive mb-2">
-                  {t('reportCards.generationErrors', { count: result.failed })}
+                  {t.reportCards.generationErrors({ count: result.failed })}
                 </p>
                 <ul className="text-sm text-destructive/80 space-y-1">
                   {result.errors.slice(0, 3).map(err => (
@@ -242,7 +242,7 @@ export function BulkGenerationDialog({
                   {result.errors.length > 3 && (
                     <li>
                       •
-                      {t('common.andMore', { count: result.errors.length - 3 })}
+                      {t.common.andMore({ count: result.errors.length - 3 })}
                     </li>
                   )}
                 </ul>
@@ -250,7 +250,7 @@ export function BulkGenerationDialog({
             )}
 
             <DialogFooter>
-              <Button onClick={handleClose}>{t('common.close')}</Button>
+              <Button onClick={handleClose}>{t.common.close()}</Button>
             </DialogFooter>
           </div>
         )}

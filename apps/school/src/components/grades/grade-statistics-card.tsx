@@ -1,6 +1,6 @@
-import { useTranslation } from 'react-i18next'
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+
+import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
 interface GradeStatistics {
@@ -18,7 +18,7 @@ interface GradeStatisticsCardProps {
 }
 
 export function GradeStatisticsCard({ statistics, className }: GradeStatisticsCardProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const passRate = statistics.count > 0
     ? Math.round(((statistics.count - statistics.below10) / statistics.count) * 100)
     : 0
@@ -26,32 +26,32 @@ export function GradeStatisticsCard({ statistics, className }: GradeStatisticsCa
   return (
     <Card className={cn('', className)}>
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium">{t('academic.grades.statistics.title')}</CardTitle>
+        <CardTitle className="text-sm font-medium">{t.academic.grades.statistics.title()}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-          <StatItem label={t('academic.grades.statistics.gradeCount')} value={statistics.count} />
+          <StatItem label={t.academic.grades.statistics.gradeCount()} value={statistics.count} />
           <StatItem
-            label={t('academic.grades.statistics.classAverage')}
+            label={t.academic.grades.statistics.classAverage()}
             value={statistics.average.toFixed(2)}
             valueClassName={getAverageColor(statistics.average)}
           />
-          <StatItem label={t('academic.grades.statistics.min')} value={statistics.min.toFixed(2)} />
-          <StatItem label={t('academic.grades.statistics.max')} value={statistics.max.toFixed(2)} />
+          <StatItem label={t.academic.grades.statistics.min()} value={statistics.min.toFixed(2)} />
+          <StatItem label={t.academic.grades.statistics.max()} value={statistics.max.toFixed(2)} />
           <StatItem
-            label={t('academic.grades.statistics.below10')}
+            label={t.academic.grades.statistics.below10()}
             value={statistics.below10}
             valueClassName="text-red-600 dark:text-red-400"
           />
           <StatItem
-            label={t('academic.grades.statistics.above15')}
+            label={t.academic.grades.statistics.above15()}
             value={statistics.above15}
             valueClassName="text-green-600 dark:text-green-400"
           />
         </div>
         <div className="mt-4">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">{t('academic.grades.statistics.passRate')}</span>
+            <span className="text-muted-foreground">{t.academic.grades.statistics.passRate()}</span>
             <span className={cn('font-medium', passRate >= 50 ? 'text-green-600' : 'text-red-600')}>
               {passRate}
               %

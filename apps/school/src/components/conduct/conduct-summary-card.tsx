@@ -1,6 +1,6 @@
 import { AlertTriangle, Award, Ban, FileText } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useTranslations } from '@/i18n'
 
 interface ConductSummary {
   incidents: number
@@ -16,7 +16,7 @@ interface ConductSummaryCardProps {
 }
 
 export function ConductSummaryCard({ studentName, summary }: ConductSummaryCardProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   return (
     <Card>
@@ -31,7 +31,7 @@ export function ConductSummaryCard({ studentName, summary }: ConductSummaryCardP
             </div>
             <div>
               <div className="text-2xl font-bold">{summary.incidents}</div>
-              <div className="text-xs text-muted-foreground">{t('conduct.type.incident')}</div>
+              <div className="text-xs text-muted-foreground">{t.conduct.type.incident()}</div>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -40,7 +40,7 @@ export function ConductSummaryCard({ studentName, summary }: ConductSummaryCardP
             </div>
             <div>
               <div className="text-2xl font-bold">{summary.sanctions}</div>
-              <div className="text-xs text-muted-foreground">{t('conduct.type.sanction')}</div>
+              <div className="text-xs text-muted-foreground">{t.conduct.type.sanction()}</div>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -49,7 +49,7 @@ export function ConductSummaryCard({ studentName, summary }: ConductSummaryCardP
             </div>
             <div>
               <div className="text-2xl font-bold">{summary.rewards}</div>
-              <div className="text-xs text-muted-foreground">{t('conduct.type.reward')}</div>
+              <div className="text-xs text-muted-foreground">{t.conduct.type.reward()}</div>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -58,14 +58,14 @@ export function ConductSummaryCard({ studentName, summary }: ConductSummaryCardP
             </div>
             <div>
               <div className="text-2xl font-bold">{summary.notes}</div>
-              <div className="text-xs text-muted-foreground">{t('conduct.type.note')}</div>
+              <div className="text-xs text-muted-foreground">{t.conduct.type.note()}</div>
             </div>
           </div>
         </div>
         {summary.totalPoints !== undefined && (
           <div className="mt-4 pt-4 border-t">
             <div className="flex justify-between items-center">
-              <span className="text-sm text-muted-foreground">{t('conduct.totalPoints')}</span>
+              <span className="text-sm text-muted-foreground">{t.conduct.totalPoints()}</span>
               <span className="text-lg font-bold">{summary.totalPoints}</span>
             </div>
           </div>

@@ -8,9 +8,8 @@ import {
 } from '@tanstack/react-table'
 import { Edit, Eye, FileWarning, MoreHorizontal, Trash2 } from 'lucide-react'
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-
 import { TableSkeleton } from '@/components/hr/table-skeleton'
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -35,6 +34,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useTranslations } from '@/i18n'
 
 import { ConductSeverityBadge } from './conduct-severity-badge'
 import { ConductStatusBadge } from './conduct-status-badge'
@@ -75,13 +75,13 @@ export function ConductRecordTable({
   onEdit,
   onDelete,
 }: ConductRecordTableProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   const columns = useMemo<ColumnDef<ConductRecord>[]>(
     () => [
       {
         accessorKey: 'incidentDate',
-        header: t('conduct.date'),
+        header: t.conduct.date(),
         cell: ({ row }) => {
           const date = row.original.incidentDate
             ? new Date(row.original.incidentDate)
@@ -101,7 +101,7 @@ export function ConductRecordTable({
       },
       {
         accessorKey: 'studentName',
-        header: t('conduct.student'),
+        header: t.conduct.student(),
         cell: ({ row }) => (
           <div className="flex items-center gap-3">
             <Avatar className="h-8 w-8">
@@ -122,12 +122,12 @@ export function ConductRecordTable({
       },
       {
         accessorKey: 'type',
-        header: t('conduct.form.type'),
+        header: t.conduct.form.type(),
         cell: ({ row }) => <ConductTypeBadge type={row.original.type} />,
       },
       {
         accessorKey: 'title',
-        header: t('conduct.title'),
+        header: t.conduct.title(),
         cell: ({ row }) => (
           <div className="flex flex-col max-w-[300px]">
             <span className="font-medium truncate" title={row.original.title}>{row.original.title}</span>
@@ -139,19 +139,19 @@ export function ConductRecordTable({
       },
       {
         accessorKey: 'severity',
-        header: t('conduct.form.severity'),
+        header: t.conduct.form.severity(),
         cell: ({ row }) => row.original.severity
           ? <ConductSeverityBadge severity={row.original.severity} />
           : <span className="text-muted-foreground">-</span>,
       },
       {
         accessorKey: 'status',
-        header: t('common.status'),
+        header: t.common.status(),
         cell: ({ row }) => <ConductStatusBadge status={row.original.status} />,
       },
       {
         id: 'actions',
-        header: t('common.actions'),
+        header: t.common.actions(),
         cell: ({ row }) => (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -163,13 +163,13 @@ export function ConductRecordTable({
               {onView && (
                 <DropdownMenuItem onClick={() => onView(row.original.id)}>
                   <Eye className="mr-2 h-4 w-4" />
-                  {t('common.view')}
+                  {t.common.view()}
                 </DropdownMenuItem>
               )}
               {onEdit && (
                 <DropdownMenuItem onClick={() => onEdit(row.original.id)}>
                   <Edit className="mr-2 h-4 w-4" />
-                  {t('common.edit')}
+                  {t.common.edit()}
                 </DropdownMenuItem>
               )}
               {onDelete && (
@@ -180,7 +180,7 @@ export function ConductRecordTable({
                     className="text-destructive focus:text-destructive"
                   >
                     <Trash2 className="mr-2 h-4 w-4" />
-                    {t('common.delete')}
+                    {t.common.delete()}
                   </DropdownMenuItem>
                 </>
               )}
@@ -215,8 +215,8 @@ export function ConductRecordTable({
           <EmptyMedia variant="icon">
             <FileWarning className="h-6 w-6" />
           </EmptyMedia>
-          <EmptyTitle>{t('conduct.noRecords')}</EmptyTitle>
-          <EmptyDescription>{t('conduct.noRecordsDescription')}</EmptyDescription>
+          <EmptyTitle>{t.conduct.noRecords()}</EmptyTitle>
+          <EmptyDescription>{t.conduct.noRecordsDescription()}</EmptyDescription>
         </EmptyHeader>
       </Empty>
     )
@@ -262,7 +262,7 @@ export function ConductRecordTable({
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            {t('common.previous')}
+            {t.common.previous()}
           </Button>
           <Button
             variant="outline"
@@ -270,7 +270,7 @@ export function ConductRecordTable({
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            {t('common.next')}
+            {t.common.next()}
           </Button>
         </div>
       )}

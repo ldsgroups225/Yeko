@@ -13,10 +13,9 @@ import {
   Trash2,
 } from 'lucide-react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-
 import { Badge } from '@/components/ui/badge'
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
@@ -52,6 +51,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useTranslations } from '@/i18n'
 import {
   createSchoolYear,
   deleteSchoolYear,
@@ -66,7 +66,7 @@ export const Route = createFileRoute('/_auth/settings/school-years')({
 })
 
 function SchoolYearsSettingsPage() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
@@ -89,10 +89,10 @@ function SchoolYearsSettingsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['school-years'] })
       queryClient.invalidateQueries({ queryKey: ['school-context'] })
-      toast.success(t('settings.schoolYears.activatedSuccess'))
+      toast.success(t.settings.schoolYears.activatedSuccess())
     },
     onError: () => {
-      toast.error(t('settings.schoolYears.activatedError'))
+      toast.error(t.settings.schoolYears.activatedError())
     },
   })
 
@@ -101,11 +101,11 @@ function SchoolYearsSettingsPage() {
     mutationFn: (id: string) => deleteSchoolYear({ data: { id } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['school-years'] })
-      toast.success(t('settings.schoolYears.deletedSuccess'))
+      toast.success(t.settings.schoolYears.deletedSuccess())
       setDeleteConfirmId(null)
     },
     onError: () => {
-      toast.error(t('settings.schoolYears.deletedError'))
+      toast.error(t.settings.schoolYears.deletedError())
     },
   })
 
@@ -114,14 +114,14 @@ function SchoolYearsSettingsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold tracking-tight">{t('settings.schoolYears.title')}</h2>
+          <h2 className="text-xl font-semibold tracking-tight">{t.settings.schoolYears.title()}</h2>
           <p className="text-sm text-muted-foreground">
-            {t('settings.schoolYears.description')}
+            {t.settings.schoolYears.description()}
           </p>
         </div>
         <Button onClick={() => setIsCreateDialogOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
-          {t('settings.schoolYears.create')}
+          {t.settings.schoolYears.create()}
         </Button>
       </div>
 
@@ -130,10 +130,10 @@ function SchoolYearsSettingsPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calendar className="h-5 w-5" />
-            {t('settings.schoolYears.list')}
+            {t.settings.schoolYears.list()}
           </CardTitle>
           <CardDescription>
-            {t('settings.schoolYears.listDescription')}
+            {t.settings.schoolYears.listDescription()}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -150,11 +150,11 @@ function SchoolYearsSettingsPage() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>{t('settings.schoolYears.name')}</TableHead>
-                        <TableHead>{t('settings.schoolYears.startDate')}</TableHead>
-                        <TableHead>{t('settings.schoolYears.endDate')}</TableHead>
-                        <TableHead>{t('settings.schoolYears.status')}</TableHead>
-                        <TableHead className="text-right">{t('common.actions')}</TableHead>
+                        <TableHead>{t.settings.schoolYears.name()}</TableHead>
+                        <TableHead>{t.settings.schoolYears.startDate()}</TableHead>
+                        <TableHead>{t.settings.schoolYears.endDate()}</TableHead>
+                        <TableHead>{t.settings.schoolYears.status()}</TableHead>
+                        <TableHead className="text-right">{t.common.actions()}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -174,12 +174,12 @@ function SchoolYearsSettingsPage() {
                               ? (
                                   <Badge variant="default" className="gap-1">
                                     <CheckCircle2 className="h-3 w-3" />
-                                    {t('settings.schoolYears.active')}
+                                    {t.settings.schoolYears.active()}
                                   </Badge>
                                 )
                               : (
                                   <Badge variant="secondary">
-                                    {t('settings.schoolYears.inactive')}
+                                    {t.settings.schoolYears.inactive()}
                                   </Badge>
                                 )}
                           </TableCell>
@@ -197,7 +197,7 @@ function SchoolYearsSettingsPage() {
                                     disabled={setActiveMutation.isPending}
                                   >
                                     <CheckCircle2 className="mr-2 h-4 w-4" />
-                                    {t('settings.schoolYears.setActive')}
+                                    {t.settings.schoolYears.setActive()}
                                   </DropdownMenuItem>
                                 )}
                                 <DropdownMenuSeparator />
@@ -206,7 +206,7 @@ function SchoolYearsSettingsPage() {
                                   onClick={() => setDeleteConfirmId(year.id)}
                                 >
                                   <Trash2 className="mr-2 h-4 w-4" />
-                                  {t('common.delete')}
+                                  {t.common.delete()}
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
@@ -220,14 +220,14 @@ function SchoolYearsSettingsPage() {
                   <div className="flex flex-col items-center justify-center py-12 text-center">
                     <Calendar className="h-12 w-12 text-muted-foreground" />
                     <h3 className="mt-4 text-lg font-semibold">
-                      {t('settings.schoolYears.empty')}
+                      {t.settings.schoolYears.empty()}
                     </h3>
                     <p className="mt-2 text-sm text-muted-foreground">
-                      {t('settings.schoolYears.emptyDescription')}
+                      {t.settings.schoolYears.emptyDescription()}
                     </p>
                     <Button className="mt-4" onClick={() => setIsCreateDialogOpen(true)}>
                       <Plus className="mr-2 h-4 w-4" />
-                      {t('settings.schoolYears.create')}
+                      {t.settings.schoolYears.create()}
                     </Button>
                   </div>
                 )}
@@ -245,14 +245,14 @@ function SchoolYearsSettingsPage() {
       <Dialog open={!!deleteConfirmId} onOpenChange={() => setDeleteConfirmId(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('settings.schoolYears.deleteConfirmTitle')}</DialogTitle>
+            <DialogTitle>{t.settings.schoolYears.deleteConfirmTitle()}</DialogTitle>
             <DialogDescription>
-              {t('settings.schoolYears.deleteConfirmDescription')}
+              {t.settings.schoolYears.deleteConfirmDescription()}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteConfirmId(null)}>
-              {t('common.cancel')}
+              {t.common.cancel()}
             </Button>
             <Button
               variant="destructive"
@@ -260,7 +260,7 @@ function SchoolYearsSettingsPage() {
               disabled={deleteMutation.isPending}
             >
               {deleteMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {t('common.delete')}
+              {t.common.delete()}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -276,7 +276,7 @@ interface CreateSchoolYearDialogProps {
 }
 
 function CreateSchoolYearDialog({ open, onOpenChange, templates }: CreateSchoolYearDialogProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
   const [templateId, setTemplateId] = useState('')
   const [startDate, setStartDate] = useState('')
@@ -305,19 +305,19 @@ function CreateSchoolYearDialog({ open, onOpenChange, templates }: CreateSchoolY
       if (isActive) {
         queryClient.invalidateQueries({ queryKey: ['school-context'] })
       }
-      toast.success(t('settings.schoolYears.createdSuccess'))
+      toast.success(t.settings.schoolYears.createdSuccess())
       onOpenChange(false)
       resetForm()
     },
     onError: () => {
-      toast.error(t('settings.schoolYears.createdError'))
+      toast.error(t.settings.schoolYears.createdError())
     },
   })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!templateId || !startDate || !endDate) {
-      toast.error(t('settings.schoolYears.fillAllFields'))
+      toast.error(t.settings.schoolYears.fillAllFields())
       return
     }
     createMutation.mutate()
@@ -327,17 +327,17 @@ function CreateSchoolYearDialog({ open, onOpenChange, templates }: CreateSchoolY
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{t('settings.schoolYears.createTitle')}</DialogTitle>
+          <DialogTitle>{t.settings.schoolYears.createTitle()}</DialogTitle>
           <DialogDescription>
-            {t('settings.schoolYears.createDescription')}
+            {t.settings.schoolYears.createDescription()}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="template">{t('settings.schoolYears.template')}</Label>
+            <Label htmlFor="template">{t.settings.schoolYears.template()}</Label>
             <Select value={templateId} onValueChange={setTemplateId}>
               <SelectTrigger>
-                <SelectValue placeholder={t('settings.schoolYears.selectTemplate')} />
+                <SelectValue placeholder={t.settings.schoolYears.selectTemplate()} />
               </SelectTrigger>
               <SelectContent>
                 {templates.map(template => (
@@ -345,7 +345,7 @@ function CreateSchoolYearDialog({ open, onOpenChange, templates }: CreateSchoolY
                     {template.name}
                     {template.isActive && (
                       <Badge variant="secondary" className="ml-2">
-                        {t('common.current')}
+                        {t.common.current()}
                       </Badge>
                     )}
                   </SelectItem>
@@ -356,7 +356,7 @@ function CreateSchoolYearDialog({ open, onOpenChange, templates }: CreateSchoolY
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="startDate">{t('settings.schoolYears.startDate')}</Label>
+              <Label htmlFor="startDate">{t.settings.schoolYears.startDate()}</Label>
               <Input
                 id="startDate"
                 type="date"
@@ -365,7 +365,7 @@ function CreateSchoolYearDialog({ open, onOpenChange, templates }: CreateSchoolY
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="endDate">{t('settings.schoolYears.endDate')}</Label>
+              <Label htmlFor="endDate">{t.settings.schoolYears.endDate()}</Label>
               <Input
                 id="endDate"
                 type="date"
@@ -384,17 +384,17 @@ function CreateSchoolYearDialog({ open, onOpenChange, templates }: CreateSchoolY
               className="h-4 w-4 rounded border-gray-300"
             />
             <Label htmlFor="isActive" className="text-sm font-normal">
-              {t('settings.schoolYears.setAsActive')}
+              {t.settings.schoolYears.setAsActive()}
             </Label>
           </div>
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              {t('common.cancel')}
+              {t.common.cancel()}
             </Button>
             <Button type="submit" disabled={createMutation.isPending}>
               {createMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {t('common.create')}
+              {t.common.create()}
             </Button>
           </DialogFooter>
         </form>

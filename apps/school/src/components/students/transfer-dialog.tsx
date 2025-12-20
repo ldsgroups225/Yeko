@@ -4,11 +4,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod'
-
 import { Button } from '@/components/ui/button'
+
 import {
   Dialog,
   DialogContent,
@@ -29,6 +28,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { useTranslations } from '@/i18n'
 import { classesOptions } from '@/lib/queries/classes'
 import { studentsKeys } from '@/lib/queries/students'
 import { transferStudent } from '@/school/functions/enrollments'
@@ -60,7 +60,7 @@ export function TransferDialog({
   currentClassName,
   schoolYearId,
 }: TransferDialogProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
 
   const { data: classesData, isLoading: classesLoading } = useQuery({
@@ -90,7 +90,7 @@ export function TransferDialog({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: studentsKeys.detail(studentId) })
       queryClient.invalidateQueries({ queryKey: studentsKeys.all })
-      toast.success(t('students.transferSuccess'))
+      toast.success(t.students.transferSuccess())
       onOpenChange(false)
       form.reset()
     },
@@ -109,7 +109,7 @@ export function TransferDialog({
     if (newClassName === currentClassName) {
       form.setError('newClassId', {
         type: 'manual',
-        message: t('students.cannotTransferToSameClass'),
+        message: t.students.cannotTransferToSameClass(),
       })
       return
     }
@@ -121,9 +121,9 @@ export function TransferDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>{t('students.transferStudent')}</DialogTitle>
+          <DialogTitle>{t.students.transferStudent()}</DialogTitle>
           <DialogDescription>
-            {t('students.transferStudentDescription', { name: studentName, class: currentClassName })}
+            {t.students.transferStudentDescription({ name: studentName, class: currentClassName })}
           </DialogDescription>
         </DialogHeader>
 
@@ -135,14 +135,14 @@ export function TransferDialog({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    {t('students.newClass')}
+                    {t.students.newClass()}
                     {' '}
                     <span className="text-destructive">*</span>
                   </FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder={classesLoading ? t('common.loading') : t('students.selectNewClass')} />
+                        <SelectValue placeholder={classesLoading ? t.common.loading() : t.students.selectNewClass()} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -167,14 +167,14 @@ export function TransferDialog({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    {t('students.effectiveDate')}
+                    {t.students.effectiveDate()}
                     {' '}
                     <span className="text-destructive">*</span>
                   </FormLabel>
                   <FormControl>
                     <Input type="date" {...field} />
                   </FormControl>
-                  <FormDescription>{t('students.effectiveDateDescription')}</FormDescription>
+                  <FormDescription>{t.students.effectiveDateDescription()}</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -185,10 +185,10 @@ export function TransferDialog({
               name="reason"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('students.transferReason')}</FormLabel>
+                  <FormLabel>{t.students.transferReason()}</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder={t('students.transferReasonPlaceholder')}
+                      placeholder={t.students.transferReasonPlaceholder()}
                       className="resize-none"
                       rows={3}
                       {...field}
@@ -201,11 +201,11 @@ export function TransferDialog({
 
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                {t('common.cancel')}
+                {t.common.cancel()}
               </Button>
               <Button type="submit" disabled={transferMutation.isPending}>
                 {transferMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {t('students.transfer')}
+                {t.students.transfer()}
               </Button>
             </DialogFooter>
           </form>

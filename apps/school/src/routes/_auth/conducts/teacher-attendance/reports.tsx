@@ -2,9 +2,8 @@ import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-
 import { Button } from '@/components/ui/button'
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DatePicker } from '@/components/ui/date-picker'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -16,6 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useTranslations } from '@/i18n'
 import { teacherPunctualityReportOptions } from '@/lib/queries/teacher-attendance'
 import { generateUUID } from '@/utils/generateUUID'
 
@@ -38,7 +38,7 @@ interface PunctualityRecord {
 }
 
 function TeacherPunctualityReportsPage() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const [startDate, setStartDate] = useState(() => {
     const d = new Date()
     d.setDate(1)
@@ -64,28 +64,28 @@ function TeacherPunctualityReportsPage() {
         <Link to="/conducts/teacher-attendance">
           <Button variant="ghost" size="sm">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            {t('common.back')}
+            {t.common.back()}
           </Button>
         </Link>
       </div>
 
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">{t('attendance.punctualityReport')}</h1>
-        <p className="text-muted-foreground">{t('attendance.punctualityReportDescription')}</p>
+        <h1 className="text-2xl font-bold">{t.attendance.punctualityReport()}</h1>
+        <p className="text-muted-foreground">{t.attendance.punctualityReportDescription()}</p>
       </div>
 
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle className="text-base">{t('attendance.selectDateRange')}</CardTitle>
+          <CardTitle className="text-base">{t.attendance.selectDateRange()}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex gap-4 items-center">
             <div>
-              <label className="text-sm text-muted-foreground">{t('common.startDate')}</label>
+              <label className="text-sm text-muted-foreground">{t.common.startDate()}</label>
               <DatePicker date={startDate} onSelect={d => d && setStartDate(d)} />
             </div>
             <div>
-              <label className="text-sm text-muted-foreground">{t('common.endDate')}</label>
+              <label className="text-sm text-muted-foreground">{t.common.endDate()}</label>
               <DatePicker date={endDate} onSelect={d => d && setEndDate(d)} />
             </div>
           </div>
@@ -94,7 +94,7 @@ function TeacherPunctualityReportsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>{t('attendance.punctualityReport')}</CardTitle>
+          <CardTitle>{t.attendance.punctualityReport()}</CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading
@@ -109,13 +109,13 @@ function TeacherPunctualityReportsPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>{t('attendance.teacher')}</TableHead>
-                      <TableHead className="text-center">{t('attendance.totalDays')}</TableHead>
-                      <TableHead className="text-center">{t('attendance.status.present')}</TableHead>
-                      <TableHead className="text-center">{t('attendance.status.late')}</TableHead>
-                      <TableHead className="text-center">{t('attendance.status.absent')}</TableHead>
-                      <TableHead className="text-center">{t('attendance.avgLateMinutes')}</TableHead>
-                      <TableHead className="text-center">{t('attendance.punctualityRate')}</TableHead>
+                      <TableHead>{t.attendance.teacher()}</TableHead>
+                      <TableHead className="text-center">{t.attendance.totalDays()}</TableHead>
+                      <TableHead className="text-center">{t.attendance.status.present()}</TableHead>
+                      <TableHead className="text-center">{t.attendance.status.late()}</TableHead>
+                      <TableHead className="text-center">{t.attendance.status.absent()}</TableHead>
+                      <TableHead className="text-center">{t.attendance.avgLateMinutes()}</TableHead>
+                      <TableHead className="text-center">{t.attendance.punctualityRate()}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>

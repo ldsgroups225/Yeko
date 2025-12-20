@@ -1,6 +1,6 @@
 import type { SchoolSettings } from '@/schemas/school-profile'
-import { useTranslation } from 'react-i18next'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useTranslations } from '@/i18n'
 import { GradingScaleConfig } from './grading-scale-config'
 import { NotificationSettingsForm } from './notification-settings-form'
 
@@ -15,16 +15,16 @@ export function SchoolSettingsTabs({
   onUpdate,
   isSubmitting,
 }: SchoolSettingsTabsProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   return (
     <Tabs defaultValue="grading" className="w-full">
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="grading">
-          {t('settings.profile.gradingScale')}
+          {t.settings.profile.gradingScale()}
         </TabsTrigger>
         <TabsTrigger value="notifications">
-          {t('settings.profile.notifications')}
+          {t.settings.notifications()}
         </TabsTrigger>
       </TabsList>
 

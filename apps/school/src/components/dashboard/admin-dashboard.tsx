@@ -6,7 +6,7 @@ import {
   Users,
 } from 'lucide-react'
 import { motion } from 'motion/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslations } from '@/i18n'
 
 const container = {
   hidden: { opacity: 0 },
@@ -24,7 +24,7 @@ const item = {
 }
 
 export function AdminDashboard() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   return (
     <motion.div
       className="space-y-6"
@@ -33,9 +33,9 @@ export function AdminDashboard() {
       animate="show"
     >
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">{t('nav.dashboard')}</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t.nav.dashboard()}</h1>
         <p className="text-muted-foreground">
-          {t('dashboard.description')}
+          {t.dashboard.description()}
         </p>
       </div>
 
@@ -48,28 +48,28 @@ export function AdminDashboard() {
         className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
       >
         <MetricCard
-          title={t('dashboard.totalStudents')}
+          title={t.dashboard.totalStudents()}
           value="1,234"
           change="+12%"
           trend="up"
           icon={GraduationCap}
         />
         <MetricCard
-          title={t('dashboard.teachers')}
+          title={t.dashboard.teachers()}
           value="89"
           change="+3"
           trend="up"
           icon={Users}
         />
         <MetricCard
-          title={t('dashboard.activeClasses')}
+          title={t.dashboard.activeClasses()}
           value="42"
           change="0"
           trend="neutral"
           icon={BookOpen}
         />
         <MetricCard
-          title={t('dashboard.revenueThisMonth')}
+          title={t.dashboard.revenueThisMonth()}
           value="245,000 FCFA"
           change="+8%"
           trend="up"
@@ -79,55 +79,55 @@ export function AdminDashboard() {
 
       {/* Quick Actions */}
       <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
-        <h2 className="mb-4 text-lg font-semibold">{t('dashboard.quickActions')}</h2>
+        <h2 className="mb-4 text-lg font-semibold">{t.dashboard.quickActions()}</h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <QuickActionButton icon={Users} label={t('dashboard.addUser')} />
-          <QuickActionButton icon={GraduationCap} label={t('dashboard.enrollStudent')} />
-          <QuickActionButton icon={BookOpen} label={t('dashboard.createClass')} />
-          <QuickActionButton icon={DollarSign} label={t('dashboard.recordPayment')} />
+          <QuickActionButton icon={Users} label={t.dashboard.addUser()} />
+          <QuickActionButton icon={GraduationCap} label={t.dashboard.enrollStudent()} />
+          <QuickActionButton icon={BookOpen} label={t.dashboard.createClass()} />
+          <QuickActionButton icon={DollarSign} label={t.dashboard.recordPayment()} />
         </div>
       </motion.div>
 
       {/* Recent Activity & Alerts */}
       <div className="grid gap-4 lg:grid-cols-2">
         <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
-          <h2 className="mb-4 text-lg font-semibold">{t('dashboard.recentActivity')}</h2>
+          <h2 className="mb-4 text-lg font-semibold">{t.dashboard.recentActivity()}</h2>
           <div className="space-y-3">
             <ActivityItem
-              title={t('dashboard.activity.teacherAdded')}
+              title={t.dashboard.activity.teacherAdded()}
               description="Marie Kouassi - Mathématiques"
-              time={t('common.timeAgo', { time: '2 heures' })}
+              time={t.common.timeAgo({ time: '2 heures' })}
             />
             <ActivityItem
-              title={t('dashboard.activity.studentsEnrolled', { count: 15 })}
+              title={t.dashboard.activity.studentsEnrolled({ count: 15 })}
               description="Classe de 6ème A"
-              time={t('common.timeAgo', { time: '5 heures' })}
+              time={t.common.timeAgo({ time: '5 heures' })}
             />
             <ActivityItem
-              title={t('dashboard.activity.paymentReceived')}
+              title={t.dashboard.activity.paymentReceived()}
               description="45,000 FCFA - Jean Kouadio"
-              time={t('common.timeAgo', { time: '1 jour' })}
+              time={t.common.timeAgo({ time: '1 jour' })}
             />
           </div>
         </motion.div>
 
         <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
-          <h2 className="mb-4 text-lg font-semibold">{t('dashboard.alerts')}</h2>
+          <h2 className="mb-4 text-lg font-semibold">{t.dashboard.alerts()}</h2>
           <div className="space-y-3">
             <AlertItem
               type="warning"
-              title={t('dashboard.alertsSection.overduePayments')}
-              description={t('dashboard.alertsSection.overduePaymentsDesc', { count: 23 })}
+              title={t.dashboard.alertsSection.overduePayments()}
+              description={t.dashboard.alertsSection.overduePaymentsDesc({ count: 23 })}
             />
             <AlertItem
               type="info"
-              title={t('dashboard.alertsSection.termEnd')}
-              description={t('dashboard.alertsSection.termEndDesc', { days: 15 })}
+              title={t.dashboard.alertsSection.termEnd()}
+              description={t.dashboard.alertsSection.termEndDesc({ days: 15 })}
             />
             <AlertItem
               type="warning"
-              title={t('dashboard.alertsSection.classCapacity')}
-              description={t('dashboard.alertsSection.classCapacityDesc', { count: 3 })}
+              title={t.dashboard.alertsSection.classCapacity()}
+              description={t.dashboard.alertsSection.classCapacityDesc({ count: 3 })}
             />
           </div>
         </motion.div>

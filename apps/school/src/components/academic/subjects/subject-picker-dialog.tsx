@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Loader2, Search } from 'lucide-react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -24,6 +23,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useTranslations } from '@/i18n'
 import {
   schoolSubjectsKeys,
   schoolSubjectsOptions,
@@ -48,7 +48,7 @@ export function SubjectPickerDialog({
   onOpenChange,
   schoolYearId,
 }: SubjectPickerDialogProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const [search, setSearch] = useState('')
   const [categoryFilter, setCategoryFilter] = useState<string>('all')
   const [selectedIds, setSelectedIds] = useState(() => new Set<string>())
@@ -77,13 +77,13 @@ export function SubjectPickerDialog({
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: schoolSubjectsKeys.all })
       toast.success(
-        t('academic.subjects.messages.addSuccess', { count: result.length }),
+        t.academic.subjects.messages.addSuccess({ count: result.length }),
       )
       setSelectedIds(new Set())
       onOpenChange(false)
     },
     onError: () => {
-      toast.error(t('academic.subjects.messages.addError'))
+      toast.error(t.academic.subjects.messages.addError())
     },
   })
 
@@ -118,7 +118,7 @@ export function SubjectPickerDialog({
 
   const handleSubmit = () => {
     if (selectedIds.size === 0) {
-      toast.error(t('academic.subjects.messages.selectAtLeastOne'))
+      toast.error(t.academic.subjects.messages.selectAtLeastOne())
       return
     }
     addMutation.mutate(Array.from(selectedIds))
@@ -138,9 +138,9 @@ export function SubjectPickerDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[80vh]">
         <DialogHeader>
-          <DialogTitle>{t('academic.subjects.picker.title')}</DialogTitle>
+          <DialogTitle>{t.academic.subjects.picker.title()}</DialogTitle>
           <DialogDescription>
-            {t('academic.subjects.picker.description')}
+            {t.academic.subjects.picker.description()}
           </DialogDescription>
         </DialogHeader>
 
@@ -149,7 +149,7 @@ export function SubjectPickerDialog({
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder={t('academic.subjects.searchPlaceholder')}
+              placeholder={t.academic.subjects.searchPlaceholder()}
               value={search}
               onChange={e => setSearch(e.target.value)}
               className="pl-10"
@@ -158,24 +158,24 @@ export function SubjectPickerDialog({
           <Select value={categoryFilter} onValueChange={setCategoryFilter}>
             <SelectTrigger id="category-filter" className="w-[180px]">
               <SelectValue
-                placeholder={t('academic.subjects.allCategories')}
+                placeholder={t.academic.subjects.allCategories()}
               />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">
-                {t('academic.subjects.allCategories')}
+                {t.academic.subjects.allCategories()}
               </SelectItem>
               <SelectItem value="Scientifique">
-                {t('academic.subjects.categories.scientifique')}
+                {t.academic.subjects.categories.scientifique()}
               </SelectItem>
               <SelectItem value="Littéraire">
-                {t('academic.subjects.categories.litteraire')}
+                {t.academic.subjects.categories.litteraire()}
               </SelectItem>
               <SelectItem value="Sportif">
-                {t('academic.subjects.categories.sportif')}
+                {t.academic.subjects.categories.sportif()}
               </SelectItem>
               <SelectItem value="Autre">
-                {t('academic.subjects.categories.autre')}
+                {t.academic.subjects.categories.autre()}
               </SelectItem>
             </SelectContent>
           </Select>
@@ -201,9 +201,9 @@ export function SubjectPickerDialog({
             : subjects.length === 0
               ? (
                   <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                    <p>{t('academic.subjects.picker.noAvailable')}</p>
+                    <p>{t.academic.subjects.picker.noAvailable()}</p>
                     <p className="text-sm">
-                      {t('academic.subjects.picker.noAvailableDescription')}
+                      {t.academic.subjects.picker.noAvailableDescription()}
                     </p>
                   </div>
                 )
@@ -285,16 +285,16 @@ export function SubjectPickerDialog({
 
         <DialogFooter className="flex items-center justify-between sm:justify-between">
           <div className="text-sm text-muted-foreground">
-            {t('academic.subjects.picker.selected', {
-              count: selectedIds.size,
-            })}
+            {selectedIds.size}
+            {' '}
+            {t.academic.subjects.picker.selected()}
           </div>
           <div className="flex gap-2">
             <Button
               variant="outline"
               onClick={() => onOpenChange(false)}
             >
-              {t('common.cancel')}
+              {t.common.cancel()}
             </Button>
             <Button
               onClick={handleSubmit}
@@ -303,7 +303,7 @@ export function SubjectPickerDialog({
               {addMutation.isPending && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
-              {t('academic.subjects.picker.addSelected')}
+              {t.academic.subjects.picker.addSelected()}
             </Button>
           </div>
         </DialogFooter>

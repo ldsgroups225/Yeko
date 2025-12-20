@@ -1,6 +1,5 @@
 'use client'
 
-import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -12,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useTranslations } from '@/i18n'
 import { generateUUID } from '@/utils/generateUUID'
 
 interface PaymentPlan {
@@ -51,7 +51,7 @@ function formatCurrency(amount: number) {
 }
 
 export function PaymentPlansTable({ paymentPlans, isLoading }: PaymentPlansTableProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   if (isLoading) {
     return (
@@ -66,7 +66,7 @@ export function PaymentPlansTable({ paymentPlans, isLoading }: PaymentPlansTable
   if (paymentPlans.length === 0) {
     return (
       <div className="py-8 text-center text-muted-foreground">
-        {t('finance.paymentPlans.noPaymentPlans')}
+        {t.finance.paymentPlans.noPaymentPlans()}
       </div>
     )
   }
@@ -75,12 +75,12 @@ export function PaymentPlansTable({ paymentPlans, isLoading }: PaymentPlansTable
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>{t('students.matricule')}</TableHead>
-          <TableHead>{t('students.name')}</TableHead>
-          <TableHead className="text-right">{t('finance.paymentPlans.totalAmount')}</TableHead>
-          <TableHead>{t('finance.paymentPlans.progress')}</TableHead>
-          <TableHead>{t('finance.paymentPlans.installments')}</TableHead>
-          <TableHead>{t('common.status')}</TableHead>
+          <TableHead>{t.students.matricule()}</TableHead>
+          <TableHead>{t.students.name()}</TableHead>
+          <TableHead className="text-right">{t.finance.paymentPlans.totalAmount()}</TableHead>
+          <TableHead>{t.finance.paymentPlans.progress()}</TableHead>
+          <TableHead>{t.finance.paymentPlans.installments()}</TableHead>
+          <TableHead>{t.common.status()}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -114,7 +114,12 @@ export function PaymentPlansTable({ paymentPlans, isLoading }: PaymentPlansTable
               </TableCell>
               <TableCell>
                 <Badge variant={getStatusVariant(plan.status)}>
-                  {t(`finance.paymentPlans.status.${plan.status}`)}
+                  {{
+                    active: t.finance.paymentPlans.status.active,
+                    completed: t.finance.paymentPlans.status.completed,
+                    overdue: t.finance.paymentPlans.status.overdue,
+                    cancelled: t.finance.paymentPlans.status.cancelled,
+                  }[plan.status as 'active' | 'completed' | 'overdue' | 'cancelled']()}
                 </Badge>
               </TableCell>
             </TableRow>

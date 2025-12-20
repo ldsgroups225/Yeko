@@ -1,6 +1,6 @@
 import { CheckCircle, FileText, UserPlus, Users } from 'lucide-react'
 import { motion } from 'motion/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslations } from '@/i18n'
 
 const container = {
   hidden: { opacity: 0 },
@@ -18,7 +18,7 @@ const item = {
 }
 
 export function RegistrarDashboard() {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   return (
     <motion.div
@@ -28,9 +28,9 @@ export function RegistrarDashboard() {
       animate="show"
     >
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.registrar.title')}</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t.dashboard.registrar.title()}</h1>
         <p className="text-muted-foreground">
-          {t('dashboard.registrar.subtitle')}
+          {t.dashboard.registrar.subtitle()}
         </p>
       </div>
 
@@ -42,34 +42,34 @@ export function RegistrarDashboard() {
         className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
       >
         <MetricCard
-          title={t('dashboard.registrar.totalStudents')}
+          title={t.dashboard.registrar.totalStudents()}
           value="1,234"
-          subtitle={t('dashboard.registrar.active')}
+          subtitle={t.dashboard.registrar.active()}
           icon={Users}
         />
         <MetricCard
-          title={t('dashboard.registrar.newEnrollments')}
+          title={t.dashboard.registrar.newEnrollments()}
           value="45"
-          subtitle={t('common.pending')}
+          subtitle={t.common.pending()}
           icon={UserPlus}
         />
         <MetricCard
-          title={t('dashboard.registrar.incompleteFiles')}
+          title={t.dashboard.registrar.incompleteFiles()}
           value="12"
-          subtitle={t('common.pending')}
+          subtitle={t.common.pending()}
           icon={FileText}
         />
         <MetricCard
-          title={t('dashboard.registrar.enrollmentsValidated')}
+          title={t.dashboard.registrar.enrollmentsValidated()}
           value="33"
-          subtitle={t('common.pending')}
+          subtitle={t.common.pending()}
           icon={CheckCircle}
         />
       </motion.div>
 
       {/* Pending Enrollments */}
       <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
-        <h2 className="mb-4 text-lg font-semibold">{t('dashboard.registrar.pendingEnrollments')}</h2>
+        <h2 className="mb-4 text-lg font-semibold">{t.dashboard.registrar.pendingEnrollments()}</h2>
         <div className="space-y-3">
           <EnrollmentItem
             name="Ibrahim Traoré"
@@ -77,7 +77,6 @@ export function RegistrarDashboard() {
             date="2 hours ago"
             status="pending"
             missingDocs={['Birth Certificate', 'Photo']}
-            t={t}
           />
           <EnrollmentItem
             name="Aisha Bamba"
@@ -85,7 +84,6 @@ export function RegistrarDashboard() {
             date="5 hours ago"
             status="review"
             missingDocs={[]}
-            t={t}
           />
           <EnrollmentItem
             name="Yao Kouassi"
@@ -93,7 +91,6 @@ export function RegistrarDashboard() {
             date="1 day ago"
             status="pending"
             missingDocs={['Previous Report']}
-            t={t}
           />
         </div>
       </motion.div>
@@ -101,7 +98,7 @@ export function RegistrarDashboard() {
       {/* Recent Activity & Statistics */}
       <div className="grid gap-4 lg:grid-cols-2">
         <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
-          <h2 className="mb-4 text-lg font-semibold">{t('dashboard.registrar.recentActivity')}</h2>
+          <h2 className="mb-4 text-lg font-semibold">{t.dashboard.registrar.recentActivity()}</h2>
           <div className="space-y-3">
             <ActivityItem
               action="Inscription validée"
@@ -125,15 +122,15 @@ export function RegistrarDashboard() {
         </motion.div>
 
         <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
-          <h2 className="mb-4 text-lg font-semibold">{t('dashboard.registrar.distributionByLevel')}</h2>
+          <h2 className="mb-4 text-lg font-semibold">{t.dashboard.registrar.distributionByLevel()}</h2>
           <div className="space-y-4">
-            <LevelBar level="6ème" count={245} total={1234} t={t} />
-            <LevelBar level="5ème" count={218} total={1234} t={t} />
-            <LevelBar level="4ème" count={203} total={1234} t={t} />
-            <LevelBar level="3ème" count={189} total={1234} t={t} />
-            <LevelBar level="2nde" count={156} total={1234} t={t} />
-            <LevelBar level="1ère" count={134} total={1234} t={t} />
-            <LevelBar level="Tle" count={89} total={1234} t={t} />
+            <LevelBar level="6ème" count={245} total={1234} />
+            <LevelBar level="5ème" count={218} total={1234} />
+            <LevelBar level="4ème" count={203} total={1234} />
+            <LevelBar level="3ème" count={189} total={1234} />
+            <LevelBar level="2nde" count={156} total={1234} />
+            <LevelBar level="1ère" count={134} total={1234} />
+            <LevelBar level="Tle" count={89} total={1234} />
           </div>
         </motion.div>
       </div>
@@ -173,10 +170,11 @@ interface EnrollmentItemProps {
   date: string
   status: 'pending' | 'review'
   missingDocs: string[]
-  t: (key: string) => string
 }
 
-function EnrollmentItem({ name, class: className, date, status, missingDocs, t }: EnrollmentItemProps) {
+function EnrollmentItem({ name, class: className, date, status, missingDocs }: EnrollmentItemProps) {
+  const t = useTranslations()
+
   return (
     <div className="rounded-md border border-border/40 bg-background p-4">
       <div className="flex items-start justify-between">
@@ -186,7 +184,7 @@ function EnrollmentItem({ name, class: className, date, status, missingDocs, t }
           <p className="text-xs text-muted-foreground">{date}</p>
           {missingDocs.length > 0 && (
             <p className="text-xs text-red-600 dark:text-red-400">
-              {t('dashboard.registrar.missing')}
+              {t.dashboard.registrar.missing()}
               :
               {' '}
               {missingDocs.join(', ')}
@@ -199,7 +197,7 @@ function EnrollmentItem({ name, class: className, date, status, missingDocs, t }
             : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
           }`}
         >
-          {status === 'review' ? t('dashboard.registrar.toReview') : t('common.pending')}
+          {status === 'review' ? t.dashboard.registrar.toReview() : t.common.pending()}
         </span>
       </div>
     </div>
@@ -235,10 +233,10 @@ interface LevelBarProps {
   level: string
   count: number
   total: number
-  t: (key: string) => string
 }
 
-function LevelBar({ level, count, total, t }: LevelBarProps) {
+function LevelBar({ level, count, total }: LevelBarProps) {
+  const t = useTranslations()
   const percentage = (count / total) * 100
 
   return (
@@ -248,7 +246,7 @@ function LevelBar({ level, count, total, t }: LevelBarProps) {
         <span className="text-muted-foreground">
           {count}
           {' '}
-          {t('dashboard.registrar.students')}
+          {t.dashboard.registrar.students()}
         </span>
       </div>
       <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">

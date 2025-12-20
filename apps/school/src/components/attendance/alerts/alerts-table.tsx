@@ -7,9 +7,8 @@ import {
 } from '@tanstack/react-table'
 import { Bell, Check, MoreHorizontal, X } from 'lucide-react'
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-
 import { AlertSeverityBadge } from '@/components/attendance/alerts/alert-severity-badge'
+
 import { TableSkeleton } from '@/components/hr/table-skeleton'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -34,6 +33,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useTranslations } from '@/i18n'
 
 type AlertSeverity = 'info' | 'warning' | 'critical'
 type AlertStatus = 'active' | 'acknowledged' | 'resolved' | 'dismissed'
@@ -64,13 +64,13 @@ export function AlertsTable({
   onAcknowledge,
   onDismiss,
 }: AlertsTableProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   const columns = useMemo<ColumnDef<AttendanceAlert>[]>(
     () => [
       {
         accessorKey: 'createdAt',
-        header: t('common.date'),
+        header: t.common.date(),
         cell: ({ row }) => {
           const date = new Date(row.original.createdAt)
           return (
@@ -87,12 +87,12 @@ export function AlertsTable({
       },
       {
         accessorKey: 'severity',
-        header: t('conduct.form.severity'), // Using similar key or t('alerts.severity') if available, falling back to what likely exists
+        header: t.conduct.form.severity(), // Using similar key or t.alerts.severity() if available, falling back to what likely exists
         cell: ({ row }) => <AlertSeverityBadge severity={row.original.severity} />,
       },
       {
         accessorKey: 'title',
-        header: t('alerts.title') || 'Title',
+        header: t.alerts.title() || 'Title',
         cell: ({ row }) => (
           <div className="flex flex-col max-w-[300px]">
             <span className="font-medium truncate" title={row.original.title}>{row.original.title}</span>
@@ -104,7 +104,7 @@ export function AlertsTable({
       },
       {
         id: 'related',
-        header: t('common.relatedTo') || 'Concernant',
+        header: t.common.relatedTo() || 'Concernant',
         cell: ({ row }) => {
           const subject = row.original.teacherName || row.original.studentName || row.original.className
           return subject || <span className="text-muted-foreground">-</span>
@@ -112,7 +112,7 @@ export function AlertsTable({
       },
       {
         accessorKey: 'status',
-        header: t('common.status'),
+        header: t.common.status(),
         cell: ({ row }) => {
           const status = row.original.status
           return (
@@ -127,17 +127,17 @@ export function AlertsTable({
               }
             >
               {status === 'active'
-                ? t('common.active')
+                ? t.common.active()
                 : status === 'acknowledged'
-                  ? t('alerts.acknowledged')
-                  : status === 'dismissed' ? t('alerts.dismissed') : status}
+                  ? t.alerts.acknowledged()
+                  : status === 'dismissed' ? t.alerts.dismissed() : status}
             </Badge>
           )
         },
       },
       {
         id: 'actions',
-        header: t('common.actions'),
+        header: t.common.actions(),
         cell: ({ row }) => (
           row.original.status === 'active'
             ? (
@@ -151,13 +151,13 @@ export function AlertsTable({
                     {onAcknowledge && (
                       <DropdownMenuItem onClick={() => onAcknowledge(row.original.id)}>
                         <Check className="mr-2 h-4 w-4" />
-                        {t('alerts.acknowledge')}
+                        {t.alerts.acknowledge()}
                       </DropdownMenuItem>
                     )}
                     {onDismiss && (
                       <DropdownMenuItem onClick={() => onDismiss(row.original.id)}>
                         <X className="mr-2 h-4 w-4" />
-                        {t('alerts.dismiss')}
+                        {t.alerts.dismiss()}
                       </DropdownMenuItem>
                     )}
                   </DropdownMenuContent>
@@ -193,8 +193,8 @@ export function AlertsTable({
           <EmptyMedia variant="icon">
             <Bell className="h-6 w-6" />
           </EmptyMedia>
-          <EmptyTitle>{t('alerts.noAlerts')}</EmptyTitle>
-          <EmptyDescription>{t('alerts.noAlertsDescription')}</EmptyDescription>
+          <EmptyTitle>{t.alerts.noAlerts()}</EmptyTitle>
+          <EmptyDescription>{t.alerts.noAlertsDescription()}</EmptyDescription>
         </EmptyHeader>
       </Empty>
     )
@@ -240,7 +240,7 @@ export function AlertsTable({
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            {t('common.previous')}
+            {t.common.previous()}
           </Button>
           <Button
             variant="outline"
@@ -248,7 +248,7 @@ export function AlertsTable({
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            {t('common.next')}
+            {t.common.next()}
           </Button>
         </div>
       )}

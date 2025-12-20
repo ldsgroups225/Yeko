@@ -9,7 +9,6 @@ import {
 import { BookOpen, Filter, Plus, Search } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { TableSkeleton } from '@/components/hr/table-skeleton'
 import { Badge } from '@/components/ui/badge'
@@ -43,6 +42,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useTranslations } from '@/i18n'
 import {
   schoolSubjectsKeys,
   schoolSubjectsOptions,
@@ -74,7 +74,7 @@ interface SchoolSubjectItem {
 const CATEGORIES = ['Scientifique', 'Littéraire', 'Sportif', 'Autre'] as const
 
 export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const [search, setSearch] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
@@ -104,10 +104,10 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
       toggleSchoolSubjectStatus({ data: params }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: schoolSubjectsKeys.all })
-      toast.success(t('academic.subjects.messages.statusUpdated'))
+      toast.success(t.academic.subjects.messages.statusUpdated())
     },
     onError: () => {
-      toast.error(t('academic.subjects.messages.statusError'))
+      toast.error(t.academic.subjects.messages.statusError())
     },
   })
 
@@ -115,7 +115,7 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
     () => [
       {
         accessorKey: 'subject.name',
-        header: t('academic.subjects.messages.subjectName'),
+        header: t.academic.subjects.messages.subjectName(),
         cell: ({ row }) => (
           <div>
             <div className="font-medium">{row.original.subject.name}</div>
@@ -127,7 +127,7 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
       },
       {
         accessorKey: 'subject.category',
-        header: t('academic.subjects.filterByCategory'),
+        header: t.academic.subjects.filterByCategory(),
         cell: ({ row }) => (
           <Badge variant="secondary">
             {row.original.subject.category || 'Autre'}
@@ -136,7 +136,7 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
       },
       {
         accessorKey: 'status',
-        header: t('academic.subjects.filterByStatus'),
+        header: t.academic.subjects.filterByStatus(),
         cell: ({ row }) => (
           <SubjectStatusToggle
             status={row.original.status}
@@ -176,7 +176,7 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
       <Card className="border-destructive">
         <CardHeader>
           <CardTitle className="text-destructive">
-            {t('academic.subjects.messages.listError')}
+            {t.academic.subjects.messages.listError()}
           </CardTitle>
           <CardContent>{(error as Error).message}</CardContent>
         </CardHeader>
@@ -194,10 +194,10 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
     <div className="space-y-4">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-          <CardTitle>{t('academic.subjects.title')}</CardTitle>
+          <CardTitle>{t.academic.subjects.title()}</CardTitle>
           <Button onClick={() => setPickerOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
-            {t('academic.subjects.addSubjects')}
+            {t.academic.subjects.addSubjects()}
           </Button>
         </CardHeader>
         <CardContent>
@@ -205,7 +205,7 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
             <div className="relative flex-1 min-w-[200px]">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder={t('academic.subjects.searchPlaceholder')}
+                placeholder={t.academic.subjects.searchPlaceholder()}
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 className="pl-10"
@@ -215,35 +215,48 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
               <SelectTrigger className="w-[180px]">
                 <Filter className="mr-2 h-4 w-4" />
                 <SelectValue
-                  placeholder={t('academic.subjects.filterByCategory')}
+                  placeholder={t.academic.subjects.filterByCategory()}
                 />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">
-                  {t('academic.subjects.allCategories')}
+                  {t.academic.subjects.allCategories()}
                 </SelectItem>
-                {CATEGORIES.map(cat => (
-                  <SelectItem key={cat} value={cat}>
-                    {t(`academic.subjects.categories.${cat.toLowerCase()}`)}
-                  </SelectItem>
-                ))}
+                {CATEGORIES.map((cat) => {
+                  const categoryTranslations = {
+                    scientifique:
+                      t.academic.subjects.categories.scientifique,
+                    litteraire: t.academic.subjects.categories.litteraire,
+                    sportif: t.academic.subjects.categories.sportif,
+                    autre: t.academic.subjects.categories.autre,
+                  }
+                  return (
+                    <SelectItem key={cat} value={cat}>
+                      {
+                        categoryTranslations[
+                          cat.toLowerCase() as keyof typeof categoryTranslations
+                        ]()
+                      }
+                    </SelectItem>
+                  )
+                })}
               </SelectContent>
             </Select>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-[150px]">
                 <SelectValue
-                  placeholder={t('academic.subjects.filterByStatus')}
+                  placeholder={t.academic.subjects.filterByStatus()}
                 />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">
-                  {t('academic.subjects.allStatus')}
+                  {t.academic.subjects.allStatus()}
                 </SelectItem>
                 <SelectItem value="active">
-                  {t('academic.subjects.status.active')}
+                  {t.academic.subjects.status.active()}
                 </SelectItem>
                 <SelectItem value="inactive">
-                  {t('academic.subjects.status.inactive')}
+                  {t.academic.subjects.status.inactive()}
                 </SelectItem>
               </SelectContent>
             </Select>
@@ -256,13 +269,13 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
                     <EmptyMedia variant="icon">
                       <BookOpen />
                     </EmptyMedia>
-                    <EmptyTitle>{t('academic.subjects.noSubjects')}</EmptyTitle>
+                    <EmptyTitle>{t.academic.subjects.noSubjects()}</EmptyTitle>
                     <EmptyDescription>
                       {search
                         || categoryFilter !== 'all'
                         || statusFilter !== 'all'
-                        ? t('academic.subjects.messages.adjustFilters')
-                        : t('academic.subjects.noSubjectsDescription')}
+                        ? t.academic.subjects.messages.adjustFilters()
+                        : t.academic.subjects.noSubjectsDescription()}
                     </EmptyDescription>
                   </EmptyHeader>
                 </Empty>
@@ -311,7 +324,7 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
                   </div>
                   <div className="flex items-center justify-between mt-4">
                     <div className="text-sm text-muted-foreground">
-                      {t('common.showing')}
+                      {t.common.showing()}
                       {' '}
                       {table.getState().pagination.pageIndex
                         * table.getState().pagination.pageSize
@@ -325,7 +338,7 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
                         subjectsData.length,
                       )}
                       {' '}
-                      {t('common.of')}
+                      {t.common.of()}
                       {' '}
                       {subjectsData.length}
                     </div>
@@ -336,7 +349,7 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
                         onClick={() => table.previousPage()}
                         disabled={!table.getCanPreviousPage()}
                       >
-                        {t('common.previous')}
+                        {t.common.previous()}
                       </Button>
                       <Button
                         variant="outline"
@@ -344,7 +357,7 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
                         onClick={() => table.nextPage()}
                         disabled={!table.getCanNextPage()}
                       >
-                        {t('common.next')}
+                        {t.common.next()}
                       </Button>
                     </div>
                   </div>

@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { useTranslation } from 'react-i18next'
 import { FinancialDashboard } from '@/components/finance'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { useTranslations } from '@/i18n'
 import { refundsOptions, studentFeesOptions } from '@/lib/queries'
 
 export const Route = createFileRoute('/_auth/accounting/dashboard')({
@@ -10,7 +10,7 @@ export const Route = createFileRoute('/_auth/accounting/dashboard')({
 })
 
 function FinanceDashboardPage() {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   const { data: studentsWithBalance, isLoading: isLoadingStudents } = useQuery(
     studentFeesOptions.withBalance(),
@@ -48,17 +48,17 @@ function FinanceDashboardPage() {
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t('nav.finance'), href: '/accounting' },
-          { label: t('finance.dashboard.title') },
+          { label: t.nav.finance(), href: '/accounting' },
+          { label: t.finance.dashboard.title() },
         ]}
       />
 
       <div>
         <h1 className="text-3xl font-bold tracking-tight">
-          {t('finance.dashboard.title')}
+          {t.finance.dashboard.title()}
         </h1>
         <p className="text-muted-foreground">
-          {t('finance.title')}
+          {t.finance.title()}
         </p>
       </div>
 

@@ -9,10 +9,10 @@ import {
   TrendingUp,
   Users,
 } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useTranslations } from '@/i18n'
 import { generateUUID } from '@/utils/generateUUID'
 
 interface FinancialDashboardProps {
@@ -45,7 +45,7 @@ export function FinancialDashboard({
   refundsPending = 0,
   isLoading = false,
 }: FinancialDashboardProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   if (isLoading) {
     return (
@@ -86,7 +86,7 @@ export function FinancialDashboard({
 
   const mainStats = [
     {
-      title: t('finance.dashboard.expectedRevenue'),
+      title: t.finance.dashboard.expectedRevenue(),
       value: formatCurrency(totalExpectedRevenue),
       suffix: 'FCFA',
       icon: PiggyBank,
@@ -94,7 +94,7 @@ export function FinancialDashboard({
       bgColor: 'bg-blue-100 dark:bg-blue-900/20',
     },
     {
-      title: t('finance.dashboard.collected'),
+      title: t.finance.dashboard.collected(),
       value: formatCurrency(totalCollected),
       suffix: 'FCFA',
       icon: TrendingUp,
@@ -102,7 +102,7 @@ export function FinancialDashboard({
       bgColor: 'bg-green-100 dark:bg-green-900/20',
     },
     {
-      title: t('finance.dashboard.outstanding'),
+      title: t.finance.dashboard.outstanding(),
       value: formatCurrency(totalOutstanding),
       suffix: 'FCFA',
       icon: TrendingDown,
@@ -110,7 +110,7 @@ export function FinancialDashboard({
       bgColor: 'bg-orange-100 dark:bg-orange-900/20',
     },
     {
-      title: t('finance.dashboard.paymentsThisMonth'),
+      title: t.finance.dashboard.paymentsThisMonth(),
       value: paymentsThisMonth.toString(),
       icon: CreditCard,
       color: 'text-purple-600',
@@ -150,7 +150,7 @@ export function FinancialDashboard({
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Banknote className="h-5 w-5" />
-              {t('finance.dashboard.collectionRate')}
+              {t.finance.dashboard.collectionRate()}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -170,7 +170,7 @@ export function FinancialDashboard({
             </div>
             <Progress value={collectionRate} className="h-3" />
             <p className="text-sm text-muted-foreground">
-              {t('finance.dashboard.collectionRateDescription')}
+              {t.finance.dashboard.collectionRateDescription()}
             </p>
           </CardContent>
         </Card>
@@ -179,17 +179,17 @@ export function FinancialDashboard({
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Users className="h-5 w-5" />
-              {t('finance.dashboard.studentPaymentStatus')}
+              {t.finance.dashboard.studentPaymentStatus()}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                <p className="text-sm text-muted-foreground">{t('finance.dashboard.totalStudents')}</p>
+                <p className="text-sm text-muted-foreground">{t.finance.dashboard.totalStudents()}</p>
                 <p className="text-2xl font-bold">{totalStudents}</p>
               </div>
               <div className="space-y-1">
-                <p className="text-sm text-muted-foreground">{t('finance.dashboard.withBalance')}</p>
+                <p className="text-sm text-muted-foreground">{t.finance.dashboard.withBalance()}</p>
                 <p className="text-2xl font-bold text-orange-600">{studentsWithBalance}</p>
               </div>
             </div>
@@ -198,7 +198,7 @@ export function FinancialDashboard({
               <span className="text-sm">
                 {refundsPending}
                 {' '}
-                {t('finance.dashboard.refundsPending')}
+                {t.finance.dashboard.refundsPending()}
               </span>
             </div>
           </CardContent>

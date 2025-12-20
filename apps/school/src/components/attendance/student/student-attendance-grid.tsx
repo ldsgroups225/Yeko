@@ -1,14 +1,18 @@
 import { CheckCircle, Save } from 'lucide-react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { generateUUID } from '@/utils/generateUUID'
 
-type StudentAttendanceStatus = 'present' | 'late' | 'absent' | 'excused'
+type StudentAttendanceStatus
+  = | 'present'
+    | 'late'
+    | 'absent'
+    | 'excused'
 
 interface StudentAttendanceEntry {
   studentId: string
@@ -49,11 +53,15 @@ export function StudentAttendanceGrid({
   isLoading,
   isSaving,
 }: StudentAttendanceGridProps) {
-  const { t } = useTranslation()
-  const [entries, setEntries] = useState<StudentAttendanceEntry[]>(initialEntries)
+  const t = useTranslations()
+  const [entries, setEntries]
+    = useState<StudentAttendanceEntry[]>(initialEntries)
   const [hasChanges, setHasChanges] = useState(false)
 
-  const handleStatusChange = (studentId: string, status: StudentAttendanceStatus) => {
+  const handleStatusChange = (
+    studentId: string,
+    status: StudentAttendanceStatus,
+  ) => {
     setEntries(prev =>
       prev.map(e => (e.studentId === studentId ? { ...e, status } : e)),
     )
@@ -88,33 +96,33 @@ export function StudentAttendanceGrid({
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={handleMarkAllPresent}>
             <CheckCircle className="mr-2 h-4 w-4" />
-            {t('attendance.markAllPresent')}
+            {t.attendance.markAllPresent()}
           </Button>
           <Button onClick={handleSave} disabled={!hasChanges || isSaving}>
             <Save className="mr-2 h-4 w-4" />
-            {isSaving ? t('common.saving') : t('common.save')}
+            {isSaving ? t.common.saving() : t.common.save()}
           </Button>
         </div>
       </CardHeader>
       <CardContent>
         <div className="mb-4 flex gap-4 text-sm">
           <span className="text-green-600">
-            {t('attendance.status.present')}
+            {t.attendance.status.present()}
             :
             {summary.present}
           </span>
           <span className="text-amber-600">
-            {t('attendance.status.late')}
+            {t.attendance.status.late()}
             :
             {summary.late}
           </span>
           <span className="text-red-600">
-            {t('attendance.status.absent')}
+            {t.attendance.status.absent()}
             :
             {summary.absent}
           </span>
           <span className="text-blue-600">
-            {t('attendance.status.excused')}
+            {t.attendance.status.excused()}
             :
             {summary.excused}
           </span>
@@ -124,7 +132,8 @@ export function StudentAttendanceGrid({
             <StudentAttendanceCard
               key={entry.studentId}
               entry={entry}
-              onStatusChange={status => handleStatusChange(entry.studentId, status)}
+              onStatusChange={status =>
+                handleStatusChange(entry.studentId, status)}
             />
           ))}
         </div>
@@ -138,8 +147,11 @@ interface StudentAttendanceCardProps {
   onStatusChange: (status: StudentAttendanceStatus) => void
 }
 
-function StudentAttendanceCard({ entry, onStatusChange }: StudentAttendanceCardProps) {
-  const { t } = useTranslation()
+function StudentAttendanceCard({
+  entry,
+  onStatusChange,
+}: StudentAttendanceCardProps) {
+  const t = useTranslations()
   const initials = entry.studentName
     .split(' ')
     .map(n => n[0])
@@ -147,14 +159,27 @@ function StudentAttendanceCard({ entry, onStatusChange }: StudentAttendanceCardP
     .toUpperCase()
     .slice(0, 2)
 
+  const statusTranslations = {
+    present: t.attendance.status.present,
+    late: t.attendance.status.late,
+    absent: t.attendance.status.absent,
+    excused: t.attendance.status.excused,
+    on_leave: t.attendance.status.on_leave,
+  }
+
   return (
     <div className="rounded-lg border p-3 space-y-2">
       <div className="flex items-center gap-2">
         <Avatar className="h-8 w-8">
-          <AvatarImage src={entry.studentPhoto ?? undefined} alt={entry.studentName} />
+          <AvatarImage
+            src={entry.studentPhoto ?? undefined}
+            alt={entry.studentName}
+          />
           <AvatarFallback className="text-xs">{initials}</AvatarFallback>
         </Avatar>
-        <span className="text-sm font-medium truncate">{entry.studentName}</span>
+        <span className="text-sm font-medium truncate">
+          {entry.studentName}
+        </span>
       </div>
       <div className="flex gap-1">
         {statusButtons.map(({ status, label }) => (
@@ -167,7 +192,7 @@ function StudentAttendanceCard({ entry, onStatusChange }: StudentAttendanceCardP
               entry.status === status && statusColors[status],
             )}
             onClick={() => onStatusChange(status)}
-            title={t(`attendance.status.${status}`)}
+            title={statusTranslations[status]()}
           >
             {label}
           </Button>

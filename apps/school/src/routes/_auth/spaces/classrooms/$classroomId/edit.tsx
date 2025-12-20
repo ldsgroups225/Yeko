@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { useTranslation } from 'react-i18next'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { ClassroomForm } from '@/components/spaces/classroom-form'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useTranslations } from '@/i18n'
 import { getClassroomById } from '@/school/functions/classrooms'
 
 export const Route = createFileRoute('/_auth/spaces/classrooms/$classroomId/edit')({
@@ -12,7 +12,7 @@ export const Route = createFileRoute('/_auth/spaces/classrooms/$classroomId/edit
 })
 
 function EditClassroomPage() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const { classroomId } = Route.useParams()
   const navigate = useNavigate()
 
@@ -33,9 +33,9 @@ function EditClassroomPage() {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-center">
-          <p className="text-lg font-medium">{t('spaces.classrooms.notFound')}</p>
+          <p className="text-lg font-medium">{t.spaces.classroom.notFound()}</p>
           <Button asChild className="mt-4">
-            <Link to="/spaces/classrooms">{t('common.back')}</Link>
+            <Link to="/spaces/classrooms">{t.common.back()}</Link>
           </Button>
         </div>
       </div>
@@ -48,23 +48,23 @@ function EditClassroomPage() {
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t('nav.spaces'), href: '/spaces/classrooms' },
-          { label: t('nav.classrooms'), href: '/spaces/classrooms' },
+          { label: t.nav.spaces(), href: '/spaces/classrooms' },
+          { label: t.nav.classrooms(), href: '/spaces/classrooms' },
           { label: classroom.name, href: `/spaces/classrooms/${classroomId}` },
-          { label: t('common.edit') },
+          { label: t.common.edit() },
         ]}
       />
 
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">{t('spaces.classrooms.editClassroom')}</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t.spaces.classroom.editClassroom()}</h1>
         <p className="text-muted-foreground">
-          {t('spaces.classrooms.editClassroomDescription', { name: classroom.name })}
+          {t.spaces.classroom.editClassroomDescription()}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>{t('spaces.classrooms.classroomInfo')}</CardTitle>
+          <CardTitle>{t.spaces.classroom.classroomInfo()}</CardTitle>
         </CardHeader>
         <CardContent>
           <ClassroomForm

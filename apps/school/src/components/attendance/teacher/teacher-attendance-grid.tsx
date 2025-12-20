@@ -1,11 +1,11 @@
 import { CheckCircle, Save } from 'lucide-react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DatePicker } from '@/components/ui/date-picker'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { useTranslations } from '@/i18n'
 import { generateUUID } from '@/utils/generateUUID'
 import { TeacherAttendanceRow } from './teacher-attendance-row'
 
@@ -41,7 +41,7 @@ export function TeacherAttendanceGrid({
   isLoading,
   isSaving,
 }: TeacherAttendanceGridProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const [entries, setEntries] = useState<TeacherAttendanceEntry[]>(initialEntries)
   const [hasChanges, setHasChanges] = useState(false)
 
@@ -77,43 +77,43 @@ export function TeacherAttendanceGrid({
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-        <CardTitle>{t('attendance.teacherAttendance')}</CardTitle>
+        <CardTitle>{t.attendance.teacherAttendance()}</CardTitle>
         <div className="flex items-center gap-2">
           <DatePicker date={date} onSelect={d => d && onDateChange(d)} />
           <Button variant="outline" onClick={handleMarkAllPresent}>
             <CheckCircle className="mr-2 h-4 w-4" />
-            {t('attendance.markAllPresent')}
+            {t.attendance.markAllPresent()}
           </Button>
           <Button onClick={handleSave} disabled={!hasChanges || isSaving}>
             <Save className="mr-2 h-4 w-4" />
-            {isSaving ? t('common.saving') : t('common.save')}
+            {isSaving ? t.common.saving() : t.common.save()}
           </Button>
         </div>
       </CardHeader>
       <CardContent>
         <div className="mb-4 flex gap-4 text-sm">
           <span className="text-green-600">
-            {t('attendance.status.present')}
+            {t.attendance.status.present()}
             :
             {summary.present}
           </span>
           <span className="text-amber-600">
-            {t('attendance.status.late')}
+            {t.attendance.status.late()}
             :
             {summary.late}
           </span>
           <span className="text-red-600">
-            {t('attendance.status.absent')}
+            {t.attendance.status.absent()}
             :
             {summary.absent}
           </span>
           <span className="text-blue-600">
-            {t('attendance.status.excused')}
+            {t.attendance.status.excused()}
             :
             {summary.excused}
           </span>
           <span className="text-purple-600">
-            {t('attendance.status.on_leave')}
+            {t.attendance.status.on_leave()}
             :
             {summary.onLeave}
           </span>
@@ -121,11 +121,11 @@ export function TeacherAttendanceGrid({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[250px]">{t('attendance.teacher')}</TableHead>
-              <TableHead className="w-[200px]">{t('attendance.status.label')}</TableHead>
-              <TableHead className="w-[120px]">{t('attendance.arrivalTime')}</TableHead>
-              <TableHead className="w-[100px]">{t('attendance.lateMinutes')}</TableHead>
-              <TableHead>{t('attendance.notes')}</TableHead>
+              <TableHead className="w-[250px]">{t.attendance.teacher()}</TableHead>
+              <TableHead className="w-[200px]">{t.attendance.status.label()}</TableHead>
+              <TableHead className="w-[120px]">{t.attendance.arrivalTime()}</TableHead>
+              <TableHead className="w-[100px]">{t.attendance.lateMinutes()}</TableHead>
+              <TableHead>{t.attendance.notes()}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

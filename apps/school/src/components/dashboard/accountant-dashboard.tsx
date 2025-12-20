@@ -1,6 +1,6 @@
 import { AlertCircle, CheckCircle, DollarSign, TrendingUp } from 'lucide-react'
 import { motion } from 'motion/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslations } from '@/i18n'
 
 const container = {
   hidden: { opacity: 0 },
@@ -18,7 +18,7 @@ const item = {
 }
 
 export function AccountantDashboard() {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   return (
     <motion.div
@@ -28,9 +28,9 @@ export function AccountantDashboard() {
       animate="show"
     >
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.accountant.title')}</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t.dashboard.accountant.title()}</h1>
         <p className="text-muted-foreground">
-          {t('dashboard.accountant.subtitle')}
+          {t.dashboard.accountant.subtitle()}
         </p>
       </div>
 
@@ -42,28 +42,28 @@ export function AccountantDashboard() {
         className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
       >
         <MetricCard
-          title={t('dashboard.accountant.monthlyRevenue')}
+          title={t.dashboard.accountant.monthlyRevenue()}
           value="2,450,000"
           currency="FCFA"
           icon={DollarSign}
           trend="positive"
         />
         <MetricCard
-          title={t('dashboard.accountant.monthlyExpenses')}
+          title={t.dashboard.accountant.monthlyExpenses()}
           value="1,230,000"
           currency="FCFA"
           icon={TrendingUp}
           trend="neutral"
         />
         <MetricCard
-          title={t('dashboard.accountant.balance')}
+          title={t.dashboard.accountant.balance()}
           value="1,220,000"
           currency="FCFA"
           icon={CheckCircle}
           trend="positive"
         />
         <MetricCard
-          title={t('dashboard.accountant.unpaidFees')}
+          title={t.dashboard.accountant.unpaidFees()}
           value="450,000"
           currency="FCFA"
           icon={AlertCircle}
@@ -74,55 +74,49 @@ export function AccountantDashboard() {
       {/* Recent Transactions & Pending Payments */}
       <div className="grid gap-4 lg:grid-cols-2">
         <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
-          <h2 className="mb-4 text-lg font-semibold">{t('dashboard.accountant.recentTransactions')}</h2>
+          <h2 className="mb-4 text-lg font-semibold">{t.dashboard.accountant.recentTransactions()}</h2>
           <div className="space-y-3">
             <TransactionItem
               type="income"
-              description={`${t('dashboard.accountant.tuitionFees')} - Jean Kouadio`}
+              description={`${t.dashboard.accountant.tuitionFees()} - Jean Kouadio`}
               amount="45,000"
-              date={t('dashboard.accountant.today')}
-              t={t}
+              date={t.dashboard.accountant.today()}
             />
             <TransactionItem
               type="expense"
-              description={t('dashboard.accountant.teacherSalaries')}
+              description={t.dashboard.accountant.teacherSalaries()}
               amount="850,000"
-              date={t('dashboard.accountant.yesterday')}
-              t={t}
+              date={t.dashboard.accountant.yesterday()}
             />
             <TransactionItem
               type="income"
-              description={`${t('dashboard.accountant.registrationFees')} - 15 students`}
+              description={`${t.dashboard.accountant.registrationFees()} - 15 students`}
               amount="225,000"
               date="2 days ago"
-              t={t}
             />
           </div>
         </motion.div>
 
         <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
-          <h2 className="mb-4 text-lg font-semibold">{t('dashboard.accountant.overduePayments')}</h2>
+          <h2 className="mb-4 text-lg font-semibold">{t.dashboard.accountant.overduePayments()}</h2>
           <div className="space-y-3">
             <PendingPaymentItem
               name="Marie Diallo"
               class="3ème A"
               amount="45,000"
               daysLate={15}
-              t={t}
             />
             <PendingPaymentItem
               name="Kofi Mensah"
               class="2nde B"
               amount="45,000"
               daysLate={8}
-              t={t}
             />
             <PendingPaymentItem
               name="Ama Asante"
               class="1ère C"
               amount="45,000"
               daysLate={3}
-              t={t}
             />
           </div>
         </motion.div>
@@ -169,7 +163,6 @@ interface TransactionItemProps {
   description: string
   amount: string
   date: string
-  t: (key: string) => string
 }
 
 function TransactionItem({ type, description, amount, date }: TransactionItemProps) {
@@ -199,21 +192,19 @@ interface PendingPaymentItemProps {
   class: string
   amount: string
   daysLate: number
-  t: (key: string) => string
 }
 
-function PendingPaymentItem({ name, class: className, amount, daysLate, t }: PendingPaymentItemProps) {
+function PendingPaymentItem({ name, class: className, amount, daysLate }: PendingPaymentItemProps) {
+  const t = useTranslations()
   return (
     <div className="flex items-center justify-between rounded-md border border-border/40 bg-background p-4">
       <div className="space-y-1">
         <p className="text-sm font-medium">{name}</p>
         <p className="text-xs text-muted-foreground">{className}</p>
         <p className="text-xs text-red-600 dark:text-red-400">
-          {t('dashboard.accountant.daysLate')}
-          :
           {daysLate}
           {' '}
-          {t('dashboard.accountant.daysAgo')}
+          {t.dashboard.accountant.daysAgo()}
         </p>
       </div>
       <p className="text-sm font-bold">

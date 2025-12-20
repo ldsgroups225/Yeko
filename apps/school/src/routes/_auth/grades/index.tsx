@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { AlertCircle, BarChart3, BookOpen, CheckCircle, ChevronRight, Clock } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
-
 import { Badge } from '@/components/ui/badge'
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useSchoolContext } from '@/hooks/use-school-context'
+import { useTranslations } from '@/i18n'
 import { gradesOptions } from '@/lib/queries/grades'
 
 export const Route = createFileRoute('/_auth/grades/')({
@@ -15,7 +15,7 @@ export const Route = createFileRoute('/_auth/grades/')({
 })
 
 function GradesIndexPage() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const { schoolId } = useSchoolContext()
 
   const { data: pendingValidations, isLoading: pendingLoading } = useQuery(
@@ -37,7 +37,7 @@ function GradesIndexPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">
-              {t('academic.grades.validations.title')}
+              {t.academic.grades.validations.title()}
             </CardTitle>
             <Clock className="size-4 text-muted-foreground" />
           </CardHeader>
@@ -50,7 +50,7 @@ function GradesIndexPage() {
                   <>
                     <div className="text-2xl font-bold">{pendingCount}</div>
                     <p className="text-xs text-muted-foreground">
-                      {t('academic.grades.validations.pendingCount', { count: totalPendingGrades })}
+                      {t.academic.grades.validations.pendingCount({ count: totalPendingGrades })}
                     </p>
                   </>
                 )}
@@ -60,14 +60,14 @@ function GradesIndexPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">
-              {t('academic.grades.statistics.classAverage')}
+              {t.academic.grades.statistics.classAverage()}
             </CardTitle>
             <BarChart3 className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">--</div>
             <p className="text-xs text-muted-foreground">
-              {t('academic.grades.statistics.description')}
+              {t.academic.grades.statistics.description()}
             </p>
           </CardContent>
         </Card>
@@ -75,14 +75,14 @@ function GradesIndexPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">
-              {t('academic.grades.statistics.passRate')}
+              {t.academic.grades.statistics.passRate()}
             </CardTitle>
             <CheckCircle className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">--</div>
             <p className="text-xs text-muted-foreground">
-              {t('academic.grades.statistics.above15')}
+              {t.academic.grades.statistics.above15()}
             </p>
           </CardContent>
         </Card>
@@ -95,15 +95,15 @@ function GradesIndexPage() {
             <AlertCircle className="size-5 text-amber-600" />
             <div className="flex-1">
               <p className="font-medium text-amber-800 dark:text-amber-200">
-                {t('academic.grades.validations.pendingCount', { count: totalPendingGrades })}
+                {t.academic.grades.validations.pendingCount({ count: totalPendingGrades })}
               </p>
               <p className="text-sm text-amber-600 dark:text-amber-400">
-                {t('academic.grades.validations.description')}
+                {t.academic.grades.validations.description()}
               </p>
             </div>
             <Link to="/grades/validations">
               <Button variant="outline" size="sm">
-                {t('academic.grades.validations.viewDetails')}
+                {t.academic.grades.validations.viewDetails()}
               </Button>
             </Link>
           </CardContent>
@@ -113,21 +113,21 @@ function GradesIndexPage() {
       {/* Quick Actions */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <QuickActionCard
-          title={t('academic.grades.quickActions.entry')}
-          description={t('academic.grades.quickActions.entryDescription')}
+          title={t.academic.grades.quickActions.entry()}
+          description={t.academic.grades.quickActions.entryDescription()}
           icon={BookOpen}
           href="/grades/entry"
         />
         <QuickActionCard
-          title={t('academic.grades.quickActions.validations')}
-          description={t('academic.grades.quickActions.validationsDescription')}
+          title={t.academic.grades.quickActions.validations()}
+          description={t.academic.grades.quickActions.validationsDescription()}
           icon={CheckCircle}
           href="/grades/validations"
           badge={pendingCount > 0 ? pendingCount : undefined}
         />
         <QuickActionCard
-          title={t('academic.grades.quickActions.statistics')}
-          description={t('academic.grades.quickActions.statisticsDescription')}
+          title={t.academic.grades.quickActions.statistics()}
+          description={t.academic.grades.quickActions.statisticsDescription()}
           icon={BarChart3}
           href="/grades/statistics"
         />
@@ -149,7 +149,7 @@ function QuickActionCard({
   href: string
   badge?: number
 }) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   return (
     <Link to={href} className="[&.active]:font-bold">
@@ -168,7 +168,7 @@ function QuickActionCard({
         <CardContent>
           <p className="text-xs text-muted-foreground">{description}</p>
           <div className="mt-2 flex items-center text-sm text-primary">
-            {t('academic.grades.quickActions.access')}
+            {t.academic.grades.quickActions.access()}
             <ChevronRight className="ml-1 size-4" />
           </div>
         </CardContent>

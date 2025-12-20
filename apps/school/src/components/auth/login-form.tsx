@@ -3,7 +3,6 @@ import { Loader2 } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
@@ -17,6 +16,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
+import { useTranslations } from '@/i18n'
 import { authClient } from '@/lib/auth-client'
 
 const loginSchema = z.object({
@@ -27,7 +27,7 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>
 
 export function LoginForm() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const [isLoading, setIsLoading] = useState(false)
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
 
@@ -47,10 +47,10 @@ export function LoginForm() {
         password: data.password,
         callbackURL: '/dashboard',
       })
-      toast.success(t('auth.login.success'))
+      toast.success(t.auth.login.success())
     }
     catch {
-      toast.error(t('auth.login.error'))
+      toast.error(t.auth.login.error())
     }
     finally {
       setIsLoading(false)
@@ -66,7 +66,7 @@ export function LoginForm() {
       })
     }
     catch {
-      toast.error(t('auth.login.googleError'))
+      toast.error(t.auth.login.googleError())
       setIsGoogleLoading(false)
     }
   }
@@ -86,7 +86,7 @@ export function LoginForm() {
               transition={{ delay: 0.1 }}
             >
               <CardTitle className="text-2xl font-bold text-center">
-                {t('auth.login.title')}
+                {t.auth.login.title()}
               </CardTitle>
             </motion.div>
             <motion.div
@@ -95,7 +95,7 @@ export function LoginForm() {
               transition={{ delay: 0.2 }}
             >
               <CardDescription className="text-center">
-                {t('auth.login.subtitle')}
+                {t.auth.login.subtitle()}
               </CardDescription>
             </motion.div>
           </CardHeader>
@@ -141,7 +141,7 @@ export function LoginForm() {
                         />
                       </svg>
                     )}
-                {t('auth.login.continueWithGoogle')}
+                {t.auth.login.continueWithGoogle()}
               </Button>
             </motion.div>
 
@@ -156,7 +156,7 @@ export function LoginForm() {
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-background px-2 text-muted-foreground">
-                  {t('auth.login.orContinueWith')}
+                  {t.auth.login.orContinueWith()}
                 </span>
               </div>
             </motion.div>
@@ -170,11 +170,11 @@ export function LoginForm() {
               transition={{ delay: 0.5 }}
             >
               <div className="space-y-2">
-                <Label htmlFor="email">{t('auth.login.email')}</Label>
+                <Label htmlFor="email">{t.auth.login.email()}</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder={t('auth.login.emailPlaceholder')}
+                  placeholder={t.auth.login.emailPlaceholder()}
                   disabled={isLoading || isGoogleLoading}
                   {...register('email')}
                 />
@@ -190,11 +190,11 @@ export function LoginForm() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">{t('auth.login.password')}</Label>
+                <Label htmlFor="password">{t.auth.login.password()}</Label>
                 <Input
                   id="password"
                   type="password"
-                  placeholder={t('auth.login.passwordPlaceholder')}
+                  placeholder={t.auth.login.passwordPlaceholder()}
                   disabled={isLoading || isGoogleLoading}
                   {...register('password')}
                 />
@@ -218,11 +218,11 @@ export function LoginForm() {
                   ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        {t('auth.login.submitting')}
+                        {t.auth.login.submitting()}
                       </>
                     )
                   : (
-                      t('auth.login.submit')
+                      t.auth.login.submit()
                     )}
               </Button>
             </motion.form>

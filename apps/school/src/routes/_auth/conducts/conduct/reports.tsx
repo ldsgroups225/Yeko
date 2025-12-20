@@ -2,9 +2,8 @@ import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-
 import { ConductSeverityBadge } from '@/components/conduct/conduct-severity-badge'
+
 import { ConductTypeBadge } from '@/components/conduct/conduct-type-badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -26,6 +25,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useTranslations } from '@/i18n'
 import { conductRecordsOptions } from '@/lib/queries/conduct-records'
 import { generateUUID } from '@/utils/generateUUID'
 
@@ -34,7 +34,7 @@ export const Route = createFileRoute('/_auth/conducts/conduct/reports')({
 })
 
 function ConductReportsPage() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const [classId, setClassId] = useState('')
   const [type, setType] = useState<'incident' | 'sanction' | 'reward' | 'note' | undefined>()
   const [startDate, setStartDate] = useState(() => {
@@ -87,25 +87,25 @@ function ConductReportsPage() {
         <Link to="/conducts/conduct">
           <Button variant="ghost" size="sm" className="mb-4">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            {t('common.back')}
+            {t.common.back()}
           </Button>
         </Link>
-        <h1 className="text-2xl font-bold">{t('conduct.reports')}</h1>
-        <p className="text-muted-foreground">{t('conduct.reportsDescription')}</p>
+        <h1 className="text-2xl font-bold">{t.conduct.reports()}</h1>
+        <p className="text-muted-foreground">{t.conduct.reportsDescription()}</p>
       </div>
 
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle className="text-base">{t('conduct.filters')}</CardTitle>
+          <CardTitle className="text-base">{t.conduct.filters()}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-4">
             <Select value={classId || 'all'} onValueChange={v => setClassId(v === 'all' ? '' : v)}>
               <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder={t('conduct.allClasses')} />
+                <SelectValue placeholder={t.conduct.allClasses()} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">{t('conduct.allClasses')}</SelectItem>
+                <SelectItem value="all">{t.conduct.allClasses()}</SelectItem>
                 <SelectItem value="class-1">6ème A</SelectItem>
                 <SelectItem value="class-2">6ème B</SelectItem>
               </SelectContent>
@@ -113,13 +113,13 @@ function ConductReportsPage() {
 
             <Select value={type ?? 'all'} onValueChange={v => setType(v === 'all' ? undefined : v as typeof type)}>
               <SelectTrigger className="w-[150px]">
-                <SelectValue placeholder={t('conduct.allTypes')} />
+                <SelectValue placeholder={t.conduct.allTypes()} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">{t('conduct.allTypes')}</SelectItem>
-                <SelectItem value="incident">{t('conduct.type.incident')}</SelectItem>
-                <SelectItem value="sanction">{t('conduct.type.sanction')}</SelectItem>
-                <SelectItem value="reward">{t('conduct.type.reward')}</SelectItem>
+                <SelectItem value="all">{t.conduct.allTypes()}</SelectItem>
+                <SelectItem value="incident">{t.conduct.type.incident()}</SelectItem>
+                <SelectItem value="sanction">{t.conduct.type.sanction()}</SelectItem>
+                <SelectItem value="reward">{t.conduct.type.reward()}</SelectItem>
               </SelectContent>
             </Select>
 
@@ -147,7 +147,7 @@ function ConductReportsPage() {
                 <Card>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium text-muted-foreground">
-                      {t('conduct.totalRecords')}
+                      {t.conduct.totalRecords()}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -158,7 +158,7 @@ function ConductReportsPage() {
                 <Card>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium text-muted-foreground">
-                      {t('conduct.type.incident')}
+                      {t.conduct.type.incident()}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -173,7 +173,7 @@ function ConductReportsPage() {
                 <Card>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium text-muted-foreground">
-                      {t('conduct.type.sanction')}
+                      {t.conduct.type.sanction()}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -188,7 +188,7 @@ function ConductReportsPage() {
                 <Card>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium text-muted-foreground">
-                      {t('conduct.type.reward')}
+                      {t.conduct.type.reward()}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -204,7 +204,7 @@ function ConductReportsPage() {
               <div className="grid gap-6 md:grid-cols-2 mb-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>{t('conduct.bySeverity')}</CardTitle>
+                    <CardTitle>{t.conduct.bySeverity()}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
@@ -220,7 +220,7 @@ function ConductReportsPage() {
 
                 <Card>
                   <CardHeader>
-                    <CardTitle>{t('conduct.byCategory')}</CardTitle>
+                    <CardTitle>{t.conduct.byCategory()}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">
@@ -229,7 +229,36 @@ function ConductReportsPage() {
                         .slice(0, 5)
                         .map(([category, count]) => (
                           <div key={category} className="flex items-center justify-between">
-                            <span className="text-sm">{t(`conduct.category.${category}`)}</span>
+                            <span className="text-sm">
+                              {(() => {
+                                switch (category) {
+                                  case 'behavior':
+                                    return t.conduct.category.behavior()
+                                  case 'academic':
+                                    return t.conduct.category.academic()
+                                  case 'attendance':
+                                    return t.conduct.category.attendance()
+                                  case 'uniform':
+                                    return t.conduct.category.uniform()
+                                  case 'property':
+                                    return t.conduct.category.property()
+                                  case 'violence':
+                                    return t.conduct.category.violence()
+                                  case 'bullying':
+                                    return t.conduct.category.bullying()
+                                  case 'cheating':
+                                    return t.conduct.category.cheating()
+                                  case 'achievement':
+                                    return t.conduct.category.achievement()
+                                  case 'improvement':
+                                    return t.conduct.category.improvement()
+                                  case 'other':
+                                    return t.conduct.category.other()
+                                  default:
+                                    return category
+                                }
+                              })()}
+                            </span>
                             <span className="font-medium">{count}</span>
                           </div>
                         ))}
@@ -240,17 +269,17 @@ function ConductReportsPage() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>{t('conduct.recentRecords')}</CardTitle>
+                  <CardTitle>{t.conduct.recentRecords()}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>{t('conduct.date')}</TableHead>
-                        <TableHead>{t('conduct.student')}</TableHead>
-                        <TableHead>{t('conduct.type.label')}</TableHead>
-                        <TableHead>{t('conduct.title')}</TableHead>
-                        <TableHead>{t('conduct.severity.label')}</TableHead>
+                        <TableHead>{t.conduct.date()}</TableHead>
+                        <TableHead>{t.conduct.student()}</TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>{t.conduct.title()}</TableHead>
+                        <TableHead>Severity</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>

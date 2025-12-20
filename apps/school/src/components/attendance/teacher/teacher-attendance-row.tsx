@@ -1,10 +1,10 @@
-import { useTranslation } from 'react-i18next'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { Textarea } from '@/components/ui/textarea'
+import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
 type TeacherAttendanceStatus = 'present' | 'late' | 'absent' | 'excused' | 'on_leave'
@@ -44,7 +44,7 @@ const statusColors: Record<TeacherAttendanceStatus, string> = {
 }
 
 export function TeacherAttendanceRow({ entry, onChange }: TeacherAttendanceRowProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   const handleStatusChange = (status: TeacherAttendanceStatus) => {
     onChange({ ...entry, status })
@@ -65,6 +65,14 @@ export function TeacherAttendanceRow({ entry, onChange }: TeacherAttendanceRowPr
     .toUpperCase()
     .slice(0, 2)
 
+  const statusTranslations = {
+    present: t.attendance.status.present,
+    late: t.attendance.status.late,
+    absent: t.attendance.status.absent,
+    excused: t.attendance.status.excused,
+    on_leave: t.attendance.status.on_leave,
+  }
+
   return (
     <TableRow>
       <TableCell>
@@ -83,7 +91,7 @@ export function TeacherAttendanceRow({ entry, onChange }: TeacherAttendanceRowPr
             <Badge variant="destructive" className="ml-2 text-xs">
               {entry.lateCount}
               {' '}
-              {t('attendance.lateThisMonth')}
+              {t.attendance.lateThisMonth()}
             </Badge>
           )}
         </div>
@@ -100,7 +108,7 @@ export function TeacherAttendanceRow({ entry, onChange }: TeacherAttendanceRowPr
                 entry.status === status && statusColors[status],
               )}
               onClick={() => handleStatusChange(status)}
-              title={t(`attendance.status.${status}`)}
+              title={statusTranslations[status]()}
             >
               {shortLabel}
             </Button>
@@ -131,7 +139,7 @@ export function TeacherAttendanceRow({ entry, onChange }: TeacherAttendanceRowPr
         <Textarea
           value={entry.notes ?? ''}
           onChange={e => handleNotesChange(e.target.value)}
-          placeholder={t('attendance.notesPlaceholder')}
+          placeholder={t.attendance.notesPlaceholder()}
           className="min-h-[36px] h-9 resize-none"
           rows={1}
         />

@@ -1,13 +1,14 @@
 import type { ReactNode } from 'react'
-import type { WithTranslation } from 'react-i18next'
+import type { TranslationFunctions } from '@/i18n'
 import { AlertTriangle } from 'lucide-react'
 import { Component } from 'react'
-import { withTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
+import { useTranslations } from '@/i18n'
 
-interface Props extends WithTranslation {
+interface Props {
   children: ReactNode
   fallback?: ReactNode
+  t: TranslationFunctions
 }
 
 interface State {
@@ -40,16 +41,16 @@ class ErrorBoundaryComponent extends Component<Props, State> {
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
             <AlertTriangle className="h-6 w-6 text-destructive" />
           </div>
-          <h3 className="mt-4 text-lg font-semibold">{this.props.t('common.somethingWentWrong')}</h3>
+          <h3 className="mt-4 text-lg font-semibold">{this.props.t.common.somethingWentWrong()}</h3>
           <p className="mt-2 text-sm text-muted-foreground max-w-sm">
-            {this.state.error?.message || this.props.t('common.unexpectedError')}
+            {this.state.error?.message || this.props.t.common.unexpectedError()}
           </p>
           <Button
             onClick={() => this.setState({ hasError: false, error: undefined })}
             className="mt-6"
             variant="outline"
           >
-            {this.props.t('common.tryAgain')}
+            {this.props.t.common.tryAgain()}
           </Button>
         </div>
       )
@@ -59,4 +60,17 @@ class ErrorBoundaryComponent extends Component<Props, State> {
   }
 }
 
-export const ErrorBoundary = withTranslation()(ErrorBoundaryComponent)
+// Wrapper component to inject translations
+interface ErrorBoundaryProps {
+  children: ReactNode
+  fallback?: ReactNode
+}
+
+export function ErrorBoundary({ children, fallback }: ErrorBoundaryProps) {
+  const t = useTranslations()
+  return (
+    <ErrorBoundaryComponent t={t} fallback={fallback}>
+      {children}
+    </ErrorBoundaryComponent>
+  )
+}

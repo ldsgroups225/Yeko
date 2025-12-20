@@ -2,12 +2,12 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { BarChart3, Loader2, TrendingUp, Users, UserX } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+
 import { Progress } from '@/components/ui/progress'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
+import { useTranslations } from '@/i18n'
 import { enrollmentsOptions } from '@/lib/queries/enrollments'
 import { generateUUID } from '@/utils/generateUUID'
 
@@ -65,7 +65,7 @@ function StatCard({ title, value, description, icon, trend }: StatCardProps) {
 }
 
 export function EnrollmentStats() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const { schoolYearId } = useSchoolYearContext()
 
   const { data, isLoading, error } = useQuery({
@@ -76,7 +76,7 @@ export function EnrollmentStats() {
   if (!schoolYearId) {
     return (
       <div className="flex min-h-[200px] items-center justify-center rounded-lg border border-dashed p-8 text-center">
-        <p className="text-muted-foreground">{t('students.selectSchoolYearForStats')}</p>
+        <p className="text-muted-foreground">{t.students.selectSchoolYearForStats()}</p>
       </div>
     )
   }
@@ -143,26 +143,26 @@ export function EnrollmentStats() {
       {/* Summary Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          title={t('students.totalEnrollments')}
+          title={t.students.totalEnrollments()}
           value={data.total}
           icon={<Users className="h-4 w-4 text-muted-foreground" />}
         />
         <StatCard
-          title={t('students.confirmedEnrollments')}
+          title={t.students.confirmedEnrollments()}
           value={data.confirmed}
-          description={`${data.total > 0 ? Math.round((data.confirmed / data.total) * 100) : 0}% ${t('students.ofTotal')}`}
+          description={`${data.total > 0 ? Math.round((data.confirmed / data.total) * 100) : 0}% ${t.students.ofTotal()}`}
           icon={<BarChart3 className="h-4 w-4 text-green-600" />}
         />
         <StatCard
-          title={t('students.pendingEnrollments')}
+          title={t.students.pendingEnrollments()}
           value={data.pending}
-          description={t('students.awaitingConfirmation')}
+          description={t.students.awaitingConfirmation()}
           icon={<Loader2 className="h-4 w-4 text-yellow-600" />}
         />
         <StatCard
-          title={t('students.genderRatio')}
+          title={t.students.genderRatio()}
           value={`${totalBoys}/${totalGirls}`}
-          description={t('students.boysGirls')}
+          description={t.students.boysGirls()}
           icon={<Users className="h-4 w-4 text-blue-600" />}
         />
       </div>
@@ -171,14 +171,14 @@ export function EnrollmentStats() {
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>{t('students.enrollmentByGrade')}</CardTitle>
-            <CardDescription>{t('students.enrollmentByGradeDescription')}</CardDescription>
+            <CardTitle>{t.students.enrollmentByGrade()}</CardTitle>
+            <CardDescription>{t.students.enrollmentByGradeDescription()}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {byGrade.length === 0
                 ? (
-                    <p className="text-center text-sm text-muted-foreground">{t('students.noEnrollmentData')}</p>
+                    <p className="text-center text-sm text-muted-foreground">{t.students.noEnrollmentData()}</p>
                   )
                 : (
                     byGrade.map(grade => (
@@ -211,14 +211,14 @@ export function EnrollmentStats() {
         {/* Enrollment by Class */}
         <Card>
           <CardHeader>
-            <CardTitle>{t('students.enrollmentByClass')}</CardTitle>
-            <CardDescription>{t('students.classCapacityOverview')}</CardDescription>
+            <CardTitle>{t.students.enrollmentByClass()}</CardTitle>
+            <CardDescription>{t.students.classCapacityOverview()}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="max-h-[300px] space-y-3 overflow-y-auto">
               {byClass.length === 0
                 ? (
-                    <p className="text-center text-sm text-muted-foreground">{t('students.noEnrollmentData')}</p>
+                    <p className="text-center text-sm text-muted-foreground">{t.students.noEnrollmentData()}</p>
                   )
                 : (
                     byClass.map((cls) => {
@@ -252,8 +252,8 @@ export function EnrollmentStats() {
       {/* Status Breakdown */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('students.enrollmentStatusBreakdown')}</CardTitle>
-          <CardDescription>{t('students.enrollmentStatusDescription')}</CardDescription>
+          <CardTitle>{t.students.enrollmentStatusBreakdown()}</CardTitle>
+          <CardDescription>{t.students.enrollmentStatusDescription()}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-4">
@@ -270,7 +270,14 @@ export function EnrollmentStats() {
                   className={`rounded-lg px-4 py-2 ${statusColors[status.status] || 'bg-gray-100 text-gray-800'}`}
                 >
                   <p className="text-2xl font-bold">{status.count}</p>
-                  <p className="text-xs capitalize">{t(`enrollments.status${status.status.charAt(0).toUpperCase() + status.status.slice(1)}`)}</p>
+                  <p className="text-xs capitalize">
+                    {{
+                      pending: t.enrollments.statusPending,
+                      confirmed: t.enrollments.statusConfirmed,
+                      cancelled: t.enrollments.statusCancelled,
+                      transferred: t.enrollments.statusTransferred,
+                    }[status.status as 'pending' | 'confirmed' | 'cancelled' | 'transferred']()}
+                  </p>
                 </div>
               )
             })}

@@ -1,10 +1,10 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Plus } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { UsersTable } from '@/components/hr/users/users-table'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Button } from '@/components/ui/button'
+import { useTranslations } from '@/i18n'
 
 const usersSearchSchema = z.object({
   page: z.number().min(1).catch(1),
@@ -19,7 +19,7 @@ export const Route = createFileRoute('/_auth/users/users/')({
 })
 
 function UsersListPage() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const navigate = useNavigate()
   const search = Route.useSearch()
 
@@ -27,20 +27,20 @@ function UsersListPage() {
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t('hr.title'), href: '/users' },
-          { label: t('hr.users.title') },
+          { label: t.hr.title(), href: '/users' },
+          { label: t.hr.users.title() },
         ]}
       />
 
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t('hr.users.title')}</h1>
-          <p className="text-muted-foreground">{t('hr.users.description')}</p>
+          <h1 className="text-3xl font-bold tracking-tight">{t.hr.users.title()}</h1>
+          <p className="text-muted-foreground">{t.hr.users.description()}</p>
         </div>
         <div className="flex gap-2">
           <Button onClick={() => navigate({ to: '/users/users/new' })}>
             <Plus className="mr-2 h-4 w-4" />
-            {t('hr.users.addUser')}
+            {t.hr.users.addUser()}
           </Button>
         </div>
       </div>

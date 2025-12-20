@@ -1,6 +1,4 @@
 import { FileWarning } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
-
 import {
   Empty,
   EmptyDescription,
@@ -8,7 +6,9 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty'
+
 import { Skeleton } from '@/components/ui/skeleton'
+import { useTranslations } from '@/i18n'
 
 import { generateUUID } from '@/utils/generateUUID'
 import { ConductRecordCard } from './conduct-record-card'
@@ -48,7 +48,7 @@ export function ConductRecordList({
   onEdit,
   onDelete,
 }: ConductRecordListProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   if (isLoading) {
     return <ConductRecordListSkeleton />
@@ -61,8 +61,8 @@ export function ConductRecordList({
           <EmptyMedia variant="icon">
             <FileWarning className="h-6 w-6" />
           </EmptyMedia>
-          <EmptyTitle>{t('conduct.noRecords')}</EmptyTitle>
-          <EmptyDescription>{t('conduct.noRecordsDescription')}</EmptyDescription>
+          <EmptyTitle>{t.conduct.noRecords()}</EmptyTitle>
+          <EmptyDescription>{t.conduct.noRecordsDescription()}</EmptyDescription>
         </EmptyHeader>
       </Empty>
     )

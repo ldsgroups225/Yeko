@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Wallet } from 'lucide-react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -14,6 +13,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
+import { useTranslations } from '@/i18n'
 import { classesOptions } from '@/lib/queries/classes'
 import { bulkAssignFees } from '@/school/functions/bulk-operations'
 import { generateUUID } from '@/utils/generateUUID'
@@ -27,7 +27,7 @@ interface ClassItem {
 }
 
 export function BulkFeeAssignmentCard() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
   const { schoolYearId } = useSchoolYearContext()
 
@@ -46,7 +46,7 @@ export function BulkFeeAssignmentCard() {
     onSuccess: (result: { success: boolean, data?: { succeeded: number } }) => {
       if (result.success && result.data) {
         toast.success(
-          t('students.bulkOperations.feeAssignmentSuccess', {
+          t.students.bulkOperations.feeAssignmentSuccess({
             count: result.data.succeeded,
           }),
         )
@@ -54,7 +54,7 @@ export function BulkFeeAssignmentCard() {
       }
     },
     onError: () => {
-      toast.error(t('students.bulkOperations.feeAssignmentError'))
+      toast.error(t.students.bulkOperations.feeAssignmentError())
     },
   })
 
@@ -76,21 +76,21 @@ export function BulkFeeAssignmentCard() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Wallet className="h-5 w-5" />
-          {t('students.bulkOperations.assignFees')}
+          {t.students.bulkOperations.assignFees()}
         </CardTitle>
         <CardDescription>
-          {t('students.bulkOperations.assignFeesDescription')}
+          {t.students.bulkOperations.assignFeesDescription()}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label>{t('students.bulkOperations.filterByGrade')}</Label>
+          <Label>{t.students.bulkOperations.filterByGrade()}</Label>
           <Select value={selectedGradeId || 'all'} onValueChange={v => setSelectedGradeId(v === 'all' ? '' : v)}>
             <SelectTrigger>
-              <SelectValue placeholder={t('common.all')} />
+              <SelectValue placeholder={t.common.all()} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">{t('common.all')}</SelectItem>
+              <SelectItem value="all">{t.common.all()}</SelectItem>
               {grades.map((g: { id: string, name: string }) => (
                 <SelectItem key={generateUUID()} value={g.id}>
                   {g.name}
@@ -101,13 +101,13 @@ export function BulkFeeAssignmentCard() {
         </div>
 
         <div className="space-y-2">
-          <Label>{t('students.bulkOperations.filterByClass')}</Label>
+          <Label>{t.students.bulkOperations.filterByClass()}</Label>
           <Select value={selectedClassId || 'all'} onValueChange={v => setSelectedClassId(v === 'all' ? '' : v)}>
             <SelectTrigger>
-              <SelectValue placeholder={t('common.all')} />
+              <SelectValue placeholder={t.common.all()} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">{t('common.all')}</SelectItem>
+              <SelectItem value="all">{t.common.all()}</SelectItem>
               {classes
                 ?.filter((c: ClassItem) => !selectedGradeId || c.gradeId === selectedGradeId)
                 .map((c: ClassItem) => (
@@ -131,8 +131,8 @@ export function BulkFeeAssignmentCard() {
           className="w-full"
         >
           {assignMutation.isPending
-            ? t('common.loading')
-            : t('students.bulkOperations.startFeeAssignment')}
+            ? t.common.loading()
+            : t.students.bulkOperations.startFeeAssignment()}
         </Button>
       </CardContent>
     </Card>

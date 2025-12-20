@@ -1,12 +1,12 @@
 import type { SchoolSettings, UpdateSchoolProfileInput } from '@/schemas/school-profile'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { SchoolProfileForm } from '@/components/settings/school-profile-form'
 import { SchoolSettingsTabs } from '@/components/settings/school-settings-tabs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useTranslations } from '@/i18n'
 import { schoolProfileOptions } from '@/lib/queries'
 import {
   updateSchoolLogo,
@@ -19,7 +19,7 @@ export const Route = createFileRoute('/_auth/settings/profile')({
 })
 
 function SettingsProfilePage() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
 
   const { data: school, isLoading } = useQuery(schoolProfileOptions.detail())
@@ -28,10 +28,10 @@ function SettingsProfilePage() {
     mutationFn: updateSchoolProfile,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['school-profile'] })
-      toast.success(t('settings.profile.updateSuccess'))
+      toast.success(t.settings.profile.updateSuccess())
     },
     onError: () => {
-      toast.error(t('settings.profile.updateError'))
+      toast.error(t.settings.profile.updateError())
     },
   })
 
@@ -39,10 +39,10 @@ function SettingsProfilePage() {
     mutationFn: updateSchoolSettings,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['school-profile'] })
-      toast.success(t('settings.profile.settingsUpdateSuccess'))
+      toast.success(t.settings.profile.settingsUpdateSuccess())
     },
     onError: () => {
-      toast.error(t('settings.profile.settingsUpdateError'))
+      toast.error(t.settings.profile.settingsUpdateError())
     },
   })
 
@@ -50,10 +50,10 @@ function SettingsProfilePage() {
     mutationFn: updateSchoolLogo,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['school-profile'] })
-      toast.success(t('settings.profile.logoUpdateSuccess'))
+      toast.success(t.settings.profile.logoUpdateSuccess())
     },
     onError: () => {
-      toast.error(t('settings.profile.logoUpdateError'))
+      toast.error(t.settings.profile.logoUpdateError())
     },
   })
 
@@ -82,19 +82,19 @@ function SettingsProfilePage() {
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-semibold tracking-tight">
-          {t('settings.profile.title')}
+          {t.settings.profile.title()}
         </h2>
         <p className="text-sm text-muted-foreground">
-          {t('settings.profile.description')}
+          {t.settings.profile.description()}
         </p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>{t('settings.profile.schoolInfo')}</CardTitle>
+            <CardTitle>{t.settings.profile.schoolInfo()}</CardTitle>
             <CardDescription>
-              {t('settings.profile.schoolInfoDescription')}
+              {t.settings.profile.schoolInfoDescription()}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -111,9 +111,9 @@ function SettingsProfilePage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>{t('settings.profile.schoolSettings')}</CardTitle>
+            <CardTitle>{t.settings.profile.schoolSettings()}</CardTitle>
             <CardDescription>
-              {t('settings.profile.schoolSettingsDescription')}
+              {t.settings.profile.schoolSettingsDescription()}
             </CardDescription>
           </CardHeader>
           <CardContent>

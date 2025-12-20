@@ -1,6 +1,5 @@
-import { useTranslation } from 'react-i18next'
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+
 import {
   Table,
   TableBody,
@@ -9,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
 interface StudentAverage {
@@ -47,7 +47,7 @@ function getRankBadge(rank: number): string {
 }
 
 export function ClassAveragesTable({ averages, className }: ClassAveragesTableProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const sortedAverages = [...averages].sort((a, b) => a.rank - b.rank)
 
   // Calculate class statistics
@@ -61,11 +61,11 @@ export function ClassAveragesTable({ averages, className }: ClassAveragesTablePr
     <Card className={className}>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg">{t('academic.grades.averages.title')}</CardTitle>
+          <CardTitle className="text-lg">{t.academic.grades.averages.title()}</CardTitle>
           <div className="flex gap-4 text-sm">
             <div>
               <span className="text-muted-foreground">
-                {t('academic.grades.statistics.classAverage')}
+                {t.academic.grades.statistics.classAverage()}
                 :
                 {' '}
               </span>
@@ -75,7 +75,7 @@ export function ClassAveragesTable({ averages, className }: ClassAveragesTablePr
             </div>
             <div>
               <span className="text-muted-foreground">
-                {t('academic.grades.statistics.passRate')}
+                {t.academic.grades.statistics.passRate()}
                 :
                 {' '}
               </span>
@@ -91,12 +91,12 @@ export function ClassAveragesTable({ averages, className }: ClassAveragesTablePr
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-16 text-center">{t('academic.grades.averages.rank')}</TableHead>
-              <TableHead>{t('academic.grades.averages.student')}</TableHead>
-              <TableHead className="w-24">{t('academic.grades.averages.matricule')}</TableHead>
-              <TableHead className="w-20 text-center">{t('academic.grades.averages.gradeCount')}</TableHead>
-              <TableHead className="w-24 text-center">{t('academic.grades.averages.average')}</TableHead>
-              <TableHead className="w-24 text-center">{t('academic.grades.averages.weightedAverage')}</TableHead>
+              <TableHead className="w-16 text-center">{t.academic.grades.averages.rank()}</TableHead>
+              <TableHead>{t.academic.grades.averages.student()}</TableHead>
+              <TableHead className="w-24">{t.academic.grades.averages.matricule()}</TableHead>
+              <TableHead className="w-20 text-center">{t.academic.grades.averages.gradeCount()}</TableHead>
+              <TableHead className="w-24 text-center">{t.academic.grades.averages.average()}</TableHead>
+              <TableHead className="w-24 text-center">{t.academic.grades.averages.weightedAverage()}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

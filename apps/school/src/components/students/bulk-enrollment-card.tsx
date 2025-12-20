@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Users } from 'lucide-react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -15,12 +14,13 @@ import {
 } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
+import { useTranslations } from '@/i18n'
 import { classesOptions } from '@/lib/queries/classes'
 import { bulkEnrollStudents } from '@/school/functions/bulk-operations'
 import { getStudents } from '@/school/functions/students'
 
 export function BulkEnrollmentCard() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
   const { schoolYearId } = useSchoolYearContext()
 
@@ -34,7 +34,7 @@ export function BulkEnrollmentCard() {
     onSuccess: (result) => {
       if (result.success && result.data) {
         toast.success(
-          t('students.bulkOperations.enrollmentSuccess', {
+          t.students.bulkOperations.enrollmentSuccess({
             count: result.data.succeeded,
           }),
         )
@@ -43,7 +43,7 @@ export function BulkEnrollmentCard() {
       }
     },
     onError: () => {
-      toast.error(t('students.bulkOperations.enrollmentError'))
+      toast.error(t.students.bulkOperations.enrollmentError())
     },
   })
 
@@ -57,7 +57,7 @@ export function BulkEnrollmentCard() {
     })
 
     if (!studentsResult.data?.length) {
-      toast.error(t('students.bulkOperations.noStudentsToEnroll'))
+      toast.error(t.students.bulkOperations.noStudentsToEnroll())
       return
     }
 
@@ -78,18 +78,18 @@ export function BulkEnrollmentCard() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Users className="h-5 w-5" />
-          {t('students.bulkOperations.bulkEnroll')}
+          {t.students.bulkOperations.bulkEnroll()}
         </CardTitle>
         <CardDescription>
-          {t('students.bulkOperations.bulkEnrollDescription')}
+          {t.students.bulkOperations.bulkEnrollDescription()}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label>{t('students.class')}</Label>
+          <Label>{t.students.class()}</Label>
           <Select value={selectedClassId} onValueChange={setSelectedClassId}>
             <SelectTrigger>
-              <SelectValue placeholder={t('students.selectClass')} />
+              <SelectValue placeholder={t.students.selectClass()} />
             </SelectTrigger>
             <SelectContent>
               {classes?.map(c => (
@@ -109,9 +109,9 @@ export function BulkEnrollmentCard() {
 
         <div className="flex items-center justify-between rounded-lg border p-4">
           <div className="space-y-0.5">
-            <Label>{t('students.autoConfirmEnrollments')}</Label>
+            <Label>{t.students.autoConfirmEnrollments()}</Label>
             <p className="text-sm text-muted-foreground">
-              {t('students.autoConfirmEnrollmentsDescription')}
+              {t.students.autoConfirmEnrollmentsDescription()}
             </p>
           </div>
           <Switch checked={autoConfirm} onCheckedChange={setAutoConfirm} />
@@ -123,8 +123,8 @@ export function BulkEnrollmentCard() {
           className="w-full"
         >
           {enrollMutation.isPending
-            ? t('common.loading')
-            : t('students.bulkOperations.startEnrollment')}
+            ? t.common.loading()
+            : t.students.bulkOperations.startEnrollment()}
         </Button>
       </CardContent>
     </Card>

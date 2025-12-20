@@ -1,6 +1,6 @@
 import { AlertCircle, AlertTriangle, Info } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/badge'
+import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
 type AlertSeverity = 'info' | 'warning' | 'critical'
@@ -25,14 +25,20 @@ export function AlertSeverityBadge({
   showIcon = true,
   className,
 }: AlertSeverityBadgeProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const config = severityConfig[severity]
   const Icon = config.icon
+
+  const severityTranslations = {
+    info: t.alerts.severity.info,
+    warning: t.alerts.severity.warning,
+    critical: t.alerts.severity.critical,
+  }
 
   return (
     <Badge variant="outline" className={cn(config.colorClass, className)}>
       {showIcon && <Icon className="mr-1 h-3 w-3" />}
-      {t(`alerts.severity.${severity}`)}
+      {severityTranslations[severity]()}
     </Badge>
   )
 }

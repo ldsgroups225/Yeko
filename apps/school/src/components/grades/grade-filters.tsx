@@ -1,8 +1,7 @@
 import type { GradeStatus, GradeType } from '@/schemas/grade'
 import { Filter, X } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
-
 import { Badge } from '@/components/ui/badge'
+
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import {
@@ -17,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useTranslations } from '@/i18n'
 import { gradeStatuses, gradeStatusLabels, gradeTypeLabels, gradeTypes } from '@/schemas/grade'
 
 interface GradeFiltersProps {
@@ -34,7 +34,7 @@ export function GradeFilters({
   onTypeChange,
   onClear,
 }: GradeFiltersProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const activeFilters = [status, type].filter(Boolean).length
 
   return (
@@ -42,7 +42,7 @@ export function GradeFilters({
       <PopoverTrigger asChild>
         <Button variant="outline" size="sm" className="h-9">
           <Filter className="mr-2 size-4" />
-          {t('academic.grades.filters.title')}
+          {t.academic.grades.filters.title()}
           {activeFilters > 0 && (
             <Badge variant="secondary" className="ml-2 rounded-full px-1.5">
               {activeFilters}
@@ -53,7 +53,7 @@ export function GradeFilters({
       <PopoverContent className="w-72" align="end">
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h4 className="font-medium">{t('academic.grades.filters.title')}</h4>
+            <h4 className="font-medium">{t.academic.grades.filters.title()}</h4>
             {activeFilters > 0 && (
               <Button
                 variant="ghost"
@@ -62,22 +62,22 @@ export function GradeFilters({
                 className="h-auto p-1 text-muted-foreground"
               >
                 <X className="mr-1 size-3" />
-                {t('academic.grades.filters.clear')}
+                {t.academic.grades.filters.clear()}
               </Button>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="grade-status-filter">{t('academic.grades.filters.status')}</Label>
+            <Label htmlFor="grade-status-filter">{t.academic.grades.filters.status()}</Label>
             <Select
               value={status ?? 'all'}
               onValueChange={v => onStatusChange(v === 'all' ? undefined : v as GradeStatus)}
             >
               <SelectTrigger id="grade-status-filter">
-                <SelectValue placeholder={t('academic.grades.filters.allStatuses')} />
+                <SelectValue placeholder={t.academic.grades.filters.allStatuses()} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">{t('academic.grades.filters.allStatuses')}</SelectItem>
+                <SelectItem value="all">{t.academic.grades.filters.allStatuses()}</SelectItem>
                 {gradeStatuses.map(s => (
                   <SelectItem key={s} value={s}>
                     {gradeStatusLabels[s]}
@@ -88,16 +88,16 @@ export function GradeFilters({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="grade-type-filter">{t('academic.grades.filters.gradeType')}</Label>
+            <Label htmlFor="grade-type-filter">{t.academic.grades.filters.gradeType()}</Label>
             <Select
               value={type ?? 'all'}
               onValueChange={v => onTypeChange(v === 'all' ? undefined : v as GradeType)}
             >
               <SelectTrigger id="grade-type-filter">
-                <SelectValue placeholder={t('academic.grades.filters.allTypes')} />
+                <SelectValue placeholder={t.academic.grades.filters.allTypes()} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">{t('academic.grades.filters.allTypes')}</SelectItem>
+                <SelectItem value="all">{t.academic.grades.filters.allTypes()}</SelectItem>
                 {gradeTypes.map(t => (
                   <SelectItem key={t} value={t}>
                     {gradeTypeLabels[t]}

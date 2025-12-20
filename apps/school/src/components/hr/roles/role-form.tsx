@@ -3,11 +3,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { useTranslations } from '@/i18n'
 import { generateSlug, roleSchema } from '@/schemas/role'
 import { PermissionsMatrix } from './permissions-matrix'
 
@@ -17,7 +17,7 @@ interface RoleFormProps {
 }
 
 export function RoleForm({ initialData, onSubmit }: RoleFormProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const isEditing = !!initialData
 
   const {
@@ -59,18 +59,18 @@ export function RoleForm({ initialData, onSubmit }: RoleFormProps) {
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
       <div className="rounded-lg border bg-card p-6">
-        <h2 className="mb-4 text-lg font-semibold">{t('hr.roles.basicInfo')}</h2>
+        <h2 className="mb-4 text-lg font-semibold">{t.hr.roles.basicInfo()}</h2>
         <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="name">
-              {t('hr.roles.name')}
+              {t.hr.roles.name()}
               {' '}
               <span className="text-destructive">*</span>
             </Label>
             <Input
               id="name"
               {...register('name')}
-              placeholder={t('hr.roles.namePlaceholder')}
+              placeholder={t.hr.roles.namePlaceholder()}
               aria-invalid={!!errors.name}
             />
             {errors.name && (
@@ -80,14 +80,14 @@ export function RoleForm({ initialData, onSubmit }: RoleFormProps) {
 
           <div className="space-y-2">
             <Label htmlFor="slug">
-              {t('hr.roles.slug')}
+              {t.hr.roles.slug()}
               {' '}
               <span className="text-destructive">*</span>
             </Label>
             <Input
               id="slug"
               {...register('slug')}
-              placeholder={t('hr.roles.slugPlaceholder')}
+              placeholder={t.hr.roles.slugPlaceholder()}
               disabled={isEditing}
               className="font-mono"
               aria-invalid={!!errors.slug}
@@ -97,17 +97,17 @@ export function RoleForm({ initialData, onSubmit }: RoleFormProps) {
             )}
             {!isEditing && (
               <p className="text-xs text-muted-foreground">
-                {t('hr.roles.slugHelp')}
+                {t.hr.roles.slugHelp()}
               </p>
             )}
           </div>
 
           <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="description">{t('hr.roles.description')}</Label>
+            <Label htmlFor="description">{t.hr.roles.description()}</Label>
             <Textarea
               id="description"
               {...register('description')}
-              placeholder={t('hr.roles.descriptionPlaceholder')}
+              placeholder={t.hr.roles.descriptionPlaceholder()}
               rows={3}
             />
           </div>
@@ -115,9 +115,9 @@ export function RoleForm({ initialData, onSubmit }: RoleFormProps) {
       </div>
 
       <div className="rounded-lg border bg-card p-6">
-        <h2 className="mb-4 text-lg font-semibold">{t('hr.roles.permissions')}</h2>
+        <h2 className="mb-4 text-lg font-semibold">{t.hr.roles.permissions()}</h2>
         <p className="mb-4 text-sm text-muted-foreground">
-          {t('hr.roles.permissionsDescription')}
+          {t.hr.roles.permissionsDescription()}
         </p>
         <PermissionsMatrix
           value={permissions}
@@ -127,11 +127,11 @@ export function RoleForm({ initialData, onSubmit }: RoleFormProps) {
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" disabled={isSubmitting}>
-          {t('common.cancel')}
+          {t.common.cancel()}
         </Button>
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {isEditing ? t('common.save') : t('common.create')}
+          {isEditing ? t.common.save() : t.common.create()}
         </Button>
       </div>
     </form>

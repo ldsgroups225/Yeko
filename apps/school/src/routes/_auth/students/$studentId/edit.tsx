@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { useTranslation } from 'react-i18next'
-
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+
 import { StudentForm } from '@/components/students'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useTranslations } from '@/i18n'
 import { studentsOptions } from '@/lib/queries/students'
 
 export const Route = createFileRoute('/_auth/students/$studentId/edit')({
@@ -12,7 +12,7 @@ export const Route = createFileRoute('/_auth/students/$studentId/edit')({
 })
 
 function EditStudentPage() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const { studentId } = Route.useParams()
   const { data, isLoading } = useQuery(studentsOptions.detail(studentId))
 
@@ -28,7 +28,7 @@ function EditStudentPage() {
   if (!data) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className="text-muted-foreground">{t('students.notFound')}</p>
+        <p className="text-muted-foreground">{t.students.notFound()}</p>
       </div>
     )
   }
@@ -37,15 +37,15 @@ function EditStudentPage() {
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t('students.title'), href: '/students' },
+          { label: t.students.title(), href: '/students' },
           { label: `${data.student.lastName} ${data.student.firstName}`, href: `/students/${studentId}` },
-          { label: t('common.edit') },
+          { label: t.common.edit() },
         ]}
       />
 
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">{t('students.editStudent')}</h1>
-        <p className="text-muted-foreground">{t('students.editStudentDescription')}</p>
+        <h1 className="text-3xl font-bold tracking-tight">{t.students.editStudent()}</h1>
+        <p className="text-muted-foreground">{t.students.editStudentDescription()}</p>
       </div>
 
       <StudentForm mode="edit" student={data.student} />

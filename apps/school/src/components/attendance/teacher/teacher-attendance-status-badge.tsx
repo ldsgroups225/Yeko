@@ -1,6 +1,6 @@
 import { Calendar, CheckCircle, Clock, FileCheck, XCircle } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/badge'
+import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
 type TeacherAttendanceStatus = 'present' | 'late' | 'absent' | 'excused' | 'on_leave'
@@ -28,14 +28,22 @@ export function TeacherAttendanceStatusBadge({
   showIcon = true,
   className,
 }: TeacherAttendanceStatusBadgeProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const config = statusConfig[status]
   const Icon = config.icon
+
+  const statusTranslations = {
+    present: t.attendance.status.present,
+    late: t.attendance.status.late,
+    absent: t.attendance.status.absent,
+    excused: t.attendance.status.excused,
+    on_leave: t.attendance.status.on_leave,
+  }
 
   return (
     <Badge variant="outline" className={cn(config.colorClass, className)}>
       {showIcon && <Icon className="mr-1 h-3 w-3" />}
-      {t(`attendance.status.${status}`)}
+      {statusTranslations[status]()}
     </Badge>
   )
 }

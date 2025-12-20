@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { AlertTriangle, Plus, Settings, X } from 'lucide-react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -28,6 +27,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { useTranslations } from '@/i18n'
 import { assignTeacherToClassSubject, getAssignmentMatrix, removeTeacherFromClassSubject } from '@/school/functions/class-subjects'
 import { getActiveSchoolYear } from '@/school/functions/school-years'
 import { getAllSubjects } from '@/school/functions/subjects'
@@ -70,7 +70,7 @@ function MatrixSkeleton() {
 }
 
 function EmptyState() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   return (
     <Card>
       <CardContent className="p-8">
@@ -79,22 +79,22 @@ function EmptyState() {
             <Settings className="h-8 w-8 text-muted-foreground" />
           </div>
           <div className="space-y-2">
-            <h3 className="text-lg font-semibold">{t('assignmentMatrix.emptyTitle')}</h3>
+            <h3 className="text-lg font-semibold">{t.assignmentMatrix.emptyTitle()}</h3>
             <p className="text-sm text-muted-foreground max-w-md">
-              {t('assignmentMatrix.emptyDescription')}
+              {t.assignmentMatrix.emptyDescription()}
             </p>
           </div>
           <div className="flex gap-2 pt-2">
             <Button variant="outline" asChild>
               <a href="/classes">
                 <Plus className="mr-2 h-4 w-4" />
-                {t('classes.create')}
+                {t.classes.create()}
               </a>
             </Button>
             <Button variant="outline" asChild>
               <a href="/settings/subjects">
                 <Settings className="mr-2 h-4 w-4" />
-                {t('subjects.configure')}
+                {t.subjects.configure()}
               </a>
             </Button>
           </div>
@@ -105,7 +105,7 @@ function EmptyState() {
 }
 
 export function AssignmentMatrix({ schoolYearId: propSchoolYearId }: AssignmentMatrixProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
   const [editingCell, setEditingCell] = useState<{ classId: string, subjectId: string } | null>(null)
 
@@ -138,18 +138,18 @@ export function AssignmentMatrix({ schoolYearId: propSchoolYearId }: AssignmentM
       assignTeacherToClassSubject({ data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assignmentMatrix'] })
-      toast.success(t('assignmentMatrix.assignedSuccess'))
+      toast.success(t.assignmentMatrix.assignedSuccess())
       setEditingCell(null)
     },
     onError: (error: Error) => {
       if (error.message.includes('not qualified')) {
-        toast.error(t('assignmentMatrix.errorNotQualified'))
+        toast.error(t.assignmentMatrix.errorNotQualified())
       }
       else if (error.message.includes('permission')) {
-        toast.error(t('common.errorPermission'))
+        toast.error(t.common.errorPermission())
       }
       else {
-        toast.error(error.message || t('common.error'))
+        toast.error(error.message || t.common.error())
       }
     },
   })
@@ -159,14 +159,14 @@ export function AssignmentMatrix({ schoolYearId: propSchoolYearId }: AssignmentM
       removeTeacherFromClassSubject({ data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assignmentMatrix'] })
-      toast.success(t('assignmentMatrix.removedSuccess'))
+      toast.success(t.assignmentMatrix.removedSuccess())
     },
     onError: (error: Error) => {
       if (error.message.includes('permission')) {
-        toast.error(t('common.errorPermission'))
+        toast.error(t.common.errorPermission())
       }
       else {
-        toast.error(error.message || t('common.error'))
+        toast.error(error.message || t.common.error())
       }
     },
   })
@@ -213,27 +213,27 @@ export function AssignmentMatrix({ schoolYearId: propSchoolYearId }: AssignmentM
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
-          <span>{t('assignmentMatrix.title')}</span>
+          <span>{t.assignmentMatrix.title()}</span>
           <Badge variant="outline">
             {classes.length}
             {' '}
-            {t('common.classes')}
+            {t.common.classes()}
             {' '}
             ×
             {' '}
             {subjects.length}
             {' '}
-            {t('common.subjects')}
+            {t.common.subjects()}
           </Badge>
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="overflow-x-auto" role="region" aria-label={t('assignmentMatrix.ariaLabel')}>
-          <Table aria-label={t('assignmentMatrix.ariaLabel')}>
+        <div className="overflow-x-auto" role="region" aria-label={t.assignmentMatrix.ariaLabel()}>
+          <Table aria-label={t.assignmentMatrix.ariaLabel()}>
             <TableHeader>
               <TableRow>
                 <TableHead className="sticky left-0 bg-background z-10 min-w-[120px]" scope="col">
-                  {t('common.class')}
+                  {t.common.classes()}
                 </TableHead>
                 {subjects.map((subject: any) => (
                   <TableHead key={subject.id} className="text-center min-w-[150px]" scope="col">
@@ -272,12 +272,12 @@ export function AssignmentMatrix({ schoolYearId: propSchoolYearId }: AssignmentM
                                 >
                                   <SelectTrigger
                                     className="h-8 w-[140px]"
-                                    aria-label={`${t('assignmentMatrix.selectTeacherFor')} ${cls.name} - ${subject.name}`}
+                                    aria-label={`${t.assignmentMatrix.selectTeacherFor()} ${cls.name} - ${subject.name}`}
                                   >
-                                    <SelectValue placeholder={t('common.select')} />
+                                    <SelectValue placeholder={t.common.select()} />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    <SelectItem value="none">{t('assignmentMatrix.notAssigned')}</SelectItem>
+                                    <SelectItem value="none">{t.assignmentMatrix.notAssigned()}</SelectItem>
                                     {teachers.map((teacher: any) => {
                                       const overloaded = isTeacherOverloaded(teacher.id)
                                       return (
@@ -285,7 +285,7 @@ export function AssignmentMatrix({ schoolYearId: propSchoolYearId }: AssignmentM
                                           <span className="flex items-center gap-2">
                                             {teacher.user.name}
                                             {overloaded && (
-                                              <AlertTriangle className="h-3 w-3 text-destructive" aria-label={t('assignmentMatrix.teacherOverloaded')} />
+                                              <AlertTriangle className="h-3 w-3 text-destructive" aria-label={t.assignmentMatrix.teacherOverloaded()} />
                                             )}
                                           </span>
                                         </SelectItem>
@@ -298,7 +298,7 @@ export function AssignmentMatrix({ schoolYearId: propSchoolYearId }: AssignmentM
                                   size="icon"
                                   className="h-8 w-8"
                                   onClick={() => setEditingCell(null)}
-                                  aria-label={t('common.cancel')}
+                                  aria-label={t.common.cancel()}
                                 >
                                   <X className="h-4 w-4" />
                                 </Button>
@@ -315,8 +315,8 @@ export function AssignmentMatrix({ schoolYearId: propSchoolYearId }: AssignmentM
                                       onClick={() => setEditingCell({ classId: cls.id, subjectId: subject.id })}
                                       aria-label={
                                         assignment?.teacherId
-                                          ? `${assignment.teacherName} ${t('assignmentMatrix.teaches')} ${subject.name} ${t('common.in')} ${cls.name}. ${t('common.clickToEdit')}`
-                                          : `${t('assignmentMatrix.assignTeacherFor')} ${subject.name} ${t('common.in')} ${cls.name}`
+                                          ? `${assignment.teacherName} ${t.assignmentMatrix.teaches()} ${subject.name} ${t.common.in()} ${cls.name}. ${t.common.clickToEdit()}`
+                                          : `${t.assignmentMatrix.assignTeacherFor()} ${subject.name} ${t.common.in()} ${cls.name}`
                                       }
                                     >
                                       {assignment?.teacherId
@@ -338,14 +338,14 @@ export function AssignmentMatrix({ schoolYearId: propSchoolYearId }: AssignmentM
                                       ? (
                                           <span>
                                             {assignment.teacherName}
-                                            {teacherOverloaded && ` (${t('assignmentMatrix.overloaded')})`}
+                                            {teacherOverloaded && ` (${t.assignmentMatrix.overloaded()})`}
                                             {' '}
                                             -
                                             {' '}
-                                            {t('common.clickToEdit')}
+                                            {t.common.clickToEdit()}
                                           </span>
                                         )
-                                      : t('assignmentMatrix.clickToAssign')}
+                                      : t.assignmentMatrix.clickToAssign()}
                                   </TooltipContent>
                                 </Tooltip>
                               </TooltipProvider>

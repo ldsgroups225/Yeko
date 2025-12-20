@@ -6,11 +6,10 @@ import { useNavigate } from '@tanstack/react-router'
 import { Loader2, RefreshCw, Upload } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod'
-
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
@@ -26,6 +25,7 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
+import { useTranslations } from '@/i18n'
 import { studentsKeys } from '@/lib/queries/students'
 import { getPresignedUploadUrl } from '@/school/functions/storage'
 import { createStudent, generateMatricule, updateStudent } from '@/school/functions/students'
@@ -57,7 +57,7 @@ interface StudentFormProps {
 }
 
 export function StudentForm({ student, mode }: StudentFormProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [showPhotoDialog, setShowPhotoDialog] = useState(false)
@@ -89,7 +89,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
     mutationFn: (data: StudentFormData) => createStudent({ data }),
     onSuccess: (newStudent) => {
       queryClient.invalidateQueries({ queryKey: studentsKeys.all })
-      toast.success(t('students.createSuccess'))
+      toast.success(t.students.createSuccess())
       if (newStudent) {
         navigate({ to: '/students/$studentId', params: { studentId: newStudent.id } })
       }
@@ -104,7 +104,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
       updateStudent({ data: { id: student.id, updates: data } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: studentsKeys.all })
-      toast.success(t('students.updateSuccess'))
+      toast.success(t.students.updateSuccess())
       navigate({ to: '/students/$studentId', params: { studentId: student.id } })
     },
     onError: (err: Error) => {
@@ -116,7 +116,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
     mutationFn: () => generateMatricule(),
     onSuccess: (matricule) => {
       form.setValue('matricule', matricule)
-      toast.success(t('students.matriculeGenerated'))
+      toast.success(t.students.matriculeGenerated())
     },
     onError: (err: Error) => {
       toast.error(err.message)
@@ -139,16 +139,16 @@ export function StudentForm({ student, mode }: StudentFormProps) {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <Tabs defaultValue="personal" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="personal">{t('students.personalInfo')}</TabsTrigger>
-            <TabsTrigger value="contact">{t('students.contactInfo')}</TabsTrigger>
-            <TabsTrigger value="medical">{t('students.medicalInfo')}</TabsTrigger>
+            <TabsTrigger value="personal">{t.students.personalInfo()}</TabsTrigger>
+            <TabsTrigger value="contact">{t.students.contactInfo()}</TabsTrigger>
+            <TabsTrigger value="medical">{t.students.medicalInfo()}</TabsTrigger>
           </TabsList>
 
           {/* Personal Information Tab */}
           <TabsContent value="personal" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>{t('students.personalInfo')}</CardTitle>
+                <CardTitle>{t.students.personalInfo()}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Photo Upload */}
@@ -169,13 +169,13 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                             onClick={() => setShowPhotoDialog(true)}
                           >
                             <Upload className="mr-2 h-4 w-4" />
-                            {t('students.uploadPhoto')}
+                            {t.students.uploadPhoto()}
                           </Button>
                         )
                       : (
                           <label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
                             {isUploadingPhoto ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-                            {isUploadingPhoto ? t('common.uploading') : t('students.uploadPhoto')}
+                            {isUploadingPhoto ? t.common.uploading() : t.students.uploadPhoto()}
                             <input
                               ref={fileInputRef}
                               type="file"
@@ -187,11 +187,11 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                                 if (!file)
                                   return
                                 if (!file.type.startsWith('image/')) {
-                                  toast.error(t('students.invalidFileType'))
+                                  toast.error(t.students.invalidFileType())
                                   return
                                 }
                                 if (file.size > 5 * 1024 * 1024) {
-                                  toast.error(t('students.fileTooLarge'))
+                                  toast.error(t.students.fileTooLarge())
                                   return
                                 }
 
@@ -208,7 +208,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                                   })
 
                                   if (!result.success) {
-                                    toast.error(result.error || t('students.uploadError'))
+                                    toast.error(result.error || t.students.uploadError())
                                     setIsUploadingPhoto(false)
                                     return
                                   }
@@ -223,18 +223,18 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                                   })
 
                                   if (!uploadResponse.ok) {
-                                    toast.error(t('students.uploadError'))
+                                    toast.error(t.students.uploadError())
                                     setIsUploadingPhoto(false)
                                     return
                                   }
 
                                   // Set the public URL in the form
                                   form.setValue('photoUrl', result.publicUrl)
-                                  toast.success(t('students.photoUploadSuccess'))
+                                  toast.success(t.students.photoUploadSuccess())
                                 }
                                 catch (error) {
                                   console.error('Upload error:', error)
-                                  toast.error(t('students.uploadError'))
+                                  toast.error(t.students.uploadError())
                                 }
                                 finally {
                                   setIsUploadingPhoto(false)
@@ -247,7 +247,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                           </label>
                         )}
                     <p className="text-sm text-muted-foreground">
-                      {t('students.photoRequirements')}
+                      {t.students.photoRequirements()}
                     </p>
                   </div>
                 </div>
@@ -259,7 +259,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          {t('students.lastName')}
+                          {t.students.lastName()}
                           {' '}
                           *
                         </FormLabel>
@@ -277,7 +277,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          {t('students.firstName')}
+                          {t.students.firstName()}
                           {' '}
                           *
                         </FormLabel>
@@ -295,7 +295,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          {t('students.dateOfBirth')}
+                          {t.students.dateOfBirth()}
                           {' '}
                           *
                         </FormLabel>
@@ -312,17 +312,17 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                     name="gender"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('students.gender')}</FormLabel>
+                        <FormLabel>{t.students.gender()}</FormLabel>
                         <Select onValueChange={field.onChange} value={field.value}>
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder={t('students.selectGender')} />
+                              <SelectValue placeholder={t.students.selectGender()} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="M">{t('students.male')}</SelectItem>
-                            <SelectItem value="F">{t('students.female')}</SelectItem>
-                            <SelectItem value="other">{t('students.other')}</SelectItem>
+                            <SelectItem value="M">{t.students.male()}</SelectItem>
+                            <SelectItem value="F">{t.students.female()}</SelectItem>
+                            <SelectItem value="other">{t.students.other()}</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -335,7 +335,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                     name="birthPlace"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('students.birthPlace')}</FormLabel>
+                        <FormLabel>{t.students.birthPlace()}</FormLabel>
                         <FormControl>
                           <Input {...field} />
                         </FormControl>
@@ -349,7 +349,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                     name="nationality"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('students.nationality')}</FormLabel>
+                        <FormLabel>{t.students.nationality()}</FormLabel>
                         <FormControl>
                           <Input {...field} />
                         </FormControl>
@@ -366,10 +366,10 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                     name="matricule"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('students.matricule')}</FormLabel>
+                        <FormLabel>{t.students.matricule()}</FormLabel>
                         <div className="flex gap-2">
                           <FormControl>
-                            <Input {...field} placeholder={t('students.matriculePlaceholder')} />
+                            <Input {...field} placeholder={t.students.matriculePlaceholder()} />
                           </FormControl>
                           {mode === 'create' && (
                             <Button
@@ -389,7 +389,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                           )}
                         </div>
                         <FormDescription>
-                          {t('students.matriculeDescription')}
+                          {t.students.matriculeDescription()}
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -401,7 +401,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                     name="admissionDate"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('students.admissionDate')}</FormLabel>
+                        <FormLabel>{t.students.admissionDate()}</FormLabel>
                         <FormControl>
                           <Input type="date" {...field} />
                         </FormControl>
@@ -416,7 +416,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                   name="previousSchool"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t('students.previousSchool')}</FormLabel>
+                      <FormLabel>{t.students.previousSchool()}</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
@@ -432,7 +432,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
           <TabsContent value="contact" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>{t('students.contactInfo')}</CardTitle>
+                <CardTitle>{t.students.contactInfo()}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <FormField
@@ -440,7 +440,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                   name="address"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t('students.address')}</FormLabel>
+                      <FormLabel>{t.students.address()}</FormLabel>
                       <FormControl>
                         <Textarea {...field} rows={3} />
                       </FormControl>
@@ -455,12 +455,12 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                     name="emergencyContact"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('students.emergencyContact')}</FormLabel>
+                        <FormLabel>{t.students.emergencyContact()}</FormLabel>
                         <FormControl>
                           <Input {...field} />
                         </FormControl>
                         <FormDescription>
-                          {t('students.emergencyContactDescription')}
+                          {t.students.emergencyContactDescription()}
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -472,7 +472,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                     name="emergencyPhone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('students.emergencyPhone')}</FormLabel>
+                        <FormLabel>{t.students.emergencyPhone()}</FormLabel>
                         <FormControl>
                           <Input {...field} type="tel" />
                         </FormControl>
@@ -489,7 +489,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
           <TabsContent value="medical" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>{t('students.medicalInfo')}</CardTitle>
+                <CardTitle>{t.students.medicalInfo()}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <FormField
@@ -497,11 +497,11 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                   name="bloodType"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t('students.bloodType')}</FormLabel>
+                      <FormLabel>{t.students.bloodType()}</FormLabel>
                       <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                           <SelectTrigger className="w-[200px]">
-                            <SelectValue placeholder={t('students.selectBloodType')} />
+                            <SelectValue placeholder={t.students.selectBloodType()} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -520,12 +520,12 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                   name="medicalNotes"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t('students.medicalNotes')}</FormLabel>
+                      <FormLabel>{t.students.medicalNotes()}</FormLabel>
                       <FormControl>
-                        <Textarea {...field} rows={4} placeholder={t('students.medicalNotesPlaceholder')} />
+                        <Textarea {...field} rows={4} placeholder={t.students.medicalNotesPlaceholder()} />
                       </FormControl>
                       <FormDescription>
-                        {t('students.medicalNotesDescription')}
+                        {t.students.medicalNotesDescription()}
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -539,11 +539,11 @@ export function StudentForm({ student, mode }: StudentFormProps) {
         {/* Form Actions */}
         <div className="flex justify-end gap-4">
           <Button type="button" variant="outline" onClick={() => navigate({ to: '/students', search: { page: 1 } })}>
-            {t('common.cancel')}
+            {t.common.cancel()}
           </Button>
           <Button type="submit" disabled={isLoading}>
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {mode === 'create' ? t('students.createStudent') : t('students.updateStudent')}
+            {mode === 'create' ? t.students.createStudent() : t.students.updateStudent()}
           </Button>
         </div>
       </form>

@@ -5,11 +5,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod'
-
 import { Button } from '@/components/ui/button'
+
 import {
   Dialog,
   DialogContent,
@@ -28,9 +27,10 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
+import { useTranslations } from '@/i18n'
 import { classesOptions } from '@/lib/queries/classes'
 import { studentsKeys } from '@/lib/queries/students'
 import { createEnrollment } from '@/school/functions/enrollments'
@@ -53,7 +53,7 @@ interface EnrollmentDialogProps {
 }
 
 export function EnrollmentDialog({ open, onOpenChange, studentId, studentName }: EnrollmentDialogProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
   const { schoolYearId: contextSchoolYearId } = useSchoolYearContext()
 
@@ -96,7 +96,7 @@ export function EnrollmentDialog({ open, onOpenChange, studentId, studentName }:
       createEnrollment({ data: { ...data, studentId } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: studentsKeys.detail(studentId) })
-      toast.success(t('students.enrollmentSuccess'))
+      toast.success(t.students.enrollmentSuccess())
       onOpenChange(false)
       form.reset()
     },
@@ -113,9 +113,9 @@ export function EnrollmentDialog({ open, onOpenChange, studentId, studentName }:
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{t('students.enrollStudent')}</DialogTitle>
+          <DialogTitle>{t.students.enrollStudent()}</DialogTitle>
           <DialogDescription>
-            {t('students.enrollStudentDescription', { name: studentName })}
+            {t.students.enrollStudentDescription({ name: studentName })}
           </DialogDescription>
         </DialogHeader>
 
@@ -127,21 +127,21 @@ export function EnrollmentDialog({ open, onOpenChange, studentId, studentName }:
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    {t('students.schoolYear')}
+                    {t.students.schoolYear()}
                     {' '}
                     <span className="text-destructive">*</span>
                   </FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder={t('students.selectSchoolYear')} />
+                        <SelectValue placeholder={t.students.selectSchoolYear()} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       {schoolYears?.map((year: any) => (
                         <SelectItem key={year.id} value={year.id}>
                           {year.name}
-                          {year.isActive && ` (${t('common.active')})`}
+                          {year.isActive && ` (${t.common.active()})`}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -157,7 +157,7 @@ export function EnrollmentDialog({ open, onOpenChange, studentId, studentName }:
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    {t('students.class')}
+                    {t.students.class()}
                     {' '}
                     <span className="text-destructive">*</span>
                   </FormLabel>
@@ -168,7 +168,7 @@ export function EnrollmentDialog({ open, onOpenChange, studentId, studentName }:
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder={t('students.selectClass')} />
+                        <SelectValue placeholder={t.students.selectClass()} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -183,9 +183,9 @@ export function EnrollmentDialog({ open, onOpenChange, studentId, studentName }:
                     </SelectContent>
                   </Select>
                   <FormDescription>
-                    {!selectedYearId && t('students.selectSchoolYearFirst')}
-                    {selectedYearId && classesLoading && t('common.loading')}
-                    {selectedYearId && !classesLoading && (!classesData || classesData.length === 0) && t('students.noClassesForYear')}
+                    {!selectedYearId && t.students.selectSchoolYearFirst()}
+                    {selectedYearId && classesLoading && t.common.loading()}
+                    {selectedYearId && !classesLoading && (!classesData || classesData.length === 0) && t.students.noClassesForYear()}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -198,7 +198,7 @@ export function EnrollmentDialog({ open, onOpenChange, studentId, studentName }:
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    {t('students.enrollmentDate')}
+                    {t.students.enrollmentDate()}
                     {' '}
                     <span className="text-destructive">*</span>
                   </FormLabel>
@@ -215,7 +215,7 @@ export function EnrollmentDialog({ open, onOpenChange, studentId, studentName }:
               name="rollNumber"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('students.rollNumber')}</FormLabel>
+                  <FormLabel>{t.students.rollNumber()}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -224,7 +224,7 @@ export function EnrollmentDialog({ open, onOpenChange, studentId, studentName }:
                       value={field.value || ''}
                     />
                   </FormControl>
-                  <FormDescription>{t('students.rollNumberDescription')}</FormDescription>
+                  <FormDescription>{t.students.rollNumberDescription()}</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -232,11 +232,11 @@ export function EnrollmentDialog({ open, onOpenChange, studentId, studentName }:
 
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                {t('common.cancel')}
+                {t.common.cancel()}
               </Button>
               <Button type="submit" disabled={enrollMutation.isPending}>
                 {enrollMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {t('students.enroll')}
+                {t.students.enroll()}
               </Button>
             </DialogFooter>
           </form>

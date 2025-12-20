@@ -1,7 +1,7 @@
 import type { ClassSubject, Subject } from '@repo/data-ops'
 import { AlertCircle, CheckCircle2 } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { Progress } from '@/components/ui/progress'
+import { useTranslations } from '@/i18n'
 
 interface ClassCoverageSummaryProps {
   subjects: Array<{
@@ -12,7 +12,7 @@ interface ClassCoverageSummaryProps {
 }
 
 export function ClassCoverageSummary({ subjects }: ClassCoverageSummaryProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const totalSubjects = subjects.length
   const assignedSubjects = subjects.filter(s => !!s.classSubject.teacherId).length
 
@@ -36,13 +36,13 @@ export function ClassCoverageSummary({ subjects }: ClassCoverageSummaryProps) {
       <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
         <div className="text-2xl font-bold">{totalSubjects}</div>
         <p className="text-xs text-muted-foreground">
-          {t('academic.classes.totalSubjects')}
+          {t.academic.classes.totalSubjects()}
         </p>
       </div>
       <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
         <div className="text-2xl font-bold">{totalCoefficient}</div>
         <p className="text-xs text-muted-foreground">
-          {t('academic.classes.totalCoefficient')}
+          {t.academic.classes.totalCoefficient()}
         </p>
       </div>
       <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
@@ -51,14 +51,14 @@ export function ClassCoverageSummary({ subjects }: ClassCoverageSummaryProps) {
           h
         </div>
         <p className="text-xs text-muted-foreground">
-          {t('academic.classes.weeklyHours')}
+          {t.academic.classes.weeklyHours()}
         </p>
       </div>
       <div className="rounded-xl border bg-card text-card-foreground shadow p-6 flex flex-col justify-between">
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium">
-              {t('academic.classes.assignmentCoverage')}
+              {t.academic.classes.assignmentCoverage()}
             </span>
             <span className="text-sm text-muted-foreground">
               {coveragePercentage}
@@ -72,13 +72,13 @@ export function ClassCoverageSummary({ subjects }: ClassCoverageSummaryProps) {
             ? (
                 <div className="flex items-center text-xs text-green-600 font-medium">
                   <CheckCircle2 className="mr-1 h-3 w-3" />
-                  {t('academic.classes.allSubjectsAssigned')}
+                  {t.academic.classes.allSubjectsAssigned()}
                 </div>
               )
             : (
                 <div className="flex items-center text-xs text-amber-600 font-medium">
                   <AlertCircle className="mr-1 h-3 w-3" />
-                  {t('academic.classes.unassignedCount', {
+                  {t.academic.classes.unassignedCount({
                     count: totalSubjects - assignedSubjects,
                   })}
                 </div>

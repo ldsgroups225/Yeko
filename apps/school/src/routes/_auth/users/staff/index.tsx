@@ -1,10 +1,10 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Plus } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { StaffTable } from '@/components/hr/staff/staff-table'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Button } from '@/components/ui/button'
+import { useTranslations } from '@/i18n'
 
 const staffSearchSchema = z.object({
   page: z.number().min(1).catch(1),
@@ -19,28 +19,28 @@ export const Route = createFileRoute('/_auth/users/staff/')({
 })
 
 function StaffListPage() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const search = Route.useSearch()
 
   return (
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t('hr.title'), href: '/users' },
-          { label: t('hr.staff.title') },
+          { label: t.hr.title(), href: '/users' },
+          { label: t.hr.staff.title() },
         ]}
       />
 
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t('hr.staff.title')}</h1>
-          <p className="text-muted-foreground">{t('hr.staff.description')}</p>
+          <h1 className="text-3xl font-bold tracking-tight">{t.hr.staff.title()}</h1>
+          <p className="text-muted-foreground">{t.hr.staff.description()}</p>
         </div>
         <div className="flex gap-2">
           <Button asChild>
             <Link to="/users/staff/new">
               <Plus className="mr-2 h-4 w-4" />
-              {t('hr.staff.addStaff')}
+              {t.hr.staff.addStaff()}
             </Link>
           </Button>
         </div>

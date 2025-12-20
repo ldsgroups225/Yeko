@@ -1,6 +1,6 @@
 import { AlertTriangle, Award, Ban, FileText } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/badge'
+import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
 type ConductType = 'incident' | 'sanction' | 'reward' | 'note'
@@ -26,14 +26,21 @@ export function ConductTypeBadge({
   showIcon = true,
   className,
 }: ConductTypeBadgeProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const config = typeConfig[type]
   const Icon = config.icon
+
+  const typeTranslations = {
+    incident: t.conduct.type.incident,
+    sanction: t.conduct.type.sanction,
+    reward: t.conduct.type.reward,
+    note: t.conduct.type.note,
+  }
 
   return (
     <Badge variant="outline" className={cn(config.colorClass, className)}>
       {showIcon && <Icon className="mr-1 h-3 w-3" />}
-      {t(`conduct.type.${type}`)}
+      {typeTranslations[type]()}
     </Badge>
   )
 }

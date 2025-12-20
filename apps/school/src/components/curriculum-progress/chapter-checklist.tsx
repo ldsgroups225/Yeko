@@ -1,8 +1,8 @@
 import { CheckCircle2, Circle, Loader2 } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
-
 import { Button } from '@/components/ui/button'
+
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
 export interface Chapter {
@@ -28,7 +28,7 @@ export function ChapterChecklist({
   readOnly = false,
   className,
 }: ChapterChecklistProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   const sortedChapters = [...chapters].sort((a, b) => a.orderIndex - b.orderIndex)
   const completedCount = chapters.filter(c => c.isCompleted).length
@@ -36,7 +36,7 @@ export function ChapterChecklist({
   return (
     <div className={cn('space-y-3', className)}>
       <div className="flex items-center justify-between">
-        <h4 className="font-medium text-sm">{t('curriculum.chapters')}</h4>
+        <h4 className="font-medium text-sm">{t.curriculum.chapters()}</h4>
         <span className="text-sm text-muted-foreground">
           {completedCount}
           /
@@ -74,8 +74,8 @@ export function ChapterChecklist({
                       onClick={() => onToggle?.(chapter.id, !chapter.isCompleted)}
                       aria-label={
                         chapter.isCompleted
-                          ? t('curriculum.markIncomplete')
-                          : t('curriculum.markComplete')
+                          ? t.curriculum.markIncomplete()
+                          : t.curriculum.markComplete()
                       }
                     >
                       {isToggling === chapter.id

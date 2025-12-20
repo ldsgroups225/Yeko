@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { CheckIcon, Loader2, XIcon } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { getRoles } from '@/school/functions/roles'
 
@@ -24,7 +24,7 @@ export function RoleSelector({
   onChange,
   disabled,
 }: RoleSelectorProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   const { data, isLoading } = useQuery({
     queryKey: ['roles-for-user'],
@@ -78,7 +78,7 @@ export function RoleSelector({
     return (
       <div className="rounded-lg border border-dashed p-8 text-center">
         <p className="text-sm text-muted-foreground">
-          {t('hr.roles.noRoles')}
+          {t.hr.roles.noRoles()}
         </p>
       </div>
     )
@@ -94,11 +94,11 @@ export function RoleSelector({
                 <span>
                   {selectedRoleIds.length}
                   {' '}
-                  {t('hr.roles.selected')}
+                  {t.hr.roles.selected()}
                 </span>
               )
             : (
-                <span>{t('hr.roles.selectRoles')}</span>
+                <span>{t.hr.roles.selectRoles()}</span>
               )}
         </div>
         <div className="flex gap-2">
@@ -109,7 +109,7 @@ export function RoleSelector({
             onClick={handleSelectAll}
             disabled={disabled || roles.length === selectedRoleIds.length}
           >
-            {t('hr.roles.selectAll')}
+            {t.hr.roles.selectAll()}
           </Button>
           <Button
             type="button"
@@ -118,7 +118,7 @@ export function RoleSelector({
             onClick={handleDeselectAll}
             disabled={disabled || selectedRoleIds.length === 0}
           >
-            {t('hr.roles.deselectAll')}
+            {t.hr.roles.deselectAll()}
           </Button>
         </div>
       </div>
@@ -127,12 +127,12 @@ export function RoleSelector({
       <div className="grid gap-4 md:grid-cols-2">
         {/* Available Roles */}
         <div className="space-y-2">
-          <h3 className="text-sm font-medium">{t('hr.roles.available')}</h3>
+          <h3 className="text-sm font-medium">{t.hr.roles.available()}</h3>
           <div className="rounded-lg border bg-muted/30 p-3 min-h-[200px] max-h-[400px] overflow-y-auto">
             {availableRoles.length === 0
               ? (
                   <div className="flex items-center justify-center h-[180px] text-sm text-muted-foreground">
-                    {t('hr.roles.allSelected')}
+                    {t.hr.roles.allSelected()}
                   </div>
                 )
               : (
@@ -163,7 +163,7 @@ export function RoleSelector({
                               </p>
                               {role.scope === 'system' && (
                                 <Badge variant="secondary" className="text-xs">
-                                  {t('hr.roles.system')}
+                                  {t.hr.roles.system()}
                                 </Badge>
                               )}
                             </div>
@@ -196,12 +196,12 @@ export function RoleSelector({
 
         {/* Selected Roles */}
         <div className="space-y-2">
-          <h3 className="text-sm font-medium">{t('hr.roles.selectedRoles')}</h3>
+          <h3 className="text-sm font-medium">{t.hr.roles.selectedRoles()}</h3>
           <div className="rounded-lg border bg-primary/5 p-3 min-h-[200px] max-h-[400px] overflow-y-auto">
             {selectedRoles.length === 0
               ? (
                   <div className="flex items-center justify-center h-[180px] text-sm text-muted-foreground">
-                    {t('hr.roles.noRolesSelected')}
+                    {t.hr.roles.noRolesSelected()}
                   </div>
                 )
               : (
@@ -232,7 +232,7 @@ export function RoleSelector({
                               </p>
                               {role.scope === 'system' && (
                                 <Badge variant="secondary" className="text-xs">
-                                  {t('hr.roles.system')}
+                                  {t.hr.roles.system()}
                                 </Badge>
                               )}
                             </div>
@@ -266,7 +266,7 @@ export function RoleSelector({
 
       {/* Helper Text */}
       <p className="text-xs text-muted-foreground">
-        {t('hr.roles.doubleClickHint')}
+        {t.hr.roles.doubleClickHint()}
       </p>
     </div>
   )

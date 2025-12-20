@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -15,6 +14,7 @@ import {
 } from '@/components/ui/dialog'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
+import { useTranslations } from '@/i18n'
 import {
   teacherSubjectsKeys,
   teacherSubjectsOptions,
@@ -34,7 +34,7 @@ export function TeacherAssignmentDialog({
   teacherId,
   teacherName,
 }: TeacherAssignmentDialogProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const { schoolYearId } = useSchoolYearContext()
   const [selectedIds, setSelectedIds] = useState(() => new Set<string>())
   const queryClient = useQueryClient()
@@ -57,7 +57,7 @@ export function TeacherAssignmentDialog({
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: teacherSubjectsKeys.all })
       toast.success(
-        t('academic.assignments.assignSuccess', {
+        t.academic.assignments.assignSuccess({
           count: result.length,
           teacherName,
         }),
@@ -66,7 +66,7 @@ export function TeacherAssignmentDialog({
       onOpenChange(false)
     },
     onError: () => {
-      toast.error(t('academic.assignments.assignError'))
+      toast.error(t.academic.assignments.assignError())
     },
   })
 
@@ -105,9 +105,9 @@ export function TeacherAssignmentDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>{t('academic.assignments.dialogTitle')}</DialogTitle>
+          <DialogTitle>{t.academic.assignments.dialogTitle()}</DialogTitle>
           <DialogDescription>
-            {t('academic.assignments.dialogDescription')}
+            {t.academic.assignments.dialogDescription()}
             {' '}
             <span className="font-medium text-foreground">{teacherName}</span>
           </DialogDescription>
@@ -123,9 +123,9 @@ export function TeacherAssignmentDialog({
             : subjects.length === 0
               ? (
                   <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-                    <p>{t('academic.assignments.noAvailableSubjects')}</p>
+                    <p>{t.academic.assignments.noAvailableSubjects()}</p>
                     <p className="text-sm">
-                      {t('academic.assignments.allSubjectsAssigned')}
+                      {t.academic.assignments.allSubjectsAssigned()}
                     </p>
                   </div>
                 )
@@ -189,13 +189,13 @@ export function TeacherAssignmentDialog({
 
         <DialogFooter className="flex justify-between items-center sm:justify-between">
           <div className="text-sm text-muted-foreground">
-            {t('academic.assignments.selectedCount', {
+            {t.academic.assignments.selectedCount({
               count: selectedIds.size,
             })}
           </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => onOpenChange(false)}>
-              {t('common.cancel')}
+              {t.common.cancel()}
             </Button>
             <Button
               onClick={handleSubmit}
@@ -204,7 +204,7 @@ export function TeacherAssignmentDialog({
               {assignMutation.isPending && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
-              {t('academic.assignments.assignSelected')}
+              {t.academic.assignments.assignSelected()}
             </Button>
           </div>
         </DialogFooter>

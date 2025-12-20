@@ -10,6 +10,7 @@ import {
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { Toaster } from 'sonner'
 import { ThemeProvider } from '@/components/theme/theme-provider'
+import { I18nProvider } from '@/i18n'
 import appCss from '@/styles.css?url'
 
 // Blocking script to prevent theme flash - runs before page renders
@@ -50,10 +51,12 @@ export const Route = createRootRouteWithContext<{
 function RootComponent() {
   return (
     <RootDocument>
-      <ThemeProvider defaultTheme="system" storageKey="school-ui-theme">
-        <Outlet />
-        <Toaster position="top-right" richColors />
-      </ThemeProvider>
+      <I18nProvider>
+        <ThemeProvider defaultTheme="system" storageKey="school-ui-theme">
+          <Outlet />
+          <Toaster position="top-right" richColors />
+        </ThemeProvider>
+      </I18nProvider>
     </RootDocument>
   )
 }

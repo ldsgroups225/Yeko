@@ -1,11 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, Save } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { useTranslations } from '@/i18n'
 
 const teacherCommentSchema = z.object({
   comment: z.string().min(1, 'Commentaire requis').max(500, 'Commentaire trop long'),
@@ -37,7 +37,7 @@ export function TeacherCommentForm({
   onSubmit,
   isSubmitting,
 }: TeacherCommentFormProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   const form = useForm<TeacherCommentInput>({
     resolver: zodResolver(teacherCommentSchema),
@@ -61,11 +61,11 @@ export function TeacherCommentForm({
     <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-3">
       <div className="space-y-2">
         <Label htmlFor={`comment-${subjectId}`}>
-          {t('reportCards.commentFor', { subject: subjectName })}
+          {t.reportCards.commentFor({ subject: subjectName })}
         </Label>
         <Textarea
           id={`comment-${subjectId}`}
-          placeholder={t('reportCards.teacherCommentPlaceholder')}
+          placeholder={t.reportCards.teacherCommentPlaceholder()}
           rows={3}
           {...form.register('comment')}
           aria-describedby={`comment-count-${subjectId}`}
@@ -96,7 +96,7 @@ export function TeacherCommentForm({
             : (
                 <Save className="mr-1 h-3 w-3" />
               )}
-          {t('common.save')}
+          {t.common.save()}
         </Button>
       </div>
     </form>

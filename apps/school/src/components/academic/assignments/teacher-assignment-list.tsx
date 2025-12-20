@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { BookOpen, Plus, Search } from 'lucide-react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { TableSkeleton } from '@/components/hr/table-skeleton'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -23,12 +22,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useTranslations } from '@/i18n'
 import { teacherOptions } from '@/lib/queries/teachers'
 import { generateUUID } from '@/utils/generateUUID'
 import { TeacherAssignmentDialog } from './teacher-assignment-dialog'
 
 export function TeacherAssignmentList() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const [search, setSearch] = useState('')
   const [
     selectedTeacher,
@@ -49,14 +49,14 @@ export function TeacherAssignmentList() {
     <>
       <Card>
         <CardHeader>
-          <CardTitle>{t('academic.assignments.listTitle')}</CardTitle>
+          <CardTitle>{t.academic.assignments.listTitle()}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between gap-4 mb-4">
             <div className="relative flex-1 max-w-sm">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder={t('academic.assignments.searchPlaceholder')}
+                placeholder={t.academic.assignments.searchPlaceholder()}
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 className="pl-10"
@@ -71,11 +71,11 @@ export function TeacherAssignmentList() {
                     <EmptyMedia variant="icon">
                       <BookOpen />
                     </EmptyMedia>
-                    <EmptyTitle>{t('academic.assignments.noTeachers')}</EmptyTitle>
+                    <EmptyTitle>{t.academic.assignments.noTeachers()}</EmptyTitle>
                     <EmptyDescription>
                       {search
-                        ? t('academic.assignments.adjustSearch')
-                        : t('academic.assignments.noTeachersForAssignment')}
+                        ? t.academic.assignments.adjustSearch()
+                        : t.academic.assignments.noTeachersForAssignment()}
                     </EmptyDescription>
                   </EmptyHeader>
                 </Empty>
@@ -85,15 +85,15 @@ export function TeacherAssignmentList() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>{t('academic.assignments.teacher')}</TableHead>
+                        <TableHead>{t.academic.assignments.teacher()}</TableHead>
                         <TableHead>
-                          {t('academic.assignments.specialization')}
+                          {t.academic.assignments.specialization()}
                         </TableHead>
                         <TableHead>
-                          {t('academic.assignments.assignedSubjects')}
+                          {t.academic.assignments.assignedSubjects()}
                         </TableHead>
                         <TableHead className="text-right">
-                          {t('academic.assignments.actions')}
+                          {t.academic.assignments.actions()}
                         </TableHead>
                       </TableRow>
                     </TableHeader>
@@ -152,7 +152,7 @@ export function TeacherAssignmentList() {
                                   )
                                 : (
                                     <span className="text-muted-foreground text-xs italic">
-                                      {t('academic.assignments.noSubjectsAssigned')}
+                                      {t.academic.assignments.noSubjectsAssigned()}
                                     </span>
                                   )}
                               {(teacher.subjects as any[])?.length > 3 && (
@@ -174,7 +174,7 @@ export function TeacherAssignmentList() {
                                 })}
                             >
                               <Plus className="mr-2 h-3 w-3" />
-                              {t('academic.assignments.assign')}
+                              {t.academic.assignments.assign()}
                             </Button>
                           </TableCell>
                         </TableRow>

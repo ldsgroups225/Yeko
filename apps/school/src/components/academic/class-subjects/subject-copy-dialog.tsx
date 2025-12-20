@@ -2,11 +2,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod'
-
 import { Button } from '@/components/ui/button'
+
 import {
   Dialog,
   DialogContent,
@@ -33,6 +32,7 @@ import {
 } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
+import { useTranslations } from '@/i18n'
 import { classSubjectsKeys } from '@/lib/queries/class-subjects'
 import { copyClassSubjects } from '@/school/functions/class-subjects'
 import { getClasses } from '@/school/functions/classes'
@@ -57,7 +57,7 @@ export function SubjectCopyDialog({
   targetClassId,
   targetClassName,
 }: SubjectCopyDialogProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const { schoolYearId } = useSchoolYearContext()
   const queryClient = useQueryClient()
 
@@ -94,13 +94,13 @@ export function SubjectCopyDialog({
         queryKey: classSubjectsKeys.list({ classId: targetClassId }),
       })
       toast.success(
-        t('academic.classes.copySubjectsSuccess', { count: data.count }),
+        t.academic.classes.copySubjectsSuccess({ count: data.count }),
       )
       onOpenChange(false)
       form.reset()
     },
     onError: () => {
-      toast.error(t('academic.classes.copySubjectsError'))
+      toast.error(t.academic.classes.copySubjectsError())
     },
   })
 
@@ -112,9 +112,9 @@ export function SubjectCopyDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{t('academic.classes.copySubjectsTitle')}</DialogTitle>
+          <DialogTitle>{t.academic.classes.copySubjectsTitle()}</DialogTitle>
           <DialogDescription>
-            {t('academic.classes.copySubjectsDescription')}
+            {t.academic.classes.copySubjectsDescription()}
             {' '}
             {targetClassName}
             .
@@ -127,7 +127,7 @@ export function SubjectCopyDialog({
               name="sourceClassId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('academic.classes.sourceClass')}</FormLabel>
+                  <FormLabel>{t.academic.classes.sourceClass()}</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
@@ -135,9 +135,7 @@ export function SubjectCopyDialog({
                     <FormControl>
                       <SelectTrigger disabled={isLoadingClasses}>
                         <SelectValue
-                          placeholder={t(
-                            'academic.classes.selectSourceClass',
-                          )}
+                          placeholder={t.academic.classes.selectSourceClassError()}
                         />
                       </SelectTrigger>
                     </FormControl>
@@ -152,7 +150,7 @@ export function SubjectCopyDialog({
                     </SelectContent>
                   </Select>
                   <FormDescription>
-                    {t('academic.classes.sourceClassDescription')}
+                    {t.academic.classes.sourceClassDescription()}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -166,10 +164,10 @@ export function SubjectCopyDialog({
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
                     <FormLabel className="text-base">
-                      {t('academic.classes.overwriteExisting')}
+                      {t.academic.classes.overwriteExisting()}
                     </FormLabel>
                     <FormDescription>
-                      {t('academic.classes.overwriteDescription')}
+                      {t.academic.classes.overwriteDescription()}
                     </FormDescription>
                   </div>
                   <FormControl>
@@ -188,13 +186,13 @@ export function SubjectCopyDialog({
                 variant="outline"
                 onClick={() => onOpenChange(false)}
               >
-                {t('common.cancel')}
+                {t.common.cancel()}
               </Button>
               <Button type="submit" disabled={copyMutation.isPending}>
                 {copyMutation.isPending && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                {t('academic.classes.copySubjects')}
+                {t.academic.classes.copySubjects()}
               </Button>
             </DialogFooter>
           </form>

@@ -2,9 +2,8 @@ import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-
 import { Button } from '@/components/ui/button'
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DatePicker } from '@/components/ui/date-picker'
 import { Progress } from '@/components/ui/progress'
@@ -16,6 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useTranslations } from '@/i18n'
 import { attendanceStatisticsOptions } from '@/lib/queries/student-attendance'
 import { generateUUID } from '@/utils/generateUUID'
 
@@ -35,7 +35,7 @@ interface AttendanceStats {
 }
 
 function StudentAttendanceStatisticsPage() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const [classId, setClassId] = useState('')
   const [startDate, setStartDate] = useState(() => {
     const d = new Date()
@@ -63,28 +63,28 @@ function StudentAttendanceStatisticsPage() {
         <Link to="/conducts/student-attendance">
           <Button variant="ghost" size="sm">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            {t('common.back')}
+            {t.common.back()}
           </Button>
         </Link>
       </div>
 
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">{t('attendance.statistics')}</h1>
-        <p className="text-muted-foreground">{t('attendance.statisticsDescription')}</p>
+        <h1 className="text-2xl font-bold">{t.attendance.statistics()}</h1>
+        <p className="text-muted-foreground">{t.attendance.statisticsDescription()}</p>
       </div>
 
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle className="text-base">{t('attendance.filters')}</CardTitle>
+          <CardTitle className="text-base">{t.attendance.filters()}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-4">
             <Select value={classId || 'all'} onValueChange={v => setClassId(v === 'all' ? '' : v)}>
               <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder={t('attendance.allClasses')} />
+                <SelectValue placeholder={t.attendance.allClasses()} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">{t('attendance.allClasses')}</SelectItem>
+                <SelectItem value="all">{t.attendance.allClasses()}</SelectItem>
                 <SelectItem value="class-1">6ème A</SelectItem>
                 <SelectItem value="class-2">6ème B</SelectItem>
               </SelectContent>
@@ -114,7 +114,7 @@ function StudentAttendanceStatisticsPage() {
                   <Card>
                     <CardHeader className="pb-2">
                       <CardTitle className="text-sm font-medium text-muted-foreground">
-                        {t('attendance.attendanceRate')}
+                        {t.attendance.attendanceRate()}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -129,7 +129,7 @@ function StudentAttendanceStatisticsPage() {
                   <Card>
                     <CardHeader className="pb-2">
                       <CardTitle className="text-sm font-medium text-muted-foreground">
-                        {t('attendance.status.present')}
+                        {t.attendance.status.present()}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -144,7 +144,7 @@ function StudentAttendanceStatisticsPage() {
                   <Card>
                     <CardHeader className="pb-2">
                       <CardTitle className="text-sm font-medium text-muted-foreground">
-                        {t('attendance.status.absent')}
+                        {t.attendance.status.absent()}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -159,36 +159,36 @@ function StudentAttendanceStatisticsPage() {
                   <Card>
                     <CardHeader className="pb-2">
                       <CardTitle className="text-sm font-medium text-muted-foreground">
-                        {t('attendance.chronicAbsentees')}
+                        {t.attendance.chronicAbsentees()}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="text-2xl font-bold text-amber-600">{stats.chronicAbsentees}</div>
-                      <p className="text-xs text-muted-foreground">{t('attendance.studentsAtRisk')}</p>
+                      <p className="text-xs text-muted-foreground">{t.attendance.studentsAtRisk()}</p>
                     </CardContent>
                   </Card>
                 </div>
 
                 <Card>
                   <CardHeader>
-                    <CardTitle>{t('attendance.breakdown')}</CardTitle>
+                    <CardTitle>{t.attendance.breakdown()}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
-                        <span>{t('attendance.status.present')}</span>
+                        <span>{t.attendance.status.present()}</span>
                         <span className="font-medium">{stats.presentCount}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span>{t('attendance.status.late')}</span>
+                        <span>{t.attendance.status.late()}</span>
                         <span className="font-medium">{stats.lateCount}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span>{t('attendance.status.absent')}</span>
+                        <span>{t.attendance.status.absent()}</span>
                         <span className="font-medium">{stats.absentCount}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span>{t('attendance.status.excused')}</span>
+                        <span>{t.attendance.status.excused()}</span>
                         <span className="font-medium">{stats.excusedCount}</span>
                       </div>
                     </div>

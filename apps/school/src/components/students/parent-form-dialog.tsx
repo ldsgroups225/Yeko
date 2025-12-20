@@ -3,11 +3,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod'
-
 import { Button } from '@/components/ui/button'
+
 import {
   Dialog,
   DialogContent,
@@ -26,6 +25,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { useTranslations } from '@/i18n'
 import { parentsKeys } from '@/lib/queries/parents'
 import { createParent, updateParent } from '@/school/functions/parents'
 
@@ -51,7 +51,7 @@ interface ParentFormDialogProps {
 }
 
 export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialogProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
   const isEditing = !!parent
 
@@ -73,7 +73,7 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
     mutationFn: (data: ParentFormValues) => createParent({ data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: parentsKeys.all })
-      toast.success(t('parents.createSuccess'))
+      toast.success(t.parents.createSuccess())
       onOpenChange(false)
       form.reset()
     },
@@ -87,7 +87,7 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
       updateParent({ data: { id: parent.id, updates: data } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: parentsKeys.all })
-      toast.success(t('parents.updateSuccess'))
+      toast.success(t.parents.updateSuccess())
       onOpenChange(false)
     },
     onError: (error: Error) => {
@@ -111,10 +111,10 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle>
-            {isEditing ? t('parents.editParent') : t('parents.addParent')}
+            {isEditing ? t.parents.editParent() : t.parents.addParent()}
           </DialogTitle>
           <DialogDescription>
-            {isEditing ? t('parents.editParentDescription') : t('parents.addParentDescription')}
+            {isEditing ? t.parents.editParentDescription() : t.parents.addParentDescription()}
           </DialogDescription>
         </DialogHeader>
 
@@ -126,9 +126,9 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('parents.lastName')}</FormLabel>
+                    <FormLabel>{t.parents.lastName()}</FormLabel>
                     <FormControl>
-                      <Input placeholder={t('parents.placeholders.lastName')} {...field} />
+                      <Input placeholder={t.parents.placeholders.lastName()} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -139,9 +139,9 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('parents.firstName')}</FormLabel>
+                    <FormLabel>{t.parents.firstName()}</FormLabel>
                     <FormControl>
-                      <Input placeholder={t('parents.placeholders.firstName')} {...field} />
+                      <Input placeholder={t.parents.placeholders.firstName()} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -156,15 +156,15 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      {t('parents.phone')}
+                      {t.parents.phone()}
                       {' '}
                       *
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder={t('parents.placeholders.phone')} {...field} />
+                      <Input placeholder={t.parents.placeholders.phone()} {...field} />
                     </FormControl>
                     <FormDescription>
-                      {t('parents.phoneDescription')}
+                      {t.parents.phoneDescription()}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -175,9 +175,9 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
                 name="phone2"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('parents.phone2')}</FormLabel>
+                    <FormLabel>{t.parents.phone2()}</FormLabel>
                     <FormControl>
-                      <Input placeholder={t('parents.placeholders.phone')} {...field} />
+                      <Input placeholder={t.parents.placeholders.phone()} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -190,9 +190,9 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('parents.email')}</FormLabel>
+                  <FormLabel>{t.parents.email()}</FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder={t('parents.placeholders.email')} {...field} />
+                    <Input type="email" placeholder={t.parents.placeholders.email()} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -204,9 +204,9 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
               name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('parents.address')}</FormLabel>
+                  <FormLabel>{t.parents.address()}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t('parents.placeholders.address')} {...field} />
+                    <Input placeholder={t.parents.placeholders.address()} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -219,9 +219,9 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
                 name="occupation"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('parents.occupation')}</FormLabel>
+                    <FormLabel>{t.parents.occupation()}</FormLabel>
                     <FormControl>
-                      <Input placeholder={t('parents.placeholders.occupation')} {...field} />
+                      <Input placeholder={t.parents.placeholders.occupation()} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -232,9 +232,9 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
                 name="workplace"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('parents.workplace')}</FormLabel>
+                    <FormLabel>{t.parents.workplace()}</FormLabel>
                     <FormControl>
-                      <Input placeholder={t('parents.placeholders.workplace')} {...field} />
+                      <Input placeholder={t.parents.placeholders.workplace()} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -244,10 +244,10 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
 
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                {t('common.cancel')}
+                {t.common.cancel()}
               </Button>
               <Button type="submit" disabled={isPending}>
-                {isPending ? t('common.loading') : t('common.save')}
+                {isPending ? t.common.loading() : t.common.save()}
               </Button>
             </DialogFooter>
           </form>

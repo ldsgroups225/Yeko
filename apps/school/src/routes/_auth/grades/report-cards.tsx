@@ -1,9 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-
 import { SectionHeader } from '@/components/layout/page-layout'
+
 import { ReportCardList } from '@/components/report-cards'
 import { Card, CardContent } from '@/components/ui/card'
 import {
@@ -15,6 +14,7 @@ import {
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
+import { useTranslations } from '@/i18n'
 import { getClasses } from '@/school/functions/classes'
 import { getSchoolYears } from '@/school/functions/school-years'
 import { getTerms } from '@/school/functions/terms'
@@ -24,7 +24,7 @@ export const Route = createFileRoute('/_auth/grades/report-cards')({
 })
 
 function ReportCardsPage() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const { schoolYearId: contextSchoolYearId } = useSchoolYearContext()
   const [selectedTermId, setSelectedTermId] = useState<string>('')
   const [selectedClassId, setSelectedClassId] = useState<string>('')
@@ -63,8 +63,8 @@ function ReportCardsPage() {
   return (
     <div className="space-y-6">
       <SectionHeader
-        title={t('reportCards.title')}
-        description={t('reportCards.description')}
+        title={t.reportCards.title()}
+        description={t.reportCards.description()}
         className="mb-4"
       />
 
@@ -92,14 +92,14 @@ function ReportCardsPage() {
                   // Disable if we want to enforce context, but here viewing history is valid
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={t('schoolYear.select')} />
+                    <SelectValue placeholder={t.schoolYear.select()} />
                   </SelectTrigger>
                   <SelectContent>
                     {schoolYears?.map(year => (
                       <SelectItem key={year.id} value={year.id}>
                         {year.template.name}
                         {' '}
-                        {year.isActive && t('schoolYear.activeSuffix')}
+                        {year.isActive && t.schoolYear.activeSuffix()}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -120,7 +120,7 @@ function ReportCardsPage() {
                   disabled={!effectiveYearId}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={t('terms.select')} />
+                    <SelectValue placeholder={t.terms.select()} />
                   </SelectTrigger>
                   <SelectContent>
                     {terms?.map(term => (
@@ -146,7 +146,7 @@ function ReportCardsPage() {
                   disabled={!effectiveYearId}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={t('classes.select')} />
+                    <SelectValue placeholder={t.classes.select()} />
                   </SelectTrigger>
                   <SelectContent>
                     {classes?.map(item => (
@@ -173,7 +173,7 @@ function ReportCardsPage() {
         : (
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                <p>{t('reportCards.selectFiltersPrompt')}</p>
+                <p>{t.reportCards.selectFiltersPrompt()}</p>
               </CardContent>
             </Card>
           )}

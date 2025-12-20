@@ -1,5 +1,4 @@
 import { Eye, MoreHorizontal, Printer } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -17,6 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useTranslations } from '@/i18n'
 import { generateUUID } from '@/utils/generateUUID'
 
 interface Payment {
@@ -43,7 +43,7 @@ export function PaymentsTable({
   onView,
   onPrintReceipt,
 }: PaymentsTableProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('fr-FR', {
@@ -78,13 +78,13 @@ export function PaymentsTable({
   const getMethodLabel = (method: string) => {
     switch (method) {
       case 'cash':
-        return t('finance.cash')
+        return t.finance.cash()
       case 'card':
-        return t('finance.card')
+        return t.finance.card()
       case 'transfer':
-        return t('finance.transfer')
+        return t.finance.transfer()
       case 'mobile_money':
-        return t('finance.mobile')
+        return t.finance.mobile()
       default:
         return method
     }
@@ -103,7 +103,7 @@ export function PaymentsTable({
   if (payments.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
-        <p className="text-muted-foreground">{t('finance.payments.noPayments')}</p>
+        <p className="text-muted-foreground">{t.finance.payments.noPayments()}</p>
       </div>
     )
   }
@@ -112,13 +112,13 @@ export function PaymentsTable({
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>{t('finance.receipt')}</TableHead>
-          <TableHead>{t('students.student')}</TableHead>
-          <TableHead>{t('finance.amount')}</TableHead>
-          <TableHead>{t('finance.method')}</TableHead>
-          <TableHead>{t('common.status')}</TableHead>
-          <TableHead>{t('common.date')}</TableHead>
-          <TableHead className="text-right">{t('common.actions')}</TableHead>
+          <TableHead>{t.finance.receipt()}</TableHead>
+          <TableHead>{t.students.student()}</TableHead>
+          <TableHead>{t.finance.amount()}</TableHead>
+          <TableHead>{t.finance.method()}</TableHead>
+          <TableHead>{t.common.status()}</TableHead>
+          <TableHead>{t.common.date()}</TableHead>
+          <TableHead className="text-right">{t.common.actions()}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -137,31 +137,36 @@ export function PaymentsTable({
             </TableCell>
             <TableCell>
               <span className="font-medium">{formatCurrency(payment.amount)}</span>
-              <span className="ml-1 text-sm text-muted-foreground">{t('common.currency')}</span>
+              <span className="ml-1 text-sm text-muted-foreground">{t.common.currency()}</span>
             </TableCell>
             <TableCell>{getMethodLabel(payment.method)}</TableCell>
             <TableCell>
               <Badge variant={getStatusVariant(payment.status)}>
-                {t(`finance.payments.status.${payment.status}`)}
+                {{
+                  pending: t.finance.payments.status.pending,
+                  completed: t.finance.payments.status.completed,
+                  cancelled: t.finance.payments.status.cancelled,
+                  refunded: t.finance.payments.status.refunded,
+                }[payment.status as 'pending' | 'completed' | 'cancelled' | 'refunded']()}
               </Badge>
             </TableCell>
             <TableCell>{formatDate(payment.createdAt)}</TableCell>
             <TableCell className="text-right">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" aria-label={t('common.actions')}>
+                  <Button variant="ghost" size="icon" aria-label={t.common.actions()}>
                     <MoreHorizontal className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={() => onView?.(payment)}>
                     <Eye className="mr-2 h-4 w-4" />
-                    {t('common.view')}
+                    {t.common.view()}
                   </DropdownMenuItem>
                   {payment.status === 'completed' && (
                     <DropdownMenuItem onClick={() => onPrintReceipt?.(payment)}>
                       <Printer className="mr-2 h-4 w-4" />
-                      {t('finance.receipt')}
+                      {t.finance.receipt()}
                     </DropdownMenuItem>
                   )}
                 </DropdownMenuContent>

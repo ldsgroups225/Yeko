@@ -1,13 +1,13 @@
 import { Bell } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { AccountMenu } from '@/components/auth/account-menu'
 import { SchoolSwitcher } from '@/components/school/school-switcher'
 import { SchoolYearSwitcher } from '@/components/school/school-year-switcher'
 import { SidebarTrigger } from '@/components/ui/sidebar'
+import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
 export function Header() {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
@@ -34,7 +34,7 @@ export function Header() {
           )}
         >
           <Bell className="h-5 w-5" />
-          <span className="sr-only">{t('common.notifications')}</span>
+          <span className="sr-only">{t.common.notifications()}</span>
           {/* Notification badge */}
           <span className="absolute right-1 top-1 flex h-2 w-2">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-75" />

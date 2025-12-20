@@ -1,11 +1,11 @@
 import type { AcademicSettings, GradingScale, SchoolSettings } from '@/schemas/school-profile'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useTranslations } from '@/i18n'
 import {
 
   defaultGradingScale,
@@ -51,7 +51,7 @@ export function GradingScaleConfig({
   onUpdate,
   isSubmitting,
 }: GradingScaleConfigProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -92,7 +92,7 @@ export function GradingScaleConfig({
     <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
       <div className="space-y-2">
         <Label htmlFor="passingGrade">
-          {t('settings.profile.passingGrade')}
+          {t.settings.profile.passingGrade()}
         </Label>
         <Input
           id="passingGrade"
@@ -104,12 +104,12 @@ export function GradingScaleConfig({
           className="w-24"
         />
         <p className="text-xs text-muted-foreground">
-          {t('settings.profile.passingGradeHint')}
+          {t.settings.profile.passingGradeHint()}
         </p>
       </div>
 
       <div className="space-y-4">
-        <Label>{t('settings.profile.gradingThresholds')}</Label>
+        <Label>{t.settings.profile.gradingThresholds()}</Label>
 
         {gradeCategories.map(({ key, color }) => (
           <div key={key} className="flex items-center gap-4">
@@ -117,7 +117,14 @@ export function GradingScaleConfig({
             <div className="grid flex-1 grid-cols-3 gap-2">
               <Input
                 {...form.register(`${key}.label`)}
-                placeholder={t(`settings.profile.gradeLabels.${key}`)}
+                placeholder={
+                  {
+                    excellent: t.settings.profile.gradeLabels.excellent,
+                    good: t.settings.profile.gradeLabels.good,
+                    average: t.settings.profile.gradeLabels.average,
+                    fail: t.settings.profile.gradeLabels.fail,
+                  }[key]()
+                }
               />
               <div className="flex items-center gap-1">
                 <Input
@@ -145,7 +152,7 @@ export function GradingScaleConfig({
 
       <div className="flex justify-end">
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? t('common.saving') : t('common.save')}
+          {isSubmitting ? t.common.saving() : t.common.save()}
         </Button>
       </div>
     </form>

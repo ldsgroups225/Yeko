@@ -1,12 +1,12 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { generateUUID } from '@/utils/generateUUID'
 
-type AttendanceStatus = 'present' | 'late' | 'absent' | 'excused'
+type AttendanceStatus = 'present' | 'late' | 'absent' | 'excused' | 'on_leave'
 
 interface AttendanceDay {
   date: string
@@ -25,6 +25,7 @@ const statusColors: Record<AttendanceStatus, string> = {
   late: 'bg-amber-500',
   absent: 'bg-red-500',
   excused: 'bg-blue-500',
+  on_leave: 'bg-purple-500',
 }
 
 export function AttendanceCalendar({
@@ -33,7 +34,7 @@ export function AttendanceCalendar({
   onMonthChange,
   attendanceData,
 }: AttendanceCalendarProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   const attendanceMap = useMemo(() => {
     const map = new Map<string, AttendanceStatus>()
@@ -77,6 +78,14 @@ export function AttendanceCalendar({
 
   const monthName = month.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
 
+  const statusTranslations = {
+    present: t.attendance.status.present,
+    late: t.attendance.status.late,
+    absent: t.attendance.status.absent,
+    excused: t.attendance.status.excused,
+    on_leave: t.attendance.status.on_leave,
+  }
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -114,7 +123,7 @@ export function AttendanceCalendar({
                   status ? statusColors[status] : 'bg-muted',
                   status && 'text-white',
                 )}
-                title={status ? t(`attendance.status.${status}`) : undefined}
+                title={status ? statusTranslations[status]() : undefined}
               >
                 {day.getDate()}
               </div>
@@ -125,7 +134,7 @@ export function AttendanceCalendar({
           <div className="flex items-center gap-1">
             <div className="h-3 w-3 rounded bg-green-500" />
             <span>
-              {t('attendance.status.present')}
+              {t.attendance.status.present()}
               :
               {' '}
               {summary.present}
@@ -134,7 +143,7 @@ export function AttendanceCalendar({
           <div className="flex items-center gap-1">
             <div className="h-3 w-3 rounded bg-amber-500" />
             <span>
-              {t('attendance.status.late')}
+              {t.attendance.status.late()}
               :
               {' '}
               {summary.late}
@@ -143,7 +152,7 @@ export function AttendanceCalendar({
           <div className="flex items-center gap-1">
             <div className="h-3 w-3 rounded bg-red-500" />
             <span>
-              {t('attendance.status.absent')}
+              {t.attendance.status.absent()}
               :
               {' '}
               {summary.absent}
@@ -152,7 +161,7 @@ export function AttendanceCalendar({
           <div className="flex items-center gap-1">
             <div className="h-3 w-3 rounded bg-blue-500" />
             <span>
-              {t('attendance.status.excused')}
+              {t.attendance.status.excused()}
               :
               {' '}
               {summary.excused}

@@ -2,9 +2,8 @@ import type { Conflict } from './conflict-indicator'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, Save, Trash2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
-
 import { z } from 'zod'
+
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -24,6 +23,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { useTranslations } from '@/i18n'
 
 import { dayOfWeekLabels } from '@/schemas/timetable'
 import { ConflictIndicator } from './conflict-indicator'
@@ -90,7 +90,7 @@ export function TimetableSessionDialog({
   isSubmitting,
   isDeleting,
 }: TimetableSessionDialogProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   const form = useForm<SessionFormInput>({
     resolver: zodResolver(sessionFormSchema),
@@ -124,13 +124,13 @@ export function TimetableSessionDialog({
         <DialogHeader>
           <DialogTitle>
             {mode === 'create'
-              ? t('timetables.addSession')
-              : t('timetables.editSession')}
+              ? t.timetables.addSession()
+              : t.timetables.editSession()}
           </DialogTitle>
           <DialogDescription>
             {mode === 'create'
-              ? t('timetables.addSessionDescription')
-              : t('timetables.editSessionDescription')}
+              ? t.timetables.addSessionDescription()
+              : t.timetables.editSessionDescription()}
           </DialogDescription>
         </DialogHeader>
 
@@ -142,13 +142,13 @@ export function TimetableSessionDialog({
           <div className="grid gap-4 sm:grid-cols-2">
             {/* Subject */}
             <div className="space-y-2">
-              <Label htmlFor="subjectId">{t('subjects.subject')}</Label>
+              <Label htmlFor="subjectId">{t.subjects.subject()}</Label>
               <Select
                 value={form.watch('subjectId')}
                 onValueChange={v => form.setValue('subjectId', v)}
               >
                 <SelectTrigger id="subjectId">
-                  <SelectValue placeholder={t('common.select')} />
+                  <SelectValue placeholder={t.common.select()} />
                 </SelectTrigger>
                 <SelectContent>
                   {subjects.map(s => (
@@ -165,13 +165,13 @@ export function TimetableSessionDialog({
 
             {/* Teacher */}
             <div className="space-y-2">
-              <Label htmlFor="teacherId">{t('teachers.teacher')}</Label>
+              <Label htmlFor="teacherId">{t.teachers.teacher()}</Label>
               <Select
                 value={form.watch('teacherId')}
                 onValueChange={v => form.setValue('teacherId', v)}
               >
                 <SelectTrigger id="teacherId">
-                  <SelectValue placeholder={t('common.select')} />
+                  <SelectValue placeholder={t.common.select()} />
                 </SelectTrigger>
                 <SelectContent>
                   {teachers.map(t => (
@@ -188,16 +188,16 @@ export function TimetableSessionDialog({
 
             {/* Classroom */}
             <div className="space-y-2">
-              <Label htmlFor="classroomId">{t('classrooms.classroom')}</Label>
+              <Label htmlFor="classroomId">{t.classrooms.classroom()}</Label>
               <Select
                 value={form.watch('classroomId') ?? 'none'}
                 onValueChange={v => form.setValue('classroomId', v === 'none' ? undefined : v)}
               >
                 <SelectTrigger id="classroomId">
-                  <SelectValue placeholder={t('common.optional')} />
+                  <SelectValue placeholder={t.common.optional()} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">{t('common.none')}</SelectItem>
+                  <SelectItem value="none">{t.common.none()}</SelectItem>
                   {classrooms.map(c => (
                     <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
                   ))}
@@ -207,7 +207,7 @@ export function TimetableSessionDialog({
 
             {/* Day of Week */}
             <div className="space-y-2">
-              <Label htmlFor="dayOfWeek">{t('timetables.day')}</Label>
+              <Label htmlFor="dayOfWeek">{t.timetables.day()}</Label>
               <Select
                 value={String(form.watch('dayOfWeek'))}
                 onValueChange={v => form.setValue('dayOfWeek', Number(v))}
@@ -227,7 +227,7 @@ export function TimetableSessionDialog({
 
             {/* Start Time */}
             <div className="space-y-2">
-              <Label htmlFor="startTime">{t('timetables.startTime')}</Label>
+              <Label htmlFor="startTime">{t.timetables.startTime()}</Label>
               <Input
                 id="startTime"
                 type="time"
@@ -242,7 +242,7 @@ export function TimetableSessionDialog({
 
             {/* End Time */}
             <div className="space-y-2">
-              <Label htmlFor="endTime">{t('timetables.endTime')}</Label>
+              <Label htmlFor="endTime">{t.timetables.endTime()}</Label>
               <Input
                 id="endTime"
                 type="time"
@@ -257,7 +257,7 @@ export function TimetableSessionDialog({
 
             {/* Color */}
             <div className="space-y-2">
-              <Label htmlFor="color">{t('common.color')}</Label>
+              <Label htmlFor="color">{t.common.color()}</Label>
               <Input
                 id="color"
                 type="color"
@@ -269,11 +269,11 @@ export function TimetableSessionDialog({
 
           {/* Notes */}
           <div className="space-y-2">
-            <Label htmlFor="notes">{t('common.notes')}</Label>
+            <Label htmlFor="notes">{t.common.notes()}</Label>
             <Textarea
               id="notes"
               rows={2}
-              placeholder={t('common.optional')}
+              placeholder={t.common.optional()}
               {...form.register('notes')}
             />
           </div>
@@ -293,7 +293,7 @@ export function TimetableSessionDialog({
                   : (
                       <Trash2 className="mr-2 h-4 w-4" />
                     )}
-                {t('common.delete')}
+                {t.common.delete()}
               </Button>
             )}
             <Button type="submit" disabled={isSubmitting || isDeleting}>
@@ -304,7 +304,7 @@ export function TimetableSessionDialog({
                 : (
                     <Save className="mr-2 h-4 w-4" />
                   )}
-              {t('common.save')}
+              {t.common.save()}
             </Button>
           </DialogFooter>
         </form>

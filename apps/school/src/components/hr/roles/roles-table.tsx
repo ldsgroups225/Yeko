@@ -10,12 +10,11 @@ import {
 import { Edit, Eye, MoreHorizontal, Search, Shield, Trash2 } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { TableSkeleton } from '@/components/hr/table-skeleton'
-
 import { Badge } from '@/components/ui/badge'
 
 import { Button } from '@/components/ui/button'
+
 import {
   Card,
   CardContent,
@@ -46,6 +45,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { useDebounce } from '@/hooks/use-debounce'
+import { useTranslations } from '@/i18n'
 import { getRoles } from '@/school/functions/roles'
 
 interface Role {
@@ -68,7 +68,7 @@ interface RolesTableProps {
 }
 
 export function RolesTable({ filters }: RolesTableProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const navigate = useNavigate()
   const [searchInput, setSearchInput] = useState(filters.search || '')
   const debouncedSearch = useDebounce(searchInput, 500)
@@ -96,14 +96,14 @@ export function RolesTable({ filters }: RolesTableProps) {
     () => [
       {
         accessorKey: 'name',
-        header: t('hr.roles.name'),
+        header: t.hr.roles.name(),
         cell: ({ row }) => (
           <div className="flex items-center gap-2">
             <span className="font-medium">{row.original.name}</span>
             {row.original.isSystemRole && (
               <Badge variant="secondary" className="text-xs">
                 <Shield className="mr-1 h-3 w-3" />
-                {t('hr.roles.system')}
+                {t.hr.roles.system()}
               </Badge>
             )}
           </div>
@@ -111,26 +111,26 @@ export function RolesTable({ filters }: RolesTableProps) {
       },
       {
         accessorKey: 'slug',
-        header: t('hr.roles.slug'),
+        header: t.hr.roles.slug(),
         cell: ({ row }) => (
           <span className="font-mono text-sm text-muted-foreground">{row.original.slug}</span>
         ),
       },
       {
         accessorKey: 'description',
-        header: t('hr.roles.description'),
+        header: t.hr.roles.description(),
         cell: ({ row }) => row.original.description || '-',
       },
       {
         accessorKey: 'permissionCount',
-        header: t('hr.roles.permissions'),
+        header: t.hr.roles.permissions(),
         cell: ({ row }) => (
           <Badge variant="outline">{row.original.permissionCount}</Badge>
         ),
       },
       {
         accessorKey: 'userCount',
-        header: t('hr.roles.users'),
+        header: t.hr.roles.users(),
         cell: ({ row }) => row.original.userCount || 0,
       },
       {
@@ -147,7 +147,7 @@ export function RolesTable({ filters }: RolesTableProps) {
                 onClick={() => navigate({ to: `/users/roles/${row.original.id}` })}
               >
                 <Eye className="mr-2 h-4 w-4" />
-                {t('common.view')}
+                {t.common.view()}
               </DropdownMenuItem>
               {!row.original.isSystemRole && (
                 <>
@@ -156,11 +156,11 @@ export function RolesTable({ filters }: RolesTableProps) {
                       navigate({ to: `/users/roles/${row.original.id}/edit` })}
                   >
                     <Edit className="mr-2 h-4 w-4" />
-                    {t('common.edit')}
+                    {t.common.edit()}
                   </DropdownMenuItem>
                   <DropdownMenuItem className="text-destructive">
                     <Trash2 className="mr-2 h-4 w-4" />
-                    {t('common.delete')}
+                    {t.common.delete()}
                   </DropdownMenuItem>
                 </>
               )}
@@ -191,7 +191,7 @@ export function RolesTable({ filters }: RolesTableProps) {
     <div className="space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle>{t('hr.roles.listTitle')}</CardTitle>
+          <CardTitle>{t.hr.roles.listTitle()}</CardTitle>
         </CardHeader>
         <CardContent>
           {/* Search */}
@@ -199,7 +199,7 @@ export function RolesTable({ filters }: RolesTableProps) {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder={t('hr.roles.searchPlaceholder')}
+                placeholder={t.hr.roles.searchPlaceholder()}
                 value={searchInput}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setSearchInput(e.target.value)}
@@ -215,12 +215,12 @@ export function RolesTable({ filters }: RolesTableProps) {
                 <EmptyMedia variant="icon">
                   <Shield />
                 </EmptyMedia>
-                <EmptyTitle>{t('hr.roles.noRoles')}</EmptyTitle>
-                <EmptyDescription>{t('hr.roles.noRolesDescription')}</EmptyDescription>
+                <EmptyTitle>{t.hr.roles.noRoles()}</EmptyTitle>
+                <EmptyDescription>{t.hr.roles.noRolesDescription()}</EmptyDescription>
               </EmptyHeader>
               <EmptyContent>
                 <Button onClick={() => navigate({ to: '/users/roles/new' })}>
-                  {t('hr.roles.addRole')}
+                  {t.hr.roles.addRole()}
                 </Button>
               </EmptyContent>
             </Empty>
@@ -233,8 +233,8 @@ export function RolesTable({ filters }: RolesTableProps) {
                 <EmptyMedia variant="icon">
                   <Search />
                 </EmptyMedia>
-                <EmptyTitle>{t('common.noResults')}</EmptyTitle>
-                <EmptyDescription>{t('common.noResultsDescription')}</EmptyDescription>
+                <EmptyTitle>{t.common.noResults()}</EmptyTitle>
+                <EmptyDescription>{t.common.noResultsDescription()}</EmptyDescription>
               </EmptyHeader>
             </Empty>
           )}
@@ -284,7 +284,7 @@ export function RolesTable({ filters }: RolesTableProps) {
           {!hasNoData && data && data.totalPages > 1 && (
             <div className="flex items-center justify-between mt-4">
               <div className="text-sm text-muted-foreground">
-                {t('common.showing')}
+                {t.common.showing()}
                 {' '}
                 {(data.page - 1) * data.limit + 1}
                 {' '}
@@ -292,7 +292,7 @@ export function RolesTable({ filters }: RolesTableProps) {
                 {' '}
                 {Math.min(data.page * data.limit, data.total)}
                 {' '}
-                {t('common.of')}
+                {t.common.of()}
                 {' '}
                 {data.total}
               </div>
@@ -307,7 +307,7 @@ export function RolesTable({ filters }: RolesTableProps) {
                     })}
                   disabled={data.page === 1}
                 >
-                  {t('common.previous')}
+                  {t.common.previous()}
                 </Button>
                 <Button
                   variant="outline"
@@ -319,7 +319,7 @@ export function RolesTable({ filters }: RolesTableProps) {
                     })}
                   disabled={data.page === data.totalPages}
                 >
-                  {t('common.next')}
+                  {t.common.next()}
                 </Button>
               </div>
             </div>

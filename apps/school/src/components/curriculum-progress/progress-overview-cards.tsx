@@ -1,8 +1,8 @@
 import { BookOpen, CheckCircle2, Clock, TrendingDown } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+
 import { Skeleton } from '@/components/ui/skeleton'
+import { useTranslations } from '@/i18n'
 
 interface ProgressOverviewData {
   totalClasses: number
@@ -32,7 +32,7 @@ function CardSkeleton() {
 }
 
 export function ProgressOverviewCards({ data, isLoading }: ProgressOverviewCardsProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   if (isLoading) {
     return (
@@ -50,25 +50,25 @@ export function ProgressOverviewCards({ data, isLoading }: ProgressOverviewCards
 
   const cards = [
     {
-      title: t('curriculum.totalClasses'),
+      title: t.curriculum.totalClasses(),
       value: data.totalClasses,
       icon: BookOpen,
       color: 'text-blue-500',
     },
     {
-      title: t('curriculum.onTrack'),
+      title: t.curriculum.onTrack(),
       value: data.onTrack + data.ahead,
       icon: CheckCircle2,
       color: 'text-green-500',
     },
     {
-      title: t('curriculum.behind'),
+      title: t.curriculum.behind(),
       value: data.slightlyBehind + data.significantlyBehind,
       icon: TrendingDown,
       color: 'text-red-500',
     },
     {
-      title: t('curriculum.averageProgress'),
+      title: t.curriculum.averageProgress(),
       value: `${data.averageProgress.toFixed(0)}%`,
       icon: Clock,
       color: 'text-purple-500',

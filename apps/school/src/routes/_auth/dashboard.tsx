@@ -1,5 +1,4 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useTranslation } from 'react-i18next'
 import { AccountantDashboard } from '@/components/dashboard/accountant-dashboard'
 import { AdminDashboard } from '@/components/dashboard/admin-dashboard'
 import { CashierDashboard } from '@/components/dashboard/cashier-dashboard'
@@ -9,13 +8,14 @@ import { RegistrarDashboard } from '@/components/dashboard/registrar-dashboard'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useRole } from '@/hooks/use-role'
+import { useTranslations } from '@/i18n'
 
 export const Route = createFileRoute('/_auth/dashboard')({
   component: DashboardPage,
 })
 
 function DashboardPage() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const { role, isLoading } = useRole()
 
   if (isLoading) {
@@ -37,7 +37,7 @@ function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <Breadcrumbs items={[{ label: t('nav.dashboard') }]} />
+      <Breadcrumbs items={[{ label: t.nav.dashboard() }]} />
 
       {role === 'school_administrator' && <AdminDashboard />}
       {role === 'academic_coordinator' && <CoordinatorDashboard />}
@@ -49,9 +49,9 @@ function DashboardPage() {
       {!role && (
         <div className="flex min-h-[400px] items-center justify-center">
           <div className="text-center">
-            <p className="text-lg font-medium">{t('dashboard.noRoleAssigned')}</p>
+            <p className="text-lg font-medium">{t.dashboard.noRoleAssigned()}</p>
             <p className="mt-2 text-sm text-muted-foreground">
-              {t('dashboard.contactAdmin')}
+              {t.dashboard.contactAdmin()}
             </p>
           </div>
         </div>

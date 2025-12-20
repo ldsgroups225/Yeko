@@ -1,5 +1,4 @@
 import { Languages, LogOut, Palette, Settings, User } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { LanguageSwitcher } from '@/components/layout/language-switcher'
 import { ThemeToggle } from '@/components/theme/theme-toggle'
@@ -18,19 +17,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { useTranslations } from '@/i18n'
 import { authClient, signOutWithCache } from '@/lib/auth-client'
 
 export function AccountMenu() {
   const session = authClient.useSession()
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   const handleSignOut = async () => {
     try {
       await signOutWithCache()
-      toast.success(t('auth.signOutSuccess'))
+      toast.success(t.auth.signOutSuccess())
     }
     catch (error) {
-      toast.error(t('auth.signOutError'))
+      toast.error(t.auth.signOutError())
       console.error('Sign out error:', error)
     }
   }
@@ -71,11 +71,11 @@ export function AccountMenu() {
         <DropdownMenuGroup>
           <DropdownMenuItem>
             <User className="mr-2 h-4 w-4" />
-            <span>{t('account.profile')}</span>
+            <span>{t.account.profile()}</span>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <Settings className="mr-2 h-4 w-4" />
-            <span>{t('account.settings')}</span>
+            <span>{t.account.settings()}</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
@@ -85,7 +85,7 @@ export function AccountMenu() {
           <div className="flex items-center justify-between py-2 px-2 rounded-lg border bg-card pointer-events-none">
             <span className="text-sm font-medium flex items-center gap-2">
               <Palette className="h-4 w-4" />
-              {t('account.theme')}
+              {t.account.theme()}
             </span>
             <div className="pointer-events-auto">
               <ThemeToggle />
@@ -98,7 +98,7 @@ export function AccountMenu() {
           <div className="flex items-center justify-between py-2 px-2 rounded-lg border bg-card pointer-events-none">
             <span className="text-sm font-medium flex items-center gap-2">
               <Languages className="h-4 w-4" />
-              {t('account.language')}
+              {t.account.language()}
             </span>
             <div className="pointer-events-auto">
               <LanguageSwitcher />
@@ -109,7 +109,7 @@ export function AccountMenu() {
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
           <LogOut className="mr-2 h-4 w-4" />
-          <span>{t('auth.signOut')}</span>
+          <span>{t.auth.signOut()}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -3,11 +3,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import * as React from 'react'
 import { useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod'
-
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -22,6 +21,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useTranslations } from '@/i18n'
 import { getSettings, updateSettings } from '@/school/functions/attendance-settings'
 
 export const Route = createFileRoute('/_auth/conducts/settings')({
@@ -41,7 +41,7 @@ const settingsSchema = z.object({
 type SettingsFormValues = z.infer<typeof settingsSchema>
 
 function AttendanceSettingsPage() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
 
   const { data: settings, isLoading } = useQuery({
@@ -87,10 +87,10 @@ function AttendanceSettingsPage() {
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['attendance-settings'] })
-      toast.success(t('settings.saved'))
+      toast.success(t.settings.saved())
     },
     onError: () => {
-      toast.error(t('settings.saveFailed'))
+      toast.error(t.settings.saveFailed())
     },
   })
 
@@ -106,22 +106,22 @@ function AttendanceSettingsPage() {
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t('nav.schoolLife'), href: '/conducts' },
-          { label: t('schoolLife.settings') },
+          { label: t.nav.schoolLife(), href: '/conducts' },
+          { label: t.schoolLife.settings() },
         ]}
       />
 
       <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">{t('schoolLife.settings')}</h1>
-        <p className="text-muted-foreground">{t('settings.attendanceDescription')}</p>
+        <h1 className="text-3xl font-bold tracking-tight">{t.schoolLife.settings()}</h1>
+        <p className="text-muted-foreground">{t.settings.attendanceDescription()}</p>
       </div>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>{t('settings.teacherAttendance')}</CardTitle>
-              <CardDescription>{t('settings.teacherAttendanceDescription')}</CardDescription>
+              <CardTitle>{t.settings.teacherAttendance()}</CardTitle>
+              <CardDescription>{t.settings.teacherAttendanceDescription()}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <FormField
@@ -129,11 +129,11 @@ function AttendanceSettingsPage() {
                 name="teacherExpectedArrival"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('settings.expectedArrival')}</FormLabel>
+                    <FormLabel>{t.settings.expectedArrival()}</FormLabel>
                     <FormControl>
                       <Input type="time" {...field} className="w-[150px]" />
                     </FormControl>
-                    <FormDescription>{t('settings.expectedArrivalDescription')}</FormDescription>
+                    <FormDescription>{t.settings.expectedArrivalDescription()}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -144,11 +144,11 @@ function AttendanceSettingsPage() {
                 name="teacherLateThresholdMinutes"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('settings.lateThreshold')}</FormLabel>
+                    <FormLabel>{t.settings.lateThreshold()}</FormLabel>
                     <FormControl>
                       <Input type="number" {...field} className="w-[100px]" />
                     </FormControl>
-                    <FormDescription>{t('settings.lateThresholdDescription')}</FormDescription>
+                    <FormDescription>{t.settings.lateThresholdDescription()}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -159,11 +159,11 @@ function AttendanceSettingsPage() {
                 name="teacherLatenessAlertCount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('settings.alertThreshold')}</FormLabel>
+                    <FormLabel>{t.settings.alertThreshold()}</FormLabel>
                     <FormControl>
                       <Input type="number" {...field} className="w-[100px]" />
                     </FormControl>
-                    <FormDescription>{t('settings.alertThresholdDescription')}</FormDescription>
+                    <FormDescription>{t.settings.alertThresholdDescription()}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -173,8 +173,8 @@ function AttendanceSettingsPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>{t('settings.studentAttendance')}</CardTitle>
-              <CardDescription>{t('settings.studentAttendanceDescription')}</CardDescription>
+              <CardTitle>{t.settings.studentAttendance()}</CardTitle>
+              <CardDescription>{t.settings.studentAttendanceDescription()}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <FormField
@@ -182,11 +182,11 @@ function AttendanceSettingsPage() {
                 name="studentLateThresholdMinutes"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('settings.studentLateThreshold')}</FormLabel>
+                    <FormLabel>{t.settings.studentLateThreshold()}</FormLabel>
                     <FormControl>
                       <Input type="number" {...field} className="w-[100px]" />
                     </FormControl>
-                    <FormDescription>{t('settings.studentLateThresholdDescription')}</FormDescription>
+                    <FormDescription>{t.settings.studentLateThresholdDescription()}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -197,11 +197,11 @@ function AttendanceSettingsPage() {
                 name="chronicAbsenceThresholdPercent"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('settings.chronicAbsenceThreshold')}</FormLabel>
+                    <FormLabel>{t.settings.chronicAbsenceThreshold()}</FormLabel>
                     <FormControl>
                       <Input type="number" {...field} className="w-[100px]" />
                     </FormControl>
-                    <FormDescription>{t('settings.chronicAbsenceThresholdDescription')}</FormDescription>
+                    <FormDescription>{t.settings.chronicAbsenceThresholdDescription()}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -211,8 +211,8 @@ function AttendanceSettingsPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>{t('settings.notifications')}</CardTitle>
-              <CardDescription>{t('settings.notificationsDescription')}</CardDescription>
+              <CardTitle>{t.settings.notifications()}</CardTitle>
+              <CardDescription>{t.settings.notificationsDescription()}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <FormField
@@ -224,8 +224,8 @@ function AttendanceSettingsPage() {
                       <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                     <div>
-                      <FormLabel>{t('settings.notifyOnAbsence')}</FormLabel>
-                      <FormDescription>{t('settings.notifyOnAbsenceDescription')}</FormDescription>
+                      <FormLabel>{t.settings.notifyOnAbsence()}</FormLabel>
+                      <FormDescription>{t.settings.notifyOnAbsenceDescription()}</FormDescription>
                     </div>
                   </FormItem>
                 )}
@@ -240,8 +240,8 @@ function AttendanceSettingsPage() {
                       <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                     <div>
-                      <FormLabel>{t('settings.notifyOnLate')}</FormLabel>
-                      <FormDescription>{t('settings.notifyOnLateDescription')}</FormDescription>
+                      <FormLabel>{t.settings.notifyOnLate()}</FormLabel>
+                      <FormDescription>{t.settings.notifyOnLateDescription()}</FormDescription>
                     </div>
                   </FormItem>
                 )}
@@ -251,7 +251,7 @@ function AttendanceSettingsPage() {
 
           <div className="flex justify-end">
             <Button type="submit" disabled={mutation.isPending}>
-              {mutation.isPending ? t('common.saving') : t('common.save')}
+              {mutation.isPending ? t.common.saving() : t.common.save()}
             </Button>
           </div>
         </form>

@@ -4,11 +4,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod'
-
 import { Button } from '@/components/ui/button'
+
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog,
@@ -36,6 +35,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { useTranslations } from '@/i18n'
 import { accountsKeys } from '@/lib/queries/accounts'
 import {
   accountTypeLabels,
@@ -63,7 +63,7 @@ interface AccountFormDialogProps {
 }
 
 export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
 
   const form = useForm<AccountFormData>({
@@ -94,7 +94,7 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: accountsKeys.all })
-      toast.success(t('finance.accounts.created'))
+      toast.success(t.finance.accounts.created())
       form.reset()
       onOpenChange(false)
     },
@@ -118,9 +118,9 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>{t('finance.accounts.create')}</DialogTitle>
+          <DialogTitle>{t.finance.accounts.create()}</DialogTitle>
           <DialogDescription>
-            {t('finance.accounts.createDescription')}
+            {t.finance.accounts.createDescription()}
           </DialogDescription>
         </DialogHeader>
 
@@ -133,7 +133,7 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      {t('common.code')}
+                      {t.common.code()}
                       {' '}
                       *
                     </FormLabel>
@@ -151,7 +151,7 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      {t('finance.accounts.type')}
+                      {t.finance.accounts.type()}
                       {' '}
                       *
                     </FormLabel>
@@ -187,12 +187,12 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    {t('common.name')}
+                    {t.common.name()}
                     {' '}
                     *
                   </FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder={t('finance.accounts.placeholders.name')} />
+                    <Input {...field} placeholder={t.finance.accounts.placeholders.name()} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -204,12 +204,12 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
               name="nameEn"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('common.nameEn')}</FormLabel>
+                  <FormLabel>{t.common.nameEn()}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder={t('finance.accounts.placeholders.nameEn')} />
+                    <Input {...field} placeholder={t.finance.accounts.placeholders.nameEn()} />
                   </FormControl>
                   <FormDescription>
-                    {t('common.optionalEnglishName')}
+                    {t.common.optionalEnglishName()}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -222,7 +222,7 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    {t('finance.accounts.normalBalance')}
+                    {t.finance.accounts.normalBalance()}
                     {' '}
                     *
                   </FormLabel>
@@ -250,7 +250,7 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('common.description')}</FormLabel>
+                  <FormLabel>{t.common.description()}</FormLabel>
                   <FormControl>
                     <Textarea {...field} rows={2} />
                   </FormControl>
@@ -271,10 +271,10 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
                     />
                   </FormControl>
                   <FormLabel className="font-normal">
-                    {t('finance.accounts.isHeader')}
+                    {t.finance.accounts.isHeader()}
                   </FormLabel>
                   <FormDescription className="ml-2">
-                    {t('finance.accounts.isHeaderDescription')}
+                    {t.finance.accounts.isHeaderDescription()}
                   </FormDescription>
                 </FormItem>
               )}
@@ -286,13 +286,13 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
                 variant="outline"
                 onClick={() => onOpenChange(false)}
               >
-                {t('common.cancel')}
+                {t.common.cancel()}
               </Button>
               <Button type="submit" disabled={mutation.isPending}>
                 {mutation.isPending && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                {t('common.save')}
+                {t.common.save()}
               </Button>
             </DialogFooter>
           </form>

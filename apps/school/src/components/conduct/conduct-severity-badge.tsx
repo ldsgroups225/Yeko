@@ -1,6 +1,6 @@
 import { Circle } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/badge'
+import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
 type ConductSeverity = 'low' | 'medium' | 'high' | 'critical'
@@ -25,13 +25,20 @@ export function ConductSeverityBadge({
   showIcon = true,
   className,
 }: ConductSeverityBadgeProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const config = severityConfig[severity]
+
+  const severityTranslations = {
+    low: t.conduct.severity.low,
+    medium: t.conduct.severity.medium,
+    high: t.conduct.severity.high,
+    critical: t.conduct.severity.critical,
+  }
 
   return (
     <Badge variant="outline" className={cn(config.colorClass, className)}>
       {showIcon && <Circle className="mr-1 h-2 w-2 fill-current" />}
-      {t(`conduct.severity.${severity}`)}
+      {severityTranslations[severity]()}
     </Badge>
   )
 }

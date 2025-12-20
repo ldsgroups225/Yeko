@@ -1,14 +1,14 @@
 import { Download, FileSpreadsheet, FileText, Loader2 } from 'lucide-react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-
 import { Button } from '@/components/ui/button'
+
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { useTranslations } from '@/i18n'
 
 type ExportFormat = 'pdf' | 'csv' | 'xlsx'
 
@@ -21,7 +21,7 @@ export function TimetableExportButton({
   onExport,
   disabled,
 }: TimetableExportButtonProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const [isExporting, setIsExporting] = useState(false)
   const [exportingFormat, setExportingFormat] = useState<ExportFormat | null>(null)
 
@@ -48,7 +48,7 @@ export function TimetableExportButton({
             : (
                 <Download className="mr-2 h-4 w-4" />
               )}
-          {t('common.export')}
+          {t.common.export()}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
@@ -57,21 +57,21 @@ export function TimetableExportButton({
           disabled={isExporting}
         >
           <FileText className="mr-2 h-4 w-4" />
-          {exportingFormat === 'pdf' ? t('common.exporting') : 'PDF'}
+          {exportingFormat === 'pdf' ? t.common.exporting() : 'PDF'}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => handleExport('csv')}
           disabled={isExporting}
         >
           <FileSpreadsheet className="mr-2 h-4 w-4" />
-          {exportingFormat === 'csv' ? t('common.exporting') : 'CSV'}
+          {exportingFormat === 'csv' ? t.common.exporting() : 'CSV'}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => handleExport('xlsx')}
           disabled={isExporting}
         >
           <FileSpreadsheet className="mr-2 h-4 w-4" />
-          {exportingFormat === 'xlsx' ? t('common.exporting') : 'Excel'}
+          {exportingFormat === 'xlsx' ? t.common.exporting() : 'Excel'}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

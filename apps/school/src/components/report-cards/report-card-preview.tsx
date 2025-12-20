@@ -1,11 +1,11 @@
 import type { ReportCardStatus } from '@/schemas/report-card'
 
 import { Award, GraduationCap, MessageSquare, User } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useTranslations } from '@/i18n'
 
 import { ReportCardStatusBadge } from './report-card-status-badge'
 
@@ -70,7 +70,7 @@ function PreviewSkeleton() {
 }
 
 export function ReportCardPreview({ data, isLoading }: ReportCardPreviewProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   if (isLoading) {
     return <PreviewSkeleton />
@@ -109,7 +109,7 @@ export function ReportCardPreview({ data, isLoading }: ReportCardPreviewProps) {
               <CardTitle className="text-xl">{data.student.name}</CardTitle>
               {data.student.matricule && (
                 <p className="text-sm text-muted-foreground">
-                  {t('students.matricule')}
+                  {t.students.matricule()}
                   :
                   {data.student.matricule}
                 </p>
@@ -132,7 +132,7 @@ export function ReportCardPreview({ data, isLoading }: ReportCardPreviewProps) {
           <div className="flex items-center gap-3 rounded-lg bg-primary/10 p-4">
             <GraduationCap className="h-8 w-8 text-primary" />
             <div>
-              <p className="text-sm text-muted-foreground">{t('reportCards.average')}</p>
+              <p className="text-sm text-muted-foreground">{t.reportCards.average()}</p>
               <p className="text-2xl font-bold">
                 {calculatedAverage.toFixed(2)}
                 /20
@@ -143,7 +143,7 @@ export function ReportCardPreview({ data, isLoading }: ReportCardPreviewProps) {
             <div className="flex items-center gap-3 rounded-lg bg-secondary p-4">
               <Award className="h-8 w-8 text-secondary-foreground" />
               <div>
-                <p className="text-sm text-muted-foreground">{t('reportCards.rank')}</p>
+                <p className="text-sm text-muted-foreground">{t.reportCards.rank()}</p>
                 <p className="text-2xl font-bold">
                   {data.rank}
                   /
@@ -155,15 +155,15 @@ export function ReportCardPreview({ data, isLoading }: ReportCardPreviewProps) {
           {data.attendance && (
             <div className="flex items-center gap-3 rounded-lg bg-muted p-4">
               <div>
-                <p className="text-sm text-muted-foreground">{t('reportCards.attendance')}</p>
+                <p className="text-sm text-muted-foreground">{t.reportCards.attendance()}</p>
                 <p className="text-sm">
-                  {t('reportCards.absences')}
+                  {t.reportCards.absences()}
                   :
                   {data.attendance.absences}
                   {' '}
                   •
                   {' '}
-                  {t('reportCards.lates')}
+                  {t.reportCards.lates()}
                   :
                   {data.attendance.lates}
                 </p>
@@ -176,19 +176,19 @@ export function ReportCardPreview({ data, isLoading }: ReportCardPreviewProps) {
 
         {/* Grades Table */}
         <div>
-          <h3 className="mb-3 font-semibold">{t('reportCards.grades')}</h3>
+          <h3 className="mb-3 font-semibold">{t.reportCards.grades()}</h3>
           <div className="rounded-md border">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b bg-muted/50">
                   <th className="px-4 py-2 text-left font-medium">
-                    {t('subjects.subject')}
+                    {t.subjects.subject()}
                   </th>
                   <th className="px-4 py-2 text-center font-medium">
-                    {t('grades.coefficient')}
+                    {t.grades.coefficient()}
                   </th>
                   <th className="px-4 py-2 text-center font-medium">
-                    {t('grades.average')}
+                    {t.grades.average()}
                   </th>
                 </tr>
               </thead>
@@ -205,7 +205,7 @@ export function ReportCardPreview({ data, isLoading }: ReportCardPreviewProps) {
               </tbody>
               <tfoot>
                 <tr className="bg-muted/50 font-semibold">
-                  <td className="px-4 py-2">{t('reportCards.overallAverage')}</td>
+                  <td className="px-4 py-2">{t.reportCards.overallAverage()}</td>
                   <td className="px-4 py-2 text-center">{totalCoefficients}</td>
                   <td className="px-4 py-2 text-center">{calculatedAverage.toFixed(2)}</td>
                 </tr>
@@ -223,7 +223,7 @@ export function ReportCardPreview({ data, isLoading }: ReportCardPreviewProps) {
                 <div>
                   <h3 className="mb-2 flex items-center gap-2 font-semibold">
                     <MessageSquare className="h-4 w-4" />
-                    {t('reportCards.homeroomComment')}
+                    {t.reportCards.homeroomComment()}
                   </h3>
                   <p className="rounded-md bg-muted p-3 text-sm italic">
                     "
@@ -234,7 +234,7 @@ export function ReportCardPreview({ data, isLoading }: ReportCardPreviewProps) {
               )}
               {data.conductSummary && (
                 <div>
-                  <h3 className="mb-2 font-semibold">{t('reportCards.conduct')}</h3>
+                  <h3 className="mb-2 font-semibold">{t.reportCards.conduct()}</h3>
                   <p className="text-sm">{data.conductSummary}</p>
                 </div>
               )}

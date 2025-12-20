@@ -1,52 +1,52 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { AlertTriangle, Bell, Settings, UserCheck, Users } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+
+import { useTranslations } from '@/i18n'
 
 export const Route = createFileRoute('/_auth/conducts/')({
   component: SchoolLifeDashboard,
 })
 
 function SchoolLifeDashboard() {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   const cards = [
     {
-      title: t('schoolLife.teacherAttendance'),
-      description: t('schoolLife.teacherAttendanceDescription'),
+      title: t.schoolLife.teacherAttendance(),
+      description: t.schoolLife.teacherAttendanceDescription(),
       icon: UserCheck,
       href: '/conducts/teacher-attendance',
       color: 'text-blue-600',
       bgColor: 'bg-blue-500/10',
     },
     {
-      title: t('schoolLife.studentAttendance'),
-      description: t('schoolLife.studentAttendanceDescription'),
+      title: t.schoolLife.studentAttendance(),
+      description: t.schoolLife.studentAttendanceDescription(),
       icon: Users,
       href: '/conducts/student-attendance',
       color: 'text-green-600',
       bgColor: 'bg-green-500/10',
     },
     {
-      title: t('schoolLife.conduct'),
-      description: t('schoolLife.conductDescription'),
+      title: t.schoolLife.conduct(),
+      description: t.schoolLife.conductDescription(),
       icon: AlertTriangle,
       href: '/conducts/conduct',
       color: 'text-orange-600',
       bgColor: 'bg-orange-500/10',
     },
     {
-      title: t('schoolLife.alerts'),
-      description: t('schoolLife.alertsDescription'),
+      title: t.schoolLife.alerts(),
+      description: t.schoolLife.alertsDescription(),
       icon: Bell,
       href: '/conducts/alerts',
       color: 'text-amber-600',
       bgColor: 'bg-amber-500/10',
     },
     {
-      title: t('schoolLife.settings'),
-      description: t('schoolLife.settingsDescription'),
+      title: t.schoolLife.settings(),
+      description: t.schoolLife.settingsDescription(),
       icon: Settings,
       href: '/conducts/settings',
       color: 'text-slate-600',

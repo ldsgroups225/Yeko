@@ -1,5 +1,4 @@
 import { Calendar, MapPin, MoreHorizontal } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -9,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { useTranslations } from '@/i18n'
 import { ConductSeverityBadge } from './conduct-severity-badge'
 import { ConductStatusBadge } from './conduct-status-badge'
 import { ConductTypeBadge } from './conduct-type-badge'
@@ -46,7 +46,7 @@ export function ConductRecordCard({
   onEdit,
   onDelete,
 }: ConductRecordCardProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   const initials = record.studentName
     .split(' ')
@@ -70,19 +70,19 @@ export function ConductRecordCard({
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" aria-label={t('common.actions')}>
+            <Button variant="ghost" size="icon" aria-label={t.common.actions()}>
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             {onView && (
               <DropdownMenuItem onClick={() => onView(record.id)}>
-                {t('common.view')}
+                {t.common.view()}
               </DropdownMenuItem>
             )}
             {onEdit && (
               <DropdownMenuItem onClick={() => onEdit(record.id)}>
-                {t('common.edit')}
+                {t.common.edit()}
               </DropdownMenuItem>
             )}
             {onDelete && (
@@ -90,7 +90,7 @@ export function ConductRecordCard({
                 onClick={() => onDelete(record.id)}
                 className="text-destructive"
               >
-                {t('common.delete')}
+                {t.common.delete()}
               </DropdownMenuItem>
             )}
           </DropdownMenuContent>

@@ -3,7 +3,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { UserCombobox } from '@/components/hr/staff/user-combobox'
 import { SubjectMultiSelect } from '@/components/hr/teachers/subject-multi-select'
@@ -18,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useTranslations } from '@/i18n'
 import { teacherCreateSchema } from '@/schemas/teacher'
 import { createNewTeacher, updateExistingTeacher } from '@/school/functions/teachers'
 
@@ -27,7 +27,7 @@ interface TeacherFormProps {
 }
 
 export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
   const isEditing = !!teacher
 
@@ -63,11 +63,11 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['teachers'] })
-      toast.success(t('hr.teachers.createSuccess'))
+      toast.success(t.hr.teachers.createSuccess())
       onSuccess?.()
     },
     onError: (error: Error) => {
-      toast.error(error.message || t('errors.generic'))
+      toast.error(error.message || t.errors.generic())
     },
   })
 
@@ -83,11 +83,11 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['teachers'] })
       queryClient.invalidateQueries({ queryKey: ['teacher', teacher.id] })
-      toast.success(t('hr.teachers.updateSuccess'))
+      toast.success(t.hr.teachers.updateSuccess())
       onSuccess?.()
     },
     onError: (error: Error) => {
-      toast.error(error.message || t('errors.generic'))
+      toast.error(error.message || t.errors.generic())
     },
   })
 
@@ -111,12 +111,12 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="rounded-lg border bg-card p-6">
-        <h2 className="mb-4 text-lg font-semibold">{t('hr.teachers.basicInfo')}</h2>
+        <h2 className="mb-4 text-lg font-semibold">{t.hr.teachers.basicInfo()}</h2>
         <div className="grid gap-4 md:grid-cols-2">
           {!isEditing && (
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="userId">
-                {t('hr.teachers.selectUser')}
+                {t.hr.teachers.selectUser()}
                 {' '}
                 <span className="text-destructive">*</span>
               </Label>
@@ -133,27 +133,27 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="specialization">{t('hr.teachers.specialization')}</Label>
+            <Label htmlFor="specialization">{t.hr.teachers.specialization()}</Label>
             <Input
               id="specialization"
               {...register('specialization')}
-              placeholder={t('hr.teachers.specializationPlaceholder')}
+              placeholder={t.hr.teachers.specializationPlaceholder()}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="hireDate">{t('hr.teachers.hireDate')}</Label>
+            <Label htmlFor="hireDate">{t.hr.teachers.hireDate()}</Label>
             <DatePicker
               date={watch('hireDate')}
               onSelect={date => setValue('hireDate', date)}
-              placeholder={t('hr.teachers.selectHireDate')}
+              placeholder={t.hr.teachers.selectHireDate()}
               maxDate={new Date()}
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="status">
-              {t('hr.common.status')}
+              {t.hr.common.status()}
               {' '}
               <span className="text-destructive">*</span>
             </Label>
@@ -165,9 +165,9 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="active">{t('hr.status.active')}</SelectItem>
-                <SelectItem value="inactive">{t('hr.status.inactive')}</SelectItem>
-                <SelectItem value="on_leave">{t('hr.status.on_leave')}</SelectItem>
+                <SelectItem value="active">{t.hr.status.active()}</SelectItem>
+                <SelectItem value="inactive">{t.hr.status.inactive()}</SelectItem>
+                <SelectItem value="on_leave">{t.hr.status.on_leave()}</SelectItem>
               </SelectContent>
             </Select>
             {errors.status && (
@@ -178,13 +178,13 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
       </div>
 
       <div className="rounded-lg border bg-card p-6">
-        <h2 className="mb-4 text-lg font-semibold">{t('hr.teachers.subjectAssignment')}</h2>
+        <h2 className="mb-4 text-lg font-semibold">{t.hr.teachers.subjectAssignment()}</h2>
         <p className="mb-4 text-sm text-muted-foreground">
-          {t('hr.teachers.subjectAssignmentDescription')}
+          {t.hr.teachers.subjectAssignmentDescription()}
         </p>
         <div className="space-y-2">
           <Label htmlFor="subjectIds">
-            {t('hr.teachers.subjects')}
+            {t.hr.teachers.subjects()}
             {' '}
             <span className="text-destructive">*</span>
           </Label>
@@ -202,11 +202,11 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={() => onSuccess?.()}>
-          {t('common.cancel')}
+          {t.common.cancel()}
         </Button>
         <Button type="submit" disabled={isLoading}>
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {isEditing ? t('common.save') : t('common.create')}
+          {isEditing ? t.common.save() : t.common.create()}
         </Button>
       </div>
     </form>

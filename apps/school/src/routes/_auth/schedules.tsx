@@ -3,9 +3,8 @@ import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 
-import { useTranslation } from 'react-i18next'
-
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+
 import {
   TimetableGrid,
   TimetableViewSwitcher,
@@ -20,6 +19,7 @@ import {
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
+import { useTranslations } from '@/i18n'
 import { timetablesOptions } from '@/lib/queries/timetables'
 import { getClasses } from '@/school/functions/classes'
 import { getSchoolYears } from '@/school/functions/school-years'
@@ -30,7 +30,7 @@ export const Route = createFileRoute('/_auth/schedules')({
 })
 
 function TimetablesPage() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const { schoolYearId: contextSchoolYearId } = useSchoolYearContext()
   const [viewMode, setViewMode] = useState<TimetableViewMode>('class')
   const [localYearId, setLocalYearId] = useState<string>('')
@@ -117,17 +117,17 @@ function TimetablesPage() {
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t('nav.academic'), href: '/academic' },
-          { label: t('nav.timetables') },
+          { label: t.nav.academic(), href: '/academic' },
+          { label: t.nav.timetables() },
         ]}
       />
 
       <div>
         <h1 className="text-3xl font-bold tracking-tight">
-          {t('timetables.title')}
+          {t.timetables.title()}
         </h1>
         <p className="text-muted-foreground">
-          {t('timetables.description')}
+          {t.timetables.description()}
         </p>
       </div>
 
@@ -145,14 +145,14 @@ function TimetablesPage() {
               : (
                   <Select value={effectiveYearId} onValueChange={setLocalYearId}>
                     <SelectTrigger>
-                      <SelectValue placeholder={t('schoolYear.select')} />
+                      <SelectValue placeholder={t.schoolYear.select()} />
                     </SelectTrigger>
                     <SelectContent>
                       {schoolYears?.map(year => (
                         <SelectItem key={year.id} value={year.id}>
                           {year.template.name}
                           {' '}
-                          {year.isActive && t('schoolYear.activeSuffix')}
+                          {year.isActive && t.schoolYear.activeSuffix()}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -174,7 +174,7 @@ function TimetablesPage() {
                       disabled={!effectiveYearId}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder={t('classes.select')} />
+                        <SelectValue placeholder={t.classes.select()} />
                       </SelectTrigger>
                       <SelectContent>
                         {classes?.map(item => (
@@ -203,7 +203,7 @@ function TimetablesPage() {
                       onValueChange={setSelectedTeacherId}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder={t('teachers.select')} />
+                        <SelectValue placeholder={t.teachers.select()} />
                       </SelectTrigger>
                       <SelectContent>
                         {teachers?.map(teacher => (
@@ -231,7 +231,7 @@ function TimetablesPage() {
         : (
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                <p>{t('timetables.selectFiltersPrompt')}</p>
+                <p>{t.timetables.selectFiltersPrompt()}</p>
               </CardContent>
             </Card>
           )}

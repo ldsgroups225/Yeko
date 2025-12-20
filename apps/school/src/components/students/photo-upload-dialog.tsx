@@ -4,12 +4,11 @@ import type { Crop } from 'react-image-crop'
 import { useMutation } from '@tanstack/react-query'
 import { Camera, Loader2, Upload, X } from 'lucide-react'
 import { useCallback, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import ReactCrop, { centerCrop, makeAspectCrop } from 'react-image-crop'
 import { toast } from 'sonner'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-
 import { Button } from '@/components/ui/button'
+
 import {
   Dialog,
   DialogContent,
@@ -18,6 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { useTranslations } from '@/i18n'
 import { getPresignedUploadUrl } from '@/school/functions/storage'
 import 'react-image-crop/dist/ReactCrop.css'
 
@@ -49,7 +49,7 @@ export function PhotoUploadDialog({
   entityName,
   onPhotoUploaded,
 }: PhotoUploadDialogProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [imgSrc, setImgSrc] = useState<string>('')
   const [crop, setCrop] = useState<Crop>()
@@ -97,7 +97,7 @@ export function PhotoUploadDialog({
     },
     onSuccess: (result) => {
       onPhotoUploaded(result.photoUrl)
-      toast.success(t('students.photoUploadSuccess'))
+      toast.success(t.students.photoUploadSuccess())
       handleClose()
     },
     onError: (err: Error) => {
@@ -111,12 +111,12 @@ export function PhotoUploadDialog({
       return
 
     if (!file.type.startsWith('image/')) {
-      toast.error(t('students.invalidFileType'))
+      toast.error(t.students.invalidFileType())
       return
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      toast.error(t('students.fileTooLarge'))
+      toast.error(t.students.fileTooLarge())
       return
     }
 
@@ -187,7 +187,7 @@ export function PhotoUploadDialog({
       uploadMutation.mutate(croppedImage)
     }
     catch {
-      toast.error(t('students.cropError'))
+      toast.error(t.students.cropError())
     }
   }
 
@@ -195,9 +195,9 @@ export function PhotoUploadDialog({
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>{t('students.uploadPhoto')}</DialogTitle>
+          <DialogTitle>{t.students.uploadPhoto()}</DialogTitle>
           <DialogDescription>
-            {t('students.uploadPhotoDescription', { name: entityName })}
+            {t.students.uploadPhotoDescription({ name: entityName })}
           </DialogDescription>
         </DialogHeader>
 
@@ -214,8 +214,8 @@ export function PhotoUploadDialog({
 
                   <label className="flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-8 transition-colors hover:border-primary hover:bg-muted/50">
                     <Upload className="h-10 w-10 text-muted-foreground mb-4" />
-                    <p className="font-medium text-lg">{t('students.clickToUpload')}</p>
-                    <p className="text-sm text-muted-foreground text-center mt-2 max-w-xs">{t('students.photoRequirements')}</p>
+                    <p className="font-medium text-lg">{t.students.clickToUpload()}</p>
+                    <p className="text-sm text-muted-foreground text-center mt-2 max-w-xs">{t.students.photoRequirements()}</p>
                     <input
                       type="file"
                       accept="image/jpeg,image/png,image/webp"
@@ -261,7 +261,7 @@ export function PhotoUploadDialog({
                       }}
                     >
                       <X className="mr-2 h-4 w-4" />
-                      {t('students.chooseAnother')}
+                      {t.students.chooseAnother()}
                     </Button>
                   </div>
                 </div>
@@ -270,7 +270,7 @@ export function PhotoUploadDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={handleClose}>
-            {t('common.cancel')}
+            {t.common.cancel()}
           </Button>
           <Button
             onClick={handleUpload}
@@ -283,7 +283,7 @@ export function PhotoUploadDialog({
               : (
                   <Camera className="mr-2 h-4 w-4" />
                 )}
-            {t('students.savePhoto')}
+            {t.students.savePhoto()}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -2,9 +2,8 @@ import type { GradeStatus, GradeType } from '@/schemas/grade'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { CheckCircle2, Cloud, CloudOff, Loader2, Save } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-
 import { Button } from '@/components/ui/button'
+
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   Table,
@@ -14,6 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useTranslations } from '@/i18n'
 import { gradesKeys } from '@/lib/queries/grades'
 import { cn } from '@/lib/utils'
 import {
@@ -68,7 +68,7 @@ export function GradeEntryTable({
   existingGrades,
   onSaveComplete,
 }: GradeEntryTableProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set())
   const [pendingChanges, setPendingChanges] = useState<Map<string, number>>(() => new Map())
@@ -263,15 +263,15 @@ export function GradeEntryTable({
                 <Checkbox
                   checked={allDraftsSelected}
                   onCheckedChange={handleSelectAll}
-                  aria-label={t('common.select')}
+                  aria-label={t.common.select()}
                   disabled={draftGrades.length === 0}
                   className={cn(someDraftsSelected && !allDraftsSelected && 'data-[state=checked]:bg-primary/50')}
                 />
               </TableHead>
-              <TableHead className="min-w-[200px]">{t('academic.grades.averages.student')}</TableHead>
-              <TableHead className="w-20">{t('academic.grades.averages.matricule')}</TableHead>
-              <TableHead className="w-24 text-center">{t('academic.grades.averages.average')}</TableHead>
-              <TableHead className="w-24 text-center">{t('common.status')}</TableHead>
+              <TableHead className="min-w-[200px]">{t.academic.grades.averages.student()}</TableHead>
+              <TableHead className="w-20">{t.academic.grades.averages.matricule()}</TableHead>
+              <TableHead className="w-24 text-center">{t.academic.grades.averages.average()}</TableHead>
+              <TableHead className="w-24 text-center">{t.common.status()}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -290,7 +290,7 @@ export function GradeEntryTable({
                         checked={selectedIds.has(grade.id)}
                         onCheckedChange={checked => handleSelectOne(grade.id, !!checked)}
                         disabled={!canSelect}
-                        aria-label={`${t('common.select')} ${student.lastName} ${student.firstName}`}
+                        aria-label={`${t.common.select()} ${student.lastName} ${student.firstName}`}
                       />
                     )}
                   </TableCell>
@@ -325,26 +325,26 @@ export function GradeEntryTable({
         <div className="flex items-center gap-4">
           {pendingChanges.size > 0 && (
             <span className="text-sm text-amber-600">
-              {t('academic.grades.validations.pendingCount', { count: pendingChanges.size })}
+              {t.academic.grades.validations.pendingCount({ count: pendingChanges.size })}
             </span>
           )}
           {/* Auto-save status indicator */}
           {autoSaveStatus === 'saving' && (
             <span className="flex items-center gap-1 text-sm text-muted-foreground">
               <Loader2 className="size-3 animate-spin" />
-              {t('academic.grades.autoSave.saving')}
+              {t.academic.grades.autoSave.saving()}
             </span>
           )}
           {autoSaveStatus === 'saved' && (
             <span className="flex items-center gap-1 text-sm text-green-600">
               <Cloud className="size-3" />
-              {t('academic.grades.autoSave.saved')}
+              {t.academic.grades.autoSave.saved()}
             </span>
           )}
           {autoSaveStatus === 'error' && (
             <span className="flex items-center gap-1 text-sm text-red-600">
               <CloudOff className="size-3" />
-              {t('academic.grades.autoSave.error')}
+              {t.academic.grades.autoSave.error()}
             </span>
           )}
         </div>
@@ -361,7 +361,7 @@ export function GradeEntryTable({
                 : (
                     <Save className="mr-2 size-4" />
                   )}
-              {t('common.save')}
+              {t.common.save()}
             </Button>
           )}
           <Button
@@ -376,7 +376,7 @@ export function GradeEntryTable({
               : (
                   <CheckCircle2 className="mr-2 size-4" />
                 )}
-            {t('common.submit')}
+            {t.common.submit()}
             {' '}
             (
             {selectedIds.size}

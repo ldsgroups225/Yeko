@@ -2,15 +2,15 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Filter } from 'lucide-react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-
 import { GradeValidationCard, GradeValidationDialog } from '@/components/grades'
+
 import { SectionHeader } from '@/components/layout/page-layout'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useSchoolContext } from '@/hooks/use-school-context'
+import { useTranslations } from '@/i18n'
 import { authClient } from '@/lib/auth-client'
 import { gradesKeys, gradesOptions } from '@/lib/queries/grades'
 import {
@@ -38,7 +38,7 @@ export const Route = createFileRoute('/_auth/grades/validations')({
 })
 
 function GradeValidationsPage() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
   const { schoolId } = useSchoolContext()
   const session = authClient.useSession()
@@ -58,10 +58,10 @@ function GradeValidationsPage() {
       queryClient.invalidateQueries({ queryKey: gradesKeys.all })
       setDialogOpen(false)
       setSelectedValidation(null)
-      toast.success(t('academic.grades.validations.validateSuccess'))
+      toast.success(t.academic.grades.validations.validateSuccess())
     },
     onError: () => {
-      toast.error(t('academic.grades.errors.saveError'))
+      toast.error(t.academic.grades.errors.saveError())
     },
   })
 
@@ -72,10 +72,10 @@ function GradeValidationsPage() {
       queryClient.invalidateQueries({ queryKey: gradesKeys.all })
       setDialogOpen(false)
       setSelectedValidation(null)
-      toast.success(t('academic.grades.validations.rejectSuccess'))
+      toast.success(t.academic.grades.validations.rejectSuccess())
     },
     onError: () => {
-      toast.error(t('academic.grades.errors.saveError'))
+      toast.error(t.academic.grades.errors.saveError())
     },
   })
 
@@ -106,7 +106,7 @@ function GradeValidationsPage() {
       })
 
       if (gradeIds.length === 0) {
-        toast.error(t('academic.grades.validations.noValidations'))
+        toast.error(t.academic.grades.validations.noValidations())
         return
       }
 
@@ -126,7 +126,7 @@ function GradeValidationsPage() {
       }
     }
     catch {
-      toast.error(t('academic.grades.errors.loadError'))
+      toast.error(t.academic.grades.errors.loadError())
     }
   }
 
@@ -135,12 +135,12 @@ function GradeValidationsPage() {
   return (
     <div className="space-y-6">
       <SectionHeader
-        title={t('academic.grades.validations.title')}
-        description={t('academic.grades.validations.description')}
+        title={t.academic.grades.validations.title()}
+        description={t.academic.grades.validations.description()}
         actions={(
           <Button variant="outline" size="sm">
             <Filter className="mr-2 size-4" />
-            {t('academic.grades.filters.title')}
+            {t.academic.grades.filters.title()}
           </Button>
         )}
       />
@@ -173,9 +173,9 @@ function GradeValidationsPage() {
           : (
               <Card>
                 <CardContent className="flex flex-col items-center justify-center py-12">
-                  <p className="text-lg font-medium">{t('academic.grades.validations.noValidations')}</p>
+                  <p className="text-lg font-medium">{t.academic.grades.validations.noValidations()}</p>
                   <p className="text-sm text-muted-foreground">
-                    {t('academic.grades.validations.allValidated')}
+                    {t.academic.grades.validations.allValidated()}
                   </p>
                 </CardContent>
               </Card>

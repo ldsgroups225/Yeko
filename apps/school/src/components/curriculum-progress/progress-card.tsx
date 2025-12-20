@@ -1,9 +1,9 @@
 import type { ProgressStatus } from '@/schemas/curriculum-progress'
 
 import { BookOpen, TrendingDown, TrendingUp } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+
+import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
 import { ProgressBar } from './progress-bar'
@@ -36,7 +36,7 @@ export function ProgressCard({
   status,
   onClick,
 }: ProgressCardProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   const isAhead = variance !== undefined && variance > 0
   const isBehind = variance !== undefined && variance < 0
@@ -86,7 +86,7 @@ export function ProgressCard({
 
         <div className="flex items-center justify-between text-sm">
           <span className="text-muted-foreground">
-            {t('curriculum.progress')}
+            {t.curriculum.progress()}
             :
             {progressPercentage.toFixed(0)}
             %
@@ -111,7 +111,7 @@ export function ProgressCard({
 
         {expectedPercentage !== undefined && (
           <p className="text-xs text-muted-foreground">
-            {t('curriculum.expectedProgress')}
+            {t.curriculum.expectedProgress()}
             :
             {expectedPercentage.toFixed(0)}
             %

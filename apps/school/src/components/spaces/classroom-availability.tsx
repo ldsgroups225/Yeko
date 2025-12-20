@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
 import { Building2, CheckCircle, Plus, Users, XCircle } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { TableSkeleton } from '@/components/hr/table-skeleton'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -15,15 +14,16 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useTranslations } from '@/i18n'
 import { getClassrooms } from '@/school/functions/classrooms'
 
 function StatsCards({ available, occupied, maintenance, inactive }: { available: number, occupied: number, maintenance: number, inactive: number }) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   return (
     <div className="grid gap-4 md:grid-cols-4" role="list" aria-label="Statistiques des salles">
       <Card role="listitem">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">{t('spaces.classrooms.available')}</CardTitle>
+          <CardTitle className="text-sm font-medium text-muted-foreground">{t.spaces.classrooms.available()}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-2">
@@ -37,7 +37,7 @@ function StatsCards({ available, occupied, maintenance, inactive }: { available:
 
       <Card role="listitem">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">{t('spaces.classrooms.occupied')}</CardTitle>
+          <CardTitle className="text-sm font-medium text-muted-foreground">{t.spaces.classrooms.occupied()}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-2">
@@ -51,7 +51,7 @@ function StatsCards({ available, occupied, maintenance, inactive }: { available:
 
       <Card role="listitem">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">{t('spaces.classrooms.maintenance')}</CardTitle>
+          <CardTitle className="text-sm font-medium text-muted-foreground">{t.spaces.classrooms.maintenance()}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-2">
@@ -65,7 +65,7 @@ function StatsCards({ available, occupied, maintenance, inactive }: { available:
 
       <Card role="listitem">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">{t('spaces.classrooms.inactive')}</CardTitle>
+          <CardTitle className="text-sm font-medium text-muted-foreground">{t.spaces.classrooms.inactive()}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-2">
@@ -81,7 +81,7 @@ function StatsCards({ available, occupied, maintenance, inactive }: { available:
 }
 
 function EmptyState() {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   return (
     <Card>
@@ -91,15 +91,15 @@ function EmptyState() {
             <Building2 className="h-8 w-8 text-muted-foreground" />
           </div>
           <div className="space-y-2">
-            <h3 className="text-lg font-semibold">{t('empty.noClassrooms')}</h3>
+            <h3 className="text-lg font-semibold">{t.empty.noClassrooms()}</h3>
             <p className="text-sm text-muted-foreground max-w-md">
-              {t('empty.createClassroomsDescription')}
+              {t.empty.createClassroomsDescription()}
             </p>
           </div>
           <Button asChild className="mt-2">
             <a href="/spaces/classrooms">
               <Plus className="mr-2 h-4 w-4" />
-              {t('empty.createClassroom')}
+              {t.empty.createClassroom()}
             </a>
           </Button>
         </div>
@@ -109,7 +109,7 @@ function EmptyState() {
 }
 
 export function ClassroomAvailability() {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   const { data: classrooms, isLoading } = useQuery({
     queryKey: ['classrooms'],
@@ -151,17 +151,17 @@ export function ClassroomAvailability() {
 
       <Card>
         <CardHeader>
-          <CardTitle>{t('spaces.classrooms.details')}</CardTitle>
+          <CardTitle>{t.spaces.classrooms.details()}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>{t('spaces.classrooms.classroom')}</TableHead>
-                  <TableHead>{t('spaces.classrooms.type')}</TableHead>
-                  <TableHead>{t('spaces.classrooms.occupation')}</TableHead>
-                  <TableHead className="w-[100px] text-right">{t('common.status')}</TableHead>
+                  <TableHead>{t.spaces.classrooms.classroom()}</TableHead>
+                  <TableHead>{t.spaces.classrooms.type()}</TableHead>
+                  <TableHead>{t.spaces.classrooms.occupation()}</TableHead>
+                  <TableHead className="w-[100px] text-right">{t.common.status()}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -186,13 +186,13 @@ export function ClassroomAvailability() {
                           <span className="text-sm text-muted-foreground">
                             {item.assignedClassesCount}
                             {' '}
-                            {t('spaces.classrooms.classes')}
+                            {t.spaces.classrooms.classes()}
                             {' '}
                             /
                             {' '}
                             {item.classroom.capacity}
                             {' '}
-                            {t('spaces.classrooms.capacity')}
+                            {t.spaces.classrooms.capacity()}
                           </span>
                         </div>
                       </TableCell>
@@ -200,18 +200,18 @@ export function ClassroomAvailability() {
                         {isAvailable
                           ? (
                               <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                                {t('spaces.classrooms.available')}
+                                {t.spaces.classrooms.available()}
                               </Badge>
                             )
                           : item.classroom.status !== 'active'
                             ? (
                                 <Badge variant="secondary">
-                                  {item.classroom.status === 'maintenance' ? t('spaces.classrooms.maintenance') : t('spaces.classrooms.inactive')}
+                                  {item.classroom.status === 'maintenance' ? t.spaces.classrooms.maintenance() : t.spaces.classrooms.inactive()}
                                 </Badge>
                               )
                             : (
                                 <Badge variant="default">
-                                  {t('spaces.classrooms.occupied')}
+                                  {t.spaces.classrooms.occupied()}
                                 </Badge>
                               )}
                       </TableCell>

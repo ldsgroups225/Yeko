@@ -1,9 +1,9 @@
 import type { NotificationSettings, SchoolSettings } from '@/schemas/school-profile'
 import { useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
+import { useTranslations } from '@/i18n'
 
 interface NotificationSettingsFormProps {
   notifications?: NotificationSettings
@@ -23,7 +23,7 @@ export function NotificationSettingsForm({
   onUpdate,
   isSubmitting,
 }: NotificationSettingsFormProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   const form = useForm<NotificationSettings>({
     defaultValues: notifications,
@@ -36,23 +36,23 @@ export function NotificationSettingsForm({
   const notificationOptions = [
     {
       id: 'emailEnabled',
-      label: t('settings.profile.emailNotifications'),
-      description: t('settings.profile.emailNotificationsDescription'),
+      label: t.settings.profile.emailNotifications(),
+      description: t.settings.profile.emailNotificationsDescription(),
     },
     {
       id: 'smsEnabled',
-      label: t('settings.profile.smsNotifications'),
-      description: t('settings.profile.smsNotificationsDescription'),
+      label: t.settings.profile.smsNotifications(),
+      description: t.settings.profile.smsNotificationsDescription(),
     },
     {
       id: 'paymentReminders',
-      label: t('settings.profile.paymentReminders'),
-      description: t('settings.profile.paymentRemindersDescription'),
+      label: t.settings.profile.paymentReminders(),
+      description: t.settings.profile.paymentRemindersDescription(),
     },
     {
       id: 'attendanceAlerts',
-      label: t('settings.profile.attendanceAlerts'),
-      description: t('settings.profile.attendanceAlertsDescription'),
+      label: t.settings.profile.attendanceAlerts(),
+      description: t.settings.profile.attendanceAlertsDescription(),
     },
   ] as const
 
@@ -81,7 +81,7 @@ export function NotificationSettingsForm({
 
       <div className="flex justify-end">
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? t('common.saving') : t('common.save')}
+          {isSubmitting ? t.common.saving() : t.common.save()}
         </Button>
       </div>
     </form>

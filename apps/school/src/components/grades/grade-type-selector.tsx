@@ -1,5 +1,4 @@
 import type { GradeType } from '@/schemas/grade'
-import { useTranslation } from 'react-i18next'
 import {
   Select,
   SelectContent,
@@ -7,6 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useTranslations } from '@/i18n'
 import { gradeTypeLabels, gradeTypes } from '@/schemas/grade'
 
 interface GradeTypeSelectorProps {
@@ -22,7 +22,7 @@ export function GradeTypeSelector({
   disabled,
   className,
 }: GradeTypeSelectorProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   return (
     <Select
@@ -31,7 +31,7 @@ export function GradeTypeSelector({
       disabled={disabled}
     >
       <SelectTrigger className={className}>
-        <SelectValue placeholder={t('academic.grades.entry.selectGradeType')} />
+        <SelectValue placeholder={t.academic.grades.entry.selectGradeType()} />
       </SelectTrigger>
       <SelectContent>
         {gradeTypes.map(type => (

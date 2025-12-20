@@ -1,6 +1,6 @@
 import { BookOpen, ClipboardCheck, TrendingUp, Users } from 'lucide-react'
 import { motion } from 'motion/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslations } from '@/i18n'
 
 const container = {
   hidden: { opacity: 0 },
@@ -18,7 +18,7 @@ const item = {
 }
 
 export function CoordinatorDashboard() {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   return (
     <motion.div
@@ -29,10 +29,10 @@ export function CoordinatorDashboard() {
     >
       <div>
         <h1 className="text-3xl font-bold tracking-tight">
-          {t('dashboard.coordinator.title')}
+          {t.dashboard.coordinator.title()}
         </h1>
         <p className="text-muted-foreground">
-          {t('dashboard.coordinator.subtitle')}
+          {t.dashboard.coordinator.subtitle()}
         </p>
       </div>
 
@@ -43,15 +43,15 @@ export function CoordinatorDashboard() {
         animate="show"
         className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
       >
-        <MetricCard title={t('dashboard.coordinator.subjects')} value="24" subtitle="8 levels" icon={BookOpen} />
-        <MetricCard title={t('dashboard.coordinator.pendingGrades')} value="156" subtitle={t('common.pending')} icon={ClipboardCheck} />
-        <MetricCard title={t('dashboard.coordinator.averageGrade')} value="12.8/20" subtitle="+0.5 pts" icon={TrendingUp} />
-        <MetricCard title={t('dashboard.coordinator.teachers')} value="89" subtitle={t('common.active')} icon={Users} />
+        <MetricCard title={t.dashboard.coordinator.subjects()} value="24" subtitle="8 levels" icon={BookOpen} />
+        <MetricCard title={t.dashboard.coordinator.pendingGrades()} value="156" subtitle={t.common.pending()} icon={ClipboardCheck} />
+        <MetricCard title={t.dashboard.coordinator.averageGrade()} value="12.8/20" subtitle="+0.5 pts" icon={TrendingUp} />
+        <MetricCard title={t.dashboard.coordinator.teachers()} value="89" subtitle={t.common.active()} icon={Users} />
       </motion.div>
 
       {/* Validation Queue */}
       <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
-        <h2 className="mb-4 text-lg font-semibold">{t('dashboard.coordinator.gradesToValidate')}</h2>
+        <h2 className="mb-4 text-lg font-semibold">{t.dashboard.coordinator.gradesToValidate()}</h2>
         <div className="space-y-3">
           <ValidationItem
             subject="Mathématiques"
@@ -80,7 +80,7 @@ export function CoordinatorDashboard() {
       {/* Performance Overview */}
       <div className="grid gap-4 lg:grid-cols-2">
         <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
-          <h2 className="mb-4 text-lg font-semibold">{t('dashboard.coordinator.performanceByLevel')}</h2>
+          <h2 className="mb-4 text-lg font-semibold">{t.dashboard.coordinator.performanceByLevel()}</h2>
           <div className="space-y-4">
             <PerformanceBar level="6ème" average="13.2" percentage={66} />
             <PerformanceBar level="5ème" average="12.8" percentage={64} />
@@ -90,11 +90,11 @@ export function CoordinatorDashboard() {
         </motion.div>
 
         <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
-          <h2 className="mb-4 text-lg font-semibold">{t('dashboard.coordinator.atRiskSubjects')}</h2>
+          <h2 className="mb-4 text-lg font-semibold">{t.dashboard.coordinator.atRiskSubjects()}</h2>
           <div className="space-y-3">
-            <RiskItem subject="Mathematics 3rd" average="9.2/20" status="critical" t={t} />
-            <RiskItem subject="Physics 2nd" average="10.1/20" status="warning" t={t} />
-            <RiskItem subject="English 4th" average="10.8/20" status="warning" t={t} />
+            <RiskItem subject="Mathematics 3rd" average="9.2/20" status="critical" />
+            <RiskItem subject="Physics 2nd" average="10.1/20" status="warning" />
+            <RiskItem subject="English 4th" average="10.8/20" status="warning" />
           </div>
         </motion.div>
       </div>
@@ -198,10 +198,10 @@ interface RiskItemProps {
   subject: string
   average: string
   status: 'critical' | 'warning'
-  t: (key: string) => string
 }
 
-function RiskItem({ subject, average, status, t }: RiskItemProps) {
+function RiskItem({ subject, average, status }: RiskItemProps) {
+  const t = useTranslations()
   const statusColors = {
     critical: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400',
     warning: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400',
@@ -217,7 +217,7 @@ function RiskItem({ subject, average, status, t }: RiskItemProps) {
         </p>
       </div>
       <span className={`rounded-full px-2 py-1 text-xs font-medium ${statusColors[status]}`}>
-        {status === 'critical' ? t('dashboard.coordinator.critical') : t('dashboard.coordinator.warning')}
+        {status === 'critical' ? t.dashboard.coordinator.critical() : t.dashboard.coordinator.warning()}
       </span>
     </div>
   )

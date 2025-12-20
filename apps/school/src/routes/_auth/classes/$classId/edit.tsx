@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { useTranslation } from 'react-i18next'
 import { ClassForm } from '@/components/academic/class-form'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useTranslations } from '@/i18n'
 import { getClassById } from '@/school/functions/classes'
 
 export const Route = createFileRoute('/_auth/classes/$classId/edit')({
@@ -12,7 +12,7 @@ export const Route = createFileRoute('/_auth/classes/$classId/edit')({
 })
 
 function EditClassPage() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const { classId } = Route.useParams()
   const navigate = useNavigate()
 
@@ -33,9 +33,9 @@ function EditClassPage() {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-center">
-          <p className="text-lg font-medium">{t('academic.classes.notFound')}</p>
+          <p className="text-lg font-medium">{t.classes.notFound()}</p>
           <Button asChild className="mt-4">
-            <Link to="/classes">{t('common.back')}</Link>
+            <Link to="/classes">{t.common.back()}</Link>
           </Button>
         </div>
       </div>
@@ -49,23 +49,23 @@ function EditClassPage() {
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t('nav.academic'), href: '/academic' },
-          { label: t('nav.classes'), href: '/classes' },
+          { label: t.nav.academic(), href: '/academic' },
+          { label: t.nav.classes(), href: '/classes' },
           { label: className, href: `/classes/${classId}` },
-          { label: t('common.edit') },
+          { label: t.common.edit() },
         ]}
       />
 
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">{t('academic.classes.editClass')}</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t.common.edit()}</h1>
         <p className="text-muted-foreground">
-          {t('academic.classes.editClassDescription', { name: className })}
+          {t.classes.editClassDescription()}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>{t('academic.classes.classInfo')}</CardTitle>
+          <CardTitle>{t.classes.classInfo()}</CardTitle>
         </CardHeader>
         <CardContent>
           <ClassForm

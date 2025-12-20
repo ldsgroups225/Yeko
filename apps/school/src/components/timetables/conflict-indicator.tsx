@@ -1,6 +1,5 @@
 import { AlertTriangle } from 'lucide-react'
 
-import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/badge'
 import {
   Tooltip,
@@ -8,6 +7,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { generateUUID } from '@/utils/generateUUID'
 
@@ -31,7 +31,7 @@ const conflictLabels: Record<ConflictType, string> = {
 }
 
 export function ConflictIndicator({ conflicts, className }: ConflictIndicatorProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   if (conflicts.length === 0)
     return null
@@ -47,7 +47,7 @@ export function ConflictIndicator({ conflicts, className }: ConflictIndicatorPro
             <AlertTriangle className="h-3 w-3" />
             {conflicts.length}
             {' '}
-            {t('timetables.conflicts')}
+            {t.timetables.conflicts()}
           </Badge>
         </TooltipTrigger>
         <TooltipContent side="bottom" className="max-w-xs">

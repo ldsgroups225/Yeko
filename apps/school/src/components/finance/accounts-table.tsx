@@ -1,5 +1,4 @@
 import { ChevronRight, Edit, MoreHorizontal, Trash2 } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -18,6 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { generateUUID } from '@/utils/generateUUID'
 
@@ -45,7 +45,7 @@ export function AccountsTable({
   onEdit,
   onDelete,
 }: AccountsTableProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('fr-FR', {
@@ -95,7 +95,7 @@ export function AccountsTable({
   if (accounts.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
-        <p className="text-muted-foreground">{t('finance.accounts.noAccounts')}</p>
+        <p className="text-muted-foreground">{t.finance.accounts.noAccounts()}</p>
       </div>
     )
   }
@@ -104,11 +104,11 @@ export function AccountsTable({
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-[120px]">{t('finance.accounts.code')}</TableHead>
-          <TableHead>{t('finance.accounts.account')}</TableHead>
-          <TableHead>{t('finance.accounts.type')}</TableHead>
-          <TableHead className="text-right">{t('finance.accounts.balance')}</TableHead>
-          <TableHead className="text-right">{t('common.actions')}</TableHead>
+          <TableHead className="w-[120px]">{t.finance.accounts.code()}</TableHead>
+          <TableHead>{t.finance.accounts.account()}</TableHead>
+          <TableHead>{t.finance.accounts.type()}</TableHead>
+          <TableHead className="text-right">{t.finance.accounts.balance()}</TableHead>
+          <TableHead className="text-right">{t.common.actions()}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -137,21 +137,21 @@ export function AccountsTable({
               {!account.isHeader && (
                 <>
                   {formatCurrency(account.balance)}
-                  <span className="ml-1 text-sm text-muted-foreground">{t('common.currency')}</span>
+                  <span className="ml-1 text-sm text-muted-foreground">{t.common.currency()}</span>
                 </>
               )}
             </TableCell>
             <TableCell className="text-right">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" aria-label={t('common.actions')}>
+                  <Button variant="ghost" size="icon" aria-label={t.common.actions()}>
                     <MoreHorizontal className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={() => onEdit?.(account)}>
                     <Edit className="mr-2 h-4 w-4" />
-                    {t('common.edit')}
+                    {t.common.edit()}
                   </DropdownMenuItem>
                   {!account.isHeader && (
                     <>
@@ -161,7 +161,7 @@ export function AccountsTable({
                         className="text-destructive"
                       >
                         <Trash2 className="mr-2 h-4 w-4" />
-                        {t('common.delete')}
+                        {t.common.delete()}
                       </DropdownMenuItem>
                     </>
                   )}

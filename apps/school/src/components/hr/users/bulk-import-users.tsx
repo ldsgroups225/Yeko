@@ -1,6 +1,5 @@
 import { AlertCircle, CheckCircle2, Download, Loader2, Upload } from 'lucide-react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -14,6 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useTranslations } from '@/i18n'
 
 interface ImportRow {
   name: string
@@ -25,7 +25,7 @@ interface ImportRow {
 }
 
 export function BulkImportUsers() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const [, setFile] = useState<File | null>(null)
   const [preview, setPreview] = useState<ImportRow[]>([])
   const [isProcessing, setIsProcessing] = useState(false)
@@ -67,13 +67,13 @@ Jane Smith,jane@example.com,+225 05 06 07 08,academic_coordinator,active`
 
         // Basic validation
         if (!row.name || row.name.length < 2) {
-          row.error = t('validation.required')
+          row.error = t.validation.required()
         }
         else if (!row.email || !row.email.includes('@')) {
-          row.error = t('validation.email')
+          row.error = t.validation.email()
         }
         else if (!row.roles) {
-          row.error = t('hr.users.rolesRequired')
+          row.error = t.hr.users.rolesRequired()
         }
 
         rows.push(row)
@@ -90,7 +90,7 @@ Jane Smith,jane@example.com,+225 05 06 07 08,academic_coordinator,active`
       return
 
     if (!selectedFile.name.endsWith('.csv')) {
-      toast.error(t('hr.users.invalidFileType'))
+      toast.error(t.hr.users.invalidFileType())
       return
     }
 
@@ -116,12 +116,12 @@ Jane Smith,jane@example.com,+225 05 06 07 08,academic_coordinator,active`
 
     if (validRows.length > 0) {
       toast.success(
-        t('hr.users.importSuccess', { count: validRows.length }),
+        t.hr.users.importSuccess({ count: validRows.length }),
       )
     }
     if (invalidRows.length > 0) {
       toast.error(
-        t('hr.users.importErrors', { count: invalidRows.length }),
+        t.hr.users.importErrors({ count: invalidRows.length }),
       )
     }
   }
@@ -129,23 +129,23 @@ Jane Smith,jane@example.com,+225 05 06 07 08,academic_coordinator,active`
   return (
     <div className="space-y-6">
       <div className="rounded-lg border bg-card p-6">
-        <h2 className="mb-4 text-lg font-semibold">{t('hr.users.step1')}</h2>
+        <h2 className="mb-4 text-lg font-semibold">{t.hr.users.step1()}</h2>
         <p className="mb-4 text-sm text-muted-foreground">
-          {t('hr.users.downloadTemplateDescription')}
+          {t.hr.users.downloadTemplateDescription()}
         </p>
         <Button onClick={downloadTemplate} variant="outline">
           <Download className="mr-2 h-4 w-4" />
-          {t('hr.users.downloadTemplate')}
+          {t.hr.users.downloadTemplate()}
         </Button>
       </div>
 
       <div className="rounded-lg border bg-card p-6">
-        <h2 className="mb-4 text-lg font-semibold">{t('hr.users.step2')}</h2>
+        <h2 className="mb-4 text-lg font-semibold">{t.hr.users.step2()}</h2>
         <p className="mb-4 text-sm text-muted-foreground">
-          {t('hr.users.uploadFileDescription')}
+          {t.hr.users.uploadFileDescription()}
         </p>
         <div className="space-y-2">
-          <Label htmlFor="csv-file">{t('hr.users.selectFile')}</Label>
+          <Label htmlFor="csv-file">{t.hr.users.selectFile()}</Label>
           <Input
             id="csv-file"
             type="file"
@@ -158,23 +158,23 @@ Jane Smith,jane@example.com,+225 05 06 07 08,academic_coordinator,active`
       {preview.length > 0 && (
         <div className="rounded-lg border bg-card p-6">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold">{t('hr.users.step3')}</h2>
+            <h2 className="text-lg font-semibold">{t.hr.users.step3()}</h2>
             <div className="flex gap-2">
               <Badge variant="secondary">
                 {preview.length}
                 {' '}
-                {t('hr.users.totalRows')}
+                {t.hr.users.totalRows()}
               </Badge>
               <Badge variant="default">
                 {preview.filter(r => !r.error).length}
                 {' '}
-                {t('hr.users.validRows')}
+                {t.hr.users.validRows()}
               </Badge>
               {preview.filter(r => r.error).length > 0 && (
                 <Badge variant="destructive">
                   {preview.filter(r => r.error).length}
                   {' '}
-                  {t('hr.users.invalidRows')}
+                  {t.hr.users.invalidRows()}
                 </Badge>
               )}
             </div>
@@ -184,12 +184,12 @@ Jane Smith,jane@example.com,+225 05 06 07 08,academic_coordinator,active`
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>{t('hr.users.status')}</TableHead>
-                  <TableHead>{t('hr.common.name')}</TableHead>
-                  <TableHead>{t('hr.common.email')}</TableHead>
-                  <TableHead>{t('hr.common.phone')}</TableHead>
-                  <TableHead>{t('hr.common.roles')}</TableHead>
-                  <TableHead>{t('hr.users.error')}</TableHead>
+                  <TableHead>{t.hr.users.status()}</TableHead>
+                  <TableHead>{t.hr.common.name()}</TableHead>
+                  <TableHead>{t.hr.common.email()}</TableHead>
+                  <TableHead>{t.hr.common.phone()}</TableHead>
+                  <TableHead>{t.hr.common.roles()}</TableHead>
+                  <TableHead>{t.hr.users.error()}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -228,7 +228,7 @@ Jane Smith,jane@example.com,+225 05 06 07 08,academic_coordinator,active`
                 setResults(null)
               }}
             >
-              {t('common.cancel')}
+              {t.common.cancel()}
             </Button>
             <Button
               onClick={handleImport}
@@ -241,13 +241,13 @@ Jane Smith,jane@example.com,+225 05 06 07 08,academic_coordinator,active`
                 ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      {t('hr.users.importing')}
+                      {t.hr.users.importing()}
                     </>
                   )
                 : (
                     <>
                       <Upload className="mr-2 h-4 w-4" />
-                      {t('hr.users.importUsers')}
+                      {t.hr.users.importUsers()}
                     </>
                   )}
             </Button>
@@ -257,14 +257,14 @@ Jane Smith,jane@example.com,+225 05 06 07 08,academic_coordinator,active`
 
       {results && (
         <div className="rounded-lg border bg-card p-6">
-          <h2 className="mb-4 text-lg font-semibold">{t('hr.users.importResults')}</h2>
+          <h2 className="mb-4 text-lg font-semibold">{t.hr.users.importResults()}</h2>
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-5 w-5 text-green-600" />
               <span>
                 {results.success}
                 {' '}
-                {t('hr.users.usersImported')}
+                {t.hr.users.usersImported()}
               </span>
             </div>
             {results.failed > 0 && (
@@ -273,7 +273,7 @@ Jane Smith,jane@example.com,+225 05 06 07 08,academic_coordinator,active`
                 <span>
                   {results.failed}
                   {' '}
-                  {t('hr.users.usersFailed')}
+                  {t.hr.users.usersFailed()}
                 </span>
               </div>
             )}

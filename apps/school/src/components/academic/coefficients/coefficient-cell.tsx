@@ -1,6 +1,5 @@
 import { Check, RotateCcw, X } from 'lucide-react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -8,6 +7,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
 interface CoefficientCellProps {
@@ -30,7 +30,7 @@ export function CoefficientCell({
   onEdit,
   onReset,
 }: CoefficientCellProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const [isOpen, setIsOpen] = useState(false)
   const [inputValue, setInputValue] = useState(effectiveWeight.toString())
 
@@ -73,19 +73,19 @@ export function CoefficientCell({
         <div className="space-y-4">
           <div className="space-y-2">
             <h4 className="font-medium text-sm">
-              {t('academic.coefficients.cell.edit')}
+              {t.academic.coefficients.cell.edit()}
             </h4>
             <div className="grid gap-2">
               <div className="flex items-center justify-between text-xs">
                 <span className="text-muted-foreground">
-                  {t('academic.coefficients.cell.template')}
+                  {t.academic.coefficients.cell.template()}
                 </span>
                 <span className="font-medium">{templateWeight}</span>
               </div>
               {isOverride && (
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">
-                    {t('academic.coefficients.cell.currentOverride')}
+                    {t.academic.coefficients.cell.currentOverride()}
                   </span>
                   <span className="font-medium text-primary">
                     {effectiveWeight}
@@ -100,7 +100,7 @@ export function CoefficientCell({
               htmlFor="coefficient-input"
               className="text-sm font-medium"
             >
-              {t('academic.coefficients.cell.newValue')}
+              {t.academic.coefficients.cell.newValue()}
             </label>
             <Input
               id="coefficient-input"
@@ -128,7 +128,7 @@ export function CoefficientCell({
               onClick={handleCancel}
             >
               <X className="mr-1 h-3 w-3" />
-              {t('academic.coefficients.cell.cancel')}
+              {t.academic.coefficients.cell.cancel()}
             </Button>
             {isOverride && overrideId && (
               <Button
@@ -137,7 +137,7 @@ export function CoefficientCell({
                 onClick={handleReset}
               >
                 <RotateCcw className="mr-1 h-3 w-3" />
-                {t('academic.coefficients.cell.reset')}
+                {t.academic.coefficients.cell.reset()}
               </Button>
             )}
             <Button
@@ -146,7 +146,7 @@ export function CoefficientCell({
               onClick={handleSave}
             >
               <Check className="mr-1 h-3 w-3" />
-              {t('academic.coefficients.cell.save')}
+              {t.academic.coefficients.cell.save()}
             </Button>
           </div>
         </div>

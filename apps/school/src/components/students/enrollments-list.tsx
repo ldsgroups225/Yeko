@@ -12,10 +12,9 @@ import {
 } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-
 import { EmptyState } from '@/components/hr/empty-state'
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -61,6 +60,7 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
+import { useTranslations } from '@/i18n'
 import { classesOptions } from '@/lib/queries/classes'
 import { enrollmentsKeys, enrollmentsOptions } from '@/lib/queries/enrollments'
 import { cancelEnrollment, confirmEnrollment } from '@/school/functions/enrollments'
@@ -77,7 +77,7 @@ const statusColors: Record<string, string> = {
 }
 
 export function EnrollmentsList() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
   const { schoolYearId } = useSchoolYearContext()
 
@@ -113,7 +113,7 @@ export function EnrollmentsList() {
     mutationFn: (id: string) => confirmEnrollment({ data: id }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: enrollmentsKeys.all })
-      toast.success(t('enrollments.confirmSuccess'))
+      toast.success(t.enrollments.confirmSuccess())
     },
     onError: (error: Error) => {
       toast.error(error.message)
@@ -125,7 +125,7 @@ export function EnrollmentsList() {
       cancelEnrollment({ data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: enrollmentsKeys.all })
-      toast.success(t('enrollments.cancelSuccess'))
+      toast.success(t.enrollments.cancelSuccess())
       setCancelDialogOpen(false)
       setSelectedEnrollment(null)
       setCancelReason('')
@@ -160,7 +160,7 @@ export function EnrollmentsList() {
           <div className="relative flex-1 min-w-[200px] max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder={t('enrollments.searchPlaceholder')}
+              placeholder={t.enrollments.searchPlaceholder()}
               value={search}
               onChange={e => setSearch(e.target.value)}
               className="pl-9"
@@ -168,22 +168,22 @@ export function EnrollmentsList() {
           </div>
           <Select value={status} onValueChange={setStatus}>
             <SelectTrigger className="w-[150px]">
-              <SelectValue placeholder={t('enrollments.filterByStatus')} />
+              <SelectValue placeholder={t.enrollments.filterByStatus()} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">{t('common.all')}</SelectItem>
-              <SelectItem value="pending">{t('enrollments.statusPending')}</SelectItem>
-              <SelectItem value="confirmed">{t('enrollments.statusConfirmed')}</SelectItem>
-              <SelectItem value="cancelled">{t('enrollments.statusCancelled')}</SelectItem>
-              <SelectItem value="transferred">{t('enrollments.statusTransferred')}</SelectItem>
+              <SelectItem value="all">{t.common.all()}</SelectItem>
+              <SelectItem value="pending">{t.enrollments.statusPending()}</SelectItem>
+              <SelectItem value="confirmed">{t.enrollments.statusConfirmed()}</SelectItem>
+              <SelectItem value="cancelled">{t.enrollments.statusCancelled()}</SelectItem>
+              <SelectItem value="transferred">{t.enrollments.statusTransferred()}</SelectItem>
             </SelectContent>
           </Select>
           <Select value={classId} onValueChange={setClassId}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder={t('enrollments.filterByClass')} />
+              <SelectValue placeholder={t.enrollments.filterByClass()} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">{t('common.all')}</SelectItem>
+              <SelectItem value="all">{t.common.all()}</SelectItem>
               {classesData?.map(cls => (
                 <SelectItem key={cls.class.id} value={cls.class.id}>
                   {cls.grade.name}
@@ -198,7 +198,7 @@ export function EnrollmentsList() {
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => setBulkReEnrollOpen(true)}>
             <RefreshCw className="mr-2 h-4 w-4" />
-            {t('students.bulkReEnroll')}
+            {t.students.bulkReEnroll()}
           </Button>
         </div>
       </div>
@@ -206,18 +206,18 @@ export function EnrollmentsList() {
       {/* Table */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('enrollments.list')}</CardTitle>
-          <CardDescription>{t('enrollments.listDescription')}</CardDescription>
+          <CardTitle>{t.enrollments.list()}</CardTitle>
+          <CardDescription>{t.enrollments.listDescription()}</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t('enrollments.student')}</TableHead>
-                <TableHead>{t('enrollments.class')}</TableHead>
-                <TableHead>{t('enrollments.enrollmentDate')}</TableHead>
-                <TableHead>{t('enrollments.rollNumber')}</TableHead>
-                <TableHead>{t('enrollments.status')}</TableHead>
+                <TableHead>{t.enrollments.student()}</TableHead>
+                <TableHead>{t.enrollments.class()}</TableHead>
+                <TableHead>{t.enrollments.enrollmentDate()}</TableHead>
+                <TableHead>{t.enrollments.rollNumber()}</TableHead>
+                <TableHead>{t.enrollments.status()}</TableHead>
                 <TableHead className="w-[70px]" />
               </TableRow>
             </TableHeader>
@@ -249,8 +249,8 @@ export function EnrollmentsList() {
                         <TableCell colSpan={6}>
                           <EmptyState
                             icon={ClipboardCheck}
-                            title={t('enrollments.noEnrollments')}
-                            description={t('enrollments.noEnrollmentsDescription')}
+                            title={t.enrollments.noEnrollments()}
+                            description={t.enrollments.noEnrollmentsDescription()}
                           />
                         </TableCell>
                       </TableRow>
@@ -312,7 +312,12 @@ export function EnrollmentsList() {
                           </TableCell>
                           <TableCell>
                             <Badge className={statusColors[item.enrollment.status]}>
-                              {t(`enrollments.status${item.enrollment.status.charAt(0).toUpperCase()}${item.enrollment.status.slice(1)}`)}
+                              {{
+                                pending: t.enrollments.statusPending,
+                                confirmed: t.enrollments.statusConfirmed,
+                                cancelled: t.enrollments.statusCancelled,
+                                transferred: t.enrollments.statusTransferred,
+                              }[item.enrollment.status as 'pending' | 'confirmed' | 'cancelled' | 'transferred']()}
                             </Badge>
                           </TableCell>
                           <TableCell>
@@ -328,7 +333,7 @@ export function EnrollmentsList() {
                                     to="/students/$studentId"
                                     params={{ studentId: item.student?.id }}
                                   >
-                                    {t('enrollments.viewStudent')}
+                                    {t.enrollments.viewStudent()}
                                   </Link>
                                 </DropdownMenuItem>
                                 {item.enrollment.status === 'pending' && (
@@ -339,14 +344,14 @@ export function EnrollmentsList() {
                                       disabled={confirmMutation.isPending}
                                     >
                                       <Check className="mr-2 h-4 w-4 text-green-600" />
-                                      {t('enrollments.confirm')}
+                                      {t.enrollments.confirm()}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
                                       className="text-destructive"
                                       onClick={() => handleCancel(item)}
                                     >
                                       <X className="mr-2 h-4 w-4" />
-                                      {t('enrollments.cancel')}
+                                      {t.enrollments.cancel()}
                                     </DropdownMenuItem>
                                   </>
                                 )}
@@ -358,7 +363,7 @@ export function EnrollmentsList() {
                                       onClick={() => handleCancel(item)}
                                     >
                                       <X className="mr-2 h-4 w-4" />
-                                      {t('enrollments.cancel')}
+                                      {t.enrollments.cancel()}
                                     </DropdownMenuItem>
                                   </>
                                 )}
@@ -375,13 +380,13 @@ export function EnrollmentsList() {
           {data && data.totalPages > 1 && (
             <div className="flex items-center justify-between mt-4">
               <p className="text-sm text-muted-foreground">
-                {t('common.showing')}
+                {t.common.showing()}
                 {' '}
                 {((page - 1) * 20) + 1}
                 -
                 {Math.min(page * 20, data.total)}
                 {' '}
-                {t('common.of')}
+                {t.common.of()}
                 {' '}
                 {data.total}
               </p>
@@ -392,7 +397,7 @@ export function EnrollmentsList() {
                   onClick={() => setPage(p => Math.max(1, p - 1))}
                   disabled={page === 1}
                 >
-                  {t('common.previous')}
+                  {t.common.previous()}
                 </Button>
                 <Button
                   variant="outline"
@@ -400,7 +405,7 @@ export function EnrollmentsList() {
                   onClick={() => setPage(p => Math.min(data.totalPages, p + 1))}
                   disabled={page === data.totalPages}
                 >
-                  {t('common.next')}
+                  {t.common.next()}
                 </Button>
               </div>
             </div>
@@ -418,18 +423,18 @@ export function EnrollmentsList() {
       <Dialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('enrollments.cancelTitle')}</DialogTitle>
+            <DialogTitle>{t.enrollments.cancelTitle()}</DialogTitle>
             <DialogDescription>
-              {t('enrollments.cancelDescription', {
+              {t.enrollments.cancelDescription({
                 name: `${selectedEnrollment?.student?.lastName} ${selectedEnrollment?.student?.firstName}`,
               })}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium">{t('enrollments.cancelReason')}</label>
+              <label className="text-sm font-medium">{t.enrollments.cancelReason()}</label>
               <Textarea
-                placeholder={t('enrollments.cancelReasonPlaceholder')}
+                placeholder={t.enrollments.cancelReasonPlaceholder()}
                 value={cancelReason}
                 onChange={e => setCancelReason(e.target.value)}
                 className="mt-1"
@@ -438,14 +443,14 @@ export function EnrollmentsList() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setCancelDialogOpen(false)}>
-              {t('common.cancel')}
+              {t.common.cancel()}
             </Button>
             <Button
               variant="destructive"
               onClick={handleConfirmCancel}
               disabled={cancelMutation.isPending}
             >
-              {t('enrollments.confirmCancel')}
+              {t.enrollments.confirmCancel()}
             </Button>
           </DialogFooter>
         </DialogContent>

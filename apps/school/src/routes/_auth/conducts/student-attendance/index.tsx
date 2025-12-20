@@ -2,10 +2,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { BarChart3, Calendar } from 'lucide-react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-
 import { StudentAttendanceGrid } from '@/components/attendance/student/student-attendance-grid'
+
 import { SectionHeader } from '@/components/layout/page-layout'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -17,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useTranslations } from '@/i18n'
 import { classAttendanceOptions } from '@/lib/queries/student-attendance'
 import { bulkRecordClassAttendance } from '@/school/functions/student-attendance'
 
@@ -44,7 +44,7 @@ interface StudentAttendanceEntry {
 }
 
 function StudentAttendancePage() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
   const [date, setDate] = useState(() => new Date())
   const [classId, setClassId] = useState<string>('')
@@ -61,10 +61,10 @@ function StudentAttendancePage() {
       bulkRecordClassAttendance({ data: params }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['student-attendance'] })
-      toast.success(t('attendance.saved'))
+      toast.success(t.attendance.saved())
     },
     onError: () => {
-      toast.error(t('attendance.saveFailed'))
+      toast.error(t.attendance.saveFailed())
     },
   })
 
@@ -95,20 +95,20 @@ function StudentAttendancePage() {
   return (
     <div className="space-y-6">
       <SectionHeader
-        title={t('schoolLife.studentAttendance')}
-        description={t('attendance.studentAttendanceDescription')}
+        title={t.schoolLife.studentAttendance()}
+        description={t.attendance.studentAttendanceDescription()}
         actions={(
           <div className="flex gap-2">
             <Link to="/conducts/student-attendance/history">
               <Button variant="outline" size="sm">
                 <Calendar className="mr-2 h-4 w-4" />
-                {t('attendance.history')}
+                {t.attendance.history()}
               </Button>
             </Link>
             <Link to="/conducts/student-attendance/statistics">
               <Button variant="outline" size="sm">
                 <BarChart3 className="mr-2 h-4 w-4" />
-                {t('attendance.statistics')}
+                {t.attendance.statistics()}
               </Button>
             </Link>
           </div>
@@ -117,13 +117,13 @@ function StudentAttendancePage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">{t('attendance.selectClassAndDate')}</CardTitle>
+          <CardTitle className="text-base">{t.attendance.selectClassAndDate()}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex gap-4">
             <Select value={classId} onValueChange={setClassId}>
               <SelectTrigger className="w-[250px]">
-                <SelectValue placeholder={t('attendance.selectClass')} />
+                <SelectValue placeholder={t.attendance.selectClass()} />
               </SelectTrigger>
               <SelectContent>
                 {/* TODO: Load classes from query */}

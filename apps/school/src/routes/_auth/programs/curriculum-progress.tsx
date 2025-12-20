@@ -1,13 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-
 import {
   BehindScheduleAlert,
   ProgressCard,
   ProgressOverviewCards,
 } from '@/components/curriculum-progress'
+
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Card, CardContent } from '@/components/ui/card'
 import {
@@ -19,6 +18,7 @@ import {
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
+import { useTranslations } from '@/i18n'
 import { progressOptions } from '@/lib/queries/curriculum-progress'
 import { getClasses } from '@/school/functions/classes'
 import { getSchoolYears } from '@/school/functions/school-years'
@@ -30,7 +30,7 @@ export const Route = createFileRoute('/_auth/programs/curriculum-progress')({
 })
 
 function CurriculumProgressPage() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const { schoolYearId: contextSchoolYearId } = useSchoolYearContext()
   const [localYearId, setLocalYearId] = useState<string>('')
   const [selectedTermId, setSelectedTermId] = useState<string>('')
@@ -101,17 +101,17 @@ function CurriculumProgressPage() {
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t('nav.academic'), href: '/academic' },
-          { label: t('nav.curriculumProgress') },
+          { label: t.nav.academic(), href: '/academic' },
+          { label: t.nav.curriculumProgress() },
         ]}
       />
 
       <div>
         <h1 className="text-3xl font-bold tracking-tight">
-          {t('curriculum.title')}
+          {t.curriculum.title()}
         </h1>
         <p className="text-muted-foreground">
-          {t('curriculum.description')}
+          {t.curriculum.description()}
         </p>
       </div>
 
@@ -126,14 +126,14 @@ function CurriculumProgressPage() {
             : (
                 <Select value={effectiveYearId} onValueChange={setLocalYearId}>
                   <SelectTrigger>
-                    <SelectValue placeholder={t('schoolYear.select')} />
+                    <SelectValue placeholder={t.schoolYear.select()} />
                   </SelectTrigger>
                   <SelectContent>
                     {schoolYears?.map((year: any) => (
                       <SelectItem key={year.id} value={year.id}>
                         {year.template?.name}
                         {' '}
-                        {year.isActive && t('schoolYear.activeSuffix')}
+                        {year.isActive && t.schoolYear.activeSuffix()}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -154,7 +154,7 @@ function CurriculumProgressPage() {
                   disabled={!effectiveYearId}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={t('terms.select')} />
+                    <SelectValue placeholder={t.terms.select()} />
                   </SelectTrigger>
                   <SelectContent>
                     {terms?.map(term => (
@@ -180,7 +180,7 @@ function CurriculumProgressPage() {
                   disabled={!effectiveYearId}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={t('classes.select')} />
+                    <SelectValue placeholder={t.classes.select()} />
                   </SelectTrigger>
                   <SelectContent>
                     {classes?.map(item => (
@@ -237,7 +237,7 @@ function CurriculumProgressPage() {
         : (
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                <p>{t('curriculum.selectFiltersPrompt')}</p>
+                <p>{t.curriculum.selectFiltersPrompt()}</p>
               </CardContent>
             </Card>
           )}

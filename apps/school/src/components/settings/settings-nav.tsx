@@ -1,7 +1,7 @@
 import { Link, useLocation } from '@tanstack/react-router'
 import { Bell, Building2, Calendar, Settings } from 'lucide-react'
 import * as React from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslations } from '@/i18n'
 
 import { cn } from '@/lib/utils'
 
@@ -18,27 +18,27 @@ interface SettingsNavItem {
  * Following the Tabs View pattern from PLAN.md
  */
 export function SettingsNav() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const pathname = useLocation({ select: location => location.pathname })
 
   const navItems: SettingsNavItem[] = [
     {
-      title: t('settings.profile.title'),
+      title: t.settings.profile.title(),
       href: '/settings/profile',
       icon: Building2,
-      description: t('settings.profile.description'),
+      description: t.settings.profile.description(),
     },
     {
-      title: t('settings.schoolYears.title'),
+      title: t.settings.schoolYears.title(),
       href: '/settings/school-years',
       icon: Calendar,
-      description: t('settings.schoolYears.description'),
+      description: t.settings.schoolYears.description(),
     },
     {
-      title: t('settings.notifications.title'),
+      title: t.settings.notifications(),
       href: '/settings/notifications',
       icon: Bell,
-      description: t('settings.notifications.description'),
+      description: t.settings.notificationsDescription(),
     },
   ]
 
@@ -100,13 +100,13 @@ export function SettingsHeader({
  * Provides consistent layout for all settings pages
  */
 export function SettingsLayout({ children }: { children: React.ReactNode }) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   return (
     <div className="space-y-6">
       <SettingsHeader
-        title={t('nav.settings')}
-        description={t('settings.description')}
+        title={t.nav.settings()}
+        description={t.settings.description()}
       />
       <SettingsNav />
       <div className="mt-6">{children}</div>

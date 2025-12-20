@@ -1,9 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
-
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+
 import { StudentsList } from '@/components/students'
+import { useTranslations } from '@/i18n'
 
 const studentsSearchSchema = z.object({
   page: z.number().min(1).catch(1),
@@ -21,20 +21,20 @@ export const Route = createFileRoute('/_auth/students/')({
 })
 
 function StudentsListPage() {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   return (
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t('students.title') },
+          { label: t.students.title() },
         ]}
       />
 
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t('students.title')}</h1>
-          <p className="text-muted-foreground">{t('students.description')}</p>
+          <h1 className="text-3xl font-bold tracking-tight">{t.students.title()}</h1>
+          <p className="text-muted-foreground">{t.students.description()}</p>
         </div>
       </div>
 

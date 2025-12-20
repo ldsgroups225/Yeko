@@ -11,10 +11,8 @@ import {
 import { BookOpen, Eye, MoreHorizontal, Search, Trash2, Users } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { TableSkeleton } from '@/components/hr/table-skeleton'
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,6 +23,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -56,6 +55,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { useDebounce } from '@/hooks/use-debounce'
+import { useTranslations } from '@/i18n'
 import { deleteClass, getClasses } from '@/school/functions/classes'
 
 interface ClassItem {
@@ -91,7 +91,7 @@ interface ClassesTableProps {
 const DEFAULT_FILTERS = {}
 
 export function ClassesTable({ filters = DEFAULT_FILTERS }: ClassesTableProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const navigate = useNavigate()
   const [searchInput, setSearchInput] = useState(filters.search || '')
   const [classToDelete, setClassToDelete] = useState<ClassItem | null>(null)
@@ -115,11 +115,11 @@ export function ClassesTable({ filters = DEFAULT_FILTERS }: ClassesTableProps) {
       return
     try {
       await deleteClass({ data: classToDelete.class.id })
-      toast.success(t('common.deleteSuccess'))
+      toast.success(t.common.deleteSuccess())
       refetch()
     }
     catch {
-      toast.error(t('common.error'))
+      toast.error(t.common.error())
     }
     finally {
       setClassToDelete(null)
@@ -203,14 +203,14 @@ export function ClassesTable({ filters = DEFAULT_FILTERS }: ClassesTableProps) {
                 onClick={() => navigate({ to: `/classes/${row.original.class.id}` })}
               >
                 <Eye className="mr-2 h-4 w-4" />
-                {t('common.view')}
+                {t.common.view()}
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-destructive"
                 onClick={() => setClassToDelete(row.original)}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                {t('common.delete')}
+                {t.common.delete()}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -243,14 +243,14 @@ export function ClassesTable({ filters = DEFAULT_FILTERS }: ClassesTableProps) {
     <div className="space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle>{t('nav.classes')}</CardTitle>
+          <CardTitle>{t.nav.classes()}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4 mb-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder={t('common.search')}
+                placeholder={t.common.search()}
                 value={searchInput}
                 onChange={e => setSearchInput(e.target.value)}
                 className="pl-9"
@@ -264,8 +264,8 @@ export function ClassesTable({ filters = DEFAULT_FILTERS }: ClassesTableProps) {
                 <EmptyMedia variant="icon">
                   <Users />
                 </EmptyMedia>
-                <EmptyTitle>{t('tables.noClassesFound')}</EmptyTitle>
-                <EmptyDescription>{t('tables.createFirstClass')}</EmptyDescription>
+                <EmptyTitle>{t.tables.noClassesFound()}</EmptyTitle>
+                <EmptyDescription>{t.tables.createFirstClass()}</EmptyDescription>
               </EmptyHeader>
             </Empty>
           )}
@@ -276,8 +276,8 @@ export function ClassesTable({ filters = DEFAULT_FILTERS }: ClassesTableProps) {
                 <EmptyMedia variant="icon">
                   <Search />
                 </EmptyMedia>
-                <EmptyTitle>{t('empty.noResults')}</EmptyTitle>
-                <EmptyDescription>{t('empty.tryModifyingFilters')}</EmptyDescription>
+                <EmptyTitle>{t.empty.noResults()}</EmptyTitle>
+                <EmptyDescription>{t.empty.tryModifyingFilters()}</EmptyDescription>
               </EmptyHeader>
             </Empty>
           )}
@@ -325,7 +325,7 @@ export function ClassesTable({ filters = DEFAULT_FILTERS }: ClassesTableProps) {
           {!hasNoData && table.getPageCount() > 1 && (
             <div className="flex items-center justify-between mt-4">
               <div className="text-sm text-muted-foreground">
-                {t('common.showing')}
+                {t.common.showing()}
                 {' '}
                 {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1}
                 {' '}
@@ -333,7 +333,7 @@ export function ClassesTable({ filters = DEFAULT_FILTERS }: ClassesTableProps) {
                 {' '}
                 {Math.min((table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize, data.length)}
                 {' '}
-                {t('common.of')}
+                {t.common.of()}
                 {' '}
                 {data.length}
               </div>
@@ -344,7 +344,7 @@ export function ClassesTable({ filters = DEFAULT_FILTERS }: ClassesTableProps) {
                   onClick={() => table.previousPage()}
                   disabled={!table.getCanPreviousPage()}
                 >
-                  {t('common.previous')}
+                  {t.common.previous()}
                 </Button>
                 <Button
                   variant="outline"
@@ -352,7 +352,7 @@ export function ClassesTable({ filters = DEFAULT_FILTERS }: ClassesTableProps) {
                   onClick={() => table.nextPage()}
                   disabled={!table.getCanNextPage()}
                 >
-                  {t('common.next')}
+                  {t.common.next()}
                 </Button>
               </div>
             </div>
@@ -364,20 +364,20 @@ export function ClassesTable({ filters = DEFAULT_FILTERS }: ClassesTableProps) {
       <AlertDialog open={!!classToDelete} onOpenChange={open => !open && setClassToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t('dialogs.deleteConfirmation.title')}</AlertDialogTitle>
+            <AlertDialogTitle>{t.dialogs.deleteConfirmation.title()}</AlertDialogTitle>
             <AlertDialogDescription>
-              {t('dialogs.deleteConfirmation.description', {
+              {t.dialogs.deleteConfirmation.description({
                 item: classToDelete ? `${classToDelete.grade.name} ${classToDelete.class.section}` : '',
               })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t('dialogs.deleteConfirmation.cancel')}</AlertDialogCancel>
+            <AlertDialogCancel>{t.dialogs.deleteConfirmation.cancel()}</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={handleDelete}
             >
-              {t('dialogs.deleteConfirmation.delete')}
+              {t.dialogs.deleteConfirmation.delete()}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -1,10 +1,10 @@
 import type { TimetableSessionData } from './timetable-session-card'
 
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
+
 import { Skeleton } from '@/components/ui/skeleton'
+import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { dayOfWeekLabels, defaultTimeSlots } from '@/schemas/timetable'
 
@@ -47,7 +47,7 @@ export function TimetableGrid({
   daysToShow = defaultDaysToShow,
   timeSlots = defaultTimeSlots,
 }: TimetableGridProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   // Group sessions by day and time slot
   const sessionsBySlot = useMemo(() => {
@@ -148,7 +148,7 @@ export function TimetableGrid({
                     : (
                         !readOnly && (
                           <div className="h-full flex items-center justify-center text-xs text-muted-foreground opacity-0 hover:opacity-100 transition-opacity">
-                            {t('timetables.addSession')}
+                            {t.timetables.addSession()}
                           </div>
                         )
                       )}

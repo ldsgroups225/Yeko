@@ -1,12 +1,12 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Edit, Trash2, User } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useTranslations } from '@/i18n'
 import { getStaffMember } from '@/school/functions/staff'
 
 export const Route = createFileRoute('/_auth/users/staff/$staffId/')({
@@ -17,7 +17,7 @@ export const Route = createFileRoute('/_auth/users/staff/$staffId/')({
 })
 
 function StaffDetailPage() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const { staffId } = Route.useParams()
   const staffData = Route.useLoaderData()
 
@@ -28,7 +28,7 @@ function StaffDetailPage() {
   })
 
   if (!staff) {
-    return <div>{t('hr.staff.notFound')}</div>
+    return <div>{t.hr.staff.notFound()}</div>
   }
 
   const getStatusBadge = (status: string) => {
@@ -39,7 +39,7 @@ function StaffDetailPage() {
     }
     return (
       <Badge variant={variants[status] || 'default'}>
-        {t(`hr.status.${status}`)}
+        {status}
       </Badge>
     )
   }
@@ -48,8 +48,8 @@ function StaffDetailPage() {
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t('hr.title'), href: '/users' },
-          { label: t('hr.staff.title'), href: '/users/staff' },
+          { label: t.hr.title(), href: '/users' },
+          { label: t.hr.staff.title(), href: '/users/staff' },
           { label: staff.position },
         ]}
       />
@@ -61,52 +61,52 @@ function StaffDetailPage() {
           </div>
           <div>
             <h1 className="text-3xl font-bold tracking-tight">{staff.position}</h1>
-            <p className="text-muted-foreground">{staff.department || t('hr.staff.noDepartment')}</p>
+            <p className="text-muted-foreground">{staff.department || t.hr.staff.noDepartment()}</p>
           </div>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" asChild>
             <Link to="/users/staff/$staffId/edit" params={{ staffId }}>
               <Edit className="mr-2 h-4 w-4" />
-              {t('common.edit')}
+              {t.common.edit()}
             </Link>
           </Button>
           <Button variant="destructive">
             <Trash2 className="mr-2 h-4 w-4" />
-            {t('common.delete')}
+            {t.common.delete()}
           </Button>
         </div>
       </div>
 
       <Tabs defaultValue="info" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="info">{t('hr.staff.tabs.info')}</TabsTrigger>
-          <TabsTrigger value="activity">{t('hr.staff.tabs.activity')}</TabsTrigger>
+          <TabsTrigger value="info">{t.hr.staff.tabs.info()}</TabsTrigger>
+          <TabsTrigger value="activity">{t.hr.staff.tabs.activity()}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="info" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>{t('hr.staff.information')}</CardTitle>
+              <CardTitle>{t.hr.staff.information()}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">{t('hr.staff.position')}</p>
-                  <p className="text-base">{t(`hr.positions.${staff.position}`)}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t.hr.staff.position()}</p>
+                  <p className="text-base">{staff.position}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">{t('hr.staff.department')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t.hr.staff.department()}</p>
                   <p className="text-base">{staff.department || '-'}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">{t('hr.staff.hireDate')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t.hr.staff.hireDate()}</p>
                   <p className="text-base">
                     {staff.hireDate ? new Date(staff.hireDate).toLocaleDateString() : '-'}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">{t('hr.staff.status')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t.hr.staff.status()}</p>
                   <div>{getStatusBadge(staff.status)}</div>
                 </div>
               </div>
@@ -117,10 +117,10 @@ function StaffDetailPage() {
         <TabsContent value="activity" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>{t('hr.staff.recentActivity')}</CardTitle>
+              <CardTitle>{t.hr.staff.recentActivity()}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">{t('hr.staff.noActivity')}</p>
+              <p className="text-sm text-muted-foreground">{t.hr.staff.noActivity()}</p>
             </CardContent>
           </Card>
         </TabsContent>

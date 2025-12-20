@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { CoefficientMatrix } from '@/components/academic/coefficients/coefficient-matrix'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Card, CardContent } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useTranslations } from '@/i18n'
 import { getSchoolYears } from '@/school/functions/school-years'
 import { getSeries } from '@/school/functions/series'
 
@@ -15,7 +15,7 @@ export const Route = createFileRoute('/_auth/programs/coefficients')({
 })
 
 function CoefficientsPage() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const [selectedYearTemplateId, setSelectedYearTemplateId] = useState<string>('')
   const [selectedSeriesId, setSelectedSeriesId] = useState<string>('all')
 
@@ -45,16 +45,16 @@ function CoefficientsPage() {
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t('nav.academic'), href: '/academic' },
-          { label: t('nav.coefficients') },
+          { label: t.nav.academic(), href: '/academic' },
+          { label: t.nav.coefficients() },
         ]}
       />
 
       <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t('coefficients.title')}</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t.coefficients.title()}</h1>
           <p className="text-muted-foreground">
-            {t('coefficients.description')}
+            {t.coefficients.description()}
           </p>
         </div>
 
@@ -70,7 +70,7 @@ function CoefficientsPage() {
                     onValueChange={setSelectedYearTemplateId}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder={t('schoolYear.select')} />
+                      <SelectValue placeholder={t.schoolYear.select()} />
                     </SelectTrigger>
                     <SelectContent>
                       {schoolYears?.map(year => (
@@ -80,7 +80,7 @@ function CoefficientsPage() {
                         >
                           {year.template.name}
                           {' '}
-                          {year.isActive && t('schoolYear.activeSuffix')}
+                          {year.isActive && t.schoolYear.activeSuffix()}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -99,10 +99,10 @@ function CoefficientsPage() {
                     onValueChange={setSelectedSeriesId}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder={t('coefficients.allSeries')} />
+                      <SelectValue placeholder={t.coefficients.allSeries()} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">{t('coefficients.allSeries')}</SelectItem>
+                      <SelectItem value="all">{t.coefficients.allSeries()}</SelectItem>
                       {series?.map((s: { id: string, name: string, code: string }) => (
                         <SelectItem key={s.id} value={s.id}>
                           {s.name}
@@ -130,7 +130,7 @@ function CoefficientsPage() {
         : (
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                <p>{t('coefficients.selectYearPrompt')}</p>
+                <p>{t.coefficients.selectYearPrompt()}</p>
               </CardContent>
             </Card>
           )}

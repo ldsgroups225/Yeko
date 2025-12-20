@@ -20,13 +20,12 @@ import {
 } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-
 import { toast } from 'sonner'
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
-
 import { Button } from '@/components/ui/button'
+
 import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog'
 import {
   DropdownMenu,
@@ -39,6 +38,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useDebounce } from '@/hooks/use-debounce'
+import { useTranslations } from '@/i18n'
 import { downloadExcelFile, exportStudentsToExcel } from '@/lib/excel-export'
 import { studentsKeys, studentsOptions } from '@/lib/queries/students'
 import { deleteStudent, exportStudents, updateStudentStatus } from '@/school/functions/students'
@@ -59,9 +59,24 @@ const statusColors = {
 type StudentStatus = 'active' | 'graduated' | 'transferred' | 'withdrawn'
 
 export function StudentsList() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
   const navigate = useNavigate()
+
+  const getStudentStatusLabel = (value: string) => {
+    switch (value) {
+      case 'active':
+        return t.students.statusActive()
+      case 'graduated':
+        return t.students.statusGraduated()
+      case 'transferred':
+        return t.students.statusTransferred()
+      case 'withdrawn':
+        return t.students.statusWithdrawn()
+      default:
+        return value
+    }
+  }
 
   const [search, setSearch] = useState('')
   const [status, setStatus] = useState<string>('')
@@ -91,7 +106,7 @@ export function StudentsList() {
     mutationFn: (id: string) => deleteStudent({ data: id }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: studentsKeys.all })
-      toast.success(t('students.deleteSuccess'))
+      toast.success(t.students.deleteSuccess())
       setDeleteDialogOpen(false)
     },
     onError: (err: Error) => {
@@ -104,7 +119,7 @@ export function StudentsList() {
       updateStudentStatus({ data: input }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: studentsKeys.all })
-      toast.success(t('students.statusUpdateSuccess'))
+      toast.success(t.students.statusUpdateSuccess())
       setStatusDialogOpen(false)
     },
     onError: (err: Error) => {
@@ -128,38 +143,38 @@ export function StudentsList() {
       const exportData = await exportStudents({ data: filters })
 
       if (exportData.length === 0) {
-        toast.error(t('students.noDataToExport'))
+        toast.error(t.students.noDataToExport())
         return
       }
 
       // Export to Excel with translated column names
       const excelBuffer = exportStudentsToExcel(exportData as any, {
-        matricule: t('students.matricule'),
-        lastName: t('students.lastName'),
-        firstName: t('students.firstName'),
-        dateOfBirth: t('students.dateOfBirth'),
-        gender: t('students.gender'),
-        status: t('students.status'),
-        class: t('students.class'),
-        series: t('students.series'),
-        nationality: t('students.nationality'),
-        address: t('students.address'),
-        emergencyContact: t('students.emergencyContact'),
-        emergencyPhone: t('students.emergencyPhone'),
-        admissionDate: t('students.admissionDate'),
-        sheetName: t('students.title'),
+        matricule: t.students.matricule(),
+        lastName: t.students.lastName(),
+        firstName: t.students.firstName(),
+        dateOfBirth: t.students.dateOfBirth(),
+        gender: t.students.gender(),
+        status: t.students.status(),
+        class: t.students.class(),
+        series: t.students.series(),
+        nationality: t.students.nationality(),
+        address: t.students.address(),
+        emergencyContact: t.students.emergencyContact(),
+        emergencyPhone: t.students.emergencyPhone(),
+        admissionDate: t.students.admissionDate(),
+        sheetName: t.students.title(),
       })
 
       // Download Excel file
       downloadExcelFile(
         excelBuffer,
-        `${t('students.title')}_${new Date().toISOString().split('T')[0]}.xlsx`,
+        `${t.students.title()}_${new Date().toISOString().split('T')[0]}.xlsx`,
       )
 
-      toast.success(t('students.exportSuccess'))
+      toast.success(t.students.exportSuccess())
     }
     catch (err) {
-      toast.error(err instanceof Error ? err.message : t('common.error'))
+      toast.error(err instanceof Error ? err.message : t.common.error())
     }
     finally {
       setIsExporting(false)
@@ -170,10 +185,10 @@ export function StudentsList() {
     return (
       <div className="flex min-h-[400px] flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
         <UserX className="mx-auto h-12 w-12 text-muted-foreground" />
-        <h3 className="mt-4 text-lg font-semibold">{t('common.error')}</h3>
+        <h3 className="mt-4 text-lg font-semibold">{t.common.error()}</h3>
         <p className="mt-2 max-w-sm text-sm text-muted-foreground">{error.message}</p>
         <Button onClick={() => queryClient.invalidateQueries({ queryKey: studentsKeys.all })} className="mt-6">
-          {t('common.retry')}
+          {t.common.retry()}
         </Button>
       </div>
     )
@@ -187,7 +202,7 @@ export function StudentsList() {
           <div className="relative max-w-sm flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder={t('students.searchPlaceholder')}
+              placeholder={t.students.searchPlaceholder()}
               value={search}
               onChange={e => setSearch(e.target.value)}
               className="pl-9"
@@ -196,25 +211,25 @@ export function StudentsList() {
 
           <Select value={status} onValueChange={setStatus}>
             <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder={t('students.status')} />
+              <SelectValue placeholder={t.students.status()} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">{t('common.all')}</SelectItem>
-              <SelectItem value="active">{t('students.statusActive')}</SelectItem>
-              <SelectItem value="graduated">{t('students.statusGraduated')}</SelectItem>
-              <SelectItem value="transferred">{t('students.statusTransferred')}</SelectItem>
-              <SelectItem value="withdrawn">{t('students.statusWithdrawn')}</SelectItem>
+              <SelectItem value="all">{t.common.all()}</SelectItem>
+              <SelectItem value="active">{t.students.statusActive()}</SelectItem>
+              <SelectItem value="graduated">{t.students.statusGraduated()}</SelectItem>
+              <SelectItem value="transferred">{t.students.statusTransferred()}</SelectItem>
+              <SelectItem value="withdrawn">{t.students.statusWithdrawn()}</SelectItem>
             </SelectContent>
           </Select>
 
           <Select value={gender} onValueChange={setGender}>
             <SelectTrigger className="w-[120px]">
-              <SelectValue placeholder={t('students.gender')} />
+              <SelectValue placeholder={t.students.gender()} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">{t('common.all')}</SelectItem>
-              <SelectItem value="M">{t('students.male')}</SelectItem>
-              <SelectItem value="F">{t('students.female')}</SelectItem>
+              <SelectItem value="all">{t.common.all()}</SelectItem>
+              <SelectItem value="M">{t.students.male()}</SelectItem>
+              <SelectItem value="F">{t.students.female()}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -222,23 +237,23 @@ export function StudentsList() {
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" size="sm" onClick={() => setAutoMatchDialogOpen(true)}>
             <Wand2 className="mr-2 h-4 w-4" />
-            {t('students.autoMatch')}
+            {t.students.autoMatch()}
           </Button>
           <Button variant="outline" size="sm" onClick={() => setReEnrollDialogOpen(true)}>
             <Users className="mr-2 h-4 w-4" />
-            {t('students.bulkReEnroll')}
+            {t.students.bulkReEnroll()}
           </Button>
           <Button variant="outline" size="sm" onClick={() => setImportDialogOpen(true)}>
             <Upload className="mr-2 h-4 w-4" />
-            {t('common.import')}
+            {t.common.import()}
           </Button>
           <Button variant="outline" size="sm" onClick={handleExport} disabled={isExporting}>
             <Download className="mr-2 h-4 w-4" />
-            {isExporting ? t('common.exporting') : t('common.export')}
+            {isExporting ? t.common.exporting() : t.common.export()}
           </Button>
           <Button size="sm" onClick={() => navigate({ to: '/students/new' })}>
             <Plus className="mr-2 h-4 w-4" />
-            {t('students.addStudent')}
+            {t.students.addStudent()}
           </Button>
         </div>
       </div>
@@ -264,11 +279,11 @@ export function StudentsList() {
             ? (
                 <div className="flex min-h-[300px] flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
                   <Users className="mx-auto h-12 w-12 text-muted-foreground" />
-                  <h3 className="mt-4 text-lg font-semibold">{t('students.noStudents')}</h3>
-                  <p className="mt-2 max-w-sm text-sm text-muted-foreground">{t('students.noStudentsDescription')}</p>
+                  <h3 className="mt-4 text-lg font-semibold">{t.students.noStudents()}</h3>
+                  <p className="mt-2 max-w-sm text-sm text-muted-foreground">{t.students.noStudentsDescription()}</p>
                   <Button onClick={() => navigate({ to: '/students/new' })} className="mt-6">
                     <Plus className="mr-2 h-4 w-4" />
-                    {t('students.addStudent')}
+                    {t.students.addStudent()}
                   </Button>
                 </div>
               )
@@ -315,32 +330,32 @@ export function StudentsList() {
                             <DropdownMenuItem asChild>
                               <Link to="/students/$studentId" params={{ studentId: item.student.id }}>
                                 <Eye className="mr-2 h-4 w-4" />
-                                {t('common.view')}
+                                {t.common.view()}
                               </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild>
                               <Link to="/students/$studentId/edit" params={{ studentId: item.student.id }}>
                                 <Edit className="mr-2 h-4 w-4" />
-                                {t('common.edit')}
+                                {t.common.edit()}
                               </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => handleStatusChange(item)}>
                               <Edit className="mr-2 h-4 w-4" />
-                              {t('students.changeStatus')}
+                              {t.students.changeStatus()}
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               onClick={() => handleDelete(item)}
                               className="text-destructive"
                             >
                               <Trash2 className="mr-2 h-4 w-4" />
-                              {t('common.delete')}
+                              {t.common.delete()}
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
                       <div className="mt-3 flex flex-wrap items-center gap-2">
                         <Badge className={statusColors[item.student.status as keyof typeof statusColors]}>
-                          {t(`students.status${item.student.status.charAt(0).toUpperCase() + item.student.status.slice(1)}`)}
+                          {getStudentStatusLabel(item.student.status)}
                         </Badge>
                         {item.currentClass?.gradeName && item.currentClass?.section && (
                           <Badge variant="outline">
@@ -350,7 +365,7 @@ export function StudentsList() {
                           </Badge>
                         )}
                         <span className="text-sm text-muted-foreground">
-                          {item.student.gender === 'M' ? t('students.male') : item.student.gender === 'F' ? t('students.female') : ''}
+                          {item.student.gender === 'M' ? t.students.male() : item.student.gender === 'F' ? t.students.female() : ''}
                         </span>
                       </div>
                     </motion.div>
@@ -364,12 +379,12 @@ export function StudentsList() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[300px]">{t('students.student')}</TableHead>
-              <TableHead>{t('students.matricule')}</TableHead>
-              <TableHead>{t('students.class')}</TableHead>
-              <TableHead>{t('students.gender')}</TableHead>
-              <TableHead>{t('students.status')}</TableHead>
-              <TableHead>{t('students.parents')}</TableHead>
+              <TableHead className="w-[300px]">{t.students.student()}</TableHead>
+              <TableHead>{t.students.matricule()}</TableHead>
+              <TableHead>{t.students.class()}</TableHead>
+              <TableHead>{t.students.gender()}</TableHead>
+              <TableHead>{t.students.status()}</TableHead>
+              <TableHead>{t.students.parents()}</TableHead>
               <TableHead className="w-[70px]" />
             </TableRow>
           </TableHeader>
@@ -402,11 +417,11 @@ export function StudentsList() {
                       <TableCell colSpan={7}>
                         <div className="flex min-h-[300px] flex-col items-center justify-center p-8 text-center">
                           <Users className="mx-auto h-12 w-12 text-muted-foreground" />
-                          <h3 className="mt-4 text-lg font-semibold">{t('students.noStudents')}</h3>
-                          <p className="mt-2 max-w-sm text-sm text-muted-foreground">{t('students.noStudentsDescription')}</p>
+                          <h3 className="mt-4 text-lg font-semibold">{t.students.noStudents()}</h3>
+                          <p className="mt-2 max-w-sm text-sm text-muted-foreground">{t.students.noStudentsDescription()}</p>
                           <Button onClick={() => navigate({ to: '/students/new' })} className="mt-6">
                             <Plus className="mr-2 h-4 w-4" />
-                            {t('students.addStudent')}
+                            {t.students.addStudent()}
                           </Button>
                         </div>
                       </TableCell>
@@ -465,14 +480,14 @@ export function StudentsList() {
                           </TableCell>
                           <TableCell>
                             {item.student.gender === 'M'
-                              ? t('students.male')
+                              ? t.students.male()
                               : item.student.gender === 'F'
-                                ? t('students.female')
+                                ? t.students.female()
                                 : '-'}
                           </TableCell>
                           <TableCell>
                             <Badge className={statusColors[item.student.status as keyof typeof statusColors]}>
-                              {t(`students.status${item.student.status.charAt(0).toUpperCase() + item.student.status.slice(1)}`)}
+                              {getStudentStatusLabel(item.student.status)}
                             </Badge>
                           </TableCell>
                           <TableCell>{item.parentsCount}</TableCell>
@@ -487,25 +502,25 @@ export function StudentsList() {
                                 <DropdownMenuItem asChild>
                                   <Link to="/students/$studentId" params={{ studentId: item.student.id }}>
                                     <Eye className="mr-2 h-4 w-4" />
-                                    {t('common.view')}
+                                    {t.common.view()}
                                   </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem asChild>
                                   <Link to="/students/$studentId/edit" params={{ studentId: item.student.id }}>
                                     <Edit className="mr-2 h-4 w-4" />
-                                    {t('common.edit')}
+                                    {t.common.edit()}
                                   </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => handleStatusChange(item)}>
                                   <Edit className="mr-2 h-4 w-4" />
-                                  {t('students.changeStatus')}
+                                  {t.students.changeStatus()}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
                                   onClick={() => handleDelete(item)}
                                   className="text-destructive"
                                 >
                                   <Trash2 className="mr-2 h-4 w-4" />
-                                  {t('common.delete')}
+                                  {t.common.delete()}
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
@@ -528,10 +543,10 @@ export function StudentsList() {
             disabled={page === 1}
           >
             <ChevronLeft className="h-4 w-4" />
-            {t('common.previous')}
+            {t.common.previous()}
           </Button>
           <span className="text-sm text-muted-foreground">
-            {t('common.pageOf', { current: page, total: data.totalPages })}
+            {t.common.pageOf({ page, totalPages: data.totalPages })}
           </span>
           <Button
             variant="outline"
@@ -539,7 +554,7 @@ export function StudentsList() {
             onClick={() => setPage(p => Math.min(data.totalPages, p + 1))}
             disabled={page === data.totalPages}
           >
-            {t('common.next')}
+            {t.common.next()}
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
@@ -549,8 +564,8 @@ export function StudentsList() {
       <DeleteConfirmationDialog
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}
-        title={t('students.deleteTitle')}
-        description={t('students.deleteDescription', {
+        title={t.students.deleteTitle()}
+        description={t.students.deleteDescription({
           name: `${selectedStudent?.student.firstName} ${selectedStudent?.student.lastName}`,
         })}
         onConfirm={() => deleteMutation.mutate(selectedStudent?.student.id)}

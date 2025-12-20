@@ -1,10 +1,10 @@
 import { formatDistanceToNow } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { CheckCircle2, Clock, FileText, XCircle } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
-
 import { Button } from '@/components/ui/button'
+
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
+import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
 interface PendingValidation {
@@ -37,7 +37,7 @@ export function GradeValidationCard({
   isLoading,
   className,
 }: GradeValidationCardProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const timeAgo = formatDistanceToNow(new Date(validation.submittedAt), {
     addSuffix: true,
     locale: fr,
@@ -60,7 +60,7 @@ export function GradeValidationCard({
                 {validation.subjectName}
               </h3>
               <p className="text-sm text-muted-foreground">
-                {t('academic.grades.validations.submittedBy')}
+                {t.academic.grades.validations.submittedBy()}
                 :
                 {' '}
                 {validation.teacherName}
@@ -74,13 +74,13 @@ export function GradeValidationCard({
           <div className="flex items-center gap-1 text-muted-foreground">
             <Clock className="size-4" />
             <span>
-              {t('academic.grades.validations.submittedAt')}
+              {t.academic.grades.validations.submittedAt()}
               {' '}
               {timeAgo}
             </span>
           </div>
           <div className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
-            {t('academic.grades.validations.pendingCount', { count: validation.pendingCount })}
+            {t.academic.grades.validations.pendingCount({ count: validation.pendingCount })}
           </div>
         </div>
       </CardContent>
@@ -91,7 +91,7 @@ export function GradeValidationCard({
           onClick={onViewDetails}
           disabled={isLoading}
         >
-          {t('academic.grades.validations.viewDetails')}
+          {t.academic.grades.validations.viewDetails()}
         </Button>
         <Button
           variant="default"
@@ -101,7 +101,7 @@ export function GradeValidationCard({
           className="bg-green-600 hover:bg-green-700"
         >
           <CheckCircle2 className="mr-1 size-4" />
-          {t('academic.grades.validations.validate')}
+          {t.academic.grades.validations.validate()}
         </Button>
         <Button
           variant="destructive"
@@ -110,7 +110,7 @@ export function GradeValidationCard({
           disabled={isLoading}
         >
           <XCircle className="mr-1 size-4" />
-          {t('academic.grades.validations.reject')}
+          {t.academic.grades.validations.reject()}
         </Button>
       </CardFooter>
     </Card>

@@ -4,11 +4,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod'
-
 import { Button } from '@/components/ui/button'
+
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog,
@@ -35,6 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useTranslations } from '@/i18n'
 import { discountsKeys } from '@/lib/queries/discounts'
 import {
   calculationTypeLabels,
@@ -66,7 +66,7 @@ interface DiscountFormDialogProps {
 }
 
 export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const queryClient = useQueryClient()
 
   const form = useForm<DiscountFormData>({
@@ -99,7 +99,7 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: discountsKeys.all })
-      toast.success(t('finance.discounts.created'))
+      toast.success(t.finance.discounts.created())
       form.reset()
       onOpenChange(false)
     },
@@ -118,9 +118,9 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>{t('finance.discounts.create')}</DialogTitle>
+          <DialogTitle>{t.finance.discounts.create()}</DialogTitle>
           <DialogDescription>
-            {t('finance.discounts.createDescription')}
+            {t.finance.discounts.createDescription()}
           </DialogDescription>
         </DialogHeader>
 
@@ -133,12 +133,12 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      {t('common.code')}
+                      {t.common.code()}
                       {' '}
                       *
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder={t('finance.discounts.placeholders.code')} />
+                      <Input {...field} placeholder={t.finance.discounts.placeholders.code()} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -151,7 +151,7 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      {t('finance.discounts.type')}
+                      {t.finance.discounts.type()}
                       {' '}
                       *
                     </FormLabel>
@@ -181,12 +181,12 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    {t('common.name')}
+                    {t.common.name()}
                     {' '}
                     *
                   </FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder={t('finance.discounts.placeholders.name')} />
+                    <Input {...field} placeholder={t.finance.discounts.placeholders.name()} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -198,12 +198,12 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
               name="nameEn"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('common.nameEn')}</FormLabel>
+                  <FormLabel>{t.common.nameEn()}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder={t('finance.discounts.placeholders.nameEn')} />
+                    <Input {...field} placeholder={t.finance.discounts.placeholders.nameEn()} />
                   </FormControl>
                   <FormDescription>
-                    {t('common.optionalEnglishName')}
+                    {t.common.optionalEnglishName()}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -217,7 +217,7 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      {t('finance.discounts.calculationType')}
+                      {t.finance.discounts.calculationType()}
                       {' '}
                       *
                     </FormLabel>
@@ -246,7 +246,7 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      {t('finance.discounts.value')}
+                      {t.finance.discounts.value()}
                       {' '}
                       *
                     </FormLabel>
@@ -283,7 +283,7 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
                       />
                     </FormControl>
                     <FormLabel className="font-normal">
-                      {t('finance.discounts.requiresApproval')}
+                      {t.finance.discounts.requiresApproval()}
                     </FormLabel>
                   </FormItem>
                 )}
@@ -301,7 +301,7 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
                       />
                     </FormControl>
                     <FormLabel className="font-normal">
-                      {t('finance.discounts.autoApply')}
+                      {t.finance.discounts.autoApply()}
                     </FormLabel>
                   </FormItem>
                 )}
@@ -314,13 +314,13 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
                 variant="outline"
                 onClick={() => onOpenChange(false)}
               >
-                {t('common.cancel')}
+                {t.common.cancel()}
               </Button>
               <Button type="submit" disabled={mutation.isPending}>
                 {mutation.isPending && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                {t('common.save')}
+                {t.common.save()}
               </Button>
             </DialogFooter>
           </form>

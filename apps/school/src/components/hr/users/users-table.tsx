@@ -11,7 +11,6 @@ import { format } from 'date-fns'
 import { Edit, Eye, MoreHorizontal, Search, Trash2, Users } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { TableSkeleton } from '@/components/hr/table-skeleton'
 import {
@@ -24,10 +23,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-
 import { Badge } from '@/components/ui/badge'
 
 import { Button } from '@/components/ui/button'
+
 import {
   Card,
   CardContent,
@@ -58,6 +57,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { useDebounce } from '@/hooks/use-debounce'
+import { useTranslations } from '@/i18n'
 import { deleteExistingUser, getUsers } from '@/school/functions/users'
 
 interface User {
@@ -80,7 +80,7 @@ interface UsersTableProps {
 }
 
 export function UsersTable({ filters }: UsersTableProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [searchInput, setSearchInput] = useState(filters.search || '')
@@ -91,11 +91,11 @@ export function UsersTable({ filters }: UsersTableProps) {
     mutationFn: (userId: string) => deleteExistingUser({ data: userId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] })
-      toast.success(t('hr.users.deleteSuccess'))
+      toast.success(t.hr.users.deleteSuccess())
       setUserToDelete(null)
     },
     onError: () => {
-      toast.error(t('hr.users.deleteError'))
+      toast.error(t.hr.users.deleteError())
     },
   })
 
@@ -123,23 +123,23 @@ export function UsersTable({ filters }: UsersTableProps) {
     () => [
       {
         accessorKey: 'name',
-        header: t('hr.users.name'),
+        header: t.hr.users.name(),
         cell: ({ row }) => (
           <div className="font-medium">{row.original.name}</div>
         ),
       },
       {
         accessorKey: 'email',
-        header: t('hr.users.email'),
+        header: t.hr.users.email(),
       },
       {
         accessorKey: 'phone',
-        header: t('hr.users.phone'),
+        header: t.hr.users.phone(),
         cell: ({ row }) => row.original.phone || '-',
       },
       {
         accessorKey: 'roles',
-        header: t('hr.users.roles'),
+        header: t.hr.users.roles(),
         cell: ({ row }) => (
           <div className="flex flex-wrap gap-1">
             {row.original.roles.map(role => (
@@ -152,7 +152,7 @@ export function UsersTable({ filters }: UsersTableProps) {
       },
       {
         accessorKey: 'status',
-        header: t('hr.users.status'),
+        header: t.hr.users.status(),
         cell: ({ row }) => {
           const status = row.original.status
           const variants = {
@@ -162,18 +162,22 @@ export function UsersTable({ filters }: UsersTableProps) {
           } as const
           return (
             <Badge variant={variants[status]}>
-              {t(`hr.status.${status}`)}
+              {{
+                active: t.hr.status.active,
+                inactive: t.hr.status.inactive,
+                suspended: t.hr.status.suspended,
+              }[status]()}
             </Badge>
           )
         },
       },
       {
         accessorKey: 'lastLoginAt',
-        header: t('hr.users.lastLogin'),
+        header: t.hr.users.lastLogin(),
         cell: ({ row }) =>
           row.original.lastLoginAt
             ? format(new Date(row.original.lastLoginAt), 'dd/MM/yyyy HH:mm')
-            : t('hr.users.neverLoggedIn'),
+            : t.hr.users.neverLoggedIn(),
       },
       {
         id: 'actions',
@@ -189,20 +193,20 @@ export function UsersTable({ filters }: UsersTableProps) {
                 onClick={() => navigate({ to: `/users/users/${row.original.id}` })}
               >
                 <Eye className="mr-2 h-4 w-4" />
-                {t('common.view')}
+                {t.common.view()}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => navigate({ to: `/users/users/${row.original.id}/edit` })}
               >
                 <Edit className="mr-2 h-4 w-4" />
-                {t('common.edit')}
+                {t.common.edit()}
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-destructive"
                 onClick={() => setUserToDelete(row.original)}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                {t('common.delete')}
+                {t.common.delete()}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -231,7 +235,7 @@ export function UsersTable({ filters }: UsersTableProps) {
     <div className="space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle>{t('hr.users.listTitle')}</CardTitle>
+          <CardTitle>{t.hr.users.listTitle()}</CardTitle>
         </CardHeader>
         <CardContent>
           {/* Search and Filters */}
@@ -239,7 +243,7 @@ export function UsersTable({ filters }: UsersTableProps) {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder={t('hr.users.searchPlaceholder')}
+                placeholder={t.hr.users.searchPlaceholder()}
                 value={searchInput}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchInput(e.target.value)}
                 className="pl-9"
@@ -254,12 +258,12 @@ export function UsersTable({ filters }: UsersTableProps) {
                 <EmptyMedia variant="icon">
                   <Users />
                 </EmptyMedia>
-                <EmptyTitle>{t('hr.users.noUsers')}</EmptyTitle>
-                <EmptyDescription>{t('hr.users.noUsersDescription')}</EmptyDescription>
+                <EmptyTitle>{t.hr.users.noUsers()}</EmptyTitle>
+                <EmptyDescription>{t.hr.users.noUsersDescription()}</EmptyDescription>
               </EmptyHeader>
               <EmptyContent>
                 <Button onClick={() => navigate({ to: '/users/users/new' })}>
-                  {t('hr.users.addUser')}
+                  {t.hr.users.addUser()}
                 </Button>
               </EmptyContent>
             </Empty>
@@ -272,8 +276,8 @@ export function UsersTable({ filters }: UsersTableProps) {
                 <EmptyMedia variant="icon">
                   <Search />
                 </EmptyMedia>
-                <EmptyTitle>{t('common.noResults')}</EmptyTitle>
-                <EmptyDescription>{t('common.noResultsDescription')}</EmptyDescription>
+                <EmptyTitle>{t.common.noResults()}</EmptyTitle>
+                <EmptyDescription>{t.common.noResultsDescription()}</EmptyDescription>
               </EmptyHeader>
             </Empty>
           )}
@@ -323,7 +327,7 @@ export function UsersTable({ filters }: UsersTableProps) {
           {!hasNoData && data && data.totalPages > 1 && (
             <div className="flex items-center justify-between mt-4">
               <div className="text-sm text-muted-foreground">
-                {t('common.showing')}
+                {t.common.showing()}
                 {' '}
                 {(data.page - 1) * data.limit + 1}
                 {' '}
@@ -331,7 +335,7 @@ export function UsersTable({ filters }: UsersTableProps) {
                 {' '}
                 {Math.min(data.page * data.limit, data.total)}
                 {' '}
-                {t('common.of')}
+                {t.common.of()}
                 {' '}
                 {data.total}
               </div>
@@ -346,7 +350,7 @@ export function UsersTable({ filters }: UsersTableProps) {
                     })}
                   disabled={data.page === 1}
                 >
-                  {t('common.previous')}
+                  {t.common.previous()}
                 </Button>
                 <Button
                   variant="outline"
@@ -358,7 +362,7 @@ export function UsersTable({ filters }: UsersTableProps) {
                     })}
                   disabled={data.page === data.totalPages}
                 >
-                  {t('common.next')}
+                  {t.common.next()}
                 </Button>
               </div>
             </div>
@@ -370,13 +374,13 @@ export function UsersTable({ filters }: UsersTableProps) {
       <AlertDialog open={!!userToDelete} onOpenChange={open => !open && setUserToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t('common.deleteConfirmTitle')}</AlertDialogTitle>
+            <AlertDialogTitle>{t.common.deleteConfirmTitle()}</AlertDialogTitle>
             <AlertDialogDescription>
-              {t('common.deleteConfirmDescription', { name: userToDelete?.name })}
+              {t.common.deleteConfirmDescription({ name: userToDelete?.name })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogCancel>{t.common.cancel()}</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               disabled={deleteMutation.isPending}
@@ -386,7 +390,7 @@ export function UsersTable({ filters }: UsersTableProps) {
                 }
               }}
             >
-              {deleteMutation.isPending ? t('common.deleting') : t('common.delete')}
+              {deleteMutation.isPending ? t.common.deleting() : t.common.delete()}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

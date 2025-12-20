@@ -11,12 +11,11 @@ import { format } from 'date-fns'
 import { Briefcase, Edit, Eye, MoreHorizontal, Search, Trash2 } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { TableSkeleton } from '@/components/hr/table-skeleton'
-
 import { Badge } from '@/components/ui/badge'
 
 import { Button } from '@/components/ui/button'
+
 import {
   Card,
   CardContent,
@@ -47,6 +46,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { useDebounce } from '@/hooks/use-debounce'
+import { useTranslations } from '@/i18n'
 import { getStaffList } from '@/school/functions/staff'
 
 type StaffListResponse = Awaited<ReturnType<typeof getStaffList>>
@@ -62,7 +62,7 @@ interface StaffTableProps {
 }
 
 export function StaffTable({ filters }: StaffTableProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const navigate = useNavigate()
   const [searchInput, setSearchInput] = useState(filters.search || '')
   const debouncedSearch = useDebounce(searchInput, 500)
@@ -91,29 +91,41 @@ export function StaffTable({ filters }: StaffTableProps) {
     () => [
       {
         accessorKey: 'user.name',
-        header: t('hr.staff.name'),
+        header: t.hr.staff.name(),
         cell: ({ row }) => (
           <div className="font-medium">{row.original.user.name}</div>
         ),
       },
       {
         accessorKey: 'user.email',
-        header: t('hr.staff.email'),
+        header: t.hr.staff.email(),
         cell: ({ row }) => row.original.user.email,
       },
       {
         accessorKey: 'position',
-        header: t('hr.staff.position'),
-        cell: ({ row }) => t(`hr.positions.${row.original.position}`),
+        header: t.hr.staff.position(),
+        cell: ({ row }) => {
+          const positionTranslations = {
+            academic_coordinator: t.hr.positions.academic_coordinator,
+            discipline_officer: t.hr.positions.discipline_officer,
+            accountant: t.hr.positions.accountant,
+            cashier: t.hr.positions.cashier,
+            registrar: t.hr.positions.registrar,
+            other: t.hr.positions.other,
+          }
+          return positionTranslations[
+            row.original.position as keyof typeof positionTranslations
+          ]()
+        },
       },
       {
         accessorKey: 'department',
-        header: t('hr.staff.department'),
+        header: t.hr.staff.department(),
         cell: ({ row }) => row.original.department || '-',
       },
       {
         accessorKey: 'status',
-        header: t('hr.staff.status'),
+        header: t.hr.staff.status(),
         cell: ({ row }) => {
           const status = row.original.status
           const variants = {
@@ -123,14 +135,18 @@ export function StaffTable({ filters }: StaffTableProps) {
           } as const
           return (
             <Badge variant={variants[status]}>
-              {t(`hr.status.${status}`)}
+              {{
+                active: t.hr.status.active,
+                inactive: t.hr.status.inactive,
+                on_leave: t.hr.status.on_leave,
+              }[status]()}
             </Badge>
           )
         },
       },
       {
         accessorKey: 'hireDate',
-        header: t('hr.staff.hireDate'),
+        header: t.hr.staff.hireDate(),
         cell: ({ row }) =>
           row.original.hireDate
             ? format(new Date(row.original.hireDate), 'dd/MM/yyyy')
@@ -150,18 +166,18 @@ export function StaffTable({ filters }: StaffTableProps) {
                 onClick={() => navigate({ to: `/users/staff/${row.original.id}` })}
               >
                 <Eye className="mr-2 h-4 w-4" />
-                {t('common.view')}
+                {t.common.view()}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() =>
                   navigate({ to: `/users/staff/${row.original.id}/edit` })}
               >
                 <Edit className="mr-2 h-4 w-4" />
-                {t('common.edit')}
+                {t.common.edit()}
               </DropdownMenuItem>
               <DropdownMenuItem className="text-destructive">
                 <Trash2 className="mr-2 h-4 w-4" />
-                {t('common.delete')}
+                {t.common.delete()}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -190,7 +206,7 @@ export function StaffTable({ filters }: StaffTableProps) {
     <div className="space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle>{t('hr.staff.listTitle')}</CardTitle>
+          <CardTitle>{t.hr.staff.listTitle()}</CardTitle>
         </CardHeader>
         <CardContent>
           {/* Search and Filters */}
@@ -198,7 +214,7 @@ export function StaffTable({ filters }: StaffTableProps) {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder={t('hr.staff.searchPlaceholder')}
+                placeholder={t.hr.staff.searchPlaceholder()}
                 value={searchInput}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setSearchInput(e.target.value)}
@@ -214,12 +230,12 @@ export function StaffTable({ filters }: StaffTableProps) {
                 <EmptyMedia variant="icon">
                   <Briefcase />
                 </EmptyMedia>
-                <EmptyTitle>{t('hr.staff.noStaff')}</EmptyTitle>
-                <EmptyDescription>{t('hr.staff.noStaffDescription')}</EmptyDescription>
+                <EmptyTitle>{t.hr.staff.noStaff()}</EmptyTitle>
+                <EmptyDescription>{t.hr.staff.noStaffDescription()}</EmptyDescription>
               </EmptyHeader>
               <EmptyContent>
                 <Button onClick={() => navigate({ to: '/users/staff/new' })}>
-                  {t('hr.staff.addStaff')}
+                  {t.hr.staff.addStaff()}
                 </Button>
               </EmptyContent>
             </Empty>
@@ -232,8 +248,8 @@ export function StaffTable({ filters }: StaffTableProps) {
                 <EmptyMedia variant="icon">
                   <Search />
                 </EmptyMedia>
-                <EmptyTitle>{t('common.noResults')}</EmptyTitle>
-                <EmptyDescription>{t('common.noResultsDescription')}</EmptyDescription>
+                <EmptyTitle>{t.common.noResults()}</EmptyTitle>
+                <EmptyDescription>{t.common.noResultsDescription()}</EmptyDescription>
               </EmptyHeader>
             </Empty>
           )}
@@ -283,7 +299,7 @@ export function StaffTable({ filters }: StaffTableProps) {
           {!hasNoData && data && data.totalPages > 1 && (
             <div className="flex items-center justify-between mt-4">
               <div className="text-sm text-muted-foreground">
-                {t('common.showing')}
+                {t.common.showing()}
                 {' '}
                 {(data.page - 1) * data.limit + 1}
                 {' '}
@@ -291,7 +307,7 @@ export function StaffTable({ filters }: StaffTableProps) {
                 {' '}
                 {Math.min(data.page * data.limit, data.total)}
                 {' '}
-                {t('common.of')}
+                {t.common.of()}
                 {' '}
                 {data.total}
               </div>
@@ -306,7 +322,7 @@ export function StaffTable({ filters }: StaffTableProps) {
                     })}
                   disabled={data.page === 1}
                 >
-                  {t('common.previous')}
+                  {t.common.previous()}
                 </Button>
                 <Button
                   variant="outline"
@@ -318,7 +334,7 @@ export function StaffTable({ filters }: StaffTableProps) {
                     })}
                   disabled={data.page === data.totalPages}
                 >
-                  {t('common.next')}
+                  {t.common.next()}
                 </Button>
               </div>
             </div>

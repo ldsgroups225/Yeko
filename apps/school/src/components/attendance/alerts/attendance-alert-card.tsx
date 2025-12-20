@@ -1,7 +1,7 @@
 import { Check, X } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { useTranslations } from '@/i18n'
 import { AlertSeverityBadge } from './alert-severity-badge'
 
 type AlertSeverity = 'info' | 'warning' | 'critical'
@@ -31,7 +31,7 @@ export function AttendanceAlertCard({
   onAcknowledge,
   onDismiss,
 }: AttendanceAlertCardProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   const subjectName = alert.teacherName ?? alert.studentName ?? alert.className
 
@@ -66,7 +66,7 @@ export function AttendanceAlertCard({
                   onClick={() => onAcknowledge(alert.id)}
                 >
                   <Check className="mr-1 h-3 w-3" />
-                  {t('alerts.acknowledge')}
+                  {t.alerts.acknowledge()}
                 </Button>
               )}
               {onDismiss && (
@@ -76,7 +76,7 @@ export function AttendanceAlertCard({
                   onClick={() => onDismiss(alert.id)}
                 >
                   <X className="mr-1 h-3 w-3" />
-                  {t('alerts.dismiss')}
+                  {t.alerts.dismiss()}
                 </Button>
               )}
             </div>

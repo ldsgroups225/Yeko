@@ -1,8 +1,8 @@
 import type { ReportCardData } from './report-card-card'
 import type { ReportCardStatus } from '@/schemas/report-card'
 import { FileX } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useTranslations } from '@/i18n'
 import { generateUUID } from '@/utils/generateUUID'
 import { ReportCardCard } from './report-card-card'
 
@@ -50,7 +50,7 @@ export function ReportCardList({
   onResend,
   filterStatus,
 }: ReportCardListProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   if (isLoading) {
     return (
@@ -70,9 +70,9 @@ export function ReportCardList({
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
         <FileX className="h-12 w-12 text-muted-foreground mb-4" />
-        <h3 className="font-semibold text-lg">{t('reportCards.noReportCards')}</h3>
+        <h3 className="font-semibold text-lg">{t.reportCards.noReportCards()}</h3>
         <p className="text-muted-foreground text-sm">
-          {t('reportCards.noReportCardsDescription')}
+          {t.reportCards.noReportCardsDescription()}
         </p>
       </div>
     )
