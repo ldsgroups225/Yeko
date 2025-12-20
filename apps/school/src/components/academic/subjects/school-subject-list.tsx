@@ -72,6 +72,14 @@ interface SchoolSubjectItem {
 }
 
 const SUBJECT_CATEGORY_KEYS = ['litteraire', 'scientifique', 'sportif', 'autre'] as const
+type SubjectCategoryKey = (typeof SUBJECT_CATEGORY_KEYS)[number]
+
+const SUBJECT_CATEGORY_FILTER_MAP: Record<SubjectCategoryKey, 'Scientifique' | 'Littéraire' | 'Sportif' | 'Autre'> = {
+  litteraire: 'Littéraire',
+  scientifique: 'Scientifique',
+  sportif: 'Sportif',
+  autre: 'Autre',
+}
 
 export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
   const t = useTranslations()
@@ -87,7 +95,7 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
     search: search || undefined,
     category:
       categoryFilter !== 'all'
-        ? (categoryFilter as (typeof SUBJECT_CATEGORY_KEYS)[number])
+        ? SUBJECT_CATEGORY_FILTER_MAP[categoryFilter as SubjectCategoryKey]
         : undefined,
     status:
       statusFilter !== 'all'
