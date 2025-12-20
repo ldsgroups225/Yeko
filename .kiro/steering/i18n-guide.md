@@ -1,207 +1,116 @@
 ---
 inclusion: fileMatch
 fileMatchPattern: "**/i18n/**/*"
-description: i18next configuration, translation patterns, and localization standards
+description: Typesafe i18n configuration, translation patterns, and localization standards
 ---
 
-# Internationalization Guide for Yeko
+# Internationalization Guide for Yeko (Typesafe Edition)
 
-## Configuration
+> **Key Reminder**  
+> Typesafe-i18n generation is already running in watch mode. **Never run `npx typesafe-i18n` manually.** Edits to translation files will be picked up automatically.
 
-Default language: French (fr)
-Supported languages: French, English
+## Configuration Overview
+
+- Default language: **French (`fr`)**
+- Supported languages: **French, English**
+- Translation tooling: **[typesafe-i18n](https://github.com/ivanhofer/typesafe-i18n)** with generated helpers and typed keys.
+- Import point: `import { useTranslations } from '@/i18n'`
+
+### Generated File Layout
+
+```
+apps/<app>/src/i18n/
+  fr/index.ts          # French translations (default, typed)
+  en/index.ts          # English translations
+  formatters.ts        # shared formatter helpers
+  i18n-types.ts        # generated types (do not edit)
+  i18n-util*.ts        # generated runtime helpers (do not edit)
+  i18n-react.tsx       # typed hooks/providers for React
+```
+
+> **Do not edit generated files.** Only adjust `en/index.ts`, `fr/index.ts`, and the modular translation object; the watcher will regenerate the rest.
+
+## Using Typed Translations in React
 
 ```typescript
-// apps/core/src/i18n/config.ts
-i18n.init({
-  resources: {
-    fr: { translation: fr },
-    en: { translation: en },
-  },
-  fallbackLng: 'fr',
-  lng: 'fr',
-  supportedLngs: ['fr', 'en'],
-})
-```
-
-## Translation File Structure
-
-```
-apps/core/src/i18n/locales/
-  fr.ts    # French translations (default)
-  en.ts    # English translations
-```
-
-### Translation Object Structure
-```typescript
-// locales/fr.ts
-export const fr = {
-  common: {
-    save: 'Enregistrer',
-    cancel: 'Annuler',
-    delete: 'Supprimer',
-    edit: 'Modifier',
-    create: 'Créer',
-    search: 'Rechercher',
-    loading: 'Chargement...',
-    noResults: 'Aucun résultat',
-    actions: 'Actions',
-  },
-  
-  navigation: {
-    dashboard: 'Tableau de bord',
-    schools: 'Écoles',
-    catalogs: 'Catalogues',
-    programs: 'Programmes',
-    analytics: 'Analytiques',
-    settings: 'Paramètres',
-  },
-  
-  schools: {
-    title: 'Gestion des écoles',
-    create: 'Créer une école',
-    edit: 'Modifier l\'école',
-    name: 'Nom',
-    code: 'Code',
-    status: 'Statut',
-    address: 'Adresse',
-    phone: 'Téléphone',
-    email: 'Email',
-    confirmDelete: 'Êtes-vous sûr de vouloir supprimer {{name}} ?',
-    created: 'École créée avec succès',
-    updated: 'École mise à jour',
-    deleted: 'École supprimée',
-  },
-  
-  status: {
-    active: 'Actif',
-    inactive: 'Inactif',
-    suspended: 'Suspendu',
-    draft: 'Brouillon',
-    published: 'Publié',
-    archived: 'Archivé',
-  },
-  
-  errors: {
-    required: 'Ce champ est requis',
-    invalidEmail: 'Email invalide',
-    createFailed: 'Échec de la création',
-    updateFailed: 'Échec de la mise à jour',
-    deleteFailed: 'Échec de la suppression',
-    loadFailed: 'Échec du chargement',
-    unauthorized: 'Non autorisé',
-  },
-  
-  validation: {
-    minLength: 'Minimum {{count}} caractères',
-    maxLength: 'Maximum {{count}} caractères',
-    unique: 'Cette valeur existe déjà',
-  },
-}
-```
-
-## Usage in Components
-
-### Basic Translation
-```typescript
-import { useTranslation } from 'react-i18next'
+import { useTranslations } from '@/i18n'
 
 function Component() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   
   return (
     <div>
-      <h1>{t('schools.title')}</h1>
-      <Button>{t('common.save')}</Button>
+      <h1>{t.schools.title()}</h1>
+      <Button>{t.common.save()}</Button>
     </div>
   )
 }
 ```
 
-### With Interpolation
-```typescript
-// Translation: "Êtes-vous sûr de vouloir supprimer {{name}} ?"
-<p>{t('schools.confirmDelete', { name: school.name })}</p>
+### Access Rules
 
-// Translation: "Minimum {{count}} caractères"
-<p>{t('validation.minLength', { count: 3 })}</p>
+1. **Only call existing typed functions.** If `t.settings.notifications` is typed as a function, call it as `t.settings.notifications()` — it isn’t an object with `title`.
+2. **No dynamic key strings.** Replace `t(\`students.status.${status}\`)` with a `switch` or pre-mapped object referencing typed helpers.
+3. **Pass required params explicitly.**
+
+```typescript
+// t.classes.deleteConfirmDescription expects { name: string }
+<p>{t.classes.deleteConfirmDescription({ name: classroom.name })}</p>
 ```
 
-### Pluralization
+### Strongly-Typed Switches
+
 ```typescript
-// Translation file
-{
-  items: {
-    count_one: '{{count}} élément',
-    count_other: '{{count}} éléments',
+const statusLabel = (status: Student['status']) => {
+  switch (status) {
+    case 'active':
+      return t.students.status.active()
+    case 'inactive':
+      return t.students.status.inactive()
+    default:
+      return status // fallback string only if no typed key exists
   }
 }
-
-// Usage
-<p>{t('items.count', { count: items.length })}</p>
-// Output: "1 élément" or "5 éléments"
 ```
 
-### Nested Keys
-```typescript
-// Access nested translations
-{t('navigation.dashboard')}
-{t('errors.createFailed')}
-{t('status.active')}
-```
+## Adding / Updating Keys
 
-## Language Switcher
-
-```typescript
-import { useTranslation } from 'react-i18next'
-
-function LanguageSwitcher() {
-  const { i18n } = useTranslation()
-  
-  const changeLanguage = (lng: string) => {
-    i18n.changeLanguage(lng)
-    localStorage.setItem('i18nextLng', lng)
-  }
-  
-  return (
-    <Select value={i18n.language} onValueChange={changeLanguage}>
-      <SelectTrigger>
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="fr">Français</SelectItem>
-        <SelectItem value="en">English</SelectItem>
-      </SelectContent>
-    </Select>
-  )
-}
-```
-
-## Adding New Translations
-
-1. Add key to French file first (default language)
-2. Add corresponding key to English file
-3. Use the key in component with `t('key.path')`
+1. **Add to `fr/index.ts`** – this drives the contract.
+2. Run (or wait for) the typesafe watcher to regenerate `i18n-types.ts`.
+3. Add to `en/index.ts` once the typing exists.
+4. Update React usage by calling the new typed function/property.
 
 ### Checklist for New Features
-- [ ] All UI text uses `t()` function
-- [ ] Keys added to both fr.ts and en.ts
-- [ ] Keys follow naming convention (feature.action)
-- [ ] Interpolation used for dynamic values
-- [ ] Error messages translated
+- [ ] `fr/index.ts` contains the new key with correct namespace.
+- [ ] `en/index.ts` replicates the structure (or fallback).
+- [ ] React components call typed functions (`t.namespace.key()`).
+- [ ] Dynamic variations handled through typed unions / switches.
+- [ ] Delete strings or fallback plain text **only** when a key truly doesn’t exist in contract.
 
-## Date/Number Formatting
+## Formatting & Utilities
+
+- Add locale-aware helpers to `formatters.ts`. They are imported into the generated translator.
+- Prefer `Intl.DateTimeFormat` / `Intl.NumberFormat` using `locale` from the hook.
+
+## Common Pitfalls
+
+1. **Treating translator as callable** – never `t('path')`; always `t.namespace.key()`.
+2. **Incorrect namespaces** – match `i18n-types.ts` exactly (e.g., `t.spaces.classroom`, not `t.spaces.classrooms`).
+3. **Missing params** – fix TypeScript errors instead of ignoring them.
+4. **Dynamic template literals** – convert to typed switches to keep Fast Refresh working.
+5. **Editing generated files** – regenerate via watcher; do not hand-edit `i18n-types.ts`.
+
+## Language Switcher Contract
+
+- `LanguageProvider` is created in `i18n-react.tsx`.
+- Use the provided `useCurrentLocale()` / `setLocale()` helpers to change language.
+- Persisted preference lives in local storage; always update both storage and provider.
 
 ```typescript
-// Use Intl for date formatting
-const formatDate = (date: Date, locale: string) =>
-  new Intl.DateTimeFormat(locale, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }).format(date)
-
-// Usage
-const { i18n } = useTranslation()
-formatDate(new Date(), i18n.language) // "7 décembre 2025" or "December 7, 2025"
+const { locale, setLocale } = useLocaleContext()
+setLocale('fr') // triggers lazy loading via typesafe runtime helpers
 ```
+
+---
+
+Keep this guide aligned with the current `typesafe-i18n` contract whenever translations or namespaces change. When major migrations occur (e.g., moving keys from `t.parents` to `t.students`), update this document immediately so the steering hints stay accurate.
