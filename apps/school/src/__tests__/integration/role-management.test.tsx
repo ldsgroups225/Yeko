@@ -84,6 +84,7 @@ describe('role Management Integration', () => {
       const mockOnSubmit = vi.fn()
 
       const initialData = {
+        id: '123',
         name: 'Teacher',
         slug: 'teacher',
         description: 'Teaching staff',
@@ -91,7 +92,7 @@ describe('role Management Integration', () => {
           users: ['view'],
           students: ['view', 'create'],
         },
-        scope: 'school',
+        scope: 'school' as const,
       }
 
       render(<RoleForm initialData={initialData} onSubmit={mockOnSubmit} />)

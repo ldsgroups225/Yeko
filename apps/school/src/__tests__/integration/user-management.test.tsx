@@ -62,7 +62,7 @@ describe('user Management Integration', () => {
         name: 'Kouadio Yao',
         email: 'kouadio@example.com',
         phone: '+225 01 23 45 67 89',
-        status: 'active',
+        status: 'active' as const,
         roleIds: ['teacher'],
       }
 
@@ -89,7 +89,7 @@ describe('user Management Integration', () => {
         id: 'user-123',
         name: 'Test User',
         email: 'test@example.com',
-        status: 'active',
+        status: 'active' as const,
         roleIds: [],
       }
 

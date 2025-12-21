@@ -74,7 +74,7 @@ vi.mock('react-hook-form', () => ({
   useForm: vi.fn(() => ({
     register: vi.fn(),
     unregister: vi.fn(),
-    handleSubmit: vi.fn(fn => async (data: any) => {
+    handleSubmit: vi.fn(fn => async (data: unknown) => {
       const result = await fn(data)
       return result
     }),

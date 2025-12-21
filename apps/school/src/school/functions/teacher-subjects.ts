@@ -37,11 +37,11 @@ export const getAvailableSubjectsForTeacher = createServerFn()
 
     // Get currently assigned subjects
     const assigned = await getTeacherSubjects(data.teacherId)
-    const assignedIds = new Set(assigned.map((a: any) => a.subjectId))
+    const assignedIds = new Set(assigned.map(a => a.subjectId))
 
     // Return only those not yet assigned
     // allSubjectsResult.subjects is the array
-    return allSubjectsResult.subjects.filter((s: any) => !assignedIds.has(s.subjectId))
+    return allSubjectsResult.subjects.filter(s => !assignedIds.has(s.subjectId))
   })
 
 export const saveTeacherAssignments = createServerFn()

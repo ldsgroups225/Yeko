@@ -196,7 +196,10 @@ export const bulkImportStudents = createServerFn()
       throw new Error('No school context')
     await requirePermission('students', 'create')
 
-    const results = await studentQueries.bulkImportStudents(context.schoolId, data as any)
+    const results = await studentQueries.bulkImportStudents(context.schoolId, data.map(student => ({
+      ...student,
+      schoolId: context.schoolId,
+    })))
 
     await createAuditLog({
       schoolId: context.schoolId,

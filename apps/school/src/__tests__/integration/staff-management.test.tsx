@@ -48,11 +48,12 @@ describe('staff Management Integration', () => {
       const mockOnSubmit = vi.fn()
 
       const initialData = {
+        id: 'staff-123',
         userId: 'user-456',
-        position: 'accountant',
+        position: 'accountant' as const,
         department: 'Finance',
-        hireDate: '2024-01-15',
-        status: 'active',
+        hireDate: new Date('2024-01-15'),
+        status: 'active' as const,
       }
 
       render(<StaffForm initialData={initialData} onSubmit={mockOnSubmit} />)
@@ -73,9 +74,10 @@ describe('staff Management Integration', () => {
 
     test('should show save button in edit mode', () => {
       const initialData = {
+        id: 'staff-456',
         userId: 'user-456',
-        position: 'secretary',
-        status: 'active',
+        position: 'registrar' as const,
+        status: 'active' as const,
       }
 
       render(<StaffForm initialData={initialData} onSubmit={vi.fn()} />)

@@ -58,7 +58,7 @@ export const getRoles = createServerFn()
 
     // Get user counts for each role
     const rolesWithCounts = await Promise.all(
-      rolesList.map(async (role: any) => {
+      rolesList.map(async (role) => {
         const userCount = await getRoleUsersCount(role.id, schoolId)
         return {
           ...role,
