@@ -61,6 +61,22 @@ export const coefficientTemplates = pgTable('coefficient_templates', {
 
 ## Query Patterns
 
+### Performance Guardrails
+
+- **Latency:** Keep OLTP queries under **100 ms** (p95). Profile new queries with `EXPLAIN ANALYZE` before shipping.
+- **Index Usage:** Aim for **>95 %** index-only scans on critical paths. Add covering indexes when the planner falls back to sequential scans.
+- **Cache Hit Rate:** Maintain **>90 %** buffer cache hit rate. Revisit query plans if repeated full-table reads appear in `pg_stat_statements`.
+- **Lock Contention:** Keep wait events below **1 %** of total query time. Prefer `SELECT … FOR UPDATE SKIP LOCKED` for batch workers.
+- **Connection Hygiene:** All server functions must reuse pooled connections (no ad-hoc clients) and keep transactions short (<500 ms) to prevent pool exhaustion.
+
+### Optimization Workflow
+
+1. **Baseline:** Capture current metrics (`pg_stat_statements`, request traces, synthetic load) before editing.
+2. **Plan Review:** Inspect execution plans for nested loops, sort nodes, temp files, and predicate pushdown gaps.
+3. **Apply Change:** Modify one concern at a time (query rewrite, index, config). Document rationale inline.
+4. **Verify:** Re-run `EXPLAIN (ANALYZE, BUFFERS)` plus integration tests. Ensure same or better row counts.
+5. **Monitor:** Ship dashboards/alerts for p95 latency, cache hit rate, and bloat after deployment.
+
 ### Basic CRUD
 ```typescript
 import { db } from '@repo/data-ops/database/client'
@@ -136,6 +152,34 @@ await db.transaction(async (tx) => {
     .values({ schoolId: school.id, ...yearData })
 })
 ```
+
+### Bulk Operations & Server Functions
+
+- **Never loop individual `insert/update` calls** inside TanStack `createServerFn` handlers. Build arrays and issue batch statements (`insert(...).values(array)` or `onConflictDoUpdate` with all rows).
+- **Preload reference data** (classes, enrollments, fee structures) with one query and store in Maps/Records for O(1) lookups inside loops.
+- **Prefer set-based updates** (`UPDATE … WHERE id = ANY($1)`) instead of per-row updates when moving large cohorts (transfers, re-enrollments, status toggles).
+- **Use window functions** for pagination totals when result sets are <100k rows; otherwise keep the separate COUNT query to avoid large-sort regressions.
+- **Guard long-running workflows** with `SKIP LOCKED` or chunk sizes (≤500 rows) to reduce lock waits and temp file churn.
+
+### Index Strategy
+
+- Add **composite indexes** that mirror the most selective `WHERE` predicates (e.g., `(school_year_id, class_id, status)` for enrollments).
+- For partial workloads (soft-delete, status flags) use **partial indexes** (`WHERE status = 'confirmed'`) to shrink bloat.
+- Keep a migration template ready:
+  ```typescript
+  await db.execute(sql`
+    CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_enrollments_student_year_status
+    ON enrollments (student_id, school_year_id, status);
+  `)
+  ```
+- Schedule **index maintenance** (REINDEX / VACUUM) when `pg_stat_user_indexes.btree_levels > 3` or `idx_blks_read` spikes.
+
+### Monitoring & Diagnostics
+
+- Enable `pg_stat_statements` in every environment; export top 20 queries weekly.
+- Capture `auto_explain` output for queries slower than 250 ms during QA.
+- Track bloat with `pgstattuple` for critical tables; trigger `VACUUM FULL` or CLUSTER when bloat >20 %.
+- Log query plans for regressions and attach to PRs touching SQL.
 
 ## Query File Organization
 
