@@ -200,6 +200,27 @@ export async function bulkUpdateReportCardStatus(
     .returning()
 }
 
+export async function bulkCreateReportCards(data: ReportCardInsert[]) {
+  const db = getDb()
+  if (data.length === 0)
+    return []
+  return db.insert(reportCards).values(data).returning()
+}
+
+export async function bulkUpdateReportCards(
+  ids: string[],
+  data: Partial<Omit<ReportCardInsert, 'id' | 'studentId' | 'classId' | 'termId' | 'schoolYearId'>>,
+) {
+  const db = getDb()
+  if (ids.length === 0)
+    return []
+  return db
+    .update(reportCards)
+    .set({ ...data, updatedAt: new Date() })
+    .where(inArray(reportCards.id, ids))
+    .returning()
+}
+
 export async function deleteReportCard(id: string) {
   const db = getDb()
   await db.delete(reportCards).where(eq(reportCards.id, id))

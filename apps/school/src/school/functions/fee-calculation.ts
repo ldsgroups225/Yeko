@@ -7,6 +7,7 @@ import {
   feeStructures,
   feeTypes,
   getDb,
+  inArray,
   isNull,
   sql,
   studentDiscounts,
@@ -237,6 +238,190 @@ export const assignFeesToStudent = createServerFn()
   })
 
 /**
+ * Core logic for bulk fee assignment
+ * Optimized to handle multiple students in batch
+ */
+export async function executeBulkFeeAssignment(params: {
+  studentIds: string[]
+  schoolId: string
+  schoolYearId: string
+  // Optional filters for grade/class to narrow down fee structures
+  gradeId?: string
+}) {
+  const db = getDb()
+  const results = {
+    total: params.studentIds.length,
+    succeeded: 0,
+    failed: 0,
+    errors: [] as Array<{ studentId: string, error: string }>,
+  }
+
+  if (params.studentIds.length === 0)
+    return results
+
+  // 1. Check which students are "new" (only have 0 or 1 confirmed enrollment ever)
+  const allEnrollments = await db
+    .select({ studentId: enrollments.studentId })
+    .from(enrollments)
+    .where(and(
+      inArray(enrollments.studentId, params.studentIds),
+      eq(enrollments.status, 'confirmed'),
+    ))
+
+  const enrollmentCounts = new Map<string, number>()
+  for (const e of allEnrollments) {
+    enrollmentCounts.set(e.studentId, (enrollmentCounts.get(e.studentId) || 0) + 1)
+  }
+
+  // 2. Fetch all confirmed enrollments for this year with their class/grade details
+  const currentEnrollments = await db
+    .select({
+      id: enrollments.id,
+      studentId: enrollments.studentId,
+      gradeId: classes.gradeId,
+      seriesId: classes.seriesId,
+    })
+    .from(enrollments)
+    .innerJoin(classes, eq(enrollments.classId, classes.id))
+    .where(and(
+      inArray(enrollments.studentId, params.studentIds),
+      eq(enrollments.schoolYearId, params.schoolYearId),
+      eq(enrollments.status, 'confirmed'),
+    ))
+
+  if (currentEnrollments.length === 0)
+    return results
+
+  // 3. Get all applicable fee structures
+  // Note: We might have students from different grades if called from bulkAssignFees
+  const gradeIds = Array.from(new Set(currentEnrollments.map(e => e.gradeId)))
+
+  const applicableFees = await db
+    .select()
+    .from(feeStructures)
+    .innerJoin(feeTypes, eq(feeStructures.feeTypeId, feeTypes.id))
+    .where(and(
+      eq(feeStructures.schoolId, params.schoolId),
+      eq(feeStructures.schoolYearId, params.schoolYearId),
+      inArray(feeStructures.gradeId, gradeIds),
+      eq(feeTypes.status, 'active'),
+    ))
+
+  // 4. Get all approved discounts for these students
+  const allStudentDiscounts = await db
+    .select({
+      studentId: studentDiscounts.studentId,
+      discountId: studentDiscounts.discountId,
+      calculatedAmount: studentDiscounts.calculatedAmount,
+      discount: discounts,
+    })
+    .from(studentDiscounts)
+    .innerJoin(discounts, eq(studentDiscounts.discountId, discounts.id))
+    .where(and(
+      inArray(studentDiscounts.studentId, params.studentIds),
+      eq(studentDiscounts.schoolYearId, params.schoolYearId),
+      eq(studentDiscounts.status, 'approved'),
+    ))
+
+  const discountMap = new Map<string, typeof allStudentDiscounts>()
+  for (const sd of allStudentDiscounts) {
+    if (!discountMap.has(sd.studentId))
+      discountMap.set(sd.studentId, [])
+    discountMap.get(sd.studentId)!.push(sd)
+  }
+
+  // 5. Check existing student fees to avoid duplicates
+  const enrollmentIds = currentEnrollments.map(e => e.id)
+  const existingStudentFees = await db
+    .select({ studentId: studentFees.studentId, feeStructureId: studentFees.feeStructureId })
+    .from(studentFees)
+    .where(inArray(studentFees.enrollmentId, enrollmentIds))
+
+  const existingFeesSet = new Set(existingStudentFees.map(f => `${f.studentId}-${f.feeStructureId}`))
+
+  // 6. Calculate and prepare batch insert
+  const toInsert: any[] = []
+
+  for (const enrollment of currentEnrollments) {
+    const isNewStudent = (enrollmentCounts.get(enrollment.studentId) || 0) <= 1
+    const studentDiscountsList = discountMap.get(enrollment.studentId) || []
+
+    // Filter applicable fees for this specific enrollment
+    const studentApplicableFees = applicableFees.filter(f =>
+      f.fee_structures.gradeId === enrollment.gradeId
+      && (enrollment.seriesId
+        ? f.fee_structures.seriesId === enrollment.seriesId
+        : !f.fee_structures.seriesId),
+    )
+
+    for (const fee of studentApplicableFees) {
+      if (existingFeesSet.has(`${enrollment.studentId}-${fee.fee_structures.id}`)) {
+        continue
+      }
+
+      const baseAmount = isNewStudent && fee.fee_structures.newStudentAmount
+        ? Number(fee.fee_structures.newStudentAmount)
+        : Number(fee.fee_structures.amount)
+
+      let discountAmount = 0
+      for (const sd of studentDiscountsList) {
+        const appliesToFeeTypes = sd.discount.appliesToFeeTypes as string[] | null
+        if (!appliesToFeeTypes || appliesToFeeTypes.includes(fee.fee_types.id)) {
+          if (sd.discount.calculationType === 'percentage') {
+            discountAmount += baseAmount * (Number(sd.discount.value) / 100)
+          }
+          else {
+            discountAmount += Number(sd.calculatedAmount)
+          }
+        }
+      }
+
+      const maxDiscountCap = studentDiscountsList.reduce((max: number, sd) => {
+        if (sd.discount.maxDiscountAmount) {
+          return Math.min(max, Number(sd.discount.maxDiscountAmount))
+        }
+        return max
+      }, Infinity)
+
+      discountAmount = Math.min(discountAmount, maxDiscountCap, baseAmount)
+      const finalAmount = baseAmount - discountAmount
+
+      toInsert.push({
+        id: generateUUID(),
+        studentId: enrollment.studentId,
+        enrollmentId: enrollment.id,
+        feeStructureId: fee.fee_structures.id,
+        originalAmount: baseAmount.toString(),
+        discountAmount: discountAmount.toString(),
+        finalAmount: finalAmount.toString(),
+        balance: finalAmount.toString(),
+        status: 'pending' as const,
+      })
+    }
+  }
+
+  if (toInsert.length > 0) {
+    try {
+      // Chunk inserts for large datasets
+      const chunkSize = 100
+      for (let i = 0; i < toInsert.length; i += chunkSize) {
+        await db.insert(studentFees).values(toInsert.slice(i, i + chunkSize))
+      }
+      results.succeeded = params.studentIds.length
+    }
+    catch (error) {
+      results.failed = params.studentIds.length
+      results.errors.push({ studentId: 'batch', error: error instanceof Error ? error.message : 'Batch assignment failed' })
+    }
+  }
+  else {
+    results.succeeded = params.studentIds.length
+  }
+
+  return results
+}
+
+/**
  * Bulk assign fees to all students in a grade
  */
 export const bulkAssignFeesByGrade = createServerFn()
@@ -257,7 +442,7 @@ export const bulkAssignFeesByGrade = createServerFn()
     const db = getDb()
 
     // Get all confirmed enrollments for this grade
-    const enrolledStudents = await db
+    const enrolledStudentsData = await db
       .select({
         studentId: enrollments.studentId,
       })
@@ -270,26 +455,13 @@ export const bulkAssignFeesByGrade = createServerFn()
         eq(enrollments.status, 'confirmed'),
       ))
 
-    const results = {
-      total: enrolledStudents.length,
-      succeeded: 0,
-      failed: 0,
-      errors: [] as Array<{ studentId: string, error: string }>,
-    }
-
-    for (const student of enrolledStudents) {
-      try {
-        await assignFeesToStudent({ data: { studentId: student.studentId, schoolYearId } })
-        results.succeeded++
-      }
-      catch (error) {
-        results.failed++
-        results.errors.push({
-          studentId: student.studentId,
-          error: error instanceof Error ? error.message : 'Unknown error',
-        })
-      }
-    }
+    const studentIds = enrolledStudentsData.map(s => s.studentId)
+    const results = await executeBulkFeeAssignment({
+      studentIds,
+      schoolId: context.schoolId,
+      schoolYearId,
+      gradeId: data.gradeId,
+    })
 
     return { success: true as const, data: results }
   })

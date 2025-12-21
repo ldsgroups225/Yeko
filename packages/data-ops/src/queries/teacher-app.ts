@@ -7,7 +7,7 @@ import { and, asc, desc, eq, gte, lte, sql } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
 
 import { getDb } from '../database/setup'
-import { subjects } from '../drizzle/core-schema'
+import { grades, subjects } from '../drizzle/core-schema'
 import {
   classes,
   classSessions,
@@ -109,8 +109,8 @@ export async function getTeacherClassSessionById(sessionId: string) {
     .select({
       id: classSessions.id,
       classId: classSessions.classId,
-      className: sql<string>`(SELECT g.name || ' ' || c.section FROM classes c JOIN grades g ON c.grade_id = g.id WHERE c.id = ${classSessions.classId})`,
-      schoolYearId: sql<string>`(SELECT school_year_id FROM classes WHERE id = ${classSessions.classId})`,
+      className: sql<string>`${grades.name} || ' ' || ${classes.section}`,
+      schoolYearId: classes.schoolYearId,
       subjectId: classSessions.subjectId,
       subjectName: subjects.name,
       teacherId: classSessions.teacherId,
@@ -129,6 +129,8 @@ export async function getTeacherClassSessionById(sessionId: string) {
     })
     .from(classSessions)
     .innerJoin(subjects, eq(classSessions.subjectId, subjects.id))
+    .innerJoin(classes, eq(classSessions.classId, classes.id))
+    .innerJoin(grades, eq(classes.gradeId, grades.id))
     .where(eq(classSessions.id, sessionId))
     .limit(1)
 
@@ -165,7 +167,7 @@ export async function getTeacherSessionHistory(params: {
     db
       .select({
         id: classSessions.id,
-        className: sql<string>`(SELECT g.name || ' ' || c.section FROM classes c JOIN grades g ON c.grade_id = g.id WHERE c.id = ${classSessions.classId})`,
+        className: sql<string>`${grades.name} || ' ' || ${classes.section}`,
         subjectName: subjects.name,
         date: classSessions.date,
         startTime: classSessions.startTime,
@@ -176,6 +178,8 @@ export async function getTeacherSessionHistory(params: {
       })
       .from(classSessions)
       .innerJoin(subjects, eq(classSessions.subjectId, subjects.id))
+      .innerJoin(classes, eq(classSessions.classId, classes.id))
+      .innerJoin(grades, eq(classes.gradeId, grades.id))
       .where(and(...conditions))
       .orderBy(desc(classSessions.date), desc(classSessions.startTime))
       .limit(pageSize)
@@ -241,34 +245,31 @@ export async function upsertParticipationGrades(params: {
 }) {
   const db = getDb()
 
-  // Use transaction for atomicity
-  return db.transaction(async (tx: PgTransaction<any, any, any>) => {
-    for (const grade of params.grades) {
-      await tx
-        .insert(participationGrades)
-        .values({
-          id: nanoid(),
-          studentId: grade.studentId,
-          classSessionId: params.classSessionId,
-          teacherId: params.teacherId,
-          grade: grade.grade,
-          comment: grade.comment,
-        })
-        .onConflictDoUpdate({
-          target: [participationGrades.studentId, participationGrades.classSessionId],
-          set: {
-            grade: grade.grade,
-            comment: grade.comment,
-            updatedAt: new Date(),
-          },
-        })
-    }
-
-    // Note: participationRecorded column will be added in migration 0009
-    // For now, we just return success after recording grades
-
+  if (params.grades.length === 0) {
     return { success: true }
-  })
+  }
+
+  // Use a single batch upsert for all grades
+  await db
+    .insert(participationGrades)
+    .values(params.grades.map(grade => ({
+      id: nanoid(),
+      studentId: grade.studentId,
+      classSessionId: params.classSessionId,
+      teacherId: params.teacherId,
+      grade: grade.grade,
+      comment: grade.comment,
+    })))
+    .onConflictDoUpdate({
+      target: [participationGrades.studentId, participationGrades.classSessionId],
+      set: {
+        grade: sql`excluded.grade`,
+        comment: sql`excluded.comment`,
+        updatedAt: new Date(),
+      },
+    })
+
+  return { success: true }
 }
 
 /**
@@ -305,7 +306,7 @@ export async function getTeacherAssignedClasses(params: {
   const result = await db
     .select({
       classId: classSubjects.classId,
-      className: sql<string>`(SELECT g.name || ' ' || c.section FROM classes c JOIN grades g ON c.grade_id = g.id WHERE c.id = ${classSubjects.classId})`,
+      className: sql<string>`${grades.name} || ' ' || ${classes.section}`,
       subjectId: classSubjects.subjectId,
       subjectName: subjects.name,
       subjectShortName: subjects.shortName,
@@ -313,13 +314,14 @@ export async function getTeacherAssignedClasses(params: {
     .from(classSubjects)
     .innerJoin(subjects, eq(classSubjects.subjectId, subjects.id))
     .innerJoin(classes, eq(classSubjects.classId, classes.id))
+    .innerJoin(grades, eq(classes.gradeId, grades.id))
     .where(
       and(
         eq(classSubjects.teacherId, params.teacherId),
         eq(classes.schoolYearId, params.schoolYearId),
       ),
     )
-    .orderBy(sql`(SELECT g.name || ' ' || c.section FROM classes c JOIN grades g ON c.grade_id = g.id WHERE c.id = ${classSubjects.classId})`)
+    .orderBy(grades.name, classes.section)
 
   // Group by class
   const classMap = new Map<string, {
@@ -421,7 +423,7 @@ export async function getTeacherHomework(params: {
       .select({
         id: homework.id,
         title: homework.title,
-        className: sql<string>`(SELECT g.name || ' ' || c.section FROM classes c JOIN grades g ON c.grade_id = g.id WHERE c.id = ${homework.classId})`,
+        className: sql<string>`${grades.name} || ' ' || ${classes.section}`,
         subjectName: subjects.name,
         dueDate: homework.dueDate,
         dueTime: homework.dueTime,
@@ -429,10 +431,15 @@ export async function getTeacherHomework(params: {
         maxPoints: homework.maxPoints,
         isGraded: homework.isGraded,
         createdAt: homework.createdAt,
+        submissionCount: sql<number>`count(${homeworkSubmissions.id})::int`,
       })
       .from(homework)
       .innerJoin(subjects, eq(homework.subjectId, subjects.id))
+      .innerJoin(classes, eq(homework.classId, classes.id))
+      .innerJoin(grades, eq(classes.gradeId, grades.id))
+      .leftJoin(homeworkSubmissions, eq(homeworkSubmissions.homeworkId, homework.id))
       .where(and(...conditions))
+      .groupBy(homework.id, subjects.id, classes.id, grades.id)
       .orderBy(desc(homework.dueDate))
       .limit(pageSize)
       .offset((page - 1) * pageSize),
@@ -442,26 +449,8 @@ export async function getTeacherHomework(params: {
       .where(and(...conditions)),
   ])
 
-  // Get submission counts for each homework
-  const homeworkIds = homeworkList.map((h: { id: string }) => h.id)
-  const submissionCounts = homeworkIds.length > 0
-    ? await db
-        .select({
-          homeworkId: homeworkSubmissions.homeworkId,
-          count: sql<number>`count(*)::int`,
-        })
-        .from(homeworkSubmissions)
-        .where(sql`${homeworkSubmissions.homeworkId} IN (${sql.join(homeworkIds.map((id: string) => sql`${id}`), sql`, `)})`)
-        .groupBy(homeworkSubmissions.homeworkId)
-    : []
-
-  const submissionMap = new Map(submissionCounts.map((s: { homeworkId: string, count: number }) => [s.homeworkId, s.count]))
-
   return {
-    homework: homeworkList.map((h: any) => ({
-      ...h,
-      submissionCount: submissionMap.get(h.id) ?? 0,
-    })),
+    homework: homeworkList,
     total: countResult[0]?.count ?? 0,
     page,
     pageSize,
@@ -479,7 +468,7 @@ export async function getHomeworkById(homeworkId: string) {
       id: homework.id,
       schoolId: homework.schoolId,
       classId: homework.classId,
-      className: sql<string>`(SELECT g.name || ' ' || c.section FROM classes c JOIN grades g ON c.grade_id = g.id WHERE c.id = ${homework.classId})`,
+      className: sql<string>`${grades.name} || ' ' || ${classes.section}`,
       subjectId: homework.subjectId,
       subjectName: subjects.name,
       teacherId: homework.teacherId,
@@ -498,6 +487,8 @@ export async function getHomeworkById(homeworkId: string) {
     })
     .from(homework)
     .innerJoin(subjects, eq(homework.subjectId, subjects.id))
+    .innerJoin(classes, eq(homework.classId, classes.id))
+    .innerJoin(grades, eq(classes.gradeId, grades.id))
     .where(eq(homework.id, homeworkId))
     .limit(1)
 
@@ -651,7 +642,7 @@ export async function getTeacherMessagesQuery(params: {
         recipientType: teacherMessages.recipientType,
         recipientId: teacherMessages.recipientId,
         studentId: teacherMessages.studentId,
-        studentName: sql<string | null>`(SELECT first_name || ' ' || last_name FROM students WHERE id = ${teacherMessages.studentId})`,
+        studentName: sql<string | null>`${students.firstName} || ' ' || ${students.lastName}`,
         subject: teacherMessages.subject,
         content: teacherMessages.content,
         isRead: teacherMessages.isRead,
@@ -660,6 +651,7 @@ export async function getTeacherMessagesQuery(params: {
         createdAt: teacherMessages.createdAt,
       })
       .from(teacherMessages)
+      .leftJoin(students, eq(teacherMessages.studentId, students.id))
       .where(and(...conditions))
       .orderBy(desc(teacherMessages.createdAt))
       .limit(pageSize)
@@ -699,9 +691,9 @@ export async function getMessageDetailsQuery(params: {
       recipientType: teacherMessages.recipientType,
       recipientId: teacherMessages.recipientId,
       studentId: teacherMessages.studentId,
-      studentName: sql<string | null>`(SELECT first_name || ' ' || last_name FROM students WHERE id = ${teacherMessages.studentId})`,
+      studentName: sql<string | null>`${students.firstName} || ' ' || ${students.lastName}`,
       classId: teacherMessages.classId,
-      className: sql<string | null>`(SELECT g.name || ' ' || c.section FROM classes c JOIN grades g ON c.grade_id = g.id WHERE c.id = ${teacherMessages.classId})`,
+      className: sql<string | null>`${grades.name} || ' ' || ${classes.section}`,
       threadId: teacherMessages.threadId,
       subject: teacherMessages.subject,
       content: teacherMessages.content,
@@ -711,6 +703,9 @@ export async function getMessageDetailsQuery(params: {
       createdAt: teacherMessages.createdAt,
     })
     .from(teacherMessages)
+    .leftJoin(students, eq(teacherMessages.studentId, students.id))
+    .leftJoin(classes, eq(teacherMessages.classId, classes.id))
+    .leftJoin(grades, eq(classes.gradeId, grades.id))
     .where(eq(teacherMessages.id, params.messageId))
     .limit(1)
 
@@ -877,13 +872,15 @@ export async function searchParentsForTeacher(params: {
     .select({
       studentId: students.id,
       studentName: sql<string>`${students.firstName} || ' ' || ${students.lastName}`,
-      className: sql<string>`(SELECT g.name || ' ' || c.section FROM classes c JOIN grades g ON c.grade_id = g.id WHERE c.id = ${enrollments.classId})`,
+      className: sql<string>`${grades.name} || ' ' || ${classes.section}`,
       parentId: parents.id,
       parentName: sql<string>`${parents.firstName} || ' ' || ${parents.lastName}`,
       parentPhone: parents.phone,
     })
     .from(students)
     .innerJoin(enrollments, eq(enrollments.studentId, students.id))
+    .innerJoin(classes, eq(enrollments.classId, classes.id))
+    .innerJoin(grades, eq(classes.gradeId, grades.id))
     .innerJoin(classSubjects, eq(classSubjects.classId, enrollments.classId))
     .innerJoin(studentParents, eq(studentParents.studentId, students.id))
     .innerJoin(parents, eq(studentParents.parentId, parents.id))
@@ -939,34 +936,29 @@ export async function submitStudentGrades(params: {
   const gradeType = params.gradeType ?? 'test'
   const today = new Date().toISOString().split('T')[0]!
 
-  // Use transaction for atomicity
-  return db.transaction(async (tx: PgTransaction<any, any, any>) => {
-    const results = []
+  if (params.grades.length === 0) {
+    return { success: true, count: 0 }
+  }
 
-    for (const grade of params.grades) {
-      // Insert new grade (no upsert since multiple grades per student/subject are allowed)
-      const [result] = await tx
-        .insert(studentGrades)
-        .values({
-          id: nanoid(),
-          studentId: grade.studentId,
-          classId: params.classId,
-          subjectId: params.subjectId,
-          termId: params.termId,
-          teacherId: params.teacherId,
-          value: grade.grade.toFixed(2),
-          type: gradeType,
-          weight: 1,
-          gradeDate: today,
-          status: params.status,
-          submittedAt: params.status === 'submitted' ? new Date() : null,
-        })
-        .returning()
-      if (!result) {
-        throw new Error('Failed to submit grade')
-      }
-      results.push(result)
-    }
+  // Use transaction for atomicity and batch insert
+  return db.transaction(async (tx: PgTransaction<any, any, any>) => {
+    const results = await tx
+      .insert(studentGrades)
+      .values(params.grades.map(grade => ({
+        id: nanoid(),
+        studentId: grade.studentId,
+        classId: params.classId,
+        subjectId: params.subjectId,
+        termId: params.termId,
+        teacherId: params.teacherId,
+        value: grade.grade.toFixed(2),
+        type: gradeType,
+        weight: 1,
+        gradeDate: today,
+        status: params.status,
+        submittedAt: params.status === 'submitted' ? new Date() : null,
+      })))
+      .returning()
 
     return { success: true, count: results.length }
   })

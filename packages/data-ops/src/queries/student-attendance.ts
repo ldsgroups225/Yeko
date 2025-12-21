@@ -1,4 +1,4 @@
-import type { AbsenceReasonCategory, StudentAttendance, StudentAttendanceInsert, StudentAttendanceStatus } from '../drizzle/school-schema'
+import type { AbsenceReasonCategory, StudentAttendanceInsert, StudentAttendanceStatus } from '../drizzle/school-schema'
 import { and, count, desc, eq, gte, lte, sql } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
 
@@ -202,64 +202,44 @@ export async function bulkUpsertClassAttendance(params: {
   recordedBy?: string
 }) {
   const db = getDb()
-  const results: StudentAttendance[] = []
 
-  await db.transaction(async (tx: any) => {
-    for (const entry of params.entries) {
-      const insertData: StudentAttendanceInsert = {
-        id: nanoid(),
-        studentId: entry.studentId,
-        classId: params.classId,
-        schoolId: params.schoolId,
-        classSessionId: params.classSessionId,
-        date: params.date,
-        status: entry.status,
-        arrivalTime: entry.arrivalTime,
-        reason: entry.reason,
-        reasonCategory: entry.reasonCategory,
-        recordedBy: params.recordedBy,
-      }
+  if (params.entries.length === 0)
+    return []
 
-      const [result] = await tx
-        .insert(studentAttendance)
-        .values(insertData)
-        .onConflictDoNothing()
-        .returning()
+  const values: StudentAttendanceInsert[] = params.entries.map(entry => ({
+    id: nanoid(),
+    studentId: entry.studentId,
+    classId: params.classId,
+    schoolId: params.schoolId,
+    classSessionId: params.classSessionId,
+    date: params.date,
+    status: entry.status,
+    arrivalTime: entry.arrivalTime,
+    reason: entry.reason,
+    reasonCategory: entry.reasonCategory,
+    recordedBy: params.recordedBy,
+  }))
 
-      if (result) {
-        results.push(result)
-      }
-      else {
-        // Update existing
-        const conditions = [
-          eq(studentAttendance.studentId, entry.studentId),
-          eq(studentAttendance.date, params.date),
-          eq(studentAttendance.classId, params.classId),
-        ]
-        if (params.classSessionId) {
-          conditions.push(eq(studentAttendance.classSessionId, params.classSessionId))
-        }
-
-        const [updated] = await tx
-          .update(studentAttendance)
-          .set({
-            status: entry.status,
-            arrivalTime: entry.arrivalTime,
-            reason: entry.reason,
-            reasonCategory: entry.reasonCategory,
-            recordedBy: params.recordedBy,
-            updatedAt: new Date(),
-          })
-          .where(and(...conditions))
-          .returning()
-
-        if (updated)
-          results.push(updated)
-      }
-    }
-  })
-
-  return results
+  return db
+    .insert(studentAttendance)
+    .values(values)
+    .onConflictDoUpdate({
+      target: [
+        studentAttendance.studentId,
+        studentAttendance.date,
+        studentAttendance.classId,
+        studentAttendance.classSessionId,
+      ],
+      set: {
+        status: sql`EXCLUDED.status`,
+        arrivalTime: sql`EXCLUDED.arrival_time`,
+        reason: sql`EXCLUDED.reason`,
+        reasonCategory: sql`EXCLUDED.reason_category`,
+        recordedBy: sql`EXCLUDED.recorded_by`,
+        updatedAt: new Date(),
+      },
+    })
+    .returning()
 }
 
 // Excuse student absence

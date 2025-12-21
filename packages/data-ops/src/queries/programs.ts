@@ -1,4 +1,4 @@
-import { and, asc, count, desc, eq, like } from 'drizzle-orm'
+import { and, asc, count, desc, eq, inArray, like, sql } from 'drizzle-orm'
 import { getDb } from '@/database/setup'
 import {
   grades,
@@ -387,17 +387,19 @@ export async function bulkUpdateChaptersOrder(items: { id: string, order: number
   if (items.length === 0)
     return
 
-  await db.transaction(async (tx: any) => {
-    for (const item of items) {
-      await tx
-        .update(programTemplateChapters)
-        .set({
-          order: item.order,
-          updatedAt: new Date(),
-        })
-        .where(eq(programTemplateChapters.id, item.id))
-    }
-  })
+  const ids = items.map(i => i.id)
+
+  await db.update(programTemplateChapters)
+    .set({
+      order: sql`CASE 
+        ${sql.join(
+          items.map(item => sql`WHEN id = ${item.id} THEN ${item.order}::integer`),
+          sql` `,
+        )} 
+      END`,
+      updatedAt: new Date(),
+    })
+    .where(inArray(programTemplateChapters.id, ids))
 }
 
 export async function bulkCreateChapters(

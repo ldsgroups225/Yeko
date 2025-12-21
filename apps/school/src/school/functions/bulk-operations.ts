@@ -23,7 +23,7 @@ import {
 import { generateUUID } from '@/utils/generateUUID'
 import { requirePermission } from '../middleware/permissions'
 import { getSchoolContext, getSchoolYearContext } from '../middleware/school-context'
-import { assignFeesToStudent } from './fee-calculation'
+import { executeBulkFeeAssignment } from './fee-calculation'
 
 /**
  * Bulk enroll students into a class
@@ -74,32 +74,42 @@ export const bulkEnrollStudents = createServerFn()
 
     const today = new Date().toISOString().split('T')[0] ?? new Date().toISOString().slice(0, 10)
 
-    for (const studentId of data.studentIds) {
-      if (alreadyEnrolled.has(studentId)) {
-        results.skipped++
-        continue
-      }
+    const toInsert = data.studentIds
+      .filter(studentId => !alreadyEnrolled.has(studentId))
+      .map(studentId => ({
+        id: generateUUID(),
+        studentId,
+        classId: data.classId,
+        schoolYearId: data.schoolYearId,
+        status: (data.autoConfirm ? 'confirmed' : 'pending') as 'pending' | 'confirmed' | 'cancelled' | 'transferred',
+        enrollmentDate: today,
+        confirmedAt: data.autoConfirm ? new Date() : null,
+      }))
 
+    if (toInsert.length > 0) {
       try {
-        await db.insert(enrollments).values({
-          id: generateUUID(),
-          studentId,
-          classId: data.classId,
-          schoolYearId: data.schoolYearId,
-          status: data.autoConfirm ? 'confirmed' : 'pending',
-          enrollmentDate: today,
-          confirmedAt: data.autoConfirm ? new Date() : null,
-        })
-        results.succeeded++
+        await db.insert(enrollments).values(toInsert)
+        results.succeeded = toInsert.length
       }
-      catch (error) {
-        results.failed++
-        results.errors.push({
-          studentId,
-          error: error instanceof Error ? error.message : 'Unknown error',
-        })
+      catch {
+        // Fallback to individual inserts to capture specific errors if batch fails
+        for (const item of toInsert) {
+          try {
+            await db.insert(enrollments).values(item)
+            results.succeeded++
+          }
+          catch (e) {
+            results.failed++
+            results.errors.push({
+              studentId: item.studentId,
+              error: e instanceof Error ? e.message : 'Individual insertion failed',
+            })
+          }
+        }
       }
     }
+
+    results.skipped = data.studentIds.length - toInsert.length - results.failed
 
     return { success: true as const, data: results }
   })
@@ -169,6 +179,8 @@ export const bulkReEnrollFromPreviousYear = createServerFn()
     const alreadyEnrolled = new Set(existingEnrollmentsTarget.map((e: { studentId: string }) => e.studentId))
     const today = new Date().toISOString().split('T')[0] ?? new Date().toISOString().slice(0, 10)
 
+    const toInsert: any[] = []
+
     for (const enrollment of sourceEnrollments) {
       if (alreadyEnrolled.has(enrollment.studentId)) {
         results.skipped++
@@ -196,24 +208,37 @@ export const bulkReEnrollFromPreviousYear = createServerFn()
         continue
       }
 
+      toInsert.push({
+        id: generateUUID(),
+        studentId: enrollment.studentId,
+        classId: targetClassId,
+        schoolYearId: data.toSchoolYearId,
+        status: (data.autoConfirm ? 'confirmed' : 'pending') as 'pending' | 'confirmed' | 'cancelled' | 'transferred',
+        enrollmentDate: today,
+        confirmedAt: data.autoConfirm ? new Date() : null,
+      })
+    }
+
+    if (toInsert.length > 0) {
       try {
-        await db.insert(enrollments).values({
-          id: generateUUID(),
-          studentId: enrollment.studentId,
-          classId: targetClassId,
-          schoolYearId: data.toSchoolYearId,
-          status: data.autoConfirm ? 'confirmed' : 'pending',
-          enrollmentDate: today,
-          confirmedAt: data.autoConfirm ? new Date() : null,
-        })
-        results.succeeded++
+        await db.insert(enrollments).values(toInsert)
+        results.succeeded = toInsert.length
       }
-      catch (error) {
-        results.failed++
-        results.errors.push({
-          studentId: enrollment.studentId,
-          error: error instanceof Error ? error.message : 'Unknown error',
-        })
+      catch {
+        // Fallback to individual inserts to capture specific errors if batch fails
+        for (const item of toInsert) {
+          try {
+            await db.insert(enrollments).values(item)
+            results.succeeded++
+          }
+          catch (e) {
+            results.failed++
+            results.errors.push({
+              studentId: item.studentId,
+              error: e instanceof Error ? e.message : 'Individual insertion failed',
+            })
+          }
+        }
       }
     }
 
@@ -246,56 +271,62 @@ export const bulkTransferStudents = createServerFn()
 
     const now = new Date()
 
-    for (const studentId of data.studentIds) {
-      try {
-        // Get current enrollment
-        const [currentEnrollment] = await db
-          .select()
-          .from(enrollments)
-          .where(and(
-            eq(enrollments.studentId, studentId),
-            eq(enrollments.schoolYearId, yearContext.schoolYearId),
-            eq(enrollments.status, 'confirmed'),
-          ))
-          .limit(1)
+    try {
+      // 1. Get all current confirmed enrollments for these students
+      const currentEnrollments = await db
+        .select()
+        .from(enrollments)
+        .where(and(
+          inArray(enrollments.studentId, data.studentIds),
+          eq(enrollments.schoolYearId, yearContext.schoolYearId),
+          eq(enrollments.status, 'confirmed'),
+        ))
 
-        if (!currentEnrollment) {
-          results.failed++
-          results.errors.push({ studentId, error: 'No active enrollment found' })
-          continue
-        }
-
-        // Update enrollment to transferred
-        await db
-          .update(enrollments)
-          .set({
-            status: 'transferred',
-            transferredAt: now,
-            transferredTo: data.newClassId,
-            transferReason: data.reason,
-          })
-          .where(eq(enrollments.id, currentEnrollment.id))
-
-        // Create new enrollment
-        await db.insert(enrollments).values({
-          id: generateUUID(),
-          studentId,
-          classId: data.newClassId,
-          schoolYearId: yearContext.schoolYearId,
-          status: 'confirmed',
-          enrollmentDate: now.toISOString().split('T')[0] ?? now.toISOString().slice(0, 10),
-          confirmedAt: now,
-          previousEnrollmentId: currentEnrollment.id,
-        })
-
-        results.succeeded++
+      if (currentEnrollments.length === 0) {
+        return { success: true as const, data: { ...results, failed: data.studentIds.length, errors: data.studentIds.map(id => ({ studentId: id, error: 'No active enrollment found' })) } }
       }
-      catch (error) {
-        results.failed++
-        results.errors.push({
-          studentId,
-          error: error instanceof Error ? error.message : 'Unknown error',
+
+      const enrolledStudentIds = new Set(currentEnrollments.map(e => e.studentId))
+      const enrollmentIds = currentEnrollments.map(e => e.id)
+
+      // Identify students not found
+      for (const id of data.studentIds) {
+        if (!enrolledStudentIds.has(id)) {
+          results.failed++
+          results.errors.push({ studentId: id, error: 'No active enrollment found' })
+        }
+      }
+
+      // 2. Batch update enrollments to transferred
+      await db
+        .update(enrollments)
+        .set({
+          status: 'transferred',
+          transferredAt: now,
+          transferredTo: data.newClassId,
+          transferReason: data.reason,
         })
+        .where(inArray(enrollments.id, enrollmentIds))
+
+      // 3. Batch insert new enrollments
+      const toInsert = currentEnrollments.map(e => ({
+        id: generateUUID(),
+        studentId: e.studentId,
+        classId: data.newClassId,
+        schoolYearId: yearContext.schoolYearId,
+        status: 'confirmed' as const,
+        enrollmentDate: now.toISOString().split('T')[0] ?? now.toISOString().slice(0, 10),
+        confirmedAt: now,
+        previousEnrollmentId: e.id,
+      }))
+
+      await db.insert(enrollments).values(toInsert)
+      results.succeeded = toInsert.length
+    }
+    catch (error) {
+      return {
+        success: false as const,
+        error: error instanceof Error ? error.message : 'Batch transfer failed',
       }
     }
 
@@ -334,26 +365,12 @@ export const bulkAssignFees = createServerFn()
       studentIds = enrolledStudents.map((e: { studentId: string }) => e.studentId)
     }
 
-    const results = {
-      total: studentIds.length,
-      succeeded: 0,
-      failed: 0,
-      errors: [] as Array<{ studentId: string, error: string }>,
-    }
-
-    for (const studentId of studentIds) {
-      try {
-        await assignFeesToStudent({ data: { studentId, schoolYearId: data.schoolYearId } })
-        results.succeeded++
-      }
-      catch (error) {
-        results.failed++
-        results.errors.push({
-          studentId,
-          error: error instanceof Error ? error.message : 'Unknown error',
-        })
-      }
-    }
+    const results = await executeBulkFeeAssignment({
+      studentIds,
+      schoolId: context.schoolId,
+      schoolYearId: data.schoolYearId,
+      gradeId: data.gradeId,
+    })
 
     return { success: true as const, data: results }
   })
@@ -506,98 +523,102 @@ export const importStudents = createServerFn()
 
     const today = new Date().toISOString().split('T')[0] ?? new Date().toISOString().slice(0, 10)
 
-    for (let i = 0; i < data.rows.length; i++) {
-      const row = data.rows[i]
-      const rowNum = i + 2
+    try {
+      await db.transaction(async (tx) => {
+        const studentRecords: any[] = []
+        const parentRecords: any[] = []
+        const studentParentLinks: any[] = []
+        const enrollmentRecords: any[] = []
+        const parentsByPhone = new Map<string, string>()
 
-      if (!row) {
-        results.failed++
-        results.errors.push({ row: rowNum, error: 'Empty row' })
-        continue
-      }
+        for (const row of data.rows) {
+          // 1. Parse date
+          const dateParts = row.dob.split('/')
+          const dob = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`
 
-      try {
-        // Parse date from DD/MM/YYYY to YYYY-MM-DD
-        const dateParts = row.dob.split('/')
-        const day = dateParts[0]
-        const month = dateParts[1]
-        const year = dateParts[2]
-        const dob = `${year}-${month}-${day}`
+          // 2. Generate student
+          const studentId = generateUUID()
+          const shortId = generateUUID().slice(0, 4).toUpperCase()
+          const matricule = `${context.schoolId.slice(0, 2).toUpperCase()}${dateParts[2]}${shortId}`
 
-        // Generate matricule
-        const shortId = generateUUID().slice(0, 4).toUpperCase()
-        const matricule = `${context.schoolId.slice(0, 2).toUpperCase()}${year}${shortId}`
-
-        // Create student
-        const studentId = generateUUID()
-        await db.insert(students).values({
-          id: studentId,
-          schoolId: context.schoolId,
-          firstName: row.firstName,
-          lastName: row.lastName,
-          dob,
-          gender: row.gender,
-          matricule,
-          status: 'active',
-          admissionDate: today,
-        })
-
-        // Create parent if provided
-        if (row.parentName && row.parentPhone) {
-          const nameParts = row.parentName.split(' ')
-          const parentFirstName = nameParts[0] ?? row.parentName
-          const parentLastName = nameParts.slice(1).join(' ') || row.lastName
-
-          const parentId = generateUUID()
-          await db.insert(parents).values({
-            id: parentId,
-            firstName: parentFirstName,
-            lastName: parentLastName,
-            phone: row.parentPhone,
-            email: row.parentEmail || null,
+          studentRecords.push({
+            id: studentId,
+            schoolId: context.schoolId,
+            firstName: row.firstName,
+            lastName: row.lastName,
+            dob,
+            gender: row.gender,
+            matricule,
+            status: 'active' as const,
+            admissionDate: today,
           })
 
-          await db.insert(studentParents).values({
-            id: generateUUID(),
-            studentId,
-            parentId,
-            relationship: 'guardian',
-            isPrimary: true,
-          })
-        }
+          // 3. Handle Parent (Dedupe by phone)
+          if (row.parentName && row.parentPhone) {
+            let parentId = parentsByPhone.get(row.parentPhone)
+            if (!parentId) {
+              parentId = generateUUID()
+              parentsByPhone.set(row.parentPhone, parentId)
 
-        // Enroll if requested
-        if (data.autoEnroll) {
-          const grade = gradeByCode.get(row.gradeCode) as GradeRow | undefined
-          const seriesObj = row.seriesCode ? seriesByCode.get(row.seriesCode) as SeriesRow | undefined : null
-
-          if (grade) {
-            const classKey = `${grade.id}-${seriesObj?.id ?? 'null'}-${row.section ?? '1'}`
-            const targetClassId = data.classId ?? classLookup.get(classKey)
-
-            if (targetClassId) {
-              await db.insert(enrollments).values({
-                id: generateUUID(),
-                studentId,
-                classId: targetClassId,
-                schoolYearId: data.schoolYearId,
-                status: 'confirmed',
-                enrollmentDate: today,
-                confirmedAt: new Date(),
+              const nameParts = row.parentName.split(' ')
+              parentRecords.push({
+                id: parentId,
+                firstName: nameParts[0] ?? row.parentName,
+                lastName: nameParts.slice(1).join(' ') || row.lastName,
+                phone: row.parentPhone,
+                email: row.parentEmail || null,
               })
+            }
+
+            studentParentLinks.push({
+              id: generateUUID(),
+              studentId,
+              parentId,
+              relationship: 'guardian' as const,
+              isPrimary: true,
+            })
+          }
+
+          // 4. Handle Enrollment
+          if (data.autoEnroll) {
+            const grade = gradeByCode.get(row.gradeCode) as GradeRow | undefined
+            const seriesObj = row.seriesCode ? seriesByCode.get(row.seriesCode) as SeriesRow | undefined : null
+
+            if (grade) {
+              const classKey = `${grade.id}-${seriesObj?.id ?? 'null'}-${row.section ?? '1'}`
+              const targetClassId = data.classId ?? classLookup.get(classKey)
+
+              if (targetClassId) {
+                enrollmentRecords.push({
+                  id: generateUUID(),
+                  studentId,
+                  classId: targetClassId,
+                  schoolYearId: data.schoolYearId,
+                  status: 'confirmed' as const,
+                  enrollmentDate: today,
+                  confirmedAt: new Date(),
+                })
+              }
             }
           }
         }
 
-        results.succeeded++
-      }
-      catch (error) {
-        results.failed++
-        results.errors.push({
-          row: rowNum,
-          error: error instanceof Error ? error.message : 'Unknown error',
-        })
-      }
+        // Batch Insert All
+        if (studentRecords.length > 0)
+          await tx.insert(students).values(studentRecords)
+        if (parentRecords.length > 0)
+          await tx.insert(parents).values(parentRecords).onConflictDoNothing()
+        if (studentParentLinks.length > 0)
+          await tx.insert(studentParents).values(studentParentLinks)
+        if (enrollmentRecords.length > 0)
+          await tx.insert(enrollments).values(enrollmentRecords)
+
+        results.succeeded = data.rows.length
+      })
+    }
+    catch (error) {
+      results.failed = data.rows.length
+      results.errors.push({ row: 0, error: error instanceof Error ? error.message : 'Import failed' })
     }
 
     return { success: true as const, data: results }

@@ -355,6 +355,8 @@ export const enrollments = pgTable('enrollments', {
   schoolYearIdx: index('idx_enrollments_school_year').on(table.schoolYearId),
   classYearStatusIdx: index('idx_enrollments_class_year_status').on(table.classId, table.schoolYearId, table.status),
   studentYearIdx: index('idx_enrollments_student_year').on(table.studentId, table.schoolYearId),
+  // Performance optimizations
+  studentYearStatusIdx: index('idx_enrollments_student_year_status').on(table.studentId, table.schoolYearId, table.status),
   // Phase 13: New indexes
   statusIdx: index('idx_enrollments_status').on(table.status),
   confirmedByIdx: index('idx_enrollments_confirmed_by').on(table.confirmedBy),
@@ -734,7 +736,7 @@ export const studentGrades = pgTable('student_grades', {
 }, table => ({
   studentTermSubjectIdx: index('idx_grades_student_term_subject').on(table.studentId, table.termId, table.subjectId),
   classSubjectTermIdx: index('idx_grades_class_subject_term').on(table.classId, table.subjectId, table.termId),
-  teacherIdx: index('idx_grades_teacher').on(table.teacherId),
+  teacherIdx: index('idx_grades_teacher_status').on(table.teacherId, table.status),
   statusIdx: index('idx_grades_status').on(table.status),
   termStatusIdx: index('idx_grades_term_status').on(table.termId, table.status),
   classTermIdx: index('idx_grades_class_term').on(table.classId, table.termId),
@@ -772,6 +774,7 @@ export const studentAverages = pgTable('student_averages', {
 }, table => ({
   studentTermIdx: index('idx_averages_student_term').on(table.studentId, table.termId),
   classTermIdx: index('idx_averages_class_term').on(table.classId, table.termId),
+  classTermFinalIdx: index('idx_averages_class_term_final').on(table.classId, table.termId, table.isFinal),
   uniqueStudentTermSubject: unique('unique_student_term_subject').on(table.studentId, table.termId, table.subjectId),
 }))
 
@@ -949,7 +952,7 @@ export const timetableSessions = pgTable('timetable_sessions', {
   teacherDayIdx: index('idx_timetable_teacher_day').on(table.teacherId, table.dayOfWeek),
   classroomDayIdx: index('idx_timetable_classroom_day').on(table.classroomId, table.dayOfWeek),
   conflictsIdx: index('idx_timetable_conflicts').on(table.schoolId, table.dayOfWeek, table.startTime, table.endTime),
-  schoolYearIdx: index('idx_timetable_school_year').on(table.schoolId, table.schoolYearId),
+  schoolYearDayIdx: index('idx_timetable_school_year_day').on(table.schoolId, table.schoolYearId, table.dayOfWeek),
 }))
 
 // Class Sessions (Actual Teaching Sessions)
@@ -1317,10 +1320,11 @@ export const studentAttendance = pgTable('student_attendance', {
   updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
 }, table => ({
   studentDateIdx: index('idx_student_attendance_student_date').on(table.studentId, table.date),
-  classDateIdx: index('idx_student_attendance_class_date').on(table.classId, table.date),
+  classDateSessionIdx: index('idx_student_attendance_class_date_session').on(table.classId, table.date, table.classSessionId),
   sessionIdx: index('idx_student_attendance_session').on(table.classSessionId),
   statusIdx: index('idx_student_attendance_status').on(table.status),
-  schoolDateIdx: index('idx_student_attendance_school_date').on(table.schoolId, table.date),
+  schoolDateStatusIdx: index('idx_student_attendance_school_date_status').on(table.schoolId, table.date, table.status),
+  uniqueAttendance: unique('unique_student_attendance').on(table.studentId, table.date, table.classId, table.classSessionId),
 }))
 
 // Conduct Records Table
@@ -2305,7 +2309,7 @@ export const homework = pgTable('homework', {
   updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
 }, table => ({
   classIdx: index('idx_homework_class').on(table.classId),
-  teacherIdx: index('idx_homework_teacher').on(table.teacherId),
+  teacherStatusIdx: index('idx_homework_teacher_status').on(table.teacherId, table.status),
   dueDateIdx: index('idx_homework_due_date').on(table.dueDate),
   statusIdx: index('idx_homework_status').on(table.status),
   classDueIdx: index('idx_homework_class_due').on(table.classId, table.dueDate),
@@ -2360,8 +2364,8 @@ export const teacherMessages = pgTable('teacher_messages', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 }, table => ({
   senderIdx: index('idx_messages_sender').on(table.senderType, table.senderId),
-  recipientIdx: index('idx_messages_recipient').on(table.recipientType, table.recipientId),
-  threadIdx: index('idx_messages_thread').on(table.threadId),
+  recipientArchivedIdx: index('idx_messages_recipient_archived').on(table.recipientType, table.recipientId, table.isArchived),
+  threadCreatedIdx: index('idx_messages_thread_created').on(table.threadId, table.createdAt),
   createdIdx: index('idx_messages_created').on(table.createdAt),
 }))
 

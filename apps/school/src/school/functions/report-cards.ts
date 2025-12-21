@@ -1,3 +1,4 @@
+import { and, eq, getDb, inArray, reportCards } from '@repo/data-ops'
 import * as reportCardQueries from '@repo/data-ops/queries/report-cards'
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
@@ -144,27 +145,38 @@ export const bulkGenerateReportCards = createServerFn()
       errors: [] as { studentId: string, error: string }[],
     }
 
-    // Get student IDs - if not provided, we'd need to fetch enrolled students
+    // Get student IDs - if not provided, we effectively do nothing or could fetch them
     const studentIds = data.studentIds ?? []
     results.total = studentIds.length
 
-    for (const studentId of studentIds) {
-      try {
-        const existing = await reportCardQueries.getReportCardByStudentTerm(
-          studentId,
-          data.termId,
-        )
+    if (studentIds.length === 0)
+      return { success: true, data: results }
 
-        if (existing) {
-          await reportCardQueries.updateReportCard(existing.id, {
-            templateId: data.templateId,
-            status: 'generated',
-            generatedAt: new Date(),
-            generatedBy: data.generatedBy,
-          })
+    try {
+      const db = getDb()
+
+      // 1. Batch fetch existing report cards for these students and term
+      const existingCards = await db
+        .select({ id: reportCards.id, studentId: reportCards.studentId })
+        .from(reportCards)
+        .where(and(
+          inArray(reportCards.studentId, studentIds),
+          eq(reportCards.termId, data.termId),
+        ))
+
+      const existingMap = new Map(existingCards.map(c => [c.studentId, c.id]))
+
+      // 2. Separate into updates and inserts
+      const toUpdateIds: string[] = []
+      const toInsert: any[] = []
+
+      for (const studentId of studentIds) {
+        const existingId = existingMap.get(studentId)
+        if (existingId) {
+          toUpdateIds.push(existingId)
         }
         else {
-          await reportCardQueries.createReportCard({
+          toInsert.push({
             id: crypto.randomUUID(),
             studentId,
             classId: data.classId,
@@ -176,15 +188,31 @@ export const bulkGenerateReportCards = createServerFn()
             generatedBy: data.generatedBy,
           })
         }
-        results.success++
       }
-      catch (error) {
-        results.failed++
-        results.errors.push({
-          studentId,
-          error: error instanceof Error ? error.message : 'Unknown error',
+
+      // 3. Batch Update
+      if (toUpdateIds.length > 0) {
+        await reportCardQueries.bulkUpdateReportCards(toUpdateIds, {
+          templateId: data.templateId,
+          status: 'generated',
+          generatedAt: new Date(),
+          generatedBy: data.generatedBy,
         })
       }
+
+      // 4. Batch Insert
+      if (toInsert.length > 0) {
+        await reportCardQueries.bulkCreateReportCards(toInsert)
+      }
+
+      results.success = studentIds.length
+    }
+    catch (error) {
+      results.failed = studentIds.length
+      results.errors.push({
+        studentId: 'batch',
+        error: error instanceof Error ? error.message : 'Batch generation failed',
+      })
     }
 
     return { success: true, data: results }

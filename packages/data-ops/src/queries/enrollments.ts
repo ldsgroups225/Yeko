@@ -1,6 +1,6 @@
 import type { Enrollment, EnrollmentInsert } from '../drizzle/school-schema'
 import crypto from 'node:crypto'
-import { and, desc, eq, ne, or, sql } from 'drizzle-orm'
+import { and, desc, eq, inArray, ne, or, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import { grades, series } from '../drizzle/core-schema'
 import { classes, enrollments, schoolYears, students, users } from '../drizzle/school-schema'
@@ -298,7 +298,7 @@ export async function bulkReEnroll(
   const db = getDb()
   const results = { success: 0, skipped: 0, errors: [] as Array<{ studentId: string, error: string }> }
 
-  // Get all confirmed enrollments from previous year
+  // 1. Get all confirmed enrollments from previous year
   const previousEnrollments = await db
     .select({
       enrollment: enrollments,
@@ -317,69 +317,110 @@ export async function bulkReEnroll(
       ),
     )
 
+  if (previousEnrollments.length === 0) {
+    return results
+  }
+
+  // 2. Pre-fetch existing enrollments in target year to avoid N+1 checks
+  const studentIds = previousEnrollments.map(pe => pe.student.id)
+  const existingInTarget = await db
+    .select({ studentId: enrollments.studentId })
+    .from(enrollments)
+    .where(
+      and(
+        inArray(enrollments.studentId, studentIds),
+        eq(enrollments.schoolYearId, toYearId),
+        ne(enrollments.status, 'cancelled'),
+      ),
+    )
+
+  const alreadyEnrolledIds = new Set(existingInTarget.map(e => e.studentId))
+
+  // 3. Pre-fetch target classes in target year
+  const targetClassesList = await db
+    .select()
+    .from(classes)
+    .where(and(eq(classes.schoolId, schoolId), eq(classes.schoolYearId, toYearId), eq(classes.status, 'active')))
+
+  // Map by gradeId and seriesId for fast lookup
+  const classLookup = new Map<string, typeof targetClassesList[0]>()
+  for (const c of targetClassesList) {
+    const key = `${c.gradeId}-${c.seriesId || 'none'}`
+    if (!classLookup.has(key))
+      classLookup.set(key, c)
+  }
+
+  // 4. Pre-fetch current max roll numbers per class
+  const rollResults = await db
+    .select({
+      classId: enrollments.classId,
+      maxRoll: sql<number>`MAX(${enrollments.rollNumber})`,
+    })
+    .from(enrollments)
+    .where(eq(enrollments.schoolYearId, toYearId))
+    .groupBy(enrollments.classId)
+
+  const rollMap = new Map<string, number>(rollResults.map(r => [r.classId, Number(r.maxRoll || 0)]))
+
+  // 5. Prepare batch inserts
+  const toInsert: EnrollmentInsert[] = []
+  const today = new Date().toISOString().split('T')[0]
+
   for (const { enrollment, student, class: prevClass } of previousEnrollments) {
-    try {
-      // Check if already enrolled in new year
-      const [existing] = await db
-        .select()
-        .from(enrollments)
-        .where(
-          and(
-            eq(enrollments.studentId, student.id),
-            eq(enrollments.schoolYearId, toYearId),
-            ne(enrollments.status, 'cancelled'),
-          ),
-        )
-
-      if (existing) {
-        results.skipped++
-        continue
-      }
-
-      // Find appropriate class in new year
-      const targetGradeId = options.gradeMapping?.[prevClass.gradeId] || prevClass.gradeId
-
-      const [newClass] = await db
-        .select()
-        .from(classes)
-        .where(and(eq(classes.schoolYearId, toYearId), eq(classes.gradeId, targetGradeId), eq(classes.status, 'active')))
-        .limit(1)
-
-      if (!newClass) {
-        results.errors.push({
-          studentId: student.id,
-          error: 'No matching class found for new year',
-        })
-        continue
-      }
-
-      // Create enrollment
-      const newEnrollment = await createEnrollment({
-        studentId: student.id,
-        classId: newClass.id,
-        schoolYearId: toYearId,
-      })
-
-      // Auto-confirm if requested
-      if (options.autoConfirm) {
-        await db
-          .update(enrollments)
-          .set({
-            status: 'confirmed',
-            confirmedAt: new Date(),
-            previousEnrollmentId: enrollment.id,
-            updatedAt: new Date(),
-          })
-          .where(eq(enrollments.id, newEnrollment.id))
-      }
-
-      results.success++
+    if (alreadyEnrolledIds.has(student.id)) {
+      results.skipped++
+      continue
     }
-    catch (error) {
+
+    const targetGradeId = options.gradeMapping?.[prevClass.gradeId] || prevClass.gradeId
+    const classKey = `${targetGradeId}-${prevClass.seriesId || 'none'}`
+    const targetClass = classLookup.get(classKey)
+
+    if (!targetClass) {
       results.errors.push({
         studentId: student.id,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: `No matching class found for grade ${targetGradeId}`,
       })
+      continue
+    }
+
+    const currentRoll = rollMap.get(targetClass.id) || 0
+    const nextRoll = currentRoll + 1
+    rollMap.set(targetClass.id, nextRoll)
+
+    toInsert.push({
+      id: nanoid(),
+      studentId: student.id,
+      classId: targetClass.id,
+      schoolYearId: toYearId,
+      enrollmentDate: today,
+      rollNumber: nextRoll,
+      status: options.autoConfirm ? 'confirmed' : 'pending',
+      confirmedAt: options.autoConfirm ? new Date() : null,
+      previousEnrollmentId: enrollment.id,
+    } as EnrollmentInsert)
+  }
+
+  // 6. Execute Batch Insert
+  if (toInsert.length > 0) {
+    try {
+      await db.insert(enrollments).values(toInsert)
+      results.success = toInsert.length
+    }
+    catch {
+      // If batch fails, we fall back to individual inserts to handle specific errors
+      for (const item of toInsert) {
+        try {
+          await db.insert(enrollments).values(item)
+          results.success++
+        }
+        catch (e) {
+          results.errors.push({
+            studentId: item.studentId,
+            error: e instanceof Error ? e.message : 'Batch insertion failed',
+          })
+        }
+      }
     }
   }
 
