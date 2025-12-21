@@ -110,6 +110,7 @@ export const en = {
     settings: 'Settings',
     spaces: 'Spaces',
     classrooms: 'Classrooms',
+    schoolYears: 'School Years',
   },
   sidebar: {
     dailyOperations: 'Daily Operations',
@@ -1250,6 +1251,7 @@ export const en = {
         pendingCount: '{{count}} grade(s) pending',
         submittedBy: 'Submitted by',
         submittedAt: 'Submitted',
+        rejectReasonRequired: 'A reason is required to reject grades',
       },
       statistics: {
         title: 'Statistics',
@@ -1530,6 +1532,9 @@ export const en = {
     chronicAbsentees: 'Chronic Absentees',
     studentsAtRisk: 'Students at risk',
     breakdown: 'Breakdown',
+    overview: 'Overview',
+    overviewDescription: 'Global attendance overview',
+    selectStudentToViewHistory: 'Select a student to view their attendance history',
     history: 'History',
     historyDescription: 'View student attendance history',
     selectStudent: 'Select a student',

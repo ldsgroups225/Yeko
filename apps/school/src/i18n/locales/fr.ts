@@ -112,6 +112,8 @@ export const fr: TypedLocale = {
     settings: 'Paramètres',
     spaces: 'Espaces',
     classrooms: 'Salles de classe',
+    schoolYears: 'Années Scolaires',
+
   },
   sidebar: {
     dailyOperations: 'Opérations Quotidiennes',
@@ -1252,6 +1254,7 @@ export const fr: TypedLocale = {
         pendingCount: '{{count}} note(s) en attente',
         submittedBy: 'Soumis par',
         submittedAt: 'Soumis',
+        rejectReasonRequired: 'Une raison est requise pour rejeter les notes',
       },
       statistics: {
         title: 'Statistiques',
@@ -1532,6 +1535,9 @@ export const fr: TypedLocale = {
     chronicAbsentees: 'Absentéistes chroniques',
     studentsAtRisk: 'Élèves à risque',
     breakdown: 'Répartition',
+    overview: 'Vue d\'ensemble',
+    overviewDescription: 'Aperçu global de l\'assiduité',
+    selectStudentToViewHistory: 'Sélectionnez un élève pour voir son historique',
     history: 'Historique',
     historyDescription: 'Voir l\'historique de présence des élèves',
     selectStudent: 'Sélectionner un élève',

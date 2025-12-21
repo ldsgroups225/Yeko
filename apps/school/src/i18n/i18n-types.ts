@@ -398,6 +398,26 @@ type RootTranslation = {
 		 */
 		maximum: string
 		/**
+		 * F​i​l​t​r​e​s
+		 */
+		filters: string
+		/**
+		 * A​c​t​i​o​n​s​ ​r​a​p​i​d​e​s
+		 */
+		quickActions: string
+		/**
+		 * C​e​t​t​e​ ​a​n​n​é​e
+		 */
+		thisYear: string
+		/**
+		 * L​'​a​n​n​é​e​ ​d​e​r​n​i​è​r​e
+		 */
+		lastYear: string
+		/**
+		 * s​é​l​e​c​t​i​o​n​n​é​(​s​)
+		 */
+		selected: string
+		/**
 		 * R​é​e​s​s​a​y​e​r
 		 */
 		retry: string
@@ -427,6 +447,10 @@ type RootTranslation = {
 		 * N​o​n​ ​a​s​s​i​g​n​é
 		 */
 		unassigned: string
+		/**
+		 * E​f​f​a​c​e​r​ ​l​e​s​ ​f​i​l​t​r​e​s
+		 */
+		clearFilters: string
 	}
 	nav: {
 		/**
@@ -793,6 +817,10 @@ type RootTranslation = {
 		 * R​e​c​h​e​r​c​h​e​r​ ​p​a​r​ ​n​o​m​ ​o​u​ ​m​a​t​r​i​c​u​l​e​.​.​.
 		 */
 		searchPlaceholder: string
+		/**
+		 * E​f​f​a​c​e​r​ ​l​e​s​ ​f​i​l​t​r​e​s
+		 */
+		clearFilters: string
 		/**
 		 * S​t​a​t​u​t
 		 */
@@ -4067,6 +4095,26 @@ type RootTranslation = {
 		 * A​l​e​r​t​e​s
 		 */
 		alerts: string
+		/**
+		 * R​e​v​e​n​u​s​ ​d​e​s​ ​6​ ​d​e​r​n​i​e​r​s​ ​m​o​i​s
+		 */
+		revenueSubtitle: string
+		/**
+		 * I​n​s​c​r​i​p​t​i​o​n​s​ ​p​a​r​ ​N​i​v​e​a​u
+		 */
+		enrollmentChartTitle: string
+		/**
+		 * R​é​p​a​r​t​i​t​i​o​n​ ​a​c​t​u​e​l​l​e​ ​d​e​s​ ​é​l​è​v​e​s
+		 */
+		enrollmentChartSubtitle: string
+		/**
+		 * P​a​r​i​t​é
+		 */
+		genderChartTitle: string
+		/**
+		 * R​é​p​a​r​t​i​t​i​o​n​ ​F​i​l​l​e​s​ ​/​ ​G​a​r​ç​o​n​s
+		 */
+		genderChartSubtitle: string
 		activity: {
 			/**
 			 * N​o​u​v​e​l​ ​e​n​s​e​i​g​n​a​n​t​ ​a​j​o​u​t​é
@@ -7694,6 +7742,26 @@ export type TranslationFunctions = {
 		 */
 		maximum: () => LocalizedString
 		/**
+		 * Filtres
+		 */
+		filters: () => LocalizedString
+		/**
+		 * Actions rapides
+		 */
+		quickActions: () => LocalizedString
+		/**
+		 * Cette année
+		 */
+		thisYear: () => LocalizedString
+		/**
+		 * L'année dernière
+		 */
+		lastYear: () => LocalizedString
+		/**
+		 * sélectionné(s)
+		 */
+		selected: () => LocalizedString
+		/**
 		 * Réessayer
 		 */
 		retry: () => LocalizedString
@@ -7721,6 +7789,10 @@ export type TranslationFunctions = {
 		 * Non assigné
 		 */
 		unassigned: () => LocalizedString
+		/**
+		 * Effacer les filtres
+		 */
+		clearFilters: () => LocalizedString
 	}
 	nav: {
 		/**
@@ -8087,6 +8159,10 @@ export type TranslationFunctions = {
 		 * Rechercher par nom ou matricule...
 		 */
 		searchPlaceholder: () => LocalizedString
+		/**
+		 * Effacer les filtres
+		 */
+		clearFilters: () => LocalizedString
 		/**
 		 * Statut
 		 */
@@ -11327,6 +11403,26 @@ export type TranslationFunctions = {
 		 * Alertes
 		 */
 		alerts: () => LocalizedString
+		/**
+		 * Revenus des 6 derniers mois
+		 */
+		revenueSubtitle: () => LocalizedString
+		/**
+		 * Inscriptions par Niveau
+		 */
+		enrollmentChartTitle: () => LocalizedString
+		/**
+		 * Répartition actuelle des élèves
+		 */
+		enrollmentChartSubtitle: () => LocalizedString
+		/**
+		 * Parité
+		 */
+		genderChartTitle: () => LocalizedString
+		/**
+		 * Répartition Filles / Garçons
+		 */
+		genderChartSubtitle: () => LocalizedString
 		activity: {
 			/**
 			 * Nouvel enseignant ajouté
