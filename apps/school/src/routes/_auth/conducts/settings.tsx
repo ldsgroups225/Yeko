@@ -1,12 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
+import { Bell, GraduationCap, Save, Settings, Sparkles, UserCheck } from 'lucide-react'
+import { motion } from 'motion/react'
 import * as React from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -87,7 +88,9 @@ function AttendanceSettingsPage() {
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['attendance-settings'] })
-      toast.success(t.settings.saved())
+      toast.success(t.settings.saved(), {
+        className: 'rounded-2xl backdrop-blur-xl bg-background/80 border-border/40 font-bold',
+      })
     },
     onError: () => {
       toast.error(t.settings.saveFailed())
@@ -102,8 +105,23 @@ function AttendanceSettingsPage() {
     return <SettingsSkeleton />
   }
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  }
+
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 },
+  }
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 p-1">
       <Breadcrumbs
         items={[
           { label: t.nav.schoolLife(), href: '/conducts' },
@@ -111,150 +129,209 @@ function AttendanceSettingsPage() {
         ]}
       />
 
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">{t.schoolLife.settings()}</h1>
-        <p className="text-muted-foreground">{t.settings.attendanceDescription()}</p>
-      </div>
+      <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        className="flex items-center gap-4"
+      >
+        <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
+          <Settings className="size-8 text-primary" />
+        </div>
+        <div>
+          <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.schoolLife.settings()}</h1>
+          <p className="text-sm font-medium text-muted-foreground italic max-w-md">{t.settings.attendanceDescription()}</p>
+        </div>
+      </motion.div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>{t.settings.teacherAttendance()}</CardTitle>
-              <CardDescription>{t.settings.teacherAttendanceDescription()}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <FormField
-                control={form.control}
-                name="teacherExpectedArrival"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t.settings.expectedArrival()}</FormLabel>
-                    <FormControl>
-                      <Input type="time" {...field} className="w-[150px]" />
-                    </FormControl>
-                    <FormDescription>{t.settings.expectedArrivalDescription()}</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+        <motion.form
+          variants={container}
+          initial="hidden"
+          animate="show"
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-8"
+        >
+          <motion.div variants={item}>
+            <Card className="relative overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl">
+              <div className="absolute top-0 right-0 p-6 opacity-5">
+                <UserCheck className="size-32" />
+              </div>
+              <CardHeader className="relative border-b border-border/10 bg-muted/20">
+                <CardTitle className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+                  <UserCheck className="h-3 w-3" />
+                  {t.settings.teacherAttendance()}
+                </CardTitle>
+                <CardDescription className="italic font-medium">{t.settings.teacherAttendanceDescription()}</CardDescription>
+              </CardHeader>
+              <CardContent className="pt-8 space-y-6">
+                <div className="grid md:grid-cols-2 gap-8">
+                  <FormField
+                    control={form.control}
+                    name="teacherExpectedArrival"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{t.settings.expectedArrival()}</FormLabel>
+                        <FormControl>
+                          <Input type="time" {...field} className="h-12 rounded-2xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold" />
+                        </FormControl>
+                        <FormDescription className="text-[10px] italic">{t.settings.expectedArrivalDescription()}</FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <FormField
-                control={form.control}
-                name="teacherLateThresholdMinutes"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t.settings.lateThreshold()}</FormLabel>
-                    <FormControl>
-                      <Input type="number" {...field} className="w-[100px]" />
-                    </FormControl>
-                    <FormDescription>{t.settings.lateThresholdDescription()}</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  <FormField
+                    control={form.control}
+                    name="teacherLateThresholdMinutes"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{t.settings.lateThreshold()}</FormLabel>
+                        <FormControl>
+                          <Input type="number" {...field} className="h-12 rounded-2xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold" />
+                        </FormControl>
+                        <FormDescription className="text-[10px] italic">{t.settings.lateThresholdDescription()}</FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
-              <FormField
-                control={form.control}
-                name="teacherLatenessAlertCount"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t.settings.alertThreshold()}</FormLabel>
-                    <FormControl>
-                      <Input type="number" {...field} className="w-[100px]" />
-                    </FormControl>
-                    <FormDescription>{t.settings.alertThresholdDescription()}</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-          </Card>
+                <FormField
+                  control={form.control}
+                  name="teacherLatenessAlertCount"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{t.settings.alertThreshold()}</FormLabel>
+                      <FormControl>
+                        <Input type="number" {...field} className="h-12 rounded-2xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold" />
+                      </FormControl>
+                      <FormDescription className="text-[10px] italic">{t.settings.alertThresholdDescription()}</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+            </Card>
+          </motion.div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>{t.settings.studentAttendance()}</CardTitle>
-              <CardDescription>{t.settings.studentAttendanceDescription()}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <FormField
-                control={form.control}
-                name="studentLateThresholdMinutes"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t.settings.studentLateThreshold()}</FormLabel>
-                    <FormControl>
-                      <Input type="number" {...field} className="w-[100px]" />
-                    </FormControl>
-                    <FormDescription>{t.settings.studentLateThresholdDescription()}</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+          <motion.div variants={item}>
+            <Card className="relative overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl">
+              <div className="absolute top-0 right-0 p-6 opacity-5">
+                <GraduationCap className="size-32" />
+              </div>
+              <CardHeader className="relative border-b border-border/10 bg-muted/20">
+                <CardTitle className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+                  <GraduationCap className="h-3 w-3" />
+                  {t.settings.studentAttendance()}
+                </CardTitle>
+                <CardDescription className="italic font-medium">{t.settings.studentAttendanceDescription()}</CardDescription>
+              </CardHeader>
+              <CardContent className="pt-8 space-y-6">
+                <div className="grid md:grid-cols-2 gap-8">
+                  <FormField
+                    control={form.control}
+                    name="studentLateThresholdMinutes"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{t.settings.studentLateThreshold()}</FormLabel>
+                        <FormControl>
+                          <Input type="number" {...field} className="h-12 rounded-2xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold" />
+                        </FormControl>
+                        <FormDescription className="text-[10px] italic">{t.settings.studentLateThresholdDescription()}</FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <FormField
-                control={form.control}
-                name="chronicAbsenceThresholdPercent"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t.settings.chronicAbsenceThreshold()}</FormLabel>
-                    <FormControl>
-                      <Input type="number" {...field} className="w-[100px]" />
-                    </FormControl>
-                    <FormDescription>{t.settings.chronicAbsenceThresholdDescription()}</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-          </Card>
+                  <FormField
+                    control={form.control}
+                    name="chronicAbsenceThresholdPercent"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{t.settings.chronicAbsenceThreshold()}</FormLabel>
+                        <FormControl>
+                          <Input type="number" {...field} className="h-12 rounded-2xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold" />
+                        </FormControl>
+                        <FormDescription className="text-[10px] italic">{t.settings.chronicAbsenceThresholdDescription()}</FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>{t.settings.notifications()}</CardTitle>
-              <CardDescription>{t.settings.notificationsDescription()}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <FormField
-                control={form.control}
-                name="notifyParentOnAbsence"
-                render={({ field }) => (
-                  <FormItem className="flex items-center gap-3">
-                    <FormControl>
-                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                    </FormControl>
-                    <div>
-                      <FormLabel>{t.settings.notifyOnAbsence()}</FormLabel>
-                      <FormDescription>{t.settings.notifyOnAbsenceDescription()}</FormDescription>
-                    </div>
-                  </FormItem>
-                )}
-              />
+          <motion.div variants={item}>
+            <Card className="relative overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl">
+              <div className="absolute top-0 right-0 p-6 opacity-5">
+                <Bell className="size-32" />
+              </div>
+              <CardHeader className="relative border-b border-border/10 bg-muted/20">
+                <CardTitle className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+                  <Bell className="h-3 w-3" />
+                  {t.settings.notifications()}
+                </CardTitle>
+                <CardDescription className="italic font-medium">{t.settings.notificationsDescription()}</CardDescription>
+              </CardHeader>
+              <CardContent className="pt-8 space-y-6">
+                <FormField
+                  control={form.control}
+                  name="notifyParentOnAbsence"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center gap-4 p-4 rounded-2xl bg-muted/20 border border-border/10">
+                      <FormControl>
+                        <Checkbox checked={field.value} onCheckedChange={field.onChange} className="size-5 rounded-lg border-border/40 data-[state=checked]:bg-primary data-[state=checked]:border-primary" />
+                      </FormControl>
+                      <div>
+                        <FormLabel className="font-black uppercase tracking-widest text-[10px]">{t.settings.notifyOnAbsence()}</FormLabel>
+                        <FormDescription className="text-[10px] italic">{t.settings.notifyOnAbsenceDescription()}</FormDescription>
+                      </div>
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="notifyParentOnLate"
-                render={({ field }) => (
-                  <FormItem className="flex items-center gap-3">
-                    <FormControl>
-                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                    </FormControl>
-                    <div>
-                      <FormLabel>{t.settings.notifyOnLate()}</FormLabel>
-                      <FormDescription>{t.settings.notifyOnLateDescription()}</FormDescription>
-                    </div>
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-          </Card>
+                <FormField
+                  control={form.control}
+                  name="notifyParentOnLate"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center gap-4 p-4 rounded-2xl bg-muted/20 border border-border/10">
+                      <FormControl>
+                        <Checkbox checked={field.value} onCheckedChange={field.onChange} className="size-5 rounded-lg border-border/40 data-[state=checked]:bg-primary data-[state=checked]:border-primary" />
+                      </FormControl>
+                      <div>
+                        <FormLabel className="font-black uppercase tracking-widest text-[10px]">{t.settings.notifyOnLate()}</FormLabel>
+                        <FormDescription className="text-[10px] italic">{t.settings.notifyOnLateDescription()}</FormDescription>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+            </Card>
+          </motion.div>
 
-          <div className="flex justify-end">
-            <Button type="submit" disabled={mutation.isPending}>
-              {mutation.isPending ? t.common.saving() : t.common.save()}
+          <motion.div variants={item} className="flex justify-end gap-4">
+            <Button
+              type="submit"
+              disabled={mutation.isPending}
+              className="h-14 px-10 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground font-black uppercase tracking-[0.2em] shadow-xl transition-all"
+            >
+              {mutation.isPending
+                ? (
+                    <>
+                      <Sparkles className="mr-2 size-4 animate-spin" />
+                      {t.common.saving()}
+                    </>
+                  )
+                : (
+                    <>
+                      <Save className="mr-2 size-4 font-black" />
+                      {t.common.save()}
+                    </>
+                  )}
             </Button>
-          </div>
-        </form>
+          </motion.div>
+        </motion.form>
       </Form>
     </div>
   )
@@ -262,13 +339,18 @@ function AttendanceSettingsPage() {
 
 function SettingsSkeleton() {
   return (
-    <div className="space-y-6">
-      <Skeleton className="h-8 w-48 mb-2" />
-      <Skeleton className="h-4 w-96 mb-6" />
-      <div className="space-y-6">
-        <Skeleton className="h-64 w-full" />
-        <Skeleton className="h-48 w-full" />
-        <Skeleton className="h-32 w-full" />
+    <div className="space-y-8 p-1">
+      <Skeleton className="h-6 w-48 mb-6" />
+      <div className="flex items-center gap-4">
+        <Skeleton className="size-14 rounded-2xl" />
+        <div className="space-y-2">
+          <Skeleton className="h-8 w-64" />
+          <Skeleton className="h-4 w-96" />
+        </div>
+      </div>
+      <div className="space-y-8">
+        <Skeleton className="h-[300px] w-full rounded-3xl" />
+        <Skeleton className="h-[200px] w-full rounded-3xl" />
       </div>
     </div>
   )

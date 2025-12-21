@@ -1,11 +1,11 @@
 import type { GradeType } from '@/schemas/grade'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-
+import { ClipboardCheck, LayoutGrid, ListTodo, Settings2, Sparkles, UserCheck } from 'lucide-react'
+import { motion } from 'motion/react'
 import { useState } from 'react'
 import { GradeEntryTable, GradeTypeSelector } from '@/components/grades'
-
-import { SectionHeader } from '@/components/layout/page-layout'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -85,7 +85,7 @@ function GradeEntryPage() {
   })
 
   // Transform enrolled students to the format expected by GradeEntryTable
-  const students = enrollmentsData?.data?.map((e: any) => ({
+  const students = enrollmentsData?.data?.map(e => ({
     id: e.student.id,
     firstName: e.student.firstName,
     lastName: e.student.lastName,
@@ -104,170 +104,239 @@ function GradeEntryPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <SectionHeader
-        title={t.academic.grades.entry.title()}
-        description={t.academic.grades.entry.subtitle()}
-        className="mb-4"
+    <div className="space-y-8">
+      <Breadcrumbs
+        items={[
+          { label: t.nav.grades(), href: '/grades' },
+          { label: t.academic.grades.entry.title() },
+        ]}
       />
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">{t.academic.grades.entry.parameters()}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="space-y-2">
-              <Label htmlFor="class-select">{t.academic.grades.entry.class()}</Label>
-              {classesLoading
-                ? (
-                    <Skeleton className="h-10 w-full" />
-                  )
-                : (
-                    <Select value={selectedClassId} onValueChange={handleClassChange}>
-                      <SelectTrigger id="class-select">
-                        <SelectValue placeholder={t.academic.grades.entry.selectClass()} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {classesData?.map(item => (
-                          <SelectItem key={item.class.id} value={item.class.id}>
-                            {item.grade.name}
-                            {' '}
-                            {item.class.section}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="subject-select">{t.academic.grades.entry.subject()}</Label>
-              {subjectsLoading
-                ? (
-                    <Skeleton className="h-10 w-full" />
-                  )
-                : (
-                    <Select
-                      value={selectedSubjectId}
-                      onValueChange={setSelectedSubjectId}
-                      disabled={!selectedClassId || !classSubjectsData?.length}
-                    >
-                      <SelectTrigger id="subject-select">
-                        <SelectValue placeholder={t.academic.grades.entry.selectSubject()} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {classSubjectsData?.map((cs: any) => (
-                          <SelectItem key={cs.subject.id} value={cs.subject.id}>
-                            {cs.subject.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="term-select">{t.academic.grades.entry.term()}</Label>
-              {termsLoading
-                ? (
-                    <Skeleton className="h-10 w-full" />
-                  )
-                : (
-                    <Select
-                      value={selectedTermId}
-                      onValueChange={setSelectedTermId}
-                      disabled={!termsData?.length}
-                    >
-                      <SelectTrigger id="term-select">
-                        <SelectValue placeholder={t.academic.grades.entry.selectTerm()} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {termsData?.map((term: any) => (
-                          <SelectItem key={term.id} value={term.id}>
-                            {term.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="grade-type-select">{t.academic.grades.entry.gradeType()}</Label>
-              <GradeTypeSelector
-                value={gradeType}
-                onValueChange={handleGradeTypeChange}
-              />
-            </div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-inner">
+            <ClipboardCheck className="size-8" />
           </div>
-
-          <div className="mt-4 grid gap-4 sm:grid-cols-3">
-            <div className="space-y-2">
-              <Label htmlFor="coefficient-input">{t.academic.grades.entry.coefficient()}</Label>
-              <Input
-                id="coefficient-input"
-                type="number"
-                min={1}
-                max={10}
-                value={weight}
-                onChange={e => setWeight(Number(e.target.value))}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="date-input">{t.academic.grades.entry.date()}</Label>
-              <Input
-                id="date-input"
-                type="date"
-                value={gradeDate}
-                onChange={e => setGradeDate(e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="description-input">{t.academic.grades.entry.gradeDescription()}</Label>
-              <Input
-                id="description-input"
-                placeholder={t.academic.grades.entry.descriptionPlaceholder()}
-                value={description}
-                onChange={e => setDescription(e.target.value)}
-              />
-            </div>
+          <div>
+            <h1 className="text-3xl font-black tracking-tight">{t.academic.grades.entry.title()}</h1>
+            <p className="text-muted-foreground font-medium italic">{t.academic.grades.entry.subtitle()}</p>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      {canFetchGrades && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">{t.academic.grades.entry.studentGrades()}</CardTitle>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
+        <Card className="overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl">
+          <CardHeader className="bg-muted/20 border-b border-border/20 pb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-background/50 text-muted-foreground shadow-sm">
+                <Settings2 className="size-4" />
+              </div>
+              <CardTitle className="text-sm font-black uppercase tracking-[0.2em]">{t.academic.grades.entry.parameters()}</CardTitle>
+            </div>
           </CardHeader>
-          <CardContent>
-            {gradesLoading || studentsLoading
-              ? (
-                  <div className="space-y-2">
-                    {Array.from({ length: 5 }).map(() => (
-                      <Skeleton key={generateUUID()} className="h-12 w-full" />
-                    ))}
-                  </div>
-                )
-              : (
-                  <GradeEntryTable
-                    classId={selectedClassId}
-                    subjectId={selectedSubjectId}
-                    termId={selectedTermId}
-                    teacherId={currentTeacher?.id ?? ''}
-                    gradeType={gradeType}
-                    weight={weight}
-                    description={description}
-                    gradeDate={gradeDate}
-                    students={students}
-                    existingGrades={gradesData ?? []}
+          <CardContent className="pt-8">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="space-y-2.5">
+                <Label htmlFor="class-select" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
+                  {t.academic.grades.entry.class()}
+                </Label>
+                {classesLoading
+                  ? (
+                      <Skeleton className="h-11 w-full rounded-xl" />
+                    )
+                  : (
+                      <Select value={selectedClassId} onValueChange={handleClassChange}>
+                        <SelectTrigger id="class-select" className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
+                          <SelectValue placeholder={t.academic.grades.entry.selectClass()} />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
+                          {classesData?.map(item => (
+                            <SelectItem key={item.class.id} value={item.class.id} className="rounded-lg">
+                              <div className="flex items-center gap-2">
+                                <LayoutGrid className="size-3.5 text-primary/60" />
+                                <span className="font-semibold">
+                                  {item.grade.name}
+                                  {' '}
+                                  {item.class.section}
+                                </span>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+              </div>
+
+              <div className="space-y-2.5">
+                <Label htmlFor="subject-select" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
+                  {t.academic.grades.entry.subject()}
+                </Label>
+                {subjectsLoading
+                  ? (
+                      <Skeleton className="h-11 w-full rounded-xl" />
+                    )
+                  : (
+                      <Select
+                        value={selectedSubjectId}
+                        onValueChange={setSelectedSubjectId}
+                        disabled={!selectedClassId || !classSubjectsData?.length}
+                      >
+                        <SelectTrigger id="subject-select" className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
+                          <SelectValue placeholder={t.academic.grades.entry.selectSubject()} />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
+                          {classSubjectsData?.map(cs => (
+                            <SelectItem key={cs.subject.id} value={cs.subject.id} className="rounded-lg">
+                              <div className="flex items-center gap-2">
+                                <Sparkles className="size-3.5 text-primary/60" />
+                                <span className="font-semibold">{cs.subject.name}</span>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+              </div>
+
+              <div className="space-y-2.5">
+                <Label htmlFor="term-select" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
+                  {t.academic.grades.entry.term()}
+                </Label>
+                {termsLoading
+                  ? (
+                      <Skeleton className="h-11 w-full rounded-xl" />
+                    )
+                  : (
+                      <Select
+                        value={selectedTermId}
+                        onValueChange={setSelectedTermId}
+                        disabled={!termsData?.length}
+                      >
+                        <SelectTrigger id="term-select" className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
+                          <SelectValue placeholder={t.academic.grades.entry.selectTerm()} />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
+                          {termsData?.map(term => (
+                            <SelectItem key={term.id} value={term.id} className="rounded-lg">
+                              <span className="font-semibold">{term.template.name}</span>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+              </div>
+
+              <div className="space-y-2.5">
+                <Label htmlFor="grade-type-select" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
+                  {t.academic.grades.entry.gradeType()}
+                </Label>
+                <GradeTypeSelector
+                  value={gradeType}
+                  onValueChange={handleGradeTypeChange}
+                />
+              </div>
+            </div>
+
+            <div className="mt-8 grid gap-6 sm:grid-cols-3">
+              <div className="space-y-2.5">
+                <Label htmlFor="coefficient-input" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
+                  {t.academic.grades.entry.coefficient()}
+                </Label>
+                <div className="relative group">
+                  <Input
+                    id="coefficient-input"
+                    type="number"
+                    min={1}
+                    max={10}
+                    value={weight}
+                    onChange={e => setWeight(Number(e.target.value))}
+                    className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all font-bold"
                   />
-                )}
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 opacity-20 group-hover:opacity-40 transition-opacity">
+                    <UserCheck className="size-4" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2.5">
+                <Label htmlFor="date-input" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
+                  {t.academic.grades.entry.date()}
+                </Label>
+                <Input
+                  id="date-input"
+                  type="date"
+                  value={gradeDate}
+                  onChange={e => setGradeDate(e.target.value)}
+                  className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all font-bold"
+                />
+              </div>
+
+              <div className="space-y-2.5">
+                <Label htmlFor="description-input" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
+                  {t.academic.grades.entry.gradeDescription()}
+                </Label>
+                <Input
+                  id="description-input"
+                  placeholder={t.academic.grades.entry.descriptionPlaceholder()}
+                  value={description}
+                  onChange={e => setDescription(e.target.value)}
+                  className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all font-medium italic"
+                />
+              </div>
+            </div>
           </CardContent>
         </Card>
+      </motion.div>
+
+      {canFetchGrades && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+        >
+          <Card className="overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl">
+            <CardHeader className="bg-muted/20 border-b border-border/20 py-5">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-primary/10 text-primary shadow-inner">
+                  <ListTodo className="size-5" />
+                </div>
+                <CardTitle className="text-xl font-black tracking-tight">{t.academic.grades.entry.studentGrades()}</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-8">
+              {gradesLoading || studentsLoading
+                ? (
+                    <div className="space-y-4">
+                      {Array.from({ length: 10 }).map(() => (
+                        <div key={generateUUID()} className="flex items-center gap-4">
+                          <Skeleton className="h-12 flex-1 rounded-xl" />
+                          <Skeleton className="h-12 w-24 rounded-xl" />
+                          <Skeleton className="h-12 w-32 rounded-xl" />
+                        </div>
+                      ))}
+                    </div>
+                  )
+                : (
+                    <GradeEntryTable
+                      classId={selectedClassId}
+                      subjectId={selectedSubjectId}
+                      termId={selectedTermId}
+                      teacherId={currentTeacher?.id ?? ''}
+                      gradeType={gradeType}
+                      weight={weight}
+                      description={description}
+                      gradeDate={gradeDate}
+                      students={students}
+                      existingGrades={gradesData ?? []}
+                    />
+                  )}
+            </CardContent>
+          </Card>
+        </motion.div>
       )}
     </div>
   )

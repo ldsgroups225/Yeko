@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
+import { Sparkles } from 'lucide-react'
+import { motion } from 'motion/react'
 import { FinancialDashboard } from '@/components/finance'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
@@ -45,7 +47,7 @@ function FinanceDashboardPage() {
   const isLoading = isLoadingStudents || isLoadingRefunds
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 p-1">
       <Breadcrumbs
         items={[
           { label: t.nav.finance(), href: '/accounting' },
@@ -53,14 +55,19 @@ function FinanceDashboardPage() {
         ]}
       />
 
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">
-          {t.finance.dashboard.title()}
-        </h1>
-        <p className="text-muted-foreground">
-          {t.finance.title()}
-        </p>
-      </div>
+      <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        className="flex items-center gap-4"
+      >
+        <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
+          <Sparkles className="size-8 text-primary" />
+        </div>
+        <div>
+          <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.finance.dashboard.title()}</h1>
+          <p className="text-sm font-medium text-muted-foreground italic max-w-lg">{t.finance.title()}</p>
+        </div>
+      </motion.div>
 
       <FinancialDashboard
         totalExpectedRevenue={totalExpectedRevenue}

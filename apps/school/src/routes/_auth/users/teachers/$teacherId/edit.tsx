@@ -56,7 +56,17 @@ function EditTeacherPage() {
         <p className="text-muted-foreground">{t.hr.teachers.editTeacherDescription()}</p>
       </div>
 
-      {teacher && <TeacherForm teacher={teacher} onSuccess={handleSuccess} />}
+      {teacher && (
+        <TeacherForm
+          teacher={{
+            ...teacher,
+            subjectIds: teacher.subjects.map(s => s.subjectId),
+            hireDate: teacher.hireDate ? new Date(teacher.hireDate) : undefined,
+            specialization: teacher.specialization ?? undefined,
+          }}
+          onSuccess={handleSuccess}
+        />
+      )}
     </div>
   )
 }

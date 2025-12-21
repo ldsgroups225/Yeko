@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Plus } from 'lucide-react'
+import { Building2, Plus } from 'lucide-react'
+import { motion } from 'motion/react'
 import { useState } from 'react'
 import { z } from 'zod'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
@@ -24,7 +25,7 @@ function ClassroomsPage() {
   const search = Route.useSearch()
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 p-1">
       <Breadcrumbs
         items={[
           { label: t.nav.spaces(), href: '/spaces/classrooms' },
@@ -32,29 +33,50 @@ function ClassroomsPage() {
         ]}
       />
 
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t.spaces.title()}</h1>
-          <p className="text-muted-foreground">{t.spaces.description()}</p>
-        </div>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              {t.buttons.newClassroom()}
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>{t.dialogs.createClassroom.title()}</DialogTitle>
-              <DialogDescription>{t.dialogs.createClassroom.description()}</DialogDescription>
-            </DialogHeader>
-            <ClassroomForm onSuccess={() => setOpen(false)} />
-          </DialogContent>
-        </Dialog>
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="flex items-center gap-4"
+        >
+          <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
+            <Building2 className="size-8 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.spaces.title()}</h1>
+            <p className="text-sm font-medium text-muted-foreground italic max-w-lg">{t.spaces.description()}</p>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+        >
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button className="h-10 rounded-xl shadow-lg shadow-primary/20">
+                <Plus className="mr-2 h-4 w-4" />
+                {t.buttons.newClassroom()}
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6">
+              <DialogHeader>
+                <DialogTitle className="text-xl font-bold">{t.dialogs.createClassroom.title()}</DialogTitle>
+                <DialogDescription className="text-muted-foreground/80">{t.dialogs.createClassroom.description()}</DialogDescription>
+              </DialogHeader>
+              <ClassroomForm onSuccess={() => setOpen(false)} />
+            </DialogContent>
+          </Dialog>
+        </motion.div>
       </div>
 
-      <ClassroomsTable filters={search} />
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+      >
+        <ClassroomsTable filters={search} />
+      </motion.div>
     </div>
   )
 }

@@ -1,6 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
+import { Sparkles } from 'lucide-react'
+import { motion } from 'motion/react'
 import { useState } from 'react'
+
 import {
   BehindScheduleAlert,
   ProgressCard,
@@ -8,7 +11,6 @@ import {
 } from '@/components/curriculum-progress'
 
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Card, CardContent } from '@/components/ui/card'
 import {
   Select,
   SelectContent,
@@ -98,7 +100,7 @@ function CurriculumProgressPage() {
   })) ?? []
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 p-1">
       <Breadcrumbs
         items={[
           { label: t.nav.academic(), href: '/academic' },
@@ -106,141 +108,164 @@ function CurriculumProgressPage() {
         ]}
       />
 
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">
-          {t.curriculum.title()}
-        </h1>
-        <p className="text-muted-foreground">
-          {t.curriculum.description()}
-        </p>
-      </div>
+      <div className="flex flex-col xl:flex-row xl:items-end xl:justify-between gap-6">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="flex items-center gap-4"
+        >
+          <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
+            <Sparkles className="size-8 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.curriculum.title()}</h1>
+            <p className="text-sm font-medium text-muted-foreground italic max-w-lg">{t.curriculum.description()}</p>
+          </div>
+        </motion.div>
 
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        {/* School Year */}
-        <div className="w-full sm:w-[200px]">
-          {yearsLoading
-            ? (
-                <Skeleton className="h-10 w-full" />
-              )
-            : (
-                <Select value={effectiveYearId} onValueChange={setLocalYearId}>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t.schoolYear.select()} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {schoolYears?.map((year: any) => (
-                      <SelectItem key={year.id} value={year.id}>
-                        {year.template?.name}
-                        {' '}
-                        {year.isActive && t.schoolYear.activeSuffix()}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col sm:flex-row gap-4 w-full xl:w-auto items-end"
+        >
+          {/* School Year */}
+          <div className="w-full sm:w-[240px] space-y-1.5">
+            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1 block">
+              {t.schoolYear.title()}
+            </span>
+            {yearsLoading
+              ? (
+                  <Skeleton className="h-11 w-full rounded-xl" />
+                )
+              : (
+                  <Select value={effectiveYearId} onValueChange={setLocalYearId}>
+                    <SelectTrigger className="h-11 rounded-xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all font-bold shadow-sm hover:bg-card/80">
+                      <SelectValue placeholder={t.schoolYear.select()} />
+                    </SelectTrigger>
+                    <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
+                      {schoolYears?.map(year => (
+                        <SelectItem key={year.id} value={year.id} className="rounded-lg focus:bg-primary/10 font-medium">
+                          {year.template?.name}
+                          {' '}
+                          {year.isActive && t.schoolYear.activeSuffix()}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+          </div>
 
-        {/* Term */}
-        <div className="w-full sm:w-[200px]">
-          {termsLoading
-            ? (
-                <Skeleton className="h-10 w-full" />
-              )
-            : (
-                <Select
-                  value={selectedTermId}
-                  onValueChange={setSelectedTermId}
-                  disabled={!effectiveYearId}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder={t.terms.select()} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {terms?.map(term => (
-                      <SelectItem key={term.id} value={term.id}>
-                        {term.template.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-        </div>
+          {/* Term */}
+          <div className="w-full sm:w-[240px] space-y-1.5">
+            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1 block">
+              Trimestre
+            </span>
+            {termsLoading
+              ? (
+                  <Skeleton className="h-11 w-full rounded-xl" />
+                )
+              : (
+                  <Select
+                    value={selectedTermId}
+                    onValueChange={setSelectedTermId}
+                    disabled={!effectiveYearId}
+                  >
+                    <SelectTrigger className="h-11 rounded-xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all font-bold shadow-sm hover:bg-card/80">
+                      <SelectValue placeholder={t.terms.select()} />
+                    </SelectTrigger>
+                    <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
+                      {terms?.map(term => (
+                        <SelectItem key={term.id} value={term.id} className="rounded-lg focus:bg-primary/10 font-medium">
+                          {term.template.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+          </div>
 
-        {/* Class */}
-        <div className="w-full sm:w-[200px]">
-          {classesLoading
-            ? (
-                <Skeleton className="h-10 w-full" />
-              )
-            : (
-                <Select
-                  value={selectedClassId}
-                  onValueChange={setSelectedClassId}
-                  disabled={!effectiveYearId}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder={t.classes.select()} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {classes?.map(item => (
-                      <SelectItem key={item.class.id} value={item.class.id}>
-                        {item.grade.name}
-                        {' '}
-                        {item.class.section}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-        </div>
+          {/* Class */}
+          <div className="w-full sm:w-[240px] space-y-1.5">
+            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1 block">
+              {t.classes.title()}
+            </span>
+            {classesLoading
+              ? (
+                  <Skeleton className="h-11 w-full rounded-xl" />
+                )
+              : (
+                  <Select
+                    value={selectedClassId}
+                    onValueChange={setSelectedClassId}
+                    disabled={!effectiveYearId}
+                  >
+                    <SelectTrigger className="h-11 rounded-xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all font-bold shadow-sm hover:bg-card/80">
+                      <SelectValue placeholder={t.classes.select()} />
+                    </SelectTrigger>
+                    <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
+                      {classes?.map(item => (
+                        <SelectItem key={item.class.id} value={item.class.id} className="rounded-lg focus:bg-primary/10 font-medium">
+                          {item.grade.name}
+                          {' '}
+                          {item.class.section}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+          </div>
+        </motion.div>
       </div>
 
       {/* Content */}
-      {canShowProgress
-        ? (
-            <div className="space-y-6">
-              {/* Overview Cards */}
-              <ProgressOverviewCards data={overviewData} isLoading={progressLoading} />
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+      >
+        {canShowProgress
+          ? (
+              <div className="space-y-6">
+                {/* Overview Cards */}
+                <ProgressOverviewCards data={overviewData} isLoading={progressLoading} />
 
-              {/* Behind Schedule Alert */}
-              {behindClasses.length > 0 && (
-                <BehindScheduleAlert classes={behindClasses} />
-              )}
+                {/* Behind Schedule Alert */}
+                {behindClasses.length > 0 && (
+                  <BehindScheduleAlert classes={behindClasses} />
+                )}
 
-              {/* Progress Cards Grid */}
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {progressLoading
-                  ? (
-                      Array.from({ length: 6 }).map(() => (
-                        <Skeleton key={generateUUID()} className="h-48" />
-                      ))
-                    )
-                  : (
-                      progress?.map(item => (
-                        <ProgressCard
-                          key={item.id}
-                          subjectName={item.programTemplate?.name ?? ''}
-                          completedChapters={item.completedChapters}
-                          totalChapters={item.totalChapters}
-                          expectedChapters={item.totalChapters ?? undefined}
-                          progressPercentage={Number(item.progressPercentage)}
-                          expectedPercentage={item.expectedPercentage ? Number(item.expectedPercentage) : undefined}
-                          variance={item.variance ? Number(item.variance) : undefined}
-                          status={item.status}
-                        />
-                      ))
-                    )}
+                {/* Progress Cards Grid */}
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  {progressLoading
+                    ? (
+                        Array.from({ length: 6 }).map(() => (
+                          <Skeleton key={generateUUID()} className="h-48 rounded-3xl" />
+                        ))
+                      )
+                    : (
+                        progress?.map(item => (
+                          <ProgressCard
+                            key={item.id}
+                            subjectName={item.programTemplate?.name ?? ''}
+                            completedChapters={item.completedChapters}
+                            totalChapters={item.totalChapters}
+                            expectedChapters={item.totalChapters ?? undefined}
+                            progressPercentage={Number(item.progressPercentage)}
+                            expectedPercentage={item.expectedPercentage ? Number(item.expectedPercentage) : undefined}
+                            variance={item.variance ? Number(item.variance) : undefined}
+                            status={item.status}
+                          />
+                        ))
+                      )}
+                </div>
               </div>
-            </div>
-          )
-        : (
-            <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                <p>{t.curriculum.selectFiltersPrompt()}</p>
-              </CardContent>
-            </Card>
-          )}
+            )
+          : (
+              <div className="flex flex-col items-center justify-center py-20 text-muted-foreground border-2 border-dashed border-border/30 rounded-3xl bg-card/10">
+                <p className="text-lg font-medium">{t.curriculum.selectFiltersPrompt()}</p>
+              </div>
+            )}
+      </motion.div>
     </div>
   )
 }

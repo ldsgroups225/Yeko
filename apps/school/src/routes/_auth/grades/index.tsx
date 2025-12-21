@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { AlertCircle, BarChart3, BookOpen, CheckCircle, ChevronRight, Clock } from 'lucide-react'
+import { AlertCircle, BarChart3, BookOpen, CheckCircle, ChevronRight, Clock, Sparkles, TrendingUp } from 'lucide-react'
+import { motion } from 'motion/react'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Badge } from '@/components/ui/badge'
-
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -24,113 +25,176 @@ function GradesIndexPage() {
 
   const pendingCount = pendingValidations?.length ?? 0
   const totalPendingGrades = pendingValidations?.reduce(
-    (sum: number, v: any) => sum + (v.pendingCount || 0),
+    (sum: number, v) => sum + (v.pendingCount || 0),
     0,
   ) ?? 0
 
   return (
     <div className="space-y-6">
-      {/* Dashboard Content */}
+      <Breadcrumbs
+        items={[
+          { label: t.nav.grades() },
+        ]}
+      />
+
+      <div className="flex items-center gap-4">
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-inner">
+          <BookOpen className="size-8" />
+        </div>
+        <div>
+          <h1 className="text-3xl font-black tracking-tight">{t.nav.grades()}</h1>
+          <p className="text-muted-foreground font-medium italic">{t.academic.grades.description()}</p>
+        </div>
+      </div>
 
       {/* Analytics Summary */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t.academic.grades.validations.title()}
-            </CardTitle>
-            <Clock className="size-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            {pendingLoading
-              ? (
-                  <Skeleton className="h-8 w-16" />
-                )
-              : (
-                  <>
-                    <div className="text-2xl font-bold">{pendingCount}</div>
-                    <p className="text-xs text-muted-foreground">
-                      {t.academic.grades.validations.pendingCount({ count: totalPendingGrades })}
-                    </p>
-                  </>
-                )}
-          </CardContent>
-        </Card>
+      <div className="grid gap-6 md:grid-cols-3">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          <Card className="overflow-hidden rounded-2xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl transition-all hover:shadow-primary/5">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                {t.academic.grades.validations.title()}
+              </CardTitle>
+              <div className="p-2 rounded-xl bg-amber-500/10 text-amber-500">
+                <Clock className="size-4" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              {pendingLoading
+                ? (
+                    <Skeleton className="h-8 w-16" />
+                  )
+                : (
+                    <div className="space-y-1">
+                      <div className="text-3xl font-black tracking-tight">{pendingCount}</div>
+                      <p className="text-xs font-medium text-muted-foreground/60">
+                        {t.academic.grades.validations.pendingCount({ count: totalPendingGrades })}
+                      </p>
+                    </div>
+                  )}
+            </CardContent>
+          </Card>
+        </motion.div>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t.academic.grades.statistics.classAverage()}
-            </CardTitle>
-            <BarChart3 className="size-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">--</div>
-            <p className="text-xs text-muted-foreground">
-              {t.academic.grades.statistics.description()}
-            </p>
-          </CardContent>
-        </Card>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+        >
+          <Card className="overflow-hidden rounded-2xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl transition-all hover:shadow-primary/5">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                {t.academic.grades.statistics.classAverage()}
+              </CardTitle>
+              <div className="p-2 rounded-xl bg-primary/10 text-primary">
+                <BarChart3 className="size-4" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-1">
+                <div className="text-3xl font-black tracking-tight">--</div>
+                <p className="text-xs font-medium text-muted-foreground/60">
+                  {t.academic.grades.statistics.description()}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t.academic.grades.statistics.passRate()}
-            </CardTitle>
-            <CheckCircle className="size-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">--</div>
-            <p className="text-xs text-muted-foreground">
-              {t.academic.grades.statistics.above15()}
-            </p>
-          </CardContent>
-        </Card>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+        >
+          <Card className="overflow-hidden rounded-2xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl transition-all hover:shadow-primary/5">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                {t.academic.grades.statistics.passRate()}
+              </CardTitle>
+              <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-500">
+                <CheckCircle className="size-4" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-1">
+                <div className="text-3xl font-black tracking-tight">--</div>
+                <p className="text-xs font-medium text-muted-foreground/60">
+                  {t.academic.grades.statistics.above15()}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
 
       {/* Pending Validations Alert */}
       {pendingCount > 0 && (
-        <Card className="border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/20">
-          <CardContent className="flex items-center gap-4 py-4">
-            <AlertCircle className="size-5 text-amber-600" />
-            <div className="flex-1">
-              <p className="font-medium text-amber-800 dark:text-amber-200">
-                {t.academic.grades.validations.pendingCount({ count: totalPendingGrades })}
-              </p>
-              <p className="text-sm text-amber-600 dark:text-amber-400">
-                {t.academic.grades.validations.description()}
-              </p>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4, delay: 0.3 }}
+        >
+          <Card className="border-amber-500/20 bg-amber-500/5 backdrop-blur-sm overflow-hidden relative group">
+            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-500 mt-2">
+              <Sparkles className="size-20" />
             </div>
-            <Link to="/grades/validations">
-              <Button variant="outline" size="sm">
-                {t.academic.grades.validations.viewDetails()}
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+            <CardContent className="flex flex-col sm:flex-row items-center gap-6 py-6 relative z-10">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-amber-500/20 text-amber-600 shadow-inner">
+                <AlertCircle className="size-7" />
+              </div>
+              <div className="flex-1 text-center sm:text-left">
+                <h3 className="text-lg font-bold text-amber-900 dark:text-amber-100">
+                  {t.academic.grades.validations.pendingCount({ count: totalPendingGrades })}
+                </h3>
+                <p className="text-sm font-medium text-amber-700/70 dark:text-amber-300/70 max-w-xl italic">
+                  {t.academic.grades.validations.description()}
+                </p>
+              </div>
+              <Link to="/grades/validations" className="w-full sm:w-auto">
+                <Button variant="outline" className="w-full sm:w-auto rounded-xl border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-300 transition-all font-bold uppercase tracking-widest text-[10px] h-11 px-6">
+                  {t.academic.grades.validations.viewDetails()}
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </motion.div>
       )}
 
       {/* Quick Actions */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <QuickActionCard
-          title={t.academic.grades.quickActions.entry()}
-          description={t.academic.grades.quickActions.entryDescription()}
-          icon={BookOpen}
-          href="/grades/entry"
-        />
-        <QuickActionCard
-          title={t.academic.grades.quickActions.validations()}
-          description={t.academic.grades.quickActions.validationsDescription()}
-          icon={CheckCircle}
-          href="/grades/validations"
-          badge={pendingCount > 0 ? pendingCount : undefined}
-        />
-        <QuickActionCard
-          title={t.academic.grades.quickActions.statistics()}
-          description={t.academic.grades.quickActions.statisticsDescription()}
-          icon={BarChart3}
-          href="/grades/statistics"
-        />
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="h-8 w-1 rounded-full bg-primary" />
+          <h2 className="text-sm font-black uppercase tracking-[0.2em] text-muted-foreground/60">{t.common.quickActions()}</h2>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <QuickActionCard
+            title={t.academic.grades.quickActions.entry()}
+            description={t.academic.grades.quickActions.entryDescription()}
+            icon={BookOpen}
+            href="/grades/entry"
+            index={0}
+          />
+          <QuickActionCard
+            title={t.academic.grades.quickActions.validations()}
+            description={t.academic.grades.quickActions.validationsDescription()}
+            icon={CheckCircle}
+            href="/grades/validations"
+            badge={pendingCount > 0 ? pendingCount : undefined}
+            index={1}
+          />
+          <QuickActionCard
+            title={t.academic.grades.quickActions.statistics()}
+            description={t.academic.grades.quickActions.statisticsDescription()}
+            icon={BarChart3}
+            href="/grades/statistics"
+            index={2}
+          />
+        </div>
       </div>
     </div>
   )
@@ -142,37 +206,51 @@ function QuickActionCard({
   icon: Icon,
   href,
   badge,
+  index,
 }: {
   title: string
   description: string
   icon: React.ElementType
   href: string
   badge?: number
+  index: number
 }) {
   const t = useTranslations()
 
   return (
-    <Link to={href} className="[&.active]:font-bold">
-      <Card className="transition-colors hover:bg-muted/50 h-full">
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <div className="flex items-center gap-2">
-            <CardTitle className="text-sm font-medium">{title}</CardTitle>
-            {badge !== undefined && badge > 0 && (
-              <Badge variant="destructive" className="h-5 px-1.5 text-xs">
-                {badge}
-              </Badge>
-            )}
-          </div>
-          <Icon className="size-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <p className="text-xs text-muted-foreground">{description}</p>
-          <div className="mt-2 flex items-center text-sm text-primary">
-            {t.academic.grades.quickActions.access()}
-            <ChevronRight className="ml-1 size-4" />
-          </div>
-        </CardContent>
-      </Card>
-    </Link>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: 0.4 + (index * 0.1) }}
+    >
+      <Link to={href} className="group h-full block">
+        <Card className="relative overflow-hidden rounded-2xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl transition-all group-hover:bg-primary/5 group-hover:border-primary/30 group-hover:shadow-primary/5">
+          <CardHeader className="flex flex-row items-center justify-between pb-4">
+            <div className="flex items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-br from-primary/20 to-primary/5 text-primary shadow-inner border border-primary/10 group-hover:scale-110 transition-transform duration-500">
+                <Icon className="size-6" />
+              </div>
+              <div className="flex items-center gap-2">
+                <CardTitle className="text-lg font-bold tracking-tight">{title}</CardTitle>
+                {badge !== undefined && badge > 0 && (
+                  <Badge variant="destructive" className="h-6 px-2 text-[10px] font-black uppercase tracking-widest rounded-full ring-2 ring-background">
+                    {badge}
+                  </Badge>
+                )}
+              </div>
+            </div>
+            <TrendingUp className="size-5 text-primary/20 group-hover:text-primary/40 transition-colors" />
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm font-medium text-muted-foreground/70 leading-relaxed italic">{description}</p>
+            <div className="flex items-center text-[10px] font-black uppercase tracking-widest text-primary opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-[-10px] group-hover:translate-x-0">
+              {t.academic.grades.quickActions.access()}
+              <ChevronRight className="ml-2 size-4" />
+            </div>
+          </CardContent>
+          <div className="absolute bottom-0 right-0 h-1 w-0 bg-primary group-hover:w-full transition-all duration-500" />
+        </Card>
+      </Link>
+    </motion.div>
   )
 }

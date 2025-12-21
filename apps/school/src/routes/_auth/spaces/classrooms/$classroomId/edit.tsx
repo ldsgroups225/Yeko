@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { ArrowLeft, Edit } from 'lucide-react'
+import { motion } from 'motion/react'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { ClassroomForm } from '@/components/spaces/classroom-form'
 import { Button } from '@/components/ui/button'
@@ -33,8 +35,8 @@ function EditClassroomPage() {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-center">
-          <p className="text-lg font-medium">{t.spaces.classroom.notFound()}</p>
-          <Button asChild className="mt-4">
+          <p className="text-lg font-medium text-muted-foreground">{t.spaces.classroom.notFound()}</p>
+          <Button asChild className="mt-4 rounded-xl shadow-lg shadow-primary/20">
             <Link to="/spaces/classrooms">{t.common.back()}</Link>
           </Button>
         </div>
@@ -45,7 +47,7 @@ function EditClassroomPage() {
   const { classroom } = data
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 p-1">
       <Breadcrumbs
         items={[
           { label: t.nav.spaces(), href: '/spaces/classrooms' },
@@ -55,24 +57,58 @@ function EditClassroomPage() {
         ]}
       />
 
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">{t.spaces.classroom.editClassroom()}</h1>
-        <p className="text-muted-foreground">
-          {t.spaces.classroom.editClassroomDescription()}
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="flex items-center gap-4"
+        >
+          <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
+            <Edit className="size-8 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.spaces.classroom.editClassroom()}</h1>
+            <p className="text-sm font-medium text-muted-foreground italic max-w-lg">
+              {t.spaces.classroom.editClassroomDescription()}
+            </p>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+        >
+          <Button variant="outline" asChild className="rounded-xl border-border/40">
+            <Link to="/spaces/classrooms/$classroomId" params={{ classroomId }}>
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              {t.common.back()}
+            </Link>
+          </Button>
+        </motion.div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{t.spaces.classroom.classroomInfo()}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ClassroomForm
-            classroom={classroom}
-            onSuccess={() => navigate({ to: '/spaces/classrooms/$classroomId', params: { classroomId } })}
-          />
-        </CardContent>
-      </Card>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+      >
+        <Card className="rounded-3xl border border-border/40 bg-card/40 backdrop-blur-xl shadow-sm">
+          <CardHeader className="border-b border-border/40 bg-muted/5">
+            <CardTitle className="text-lg font-bold uppercase tracking-wider text-muted-foreground">{t.spaces.classroom.classroomInfo()}</CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <ClassroomForm
+              classroom={{
+                ...classroom,
+                floor: classroom.floor ?? undefined,
+                building: classroom.building ?? undefined,
+                notes: classroom.notes ?? undefined,
+              }}
+              onSuccess={() => navigate({ to: '/spaces/classrooms/$classroomId', params: { classroomId } })}
+            />
+          </CardContent>
+        </Card>
+      </motion.div>
     </div>
   )
 }

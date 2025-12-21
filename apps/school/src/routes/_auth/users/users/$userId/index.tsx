@@ -213,7 +213,7 @@ function UserDetailsPage() {
             <div className="space-y-3">
               {activity && activity.length > 0
                 ? (
-                    activity.map((log: any) => (
+                    activity.map(log => (
                       <div key={log.id} className="flex gap-3 border-b pb-3 last:border-0">
                         <div className="mt-1 flex h-2 w-2 shrink-0 rounded-full bg-primary" />
                         <div className="flex-1">

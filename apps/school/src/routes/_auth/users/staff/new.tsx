@@ -1,3 +1,4 @@
+import type { CreateStaffData } from '@/schemas/staff'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import { StaffForm } from '@/components/hr/staff/staff-form'
@@ -13,7 +14,7 @@ function NewStaffPage() {
   const t = useTranslations()
   const navigate = useNavigate()
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: CreateStaffData) => {
     try {
       const result = await createNewStaff({ data })
       toast.success(t.hr.staff.createSuccess())

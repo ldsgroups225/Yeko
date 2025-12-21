@@ -1,6 +1,8 @@
 import type { TimetableViewMode } from '@/components/timetables'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
+import { CalendarSearch, Sparkles } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
@@ -9,7 +11,6 @@ import {
   TimetableGrid,
   TimetableViewSwitcher,
 } from '@/components/timetables'
-import { Card, CardContent } from '@/components/ui/card'
 import {
   Select,
   SelectContent,
@@ -114,7 +115,7 @@ function TimetablesPage() {
   }) || []
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 p-1">
       <Breadcrumbs
         items={[
           { label: t.nav.academic(), href: '/academic' },
@@ -122,119 +123,171 @@ function TimetablesPage() {
         ]}
       />
 
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">
-          {t.timetables.title()}
-        </h1>
-        <p className="text-muted-foreground">
-          {t.timetables.description()}
-        </p>
-      </div>
-
-      {/* View Switcher and Filters */}
-      <div className="flex flex-col gap-4">
-        <TimetableViewSwitcher value={viewMode} onChange={handleViewModeChange} />
-
-        <div className="flex flex-col sm:flex-row gap-4">
-          {/* School Year */}
-          <div className="w-full sm:w-[200px]">
-            {yearsLoading
-              ? (
-                  <Skeleton className="h-10 w-full" />
-                )
-              : (
-                  <Select value={effectiveYearId} onValueChange={setLocalYearId}>
-                    <SelectTrigger>
-                      <SelectValue placeholder={t.schoolYear.select()} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {schoolYears?.map(year => (
-                        <SelectItem key={year.id} value={year.id}>
-                          {year.template.name}
-                          {' '}
-                          {year.isActive && t.schoolYear.activeSuffix()}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="flex items-center gap-4"
+        >
+          <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
+            <Sparkles className="size-8 text-primary" />
           </div>
-
-          {/* Class selector (for class view) */}
-          {viewMode === 'class' && (
-            <div className="w-full sm:w-[200px]">
-              {classesLoading
-                ? (
-                    <Skeleton className="h-10 w-full" />
-                  )
-                : (
-                    <Select
-                      value={selectedClassId}
-                      onValueChange={setSelectedClassId}
-                      disabled={!effectiveYearId}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder={t.classes.select()} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {classes?.map(item => (
-                          <SelectItem key={item.class.id} value={item.class.id}>
-                            {item.grade.name}
-                            {' '}
-                            {item.class.section}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-            </div>
-          )}
-
-          {/* Teacher selector (for teacher view) */}
-          {viewMode === 'teacher' && (
-            <div className="w-full sm:w-[200px]">
-              {teachersLoading
-                ? (
-                    <Skeleton className="h-10 w-full" />
-                  )
-                : (
-                    <Select
-                      value={selectedTeacherId}
-                      onValueChange={setSelectedTeacherId}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder={t.teachers.select()} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {teachers?.map(teacher => (
-                          <SelectItem key={teacher.id} value={teacher.id}>
-                            {teacher.user.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-            </div>
-          )}
-        </div>
+          <div>
+            <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.timetables.title()}</h1>
+            <p className="text-sm font-medium text-muted-foreground italic max-w-md">{t.timetables.description()}</p>
+          </div>
+        </motion.div>
       </div>
 
-      {/* Timetable Grid */}
-      {canShowTimetable
-        ? (
-            <TimetableGrid
-              sessions={transformedTimetable}
-              isLoading={timetableLoading}
-              readOnly
-            />
-          )
-        : (
-            <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                <p>{t.timetables.selectFiltersPrompt()}</p>
-              </CardContent>
-            </Card>
-          )}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-card/20 backdrop-blur-xl border border-border/40 p-6 rounded-3xl space-y-6"
+      >
+        <div className="flex flex-col gap-6">
+          <TimetableViewSwitcher value={viewMode} onChange={handleViewModeChange} />
+
+          <div className="flex flex-col sm:flex-row gap-4 items-end">
+            {/* School Year */}
+            <div className="w-full sm:w-[240px] space-y-1.5">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">
+                {t.schoolYear.title()}
+              </label>
+              {yearsLoading
+                ? (
+                    <Skeleton className="h-11 w-full rounded-xl" />
+                  )
+                : (
+                    <Select value={effectiveYearId} onValueChange={setLocalYearId}>
+                      <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
+                        <SelectValue placeholder={t.schoolYear.select()} />
+                      </SelectTrigger>
+                      <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
+                        {schoolYears?.map(year => (
+                          <SelectItem key={year.id} value={year.id} className="rounded-lg focus:bg-primary/10 font-medium">
+                            {year.template.name}
+                            {' '}
+                            {year.isActive && t.schoolYear.activeSuffix()}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+            </div>
+
+            {/* Class selector (for class view) */}
+            {viewMode === 'class' && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="w-full sm:w-[240px] space-y-1.5"
+              >
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">
+                  {t.classes.title()}
+                </label>
+                {classesLoading
+                  ? (
+                      <Skeleton className="h-11 w-full rounded-xl" />
+                    )
+                  : (
+                      <Select
+                        value={selectedClassId}
+                        onValueChange={setSelectedClassId}
+                        disabled={!effectiveYearId}
+                      >
+                        <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
+                          <SelectValue placeholder={t.classes.select()} />
+                        </SelectTrigger>
+                        <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
+                          {classes?.map(item => (
+                            <SelectItem key={item.class.id} value={item.class.id} className="rounded-lg focus:bg-primary/10 font-medium">
+                              {item.grade.name}
+                              {' '}
+                              {item.class.section}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+              </motion.div>
+            )}
+
+            {/* Teacher selector (for teacher view) */}
+            {viewMode === 'teacher' && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="w-full sm:w-[240px] space-y-1.5"
+              >
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">
+                  {t.teachers.title()}
+                </label>
+                {teachersLoading
+                  ? (
+                      <Skeleton className="h-11 w-full rounded-xl" />
+                    )
+                  : (
+                      <Select
+                        value={selectedTeacherId}
+                        onValueChange={setSelectedTeacherId}
+                      >
+                        <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
+                          <SelectValue placeholder={t.teachers.select()} />
+                        </SelectTrigger>
+                        <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
+                          {teachers?.map(teacher => (
+                            <SelectItem key={teacher.id} value={teacher.id} className="rounded-lg focus:bg-primary/10 font-medium">
+                              {teacher.user.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+              </motion.div>
+            )}
+          </div>
+        </div>
+      </motion.div>
+
+      <div className="min-h-[500px]">
+        <AnimatePresence mode="wait">
+          {canShowTimetable
+            ? (
+                <motion.div
+                  key="grid"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="bg-card/40 backdrop-blur-xl border border-border/40 p-1 rounded-3xl overflow-hidden shadow-xl"
+                >
+                  <div className="p-4">
+                    <TimetableGrid
+                      sessions={transformedTimetable}
+                      isLoading={timetableLoading}
+                      readOnly
+                    />
+                  </div>
+                </motion.div>
+              )
+            : (
+                <motion.div
+                  key="empty"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="flex flex-col items-center justify-center h-[400px] text-muted-foreground/60 bg-card/20 border-2 border-dashed border-border/40 rounded-3xl"
+                >
+                  <div className="p-4 rounded-full bg-primary/5 mb-4">
+                    <CalendarSearch className="size-8 text-primary/40" />
+                  </div>
+                  <p className="font-bold text-lg">{t.timetables.selectFiltersPrompt()}</p>
+                  <p className="text-sm font-medium opacity-70 max-w-sm text-center mt-2">
+                    {t.timetables.description()}
+                  </p>
+                </motion.div>
+              )}
+        </AnimatePresence>
+      </div>
     </div>
   )
 }

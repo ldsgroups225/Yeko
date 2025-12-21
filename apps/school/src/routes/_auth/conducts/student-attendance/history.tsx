@@ -1,12 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, History, Search, Sparkles } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { AttendanceCalendar } from '@/components/attendance/student/attendance-calendar'
-
 import { StudentCombobox } from '@/components/attendance/student/student-combobox'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useTranslations } from '@/i18n'
 import { studentAttendanceHistoryOptions } from '@/lib/queries/student-attendance'
@@ -49,48 +50,103 @@ function StudentAttendanceHistoryPage() {
   }
 
   return (
-    <div className="container py-6">
-      <div className="mb-4">
-        <Link to="/conducts/student-attendance">
-          <Button variant="ghost" size="sm">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            {t.common.back()}
-          </Button>
-        </Link>
+    <div className="space-y-8 p-1">
+      <Breadcrumbs
+        items={[
+          { label: t.nav.schoolLife(), href: '/conducts' },
+          { label: t.schoolLife.studentAttendance(), href: '/conducts/student-attendance' },
+          { label: t.attendance.history() },
+        ]}
+      />
+
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="flex items-center gap-4"
+        >
+          <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
+            <History className="size-8 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.attendance.history()}</h1>
+            <p className="text-sm font-medium text-muted-foreground italic max-w-md">{t.attendance.historyDescription()}</p>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+        >
+          <Link to="/conducts/student-attendance">
+            <Button variant="ghost" size="sm" className="rounded-xl hover:bg-primary/10 hover:text-primary transition-all font-black uppercase tracking-widest text-[10px]">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              {t.common.back()}
+            </Button>
+          </Link>
+        </motion.div>
       </div>
 
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">{t.attendance.history()}</h1>
-        <p className="text-muted-foreground">{t.attendance.historyDescription()}</p>
-      </div>
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-card/20 backdrop-blur-xl border border-border/40 p-6 rounded-3xl"
+      >
+        <div className="flex items-center gap-2 mb-4 ml-1">
+          <Search className="size-3 text-muted-foreground/60" />
+          <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{t.attendance.selectStudent()}</span>
+        </div>
+        <StudentCombobox
+          value={studentId}
+          onSelect={handleStudentSelect}
+          placeholder={t.attendance.searchStudent()}
+        />
+      </motion.div>
 
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="text-base">{t.attendance.selectStudent()}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <StudentCombobox
-            value={studentId}
-            onSelect={handleStudentSelect}
-            placeholder={t.attendance.searchStudent()}
-          />
-        </CardContent>
-      </Card>
-
-      {studentId && (
-        isLoading
+      <AnimatePresence mode="wait">
+        {studentId
           ? (
-              <Skeleton className="h-96 w-full max-w-md" />
+              <motion.div
+                key={studentId}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="flex justify-center"
+              >
+                {isLoading
+                  ? (
+                      <Card className="w-full max-w-2xl rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl p-8">
+                        <Skeleton className="h-[400px] w-full rounded-2xl" />
+                      </Card>
+                    )
+                  : (
+                      <div className="w-full max-w-2xl">
+                        <AttendanceCalendar
+                          studentName={studentName || studentId}
+                          month={month}
+                          onMonthChange={setMonth}
+                          attendanceData={attendanceData}
+                        />
+                      </div>
+                    )}
+              </motion.div>
             )
           : (
-              <AttendanceCalendar
-                studentName={studentName || studentId}
-                month={month}
-                onMonthChange={setMonth}
-                attendanceData={attendanceData}
-              />
-            )
-      )}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="rounded-3xl border border-dashed border-border/60 bg-card/10 backdrop-blur-sm p-20 flex flex-col items-center text-center space-y-4"
+              >
+                <div className="p-4 rounded-full bg-primary/5">
+                  <Sparkles className="size-12 text-primary/40" />
+                </div>
+                <div className="space-y-1">
+                  <h3 className="text-xl font-black uppercase tracking-tight text-muted-foreground/60">{t.attendance.searchStudent()}</h3>
+                  <p className="text-sm font-medium text-muted-foreground/40 italic">{t.attendance.selectStudent()}</p>
+                </div>
+              </motion.div>
+            )}
+      </AnimatePresence>
     </div>
   )
 }

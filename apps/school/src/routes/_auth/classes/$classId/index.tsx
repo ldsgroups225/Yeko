@@ -37,7 +37,7 @@ function ClassDetailPage() {
       toast.success(t.classes.deleteSuccess())
       navigate({ to: '/classes' })
     },
-    onError: (error: any) => {
+    onError: (error) => {
       toast.error(error.message || t.classes.deleteError())
     },
   })
@@ -132,7 +132,7 @@ function ClassDetailPage() {
 
         <TabsContent value="info" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-3">
-            <Card>
+            <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">{t.classes.studentCount()}</CardTitle>
               </CardHeader>
@@ -182,7 +182,7 @@ function ClassDetailPage() {
             </Card>
           </div>
 
-          <Card>
+          <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
             <CardHeader>
               <CardTitle>{t.classes.details()}</CardTitle>
             </CardHeader>
@@ -212,7 +212,7 @@ function ClassDetailPage() {
         </TabsContent>
 
         <TabsContent value="students" className="space-y-4">
-          <Card>
+          <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
             <CardHeader>
               <CardTitle>{t.students.studentsList()}</CardTitle>
             </CardHeader>

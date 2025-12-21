@@ -1,3 +1,4 @@
+import type { UpdateRoleData } from '@/schemas/role'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
@@ -25,7 +26,7 @@ function EditRolePage() {
     initialData: roleData,
   })
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: UpdateRoleData) => {
     try {
       await updateExistingRole({ data: { roleId, data } })
       toast.success(t.hr.roles.updateSuccess())

@@ -16,9 +16,11 @@ import { Route as AuthStudentsRouteImport } from './routes/_auth/students'
 import { Route as AuthSpacesRouteImport } from './routes/_auth/spaces'
 import { Route as AuthSettingsRouteImport } from './routes/_auth/settings'
 import { Route as AuthSchedulesRouteImport } from './routes/_auth/schedules'
+import { Route as AuthProgramsRouteImport } from './routes/_auth/programs'
 import { Route as AuthGradesRouteImport } from './routes/_auth/grades'
 import { Route as AuthDashboardRouteImport } from './routes/_auth/dashboard'
 import { Route as AuthConductsRouteImport } from './routes/_auth/conducts'
+import { Route as AuthClassesRouteImport } from './routes/_auth/classes'
 import { Route as AuthAccountingRouteImport } from './routes/_auth/accounting'
 import { Route as AuthUsersIndexRouteImport } from './routes/_auth/users/index'
 import { Route as AuthStudentsIndexRouteImport } from './routes/_auth/students/index'
@@ -124,6 +126,11 @@ const AuthSchedulesRoute = AuthSchedulesRouteImport.update({
   path: '/schedules',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthProgramsRoute = AuthProgramsRouteImport.update({
+  id: '/programs',
+  path: '/programs',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthGradesRoute = AuthGradesRouteImport.update({
   id: '/grades',
   path: '/grades',
@@ -137,6 +144,11 @@ const AuthDashboardRoute = AuthDashboardRouteImport.update({
 const AuthConductsRoute = AuthConductsRouteImport.update({
   id: '/conducts',
   path: '/conducts',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthClassesRoute = AuthClassesRouteImport.update({
+  id: '/classes',
+  path: '/classes',
   getParentRoute: () => AuthRoute,
 } as any)
 const AuthAccountingRoute = AuthAccountingRouteImport.update({
@@ -175,9 +187,9 @@ const AuthConductsIndexRoute = AuthConductsIndexRouteImport.update({
   getParentRoute: () => AuthConductsRoute,
 } as any)
 const AuthClassesIndexRoute = AuthClassesIndexRouteImport.update({
-  id: '/classes/',
-  path: '/classes/',
-  getParentRoute: () => AuthRoute,
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthClassesRoute,
 } as any)
 const AuthAccountingIndexRoute = AuthAccountingIndexRouteImport.update({
   id: '/',
@@ -232,21 +244,21 @@ const AuthSettingsNotificationsRoute =
     getParentRoute: () => AuthSettingsRoute,
   } as any)
 const AuthProgramsSubjectsRoute = AuthProgramsSubjectsRouteImport.update({
-  id: '/programs/subjects',
-  path: '/programs/subjects',
-  getParentRoute: () => AuthRoute,
+  id: '/subjects',
+  path: '/subjects',
+  getParentRoute: () => AuthProgramsRoute,
 } as any)
 const AuthProgramsCurriculumProgressRoute =
   AuthProgramsCurriculumProgressRouteImport.update({
-    id: '/programs/curriculum-progress',
-    path: '/programs/curriculum-progress',
-    getParentRoute: () => AuthRoute,
+    id: '/curriculum-progress',
+    path: '/curriculum-progress',
+    getParentRoute: () => AuthProgramsRoute,
   } as any)
 const AuthProgramsCoefficientsRoute =
   AuthProgramsCoefficientsRouteImport.update({
-    id: '/programs/coefficients',
-    path: '/programs/coefficients',
-    getParentRoute: () => AuthRoute,
+    id: '/coefficients',
+    path: '/coefficients',
+    getParentRoute: () => AuthProgramsRoute,
   } as any)
 const AuthGradesValidationsRoute = AuthGradesValidationsRouteImport.update({
   id: '/validations',
@@ -274,9 +286,9 @@ const AuthConductsSettingsRoute = AuthConductsSettingsRouteImport.update({
   getParentRoute: () => AuthConductsRoute,
 } as any)
 const AuthClassesAssignmentsRoute = AuthClassesAssignmentsRouteImport.update({
-  id: '/classes/assignments',
-  path: '/classes/assignments',
-  getParentRoute: () => AuthRoute,
+  id: '/assignments',
+  path: '/assignments',
+  getParentRoute: () => AuthClassesRoute,
 } as any)
 const AuthAccountingStudentFeesRoute =
   AuthAccountingStudentFeesRouteImport.update({
@@ -382,9 +394,9 @@ const AuthConductsAlertsIndexRoute = AuthConductsAlertsIndexRouteImport.update({
   getParentRoute: () => AuthConductsRoute,
 } as any)
 const AuthClassesClassIdIndexRoute = AuthClassesClassIdIndexRouteImport.update({
-  id: '/classes/$classId/',
-  path: '/classes/$classId/',
-  getParentRoute: () => AuthRoute,
+  id: '/$classId/',
+  path: '/$classId/',
+  getParentRoute: () => AuthClassesRoute,
 } as any)
 const AuthUsersUsersNewRoute = AuthUsersUsersNewRouteImport.update({
   id: '/users/new',
@@ -453,9 +465,9 @@ const AuthConductsConductRecordIdRoute =
     getParentRoute: () => AuthConductsRoute,
   } as any)
 const AuthClassesClassIdEditRoute = AuthClassesClassIdEditRouteImport.update({
-  id: '/classes/$classId/edit',
-  path: '/classes/$classId/edit',
-  getParentRoute: () => AuthRoute,
+  id: '/$classId/edit',
+  path: '/$classId/edit',
+  getParentRoute: () => AuthClassesRoute,
 } as any)
 const AuthUsersUsersUserIdIndexRoute =
   AuthUsersUsersUserIdIndexRouteImport.update({
@@ -521,9 +533,11 @@ const AuthSpacesClassroomsClassroomIdEditRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/accounting': typeof AuthAccountingRouteWithChildren
+  '/classes': typeof AuthClassesRouteWithChildren
   '/conducts': typeof AuthConductsRouteWithChildren
   '/dashboard': typeof AuthDashboardRoute
   '/grades': typeof AuthGradesRouteWithChildren
+  '/programs': typeof AuthProgramsRouteWithChildren
   '/schedules': typeof AuthSchedulesRoute
   '/settings': typeof AuthSettingsRouteWithChildren
   '/spaces': typeof AuthSpacesRouteWithChildren
@@ -557,7 +571,7 @@ export interface FileRoutesByFullPath {
   '/students/parents': typeof AuthStudentsParentsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/accounting/': typeof AuthAccountingIndexRoute
-  '/classes': typeof AuthClassesIndexRoute
+  '/classes/': typeof AuthClassesIndexRoute
   '/conducts/': typeof AuthConductsIndexRoute
   '/grades/': typeof AuthGradesIndexRoute
   '/settings/': typeof AuthSettingsIndexRoute
@@ -602,6 +616,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof AuthDashboardRoute
+  '/programs': typeof AuthProgramsRouteWithChildren
   '/schedules': typeof AuthSchedulesRoute
   '/accounting/accounts': typeof AuthAccountingAccountsRoute
   '/accounting/dashboard': typeof AuthAccountingDashboardRoute
@@ -678,9 +693,11 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteWithChildren
   '/_auth/accounting': typeof AuthAccountingRouteWithChildren
+  '/_auth/classes': typeof AuthClassesRouteWithChildren
   '/_auth/conducts': typeof AuthConductsRouteWithChildren
   '/_auth/dashboard': typeof AuthDashboardRoute
   '/_auth/grades': typeof AuthGradesRouteWithChildren
+  '/_auth/programs': typeof AuthProgramsRouteWithChildren
   '/_auth/schedules': typeof AuthSchedulesRoute
   '/_auth/settings': typeof AuthSettingsRouteWithChildren
   '/_auth/spaces': typeof AuthSpacesRouteWithChildren
@@ -761,9 +778,11 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/accounting'
+    | '/classes'
     | '/conducts'
     | '/dashboard'
     | '/grades'
+    | '/programs'
     | '/schedules'
     | '/settings'
     | '/spaces'
@@ -797,7 +816,7 @@ export interface FileRouteTypes {
     | '/students/parents'
     | '/api/auth/$'
     | '/accounting/'
-    | '/classes'
+    | '/classes/'
     | '/conducts/'
     | '/grades/'
     | '/settings/'
@@ -842,6 +861,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/dashboard'
+    | '/programs'
     | '/schedules'
     | '/accounting/accounts'
     | '/accounting/dashboard'
@@ -917,9 +937,11 @@ export interface FileRouteTypes {
     | '/'
     | '/_auth'
     | '/_auth/accounting'
+    | '/_auth/classes'
     | '/_auth/conducts'
     | '/_auth/dashboard'
     | '/_auth/grades'
+    | '/_auth/programs'
     | '/_auth/schedules'
     | '/_auth/settings'
     | '/_auth/spaces'
@@ -1053,6 +1075,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSchedulesRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/programs': {
+      id: '/_auth/programs'
+      path: '/programs'
+      fullPath: '/programs'
+      preLoaderRoute: typeof AuthProgramsRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_auth/grades': {
       id: '/_auth/grades'
       path: '/grades'
@@ -1072,6 +1101,13 @@ declare module '@tanstack/react-router' {
       path: '/conducts'
       fullPath: '/conducts'
       preLoaderRoute: typeof AuthConductsRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/classes': {
+      id: '/_auth/classes'
+      path: '/classes'
+      fullPath: '/classes'
+      preLoaderRoute: typeof AuthClassesRouteImport
       parentRoute: typeof AuthRoute
     }
     '/_auth/accounting': {
@@ -1125,10 +1161,10 @@ declare module '@tanstack/react-router' {
     }
     '/_auth/classes/': {
       id: '/_auth/classes/'
-      path: '/classes'
-      fullPath: '/classes'
+      path: '/'
+      fullPath: '/classes/'
       preLoaderRoute: typeof AuthClassesIndexRouteImport
-      parentRoute: typeof AuthRoute
+      parentRoute: typeof AuthClassesRoute
     }
     '/_auth/accounting/': {
       id: '/_auth/accounting/'
@@ -1202,24 +1238,24 @@ declare module '@tanstack/react-router' {
     }
     '/_auth/programs/subjects': {
       id: '/_auth/programs/subjects'
-      path: '/programs/subjects'
+      path: '/subjects'
       fullPath: '/programs/subjects'
       preLoaderRoute: typeof AuthProgramsSubjectsRouteImport
-      parentRoute: typeof AuthRoute
+      parentRoute: typeof AuthProgramsRoute
     }
     '/_auth/programs/curriculum-progress': {
       id: '/_auth/programs/curriculum-progress'
-      path: '/programs/curriculum-progress'
+      path: '/curriculum-progress'
       fullPath: '/programs/curriculum-progress'
       preLoaderRoute: typeof AuthProgramsCurriculumProgressRouteImport
-      parentRoute: typeof AuthRoute
+      parentRoute: typeof AuthProgramsRoute
     }
     '/_auth/programs/coefficients': {
       id: '/_auth/programs/coefficients'
-      path: '/programs/coefficients'
+      path: '/coefficients'
       fullPath: '/programs/coefficients'
       preLoaderRoute: typeof AuthProgramsCoefficientsRouteImport
-      parentRoute: typeof AuthRoute
+      parentRoute: typeof AuthProgramsRoute
     }
     '/_auth/grades/validations': {
       id: '/_auth/grades/validations'
@@ -1258,10 +1294,10 @@ declare module '@tanstack/react-router' {
     }
     '/_auth/classes/assignments': {
       id: '/_auth/classes/assignments'
-      path: '/classes/assignments'
+      path: '/assignments'
       fullPath: '/classes/assignments'
       preLoaderRoute: typeof AuthClassesAssignmentsRouteImport
-      parentRoute: typeof AuthRoute
+      parentRoute: typeof AuthClassesRoute
     }
     '/_auth/accounting/student-fees': {
       id: '/_auth/accounting/student-fees'
@@ -1398,10 +1434,10 @@ declare module '@tanstack/react-router' {
     }
     '/_auth/classes/$classId/': {
       id: '/_auth/classes/$classId/'
-      path: '/classes/$classId'
+      path: '/$classId'
       fullPath: '/classes/$classId'
       preLoaderRoute: typeof AuthClassesClassIdIndexRouteImport
-      parentRoute: typeof AuthRoute
+      parentRoute: typeof AuthClassesRoute
     }
     '/_auth/users/users/new': {
       id: '/_auth/users/users/new'
@@ -1489,10 +1525,10 @@ declare module '@tanstack/react-router' {
     }
     '/_auth/classes/$classId/edit': {
       id: '/_auth/classes/$classId/edit'
-      path: '/classes/$classId/edit'
+      path: '/$classId/edit'
       fullPath: '/classes/$classId/edit'
       preLoaderRoute: typeof AuthClassesClassIdEditRouteImport
-      parentRoute: typeof AuthRoute
+      parentRoute: typeof AuthClassesRoute
     }
     '/_auth/users/users/$userId/': {
       id: '/_auth/users/users/$userId/'
@@ -1597,6 +1633,24 @@ const AuthAccountingRouteWithChildren = AuthAccountingRoute._addFileChildren(
   AuthAccountingRouteChildren,
 )
 
+interface AuthClassesRouteChildren {
+  AuthClassesAssignmentsRoute: typeof AuthClassesAssignmentsRoute
+  AuthClassesIndexRoute: typeof AuthClassesIndexRoute
+  AuthClassesClassIdEditRoute: typeof AuthClassesClassIdEditRoute
+  AuthClassesClassIdIndexRoute: typeof AuthClassesClassIdIndexRoute
+}
+
+const AuthClassesRouteChildren: AuthClassesRouteChildren = {
+  AuthClassesAssignmentsRoute: AuthClassesAssignmentsRoute,
+  AuthClassesIndexRoute: AuthClassesIndexRoute,
+  AuthClassesClassIdEditRoute: AuthClassesClassIdEditRoute,
+  AuthClassesClassIdIndexRoute: AuthClassesClassIdIndexRoute,
+}
+
+const AuthClassesRouteWithChildren = AuthClassesRoute._addFileChildren(
+  AuthClassesRouteChildren,
+)
+
 interface AuthConductsRouteChildren {
   AuthConductsSettingsRoute: typeof AuthConductsSettingsRoute
   AuthConductsIndexRoute: typeof AuthConductsIndexRoute
@@ -1654,6 +1708,22 @@ const AuthGradesRouteChildren: AuthGradesRouteChildren = {
 
 const AuthGradesRouteWithChildren = AuthGradesRoute._addFileChildren(
   AuthGradesRouteChildren,
+)
+
+interface AuthProgramsRouteChildren {
+  AuthProgramsCoefficientsRoute: typeof AuthProgramsCoefficientsRoute
+  AuthProgramsCurriculumProgressRoute: typeof AuthProgramsCurriculumProgressRoute
+  AuthProgramsSubjectsRoute: typeof AuthProgramsSubjectsRoute
+}
+
+const AuthProgramsRouteChildren: AuthProgramsRouteChildren = {
+  AuthProgramsCoefficientsRoute: AuthProgramsCoefficientsRoute,
+  AuthProgramsCurriculumProgressRoute: AuthProgramsCurriculumProgressRoute,
+  AuthProgramsSubjectsRoute: AuthProgramsSubjectsRoute,
+}
+
+const AuthProgramsRouteWithChildren = AuthProgramsRoute._addFileChildren(
+  AuthProgramsRouteChildren,
 )
 
 interface AuthSettingsRouteChildren {
@@ -1768,40 +1838,30 @@ const AuthUsersRouteWithChildren = AuthUsersRoute._addFileChildren(
 
 interface AuthRouteChildren {
   AuthAccountingRoute: typeof AuthAccountingRouteWithChildren
+  AuthClassesRoute: typeof AuthClassesRouteWithChildren
   AuthConductsRoute: typeof AuthConductsRouteWithChildren
   AuthDashboardRoute: typeof AuthDashboardRoute
   AuthGradesRoute: typeof AuthGradesRouteWithChildren
+  AuthProgramsRoute: typeof AuthProgramsRouteWithChildren
   AuthSchedulesRoute: typeof AuthSchedulesRoute
   AuthSettingsRoute: typeof AuthSettingsRouteWithChildren
   AuthSpacesRoute: typeof AuthSpacesRouteWithChildren
   AuthStudentsRoute: typeof AuthStudentsRouteWithChildren
   AuthUsersRoute: typeof AuthUsersRouteWithChildren
-  AuthClassesAssignmentsRoute: typeof AuthClassesAssignmentsRoute
-  AuthProgramsCoefficientsRoute: typeof AuthProgramsCoefficientsRoute
-  AuthProgramsCurriculumProgressRoute: typeof AuthProgramsCurriculumProgressRoute
-  AuthProgramsSubjectsRoute: typeof AuthProgramsSubjectsRoute
-  AuthClassesIndexRoute: typeof AuthClassesIndexRoute
-  AuthClassesClassIdEditRoute: typeof AuthClassesClassIdEditRoute
-  AuthClassesClassIdIndexRoute: typeof AuthClassesClassIdIndexRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthAccountingRoute: AuthAccountingRouteWithChildren,
+  AuthClassesRoute: AuthClassesRouteWithChildren,
   AuthConductsRoute: AuthConductsRouteWithChildren,
   AuthDashboardRoute: AuthDashboardRoute,
   AuthGradesRoute: AuthGradesRouteWithChildren,
+  AuthProgramsRoute: AuthProgramsRouteWithChildren,
   AuthSchedulesRoute: AuthSchedulesRoute,
   AuthSettingsRoute: AuthSettingsRouteWithChildren,
   AuthSpacesRoute: AuthSpacesRouteWithChildren,
   AuthStudentsRoute: AuthStudentsRouteWithChildren,
   AuthUsersRoute: AuthUsersRouteWithChildren,
-  AuthClassesAssignmentsRoute: AuthClassesAssignmentsRoute,
-  AuthProgramsCoefficientsRoute: AuthProgramsCoefficientsRoute,
-  AuthProgramsCurriculumProgressRoute: AuthProgramsCurriculumProgressRoute,
-  AuthProgramsSubjectsRoute: AuthProgramsSubjectsRoute,
-  AuthClassesIndexRoute: AuthClassesIndexRoute,
-  AuthClassesClassIdEditRoute: AuthClassesClassIdEditRoute,
-  AuthClassesClassIdIndexRoute: AuthClassesClassIdIndexRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)

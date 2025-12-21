@@ -1,3 +1,4 @@
+import type { CreateRoleData } from '@/schemas/role'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import { RoleForm } from '@/components/hr/roles/role-form'
@@ -13,7 +14,7 @@ function NewRolePage() {
   const t = useTranslations()
   const navigate = useNavigate()
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: CreateRoleData) => {
     try {
       const result = await createNewRole({ data })
       toast.success(t.hr.roles.createSuccess())

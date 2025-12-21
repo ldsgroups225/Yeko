@@ -63,13 +63,13 @@ function EditClassPage() {
         </p>
       </div>
 
-      <Card>
+      <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
         <CardHeader>
           <CardTitle>{t.classes.classInfo()}</CardTitle>
         </CardHeader>
         <CardContent>
           <ClassForm
-            classData={classData}
+            classData={{ ...data, subjectsCount: 0 }}
             onSuccess={() => navigate({ to: '/classes/$classId', params: { classId } })}
           />
         </CardContent>

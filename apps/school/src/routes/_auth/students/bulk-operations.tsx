@@ -37,7 +37,7 @@ function BulkOperationsPage() {
         <BulkEnrollmentCard />
         <BulkFeeAssignmentCard />
 
-        <Card>
+        <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <RefreshCw className="h-5 w-5" />

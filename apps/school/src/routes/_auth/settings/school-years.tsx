@@ -12,6 +12,7 @@ import {
   Plus,
   Trash2,
 } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
@@ -110,129 +111,153 @@ function SchoolYearsSettingsPage() {
   })
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        className="flex items-center justify-between"
+      >
         <div>
-          <h2 className="text-xl font-semibold tracking-tight">{t.settings.schoolYears.title()}</h2>
-          <p className="text-sm text-muted-foreground">
-            {t.settings.schoolYears.description()}
-          </p>
+          {/* Header is handled by SettingsLayout now, so we might not need this duplication if it's the main page.
+               However, keeping it as sub-section header or removing if redundant.
+               The layout has the main header. This part seems to be specific actions for this tab.
+           */}
+          {/* Let's keep the action button but maybe simplify the text if it's redundant with layout header */}
         </div>
-        <Button onClick={() => setIsCreateDialogOpen(true)}>
+        <Button onClick={() => setIsCreateDialogOpen(true)} className="rounded-xl shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90">
           <Plus className="mr-2 h-4 w-4" />
           {t.settings.schoolYears.create()}
         </Button>
-      </div>
+      </motion.div>
 
       {/* School Years Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calendar className="h-5 w-5" />
-            {t.settings.schoolYears.list()}
-          </CardTitle>
-          <CardDescription>
-            {t.settings.schoolYears.listDescription()}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {isLoading
-            ? (
-                <div className="space-y-2">
-                  {Array.from({ length: 3 }).map(() => (
-                    <Skeleton key={generateUUID()} className="h-12 w-full" />
-                  ))}
-                </div>
-              )
-            : schoolYears && schoolYears.length > 0
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+      >
+        <Card className="rounded-3xl border border-border/40 bg-card/40 backdrop-blur-xl shadow-sm overflow-hidden">
+          <CardHeader className="border-b border-border/40 bg-muted/5">
+            <CardTitle className="flex items-center gap-2 text-xl font-bold uppercase tracking-wider text-muted-foreground">
+              <Calendar className="h-5 w-5 text-primary" />
+              {t.settings.schoolYears.list()}
+            </CardTitle>
+            <CardDescription className="text-muted-foreground/80">
+              {t.settings.schoolYears.listDescription()}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-0">
+            {isLoading
               ? (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>{t.settings.schoolYears.name()}</TableHead>
-                        <TableHead>{t.settings.schoolYears.startDate()}</TableHead>
-                        <TableHead>{t.settings.schoolYears.endDate()}</TableHead>
-                        <TableHead>{t.settings.schoolYears.status()}</TableHead>
-                        <TableHead className="text-right">{t.common.actions()}</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {schoolYears.map((year: any) => (
-                        <TableRow key={year.id}>
-                          <TableCell className="font-medium">
-                            {year.template?.name || 'N/A'}
-                          </TableCell>
-                          <TableCell>
-                            {format(new Date(year.startDate), 'dd MMM yyyy', { locale: fr })}
-                          </TableCell>
-                          <TableCell>
-                            {format(new Date(year.endDate), 'dd MMM yyyy', { locale: fr })}
-                          </TableCell>
-                          <TableCell>
-                            {year.isActive
-                              ? (
-                                  <Badge variant="default" className="gap-1">
-                                    <CheckCircle2 className="h-3 w-3" />
-                                    {t.settings.schoolYears.active()}
-                                  </Badge>
-                                )
-                              : (
-                                  <Badge variant="secondary">
-                                    {t.settings.schoolYears.inactive()}
-                                  </Badge>
-                                )}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon">
-                                  <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                {!year.isActive && (
-                                  <DropdownMenuItem
-                                    onClick={() => setActiveMutation.mutate(year.id)}
-                                    disabled={setActiveMutation.isPending}
-                                  >
-                                    <CheckCircle2 className="mr-2 h-4 w-4" />
-                                    {t.settings.schoolYears.setActive()}
-                                  </DropdownMenuItem>
-                                )}
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem
-                                  className="text-destructive"
-                                  onClick={() => setDeleteConfirmId(year.id)}
-                                >
-                                  <Trash2 className="mr-2 h-4 w-4" />
-                                  {t.common.delete()}
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                )
-              : (
-                  <div className="flex flex-col items-center justify-center py-12 text-center">
-                    <Calendar className="h-12 w-12 text-muted-foreground" />
-                    <h3 className="mt-4 text-lg font-semibold">
-                      {t.settings.schoolYears.empty()}
-                    </h3>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      {t.settings.schoolYears.emptyDescription()}
-                    </p>
-                    <Button className="mt-4" onClick={() => setIsCreateDialogOpen(true)}>
-                      <Plus className="mr-2 h-4 w-4" />
-                      {t.settings.schoolYears.create()}
-                    </Button>
+                  <div className="space-y-4 p-6">
+                    {Array.from({ length: 3 }).map(() => (
+                      <Skeleton key={generateUUID()} className="h-16 w-full rounded-xl" />
+                    ))}
                   </div>
-                )}
-        </CardContent>
-      </Card>
+                )
+              : schoolYears && schoolYears.length > 0
+                ? (
+                    <Table>
+                      <TableHeader className="bg-muted/50">
+                        <TableRow className="hover:bg-transparent border-border/40">
+                          <TableHead className="font-semibold text-muted-foreground pl-6">{t.settings.schoolYears.name()}</TableHead>
+                          <TableHead className="font-semibold text-muted-foreground">{t.settings.schoolYears.startDate()}</TableHead>
+                          <TableHead className="font-semibold text-muted-foreground">{t.settings.schoolYears.endDate()}</TableHead>
+                          <TableHead className="font-semibold text-muted-foreground">{t.settings.schoolYears.status()}</TableHead>
+                          <TableHead className="text-right font-semibold text-muted-foreground pr-6">{t.common.actions()}</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        <AnimatePresence>
+                          {schoolYears.map((year, index) => (
+                            <motion.tr
+                              key={year.id}
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: index * 0.05 }}
+                              className="group hover:bg-muted/30 border-border/40 transition-colors"
+                            >
+                              <TableCell className="font-bold pl-6 text-foreground">
+                                {year.template?.name || 'N/A'}
+                              </TableCell>
+                              <TableCell className="font-medium text-muted-foreground">
+                                {format(new Date(year.startDate), 'dd MMM yyyy', { locale: fr })}
+                              </TableCell>
+                              <TableCell className="font-medium text-muted-foreground">
+                                {format(new Date(year.endDate), 'dd MMM yyyy', { locale: fr })}
+                              </TableCell>
+                              <TableCell>
+                                {year.isActive
+                                  ? (
+                                      <Badge variant="default" className="gap-1 bg-green-500/15 text-green-700 hover:bg-green-500/25 border-green-200 dark:border-green-800 dark:text-green-400 rounded-lg pr-3 pl-3">
+                                        <CheckCircle2 className="h-3.5 w-3.5" />
+                                        {t.settings.schoolYears.active()}
+                                      </Badge>
+                                    )
+                                  : (
+                                      <Badge variant="secondary" className="bg-muted text-muted-foreground rounded-lg">
+                                        {t.settings.schoolYears.inactive()}
+                                      </Badge>
+                                    )}
+                              </TableCell>
+                              <TableCell className="text-right pr-6">
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                                      <MoreHorizontal className="h-4 w-4" />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end" className="rounded-xl border-border/40 bg-card/95 backdrop-blur-xl shadow-xl w-48">
+                                    {!year.isActive && (
+                                      <DropdownMenuItem
+                                        onClick={() => setActiveMutation.mutate(year.id)}
+                                        disabled={setActiveMutation.isPending}
+                                        className="rounded-lg cursor-pointer focus:bg-primary/10 font-medium"
+                                      >
+                                        <CheckCircle2 className="mr-2 h-4 w-4 text-green-600" />
+                                        {t.settings.schoolYears.setActive()}
+                                      </DropdownMenuItem>
+                                    )}
+                                    <DropdownMenuSeparator className="bg-border/40" />
+                                    <DropdownMenuItem
+                                      className="text-destructive focus:bg-destructive/10 focus:text-destructive rounded-lg cursor-pointer font-medium"
+                                      onClick={() => setDeleteConfirmId(year.id)}
+                                    >
+                                      <Trash2 className="mr-2 h-4 w-4" />
+                                      {t.common.delete()}
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </TableCell>
+                            </motion.tr>
+                          ))}
+                        </AnimatePresence>
+                      </TableBody>
+                    </Table>
+                  )
+                : (
+                    <div className="flex flex-col items-center justify-center py-16 text-center space-y-4">
+                      <div className="p-4 rounded-full bg-muted/20">
+                        <Calendar className="h-10 w-10 text-muted-foreground/50" />
+                      </div>
+                      <div className="space-y-1">
+                        <h3 className="text-lg font-bold text-foreground">
+                          {t.settings.schoolYears.empty()}
+                        </h3>
+                        <p className="text-sm text-muted-foreground max-w-sm mx-auto">
+                          {t.settings.schoolYears.emptyDescription()}
+                        </p>
+                      </div>
+                      <Button className="mt-4 rounded-xl" onClick={() => setIsCreateDialogOpen(true)}>
+                        <Plus className="mr-2 h-4 w-4" />
+                        {t.settings.schoolYears.create()}
+                      </Button>
+                    </div>
+                  )}
+          </CardContent>
+        </Card>
+      </motion.div>
 
       {/* Create Dialog */}
       <CreateSchoolYearDialog
@@ -243,21 +268,22 @@ function SchoolYearsSettingsPage() {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={!!deleteConfirmId} onOpenChange={() => setDeleteConfirmId(null)}>
-        <DialogContent>
+        <DialogContent className="backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6 sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>{t.settings.schoolYears.deleteConfirmTitle()}</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-xl font-bold">{t.settings.schoolYears.deleteConfirmTitle()}</DialogTitle>
+            <DialogDescription className="text-muted-foreground/80">
               {t.settings.schoolYears.deleteConfirmDescription()}
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteConfirmId(null)}>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="outline" onClick={() => setDeleteConfirmId(null)} className="rounded-xl border-border/40">
               {t.common.cancel()}
             </Button>
             <Button
               variant="destructive"
               onClick={() => deleteConfirmId && deleteMutation.mutate(deleteConfirmId)}
               disabled={deleteMutation.isPending}
+              className="rounded-xl shadow-lg shadow-destructive/20"
             >
               {deleteMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {t.common.delete()}
@@ -323,76 +349,83 @@ function CreateSchoolYearDialog({ open, onOpenChange, templates }: CreateSchoolY
     createMutation.mutate()
   }
 
+  const inputClass = 'rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors'
+  const selectTriggerClass = 'rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors data-[placeholder]:text-muted-foreground'
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6 sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>{t.settings.schoolYears.createTitle()}</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-2xl font-black tracking-tight uppercase italic">{t.settings.schoolYears.createTitle()}</DialogTitle>
+          <DialogDescription className="text-muted-foreground/80 font-medium">
             {t.settings.schoolYears.createDescription()}
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6 mt-4">
           <div className="space-y-2">
-            <Label htmlFor="template">{t.settings.schoolYears.template()}</Label>
+            <Label htmlFor="template" className="text-xs uppercase font-bold tracking-wider text-muted-foreground">{t.settings.schoolYears.template()}</Label>
             <Select value={templateId} onValueChange={setTemplateId}>
-              <SelectTrigger>
+              <SelectTrigger className={selectTriggerClass}>
                 <SelectValue placeholder={t.settings.schoolYears.selectTemplate()} />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="rounded-xl backdrop-blur-xl bg-card/95 border-border/40 shadow-xl">
                 {templates.map(template => (
-                  <SelectItem key={template.id} value={template.id}>
-                    {template.name}
-                    {template.isActive && (
-                      <Badge variant="secondary" className="ml-2">
-                        {t.common.current()}
-                      </Badge>
-                    )}
+                  <SelectItem key={template.id} value={template.id} className="rounded-lg cursor-pointer focus:bg-primary/10">
+                    <span className="flex items-center gap-2">
+                      {template.name}
+                      {template.isActive && (
+                        <Badge variant="secondary" className="ml-2 px-1 py-0 text-[10px]">
+                          {t.common.current()}
+                        </Badge>
+                      )}
+                    </span>
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-6 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="startDate">{t.settings.schoolYears.startDate()}</Label>
+              <Label htmlFor="startDate" className="text-xs uppercase font-bold tracking-wider text-muted-foreground">{t.settings.schoolYears.startDate()}</Label>
               <Input
                 id="startDate"
                 type="date"
                 value={startDate}
                 onChange={e => setStartDate(e.target.value)}
+                className={inputClass}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="endDate">{t.settings.schoolYears.endDate()}</Label>
+              <Label htmlFor="endDate" className="text-xs uppercase font-bold tracking-wider text-muted-foreground">{t.settings.schoolYears.endDate()}</Label>
               <Input
                 id="endDate"
                 type="date"
                 value={endDate}
                 onChange={e => setEndDate(e.target.value)}
+                className={inputClass}
               />
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3 p-4 rounded-xl bg-muted/10 border border-border/40">
             <input
               type="checkbox"
               id="isActive"
               checked={isActive}
               onChange={e => setIsActive(e.target.checked)}
-              className="h-4 w-4 rounded border-gray-300"
+              className="h-5 w-5 rounded-md border-border/40 text-primary focus:ring-primary/20 bg-muted/20"
             />
-            <Label htmlFor="isActive" className="text-sm font-normal">
+            <Label htmlFor="isActive" className="text-sm font-medium cursor-pointer select-none">
               {t.settings.schoolYears.setAsActive()}
             </Label>
           </div>
 
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+          <DialogFooter className="gap-2 sm:gap-0 pt-2">
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="rounded-xl border-border/40">
               {t.common.cancel()}
             </Button>
-            <Button type="submit" disabled={createMutation.isPending}>
+            <Button type="submit" disabled={createMutation.isPending} className="rounded-xl shadow-lg shadow-primary/20">
               {createMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {t.common.create()}
             </Button>

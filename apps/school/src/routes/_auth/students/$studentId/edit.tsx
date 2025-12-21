@@ -48,7 +48,27 @@ function EditStudentPage() {
         <p className="text-muted-foreground">{t.students.editStudentDescription()}</p>
       </div>
 
-      <StudentForm mode="edit" student={data.student} />
+      <StudentForm
+        mode="edit"
+        student={{
+          id: data.student.id,
+          firstName: data.student.firstName,
+          lastName: data.student.lastName,
+          dob: data.student.dob,
+          gender: data.student.gender ?? undefined,
+          photoUrl: data.student.photoUrl ?? undefined,
+          matricule: data.student.matricule ?? undefined,
+          birthPlace: data.student.birthPlace ?? undefined,
+          nationality: data.student.nationality ?? undefined,
+          address: data.student.address ?? undefined,
+          emergencyContact: data.student.emergencyContact ?? undefined,
+          emergencyPhone: data.student.emergencyPhone ?? undefined,
+          bloodType: data.student.bloodType ?? undefined,
+          medicalNotes: data.student.medicalNotes ?? undefined,
+          previousSchool: data.student.previousSchool ?? undefined,
+          admissionDate: data.student.admissionDate ?? undefined,
+        }}
+      />
     </div>
   )
 }
