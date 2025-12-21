@@ -57,15 +57,15 @@ export function NotificationSettingsForm({
   ] as const
 
   return (
-    <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+    <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
       <div className="space-y-4">
         {notificationOptions.map(option => (
           <div
             key={option.id}
-            className="flex items-center justify-between rounded-lg border p-4"
+            className="flex items-center justify-between rounded-2xl border border-border/40 bg-muted/20 p-5 transition-all hover:bg-muted/30"
           >
-            <div className="space-y-0.5">
-              <Label htmlFor={option.id}>{option.label}</Label>
+            <div className="space-y-1">
+              <Label htmlFor={option.id} className="text-base font-semibold">{option.label}</Label>
               <p className="text-sm text-muted-foreground">
                 {option.description}
               </p>
@@ -74,13 +74,14 @@ export function NotificationSettingsForm({
               id={option.id}
               checked={form.watch(option.id)}
               onCheckedChange={checked => form.setValue(option.id, checked)}
+              className="data-[state=checked]:bg-primary"
             />
           </div>
         ))}
       </div>
 
-      <div className="flex justify-end">
-        <Button type="submit" disabled={isSubmitting}>
+      <div className="flex justify-end pt-4">
+        <Button type="submit" disabled={isSubmitting} className="rounded-xl shadow-lg shadow-primary/20 px-8">
           {isSubmitting ? t.common.saving() : t.common.save()}
         </Button>
       </div>

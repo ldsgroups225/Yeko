@@ -1,6 +1,7 @@
 export * from './conduct-record-card'
 export * from './conduct-record-form'
 export * from './conduct-record-list'
+export * from './conduct-record-table'
 export * from './conduct-severity-badge'
 export * from './conduct-status-badge'
 export * from './conduct-summary-card'

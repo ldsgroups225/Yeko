@@ -116,10 +116,10 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6">
         <DialogHeader>
-          <DialogTitle>{t.finance.accounts.create()}</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-xl font-bold">{t.finance.accounts.create()}</DialogTitle>
+          <DialogDescription className="text-muted-foreground/80">
             {t.finance.accounts.createDescription()}
           </DialogDescription>
         </DialogHeader>
@@ -132,13 +132,13 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
                 name="code"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
+                    <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
                       {t.common.code()}
                       {' '}
                       *
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="1000" />
+                      <Input {...field} placeholder="1000" className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors font-mono" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -150,7 +150,7 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
                 name="type"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
+                    <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
                       {t.finance.accounts.type()}
                       {' '}
                       *
@@ -163,13 +163,13 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
                       value={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors">
                           <SelectValue />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
+                      <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">
                         {accountTypes.map(type => (
-                          <SelectItem key={type} value={type}>
+                          <SelectItem key={type} value={type} className="rounded-lg cursor-pointer focus:bg-primary/10">
                             {accountTypeLabels[type]}
                           </SelectItem>
                         ))}
@@ -186,13 +186,13 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
+                  <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
                     {t.common.name()}
                     {' '}
                     *
                   </FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder={t.finance.accounts.placeholders.name()} />
+                    <Input {...field} placeholder={t.finance.accounts.placeholders.name()} className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -204,11 +204,11 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
               name="nameEn"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t.common.nameEn()}</FormLabel>
+                  <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">{t.common.nameEn()}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder={t.finance.accounts.placeholders.nameEn()} />
+                    <Input {...field} placeholder={t.finance.accounts.placeholders.nameEn()} className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors" />
                   </FormControl>
-                  <FormDescription>
+                  <FormDescription className="text-[11px]">
                     {t.common.optionalEnglishName()}
                   </FormDescription>
                   <FormMessage />
@@ -221,20 +221,20 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
               name="normalBalance"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
+                  <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
                     {t.finance.accounts.normalBalance()}
                     {' '}
                     *
                   </FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors">
                         <SelectValue />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
+                    <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">
                       {normalBalances.map(balance => (
-                        <SelectItem key={balance} value={balance}>
+                        <SelectItem key={balance} value={balance} className="rounded-lg cursor-pointer focus:bg-primary/10">
                           {normalBalanceLabels[balance]}
                         </SelectItem>
                       ))}
@@ -250,9 +250,9 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t.common.description()}</FormLabel>
+                  <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">{t.common.description()}</FormLabel>
                   <FormControl>
-                    <Textarea {...field} rows={2} />
+                    <Textarea {...field} rows={2} className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors resize-none" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -263,32 +263,35 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
               control={form.control}
               name="isHeader"
               render={({ field }) => (
-                <FormItem className="flex items-center gap-2 space-y-0">
+                <FormItem className="flex items-center gap-3 space-y-0 p-3 rounded-xl border border-border/40 bg-muted/10">
                   <FormControl>
                     <Checkbox
                       checked={field.value}
                       onCheckedChange={field.onChange}
                     />
                   </FormControl>
-                  <FormLabel className="font-normal">
-                    {t.finance.accounts.isHeader()}
-                  </FormLabel>
-                  <FormDescription className="ml-2">
-                    {t.finance.accounts.isHeaderDescription()}
-                  </FormDescription>
+                  <div className="space-y-0.5">
+                    <FormLabel className="font-bold text-sm">
+                      {t.finance.accounts.isHeader()}
+                    </FormLabel>
+                    <FormDescription className="text-xs">
+                      {t.finance.accounts.isHeaderDescription()}
+                    </FormDescription>
+                  </div>
                 </FormItem>
               )}
             />
 
-            <DialogFooter>
+            <DialogFooter className="pt-4">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => onOpenChange(false)}
+                className="rounded-xl border-border/40"
               >
                 {t.common.cancel()}
               </Button>
-              <Button type="submit" disabled={mutation.isPending}>
+              <Button type="submit" disabled={mutation.isPending} className="rounded-xl shadow-lg shadow-primary/20">
                 {mutation.isPending && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}

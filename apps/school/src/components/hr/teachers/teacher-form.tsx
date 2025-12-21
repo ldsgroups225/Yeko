@@ -1,7 +1,8 @@
 import type { TeacherFormData } from '@/schemas/teacher'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Loader2 } from 'lucide-react'
+import { BookOpen, GraduationCap, Info, Loader2, Shield } from 'lucide-react'
+import { motion } from 'motion/react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { UserCombobox } from '@/components/hr/staff/user-combobox'
@@ -22,7 +23,7 @@ import { teacherCreateSchema } from '@/schemas/teacher'
 import { createNewTeacher, updateExistingTeacher } from '@/school/functions/teachers'
 
 interface TeacherFormProps {
-  teacher?: any
+  teacher?: TeacherFormData & { id: string }
   onSuccess?: () => void
 }
 
@@ -37,7 +38,7 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
     formState: { errors },
     setValue,
     watch,
-  } = useForm<any>({
+  } = useForm<TeacherFormData>({
     resolver: zodResolver(teacherCreateSchema),
     defaultValues: teacher
       ? {
@@ -75,14 +76,14 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
     mutationFn: async (data: TeacherFormData) => {
       return await updateExistingTeacher({
         data: {
-          teacherId: teacher.id,
+          teacherId: teacher!.id,
           data,
         },
       })
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['teachers'] })
-      queryClient.invalidateQueries({ queryKey: ['teacher', teacher.id] })
+      queryClient.invalidateQueries({ queryKey: ['teacher', teacher!.id] })
       toast.success(t.hr.teachers.updateSuccess())
       onSuccess?.()
     },
@@ -91,8 +92,7 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
     },
   })
 
-  const onSubmit = (data: any) => {
-    // Date is already a Date object from DatePicker
+  const onSubmit = (data: TeacherFormData) => {
     const formData = {
       ...data,
       hireDate: data.hireDate || null,
@@ -109,15 +109,24 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
   const isLoading = createMutation.isPending || updateMutation.isPending
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div className="rounded-lg border bg-card p-6">
-        <h2 className="mb-4 text-lg font-semibold">{t.hr.teachers.basicInfo()}</h2>
-        <div className="grid gap-4 md:grid-cols-2">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="rounded-xl border border-border/40 bg-card/50 backdrop-blur-xl p-8 shadow-sm"
+      >
+        <div className="flex items-center gap-2 mb-8">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <Info className="h-4 w-4" />
+          </div>
+          <h2 className="text-xl font-serif font-semibold">{t.hr.teachers.basicInfo()}</h2>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2">
           {!isEditing && (
             <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="userId">
+              <Label htmlFor="userId" className="flex items-center gap-1.5 font-semibold text-foreground">
                 {t.hr.teachers.selectUser()}
-                {' '}
                 <span className="text-destructive">*</span>
               </Label>
               <UserCombobox
@@ -127,24 +136,25 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
                 }}
               />
               {errors.userId && (
-                <p className="text-sm text-destructive">{String(errors.userId.message)}</p>
+                <motion.p initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="text-xs font-medium text-destructive">{String(errors.userId.message)}</motion.p>
               )}
             </div>
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="specialization">{t.hr.teachers.specialization()}</Label>
+            <Label htmlFor="specialization" className="font-semibold text-foreground">{t.hr.teachers.specialization()}</Label>
             <Input
               id="specialization"
               {...register('specialization')}
               placeholder={t.hr.teachers.specializationPlaceholder()}
+              className="rounded-xl h-11 border-border/40 bg-background/50 focus:bg-background transition-all"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="hireDate">{t.hr.teachers.hireDate()}</Label>
+            <Label htmlFor="hireDate" className="font-semibold text-foreground">{t.hr.teachers.hireDate()}</Label>
             <DatePicker
-              date={watch('hireDate')}
+              date={watch('hireDate') || undefined}
               onSelect={date => setValue('hireDate', date)}
               placeholder={t.hr.teachers.selectHireDate()}
               maxDate={new Date()}
@@ -152,40 +162,63 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="status">
+            <Label htmlFor="status" className="flex items-center gap-1.5 font-semibold text-foreground">
               {t.hr.common.status()}
-              {' '}
               <span className="text-destructive">*</span>
             </Label>
             <Select
               value={watch('status')}
-              onValueChange={value => setValue('status', value as any)}
+              onValueChange={value => setValue('status', value as 'active' | 'inactive' | 'on_leave')}
             >
-              <SelectTrigger>
+              <SelectTrigger className="rounded-xl h-11 border-border/40 bg-background/50 focus:bg-background transition-all">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="active">{t.hr.status.active()}</SelectItem>
-                <SelectItem value="inactive">{t.hr.status.inactive()}</SelectItem>
-                <SelectItem value="on_leave">{t.hr.status.on_leave()}</SelectItem>
+              <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
+                <SelectItem value="active" className="rounded-lg py-2.5">
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-emerald-500" />
+                    {t.hr.status.active()}
+                  </div>
+                </SelectItem>
+                <SelectItem value="inactive" className="rounded-lg py-2.5">
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-slate-400" />
+                    {t.hr.status.inactive()}
+                  </div>
+                </SelectItem>
+                <SelectItem value="on_leave" className="rounded-lg py-2.5">
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-amber-500" />
+                    {t.hr.status.on_leave()}
+                  </div>
+                </SelectItem>
               </SelectContent>
             </Select>
             {errors.status && (
-              <p className="text-sm text-destructive">{String(errors.status.message)}</p>
+              <motion.p initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="text-xs font-medium text-destructive">{String(errors.status.message)}</motion.p>
             )}
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="rounded-lg border bg-card p-6">
-        <h2 className="mb-4 text-lg font-semibold">{t.hr.teachers.subjectAssignment()}</h2>
-        <p className="mb-4 text-sm text-muted-foreground">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="rounded-xl border border-border/40 bg-card/50 backdrop-blur-xl p-8 shadow-sm"
+      >
+        <div className="flex items-center gap-2 mb-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <BookOpen className="h-4 w-4" />
+          </div>
+          <h2 className="text-xl font-serif font-semibold">{t.hr.teachers.subjectAssignment()}</h2>
+        </div>
+        <p className="mb-8 text-sm text-muted-foreground leading-relaxed">
           {t.hr.teachers.subjectAssignmentDescription()}
         </p>
-        <div className="space-y-2">
-          <Label htmlFor="subjectIds">
+        <div className="space-y-4">
+          <Label htmlFor="subjectIds" className="flex items-center gap-1.5 font-semibold text-foreground">
             {t.hr.teachers.subjects()}
-            {' '}
             <span className="text-destructive">*</span>
           </Label>
           <SubjectMultiSelect
@@ -195,17 +228,36 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
             }}
           />
           {errors.subjectIds && (
-            <p className="text-sm text-destructive">{String(errors.subjectIds.message)}</p>
+            <motion.p initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="text-xs font-medium text-destructive">{String(errors.subjectIds.message)}</motion.p>
           )}
         </div>
-      </div>
+      </motion.div>
 
-      <div className="flex justify-end gap-2">
-        <Button type="button" variant="outline" onClick={() => onSuccess?.()}>
+      <div className="flex justify-end items-center gap-4">
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => onSuccess?.()}
+          className="rounded-xl px-6 hover:bg-muted font-medium"
+        >
           {t.common.cancel()}
         </Button>
-        <Button type="submit" disabled={isLoading}>
-          {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        <Button
+          type="submit"
+          disabled={isLoading}
+          className="rounded-xl px-8 min-w-[140px] font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-primary/20"
+        >
+          {isLoading
+            ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )
+            : isEditing
+              ? (
+                  <Shield className="mr-2 h-4 w-4" />
+                )
+              : (
+                  <GraduationCap className="mr-2 h-4 w-4" />
+                )}
           {isEditing ? t.common.save() : t.common.create()}
         </Button>
       </div>

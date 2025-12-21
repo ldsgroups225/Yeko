@@ -7,8 +7,8 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { Eye, Layers, MoreHorizontal, Search, Trash2, Users } from 'lucide-react'
-import { motion } from 'motion/react'
+import { Building2, Eye, Layers, MoreHorizontal, Search, Trash2, Users } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { TableSkeleton } from '@/components/hr/table-skeleton'
@@ -90,7 +90,6 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
       const result = await getClassrooms({
         data: {
           search: debouncedSearch,
-          // status: filters.status, // API supports status but let's stick to search for now as layout
         },
       })
       return result as unknown as ClassroomItem[]
@@ -120,23 +119,29 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
         header: 'Nom',
         cell: ({ row }) => (
           <div>
-            <div className="font-medium">{row.original.classroom.name}</div>
-            <div className="text-xs text-muted-foreground">{row.original.classroom.code}</div>
+            <div className="font-bold text-foreground">{row.original.classroom.name}</div>
+            <div className="font-mono text-xs font-medium text-muted-foreground">{row.original.classroom.code}</div>
           </div>
         ),
       },
       {
         accessorKey: 'classroom.type',
         header: 'Type',
-        cell: ({ row }) => <span className="capitalize">{row.original.classroom.type}</span>,
+        cell: ({ row }) => (
+          <Badge variant="secondary" className="font-medium">
+            <span className="capitalize">{row.original.classroom.type}</span>
+          </Badge>
+        ),
       },
       {
         accessorKey: 'classroom.capacity',
         header: 'Capacité',
         cell: ({ row }) => (
-          <div className="flex items-center gap-1">
-            <Users className="h-3 w-3 text-muted-foreground" />
-            <span>{row.original.classroom.capacity}</span>
+          <div className="flex items-center gap-2">
+            <div className="p-1 rounded bg-muted/20">
+              <Users className="h-3.5 w-3.5 text-muted-foreground" />
+            </div>
+            <span className="font-medium tabular-nums">{row.original.classroom.capacity}</span>
           </div>
         ),
       },
@@ -144,9 +149,11 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
         id: 'assigned',
         header: 'Classes assignées',
         cell: ({ row }) => (
-          <div className="flex items-center gap-1">
-            <Layers className="h-3 w-3 text-muted-foreground" />
-            <span>{row.original.assignedClassesCount}</span>
+          <div className="flex items-center gap-2">
+            <div className="p-1 rounded bg-muted/20">
+              <Layers className="h-3.5 w-3.5 text-muted-foreground" />
+            </div>
+            <span className="font-medium tabular-nums">{row.original.assignedClassesCount}</span>
           </div>
         ),
       },
@@ -156,7 +163,13 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
         cell: ({ row }) => {
           const status = row.original.classroom.status
           return (
-            <Badge variant={status === 'active' ? 'default' : 'secondary'}>
+            <Badge
+              variant={status === 'active' ? 'default' : 'secondary'}
+              className={`rounded-lg capitalize transition-colors ${status === 'active'
+                ? 'bg-primary/10 text-primary hover:bg-primary/20 border-primary/20'
+                : 'bg-muted text-muted-foreground'
+              }`}
+            >
               {status === 'active' ? 'Actif' : status === 'maintenance' ? 'Maintenance' : 'Inactif'}
             </Badge>
           )
@@ -167,20 +180,20 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
         cell: ({ row }) => (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="backdrop-blur-xl bg-card/95 border-border/40 shadow-xl rounded-xl p-1">
               <DropdownMenuItem
+                className="rounded-lg cursor-pointer focus:bg-primary/10 font-medium"
                 onClick={() => navigate({ to: `/spaces/classrooms/${row.original.classroom.id}` })}
               >
-                <Eye className="mr-2 h-4 w-4" />
+                <Eye className="mr-2 h-4 w-4 text-muted-foreground" />
                 {t.common.view()}
               </DropdownMenuItem>
-              {/* Add Edit later when dialog support is better */}
               <DropdownMenuItem
-                className="text-destructive"
+                className="text-destructive focus:bg-destructive/10 focus:text-destructive rounded-lg cursor-pointer font-medium"
                 onClick={() => setItemToDelete(row.original)}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
@@ -207,41 +220,44 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
   })
 
   if (isLoading) {
-    return <TableSkeleton columns={6} rows={5} />
+    return (
+      <Card className="border-border/40 bg-card/40 backdrop-blur-xl">
+        <CardContent className="p-6">
+          <TableSkeleton columns={6} rows={5} />
+        </CardContent>
+      </Card>
+    )
   }
 
   const hasNoData = !data || data.length === 0
   const hasNoResults = hasNoData && debouncedSearch
 
   return (
-    <div className="space-y-4">
-      <Card>
-        <CardHeader>
-          <CardTitle>{t.spaces.title()}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-4 mb-4">
-            <div className="relative flex-1">
+    <div className="space-y-6">
+      <Card className="border-border/40 bg-card/40 backdrop-blur-xl overflow-hidden shadow-sm">
+        <CardHeader className="border-b border-border/40 bg-muted/5 pb-4">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg font-bold">{t.spaces.title()}</CardTitle>
+            <div className="relative w-full max-w-sm">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder={t.common.search()}
                 value={searchInput}
                 onChange={e => setSearchInput(e.target.value)}
-                className="pl-9"
+                className="pl-9 h-9 rounded-xl border-border/40 bg-background/50 focus:bg-background transition-colors"
               />
             </div>
           </div>
-
-          {hasNoData && !hasNoResults && (
-            <Empty>
-              <EmptyHeader>
-                <EmptyMedia variant="icon">
-                  <Layers />
-                </EmptyMedia>
-                <EmptyTitle>{t.tables.noClassroomsFound()}</EmptyTitle>
-                <EmptyDescription>{t.tables.createFirstClassroom()}</EmptyDescription>
-              </EmptyHeader>
-            </Empty>
+        </CardHeader>
+        <CardContent className="p-0">
+          {(hasNoData && !hasNoResults) && (
+            <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground border-b border-border/40 bg-card/10">
+              <div className="p-4 rounded-full bg-muted/20 mb-4">
+                <Building2 className="size-8 text-muted-foreground/50" />
+              </div>
+              <p className="text-lg font-medium">{t.tables.noClassroomsFound()}</p>
+              <p className="text-sm max-w-sm mt-1 text-muted-foreground/70">{t.tables.createFirstClassroom()}</p>
+            </div>
           )}
 
           {hasNoResults && (
@@ -257,59 +273,117 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
           )}
 
           {!hasNoData && (
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  {table.getHeaderGroups().map(headerGroup => (
-                    <TableRow key={headerGroup.id}>
-                      {headerGroup.headers.map(header => (
-                        <TableHead key={header.id}>
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )}
-                        </TableHead>
+            <>
+              <div className="hidden md:block">
+                <Table>
+                  <TableHeader className="bg-muted/50">
+                    {table.getHeaderGroups().map(headerGroup => (
+                      <TableRow key={headerGroup.id} className="hover:bg-transparent border-border/40">
+                        {headerGroup.headers.map(header => (
+                          <TableHead key={header.id} className="font-semibold text-muted-foreground">
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext(),
+                                )}
+                          </TableHead>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableHeader>
+                  <TableBody>
+                    <AnimatePresence>
+                      {table.getRowModel().rows.map((row, index) => (
+                        <motion.tr
+                          key={row.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.15, delay: index * 0.03 }}
+                          className="group hover:bg-muted/30 border-border/40 transition-colors"
+                        >
+                          {row.getVisibleCells().map(cell => (
+                            <TableCell key={cell.id}>
+                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                            </TableCell>
+                          ))}
+                        </motion.tr>
                       ))}
-                    </TableRow>
-                  ))}
-                </TableHeader>
-                <TableBody>
-                  {table.getRowModel().rows.map((row, index) => (
-                    <motion.tr
-                      key={row.id}
+                    </AnimatePresence>
+                  </TableBody>
+                </Table>
+              </div>
+
+              <div className="md:hidden space-y-4 p-4">
+                <AnimatePresence>
+                  {data?.map((item, index) => (
+                    <motion.div
+                      key={item.classroom.id}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.15, delay: index * 0.03 }}
-                      className="hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors"
+                      transition={{ delay: index * 0.05 }}
+                      className="p-4 rounded-2xl bg-card/50 border border-border/40 backdrop-blur-md space-y-3"
                     >
-                      {row.getVisibleCells().map(cell => (
-                        <TableCell key={cell.id}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                      ))}
-                    </motion.tr>
+                      <div className="flex justify-between items-start">
+                        <div className="flex items-center gap-2">
+                          <div className="font-mono text-xs font-bold text-muted-foreground bg-muted/20 px-2 py-1 rounded-md">{item.classroom.code}</div>
+                          <Badge
+                            variant={item.classroom.status === 'active' ? 'default' : 'secondary'}
+                            className="capitalize rounded-md text-[10px]"
+                          >
+                            {item.classroom.status === 'active' ? 'Actif' : 'Inactif'}
+                          </Badge>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 rounded-lg -mr-2 -mt-2 text-muted-foreground"
+                          onClick={() => navigate({ to: `/spaces/classrooms/${item.classroom.id}` })}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </div>
+
+                      <div>
+                        <div className="font-bold text-lg">{item.classroom.name}</div>
+                        <Badge variant="outline" className="mt-1 font-medium text-xs capitalize">
+                          {item.classroom.type}
+                        </Badge>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3 pt-2">
+                        <div className="p-2 rounded-xl bg-muted/20 flex flex-col items-center justify-center text-center">
+                          <Users className="h-4 w-4 text-muted-foreground mb-1" />
+                          <span className="text-xs text-muted-foreground">Capacité</span>
+                          <span className="font-bold">{item.classroom.capacity}</span>
+                        </div>
+                        <div className="p-2 rounded-xl bg-muted/20 flex flex-col items-center justify-center text-center">
+                          <Layers className="h-4 w-4 text-muted-foreground mb-1" />
+                          <span className="text-xs text-muted-foreground">Classes</span>
+                          <span className="font-bold">{item.assignedClassesCount}</span>
+                        </div>
+                      </div>
+                    </motion.div>
                   ))}
-                </TableBody>
-              </Table>
-            </div>
+                </AnimatePresence>
+              </div>
+            </>
           )}
 
           {!hasNoData && table.getPageCount() > 1 && (
-            <div className="flex items-center justify-between mt-4">
-              <div className="text-sm text-muted-foreground">
+            <div className="flex items-center justify-between p-4 border-t border-border/40 bg-muted/5">
+              <div className="text-sm text-muted-foreground font-medium">
                 {t.common.showing()}
                 {' '}
-                {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1}
+                <span className="font-bold text-foreground">{table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1}</span>
                 {' '}
                 -
                 {' '}
-                {Math.min((table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize, data.length)}
+                <span className="font-bold text-foreground">{Math.min((table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize, data.length)}</span>
                 {' '}
                 {t.common.of()}
                 {' '}
-                {data.length}
+                <span className="font-bold text-foreground">{data.length}</span>
               </div>
               <div className="flex gap-2">
                 <Button
@@ -317,6 +391,7 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
                   size="sm"
                   onClick={() => table.previousPage()}
                   disabled={!table.getCanPreviousPage()}
+                  className="rounded-lg h-8"
                 >
                   {t.common.previous()}
                 </Button>
@@ -325,30 +400,30 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
                   size="sm"
                   onClick={() => table.nextPage()}
                   disabled={!table.getCanNextPage()}
+                  className="rounded-lg h-8"
                 >
                   {t.common.next()}
                 </Button>
               </div>
             </div>
           )}
-
         </CardContent>
       </Card>
 
       <AlertDialog open={!!itemToDelete} onOpenChange={open => !open && setItemToDelete(null)}>
-        <AlertDialogContent>
+        <AlertDialogContent className="backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6">
           <AlertDialogHeader>
-            <AlertDialogTitle>{t.dialogs.deleteConfirmation.title()}</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="text-xl font-bold">{t.dialogs.deleteConfirmation.title()}</AlertDialogTitle>
+            <AlertDialogDescription className="text-muted-foreground/80">
               {t.dialogs.deleteConfirmation.description({
                 item: itemToDelete ? itemToDelete.classroom.name : '',
               })}
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t.dialogs.deleteConfirmation.cancel()}</AlertDialogCancel>
+          <AlertDialogFooter className="mt-4">
+            <AlertDialogCancel className="rounded-xl border-border/40">{t.dialogs.deleteConfirmation.cancel()}</AlertDialogCancel>
             <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className="rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-lg shadow-destructive/20"
               onClick={handleDelete}
             >
               {t.dialogs.deleteConfirmation.delete()}

@@ -193,7 +193,7 @@ export function PhotoUploadDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] backdrop-blur-xl bg-card/95 border-border/40">
         <DialogHeader>
           <DialogTitle>{t.students.uploadPhoto()}</DialogTitle>
           <DialogDescription>
@@ -212,7 +212,7 @@ export function PhotoUploadDialog({
                     </AvatarFallback>
                   </Avatar>
 
-                  <label className="flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-8 transition-colors hover:border-primary hover:bg-muted/50">
+                  <label className="flex w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-border/40 bg-card/30 p-8 transition-all hover:border-primary hover:bg-card/50 hover:shadow-sm">
                     <Upload className="h-10 w-10 text-muted-foreground mb-4" />
                     <p className="font-medium text-lg">{t.students.clickToUpload()}</p>
                     <p className="text-sm text-muted-foreground text-center mt-2 max-w-xs">{t.students.photoRequirements()}</p>
@@ -227,7 +227,7 @@ export function PhotoUploadDialog({
               )
             : (
                 <div className="space-y-6">
-                  <div className="flex justify-center bg-black/5 rounded-lg overflow-hidden p-4">
+                  <div className="flex justify-center bg-card/50 backdrop-blur-sm rounded-xl overflow-hidden p-4 border border-border/20">
                     <ReactCrop
                       crop={crop}
                       onChange={(_, percentCrop) => setCrop(percentCrop)}

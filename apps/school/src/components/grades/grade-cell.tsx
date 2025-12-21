@@ -1,10 +1,12 @@
 import type { GradeStatus } from '@/schemas/grade'
+import { AlertCircle } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useCallback, useRef, useState } from 'react'
 import { Input } from '@/components/ui/input'
-
 import {
   Tooltip,
   TooltipContent,
+  TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { useTranslations } from '@/i18n'
@@ -21,22 +23,22 @@ interface GradeCellProps {
 }
 
 const statusStyles: Record<GradeStatus, string> = {
-  draft: 'bg-background border-input',
-  submitted: 'bg-blue-50 border-blue-200 dark:bg-blue-950/20 dark:border-blue-800',
-  validated: 'bg-green-50 border-green-200 dark:bg-green-950/20 dark:border-green-800',
-  rejected: 'bg-red-50 border-red-200 dark:bg-red-950/20 dark:border-red-800',
+  draft: 'bg-background/50 border-border/40 focus:bg-background',
+  submitted: 'bg-blue-500/5 border-blue-500/20 text-blue-600',
+  validated: 'bg-emerald-500/5 border-emerald-500/20 text-emerald-600',
+  rejected: 'bg-destructive/5 border-destructive/20 text-destructive',
 }
 
 function getValueColor(value: number | null): string {
   if (value === null)
     return ''
   if (value >= 16)
-    return 'text-green-600 dark:text-green-400'
+    return 'text-emerald-600 font-bold'
   if (value >= 14)
-    return 'text-emerald-600 dark:text-emerald-400'
+    return 'text-indigo-600 font-bold'
   if (value >= 10)
-    return 'text-foreground'
-  return 'text-red-600 dark:text-red-400'
+    return 'text-foreground font-semibold'
+  return 'text-destructive font-bold'
 }
 
 export function GradeCell({
@@ -49,9 +51,9 @@ export function GradeCell({
   className,
 }: GradeCellProps) {
   const t = useTranslations()
-  // Use value as initial state - component should be keyed by studentId for proper reset
   const [localValue, setLocalValue] = useState(() => value?.toString() ?? '')
   const [error, setError] = useState<string | null>(null)
+  const [isFocused, setIsFocused] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const validateAndUpdate = useCallback((inputValue: string) => {
@@ -72,7 +74,6 @@ export function GradeCell({
       return
     }
 
-    // Check quarter points
     if ((numValue * 4) % 1 !== 0) {
       setError(t.academic.grades.errors.invalidGrade())
       return
@@ -88,6 +89,7 @@ export function GradeCell({
   }
 
   const handleBlur = () => {
+    setIsFocused(false)
     validateAndUpdate(localValue)
     onBlur?.()
   }
@@ -98,7 +100,6 @@ export function GradeCell({
     if (e.key === 'Enter' || e.key === 'ArrowDown') {
       e.preventDefault()
       validateAndUpdate(localValue)
-      // Move to next row
       const nextInput = currentRow?.nextElementSibling?.querySelector('input[type="text"]')
       if (nextInput instanceof HTMLInputElement) {
         nextInput.focus()
@@ -109,7 +110,6 @@ export function GradeCell({
     if (e.key === 'ArrowUp') {
       e.preventDefault()
       validateAndUpdate(localValue)
-      // Move to previous row
       const prevInput = currentRow?.previousElementSibling?.querySelector('input[type="text"]')
       if (prevInput instanceof HTMLInputElement) {
         prevInput.focus()
@@ -122,7 +122,6 @@ export function GradeCell({
     }
 
     if (e.key === 'Escape') {
-      // Reset to original value
       setLocalValue(value?.toString() ?? '')
       setError(null)
       inputRef.current?.blur()
@@ -132,47 +131,76 @@ export function GradeCell({
   const isEditable = !disabled && (status === 'draft' || status === 'rejected')
 
   const cell = (
-    <div className={cn('relative', className)}>
-      <Input
-        ref={inputRef}
-        type="text"
-        inputMode="decimal"
-        value={localValue}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        onKeyDown={handleKeyDown}
-        disabled={!isEditable}
-        className={cn(
-          'h-9 w-16 text-center font-mono text-sm',
-          statusStyles[status],
-          getValueColor(value),
-          error && 'border-red-500 focus-visible:ring-red-500',
+    <div className={cn('relative group', className)}>
+      <motion.div
+        animate={isFocused ? { scale: 1.05 } : { scale: 1 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      >
+        <Input
+          ref={inputRef}
+          type="text"
+          inputMode="decimal"
+          value={localValue}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          onFocus={() => setIsFocused(true)}
+          onKeyDown={handleKeyDown}
+          disabled={!isEditable}
+          className={cn(
+            'h-10 w-20 text-center font-mono text-sm transition-all focus-visible:ring-primary/30 rounded-lg shadow-sm',
+            statusStyles[status],
+            !isFocused && getValueColor(value),
+            error && 'border-destructive focus-visible:ring-destructive/30',
+            !isEditable && 'cursor-not-allowed opacity-80 backdrop-blur-none bg-muted/30',
+          )}
+          aria-label={t.ui.grade()}
+          aria-invalid={!!error}
+        />
+      </motion.div>
+
+      <AnimatePresence>
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -5 }}
+            className="absolute -bottom-6 left-0 z-50 pointer-events-none"
+          >
+            <div className="bg-destructive text-destructive-foreground text-[10px] font-bold px-2 py-0.5 rounded shadow-lg border border-white/10 uppercase tracking-tight whitespace-nowrap">
+              {error}
+            </div>
+          </motion.div>
         )}
-        aria-label={t.ui.grade()}
-        aria-invalid={!!error}
-      />
-      {error && (
-        <p className="absolute -bottom-5 left-0 text-xs text-red-500">
-          {error}
-        </p>
+      </AnimatePresence>
+
+      {status === 'rejected' && !isFocused && !error && (
+        <div className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-destructive text-destructive-foreground border-2 border-background flex items-center justify-center shadow-lg">
+          <AlertCircle className="h-2.5 w-2.5" />
+        </div>
       )}
     </div>
   )
 
   if (status === 'rejected' && rejectionReason) {
     return (
-      <Tooltip>
-        <TooltipTrigger asChild>
-          {cell}
-        </TooltipTrigger>
-        <TooltipContent side="top" className="max-w-xs">
-          <p className="text-sm font-medium">
-            {t.academic.grades.validations.rejectReason()}
-            :
-          </p>
-          <p className="text-sm text-muted-foreground">{rejectionReason}</p>
-        </TooltipContent>
-      </Tooltip>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            {cell}
+          </TooltipTrigger>
+          <TooltipContent side="top" className="max-w-xs rounded-xl backdrop-blur-xl bg-destructive/90 text-destructive-foreground border-none p-4 shadow-xl">
+            <div className="flex items-start gap-2">
+              <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wider mb-1">
+                  {t.academic.grades.validations.rejectReason()}
+                </p>
+                <p className="text-sm leading-relaxed">{rejectionReason}</p>
+              </div>
+            </div>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     )
   }
 

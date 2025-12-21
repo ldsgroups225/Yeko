@@ -103,10 +103,10 @@ export function FeeTypeFormDialog({ open, onOpenChange }: FeeTypeFormDialogProps
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6">
         <DialogHeader>
-          <DialogTitle>{t.finance.feeTypes.create()}</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-xl font-bold">{t.finance.feeTypes.create()}</DialogTitle>
+          <DialogDescription className="text-muted-foreground/80">
             {t.finance.feeTypes.createDescription()}
           </DialogDescription>
         </DialogHeader>
@@ -119,13 +119,13 @@ export function FeeTypeFormDialog({ open, onOpenChange }: FeeTypeFormDialogProps
                 name="code"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
+                    <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
                       {t.common.code()}
                       {' '}
                       *
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder={t.finance.feeTypes.placeholders.code()} />
+                      <Input {...field} placeholder={t.finance.feeTypes.placeholders.code()} className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -137,20 +137,20 @@ export function FeeTypeFormDialog({ open, onOpenChange }: FeeTypeFormDialogProps
                 name="category"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
+                    <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
                       {t.finance.feeTypes.category()}
                       {' '}
                       *
                     </FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors">
                           <SelectValue />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
+                      <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">
                         {feeCategories.map(cat => (
-                          <SelectItem key={cat} value={cat}>
+                          <SelectItem key={cat} value={cat} className="rounded-lg cursor-pointer focus:bg-primary/10">
                             {feeCategoryLabels[cat]}
                           </SelectItem>
                         ))}
@@ -167,13 +167,13 @@ export function FeeTypeFormDialog({ open, onOpenChange }: FeeTypeFormDialogProps
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
+                  <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
                     {t.common.name()}
                     {' '}
                     *
                   </FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder={t.finance.feeTypes.placeholders.name()} />
+                    <Input {...field} placeholder={t.finance.feeTypes.placeholders.name()} className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -185,11 +185,11 @@ export function FeeTypeFormDialog({ open, onOpenChange }: FeeTypeFormDialogProps
               name="nameEn"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t.common.nameEn()}</FormLabel>
+                  <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">{t.common.nameEn()}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder={t.finance.feeTypes.placeholders.nameEn()} />
+                    <Input {...field} placeholder={t.finance.feeTypes.placeholders.nameEn()} className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors" />
                   </FormControl>
-                  <FormDescription>
+                  <FormDescription className="text-[11px]">
                     {t.common.optionalEnglishName()}
                   </FormDescription>
                   <FormMessage />
@@ -202,28 +202,29 @@ export function FeeTypeFormDialog({ open, onOpenChange }: FeeTypeFormDialogProps
               name="displayOrder"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t.common.displayOrder()}</FormLabel>
+                  <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">{t.common.displayOrder()}</FormLabel>
                   <FormControl>
-                    <Input type="number" min={0} {...field} />
+                    <Input type="number" min={0} {...field} className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <div className="flex gap-6">
+            <div className="flex gap-6 pt-2">
               <FormField
                 control={form.control}
                 name="isMandatory"
                 render={({ field }) => (
-                  <FormItem className="flex items-center gap-2 space-y-0">
+                  <FormItem className="flex items-center gap-3 space-y-0 rounded-xl border border-border/40 p-3 bg-muted/10">
                     <FormControl>
                       <Checkbox
                         checked={field.value}
                         onCheckedChange={field.onChange}
+                        className="data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground border-border/60 rounded-md"
                       />
                     </FormControl>
-                    <FormLabel className="font-normal">
+                    <FormLabel className="font-medium cursor-pointer">
                       {t.finance.feeTypes.mandatory()}
                     </FormLabel>
                   </FormItem>
@@ -234,14 +235,15 @@ export function FeeTypeFormDialog({ open, onOpenChange }: FeeTypeFormDialogProps
                 control={form.control}
                 name="isRecurring"
                 render={({ field }) => (
-                  <FormItem className="flex items-center gap-2 space-y-0">
+                  <FormItem className="flex items-center gap-3 space-y-0 rounded-xl border border-border/40 p-3 bg-muted/10">
                     <FormControl>
                       <Checkbox
                         checked={field.value}
                         onCheckedChange={field.onChange}
+                        className="data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground border-border/60 rounded-md"
                       />
                     </FormControl>
-                    <FormLabel className="font-normal">
+                    <FormLabel className="font-medium cursor-pointer">
                       {t.finance.feeTypes.recurring()}
                     </FormLabel>
                   </FormItem>
@@ -249,15 +251,16 @@ export function FeeTypeFormDialog({ open, onOpenChange }: FeeTypeFormDialogProps
               />
             </div>
 
-            <DialogFooter>
+            <DialogFooter className="pt-4">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => onOpenChange(false)}
+                className="rounded-xl border-border/40"
               >
                 {t.common.cancel()}
               </Button>
-              <Button type="submit" disabled={mutation.isPending}>
+              <Button type="submit" disabled={mutation.isPending} className="rounded-xl shadow-lg shadow-primary/20">
                 {mutation.isPending && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}

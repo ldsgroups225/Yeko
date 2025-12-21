@@ -1,19 +1,20 @@
 import { useQuery } from '@tanstack/react-query'
-import { BookOpen, Plus, Search } from 'lucide-react'
+import {
+  BookOpen,
+  Download,
+  Plus,
+  Search,
+  SlidersHorizontal,
+} from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
+import { toast } from 'sonner'
 import { TableSkeleton } from '@/components/hr/table-skeleton'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from '@/components/ui/empty'
 import { Input } from '@/components/ui/input'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import {
   Table,
   TableBody,
@@ -46,145 +47,158 @@ export function TeacherAssignmentList() {
   const hasNoData = teachers.length === 0
 
   return (
-    <>
-      <Card>
-        <CardHeader>
-          <CardTitle>{t.academic.assignments.listTitle()}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between gap-4 mb-4">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder={t.academic.assignments.searchPlaceholder()}
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                className="pl-10"
-              />
-            </div>
+    <div className="space-y-6">
+      {/* Filters & Actions - Glass Card */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col gap-4 rounded-xl border border-border/40 bg-card/50 p-4 backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between"
+      >
+        <div className="flex flex-1 gap-3">
+          <div className="relative max-w-sm flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder={t.academic.assignments.searchPlaceholder()}
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="border-border/40 bg-card/50 pl-9 transition-all focus:bg-card/80 shadow-none"
+            />
           </div>
 
-          {hasNoData
-            ? (
-                <Empty>
-                  <EmptyHeader>
-                    <EmptyMedia variant="icon">
-                      <BookOpen />
-                    </EmptyMedia>
-                    <EmptyTitle>{t.academic.assignments.noTeachers()}</EmptyTitle>
-                    <EmptyDescription>
-                      {search
-                        ? t.academic.assignments.adjustSearch()
-                        : t.academic.assignments.noTeachersForAssignment()}
-                    </EmptyDescription>
-                  </EmptyHeader>
-                </Empty>
-              )
-            : (
-                <div className="rounded-md border">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>{t.academic.assignments.teacher()}</TableHead>
-                        <TableHead>
-                          {t.academic.assignments.specialization()}
-                        </TableHead>
-                        <TableHead>
-                          {t.academic.assignments.assignedSubjects()}
-                        </TableHead>
-                        <TableHead className="text-right">
-                          {t.academic.assignments.actions()}
-                        </TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {teachers.map(teacher => (
-                        <TableRow key={teacher.id}>
-                          <TableCell>
-                            <div className="flex items-center gap-3">
-                              <Avatar className="h-9 w-9">
-                                <AvatarImage
-                                  src={teacher.user.avatarUrl || undefined}
-                                />
-                                <AvatarFallback>
-                                  {teacher.user.name.slice(0, 2).toUpperCase()}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div className="flex flex-col">
-                                <span className="font-medium">
-                                  {teacher.user.name}
-                                </span>
-                                <span className="text-xs text-muted-foreground">
-                                  {teacher.user.email}
-                                </span>
-                              </div>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="border-border/40 bg-card/50 backdrop-blur-sm shadow-none hover:bg-card/80">
+                <SlidersHorizontal className="mr-2 h-4 w-4" />
+                {t.common.actions()}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80 p-4 space-y-4 backdrop-blur-2xl bg-popover/90 border border-border/40" align="start">
+              <div className="pt-2 space-y-2">
+                <h4 className="font-medium leading-none text-muted-foreground text-xs mb-3 uppercase tracking-wider">{t.common.quickActions()}</h4>
+                <Button variant="ghost" className="w-full justify-start text-sm" onClick={() => toast.info(t.common.comingSoon())}>
+                  <Download className="mr-2 h-4 w-4" />
+                  {t.common.export()}
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
+      </motion.div>
+
+      <div className="rounded-xl border border-border/40 bg-card/40 backdrop-blur-xl overflow-hidden">
+        {hasNoData
+          ? (
+              <div className="flex flex-col items-center justify-center py-24 text-center">
+                <div className="rounded-full bg-white/10 p-6 backdrop-blur-xl mb-4">
+                  <BookOpen className="h-12 w-12 text-muted-foreground/50" />
+                </div>
+                <h3 className="text-lg font-semibold">{t.academic.assignments.noTeachers()}</h3>
+                <p className="mt-2 max-w-sm text-sm text-muted-foreground">
+                  {search
+                    ? t.academic.assignments.adjustSearch()
+                    : t.academic.assignments.noTeachersForAssignment()}
+                </p>
+              </div>
+            )
+          : (
+              <Table>
+                <TableHeader className="bg-card/20">
+                  <TableRow className="hover:bg-transparent border-border/40">
+                    <TableHead className="text-foreground font-semibold">{t.academic.assignments.teacher()}</TableHead>
+                    <TableHead className="text-foreground font-semibold">{t.academic.assignments.specialization()}</TableHead>
+                    <TableHead className="text-foreground font-semibold">{t.academic.assignments.assignedSubjects()}</TableHead>
+                    <TableHead className="w-[100px]" />
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <AnimatePresence>
+                    {teachers.map((teacher, index) => (
+                      <motion.tr
+                        key={teacher.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ delay: index * 0.02 }}
+                        className="border-border/10 group hover:bg-card/30 transition-colors"
+                      >
+                        <TableCell className="py-4">
+                          <div className="flex items-center gap-3">
+                            <Avatar className="h-10 w-10 border border-border/20">
+                              <AvatarImage src={teacher.user.avatarUrl || undefined} />
+                              <AvatarFallback>
+                                {teacher.user.name.slice(0, 2).toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex flex-col">
+                              <span className="font-medium text-foreground">
+                                {teacher.user.name}
+                              </span>
+                              <span className="text-xs text-muted-foreground">
+                                {teacher.user.email}
+                              </span>
                             </div>
-                          </TableCell>
-                          <TableCell>
-                            {teacher.specialization
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {teacher.specialization
+                            ? (
+                                <Badge variant="outline" className="bg-card/10 border-border/20">
+                                  {teacher.specialization}
+                                </Badge>
+                              )
+                            : (
+                                <span className="text-muted-foreground text-sm">-</span>
+                              )}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex flex-wrap gap-1">
+                            {(teacher.subjects)?.length > 0
                               ? (
-                                  <Badge variant="outline">
-                                    {teacher.specialization}
-                                  </Badge>
+                                  teacher.subjects.slice(0, 3).map((sub: string) => (
+                                    <Badge
+                                      key={`${teacher.id}-${sub}-${generateUUID()}`}
+                                      variant="secondary"
+                                      className="text-xs bg-card/30 border-0 shadow-none"
+                                    >
+                                      {sub}
+                                    </Badge>
+                                  ))
                                 )
                               : (
-                                  <span className="text-muted-foreground text-sm">
-                                    -
+                                  <span className="text-muted-foreground text-xs italic">
+                                    {t.academic.assignments.noSubjectsAssigned()}
                                   </span>
                                 )}
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex flex-wrap gap-1">
-                              {(teacher.subjects as any[])?.length > 0
-                                ? (
-                                    (teacher.subjects as any[]).slice(0, 3).map((
-                                      sub: string,
-                                    ) => (
-
-                                      <Badge
-                                        key={`${teacher.id}-${sub}-${generateUUID()}`}
-                                        variant="secondary"
-                                        className="text-xs"
-                                      >
-                                        {sub}
-                                      </Badge>
-                                    ))
-                                  )
-                                : (
-                                    <span className="text-muted-foreground text-xs italic">
-                                      {t.academic.assignments.noSubjectsAssigned()}
-                                    </span>
-                                  )}
-                              {(teacher.subjects as any[])?.length > 3 && (
-                                <Badge variant="secondary" className="text-xs">
-                                  +
-                                  {(teacher.subjects as any[]).length - 3}
-                                </Badge>
-                              )}
-                            </div>
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() =>
-                                setSelectedTeacher({
-                                  id: teacher.id,
-                                  name: teacher.user.name,
-                                })}
-                            >
-                              <Plus className="mr-2 h-3 w-3" />
-                              {t.academic.assignments.assign()}
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              )}
-        </CardContent>
-      </Card>
+                            {(teacher.subjects)?.length > 3 && (
+                              <Badge variant="secondary" className="text-xs bg-card/30 border-0 shadow-none">
+                                +
+                                {teacher.subjects.length - 3}
+                              </Badge>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="hover:bg-primary/10 hover:text-primary transition-colors"
+                            onClick={() =>
+                              setSelectedTeacher({
+                                id: teacher.id,
+                                name: teacher.user.name,
+                              })}
+                          >
+                            <Plus className="mr-2 h-3 w-3" />
+                            {t.academic.assignments.assign()}
+                          </Button>
+                        </TableCell>
+                      </motion.tr>
+                    ))}
+                  </AnimatePresence>
+                </TableBody>
+              </Table>
+            )}
+      </div>
 
       {selectedTeacher && (
         <TeacherAssignmentDialog
@@ -194,6 +208,6 @@ export function TeacherAssignmentList() {
           teacherName={selectedTeacher.name}
         />
       )}
-    </>
+    </div>
   )
 }

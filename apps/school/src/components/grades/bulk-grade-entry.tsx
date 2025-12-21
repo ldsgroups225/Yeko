@@ -1,9 +1,10 @@
 import type { GradeType } from '@/schemas/grade'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { FileSpreadsheet, Loader2, Upload } from 'lucide-react'
+import { FileSpreadsheet, Hash, Loader2, Upload, User } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-
 import {
   Dialog,
   DialogContent,
@@ -24,6 +25,7 @@ import {
 } from '@/components/ui/table'
 import { useTranslations } from '@/i18n'
 import { gradesKeys } from '@/lib/queries/grades'
+import { cn } from '@/lib/utils'
 import { createBulkGrades } from '@/school/functions/student-grades'
 
 interface Student {
@@ -111,76 +113,118 @@ export function BulkGradeEntry({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">
-          <FileSpreadsheet className="mr-2 size-4" />
-          {t.academic.grades.bulk.title()}
+        <Button variant="outline" className="rounded-xl border-border/40 bg-background/50 hover:bg-background shadow-sm h-10 px-4 group">
+          <FileSpreadsheet className="mr-2 size-4 text-primary transition-transform group-hover:scale-110" />
+          <span className="font-bold tracking-tight uppercase text-xs">{t.academic.grades.bulk.title()}</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-h-[80vh] max-w-2xl overflow-hidden">
-        <DialogHeader>
-          <DialogTitle>{t.academic.grades.bulk.title()}</DialogTitle>
-          <DialogDescription>
-            {t.academic.grades.bulk.description()}
-          </DialogDescription>
+      <DialogContent className="max-h-[90vh] max-w-2xl overflow-hidden rounded-3xl border-border/40 bg-popover/90 backdrop-blur-2xl shadow-2xl p-0">
+        <DialogHeader className="p-6 pb-0">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-inner">
+              <FileSpreadsheet className="size-5" />
+            </div>
+            <div>
+              <DialogTitle className="text-xl font-bold tracking-tight">{t.academic.grades.bulk.title()}</DialogTitle>
+              <DialogDescription className="text-xs font-medium text-muted-foreground uppercase tracking-widest opacity-70">
+                {t.academic.grades.bulk.description()}
+              </DialogDescription>
+            </div>
+          </div>
         </DialogHeader>
 
-        <div className="max-h-[50vh] overflow-y-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t.academic.grades.averages.student()}</TableHead>
-                <TableHead className="w-24">{t.academic.grades.averages.matricule()}</TableHead>
-                <TableHead className="w-28 text-center">{t.academic.grades.averages.average()}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {students.map(student => (
-                <TableRow key={student.id}>
-                  <TableCell className="font-medium">
-                    {student.lastName}
-                    {' '}
-                    {student.firstName}
-                  </TableCell>
-                  <TableCell className="font-mono text-sm text-muted-foreground">
-                    {student.matricule}
-                  </TableCell>
-                  <TableCell>
-                    <Input
-                      type="number"
-                      min={0}
-                      max={20}
-                      step={0.5}
-                      placeholder="--"
-                      className="h-8 w-20 text-center"
-                      value={entries.get(student.id) ?? ''}
-                      onChange={e => handleValueChange(student.id, e.target.value)}
-                      aria-label={`${t.academic.grades.averages.average()} ${student.lastName}`}
-                    />
-                  </TableCell>
+        <div className="px-6 py-4 overflow-hidden border-y border-border/20">
+          <div className="max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-b-border/40 hover:bg-transparent">
+                  <TableHead className="py-4">
+                    <div className="flex items-center gap-2">
+                      <User className="size-3.5 text-muted-foreground" />
+                      <span className="font-bold uppercase tracking-tight text-[10px]">{t.academic.grades.averages.student()}</span>
+                    </div>
+                  </TableHead>
+                  <TableHead className="w-24">
+                    <div className="flex items-center gap-2">
+                      <Hash className="size-3.5 text-muted-foreground" />
+                      <span className="font-bold uppercase tracking-tight text-[10px]">{t.academic.grades.averages.matricule()}</span>
+                    </div>
+                  </TableHead>
+                  <TableHead className="w-32 text-center">
+                    <span className="font-bold uppercase tracking-tight text-[10px]">{t.academic.grades.averages.average()}</span>
+                  </TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                <AnimatePresence mode="popLayout">
+                  {students.map((student, index) => (
+                    <motion.tr
+                      key={student.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.02 }}
+                      className="group border-b border-border/10 last:border-0 hover:bg-primary/5 transition-colors"
+                    >
+                      <TableCell className="py-4 font-bold text-sm text-foreground">
+                        {student.lastName}
+                        {' '}
+                        {student.firstName}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="font-mono text-[9px] font-bold tracking-widest bg-muted/40 border-border/20 rounded-md">
+                          {student.matricule}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="flex justify-center py-4">
+                        <Input
+                          type="number"
+                          min={0}
+                          max={20}
+                          step={0.5}
+                          placeholder="--"
+                          className={cn(
+                            'h-10 w-24 text-center font-mono text-sm rounded-xl border-border/40 transition-all focus-visible:ring-primary/30 group-hover:bg-background',
+                            entries.get(student.id) !== undefined && entries.get(student.id) !== null && 'border-primary/40 bg-primary/5 font-bold',
+                          )}
+                          value={entries.get(student.id) ?? ''}
+                          onChange={e => handleValueChange(student.id, e.target.value)}
+                          aria-label={`${t.academic.grades.averages.average()} ${student.lastName}`}
+                        />
+                      </TableCell>
+                    </motion.tr>
+                  ))}
+                </AnimatePresence>
+              </TableBody>
+            </Table>
+          </div>
         </div>
 
-        <DialogFooter className="flex-col gap-2 sm:flex-row sm:justify-between">
-          <p className="text-sm text-muted-foreground">
-            {t.academic.grades.bulk.filled({ count: filledCount, total: students.length })}
-          </p>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={() => setOpen(false)}>
+        <DialogFooter className="p-6 bg-muted/20 sm:flex-row sm:justify-between sm:items-center gap-4">
+          <div className="flex items-center gap-2">
+            <div className={cn(
+              'flex h-8 px-3 items-center gap-2 rounded-full border text-[10px] font-bold uppercase tracking-widest shadow-sm transition-all',
+              filledCount > 0 ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600' : 'bg-muted/50 border-border/40 text-muted-foreground',
+            )}
+            >
+              <div className={cn('size-2 rounded-full animate-pulse', filledCount > 0 ? 'bg-emerald-500' : 'bg-muted-foreground/40')} />
+              {t.academic.grades.bulk.filled({ count: filledCount, total: students.length })}
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <Button variant="ghost" onClick={() => setOpen(false)} className="rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-background/80">
               {t.common.cancel()}
             </Button>
             <Button
               onClick={handleSubmit}
               disabled={filledCount === 0 || createMutation.isPending}
+              className="rounded-xl font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 px-6"
             >
               {createMutation.isPending
                 ? (
-                    <Loader2 className="mr-2 size-4 animate-spin" />
+                    <Loader2 className="mr-2 size-3.5 animate-spin" />
                   )
                 : (
-                    <Upload className="mr-2 size-4" />
+                    <Upload className="mr-2 size-3.5" />
                   )}
               {t.common.save()}
             </Button>

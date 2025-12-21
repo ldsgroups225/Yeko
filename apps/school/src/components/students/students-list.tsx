@@ -1,6 +1,7 @@
 'use client'
 
 import type { StudentFilters } from '@/lib/queries/students'
+import type { getStudents } from '@/school/functions/students'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate } from '@tanstack/react-router'
 import {
@@ -12,20 +13,23 @@ import {
   MoreHorizontal,
   Plus,
   Search,
+  SlidersHorizontal,
   Trash2,
   Upload,
   Users,
   UserX,
   Wand2,
+  X,
 } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
-import { toast } from 'sonner'
 
+import { toast } from 'sonner'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 
+import { Checkbox } from '@/components/ui/checkbox'
 import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog'
 import {
   DropdownMenu,
@@ -34,6 +38,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
@@ -57,11 +67,47 @@ const statusColors = {
 }
 
 type StudentStatus = 'active' | 'graduated' | 'transferred' | 'withdrawn'
+type StudentItem = Awaited<ReturnType<typeof getStudents>>['data'][number]
 
 export function StudentsList() {
   const t = useTranslations()
   const queryClient = useQueryClient()
   const navigate = useNavigate()
+
+  const [search, setSearch] = useState('')
+  const [status, setStatus] = useState<string>('')
+  const [gender, setGender] = useState<string>('')
+  const [page, setPage] = useState(1)
+  const [selectedStudent, setSelectedStudent] = useState<StudentItem | null>(null)
+  const [selectedRows, setSelectedRows] = useState<string[]>([])
+
+  // Dialog states
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [statusDialogOpen, setStatusDialogOpen] = useState(false)
+  const [reEnrollDialogOpen, setReEnrollDialogOpen] = useState(false)
+  const [importDialogOpen, setImportDialogOpen] = useState(false)
+  const [autoMatchDialogOpen, setAutoMatchDialogOpen] = useState(false)
+  const [isExporting, setIsExporting] = useState(false)
+
+  const debouncedSearch = useDebounce(search, 500)
+
+  const filters = {
+    search: debouncedSearch || undefined,
+    status: status as StudentFilters['status'] || undefined,
+    gender: gender as StudentFilters['gender'] || undefined,
+    page,
+    limit: 20,
+  }
+
+  const isFiltered = !!search || (!!status && status !== 'all') || (!!gender && gender !== 'all')
+
+  const handleClearFilters = () => {
+    setSearch('')
+    setStatus('')
+    setGender('')
+  }
+
+  const { data, isLoading, error } = useQuery(studentsOptions.list(filters))
 
   const getStudentStatusLabel = (value: string) => {
     switch (value) {
@@ -78,29 +124,25 @@ export function StudentsList() {
     }
   }
 
-  const [search, setSearch] = useState('')
-  const [status, setStatus] = useState<string>('')
-  const [gender, setGender] = useState<string>('')
-  const [page, setPage] = useState(1)
-  const [selectedStudent, setSelectedStudent] = useState<any>(null)
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [statusDialogOpen, setStatusDialogOpen] = useState(false)
-  const [reEnrollDialogOpen, setReEnrollDialogOpen] = useState(false)
-  const [importDialogOpen, setImportDialogOpen] = useState(false)
-  const [autoMatchDialogOpen, setAutoMatchDialogOpen] = useState(false)
-  const [isExporting, setIsExporting] = useState(false)
-
-  const debouncedSearch = useDebounce(search, 500)
-
-  const filters: StudentFilters = {
-    search: debouncedSearch || undefined,
-    status: status as StudentFilters['status'] || undefined,
-    gender: gender as StudentFilters['gender'] || undefined,
-    page,
-    limit: 20,
+  const handleSelectAll = (checked: boolean) => {
+    if (checked && data?.data) {
+      setSelectedRows(data.data.map(item => item.student.id))
+    }
+    else {
+      setSelectedRows([])
+    }
   }
 
-  const { data, isLoading, error } = useQuery(studentsOptions.list(filters))
+  const handleSelectRow = (id: string, checked: boolean) => {
+    if (checked) {
+      setSelectedRows(prev => [...prev, id])
+    }
+    else {
+      setSelectedRows(prev => prev.filter(rowId => rowId !== id))
+    }
+  }
+
+  // Filters are now calculated in useQuery directly to avoid hoisting issues
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteStudent({ data: id }),
@@ -127,12 +169,12 @@ export function StudentsList() {
     },
   })
 
-  const handleDelete = (student: any) => {
+  const handleDelete = (student: StudentItem) => {
     setSelectedStudent(student)
     setDeleteDialogOpen(true)
   }
 
-  const handleStatusChange = (student: any) => {
+  const handleStatusChange = (student: StudentItem) => {
     setSelectedStudent(student)
     setStatusDialogOpen(true)
   }
@@ -148,7 +190,7 @@ export function StudentsList() {
       }
 
       // Export to Excel with translated column names
-      const excelBuffer = exportStudentsToExcel(exportData as any, {
+      const excelBuffer = exportStudentsToExcel(exportData, {
         matricule: t.students.matricule(),
         lastName: t.students.lastName(),
         firstName: t.students.firstName(),
@@ -195,75 +237,133 @@ export function StudentsList() {
   }
 
   return (
-    <div className="space-y-4">
-      {/* Filters */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-1 gap-2">
+    <div className="space-y-6">
+      {/* Filters & Actions - Glass Card */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col gap-4 rounded-xl border border-border/40 bg-card/50 p-4 backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between"
+      >
+        <div className="flex flex-1 gap-3">
           <div className="relative max-w-sm flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder={t.students.searchPlaceholder()}
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="pl-9"
+              className="border-border/40 bg-card/50 pl-9 transition-all focus:bg-card/80 shadow-none"
             />
           </div>
 
-          <Select value={status} onValueChange={setStatus}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder={t.students.status()} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">{t.common.all()}</SelectItem>
-              <SelectItem value="active">{t.students.statusActive()}</SelectItem>
-              <SelectItem value="graduated">{t.students.statusGraduated()}</SelectItem>
-              <SelectItem value="transferred">{t.students.statusTransferred()}</SelectItem>
-              <SelectItem value="withdrawn">{t.students.statusWithdrawn()}</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select value={gender} onValueChange={setGender}>
-            <SelectTrigger className="w-[120px]">
-              <SelectValue placeholder={t.students.gender()} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">{t.common.all()}</SelectItem>
-              <SelectItem value="M">{t.students.male()}</SelectItem>
-              <SelectItem value="F">{t.students.female()}</SelectItem>
-            </SelectContent>
-          </Select>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="border-border/40 bg-card/50 backdrop-blur-sm shadow-none hover:bg-card/80">
+                <SlidersHorizontal className="mr-2 h-4 w-4" />
+                {t.common.actions()}
+                {(status || gender) && (
+                  <Badge variant="secondary" className="ml-2 h-5 rounded-full px-1.5 text-xs">
+                    {Number(!!status) + Number(!!gender)}
+                  </Badge>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80 p-4 space-y-4 backdrop-blur-2xl bg-popover/90 border border-border/40" align="start">
+              <div className="space-y-2">
+                <h4 className="font-medium leading-none text-muted-foreground text-xs mb-3 uppercase tracking-wider">{t.common.filters()}</h4>
+                <Label>{t.students.status()}</Label>
+                <Select value={status} onValueChange={setStatus}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder={t.students.status()} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{t.common.all()}</SelectItem>
+                    <SelectItem value="active">{t.students.statusActive()}</SelectItem>
+                    <SelectItem value="graduated">{t.students.statusGraduated()}</SelectItem>
+                    <SelectItem value="transferred">{t.students.statusTransferred()}</SelectItem>
+                    <SelectItem value="withdrawn">{t.students.statusWithdrawn()}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>{t.students.gender()}</Label>
+                <Select value={gender} onValueChange={setGender}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder={t.students.gender()} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{t.common.all()}</SelectItem>
+                    <SelectItem value="M">{t.students.male()}</SelectItem>
+                    <SelectItem value="F">{t.students.female()}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              {(status || gender) && (
+                <Button
+                  variant="ghost"
+                  className="w-full text-muted-foreground"
+                  onClick={() => {
+                    setStatus('')
+                    setGender('')
+                  }}
+                >
+                  {t.students.clearFilters()}
+                </Button>
+              )}
+              <div className="pt-4 border-t border-border/40 space-y-2">
+                <h4 className="font-medium leading-none text-muted-foreground text-xs mb-3 uppercase tracking-wider">{t.common.quickActions()}</h4>
+                <Button variant="ghost" onClick={() => setAutoMatchDialogOpen(true)} className="w-full justify-start">
+                  <Wand2 className="mr-2 h-4 w-4" />
+                  {t.students.autoMatch()}
+                </Button>
+                <Button variant="ghost" onClick={() => setReEnrollDialogOpen(true)} className="w-full justify-start">
+                  <Users className="mr-2 h-4 w-4" />
+                  {t.students.bulkReEnroll()}
+                </Button>
+                <Button variant="ghost" onClick={() => setImportDialogOpen(true)} className="w-full justify-start">
+                  <Upload className="mr-2 h-4 w-4" />
+                  {t.common.import()}
+                </Button>
+                <Button variant="ghost" onClick={handleExport} disabled={isExporting} className="w-full justify-start">
+                  <Download className="mr-2 h-4 w-4" />
+                  {isExporting ? t.common.exporting() : t.common.export()}
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
+          {isFiltered && (
+            <Button
+              variant="ghost"
+              onClick={handleClearFilters}
+              className="h-10 px-3 text-muted-foreground hover:text-foreground hover:bg-white/20 dark:hover:bg-white/10"
+            >
+              <X className="mr-2 h-4 w-4" />
+              {t.students.clearFilters()}
+            </Button>
+          )}
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" size="sm" onClick={() => setAutoMatchDialogOpen(true)}>
-            <Wand2 className="mr-2 h-4 w-4" />
-            {t.students.autoMatch()}
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => setReEnrollDialogOpen(true)}>
-            <Users className="mr-2 h-4 w-4" />
-            {t.students.bulkReEnroll()}
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => setImportDialogOpen(true)}>
-            <Upload className="mr-2 h-4 w-4" />
-            {t.common.import()}
-          </Button>
-          <Button variant="outline" size="sm" onClick={handleExport} disabled={isExporting}>
-            <Download className="mr-2 h-4 w-4" />
-            {isExporting ? t.common.exporting() : t.common.export()}
-          </Button>
-          <Button size="sm" onClick={() => navigate({ to: '/students/new' })}>
+          {selectedRows.length > 0 && (
+            <Button variant="secondary" size="sm" className="bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 shadow-none">
+              {selectedRows.length}
+              {' '}
+              {t.common.selected()}
+            </Button>
+          )}
+
+          <Button size="sm" onClick={() => navigate({ to: '/students/new' })} className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm">
             <Plus className="mr-2 h-4 w-4" />
             {t.students.addStudent()}
           </Button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Mobile Card View */}
       <div className="space-y-3 md:hidden">
         {isLoading
           ? (
               Array.from({ length: 5 }, () => (
-                <div key={`card-skeleton-${generateUUID()}`} className="rounded-lg border p-4">
+                <div key={`card-skeleton-${generateUUID()}`} className="rounded-xl border border-white/10 bg-white/30 p-4 backdrop-blur-sm">
                   <div className="flex items-center gap-3">
                     <Skeleton className="h-12 w-12 rounded-full" />
                     <div className="flex-1 space-y-2">
@@ -277,8 +377,8 @@ export function StudentsList() {
             )
           : data?.data.length === 0
             ? (
-                <div className="flex min-h-[300px] flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
-                  <Users className="mx-auto h-12 w-12 text-muted-foreground" />
+                <div className="flex min-h-[300px] flex-col items-center justify-center rounded-xl border border-dashed border-white/20 bg-white/30 p-8 text-center backdrop-blur-sm">
+                  <Users className="mx-auto h-12 w-12 text-muted-foreground/50" />
                   <h3 className="mt-4 text-lg font-semibold">{t.students.noStudents()}</h3>
                   <p className="mt-2 max-w-sm text-sm text-muted-foreground">{t.students.noStudentsDescription()}</p>
                   <Button onClick={() => navigate({ to: '/students/new' })} className="mt-6">
@@ -289,44 +389,51 @@ export function StudentsList() {
               )
             : (
                 <AnimatePresence>
-                  {data?.data.map((item: any, index: number) => (
+                  {data?.data.map((item, index: number) => (
                     <motion.div
                       key={item.student.id}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      transition={{ delay: index * 0.02 }}
-                      className="rounded-lg border p-4"
+                      transition={{ delay: index * 0.05 }}
+                      className="rounded-xl border border-border/40 bg-card/50 p-4 shadow-sm backdrop-blur-xl"
                     >
                       <div className="flex items-start justify-between">
-                        <Link
-                          to="/students/$studentId"
-                          params={{ studentId: item.student.id }}
-                          className="flex items-center gap-3"
-                        >
-                          <Avatar className="h-12 w-12">
-                            <AvatarImage src={item.student.photoUrl || undefined} />
-                            <AvatarFallback>
-                              {item.student.firstName[0]}
-                              {item.student.lastName[0]}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="font-medium">
-                              {item.student.lastName}
-                              {' '}
-                              {item.student.firstName}
-                            </p>
-                            <p className="font-mono text-sm text-muted-foreground">{item.student.matricule}</p>
-                          </div>
-                        </Link>
+                        <div className="flex items-center gap-3">
+                          <Checkbox
+                            checked={selectedRows.includes(item.student.id)}
+                            onCheckedChange={checked => handleSelectRow(item.student.id, !!checked)}
+                            className="mr-2 border-primary/50 data-[state=checked]:border-primary"
+                          />
+                          <Link
+                            to="/students/$studentId"
+                            params={{ studentId: item.student.id }}
+                            className="flex items-center gap-3"
+                          >
+                            <Avatar className="h-12 w-12 border-2 border-border/20">
+                              <AvatarImage src={item.student.photoUrl || undefined} />
+                              <AvatarFallback>
+                                {item.student.firstName[0]}
+                                {item.student.lastName[0]}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="font-medium text-foreground">
+                                {item.student.lastName}
+                                {' '}
+                                {item.student.firstName}
+                              </p>
+                              <p className="font-mono text-xs text-muted-foreground">{item.student.matricule}</p>
+                            </div>
+                          </Link>
+                        </div>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
+                            <Button variant="ghost" size="icon" className="hover:bg-card/20">
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
+                          <DropdownMenuContent align="end" className="backdrop-blur-xl bg-popover/90 border border-border/40">
                             <DropdownMenuItem asChild>
                               <Link to="/students/$studentId" params={{ studentId: item.student.id }}>
                                 <Eye className="mr-2 h-4 w-4" />
@@ -345,7 +452,7 @@ export function StudentsList() {
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               onClick={() => handleDelete(item)}
-                              className="text-destructive"
+                              className="text-destructive focus:text-destructive"
                             >
                               <Trash2 className="mr-2 h-4 w-4" />
                               {t.common.delete()}
@@ -353,18 +460,18 @@ export function StudentsList() {
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
-                      <div className="mt-3 flex flex-wrap items-center gap-2">
-                        <Badge className={statusColors[item.student.status as keyof typeof statusColors]}>
+                      <div className="mt-4 flex flex-wrap items-center gap-2">
+                        <Badge className={`${statusColors[item.student.status as keyof typeof statusColors]} border-0 shadow-none`}>
                           {getStudentStatusLabel(item.student.status)}
                         </Badge>
                         {item.currentClass?.gradeName && item.currentClass?.section && (
-                          <Badge variant="outline">
+                          <Badge variant="outline" className="border-border/40 bg-card/20 backdrop-blur-md">
                             {item.currentClass.gradeName}
                             {' '}
                             {item.currentClass.section}
                           </Badge>
                         )}
-                        <span className="text-sm text-muted-foreground">
+                        <span className="text-xs font-medium text-muted-foreground ml-auto bg-card/20 px-2 py-0.5 rounded-full">
                           {item.student.gender === 'M' ? t.students.male() : item.student.gender === 'F' ? t.students.female() : ''}
                         </span>
                       </div>
@@ -375,16 +482,23 @@ export function StudentsList() {
       </div>
 
       {/* Desktop Table View */}
-      <div className="hidden rounded-md border md:block">
+      <div className="hidden rounded-xl border border-border/40 bg-card/40 backdrop-blur-xl md:block overflow-hidden">
         <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[300px]">{t.students.student()}</TableHead>
-              <TableHead>{t.students.matricule()}</TableHead>
-              <TableHead>{t.students.class()}</TableHead>
-              <TableHead>{t.students.gender()}</TableHead>
-              <TableHead>{t.students.status()}</TableHead>
-              <TableHead>{t.students.parents()}</TableHead>
+          <TableHeader className="bg-card/20">
+            <TableRow className="hover:bg-transparent border-border/40">
+              <TableHead className="w-[50px]">
+                <Checkbox
+                  checked={data?.data && data.data.length > 0 && selectedRows.length === data.data.length}
+                  onCheckedChange={checked => handleSelectAll(!!checked)}
+                  className="border-primary/50 data-[state=checked]:border-primary"
+                />
+              </TableHead>
+              <TableHead className="w-[250px] text-foreground font-semibold">{t.students.student()}</TableHead>
+              <TableHead className="text-foreground font-semibold">{t.students.matricule()}</TableHead>
+              <TableHead className="text-foreground font-semibold">{t.students.class()}</TableHead>
+              <TableHead className="text-foreground font-semibold">{t.students.gender()}</TableHead>
+              <TableHead className="text-foreground font-semibold">{t.students.status()}</TableHead>
+              <TableHead className="text-foreground font-semibold">{t.students.parents()}</TableHead>
               <TableHead className="w-[70px]" />
             </TableRow>
           </TableHeader>
@@ -392,7 +506,8 @@ export function StudentsList() {
             {isLoading
               ? (
                   Array.from({ length: 10 }, () => (
-                    <TableRow key={`table-skeleton-${generateUUID()}`}>
+                    <TableRow key={`table-skeleton-${generateUUID()}`} className="border-white/10">
+                      <TableCell><Skeleton className="h-4 w-4" /></TableCell>
                       <TableCell>
                         <div className="flex items-center gap-3">
                           <Skeleton className="h-10 w-10 rounded-full" />
@@ -414,10 +529,12 @@ export function StudentsList() {
               : data?.data.length === 0
                 ? (
                     <TableRow>
-                      <TableCell colSpan={7}>
-                        <div className="flex min-h-[300px] flex-col items-center justify-center p-8 text-center">
-                          <Users className="mx-auto h-12 w-12 text-muted-foreground" />
-                          <h3 className="mt-4 text-lg font-semibold">{t.students.noStudents()}</h3>
+                      <TableCell colSpan={8} className="h-96">
+                        <div className="flex flex-col items-center justify-center text-center">
+                          <div className="rounded-full bg-white/50 p-6 backdrop-blur-xl mb-4">
+                            <Users className="h-12 w-12 text-muted-foreground/50" />
+                          </div>
+                          <h3 className="text-lg font-semibold">{t.students.noStudents()}</h3>
                           <p className="mt-2 max-w-sm text-sm text-muted-foreground">{t.students.noStudentsDescription()}</p>
                           <Button onClick={() => navigate({ to: '/students/new' })} className="mt-6">
                             <Plus className="mr-2 h-4 w-4" />
@@ -429,18 +546,25 @@ export function StudentsList() {
                   )
                 : (
                     <AnimatePresence>
-                      {data?.data.map((item: any, index: number) => (
+                      {data?.data.map((item, index: number) => (
                         <motion.tr
                           key={item.student.id}
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -10 }}
                           transition={{ delay: index * 0.02 }}
-                          className="border-b"
+                          className="border-border/10 group hover:bg-card/30 transition-colors"
                         >
                           <TableCell>
+                            <Checkbox
+                              checked={selectedRows.includes(item.student.id)}
+                              onCheckedChange={checked => handleSelectRow(item.student.id, !!checked)}
+                              className="mr-2 border-primary/50 data-[state=checked]:border-primary"
+                            />
+                          </TableCell>
+                          <TableCell className="py-3">
                             <div className="flex items-center gap-3">
-                              <Avatar>
+                              <Avatar className="h-10 w-10 border border-border/20">
                                 <AvatarImage src={item.student.photoUrl || undefined} />
                                 <AvatarFallback>
                                   {item.student.firstName[0]}
@@ -451,28 +575,28 @@ export function StudentsList() {
                                 <Link
                                   to="/students/$studentId"
                                   params={{ studentId: item.student.id }}
-                                  className="font-medium hover:underline"
+                                  className="font-medium hover:text-primary transition-colors block"
                                 >
                                   {item.student.lastName}
                                   {' '}
                                   {item.student.firstName}
                                 </Link>
-                                <p className="text-sm text-muted-foreground">
+                                <p className="text-xs text-muted-foreground">
                                   {new Date(item.student.dob).toLocaleDateString()}
                                 </p>
                               </div>
                             </div>
                           </TableCell>
-                          <TableCell className="font-mono">{item.student.matricule}</TableCell>
+                          <TableCell className="font-mono text-sm text-muted-foreground">{item.student.matricule}</TableCell>
                           <TableCell>
                             {item.currentClass?.gradeName && item.currentClass?.section
                               ? (
-                                  <span>
+                                  <Badge variant="outline" className="bg-card/10 border-border/20">
                                     {item.currentClass.gradeName}
                                     {' '}
                                     {item.currentClass.section}
                                     {item.currentClass.seriesName && ` (${item.currentClass.seriesName})`}
-                                  </span>
+                                  </Badge>
                                 )
                               : (
                                   <span className="text-muted-foreground">-</span>
@@ -486,19 +610,23 @@ export function StudentsList() {
                                 : '-'}
                           </TableCell>
                           <TableCell>
-                            <Badge className={statusColors[item.student.status as keyof typeof statusColors]}>
+                            <Badge className={`${statusColors[item.student.status as keyof typeof statusColors]} border-0 shadow-none`}>
                               {getStudentStatusLabel(item.student.status)}
                             </Badge>
                           </TableCell>
-                          <TableCell>{item.parentsCount}</TableCell>
+                          <TableCell className="text-center">
+                            <span className="inline-flex items-center justify-center rounded-full bg-card/20 px-2 py-0.5 text-xs font-medium w-6 h-6">
+                              {item.parentsCount}
+                            </span>
+                          </TableCell>
                           <TableCell>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon">
+                                <Button variant="ghost" size="icon" className="hover:bg-card/20">
                                   <MoreHorizontal className="h-4 w-4" />
                                 </Button>
                               </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
+                              <DropdownMenuContent align="end" className="backdrop-blur-xl bg-popover/90 border border-border/40">
                                 <DropdownMenuItem asChild>
                                   <Link to="/students/$studentId" params={{ studentId: item.student.id }}>
                                     <Eye className="mr-2 h-4 w-4" />
@@ -517,7 +645,7 @@ export function StudentsList() {
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
                                   onClick={() => handleDelete(item)}
-                                  className="text-destructive"
+                                  className="text-destructive focus:text-destructive"
                                 >
                                   <Trash2 className="mr-2 h-4 w-4" />
                                   {t.common.delete()}
@@ -568,7 +696,7 @@ export function StudentsList() {
         description={t.students.deleteDescription({
           name: `${selectedStudent?.student.firstName} ${selectedStudent?.student.lastName}`,
         })}
-        onConfirm={() => deleteMutation.mutate(selectedStudent?.student.id)}
+        onConfirm={() => selectedStudent && deleteMutation.mutate(selectedStudent.student.id)}
         isLoading={deleteMutation.isPending}
       />
 
@@ -578,7 +706,7 @@ export function StudentsList() {
         onOpenChange={setStatusDialogOpen}
         student={selectedStudent?.student}
         onConfirm={(newStatus, reason) =>
-          statusMutation.mutate({ id: selectedStudent?.student.id, status: newStatus as StudentStatus, reason })}
+          selectedStudent && statusMutation.mutate({ id: selectedStudent.student.id, status: newStatus as StudentStatus, reason })}
         isLoading={statusMutation.isPending}
       />
 

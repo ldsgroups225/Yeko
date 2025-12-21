@@ -1,4 +1,5 @@
-import { AlertCircle, CheckCircle2, Download, Loader2, Upload } from 'lucide-react'
+import { AlertCircle, CheckCircle2, Database, Download, FileText, Info, Loader2, Mail, Phone, Settings, Shield, Upload } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
@@ -14,6 +15,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { useTranslations } from '@/i18n'
+import { generateUUID } from '@/utils/generateUUID'
 
 interface ImportRow {
   name: string
@@ -65,7 +67,6 @@ Jane Smith,jane@example.com,+225 05 06 07 08,academic_coordinator,active`
           status: values[4] || 'active',
         }
 
-        // Basic validation
         if (!row.name || row.name.length < 2) {
           row.error = t.validation.required()
         }
@@ -100,8 +101,6 @@ Jane Smith,jane@example.com,+225 05 06 07 08,academic_coordinator,active`
 
   const handleImport = async () => {
     setIsProcessing(true)
-
-    // Simulate import process
     await new Promise(resolve => setTimeout(resolve, 2000))
 
     const validRows = preview.filter(row => !row.error)
@@ -126,160 +125,259 @@ Jane Smith,jane@example.com,+225 05 06 07 08,academic_coordinator,active`
     }
   }
 
+  const variants = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, scale: 0.95 },
+  }
+
   return (
-    <div className="space-y-6">
-      <div className="rounded-lg border bg-card p-6">
-        <h2 className="mb-4 text-lg font-semibold">{t.hr.users.step1()}</h2>
-        <p className="mb-4 text-sm text-muted-foreground">
-          {t.hr.users.downloadTemplateDescription()}
-        </p>
-        <Button onClick={downloadTemplate} variant="outline">
-          <Download className="mr-2 h-4 w-4" />
-          {t.hr.users.downloadTemplate()}
-        </Button>
+    <div className="space-y-8">
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* Step 1 */}
+        <motion.div
+          variants={variants}
+          initial="initial"
+          animate="animate"
+          className="rounded-xl border border-border/40 bg-card/50 backdrop-blur-xl p-8 shadow-sm flex flex-col"
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <FileText className="h-4 w-4" />
+            </div>
+            <h2 className="text-xl font-serif font-semibold">{t.hr.users.step1()}</h2>
+          </div>
+          <p className="mb-8 text-sm text-muted-foreground leading-relaxed flex-1">
+            {t.hr.users.downloadTemplateDescription()}
+          </p>
+          <Button
+            onClick={downloadTemplate}
+            variant="outline"
+            className="w-full rounded-xl h-11 font-semibold border-border/40 bg-background/50 hover:bg-background transition-all shadow-sm group"
+          >
+            <Download className="mr-2 h-4 w-4 transition-transform group-hover:-translate-y-0.5" />
+            {t.hr.users.downloadTemplate()}
+          </Button>
+        </motion.div>
+
+        {/* Step 2 */}
+        <motion.div
+          variants={variants}
+          initial="initial"
+          animate="animate"
+          transition={{ delay: 0.1 }}
+          className="rounded-xl border border-border/40 bg-card/50 backdrop-blur-xl p-8 shadow-sm flex flex-col"
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <Upload className="h-4 w-4" />
+            </div>
+            <h2 className="text-xl font-serif font-semibold">{t.hr.users.step2()}</h2>
+          </div>
+          <p className="mb-8 text-sm text-muted-foreground leading-relaxed flex-1">
+            {t.hr.users.uploadFileDescription()}
+          </p>
+          <div className="space-y-3">
+            <Label htmlFor="csv-file" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{t.hr.users.selectFile()}</Label>
+            <Input
+              id="csv-file"
+              type="file"
+              accept=".csv"
+              onChange={handleFileChange}
+              className="rounded-xl h-11 border-border/40 bg-background/50 focus:bg-background transition-all cursor-pointer file:mr-4 file:py-1 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+            />
+          </div>
+        </motion.div>
       </div>
 
-      <div className="rounded-lg border bg-card p-6">
-        <h2 className="mb-4 text-lg font-semibold">{t.hr.users.step2()}</h2>
-        <p className="mb-4 text-sm text-muted-foreground">
-          {t.hr.users.uploadFileDescription()}
-        </p>
-        <div className="space-y-2">
-          <Label htmlFor="csv-file">{t.hr.users.selectFile()}</Label>
-          <Input
-            id="csv-file"
-            type="file"
-            accept=".csv"
-            onChange={handleFileChange}
-          />
-        </div>
-      </div>
-
-      {preview.length > 0 && (
-        <div className="rounded-lg border bg-card p-6">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold">{t.hr.users.step3()}</h2>
-            <div className="flex gap-2">
-              <Badge variant="secondary">
-                {preview.length}
-                {' '}
-                {t.hr.users.totalRows()}
-              </Badge>
-              <Badge variant="default">
-                {preview.filter(r => !r.error).length}
-                {' '}
-                {t.hr.users.validRows()}
-              </Badge>
-              {preview.filter(r => r.error).length > 0 && (
-                <Badge variant="destructive">
-                  {preview.filter(r => r.error).length}
+      <AnimatePresence mode="wait">
+        {preview.length > 0 && (
+          <motion.div
+            variants={variants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="rounded-xl border border-border/40 bg-card/50 backdrop-blur-xl p-8 shadow-sm"
+          >
+            <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <Database className="h-4 w-4" />
+                </div>
+                <h2 className="text-xl font-serif font-semibold">{t.hr.users.step3()}</h2>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Badge variant="outline" className="rounded-full px-3 py-1 bg-muted/50 border-border/40 font-semibold uppercase text-[10px] tracking-wider">
+                  {preview.length}
                   {' '}
-                  {t.hr.users.invalidRows()}
+                  {t.hr.users.totalRows()}
                 </Badge>
+                <Badge variant="outline" className="rounded-full px-3 py-1 bg-emerald-500/10 text-emerald-600 border-emerald-500/20 font-semibold uppercase text-[10px] tracking-wider">
+                  {preview.filter(r => !r.error).length}
+                  {' '}
+                  {t.hr.users.validRows()}
+                </Badge>
+                {preview.filter(r => r.error).length > 0 && (
+                  <Badge variant="outline" className="rounded-full px-3 py-1 bg-destructive/10 text-destructive border-destructive/20 font-semibold uppercase text-[10px] tracking-wider">
+                    {preview.filter(r => r.error).length}
+                    {' '}
+                    {t.hr.users.invalidRows()}
+                  </Badge>
+                )}
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-border/40 bg-background/30 overflow-hidden mb-8 shadow-inner">
+              <Table>
+                <TableHeader className="bg-muted/50 backdrop-blur-md">
+                  <TableRow className="hover:bg-transparent border-border/40">
+                    <TableHead className="w-[80px] text-xs uppercase tracking-wider font-bold py-4">{t.hr.users.status()}</TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider font-bold py-4">{t.hr.common.name()}</TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider font-bold py-4">{t.hr.common.email()}</TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider font-bold py-4">{t.hr.common.phone()}</TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider font-bold py-4">{t.hr.common.roles()}</TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider font-bold py-4">{t.hr.users.error()}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {preview.map((row, idx) => (
+                    <motion.tr
+                      key={`${row.email}-${generateUUID()}`}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.02 }}
+                      className="border-border/40 hover:bg-primary/5 transition-colors"
+                    >
+                      <TableCell className="py-4">
+                        {row.error
+                          ? (
+                              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+                                <AlertCircle className="h-4 w-4" />
+                              </div>
+                            )
+                          : (
+                              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600">
+                                <CheckCircle2 className="h-4 w-4" />
+                              </div>
+                            )}
+                      </TableCell>
+                      <TableCell className="font-semibold text-foreground py-4">{row.name}</TableCell>
+                      <TableCell className="py-4 font-medium text-muted-foreground">
+                        <div className="flex items-center gap-1.5">
+                          <Mail className="h-3 w-3" />
+                          {row.email}
+                        </div>
+                      </TableCell>
+                      <TableCell className="py-4 text-muted-foreground whitespace-nowrap">
+                        {row.phone
+                          ? (
+                              <div className="flex items-center gap-1.5">
+                                <Phone className="h-3 w-3" />
+                                {row.phone}
+                              </div>
+                            )
+                          : '-'}
+                      </TableCell>
+                      <TableCell className="py-4">
+                        <div className="flex items-center gap-1.5">
+                          <Shield className="h-3 w-3 text-primary/60" />
+                          <span className="font-medium text-foreground">{row.roles}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="py-4">
+                        {row.error && (
+                          <div className="flex items-center gap-1.5 text-xs font-bold text-destructive uppercase tracking-tight">
+                            <Info className="h-3 w-3" />
+                            {row.error}
+                          </div>
+                        )}
+                      </TableCell>
+                    </motion.tr>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+
+            <div className="flex justify-end items-center gap-4">
+              <Button
+                variant="ghost"
+                className="rounded-xl px-6 font-medium bg-muted hover:bg-muted/80 transition-colors"
+                onClick={() => {
+                  setFile(null)
+                  setPreview([])
+                  setResults(null)
+                }}
+              >
+                {t.common.cancel()}
+              </Button>
+              <Button
+                onClick={handleImport}
+                disabled={
+                  isProcessing
+                  || preview.filter(r => !r.error).length === 0
+                }
+                className="rounded-xl px-8 min-w-[160px] font-bold shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              >
+                {isProcessing
+                  ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin text-primary-foreground/80" />
+                        {t.hr.users.importing()}
+                      </>
+                    )
+                  : (
+                      <>
+                        <Upload className="mr-2 h-4 w-4 group-hover:-translate-y-0.5" />
+                        {t.hr.users.importUsers()}
+                      </>
+                    )}
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {results && (
+          <motion.div
+            variants={variants}
+            initial="initial"
+            animate="animate"
+            className="rounded-xl border border-border/40 bg-card/50 backdrop-blur-xl p-8 shadow-sm"
+          >
+            <div className="flex items-center gap-2 mb-6">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <Settings className="h-4 w-4" />
+              </div>
+              <h2 className="text-xl font-serif font-semibold">{t.hr.users.importResults()}</h2>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 max-w-2xl">
+              <div className="flex items-center gap-4 p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/10 shadow-sm">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600">
+                  <CheckCircle2 className="h-6 w-6" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-emerald-600 leading-none">{results.success}</p>
+                  <p className="text-xs font-bold uppercase tracking-wider text-emerald-600/70 mt-1">{t.hr.users.usersImported()}</p>
+                </div>
+              </div>
+
+              {results.failed > 0 && (
+                <div className="flex items-center gap-4 p-4 rounded-xl bg-destructive/5 border border-destructive/10 shadow-sm">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+                    <AlertCircle className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-destructive leading-none">{results.failed}</p>
+                    <p className="text-xs font-bold uppercase tracking-wider text-destructive/70 mt-1">{t.hr.users.usersFailed()}</p>
+                  </div>
+                </div>
               )}
             </div>
-          </div>
-
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t.hr.users.status()}</TableHead>
-                  <TableHead>{t.hr.common.name()}</TableHead>
-                  <TableHead>{t.hr.common.email()}</TableHead>
-                  <TableHead>{t.hr.common.phone()}</TableHead>
-                  <TableHead>{t.hr.common.roles()}</TableHead>
-                  <TableHead>{t.hr.users.error()}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {preview.map(row => (
-                  <TableRow key={row.email}>
-                    <TableCell>
-                      {row.error
-                        ? (
-                            <AlertCircle className="h-4 w-4 text-destructive" />
-                          )
-                        : (
-                            <CheckCircle2 className="h-4 w-4 text-green-600" />
-                          )}
-                    </TableCell>
-                    <TableCell>{row.name}</TableCell>
-                    <TableCell>{row.email}</TableCell>
-                    <TableCell>{row.phone || '-'}</TableCell>
-                    <TableCell>{row.roles}</TableCell>
-                    <TableCell>
-                      {row.error && (
-                        <span className="text-sm text-destructive">{row.error}</span>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-
-          <div className="mt-4 flex justify-end gap-2">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setFile(null)
-                setPreview([])
-                setResults(null)
-              }}
-            >
-              {t.common.cancel()}
-            </Button>
-            <Button
-              onClick={handleImport}
-              disabled={
-                isProcessing
-                || preview.filter(r => !r.error).length === 0
-              }
-            >
-              {isProcessing
-                ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      {t.hr.users.importing()}
-                    </>
-                  )
-                : (
-                    <>
-                      <Upload className="mr-2 h-4 w-4" />
-                      {t.hr.users.importUsers()}
-                    </>
-                  )}
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {results && (
-        <div className="rounded-lg border bg-card p-6">
-          <h2 className="mb-4 text-lg font-semibold">{t.hr.users.importResults()}</h2>
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-5 w-5 text-green-600" />
-              <span>
-                {results.success}
-                {' '}
-                {t.hr.users.usersImported()}
-              </span>
-            </div>
-            {results.failed > 0 && (
-              <div className="flex items-center gap-2">
-                <AlertCircle className="h-5 w-5 text-destructive" />
-                <span>
-                  {results.failed}
-                  {' '}
-                  {t.hr.users.usersFailed()}
-                </span>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

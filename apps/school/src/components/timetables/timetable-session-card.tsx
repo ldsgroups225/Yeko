@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { motion } from 'motion/react'
 
 import { cn } from '@/lib/utils'
 import { dayOfWeekShortLabels } from '@/schemas/timetable'
@@ -41,9 +42,9 @@ export function TimetableSessionCard({
     <>
       {compact
         ? (
-            <div className="text-xs">
-              <p className="font-medium truncate">{session.subjectName}</p>
-              <p className="opacity-80 truncate">
+            <div className="text-[10px] leading-tight flex flex-col justify-center h-full">
+              <p className="font-bold truncate">{session.subjectName}</p>
+              <p className="opacity-80 truncate font-medium text-[9px]">
                 {session.startTime}
                 -
                 {session.endTime}
@@ -51,23 +52,23 @@ export function TimetableSessionCard({
             </div>
           )
         : (
-            <div className="space-y-1">
+            <div className="space-y-1 h-full flex flex-col">
               <div className="flex items-start justify-between gap-1">
-                <p className="font-semibold text-sm leading-tight">{session.subjectName}</p>
+                <p className="font-black tracking-tight text-xs leading-none line-clamp-2">{session.subjectName}</p>
                 {session.hasConflict && (
-                  <span className="text-xs bg-destructive rounded px-1">!</span>
+                  <span className="text-[9px] font-black bg-destructive text-destructive-foreground rounded-md px-1 py-0.5 shadow-sm animate-pulse">!</span>
                 )}
               </div>
-              <p className="text-xs opacity-90">{session.teacherName}</p>
-              <div className="flex items-center justify-between text-xs opacity-80">
-                <span>
+              <p className="text-[10px] uppercase font-bold opacity-90 truncate tracking-wide">{session.teacherName}</p>
+              <div className="mt-auto flex items-center justify-between text-[9px] opacity-80 font-medium">
+                <span className="tabular-nums tracking-tighter">
                   {showDay && `${dayOfWeekShortLabels[session.dayOfWeek]} `}
                   {session.startTime}
                   -
                   {session.endTime}
                 </span>
                 {session.classroomName && (
-                  <span className="truncate ml-1">{session.classroomName}</span>
+                  <span className="truncate ml-1 bg-black/10 dark:bg-white/10 px-1 rounded-sm">{session.classroomName}</span>
                 )}
               </div>
               {children}
@@ -78,30 +79,38 @@ export function TimetableSessionCard({
 
   if (onClick) {
     return (
-      <button
+      <motion.button
         type="button"
+        whileHover={{ scale: 1.02, y: -2 }}
+        whileTap={{ scale: 0.98 }}
         onClick={() => onClick(session)}
         className={cn(
-          'rounded-md p-2 text-white transition-all text-left w-full',
-          'cursor-pointer hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2',
-          session.hasConflict && 'ring-2 ring-destructive ring-offset-1',
+          'rounded-xl p-2.5 text-white transition-all text-left w-full h-full shadow-md hover:shadow-lg',
+          'cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-1',
+          session.hasConflict && 'ring-2 ring-destructive ring-offset-1 shadow-destructive/20',
           className,
         )}
-        style={{ backgroundColor: bgColor }}
+        style={{
+          backgroundColor: bgColor,
+          backgroundImage: 'linear-gradient(to bottom right, rgba(255,255,255,0.1), rgba(0,0,0,0.05))',
+        }}
       >
         {content}
-      </button>
+      </motion.button>
     )
   }
 
   return (
     <div
       className={cn(
-        'rounded-md p-2 text-white transition-all',
-        session.hasConflict && 'ring-2 ring-destructive ring-offset-1',
+        'rounded-xl p-2.5 text-white transition-all h-full shadow-md',
+        session.hasConflict && 'ring-2 ring-destructive ring-offset-1 shadow-destructive/20',
         className,
       )}
-      style={{ backgroundColor: bgColor }}
+      style={{
+        backgroundColor: bgColor,
+        backgroundImage: 'linear-gradient(to bottom right, rgba(255,255,255,0.1), rgba(0,0,0,0.05))',
+      }}
     >
       {content}
     </div>

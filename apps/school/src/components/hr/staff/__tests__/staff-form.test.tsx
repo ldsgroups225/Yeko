@@ -49,11 +49,12 @@ describe('staffForm Component', () => {
 
   describe('rendering - Edit Mode', () => {
     const initialData = {
+      id: 'staff-123',
       userId: 'user-123',
-      position: 'accountant',
+      position: 'accountant' as const,
       department: 'Finance',
-      hireDate: '2024-01-15',
-      status: 'active',
+      hireDate: new Date('2024-01-15'),
+      status: 'active' as const,
     }
 
     test('should populate form with initial data', () => {

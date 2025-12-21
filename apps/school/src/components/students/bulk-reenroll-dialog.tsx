@@ -103,7 +103,7 @@ export function BulkReEnrollDialog({ open, onOpenChange }: BulkReEnrollDialogPro
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-lg backdrop-blur-xl bg-card/95 border-border/40">
         <DialogHeader>
           <DialogTitle>{t.students.bulkReEnroll()}</DialogTitle>
           <DialogDescription>
@@ -175,9 +175,9 @@ export function BulkReEnrollDialog({ open, onOpenChange }: BulkReEnrollDialogPro
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {schoolYears?.map((year: any) => (
+                            {schoolYears?.map(year => (
                               <SelectItem key={year.id} value={year.id}>
-                                {year.template?.name || year.name}
+                                {year.template.name}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -210,10 +210,10 @@ export function BulkReEnrollDialog({ open, onOpenChange }: BulkReEnrollDialogPro
                           </FormControl>
                           <SelectContent>
                             {schoolYears
-                              ?.filter((year: any) => year.id !== fromYearId)
-                              .map((year: any) => (
+                              ?.filter(year => year.id !== fromYearId)
+                              .map(year => (
                                 <SelectItem key={year.id} value={year.id}>
-                                  {year.template?.name || year.name}
+                                  {year.template.name}
                                   {year.isActive && ` (${t.common.active()})`}
                                 </SelectItem>
                               ))}

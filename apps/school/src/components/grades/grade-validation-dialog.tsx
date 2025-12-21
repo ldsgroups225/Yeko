@@ -1,9 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { AlertCircle, CheckCircle2, MessageSquare, XCircle } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
-
 import {
   Dialog,
   DialogContent,
@@ -23,6 +23,7 @@ import {
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { useTranslations } from '@/i18n'
+import { cn } from '@/lib/utils'
 
 const rejectSchema = z.object({
   reason: z.string()
@@ -76,84 +77,102 @@ export function GradeValidationDialog({
     onOpenChange(newOpen)
   }
 
+  const isReject = mode === 'reject'
+
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
-            {mode === 'validate'
-              ? t.academic.grades.validations.validateTitle()
-              : t.academic.grades.validations.rejectTitle()}
-          </DialogTitle>
-          <DialogDescription>
-            {mode === 'validate'
-              ? t.academic.grades.validations.validateDescription({ count: gradeCount })
-              : t.academic.grades.validations.rejectDescription()}
-          </DialogDescription>
+      <DialogContent className="max-w-md rounded-3xl border-border/40 bg-popover/90 backdrop-blur-2xl shadow-2xl p-0 overflow-hidden">
+        <DialogHeader className="p-6 pb-0">
+          <div className="flex items-center gap-4 mb-2">
+            <div className={cn(
+              'flex h-12 w-12 items-center justify-center rounded-2xl shadow-inner transition-transform group-hover:scale-110',
+              isReject ? 'bg-destructive/10 text-destructive' : 'bg-emerald-500/10 text-emerald-600',
+            )}
+            >
+              {isReject ? <XCircle className="size-6" /> : <CheckCircle2 className="size-6" />}
+            </div>
+            <div>
+              <DialogTitle className="text-xl font-bold tracking-tight">
+                {isReject ? t.academic.grades.validations.rejectTitle() : t.academic.grades.validations.validateTitle()}
+              </DialogTitle>
+              <DialogDescription className="text-xs font-medium text-muted-foreground uppercase tracking-widest opacity-70">
+                {isReject ? t.academic.grades.validations.rejectDescription() : t.academic.grades.validations.validateDescription({ count: gradeCount })}
+              </DialogDescription>
+            </div>
+          </div>
         </DialogHeader>
 
-        {mode === 'reject'
-          ? (
-              <Form {...form}>
-                <form className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="reason"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          {t.academic.grades.validations.rejectReason()}
-                          {' '}
-                          *
-                        </FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder={t.academic.grades.validations.rejectReasonPlaceholder()}
-                            className="min-h-[100px]"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+        <div className="p-6">
+          {isReject
+            ? (
+                <Form {...form}>
+                  <form className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="reason"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                            <AlertCircle className="size-3" />
+                            {t.academic.grades.validations.rejectReason()}
+                            {' '}
+                            *
+                          </FormLabel>
+                          <FormControl>
+                            <Textarea
+                              placeholder={t.academic.grades.validations.rejectReasonPlaceholder()}
+                              className="min-h-[120px] rounded-2xl border-border/40 bg-background/50 focus:bg-background transition-all resize-none p-4"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-[10px] font-bold uppercase tracking-tight" />
+                        </FormItem>
+                      )}
+                    />
+                  </form>
+                </Form>
+              )
+            : (
+                <div className="space-y-3">
+                  <Label htmlFor="comment" className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                    <MessageSquare className="size-3" />
+                    {t.academic.grades.validations.comment()}
+                  </Label>
+                  <Textarea
+                    id="comment"
+                    placeholder={t.academic.grades.validations.commentPlaceholder()}
+                    value={comment}
+                    onChange={e => setComment(e.target.value)}
+                    className="min-h-[100px] rounded-2xl border-border/40 bg-background/50 focus:bg-background transition-all resize-none p-4"
                   />
-                </form>
-              </Form>
-            )
-          : (
-              <div className="space-y-2">
-                <Label htmlFor="comment">
-                  {t.academic.grades.validations.comment()}
-                </Label>
-                <Textarea
-                  id="comment"
-                  placeholder={t.academic.grades.validations.commentPlaceholder()}
-                  value={comment}
-                  onChange={e => setComment(e.target.value)}
-                  className="min-h-[80px]"
-                />
-              </div>
-            )}
+                </div>
+              )}
+        </div>
 
-        <DialogFooter>
+        <DialogFooter className="p-6 bg-muted/20 gap-3 sm:gap-0">
           <Button
-            variant="outline"
+            variant="ghost"
             onClick={() => handleOpenChange(false)}
             disabled={isLoading}
+            className="rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-background/80"
           >
             {t.common.cancel()}
           </Button>
           <Button
-            variant={mode === 'reject' ? 'destructive' : 'default'}
+            variant={isReject ? 'destructive' : 'default'}
             onClick={handleConfirm}
             disabled={isLoading}
-            className={mode === 'validate' ? 'bg-green-600 hover:bg-green-700' : ''}
+            className={cn(
+              'rounded-xl font-bold uppercase tracking-widest text-[10px] px-8 shadow-lg transition-all',
+              !isReject && 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-500/20',
+              isReject && 'shadow-destructive/20',
+            )}
           >
             {isLoading
               ? t.common.loading()
-              : mode === 'validate'
-                ? t.academic.grades.validations.confirmValidate()
-                : t.academic.grades.validations.confirmReject()}
+              : isReject
+                ? t.academic.grades.validations.confirmReject()
+                : t.academic.grades.validations.confirmValidate()}
           </Button>
         </DialogFooter>
       </DialogContent>

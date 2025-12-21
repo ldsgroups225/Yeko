@@ -166,7 +166,7 @@ export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl backdrop-blur-xl bg-card/95 border-border/40">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Wand2 className="h-5 w-5" />
@@ -178,7 +178,7 @@ export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
         {results
           ? (
               <div className="space-y-4 py-4">
-                <div className="flex flex-col items-center justify-center gap-3 rounded-lg border bg-muted/50 p-6">
+                <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-border/40 bg-card/50 backdrop-blur-sm p-6">
                   <CheckCircle2 className="h-12 w-12 text-green-500" />
                   <h3 className="text-lg font-semibold">{t.students.autoMatchComplete()}</h3>
                   <div className="text-center text-sm text-muted-foreground">
@@ -234,7 +234,7 @@ export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
                         return (
                           <div
                             key={suggestion.studentId}
-                            className={`rounded-lg border p-3 transition-colors ${isSelected ? 'border-primary bg-primary/5' : ''}`}
+                            className={`rounded-xl border p-3 transition-all ${isSelected ? 'border-primary bg-primary/5 shadow-sm' : 'border-border/40 bg-card/30 hover:bg-card/50'}`}
                           >
                             <div className="flex items-start gap-3">
                               <Checkbox
@@ -261,7 +261,7 @@ export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
                                 </div>
 
                                 {suggestion.existingParent && (
-                                  <div className="flex items-center gap-2 rounded bg-muted/50 p-2">
+                                  <div className="flex items-center gap-2 rounded-lg bg-card/50 backdrop-blur-sm border border-border/20 p-2">
                                     <Avatar className="h-8 w-8">
                                       <AvatarFallback className="text-xs">
                                         {suggestion.existingParent.firstName?.[0]}

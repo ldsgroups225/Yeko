@@ -64,7 +64,7 @@ export function EnrollmentDialog({ open, onOpenChange, studentId, studentName }:
   })
 
   // Find the active school year or use context school year
-  const activeSchoolYear = schoolYears?.find((sy: any) => sy.isActive)
+  const activeSchoolYear = schoolYears?.find(sy => sy.isActive)
   const defaultSchoolYearId = contextSchoolYearId || activeSchoolYear?.id || ''
 
   const form = useForm<EnrollmentFormData>({
@@ -111,7 +111,7 @@ export function EnrollmentDialog({ open, onOpenChange, studentId, studentName }:
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] backdrop-blur-xl bg-card/95 border-border/40">
         <DialogHeader>
           <DialogTitle>{t.students.enrollStudent()}</DialogTitle>
           <DialogDescription>
@@ -138,9 +138,9 @@ export function EnrollmentDialog({ open, onOpenChange, studentId, studentName }:
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {schoolYears?.map((year: any) => (
+                      {schoolYears?.map(year => (
                         <SelectItem key={year.id} value={year.id}>
-                          {year.name}
+                          {year.template.name}
                           {year.isActive && ` (${t.common.active()})`}
                         </SelectItem>
                       ))}
@@ -172,7 +172,7 @@ export function EnrollmentDialog({ open, onOpenChange, studentId, studentName }:
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {classesData?.map((cls: any) => (
+                      {classesData?.map(cls => (
                         <SelectItem key={cls.class.id} value={cls.class.id}>
                           {cls.grade?.name}
                           {' '}

@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Loader2 } from 'lucide-react'
+import { Check, Clock, Hash, Loader2, Sparkles } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -17,8 +18,9 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { classSubjectsKeys } from '@/lib/queries/class-subjects'
+import { cn } from '@/lib/utils'
 import { saveClassSubject } from '@/school/functions/class-subjects'
-import { getSchoolSubjects } from '@/school/functions/school-subjects' // Use school-subjects directly or via query options if available
+import { getSchoolSubjects } from '@/school/functions/school-subjects'
 
 interface ClassSubjectDialogProps {
   open: boolean
@@ -41,7 +43,7 @@ export function ClassSubjectDialog({
   const [hours, setHours] = useState(3)
 
   const { data: allSubjects, isLoading } = useQuery({
-    queryKey: ['schoolSubjects', schoolYearId], // Should use proper keys
+    queryKey: ['schoolSubjects', schoolYearId],
     queryFn: () => getSchoolSubjects({ data: { schoolYearId: schoolYearId! } }),
     enabled: open && !!schoolYearId,
   })
@@ -83,63 +85,93 @@ export function ClassSubjectDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>{t.academic.classes.addSubjectTitle()}</DialogTitle>
-          <DialogDescription>
-            {t.academic.classes.addSubjectDescription()}
-            {' '}
-            <span className="font-medium">{className}</span>
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="max-w-md backdrop-blur-xl bg-card/95 border-border/40 p-0 overflow-hidden">
+        <div className="p-6 pb-4 border-b border-border/10">
+          <DialogHeader>
+            <div className="flex items-center gap-3 mb-1">
+              <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Sparkles className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <DialogTitle className="text-xl font-bold">{t.academic.classes.addSubjectTitle()}</DialogTitle>
+                <DialogDescription className="text-xs font-semibold opacity-70 uppercase tracking-wider">
+                  {className}
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+        </div>
 
-        <div className="space-y-4 py-2">
-          <div className="space-y-2">
-            <Label>{t.academic.classes.selectSubject()}</Label>
-            <ScrollArea className="h-[200px] border rounded-md p-2">
-              {isLoading
-                ? (
-                    <div className="flex justify-center p-4">
-                      <Loader2 className="animate-spin" />
-                    </div>
-                  )
-                : (
-                    <div className="space-y-1">
-                      {allSubjects?.subjects?.map((item: any) => (
-                        <div
-                          key={item.subjectId}
-                          role="button"
-                          tabIndex={0}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              e.preventDefault()
-                              setSelectedSubjectId(item.subjectId)
-                              setCoefficient(item.coefficient || 1)
-                              setHours(item.hoursPerWeek || 1)
-                            }
-                          }}
-                          className={`
-                        flex items-center justify-between p-2 rounded-md cursor-pointer text-sm
-                        ${selectedSubjectId === item.subjectId ? 'bg-primary text-primary-foreground' : 'hover:bg-accent'}
-                      `}
-                          onClick={() => setSelectedSubjectId(item.subjectId)}
-                        >
-                          <span className="font-medium">{item.subject.name}</span>
-                          <span
-                            className={`text-xs ${selectedSubjectId === item.subjectId ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}
-                          >
-                            {item.subject.shortName}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+        <div className="p-6 space-y-6">
+          <div className="space-y-3">
+            <Label className="text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground ml-1">
+              {t.academic.classes.selectSubject()}
+            </Label>
+            <ScrollArea className="h-[240px] rounded-xl border border-white/10 bg-white/5 overflow-hidden">
+              <AnimatePresence mode="wait">
+                {isLoading
+                  ? (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="flex flex-col items-center justify-center h-full gap-3 py-10"
+                      >
+                        <Loader2 className="h-6 w-6 animate-spin text-primary/40" />
+                        <p className="text-xs font-medium text-muted-foreground">{t.common.loading()}</p>
+                      </motion.div>
+                    )
+                  : (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="p-1.5 space-y-1"
+                      >
+                        {allSubjects?.subjects?.map((item) => {
+                          const isSelected = selectedSubjectId === item.subjectId
+                          return (
+                            <div
+                              key={item.subjectId}
+                              role="button"
+                              tabIndex={0}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.preventDefault()
+                                  setSelectedSubjectId(item.subjectId)
+                                }
+                              }}
+                              className={cn(
+                                'flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all',
+                                isSelected
+                                  ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20'
+                                  : 'hover:bg-white/5 text-foreground',
+                              )}
+                              onClick={() => {
+                                setSelectedSubjectId(item.subjectId)
+                              }}
+                            >
+                              <div className="flex flex-col">
+                                <span className="font-bold text-sm">{item.subject.name}</span>
+                                <span className={cn('text-[10px] font-semibold uppercase tracking-wider', isSelected ? 'text-primary-foreground/70' : 'text-muted-foreground')}>
+                                  {item.subject.shortName}
+                                </span>
+                              </div>
+                              {isSelected && <Check className="h-4 w-4" />}
+                            </div>
+                          )
+                        })}
+                      </motion.div>
+                    )}
+              </AnimatePresence>
             </ScrollArea>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="coeff">{t.academic.classes.coefficient()}</Label>
+              <Label htmlFor="coeff" className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground ml-1">
+                <Hash className="h-3 w-3" />
+                {t.academic.classes.coefficient()}
+              </Label>
               <Input
                 id="coeff"
                 type="number"
@@ -147,10 +179,14 @@ export function ClassSubjectDialog({
                 step="0.5"
                 value={coefficient}
                 onChange={e => setCoefficient(Number(e.target.value))}
+                className="h-11 bg-white/5 border-white/10 focus:ring-primary/40 font-mono text-center font-bold"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="hours">{t.academic.classes.hoursPerWeek()}</Label>
+              <Label htmlFor="hours" className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground ml-1">
+                <Clock className="h-3 w-3" />
+                {t.academic.classes.hoursPerWeek()}
+              </Label>
               <Input
                 id="hours"
                 type="number"
@@ -158,25 +194,37 @@ export function ClassSubjectDialog({
                 step="0.5"
                 value={hours}
                 onChange={e => setHours(Number(e.target.value))}
+                className="h-11 bg-white/5 border-white/10 focus:ring-primary/40 font-mono text-center font-bold"
               />
             </div>
           </div>
         </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            {t.common.cancel()}
-          </Button>
-          <Button
-            onClick={handleSave}
-            disabled={!selectedSubjectId || saveMutation.isPending}
-          >
-            {saveMutation.isPending && (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            )}
-            {t.academic.classes.addSubject()}
-          </Button>
-        </DialogFooter>
+        <div className="p-6 bg-white/5 border-t border-border/10">
+          <DialogFooter className="gap-3 sm:gap-0">
+            <Button
+              variant="ghost"
+              onClick={() => onOpenChange(false)}
+              className="flex-1 sm:flex-none hover:bg-white/10"
+            >
+              {t.common.cancel()}
+            </Button>
+            <Button
+              onClick={handleSave}
+              disabled={!selectedSubjectId || saveMutation.isPending}
+              className="flex-1 sm:min-w-[140px] bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20"
+            >
+              {saveMutation.isPending
+                ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )
+                : (
+                    <Check className="mr-2 h-4 w-4" />
+                  )}
+              {t.academic.classes.addSubject()}
+            </Button>
+          </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   )

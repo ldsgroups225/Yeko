@@ -130,7 +130,7 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[600px] backdrop-blur-xl bg-card/95 border-border/40">
         <DialogHeader>
           <DialogTitle>{t.students.linkParent()}</DialogTitle>
           <DialogDescription>{t.parents.description()}</DialogDescription>
@@ -173,23 +173,23 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
             {parentsData?.data && parentsData.data.length > 0 && (
               <RadioGroup value={selectedParentId || ''} onValueChange={setSelectedParentId} className="max-h-[240px] overflow-y-auto pr-2">
                 <div className="space-y-2">
-                  {parentsData.data.map((parent: any) => (
-                    <div key={parent.id} className="flex items-center space-x-3 rounded-lg border p-3 transition-colors hover:bg-muted/50">
-                      <RadioGroupItem value={parent.id} id={parent.id} />
-                      <Label htmlFor={parent.id} className="flex flex-1 cursor-pointer items-center gap-3">
+                  {parentsData.data.map(parent => (
+                    <div key={parent.parent.id} className="flex items-center space-x-3 rounded-lg border p-3 transition-colors hover:bg-muted/50">
+                      <RadioGroupItem value={parent.parent.id} id={parent.parent.id} />
+                      <Label htmlFor={parent.parent.id} className="flex flex-1 cursor-pointer items-center gap-3">
                         <Avatar className="h-10 w-10">
                           <AvatarFallback>
-                            {parent.firstName?.[0]}
-                            {parent.lastName?.[0]}
+                            {parent.parent.firstName?.[0]}
+                            {parent.parent.lastName?.[0]}
                           </AvatarFallback>
                         </Avatar>
                         <div>
                           <p className="font-medium">
-                            {parent.lastName}
+                            {parent.parent.lastName}
                             {' '}
-                            {parent.firstName}
+                            {parent.parent.firstName}
                           </p>
-                          <p className="text-sm text-muted-foreground">{parent.phone}</p>
+                          <p className="text-sm text-muted-foreground">{parent.parent.phone}</p>
                         </div>
                       </Label>
                     </div>

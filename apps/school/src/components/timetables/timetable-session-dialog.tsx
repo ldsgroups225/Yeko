@@ -120,14 +120,14 @@ export function TimetableSessionDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6">
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className="text-xl font-black uppercase tracking-tight italic">
             {mode === 'create'
               ? t.timetables.addSession()
               : t.timetables.editSession()}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-base font-medium text-muted-foreground/60 italic">
             {mode === 'create'
               ? t.timetables.addSessionDescription()
               : t.timetables.editSessionDescription()}
@@ -135,89 +135,89 @@ export function TimetableSessionDialog({
         </DialogHeader>
 
         {conflicts.length > 0 && (
-          <ConflictIndicator conflicts={conflicts} className="w-fit" />
+          <ConflictIndicator conflicts={conflicts} className="w-fit mb-4" />
         )}
 
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+          <div className="grid gap-6 sm:grid-cols-2">
             {/* Subject */}
-            <div className="space-y-2">
-              <Label htmlFor="subjectId">{t.subjects.subject()}</Label>
+            <div className="space-y-2 col-span-2 sm:col-span-1">
+              <Label htmlFor="subjectId" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">{t.subjects.subject()}</Label>
               <Select
                 value={form.watch('subjectId')}
                 onValueChange={v => form.setValue('subjectId', v)}
               >
-                <SelectTrigger id="subjectId">
+                <SelectTrigger id="subjectId" className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
                   <SelectValue placeholder={t.common.select()} />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
                   {subjects.map(s => (
-                    <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
+                    <SelectItem key={s.id} value={s.id} className="rounded-lg focus:bg-primary/10 focus:text-primary font-medium">{s.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
               {form.formState.errors.subjectId && (
-                <p className="text-sm text-destructive">
+                <p className="text-xs font-bold text-destructive pl-1">
                   {form.formState.errors.subjectId.message}
                 </p>
               )}
             </div>
 
             {/* Teacher */}
-            <div className="space-y-2">
-              <Label htmlFor="teacherId">{t.teachers.teacher()}</Label>
+            <div className="space-y-2 col-span-2 sm:col-span-1">
+              <Label htmlFor="teacherId" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">{t.teachers.teacher()}</Label>
               <Select
                 value={form.watch('teacherId')}
                 onValueChange={v => form.setValue('teacherId', v)}
               >
-                <SelectTrigger id="teacherId">
+                <SelectTrigger id="teacherId" className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
                   <SelectValue placeholder={t.common.select()} />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
                   {teachers.map(t => (
-                    <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
+                    <SelectItem key={t.id} value={t.id} className="rounded-lg focus:bg-primary/10 focus:text-primary font-medium">{t.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
               {form.formState.errors.teacherId && (
-                <p className="text-sm text-destructive">
+                <p className="text-xs font-bold text-destructive pl-1">
                   {form.formState.errors.teacherId.message}
                 </p>
               )}
             </div>
 
             {/* Classroom */}
-            <div className="space-y-2">
-              <Label htmlFor="classroomId">{t.classrooms.classroom()}</Label>
+            <div className="space-y-2 col-span-2 sm:col-span-1">
+              <Label htmlFor="classroomId" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">{t.classrooms.classroom()}</Label>
               <Select
                 value={form.watch('classroomId') ?? 'none'}
                 onValueChange={v => form.setValue('classroomId', v === 'none' ? undefined : v)}
               >
-                <SelectTrigger id="classroomId">
+                <SelectTrigger id="classroomId" className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
                   <SelectValue placeholder={t.common.optional()} />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">{t.common.none()}</SelectItem>
+                <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
+                  <SelectItem value="none" className="rounded-lg focus:bg-primary/10 italic text-muted-foreground">{t.common.none()}</SelectItem>
                   {classrooms.map(c => (
-                    <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                    <SelectItem key={c.id} value={c.id} className="rounded-lg focus:bg-primary/10 focus:text-primary font-medium">{c.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
 
             {/* Day of Week */}
-            <div className="space-y-2">
-              <Label htmlFor="dayOfWeek">{t.timetables.day()}</Label>
+            <div className="space-y-2 col-span-2 sm:col-span-1">
+              <Label htmlFor="dayOfWeek" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">{t.timetables.day()}</Label>
               <Select
                 value={String(form.watch('dayOfWeek'))}
                 onValueChange={v => form.setValue('dayOfWeek', Number(v))}
               >
-                <SelectTrigger id="dayOfWeek">
+                <SelectTrigger id="dayOfWeek" className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
                   {[1, 2, 3, 4, 5, 6, 7].map(d => (
-                    <SelectItem key={d} value={String(d)}>
+                    <SelectItem key={d} value={String(d)} className="rounded-lg focus:bg-primary/10 focus:text-primary font-medium">
                       {dayOfWeekLabels[d]}
                     </SelectItem>
                   ))}
@@ -226,65 +226,75 @@ export function TimetableSessionDialog({
             </div>
 
             {/* Start Time */}
-            <div className="space-y-2">
-              <Label htmlFor="startTime">{t.timetables.startTime()}</Label>
+            <div className="space-y-2 col-span-2 sm:col-span-1">
+              <Label htmlFor="startTime" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">{t.timetables.startTime()}</Label>
               <Input
                 id="startTime"
                 type="time"
+                className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold tabular-nums"
                 {...form.register('startTime')}
               />
               {form.formState.errors.startTime && (
-                <p className="text-sm text-destructive">
+                <p className="text-xs font-bold text-destructive pl-1">
                   {form.formState.errors.startTime.message}
                 </p>
               )}
             </div>
 
             {/* End Time */}
-            <div className="space-y-2">
-              <Label htmlFor="endTime">{t.timetables.endTime()}</Label>
+            <div className="space-y-2 col-span-2 sm:col-span-1">
+              <Label htmlFor="endTime" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">{t.timetables.endTime()}</Label>
               <Input
                 id="endTime"
                 type="time"
+                className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold tabular-nums"
                 {...form.register('endTime')}
               />
               {form.formState.errors.endTime && (
-                <p className="text-sm text-destructive">
+                <p className="text-xs font-bold text-destructive pl-1">
                   {form.formState.errors.endTime.message}
                 </p>
               )}
             </div>
 
             {/* Color */}
-            <div className="space-y-2">
-              <Label htmlFor="color">{t.common.color()}</Label>
-              <Input
-                id="color"
-                type="color"
-                className="h-10 w-full"
-                {...form.register('color')}
-              />
+            <div className="space-y-2 col-span-2">
+              <Label htmlFor="color" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">{t.common.color()}</Label>
+              <div className="flex gap-4 items-center">
+                <Input
+                  id="color"
+                  type="color"
+                  className="h-12 w-20 rounded-xl border-border/40 p-1 cursor-pointer bg-background/50"
+                  {...form.register('color')}
+                />
+                <div
+                  className="h-12 flex-1 rounded-xl border border-border/40 transition-colors"
+                  style={{ backgroundColor: form.watch('color') }}
+                />
+              </div>
             </div>
           </div>
 
           {/* Notes */}
           <div className="space-y-2">
-            <Label htmlFor="notes">{t.common.notes()}</Label>
+            <Label htmlFor="notes" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">{t.common.notes()}</Label>
             <Textarea
               id="notes"
-              rows={2}
+              rows={3}
               placeholder={t.common.optional()}
+              className="resize-none rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-medium"
               {...form.register('notes')}
             />
           </div>
 
-          <DialogFooter className="gap-2">
+          <DialogFooter className="gap-3 sm:gap-2 pt-4">
             {mode === 'edit' && onDelete && (
               <Button
                 type="button"
                 variant="destructive"
                 onClick={handleDelete}
                 disabled={isDeleting || isSubmitting}
+                className="rounded-xl font-bold uppercase tracking-wider text-xs"
               >
                 {isDeleting
                   ? (
@@ -296,7 +306,11 @@ export function TimetableSessionDialog({
                 {t.common.delete()}
               </Button>
             )}
-            <Button type="submit" disabled={isSubmitting || isDeleting}>
+            <Button
+              type="submit"
+              disabled={isSubmitting || isDeleting}
+              className="rounded-xl font-bold uppercase tracking-wider text-xs bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20"
+            >
               {isSubmitting
                 ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

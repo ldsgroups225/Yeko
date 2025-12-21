@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { CheckIcon, ChevronsUpDownIcon, Loader2 } from 'lucide-react'
+import { CheckIcon, ChevronsUpDownIcon, Loader2, Search, User as UserIcon } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import * as React from 'react'
 import { Button } from '@/components/ui/button'
 import {
@@ -67,72 +68,109 @@ export function UserCombobox({
           aria-expanded={open}
           aria-controls="user-combobox-list"
           disabled={disabled}
-          className="w-full justify-between font-normal"
+          className={cn(
+            'w-full justify-between font-medium rounded-xl h-11 border-border/40 bg-background/50 hover:bg-background transition-all shadow-sm',
+            open && 'ring-2 ring-primary/20 border-primary/50 bg-background',
+          )}
         >
           {selectedUser
             ? (
-                <span className="truncate">
-                  {selectedUser.name}
-                  <span className="ml-2 text-muted-foreground">
-                    (
-                    {selectedUser.email}
-                    )
+                <div className="flex items-center gap-2 truncate">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <UserIcon className="h-3 w-3" />
+                  </div>
+                  <span className="truncate">
+                    {selectedUser.name}
+                    <span className="ml-2 text-xs text-muted-foreground font-normal">
+                      {selectedUser.email}
+                    </span>
                   </span>
-                </span>
+                </div>
               )
             : (
-                <span className="text-muted-foreground">
+                <span className="text-muted-foreground font-normal">
                   {placeholder || t.hr.staff.selectUser()}
                 </span>
               )}
           <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[400px] p-0" align="start">
-        <Command shouldFilter={false}>
-          <CommandInput
-            placeholder={t.hr.staff.searchUser()}
-            value={search}
-            onValueChange={setSearch}
-          />
+      <PopoverContent className="w-(--radix-popover-trigger-width) p-0 rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40 shadow-xl overflow-hidden" align="start">
+        <Command shouldFilter={false} className="bg-transparent">
+          <div className="relative border-b border-border/40">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <CommandInput
+              placeholder={t.hr.staff.searchUser()}
+              value={search}
+              onValueChange={setSearch}
+              className="border-none focus:ring-0 pl-9 py-4 h-11 bg-transparent"
+            />
+          </div>
           <CommandList id="user-combobox-list">
-            {isLoading
-              ? (
-                  <div className="flex items-center justify-center py-6">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  </div>
-                )
-              : users.length === 0
+            <AnimatePresence mode="wait">
+              {isLoading
                 ? (
-                    <CommandEmpty>{t.hr.staff.noUsersFound()}</CommandEmpty>
+                    <motion.div
+                      key="loading"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="flex items-center justify-center py-8"
+                    >
+                      <Loader2 className="h-5 w-5 animate-spin text-primary/60" />
+                    </motion.div>
                   )
-                : (
-                    <CommandGroup>
-                      {users.map(user => (
-                        <CommandItem
-                          key={user.id}
-                          value={user.id}
-                          onSelect={() => {
-                            onSelect(user.id)
-                            setOpen(false)
-                          }}
-                        >
-                          <CheckIcon
-                            className={cn(
-                              'mr-2 h-4 w-4',
-                              value === user.id ? 'opacity-100' : 'opacity-0',
-                            )}
-                          />
-                          <div className="flex flex-col">
-                            <span>{user.name}</span>
-                            <span className="text-xs text-muted-foreground">
-                              {user.email}
-                            </span>
-                          </div>
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  )}
+                : users.length === 0
+                  ? (
+                      <motion.div
+                        key="empty"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="py-10 text-center"
+                      >
+                        <CommandEmpty className="text-sm text-muted-foreground">
+                          {t.hr.staff.noUsersFound()}
+                        </CommandEmpty>
+                      </motion.div>
+                    )
+                  : (
+                      <CommandGroup className="p-2">
+                        {users.map(user => (
+                          <CommandItem
+                            key={user.id}
+                            value={user.id}
+                            onSelect={() => {
+                              onSelect(user.id)
+                              setOpen(false)
+                            }}
+                            className="rounded-lg py-3 px-3 cursor-pointer data-[selected=true]:bg-primary/10 transition-colors"
+                          >
+                            <div className="flex items-center w-full">
+                              <div className={cn(
+                                'flex h-8 w-8 shrink-0 items-center justify-center rounded-full mr-3 border transition-colors',
+                                value === user.id ? 'bg-primary border-primary text-primary-foreground' : 'bg-muted border-border/40 text-muted-foreground group-hover:bg-primary/10',
+                              )}
+                              >
+                                {value === user.id
+                                  ? (
+                                      <CheckIcon className="h-4 w-4" />
+                                    )
+                                  : (
+                                      <UserIcon className="h-4 w-4" />
+                                    )}
+                              </div>
+                              <div className="flex flex-col flex-1 truncate">
+                                <span className="font-semibold text-foreground truncate">{user.name}</span>
+                                <span className="text-xs text-muted-foreground truncate">
+                                  {user.email}
+                                </span>
+                              </div>
+                            </div>
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    )}
+            </AnimatePresence>
           </CommandList>
         </Command>
       </PopoverContent>

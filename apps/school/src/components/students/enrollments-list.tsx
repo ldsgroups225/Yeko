@@ -1,5 +1,8 @@
 'use client'
 
+import type {
+  getEnrollments,
+} from '@/school/functions/enrollments'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import {
@@ -13,8 +16,8 @@ import {
 import { motion } from 'motion/react'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
-import { EmptyState } from '@/components/hr/empty-state'
 
+import { EmptyState } from '@/components/hr/empty-state'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -63,7 +66,10 @@ import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { classesOptions } from '@/lib/queries/classes'
 import { enrollmentsKeys, enrollmentsOptions } from '@/lib/queries/enrollments'
-import { cancelEnrollment, confirmEnrollment } from '@/school/functions/enrollments'
+import {
+  cancelEnrollment,
+  confirmEnrollment,
+} from '@/school/functions/enrollments'
 
 import { generateUUID } from '@/utils/generateUUID'
 import { BulkReEnrollDialog } from './bulk-reenroll-dialog'
@@ -88,7 +94,9 @@ export function EnrollmentsList() {
 
   const [bulkReEnrollOpen, setBulkReEnrollOpen] = useState(false)
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false)
-  const [selectedEnrollment, setSelectedEnrollment] = useState<any>(null)
+  type EnrollmentItem = Awaited<ReturnType<typeof getEnrollments>>['data'][number]
+
+  const [selectedEnrollment, setSelectedEnrollment] = useState<EnrollmentItem | null>(null)
   const [cancelReason, setCancelReason] = useState('')
 
   const debouncedSearch = useDebounce(search, 500)
@@ -135,7 +143,7 @@ export function EnrollmentsList() {
     },
   })
 
-  const handleCancel = (enrollment: any) => {
+  const handleCancel = (enrollment: EnrollmentItem) => {
     setSelectedEnrollment(enrollment)
     setCancelDialogOpen(true)
   }
@@ -256,7 +264,7 @@ export function EnrollmentsList() {
                       </TableRow>
                     )
                   : (
-                      data?.data?.map((item: any, index: number) => (
+                      data?.data?.map((item, index: number) => (
                         <motion.tr
                           key={item.enrollment.id}
                           initial={{ opacity: 0, y: 10 }}
@@ -421,7 +429,7 @@ export function EnrollmentsList() {
 
       {/* Cancel Confirmation Dialog */}
       <Dialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
-        <DialogContent>
+        <DialogContent className="backdrop-blur-xl bg-card/95 border-border/40">
           <DialogHeader>
             <DialogTitle>{t.enrollments.cancelTitle()}</DialogTitle>
             <DialogDescription>

@@ -101,7 +101,7 @@ export function TransferDialog({
 
   const onSubmit = (data: TransferFormData) => {
     // Prevent transferring to the same class
-    const selectedClass = classesData?.find((c: any) => c.class.id === data.newClassId)
+    const selectedClass = classesData?.find(c => c.class.id === data.newClassId)
     const newClassName = selectedClass
       ? `${selectedClass.grade?.name} ${selectedClass.class.section}${selectedClass.series?.name ? ` (${selectedClass.series.name})` : ''}`
       : ''
@@ -119,7 +119,7 @@ export function TransferDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] backdrop-blur-xl bg-card/95 border-border/40">
         <DialogHeader>
           <DialogTitle>{t.students.transferStudent()}</DialogTitle>
           <DialogDescription>
@@ -146,7 +146,7 @@ export function TransferDialog({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {classesData?.map((cls: any) => (
+                      {classesData?.map(cls => (
                         <SelectItem key={cls.class.id} value={cls.class.id}>
                           {cls.grade?.name}
                           {' '}

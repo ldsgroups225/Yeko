@@ -352,7 +352,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl backdrop-blur-xl bg-card/95 border-border/40">
         <DialogHeader>
           <DialogTitle>{t.students.importStudents()}</DialogTitle>
           <DialogDescription>{t.students.importStudentsDescriptionExcel()}</DialogDescription>

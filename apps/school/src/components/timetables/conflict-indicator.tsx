@@ -50,11 +50,11 @@ export function ConflictIndicator({ conflicts, className }: ConflictIndicatorPro
             {t.timetables.conflicts()}
           </Badge>
         </TooltipTrigger>
-        <TooltipContent side="bottom" className="max-w-xs">
-          <ul className="space-y-1 text-sm">
+        <TooltipContent side="bottom" className="max-w-xs backdrop-blur-xl bg-destructive/95 border-destructive/20 text-destructive-foreground shadow-lg rounded-xl">
+          <ul className="space-y-2 text-xs font-medium">
             {conflicts.map(conflict => (
               <li key={generateUUID()} className="flex items-start gap-2">
-                <span className="font-medium">
+                <span className="font-bold uppercase tracking-wider opacity-80 text-[10px] mt-0.5">
                   {conflictLabels[conflict.type]}
                   :
                 </span>

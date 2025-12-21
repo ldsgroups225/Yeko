@@ -2,16 +2,16 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import {
-
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
 import { format } from 'date-fns'
-import { Edit, Eye, MoreHorizontal, Search, Trash2, Users } from 'lucide-react'
-import { motion } from 'motion/react'
+import { Calendar, Edit, Eye, Loader2, Mail, MoreHorizontal, Phone, Search, Trash2, Users } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
+import { EmptyState } from '@/components/hr/empty-state'
 import { TableSkeleton } from '@/components/hr/table-skeleton'
 import {
   AlertDialog,
@@ -24,9 +24,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { Badge } from '@/components/ui/badge'
-
 import { Button } from '@/components/ui/button'
-
 import {
   Card,
   CardContent,
@@ -39,14 +37,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import {
-  Empty,
-  EmptyContent,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from '@/components/ui/empty'
 import { Input } from '@/components/ui/input'
 import {
   Table,
@@ -125,25 +115,42 @@ export function UsersTable({ filters }: UsersTableProps) {
         accessorKey: 'name',
         header: t.hr.users.name(),
         cell: ({ row }) => (
-          <div className="font-medium">{row.original.name}</div>
+          <div className="flex flex-col">
+            <span className="font-semibold text-foreground">{row.original.name}</span>
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
+              <Mail className="h-3 w-3" />
+              {row.original.email}
+            </div>
+          </div>
         ),
-      },
-      {
-        accessorKey: 'email',
-        header: t.hr.users.email(),
       },
       {
         accessorKey: 'phone',
         header: t.hr.users.phone(),
-        cell: ({ row }) => row.original.phone || '-',
+        cell: ({ row }) => (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            {row.original.phone
+              ? (
+                  <>
+                    <Phone className="h-3.5 w-3.5" />
+                    {row.original.phone}
+                  </>
+                )
+              : '-'}
+          </div>
+        ),
       },
       {
         accessorKey: 'roles',
         header: t.hr.users.roles(),
         cell: ({ row }) => (
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap gap-1.5 max-w-[200px]">
             {row.original.roles.map(role => (
-              <Badge key={role} variant="secondary" className="text-xs">
+              <Badge
+                key={role}
+                variant="outline"
+                className="bg-primary/5 border-primary/10 text-primary text-[10px] font-medium px-2 py-0"
+              >
                 {role}
               </Badge>
             ))}
@@ -156,12 +163,12 @@ export function UsersTable({ filters }: UsersTableProps) {
         cell: ({ row }) => {
           const status = row.original.status
           const variants = {
-            active: 'default',
-            inactive: 'secondary',
-            suspended: 'destructive',
+            active: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
+            inactive: 'bg-slate-500/10 text-slate-600 border-slate-500/20',
+            suspended: 'bg-destructive/10 text-destructive border-destructive/20',
           } as const
           return (
-            <Badge variant={variants[status]}>
+            <Badge variant="outline" className={`rounded-full border ${variants[status]} transition-colors`}>
               {{
                 active: t.hr.status.active,
                 inactive: t.hr.status.inactive,
@@ -174,38 +181,44 @@ export function UsersTable({ filters }: UsersTableProps) {
       {
         accessorKey: 'lastLoginAt',
         header: t.hr.users.lastLogin(),
-        cell: ({ row }) =>
-          row.original.lastLoginAt
-            ? format(new Date(row.original.lastLoginAt), 'dd/MM/yyyy HH:mm')
-            : t.hr.users.neverLoggedIn(),
+        cell: ({ row }) => (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Calendar className="h-3.5 w-3.5" />
+            {row.original.lastLoginAt
+              ? format(new Date(row.original.lastLoginAt), 'dd MMM yyyy HH:mm')
+              : t.hr.users.neverLoggedIn()}
+          </div>
+        ),
       },
       {
         id: 'actions',
         cell: ({ row }) => (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="hover:bg-primary/10 hover:text-primary transition-colors">
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="backdrop-blur-2xl bg-popover/90 border-border/40 min-w-[160px]">
               <DropdownMenuItem
+                className="cursor-pointer gap-2"
                 onClick={() => navigate({ to: `/users/users/${row.original.id}` })}
               >
-                <Eye className="mr-2 h-4 w-4" />
+                <Eye className="h-4 w-4" />
                 {t.common.view()}
               </DropdownMenuItem>
               <DropdownMenuItem
+                className="cursor-pointer gap-2"
                 onClick={() => navigate({ to: `/users/users/${row.original.id}/edit` })}
               >
-                <Edit className="mr-2 h-4 w-4" />
+                <Edit className="h-4 w-4" />
                 {t.common.edit()}
               </DropdownMenuItem>
               <DropdownMenuItem
-                className="text-destructive"
+                className="cursor-pointer gap-2 text-destructive focus:text-destructive focus:bg-destructive/10"
                 onClick={() => setUserToDelete(row.original)}
               >
-                <Trash2 className="mr-2 h-4 w-4" />
+                <Trash2 className="h-4 w-4" />
                 {t.common.delete()}
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -225,72 +238,65 @@ export function UsersTable({ filters }: UsersTableProps) {
   })
 
   if (isLoading) {
-    return <TableSkeleton columns={7} rows={5} />
+    return <TableSkeleton columns={6} rows={5} />
   }
 
   const hasNoData = !data?.users || data.users.length === 0
   const hasNoResults = hasNoData && (debouncedSearch || filters.roleId || filters.status)
 
   return (
-    <div className="space-y-4">
-      <Card>
-        <CardHeader>
-          <CardTitle>{t.hr.users.listTitle()}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {/* Search and Filters */}
-          <div className="flex items-center gap-4 mb-4">
-            <div className="relative flex-1">
+    <div className="space-y-6">
+      <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm overflow-hidden">
+        <CardHeader className="pb-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <CardTitle className="text-2xl font-serif">{t.hr.users.listTitle()}</CardTitle>
+            <div className="relative w-full sm:w-72">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder={t.hr.users.searchPlaceholder()}
                 value={searchInput}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchInput(e.target.value)}
-                className="pl-9"
+                className="pl-10 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all"
               />
             </div>
           </div>
-
+        </CardHeader>
+        <CardContent>
           {/* Empty State */}
           {hasNoData && !hasNoResults && (
-            <Empty>
-              <EmptyHeader>
-                <EmptyMedia variant="icon">
-                  <Users />
-                </EmptyMedia>
-                <EmptyTitle>{t.hr.users.noUsers()}</EmptyTitle>
-                <EmptyDescription>{t.hr.users.noUsersDescription()}</EmptyDescription>
-              </EmptyHeader>
-              <EmptyContent>
-                <Button onClick={() => navigate({ to: '/users/users/new' })}>
-                  {t.hr.users.addUser()}
-                </Button>
-              </EmptyContent>
-            </Empty>
+            <div className="py-12">
+              <EmptyState
+                icon={Users}
+                title={t.hr.users.noUsers()}
+                description={t.hr.users.noUsersDescription()}
+                action={{
+                  label: t.hr.users.addUser(),
+                  onClick: () => navigate({ to: '/users/users/new' }),
+                }}
+              />
+            </div>
           )}
 
           {/* No Results State */}
           {hasNoResults && (
-            <Empty>
-              <EmptyHeader>
-                <EmptyMedia variant="icon">
-                  <Search />
-                </EmptyMedia>
-                <EmptyTitle>{t.common.noResults()}</EmptyTitle>
-                <EmptyDescription>{t.common.noResultsDescription()}</EmptyDescription>
-              </EmptyHeader>
-            </Empty>
+            <div className="py-12">
+              <EmptyState
+                icon={Search}
+                title={t.common.noResults()}
+                description={t.common.noResultsDescription()}
+              />
+            </div>
           )}
 
           {/* Table */}
           {!hasNoData && (
-            <div className="rounded-md border">
+            <div className="rounded-xl border border-border/40 bg-background/30 overflow-hidden">
               <Table>
-                <TableHeader>
+                <TableHeader className="bg-muted/50 backdrop-blur-md">
                   {table.getHeaderGroups().map(headerGroup => (
-                    <TableRow key={headerGroup.id}>
+                    <TableRow key={headerGroup.id} className="hover:bg-transparent border-border/40">
                       {headerGroup.headers.map(header => (
-                        <TableHead key={header.id}>
+                        <TableHead key={header.id} className="text-xs uppercase tracking-wider font-semibold py-4">
                           {header.isPlaceholder
                             ? null
                             : flexRender(
@@ -303,21 +309,25 @@ export function UsersTable({ filters }: UsersTableProps) {
                   ))}
                 </TableHeader>
                 <TableBody>
-                  {table.getRowModel().rows.map((row, index) => (
-                    <motion.tr
-                      key={row.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.15, delay: index * 0.03 }}
-                      className="hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors"
-                    >
-                      {row.getVisibleCells().map(cell => (
-                        <TableCell key={cell.id}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                      ))}
-                    </motion.tr>
-                  ))}
+                  <AnimatePresence mode="popLayout">
+                    {table.getRowModel().rows.map((row, index) => (
+                      <motion.tr
+                        key={row.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.98 }}
+                        transition={{ duration: 0.2, delay: index * 0.03, ease: 'easeOut' }}
+                        className="group hover:bg-primary/5 transition-colors border-border/40 cursor-pointer"
+                        onClick={() => navigate({ to: `/users/users/${row.original.id}` })}
+                      >
+                        {row.getVisibleCells().map(cell => (
+                          <TableCell key={cell.id} className="py-4">
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </TableCell>
+                        ))}
+                      </motion.tr>
+                    ))}
+                  </AnimatePresence>
                 </TableBody>
               </Table>
             </div>
@@ -325,29 +335,32 @@ export function UsersTable({ filters }: UsersTableProps) {
 
           {/* Pagination */}
           {!hasNoData && data && data.totalPages > 1 && (
-            <div className="flex items-center justify-between mt-4">
-              <div className="text-sm text-muted-foreground">
+            <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
+              <div className="text-sm text-muted-foreground font-medium">
                 {t.common.showing()}
                 {' '}
-                {(data.page - 1) * data.limit + 1}
+                <span className="text-foreground">{(data.page - 1) * data.limit + 1}</span>
                 {' '}
                 -
                 {' '}
-                {Math.min(data.page * data.limit, data.total)}
+                <span className="text-foreground">{Math.min(data.page * data.limit, data.total)}</span>
                 {' '}
                 {t.common.of()}
                 {' '}
-                {data.total}
+                <span className="text-foreground">{data.total}</span>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() =>
+                  className="rounded-xl border-border/40 bg-background/50 hover:bg-background transition-all px-4"
+                  onClick={(e) => {
+                    e.stopPropagation()
                     navigate({
                       to: '/users/users',
                       search: { ...filters, page: data.page - 1 },
-                    })}
+                    })
+                  }}
                   disabled={data.page === 1}
                 >
                   {t.common.previous()}
@@ -355,11 +368,14 @@ export function UsersTable({ filters }: UsersTableProps) {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() =>
+                  className="rounded-xl border-border/40 bg-background/50 hover:bg-background transition-all px-4"
+                  onClick={(e) => {
+                    e.stopPropagation()
                     navigate({
                       to: '/users/users',
                       search: { ...filters, page: data.page + 1 },
-                    })}
+                    })
+                  }}
                   disabled={data.page === data.totalPages}
                 >
                   {t.common.next()}
@@ -372,17 +388,17 @@ export function UsersTable({ filters }: UsersTableProps) {
 
       {/* Delete Dialog */}
       <AlertDialog open={!!userToDelete} onOpenChange={open => !open && setUserToDelete(null)}>
-        <AlertDialogContent>
+        <AlertDialogContent className="rounded-2xl border-border/40 bg-card/95 backdrop-blur-2xl">
           <AlertDialogHeader>
-            <AlertDialogTitle>{t.common.deleteConfirmTitle()}</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="text-xl font-serif">{t.common.deleteConfirmTitle()}</AlertDialogTitle>
+            <AlertDialogDescription className="text-muted-foreground">
               {t.common.deleteConfirmDescription({ name: userToDelete?.name })}
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t.common.cancel()}</AlertDialogCancel>
+          <AlertDialogFooter className="gap-2">
+            <AlertDialogCancel className="rounded-xl border-border/40 bg-background/50 hover:bg-background">{t.common.cancel()}</AlertDialogCancel>
             <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className="rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-lg shadow-destructive/20"
               disabled={deleteMutation.isPending}
               onClick={() => {
                 if (userToDelete) {
@@ -390,6 +406,13 @@ export function UsersTable({ filters }: UsersTableProps) {
                 }
               }}
             >
+              {deleteMutation.isPending
+                ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )
+                : (
+                    <Trash2 className="mr-2 h-4 w-4" />
+                  )}
               {deleteMutation.isPending ? t.common.deleting() : t.common.delete()}
             </AlertDialogAction>
           </AlertDialogFooter>

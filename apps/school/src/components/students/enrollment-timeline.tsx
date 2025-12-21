@@ -79,7 +79,7 @@ export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
   return (
     <div className="relative">
       {/* Timeline line */}
-      <div className="absolute left-4 top-0 h-full w-0.5 bg-border" />
+      <div className="absolute left-4 top-0 h-full w-0.5 bg-border/40" />
 
       <div className="space-y-6">
         {sortedEnrollments.map((item, index) => {
@@ -93,9 +93,9 @@ export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
               {/* Timeline dot */}
               <div
                 className={cn(
-                  'absolute left-2 flex h-5 w-5 items-center justify-center rounded-full border-2 bg-background',
+                  'absolute left-2 flex h-5 w-5 items-center justify-center rounded-full border-2 bg-card backdrop-blur-sm',
                   config.borderColor,
-                  isFirst && 'ring-2 ring-offset-2',
+                  isFirst && 'ring-2 ring-offset-2 ring-primary/20',
                   isFirst && config.bgColor,
                 )}
               >
@@ -104,8 +104,8 @@ export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
 
               {/* Content */}
               <div className={cn(
-                'flex-1 rounded-lg border p-4 transition-colors',
-                isFirst && 'border-primary/50 bg-primary/5',
+                'flex-1 rounded-xl border border-border/40 bg-card/50 backdrop-blur-sm p-4 transition-all hover:shadow-sm',
+                isFirst && 'border-primary/50 bg-primary/5 shadow-sm',
               )}
               >
                 <div className="flex flex-wrap items-start justify-between gap-2">

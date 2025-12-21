@@ -60,7 +60,7 @@ describe('userForm Component', () => {
       email: 'john@example.com',
       phone: '+1234567890',
       avatarUrl: 'https://example.com/avatar.jpg',
-      status: 'active',
+      status: 'active' as const,
       roleIds: ['role-1'],
     }
 

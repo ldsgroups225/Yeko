@@ -1,6 +1,8 @@
-import { AlertTriangle, Award, Ban, FileText } from 'lucide-react'
+import { AlertTriangle, Award, Ban, FileText, UserCircle } from 'lucide-react'
+import { motion } from 'motion/react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useTranslations } from '@/i18n'
+import { cn } from '@/lib/utils'
 
 interface ConductSummary {
   incidents: number
@@ -13,64 +15,69 @@ interface ConductSummary {
 interface ConductSummaryCardProps {
   studentName: string
   summary: ConductSummary
+  className?: string
 }
 
-export function ConductSummaryCard({ studentName, summary }: ConductSummaryCardProps) {
+export function ConductSummaryCard({ studentName, summary, className }: ConductSummaryCardProps) {
   const t = useTranslations()
 
+  const stats = [
+    { label: t.conduct.type.incident(), value: summary.incidents, icon: AlertTriangle, color: 'text-orange-500', bg: 'bg-orange-500/10' },
+    { label: t.conduct.type.sanction(), value: summary.sanctions, icon: Ban, color: 'text-red-500', bg: 'bg-red-500/10' },
+    { label: t.conduct.type.reward(), value: summary.rewards, icon: Award, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+    { label: t.conduct.type.note(), value: summary.notes, icon: FileText, color: 'text-blue-500', bg: 'bg-blue-500/10' },
+  ]
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-base">{studentName}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="flex items-center gap-2">
-            <div className="rounded-full bg-orange-500/10 p-2">
-              <AlertTriangle className="h-4 w-4 text-orange-600" />
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.3 }}
+    >
+      <Card className={cn('overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl', className)}>
+        <CardHeader className="bg-muted/20 border-b border-border/20 pb-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-background/50 text-muted-foreground shadow-sm">
+              <UserCircle className="size-4" />
             </div>
-            <div>
-              <div className="text-2xl font-bold">{summary.incidents}</div>
-              <div className="text-xs text-muted-foreground">{t.conduct.type.incident()}</div>
-            </div>
+            <CardTitle className="text-sm font-black uppercase tracking-[0.2em]">{studentName}</CardTitle>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="rounded-full bg-red-500/10 p-2">
-              <Ban className="h-4 w-4 text-red-600" />
-            </div>
-            <div>
-              <div className="text-2xl font-bold">{summary.sanctions}</div>
-              <div className="text-xs text-muted-foreground">{t.conduct.type.sanction()}</div>
-            </div>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="grid grid-cols-2 gap-6">
+            {stats.map((stat, index) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="flex items-center gap-4 transition-transform hover:scale-105"
+              >
+                <div className={cn('flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl shadow-inner border border-white/10 transition-transform duration-500', stat.bg, stat.color)}>
+                  <stat.icon className="size-6" />
+                </div>
+                <div>
+                  <div className="text-2xl font-black tracking-tight leading-none">{stat.value}</div>
+                  <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mt-1">{stat.label}</div>
+                </div>
+              </motion.div>
+            ))}
           </div>
-          <div className="flex items-center gap-2">
-            <div className="rounded-full bg-green-500/10 p-2">
-              <Award className="h-4 w-4 text-green-600" />
-            </div>
-            <div>
-              <div className="text-2xl font-bold">{summary.rewards}</div>
-              <div className="text-xs text-muted-foreground">{t.conduct.type.reward()}</div>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="rounded-full bg-blue-500/10 p-2">
-              <FileText className="h-4 w-4 text-blue-600" />
-            </div>
-            <div>
-              <div className="text-2xl font-bold">{summary.notes}</div>
-              <div className="text-xs text-muted-foreground">{t.conduct.type.note()}</div>
-            </div>
-          </div>
-        </div>
-        {summary.totalPoints !== undefined && (
-          <div className="mt-4 pt-4 border-t">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-muted-foreground">{t.conduct.totalPoints()}</span>
-              <span className="text-lg font-bold">{summary.totalPoints}</span>
-            </div>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+          {summary.totalPoints !== undefined && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="mt-6 pt-6 border-t border-border/20"
+            >
+              <div className="flex justify-between items-center rounded-2xl bg-primary/5 p-4 border border-primary/10">
+                <span className="text-xs font-black uppercase tracking-widest text-primary/70">{t.conduct.totalPoints()}</span>
+                <span className="text-2xl font-black text-primary tracking-tighter">{summary.totalPoints}</span>
+              </div>
+            </motion.div>
+          )}
+        </CardContent>
+      </Card>
+    </motion.div>
   )
 }

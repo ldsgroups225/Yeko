@@ -1,5 +1,7 @@
+import { FileText, Hash, Percent, TrendingUp, Trophy, User } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
+import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-
 import {
   Table,
   TableBody,
@@ -28,29 +30,28 @@ interface ClassAveragesTableProps {
 
 function getAverageColor(average: number): string {
   if (average >= 16)
-    return 'text-green-600 dark:text-green-400'
+    return 'text-emerald-500 font-bold'
   if (average >= 14)
-    return 'text-emerald-600 dark:text-emerald-400'
+    return 'text-indigo-500 font-bold'
   if (average >= 10)
-    return 'text-foreground'
-  return 'text-red-600 dark:text-red-400'
+    return 'text-foreground font-semibold'
+  return 'text-destructive font-bold'
 }
 
-function getRankBadge(rank: number): string {
+function getRankStyles(rank: number): string {
   if (rank === 1)
-    return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
+    return 'bg-amber-500/10 text-amber-600 border-amber-500/20 shadow-amber-500/10'
   if (rank === 2)
-    return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
+    return 'bg-slate-400/10 text-slate-500 border-slate-400/20'
   if (rank === 3)
-    return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400'
-  return 'bg-muted text-muted-foreground'
+    return 'bg-orange-500/10 text-orange-600 border-orange-500/20'
+  return 'bg-muted/50 text-muted-foreground border-border/40'
 }
 
 export function ClassAveragesTable({ averages, className }: ClassAveragesTableProps) {
   const t = useTranslations()
   const sortedAverages = [...averages].sort((a, b) => a.rank - b.rank)
 
-  // Calculate class statistics
   const classAverage = averages.length > 0
     ? averages.reduce((sum, a) => sum + a.weightedAverage, 0) / averages.length
     : 0
@@ -58,77 +59,128 @@ export function ClassAveragesTable({ averages, className }: ClassAveragesTablePr
   const passRate = averages.length > 0 ? (passCount / averages.length) * 100 : 0
 
   return (
-    <Card className={className}>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg">{t.academic.grades.averages.title()}</CardTitle>
-          <div className="flex gap-4 text-sm">
-            <div>
-              <span className="text-muted-foreground">
-                {t.academic.grades.statistics.classAverage()}
-                :
-                {' '}
-              </span>
-              <span className={cn('font-semibold', getAverageColor(classAverage))}>
-                {classAverage.toFixed(2)}
-              </span>
+    <Card className={cn('overflow-hidden rounded-2xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl', className)}>
+      <CardHeader className="border-b border-border/20 bg-muted/20">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-inner">
+              <Trophy className="size-5" />
             </div>
-            <div>
-              <span className="text-muted-foreground">
-                {t.academic.grades.statistics.passRate()}
-                :
-                {' '}
-              </span>
-              <span className={cn('font-semibold', passRate >= 50 ? 'text-green-600' : 'text-red-600')}>
-                {passRate.toFixed(0)}
-                %
-              </span>
+            <CardTitle className="text-xl font-bold tracking-tight">{t.academic.grades.averages.title()}</CardTitle>
+          </div>
+
+          <div className="flex flex-wrap gap-3">
+            <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-background/50 border border-border/40 shadow-sm">
+              <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
+                <TrendingUp className="size-3.5" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground opacity-70 leading-none mb-1">
+                  {t.academic.grades.statistics.classAverage()}
+                </span>
+                <span className={cn('text-sm font-bold tabular-nums', getAverageColor(classAverage))}>
+                  {classAverage.toFixed(2)}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-background/50 border border-border/40 shadow-sm">
+              <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600">
+                <Percent className="size-3.5" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground opacity-70 leading-none mb-1">
+                  {t.academic.grades.statistics.passRate()}
+                </span>
+                <span className={cn('text-sm font-bold tabular-nums', passRate >= 50 ? 'text-emerald-600' : 'text-destructive')}>
+                  {passRate.toFixed(1)}
+                  %
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-16 text-center">{t.academic.grades.averages.rank()}</TableHead>
-              <TableHead>{t.academic.grades.averages.student()}</TableHead>
-              <TableHead className="w-24">{t.academic.grades.averages.matricule()}</TableHead>
-              <TableHead className="w-20 text-center">{t.academic.grades.averages.gradeCount()}</TableHead>
-              <TableHead className="w-24 text-center">{t.academic.grades.averages.average()}</TableHead>
-              <TableHead className="w-24 text-center">{t.academic.grades.averages.weightedAverage()}</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {sortedAverages.map(student => (
-              <TableRow key={student.studentId}>
-                <TableCell className="text-center">
-                  <span
-                    className={cn(
-                      'inline-flex size-7 items-center justify-center rounded-full text-xs font-medium',
-                      getRankBadge(student.rank),
-                    )}
-                  >
-                    {student.rank}
-                  </span>
-                </TableCell>
-                <TableCell className="font-medium">{student.studentName}</TableCell>
-                <TableCell className="font-mono text-sm text-muted-foreground">
-                  {student.matricule}
-                </TableCell>
-                <TableCell className="text-center text-muted-foreground">
-                  {student.gradeCount}
-                </TableCell>
-                <TableCell className={cn('text-center font-semibold tabular-nums', getAverageColor(student.average))}>
-                  {student.average.toFixed(2)}
-                </TableCell>
-                <TableCell className={cn('text-center font-semibold tabular-nums', getAverageColor(student.weightedAverage))}>
-                  {student.weightedAverage.toFixed(2)}
-                </TableCell>
+
+      <CardContent className="p-0">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-muted/10 border-b-border/20 hover:bg-muted/10">
+                <TableHead className="w-20 text-center">
+                  <span className="font-bold uppercase tracking-tight text-[10px]">{t.academic.grades.averages.rank()}</span>
+                </TableHead>
+                <TableHead>
+                  <div className="flex items-center gap-2">
+                    <User className="size-3.5 text-muted-foreground" />
+                    <span className="font-bold uppercase tracking-tight text-[10px]">{t.academic.grades.averages.student()}</span>
+                  </div>
+                </TableHead>
+                <TableHead className="w-32">
+                  <div className="flex items-center gap-2">
+                    <Hash className="size-3.5 text-muted-foreground" />
+                    <span className="font-bold uppercase tracking-tight text-[10px]">{t.academic.grades.averages.matricule()}</span>
+                  </div>
+                </TableHead>
+                <TableHead className="w-24 text-center">
+                  <div className="flex items-center justify-center gap-2">
+                    <FileText className="size-3.5 text-muted-foreground" />
+                    <span className="font-bold uppercase tracking-tight text-[10px]">{t.academic.grades.averages.gradeCount()}</span>
+                  </div>
+                </TableHead>
+                <TableHead className="w-28 text-center px-6">
+                  <span className="font-bold uppercase tracking-tight text-[10px]">{t.academic.grades.averages.average()}</span>
+                </TableHead>
+                <TableHead className="w-32 text-center px-6">
+                  <span className="font-bold uppercase tracking-tight text-[10px]">{t.academic.grades.averages.weightedAverage()}</span>
+                </TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              <AnimatePresence mode="popLayout">
+                {sortedAverages.map((student, index) => (
+                  <motion.tr
+                    key={student.studentId}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.03 }}
+                    className="group border-b border-border/10 last:border-0 hover:bg-primary/5 transition-colors"
+                  >
+                    <TableCell className="text-center py-4">
+                      <div
+                        className={cn(
+                          'inline-flex size-8 items-center justify-center rounded-xl text-xs font-bold border shadow-sm transition-transform group-hover:scale-110',
+                          getRankStyles(student.rank),
+                        )}
+                      >
+                        {student.rank}
+                      </div>
+                    </TableCell>
+                    <TableCell className="py-4 font-bold text-foreground">
+                      {student.studentName}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="font-mono text-[10px] font-bold tracking-widest bg-muted/40 border-border/20 rounded-md py-0.5 px-2">
+                        {student.matricule}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-center font-bold text-muted-foreground tabular-nums">
+                      {student.gradeCount}
+                    </TableCell>
+                    <TableCell className={cn('text-center font-bold tabular-nums px-6', getAverageColor(student.average))}>
+                      {student.average.toFixed(2)}
+                    </TableCell>
+                    <TableCell className={cn('text-center px-6', getAverageColor(student.weightedAverage))}>
+                      <div className="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-background/40 border border-border/10 shadow-inner font-bold tabular-nums">
+                        {student.weightedAverage.toFixed(2)}
+                      </div>
+                    </TableCell>
+                  </motion.tr>
+                ))}
+              </AnimatePresence>
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
     </Card>
   )

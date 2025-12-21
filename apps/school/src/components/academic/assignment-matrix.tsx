@@ -1,10 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { AlertTriangle, Plus, Settings, X } from 'lucide-react'
+import { AlertTriangle, GraduationCap, Plus, Settings, X } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import {
   Select,
   SelectContent,
@@ -28,10 +35,10 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { useTranslations } from '@/i18n'
+import { cn } from '@/lib/utils'
 import { assignTeacherToClassSubject, getAssignmentMatrix, removeTeacherFromClassSubject } from '@/school/functions/class-subjects'
 import { getActiveSchoolYear } from '@/school/functions/school-years'
 import { getAllSubjects } from '@/school/functions/subjects'
-
 import { getTeachers } from '@/school/functions/teachers'
 
 interface AssignmentMatrixProps {
@@ -40,7 +47,7 @@ interface AssignmentMatrixProps {
 
 function MatrixSkeleton() {
   return (
-    <Card>
+    <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
       <CardHeader>
         <div className="flex items-center justify-between">
           <Skeleton className="h-6 w-48" />
@@ -72,7 +79,7 @@ function MatrixSkeleton() {
 function EmptyState() {
   const t = useTranslations()
   return (
-    <Card>
+    <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
       <CardContent className="p-8">
         <div className="flex flex-col items-center justify-center text-center space-y-4">
           <div className="rounded-full bg-muted p-4">
@@ -173,7 +180,7 @@ export function AssignmentMatrix({ schoolYearId: propSchoolYearId }: AssignmentM
 
   // Calculate teacher workload for overload warnings
   const teacherWorkload = new Map<string, number>()
-  matrixData?.forEach((item: any) => {
+  matrixData?.forEach((item) => {
     if (item.teacherId && item.hoursPerWeek) {
       const current = teacherWorkload.get(item.teacherId) || 0
       teacherWorkload.set(item.teacherId, current + item.hoursPerWeek)
@@ -193,12 +200,12 @@ export function AssignmentMatrix({ schoolYearId: propSchoolYearId }: AssignmentM
   }
 
   // Build matrix structure
-  const classes = [...new Map(matrixData.map((item: any) => [item.classId, { id: item.classId, name: item.className }])).values()]
+  const classes = [...new Map(matrixData.map(item => [item.classId, { id: item.classId, name: item.className }])).values()]
   const subjects = subjectsData?.subjects || []
 
   // Create assignment lookup
   const assignmentMap = new Map<string, { teacherId: string | null, teacherName: string | null }>()
-  matrixData.forEach((item: any) => {
+  matrixData.forEach((item) => {
     if (item.subjectId) {
       assignmentMap.set(`${item.classId}-${item.subjectId}`, {
         teacherId: item.teacherId,
@@ -210,155 +217,199 @@ export function AssignmentMatrix({ schoolYearId: propSchoolYearId }: AssignmentM
   const teachers = teachersData?.teachers || []
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <span>{t.assignmentMatrix.title()}</span>
-          <Badge variant="outline">
-            {classes.length}
-            {' '}
-            {t.common.classes()}
-            {' '}
-            ×
-            {' '}
-            {subjects.length}
-            {' '}
-            {t.common.subjects()}
-          </Badge>
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="overflow-x-auto" role="region" aria-label={t.assignmentMatrix.ariaLabel()}>
-          <Table aria-label={t.assignmentMatrix.ariaLabel()}>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="sticky left-0 bg-background z-10 min-w-[120px]" scope="col">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.99 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="space-y-4"
+    >
+      <Card className="border-border/40 bg-card/40 backdrop-blur-xl shadow-sm overflow-hidden">
+        <CardHeader className="border-b border-border/10 pb-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <GraduationCap className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <CardTitle>{t.assignmentMatrix.title()}</CardTitle>
+                <CardDescription>
+                  {classes.length}
+                  {' '}
                   {t.common.classes()}
-                </TableHead>
-                {subjects.map((subject: any) => (
-                  <TableHead key={subject.id} className="text-center min-w-[150px]" scope="col">
-                    {subject.name}
+                  {' '}
+                  ×
+                  {' '}
+                  {subjects.length}
+                  {' '}
+                  {t.common.subjects()}
+                </CardDescription>
+              </div>
+            </div>
+            <Badge variant="outline" className="border-border/40 bg-white/5">
+              {matrixData.length}
+              {' '}
+              {t.common.total()}
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10" role="region" aria-label={t.assignmentMatrix.ariaLabel()}>
+            <Table aria-label={t.assignmentMatrix.ariaLabel()}>
+              <TableHeader>
+                <TableRow className="border-border/10 hover:bg-transparent">
+                  <TableHead className="sticky left-0 bg-background/80 backdrop-blur-md z-20 min-w-[140px] border-r border-border/10" scope="col">
+                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground/70">
+                      {t.common.classes()}
+                    </span>
                   </TableHead>
-                ))}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {classes.map((cls: any) => (
-                <TableRow key={cls.id}>
-                  <TableCell className="sticky left-0 bg-background z-10 font-medium" scope="row">
-                    {cls.name}
-                  </TableCell>
-                  {subjects.map((subject: any) => {
-                    const key = `${cls.id}-${subject.id}`
-                    const assignment = assignmentMap.get(key)
-                    const isEditing = editingCell?.classId === cls.id && editingCell?.subjectId === subject.id
-                    const teacherOverloaded = assignment?.teacherId ? isTeacherOverloaded(assignment.teacherId) : false
-
-                    return (
-                      <TableCell key={key} className="text-center p-1">
-                        {isEditing
-                          ? (
-                              <div className="flex items-center gap-1">
-                                <Select
-                                  onValueChange={(teacherId) => {
-                                    if (teacherId === 'none') {
-                                      removeMutation.mutate({ classId: cls.id, subjectId: subject.id })
-                                    }
-                                    else {
-                                      assignMutation.mutate({ classId: cls.id, subjectId: subject.id, teacherId })
-                                    }
-                                  }}
-                                  defaultValue={assignment?.teacherId || 'none'}
-                                >
-                                  <SelectTrigger
-                                    className="h-8 w-[140px]"
-                                    aria-label={`${t.assignmentMatrix.selectTeacherFor()} ${cls.name} - ${subject.name}`}
-                                  >
-                                    <SelectValue placeholder={t.common.select()} />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="none">{t.assignmentMatrix.notAssigned()}</SelectItem>
-                                    {teachers.map((teacher: any) => {
-                                      const overloaded = isTeacherOverloaded(teacher.id)
-                                      return (
-                                        <SelectItem key={teacher.id} value={teacher.id}>
-                                          <span className="flex items-center gap-2">
-                                            {teacher.user.name}
-                                            {overloaded && (
-                                              <AlertTriangle className="h-3 w-3 text-destructive" aria-label={t.assignmentMatrix.teacherOverloaded()} />
-                                            )}
-                                          </span>
-                                        </SelectItem>
-                                      )
-                                    })}
-                                  </SelectContent>
-                                </Select>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-8 w-8"
-                                  onClick={() => setEditingCell(null)}
-                                  aria-label={t.common.cancel()}
-                                >
-                                  <X className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            )
-                          : (
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <Button
-                                      variant={assignment?.teacherId ? 'secondary' : 'ghost'}
-                                      size="sm"
-                                      className={`h-8 w-full ${!assignment?.teacherId ? 'text-muted-foreground border-dashed border' : ''}`}
-                                      onClick={() => setEditingCell({ classId: cls.id, subjectId: subject.id })}
-                                      aria-label={
-                                        assignment?.teacherId
-                                          ? `${assignment.teacherName} ${t.assignmentMatrix.teaches()} ${subject.name} ${t.common.in()} ${cls.name}. ${t.common.clickToEdit()}`
-                                          : `${t.assignmentMatrix.assignTeacherFor()} ${subject.name} ${t.common.in()} ${cls.name}`
-                                      }
-                                    >
-                                      {assignment?.teacherId
-                                        ? (
-                                            <span className="flex items-center gap-1 truncate max-w-[120px]">
-                                              {assignment.teacherName}
-                                              {teacherOverloaded && (
-                                                <AlertTriangle className="h-3 w-3 text-destructive shrink-0" aria-hidden="true" />
-                                              )}
-                                            </span>
-                                          )
-                                        : (
-                                            <span aria-hidden="true">—</span>
-                                          )}
-                                    </Button>
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    {assignment?.teacherId
-                                      ? (
-                                          <span>
-                                            {assignment.teacherName}
-                                            {teacherOverloaded && ` (${t.assignmentMatrix.overloaded()})`}
-                                            {' '}
-                                            -
-                                            {' '}
-                                            {t.common.clickToEdit()}
-                                          </span>
-                                        )
-                                      : t.assignmentMatrix.clickToAssign()}
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                            )}
-                      </TableCell>
-                    )
-                  })}
+                  {subjects.map(subject => (
+                    <TableHead key={subject.id} className="text-center min-w-[160px] border-b border-border/10 py-4" scope="col">
+                      <div className="flex flex-col items-center">
+                        <span className="font-semibold text-foreground">{subject.name}</span>
+                        <span className="text-[10px] text-muted-foreground uppercase">{subject.shortName}</span>
+                      </div>
+                    </TableHead>
+                  ))}
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      </CardContent>
-    </Card>
+              </TableHeader>
+              <TableBody>
+                {classes.map(cls => (
+                  <TableRow
+                    key={cls.id}
+                    className="border-border/5 hover:bg-white/5 transition-colors group"
+                  >
+                    <TableCell className="sticky left-0 bg-card/60 backdrop-blur-md z-10 font-medium border-r border-border/10 py-4 group-hover:bg-primary/5 transition-colors" scope="row">
+                      {cls.name}
+                    </TableCell>
+                    {subjects.map((subject) => {
+                      const key = `${cls.id}-${subject.id}`
+                      const assignment = assignmentMap.get(key)
+                      const isEditing = editingCell?.classId === cls.id && editingCell?.subjectId === subject.id
+                      const teacherOverloaded = assignment?.teacherId ? isTeacherOverloaded(assignment.teacherId) : false
+
+                      return (
+                        <TableCell key={key} className="text-center p-2 relative">
+                          <AnimatePresence mode="wait">
+                            {isEditing
+                              ? (
+                                  <motion.div
+                                    key="editing"
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
+                                    className="flex items-center gap-1 justify-center"
+                                  >
+                                    <Select
+                                      onValueChange={(teacherId) => {
+                                        if (teacherId === 'none') {
+                                          removeMutation.mutate({ classId: cls.id, subjectId: subject.id })
+                                        }
+                                        else {
+                                          assignMutation.mutate({ classId: cls.id, subjectId: subject.id, teacherId })
+                                        }
+                                      }}
+                                      defaultValue={assignment?.teacherId || 'none'}
+                                    >
+                                      <SelectTrigger
+                                        className="h-9 w-[150px] bg-white/5 border-white/10 text-xs focus:ring-primary/40"
+                                        aria-label={`${t.assignmentMatrix.selectTeacherFor()} ${cls.name} - ${subject.name}`}
+                                      >
+                                        <SelectValue placeholder={t.common.select()} />
+                                      </SelectTrigger>
+                                      <SelectContent className="backdrop-blur-xl bg-card/95 border-white/10">
+                                        <SelectItem value="none" className="text-xs">{t.assignmentMatrix.notAssigned()}</SelectItem>
+                                        {teachers.map((teacher) => {
+                                          const overloaded = isTeacherOverloaded(teacher.id)
+                                          return (
+                                            <SelectItem key={teacher.id} value={teacher.id} className="text-xs">
+                                              <span className="flex items-center gap-2">
+                                                {teacher.user.name}
+                                                {overloaded && (
+                                                  <Badge variant="destructive" className="h-4 px-1 text-[8px] bg-destructive/10 text-destructive border-0">
+                                                    OVERLOAD
+                                                  </Badge>
+                                                )}
+                                              </span>
+                                            </SelectItem>
+                                          )
+                                        })}
+                                      </SelectContent>
+                                    </Select>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-8 w-8 hover:bg-white/10"
+                                      onClick={() => setEditingCell(null)}
+                                      aria-label={t.common.cancel()}
+                                    >
+                                      <X className="h-4 w-4" />
+                                    </Button>
+                                  </motion.div>
+                                )
+                              : (
+                                  <motion.div
+                                    key={`static-${key}`}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                  >
+                                    <TooltipProvider>
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <Button
+                                            variant={assignment?.teacherId ? 'secondary' : 'ghost'}
+                                            size="sm"
+                                            className={cn(
+                                              'h-9 w-full min-w-[130px] rounded-lg transition-all border',
+                                              assignment?.teacherId
+                                                ? 'bg-primary/5 hover:bg-primary/10 text-primary border-primary/20'
+                                                : 'text-muted-foreground border-dashed border-border/20 hover:border-primary/40 hover:bg-white/5',
+                                            )}
+                                            onClick={() => setEditingCell({ classId: cls.id, subjectId: subject.id })}
+                                          >
+                                            {assignment?.teacherId
+                                              ? (
+                                                  <div className="flex items-center gap-1.5 truncate">
+                                                    <span className="truncate">{assignment.teacherName}</span>
+                                                    {teacherOverloaded && (
+                                                      <AlertTriangle className="h-3.5 w-3.5 text-amber-500 shrink-0 animate-pulse" />
+                                                    )}
+                                                  </div>
+                                                )
+                                              : (
+                                                  <Plus className="h-3.5 w-3.5 opacity-40 group-hover:opacity-100 transition-opacity" />
+                                                )}
+                                          </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent className="backdrop-blur-xl bg-card/95 border-white/10 text-[11px]">
+                                          {assignment?.teacherId
+                                            ? (
+                                                <div className="space-y-1">
+                                                  <p className="font-semibold">{assignment.teacherName}</p>
+                                                  {teacherOverloaded && (
+                                                    <p className="text-amber-500 flex items-center gap-1">
+                                                      <AlertTriangle className="h-3 w-3" />
+                                                      {t.assignmentMatrix.overloaded()}
+                                                    </p>
+                                                  )}
+                                                  <p className="opacity-70">{t.common.clickToEdit()}</p>
+                                                </div>
+                                              )
+                                            : t.assignmentMatrix.clickToAssign()}
+                                        </TooltipContent>
+                                      </Tooltip>
+                                    </TooltipProvider>
+                                  </motion.div>
+                                )}
+                          </AnimatePresence>
+                        </TableCell>
+                      )
+                    })}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
   )
 }

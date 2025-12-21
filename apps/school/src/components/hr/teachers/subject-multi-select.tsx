@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { CheckIcon, ChevronsUpDownIcon, Loader2, XIcon } from 'lucide-react'
+import { BookOpen, CheckIcon, ChevronsUpDownIcon, Loader2, Search, XIcon } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import * as React from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -17,6 +18,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { useTranslations } from '@/i18n'
+import { cn } from '@/lib/utils'
 import { getAllSubjects } from '@/school/functions/subjects'
 
 interface Subject {
@@ -63,7 +65,7 @@ export function SubjectMultiSelect({ value = DEFAULT_VALUE, onChange }: SubjectM
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-4">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
@@ -71,80 +73,136 @@ export function SubjectMultiSelect({ value = DEFAULT_VALUE, onChange }: SubjectM
             role="combobox"
             aria-expanded={open}
             aria-controls="subject-list"
-            className="w-full justify-between"
+            className={cn(
+              'w-full justify-between font-medium rounded-xl h-11 border-border/40 bg-background/50 hover:bg-background transition-all shadow-sm',
+              open && 'ring-2 ring-primary/20 border-primary/50 bg-background',
+            )}
           >
-            <span className="truncate">
-              {value.length > 0
-                ? `${value.length} ${t.hr.teachers.subjects().toLowerCase()}`
-                : t.hr.teachers.selectSubjects()}
-            </span>
+            <div className="flex items-center gap-2 truncate">
+              <BookOpen className="h-4 w-4 text-muted-foreground" />
+              <span className="truncate">
+                {value.length > 0
+                  ? `${value.length} ${t.hr.teachers.subjects().toLowerCase()}`
+                  : t.hr.teachers.selectSubjects()}
+              </span>
+            </div>
             <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-full p-0" align="start">
-          <Command>
-            <CommandInput
-              placeholder={t.common.search()}
-              value={search}
-              onValueChange={setSearch}
-            />
-            <CommandList>
-              {isLoading
-                ? (
-                    <div className="flex items-center justify-center p-4">
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    </div>
-                  )
-                : (
-                    <>
-                      <CommandEmpty>{t.common.noResults()}</CommandEmpty>
-                      <CommandGroup id="subject-list">
-                        {subjects.map((subject: Subject) => (
-                          <CommandItem
-                            key={subject.id}
-                            value={subject.id}
-                            onSelect={() => handleSelect(subject.id)}
-                          >
-                            <CheckIcon
-                              className={`mr-2 h-4 w-4 ${value.includes(subject.id) ? 'opacity-100' : 'opacity-0'
-                              }`}
-                            />
-                            <div className="flex flex-col">
-                              <span>{subject.name}</span>
-                              <span className="text-xs text-muted-foreground">
-                                {subject.shortName}
-                                {' '}
-                                •
-                                {' '}
-                                {subject.category}
-                              </span>
-                            </div>
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </>
-                  )}
+        <PopoverContent className="w-(--radix-popover-trigger-width) p-0 rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40 shadow-xl overflow-hidden" align="start">
+          <Command className="bg-transparent" shouldFilter={false}>
+            <div className="relative border-b border-border/40">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <CommandInput
+                placeholder={t.common.search()}
+                value={search}
+                onValueChange={setSearch}
+                className="border-none focus:ring-0 pl-9 py-4 h-11 bg-transparent"
+              />
+            </div>
+            <CommandList id="subject-list">
+              <AnimatePresence mode="wait">
+                {isLoading
+                  ? (
+                      <motion.div
+                        key="loading"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="flex items-center justify-center py-8"
+                      >
+                        <Loader2 className="h-5 w-5 animate-spin text-primary/60" />
+                      </motion.div>
+                    )
+                  : subjects.length === 0
+                    ? (
+                        <motion.div
+                          key="empty"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="py-10 text-center"
+                        >
+                          <CommandEmpty className="text-sm text-muted-foreground">
+                            {t.common.noResults()}
+                          </CommandEmpty>
+                        </motion.div>
+                      )
+                    : (
+                        <CommandGroup className="p-2">
+                          {subjects.map((subject: Subject) => (
+                            <CommandItem
+                              key={subject.id}
+                              value={subject.id}
+                              onSelect={() => handleSelect(subject.id)}
+                              className="rounded-lg py-3 px-3 cursor-pointer data-[selected=true]:bg-primary/10 transition-colors"
+                            >
+                              <div className="flex items-center w-full">
+                                <div className={cn(
+                                  'flex h-8 w-8 shrink-0 items-center justify-center rounded-full mr-3 border transition-colors',
+                                  value.includes(subject.id) ? 'bg-primary border-primary text-primary-foreground' : 'bg-muted border-border/40 text-muted-foreground',
+                                )}
+                                >
+                                  {value.includes(subject.id)
+                                    ? (
+                                        <CheckIcon className="h-4 w-4" />
+                                      )
+                                    : (
+                                        <BookOpen className="h-4 w-4" />
+                                      )}
+                                </div>
+                                <div className="flex flex-col flex-1 truncate">
+                                  <span className="font-semibold text-foreground truncate">{subject.name}</span>
+                                  <span className="text-xs text-muted-foreground truncate">
+                                    {subject.shortName}
+                                    {' '}
+                                    •
+                                    {subject.category}
+                                  </span>
+                                </div>
+                              </div>
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      )}
+              </AnimatePresence>
             </CommandList>
           </Command>
         </PopoverContent>
       </Popover>
 
-      {selectedSubjects.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {selectedSubjects.map((subject: Subject) => (
-            <Badge key={subject.id} variant="secondary" className="gap-1">
-              {subject.name}
-              <button
-                type="button"
-                onClick={() => handleRemove(subject.id)}
-                className="ml-1 rounded-full hover:bg-muted"
+      <AnimatePresence>
+        {selectedSubjects.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-wrap gap-2 p-3 rounded-xl bg-primary/5 border border-primary/10"
+          >
+            {selectedSubjects.map((subject: Subject) => (
+              <motion.div
+                layout
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0 }}
+                key={subject.id}
               >
-                <XIcon className="h-3 w-3" />
-              </button>
-            </Badge>
-          ))}
-        </div>
-      )}
+                <Badge
+                  variant="secondary"
+                  className="pl-3 pr-1 py-1 gap-2 rounded-lg bg-card border-border/40 shadow-sm group hover:border-primary/30 transition-colors"
+                >
+                  <span className="text-xs font-semibold">{subject.name}</span>
+                  <button
+                    type="button"
+                    onClick={() => handleRemove(subject.id)}
+                    className="flex h-5 w-5 items-center justify-center rounded-md hover:bg-destructive/10 hover:text-destructive transition-colors"
+                  >
+                    <XIcon className="h-3 w-3" />
+                  </button>
+                </Badge>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

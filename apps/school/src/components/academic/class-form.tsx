@@ -1,9 +1,12 @@
+import type { getClasses } from '@/school/functions/classes'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
-import { Loader2 } from 'lucide-react'
+import { Activity, Calendar as CalendarIcon, Check, GraduationCap, LayoutGrid, Loader2, User as UserIcon, Users as UsersIcon } from 'lucide-react'
+import { motion } from 'motion/react'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -29,9 +32,10 @@ const classSchema = z.object({
 })
 
 type ClassFormData = z.infer<typeof classSchema>
+type ClassInfo = Awaited<ReturnType<typeof getClasses>>[number]
 
 interface ClassFormProps {
-  classData?: any
+  classData?: ClassInfo
   onSuccess?: () => void
 }
 
@@ -47,7 +51,7 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
   })
 
   // Find the current school year from context or use the first one
-  const currentSchoolYear = schoolYears?.find((sy: any) => sy.id === schoolYearId) || schoolYears?.[0]
+  const currentSchoolYear = schoolYears?.find(sy => sy.id === schoolYearId) || schoolYears?.[0]
 
   const { data: grades } = useSuspenseQuery({
     queryKey: ['grades'],
@@ -69,33 +73,33 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
     queryFn: () => getTeachers({ data: {} }),
   })
 
-  const defaultSchoolYearId = classData?.schoolYearId || schoolYearId || currentSchoolYear?.id || ''
+  const defaultSchoolYearId = classData?.class.schoolYearId || schoolYearId || currentSchoolYear?.id || ''
 
   const { register, handleSubmit, setValue, watch, formState: { errors }, control } = useForm<ClassFormData>({
     resolver: zodResolver(classSchema),
     defaultValues: {
       schoolYearId: defaultSchoolYearId,
-      gradeId: classData?.gradeId || '',
-      seriesId: classData?.seriesId || null,
-      section: classData?.section || '',
-      classroomId: classData?.classroomId || null,
-      homeroomTeacherId: classData?.homeroomTeacherId || null,
-      status: classData?.status || 'active',
-      maxStudents: classData?.maxStudents || 40,
+      gradeId: classData?.class.gradeId || '',
+      seriesId: classData?.class.seriesId || null,
+      section: classData?.class.section || '',
+      classroomId: classData?.class.classroomId || null,
+      homeroomTeacherId: classData?.class.homeroomTeacherId || null,
+      status: classData?.class.status || 'active',
+      maxStudents: classData?.class.maxStudents || 40,
     },
   })
 
   const mutation = useMutation({
     mutationFn: (formData: ClassFormData) =>
       isEditing
-        ? updateClass({ data: { id: classData.id, updates: formData } })
+        ? updateClass({ data: { id: classData.class.id, updates: formData } })
         : createClass({ data: formData }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['classes'] })
       toast.success(isEditing ? t.classes.updateSuccess() : t.classes.createSuccess())
       onSuccess?.()
     },
-    onError: (error: any) => {
+    onError: (error) => {
       toast.error(error.message || t.classes.saveFailed())
     },
   })
@@ -121,10 +125,17 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit, onFormError)} className="space-y-4">
-      <div className="grid gap-4 md:grid-cols-2">
+    <motion.form
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      onSubmit={handleSubmit(onSubmit, onFormError)}
+      className="space-y-6"
+    >
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* Grade Selection */}
         <div className="space-y-2">
-          <Label htmlFor="gradeId">
+          <Label htmlFor="gradeId" className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <GraduationCap className="h-3.5 w-3.5" />
             {t.classes.grade()}
             {' '}
             *
@@ -134,117 +145,176 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
             control={control}
             render={({ field }) => (
               <Select value={field.value || ''} onValueChange={field.onChange}>
-                <SelectTrigger>
+                <SelectTrigger className="bg-white/5 border-white/10 focus:ring-primary/40 h-11">
                   <SelectValue placeholder={t.classes.selectGrade()} />
                 </SelectTrigger>
-                <SelectContent>
-                  {grades.map((g: any) => (
+                <SelectContent className="backdrop-blur-xl bg-card/95 border-white/10">
+                  {grades.map(g => (
                     <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             )}
           />
-          {errors.gradeId && <p className="text-sm text-destructive">{errors.gradeId.message}</p>}
+          {errors.gradeId && (
+            <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="text-[11px] font-medium text-destructive">
+              {errors.gradeId.message}
+            </motion.p>
+          )}
         </div>
 
+        {/* Series Selection */}
         <div className="space-y-2">
-          <Label htmlFor="seriesId">{t.classes.series()}</Label>
+          <Label htmlFor="seriesId" className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <LayoutGrid className="h-3.5 w-3.5" />
+            {t.classes.series()}
+          </Label>
           <Select value={watch('seriesId') || '__none__'} onValueChange={v => setValue('seriesId', v === '__none__' ? null : v)}>
-            <SelectTrigger>
+            <SelectTrigger className="bg-white/5 border-white/10 focus:ring-primary/40 h-11">
               <SelectValue placeholder={t.classes.selectSeries()} />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="backdrop-blur-xl bg-card/95 border-white/10">
               <SelectItem value="__none__">{t.common.none()}</SelectItem>
-              {series.map((s: any) => (
+              {series.map(s => (
                 <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
 
+        {/* Section Input */}
         <div className="space-y-2">
-          <Label htmlFor="section">
+          <Label htmlFor="section" className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <Activity className="h-3.5 w-3.5" />
             {t.classes.section()}
             {' '}
             *
           </Label>
-          <Input id="section" {...register('section')} placeholder={t.placeholders.classSection()} />
-          {errors.section && <p className="text-sm text-destructive">{errors.section.message}</p>}
+          <Input
+            id="section"
+            {...register('section')}
+            placeholder={t.placeholders.classSection()}
+            className="bg-white/5 border-white/10 focus:ring-primary/40 h-11"
+          />
+          {errors.section && (
+            <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="text-[11px] font-medium text-destructive">
+              {errors.section.message}
+            </motion.p>
+          )}
         </div>
 
+        {/* Max Students */}
         <div className="space-y-2">
-          <Label htmlFor="maxStudents">
+          <Label htmlFor="maxStudents" className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <UsersIcon className="h-3.5 w-3.5" />
             {t.classes.maxStudents()}
             {' '}
             *
           </Label>
-          <Input id="maxStudents" type="number" {...register('maxStudents', { valueAsNumber: true })} />
-          {errors.maxStudents && <p className="text-sm text-destructive">{errors.maxStudents.message}</p>}
+          <Input
+            id="maxStudents"
+            type="number"
+            {...register('maxStudents', { valueAsNumber: true })}
+            className="bg-white/5 border-white/10 focus:ring-primary/40 h-11 font-mono"
+          />
+          {errors.maxStudents && (
+            <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="text-[11px] font-medium text-destructive">
+              {errors.maxStudents.message}
+            </motion.p>
+          )}
         </div>
 
+        {/* Classroom Selection */}
         <div className="space-y-2">
-          <Label htmlFor="classroomId">{t.classes.classroom()}</Label>
+          <Label htmlFor="classroomId" className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <CalendarIcon className="h-3.5 w-3.5" />
+            {t.classes.classroom()}
+          </Label>
           <Select value={watch('classroomId') || '__none__'} onValueChange={v => setValue('classroomId', v === '__none__' ? null : v)}>
-            <SelectTrigger>
+            <SelectTrigger className="bg-white/5 border-white/10 focus:ring-primary/40 h-11">
               <SelectValue placeholder={t.classes.selectClassroom()} />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="backdrop-blur-xl bg-card/95 border-white/10">
               <SelectItem value="__none__">{t.common.none()}</SelectItem>
-              {classrooms.map((c: any) => (
+              {classrooms.map(c => (
                 <SelectItem key={c.classroom.id} value={c.classroom.id}>
-                  {c.classroom.name}
-                  {' '}
-                  (
-                  {c.classroom.code}
-                  )
+                  <div className="flex items-center justify-between w-full gap-2">
+                    <span>{c.classroom.name}</span>
+                    <Badge variant="outline" className="text-[10px] bg-white/5 border-white/10">{c.classroom.code}</Badge>
+                  </div>
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
 
+        {/* Homeroom Teacher */}
         <div className="space-y-2">
-          <Label htmlFor="homeroomTeacherId">{t.classes.homeroomTeacher()}</Label>
+          <Label htmlFor="homeroomTeacherId" className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <UserIcon className="h-3.5 w-3.5" />
+            {t.classes.homeroomTeacher()}
+          </Label>
           <Select value={watch('homeroomTeacherId') || '__none__'} onValueChange={v => setValue('homeroomTeacherId', v === '__none__' ? null : v)}>
-            <SelectTrigger>
+            <SelectTrigger className="bg-white/5 border-white/10 focus:ring-primary/40 h-11">
               <SelectValue placeholder={t.classes.selectTeacher()} />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="backdrop-blur-xl bg-card/95 border-white/10">
               <SelectItem value="__none__">{t.common.none()}</SelectItem>
-              {teachersData.teachers.map((t: any) => (
-                <SelectItem key={t.id} value={t.id}>
-                  {t.user.name}
+              {teachersData.teachers.map(teacher => (
+                <SelectItem key={teacher.id} value={teacher.id}>
+                  {teacher.user.name}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
 
+        {/* Status Selection */}
         <div className="space-y-2">
-          <Label htmlFor="status">
+          <Label htmlFor="status" className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <Activity className="h-3.5 w-3.5" />
             {t.common.status()}
             {' '}
             *
           </Label>
           <Select value={watch('status') || 'active'} onValueChange={v => setValue('status', v as 'active' | 'archived')}>
-            <SelectTrigger>
+            <SelectTrigger className="bg-white/5 border-white/10 focus:ring-primary/40 h-11">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="active">{t.common.active()}</SelectItem>
-              <SelectItem value="archived">{t.common.archived()}</SelectItem>
+            <SelectContent className="backdrop-blur-xl bg-card/95 border-white/10">
+              <SelectItem value="active">
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-primary" />
+                  {t.common.active()}
+                </div>
+              </SelectItem>
+              <SelectItem value="archived">
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-muted-foreground" />
+                  {t.common.archived()}
+                </div>
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
 
-      <div className="flex justify-end gap-2">
-        <Button type="submit" disabled={mutation.isPending}>
-          {mutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+      <div className="flex justify-end gap-3 pt-4 border-t border-border/10">
+        <Button
+          type="submit"
+          disabled={mutation.isPending}
+          className="min-w-[120px] bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20"
+        >
+          {mutation.isPending
+            ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )
+            : (
+                <Check className="mr-2 h-4 w-4" />
+              )}
           {isEditing ? t.common.update() : t.common.create()}
         </Button>
       </div>
-    </form>
+    </motion.form>
   )
 }

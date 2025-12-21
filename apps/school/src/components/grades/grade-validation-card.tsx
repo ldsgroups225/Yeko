@@ -1,8 +1,8 @@
 import { formatDistanceToNow } from 'date-fns'
 import { fr } from 'date-fns/locale'
-import { CheckCircle2, Clock, FileText, XCircle } from 'lucide-react'
+import { CheckCircle2, ChevronRight, Clock, FileText, User, XCircle } from 'lucide-react'
+import { motion } from 'motion/react'
 import { Button } from '@/components/ui/button'
-
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
@@ -17,7 +17,7 @@ interface PendingValidation {
   teacherId: string
   teacherName: string
   pendingCount: number
-  submittedAt: Date
+  submittedAt: Date | string
 }
 
 interface GradeValidationCardProps {
@@ -44,75 +44,98 @@ export function GradeValidationCard({
   })
 
   return (
-    <Card className={cn('', className)}>
-      <CardHeader className="pb-2">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-2">
-            <FileText className="size-5 text-muted-foreground" />
-            <div>
-              <h3 className="font-semibold">
-                {validation.gradeName}
-                {' '}
-                {validation.className}
-                {' '}
-                -
-                {' '}
-                {validation.subjectName}
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                {t.academic.grades.validations.submittedBy()}
-                :
-                {' '}
-                {validation.teacherName}
-              </p>
+    <motion.div
+      whileHover={{ y: -5 }}
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className={cn('group', className)}
+    >
+      <Card className="overflow-hidden rounded-2xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl transition-all group-hover:shadow-primary/10">
+        <CardHeader className="pb-4">
+          <div className="flex items-start justify-between">
+            <div className="flex gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary group-hover:scale-110 transition-transform shadow-inner">
+                <FileText className="size-6" />
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-lg font-bold tracking-tight text-foreground leading-none">
+                    {validation.gradeName}
+                  </h3>
+                  <div className="h-1 w-1 rounded-full bg-border" />
+                  <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider">{validation.className}</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm font-semibold text-primary/60">
+                  {validation.subjectName}
+                </div>
+              </div>
+            </div>
+            <div className="rounded-full bg-primary/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-primary border border-primary/20 shadow-sm">
+              {t.academic.grades.validations.pendingCount({ count: validation.pendingCount })}
             </div>
           </div>
-        </div>
-      </CardHeader>
-      <CardContent className="pb-2">
-        <div className="flex items-center gap-4 text-sm">
-          <div className="flex items-center gap-1 text-muted-foreground">
-            <Clock className="size-4" />
-            <span>
-              {t.academic.grades.validations.submittedAt()}
-              {' '}
-              {timeAgo}
-            </span>
+        </CardHeader>
+
+        <CardContent className="pb-6">
+          <div className="flex flex-col gap-3 p-4 rounded-xl bg-muted/30 border border-border/20">
+            <div className="flex items-center gap-2 text-sm">
+              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-background/50 border border-border/40">
+                <User className="size-3 text-muted-foreground" />
+              </div>
+              <span className="text-muted-foreground italic truncate">
+                {t.academic.grades.validations.submittedBy()}
+                :
+                <span className="text-foreground font-bold not-italic ml-1">{validation.teacherName}</span>
+              </span>
+            </div>
+            <div className="flex items-center gap-2 text-xs">
+              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-background/50 border border-border/40">
+                <Clock className="size-3 text-muted-foreground" />
+              </div>
+              <span className="text-muted-foreground font-medium uppercase tracking-wider opacity-60">
+                {t.academic.grades.validations.submittedAt()}
+                {' '}
+                {timeAgo}
+              </span>
+            </div>
           </div>
-          <div className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
-            {t.academic.grades.validations.pendingCount({ count: validation.pendingCount })}
-          </div>
-        </div>
-      </CardContent>
-      <CardFooter className="gap-2 pt-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onViewDetails}
-          disabled={isLoading}
-        >
-          {t.academic.grades.validations.viewDetails()}
-        </Button>
-        <Button
-          variant="default"
-          size="sm"
-          onClick={onValidate}
-          disabled={isLoading}
-          className="bg-green-600 hover:bg-green-700"
-        >
-          <CheckCircle2 className="mr-1 size-4" />
-          {t.academic.grades.validations.validate()}
-        </Button>
-        <Button
-          variant="destructive"
-          size="sm"
-          onClick={onReject}
-          disabled={isLoading}
-        >
-          <XCircle className="mr-1 size-4" />
-          {t.academic.grades.validations.reject()}
-        </Button>
-      </CardFooter>
-    </Card>
+        </CardContent>
+
+        <CardFooter className="gap-3 p-4 bg-muted/20 border-t border-border/20">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onViewDetails}
+            disabled={isLoading}
+            className="flex-1 rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-background/80"
+          >
+            {t.academic.grades.validations.viewDetails()}
+            <ChevronRight className="ml-1 size-3" />
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onReject}
+            disabled={isLoading}
+            className="flex-1 rounded-xl font-bold uppercase tracking-widest text-[10px] border-destructive/30 text-destructive hover:bg-destructive hover:text-destructive-foreground transition-all shadow-sm"
+          >
+            <XCircle className="mr-1.5 size-3.5" />
+            {t.academic.grades.validations.reject()}
+          </Button>
+
+          <Button
+            variant="default"
+            size="sm"
+            onClick={onValidate}
+            disabled={isLoading}
+            className="flex-1 rounded-xl font-bold uppercase tracking-widest text-[10px] bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-500/20"
+          >
+            <CheckCircle2 className="mr-1.5 size-3.5" />
+            {t.academic.grades.validations.validate()}
+          </Button>
+        </CardFooter>
+      </Card>
+    </motion.div>
   )
 }

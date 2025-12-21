@@ -1,15 +1,8 @@
-import { FileWarning } from 'lucide-react'
-import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from '@/components/ui/empty'
-
+import { FileWarning, Plus } from 'lucide-react'
+import { motion } from 'motion/react'
+import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useTranslations } from '@/i18n'
-
 import { generateUUID } from '@/utils/generateUUID'
 import { ConductRecordCard } from './conduct-record-card'
 
@@ -56,20 +49,26 @@ export function ConductRecordList({
 
   if (records.length === 0) {
     return (
-      <Empty>
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <FileWarning className="h-6 w-6" />
-          </EmptyMedia>
-          <EmptyTitle>{t.conduct.noRecords()}</EmptyTitle>
-          <EmptyDescription>{t.conduct.noRecordsDescription()}</EmptyDescription>
-        </EmptyHeader>
-      </Empty>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="rounded-3xl border border-dashed border-border/60 bg-card/20 backdrop-blur-sm p-12 flex flex-col items-center text-center"
+      >
+        <div className="p-6 rounded-full bg-background/50 mb-6 shadow-inner">
+          <FileWarning className="size-12 text-muted-foreground/20" />
+        </div>
+        <h3 className="text-xl font-bold text-muted-foreground mb-2">{t.conduct.noRecords()}</h3>
+        <p className="text-sm text-muted-foreground max-w-xs mb-8">{t.conduct.noRecordsDescription()}</p>
+        <Button className="rounded-2xl h-12 px-8 font-black uppercase tracking-widest text-[10px]">
+          <Plus className="mr-2 h-4 w-4" />
+          {t.common.create()}
+        </Button>
+      </motion.div>
     )
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {records.map(record => (
         <ConductRecordCard
           key={record.id}
@@ -85,9 +84,9 @@ export function ConductRecordList({
 
 function ConductRecordListSkeleton() {
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {Array.from({ length: 6 }).map(() => (
-        <Skeleton key={generateUUID()} className="h-48 w-full" />
+        <Skeleton key={generateUUID()} className="h-[220px] w-full rounded-3xl" />
       ))}
     </div>
   )

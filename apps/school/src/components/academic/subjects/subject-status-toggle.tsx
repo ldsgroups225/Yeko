@@ -1,3 +1,4 @@
+import { motion } from 'motion/react'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { useTranslations } from '@/i18n'
@@ -20,27 +21,35 @@ export function SubjectStatusToggle({
   const isActive = status === 'active'
 
   return (
-    <div className={cn('flex items-center space-x-2', className)}>
+    <motion.div
+      initial={{ opacity: 0, x: -10 }}
+      animate={{ opacity: 1, x: 0 }}
+      className={cn(
+        'flex items-center space-x-3 px-3 py-1.5 rounded-full transition-colors',
+        isActive ? 'bg-primary/10 border border-primary/20' : 'bg-muted/50 border border-border/40',
+        className,
+      )}
+    >
       <Switch
         id="subject-status"
         checked={isActive}
         onCheckedChange={checked => onToggle(checked ? 'active' : 'inactive')}
         disabled={disabled}
         className={cn(
-          isActive && 'data-[state=checked]:bg-green-500',
+          'data-[state=checked]:bg-primary',
         )}
       />
       <Label
         htmlFor="subject-status"
         className={cn(
-          'text-sm cursor-pointer transition-colors',
-          isActive ? 'text-green-600' : 'text-muted-foreground',
+          'text-xs font-semibold cursor-pointer transition-colors uppercase tracking-wider',
+          isActive ? 'text-primary' : 'text-muted-foreground',
         )}
       >
         {isActive
           ? t.academic.subjects.status.active()
           : t.academic.subjects.status.inactive()}
       </Label>
-    </div>
+    </motion.div>
   )
 }

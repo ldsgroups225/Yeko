@@ -58,8 +58,8 @@ describe('teacherForm Component', () => {
       id: 'teacher-123',
       userId: 'user-123',
       specialization: 'Mathematics',
-      hireDate: '2024-01-15',
-      status: 'active',
+      hireDate: new Date('2024-01-15'),
+      status: 'active' as const,
       subjectIds: ['math-101'],
     }
 

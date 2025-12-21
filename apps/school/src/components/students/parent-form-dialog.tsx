@@ -47,7 +47,7 @@ type ParentFormValues = z.infer<typeof parentFormSchema>
 interface ParentFormDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  parent?: any
+  parent?: ParentFormValues & { id: string }
 }
 
 export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialogProps) {
@@ -84,7 +84,7 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
 
   const updateMutation = useMutation({
     mutationFn: (data: ParentFormValues) =>
-      updateParent({ data: { id: parent.id, updates: data } }),
+      updateParent({ data: { id: parent!.id, updates: data } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: parentsKeys.all })
       toast.success(t.parents.updateSuccess())
@@ -108,7 +108,7 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-lg backdrop-blur-xl bg-card/95 border-border/40">
         <DialogHeader>
           <DialogTitle>
             {isEditing ? t.parents.editParent() : t.parents.addParent()}

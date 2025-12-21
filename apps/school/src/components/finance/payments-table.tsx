@@ -1,4 +1,7 @@
-import { Eye, MoreHorizontal, Printer } from 'lucide-react'
+'use client'
+
+import { CreditCard, Eye, MoreHorizontal, Printer } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -92,9 +95,9 @@ export function PaymentsTable({
 
   if (isLoading) {
     return (
-      <div className="space-y-2">
+      <div className="space-y-4 p-4">
         {Array.from({ length: 5 }).map(() => (
-          <Skeleton key={generateUUID()} className="h-16 w-full" />
+          <Skeleton key={generateUUID()} className="h-16 w-full rounded-xl" />
         ))}
       </div>
     )
@@ -102,79 +105,161 @@ export function PaymentsTable({
 
   if (payments.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
-        <p className="text-muted-foreground">{t.finance.payments.noPayments()}</p>
+      <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground border-2 border-dashed border-border/30 rounded-xl bg-card/10 m-4">
+        <div className="p-4 rounded-full bg-muted/20 mb-4">
+          <CreditCard className="h-8 w-8 text-muted-foreground/50" />
+        </div>
+        <p className="text-lg font-medium">{t.finance.payments.noPayments()}</p>
+        <p className="text-sm max-w-sm mt-1 text-muted-foreground/70">{t.finance.payments.description()}</p>
       </div>
     )
   }
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>{t.finance.receipt()}</TableHead>
-          <TableHead>{t.students.student()}</TableHead>
-          <TableHead>{t.finance.amount()}</TableHead>
-          <TableHead>{t.finance.method()}</TableHead>
-          <TableHead>{t.common.status()}</TableHead>
-          <TableHead>{t.common.date()}</TableHead>
-          <TableHead className="text-right">{t.common.actions()}</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {payments.map(payment => (
-          <TableRow key={payment.id}>
-            <TableCell className="font-medium">
-              {payment.receiptNumber || '-'}
-            </TableCell>
-            <TableCell>
-              <div>
-                <div className="font-medium">{payment.studentName}</div>
-                <div className="text-sm text-muted-foreground">
-                  {payment.studentMatricule}
+    <>
+      <div className="hidden md:block">
+        <Table>
+          <TableHeader className="bg-muted/50">
+            <TableRow className="hover:bg-transparent border-border/40">
+              <TableHead className="font-semibold">{t.finance.receipt()}</TableHead>
+              <TableHead className="font-semibold">{t.students.student()}</TableHead>
+              <TableHead className="font-semibold">{t.finance.amount()}</TableHead>
+              <TableHead className="font-semibold">{t.finance.method()}</TableHead>
+              <TableHead className="font-semibold">{t.common.status()}</TableHead>
+              <TableHead className="font-semibold">{t.common.date()}</TableHead>
+              <TableHead className="text-right font-semibold">{t.common.actions()}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <AnimatePresence>
+              {payments.map((payment, index) => (
+                <motion.tr
+                  key={payment.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="group hover:bg-muted/30 border-border/40 transition-colors"
+                >
+                  <TableCell className="font-mono text-sm text-muted-foreground font-medium">
+                    {payment.receiptNumber || '-'}
+                  </TableCell>
+                  <TableCell>
+                    <div>
+                      <div className="font-bold text-foreground">{payment.studentName}</div>
+                      <div className="text-xs font-mono text-muted-foreground mt-0.5">
+                        {payment.studentMatricule}
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <span className="font-bold text-foreground">{formatCurrency(payment.amount)}</span>
+                    <span className="ml-1 text-xs text-muted-foreground uppercase">{t.common.currency()}</span>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="secondary" className="bg-secondary/50 font-medium">
+                      {getMethodLabel(payment.method)}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={getStatusVariant(payment.status)} className="capitalize rounded-md">
+                      {{
+                        pending: t.finance.payments.status.pending,
+                        completed: t.finance.payments.status.completed,
+                        cancelled: t.finance.payments.status.cancelled,
+                        refunded: t.finance.payments.status.refunded,
+                      }[payment.status as 'pending' | 'completed' | 'cancelled' | 'refunded']()}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-sm text-muted-foreground font-medium">{formatDate(payment.createdAt)}</TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-muted">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48 backdrop-blur-xl bg-card/95 border-border/40 shadow-xl rounded-xl p-1">
+                        <DropdownMenuItem onClick={() => onView?.(payment)} className="rounded-lg cursor-pointer focus:bg-primary/10 font-medium">
+                          <Eye className="mr-2 h-4 w-4 text-muted-foreground" />
+                          {t.common.view()}
+                        </DropdownMenuItem>
+                        {payment.status === 'completed' && (
+                          <DropdownMenuItem onClick={() => onPrintReceipt?.(payment)} className="rounded-lg cursor-pointer focus:bg-primary/10 font-medium">
+                            <Printer className="mr-2 h-4 w-4 text-muted-foreground" />
+                            {t.finance.receipt()}
+                          </DropdownMenuItem>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </motion.tr>
+              ))}
+            </AnimatePresence>
+          </TableBody>
+        </Table>
+      </div>
+
+      <div className="md:hidden space-y-4 p-4">
+        <AnimatePresence>
+          {payments.map((payment, index) => (
+            <motion.div
+              key={payment.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+              className="p-4 rounded-2xl bg-card/50 border border-border/40 backdrop-blur-md space-y-4"
+            >
+              <div className="flex justify-between items-start">
+                <div>
+                  <div className="font-bold text-lg">{payment.studentName}</div>
+                  <div className="text-xs font-mono text-muted-foreground mt-0.5">{payment.receiptNumber || 'N/A'}</div>
+                </div>
+                <Badge variant={getStatusVariant(payment.status)} className="capitalize rounded-md">
+                  {{
+                    pending: t.finance.payments.status.pending,
+                    completed: t.finance.payments.status.completed,
+                    cancelled: t.finance.payments.status.cancelled,
+                    refunded: t.finance.payments.status.refunded,
+                  }[payment.status as 'pending' | 'completed' | 'cancelled' | 'refunded']()}
+                </Badge>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <div className="p-3 rounded-xl bg-muted/20 border border-border/20 flex-1">
+                  <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{t.finance.amount()}</div>
+                  <div className="font-bold text-lg">
+                    {formatCurrency(payment.amount)}
+                    {' '}
+                    <span className="text-sm font-normal text-muted-foreground">FCFA</span>
+                  </div>
+                </div>
+                <div className="p-3 rounded-xl bg-muted/20 border border-border/20 flex-1">
+                  <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{t.finance.method()}</div>
+                  <div className="font-bold">{getMethodLabel(payment.method)}</div>
                 </div>
               </div>
-            </TableCell>
-            <TableCell>
-              <span className="font-medium">{formatCurrency(payment.amount)}</span>
-              <span className="ml-1 text-sm text-muted-foreground">{t.common.currency()}</span>
-            </TableCell>
-            <TableCell>{getMethodLabel(payment.method)}</TableCell>
-            <TableCell>
-              <Badge variant={getStatusVariant(payment.status)}>
-                {{
-                  pending: t.finance.payments.status.pending,
-                  completed: t.finance.payments.status.completed,
-                  cancelled: t.finance.payments.status.cancelled,
-                  refunded: t.finance.payments.status.refunded,
-                }[payment.status as 'pending' | 'completed' | 'cancelled' | 'refunded']()}
-              </Badge>
-            </TableCell>
-            <TableCell>{formatDate(payment.createdAt)}</TableCell>
-            <TableCell className="text-right">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" aria-label={t.common.actions()}>
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => onView?.(payment)}>
-                    <Eye className="mr-2 h-4 w-4" />
+
+              <div className="flex items-center justify-between pt-2 border-t border-border/30">
+                <div className="text-xs font-medium text-muted-foreground">
+                  {formatDate(payment.createdAt)}
+                </div>
+                <div className="flex gap-2">
+                  <Button size="sm" variant="ghost" className="h-8 rounded-lg" onClick={() => onView?.(payment)}>
+                    <Eye className="mr-2 h-3.5 w-3.5" />
                     {t.common.view()}
-                  </DropdownMenuItem>
+                  </Button>
                   {payment.status === 'completed' && (
-                    <DropdownMenuItem onClick={() => onPrintReceipt?.(payment)}>
-                      <Printer className="mr-2 h-4 w-4" />
+                    <Button size="sm" variant="ghost" className="h-8 rounded-lg" onClick={() => onPrintReceipt?.(payment)}>
+                      <Printer className="mr-2 h-3.5 w-3.5" />
                       {t.finance.receipt()}
-                    </DropdownMenuItem>
+                    </Button>
                   )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
+    </>
   )
 }

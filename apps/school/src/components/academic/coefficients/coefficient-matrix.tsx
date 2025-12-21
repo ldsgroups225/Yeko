@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { AlertCircle, Save } from 'lucide-react'
+import { AlertCircle, Info, LayoutGrid, Save } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useState } from 'react'
 import { toast } from 'sonner'
@@ -122,7 +122,7 @@ export function CoefficientMatrix({
 
   if (isLoading) {
     return (
-      <Card>
+      <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
         <CardHeader>
           <Skeleton className="h-8 w-[200px]" />
           <Skeleton className="h-4 w-[300px]" />
@@ -180,31 +180,38 @@ export function CoefficientMatrix({
       )}
 
       {/* Matrix Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t.academic.coefficients.matrix.title()}</CardTitle>
-          <CardDescription>
-            {t.academic.coefficients.matrix.description()}
-          </CardDescription>
+      <Card className="border-border/40 bg-card/40 backdrop-blur-xl shadow-sm overflow-hidden">
+        <CardHeader className="border-b border-border/10 pb-4">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <LayoutGrid className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <CardTitle>{t.academic.coefficients.matrix.title()}</CardTitle>
+              <CardDescription>
+                {t.academic.coefficients.matrix.description()}
+              </CardDescription>
+            </div>
+          </div>
         </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
+        <CardContent className="p-0">
+          <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[200px] sticky left-0 bg-background z-10">
-                    {t.academic.coefficients.matrix.subject()}
+                <TableRow className="border-border/10 hover:bg-transparent">
+                  <TableHead className="w-[200px] sticky left-0 bg-background/80 backdrop-blur-md z-20 border-r border-border/10 py-4">
+                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground/70">
+                      {t.academic.coefficients.matrix.subject()}
+                    </span>
                   </TableHead>
                   {grades.map(grade => (
                     <TableHead
                       key={grade.id}
-                      className="text-center min-w-[100px]"
+                      className="text-center min-w-[120px] border-b border-border/10 py-4"
                     >
-                      {grade.name}
-                      <div className="text-xs text-muted-foreground font-normal">
-                        (
-                        {grade.code}
-                        )
+                      <div className="flex flex-col items-center">
+                        <span className="font-semibold text-foreground">{grade.name}</span>
+                        <span className="text-[10px] text-muted-foreground uppercase">{grade.code}</span>
                       </div>
                     </TableHead>
                   ))}
@@ -212,13 +219,13 @@ export function CoefficientMatrix({
               </TableHeader>
               <TableBody>
                 {subjects.map(subject => (
-                  <TableRow key={subject.id}>
-                    <TableCell className="font-medium sticky left-0 bg-background z-10">
-                      <div>
-                        <div>{subject.name}</div>
-                        <div className="text-xs text-muted-foreground">
+                  <TableRow key={subject.id} className="border-border/5 hover:bg-white/5 transition-colors group">
+                    <TableCell className="font-medium sticky left-0 bg-card/60 backdrop-blur-md z-10 border-r border-border/10 py-4 group-hover:bg-primary/5 transition-colors">
+                      <div className="flex flex-col">
+                        <span className="text-sm font-semibold">{subject.name}</span>
+                        <span className="text-[10px] text-muted-foreground uppercase">
                           {subject.shortName}
-                        </div>
+                        </span>
                       </div>
                     </TableCell>
                     {grades.map((grade) => {
@@ -227,9 +234,9 @@ export function CoefficientMatrix({
                         return (
                           <TableCell
                             key={grade.id}
-                            className="text-center text-muted-foreground"
+                            className="text-center"
                           >
-                            —
+                            <span className="text-muted-foreground/30 text-xs">—</span>
                           </TableCell>
                         )
                       }
@@ -262,9 +269,12 @@ export function CoefficientMatrix({
 
           {/* Empty State */}
           {subjects.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-              <p>{t.academic.coefficients.matrix.noData()}</p>
-              <p className="text-sm">
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <div className="h-12 w-12 rounded-full bg-muted/30 flex items-center justify-center mb-4">
+                <Info className="h-6 w-6 text-muted-foreground/50" />
+              </div>
+              <p className="text-foreground font-medium">{t.academic.coefficients.matrix.noData()}</p>
+              <p className="text-sm text-muted-foreground max-w-[250px] mx-auto mt-1">
                 {t.academic.coefficients.matrix.noDataDescription()}
               </p>
             </div>
@@ -273,20 +283,20 @@ export function CoefficientMatrix({
       </Card>
 
       {/* Legend */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-wrap gap-6 text-sm">
+      <Card className="border-border/40 bg-card/40 backdrop-blur-xl shadow-sm border-t-0 rounded-t-none">
+        <CardContent className="py-4">
+          <div className="flex flex-wrap gap-6 text-xs font-medium">
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded border-2 border-primary bg-primary/10" />
-              <span>{t.academic.coefficients.legend.override()}</span>
+              <div className="w-3 h-3 rounded bg-primary/20 border border-primary/40 ring-1 ring-primary/20 ring-offset-1 ring-offset-background" />
+              <span className="text-muted-foreground">{t.academic.coefficients.legend.override()}</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded border" />
-              <span>{t.academic.coefficients.legend.template()}</span>
+              <div className="w-3 h-3 rounded border border-border/60 bg-white/5" />
+              <span className="text-muted-foreground">{t.academic.coefficients.legend.template()}</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded border-2 border-amber-500 bg-amber-500/10" />
-              <span>{t.academic.coefficients.legend.edited()}</span>
+              <div className="w-3 h-3 rounded bg-amber-500/20 border border-amber-500/40 ring-1 ring-amber-500/20 ring-offset-1 ring-offset-background" />
+              <span className="text-muted-foreground">{t.academic.coefficients.legend.edited()}</span>
             </div>
           </div>
         </CardContent>

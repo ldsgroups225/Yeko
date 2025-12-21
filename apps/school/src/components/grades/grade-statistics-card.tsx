@@ -1,5 +1,6 @@
+import { AlertCircle, ChevronsDown, ChevronsUp, Percent, Star, TrendingUp, Users } from 'lucide-react'
+import { motion } from 'motion/react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
@@ -24,77 +25,160 @@ export function GradeStatisticsCard({ statistics, className }: GradeStatisticsCa
     : 0
 
   return (
-    <Card className={cn('', className)}>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium">{t.academic.grades.statistics.title()}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-          <StatItem label={t.academic.grades.statistics.gradeCount()} value={statistics.count} />
-          <StatItem
-            label={t.academic.grades.statistics.classAverage()}
-            value={statistics.average.toFixed(2)}
-            valueClassName={getAverageColor(statistics.average)}
-          />
-          <StatItem label={t.academic.grades.statistics.min()} value={statistics.min.toFixed(2)} />
-          <StatItem label={t.academic.grades.statistics.max()} value={statistics.max.toFixed(2)} />
-          <StatItem
-            label={t.academic.grades.statistics.below10()}
-            value={statistics.below10}
-            valueClassName="text-red-600 dark:text-red-400"
-          />
-          <StatItem
-            label={t.academic.grades.statistics.above15()}
-            value={statistics.above15}
-            valueClassName="text-green-600 dark:text-green-400"
-          />
-        </div>
-        <div className="mt-4">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">{t.academic.grades.statistics.passRate()}</span>
-            <span className={cn('font-medium', passRate >= 50 ? 'text-green-600' : 'text-red-600')}>
-              {passRate}
-              %
-            </span>
+    <motion.div
+      initial={{ opacity: 0, scale: 0.98 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.4 }}
+    >
+      <Card className={cn('overflow-hidden rounded-2xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl', className)}>
+        <CardHeader className="pb-4 border-b border-border/20 bg-muted/20">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-inner">
+                <TrendingUp className="size-5" />
+              </div>
+              <CardTitle className="text-xl font-bold tracking-tight">{t.academic.grades.statistics.title()}</CardTitle>
+            </div>
+            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+              <Percent className="size-3.5" />
+              <span className="text-[10px] font-bold uppercase tracking-widest leading-none">
+                {t.academic.grades.statistics.passRate()}
+              </span>
+            </div>
           </div>
-          <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-muted">
-            <div
-              className={cn(
-                'h-full transition-all',
-                passRate >= 50 ? 'bg-green-500' : 'bg-red-500',
-              )}
-              style={{ width: `${passRate}%` }}
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6 mb-8">
+            <StatItem
+              label={t.academic.grades.statistics.gradeCount()}
+              value={statistics.count}
+              icon={Users}
+              color="bg-primary/10 text-primary"
+            />
+            <StatItem
+              label={t.academic.grades.statistics.classAverage()}
+              value={statistics.average.toFixed(2)}
+              icon={TrendingUp}
+              color={getAverageBgColor(statistics.average)}
+              valueClassName={getAverageTextColor(statistics.average)}
+            />
+            <StatItem
+              label={t.academic.grades.statistics.min()}
+              value={statistics.min.toFixed(2)}
+              icon={ChevronsDown}
+              color="bg-amber-500/10 text-amber-600"
+              valueClassName="text-amber-600"
+            />
+            <StatItem
+              label={t.academic.grades.statistics.max()}
+              value={statistics.max.toFixed(2)}
+              icon={ChevronsUp}
+              color="bg-indigo-500/10 text-indigo-600"
+              valueClassName="text-indigo-600"
+            />
+            <StatItem
+              label={t.academic.grades.statistics.below10()}
+              value={statistics.below10}
+              icon={AlertCircle}
+              color="bg-destructive/10 text-destructive"
+              valueClassName="text-destructive"
+            />
+            <StatItem
+              label={t.academic.grades.statistics.above15()}
+              value={statistics.above15}
+              icon={Star}
+              color="bg-emerald-500/10 text-emerald-600"
+              valueClassName="text-emerald-600"
             />
           </div>
-        </div>
-      </CardContent>
-    </Card>
+
+          <div className="relative p-6 rounded-2xl bg-muted/30 border border-border/20 shadow-inner overflow-hidden group">
+            <div className="relative z-10 flex items-center justify-between mb-4">
+              <div className="space-y-1">
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground opacity-70">
+                  {t.academic.grades.statistics.passRate()}
+                </span>
+                <p className="text-2xl font-bold tracking-tighter text-foreground">
+                  {passRate}
+                  %
+                  <span className="text-xs font-medium text-muted-foreground tracking-normal ml-1">de réussite</span>
+                </p>
+              </div>
+              <div className={cn(
+                'flex h-12 w-12 items-center justify-center rounded-2xl border shadow-lg transition-transform group-hover:scale-110 duration-500',
+                passRate >= 50 ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' : 'bg-destructive/10 text-destructive border-destructive/20',
+              )}
+              >
+                <TrendingUp className={cn('size-6', passRate < 50 && 'rotate-180')} />
+              </div>
+            </div>
+
+            <div className="relative h-3 w-full overflow-hidden rounded-full bg-background/50 border border-border/10 shadow-inner">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${passRate}%` }}
+                transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+                className={cn(
+                  'h-full relative transition-colors duration-1000',
+                  passRate >= 80 ? 'bg-indigo-500' : passRate >= 50 ? 'bg-emerald-500' : 'bg-destructive',
+                )}
+              >
+                <div className="absolute inset-0 bg-[linear-gradient(110deg,transparent_25%,rgba(255,255,255,0.2)_50%,transparent_75%)] bg-size-[200%_100%] animate-shimmer" />
+              </motion.div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
   )
 }
 
 function StatItem({
   label,
   value,
+  icon: Icon,
   valueClassName,
+  color,
 }: {
   label: string
   value: string | number
+  icon: React.ElementType
   valueClassName?: string
+  color?: string
 }) {
   return (
-    <div className="text-center">
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p className={cn('text-lg font-semibold tabular-nums', valueClassName)}>
+    <div className="flex flex-col items-center text-center group">
+      <div className={cn(
+        'mb-3 p-2.5 rounded-xl border border-border/10 shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:shadow-md',
+        color || 'bg-background/50 text-muted-foreground',
+      )}
+      >
+        <Icon className="size-4.5" />
+      </div>
+      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mb-1 group-hover:text-muted-foreground transition-colors">{label}</p>
+      <p className={cn('text-xl font-bold tabular-nums tracking-tight', valueClassName || 'text-foreground')}>
         {value}
       </p>
     </div>
   )
 }
 
-function getAverageColor(average: number): string {
+function getAverageBgColor(average: number): string {
+  if (average >= 16)
+    return 'bg-indigo-500/10 text-indigo-600'
   if (average >= 14)
-    return 'text-green-600 dark:text-green-400'
+    return 'bg-emerald-500/10 text-emerald-600'
   if (average >= 10)
-    return 'text-foreground'
-  return 'text-red-600 dark:text-red-400'
+    return 'bg-primary/10 text-primary'
+  return 'bg-destructive/10 text-destructive'
+}
+
+function getAverageTextColor(average: number): string {
+  if (average >= 16)
+    return 'text-indigo-600 font-black'
+  if (average >= 14)
+    return 'text-emerald-600 font-black'
+  if (average >= 10)
+    return 'text-primary font-bold'
+  return 'text-destructive font-black'
 }

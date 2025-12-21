@@ -1,9 +1,10 @@
 import type { GradeStatus, GradeType } from '@/schemas/grade'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { CheckCircle2, Cloud, CloudOff, Loader2, Save } from 'lucide-react'
+import { AlertTriangle, Cloud, CloudOff, Hash, Loader2, Save, Send, User } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   Table,
@@ -74,9 +75,8 @@ export function GradeEntryTable({
   const [pendingChanges, setPendingChanges] = useState<Map<string, number>>(() => new Map())
   const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
   const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const AUTO_SAVE_DELAY = 30000 // 30 seconds
+  const AUTO_SAVE_DELAY = 30000
 
-  // Map existing grades by student ID
   const gradesByStudent = useMemo(() => {
     const map = new Map<string, Grade>()
     for (const grade of existingGrades) {
@@ -85,7 +85,6 @@ export function GradeEntryTable({
     return map
   }, [existingGrades])
 
-  // Calculate statistics
   const statistics = useMemo(() => {
     const values = existingGrades
       .filter(g => g.status === 'validated')
@@ -105,7 +104,6 @@ export function GradeEntryTable({
     }
   }, [existingGrades])
 
-  // Mutations
   const updateMutation = useMutation({
     mutationFn: (params: { id: string, value: number }) => updateGrade({ data: { id: params.id, value: params.value } }),
     onSuccess: () => {
@@ -120,7 +118,6 @@ export function GradeEntryTable({
       setPendingChanges(new Map())
       setAutoSaveStatus('saved')
       onSaveComplete?.()
-      // Reset status after 3 seconds
       setTimeout(() => setAutoSaveStatus('idle'), 3000)
     },
     onError: () => {
@@ -136,7 +133,6 @@ export function GradeEntryTable({
     },
   })
 
-  // Save pending changes function
   const savePendingChanges = useCallback(() => {
     if (pendingChanges.size === 0)
       return
@@ -160,7 +156,6 @@ export function GradeEntryTable({
     })
   }, [pendingChanges, classId, subjectId, termId, teacherId, gradeType, weight, description, gradeDate, createBulkMutation])
 
-  // Auto-save effect
   useEffect(() => {
     if (pendingChanges.size === 0) {
       if (autoSaveTimerRef.current) {
@@ -170,17 +165,14 @@ export function GradeEntryTable({
       return
     }
 
-    // Clear existing timer
     if (autoSaveTimerRef.current) {
       clearTimeout(autoSaveTimerRef.current)
     }
 
-    // Set new timer for auto-save
     autoSaveTimerRef.current = setTimeout(() => {
       savePendingChanges()
     }, AUTO_SAVE_DELAY)
 
-    // Cleanup on unmount
     return () => {
       if (autoSaveTimerRef.current) {
         clearTimeout(autoSaveTimerRef.current)
@@ -192,17 +184,14 @@ export function GradeEntryTable({
     const existingGrade = gradesByStudent.get(studentId)
 
     if (existingGrade) {
-      // Update existing grade
       updateMutation.mutate({ id: existingGrade.id, value })
     }
     else {
-      // Track pending new grade
       setPendingChanges(prev => new Map(prev).set(studentId, value))
     }
   }
 
   const handleSavePending = () => {
-    // Clear auto-save timer when manually saving
     if (autoSaveTimerRef.current) {
       clearTimeout(autoSaveTimerRef.current)
       autoSaveTimerRef.current = null
@@ -252,138 +241,226 @@ export function GradeEntryTable({
   const isLoading = updateMutation.isPending || createBulkMutation.isPending || submitMutation.isPending
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <GradeStatisticsCard statistics={statistics} />
 
-      <div className="rounded-md border">
+      <div className="rounded-2xl border border-border/40 bg-card/30 backdrop-blur-xl shadow-xl overflow-hidden overflow-x-auto">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead className="w-10">
+            <TableRow className="bg-muted/30 border-b-border/40 hover:bg-muted/30">
+              <TableHead className="w-12 text-center">
                 <Checkbox
                   checked={allDraftsSelected}
                   onCheckedChange={handleSelectAll}
                   aria-label={t.common.select()}
                   disabled={draftGrades.length === 0}
-                  className={cn(someDraftsSelected && !allDraftsSelected && 'data-[state=checked]:bg-primary/50')}
+                  className={cn(
+                    'rounded-md border-border/60 transition-all',
+                    someDraftsSelected && !allDraftsSelected && 'data-[state=checked]:bg-primary/50',
+                  )}
                 />
               </TableHead>
-              <TableHead className="min-w-[200px]">{t.academic.grades.averages.student()}</TableHead>
-              <TableHead className="w-20">{t.academic.grades.averages.matricule()}</TableHead>
-              <TableHead className="w-24 text-center">{t.academic.grades.averages.average()}</TableHead>
-              <TableHead className="w-24 text-center">{t.common.status()}</TableHead>
+              <TableHead className="min-w-[240px]">
+                <div className="flex items-center gap-2">
+                  <User className="size-4 text-muted-foreground" />
+                  <span className="font-bold uppercase tracking-tight text-xs">{t.academic.grades.averages.student()}</span>
+                </div>
+              </TableHead>
+              <TableHead className="w-24">
+                <div className="flex items-center gap-1.5">
+                  <Hash className="size-3.5 text-muted-foreground" />
+                  <span className="font-bold uppercase tracking-tight text-xs">{t.academic.grades.averages.matricule()}</span>
+                </div>
+              </TableHead>
+              <TableHead className="w-32 text-center">
+                <span className="font-bold uppercase tracking-tight text-xs">{t.academic.grades.averages.average()}</span>
+              </TableHead>
+              <TableHead className="w-32 text-center">
+                <span className="font-bold uppercase tracking-tight text-xs">{t.common.status()}</span>
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {students.map((student) => {
-              const grade = gradesByStudent.get(student.id)
-              const pendingValue = pendingChanges.get(student.id)
-              const currentValue = grade ? Number.parseFloat(grade.value) : pendingValue ?? null
-              const status = grade?.status ?? 'draft'
-              const canSelect = grade?.status === 'draft'
+            <AnimatePresence mode="popLayout">
+              {students.map((student, index) => {
+                const grade = gradesByStudent.get(student.id)
+                const pendingValue = pendingChanges.get(student.id)
+                const currentValue = grade ? Number.parseFloat(grade.value) : pendingValue ?? null
+                const status = grade?.status ?? 'draft'
+                const canSelect = grade?.status === 'draft'
 
-              return (
-                <TableRow key={student.id}>
-                  <TableCell>
-                    {grade && (
-                      <Checkbox
-                        checked={selectedIds.has(grade.id)}
-                        onCheckedChange={checked => handleSelectOne(grade.id, !!checked)}
-                        disabled={!canSelect}
-                        aria-label={`${t.common.select()} ${student.lastName} ${student.firstName}`}
-                      />
-                    )}
-                  </TableCell>
-                  <TableCell className="font-medium">
-                    {student.lastName}
-                    {' '}
-                    {student.firstName}
-                  </TableCell>
-                  <TableCell className="font-mono text-sm text-muted-foreground">
-                    {student.matricule}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <GradeCell
-                      value={currentValue}
-                      status={status}
-                      onChange={value => handleGradeChange(student.id, value)}
-                      disabled={isLoading}
-                      rejectionReason={grade?.rejectionReason ?? undefined}
-                    />
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <GradeStatusBadge status={status} />
-                  </TableCell>
-                </TableRow>
-              )
-            })}
+                return (
+                  <motion.tr
+                    key={student.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.03 }}
+                    className="group border-b border-border/20 last:border-0 hover:bg-primary/5 transition-colors"
+                  >
+                    <TableCell className="text-center">
+                      {grade && (
+                        <Checkbox
+                          checked={selectedIds.has(grade.id)}
+                          onCheckedChange={checked => handleSelectOne(grade.id, !!checked)}
+                          disabled={!canSelect}
+                          className="rounded-md border-border/60"
+                          aria-label={`${t.common.select()} ${student.lastName} ${student.firstName}`}
+                        />
+                      )}
+                    </TableCell>
+                    <TableCell className="py-4">
+                      <div className="flex flex-col">
+                        <span className="font-bold text-foreground group-hover:text-primary transition-colors">
+                          {student.lastName}
+                          {' '}
+                          {student.firstName}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="font-mono text-[10px] font-bold tracking-widest bg-muted/50 border-border/40 px-2 rounded-md">
+                        {student.matricule}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex justify-center">
+                        <GradeCell
+                          value={currentValue}
+                          status={status}
+                          onChange={value => handleGradeChange(student.id, value)}
+                          disabled={isLoading}
+                          rejectionReason={grade?.rejectionReason ?? undefined}
+                        />
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex justify-center">
+                        <GradeStatusBadge status={status} />
+                      </div>
+                    </TableCell>
+                  </motion.tr>
+                )
+              })}
+            </AnimatePresence>
           </TableBody>
         </Table>
       </div>
 
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          {pendingChanges.size > 0 && (
-            <span className="text-sm text-amber-600">
-              {t.academic.grades.validations.pendingCount({ count: pendingChanges.size })}
-            </span>
-          )}
-          {/* Auto-save status indicator */}
-          {autoSaveStatus === 'saving' && (
-            <span className="flex items-center gap-1 text-sm text-muted-foreground">
-              <Loader2 className="size-3 animate-spin" />
-              {t.academic.grades.autoSave.saving()}
-            </span>
-          )}
-          {autoSaveStatus === 'saved' && (
-            <span className="flex items-center gap-1 text-sm text-green-600">
-              <Cloud className="size-3" />
-              {t.academic.grades.autoSave.saved()}
-            </span>
-          )}
-          {autoSaveStatus === 'error' && (
-            <span className="flex items-center gap-1 text-sm text-red-600">
-              <CloudOff className="size-3" />
-              {t.academic.grades.autoSave.error()}
-            </span>
-          )}
+      <motion.div
+        layout
+        className="flex items-center justify-between p-4 rounded-2xl border border-primary/20 bg-primary/5 backdrop-blur-md shadow-inner"
+      >
+        <div className="flex items-center gap-6">
+          <AnimatePresence mode="wait">
+            {pendingChanges.size > 0 && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600"
+              >
+                <AlertTriangle className="size-4" />
+                <span className="text-xs font-bold uppercase tracking-tight">
+                  {t.academic.grades.validations.pendingCount({ count: pendingChanges.size })}
+                </span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <div className="flex items-center gap-3">
+            <AnimatePresence mode="wait">
+              {autoSaveStatus === 'saving' && (
+                <motion.span
+                  key="saving"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 10 }}
+                  className="flex items-center gap-2 text-xs font-semibold text-muted-foreground"
+                >
+                  <Loader2 className="size-3.5 animate-spin" />
+                  {t.academic.grades.autoSave.saving()}
+                </motion.span>
+              )}
+              {autoSaveStatus === 'saved' && (
+                <motion.span
+                  key="saved"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 10 }}
+                  className="flex items-center gap-2 text-xs font-bold text-emerald-600"
+                >
+                  <div className="p-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                    <Cloud className="size-3" />
+                  </div>
+                  {t.academic.grades.autoSave.saved()}
+                </motion.span>
+              )}
+              {autoSaveStatus === 'error' && (
+                <motion.span
+                  key="error"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 10 }}
+                  className="flex items-center gap-2 text-xs font-bold text-destructive"
+                >
+                  <div className="p-1 rounded-full bg-destructive/10 border border-destructive/20">
+                    <CloudOff className="size-3" />
+                  </div>
+                  {t.academic.grades.autoSave.error()}
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
-        <div className="flex gap-2">
-          {pendingChanges.size > 0 && (
-            <Button
-              onClick={handleSavePending}
-              disabled={isLoading}
-            >
-              {createBulkMutation.isPending
-                ? (
-                    <Loader2 className="mr-2 size-4 animate-spin" />
-                  )
-                : (
-                    <Save className="mr-2 size-4" />
-                  )}
-              {t.common.save()}
-            </Button>
-          )}
+
+        <div className="flex gap-3">
+          <AnimatePresence>
+            {pendingChanges.size > 0 && (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+              >
+                <Button
+                  onClick={handleSavePending}
+                  disabled={isLoading}
+                  variant="outline"
+                  className="rounded-xl border-amber-500/30 font-bold bg-amber-500/5 hover:bg-amber-500/10 text-amber-700"
+                >
+                  {createBulkMutation.isPending
+                    ? (
+                        <Loader2 className="mr-2 size-4 animate-spin text-amber-600" />
+                      )
+                    : (
+                        <Save className="mr-2 size-4 text-amber-600" />
+                      )}
+                  {t.common.save()}
+                </Button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <Button
             onClick={handleSubmitForValidation}
             disabled={selectedIds.size === 0 || isLoading}
-            variant="default"
+            className="rounded-xl font-bold shadow-lg shadow-primary/20 px-6"
           >
             {submitMutation.isPending
               ? (
                   <Loader2 className="mr-2 size-4 animate-spin" />
                 )
               : (
-                  <CheckCircle2 className="mr-2 size-4" />
+                  <Send className="mr-2 size-4" />
                 )}
             {t.common.submit()}
-            {' '}
-            (
-            {selectedIds.size}
-            )
+            {selectedIds.size > 0 && (
+              <Badge variant="secondary" className="ml-2 bg-primary-foreground/10 text-primary-foreground border-none px-2 rounded-full font-bold">
+                {selectedIds.size}
+              </Badge>
+            )}
           </Button>
         </div>
-      </div>
+      </motion.div>
     </div>
   )
 }

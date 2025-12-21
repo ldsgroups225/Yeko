@@ -44,7 +44,7 @@ interface StatusStats {
 
 function StatCard({ title, value, description, icon, trend }: StatCardProps) {
   return (
-    <Card>
+    <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
         {icon}
@@ -75,7 +75,7 @@ export function EnrollmentStats() {
 
   if (!schoolYearId) {
     return (
-      <div className="flex min-h-[200px] items-center justify-center rounded-lg border border-dashed p-8 text-center">
+      <div className="flex min-h-[200px] items-center justify-center rounded-xl border border-dashed border-border/40 bg-card/30 p-8 text-center">
         <p className="text-muted-foreground">{t.students.selectSchoolYearForStats()}</p>
       </div>
     )
@@ -86,7 +86,7 @@ export function EnrollmentStats() {
       <div className="space-y-4">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {Array.from({ length: 4 }, () => (
-            <Card key={`stat-${generateUUID()}`}>
+            <Card key={`stat-${generateUUID()}`} className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
               <CardHeader className="pb-2">
                 <Skeleton className="h-4 w-24" />
               </CardHeader>
@@ -121,7 +121,7 @@ export function EnrollmentStats() {
 
   if (error) {
     return (
-      <div className="flex min-h-[200px] flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
+      <div className="flex min-h-[200px] flex-col items-center justify-center rounded-xl border border-dashed border-border/40 bg-card/30 p-8 text-center">
         <UserX className="h-12 w-12 text-muted-foreground" />
         <p className="mt-2 text-muted-foreground">{error.message}</p>
       </div>
@@ -169,7 +169,7 @@ export function EnrollmentStats() {
 
       {/* Enrollment by Grade */}
       <div className="grid gap-4 md:grid-cols-2">
-        <Card>
+        <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
           <CardHeader>
             <CardTitle>{t.students.enrollmentByGrade()}</CardTitle>
             <CardDescription>{t.students.enrollmentByGradeDescription()}</CardDescription>
@@ -250,7 +250,7 @@ export function EnrollmentStats() {
       </div>
 
       {/* Status Breakdown */}
-      <Card>
+      <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
         <CardHeader>
           <CardTitle>{t.students.enrollmentStatusBreakdown()}</CardTitle>
           <CardDescription>{t.students.enrollmentStatusDescription()}</CardDescription>
@@ -267,7 +267,7 @@ export function EnrollmentStats() {
               return (
                 <div
                   key={status.status}
-                  className={`rounded-lg px-4 py-2 ${statusColors[status.status] || 'bg-gray-100 text-gray-800'}`}
+                  className={`rounded-xl px-4 py-2 backdrop-blur-sm border border-border/20 ${statusColors[status.status] || 'bg-card/50 text-foreground'}`}
                 >
                   <p className="text-2xl font-bold">{status.count}</p>
                   <p className="text-xs capitalize">

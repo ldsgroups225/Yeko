@@ -1,17 +1,15 @@
-'use client'
-
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
-import { Loader2, RefreshCw, Upload } from 'lucide-react'
+import { Loader2, RefreshCw, Save, Upload, X } from 'lucide-react'
+import { motion } from 'motion/react'
 import { useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Form,
   FormControl,
@@ -52,7 +50,7 @@ const studentSchema = z.object({
 type StudentFormData = z.infer<typeof studentSchema>
 
 interface StudentFormProps {
-  student?: any
+  student?: StudentFormData & { id: string }
   mode: 'create' | 'edit'
 }
 
@@ -67,20 +65,20 @@ export function StudentForm({ student, mode }: StudentFormProps) {
   const form = useForm<StudentFormData>({
     resolver: zodResolver(studentSchema),
     defaultValues: {
-      firstName: student?.firstName || '',
-      lastName: student?.lastName || '',
-      dob: student?.dob || '',
-      gender: student?.gender || undefined,
-      photoUrl: student?.photoUrl || '',
-      matricule: student?.matricule || '',
-      birthPlace: student?.birthPlace || '',
+      firstName: student?.firstName,
+      lastName: student?.lastName,
+      dob: student?.dob,
+      gender: student?.gender,
+      photoUrl: student?.photoUrl,
+      matricule: student?.matricule,
+      birthPlace: student?.birthPlace,
       nationality: student?.nationality || 'Ivoirien',
-      address: student?.address || '',
-      emergencyContact: student?.emergencyContact || '',
-      emergencyPhone: student?.emergencyPhone || '',
-      bloodType: student?.bloodType || undefined,
-      medicalNotes: student?.medicalNotes || '',
-      previousSchool: student?.previousSchool || '',
+      address: student?.address,
+      emergencyContact: student?.emergencyContact,
+      emergencyPhone: student?.emergencyPhone,
+      bloodType: student?.bloodType,
+      medicalNotes: student?.medicalNotes,
+      previousSchool: student?.previousSchool,
       admissionDate: student?.admissionDate || new Date().toISOString().split('T')[0],
     },
   })
@@ -101,11 +99,11 @@ export function StudentForm({ student, mode }: StudentFormProps) {
 
   const updateMutation = useMutation({
     mutationFn: (data: StudentFormData) =>
-      updateStudent({ data: { id: student.id, updates: data } }),
+      updateStudent({ data: { id: student!.id, updates: data } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: studentsKeys.all })
       toast.success(t.students.updateSuccess())
-      navigate({ to: '/students/$studentId', params: { studentId: student.id } })
+      navigate({ to: '/students/$studentId', params: { studentId: student!.id } })
     },
     onError: (err: Error) => {
       toast.error(err.message)
@@ -137,20 +135,24 @@ export function StudentForm({ student, mode }: StudentFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <Tabs defaultValue="personal" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="personal">{t.students.personalInfo()}</TabsTrigger>
-            <TabsTrigger value="contact">{t.students.contactInfo()}</TabsTrigger>
-            <TabsTrigger value="medical">{t.students.medicalInfo()}</TabsTrigger>
+        <Tabs defaultValue="personal" className="w-full space-y-8">
+          <TabsList className="p-1 h-auto bg-white/40 dark:bg-black/40 backdrop-blur-md rounded-full border border-white/20 dark:border-white/10 w-full md:w-auto inline-flex justify-start">
+            <TabsTrigger value="personal" className="rounded-full px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all">{t.students.personalInfo()}</TabsTrigger>
+            <TabsTrigger value="contact" className="rounded-full px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all">{t.students.contactInfo()}</TabsTrigger>
+            <TabsTrigger value="medical" className="rounded-full px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all">{t.students.medicalInfo()}</TabsTrigger>
           </TabsList>
 
           {/* Personal Information Tab */}
           <TabsContent value="personal" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>{t.students.personalInfo()}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="rounded-xl border border-white/20 bg-white/50 backdrop-blur-xl dark:bg-black/20"
+            >
+              <div className="border-b border-white/10 bg-white/30 px-6 py-4">
+                <h3 className="text-lg font-semibold">{t.students.personalInfo()}</h3>
+              </div>
+              <div className="p-6 space-y-8">
                 {/* Photo Upload */}
                 <div className="flex items-center gap-4">
                   <Avatar className="h-24 w-24">
@@ -424,17 +426,21 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                     </FormItem>
                   )}
                 />
-              </CardContent>
-            </Card>
+              </div>
+            </motion.div>
           </TabsContent>
 
           {/* Contact Information Tab */}
           <TabsContent value="contact" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>{t.students.contactInfo()}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="rounded-xl border border-white/20 bg-white/50 backdrop-blur-xl dark:bg-black/20"
+            >
+              <div className="border-b border-white/10 bg-white/30 px-6 py-4">
+                <h3 className="text-lg font-semibold">{t.students.contactInfo()}</h3>
+              </div>
+              <div className="p-6 space-y-6">
                 <FormField
                   control={form.control}
                   name="address"
@@ -481,17 +487,21 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                     )}
                   />
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </motion.div>
           </TabsContent>
 
           {/* Medical Information Tab */}
           <TabsContent value="medical" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>{t.students.medicalInfo()}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="rounded-xl border border-white/20 bg-white/50 backdrop-blur-xl dark:bg-black/20"
+            >
+              <div className="border-b border-white/10 bg-white/30 px-6 py-4">
+                <h3 className="text-lg font-semibold">{t.students.medicalInfo()}</h3>
+              </div>
+              <div className="p-6 space-y-6">
                 <FormField
                   control={form.control}
                   name="bloodType"
@@ -531,18 +541,24 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                     </FormItem>
                   )}
                 />
-              </CardContent>
-            </Card>
+              </div>
+            </motion.div>
           </TabsContent>
         </Tabs>
 
         {/* Form Actions */}
-        <div className="flex justify-end gap-4">
-          <Button type="button" variant="outline" onClick={() => navigate({ to: '/students', search: { page: 1 } })}>
+        <div className="flex justify-end gap-3 sticky bottom-4 z-10 p-4 rounded-xl border border-white/20 bg-white/80 backdrop-blur-md shadow-sm dark:bg-black/80 dark:border-white/10">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => navigate({ to: '/students', search: { page: 1 } })}
+            className="hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/30"
+          >
+            <X className="mr-2 h-4 w-4" />
             {t.common.cancel()}
           </Button>
-          <Button type="submit" disabled={isLoading}>
-            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          <Button type="submit" disabled={isLoading} className="bg-primary text-primary-foreground shadow-sm hover:shadow-md transition-all">
+            {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
             {mode === 'create' ? t.students.createStudent() : t.students.updateStudent()}
           </Button>
         </div>
@@ -554,7 +570,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
           onOpenChange={setShowPhotoDialog}
           currentPhotoUrl={form.watch('photoUrl')}
           entityType="student"
-          entityName={`${form.watch('firstName')} ${form.watch('lastName')}`}
+          entityName={`${form.watch('firstName')} ${form.watch('lastName')} `}
           onPhotoUploaded={(photoUrl) => {
             form.setValue('photoUrl', photoUrl)
           }}

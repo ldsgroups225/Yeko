@@ -1,5 +1,6 @@
 'use client'
 
+import type { getParents } from '@/school/functions/parents'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   Mail,
@@ -15,8 +16,8 @@ import {
 import { motion } from 'motion/react'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { EmptyState } from '@/components/hr/empty-state'
 
+import { EmptyState } from '@/components/hr/empty-state'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -75,6 +76,8 @@ const invitationStatusColors: Record<string, string> = {
   expired: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
 }
 
+type ParentItem = Awaited<ReturnType<typeof getParents>>['data'][number]
+
 export function ParentsList() {
   const t = useTranslations()
   const queryClient = useQueryClient()
@@ -86,7 +89,7 @@ export function ParentsList() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
   const [autoMatchDialogOpen, setAutoMatchDialogOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [selectedParent, setSelectedParent] = useState<any>(null)
+  const [selectedParent, setSelectedParent] = useState<ParentItem | null>(null)
 
   const debouncedSearch = useDebounce(search, 500)
 
@@ -123,7 +126,7 @@ export function ParentsList() {
     },
   })
 
-  const handleDelete = (parent: any) => {
+  const handleDelete = (parent: ParentItem) => {
     setSelectedParent(parent)
     setDeleteDialogOpen(true)
   }
@@ -152,7 +155,7 @@ export function ParentsList() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-yellow-600">
-              {data?.data?.filter((p: any) => p.parent.invitationStatus === 'pending').length || 0}
+              {data?.data?.filter(p => p.parent.invitationStatus === 'pending').length || 0}
             </div>
           </CardContent>
         </Card>
@@ -165,7 +168,7 @@ export function ParentsList() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600">
-              {data?.data?.filter((p: any) => p.parent.invitationStatus === 'sent').length || 0}
+              {data?.data?.filter(p => p.parent.invitationStatus === 'sent').length || 0}
             </div>
           </CardContent>
         </Card>
@@ -178,7 +181,7 @@ export function ParentsList() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {data?.data?.filter((p: any) => p.parent.invitationStatus === 'accepted').length || 0}
+              {data?.data?.filter(p => p.parent.invitationStatus === 'accepted').length || 0}
             </div>
           </CardContent>
         </Card>
@@ -275,7 +278,7 @@ export function ParentsList() {
                       </TableRow>
                     )
                   : (
-                      data?.data?.map((item: any, index: number) => (
+                      data?.data?.map((item, index: number) => (
                         <motion.tr
                           key={item.parent.id}
                           initial={{ opacity: 0, y: 10 }}
@@ -425,7 +428,7 @@ export function ParentsList() {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent>
+        <DialogContent className="backdrop-blur-xl bg-card/95 border-border/40">
           <DialogHeader>
             <DialogTitle>{t.parents.deleteTitle()}</DialogTitle>
             <DialogDescription>

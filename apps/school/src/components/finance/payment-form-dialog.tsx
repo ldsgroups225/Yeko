@@ -115,26 +115,28 @@ export function PaymentFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6">
         <DialogHeader>
-          <DialogTitle>{t.finance.payments.recordPayment()}</DialogTitle>
-          <DialogDescription>
-            {studentName && (
-              <span>
-                {studentName}
-                {outstandingBalance !== undefined && (
-                  <span className="ml-2 text-orange-600">
-                    (
-                    {formatCurrency(outstandingBalance)}
-                    {' '}
-                    FCFA
-                    {' '}
-                    {t.dashboard.accountant.unpaidFees()}
-                    )
+          <DialogTitle className="text-xl font-bold">{t.finance.payments.recordPayment()}</DialogTitle>
+          <DialogDescription className="text-muted-foreground/80">
+            {studentName
+              ? (
+                  <span>
+                    {studentName}
+                    {outstandingBalance !== undefined && (
+                      <span className="ml-2 text-orange-600 font-medium">
+                        (
+                        {formatCurrency(outstandingBalance)}
+                        {' '}
+                        FCFA
+                        {' '}
+                        {t.dashboard.accountant.unpaidFees()}
+                        )
+                      </span>
+                    )}
                   </span>
-                )}
-              </span>
-            )}
+                )
+              : t.finance.payments.description()}
           </DialogDescription>
         </DialogHeader>
 
@@ -146,13 +148,13 @@ export function PaymentFormDialog({
                 name="studentId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
+                    <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
                       {t.students.student()}
                       {' '}
                       *
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder={t.students.searchPlaceholder()} />
+                      <Input {...field} placeholder={t.students.searchPlaceholder()} className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -160,74 +162,76 @@ export function PaymentFormDialog({
               />
             )}
 
-            <FormField
-              control={form.control}
-              name="amount"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    {t.finance.amount()}
-                    {' '}
-                    *
-                  </FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <Input
-                        type="text"
-                        inputMode="numeric"
-                        {...field}
-                        className="pr-16"
-                        placeholder="0"
-                      />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
-                        FCFA
-                      </span>
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="method"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    {t.finance.method()}
-                    {' '}
-                    *
-                  </FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+            <div className="grid gap-4 md:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="amount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
+                      {t.finance.amount()}
+                      {' '}
+                      *
+                    </FormLabel>
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
+                      <div className="relative">
+                        <Input
+                          type="text"
+                          inputMode="numeric"
+                          {...field}
+                          className="pr-16 rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors font-bold text-lg"
+                          placeholder="0"
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-muted-foreground">
+                          FCFA
+                        </span>
+                      </div>
                     </FormControl>
-                    <SelectContent>
-                      {paymentMethods.map(method => (
-                        <SelectItem key={method} value={method}>
-                          {paymentMethodLabels[method]}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="method"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
+                      {t.finance.method()}
+                      {' '}
+                      *
+                    </FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors">
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">
+                        {paymentMethods.map(method => (
+                          <SelectItem key={method} value={method} className="rounded-lg cursor-pointer focus:bg-primary/10">
+                            {paymentMethodLabels[method]}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <FormField
               control={form.control}
               name="reference"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t.finance.payments.reference()}</FormLabel>
+                  <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">{t.finance.payments.reference()}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder={t.finance.payments.referencePlaceholder()} />
+                    <Input {...field} placeholder={t.finance.payments.referencePlaceholder()} className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors" />
                   </FormControl>
-                  <FormDescription>
+                  <FormDescription className="text-[11px]">
                     {t.finance.payments.referenceDescription()}
                   </FormDescription>
                   <FormMessage />
@@ -240,24 +244,25 @@ export function PaymentFormDialog({
               name="notes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t.finance.description()}</FormLabel>
+                  <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">{t.finance.description()}</FormLabel>
                   <FormControl>
-                    <Textarea {...field} rows={2} />
+                    <Textarea {...field} rows={2} className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors resize-none" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <DialogFooter>
+            <DialogFooter className="pt-4">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => onOpenChange(false)}
+                className="rounded-xl border-border/40"
               >
                 {t.common.cancel()}
               </Button>
-              <Button type="submit" disabled={mutation.isPending}>
+              <Button type="submit" disabled={mutation.isPending} className="rounded-xl shadow-lg shadow-primary/20">
                 {mutation.isPending && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}

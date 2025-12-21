@@ -1,6 +1,7 @@
 'use client'
 
-import { Pencil, Trash2 } from 'lucide-react'
+import { Layers, Pencil, Trash2 } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -42,9 +43,9 @@ export function FeeStructuresTable({ feeStructures, isLoading, onEdit, onDelete 
 
   if (isLoading) {
     return (
-      <div className="space-y-2">
+      <div className="space-y-4 p-4">
         {Array.from({ length: 5 }).map(() => (
-          <Skeleton key={generateUUID()} className="h-12 w-full" />
+          <Skeleton key={generateUUID()} className="h-12 w-full rounded-xl" />
         ))}
       </div>
     )
@@ -52,70 +53,162 @@ export function FeeStructuresTable({ feeStructures, isLoading, onEdit, onDelete 
 
   if (feeStructures.length === 0) {
     return (
-      <div className="py-8 text-center text-muted-foreground">
-        {t.finance.feeStructures.noFeeStructures()}
+      <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground border-2 border-dashed border-border/30 rounded-xl bg-card/10 m-4">
+        <div className="p-4 rounded-full bg-muted/20 mb-4">
+          <Layers className="h-8 w-8 text-muted-foreground/50" />
+        </div>
+        <p className="text-lg font-medium">{t.finance.feeStructures.noFeeStructures()}</p>
+        <p className="text-sm max-w-sm mt-1 text-muted-foreground/70">{t.finance.feeStructures.description()}</p>
       </div>
     )
   }
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>{t.finance.feeTypes.title()}</TableHead>
-          <TableHead>{t.grades.grade()}</TableHead>
-          <TableHead>{t.classes.series()}</TableHead>
-          <TableHead className="text-right">{t.finance.amount()}</TableHead>
-          <TableHead className="text-right">{t.finance.feeStructures.newStudentAmount()}</TableHead>
-          <TableHead className="text-right">{t.common.actions()}</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {feeStructures.map(structure => (
-          <TableRow key={structure.id}>
-            <TableCell>
-              <div>
-                <span className="font-medium">{structure.feeTypeName}</span>
-                <Badge variant="outline" className="ml-2 text-xs">
-                  {structure.feeTypeCode}
-                </Badge>
-              </div>
-            </TableCell>
-            <TableCell>{structure.gradeName}</TableCell>
-            <TableCell>{structure.seriesName || '-'}</TableCell>
-            <TableCell className="text-right font-medium">
-              {formatCurrency(structure.amount, structure.currency)}
-            </TableCell>
-            <TableCell className="text-right text-muted-foreground">
-              {structure.newStudentAmount
-                ? formatCurrency(structure.newStudentAmount, structure.currency)
-                : '-'}
-            </TableCell>
-            <TableCell className="text-right">
-              <div className="flex justify-end gap-1">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={() => onEdit?.(structure.id)}
-                  aria-label={t.common.edit()}
+    <>
+      <div className="hidden md:block">
+        <Table>
+          <TableHeader className="bg-muted/50">
+            <TableRow className="hover:bg-transparent border-border/40">
+              <TableHead className="font-semibold">{t.finance.feeTypes.title()}</TableHead>
+              <TableHead className="font-semibold">{t.grades.grade()}</TableHead>
+              <TableHead className="font-semibold">{t.classes.series()}</TableHead>
+              <TableHead className="text-right font-semibold">{t.finance.amount()}</TableHead>
+              <TableHead className="text-right font-semibold">{t.finance.feeStructures.newStudentAmount()}</TableHead>
+              <TableHead className="text-right font-semibold">{t.common.actions()}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <AnimatePresence>
+              {feeStructures.map((structure, index) => (
+                <motion.tr
+                  key={structure.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="group hover:bg-muted/30 border-border/40 transition-colors"
                 >
-                  <Pencil className="h-4 w-4" />
+                  <TableCell>
+                    <div>
+                      <span className="font-bold text-foreground">{structure.feeTypeName}</span>
+                      <Badge variant="outline" className="ml-2 text-[10px] font-mono tracking-wider bg-muted/50">
+                        {structure.feeTypeCode}
+                      </Badge>
+                    </div>
+                  </TableCell>
+                  <TableCell className="font-medium">{structure.gradeName}</TableCell>
+                  <TableCell>
+                    {structure.seriesName
+                      ? (
+                          <Badge variant="secondary" className="bg-secondary/50 font-medium">
+                            {structure.seriesName}
+                          </Badge>
+                        )
+                      : (
+                          <span className="text-muted-foreground italic text-sm">-</span>
+                        )}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <span className="font-bold tabular-nums">
+                      {formatCurrency(structure.amount, structure.currency)}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {structure.newStudentAmount
+                      ? (
+                          <span className="font-medium tabular-nums text-muted-foreground">
+                            {formatCurrency(structure.newStudentAmount, structure.currency)}
+                          </span>
+                        )
+                      : (
+                          <span className="text-muted-foreground italic text-sm">-</span>
+                        )}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 rounded-lg hover:bg-muted"
+                        onClick={() => onEdit?.(structure.id)}
+                        aria-label={t.common.edit()}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 rounded-lg"
+                        onClick={() => onDelete?.(structure.id)}
+                        aria-label={t.common.delete()}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </motion.tr>
+              ))}
+            </AnimatePresence>
+          </TableBody>
+        </Table>
+      </div>
+
+      <div className="md:hidden space-y-4 p-4">
+        <AnimatePresence>
+          {feeStructures.map((structure, index) => (
+            <motion.div
+              key={structure.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+              className="p-4 rounded-2xl bg-card/50 border border-border/40 backdrop-blur-md space-y-4"
+            >
+              <div className="flex justify-between items-start">
+                <div>
+                  <div className="font-bold text-lg">{structure.feeTypeName}</div>
+                  <div className="text-xs font-mono text-muted-foreground mt-0.5">{structure.feeTypeCode}</div>
+                </div>
+                {structure.seriesName
+                  ? (
+                      <Badge variant="secondary" className="bg-secondary/50">
+                        {structure.seriesName}
+                      </Badge>
+                    )
+                  : (
+                      <span className="text-xs text-muted-foreground italic">
+                        {t.grades.grade()}
+                        {' '}
+                        {structure.gradeName}
+                      </span>
+                    )}
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-3 rounded-xl bg-muted/20 border border-border/20">
+                  <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{t.finance.amount()}</div>
+                  <div className="font-bold text-lg">{formatCurrency(structure.amount, structure.currency)}</div>
+                </div>
+                {structure.newStudentAmount && (
+                  <div className="p-3 rounded-xl bg-muted/20 border border-border/20">
+                    <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{t.finance.feeStructures.newStudentAmount()}</div>
+                    <div className="font-bold text-lg text-muted-foreground">{formatCurrency(structure.newStudentAmount, structure.currency)}</div>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 border-t border-border/30">
+                <Button size="sm" variant="ghost" className="h-8 rounded-lg" onClick={() => onEdit?.(structure.id)}>
+                  <Pencil className="mr-2 h-3.5 w-3.5" />
+                  {t.common.edit()}
                 </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 text-destructive hover:text-destructive"
-                  onClick={() => onDelete?.(structure.id)}
-                  aria-label={t.common.delete()}
-                >
-                  <Trash2 className="h-4 w-4" />
+                <Button size="sm" variant="ghost" className="h-8 rounded-lg text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => onDelete?.(structure.id)}>
+                  <Trash2 className="mr-2 h-3.5 w-3.5" />
+                  {t.common.delete()}
                 </Button>
               </div>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
+    </>
   )
 }

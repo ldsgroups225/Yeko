@@ -75,7 +75,7 @@ export function ClassSubjectManager({
     <div className="space-y-6">
       {!isLoading && subjects && <ClassCoverageSummary subjects={subjects} />}
 
-      <Card>
+      <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <div>
             <CardTitle>{t.academic.classes.subjectsTitle()}</CardTitle>
@@ -153,7 +153,7 @@ export function ClassSubjectManager({
                         </TableRow>
                       )
                     : (
-                        subjects?.map((item: any) => (
+                        subjects?.map(item => (
                           <TableRow key={item.classSubject.id}>
                             <TableCell className="font-medium">
                               {item.subject.name}

@@ -1,11 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Loader2 } from 'lucide-react'
+import { AlertCircle, Check, Copy, Loader2, Sparkles } from 'lucide-react'
+import { motion } from 'motion/react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
-
 import {
   Dialog,
   DialogContent,
@@ -61,18 +61,15 @@ export function SubjectCopyDialog({
   const { schoolYearId } = useSchoolYearContext()
   const queryClient = useQueryClient()
 
-  // Fetch available classes to copy from
   const { data: classesData, isLoading: isLoadingClasses } = useQuery({
     queryKey: ['classes', 'list', schoolYearId],
     queryFn: () => getClasses({ data: { schoolYearId: schoolYearId! } }),
     enabled: !!schoolYearId && open,
   })
 
-  // Filter out the current class from source options
-  const sourceClasses
-    = classesData?.filter((c: any) => c.id !== targetClassId) || []
+  const sourceClasses = classesData?.filter(c => c.class.id !== targetClassId) || []
 
-  const form = useForm({
+  const form = useForm<CopyFormValues>({
     resolver: zodResolver(copyFormSchema),
     defaultValues: {
       sourceClassId: '',
@@ -104,55 +101,78 @@ export function SubjectCopyDialog({
     },
   })
 
-  function onSubmit(values: z.infer<typeof copyFormSchema>) {
+  function onSubmit(values: CopyFormValues) {
     copyMutation.mutate(values)
   }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>{t.academic.classes.copySubjectsTitle()}</DialogTitle>
-          <DialogDescription>
-            {t.academic.classes.copySubjectsDescription()}
-            {' '}
-            {targetClassName}
-            .
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="sm:max-w-md backdrop-blur-xl bg-card/95 border-border/40 p-0 overflow-hidden">
+        <div className="p-6 pb-4 border-b border-border/10">
+          <DialogHeader>
+            <div className="flex items-center gap-3 mb-1">
+              <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Copy className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <DialogTitle className="text-xl font-bold">{t.academic.classes.copySubjectsTitle()}</DialogTitle>
+                <DialogDescription className="text-xs font-semibold opacity-70 uppercase tracking-wider">
+                  {targetClassName}
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+        </div>
+
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <motion.form
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="p-6 space-y-6"
+          >
             <FormField
               control={form.control}
               name="sourceClassId"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t.academic.classes.sourceClass()}</FormLabel>
+                <FormItem className="space-y-3">
+                  <FormLabel className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground">
+                    <Sparkles className="h-3 w-3" />
+                    {t.academic.classes.sourceClass()}
+                  </FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger disabled={isLoadingClasses}>
+                      <SelectTrigger
+                        disabled={isLoadingClasses}
+                        className="h-11 bg-white/5 border-white/10 focus:ring-primary/40"
+                      >
                         <SelectValue
                           placeholder={t.academic.classes.selectSourceClassError()}
                         />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
-                      {sourceClasses.map((cls: any) => (
-                        <SelectItem key={cls.id} value={cls.id}>
-                          {cls.grade?.name}
-                          {' '}
-                          {cls.section}
+                    <SelectContent className="backdrop-blur-xl bg-card/95 border-white/10">
+                      {sourceClasses.map(cls => (
+                        <SelectItem key={cls.class.id} value={cls.class.id}>
+                          <div className="flex flex-col">
+                            <span className="font-semibold text-sm">
+                              {cls.grade.name}
+                              {' '}
+                              {cls.class.section}
+                            </span>
+                            <span className="text-[10px] text-muted-foreground uppercase">{cls.series?.name || ''}</span>
+                          </div>
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormDescription>
+                  <FormDescription className="text-[11px] leading-relaxed">
                     {t.academic.classes.sourceClassDescription()}
                   </FormDescription>
-                  <FormMessage />
+                  <FormMessage className="text-[11px] font-medium" />
                 </FormItem>
               )}
             />
@@ -161,12 +181,13 @@ export function SubjectCopyDialog({
               control={form.control}
               name="overwrite"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-base">
+                <FormItem className="flex flex-row items-center justify-between rounded-xl border border-white/5 bg-white/5 p-4 transition-colors hover:bg-white/10">
+                  <div className="space-y-1">
+                    <FormLabel className="text-sm font-bold flex items-center gap-2">
+                      <AlertCircle className="h-3.5 w-3.5 text-amber-500" />
                       {t.academic.classes.overwriteExisting()}
                     </FormLabel>
-                    <FormDescription>
+                    <FormDescription className="text-[11px] leading-relaxed max-w-[200px]">
                       {t.academic.classes.overwriteDescription()}
                     </FormDescription>
                   </div>
@@ -174,28 +195,40 @@ export function SubjectCopyDialog({
                     <Switch
                       checked={field.value}
                       onCheckedChange={field.onChange}
+                      className="data-[state=checked]:bg-primary"
                     />
                   </FormControl>
                 </FormItem>
               )}
             />
 
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-              >
-                {t.common.cancel()}
-              </Button>
-              <Button type="submit" disabled={copyMutation.isPending}>
-                {copyMutation.isPending && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                {t.academic.classes.copySubjects()}
-              </Button>
-            </DialogFooter>
-          </form>
+            <div className="pt-2">
+              <DialogFooter className="gap-3 sm:gap-0">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => onOpenChange(false)}
+                  className="flex-1 sm:flex-none hover:bg-white/10"
+                >
+                  {t.common.cancel()}
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={copyMutation.isPending}
+                  className="flex-1 sm:min-w-[140px] bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20"
+                >
+                  {copyMutation.isPending
+                    ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      )
+                    : (
+                        <Check className="mr-2 h-4 w-4" />
+                      )}
+                  {t.academic.classes.copySubjects()}
+                </Button>
+              </DialogFooter>
+            </div>
+          </motion.form>
         </Form>
       </DialogContent>
     </Dialog>

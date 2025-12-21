@@ -1,4 +1,5 @@
 import type { GradeType } from '@/schemas/grade'
+import { Briefcase, FileText, GraduationCap, HelpCircle, Home, UserCheck } from 'lucide-react'
 import {
   Select,
   SelectContent,
@@ -16,6 +17,15 @@ interface GradeTypeSelectorProps {
   className?: string
 }
 
+const gradeTypeIcons: Record<GradeType, React.ElementType> = {
+  quiz: HelpCircle,
+  test: FileText,
+  exam: GraduationCap,
+  participation: UserCheck,
+  homework: Home,
+  project: Briefcase,
+}
+
 export function GradeTypeSelector({
   value,
   onValueChange,
@@ -30,15 +40,23 @@ export function GradeTypeSelector({
       onValueChange={onValueChange as (value: string) => void}
       disabled={disabled}
     >
-      <SelectTrigger className={className}>
+      <SelectTrigger className={`rounded-xl h-11 border-border/40 bg-background/50 focus:bg-background transition-all ${className}`}>
         <SelectValue placeholder={t.academic.grades.entry.selectGradeType()} />
       </SelectTrigger>
-      <SelectContent>
-        {gradeTypes.map(type => (
-          <SelectItem key={type} value={type}>
-            {gradeTypeLabels[type]}
-          </SelectItem>
-        ))}
+      <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
+        {gradeTypes.map((type) => {
+          const Icon = gradeTypeIcons[type]
+          return (
+            <SelectItem key={type} value={type} className="rounded-lg py-2.5">
+              <div className="flex items-center gap-2">
+                <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary/10 text-primary">
+                  <Icon className="h-3.5 w-3.5" />
+                </div>
+                <span className="font-medium">{gradeTypeLabels[type]}</span>
+              </div>
+            </SelectItem>
+          )
+        })}
       </SelectContent>
     </Select>
   )

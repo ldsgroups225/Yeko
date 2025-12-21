@@ -26,7 +26,7 @@ const classroomSchema = z.object({
 type ClassroomFormData = z.infer<typeof classroomSchema>
 
 interface ClassroomFormProps {
-  classroom?: any
+  classroom?: ClassroomFormData & { id: string }
   onSuccess?: () => void
 }
 
@@ -54,7 +54,7 @@ export function ClassroomForm({ classroom, onSuccess }: ClassroomFormProps) {
       toast.success(isEditing ? t.spaces.classrooms.updateSuccess() : t.spaces.classrooms.createSuccess())
       onSuccess?.()
     },
-    onError: (error: any) => {
+    onError: (error) => {
       toast.error(error.message || t.spaces.classrooms.saveFailed())
     },
   })
@@ -63,95 +63,98 @@ export function ClassroomForm({ classroom, onSuccess }: ClassroomFormProps) {
     mutation.mutate(data)
   }
 
+  const inputClass = 'rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors'
+  const selectTriggerClass = 'rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors data-[placeholder]:text-muted-foreground'
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div className="grid gap-4 md:grid-cols-2">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <div className="grid gap-6 md:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="name">
+          <Label htmlFor="name" className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
             {t.spaces.classrooms.name()}
             {' '}
-            *
+            <span className="text-destructive">*</span>
           </Label>
-          <Input id="name" {...register('name')} placeholder={t.spaces.classrooms.namePlaceholder()} />
+          <Input id="name" {...register('name')} placeholder={t.spaces.classrooms.namePlaceholder()} className={inputClass} />
           {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="code">
+          <Label htmlFor="code" className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
             {t.spaces.classrooms.code()}
             {' '}
-            *
+            <span className="text-destructive">*</span>
           </Label>
-          <Input id="code" {...register('code')} placeholder={t.spaces.classrooms.codePlaceholder()} />
+          <Input id="code" {...register('code')} placeholder={t.spaces.classrooms.codePlaceholder()} className={`${inputClass} font-mono`} />
           {errors.code && <p className="text-sm text-destructive">{errors.code.message}</p>}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="type">
+          <Label htmlFor="type" className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
             {t.spaces.classrooms.type()}
             {' '}
-            *
+            <span className="text-destructive">*</span>
           </Label>
-          <Select value={watch('type')} onValueChange={v => setValue('type', v as any)}>
-            <SelectTrigger>
+          <Select value={watch('type')} onValueChange={v => setValue('type', v as 'regular' | 'lab' | 'gym' | 'library' | 'auditorium')}>
+            <SelectTrigger className={selectTriggerClass}>
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="regular">{t.spaces.classrooms.types.regular()}</SelectItem>
-              <SelectItem value="lab">{t.spaces.classrooms.types.lab()}</SelectItem>
-              <SelectItem value="gym">{t.spaces.classrooms.types.gym()}</SelectItem>
-              <SelectItem value="library">{t.spaces.classrooms.types.library()}</SelectItem>
-              <SelectItem value="auditorium">{t.spaces.classrooms.types.auditorium()}</SelectItem>
+            <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">
+              <SelectItem value="regular" className="rounded-lg cursor-pointer focus:bg-primary/10">{t.spaces.classrooms.types.regular()}</SelectItem>
+              <SelectItem value="lab" className="rounded-lg cursor-pointer focus:bg-primary/10">{t.spaces.classrooms.types.lab()}</SelectItem>
+              <SelectItem value="gym" className="rounded-lg cursor-pointer focus:bg-primary/10">{t.spaces.classrooms.types.gym()}</SelectItem>
+              <SelectItem value="library" className="rounded-lg cursor-pointer focus:bg-primary/10">{t.spaces.classrooms.types.library()}</SelectItem>
+              <SelectItem value="auditorium" className="rounded-lg cursor-pointer focus:bg-primary/10">{t.spaces.classrooms.types.auditorium()}</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="capacity">
+          <Label htmlFor="capacity" className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
             {t.spaces.classrooms.capacity()}
             {' '}
-            *
+            <span className="text-destructive">*</span>
           </Label>
-          <Input id="capacity" type="number" {...register('capacity', { valueAsNumber: true })} />
+          <Input id="capacity" type="number" {...register('capacity', { valueAsNumber: true })} className={inputClass} />
           {errors.capacity && <p className="text-sm text-destructive">{errors.capacity.message}</p>}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="floor">{t.spaces.classrooms.floor()}</Label>
-          <Input id="floor" {...register('floor')} placeholder={t.spaces.classrooms.floorPlaceholder()} />
+          <Label htmlFor="floor" className="text-xs uppercase font-bold tracking-wider text-muted-foreground">{t.spaces.classrooms.floor()}</Label>
+          <Input id="floor" {...register('floor')} placeholder={t.spaces.classrooms.floorPlaceholder()} className={inputClass} />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="building">{t.spaces.classrooms.building()}</Label>
-          <Input id="building" {...register('building')} placeholder={t.spaces.classrooms.buildingPlaceholder()} />
+          <Label htmlFor="building" className="text-xs uppercase font-bold tracking-wider text-muted-foreground">{t.spaces.classrooms.building()}</Label>
+          <Input id="building" {...register('building')} placeholder={t.spaces.classrooms.buildingPlaceholder()} className={inputClass} />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="status">
+          <Label htmlFor="status" className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
             {t.common.status()}
             {' '}
-            *
+            <span className="text-destructive">*</span>
           </Label>
-          <Select value={watch('status')} onValueChange={v => setValue('status', v as any)}>
-            <SelectTrigger>
+          <Select value={watch('status')} onValueChange={v => setValue('status', v as 'active' | 'maintenance' | 'inactive')}>
+            <SelectTrigger className={selectTriggerClass}>
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="active">{t.common.active()}</SelectItem>
-              <SelectItem value="maintenance">{t.spaces.classrooms.status.maintenance()}</SelectItem>
-              <SelectItem value="inactive">{t.common.inactive()}</SelectItem>
+            <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">
+              <SelectItem value="active" className="rounded-lg cursor-pointer focus:bg-primary/10">{t.common.active()}</SelectItem>
+              <SelectItem value="maintenance" className="rounded-lg cursor-pointer focus:bg-primary/10">{t.spaces.classrooms.status.maintenance()}</SelectItem>
+              <SelectItem value="inactive" className="rounded-lg cursor-pointer focus:bg-primary/10">{t.common.inactive()}</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="notes">{t.common.notes()}</Label>
-        <Textarea id="notes" {...register('notes')} rows={3} placeholder={t.spaces.classrooms.notesPlaceholder()} />
+        <Label htmlFor="notes" className="text-xs uppercase font-bold tracking-wider text-muted-foreground">{t.common.notes()}</Label>
+        <Textarea id="notes" {...register('notes')} rows={3} placeholder={t.spaces.classrooms.notesPlaceholder()} className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors resize-none" />
       </div>
 
-      <div className="flex justify-end gap-2">
-        <Button type="submit" disabled={mutation.isPending}>
+      <div className="flex justify-end gap-2 pt-2">
+        <Button type="submit" disabled={mutation.isPending} className="rounded-xl shadow-lg shadow-primary/20">
           {mutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {isEditing ? t.common.update() : t.common.create()}
         </Button>

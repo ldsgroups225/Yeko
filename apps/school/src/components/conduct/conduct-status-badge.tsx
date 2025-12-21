@@ -1,4 +1,5 @@
 import { AlertTriangle, CheckCircle, Circle, Clock, Search, XCircle } from 'lucide-react'
+import { motion } from 'motion/react'
 import { Badge } from '@/components/ui/badge'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
@@ -15,12 +16,12 @@ const statusConfig: Record<ConductStatus, {
   icon: typeof Circle
   colorClass: string
 }> = {
-  open: { icon: Circle, colorClass: 'bg-blue-500/10 text-blue-600 border-blue-200' },
-  investigating: { icon: Search, colorClass: 'bg-purple-500/10 text-purple-600 border-purple-200' },
-  pending_decision: { icon: Clock, colorClass: 'bg-amber-500/10 text-amber-600 border-amber-200' },
-  resolved: { icon: CheckCircle, colorClass: 'bg-green-500/10 text-green-600 border-green-200' },
-  closed: { icon: XCircle, colorClass: 'bg-gray-500/10 text-gray-600 border-gray-200' },
-  appealed: { icon: AlertTriangle, colorClass: 'bg-orange-500/10 text-orange-600 border-orange-200' },
+  open: { icon: Circle, colorClass: 'bg-blue-500/10 text-blue-600 border-blue-500/20' },
+  investigating: { icon: Search, colorClass: 'bg-purple-500/10 text-purple-600 border-purple-500/20' },
+  pending_decision: { icon: Clock, colorClass: 'bg-amber-500/10 text-amber-600 border-amber-500/20' },
+  resolved: { icon: CheckCircle, colorClass: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' },
+  closed: { icon: XCircle, colorClass: 'bg-zinc-500/10 text-zinc-600 border-zinc-500/20' },
+  appealed: { icon: AlertTriangle, colorClass: 'bg-orange-500/10 text-orange-600 border-orange-500/20' },
 }
 
 export function ConductStatusBadge({
@@ -32,19 +33,30 @@ export function ConductStatusBadge({
   const config = statusConfig[status]
   const Icon = config.icon
 
-  const statusTranslations = {
-    open: t.conduct.status.open,
-    investigating: t.conduct.status.investigating,
-    pending_decision: t.conduct.status.pending_decision,
-    resolved: t.conduct.status.resolved,
-    closed: t.conduct.status.closed,
-    appealed: t.conduct.status.appealed,
-  }
-
   return (
-    <Badge variant="outline" className={cn(config.colorClass, className)}>
-      {showIcon && <Icon className="mr-1 h-3 w-3" />}
-      {statusTranslations[status]()}
-    </Badge>
+    <motion.div
+      initial={{ scale: 0.95, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      className="inline-flex"
+    >
+      <Badge
+        variant="outline"
+        className={cn(
+          'rounded-xl px-2.5 py-1 text-[10px] font-black uppercase tracking-widest transition-all',
+          config.colorClass,
+          className,
+        )}
+      >
+        {showIcon && (
+          <motion.div
+            animate={{ rotate: status === 'investigating' ? [0, 10, -10, 0] : 0 }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            <Icon className="mr-1.5 h-3 w-3" />
+          </motion.div>
+        )}
+        {t.conduct.status[status]()}
+      </Badge>
+    </motion.div>
   )
 }

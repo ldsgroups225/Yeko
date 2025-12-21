@@ -54,13 +54,14 @@ describe('roleForm Component', () => {
 
   describe('rendering - Edit Mode', () => {
     const initialData = {
+      id: '123',
       name: 'Administrator',
       slug: 'administrator',
       description: 'Full system access',
       permissions: {
         users: ['view', 'create', 'edit', 'delete'],
       },
-      scope: 'school',
+      scope: 'school' as const,
     }
 
     test('should populate form with initial data', () => {
@@ -159,10 +160,11 @@ describe('roleForm Component', () => {
     test('should not auto-generate slug in edit mode', async () => {
       const user = userEvent.setup()
       const initialData = {
+        id: '456',
         name: 'Administrator',
         slug: 'administrator',
         permissions: {},
-        scope: 'school',
+        scope: 'school' as const,
       }
 
       render(<RoleForm initialData={initialData} onSubmit={mockOnSubmit} />)

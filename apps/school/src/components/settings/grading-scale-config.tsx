@@ -7,9 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useTranslations } from '@/i18n'
 import {
-
   defaultGradingScale,
-
 } from '@/schemas/school-profile'
 
 const formSchema = z.object({
@@ -82,76 +80,90 @@ export function GradingScaleConfig({
   }
 
   const gradeCategories = [
-    { key: 'excellent' as const, color: 'bg-green-500' },
-    { key: 'good' as const, color: 'bg-blue-500' },
-    { key: 'average' as const, color: 'bg-yellow-500' },
-    { key: 'fail' as const, color: 'bg-red-500' },
+    { key: 'excellent' as const, color: 'bg-green-500', shadow: 'shadow-green-500/20' },
+    { key: 'good' as const, color: 'bg-blue-500', shadow: 'shadow-blue-500/20' },
+    { key: 'average' as const, color: 'bg-yellow-500', shadow: 'shadow-yellow-500/20' },
+    { key: 'fail' as const, color: 'bg-red-500', shadow: 'shadow-red-500/20' },
   ]
 
+  const inputClass = 'rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors'
+
   return (
-    <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-      <div className="space-y-2">
-        <Label htmlFor="passingGrade">
+    <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+      <div className="space-y-3 p-4 rounded-2xl bg-muted/10 border border-border/40">
+        <Label htmlFor="passingGrade" className="text-sm font-semibold text-foreground">
           {t.settings.profile.passingGrade()}
         </Label>
-        <Input
-          id="passingGrade"
-          type="number"
-          step="0.5"
-          min="0"
-          max="20"
-          {...form.register('passingGrade')}
-          className="w-24"
-        />
-        <p className="text-xs text-muted-foreground">
-          {t.settings.profile.passingGradeHint()}
-        </p>
+        <div className="flex items-center gap-4">
+          <Input
+            id="passingGrade"
+            type="number"
+            step="0.5"
+            min="0"
+            max="20"
+            {...form.register('passingGrade')}
+            className={`w-32 font-mono text-lg font-bold ${inputClass}`}
+          />
+          <p className="text-xs text-muted-foreground/80 max-w-[200px] leading-snug">
+            {t.settings.profile.passingGradeHint()}
+          </p>
+        </div>
       </div>
 
-      <div className="space-y-4">
-        <Label>{t.settings.profile.gradingThresholds()}</Label>
+      <div className="space-y-5">
+        <Label className="text-xs uppercase font-bold tracking-wider text-muted-foreground">{t.settings.profile.gradingThresholds()}</Label>
 
-        {gradeCategories.map(({ key, color }) => (
-          <div key={key} className="flex items-center gap-4">
-            <div className={`h-4 w-4 rounded ${color}`} />
-            <div className="grid flex-1 grid-cols-3 gap-2">
-              <Input
-                {...form.register(`${key}.label`)}
-                placeholder={
-                  {
-                    excellent: t.settings.profile.gradeLabels.excellent,
-                    good: t.settings.profile.gradeLabels.good,
-                    average: t.settings.profile.gradeLabels.average,
-                    fail: t.settings.profile.gradeLabels.fail,
-                  }[key]()
-                }
-              />
-              <div className="flex items-center gap-1">
+        <div className="space-y-3">
+          {gradeCategories.map(({ key, color, shadow }) => (
+            <div key={key} className="flex flex-col sm:flex-row sm:items-center gap-4 p-3 rounded-2xl bg-muted/10 border border-border/40 hover:bg-muted/20 transition-colors group">
+              <div className="flex items-center gap-3 min-w-[140px]">
+                <div className={`h-3 w-3 rounded-full ${color} shadow-lg ${shadow}`} />
                 <Input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="20"
-                  {...form.register(`${key}.min`)}
-                  className="w-20"
-                />
-                <span className="text-muted-foreground">-</span>
-                <Input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="20"
-                  {...form.register(`${key}.max`)}
-                  className="w-20"
+                  {...form.register(`${key}.label`)}
+                  placeholder={
+                    {
+                      excellent: t.settings.profile.gradeLabels.excellent,
+                      good: t.settings.profile.gradeLabels.good,
+                      average: t.settings.profile.gradeLabels.average,
+                      fail: t.settings.profile.gradeLabels.fail,
+                    }[key]()
+                  }
+                  className="h-9 border-transparent bg-transparent font-medium focus:bg-background/50 hover:bg-background/30 transition-colors px-2 rounded-lg"
                 />
               </div>
+
+              <div className="flex items-center gap-2 flex-1">
+                <div className="flex items-center gap-2 bg-background/40 p-1.5 rounded-xl border border-border/20 group-hover:bg-background/60 transition-colors">
+                  <span className="text-xs font-mono text-muted-foreground pl-2">Min</span>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    max="20"
+                    {...form.register(`${key}.min`)}
+                    className="w-20 h-8 border-transparent bg-transparent text-center font-mono font-medium focus:bg-background rounded-lg"
+                  />
+                </div>
+                <span className="text-muted-foreground/50 font-light">to</span>
+                <div className="flex items-center gap-2 bg-background/40 p-1.5 rounded-xl border border-border/20 group-hover:bg-background/60 transition-colors">
+                  <span className="text-xs font-mono text-muted-foreground pl-2">Max</span>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    max="20"
+                    {...form.register(`${key}.max`)}
+                    className="w-20 h-8 border-transparent bg-transparent text-center font-mono font-medium focus:bg-background rounded-lg"
+                  />
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
-      <div className="flex justify-end">
-        <Button type="submit" disabled={isSubmitting}>
+      <div className="flex justify-end pt-4">
+        <Button type="submit" disabled={isSubmitting} className="rounded-xl shadow-lg shadow-primary/20 px-8">
           {isSubmitting ? t.common.saving() : t.common.save()}
         </Button>
       </div>

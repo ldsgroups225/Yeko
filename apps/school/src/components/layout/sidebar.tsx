@@ -20,6 +20,7 @@ import {
   Users,
   Wallet,
 } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import * as React from 'react'
 import {
   Sidebar,
@@ -172,19 +173,25 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = useLocation({ select: location => location.pathname })
 
   return (
-    <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        <div className="flex items-center gap-2 px-2 py-1">
-          <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <GraduationCap className="size-4" />
+    <Sidebar collapsible="icon" className="border-r border-border/40 bg-white/70 backdrop-blur-2xl dark:bg-black/70 transition-all duration-300" {...props}>
+      <SidebarHeader className="border-b border-border/10 p-5">
+        <motion.div
+          className="flex items-center gap-3"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="flex aspect-square size-10 items-center justify-center rounded-xl bg-linear-to-br from-primary to-primary/80 text-primary-foreground shadow-lg shadow-primary/20">
+            <GraduationCap className="size-6" />
           </div>
-          <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-semibold">{t.sidebar.schoolName()}</span>
-            <span className="truncate text-xs">{t.sidebar.schoolSubtitle()}</span>
+          <div className="grid flex-1 text-left">
+            <span className="truncate text-base font-bold leading-none">{t.sidebar.schoolName()}</span>
+            <span className="truncate text-xs font-medium text-muted-foreground">{t.sidebar.schoolSubtitle()}</span>
           </div>
-        </div>
+        </motion.div>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="px-2">
+
         {/* CORE DAILY OPERATIONS */}
         <SidebarGroup>
           <SidebarGroupLabel>{t.sidebar.dailyOperations()}</SidebarGroupLabel>
@@ -201,10 +208,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                           asChild
                           isActive={pathname === item.href}
                           tooltip={item.title}
+                          className={`transition-all duration-200 py-3 ${pathname === item.href ? 'bg-primary/10 text-primary shadow-sm font-semibold' : 'hover:bg-sidebar-accent/50 hover:pl-5 text-muted-foreground hover:text-foreground'}`}
                         >
-                          <Link to={item.href}>
-                            <item.icon />
-                            <span>{item.title}</span>
+                          <Link to={item.href} className="flex w-full items-center gap-3">
+                            <item.icon className={`size-5 ${pathname === item.href ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'}`} />
+                            <span className="font-medium text-sm">{item.title}</span>
+                            {pathname === item.href && (
+                              <motion.div
+                                layoutId="active-nav-indicator"
+                                className="absolute left-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full bg-primary"
+                              />
+                            )}
                           </Link>
                         </SidebarMenuButton>
                       )}
@@ -230,10 +244,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                           asChild
                           isActive={pathname === item.href}
                           tooltip={item.title}
+                          className={`transition-all duration-200 ${pathname === item.href ? 'bg-primary/10 text-primary shadow-sm' : 'hover:bg-sidebar-accent/50 hover:pl-4'}`}
                         >
-                          <Link to={item.href}>
-                            <item.icon />
-                            <span>{item.title}</span>
+                          <Link to={item.href} className="flex w-full items-center gap-2 py-2">
+                            <item.icon className={`size-4 ${pathname === item.href ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'}`} />
+                            <span className="font-medium">{item.title}</span>
+                            {pathname === item.href && (
+                              <motion.div
+                                layoutId="active-nav-indicator"
+                                className="absolute left-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full bg-primary"
+                              />
+                            )}
                           </Link>
                         </SidebarMenuButton>
                       )}
@@ -259,10 +280,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                           asChild
                           isActive={pathname === item.href}
                           tooltip={item.title}
+                          className={`transition-all duration-200 ${pathname === item.href ? 'bg-primary/10 text-primary shadow-sm' : 'hover:bg-sidebar-accent/50 hover:pl-4'}`}
                         >
-                          <Link to={item.href}>
-                            <item.icon />
-                            <span>{item.title}</span>
+                          <Link to={item.href} className="flex w-full items-center gap-2 py-2">
+                            <item.icon className={`size-4 ${pathname === item.href ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'}`} />
+                            <span className="font-medium">{item.title}</span>
+                            {pathname === item.href && (
+                              <motion.div
+                                layoutId="active-nav-indicator"
+                                className="absolute left-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full bg-primary"
+                              />
+                            )}
                           </Link>
                         </SidebarMenuButton>
                       )}
@@ -288,10 +316,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                           asChild
                           isActive={pathname === item.href}
                           tooltip={item.title}
+                          className={`transition-all duration-200 ${pathname === item.href ? 'bg-primary/10 text-primary shadow-sm' : 'hover:bg-sidebar-accent/50 hover:pl-4'}`}
                         >
-                          <Link to={item.href}>
-                            <item.icon />
-                            <span>{item.title}</span>
+                          <Link to={item.href} className="flex w-full items-center gap-2 py-2">
+                            <item.icon className={`size-4 ${pathname === item.href ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'}`} />
+                            <span className="font-medium">{item.title}</span>
+                            {pathname === item.href && (
+                              <motion.div
+                                layoutId="active-nav-indicator"
+                                className="absolute left-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full bg-primary"
+                              />
+                            )}
                           </Link>
                         </SidebarMenuButton>
                       )}
@@ -314,10 +349,11 @@ function SidebarMenuSubItemWrapper({ item, pathname }: { item: NavItem, pathname
   const hasActiveChild = item.children?.some(child => pathname.startsWith(child.href))
 
   React.useEffect(() => {
-    if (hasActiveChild) {
+    if (hasActiveChild && !isOpen) {
+      // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
       setIsOpen(true)
     }
-  }, [hasActiveChild])
+  }, [hasActiveChild, isOpen])
 
   return (
     <>
@@ -325,26 +361,34 @@ function SidebarMenuSubItemWrapper({ item, pathname }: { item: NavItem, pathname
         tooltip={item.title}
         onClick={() => setIsOpen(!isOpen)}
         isActive={hasActiveChild}
-        className="group/collapsable"
+        className={`group/collapsable w-full justify-between transition-all duration-200 ${hasActiveChild ? 'bg-primary/5 text-primary' : 'hover:bg-sidebar-accent/50'}`}
       >
-        <item.icon />
-        <span>{item.title}</span>
-        <ChevronDown className={`ml-auto transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+        <div className="flex items-center gap-2">
+          <item.icon className="size-4" />
+          <span className="font-medium">{item.title}</span>
+        </div>
+        <ChevronDown className={`ml-auto size-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
       </SidebarMenuButton>
-      {isOpen && (
-        <SidebarMenuSub>
-          {item.children?.map(child => (
-            <SidebarMenuSubItem key={child.href}>
-              <SidebarMenuSubButton asChild isActive={pathname === child.href}>
-                <Link to={child.href}>
-                  <child.icon />
-                  <span>{child.title}</span>
-                </Link>
-              </SidebarMenuSubButton>
-            </SidebarMenuSubItem>
-          ))}
-        </SidebarMenuSub>
-      )}
+      <AnimatePresence>
+        {isOpen && (
+          <SidebarMenuSub>
+            {item.children?.map(child => (
+              <SidebarMenuSubItem key={child.href}>
+                <SidebarMenuSubButton
+                  asChild
+                  isActive={pathname === child.href}
+                  className={`transition-all duration-200 ${pathname === child.href ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-sidebar-accent/50 hover:text-foreground hover:pl-4'}`}
+                >
+                  <Link to={child.href}>
+                    <child.icon className="size-3.5" />
+                    <span>{child.title}</span>
+                  </Link>
+                </SidebarMenuSubButton>
+              </SidebarMenuSubItem>
+            ))}
+          </SidebarMenuSub>
+        )}
+      </AnimatePresence>
     </>
   )
 }

@@ -116,10 +116,10 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6">
         <DialogHeader>
-          <DialogTitle>{t.finance.discounts.create()}</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-xl font-bold">{t.finance.discounts.create()}</DialogTitle>
+          <DialogDescription className="text-muted-foreground/80">
             {t.finance.discounts.createDescription()}
           </DialogDescription>
         </DialogHeader>
@@ -132,13 +132,13 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
                 name="code"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
+                    <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
                       {t.common.code()}
                       {' '}
                       *
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder={t.finance.discounts.placeholders.code()} />
+                      <Input {...field} placeholder={t.finance.discounts.placeholders.code()} className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors font-mono" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -150,20 +150,20 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
                 name="type"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
+                    <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
                       {t.finance.discounts.type()}
                       {' '}
                       *
                     </FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors">
                           <SelectValue />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
+                      <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">
                         {discountTypes.map(type => (
-                          <SelectItem key={type} value={type}>
+                          <SelectItem key={type} value={type} className="rounded-lg cursor-pointer focus:bg-primary/10">
                             {discountTypeLabels[type]}
                           </SelectItem>
                         ))}
@@ -180,13 +180,13 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
+                  <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
                     {t.common.name()}
                     {' '}
                     *
                   </FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder={t.finance.discounts.placeholders.name()} />
+                    <Input {...field} placeholder={t.finance.discounts.placeholders.name()} className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -198,11 +198,11 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
               name="nameEn"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t.common.nameEn()}</FormLabel>
+                  <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">{t.common.nameEn()}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder={t.finance.discounts.placeholders.nameEn()} />
+                    <Input {...field} placeholder={t.finance.discounts.placeholders.nameEn()} className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors" />
                   </FormControl>
-                  <FormDescription>
+                  <FormDescription className="text-[11px]">
                     {t.common.optionalEnglishName()}
                   </FormDescription>
                   <FormMessage />
@@ -216,20 +216,20 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
                 name="calculationType"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
+                    <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
                       {t.finance.discounts.calculationType()}
                       {' '}
                       *
                     </FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors">
                           <SelectValue />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
+                      <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">
                         {calculationTypes.map(type => (
-                          <SelectItem key={type} value={type}>
+                          <SelectItem key={type} value={type} className="rounded-lg cursor-pointer focus:bg-primary/10">
                             {calculationTypeLabels[type]}
                           </SelectItem>
                         ))}
@@ -245,7 +245,7 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
                 name="value"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
+                    <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
                       {t.finance.discounts.value()}
                       {' '}
                       *
@@ -256,10 +256,10 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
                           type="text"
                           inputMode="numeric"
                           {...field}
-                          className="pr-12"
+                          className="pr-12 rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors font-bold text-lg"
                           placeholder="0"
                         />
-                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-muted-foreground">
                           {watchCalculationType === 'percentage' ? '%' : 'FCFA'}
                         </span>
                       </div>
@@ -270,19 +270,19 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
               />
             </div>
 
-            <div className="flex gap-6">
+            <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="requiresApproval"
                 render={({ field }) => (
-                  <FormItem className="flex items-center gap-2 space-y-0">
+                  <FormItem className="flex items-center gap-3 space-y-0 p-3 rounded-xl border border-border/40 bg-muted/10 h-full">
                     <FormControl>
                       <Checkbox
                         checked={field.value}
                         onCheckedChange={field.onChange}
                       />
                     </FormControl>
-                    <FormLabel className="font-normal">
+                    <FormLabel className="font-bold text-sm cursor-pointer w-full">
                       {t.finance.discounts.requiresApproval()}
                     </FormLabel>
                   </FormItem>
@@ -293,14 +293,14 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
                 control={form.control}
                 name="autoApply"
                 render={({ field }) => (
-                  <FormItem className="flex items-center gap-2 space-y-0">
+                  <FormItem className="flex items-center gap-3 space-y-0 p-3 rounded-xl border border-border/40 bg-muted/10 h-full">
                     <FormControl>
                       <Checkbox
                         checked={field.value}
                         onCheckedChange={field.onChange}
                       />
                     </FormControl>
-                    <FormLabel className="font-normal">
+                    <FormLabel className="font-bold text-sm cursor-pointer w-full">
                       {t.finance.discounts.autoApply()}
                     </FormLabel>
                   </FormItem>
@@ -308,15 +308,16 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
               />
             </div>
 
-            <DialogFooter>
+            <DialogFooter className="pt-4">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => onOpenChange(false)}
+                className="rounded-xl border-border/40"
               >
                 {t.common.cancel()}
               </Button>
-              <Button type="submit" disabled={mutation.isPending}>
+              <Button type="submit" disabled={mutation.isPending} className="rounded-xl shadow-lg shadow-primary/20">
                 {mutation.isPending && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
