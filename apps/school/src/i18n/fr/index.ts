@@ -111,6 +111,7 @@ const fr = {
     notes: 'Notes',
     unassigned: 'Non assigné',
     clearFilters: 'Effacer les filtres',
+    settings: 'Paramètres',
   },
   nav: {
     dashboard: 'Tableau de bord',
@@ -145,6 +146,7 @@ const fr = {
     settings: 'Paramètres',
     spaces: 'Espaces',
     classrooms: 'Salles de classe',
+    schoolYears: 'Années Scolaires',
   },
   sidebar: {
     dailyOperations: 'Opérations Quotidiennes',
@@ -2026,6 +2028,12 @@ const fr = {
     subject: 'Matière',
     term: 'Trimestre',
     reportCard: 'Bulletin scolaire',
+    statistics: {
+      title: 'Statistiques',
+    },
+    validations: {
+      title: 'Validations',
+    },
   },
 } satisfies BaseTranslation
 

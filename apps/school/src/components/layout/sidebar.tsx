@@ -1,6 +1,7 @@
 import { Link, useLocation } from '@tanstack/react-router'
 import {
   AlertTriangle,
+  BarChart3,
   Bell,
   BookOpen,
   Building2,
@@ -9,6 +10,8 @@ import {
   ClipboardCheck,
   CreditCard,
   DollarSign,
+  FileBarChart,
+  FileSearch,
   FileText,
   GraduationCap,
   Grid,
@@ -16,8 +19,11 @@ import {
   Percent,
   RotateCcw,
   Settings,
+  Settings2,
+  ShieldCheck,
   UserCheck,
   Users,
+  UsersRound,
   Wallet,
 } from 'lucide-react'
 import { motion } from 'motion/react'
@@ -50,128 +56,133 @@ interface NavItem {
   children?: NavItem[]
 }
 
-// Navigation optimized by usage frequency and UX best practices
-// CORE DAILY OPERATIONS → ACADEMIC → ADMINISTRATIVE → CONFIGURATION
-const navigationItems: NavItem[] = [
-  // CORE DAILY OPERATIONS (Top - Most Frequent)
-  {
-    title: 'Tableau de bord',
-    href: '/dashboard',
-    icon: LayoutDashboard,
-  },
-  {
-    title: 'Élèves',
-    href: '/students',
-    icon: GraduationCap,
-    children: [
-      { title: 'Liste', href: '/students', icon: GraduationCap },
-      { title: 'Parents', href: '/students/parents', icon: Users },
-      { title: 'Inscriptions', href: '/students/enrollments', icon: ClipboardCheck },
-      { title: 'Opérations groupées', href: '/students/bulk-operations', icon: FileText },
-    ],
-  },
-  {
-    title: 'Classes',
-    href: '/classes',
-    icon: BookOpen,
-    children: [
-      { title: 'Liste des classes', href: '/classes', icon: BookOpen },
-      { title: 'Affectations', href: '/classes/assignments', icon: Users },
-    ],
-  },
-  {
-    title: 'Utilisateurs',
-    href: '/users',
-    icon: Users,
-    children: [
-      { title: 'Personnel', href: '/users/staff', icon: Users },
-      { title: 'Enseignants', href: '/users/teachers', icon: GraduationCap },
-      { title: 'Rôles', href: '/users/roles', icon: UserCheck },
-    ],
-  },
-
-  // ACADEMIC OPERATIONS (Middle)
-  {
-    title: 'Notes & Moyennes',
-    href: '/grades',
-    icon: ClipboardCheck,
-    children: [
-      { title: 'Saisie des notes', href: '/grades/entry', icon: FileText },
-      { title: 'Statistiques', href: '/grades/statistics', icon: Grid },
-      { title: 'Validations', href: '/grades/validations', icon: ClipboardCheck },
-      { title: 'Bulletins', href: '/grades/report-cards', icon: FileText },
-    ],
-  },
-  {
-    title: 'Conduites',
-    href: '/conducts',
-    icon: AlertTriangle,
-    children: [
-      { title: 'Présence Élèves', href: '/conducts/student-attendance', icon: UserCheck },
-      { title: 'Présence Enseignants', href: '/conducts/teacher-attendance', icon: UserCheck },
-      { title: 'Conduite', href: '/conducts/conduct', icon: AlertTriangle },
-      { title: 'Alertes', href: '/conducts/alerts', icon: Bell },
-    ],
-  },
-  {
-    title: 'Emplois du temps',
-    href: '/schedules',
-    icon: Calendar,
-  },
-  {
-    title: 'Programmes',
-    href: '/programs',
-    icon: BookOpen,
-    children: [
-      { title: 'Matières', href: '/programs/subjects', icon: BookOpen },
-      { title: 'Coefficients', href: '/programs/coefficients', icon: Percent },
-      { title: 'Progression', href: '/programs/curriculum-progress', icon: Grid },
-    ],
-  },
-
-  // ADMINISTRATIVE (Lower)
-  {
-    title: 'Comptabilité',
-    href: '/accounting',
-    icon: DollarSign,
-    children: [
-      { title: 'Tableau de bord', href: '/accounting/dashboard', icon: LayoutDashboard },
-      { title: 'Types de frais', href: '/accounting/fee-types', icon: FileText },
-      { title: 'Grilles tarifaires', href: '/accounting/fee-structures', icon: Grid },
-      { title: 'Frais élèves', href: '/accounting/student-fees', icon: Users },
-      { title: 'Paiements', href: '/accounting/payments', icon: CreditCard },
-      { title: 'Plans de paiement', href: '/accounting/payment-plans', icon: Calendar },
-      { title: 'Remises', href: '/accounting/discounts', icon: Percent },
-      { title: 'Remboursements', href: '/accounting/refunds', icon: RotateCcw },
-      { title: 'Comptes', href: '/accounting/accounts', icon: Wallet },
-    ],
-  },
-  {
-    title: 'Espaces',
-    href: '/spaces',
-    icon: Building2,
-    children: [
-      { title: 'Salles de classe', href: '/spaces/classrooms', icon: Building2 },
-      { title: 'Disponibilité', href: '/spaces/availability', icon: Calendar },
-    ],
-  },
-
-  // CONFIGURATION (Bottom - Least Frequent)
-  {
-    title: 'Paramètres',
-    href: '/settings',
-    icon: Settings,
-    children: [
-      { title: 'Profil école', href: '/settings/profile', icon: Building2 },
-      { title: 'Années scolaires', href: '/settings/school-years', icon: Calendar },
-      { title: 'Notifications', href: '/settings/notifications', icon: Bell },
-    ],
-  },
-]
-
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const t = useTranslations()
   const pathname = useLocation({ select: location => location.pathname })
+
+  // Navigation optimized by usage frequency and UX best practices
+  // CORE DAILY OPERATIONS → ACADEMIC → ADMINISTRATIVE → CONFIGURATION
+  const navigationItems: NavItem[] = [
+    // CORE DAILY OPERATIONS (Top - Most Frequent)
+    {
+      title: t.nav.dashboard(),
+      href: '/dashboard',
+      icon: LayoutDashboard,
+    },
+    {
+      title: t.nav.students(),
+      href: '/students',
+      icon: GraduationCap,
+      children: [
+        { title: t.nav.studentsList(), href: '/students', icon: GraduationCap },
+        { title: t.nav.parents(), href: '/students/parents', icon: Users },
+        { title: t.nav.enrollments(), href: '/students/enrollments', icon: ClipboardCheck },
+        { title: t.students.bulkOperations.title(), href: '/students/bulk-operations', icon: FileText },
+      ],
+    },
+    {
+      title: t.nav.classes(),
+      href: '/classes',
+      icon: BookOpen,
+      children: [
+        { title: t.nav.classes(), href: '/classes', icon: BookOpen },
+        { title: t.nav.assignments(), href: '/classes/assignments', icon: Users },
+      ],
+    },
+    {
+      title: t.nav.users(),
+      href: '/users',
+      icon: Users,
+      children: [
+        { title: t.nav.users(), href: '/users/users', icon: UsersRound },
+        { title: t.nav.staff(), href: '/users/staff', icon: UserCheck },
+        { title: t.nav.teachers(), href: '/users/teachers', icon: GraduationCap },
+        { title: t.nav.roles(), href: '/users/roles', icon: ShieldCheck },
+      ],
+    },
+
+    // ACADEMIC OPERATIONS (Middle)
+    {
+      title: t.nav.grades(),
+      href: '/grades',
+      icon: ClipboardCheck,
+      children: [
+        { title: t.nav.grades(), href: '/grades/entry', icon: FileText },
+        { title: t.common.view(), href: '/grades', icon: FileSearch },
+        { title: t.grades.statistics.title(), href: '/grades/statistics', icon: BarChart3 },
+        { title: t.grades.validations.title(), href: '/grades/validations', icon: ClipboardCheck },
+        { title: t.nav.reportCards(), href: '/grades/report-cards', icon: FileBarChart },
+      ],
+    },
+    {
+      title: t.nav.schoolLife(),
+      href: '/conducts',
+      icon: AlertTriangle,
+      children: [
+        { title: t.schoolLife.studentAttendance(), href: '/conducts/student-attendance', icon: UserCheck },
+        { title: t.schoolLife.teacherAttendance(), href: '/conducts/teacher-attendance', icon: UserCheck },
+        { title: t.nav.conduct(), href: '/conducts/conduct', icon: AlertTriangle },
+        { title: t.nav.punctuality(), href: '/conducts/alerts', icon: Bell },
+        { title: t.conduct.reports(), href: '/conducts/conduct/reports', icon: FileBarChart },
+        { title: t.common.settings(), href: '/conducts/settings', icon: Settings2 },
+      ],
+    },
+    {
+      title: t.nav.timetables(),
+      href: '/schedules',
+      icon: Calendar,
+    },
+    {
+      title: t.nav.academic(),
+      href: '/programs',
+      icon: BookOpen,
+      children: [
+        { title: t.nav.subjects(), href: '/programs/subjects', icon: BookOpen },
+        { title: t.nav.coefficients(), href: '/programs/coefficients', icon: Percent },
+        { title: t.nav.curriculumProgress(), href: '/programs/curriculum-progress', icon: Grid },
+      ],
+    },
+
+    // ADMINISTRATIVE (Lower)
+    {
+      title: t.nav.accounting(),
+      href: '/accounting',
+      icon: DollarSign,
+      children: [
+        { title: t.nav.dashboard(), href: '/accounting/dashboard', icon: LayoutDashboard },
+        { title: t.finance.feeTypes.title(), href: '/accounting/fee-types', icon: FileText },
+        { title: t.finance.feeStructures.title(), href: '/accounting/fee-structures', icon: Grid },
+        { title: t.finance.studentFees.title(), href: '/accounting/student-fees', icon: Users },
+        { title: t.nav.payments(), href: '/accounting/payments', icon: CreditCard },
+        { title: t.finance.paymentPlans.title(), href: '/accounting/payment-plans', icon: Calendar },
+        { title: t.finance.discounts.title(), href: '/accounting/discounts', icon: Percent },
+        { title: t.finance.refunds.title(), href: '/accounting/refunds', icon: RotateCcw },
+        { title: t.finance.accounts.title(), href: '/accounting/accounts', icon: Wallet },
+      ],
+    },
+    {
+      title: t.nav.spaces(),
+      href: '/spaces',
+      icon: Building2,
+      children: [
+        { title: t.nav.classrooms(), href: '/spaces/classrooms', icon: Building2 },
+        { title: t.common.view(), href: '/spaces/availability', icon: Calendar },
+      ],
+    },
+
+    // CONFIGURATION (Bottom - Least Frequent)
+    {
+      title: t.nav.settings(),
+      href: '/settings',
+      icon: Settings,
+      children: [
+        { title: t.sidebar.schoolName(), href: '/settings/profile', icon: Building2 },
+        { title: t.nav.schoolYears(), href: '/settings/school-years', icon: Calendar },
+        { title: t.common.notifications(), href: '/settings/notifications', icon: Bell },
+      ],
+    },
+  ]
+
   const [openItem, setOpenItem] = React.useState<string | null>(() => {
     const activeItem = navigationItems.find(item =>
       item.children?.some(child => pathname.startsWith(child.href)),
@@ -220,32 +231,32 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarMenuItem key={item.href}>
                   {item.children
                     ? (
-                        <SidebarMenuSubItemWrapper
-                          item={item}
-                          pathname={pathname}
-                          isOpen={openItem === item.title}
-                          onToggle={() => setOpenItem(openItem === item.title ? null : item.title)}
-                        />
-                      )
+                      <SidebarMenuSubItemWrapper
+                        item={item}
+                        pathname={pathname}
+                        isOpen={openItem === item.title}
+                        onToggle={() => setOpenItem(openItem === item.title ? null : item.title)}
+                      />
+                    )
                     : (
-                        <SidebarMenuButton
-                          asChild
-                          isActive={pathname === item.href}
-                          tooltip={item.title}
-                          className={`transition-all duration-200 py-3 ${pathname === item.href ? 'bg-primary/10 text-primary shadow-sm font-semibold' : 'hover:bg-sidebar-accent/50 hover:pl-5 text-muted-foreground hover:text-foreground'}`}
-                        >
-                          <Link to={item.href} className="flex w-full items-center gap-3">
-                            <item.icon className={`size-5 transition-transform duration-300 group-hover:scale-110 ${pathname === item.href ? 'text-primary scale-110' : 'text-muted-foreground group-hover:text-foreground'}`} />
-                            <span className="font-medium text-sm">{item.title}</span>
-                            {pathname === item.href && (
-                              <motion.div
-                                layoutId="active-nav-indicator"
-                                className="absolute left-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full bg-primary shadow-[0_0_12px_rgba(59,130,246,0.6)]"
-                              />
-                            )}
-                          </Link>
-                        </SidebarMenuButton>
-                      )}
+                      <SidebarMenuButton
+                        asChild
+                        isActive={pathname === item.href}
+                        tooltip={item.title}
+                        className={`transition-all duration-200 py-3 ${pathname === item.href ? 'bg-primary/10 text-primary shadow-sm font-semibold' : 'hover:bg-sidebar-accent/50 hover:pl-5 text-muted-foreground hover:text-foreground'}`}
+                      >
+                        <Link to={item.href} className="flex w-full items-center gap-3">
+                          <item.icon className={`size-5 transition-transform duration-300 group-hover:scale-110 ${pathname === item.href ? 'text-primary scale-110' : 'text-muted-foreground group-hover:text-foreground'}`} />
+                          <span className="font-medium text-sm">{item.title}</span>
+                          {pathname === item.href && (
+                            <motion.div
+                              layoutId="active-nav-indicator"
+                              className="absolute left-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full bg-primary shadow-[0_0_12px_rgba(59,130,246,0.6)]"
+                            />
+                          )}
+                        </Link>
+                      </SidebarMenuButton>
+                    )}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -261,32 +272,32 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarMenuItem key={item.href}>
                   {item.children
                     ? (
-                        <SidebarMenuSubItemWrapper
-                          item={item}
-                          pathname={pathname}
-                          isOpen={openItem === item.title}
-                          onToggle={() => setOpenItem(openItem === item.title ? null : item.title)}
-                        />
-                      )
+                      <SidebarMenuSubItemWrapper
+                        item={item}
+                        pathname={pathname}
+                        isOpen={openItem === item.title}
+                        onToggle={() => setOpenItem(openItem === item.title ? null : item.title)}
+                      />
+                    )
                     : (
-                        <SidebarMenuButton
-                          asChild
-                          isActive={pathname === item.href}
-                          tooltip={item.title}
-                          className={`transition-all duration-200 ${pathname === item.href ? 'bg-primary/10 text-primary shadow-sm' : 'hover:bg-sidebar-accent/50 hover:pl-4'}`}
-                        >
-                          <Link to={item.href} className="flex w-full items-center gap-2 py-2">
-                            <item.icon className={`size-4 transition-transform duration-300 group-hover:scale-110 ${pathname === item.href ? 'text-primary scale-110' : 'text-muted-foreground group-hover:text-foreground'}`} />
-                            <span className="font-medium">{item.title}</span>
-                            {pathname === item.href && (
-                              <motion.div
-                                layoutId="active-nav-indicator"
-                                className="absolute left-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full bg-primary shadow-[0_0_12px_rgba(59,130,246,0.6)]"
-                              />
-                            )}
-                          </Link>
-                        </SidebarMenuButton>
-                      )}
+                      <SidebarMenuButton
+                        asChild
+                        isActive={pathname === item.href}
+                        tooltip={item.title}
+                        className={`transition-all duration-200 ${pathname === item.href ? 'bg-primary/10 text-primary shadow-sm' : 'hover:bg-sidebar-accent/50 hover:pl-4'}`}
+                      >
+                        <Link to={item.href} className="flex w-full items-center gap-2 py-2">
+                          <item.icon className={`size-4 transition-transform duration-300 group-hover:scale-110 ${pathname === item.href ? 'text-primary scale-110' : 'text-muted-foreground group-hover:text-foreground'}`} />
+                          <span className="font-medium">{item.title}</span>
+                          {pathname === item.href && (
+                            <motion.div
+                              layoutId="active-nav-indicator"
+                              className="absolute left-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full bg-primary shadow-[0_0_12px_rgba(59,130,246,0.6)]"
+                            />
+                          )}
+                        </Link>
+                      </SidebarMenuButton>
+                    )}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -302,32 +313,32 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarMenuItem key={item.href}>
                   {item.children
                     ? (
-                        <SidebarMenuSubItemWrapper
-                          item={item}
-                          pathname={pathname}
-                          isOpen={openItem === item.title}
-                          onToggle={() => setOpenItem(openItem === item.title ? null : item.title)}
-                        />
-                      )
+                      <SidebarMenuSubItemWrapper
+                        item={item}
+                        pathname={pathname}
+                        isOpen={openItem === item.title}
+                        onToggle={() => setOpenItem(openItem === item.title ? null : item.title)}
+                      />
+                    )
                     : (
-                        <SidebarMenuButton
-                          asChild
-                          isActive={pathname === item.href}
-                          tooltip={item.title}
-                          className={`transition-all duration-200 ${pathname === item.href ? 'bg-primary/10 text-primary shadow-sm' : 'hover:bg-sidebar-accent/50 hover:pl-4'}`}
-                        >
-                          <Link to={item.href} className="flex w-full items-center gap-2 py-2">
-                            <item.icon className={`size-4 transition-transform duration-300 group-hover:scale-110 ${pathname === item.href ? 'text-primary scale-110' : 'text-muted-foreground group-hover:text-foreground'}`} />
-                            <span className="font-medium">{item.title}</span>
-                            {pathname === item.href && (
-                              <motion.div
-                                layoutId="active-nav-indicator"
-                                className="absolute left-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full bg-primary shadow-[0_0_12px_rgba(59,130,246,0.6)]"
-                              />
-                            )}
-                          </Link>
-                        </SidebarMenuButton>
-                      )}
+                      <SidebarMenuButton
+                        asChild
+                        isActive={pathname === item.href}
+                        tooltip={item.title}
+                        className={`transition-all duration-200 ${pathname === item.href ? 'bg-primary/10 text-primary shadow-sm' : 'hover:bg-sidebar-accent/50 hover:pl-4'}`}
+                      >
+                        <Link to={item.href} className="flex w-full items-center gap-2 py-2">
+                          <item.icon className={`size-4 transition-transform duration-300 group-hover:scale-110 ${pathname === item.href ? 'text-primary scale-110' : 'text-muted-foreground group-hover:text-foreground'}`} />
+                          <span className="font-medium">{item.title}</span>
+                          {pathname === item.href && (
+                            <motion.div
+                              layoutId="active-nav-indicator"
+                              className="absolute left-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full bg-primary shadow-[0_0_12px_rgba(59,130,246,0.6)]"
+                            />
+                          )}
+                        </Link>
+                      </SidebarMenuButton>
+                    )}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -343,32 +354,32 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarMenuItem key={item.href}>
                   {item.children
                     ? (
-                        <SidebarMenuSubItemWrapper
-                          item={item}
-                          pathname={pathname}
-                          isOpen={openItem === item.title}
-                          onToggle={() => setOpenItem(openItem === item.title ? null : item.title)}
-                        />
-                      )
+                      <SidebarMenuSubItemWrapper
+                        item={item}
+                        pathname={pathname}
+                        isOpen={openItem === item.title}
+                        onToggle={() => setOpenItem(openItem === item.title ? null : item.title)}
+                      />
+                    )
                     : (
-                        <SidebarMenuButton
-                          asChild
-                          isActive={pathname === item.href}
-                          tooltip={item.title}
-                          className={`transition-all duration-200 ${pathname === item.href ? 'bg-primary/10 text-primary shadow-sm' : 'hover:bg-sidebar-accent/50 hover:pl-4'}`}
-                        >
-                          <Link to={item.href} className="flex w-full items-center gap-2 py-2">
-                            <item.icon className={`size-4 transition-transform duration-300 group-hover:scale-110 ${pathname === item.href ? 'text-primary scale-110' : 'text-muted-foreground group-hover:text-foreground'}`} />
-                            <span className="font-medium">{item.title}</span>
-                            {pathname === item.href && (
-                              <motion.div
-                                layoutId="active-nav-indicator"
-                                className="absolute left-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full bg-primary shadow-[0_0_12px_rgba(59,130,246,0.6)]"
-                              />
-                            )}
-                          </Link>
-                        </SidebarMenuButton>
-                      )}
+                      <SidebarMenuButton
+                        asChild
+                        isActive={pathname === item.href}
+                        tooltip={item.title}
+                        className={`transition-all duration-200 ${pathname === item.href ? 'bg-primary/10 text-primary shadow-sm' : 'hover:bg-sidebar-accent/50 hover:pl-4'}`}
+                      >
+                        <Link to={item.href} className="flex w-full items-center gap-2 py-2">
+                          <item.icon className={`size-4 transition-transform duration-300 group-hover:scale-110 ${pathname === item.href ? 'text-primary scale-110' : 'text-muted-foreground group-hover:text-foreground'}`} />
+                          <span className="font-medium">{item.title}</span>
+                          {pathname === item.href && (
+                            <motion.div
+                              layoutId="active-nav-indicator"
+                              className="absolute left-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full bg-primary shadow-[0_0_12px_rgba(59,130,246,0.6)]"
+                            />
+                          )}
+                        </Link>
+                      </SidebarMenuButton>
+                    )}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -402,7 +413,7 @@ function SidebarMenuSubItemWrapper({
         onClick={onToggle}
         isActive={hasActiveChild} // Keep active style if child is active
         className={`group/collapsable w-full justify-between transition-all duration-200 ${hasActiveChild ? 'bg-primary/5 text-primary' : 'hover:bg-sidebar-accent/50'
-        }`}
+          }`}
       >
         <div className="flex items-center gap-2">
           <item.icon className="size-4" />
@@ -440,7 +451,7 @@ function SidebarMenuSubItemWrapper({
                 className={`transition-all duration-200 ${pathname === child.href
                   ? 'bg-primary/10 text-primary font-medium'
                   : 'text-muted-foreground hover:bg-sidebar-accent/50 hover:pl-4 hover:text-foreground'
-                }`}
+                  }`}
               >
                 <Link to={child.href}>
                   <child.icon className={cn(

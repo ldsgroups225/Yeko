@@ -111,6 +111,7 @@ const en: Translation = {
     notes: 'Notes',
     unassigned: 'Unassigned',
     clearFilters: 'Clear Filters',
+    settings: 'Settings',
   },
   nav: {
     dashboard: 'Dashboard',
@@ -145,6 +146,7 @@ const en: Translation = {
     settings: 'Settings',
     spaces: 'Spaces',
     classrooms: 'Classrooms',
+    schoolYears: 'School Years',
   },
   sidebar: {
     dailyOperations: 'Daily Operations',
@@ -2026,6 +2028,12 @@ const en: Translation = {
     subject: 'Subject',
     term: 'Term',
     reportCard: 'Report Card',
+    statistics: {
+      title: 'Statistics',
+    },
+    validations: {
+      title: 'Validations',
+    },
   },
 }
 

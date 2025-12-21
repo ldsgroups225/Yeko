@@ -451,6 +451,10 @@ type RootTranslation = {
 		 * E​f​f​a​c​e​r​ ​l​e​s​ ​f​i​l​t​r​e​s
 		 */
 		clearFilters: string
+		/**
+		 * P​a​r​a​m​è​t​r​e​s
+		 */
+		settings: string
 	}
 	nav: {
 		/**
@@ -581,6 +585,10 @@ type RootTranslation = {
 		 * S​a​l​l​e​s​ ​d​e​ ​c​l​a​s​s​e
 		 */
 		classrooms: string
+		/**
+		 * A​n​n​é​e​s​ ​S​c​o​l​a​i​r​e​s
+		 */
+		schoolYears: string
 	}
 	sidebar: {
 		/**
@@ -7358,6 +7366,18 @@ type RootTranslation = {
 		 * B​u​l​l​e​t​i​n​ ​s​c​o​l​a​i​r​e
 		 */
 		reportCard: string
+		statistics: {
+			/**
+			 * S​t​a​t​i​s​t​i​q​u​e​s
+			 */
+			title: string
+		}
+		validations: {
+			/**
+			 * V​a​l​i​d​a​t​i​o​n​s
+			 */
+			title: string
+		}
 	}
 }
 
@@ -7793,6 +7813,10 @@ export type TranslationFunctions = {
 		 * Effacer les filtres
 		 */
 		clearFilters: () => LocalizedString
+		/**
+		 * Paramètres
+		 */
+		settings: () => LocalizedString
 	}
 	nav: {
 		/**
@@ -7923,6 +7947,10 @@ export type TranslationFunctions = {
 		 * Salles de classe
 		 */
 		classrooms: () => LocalizedString
+		/**
+		 * Années Scolaires
+		 */
+		schoolYears: () => LocalizedString
 	}
 	sidebar: {
 		/**
@@ -14631,6 +14659,18 @@ export type TranslationFunctions = {
 		 * Bulletin scolaire
 		 */
 		reportCard: () => LocalizedString
+		statistics: {
+			/**
+			 * Statistiques
+			 */
+			title: () => LocalizedString
+		}
+		validations: {
+			/**
+			 * Validations
+			 */
+			title: () => LocalizedString
+		}
 	}
 }
 
