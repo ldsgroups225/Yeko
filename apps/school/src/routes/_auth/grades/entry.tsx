@@ -84,6 +84,12 @@ function GradeEntryPage() {
     enabled: !!canFetchGrades,
   })
 
+  // Determine effective teacher ID (assigned teacher for subject or current user if they are a teacher)
+  const selectedClassSubject = classSubjectsData?.find(
+    cs => cs.subject.id === selectedSubjectId,
+  )
+  const effectiveTeacherId = selectedClassSubject?.teacher?.id || currentTeacher?.id || ''
+
   // Transform enrolled students to the format expected by GradeEntryTable
   const students = enrollmentsData?.data?.map(e => ({
     id: e.student.id,
@@ -146,29 +152,29 @@ function GradeEntryPage() {
                 </Label>
                 {classesLoading
                   ? (
-                      <Skeleton className="h-11 w-full rounded-xl" />
-                    )
+                    <Skeleton className="h-11 w-full rounded-xl" />
+                  )
                   : (
-                      <Select value={selectedClassId} onValueChange={handleClassChange}>
-                        <SelectTrigger id="class-select" className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
-                          <SelectValue placeholder={t.academic.grades.entry.selectClass()} />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
-                          {classesData?.map(item => (
-                            <SelectItem key={item.class.id} value={item.class.id} className="rounded-lg">
-                              <div className="flex items-center gap-2">
-                                <LayoutGrid className="size-3.5 text-primary/60" />
-                                <span className="font-semibold">
-                                  {item.grade.name}
-                                  {' '}
-                                  {item.class.section}
-                                </span>
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
+                    <Select value={selectedClassId} onValueChange={handleClassChange}>
+                      <SelectTrigger id="class-select" className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
+                        <SelectValue placeholder={t.academic.grades.entry.selectClass()} />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
+                        {classesData?.map(item => (
+                          <SelectItem key={item.class.id} value={item.class.id} className="rounded-lg">
+                            <div className="flex items-center gap-2">
+                              <LayoutGrid className="size-3.5 text-primary/60" />
+                              <span className="font-semibold">
+                                {item.grade.name}
+                                {' '}
+                                {item.class.section}
+                              </span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
               </div>
 
               <div className="space-y-2.5">
@@ -177,29 +183,29 @@ function GradeEntryPage() {
                 </Label>
                 {subjectsLoading
                   ? (
-                      <Skeleton className="h-11 w-full rounded-xl" />
-                    )
+                    <Skeleton className="h-11 w-full rounded-xl" />
+                  )
                   : (
-                      <Select
-                        value={selectedSubjectId}
-                        onValueChange={setSelectedSubjectId}
-                        disabled={!selectedClassId || !classSubjectsData?.length}
-                      >
-                        <SelectTrigger id="subject-select" className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
-                          <SelectValue placeholder={t.academic.grades.entry.selectSubject()} />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
-                          {classSubjectsData?.map(cs => (
-                            <SelectItem key={cs.subject.id} value={cs.subject.id} className="rounded-lg">
-                              <div className="flex items-center gap-2">
-                                <Sparkles className="size-3.5 text-primary/60" />
-                                <span className="font-semibold">{cs.subject.name}</span>
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
+                    <Select
+                      value={selectedSubjectId}
+                      onValueChange={setSelectedSubjectId}
+                      disabled={!selectedClassId || !classSubjectsData?.length}
+                    >
+                      <SelectTrigger id="subject-select" className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
+                        <SelectValue placeholder={t.academic.grades.entry.selectSubject()} />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
+                        {classSubjectsData?.map(cs => (
+                          <SelectItem key={cs.subject.id} value={cs.subject.id} className="rounded-lg">
+                            <div className="flex items-center gap-2">
+                              <Sparkles className="size-3.5 text-primary/60" />
+                              <span className="font-semibold">{cs.subject.name}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
               </div>
 
               <div className="space-y-2.5">
@@ -208,26 +214,26 @@ function GradeEntryPage() {
                 </Label>
                 {termsLoading
                   ? (
-                      <Skeleton className="h-11 w-full rounded-xl" />
-                    )
+                    <Skeleton className="h-11 w-full rounded-xl" />
+                  )
                   : (
-                      <Select
-                        value={selectedTermId}
-                        onValueChange={setSelectedTermId}
-                        disabled={!termsData?.length}
-                      >
-                        <SelectTrigger id="term-select" className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
-                          <SelectValue placeholder={t.academic.grades.entry.selectTerm()} />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
-                          {termsData?.map(term => (
-                            <SelectItem key={term.id} value={term.id} className="rounded-lg">
-                              <span className="font-semibold">{term.template.name}</span>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
+                    <Select
+                      value={selectedTermId}
+                      onValueChange={setSelectedTermId}
+                      disabled={!termsData?.length}
+                    >
+                      <SelectTrigger id="term-select" className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
+                        <SelectValue placeholder={t.academic.grades.entry.selectTerm()} />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
+                        {termsData?.map(term => (
+                          <SelectItem key={term.id} value={term.id} className="rounded-lg">
+                            <span className="font-semibold">{term.template.name}</span>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
               </div>
 
               <div className="space-y-2.5">
@@ -310,30 +316,30 @@ function GradeEntryPage() {
             <CardContent className="pt-8">
               {gradesLoading || studentsLoading
                 ? (
-                    <div className="space-y-4">
-                      {Array.from({ length: 10 }).map(() => (
-                        <div key={generateUUID()} className="flex items-center gap-4">
-                          <Skeleton className="h-12 flex-1 rounded-xl" />
-                          <Skeleton className="h-12 w-24 rounded-xl" />
-                          <Skeleton className="h-12 w-32 rounded-xl" />
-                        </div>
-                      ))}
-                    </div>
-                  )
+                  <div className="space-y-4">
+                    {Array.from({ length: 10 }).map(() => (
+                      <div key={generateUUID()} className="flex items-center gap-4">
+                        <Skeleton className="h-12 flex-1 rounded-xl" />
+                        <Skeleton className="h-12 w-24 rounded-xl" />
+                        <Skeleton className="h-12 w-32 rounded-xl" />
+                      </div>
+                    ))}
+                  </div>
+                )
                 : (
-                    <GradeEntryTable
-                      classId={selectedClassId}
-                      subjectId={selectedSubjectId}
-                      termId={selectedTermId}
-                      teacherId={currentTeacher?.id ?? ''}
-                      gradeType={gradeType}
-                      weight={weight}
-                      description={description}
-                      gradeDate={gradeDate}
-                      students={students}
-                      existingGrades={gradesData ?? []}
-                    />
-                  )}
+                  <GradeEntryTable
+                    classId={selectedClassId}
+                    subjectId={selectedSubjectId}
+                    termId={selectedTermId}
+                    teacherId={effectiveTeacherId}
+                    gradeType={gradeType}
+                    weight={weight}
+                    description={description}
+                    gradeDate={gradeDate}
+                    students={students}
+                    existingGrades={gradesData ?? []}
+                  />
+                )}
             </CardContent>
           </Card>
         </motion.div>

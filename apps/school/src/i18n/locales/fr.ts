@@ -1309,6 +1309,8 @@ export const fr: TypedLocale = {
         gradeRequired: 'Note requise',
         loadError: 'Erreur de chargement des notes',
         saveError: 'Erreur lors de l\'enregistrement',
+        noTeacherTitle: 'Aucun enseignant assigné',
+        noTeacherDescription: 'Vous ne pouvez pas enregistrer de notes car aucun enseignant n\'est assigné à cette matière dans cette classe.',
       },
       quickActions: {
         entry: 'Saisie des notes',

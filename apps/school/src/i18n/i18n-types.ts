@@ -5302,6 +5302,14 @@ type RootTranslation = {
 				 * E​r​r​e​u​r​ ​l​o​r​s​ ​d​e​ ​l​'​e​n​r​e​g​i​s​t​r​e​m​e​n​t
 				 */
 				saveError: string
+				/**
+				 * A​u​c​u​n​ ​e​n​s​e​i​g​n​a​n​t​ ​a​s​s​i​g​n​é
+				 */
+				noTeacherTitle: string
+				/**
+				 * V​o​u​s​ ​n​e​ ​p​o​u​v​e​z​ ​p​a​s​ ​e​n​r​e​g​i​s​t​r​e​r​ ​d​e​ ​n​o​t​e​s​ ​c​a​r​ ​a​u​c​u​n​ ​e​n​s​e​i​g​n​a​n​t​ ​n​'​e​s​t​ ​a​s​s​i​g​n​é​ ​à​ ​c​e​t​t​e​ ​m​a​t​i​è​r​e​ ​d​a​n​s​ ​c​e​t​t​e​ ​c​l​a​s​s​e​.
+				 */
+				noTeacherDescription: string
 			}
 			quickActions: {
 				/**
@@ -12615,6 +12623,14 @@ export type TranslationFunctions = {
 				 * Erreur lors de l'enregistrement
 				 */
 				saveError: () => LocalizedString
+				/**
+				 * Aucun enseignant assigné
+				 */
+				noTeacherTitle: () => LocalizedString
+				/**
+				 * Vous ne pouvez pas enregistrer de notes car aucun enseignant n'est assigné à cette matière dans cette classe.
+				 */
+				noTeacherDescription: () => LocalizedString
 			}
 			quickActions: {
 				/**

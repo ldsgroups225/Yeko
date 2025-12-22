@@ -30,7 +30,7 @@ export const getGrade = createServerFn()
 
 // Create single grade
 export const createGrade = createServerFn()
-  .inputValidator(createGradeSchema.extend({ teacherId: z.string() }))
+  .inputValidator(createGradeSchema.extend({ teacherId: z.string().min(1, 'Teacher ID is required') }))
   .handler(async ({ data }) => {
     const grade = await gradeQueries.createStudentGrade({
       id: crypto.randomUUID(),
@@ -51,7 +51,7 @@ export const createGrade = createServerFn()
 
 // Create bulk grades (for entire class)
 export const createBulkGrades = createServerFn()
-  .inputValidator(bulkGradesSchema.extend({ teacherId: z.string() }))
+  .inputValidator(bulkGradesSchema.extend({ teacherId: z.string().min(1, 'Teacher ID is required') }))
   .handler(async ({ data }) => {
     const results = []
     const gradeDate = data.gradeDate ?? new Date().toISOString().split('T')[0]

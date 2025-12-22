@@ -91,7 +91,7 @@ export const getGradesByClassSchema = z.object({
   classId: z.string().min(1),
   subjectId: z.string().min(1),
   termId: z.string().min(1),
-  teacherId: z.string().optional(),
+  teacherId: z.string().min(1).optional(),
 })
 
 export const getPendingValidationsSchema = z.object({

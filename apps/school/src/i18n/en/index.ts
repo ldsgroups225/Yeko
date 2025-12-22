@@ -1433,6 +1433,8 @@ const en: Translation = {
         gradeRequired: 'Grade required',
         loadError: 'Error loading grades',
         saveError: 'Error saving grades',
+        noTeacherTitle: 'No Teacher Assigned',
+        noTeacherDescription: 'You cannot save grades because no teacher is assigned to this subject in this class.',
       },
       quickActions: {
         entry: 'Grade entry',

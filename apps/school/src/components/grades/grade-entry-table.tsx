@@ -134,7 +134,7 @@ export function GradeEntryTable({
   })
 
   const savePendingChanges = useCallback(() => {
-    if (pendingChanges.size === 0)
+    if (pendingChanges.size === 0 || !teacherId)
       return
 
     setAutoSaveStatus('saving')
@@ -239,10 +239,27 @@ export function GradeEntryTable({
   const someDraftsSelected = draftGrades.some(g => selectedIds.has(g.id))
 
   const isLoading = updateMutation.isPending || createBulkMutation.isPending || submitMutation.isPending
+  const isMissingTeacher = !teacherId
 
   return (
     <div className="space-y-6">
       <GradeStatisticsCard statistics={statistics} />
+
+      {isMissingTeacher && pendingChanges.size > 0 && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="p-4 rounded-2xl bg-destructive/10 border border-destructive/20 flex items-center gap-3 text-destructive"
+        >
+          <AlertTriangle className="size-5 shrink-0" />
+          <div className="flex-1">
+            <p className="text-sm font-bold">{t.academic.grades.errors.noTeacherTitle() || 'Aucun enseignant assigné'}</p>
+            <p className="text-xs opacity-80 font-medium">
+              {t.academic.grades.errors.noTeacherDescription() || 'Vous ne pouvez pas enregistrer de notes car aucun enseignant n\'est assigné à cette matière dans cette classe.'}
+            </p>
+          </div>
+        </motion.div>
+      )}
 
       <div className="rounded-2xl border border-border/40 bg-card/30 backdrop-blur-xl shadow-xl overflow-hidden overflow-x-auto">
         <Table>
@@ -423,17 +440,17 @@ export function GradeEntryTable({
               >
                 <Button
                   onClick={handleSavePending}
-                  disabled={isLoading}
+                  disabled={isLoading || isMissingTeacher}
                   variant="outline"
                   className="rounded-xl border-amber-500/30 font-bold bg-amber-500/5 hover:bg-amber-500/10 text-amber-700"
                 >
                   {createBulkMutation.isPending
                     ? (
-                        <Loader2 className="mr-2 size-4 animate-spin text-amber-600" />
-                      )
+                      <Loader2 className="mr-2 size-4 animate-spin text-amber-600" />
+                    )
                     : (
-                        <Save className="mr-2 size-4 text-amber-600" />
-                      )}
+                      <Save className="mr-2 size-4 text-amber-600" />
+                    )}
                   {t.common.save()}
                 </Button>
               </motion.div>
@@ -447,11 +464,11 @@ export function GradeEntryTable({
           >
             {submitMutation.isPending
               ? (
-                  <Loader2 className="mr-2 size-4 animate-spin" />
-                )
+                <Loader2 className="mr-2 size-4 animate-spin" />
+              )
               : (
-                  <Send className="mr-2 size-4" />
-                )}
+                <Send className="mr-2 size-4" />
+              )}
             {t.common.submit()}
             {selectedIds.size > 0 && (
               <Badge variant="secondary" className="ml-2 bg-primary-foreground/10 text-primary-foreground border-none px-2 rounded-full font-bold">
