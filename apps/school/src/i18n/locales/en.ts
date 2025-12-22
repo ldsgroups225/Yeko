@@ -46,6 +46,7 @@ export const en = {
     of: 'of',
     noResults: 'No results found',
     noResultsDescription: 'Try adjusting your search or filter criteria',
+    trySearchingSomethingElse: 'Try searching for something else',
     noSchool: 'No school',
     more: 'More',
     morePages: 'More pages',
@@ -1505,6 +1506,7 @@ export const en = {
     selectClassAndDate: 'Select a class and date',
     selectClass: 'Select a class',
     teacher: 'Teacher',
+    student: 'Student',
     status: {
       label: 'Status',
       present: 'Present',

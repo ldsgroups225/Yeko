@@ -48,6 +48,7 @@ export const fr: TypedLocale = {
     of: 'sur',
     noResults: 'Aucun résultat trouvé',
     noResultsDescription: 'Essayez de modifier vos critères de recherche ou filtres',
+    trySearchingSomethingElse: 'Essayez de rechercher autre chose',
     noSchool: 'Aucune école',
     more: 'Plus',
     morePages: 'Plus de pages',
@@ -1508,6 +1509,7 @@ export const fr: TypedLocale = {
     selectClassAndDate: 'Sélectionner une classe et une date',
     selectClass: 'Sélectionner une classe',
     teacher: 'Enseignant',
+    student: 'Élève',
     status: {
       label: 'Statut',
       present: 'Présent',

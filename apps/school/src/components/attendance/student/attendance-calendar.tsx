@@ -1,12 +1,15 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, Info, UserX } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useMemo } from 'react'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { useTranslations } from '@/i18n'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { useLocale, useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { generateUUID } from '@/utils/generateUUID'
 
-type AttendanceStatus = 'present' | 'late' | 'absent' | 'excused' | 'on_leave'
+type AttendanceStatus = 'present' | 'late' | 'absent' | 'excused'
 
 interface AttendanceDay {
   date: string
@@ -15,26 +18,63 @@ interface AttendanceDay {
 
 interface AttendanceCalendarProps {
   studentName: string
+  studentPhoto?: string | null
   month: Date
   onMonthChange: (month: Date) => void
   attendanceData: AttendanceDay[]
 }
 
-const statusColors: Record<AttendanceStatus, string> = {
-  present: 'bg-green-500',
-  late: 'bg-amber-500',
-  absent: 'bg-red-500',
-  excused: 'bg-blue-500',
-  on_leave: 'bg-purple-500',
+const statusConfig: Record<AttendanceStatus, {
+  color: string
+  bgColor: string
+  borderColor: string
+  textColor: string
+  label: (t: any) => string
+  icon: any
+}> = {
+  present: {
+    color: 'bg-emerald-500',
+    bgColor: 'bg-emerald-500/10',
+    borderColor: 'border-emerald-500/20',
+    textColor: 'text-emerald-500',
+    label: t => t.attendance.status.present(),
+    icon: CalendarIcon,
+  },
+  late: {
+    color: 'bg-amber-500',
+    bgColor: 'bg-amber-500/10',
+    borderColor: 'border-amber-500/20',
+    textColor: 'text-amber-500',
+    label: t => t.attendance.status.late(),
+    icon: Clock,
+  },
+  absent: {
+    color: 'bg-rose-500',
+    bgColor: 'bg-rose-500/10',
+    borderColor: 'border-rose-500/20',
+    textColor: 'text-rose-500',
+    label: t => t.attendance.status.absent(),
+    icon: UserX,
+  },
+  excused: {
+    color: 'bg-blue-500',
+    bgColor: 'bg-blue-500/10',
+    borderColor: 'border-blue-500/20',
+    textColor: 'text-blue-500',
+    label: t => t.attendance.status.excused(),
+    icon: Info,
+  },
 }
 
 export function AttendanceCalendar({
   studentName,
+  studentPhoto,
   month,
   onMonthChange,
   attendanceData,
 }: AttendanceCalendarProps) {
   const t = useTranslations()
+  const { locale } = useLocale()
 
   const attendanceMap = useMemo(() => {
     const map = new Map<string, AttendanceStatus>()
@@ -76,97 +116,139 @@ export function AttendanceCalendar({
     excused: attendanceData.filter(d => d.status === 'excused').length,
   }
 
-  const monthName = month.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
-
-  const statusTranslations = {
-    present: t.attendance.status.present,
-    late: t.attendance.status.late,
-    absent: t.attendance.status.absent,
-    excused: t.attendance.status.excused,
-    on_leave: t.attendance.status.on_leave,
-  }
+  const monthName = month.toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US', { month: 'long', year: 'numeric' })
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-base">{studentName}</CardTitle>
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" onClick={handlePrevMonth}>
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <span className="text-sm font-medium capitalize w-32 text-center">{monthName}</span>
-          <Button variant="ghost" size="icon" onClick={handleNextMonth}>
-            <ChevronRight className="h-4 w-4" />
-          </Button>
+    <Card className="overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl">
+      <CardHeader className="relative border-b border-border/10 bg-muted/20 pb-4 pt-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <Avatar className="h-10 w-10 rounded-2xl border border-primary/20 shadow-lg">
+                <AvatarImage src={studentPhoto ?? undefined} alt={studentName} />
+                <AvatarFallback className="bg-primary/10 text-primary font-black uppercase tracking-widest text-[10px]">
+                  {studentName.charAt(0)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="absolute -bottom-1 -right-1 p-1 rounded-lg bg-background border border-border/40 shadow-sm">
+                <CalendarIcon className="size-2.5 text-primary" />
+              </div>
+            </div>
+            <div>
+              <CardTitle className="text-sm font-black uppercase italic tracking-tight">{studentName}</CardTitle>
+              <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest italic">{t.attendance.history()}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" size="icon" onClick={handlePrevMonth} className="h-8 w-8 rounded-lg hover:bg-primary/5">
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <span className="text-[10px] font-black uppercase tracking-widest w-28 text-center italic">{monthName}</span>
+            <Button variant="ghost" size="icon" onClick={handleNextMonth} className="h-8 w-8 rounded-lg hover:bg-primary/5">
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-7 gap-1 text-center text-xs mb-2">
-          {['D', 'L', 'M', 'M', 'J', 'V', 'S'].map(day => (
-            <div key={generateUUID()} className="font-medium text-muted-foreground py-1">
+      <CardContent className="p-6">
+        <div className="grid grid-cols-7 gap-2 text-center mb-4">
+          {(locale === 'fr' ? ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'] : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']).map(day => (
+            <div key={generateUUID()} className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/30">
               {day}
             </div>
           ))}
         </div>
-        <div className="grid grid-cols-7 gap-1">
-          {calendarDays.map((day) => {
-            if (!day) {
-              return <div key={generateUUID()} className="h-8" />
-            }
-            const dateStr = day.toISOString().split('T')[0]
-            const status = attendanceMap.get(dateStr ?? '')
-            return (
-              <div
-                key={generateUUID()}
-                className={cn(
-                  'h-8 flex items-center justify-center rounded text-xs',
-                  status ? statusColors[status] : 'bg-muted',
-                  status && 'text-white',
-                )}
-                title={status ? statusTranslations[status]() : undefined}
-              >
-                {day.getDate()}
-              </div>
-            )
-          })}
+        <div className="grid grid-cols-7 gap-2">
+          <AnimatePresence mode="popLayout">
+            {calendarDays.map((day, idx) => {
+              if (!day) {
+                return <div key={generateUUID()} className="h-12 rounded-2xl" />
+              }
+              const dateStr = day.toISOString().split('T')[0]
+              const status = attendanceMap.get(dateStr ?? '')
+              const config = status ? statusConfig[status] : null
+              const isToday = new Date().toISOString().split('T')[0] === dateStr
+
+              return (
+                <TooltipProvider key={dateStr}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: idx * 0.005 }}
+                        className={cn(
+                          'h-12 rounded-2xl flex flex-col items-center justify-center gap-0.5 transition-all group relative overflow-hidden border',
+                          config
+                            ? cn(config.bgColor, config.borderColor, 'shadow-lg shadow-black/5 scale-[1.02] z-10')
+                            : 'bg-background/20 border-border/10 hover:border-primary/30',
+                          isToday && 'ring-2 ring-primary ring-offset-2 ring-offset-background',
+                        )}
+                      >
+                        <span className={cn(
+                          'text-xs font-black italic tracking-tight',
+                          config ? 'text-foreground' : 'text-muted-foreground/30',
+                          isToday && 'text-primary',
+                        )}
+                        >
+                          {day.getDate()}
+                        </span>
+
+                        {config
+                          ? (
+                            <div className={cn('size-1.5 rounded-full shadow-sm', config.color)} />
+                          )
+                          : (
+                            <div className="size-1.5 rounded-full bg-border/20 group-hover:bg-primary/20 transition-colors" />
+                          )}
+                      </motion.div>
+                    </TooltipTrigger>
+                    {config && (
+                      <TooltipContent className="rounded-2xl font-black uppercase tracking-[0.2em] text-[8px] border-border/40 backdrop-blur-xl bg-background/80 px-3 py-2">
+                        <div className="flex items-center gap-2">
+                          <div className={cn('size-2 rounded-full animate-pulse', config.color)} />
+                          {config.label(t)}
+                        </div>
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
+                </TooltipProvider>
+              )
+            })}
+          </AnimatePresence>
         </div>
-        <div className="mt-4 flex gap-4 text-xs">
-          <div className="flex items-center gap-1">
-            <div className="h-3 w-3 rounded bg-green-500" />
-            <span>
-              {t.attendance.status.present()}
-              :
-              {' '}
-              {summary.present}
-            </span>
-          </div>
-          <div className="flex items-center gap-1">
-            <div className="h-3 w-3 rounded bg-amber-500" />
-            <span>
-              {t.attendance.status.late()}
-              :
-              {' '}
-              {summary.late}
-            </span>
-          </div>
-          <div className="flex items-center gap-1">
-            <div className="h-3 w-3 rounded bg-red-500" />
-            <span>
-              {t.attendance.status.absent()}
-              :
-              {' '}
-              {summary.absent}
-            </span>
-          </div>
-          <div className="flex items-center gap-1">
-            <div className="h-3 w-3 rounded bg-blue-500" />
-            <span>
-              {t.attendance.status.excused()}
-              :
-              {' '}
-              {summary.excused}
-            </span>
-          </div>
+
+        <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+          {(Object.entries(statusConfig) as [AttendanceStatus, typeof statusConfig['present']][]).map(([status, config]) => (
+            <motion.div
+              key={status}
+              whileHover={{ y: -5 }}
+              className={cn(
+                'relative p-4 rounded-3xl border transition-all duration-300 group overflow-hidden',
+                config.bgColor,
+                config.borderColor,
+              )}
+            >
+              <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform duration-500">
+                <config.icon className={cn('size-8', config.textColor)} />
+              </div>
+              <div className="relative z-10 flex flex-col gap-1">
+                <span className={cn('text-[10px] font-black uppercase tracking-[0.2em] italic', config.textColor)}>
+                  {config.label(t)}
+                </span>
+                <span className="text-2xl font-black italic tabular-nums">
+                  {(summary as any)[status]}
+                </span>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="mt-4 flex items-center gap-2 p-3 rounded-2xl bg-primary/5 border border-primary/10">
+          <Info className="size-3 text-primary/40" />
+          <p className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest italic leading-relaxed">
+            {t.attendance.historyDescription()}
+          </p>
         </div>
       </CardContent>
     </Card>

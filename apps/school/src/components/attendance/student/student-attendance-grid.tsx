@@ -1,18 +1,26 @@
-import { CheckCircle, Save } from 'lucide-react'
-import { useState } from 'react'
+import { CheckCircle, Clock, Save, Search, UserCheck, UserMinus, UserX } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
+import { useMemo, useState } from 'react'
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ConfirmationDialog } from '@/components/ui/confirmation-dialog'
+import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { generateUUID } from '@/utils/generateUUID'
 
-type StudentAttendanceStatus
-  = | 'present'
-    | 'late'
-    | 'absent'
-    | 'excused'
+type StudentAttendanceStatus = 'present' | 'late' | 'absent' | 'excused'
 
 interface StudentAttendanceEntry {
   studentId: string
@@ -32,18 +40,46 @@ interface StudentAttendanceGridProps {
   isSaving?: boolean
 }
 
-const statusButtons: { status: StudentAttendanceStatus, label: string }[] = [
-  { status: 'present', label: 'P' },
-  { status: 'late', label: 'R' },
-  { status: 'absent', label: 'A' },
-  { status: 'excused', label: 'E' },
-]
-
-const statusColors: Record<StudentAttendanceStatus, string> = {
-  present: 'bg-green-500 hover:bg-green-600 text-white',
-  late: 'bg-amber-500 hover:bg-amber-600 text-white',
-  absent: 'bg-red-500 hover:bg-red-600 text-white',
-  excused: 'bg-blue-500 hover:bg-blue-600 text-white',
+const statusConfig: Record<StudentAttendanceStatus, {
+  label: (t: any) => string
+  icon: any
+  color: string
+  bgColor: string
+  borderColor: string
+  indicatorColor: string
+}> = {
+  present: {
+    label: t => t.attendance.status.present(),
+    icon: UserCheck,
+    color: 'text-emerald-500',
+    bgColor: 'bg-emerald-500/10',
+    borderColor: 'border-emerald-500/20',
+    indicatorColor: 'bg-emerald-500',
+  },
+  late: {
+    label: t => t.attendance.status.late(),
+    icon: Clock,
+    color: 'text-amber-500',
+    bgColor: 'bg-amber-500/10',
+    borderColor: 'border-amber-500/20',
+    indicatorColor: 'bg-amber-500',
+  },
+  absent: {
+    label: t => t.attendance.status.absent(),
+    icon: UserX,
+    color: 'text-rose-500',
+    bgColor: 'bg-rose-500/10',
+    borderColor: 'border-rose-500/20',
+    indicatorColor: 'bg-rose-500',
+  },
+  excused: {
+    label: t => t.attendance.status.excused(),
+    icon: UserMinus,
+    color: 'text-blue-500',
+    bgColor: 'bg-blue-500/10',
+    borderColor: 'border-blue-500/20',
+    indicatorColor: 'bg-blue-500',
+  },
 }
 
 export function StudentAttendanceGrid({
@@ -54,17 +90,13 @@ export function StudentAttendanceGrid({
   isSaving,
 }: StudentAttendanceGridProps) {
   const t = useTranslations()
-  const [entries, setEntries]
-    = useState<StudentAttendanceEntry[]>(initialEntries)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [entries, setEntries] = useState<StudentAttendanceEntry[]>(initialEntries)
   const [hasChanges, setHasChanges] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
 
-  const handleStatusChange = (
-    studentId: string,
-    status: StudentAttendanceStatus,
-  ) => {
-    setEntries(prev =>
-      prev.map(e => (e.studentId === studentId ? { ...e, status } : e)),
-    )
+  const handleStatusChange = (studentId: string, status: StudentAttendanceStatus) => {
+    setEntries(prev => prev.map(e => (e.studentId === studentId ? { ...e, status } : e)))
     setHasChanges(true)
   }
 
@@ -74,144 +106,272 @@ export function StudentAttendanceGrid({
   }
 
   const handleSave = () => {
-    onSave(entries)
-    setHasChanges(false)
+    setShowConfirm(true)
   }
 
-  const summary = {
+  const onConfirmSave = () => {
+    onSave(entries)
+    setHasChanges(false)
+    setShowConfirm(false)
+  }
+
+  const filteredEntries = useMemo(() => {
+    return entries.filter(e =>
+      e.studentName.toLowerCase().includes(searchQuery.toLowerCase()),
+    )
+  }, [entries, searchQuery])
+
+  const summary = useMemo(() => ({
     present: entries.filter(e => e.status === 'present').length,
     late: entries.filter(e => e.status === 'late').length,
     absent: entries.filter(e => e.status === 'absent').length,
     excused: entries.filter(e => e.status === 'excused').length,
-  }
+  }), [entries])
 
   if (isLoading) {
     return <StudentAttendanceGridSkeleton />
   }
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-        <CardTitle>{className}</CardTitle>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={handleMarkAllPresent}>
-            <CheckCircle className="mr-2 h-4 w-4" />
-            {t.attendance.markAllPresent()}
-          </Button>
-          <Button onClick={handleSave} disabled={!hasChanges || isSaving}>
-            <Save className="mr-2 h-4 w-4" />
-            {isSaving ? t.common.saving() : t.common.save()}
-          </Button>
+    <Card className="relative overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl">
+      <CardHeader className="relative border-b border-border/10 bg-muted/20 pb-4 pt-4">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+              <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+                {className}
+              </CardTitle>
+            </div>
+            <h2 className="text-xl font-black uppercase italic tracking-tight">{t.schoolLife.studentAttendance()}</h2>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              variant="outline"
+              onClick={handleMarkAllPresent}
+              className="h-9 rounded-2xl border-border/40 font-black uppercase tracking-widest text-[10px] hover:bg-emerald-500/10 hover:text-emerald-500 transition-all px-4"
+            >
+              <CheckCircle className="mr-2 h-4 w-4" />
+              {t.attendance.markAllPresent()}
+            </Button>
+            <Button
+              onClick={handleSave}
+              disabled={!hasChanges || isSaving}
+              className="h-9 rounded-2xl bg-primary shadow-xl shadow-primary/20 font-black uppercase tracking-widest text-[10px] px-6 transition-all hover:scale-105 active:scale-95 disabled:grayscale"
+            >
+              <Save className="mr-2 h-4 w-4" />
+              {isSaving ? t.common.saving() : t.common.save()}
+            </Button>
+          </div>
+        </div>
+
+        <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+          <SummaryCard
+            label={t.attendance.status.present()}
+            count={summary.present}
+            config={statusConfig.present}
+          />
+          <SummaryCard
+            label={t.attendance.status.late()}
+            count={summary.late}
+            config={statusConfig.late}
+          />
+          <SummaryCard
+            label={t.attendance.status.absent()}
+            count={summary.absent}
+            config={statusConfig.absent}
+          />
+          <SummaryCard
+            label={t.attendance.status.excused()}
+            count={summary.excused}
+            config={statusConfig.excused}
+          />
+        </div>
+
+        <div className="mt-4 relative">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/40" />
+          <Input
+            placeholder={t.common.search()}
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            className="h-10 pl-12 rounded-2xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold italic"
+          />
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="mb-4 flex gap-4 text-sm">
-          <span className="text-green-600">
-            {t.attendance.status.present()}
-            :
-            {summary.present}
-          </span>
-          <span className="text-amber-600">
-            {t.attendance.status.late()}
-            :
-            {summary.late}
-          </span>
-          <span className="text-red-600">
-            {t.attendance.status.absent()}
-            :
-            {summary.absent}
-          </span>
-          <span className="text-blue-600">
-            {t.attendance.status.excused()}
-            :
-            {summary.excused}
-          </span>
+
+      <CardContent className="p-0">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader className="bg-muted/10">
+              <TableRow className="border-border/10 hover:bg-transparent">
+                <TableHead className="w-[60px] text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 text-center py-4">ID</TableHead>
+                <TableHead className="min-w-[200px] text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 py-4">{t.nav.students()}</TableHead>
+                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 text-center py-4">{t.attendance.status.label()}</TableHead>
+                <TableHead className="min-w-[240px] text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 text-right py-4">{t.common.actions()}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <AnimatePresence mode="popLayout">
+                {filteredEntries.map((entry, index) => (
+                  <motion.tr
+                    key={entry.studentId}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.02 }}
+                    className="border-border/5 hover:bg-primary/5 transition-colors group"
+                  >
+                    <TableCell className="text-center py-2">
+                      <span className="text-[10px] font-black text-muted-foreground/30">
+                        #
+                        {index + 1}
+                      </span>
+                    </TableCell>
+                    <TableCell className="py-2">
+                      <div className="flex items-center gap-3">
+                        <div className="relative">
+                          <Avatar className="h-8 w-8 rounded-xl border border-border/40 shadow-sm group-hover:scale-105 transition-transform duration-500">
+                            <AvatarImage src={entry.studentPhoto ?? undefined} alt={entry.studentName} />
+                            <AvatarFallback className="bg-primary/5 text-[10px] font-black">{entry.studentName.charAt(0)}</AvatarFallback>
+                          </Avatar>
+                          <div className={cn(
+                            'absolute -bottom-1 -right-1 size-2.5 rounded-full border-2 border-card',
+                            statusConfig[entry.status].indicatorColor,
+                          )}
+                          />
+                        </div>
+                        <div>
+                          <p className="font-black text-sm uppercase tracking-tight italic">{entry.studentName}</p>
+                          <p className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest italic">{statusConfig[entry.status].label(t)}</p>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-center py-2">
+                      <div className={cn(
+                        'inline-flex items-center gap-2 px-2.5 py-1 rounded-full border text-[9px] font-black uppercase tracking-widest italic',
+                        statusConfig[entry.status].bgColor,
+                        statusConfig[entry.status].borderColor,
+                        statusConfig[entry.status].color,
+                      )}
+                      >
+                        {(() => {
+                          const Icon = statusConfig[entry.status].icon
+                          return <Icon className="size-3" />
+                        })()}
+                        {statusConfig[entry.status].label(t)}
+                      </div>
+                    </TableCell>
+                    <TableCell className="py-2">
+                      <div className="flex items-center justify-end gap-1">
+                        {(Object.entries(statusConfig) as [StudentAttendanceStatus, typeof statusConfig['present']][]).map(([status, config]) => (
+                          <StatusButton
+                            key={status}
+                            active={entry.status === status}
+                            onClick={() => handleStatusChange(entry.studentId, status)}
+                            config={config}
+                          />
+                        ))}
+                      </div>
+                    </TableCell>
+                  </motion.tr>
+                ))}
+              </AnimatePresence>
+            </TableBody>
+          </Table>
         </div>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {entries.map(entry => (
-            <StudentAttendanceCard
-              key={entry.studentId}
-              entry={entry}
-              onStatusChange={status =>
-                handleStatusChange(entry.studentId, status)}
-            />
-          ))}
-        </div>
+
+        {filteredEntries.length === 0 && (
+          <div className="py-12 flex flex-col items-center text-center space-y-3">
+            <div className="p-3 rounded-full bg-primary/5">
+              <Search className="size-6 text-primary/20" />
+            </div>
+            <div>
+              <h3 className="text-base font-black uppercase tracking-tight text-muted-foreground/40 italic">{t.common.noResults()}</h3>
+              <p className="text-[9px] font-bold text-muted-foreground/20 uppercase tracking-widest italic">{t.common.trySearchingSomethingElse()}</p>
+            </div>
+          </div>
+        )}
       </CardContent>
+
+      <ConfirmationDialog
+        open={showConfirm}
+        onOpenChange={setShowConfirm}
+        title={t.attendance.save()}
+        description={t.attendance.saveConfirmDescription()}
+        onConfirm={onConfirmSave}
+        isLoading={isSaving}
+        confirmLabel={t.common.save()}
+      />
     </Card>
   )
 }
 
-interface StudentAttendanceCardProps {
-  entry: StudentAttendanceEntry
-  onStatusChange: (status: StudentAttendanceStatus) => void
-}
-
-function StudentAttendanceCard({
-  entry,
-  onStatusChange,
-}: StudentAttendanceCardProps) {
-  const t = useTranslations()
-  const initials = entry.studentName
-    .split(' ')
-    .map(n => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2)
-
-  const statusTranslations = {
-    present: t.attendance.status.present,
-    late: t.attendance.status.late,
-    absent: t.attendance.status.absent,
-    excused: t.attendance.status.excused,
-    on_leave: t.attendance.status.on_leave,
-  }
-
+function SummaryCard({ label, count, config }: { label: string, count: number, config: any }) {
+  const Icon = config.icon
   return (
-    <div className="rounded-lg border p-3 space-y-2">
-      <div className="flex items-center gap-2">
-        <Avatar className="h-8 w-8">
-          <AvatarImage
-            src={entry.studentPhoto ?? undefined}
-            alt={entry.studentName}
-          />
-          <AvatarFallback className="text-xs">{initials}</AvatarFallback>
-        </Avatar>
-        <span className="text-sm font-medium truncate">
-          {entry.studentName}
-        </span>
+    <div className={cn(
+      'relative overflow-hidden p-3 rounded-2xl border transition-all duration-300 group',
+      config.bgColor,
+      config.borderColor,
+    )}
+    >
+      <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:scale-110 transition-transform duration-500">
+        <Icon className={cn('size-6', config.color)} />
       </div>
-      <div className="flex gap-1">
-        {statusButtons.map(({ status, label }) => (
-          <Button
-            key={status}
-            size="sm"
-            variant={entry.status === status ? 'default' : 'outline'}
-            className={cn(
-              'h-7 flex-1 p-0 text-xs',
-              entry.status === status && statusColors[status],
-            )}
-            onClick={() => onStatusChange(status)}
-            title={statusTranslations[status]()}
-          >
-            {label}
-          </Button>
-        ))}
+      <div className="relative z-10 flex flex-col">
+        <span className={cn('text-[8px] font-black uppercase tracking-widest mb-0.5 italic', config.color)}>{label}</span>
+        <span className="text-xl font-black italic tabular-nums group-hover:translate-x-1 transition-transform">{count}</span>
       </div>
     </div>
   )
 }
 
+function StatusButton({ active, onClick, config }: { active: boolean, onClick: () => void, config: any }) {
+  const Icon = config.icon
+  return (
+    <Button
+      size="sm"
+      variant="ghost"
+      onClick={onClick}
+      className={cn(
+        'h-8 w-8 rounded-xl p-0 transition-all duration-300 relative group overflow-hidden',
+        active ? config.bgColor : 'grayscale hover:grayscale-0 hover:bg-card/40',
+      )}
+    >
+      <Icon className={cn('size-3.5 transition-transform group-hover:scale-110 group-active:scale-90', active ? config.color : 'text-muted-foreground/40')} />
+      {active && (
+        <motion.div
+          layoutId="active-indicator"
+          className={cn('absolute inset-0 border-2 rounded-xl', config.borderColor)}
+          initial={false}
+          transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+        />
+      )}
+    </Button>
+  )
+}
+
 function StudentAttendanceGridSkeleton() {
   return (
-    <Card>
-      <CardHeader>
-        <Skeleton className="h-6 w-48" />
+    <Card className="rounded-3xl border-border/40 bg-card/30">
+      <CardHeader className="space-y-3">
+        <div className="flex justify-between">
+          <Skeleton className="h-7 w-40 rounded-xl" />
+          <div className="flex gap-2">
+            <Skeleton className="h-9 w-28 rounded-xl" />
+            <Skeleton className="h-9 w-28 rounded-xl" />
+          </div>
+        </div>
+        <div className="grid grid-cols-4 gap-3">
+          <Skeleton className="h-16 rounded-2xl" />
+          <Skeleton className="h-16 rounded-2xl" />
+          <Skeleton className="h-16 rounded-2xl" />
+          <Skeleton className="h-16 rounded-2xl" />
+        </div>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {Array.from({ length: 20 }).map(() => (
-            <Skeleton key={generateUUID()} className="h-24 w-full" />
+        <div className="space-y-3">
+          {Array.from({ length: 5 }).map(() => (
+            <Skeleton key={generateUUID()} className="h-12 w-full rounded-2xl" />
           ))}
         </div>
       </CardContent>

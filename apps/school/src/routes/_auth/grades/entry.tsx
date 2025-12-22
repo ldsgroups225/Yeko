@@ -357,6 +357,7 @@ function GradeEntryPage() {
                   )
                 : (
                     <GradeEntryTable
+                      key={`${gradeType}-${description}-${gradeDate}`}
                       classId={selectedClassId}
                       subjectId={selectedSubjectId}
                       termId={selectedTermId}

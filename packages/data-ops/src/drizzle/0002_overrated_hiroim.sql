@@ -1,0 +1,2 @@
+ALTER TABLE "fee_structures" DROP CONSTRAINT "unique_fee_structure";--> statement-breakpoint
+ALTER TABLE "fee_structures" ADD CONSTRAINT "unique_fee_structure" UNIQUE NULLS NOT DISTINCT("school_id","school_year_id","fee_type_id","grade_id","series_id");

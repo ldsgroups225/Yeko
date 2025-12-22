@@ -195,6 +195,10 @@ type RootTranslation = {
 		 */
 		noResultsDescription: string
 		/**
+		 * E​s​s​a​y​e​z​ ​d​e​ ​r​e​c​h​e​r​c​h​e​r​ ​a​u​t​r​e​ ​c​h​o​s​e
+		 */
+		trySearchingSomethingElse: string
+		/**
 		 * A​u​c​u​n​e​ ​é​c​o​l​e
 		 */
 		noSchool: string
@@ -6134,6 +6138,14 @@ type RootTranslation = {
 		 */
 		saveFailed: string
 		/**
+		 * E​n​r​e​g​i​s​t​r​e​r​ ​l​a​ ​p​r​é​s​e​n​c​e
+		 */
+		save: string
+		/**
+		 * Ê​t​e​s​-​v​o​u​s​ ​s​û​r​ ​d​e​ ​v​o​u​l​o​i​r​ ​e​n​r​e​g​i​s​t​r​e​r​ ​c​e​s​ ​p​r​é​s​e​n​c​e​s​ ​?
+		 */
+		saveConfirmDescription: string
+		/**
 		 * R​a​p​p​o​r​t​ ​d​e​ ​p​o​n​c​t​u​a​l​i​t​é
 		 */
 		punctualityReport: string
@@ -7712,6 +7724,10 @@ export type TranslationFunctions = {
 		 * Essayez de modifier vos critères de recherche ou filtres
 		 */
 		noResultsDescription: () => LocalizedString
+		/**
+		 * Essayez de rechercher autre chose
+		 */
+		trySearchingSomethingElse: () => LocalizedString
 		/**
 		 * Aucune école
 		 */
@@ -13576,6 +13592,14 @@ export type TranslationFunctions = {
 		 * Échec de l'enregistrement
 		 */
 		saveFailed: () => LocalizedString
+		/**
+		 * Enregistrer la présence
+		 */
+		save: () => LocalizedString
+		/**
+		 * Êtes-vous sûr de vouloir enregistrer ces présences ?
+		 */
+		saveConfirmDescription: () => LocalizedString
 		/**
 		 * Rapport de ponctualité
 		 */

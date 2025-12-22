@@ -358,106 +358,106 @@ function GradeValidationsPage() {
           <TableBody>
             {isLoading
               ? (
-                Array.from({ length: 5 }).map(() => (
-                  <TableRow key={generateUUID()} className="border-border/10">
-                    <TableCell className="pl-6"><Skeleton className="h-4 w-4" /></TableCell>
-                    <TableCell><Skeleton className="h-6 w-32 rounded-lg" /></TableCell>
-                    <TableCell><Skeleton className="h-6 w-24 rounded-lg" /></TableCell>
-                    <TableCell><Skeleton className="h-6 w-40 rounded-lg" /></TableCell>
-                    <TableCell><Skeleton className="h-6 w-32 rounded-lg" /></TableCell>
-                    <TableCell><Skeleton className="h-8 w-12 mx-auto rounded-full" /></TableCell>
-                    <TableCell className="pr-6"><Skeleton className="h-8 w-8 ml-auto" /></TableCell>
-                  </TableRow>
-                ))
-              )
+                  Array.from({ length: 5 }).map(() => (
+                    <TableRow key={generateUUID()} className="border-border/10">
+                      <TableCell className="pl-6"><Skeleton className="h-4 w-4" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-32 rounded-lg" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-24 rounded-lg" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-40 rounded-lg" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-32 rounded-lg" /></TableCell>
+                      <TableCell><Skeleton className="h-8 w-12 mx-auto rounded-full" /></TableCell>
+                      <TableCell className="pr-6"><Skeleton className="h-8 w-8 ml-auto" /></TableCell>
+                    </TableRow>
+                  ))
+                )
               : filteredValidations.length > 0
                 ? (
-                  <AnimatePresence>
-                    {filteredValidations.map((validation, index) => {
-                      const rowId = `${validation.classId}__${validation.subjectId}__${validation.termId}`
-                      return (
-                        <motion.tr
-                          key={rowId}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: index * 0.05 }}
-                          className="border-border/10 group hover:bg-primary/5 transition-colors"
-                        >
-                          <TableCell className="pl-6">
-                            <Checkbox
-                              checked={selectedRows.includes(rowId)}
-                              onCheckedChange={checked => handleSelectRow(rowId, !!checked)}
-                              className="border-primary/50 data-[state=checked]:border-primary"
-                            />
-                          </TableCell>
-                          <TableCell className="py-4">
-                            <div className="flex items-center gap-3">
-                              <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                                <FileText className="size-4" />
+                    <AnimatePresence>
+                      {filteredValidations.map((validation, index) => {
+                        const rowId = `${validation.classId}__${validation.subjectId}__${validation.termId}`
+                        return (
+                          <motion.tr
+                            key={rowId}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                            className="border-border/10 group hover:bg-primary/5 transition-colors"
+                          >
+                            <TableCell className="pl-6">
+                              <Checkbox
+                                checked={selectedRows.includes(rowId)}
+                                onCheckedChange={checked => handleSelectRow(rowId, !!checked)}
+                                className="border-primary/50 data-[state=checked]:border-primary"
+                              />
+                            </TableCell>
+                            <TableCell className="py-4">
+                              <div className="flex items-center gap-3">
+                                <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                                  <FileText className="size-4" />
+                                </div>
+                                <span className="font-bold tracking-tight">{validation.gradeName}</span>
                               </div>
-                              <span className="font-bold tracking-tight">{validation.gradeName}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant="outline" className="rounded-lg bg-background/50 border-border/40 font-bold uppercase tracking-wider text-[10px]">
-                              {validation.className}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="font-semibold text-muted-foreground italic">
-                            {validation.subjectName}
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <div className="h-7 w-7 rounded-full bg-linear-to-br from-primary/20 to-primary/5 border border-primary/10 flex items-center justify-center">
-                                <User className="size-3 text-primary" />
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="outline" className="rounded-lg bg-background/50 border-border/40 font-bold uppercase tracking-wider text-[10px]">
+                                {validation.className}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="font-semibold text-muted-foreground italic">
+                              {validation.subjectName}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <div className="h-7 w-7 rounded-full bg-linear-to-br from-primary/20 to-primary/5 border border-primary/10 flex items-center justify-center">
+                                  <User className="size-3 text-primary" />
+                                </div>
+                                <span className="text-sm font-medium">{validation.teacherName}</span>
                               </div>
-                              <span className="text-sm font-medium">{validation.teacherName}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell className="text-center">
-                            <Badge className="bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 border-amber-500/20 font-black px-2.5 rounded-full">
-                              {validation.pendingCount}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="pr-6">
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="hover:bg-background/80 ml-auto flex rounded-xl">
-                                  <MoreHorizontal className="size-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end" className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40 min-w-[160px]">
-                                <DropdownMenuItem onClick={() => handleValidate(validation)} className="rounded-lg py-2 cursor-pointer">
-                                  <CheckCircle className="mr-2 size-4 text-emerald-500" />
-                                  <span className="font-semibold">{t.academic.grades.validations.validate()}</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleReject(validation)} className="rounded-lg py-2 cursor-pointer text-destructive focus:text-destructive">
-                                  <XCircle className="mr-2 size-4" />
-                                  <span className="font-semibold">{t.academic.grades.validations.reject()}</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem className="rounded-lg py-2 cursor-pointer border-t border-border/10 mt-1">
-                                  <FileText className="mr-2 size-4" />
-                                  <span className="font-semibold">{t.academic.grades.validations.viewDetails()}</span>
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </TableCell>
-                        </motion.tr>
-                      )
-                    })}
-                  </AnimatePresence>
-                )
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Badge className="bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 border-amber-500/20 font-black px-2.5 rounded-full">
+                                {validation.pendingCount}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="pr-6">
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="icon" className="hover:bg-background/80 ml-auto flex rounded-xl">
+                                    <MoreHorizontal className="size-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40 min-w-[160px]">
+                                  <DropdownMenuItem onClick={() => handleValidate(validation)} className="rounded-lg py-2 cursor-pointer">
+                                    <CheckCircle className="mr-2 size-4 text-emerald-500" />
+                                    <span className="font-semibold">{t.academic.grades.validations.validate()}</span>
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleReject(validation)} className="rounded-lg py-2 cursor-pointer text-destructive focus:text-destructive">
+                                    <XCircle className="mr-2 size-4" />
+                                    <span className="font-semibold">{t.academic.grades.validations.reject()}</span>
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem className="rounded-lg py-2 cursor-pointer border-t border-border/10 mt-1">
+                                    <FileText className="mr-2 size-4" />
+                                    <span className="font-semibold">{t.academic.grades.validations.viewDetails()}</span>
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
+                          </motion.tr>
+                        )
+                      })}
+                    </AnimatePresence>
+                  )
                 : (
-                  <TableRow>
-                    <TableCell colSpan={7} className="h-64 text-center">
-                      <div className="flex flex-col items-center justify-center opacity-40 italic">
-                        <ClipboardCheck className="size-12 mb-4" />
-                        <p className="text-lg font-bold">{t.academic.grades.validations.noValidations()}</p>
-                        <p className="text-sm font-medium">{t.academic.grades.validations.allValidated()}</p>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                )}
+                    <TableRow>
+                      <TableCell colSpan={7} className="h-64 text-center">
+                        <div className="flex flex-col items-center justify-center opacity-40 italic">
+                          <ClipboardCheck className="size-12 mb-4" />
+                          <p className="text-lg font-bold">{t.academic.grades.validations.noValidations()}</p>
+                          <p className="text-sm font-medium">{t.academic.grades.validations.allValidated()}</p>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
           </TableBody>
         </Table>
       </motion.div>

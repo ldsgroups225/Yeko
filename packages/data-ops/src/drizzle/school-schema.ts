@@ -1324,7 +1324,7 @@ export const studentAttendance = pgTable('student_attendance', {
   sessionIdx: index('idx_student_attendance_session').on(table.classSessionId),
   statusIdx: index('idx_student_attendance_status').on(table.status),
   schoolDateStatusIdx: index('idx_student_attendance_school_date_status').on(table.schoolId, table.date, table.status),
-  uniqueAttendance: unique('unique_student_attendance').on(table.studentId, table.date, table.classId, table.classSessionId),
+  uniqueAttendance: unique('unique_student_attendance').on(table.studentId, table.date, table.classId, table.classSessionId).nullsNotDistinct(),
 }))
 
 // Conduct Records Table
@@ -1718,7 +1718,7 @@ export const feeStructures = pgTable('fee_structures', {
   gradeIdx: index('idx_fee_structures_grade').on(table.gradeId),
   feeTypeIdx: index('idx_fee_structures_fee_type').on(table.feeTypeId),
   lookupIdx: index('idx_fee_structures_lookup').on(table.schoolId, table.schoolYearId, table.gradeId),
-  uniqueFeeStructure: unique('unique_fee_structure').on(table.schoolId, table.schoolYearId, table.feeTypeId, table.gradeId, table.seriesId),
+  uniqueFeeStructure: unique('unique_fee_structure').on(table.schoolId, table.schoolYearId, table.feeTypeId, table.gradeId, table.seriesId).nullsNotDistinct(),
 }))
 
 // Discounts Table

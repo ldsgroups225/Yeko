@@ -25,6 +25,7 @@ function StudentAttendanceHistoryPage() {
   const t = useTranslations()
   const [studentId, setStudentId] = useState('')
   const [studentName, setStudentName] = useState('')
+  const [studentPhoto, setStudentPhoto] = useState<string | undefined>()
   const [month, setMonth] = useState(() => new Date())
 
   const startDate = new Date(month.getFullYear(), month.getMonth(), 1)
@@ -39,14 +40,15 @@ function StudentAttendanceHistoryPage() {
     enabled: !!studentId,
   })
 
-  const attendanceData = (data as AttendanceRecord[] | undefined)?.map(record => ({
+  const attendanceData = (data as { records: AttendanceRecord[] } | undefined)?.records?.map(record => ({
     date: record.date,
     status: record.status as 'present' | 'late' | 'absent' | 'excused',
   })) ?? []
 
-  const handleStudentSelect = (id: string, name: string) => {
+  const handleStudentSelect = (id: string, name: string, image?: string) => {
     setStudentId(id)
     setStudentName(name)
+    setStudentPhoto(image)
   }
 
   return (
@@ -106,46 +108,54 @@ function StudentAttendanceHistoryPage() {
       <AnimatePresence mode="wait">
         {studentId
           ? (
-              <motion.div
-                key={studentId}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="flex justify-center"
-              >
-                {isLoading
-                  ? (
-                      <Card className="w-full max-w-2xl rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl p-8">
-                        <Skeleton className="h-[400px] w-full rounded-2xl" />
-                      </Card>
-                    )
-                  : (
-                      <div className="w-full max-w-2xl">
-                        <AttendanceCalendar
-                          studentName={studentName || studentId}
-                          month={month}
-                          onMonthChange={setMonth}
-                          attendanceData={attendanceData}
-                        />
-                      </div>
-                    )}
-              </motion.div>
-            )
+            <motion.div
+              key={studentId}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="flex justify-center"
+            >
+              {isLoading
+                ? (
+                  <Card className="w-full max-w-2xl rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl p-8">
+                    <Skeleton className="h-[400px] w-full rounded-2xl" />
+                  </Card>
+                )
+                : (
+                  <div className="w-full max-w-2xl">
+                    <AttendanceCalendar
+                      studentName={studentName || studentId}
+                      studentPhoto={studentPhoto}
+                      month={month}
+                      onMonthChange={setMonth}
+                      attendanceData={attendanceData}
+                    />
+                  </div>
+                )}
+            </motion.div>
+          )
           : (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="rounded-3xl border border-dashed border-border/60 bg-card/10 backdrop-blur-sm p-20 flex flex-col items-center text-center space-y-4"
-              >
-                <div className="p-4 rounded-full bg-primary/5">
-                  <Sparkles className="size-12 text-primary/40" />
-                </div>
-                <div className="space-y-1">
-                  <h3 className="text-xl font-black uppercase tracking-tight text-muted-foreground/60">{t.attendance.searchStudent()}</h3>
-                  <p className="text-sm font-medium text-muted-foreground/40 italic">{t.attendance.selectStudent()}</p>
-                </div>
-              </motion.div>
-            )}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="rounded-[2.5rem] border border-dashed border-primary/20 bg-primary/5 p-20 flex flex-col items-center text-center space-y-6"
+            >
+              <div className="relative">
+                <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full animate-pulse" />
+                <motion.div
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+                  className="relative p-6 rounded-4xl bg-card/50 border border-primary/10 shadow-2xl"
+                >
+                  <Sparkles className="size-16 text-primary" />
+                </motion.div>
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-2xl font-black uppercase tracking-tight text-primary/60 italic">{t.attendance.searchStudent()}</h3>
+                <p className="text-base font-medium text-muted-foreground/40 italic max-w-xs">{t.attendance.selectStudent()}</p>
+              </div>
+            </motion.div>
+          )}
       </AnimatePresence>
     </div>
   )

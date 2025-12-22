@@ -3,6 +3,7 @@ import { AlertCircle, Calendar, Clock, MapPin, Tag, Type, Users } from 'lucide-r
 import { motion } from 'motion/react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { StudentCombobox } from '@/components/attendance/student/student-combobox'
 import { Button } from '@/components/ui/button'
 import { DatePicker } from '@/components/ui/date-picker'
 import { Input } from '@/components/ui/input'
@@ -34,7 +35,7 @@ const conductCategories = [
 const severityLevels = ['low', 'medium', 'high', 'critical'] as const
 
 const conductRecordFormSchema = z.object({
-  studentId: z.string().min(1),
+  studentId: z.string().min(1, 'Student is required'),
   type: z.enum(conductTypes),
   category: z.enum(conductCategories),
   title: z.string().min(1).max(200),
@@ -57,7 +58,7 @@ interface ConductRecordFormProps {
 }
 
 export function ConductRecordForm({
-  studentId,
+  studentId: initialStudentId,
   defaultType = 'incident',
   onSubmit,
   onCancel,
@@ -68,7 +69,7 @@ export function ConductRecordForm({
   const form = useForm<ConductRecordFormData>({
     resolver: zodResolver(conductRecordFormSchema),
     defaultValues: {
-      studentId: studentId ?? '',
+      studentId: initialStudentId ?? '',
       type: defaultType,
       category: 'behavior',
       title: '',
@@ -81,6 +82,26 @@ export function ConductRecordForm({
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      {!initialStudentId && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="space-y-3"
+        >
+          <Label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
+            <Users className="size-3.5" />
+            {t.conduct.student()}
+          </Label>
+          <StudentCombobox
+            value={form.watch('studentId')}
+            onSelect={id => form.setValue('studentId', id)}
+          />
+          {form.formState.errors.studentId && (
+            <p className="text-[10px] font-black uppercase tracking-widest text-destructive ml-1">{form.formState.errors.studentId.message}</p>
+          )}
+        </motion.div>
+      )}
+
       <div className="grid gap-6 md:grid-cols-2">
         <motion.div
           initial={{ opacity: 0, x: -20 }}

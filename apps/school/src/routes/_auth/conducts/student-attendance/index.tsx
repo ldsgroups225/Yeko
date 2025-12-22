@@ -15,8 +15,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { classAttendanceOptions } from '@/lib/queries/student-attendance'
+import { getClasses } from '@/school/functions/classes'
+import { getSchoolYears } from '@/school/functions/school-years'
 import { bulkRecordClassAttendance } from '@/school/functions/student-attendance'
 
 export const Route = createFileRoute('/_auth/conducts/student-attendance/')({
@@ -25,12 +28,13 @@ export const Route = createFileRoute('/_auth/conducts/student-attendance/')({
 
 interface StudentAttendanceRecord {
   studentId: string
-  status: string
-  arrivalTime?: string | null
-  notes?: string | null
-  student?: {
-    user?: { name?: string | null, image?: string | null }
-  }
+  studentName: string
+  photoUrl?: string | null
+  attendance?: {
+    status: string
+    arrivalTime?: string | null
+    notes?: string | null
+  } | null
 }
 
 interface StudentAttendanceEntry {
@@ -48,6 +52,20 @@ function StudentAttendancePage() {
   const [date, setDate] = useState(() => new Date())
   const [classId, setClassId] = useState<string>('')
 
+  const { schoolYearId: contextSchoolYearId } = useSchoolYearContext()
+  const { data: schoolYears } = useQuery({
+    queryKey: ['school-years'],
+    queryFn: () => getSchoolYears(),
+  })
+  const activeSchoolYear = schoolYears?.find(sy => sy.isActive)
+  const schoolYearId = contextSchoolYearId || activeSchoolYear?.id
+
+  const { data: classes } = useQuery({
+    queryKey: ['classes', { schoolYearId }],
+    queryFn: () => getClasses({ data: { schoolYearId: schoolYearId ?? undefined } }),
+    enabled: !!schoolYearId,
+  })
+
   const dateStr = date.toISOString().split('T')[0] ?? ''
 
   const { data, isLoading } = useQuery({
@@ -63,6 +81,7 @@ function StudentAttendancePage() {
       toast.success(t.attendance.saved(), {
         className: 'rounded-2xl backdrop-blur-xl bg-background/80 border-border/40 font-bold',
       })
+      setClassId('')
     },
     onError: () => {
       toast.error(t.attendance.saveFailed())
@@ -71,11 +90,11 @@ function StudentAttendancePage() {
 
   const entries: StudentAttendanceEntry[] = (data as StudentAttendanceRecord[] | undefined)?.map(record => ({
     studentId: record.studentId,
-    studentName: record.student?.user?.name ?? 'Unknown',
-    studentPhoto: record.student?.user?.image ?? undefined,
-    status: record.status as 'present' | 'late' | 'absent' | 'excused',
-    arrivalTime: record.arrivalTime ?? undefined,
-    notes: record.notes ?? undefined,
+    studentName: record.studentName,
+    studentPhoto: record.photoUrl,
+    status: (record.attendance?.status as any) || 'present',
+    arrivalTime: record.attendance?.arrivalTime ?? undefined,
+    notes: record.attendance?.notes ?? undefined,
   })) ?? []
 
   const handleSave = (updatedEntries: StudentAttendanceEntry[]) => {
@@ -92,6 +111,9 @@ function StudentAttendancePage() {
       })),
     })
   }
+
+  const selectedClass = classes?.find(c => c.class.id === classId)
+  const className = selectedClass ? `${selectedClass.grade?.name ?? ''} ${selectedClass.class.section}` : ''
 
   return (
     <div className="space-y-8 p-1">
@@ -152,9 +174,13 @@ function StudentAttendancePage() {
               <SelectValue placeholder={t.attendance.selectClass()} />
             </SelectTrigger>
             <SelectContent className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40">
-              <SelectItem value="class-1" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">6ème A</SelectItem>
-              <SelectItem value="class-2" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">6ème B</SelectItem>
-              <SelectItem value="class-3" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">5ème A</SelectItem>
+              {classes?.map(c => (
+                <SelectItem key={c.class.id} value={c.class.id} className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">
+                  {c.grade?.name}
+                  {' '}
+                  {c.class.section}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
           <DatePicker date={date} onSelect={d => d && setDate(d)} className="h-12 rounded-2xl bg-background/50 border-border/40 font-bold" />
@@ -164,37 +190,38 @@ function StudentAttendancePage() {
       <AnimatePresence mode="wait">
         {classId
           ? (
-              <motion.div
-                key={classId}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ delay: 0.1 }}
-              >
-                <StudentAttendanceGrid
-                  className={classId}
-                  entries={entries}
-                  onSave={handleSave}
-                  isLoading={isLoading}
-                  isSaving={mutation.isPending}
-                />
-              </motion.div>
-            )
+            <motion.div
+              key={`${classId}-${dateStr}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ delay: 0.1 }}
+            >
+              <StudentAttendanceGrid
+                key={`${classId}-${dateStr}`}
+                className={className}
+                entries={entries}
+                onSave={handleSave}
+                isLoading={isLoading}
+                isSaving={mutation.isPending}
+              />
+            </motion.div>
+          )
           : (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="rounded-3xl border border-dashed border-border/60 bg-card/10 backdrop-blur-sm p-20 flex flex-col items-center text-center space-y-4"
-              >
-                <div className="p-4 rounded-full bg-primary/5">
-                  <Sparkles className="size-12 text-primary/40" />
-                </div>
-                <div className="space-y-1">
-                  <h3 className="text-xl font-black uppercase tracking-tight text-muted-foreground/60">{t.attendance.selectClass()}</h3>
-                  <p className="text-sm font-medium text-muted-foreground/40 italic">{t.attendance.selectClassAndDate()}</p>
-                </div>
-              </motion.div>
-            )}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="rounded-3xl border border-dashed border-border/60 bg-card/10 backdrop-blur-sm p-20 flex flex-col items-center text-center space-y-4"
+            >
+              <div className="p-4 rounded-full bg-primary/5">
+                <Sparkles className="size-12 text-primary/40" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-xl font-black uppercase tracking-tight text-muted-foreground/60">{t.attendance.selectClass()}</h3>
+                <p className="text-sm font-medium text-muted-foreground/40 italic">{t.attendance.selectClassAndDate()}</p>
+              </div>
+            </motion.div>
+          )}
       </AnimatePresence>
     </div>
   )

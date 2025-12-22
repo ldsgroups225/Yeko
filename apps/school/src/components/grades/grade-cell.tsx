@@ -1,7 +1,7 @@
 import type { GradeStatus } from '@/schemas/grade'
 import { AlertCircle } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import {
   Tooltip,
@@ -51,53 +51,56 @@ export function GradeCell({
   className,
 }: GradeCellProps) {
   const t = useTranslations()
-  const [localValue, setLocalValue] = useState(() => value?.toString() ?? '')
+  const [editingValue, setEditingValue] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [isFocused, setIsFocused] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  // Sync localValue with value prop when it changes and not focused
-  useEffect(() => {
-    if (!isFocused) {
-      setLocalValue(value?.toString() ?? '')
-    }
-  }, [value, isFocused])
+  const isEditing = editingValue !== null
+  const displayValue = isEditing ? editingValue : value?.toString() ?? ''
 
-  const validateAndUpdate = useCallback((inputValue: string) => {
-    if (inputValue === '') {
+  const validateAndUpdate = useCallback(
+    (inputValue: string) => {
+      if (inputValue === '') {
+        setError(null)
+        return
+      }
+
+      const numValue = Number.parseFloat(inputValue)
+
+      if (Number.isNaN(numValue)) {
+        setError(t.academic.grades.errors.invalidGrade())
+        return
+      }
+
+      if (numValue < 0 || numValue > 20) {
+        setError(t.academic.grades.errors.invalidGrade())
+        return
+      }
+
+      if ((numValue * 4) % 1 !== 0) {
+        setError(t.academic.grades.errors.invalidGrade())
+        return
+      }
+
       setError(null)
-      return
-    }
-
-    const numValue = Number.parseFloat(inputValue)
-
-    if (Number.isNaN(numValue)) {
-      setError(t.academic.grades.errors.invalidGrade())
-      return
-    }
-
-    if (numValue < 0 || numValue > 20) {
-      setError(t.academic.grades.errors.invalidGrade())
-      return
-    }
-
-    if ((numValue * 4) % 1 !== 0) {
-      setError(t.academic.grades.errors.invalidGrade())
-      return
-    }
-
-    setError(null)
-    onChange(numValue)
-  }, [onChange, t])
+      onChange(numValue)
+    },
+    [onChange, t],
+  )
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value
-    setLocalValue(newValue)
+    setEditingValue(e.target.value)
+  }
+
+  const handleFocus = () => {
+    setEditingValue(value?.toString() ?? '')
   }
 
   const handleBlur = () => {
-    setIsFocused(false)
-    validateAndUpdate(localValue)
+    if (editingValue !== null) {
+      validateAndUpdate(editingValue)
+    }
+    setEditingValue(null)
     onBlur?.()
   }
 
@@ -106,30 +109,40 @@ export function GradeCell({
 
     if (e.key === 'Enter' || e.key === 'ArrowDown') {
       e.preventDefault()
-      validateAndUpdate(localValue)
-      const nextInput = currentRow?.nextElementSibling?.querySelector('input[type="text"]')
+      if (editingValue !== null) {
+        validateAndUpdate(editingValue)
+      }
+      const nextInput
+        = currentRow?.nextElementSibling?.querySelector('input[type="text"]')
       if (nextInput instanceof HTMLInputElement) {
         nextInput.focus()
-        nextInput.select()
+        // nextInput.select() is handled by onFocus
       }
     }
 
     if (e.key === 'ArrowUp') {
       e.preventDefault()
-      validateAndUpdate(localValue)
-      const prevInput = currentRow?.previousElementSibling?.querySelector('input[type="text"]')
+      if (editingValue !== null) {
+        validateAndUpdate(editingValue)
+      }
+      const prevInput
+        = currentRow?.previousElementSibling?.querySelector(
+          'input[type="text"]',
+        )
       if (prevInput instanceof HTMLInputElement) {
         prevInput.focus()
-        prevInput.select()
+        // prevInput.select() is handled by onFocus
       }
     }
 
     if (e.key === 'Tab') {
-      validateAndUpdate(localValue)
+      if (editingValue !== null) {
+        validateAndUpdate(editingValue)
+      }
     }
 
     if (e.key === 'Escape') {
-      setLocalValue(value?.toString() ?? '')
+      setEditingValue(null)
       setError(null)
       inputRef.current?.blur()
     }
@@ -140,25 +153,26 @@ export function GradeCell({
   const cell = (
     <div className={cn('relative group', className)}>
       <motion.div
-        animate={isFocused ? { scale: 1.05 } : { scale: 1 }}
+        animate={isEditing ? { scale: 1.05 } : { scale: 1 }}
         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
       >
         <Input
           ref={inputRef}
           type="text"
           inputMode="decimal"
-          value={localValue}
+          value={displayValue}
           onChange={handleChange}
           onBlur={handleBlur}
-          onFocus={() => setIsFocused(true)}
+          onFocus={handleFocus}
           onKeyDown={handleKeyDown}
           disabled={!isEditable}
           className={cn(
             'h-10 w-20 text-center font-mono text-sm transition-all focus-visible:ring-primary/30 rounded-lg shadow-sm',
             statusStyles[status],
-            !isFocused && getValueColor(value),
+            !isEditing && getValueColor(value),
             error && 'border-destructive focus-visible:ring-destructive/30',
-            !isEditable && 'cursor-not-allowed opacity-80 backdrop-blur-none bg-muted/30',
+            !isEditable
+            && 'cursor-not-allowed opacity-80 backdrop-blur-none bg-muted/30',
           )}
           aria-label={t.ui.grade()}
           aria-invalid={!!error}
@@ -180,7 +194,7 @@ export function GradeCell({
         )}
       </AnimatePresence>
 
-      {status === 'rejected' && !isFocused && !error && (
+      {status === 'rejected' && !isEditing && !error && (
         <div className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-destructive text-destructive-foreground border-2 border-background flex items-center justify-center shadow-lg">
           <AlertCircle className="h-2.5 w-2.5" />
         </div>
@@ -192,14 +206,15 @@ export function GradeCell({
     return (
       <TooltipProvider>
         <Tooltip>
-          <TooltipTrigger asChild>
-            {cell}
-          </TooltipTrigger>
-          <TooltipContent side="top" className="max-w-xs rounded-xl backdrop-blur-xl bg-destructive/90 text-destructive-foreground border-none p-4 shadow-xl">
+          <TooltipTrigger asChild>{cell}</TooltipTrigger>
+          <TooltipContent
+            side="top"
+            className="max-w-xs rounded-xl backdrop-blur-xl bg-destructive/90 text-destructive-foreground border-none p-4 shadow-xl"
+          >
             <div className="flex items-start gap-2">
               <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
               <div>
-                <p className="text-xs font-bold uppercase tracking-wider mb-1">
+                <p className="mb-1 text-xs font-bold uppercase tracking-wider">
                   {t.academic.grades.validations.rejectReason()}
                 </p>
                 <p className="text-sm leading-relaxed">{rejectionReason}</p>

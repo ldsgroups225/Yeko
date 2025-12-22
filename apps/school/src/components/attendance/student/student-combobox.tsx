@@ -34,7 +34,7 @@ interface Student {
 
 interface StudentComboboxProps {
   value?: string
-  onSelect: (studentId: string, studentName: string) => void
+  onSelect: (studentId: string, studentName: string, studentImage?: string) => void
   placeholder?: string
   disabled?: boolean
   classId?: string
@@ -96,22 +96,22 @@ export function StudentCombobox({
         >
           {selectedStudent
             ? (
-                <span className="truncate">
-                  {selectedStudent.user?.name ?? 'Unknown'}
-                  {selectedStudent.matricule && (
-                    <span className="ml-2 text-muted-foreground">
-                      (
-                      {selectedStudent.matricule}
-                      )
-                    </span>
-                  )}
-                </span>
-              )
+              <span className="truncate">
+                {selectedStudent.user?.name ?? 'Unknown'}
+                {selectedStudent.matricule && (
+                  <span className="ml-2 text-muted-foreground">
+                    (
+                    {selectedStudent.matricule}
+                    )
+                  </span>
+                )}
+              </span>
+            )
             : (
-                <span className="text-muted-foreground">
-                  {placeholder ?? t.attendance.selectStudent()}
-                </span>
-              )}
+              <span className="text-muted-foreground">
+                {placeholder ?? t.attendance.selectStudent()}
+              </span>
+            )}
           <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -125,48 +125,48 @@ export function StudentCombobox({
           <CommandList id="student-combobox-list">
             {isLoading
               ? (
-                  <div className="flex items-center justify-center py-6">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  </div>
-                )
+                <div className="flex items-center justify-center py-6">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                </div>
+              )
               : students.length === 0
                 ? (
-                    <CommandEmpty>{t.students.noStudents()}</CommandEmpty>
-                  )
+                  <CommandEmpty>{t.students.noStudents()}</CommandEmpty>
+                )
                 : (
-                    <CommandGroup>
-                      {students.map(student => (
-                        <CommandItem
-                          key={student.id}
-                          value={student.id}
-                          onSelect={() => {
-                            onSelect(student.id, student.user?.name ?? 'Unknown')
-                            setOpen(false)
-                          }}
-                        >
-                          <CheckIcon
-                            className={cn(
-                              'mr-2 h-4 w-4',
-                              value === student.id ? 'opacity-100' : 'opacity-0',
+                  <CommandGroup>
+                    {students.map(student => (
+                      <CommandItem
+                        key={student.id}
+                        value={student.id}
+                        onSelect={() => {
+                          onSelect(student.id, student.user?.name ?? 'Unknown', student.user?.image ?? undefined)
+                          setOpen(false)
+                        }}
+                      >
+                        <CheckIcon
+                          className={cn(
+                            'mr-2 h-4 w-4',
+                            value === student.id ? 'opacity-100' : 'opacity-0',
+                          )}
+                        />
+                        <div className="flex flex-col">
+                          <span>{student.user?.name ?? 'Unknown'}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {student.matricule}
+                            {student.currentEnrollment?.class?.name && (
+                              <>
+                                {' '}
+                                •
+                                {student.currentEnrollment.class.name}
+                              </>
                             )}
-                          />
-                          <div className="flex flex-col">
-                            <span>{student.user?.name ?? 'Unknown'}</span>
-                            <span className="text-xs text-muted-foreground">
-                              {student.matricule}
-                              {student.currentEnrollment?.class?.name && (
-                                <>
-                                  {' '}
-                                  •
-                                  {student.currentEnrollment.class.name}
-                                </>
-                              )}
-                            </span>
-                          </div>
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  )}
+                          </span>
+                        </div>
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                )}
           </CommandList>
         </Command>
       </PopoverContent>

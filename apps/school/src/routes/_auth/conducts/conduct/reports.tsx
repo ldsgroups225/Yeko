@@ -26,8 +26,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { conductRecordsOptions } from '@/lib/queries/conduct-records'
+import { getClasses } from '@/school/functions/classes'
+import { getSchoolYears } from '@/school/functions/school-years'
 import { generateUUID } from '@/utils/generateUUID'
 
 export const Route = createFileRoute('/_auth/conducts/conduct/reports')({
@@ -45,8 +48,19 @@ function ConductReportsPage() {
   })
   const [endDate, setEndDate] = useState(() => new Date())
 
-  // TODO: Get schoolYearId from context
-  const schoolYearId = 'current-year'
+  const { schoolYearId: contextSchoolYearId } = useSchoolYearContext()
+  const { data: schoolYears } = useQuery({
+    queryKey: ['school-years'],
+    queryFn: () => getSchoolYears(),
+  })
+  const activeSchoolYear = schoolYears?.find(sy => sy.isActive)
+  const schoolYearId = contextSchoolYearId || activeSchoolYear?.id || 'current-year'
+
+  const { data: classes } = useQuery({
+    queryKey: ['classes', { schoolYearId }],
+    queryFn: () => getClasses({ data: { schoolYearId: schoolYearId ?? undefined } }),
+    enabled: !!schoolYearId,
+  })
 
   const startDateStr = startDate.toISOString().split('T')[0] ?? ''
   const endDateStr = endDate.toISOString().split('T')[0] ?? ''
@@ -151,8 +165,13 @@ function ConductReportsPage() {
             </SelectTrigger>
             <SelectContent className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40">
               <SelectItem value="all" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">{t.conduct.allClasses()}</SelectItem>
-              <SelectItem value="class-1" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">6ème A</SelectItem>
-              <SelectItem value="class-2" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">6ème B</SelectItem>
+              {classes?.map(c => (
+                <SelectItem key={c.class.id} value={c.class.id} className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">
+                  {c.grade?.name}
+                  {' '}
+                  {c.class.section}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
 

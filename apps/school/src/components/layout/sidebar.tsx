@@ -232,32 +232,32 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarMenuItem key={item.href}>
                   {item.children
                     ? (
-                      <SidebarMenuSubItemWrapper
-                        item={item}
-                        pathname={pathname}
-                        isOpen={openItem === item.title}
-                        onToggle={() => setOpenItem(openItem === item.title ? null : item.title)}
-                      />
-                    )
+                        <SidebarMenuSubItemWrapper
+                          item={item}
+                          pathname={pathname}
+                          isOpen={openItem === item.title}
+                          onToggle={() => setOpenItem(openItem === item.title ? null : item.title)}
+                        />
+                      )
                     : (
-                      <SidebarMenuButton
-                        asChild
-                        isActive={pathname === item.href}
-                        tooltip={item.title}
-                        className={`transition-all duration-200 py-3 ${pathname === item.href ? 'bg-primary/10 text-primary shadow-sm font-semibold' : 'hover:bg-sidebar-accent/50 hover:pl-5 text-muted-foreground hover:text-foreground'}`}
-                      >
-                        <Link to={item.href} className="flex w-full items-center gap-3">
-                          <item.icon className={`size-5 transition-transform duration-300 group-hover:scale-110 ${pathname === item.href ? 'text-primary scale-110' : 'text-muted-foreground group-hover:text-foreground'}`} />
-                          <span className="font-medium text-sm">{item.title}</span>
-                          {pathname === item.href && (
-                            <motion.div
-                              layoutId="active-nav-indicator"
-                              className="absolute left-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full bg-primary shadow-[0_0_12px_rgba(59,130,246,0.6)]"
-                            />
-                          )}
-                        </Link>
-                      </SidebarMenuButton>
-                    )}
+                        <SidebarMenuButton
+                          asChild
+                          isActive={pathname === item.href}
+                          tooltip={item.title}
+                          className={`transition-all duration-200 py-3 ${pathname === item.href ? 'bg-primary/10 text-primary shadow-sm font-semibold' : 'hover:bg-sidebar-accent/50 hover:pl-5 text-muted-foreground hover:text-foreground'}`}
+                        >
+                          <Link to={item.href} className="flex w-full items-center gap-3">
+                            <item.icon className={`size-5 transition-transform duration-300 group-hover:scale-110 ${pathname === item.href ? 'text-primary scale-110' : 'text-muted-foreground group-hover:text-foreground'}`} />
+                            <span className="font-medium text-sm">{item.title}</span>
+                            {pathname === item.href && (
+                              <motion.div
+                                layoutId="active-nav-indicator"
+                                className="absolute left-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full bg-primary shadow-[0_0_12px_rgba(59,130,246,0.6)]"
+                              />
+                            )}
+                          </Link>
+                        </SidebarMenuButton>
+                      )}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -273,32 +273,32 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarMenuItem key={item.href}>
                   {item.children
                     ? (
-                      <SidebarMenuSubItemWrapper
-                        item={item}
-                        pathname={pathname}
-                        isOpen={openItem === item.title}
-                        onToggle={() => setOpenItem(openItem === item.title ? null : item.title)}
-                      />
-                    )
+                        <SidebarMenuSubItemWrapper
+                          item={item}
+                          pathname={pathname}
+                          isOpen={openItem === item.title}
+                          onToggle={() => setOpenItem(openItem === item.title ? null : item.title)}
+                        />
+                      )
                     : (
-                      <SidebarMenuButton
-                        asChild
-                        isActive={pathname === item.href}
-                        tooltip={item.title}
-                        className={`transition-all duration-200 ${pathname === item.href ? 'bg-primary/10 text-primary shadow-sm' : 'hover:bg-sidebar-accent/50 hover:pl-4'}`}
-                      >
-                        <Link to={item.href} className="flex w-full items-center gap-2 py-2">
-                          <item.icon className={`size-4 transition-transform duration-300 group-hover:scale-110 ${pathname === item.href ? 'text-primary scale-110' : 'text-muted-foreground group-hover:text-foreground'}`} />
-                          <span className="font-medium">{item.title}</span>
-                          {pathname === item.href && (
-                            <motion.div
-                              layoutId="active-nav-indicator"
-                              className="absolute left-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full bg-primary shadow-[0_0_12px_rgba(59,130,246,0.6)]"
-                            />
-                          )}
-                        </Link>
-                      </SidebarMenuButton>
-                    )}
+                        <SidebarMenuButton
+                          asChild
+                          isActive={pathname === item.href}
+                          tooltip={item.title}
+                          className={`transition-all duration-200 ${pathname === item.href ? 'bg-primary/10 text-primary shadow-sm' : 'hover:bg-sidebar-accent/50 hover:pl-4'}`}
+                        >
+                          <Link to={item.href} className="flex w-full items-center gap-2 py-2">
+                            <item.icon className={`size-4 transition-transform duration-300 group-hover:scale-110 ${pathname === item.href ? 'text-primary scale-110' : 'text-muted-foreground group-hover:text-foreground'}`} />
+                            <span className="font-medium">{item.title}</span>
+                            {pathname === item.href && (
+                              <motion.div
+                                layoutId="active-nav-indicator"
+                                className="absolute left-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full bg-primary shadow-[0_0_12px_rgba(59,130,246,0.6)]"
+                              />
+                            )}
+                          </Link>
+                        </SidebarMenuButton>
+                      )}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -314,32 +314,32 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarMenuItem key={item.href}>
                   {item.children
                     ? (
-                      <SidebarMenuSubItemWrapper
-                        item={item}
-                        pathname={pathname}
-                        isOpen={openItem === item.title}
-                        onToggle={() => setOpenItem(openItem === item.title ? null : item.title)}
-                      />
-                    )
+                        <SidebarMenuSubItemWrapper
+                          item={item}
+                          pathname={pathname}
+                          isOpen={openItem === item.title}
+                          onToggle={() => setOpenItem(openItem === item.title ? null : item.title)}
+                        />
+                      )
                     : (
-                      <SidebarMenuButton
-                        asChild
-                        isActive={pathname === item.href}
-                        tooltip={item.title}
-                        className={`transition-all duration-200 ${pathname === item.href ? 'bg-primary/10 text-primary shadow-sm' : 'hover:bg-sidebar-accent/50 hover:pl-4'}`}
-                      >
-                        <Link to={item.href} className="flex w-full items-center gap-2 py-2">
-                          <item.icon className={`size-4 transition-transform duration-300 group-hover:scale-110 ${pathname === item.href ? 'text-primary scale-110' : 'text-muted-foreground group-hover:text-foreground'}`} />
-                          <span className="font-medium">{item.title}</span>
-                          {pathname === item.href && (
-                            <motion.div
-                              layoutId="active-nav-indicator"
-                              className="absolute left-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full bg-primary shadow-[0_0_12px_rgba(59,130,246,0.6)]"
-                            />
-                          )}
-                        </Link>
-                      </SidebarMenuButton>
-                    )}
+                        <SidebarMenuButton
+                          asChild
+                          isActive={pathname === item.href}
+                          tooltip={item.title}
+                          className={`transition-all duration-200 ${pathname === item.href ? 'bg-primary/10 text-primary shadow-sm' : 'hover:bg-sidebar-accent/50 hover:pl-4'}`}
+                        >
+                          <Link to={item.href} className="flex w-full items-center gap-2 py-2">
+                            <item.icon className={`size-4 transition-transform duration-300 group-hover:scale-110 ${pathname === item.href ? 'text-primary scale-110' : 'text-muted-foreground group-hover:text-foreground'}`} />
+                            <span className="font-medium">{item.title}</span>
+                            {pathname === item.href && (
+                              <motion.div
+                                layoutId="active-nav-indicator"
+                                className="absolute left-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full bg-primary shadow-[0_0_12px_rgba(59,130,246,0.6)]"
+                              />
+                            )}
+                          </Link>
+                        </SidebarMenuButton>
+                      )}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -355,32 +355,32 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarMenuItem key={item.href}>
                   {item.children
                     ? (
-                      <SidebarMenuSubItemWrapper
-                        item={item}
-                        pathname={pathname}
-                        isOpen={openItem === item.title}
-                        onToggle={() => setOpenItem(openItem === item.title ? null : item.title)}
-                      />
-                    )
+                        <SidebarMenuSubItemWrapper
+                          item={item}
+                          pathname={pathname}
+                          isOpen={openItem === item.title}
+                          onToggle={() => setOpenItem(openItem === item.title ? null : item.title)}
+                        />
+                      )
                     : (
-                      <SidebarMenuButton
-                        asChild
-                        isActive={pathname === item.href}
-                        tooltip={item.title}
-                        className={`transition-all duration-200 ${pathname === item.href ? 'bg-primary/10 text-primary shadow-sm' : 'hover:bg-sidebar-accent/50 hover:pl-4'}`}
-                      >
-                        <Link to={item.href} className="flex w-full items-center gap-2 py-2">
-                          <item.icon className={`size-4 transition-transform duration-300 group-hover:scale-110 ${pathname === item.href ? 'text-primary scale-110' : 'text-muted-foreground group-hover:text-foreground'}`} />
-                          <span className="font-medium">{item.title}</span>
-                          {pathname === item.href && (
-                            <motion.div
-                              layoutId="active-nav-indicator"
-                              className="absolute left-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full bg-primary shadow-[0_0_12px_rgba(59,130,246,0.6)]"
-                            />
-                          )}
-                        </Link>
-                      </SidebarMenuButton>
-                    )}
+                        <SidebarMenuButton
+                          asChild
+                          isActive={pathname === item.href}
+                          tooltip={item.title}
+                          className={`transition-all duration-200 ${pathname === item.href ? 'bg-primary/10 text-primary shadow-sm' : 'hover:bg-sidebar-accent/50 hover:pl-4'}`}
+                        >
+                          <Link to={item.href} className="flex w-full items-center gap-2 py-2">
+                            <item.icon className={`size-4 transition-transform duration-300 group-hover:scale-110 ${pathname === item.href ? 'text-primary scale-110' : 'text-muted-foreground group-hover:text-foreground'}`} />
+                            <span className="font-medium">{item.title}</span>
+                            {pathname === item.href && (
+                              <motion.div
+                                layoutId="active-nav-indicator"
+                                className="absolute left-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full bg-primary shadow-[0_0_12px_rgba(59,130,246,0.6)]"
+                              />
+                            )}
+                          </Link>
+                        </SidebarMenuButton>
+                      )}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -414,7 +414,7 @@ function SidebarMenuSubItemWrapper({
         onClick={onToggle}
         isActive={hasActiveChild} // Keep active style if child is active
         className={`group/collapsable w-full justify-between transition-all duration-200 ${hasActiveChild ? 'bg-primary/5 text-primary' : 'hover:bg-sidebar-accent/50'
-          }`}
+        }`}
       >
         <div className="flex items-center gap-2">
           <item.icon className="size-4" />
@@ -452,7 +452,7 @@ function SidebarMenuSubItemWrapper({
                 className={`transition-all duration-200 ${pathname === child.href
                   ? 'bg-primary/10 text-primary font-medium'
                   : 'text-muted-foreground hover:bg-sidebar-accent/50 hover:pl-4 hover:text-foreground'
-                  }`}
+                }`}
               >
                 <Link to={child.href}>
                   <child.icon className={cn(

@@ -10,7 +10,6 @@ import {
   reportCards,
   reportCardTemplates,
   studentAverages,
-  students,
   teacherComments,
 } from '../drizzle/school-schema'
 

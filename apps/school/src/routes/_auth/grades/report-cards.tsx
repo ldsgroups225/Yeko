@@ -205,29 +205,29 @@ function ReportCardsPage() {
             </Label>
             {yearsLoading
               ? (
-                <Skeleton className="h-11 w-full rounded-xl" />
-              )
+                  <Skeleton className="h-11 w-full rounded-xl" />
+                )
               : (
-                <Select
-                  value={effectiveYearId}
-                  onValueChange={val => setLocalYearId(val)}
-                >
-                  <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
-                    <div className="flex items-center gap-2">
-                      <Calendar className="size-3.5 text-muted-foreground" />
-                      <SelectValue placeholder={t.schoolYear.select()} />
-                    </div>
-                  </SelectTrigger>
-                  <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
-                    {schoolYears?.map(year => (
-                      <SelectItem key={year.id} value={year.id} className="rounded-lg font-semibold">
-                        {year.template.name}
-                        {year.isActive && ` (${t.schoolYear.activeSuffix()})`}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
+                  <Select
+                    value={effectiveYearId}
+                    onValueChange={val => setLocalYearId(val)}
+                  >
+                    <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="size-3.5 text-muted-foreground" />
+                        <SelectValue placeholder={t.schoolYear.select()} />
+                      </div>
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
+                      {schoolYears?.map(year => (
+                        <SelectItem key={year.id} value={year.id} className="rounded-lg font-semibold">
+                          {year.template.name}
+                          {year.isActive && ` (${t.schoolYear.activeSuffix()})`}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
           </div>
 
           {/* Term */}
@@ -237,26 +237,26 @@ function ReportCardsPage() {
             </Label>
             {termsLoading
               ? (
-                <Skeleton className="h-11 w-full rounded-xl" />
-              )
+                  <Skeleton className="h-11 w-full rounded-xl" />
+                )
               : (
-                <Select
-                  value={selectedTermId}
-                  onValueChange={setSelectedTermId}
-                  disabled={!effectiveYearId}
-                >
-                  <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
-                    <SelectValue placeholder={t.terms.select()} />
-                  </SelectTrigger>
-                  <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
-                    {terms?.map(term => (
-                      <SelectItem key={term.id} value={term.id} className="rounded-lg font-semibold">
-                        {term.template.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
+                  <Select
+                    value={selectedTermId}
+                    onValueChange={setSelectedTermId}
+                    disabled={!effectiveYearId}
+                  >
+                    <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
+                      <SelectValue placeholder={t.terms.select()} />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
+                      {terms?.map(term => (
+                        <SelectItem key={term.id} value={term.id} className="rounded-lg font-semibold">
+                          {term.template.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
           </div>
 
           {/* Class */}
@@ -266,31 +266,31 @@ function ReportCardsPage() {
             </Label>
             {classesLoading
               ? (
-                <Skeleton className="h-11 w-full rounded-xl" />
-              )
+                  <Skeleton className="h-11 w-full rounded-xl" />
+                )
               : (
-                <Select
-                  value={selectedClassId}
-                  onValueChange={setSelectedClassId}
-                  disabled={!effectiveYearId}
-                >
-                  <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
-                    <div className="flex items-center gap-2">
-                      <LayoutGrid className="size-3.5 text-muted-foreground" />
-                      <SelectValue placeholder={t.classes.select()} />
-                    </div>
-                  </SelectTrigger>
-                  <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
-                    {classes?.map(item => (
-                      <SelectItem key={item.class.id} value={item.class.id} className="rounded-lg font-semibold">
-                        {item.grade.name}
-                        {' '}
-                        {item.class.section}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
+                  <Select
+                    value={selectedClassId}
+                    onValueChange={setSelectedClassId}
+                    disabled={!effectiveYearId}
+                  >
+                    <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
+                      <div className="flex items-center gap-2">
+                        <LayoutGrid className="size-3.5 text-muted-foreground" />
+                        <SelectValue placeholder={t.classes.select()} />
+                      </div>
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
+                      {classes?.map(item => (
+                        <SelectItem key={item.class.id} value={item.class.id} className="rounded-lg font-semibold">
+                          {item.grade.name}
+                          {' '}
+                          {item.class.section}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
           </div>
         </div>
 
@@ -334,22 +334,22 @@ function ReportCardsPage() {
       >
         {canShowReportCards
           ? (
-            <ReportCardList
-              reportCards={mappedReportCards}
-              isLoading={reportCardsLoading}
-            />
-          )
+              <ReportCardList
+                reportCards={mappedReportCards}
+                isLoading={reportCardsLoading}
+              />
+            )
           : (
-            <Card className="rounded-3xl border border-dashed border-border/60 bg-card/20 backdrop-blur-sm">
-              <CardContent className="flex flex-col items-center justify-center py-20 text-center">
-                <div className="p-6 rounded-full bg-background/50 mb-6 shadow-inner">
-                  <GraduationCap className="size-16 text-muted-foreground/20" />
-                </div>
-                <h3 className="text-xl font-bold text-muted-foreground mb-2">{t.reportCards.selectFiltersPrompt()}</h3>
-                <p className="text-sm text-muted-foreground max-w-xs">{t.academic.grades.statistics.description()}</p>
-              </CardContent>
-            </Card>
-          )}
+              <Card className="rounded-3xl border border-dashed border-border/60 bg-card/20 backdrop-blur-sm">
+                <CardContent className="flex flex-col items-center justify-center py-20 text-center">
+                  <div className="p-6 rounded-full bg-background/50 mb-6 shadow-inner">
+                    <GraduationCap className="size-16 text-muted-foreground/20" />
+                  </div>
+                  <h3 className="text-xl font-bold text-muted-foreground mb-2">{t.reportCards.selectFiltersPrompt()}</h3>
+                  <p className="text-sm text-muted-foreground max-w-xs">{t.academic.grades.statistics.description()}</p>
+                </CardContent>
+              </Card>
+            )}
       </motion.div>
 
       <BulkGenerationDialog

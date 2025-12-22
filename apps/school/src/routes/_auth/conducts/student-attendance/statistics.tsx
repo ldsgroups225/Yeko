@@ -16,9 +16,12 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { attendanceStatisticsOptions } from '@/lib/queries/student-attendance'
 import { cn } from '@/lib/utils'
+import { getClasses } from '@/school/functions/classes'
+import { getSchoolYears } from '@/school/functions/school-years'
 import { generateUUID } from '@/utils/generateUUID'
 
 export const Route = createFileRoute('/_auth/conducts/student-attendance/statistics')({
@@ -45,6 +48,20 @@ function StudentAttendanceStatisticsPage() {
     return d
   })
   const [endDate, setEndDate] = useState(() => new Date())
+
+  const { schoolYearId: contextSchoolYearId } = useSchoolYearContext()
+  const { data: schoolYears } = useQuery({
+    queryKey: ['school-years'],
+    queryFn: () => getSchoolYears(),
+  })
+  const activeSchoolYear = schoolYears?.find(sy => sy.isActive)
+  const schoolYearId = contextSchoolYearId || activeSchoolYear?.id || 'current-year'
+
+  const { data: classes } = useQuery({
+    queryKey: ['classes', { schoolYearId }],
+    queryFn: () => getClasses({ data: { schoolYearId: schoolYearId ?? undefined } }),
+    enabled: !!schoolYearId,
+  })
 
   const startDateStr = startDate.toISOString().split('T')[0] ?? ''
   const endDateStr = endDate.toISOString().split('T')[0] ?? ''
@@ -128,8 +145,13 @@ function StudentAttendanceStatisticsPage() {
             </SelectTrigger>
             <SelectContent className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40">
               <SelectItem value="all" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">{t.attendance.allClasses()}</SelectItem>
-              <SelectItem value="class-1" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">6ème A</SelectItem>
-              <SelectItem value="class-2" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">6ème B</SelectItem>
+              {classes?.map(c => (
+                <SelectItem key={c.class.id} value={c.class.id} className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">
+                  {c.grade?.name}
+                  {' '}
+                  {c.class.section}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
           <DatePicker date={startDate} onSelect={d => d && setStartDate(d)} className="h-12 rounded-2xl bg-background/50 border-border/40 font-bold" />
@@ -190,12 +212,12 @@ function StudentAttendanceStatisticsPage() {
                           <div className="flex items-baseline gap-2">
                             <span className="text-4xl font-black text-emerald-500">{stats.presentCount}</span>
                             <span className="text-sm font-bold text-emerald-500/60 uppercase tracking-widest">
-                              {((stats.presentCount / (stats.totalStudents * stats.totalDays)) * 100).toFixed(1)}
+                              {((stats.presentCount / Math.max(1, stats.totalStudents * stats.totalDays)) * 100).toFixed(1)}
                               %
                             </span>
                           </div>
                           <div className="h-1 rounded-full bg-emerald-500/20 overflow-hidden">
-                            <div className="h-full bg-emerald-500" style={{ width: `${(stats.presentCount / (stats.totalStudents * stats.totalDays)) * 100}%` }} />
+                            <div className="h-full bg-emerald-500" style={{ width: `${(stats.presentCount / Math.max(1, stats.totalStudents * stats.totalDays)) * 100}%` }} />
                           </div>
                         </div>
                       </Card>
@@ -211,12 +233,12 @@ function StudentAttendanceStatisticsPage() {
                           <div className="flex items-baseline gap-2">
                             <span className="text-4xl font-black text-rose-500">{stats.absentCount}</span>
                             <span className="text-sm font-bold text-rose-500/60 uppercase tracking-widest">
-                              {((stats.absentCount / (stats.totalStudents * stats.totalDays)) * 100).toFixed(1)}
+                              {((stats.absentCount / Math.max(1, stats.totalStudents * stats.totalDays)) * 100).toFixed(1)}
                               %
                             </span>
                           </div>
                           <div className="h-1 rounded-full bg-rose-500/20 overflow-hidden">
-                            <div className="h-full bg-rose-500" style={{ width: `${(stats.absentCount / (stats.totalStudents * stats.totalDays)) * 100}%` }} />
+                            <div className="h-full bg-rose-500" style={{ width: `${(stats.absentCount / Math.max(1, stats.totalStudents * stats.totalDays)) * 100}%` }} />
                           </div>
                         </div>
                       </Card>
@@ -275,7 +297,7 @@ function StudentAttendanceStatisticsPage() {
 }
 
 function BreakdownItem({ label, value, total, color }: { label: string, value: number, total: number, color: string }) {
-  const percentage = (value / total) * 100
+  const percentage = total > 0 ? (value / total) * 100 : 0
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
