@@ -1,7 +1,14 @@
-import { and, count, desc, eq, ilike, or } from 'drizzle-orm'
+import { and, count, desc, eq, ilike, or, sql } from 'drizzle-orm'
 import { getDb } from '@/database/setup'
-import { subjects } from '@/drizzle/core-schema'
-import { teachers, teacherSubjects, users } from '@/drizzle/school-schema'
+import { grades, series, subjects } from '@/drizzle/core-schema'
+import {
+  classes,
+  classrooms,
+  classSubjects,
+  teachers,
+  teacherSubjects,
+  users,
+} from '@/drizzle/school-schema'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
 
 export async function getTeachersBySchool(
@@ -86,8 +93,25 @@ export async function getTeacherById(teacherId: string, schoolId: string) {
   const db = getDb()
 
   const result = await db
-    .select()
+    .select({
+      id: teachers.id,
+      userId: teachers.userId,
+      schoolId: teachers.schoolId,
+      specialization: teachers.specialization,
+      hireDate: teachers.hireDate,
+      status: teachers.status,
+      createdAt: teachers.createdAt,
+      updatedAt: teachers.updatedAt,
+      user: {
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        phone: users.phone,
+        avatarUrl: users.avatarUrl,
+      },
+    })
     .from(teachers)
+    .innerJoin(users, eq(teachers.userId, users.id))
     .where(and(eq(teachers.id, teacherId), eq(teachers.schoolId, schoolId)))
     .limit(1)
 
@@ -331,4 +355,42 @@ export async function getTeacherByAuthUserId(authUserId: string) {
     .limit(1)
 
   return result[0] || null
+}
+
+export async function getTeacherClasses(teacherId: string, schoolId: string) {
+  if (!schoolId) {
+    throw new Error(SCHOOL_ERRORS.NO_SCHOOL_CONTEXT)
+  }
+
+  const db = getDb()
+
+  const result = await db
+    .select({
+      id: classes.id,
+      section: classes.section,
+      gradeName: grades.name,
+      seriesName: series.name,
+      classroomName: classrooms.name,
+      isHomeroom: sql<boolean>`${classes.homeroomTeacherId} = ${teacherId}`,
+      subjects: sql<string[]>`COALESCE(json_agg(DISTINCT ${subjects.shortName}) FILTER (WHERE ${subjects.shortName} IS NOT NULL), '[]')`,
+    })
+    .from(classes)
+    .innerJoin(grades, eq(classes.gradeId, grades.id))
+    .leftJoin(series, eq(classes.seriesId, series.id))
+    .leftJoin(classrooms, eq(classes.classroomId, classrooms.id))
+    .leftJoin(classSubjects, eq(classSubjects.classId, classes.id))
+    .leftJoin(subjects, eq(classSubjects.subjectId, subjects.id))
+    .where(
+      and(
+        eq(classes.schoolId, schoolId),
+        or(
+          eq(classes.homeroomTeacherId, teacherId),
+          eq(classSubjects.teacherId, teacherId),
+        ),
+      ),
+    )
+    .groupBy(classes.id, grades.id, series.id, classrooms.id)
+    .orderBy(grades.order, classes.section)
+
+  return result
 }

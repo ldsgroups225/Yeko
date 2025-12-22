@@ -4,10 +4,12 @@ import {
   createTeacher,
   deleteTeacher,
   getTeacherByUserId,
+  getTeacherClasses,
   getTeachersBySchool,
   getTeacherWithSubjects,
   updateTeacher,
 } from '@repo/data-ops/queries/school-admin/teachers'
+import { getTimetableByTeacher } from '@repo/data-ops/queries/timetables'
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 import { teacherCreateSchema, teacherUpdateSchema } from '@/schemas/teacher'
@@ -178,4 +180,28 @@ export const getCurrentTeacher = createServerFn()
       throw new Error('No school context')
     const { schoolId } = context
     return await getTeacherByUserId(data.userId, schoolId)
+  })
+/**
+ * Get teacher classes
+ */
+export const getTeacherClassesList = createServerFn()
+  .inputValidator(z.string())
+  .handler(async ({ data: teacherId }) => {
+    const context = await getSchoolContext()
+    if (!context)
+      throw new Error('No school context')
+    const { schoolId } = context
+    return await getTeacherClasses(teacherId, schoolId)
+  })
+
+/**
+ * Get teacher schedules
+ */
+export const getTeacherSchedulesList = createServerFn()
+  .inputValidator(z.object({ teacherId: z.string(), schoolYearId: z.string() }))
+  .handler(async ({ data: { teacherId, schoolYearId } }) => {
+    const context = await getSchoolContext()
+    if (!context)
+      throw new Error('No school context')
+    return await getTimetableByTeacher({ teacherId, schoolYearId })
   })

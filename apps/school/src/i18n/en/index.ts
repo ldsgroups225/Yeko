@@ -633,6 +633,7 @@ const en: Translation = {
       assignedSubjects: 'Assigned Subjects',
       noSubjects: 'No subjects assigned',
       noClasses: 'No classes assigned yet',
+      noSchedule: 'No schedule assigned',
       scheduleComingSoon: 'Schedule will be available soon',
       basicInfo: 'Basic Information',
       subjectAssignment: 'Subject Assignment',

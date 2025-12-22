@@ -58,6 +58,7 @@ export function TeacherAssignmentDialog({
   // Initialize selectedIds when assignedSubjects is loaded
   useEffect(() => {
     if (assignedSubjects) {
+      // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
       setSelectedIds(new Set(assignedSubjects.map(a => a.subjectId)))
     }
   }, [assignedSubjects])
@@ -137,103 +138,103 @@ export function TeacherAssignmentDialog({
           <AnimatePresence mode="wait">
             {isLoading
               ? (
-                <motion.div
-                  key="loading"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="flex flex-col items-center justify-center h-[350px] gap-3"
-                >
-                  <Loader2 className="h-8 w-8 animate-spin text-primary/40" />
-                  <p className="text-sm text-muted-foreground animate-pulse">{t.common.loading()}</p>
-                </motion.div>
-              )
-              : subjects.length === 0
-                ? (
                   <motion.div
-                    key="empty"
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="flex flex-col items-center justify-center h-[350px] text-center space-y-4"
-                  >
-                    <div className="h-16 w-16 rounded-full bg-white/5 flex items-center justify-center">
-                      <BookOpen className="h-8 w-8 text-muted-foreground/30" />
-                    </div>
-                    <div className="space-y-1">
-                      <p className="font-semibold text-foreground">{t.academic.assignments.noAvailableSubjects()}</p>
-                      <p className="text-sm text-muted-foreground max-w-[280px]">
-                        {t.academic.assignments.allSubjectsAssigned()}
-                      </p>
-                    </div>
-                  </motion.div>
-                )
-                : (
-                  <motion.div
-                    key="content"
+                    key="loading"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="space-y-8 pb-4"
+                    exit={{ opacity: 0 }}
+                    className="flex flex-col items-center justify-center h-[350px] gap-3"
                   >
-                    {Object.entries(groupedSubjects).map(([category, categorySubjects], catIdx) => (
-                      <div key={category} className="space-y-4">
-                        <div className="flex items-center gap-3">
-                          <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
-                            {category}
-                          </h4>
-                          <div className="h-px flex-1 bg-border/20" />
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          {(categorySubjects).map((item, idx) => {
-                            const isSelected = selectedIds.has(item.subjectId)
-                            return (
-                              <motion.div
-                                key={item.subjectId}
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: (catIdx * 0.1) + (idx * 0.05) }}
-                                whileHover={{ scale: 1.01 }}
-                                whileTap={{ scale: 0.99 }}
-                                onClick={() => handleToggle(item.subjectId)}
-                                className={cn(
-                                  'relative group flex items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer overflow-hidden',
-                                  isSelected
-                                    ? 'border-primary/50 bg-primary/10 shadow-[0_0_20px_rgba(var(--primary-rgb),0.1)]'
-                                    : 'border-border/40 bg-white/5 hover:border-primary/30 hover:bg-white/10',
-                                )}
-                              >
-                                <div className={cn(
-                                  'h-10 w-10 rounded-lg flex items-center justify-center shrink-0 transition-colors',
-                                  isSelected ? 'bg-primary text-white' : 'bg-white/5 text-muted-foreground',
-                                )}
-                                >
-                                  {isSelected ? <Check className="h-5 w-5" /> : <BookOpen className="h-5 w-5" />}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <p className={cn('font-bold text-sm truncate', isSelected ? 'text-primary' : 'text-foreground')}>
-                                    {item.subject?.name}
-                                  </p>
-                                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
-                                    {item.subject?.shortName}
-                                  </p>
-                                </div>
-                                <Checkbox
-                                  checked={isSelected}
-                                  onCheckedChange={() => handleToggle(item.subjectId)}
-                                  className="sr-only"
-                                />
-                                {isSelected && (
-                                  <div className="absolute top-0 right-0 p-1">
-                                    <div className="h-1 w-1 rounded-full bg-primary" />
-                                  </div>
-                                )}
-                              </motion.div>
-                            )
-                          })}
-                        </div>
-                      </div>
-                    ))}
+                    <Loader2 className="h-8 w-8 animate-spin text-primary/40" />
+                    <p className="text-sm text-muted-foreground animate-pulse">{t.common.loading()}</p>
                   </motion.div>
-                )}
+                )
+              : subjects.length === 0
+                ? (
+                    <motion.div
+                      key="empty"
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="flex flex-col items-center justify-center h-[350px] text-center space-y-4"
+                    >
+                      <div className="h-16 w-16 rounded-full bg-white/5 flex items-center justify-center">
+                        <BookOpen className="h-8 w-8 text-muted-foreground/30" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="font-semibold text-foreground">{t.academic.assignments.noAvailableSubjects()}</p>
+                        <p className="text-sm text-muted-foreground max-w-[280px]">
+                          {t.academic.assignments.allSubjectsAssigned()}
+                        </p>
+                      </div>
+                    </motion.div>
+                  )
+                : (
+                    <motion.div
+                      key="content"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="space-y-8 pb-4"
+                    >
+                      {Object.entries(groupedSubjects).map(([category, categorySubjects], catIdx) => (
+                        <div key={category} className="space-y-4">
+                          <div className="flex items-center gap-3">
+                            <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
+                              {category}
+                            </h4>
+                            <div className="h-px flex-1 bg-border/20" />
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {(categorySubjects).map((item, idx) => {
+                              const isSelected = selectedIds.has(item.subjectId)
+                              return (
+                                <motion.div
+                                  key={item.subjectId}
+                                  initial={{ opacity: 0, y: 10 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ delay: (catIdx * 0.1) + (idx * 0.05) }}
+                                  whileHover={{ scale: 1.01 }}
+                                  whileTap={{ scale: 0.99 }}
+                                  onClick={() => handleToggle(item.subjectId)}
+                                  className={cn(
+                                    'relative group flex items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer overflow-hidden',
+                                    isSelected
+                                      ? 'border-primary/50 bg-primary/10 shadow-[0_0_20px_rgba(var(--primary-rgb),0.1)]'
+                                      : 'border-border/40 bg-white/5 hover:border-primary/30 hover:bg-white/10',
+                                  )}
+                                >
+                                  <div className={cn(
+                                    'h-10 w-10 rounded-lg flex items-center justify-center shrink-0 transition-colors',
+                                    isSelected ? 'bg-primary text-white' : 'bg-white/5 text-muted-foreground',
+                                  )}
+                                  >
+                                    {isSelected ? <Check className="h-5 w-5" /> : <BookOpen className="h-5 w-5" />}
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <p className={cn('font-bold text-sm truncate', isSelected ? 'text-primary' : 'text-foreground')}>
+                                      {item.subject?.name}
+                                    </p>
+                                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
+                                      {item.subject?.shortName}
+                                    </p>
+                                  </div>
+                                  <Checkbox
+                                    checked={isSelected}
+                                    onCheckedChange={() => handleToggle(item.subjectId)}
+                                    className="sr-only"
+                                  />
+                                  {isSelected && (
+                                    <div className="absolute top-0 right-0 p-1">
+                                      <div className="h-1 w-1 rounded-full bg-primary" />
+                                    </div>
+                                  )}
+                                </motion.div>
+                              )
+                            })}
+                          </div>
+                        </div>
+                      ))}
+                    </motion.div>
+                  )}
           </AnimatePresence>
         </ScrollArea>
 
@@ -262,11 +263,11 @@ export function TeacherAssignmentDialog({
               >
                 {assignMutation.isPending
                   ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  )
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )
                   : (
-                    <Check className="mr-2 h-4 w-4" />
-                  )}
+                      <Check className="mr-2 h-4 w-4" />
+                    )}
                 {t.academic.assignments.assignSelected()}
               </Button>
             </div>

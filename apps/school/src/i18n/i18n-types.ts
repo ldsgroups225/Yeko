@@ -2464,6 +2464,10 @@ type RootTranslation = {
 			 */
 			noClasses: string
 			/**
+			 * A​u​c​u​n​ ​e​m​p​l​o​i​ ​d​u​ ​t​e​m​p​s
+			 */
+			noSchedule: string
+			/**
 			 * L​'​e​m​p​l​o​i​ ​d​u​ ​t​e​m​p​s​ ​s​e​r​a​ ​d​i​s​p​o​n​i​b​l​e​ ​p​r​o​c​h​a​i​n​e​m​e​n​t
 			 */
 			scheduleComingSoon: string
@@ -9867,6 +9871,10 @@ export type TranslationFunctions = {
 			 * Aucune classe assignée pour le moment
 			 */
 			noClasses: () => LocalizedString
+			/**
+			 * Aucun emploi du temps
+			 */
+			noSchedule: () => LocalizedString
 			/**
 			 * L'emploi du temps sera disponible prochainement
 			 */

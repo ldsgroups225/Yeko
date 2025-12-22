@@ -633,6 +633,7 @@ const fr = {
       assignedSubjects: 'Matières assignées',
       noSubjects: 'Aucune matière assignée',
       noClasses: 'Aucune classe assignée pour le moment',
+      noSchedule: 'Aucun emploi du temps',
       scheduleComingSoon: 'L\'emploi du temps sera disponible prochainement',
       basicInfo: 'Informations de base',
       subjectAssignment: 'Attribution des matières',

@@ -1,13 +1,19 @@
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { format } from 'date-fns'
-import { BookOpen, Calendar, Edit, Trash2 } from 'lucide-react'
+import { BookOpen, Calendar, ChevronLeft, Edit, Mail, Phone, Trash2, User, UserCheck } from 'lucide-react'
+import { motion } from 'motion/react'
+import { TeacherClasses } from '@/components/hr/teachers/teacher-classes'
+import { TeacherTimetable } from '@/components/hr/teachers/teacher-timetable'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useTranslations } from '@/i18n'
-import { getTeacher } from '@/school/functions/teachers'
+import { teacherOptions } from '@/lib/queries/teachers'
+import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/_auth/users/teachers/$teacherId/')({
   component: TeacherDetailsPage,
@@ -18,168 +24,242 @@ function TeacherDetailsPage() {
   const t = useTranslations()
 
   const { data: teacher, isLoading } = useQuery({
-    queryKey: ['teacher', teacherId],
-    queryFn: async () => {
-      const result = await getTeacher({ data: teacherId })
-      return result
-    },
+    ...teacherOptions.detail(teacherId),
+  })
+
+  const { data: classes, isLoading: isLoadingClasses } = useQuery({
+    ...teacherOptions.classes(teacherId),
   })
 
   if (isLoading) {
     return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <div className="text-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-          <p className="mt-4 text-sm text-muted-foreground">{t.common.loading()}</p>
+      <div className="space-y-6">
+        <Skeleton className="h-4 w-1/4" />
+        <div className="flex items-center gap-6">
+          <Skeleton className="size-24 rounded-full" />
+          <div className="space-y-3 flex-1">
+            <Skeleton className="h-8 w-1/3" />
+            <Skeleton className="h-4 w-1/4" />
+          </div>
         </div>
+        <Skeleton className="h-10 w-full rounded-xl" />
+        <Skeleton className="h-64 w-full rounded-2xl" />
       </div>
     )
   }
 
   if (!teacher) {
     return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <div className="text-center">
-          <p className="text-lg font-medium">{t.errors.notFound()}</p>
-          <Button asChild className="mt-4">
-            <Link to="/users/teachers" search={{ page: 1 }}>
-              {t.common.back()}
-            </Link>
-          </Button>
+      <div className="flex min-h-[400px] flex-col items-center justify-center text-center">
+        <div className="size-16 rounded-full bg-red-500/10 flex items-center justify-center mb-4">
+          <UserCheck className="size-8 text-red-500" />
         </div>
+        <h2 className="text-2xl font-bold">{t.errors.notFound()}</h2>
+        <p className="text-muted-foreground mt-2 max-w-xs">Cet enseignant n'existe pas ou vous n'avez pas la permission de le voir.</p>
+        <Button asChild className="mt-6 rounded-xl" variant="outline">
+          <Link to="/users/teachers" search={{ page: 1 }}>
+            <ChevronLeft className="mr-2 size-4" />
+            {t.common.back()}
+          </Link>
+        </Button>
       </div>
     )
   }
 
-  return (
-    <div className="space-y-6">
-      <Breadcrumbs
-        items={[
-          { label: t.hr.title(), href: '/users' },
-          { label: t.hr.teachers.title(), href: '/users/teachers' },
-          { label: teacherId },
-        ]}
-      />
+  const user = teacher.user
 
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-4">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-2xl font-bold text-primary">
-            {teacher.specialization?.charAt(0).toUpperCase() ?? 'T'}
-          </div>
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">{t.hr.teachers.teacherDetails()}</h1>
-            <p className="text-muted-foreground">{teacher.specialization ?? t.hr.teachers.noSpecialization()}</p>
+  return (
+    <div className="space-y-8 pb-10">
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div className="space-y-4">
+          <Breadcrumbs
+            items={[
+              { label: t.hr.title(), href: '/users' },
+              { label: t.hr.teachers.title(), href: '/users/teachers' },
+              { label: user?.name || teacherId },
+            ]}
+          />
+
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
+            <Avatar className="size-24 ring-4 ring-background shadow-xl border-2 border-primary/20">
+              <AvatarImage src={user?.avatarUrl || undefined} />
+              <AvatarFallback className="bg-primary/5 text-primary text-3xl font-black">
+                {user?.name?.charAt(0).toUpperCase() || 'T'}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <div className="flex items-center gap-3">
+                <h1 className="text-4xl font-black tracking-tight text-foreground">
+                  {user?.name}
+                </h1>
+                <Badge
+                  className={cn(
+                    'text-[10px] uppercase font-bold tracking-widest px-2',
+                    teacher.status === 'active'
+                      ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
+                      : teacher.status === 'on_leave'
+                        ? 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+                        : 'bg-muted text-muted-foreground',
+                  )}
+                  variant="outline"
+                >
+                  {t.hr.status[teacher.status as keyof typeof t.hr.status]?.() || teacher.status}
+                </Badge>
+              </div>
+              <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
+                <div className="flex items-center gap-1.5 font-medium">
+                  <BookOpen className="size-4 text-primary/60" />
+                  {teacher.specialization || t.hr.teachers.noSpecialization()}
+                </div>
+                {user?.email && (
+                  <div className="flex items-center gap-1.5">
+                    <Mail className="size-4 opacity-70" />
+                    <a href={`mailto:${user.email}`} className="hover:text-primary transition-colors underline-offset-4 hover:underline">{user.email}</a>
+                  </div>
+                )}
+                {user?.phone && (
+                  <div className="flex items-center gap-1.5">
+                    <Phone className="size-4 opacity-70" />
+                    <span>{user.phone}</span>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            <Trash2 className="mr-2 h-4 w-4" />
+
+        <div className="flex items-center gap-3">
+          <Button variant="outline" size="lg" className="rounded-2xl border-border/40 hover:bg-red-500/5 hover:text-red-500 hover:border-red-500/20 transition-all shadow-sm">
+            <Trash2 className="mr-2 size-4" />
             {t.common.delete()}
           </Button>
-          <Button size="sm">
-            <Edit className="mr-2 h-4 w-4" />
+          <Button size="lg" className="rounded-2xl shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5 active:translate-y-0">
+            <Edit className="mr-2 size-4" />
             {t.common.edit()}
           </Button>
         </div>
       </div>
 
-      <Tabs defaultValue="info" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="info">{t.hr.teachers.tabs.info()}</TabsTrigger>
-          <TabsTrigger value="subjects">{t.hr.teachers.tabs.subjects()}</TabsTrigger>
-          <TabsTrigger value="classes">{t.hr.teachers.tabs.classes()}</TabsTrigger>
-          <TabsTrigger value="schedule">{t.hr.teachers.tabs.schedule()}</TabsTrigger>
+      <Tabs defaultValue="info" className="space-y-6">
+        <TabsList className="h-14 w-full justify-start gap-1 rounded-2xl border border-border/40 bg-card/40 p-1.5 backdrop-blur-md">
+          <TabsTrigger value="info" className="h-full rounded-xl px-6 data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm font-semibold transition-all">
+            {t.hr.teachers.tabs.info()}
+          </TabsTrigger>
+          <TabsTrigger value="subjects" className="h-full rounded-xl px-6 data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm font-semibold transition-all">
+            {t.hr.teachers.tabs.subjects()}
+          </TabsTrigger>
+          <TabsTrigger value="classes" className="h-full rounded-xl px-6 data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm font-semibold transition-all">
+            {t.hr.teachers.tabs.classes()}
+          </TabsTrigger>
+          <TabsTrigger value="schedule" className="h-full rounded-xl px-6 data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm font-semibold transition-all">
+            {t.hr.teachers.tabs.schedule()}
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="info" className="space-y-4">
-          <div className="rounded-lg border bg-card p-6">
-            <h2 className="mb-4 text-lg font-semibold">{t.hr.teachers.personalInfo()}</h2>
-            <div className="grid gap-4 md:grid-cols-2">
-              {teacher.hireDate && (
-                <div className="flex items-center gap-3">
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">{t.hr.teachers.hireDate()}</p>
-                    <p className="font-medium">
-                      {format(new Date(teacher.hireDate), 'dd/MM/yyyy')}
-                    </p>
+        <motion.div
+          key="tabs-content"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <TabsContent value="info" className="space-y-6 m-0">
+            <div className="rounded-3xl border border-border/40 bg-card/40 p-8 backdrop-blur-md shadow-sm">
+              <h2 className="text-xl font-bold mb-8 flex items-center gap-2">
+                <User className="size-5 text-primary" />
+                {t.hr.teachers.personalInfo()}
+              </h2>
+              <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                {teacher.hireDate && (
+                  <div className="flex flex-col gap-1">
+                    <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">{t.hr.teachers.hireDate()}</span>
+                    <div className="flex items-center gap-2.5 mt-1 font-semibold text-foreground">
+                      <div className="size-8 rounded-lg bg-primary/5 flex items-center justify-center border border-primary/10">
+                        <Calendar className="size-4 text-primary" />
+                      </div>
+                      {format(new Date(teacher.hireDate), 'PPP')}
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">{t.hr.teachers.status()}</span>
+                  <div className="flex items-center gap-2.5 mt-1">
+                    <div className={cn(
+                      'size-8 rounded-lg flex items-center justify-center border',
+                      teacher.status === 'active'
+                        ? 'bg-emerald-500/10 border-emerald-500/20'
+                        : teacher.status === 'on_leave'
+                          ? 'bg-amber-500/10 border-amber-500/20'
+                          : 'bg-muted border-border/40',
+                    )}
+                    >
+                      <div className={cn(
+                        'size-2 rounded-full',
+                        teacher.status === 'active'
+                          ? 'bg-emerald-500 animate-pulse'
+                          : teacher.status === 'on_leave'
+                            ? 'bg-amber-500'
+                            : 'bg-muted-foreground',
+                      )}
+                      />
+                    </div>
+                    <span className="font-semibold">
+                      {t.hr.status[teacher.status as keyof typeof t.hr.status]?.() || teacher.status}
+                    </span>
                   </div>
                 </div>
-              )}
-              <div className="flex items-center gap-3">
-                <div>
-                  <p className="text-sm text-muted-foreground">{t.hr.teachers.status()}</p>
-                  <Badge
-                    variant={
-                      teacher.status === 'active'
-                        ? 'default'
-                        : teacher.status === 'on_leave'
-                          ? 'secondary'
-                          : 'outline'
-                    }
-                  >
-                    {(() => {
-                      switch (teacher.status) {
-                        case 'active':
-                          return t.hr.status.active()
-                        case 'inactive':
-                          return t.hr.status.inactive()
-                        case 'on_leave':
-                          return t.hr.status.on_leave()
-                        default:
-                          return teacher.status
-                      }
-                    })()}
-                  </Badge>
+
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">{t.hr.teachers.specialization()}</span>
+                  <div className="flex items-center gap-2.5 mt-1 font-semibold text-foreground text-lg">
+                    <div className="size-8 rounded-lg bg-blue-500/5 flex items-center justify-center border border-blue-500/10">
+                      <BookOpen className="size-4 text-blue-500" />
+                    </div>
+                    {teacher.specialization || t.hr.teachers.noSpecialization()}
+                  </div>
                 </div>
               </div>
-              {teacher.specialization && (
-                <div className="flex items-center gap-3 md:col-span-2">
-                  <BookOpen className="h-4 w-4 text-muted-foreground" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">
-                      {t.hr.teachers.specialization()}
-                    </p>
-                    <p className="font-medium">{teacher.specialization}</p>
-                  </div>
-                </div>
-              )}
             </div>
-          </div>
-        </TabsContent>
+          </TabsContent>
 
-        <TabsContent value="subjects" className="space-y-4">
-          <div className="rounded-lg border bg-card p-6">
-            <h2 className="mb-4 text-lg font-semibold">{t.hr.teachers.assignedSubjects()}</h2>
-            <div className="flex flex-wrap gap-2">
-              {teacher.subjects && teacher.subjects.length > 0
-                ? (
-                    teacher.subjects.map(subject => (
-                      <Badge key={subject.subjectId} variant="secondary" className="text-sm">
-                        {subject.subjectName}
-                      </Badge>
-                    ))
-                  )
-                : (
-                    <p className="text-sm text-muted-foreground">{t.hr.teachers.noSubjects()}</p>
-                  )}
+          <TabsContent value="subjects" className="m-0">
+            <div className="rounded-3xl border border-border/40 bg-card/40 p-8 backdrop-blur-md shadow-sm">
+              <h2 className="text-xl font-bold mb-8 flex items-center gap-2">
+                <BookOpen className="size-5 text-primary" />
+                {t.hr.teachers.assignedSubjects()}
+              </h2>
+              <div className="flex flex-wrap gap-3">
+                {teacher.subjects && teacher.subjects.length > 0
+                  ? (
+                      teacher.subjects.map((sub: any) => (
+                        <Badge
+                          key={sub.subjectId}
+                          className="bg-primary/5 text-primary border-primary/20 px-4 py-2 text-sm font-semibold rounded-xl hover:bg-primary/10 transition-colors cursor-default"
+                          variant="outline"
+                        >
+                          <BookOpen className="mr-2 size-3.5" />
+                          {sub.subjectName}
+                        </Badge>
+                      ))
+                    )
+                  : (
+                      <div className="flex flex-col items-center justify-center py-10 w-full text-center">
+                        <BookOpen className="mb-4 size-10 text-muted-foreground/30" />
+                        <p className="text-muted-foreground font-medium">{t.hr.teachers.noSubjects()}</p>
+                      </div>
+                    )}
+              </div>
             </div>
-          </div>
-        </TabsContent>
+          </TabsContent>
 
-        <TabsContent value="classes" className="space-y-4">
-          <div className="rounded-lg border bg-card p-6">
-            <h2 className="mb-4 text-lg font-semibold">{t.hr.teachers.assignedClasses()}</h2>
-            <p className="text-sm text-muted-foreground">{t.hr.teachers.noClasses()}</p>
-          </div>
-        </TabsContent>
+          <TabsContent value="classes" className="m-0">
+            <TeacherClasses classes={classes || []} isLoading={isLoadingClasses} />
+          </TabsContent>
 
-        <TabsContent value="schedule" className="space-y-4">
-          <div className="rounded-lg border bg-card p-6">
-            <h2 className="mb-4 text-lg font-semibold">{t.hr.teachers.schedule()}</h2>
-            <p className="text-sm text-muted-foreground">{t.hr.teachers.scheduleComingSoon()}</p>
-          </div>
-        </TabsContent>
+          <TabsContent value="schedule" className="m-0">
+            <TeacherTimetable teacherId={teacherId} />
+          </TabsContent>
+        </motion.div>
       </Tabs>
     </div>
   )
