@@ -7,10 +7,12 @@ import {
   createUserWithSchool,
   deleteUser,
   getUserActivityLogs,
+  getUserIdFromAuthUserId as getUserIdFromAuthUserIdQuery,
   getUsersBySchool,
   getUserWithRoles,
   updateUser,
 } from '@repo/data-ops/queries/school-admin/users'
+
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 import { userCreateSchema, userUpdateSchema } from '@/schemas/user'
@@ -278,4 +280,15 @@ export const getCurrentUserRole = createServerFn()
       console.error('Error fetching current user role:', error)
       return null
     }
+  })
+
+/**
+ * Get internal user ID from auth user ID (Better Auth user ID)
+ * This is used to convert the session user ID to the internal users table ID
+ */
+export const getUserIdFromAuthUserId = createServerFn()
+  .inputValidator(z.object({ authUserId: z.string() }))
+  .handler(async ({ data }) => {
+    const userId = await getUserIdFromAuthUserIdQuery(data.authUserId)
+    return userId
   })

@@ -160,7 +160,15 @@ export async function updateGradesStatus(gradeIds: string[], status: GradeStatus
   const now = new Date()
 
   // Convert to values object based on status
-  const updates: any = { status, updatedAt: now }
+  const updates: {
+    status: GradeStatus
+    updatedAt: Date
+    submittedAt?: Date
+    validatedAt?: Date
+    validatedBy?: string
+    rejectionReason?: string
+  } = { status, updatedAt: now }
+
   if (status === 'submitted')
     updates.submittedAt = now
   if (status === 'validated') {

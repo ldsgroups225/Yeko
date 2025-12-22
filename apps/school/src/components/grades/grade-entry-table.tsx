@@ -584,11 +584,11 @@ export function GradeEntryTable({
                 >
                   {createBulkMutation.isPending
                     ? (
-                        <Loader2 className="mr-2 size-4 animate-spin text-amber-600" />
-                      )
+                      <Loader2 className="mr-2 size-4 animate-spin text-amber-600" />
+                    )
                     : (
-                        <Save className="mr-2 size-4 text-amber-600" />
-                      )}
+                      <Save className="mr-2 size-4 text-amber-600" />
+                    )}
                   {t.common.save()}
                 </Button>
               </motion.div>
@@ -602,11 +602,11 @@ export function GradeEntryTable({
           >
             {submitMutation.isPending
               ? (
-                  <Loader2 className="mr-2 size-4 animate-spin" />
-                )
+                <Loader2 className="mr-2 size-4 animate-spin" />
+              )
               : (
-                  <Send className="mr-2 size-4" />
-                )}
+                <Send className="mr-2 size-4" />
+              )}
             {t.common.submit()}
             {gradesByStudent.size > 0 && (
               <Badge variant="secondary" className="ml-2 bg-primary-foreground/10 text-primary-foreground border-none px-2 rounded-full font-bold">

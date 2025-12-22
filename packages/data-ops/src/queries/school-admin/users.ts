@@ -623,3 +623,23 @@ export async function syncUserAuthOnLogin(authUserId: string, email: string) {
 
   return existingUser.id
 }
+
+/**
+ * Get user ID from auth user ID
+ * This is used to convert Better Auth user ID to internal user ID
+ */
+export async function getUserIdFromAuthUserId(authUserId: string): Promise<string | null> {
+  if (!authUserId) {
+    return null
+  }
+
+  const db = getDb()
+
+  const [user] = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(and(eq(users.authUserId, authUserId), isNull(users.deletedAt)))
+    .limit(1)
+
+  return user?.id ?? null
+}
