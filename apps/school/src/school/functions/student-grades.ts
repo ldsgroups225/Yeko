@@ -104,6 +104,21 @@ export const deleteGrade = createServerFn()
     return { success: true, id: data.id }
   })
 
+// Delete all draft grades for a specific evaluation
+export const deleteDraftGrades = createServerFn()
+  .inputValidator(z.object({
+    classId: z.string(),
+    subjectId: z.string(),
+    termId: z.string(),
+    type: z.string(),
+    gradeDate: z.string(),
+    description: z.string().optional(),
+  }))
+  .handler(async ({ data }) => {
+    const deleted = await gradeQueries.deleteDraftGrades(data)
+    return { success: true, count: deleted.length }
+  })
+
 // Submit grades for validation
 export const submitGradesForValidation = createServerFn()
   .inputValidator(submitGradesSchema)

@@ -1,11 +1,12 @@
 import type { GradeType } from '@/schemas/grade'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { ClipboardCheck, LayoutGrid, ListTodo, Settings2, Sparkles, UserCheck } from 'lucide-react'
+import { ClipboardCheck, LayoutGrid, ListTodo, RotateCcw, Settings2, Sparkles, UserCheck } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useState } from 'react'
 import { GradeEntryTable, GradeTypeSelector } from '@/components/grades'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -109,6 +110,23 @@ function GradeEntryPage() {
     setWeight(defaultGradeWeights[type])
   }
 
+  const handleReset = () => {
+    setSelectedClassId('')
+    setSelectedSubjectId('')
+    setSelectedTermId('')
+    setGradeType('test')
+    setWeight(defaultGradeWeights.test)
+    setDescription('')
+    setGradeDate(new Date().toISOString().split('T')[0])
+  }
+
+  const handleNewEvaluation = () => {
+    setDescription('')
+    setGradeDate(new Date().toISOString().split('T')[0])
+    setGradeType('test')
+    setWeight(defaultGradeWeights.test)
+  }
+
   return (
     <div className="space-y-8">
       <Breadcrumbs
@@ -137,11 +155,22 @@ function GradeEntryPage() {
       >
         <Card className="overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl">
           <CardHeader className="bg-muted/20 border-b border-border/20 pb-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-background/50 text-muted-foreground shadow-sm">
-                <Settings2 className="size-4" />
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-background/50 text-muted-foreground shadow-sm">
+                  <Settings2 className="size-4" />
+                </div>
+                <CardTitle className="text-sm font-black uppercase tracking-[0.2em]">{t.academic.grades.entry.parameters()}</CardTitle>
               </div>
-              <CardTitle className="text-sm font-black uppercase tracking-[0.2em]">{t.academic.grades.entry.parameters()}</CardTitle>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleReset}
+                className="h-8 gap-2 rounded-lg text-xs font-bold hover:bg-background/50 text-muted-foreground hover:text-primary transition-all"
+              >
+                <RotateCcw className="size-3.5" />
+                {t.common.reset()}
+              </Button>
             </div>
           </CardHeader>
           <CardContent className="pt-8">
@@ -338,6 +367,10 @@ function GradeEntryPage() {
                       gradeDate={gradeDate}
                       students={students}
                       existingGrades={gradesData ?? []}
+                      onSubmissionComplete={() => {
+                        setDescription('')
+                      }}
+                      onReset={handleNewEvaluation}
                     />
                   )}
             </CardContent>

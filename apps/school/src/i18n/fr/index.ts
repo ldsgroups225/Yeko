@@ -112,6 +112,7 @@ const fr = {
     unassigned: 'Non assigné',
     clearFilters: 'Effacer les filtres',
     settings: 'Paramètres',
+    reset: 'Réinitialiser',
   },
   nav: {
     dashboard: 'Tableau de bord',
@@ -1364,6 +1365,9 @@ const fr = {
         gradeDescription: 'Description (optionnel)',
         descriptionPlaceholder: 'Ex: Chapitre 3 - Équations',
         enterGrade: 'Saisir des notes',
+        newEvaluation: 'Nouvelle évaluation',
+        confirmResetTitle: 'Abandonner les modifications ?',
+        confirmResetDescription: 'Vous avez {count} note(s) non enregistrée(s). Si vous continuez, ces modifications seront perdues.',
       },
       validations: {
         title: 'Validations en attente',
@@ -1388,6 +1392,8 @@ const fr = {
         pendingCount: '{count} note(s) en attente',
         submittedBy: 'Soumis par',
         submittedAt: 'Soumis',
+        confirmSubmitTitle: 'Confirmer la soumission',
+        confirmSubmitDescription: 'Voulez-vous soumettre {count} note(s) pour validation ? Une fois soumises, elles ne pourront plus être modifiées.',
       },
       statistics: {
         title: 'Statistiques',
@@ -1444,6 +1450,7 @@ const fr = {
         saveError: 'Erreur lors de l\'enregistrement',
         noTeacherTitle: 'Aucun enseignant assigné',
         noTeacherDescription: 'Vous ne pouvez pas enregistrer de notes car aucun enseignant n\'est assigné à cette matière dans cette classe.',
+        incompleteGrades: 'Veuillez saisir les notes pour tous les élèves avant de soumettre.',
       },
       quickActions: {
         entry: 'Saisie des notes',

@@ -1,12 +1,11 @@
 import type { GradeStatus, GradeType } from '@/schemas/grade'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { AlertTriangle, Cloud, CloudOff, Hash, Loader2, Save, Send, User, UserPlus } from 'lucide-react'
+import { AlertTriangle, Cloud, CloudOff, Hash, Loader2, Plus, Save, Send, User, UserPlus } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog'
 import {
   Select,
@@ -30,10 +29,10 @@ import {
 } from '@/lib/queries/class-subjects'
 import { gradesKeys } from '@/lib/queries/grades'
 import { teacherOptions } from '@/lib/queries/teachers'
-import { cn } from '@/lib/utils'
 import { assignTeacherToClassSubject } from '@/school/functions/class-subjects'
 import {
   createBulkGrades,
+  deleteDraftGrades,
   submitGradesForValidation,
   updateGrade,
 } from '@/school/functions/student-grades'
@@ -54,6 +53,9 @@ interface Grade {
   studentId: string
   value: string
   status: GradeStatus
+  type: GradeType
+  description?: string | null
+  gradeDate: string
   rejectionReason?: string | null
 }
 
@@ -69,6 +71,8 @@ interface GradeEntryTableProps {
   students: Student[]
   existingGrades: Grade[]
   onSaveComplete?: () => void
+  onSubmissionComplete?: () => void
+  onReset?: () => void
 }
 
 export function GradeEntryTable({
@@ -83,46 +87,85 @@ export function GradeEntryTable({
   students,
   existingGrades,
   onSaveComplete,
+  onSubmissionComplete,
+  onReset,
 }: GradeEntryTableProps) {
   const t = useTranslations()
   const queryClient = useQueryClient()
   const isMissingTeacher = !teacherId
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set())
   const [pendingChanges, setPendingChanges] = useState<Map<string, number>>(() => new Map())
   const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
-  const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [pendingAssignment, setPendingAssignment] = useState<{
     teacherId: string
     teacherName: string
   } | null>(null)
+  const [isConfirmingSubmit, setIsConfirmingSubmit] = useState(false)
+  const [isConfirmingReset, setIsConfirmingReset] = useState(false)
+  const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const AUTO_SAVE_DELAY = 30000
+
+  // Reset internal state when evaluation parameters change
+  useEffect(() => {
+    setPendingChanges(new Map())
+  }, [gradeType, description, gradeDate])
 
   const gradesByStudent = useMemo(() => {
     const map = new Map<string, Grade>()
     for (const grade of existingGrades) {
-      map.set(grade.studentId, grade)
+      // Only show draft grades in editable cells - submitted/validated grades should not appear
+      // This allows starting a fresh evaluation even if previous grades exist with same parameters
+      if (
+        grade.status === 'draft'
+        && grade.type === gradeType
+        && (grade.description || '') === (description || '')
+        && grade.gradeDate === gradeDate
+      ) {
+        map.set(grade.studentId, grade)
+      }
     }
     return map
-  }, [existingGrades])
+  }, [existingGrades, gradeType, description, gradeDate])
 
+  const isComplete = useMemo(() => {
+    return students.length > 0 && students.every((student) => {
+      const grade = gradesByStudent.get(student.id)
+      const pendingValue = pendingChanges.get(student.id)
+      const value = grade ? Number.parseFloat(grade.value) : pendingValue
+      return value !== undefined && value !== null && !Number.isNaN(value) && value >= 0
+    })
+  }, [students, gradesByStudent, pendingChanges])
+
+  // Realtime statistics including pending changes and draft grades
   const statistics = useMemo(() => {
-    const values = existingGrades
-      .filter(g => g.status === 'validated')
-      .map(g => Number.parseFloat(g.value))
+    // Collect all values: from draft grades and from pending changes
+    const allValues: number[] = []
 
-    if (values.length === 0) {
+    // Add values from draft grades in gradesByStudent
+    for (const grade of gradesByStudent.values()) {
+      allValues.push(Number.parseFloat(grade.value))
+    }
+
+    // Add pending changes (new grades not yet saved)
+    for (const [studentId, value] of pendingChanges.entries()) {
+      // Only add if student doesn't already have a grade (to avoid duplicates)
+      if (!gradesByStudent.has(studentId)) {
+        allValues.push(value)
+      }
+    }
+
+    if (allValues.length === 0) {
       return { count: 0, average: 0, min: 0, max: 0, below10: 0, above15: 0 }
     }
 
     return {
-      count: values.length,
-      average: values.reduce((a, b) => a + b, 0) / values.length,
-      min: Math.min(...values),
-      max: Math.max(...values),
-      below10: values.filter(v => v < 10).length,
-      above15: values.filter(v => v >= 15).length,
+      count: allValues.length,
+      average: allValues.reduce((a, b) => a + b, 0) / allValues.length,
+      min: Math.min(...allValues),
+      max: Math.max(...allValues),
+      below10: allValues.filter(v => v < 10).length,
+      above15: allValues.filter(v => v >= 15).length,
     }
-  }, [existingGrades])
+  }, [gradesByStudent, pendingChanges])
 
   const updateMutation = useMutation({
     mutationFn: (params: { id: string, value: number }) => updateGrade({ data: { id: params.id, value: params.value } }),
@@ -176,7 +219,30 @@ export function GradeEntryTable({
     mutationFn: (params: { gradeIds: string[] }) => submitGradesForValidation({ data: params }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: gradesKeys.byClass(classId, subjectId, termId) })
-      setSelectedIds(new Set())
+      toast.success(t.academic.grades.actions.submitSuccess())
+      onSubmissionComplete?.()
+    },
+  })
+
+  const effectiveGradeDate = gradeDate ?? new Date().toISOString().slice(0, 10)
+
+  const deleteDraftMutation = useMutation({
+    mutationFn: () => deleteDraftGrades({
+      data: {
+        classId,
+        subjectId,
+        termId,
+        type: gradeType,
+        gradeDate: effectiveGradeDate,
+        description: description || undefined,
+      },
+    }),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: gradesKeys.byClass(classId, subjectId, termId) })
+      setPendingChanges(new Map())
+      setIsConfirmingReset(false)
+      onReset?.()
     },
   })
 
@@ -247,43 +313,48 @@ export function GradeEntryTable({
   }
 
   const handleSubmitForValidation = () => {
-    const draftGradeIds = existingGrades
-      .filter(g => g.status === 'draft' && selectedIds.has(g.id))
+    if (!isComplete) {
+      toast.error(t.academic.grades.errors.incompleteGrades())
+      return
+    }
+    setIsConfirmingSubmit(true)
+  }
+
+  const confirmSubmit = () => {
+    // Get all draft grade IDs for the current evaluation
+    const draftGradeIds = Array.from(gradesByStudent.values())
+      .filter(g => g.status === 'draft')
       .map(g => g.id)
 
     if (draftGradeIds.length > 0) {
       submitMutation.mutate({ gradeIds: draftGradeIds })
     }
+    setIsConfirmingSubmit(false)
   }
 
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      const draftIds = existingGrades
-        .filter(g => g.status === 'draft')
-        .map(g => g.id)
-      setSelectedIds(new Set(draftIds))
+  const handleNewEvaluation = () => {
+    // Check if there are pending changes OR draft grades in the database
+    const hasDraftGrades = gradesByStudent.size > 0
+    if (pendingChanges.size > 0 || hasDraftGrades) {
+      setIsConfirmingReset(true)
     }
     else {
-      setSelectedIds(new Set())
+      onReset?.()
     }
   }
 
-  const handleSelectOne = (gradeId: string, checked: boolean) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev)
-      if (checked) {
-        next.add(gradeId)
-      }
-      else {
-        next.delete(gradeId)
-      }
-      return next
-    })
+  const confirmReset = () => {
+    // Delete draft grades from the database if they exist
+    if (gradesByStudent.size > 0) {
+      deleteDraftMutation.mutate()
+    }
+    else {
+      // Just clear local state
+      setPendingChanges(new Map())
+      setIsConfirmingReset(false)
+      onReset?.()
+    }
   }
-
-  const draftGrades = existingGrades.filter(g => g.status === 'draft')
-  const allDraftsSelected = draftGrades.length > 0 && draftGrades.every(g => selectedIds.has(g.id))
-  const someDraftsSelected = draftGrades.some(g => selectedIds.has(g.id))
 
   const isLoading = updateMutation.isPending || createBulkMutation.isPending || submitMutation.isPending
 
@@ -347,18 +418,6 @@ export function GradeEntryTable({
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/30 border-b-border/40 hover:bg-muted/30">
-              <TableHead className="w-12 text-center">
-                <Checkbox
-                  checked={allDraftsSelected}
-                  onCheckedChange={handleSelectAll}
-                  aria-label={t.common.select()}
-                  disabled={draftGrades.length === 0}
-                  className={cn(
-                    'rounded-md border-border/60 transition-all',
-                    someDraftsSelected && !allDraftsSelected && 'data-[state=checked]:bg-primary/50',
-                  )}
-                />
-              </TableHead>
               <TableHead className="min-w-[240px]">
                 <div className="flex items-center gap-2">
                   <User className="size-4 text-muted-foreground" />
@@ -386,7 +445,6 @@ export function GradeEntryTable({
                 const pendingValue = pendingChanges.get(student.id)
                 const currentValue = grade ? Number.parseFloat(grade.value) : pendingValue ?? null
                 const status = grade?.status ?? 'draft'
-                const canSelect = grade?.status === 'draft'
 
                 return (
                   <motion.tr
@@ -396,17 +454,6 @@ export function GradeEntryTable({
                     transition={{ delay: index * 0.03 }}
                     className="group border-b border-border/20 last:border-0 hover:bg-primary/5 transition-colors"
                   >
-                    <TableCell className="text-center">
-                      {grade && (
-                        <Checkbox
-                          checked={selectedIds.has(grade.id)}
-                          onCheckedChange={checked => handleSelectOne(grade.id, !!checked)}
-                          disabled={!canSelect}
-                          className="rounded-md border-border/60"
-                          aria-label={`${t.common.select()} ${student.lastName} ${student.firstName}`}
-                        />
-                      )}
-                    </TableCell>
                     <TableCell className="py-4">
                       <div className="flex flex-col">
                         <span className="font-bold text-foreground group-hover:text-primary transition-colors">
@@ -513,6 +560,15 @@ export function GradeEntryTable({
         </div>
 
         <div className="flex gap-3">
+          <Button
+            onClick={handleNewEvaluation}
+            variant="outline"
+            className="rounded-xl font-bold border-primary/20 hover:bg-primary/5 text-primary"
+          >
+            <Plus className="mr-2 size-4" />
+            {t.academic.grades.entry.newEvaluation()}
+          </Button>
+
           <AnimatePresence>
             {pendingChanges.size > 0 && (
               <motion.div
@@ -541,7 +597,7 @@ export function GradeEntryTable({
 
           <Button
             onClick={handleSubmitForValidation}
-            disabled={selectedIds.size === 0 || isLoading}
+            disabled={!isComplete || isLoading}
             className="rounded-xl font-bold shadow-lg shadow-primary/20 px-6"
           >
             {submitMutation.isPending
@@ -552,12 +608,13 @@ export function GradeEntryTable({
                   <Send className="mr-2 size-4" />
                 )}
             {t.common.submit()}
-            {selectedIds.size > 0 && (
+            {gradesByStudent.size > 0 && (
               <Badge variant="secondary" className="ml-2 bg-primary-foreground/10 text-primary-foreground border-none px-2 rounded-full font-bold">
-                {selectedIds.size}
+                {gradesByStudent.size}
               </Badge>
             )}
           </Button>
+
         </div>
       </motion.div>
 
@@ -577,6 +634,26 @@ export function GradeEntryTable({
         }}
         isLoading={assignMutation.isPending}
       />
+
+      <ConfirmationDialog
+        open={isConfirmingSubmit}
+        onOpenChange={setIsConfirmingSubmit}
+        title={t.academic.grades.validations.confirmSubmitTitle()}
+        description={t.academic.grades.validations.confirmSubmitDescription({ count: gradesByStudent.size })}
+        onConfirm={confirmSubmit}
+        isLoading={submitMutation.isPending}
+      />
+
+      <ConfirmationDialog
+        open={isConfirmingReset}
+        onOpenChange={setIsConfirmingReset}
+        title={t.academic.grades.entry.confirmResetTitle()}
+        description={t.academic.grades.entry.confirmResetDescription({ count: pendingChanges.size + gradesByStudent.size })}
+        onConfirm={confirmReset}
+        variant="destructive"
+        isLoading={deleteDraftMutation.isPending}
+      />
+
     </div>
   )
 }

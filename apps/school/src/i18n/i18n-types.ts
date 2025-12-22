@@ -455,6 +455,10 @@ type RootTranslation = {
 		 * P​a​r​a​m​è​t​r​e​s
 		 */
 		settings: string
+		/**
+		 * R​é​i​n​i​t​i​a​l​i​s​e​r
+		 */
+		reset: string
 	}
 	nav: {
 		/**
@@ -5073,6 +5077,19 @@ type RootTranslation = {
 				 * S​a​i​s​i​r​ ​d​e​s​ ​n​o​t​e​s
 				 */
 				enterGrade: string
+				/**
+				 * N​o​u​v​e​l​l​e​ ​é​v​a​l​u​a​t​i​o​n
+				 */
+				newEvaluation: string
+				/**
+				 * A​b​a​n​d​o​n​n​e​r​ ​l​e​s​ ​m​o​d​i​f​i​c​a​t​i​o​n​s​ ​?
+				 */
+				confirmResetTitle: string
+				/**
+				 * V​o​u​s​ ​a​v​e​z​ ​{​c​o​u​n​t​}​ ​n​o​t​e​(​s​)​ ​n​o​n​ ​e​n​r​e​g​i​s​t​r​é​e​(​s​)​.​ ​S​i​ ​v​o​u​s​ ​c​o​n​t​i​n​u​e​z​,​ ​c​e​s​ ​m​o​d​i​f​i​c​a​t​i​o​n​s​ ​s​e​r​o​n​t​ ​p​e​r​d​u​e​s​.
+				 * @param {unknown} count
+				 */
+				confirmResetDescription: RequiredParams<'count'>
 			}
 			validations: {
 				/**
@@ -5165,6 +5182,15 @@ type RootTranslation = {
 				 * S​o​u​m​i​s
 				 */
 				submittedAt: string
+				/**
+				 * C​o​n​f​i​r​m​e​r​ ​l​a​ ​s​o​u​m​i​s​s​i​o​n
+				 */
+				confirmSubmitTitle: string
+				/**
+				 * V​o​u​l​e​z​-​v​o​u​s​ ​s​o​u​m​e​t​t​r​e​ ​{​c​o​u​n​t​}​ ​n​o​t​e​(​s​)​ ​p​o​u​r​ ​v​a​l​i​d​a​t​i​o​n​ ​?​ ​U​n​e​ ​f​o​i​s​ ​s​o​u​m​i​s​e​s​,​ ​e​l​l​e​s​ ​n​e​ ​p​o​u​r​r​o​n​t​ ​p​l​u​s​ ​ê​t​r​e​ ​m​o​d​i​f​i​é​e​s​.
+				 * @param {unknown} count
+				 */
+				confirmSubmitDescription: RequiredParams<'count'>
 			}
 			statistics: {
 				/**
@@ -5347,6 +5373,10 @@ type RootTranslation = {
 				 * V​o​u​s​ ​n​e​ ​p​o​u​v​e​z​ ​p​a​s​ ​e​n​r​e​g​i​s​t​r​e​r​ ​d​e​ ​n​o​t​e​s​ ​c​a​r​ ​a​u​c​u​n​ ​e​n​s​e​i​g​n​a​n​t​ ​n​'​e​s​t​ ​a​s​s​i​g​n​é​ ​à​ ​c​e​t​t​e​ ​m​a​t​i​è​r​e​ ​d​a​n​s​ ​c​e​t​t​e​ ​c​l​a​s​s​e​.
 				 */
 				noTeacherDescription: string
+				/**
+				 * V​e​u​i​l​l​e​z​ ​s​a​i​s​i​r​ ​l​e​s​ ​n​o​t​e​s​ ​p​o​u​r​ ​t​o​u​s​ ​l​e​s​ ​é​l​è​v​e​s​ ​a​v​a​n​t​ ​d​e​ ​s​o​u​m​e​t​t​r​e​.
+				 */
+				incompleteGrades: string
 			}
 			quickActions: {
 				/**
@@ -7892,6 +7922,10 @@ export type TranslationFunctions = {
 		 * Paramètres
 		 */
 		settings: () => LocalizedString
+		/**
+		 * Réinitialiser
+		 */
+		reset: () => LocalizedString
 	}
 	nav: {
 		/**
@@ -12462,6 +12496,18 @@ export type TranslationFunctions = {
 				 * Saisir des notes
 				 */
 				enterGrade: () => LocalizedString
+				/**
+				 * Nouvelle évaluation
+				 */
+				newEvaluation: () => LocalizedString
+				/**
+				 * Abandonner les modifications ?
+				 */
+				confirmResetTitle: () => LocalizedString
+				/**
+				 * Vous avez {count} note(s) non enregistrée(s). Si vous continuez, ces modifications seront perdues.
+				 */
+				confirmResetDescription: (arg: { count: unknown }) => LocalizedString
 			}
 			validations: {
 				/**
@@ -12552,6 +12598,14 @@ export type TranslationFunctions = {
 				 * Soumis
 				 */
 				submittedAt: () => LocalizedString
+				/**
+				 * Confirmer la soumission
+				 */
+				confirmSubmitTitle: () => LocalizedString
+				/**
+				 * Voulez-vous soumettre {count} note(s) pour validation ? Une fois soumises, elles ne pourront plus être modifiées.
+				 */
+				confirmSubmitDescription: (arg: { count: unknown }) => LocalizedString
 			}
 			statistics: {
 				/**
@@ -12734,6 +12788,10 @@ export type TranslationFunctions = {
 				 * Vous ne pouvez pas enregistrer de notes car aucun enseignant n'est assigné à cette matière dans cette classe.
 				 */
 				noTeacherDescription: () => LocalizedString
+				/**
+				 * Veuillez saisir les notes pour tous les élèves avant de soumettre.
+				 */
+				incompleteGrades: () => LocalizedString
 			}
 			quickActions: {
 				/**

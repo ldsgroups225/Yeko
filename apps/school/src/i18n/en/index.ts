@@ -112,6 +112,7 @@ const en: Translation = {
     unassigned: 'Unassigned',
     clearFilters: 'Clear Filters',
     settings: 'Settings',
+    reset: 'Reset',
   },
   nav: {
     dashboard: 'Dashboard',
@@ -1364,6 +1365,9 @@ const en: Translation = {
         gradeDescription: 'Description (optional)',
         descriptionPlaceholder: 'E.g., Chapter 3 - Equations',
         enterGrade: 'Enter grades',
+        newEvaluation: 'New Evaluation',
+        confirmResetTitle: 'Discard changes?',
+        confirmResetDescription: 'You have {count} unsaved grade(s). If you continue, these changes will be lost.',
       },
       validations: {
         title: 'Pending Validations',
@@ -1388,6 +1392,8 @@ const en: Translation = {
         pendingCount: '{count} grade(s) pending',
         submittedBy: 'Submitted by',
         submittedAt: 'Submitted',
+        confirmSubmitTitle: 'Confirm Submission',
+        confirmSubmitDescription: 'Do you want to submit {count} grade(s) for validation? Once submitted, they cannot be modified.',
       },
       statistics: {
         title: 'Statistics',
@@ -1444,6 +1450,7 @@ const en: Translation = {
         saveError: 'Error saving grades',
         noTeacherTitle: 'No Teacher Assigned',
         noTeacherDescription: 'You cannot save grades because no teacher is assigned to this subject in this class.',
+        incompleteGrades: 'Please enter grades for all students before submitting.',
       },
       quickActions: {
         entry: 'Grade entry',

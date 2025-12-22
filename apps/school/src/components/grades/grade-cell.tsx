@@ -1,7 +1,7 @@
 import type { GradeStatus } from '@/schemas/grade'
 import { AlertCircle } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import {
   Tooltip,
@@ -55,6 +55,13 @@ export function GradeCell({
   const [error, setError] = useState<string | null>(null)
   const [isFocused, setIsFocused] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  // Sync localValue with value prop when it changes and not focused
+  useEffect(() => {
+    if (!isFocused) {
+      setLocalValue(value?.toString() ?? '')
+    }
+  }, [value, isFocused])
 
   const validateAndUpdate = useCallback((inputValue: string) => {
     if (inputValue === '') {

@@ -176,6 +176,36 @@ export async function updateGradesStatus(gradeIds: string[], status: GradeStatus
     .returning()
 }
 
+export async function deleteDraftGrades(params: {
+  classId: string
+  subjectId: string
+  termId: string
+  type: string
+  gradeDate: string
+  description?: string
+}) {
+  const db = getDb()
+  const conditions = [
+    eq(studentGrades.classId, params.classId),
+    eq(studentGrades.subjectId, params.subjectId),
+    eq(studentGrades.termId, params.termId),
+    eq(studentGrades.type, params.type as any),
+    eq(studentGrades.gradeDate, params.gradeDate),
+    eq(studentGrades.status, 'draft'),
+  ]
+
+  // Handle null/empty description
+  if (params.description) {
+    conditions.push(eq(studentGrades.description, params.description))
+  }
+
+  const deleted = await db.delete(studentGrades)
+    .where(and(...conditions))
+    .returning()
+
+  return deleted
+}
+
 export async function getGradeValidationHistory(gradeId: string) {
   const db = getDb()
   return db.query.gradeValidations.findMany({
