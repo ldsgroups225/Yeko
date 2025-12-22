@@ -198,12 +198,12 @@ export function ClassesTable({ filters: initialFilters = DEFAULT_FILTERS }: Clas
       },
       {
         accessorKey: 'classroom.name',
-        header: 'Salle',
+        header: t.classes.room(),
         cell: ({ row }) => row.original.classroom?.name || '-',
       },
       {
         id: 'students',
-        header: 'Élèves',
+        header: t.classes.students(),
         cell: ({ row }) => (
           <div className="flex items-center gap-1">
             <Users className="h-3 w-3 text-muted-foreground" />
@@ -218,7 +218,7 @@ export function ClassesTable({ filters: initialFilters = DEFAULT_FILTERS }: Clas
       },
       {
         id: 'subjects',
-        header: 'Matières',
+        header: t.classes.subjects(),
         cell: ({ row }) => (
           <div className="flex items-center gap-1">
             <BookOpen className="h-3 w-3 text-muted-foreground" />
@@ -228,17 +228,17 @@ export function ClassesTable({ filters: initialFilters = DEFAULT_FILTERS }: Clas
       },
       {
         accessorKey: 'homeroomTeacher.name',
-        header: 'Prof. Principal',
+        header: t.classes.homeroomTeacher(),
         cell: ({ row }) => row.original.homeroomTeacher?.name || '-',
       },
       {
         accessorKey: 'class.status',
-        header: 'Statut',
+        header: t.classes.status(),
         cell: ({ row }) => {
           const status = row.original.class.status
           return (
             <Badge variant={status === 'active' ? 'default' : 'secondary'}>
-              {status === 'active' ? 'Actif' : 'Archivé'}
+              {status === 'active' ? t.common.active() : t.common.archived()}
             </Badge>
           )
         },
@@ -404,100 +404,100 @@ export function ClassesTable({ filters: initialFilters = DEFAULT_FILTERS }: Clas
       <div className="space-y-3 md:hidden">
         {isLoading
           ? (
-              Array.from({ length: 5 }, () => (
-                <div key={`card-skeleton-${Math.random()}`} className="rounded-xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm">
-                  <div className="flex items-center gap-3">
-                    <div className="flex-1 space-y-2">
-                      <div className="h-4 w-32 bg-muted animate-pulse rounded" />
-                      <div className="h-3 w-24 bg-muted animate-pulse rounded" />
-                    </div>
+            Array.from({ length: 5 }, () => (
+              <div key={`card-skeleton-${Math.random()}`} className="rounded-xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm">
+                <div className="flex items-center gap-3">
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 w-32 bg-muted animate-pulse rounded" />
+                    <div className="h-3 w-24 bg-muted animate-pulse rounded" />
                   </div>
                 </div>
-              ))
-            )
+              </div>
+            ))
+          )
           : data?.length === 0
             ? (
-                <div className="flex min-h-[300px] flex-col items-center justify-center rounded-xl border border-dashed border-border/40 bg-card/50 p-8 text-center backdrop-blur-sm">
-                  <Users className="mx-auto h-12 w-12 text-muted-foreground/50" />
-                  <h3 className="mt-4 text-lg font-semibold">{t.tables.noClassesFound()}</h3>
-                  <p className="mt-2 max-w-sm text-sm text-muted-foreground">{t.tables.createFirstClass()}</p>
-                </div>
-              )
+              <div className="flex min-h-[300px] flex-col items-center justify-center rounded-xl border border-dashed border-border/40 bg-card/50 p-8 text-center backdrop-blur-sm">
+                <Users className="mx-auto h-12 w-12 text-muted-foreground/50" />
+                <h3 className="mt-4 text-lg font-semibold">{t.tables.noClassesFound()}</h3>
+                <p className="mt-2 max-w-sm text-sm text-muted-foreground">{t.tables.createFirstClass()}</p>
+              </div>
+            )
             : (
-                <AnimatePresence>
-                  {data?.map((item, index) => (
-                    <motion.div
-                      key={item.class.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ delay: index * 0.05 }}
-                      className="rounded-xl border border-border/40 bg-card/50 p-4 shadow-sm backdrop-blur-xl"
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-center gap-3">
-                          <Checkbox
-                            checked={selectedRows.includes(item.class.id)}
-                            onCheckedChange={checked => handleSelectRow(item.class.id, !!checked)}
-                            className="mr-2 border-primary/50 data-[state=checked]:border-primary"
-                          />
-                          <div
-                            onClick={() => navigate({ to: `/classes/${item.class.id}` })}
-                            className="cursor-pointer"
-                            role="button"
-                            tabIndex={0}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter' || e.key === ' ') {
-                                navigate({ to: `/classes/${item.class.id}` })
-                              }
-                            }}
-                          >
-                            <p className="font-medium text-foreground">
-                              {item.grade.name}
-                              {' '}
-                              {item.series?.name}
-                              {' '}
-                              <span className="text-muted-foreground">{item.class.section}</span>
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {item.classroom?.name || t.classes.noClassroom()}
-                            </p>
-                          </div>
+              <AnimatePresence>
+                {data?.map((item, index) => (
+                  <motion.div
+                    key={item.class.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="rounded-xl border border-border/40 bg-card/50 p-4 shadow-sm backdrop-blur-xl"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-3">
+                        <Checkbox
+                          checked={selectedRows.includes(item.class.id)}
+                          onCheckedChange={checked => handleSelectRow(item.class.id, !!checked)}
+                          className="mr-2 border-primary/50 data-[state=checked]:border-primary"
+                        />
+                        <div
+                          onClick={() => navigate({ to: `/classes/${item.class.id}` })}
+                          className="cursor-pointer"
+                          role="button"
+                          tabIndex={0}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              navigate({ to: `/classes/${item.class.id}` })
+                            }
+                          }}
+                        >
+                          <p className="font-medium text-foreground">
+                            {item.grade.name}
+                            {' '}
+                            {item.series?.name}
+                            {' '}
+                            <span className="text-muted-foreground">{item.class.section}</span>
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {item.classroom?.name || t.classes.noClassroom()}
+                          </p>
                         </div>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="hover:bg-card/20">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="backdrop-blur-xl bg-popover/90 border border-border/40">
-                            <DropdownMenuItem onClick={() => navigate({ to: `/classes/${item.class.id}` })}>
-                              <Eye className="mr-2 h-4 w-4" />
-                              {t.common.view()}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => setClassToDelete(item)}
-                              className="text-destructive focus:text-destructive"
-                            >
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              {t.common.delete()}
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
                       </div>
-                      <div className="mt-4 flex flex-wrap items-center gap-2">
-                        <Badge variant={item.class.status === 'active' ? 'default' : 'secondary'} className="border-0 shadow-none">
-                          {item.class.status === 'active' ? t.common.active() : t.common.archived()}
-                        </Badge>
-                        <Badge variant="outline" className="border-border/40 bg-card/20 backdrop-blur-md">
-                          <Users className="mr-1 h-3 w-3" />
-                          {item.studentsCount}
-                        </Badge>
-                      </div>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              )}
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="hover:bg-card/20">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="backdrop-blur-xl bg-popover/90 border border-border/40">
+                          <DropdownMenuItem onClick={() => navigate({ to: `/classes/${item.class.id}` })}>
+                            <Eye className="mr-2 h-4 w-4" />
+                            {t.common.view()}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => setClassToDelete(item)}
+                            className="text-destructive focus:text-destructive"
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            {t.common.delete()}
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                    <div className="mt-4 flex flex-wrap items-center gap-2">
+                      <Badge variant={item.class.status === 'active' ? 'default' : 'secondary'} className="border-0 shadow-none">
+                        {item.class.status === 'active' ? t.common.active() : t.common.archived()}
+                      </Badge>
+                      <Badge variant="outline" className="border-border/40 bg-card/20 backdrop-blur-md">
+                        <Users className="mr-1 h-3 w-3" />
+                        {item.studentsCount}
+                      </Badge>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            )}
       </div>
 
       {/* Desktop Table View */}
@@ -511,9 +511,9 @@ export function ClassesTable({ filters: initialFilters = DEFAULT_FILTERS }: Clas
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -522,38 +522,38 @@ export function ClassesTable({ filters: initialFilters = DEFAULT_FILTERS }: Clas
           <TableBody>
             {data?.length === 0
               ? (
-                  <TableRow>
-                    <TableCell colSpan={columns.length} className="h-96">
-                      <div className="flex flex-col items-center justify-center text-center">
-                        <div className="rounded-full bg-white/10 p-6 backdrop-blur-xl mb-4">
-                          <Users className="h-12 w-12 text-muted-foreground/50" />
-                        </div>
-                        <h3 className="text-lg font-semibold">{t.tables.noClassesFound()}</h3>
-                        <p className="mt-2 max-w-sm text-sm text-muted-foreground">{t.tables.createFirstClass()}</p>
+                <TableRow>
+                  <TableCell colSpan={columns.length} className="h-96">
+                    <div className="flex flex-col items-center justify-center text-center">
+                      <div className="rounded-full bg-white/10 p-6 backdrop-blur-xl mb-4">
+                        <Users className="h-12 w-12 text-muted-foreground/50" />
                       </div>
-                    </TableCell>
-                  </TableRow>
-                )
+                      <h3 className="text-lg font-semibold">{t.tables.noClassesFound()}</h3>
+                      <p className="mt-2 max-w-sm text-sm text-muted-foreground">{t.tables.createFirstClass()}</p>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )
               : (
-                  <AnimatePresence>
-                    {table.getRowModel().rows.map((row, index) => (
-                      <motion.tr
-                        key={row.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ delay: index * 0.02 }}
-                        className="border-border/10 group hover:bg-card/30 transition-colors"
-                      >
-                        {row.getVisibleCells().map(cell => (
-                          <TableCell key={cell.id} className="py-3">
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </TableCell>
-                        ))}
-                      </motion.tr>
-                    ))}
-                  </AnimatePresence>
-                )}
+                <AnimatePresence>
+                  {table.getRowModel().rows.map((row, index) => (
+                    <motion.tr
+                      key={row.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ delay: index * 0.02 }}
+                      className="border-border/10 group hover:bg-card/30 transition-colors"
+                    >
+                      {row.getVisibleCells().map(cell => (
+                        <TableCell key={cell.id} className="py-3">
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      ))}
+                    </motion.tr>
+                  ))}
+                </AnimatePresence>
+              )}
           </TableBody>
         </Table>
       </div>

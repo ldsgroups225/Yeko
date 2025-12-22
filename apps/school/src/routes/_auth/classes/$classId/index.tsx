@@ -4,6 +4,7 @@ import { Edit, GraduationCap, Trash2, Users } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { ClassSubjectManager } from '@/components/academic/class-subjects/class-subject-manager'
+import { ClassStudentList } from '@/components/academic/classes/class-student-list'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -95,17 +96,17 @@ function ClassDetailPage() {
             <h1 className="text-3xl font-bold tracking-tight">{className}</h1>
             {classroom
               ? (
-                  <Link
-                    to="/spaces/classrooms/$classroomId"
-                    params={{ classroomId: classroom.id }}
-                    className="text-muted-foreground hover:underline"
-                  >
-                    {classroom.name}
-                  </Link>
-                )
+                <Link
+                  to="/spaces/classrooms/$classroomId"
+                  params={{ classroomId: classroom.id }}
+                  className="text-muted-foreground hover:underline"
+                >
+                  {classroom.name}
+                </Link>
+              )
               : (
-                  <p className="text-muted-foreground">{t.classes.noClassroom()}</p>
-                )}
+                <p className="text-muted-foreground">{t.classes.noClassroom()}</p>
+              )}
           </div>
         </div>
         <div className="flex gap-2">
@@ -126,8 +127,8 @@ function ClassDetailPage() {
       <Tabs defaultValue="info" className="space-y-4">
         <TabsList>
           <TabsTrigger value="info">{t.classes.tabs.stats()}</TabsTrigger>
-          <TabsTrigger value="students">{t.students.studentsList()}</TabsTrigger>
-          <TabsTrigger value="teachers">Teachers</TabsTrigger>
+          <TabsTrigger value="students">{t.classes.tabs.students()}</TabsTrigger>
+          <TabsTrigger value="teachers">{t.classes.tabs.teachers()}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="info" className="space-y-4">
@@ -145,12 +146,16 @@ function ClassDetailPage() {
                     {classData.maxStudents}
                   </span>
                 </div>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Boys:
-                  {boysCount}
+                <p className="mt-1 text-xs text-muted-foreground italic">
+                  {t.classes.boys()}:
                   {' '}
-                  / Girls:
-                  {girlsCount}
+                  <span className="font-bold text-foreground">{boysCount}</span>
+                  {' '}
+                  /
+                  {' '}
+                  {t.classes.girls()}:
+                  {' '}
+                  <span className="font-bold text-foreground">{girlsCount}</span>
                 </p>
               </CardContent>
             </Card>
@@ -173,11 +178,11 @@ function ClassDetailPage() {
               <CardContent>
                 {classroom
                   ? (
-                      <span className="text-lg font-medium">{classroom.name}</span>
-                    )
+                    <span className="text-lg font-medium">{classroom.name}</span>
+                  )
                   : (
-                      <span className="text-lg font-medium text-muted-foreground">-</span>
-                    )}
+                    <span className="text-lg font-medium text-muted-foreground">-</span>
+                  )}
               </CardContent>
             </Card>
           </div>
@@ -212,22 +217,7 @@ function ClassDetailPage() {
         </TabsContent>
 
         <TabsContent value="students" className="space-y-4">
-          <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
-            <CardHeader>
-              <CardTitle>{t.students.studentsList()}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {/* Placeholder for future implementation */}
-              <div className="flex flex-col items-center justify-center py-8 text-center">
-                <Users className="h-10 w-10 text-muted-foreground/50" />
-                <p className="mt-2 text-muted-foreground">
-                  {studentsCount > 0
-                    ? `${studentsCount} students enrolled`
-                    : 'No students'}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+          <ClassStudentList classId={classId} />
         </TabsContent>
 
         <TabsContent value="teachers" className="space-y-4">

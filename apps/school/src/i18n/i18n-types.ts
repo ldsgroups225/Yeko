@@ -3233,6 +3233,31 @@ type RootTranslation = {
 		 * A​u​c​u​n​e​ ​s​a​l​l​e​ ​d​e​ ​c​l​a​s​s​e
 		 */
 		noClassroom: string
+		/**
+		 * G​a​r​ç​o​n​s
+		 */
+		boys: string
+		/**
+		 * F​i​l​l​e​s
+		 */
+		girls: string
+		/**
+		 * {​c​o​u​n​t​}​ ​é​l​è​v​e​s​ ​i​n​s​c​r​i​t​s
+		 * @param {unknown} count
+		 */
+		enrolledStudents: RequiredParams<'count'>
+		/**
+		 * A​u​c​u​n​ ​é​l​è​v​e
+		 */
+		noStudents: string
+		/**
+		 * M​a​t​i​è​r​e​s
+		 */
+		subjects: string
+		/**
+		 * É​l​è​v​e​s
+		 */
+		students: string
 		tabs: {
 			/**
 			 * S​t​a​t​i​s​t​i​q​u​e​s
@@ -3242,6 +3267,14 @@ type RootTranslation = {
 			 * D​é​t​a​i​l​s
 			 */
 			details: string
+			/**
+			 * É​l​è​v​e​s
+			 */
+			students: string
+			/**
+			 * E​n​s​e​i​g​n​a​n​t​s
+			 */
+			teachers: string
 		}
 		/**
 		 * S​t​a​t​u​t
@@ -10603,6 +10636,30 @@ export type TranslationFunctions = {
 		 * Aucune salle de classe
 		 */
 		noClassroom: () => LocalizedString
+		/**
+		 * Garçons
+		 */
+		boys: () => LocalizedString
+		/**
+		 * Filles
+		 */
+		girls: () => LocalizedString
+		/**
+		 * {count} élèves inscrits
+		 */
+		enrolledStudents: (arg: { count: unknown }) => LocalizedString
+		/**
+		 * Aucun élève
+		 */
+		noStudents: () => LocalizedString
+		/**
+		 * Matières
+		 */
+		subjects: () => LocalizedString
+		/**
+		 * Élèves
+		 */
+		students: () => LocalizedString
 		tabs: {
 			/**
 			 * Statistiques
@@ -10612,6 +10669,14 @@ export type TranslationFunctions = {
 			 * Détails
 			 */
 			details: () => LocalizedString
+			/**
+			 * Élèves
+			 */
+			students: () => LocalizedString
+			/**
+			 * Enseignants
+			 */
+			teachers: () => LocalizedString
 		}
 		/**
 		 * Statut
