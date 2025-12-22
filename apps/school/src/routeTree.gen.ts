@@ -37,6 +37,7 @@ import { Route as AuthStudentsEnrollmentsRouteImport } from './routes/_auth/stud
 import { Route as AuthStudentsBulkOperationsRouteImport } from './routes/_auth/students/bulk-operations'
 import { Route as AuthSpacesAvailabilityRouteImport } from './routes/_auth/spaces/availability'
 import { Route as AuthSettingsSchoolYearsRouteImport } from './routes/_auth/settings/school-years'
+import { Route as AuthSettingsReportCardsRouteImport } from './routes/_auth/settings/report-cards'
 import { Route as AuthSettingsProfileRouteImport } from './routes/_auth/settings/profile'
 import { Route as AuthSettingsNotificationsRouteImport } from './routes/_auth/settings/notifications'
 import { Route as AuthProgramsSubjectsRouteImport } from './routes/_auth/programs/subjects'
@@ -230,6 +231,11 @@ const AuthSpacesAvailabilityRoute = AuthSpacesAvailabilityRouteImport.update({
 const AuthSettingsSchoolYearsRoute = AuthSettingsSchoolYearsRouteImport.update({
   id: '/school-years',
   path: '/school-years',
+  getParentRoute: () => AuthSettingsRoute,
+} as any)
+const AuthSettingsReportCardsRoute = AuthSettingsReportCardsRouteImport.update({
+  id: '/report-cards',
+  path: '/report-cards',
   getParentRoute: () => AuthSettingsRoute,
 } as any)
 const AuthSettingsProfileRoute = AuthSettingsProfileRouteImport.update({
@@ -563,6 +569,7 @@ export interface FileRoutesByFullPath {
   '/programs/subjects': typeof AuthProgramsSubjectsRoute
   '/settings/notifications': typeof AuthSettingsNotificationsRoute
   '/settings/profile': typeof AuthSettingsProfileRoute
+  '/settings/report-cards': typeof AuthSettingsReportCardsRoute
   '/settings/school-years': typeof AuthSettingsSchoolYearsRoute
   '/spaces/availability': typeof AuthSpacesAvailabilityRoute
   '/students/bulk-operations': typeof AuthStudentsBulkOperationsRoute
@@ -638,6 +645,7 @@ export interface FileRoutesByTo {
   '/programs/subjects': typeof AuthProgramsSubjectsRoute
   '/settings/notifications': typeof AuthSettingsNotificationsRoute
   '/settings/profile': typeof AuthSettingsProfileRoute
+  '/settings/report-cards': typeof AuthSettingsReportCardsRoute
   '/settings/school-years': typeof AuthSettingsSchoolYearsRoute
   '/spaces/availability': typeof AuthSpacesAvailabilityRoute
   '/students/bulk-operations': typeof AuthStudentsBulkOperationsRoute
@@ -723,6 +731,7 @@ export interface FileRoutesById {
   '/_auth/programs/subjects': typeof AuthProgramsSubjectsRoute
   '/_auth/settings/notifications': typeof AuthSettingsNotificationsRoute
   '/_auth/settings/profile': typeof AuthSettingsProfileRoute
+  '/_auth/settings/report-cards': typeof AuthSettingsReportCardsRoute
   '/_auth/settings/school-years': typeof AuthSettingsSchoolYearsRoute
   '/_auth/spaces/availability': typeof AuthSpacesAvailabilityRoute
   '/_auth/students/bulk-operations': typeof AuthStudentsBulkOperationsRoute
@@ -808,6 +817,7 @@ export interface FileRouteTypes {
     | '/programs/subjects'
     | '/settings/notifications'
     | '/settings/profile'
+    | '/settings/report-cards'
     | '/settings/school-years'
     | '/spaces/availability'
     | '/students/bulk-operations'
@@ -883,6 +893,7 @@ export interface FileRouteTypes {
     | '/programs/subjects'
     | '/settings/notifications'
     | '/settings/profile'
+    | '/settings/report-cards'
     | '/settings/school-years'
     | '/spaces/availability'
     | '/students/bulk-operations'
@@ -967,6 +978,7 @@ export interface FileRouteTypes {
     | '/_auth/programs/subjects'
     | '/_auth/settings/notifications'
     | '/_auth/settings/profile'
+    | '/_auth/settings/report-cards'
     | '/_auth/settings/school-years'
     | '/_auth/spaces/availability'
     | '/_auth/students/bulk-operations'
@@ -1220,6 +1232,13 @@ declare module '@tanstack/react-router' {
       path: '/school-years'
       fullPath: '/settings/school-years'
       preLoaderRoute: typeof AuthSettingsSchoolYearsRouteImport
+      parentRoute: typeof AuthSettingsRoute
+    }
+    '/_auth/settings/report-cards': {
+      id: '/_auth/settings/report-cards'
+      path: '/report-cards'
+      fullPath: '/settings/report-cards'
+      preLoaderRoute: typeof AuthSettingsReportCardsRouteImport
       parentRoute: typeof AuthSettingsRoute
     }
     '/_auth/settings/profile': {
@@ -1729,6 +1748,7 @@ const AuthProgramsRouteWithChildren = AuthProgramsRoute._addFileChildren(
 interface AuthSettingsRouteChildren {
   AuthSettingsNotificationsRoute: typeof AuthSettingsNotificationsRoute
   AuthSettingsProfileRoute: typeof AuthSettingsProfileRoute
+  AuthSettingsReportCardsRoute: typeof AuthSettingsReportCardsRoute
   AuthSettingsSchoolYearsRoute: typeof AuthSettingsSchoolYearsRoute
   AuthSettingsIndexRoute: typeof AuthSettingsIndexRoute
 }
@@ -1736,6 +1756,7 @@ interface AuthSettingsRouteChildren {
 const AuthSettingsRouteChildren: AuthSettingsRouteChildren = {
   AuthSettingsNotificationsRoute: AuthSettingsNotificationsRoute,
   AuthSettingsProfileRoute: AuthSettingsProfileRoute,
+  AuthSettingsReportCardsRoute: AuthSettingsReportCardsRoute,
   AuthSettingsSchoolYearsRoute: AuthSettingsSchoolYearsRoute,
   AuthSettingsIndexRoute: AuthSettingsIndexRoute,
 }

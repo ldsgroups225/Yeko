@@ -111,6 +111,7 @@ export const en = {
     spaces: 'Spaces',
     classrooms: 'Classrooms',
     schoolYears: 'School Years',
+    reportCardTemplates: 'Report Card Templates',
   },
   sidebar: {
     dailyOperations: 'Daily Operations',
@@ -1731,6 +1732,18 @@ export const en = {
     notifyOnAbsenceDescription: 'Send notification to parents when student is absent',
     notifyOnLate: 'Notify on Late',
     notifyOnLateDescription: 'Send notification to parents when student is late',
+    reportCards: {
+      title: 'Report Card Templates',
+      description: 'Manage report card templates',
+      createTitle: 'Create Template',
+      createDescription: 'Create a new report card template',
+      templateName: 'Template Name',
+      templateNamePlaceholder: 'e.g. Standard Template',
+      isDefault: 'Set as Default',
+      setAsDefault: 'Set as default template',
+      deleteTitle: 'Delete Template',
+      deleteDescription: 'Are you sure you want to delete this template? This action is irreversible.',
+    },
   },
   dialogs: {
     createClass: {

@@ -85,7 +85,7 @@ export async function getReportCardsByClass(params: {
     conditions.push(eq(reportCards.status, params.status))
   }
 
-  return db.query.reportCards.findMany({
+  const cards = await db.query.reportCards.findMany({
     where: and(...conditions),
     with: {
       student: {
@@ -95,7 +95,12 @@ export async function getReportCardsByClass(params: {
         columns: { id: true, name: true },
       },
     },
-    orderBy: [asc(students.lastName), asc(students.firstName)],
+  })
+
+  return cards.sort((a, b) => {
+    const nameA = `${a.student.lastName} ${a.student.firstName}`
+    const nameB = `${b.student.lastName} ${b.student.firstName}`
+    return nameA.localeCompare(nameB)
   })
 }
 

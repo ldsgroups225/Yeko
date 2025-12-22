@@ -1,5 +1,5 @@
 import { Link, useLocation } from '@tanstack/react-router'
-import { Bell, Building2, Calendar, Settings } from 'lucide-react'
+import { Bell, Building2, Calendar, FileText, Settings } from 'lucide-react'
 import { motion } from 'motion/react'
 import * as React from 'react'
 import { useTranslations } from '@/i18n'
@@ -40,6 +40,12 @@ export function SettingsNav() {
       href: '/settings/notifications',
       icon: Bell,
       description: t.settings.notificationsDescription(),
+    },
+    {
+      title: t.settings.reportCards.title(),
+      href: '/settings/report-cards',
+      icon: FileText,
+      description: t.settings.reportCards.description(),
     },
   ]
 

@@ -1,10 +1,11 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { BookOpenCheck, Calendar, Filter, GraduationCap, LayoutGrid, Search } from 'lucide-react'
+import { BookOpenCheck, Calendar, FileText, Filter, GraduationCap, LayoutGrid, Search } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useState } from 'react'
+import { toast } from 'sonner'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { ReportCardList } from '@/components/report-cards'
+import { BulkGenerationDialog, ReportCardList } from '@/components/report-cards'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -17,11 +18,20 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useSchoolContext } from '@/hooks/use-school-context'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
+import { authClient } from '@/lib/auth-client'
 import { getClasses } from '@/school/functions/classes'
+import { getEnrollments } from '@/school/functions/enrollments'
+import {
+  bulkGenerateReportCards,
+  getReportCards,
+  getReportCardTemplates,
+} from '@/school/functions/report-cards'
 import { getSchoolYears } from '@/school/functions/school-years'
 import { getTerms } from '@/school/functions/terms'
+import { getUserIdFromAuthUserId } from '@/school/functions/users'
 
 export const Route = createFileRoute('/_auth/grades/report-cards')({
   component: ReportCardsPage,
@@ -29,11 +39,17 @@ export const Route = createFileRoute('/_auth/grades/report-cards')({
 
 function ReportCardsPage() {
   const t = useTranslations()
+  const { schoolId } = useSchoolContext()
   const { schoolYearId: contextSchoolYearId } = useSchoolYearContext()
+  const queryClient = useQueryClient()
+  const session = authClient.useSession()
+  const authUserId = session.data?.user?.id
+
   const [selectedTermId, setSelectedTermId] = useState<string>('')
   const [selectedClassId, setSelectedClassId] = useState<string>('')
   const [localYearId, setLocalYearId] = useState<string>('')
   const [search, setSearch] = useState('')
+  const [isGenerationDialogOpen, setIsGenerationDialogOpen] = useState(false)
 
   // Fetch school years
   const { data: schoolYears, isLoading: yearsLoading } = useQuery({
@@ -62,7 +78,97 @@ function ReportCardsPage() {
     staleTime: 5 * 60 * 1000,
   })
 
+  // Fetch students for the selected class (enrollments)
+  const { data: enrollmentsData } = useQuery({
+    queryKey: ['enrollments', effectiveYearId, selectedClassId],
+    queryFn: () => getEnrollments({ data: { schoolYearId: effectiveYearId, classId: selectedClassId, limit: 100 } }),
+    enabled: !!effectiveYearId && !!selectedClassId,
+    staleTime: 5 * 60 * 1000,
+  })
+
+  // Fetch existing report cards
+  const { data: reportCards, isLoading: reportCardsLoading } = useQuery({
+    queryKey: ['report-cards', selectedClassId, selectedTermId],
+    queryFn: () => getReportCards({ data: { classId: selectedClassId, termId: selectedTermId } }),
+    enabled: !!selectedClassId && !!selectedTermId,
+  })
+
+  // Fetch all templates
+  const { data: templates } = useQuery({
+    queryKey: ['report-card-templates', schoolId],
+    queryFn: () => getReportCardTemplates({ data: { schoolId: schoolId ?? '' } }),
+    enabled: !!schoolId,
+  })
+
+  // Determine which template to use (default or first available)
+  const activeTemplate = templates?.find(t => t.isDefault) || templates?.[0]
+
+  const generateMutation = useMutation({
+    mutationFn: async (studentIds: string[]) => {
+      if (!authUserId)
+        throw new Error('User not found')
+
+      if (!activeTemplate)
+        throw new Error('No report card template found. Please create one in settings.')
+
+      const internalUserId = await getUserIdFromAuthUserId({ data: { authUserId } })
+      if (!internalUserId)
+        throw new Error('User not found')
+
+      return await bulkGenerateReportCards({
+        data: {
+          classId: selectedClassId,
+          termId: selectedTermId,
+          schoolYearId: effectiveYearId,
+          templateId: activeTemplate.id,
+          studentIds,
+          generatedBy: internalUserId,
+        },
+      })
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['report-cards'] })
+      toast.success(t.reportCards.generationComplete())
+    },
+    onError: (error) => {
+      toast.error(error.message || t.common.error())
+    },
+  })
+
   const canShowReportCards = effectiveYearId && selectedTermId && selectedClassId
+
+  const mappedReportCards = (reportCards || [])
+    .filter((rc) => {
+      if (!search)
+        return true
+      const searchLower = search.toLowerCase()
+      return (
+        rc.student.firstName.toLowerCase().includes(searchLower)
+        || rc.student.lastName.toLowerCase().includes(searchLower)
+        || rc.student.matricule?.toLowerCase().includes(searchLower)
+      )
+    })
+    .map(rc => ({
+      id: rc.id,
+      studentId: rc.studentId,
+      studentName: `${rc.student.lastName} ${rc.student.firstName}`,
+      studentMatricule: rc.student.matricule,
+      status: rc.status,
+      generatedAt: rc.generatedAt,
+      sentAt: rc.sentAt,
+      deliveryMethod: rc.deliveryMethod,
+      pdfUrl: rc.pdfUrl,
+    }))
+
+  const mappedStudents = enrollmentsData?.data.map(e => ({
+    id: e.student.id,
+    name: `${e.student.lastName} ${e.student.firstName}`,
+    matricule: e.student.matricule,
+    hasReportCard: reportCards?.some(rc => rc.studentId === e.student.id),
+  })) || []
+
+  const currentClass = classes?.find(c => c.class.id === selectedClassId)
+  const currentTerm = terms?.find(t => t.id === selectedTermId)
 
   return (
     <div className="space-y-8">
@@ -99,29 +205,29 @@ function ReportCardsPage() {
             </Label>
             {yearsLoading
               ? (
-                  <Skeleton className="h-11 w-full rounded-xl" />
-                )
+                <Skeleton className="h-11 w-full rounded-xl" />
+              )
               : (
-                  <Select
-                    value={effectiveYearId}
-                    onValueChange={val => setLocalYearId(val)}
-                  >
-                    <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="size-3.5 text-muted-foreground" />
-                        <SelectValue placeholder={t.schoolYear.select()} />
-                      </div>
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
-                      {schoolYears?.map(year => (
-                        <SelectItem key={year.id} value={year.id} className="rounded-lg font-semibold">
-                          {year.template.name}
-                          {year.isActive && ` (${t.schoolYear.activeSuffix()})`}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
+                <Select
+                  value={effectiveYearId}
+                  onValueChange={val => setLocalYearId(val)}
+                >
+                  <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="size-3.5 text-muted-foreground" />
+                      <SelectValue placeholder={t.schoolYear.select()} />
+                    </div>
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
+                    {schoolYears?.map(year => (
+                      <SelectItem key={year.id} value={year.id} className="rounded-lg font-semibold">
+                        {year.template.name}
+                        {year.isActive && ` (${t.schoolYear.activeSuffix()})`}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
           </div>
 
           {/* Term */}
@@ -131,26 +237,26 @@ function ReportCardsPage() {
             </Label>
             {termsLoading
               ? (
-                  <Skeleton className="h-11 w-full rounded-xl" />
-                )
+                <Skeleton className="h-11 w-full rounded-xl" />
+              )
               : (
-                  <Select
-                    value={selectedTermId}
-                    onValueChange={setSelectedTermId}
-                    disabled={!effectiveYearId}
-                  >
-                    <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
-                      <SelectValue placeholder={t.terms.select()} />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
-                      {terms?.map(term => (
-                        <SelectItem key={term.id} value={term.id} className="rounded-lg font-semibold">
-                          {term.template.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
+                <Select
+                  value={selectedTermId}
+                  onValueChange={setSelectedTermId}
+                  disabled={!effectiveYearId}
+                >
+                  <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
+                    <SelectValue placeholder={t.terms.select()} />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
+                    {terms?.map(term => (
+                      <SelectItem key={term.id} value={term.id} className="rounded-lg font-semibold">
+                        {term.template.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
           </div>
 
           {/* Class */}
@@ -160,31 +266,31 @@ function ReportCardsPage() {
             </Label>
             {classesLoading
               ? (
-                  <Skeleton className="h-11 w-full rounded-xl" />
-                )
+                <Skeleton className="h-11 w-full rounded-xl" />
+              )
               : (
-                  <Select
-                    value={selectedClassId}
-                    onValueChange={setSelectedClassId}
-                    disabled={!effectiveYearId}
-                  >
-                    <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
-                      <div className="flex items-center gap-2">
-                        <LayoutGrid className="size-3.5 text-muted-foreground" />
-                        <SelectValue placeholder={t.classes.select()} />
-                      </div>
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
-                      {classes?.map(item => (
-                        <SelectItem key={item.class.id} value={item.class.id} className="rounded-lg font-semibold">
-                          {item.grade.name}
-                          {' '}
-                          {item.class.section}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
+                <Select
+                  value={selectedClassId}
+                  onValueChange={setSelectedClassId}
+                  disabled={!effectiveYearId}
+                >
+                  <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
+                    <div className="flex items-center gap-2">
+                      <LayoutGrid className="size-3.5 text-muted-foreground" />
+                      <SelectValue placeholder={t.classes.select()} />
+                    </div>
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
+                    {classes?.map(item => (
+                      <SelectItem key={item.class.id} value={item.class.id} className="rounded-lg font-semibold">
+                        {item.grade.name}
+                        {' '}
+                        {item.class.section}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
           </div>
         </div>
 
@@ -199,10 +305,23 @@ function ReportCardsPage() {
                 className="h-11 border-border/40 bg-background/40 pl-9 transition-all focus:bg-background shadow-none rounded-xl"
               />
             </div>
-            <Button variant="outline" className="h-11 px-6 border-border/40 bg-background/40 hover:bg-background rounded-xl font-bold uppercase tracking-widest text-[10px]">
-              <Filter className="mr-2 h-4 w-4" />
-              {t.common.filters()}
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                className="h-11 px-6 border-border/40 bg-background/40 hover:bg-background rounded-xl font-bold uppercase tracking-widest text-[10px]"
+              >
+                <Filter className="mr-2 h-4 w-4" />
+                {t.common.filters()}
+              </Button>
+              <Button
+                variant="default"
+                className="h-11 px-6 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl font-bold uppercase tracking-widest text-[10px]"
+                onClick={() => setIsGenerationDialogOpen(true)}
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                {t.reportCards.generate()}
+              </Button>
+            </div>
           </div>
         )}
       </motion.div>
@@ -215,23 +334,35 @@ function ReportCardsPage() {
       >
         {canShowReportCards
           ? (
-              <ReportCardList
-                reportCards={[]}
-                isLoading={false}
-              />
-            )
+            <ReportCardList
+              reportCards={mappedReportCards}
+              isLoading={reportCardsLoading}
+            />
+          )
           : (
-              <Card className="rounded-3xl border border-dashed border-border/60 bg-card/20 backdrop-blur-sm">
-                <CardContent className="flex flex-col items-center justify-center py-20 text-center">
-                  <div className="p-6 rounded-full bg-background/50 mb-6 shadow-inner">
-                    <GraduationCap className="size-16 text-muted-foreground/20" />
-                  </div>
-                  <h3 className="text-xl font-bold text-muted-foreground mb-2">{t.reportCards.selectFiltersPrompt()}</h3>
-                  <p className="text-sm text-muted-foreground max-w-xs">{t.academic.grades.statistics.description()}</p>
-                </CardContent>
-              </Card>
-            )}
+            <Card className="rounded-3xl border border-dashed border-border/60 bg-card/20 backdrop-blur-sm">
+              <CardContent className="flex flex-col items-center justify-center py-20 text-center">
+                <div className="p-6 rounded-full bg-background/50 mb-6 shadow-inner">
+                  <GraduationCap className="size-16 text-muted-foreground/20" />
+                </div>
+                <h3 className="text-xl font-bold text-muted-foreground mb-2">{t.reportCards.selectFiltersPrompt()}</h3>
+                <p className="text-sm text-muted-foreground max-w-xs">{t.academic.grades.statistics.description()}</p>
+              </CardContent>
+            </Card>
+          )}
       </motion.div>
+
+      <BulkGenerationDialog
+        open={isGenerationDialogOpen}
+        onOpenChange={setIsGenerationDialogOpen}
+        students={mappedStudents}
+        className={currentClass ? `${currentClass.grade.name} ${currentClass.class.section}` : ''}
+        termName={currentTerm?.template.name || ''}
+        onGenerate={async (ids) => {
+          const res = await generateMutation.mutateAsync(ids)
+          return res.data
+        }}
+      />
     </div>
   )
 }

@@ -113,6 +113,7 @@ export const fr: TypedLocale = {
     spaces: 'Espaces',
     classrooms: 'Salles de classe',
     schoolYears: 'Années Scolaires',
+    reportCardTemplates: 'Modèles de bulletins',
 
   },
   sidebar: {
@@ -1734,6 +1735,18 @@ export const fr: TypedLocale = {
     notifyOnAbsenceDescription: 'Envoyer une notification aux parents quand l\'élève est absent',
     notifyOnLate: 'Notifier en cas de retard',
     notifyOnLateDescription: 'Envoyer une notification aux parents quand l\'élève est en retard',
+    reportCards: {
+      title: 'Modèles de bulletins',
+      description: 'Gérer les modèles de bulletins scolaires',
+      createTitle: 'Créer un modèle',
+      createDescription: 'Créer un nouveau modèle de bulletin',
+      templateName: 'Nom du modèle',
+      templateNamePlaceholder: 'Ex: Modèle Standard',
+      isDefault: 'Définir comme défaut',
+      setAsDefault: 'Définir comme modèle par défaut',
+      deleteTitle: 'Supprimer le modèle',
+      deleteDescription: 'Êtes-vous sûr de vouloir supprimer ce modèle ? Cette action est irréversible.',
+    },
   },
   coefficients: {
     title: 'Gestion des coefficients',

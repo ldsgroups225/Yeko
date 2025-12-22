@@ -593,6 +593,10 @@ type RootTranslation = {
 		 * A​n​n​é​e​s​ ​S​c​o​l​a​i​r​e​s
 		 */
 		schoolYears: string
+		/**
+		 * M​o​d​è​l​e​s​ ​d​e​ ​b​u​l​l​e​t​i​n​s
+		 */
+		reportCardTemplates: string
 	}
 	sidebar: {
 		/**
@@ -6831,6 +6835,48 @@ type RootTranslation = {
 			 */
 			deleteConfirmDescription: string
 		}
+		reportCards: {
+			/**
+			 * M​o​d​è​l​e​s​ ​d​e​ ​b​u​l​l​e​t​i​n​s
+			 */
+			title: string
+			/**
+			 * G​é​r​e​r​ ​l​e​s​ ​m​o​d​è​l​e​s​ ​d​e​ ​b​u​l​l​e​t​i​n​s
+			 */
+			description: string
+			/**
+			 * C​r​é​e​r​ ​u​n​ ​m​o​d​è​l​e
+			 */
+			createTitle: string
+			/**
+			 * C​r​é​e​r​ ​u​n​ ​n​o​u​v​e​a​u​ ​m​o​d​è​l​e​ ​d​e​ ​b​u​l​l​e​t​i​n
+			 */
+			createDescription: string
+			/**
+			 * N​o​m​ ​d​u​ ​m​o​d​è​l​e
+			 */
+			templateName: string
+			/**
+			 * e​x​:​ ​M​o​d​è​l​e​ ​S​t​a​n​d​a​r​d
+			 */
+			templateNamePlaceholder: string
+			/**
+			 * D​é​f​i​n​i​r​ ​p​a​r​ ​d​é​f​a​u​t
+			 */
+			isDefault: string
+			/**
+			 * D​é​f​i​n​i​r​ ​c​o​m​m​e​ ​m​o​d​è​l​e​ ​p​a​r​ ​d​é​f​a​u​t
+			 */
+			setAsDefault: string
+			/**
+			 * S​u​p​p​r​i​m​e​r​ ​l​e​ ​m​o​d​è​l​e
+			 */
+			deleteTitle: string
+			/**
+			 * Ê​t​e​s​-​v​o​u​s​ ​s​û​r​ ​d​e​ ​v​o​u​l​o​i​r​ ​s​u​p​p​r​i​m​e​r​ ​c​e​ ​m​o​d​è​l​e​ ​?​ ​C​e​t​t​e​ ​a​c​t​i​o​n​ ​e​s​t​ ​i​r​r​é​v​e​r​s​i​b​l​e​.
+			 */
+			deleteDescription: string
+		}
 		/**
 		 * C​o​n​f​i​g​u​r​e​r​ ​l​e​s​ ​p​a​r​a​m​è​t​r​e​s​ ​d​e​ ​p​r​é​s​e​n​c​e​ ​e​t​ ​d​e​ ​n​o​t​i​f​i​c​a​t​i​o​n
 		 */
@@ -8060,6 +8106,10 @@ export type TranslationFunctions = {
 		 * Années Scolaires
 		 */
 		schoolYears: () => LocalizedString
+		/**
+		 * Modèles de bulletins
+		 */
+		reportCardTemplates: () => LocalizedString
 	}
 	sidebar: {
 		/**
@@ -14227,6 +14277,48 @@ export type TranslationFunctions = {
 			 * Êtes-vous sûr de vouloir supprimer cette année scolaire ? Cette action supprimera également toutes les classes, inscriptions et données associées. Cette action est irréversible.
 			 */
 			deleteConfirmDescription: () => LocalizedString
+		}
+		reportCards: {
+			/**
+			 * Modèles de bulletins
+			 */
+			title: () => LocalizedString
+			/**
+			 * Gérer les modèles de bulletins
+			 */
+			description: () => LocalizedString
+			/**
+			 * Créer un modèle
+			 */
+			createTitle: () => LocalizedString
+			/**
+			 * Créer un nouveau modèle de bulletin
+			 */
+			createDescription: () => LocalizedString
+			/**
+			 * Nom du modèle
+			 */
+			templateName: () => LocalizedString
+			/**
+			 * ex: Modèle Standard
+			 */
+			templateNamePlaceholder: () => LocalizedString
+			/**
+			 * Définir par défaut
+			 */
+			isDefault: () => LocalizedString
+			/**
+			 * Définir comme modèle par défaut
+			 */
+			setAsDefault: () => LocalizedString
+			/**
+			 * Supprimer le modèle
+			 */
+			deleteTitle: () => LocalizedString
+			/**
+			 * Êtes-vous sûr de vouloir supprimer ce modèle ? Cette action est irréversible.
+			 */
+			deleteDescription: () => LocalizedString
 		}
 		/**
 		 * Configurer les paramètres de présence et de notification

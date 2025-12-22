@@ -1,7 +1,7 @@
 import { getUserSchoolsByAuthUserId } from '@repo/data-ops/queries/school-admin/users'
 import { createServerFn } from '@tanstack/react-start'
 import { getAuthContext } from '../middleware/auth'
-import { getSchoolContext } from '../middleware/school-context'
+import { retrieveSchoolContext } from '../middleware/school-context-logic'
 
 /**
  * Get all schools accessible by the current user
@@ -26,7 +26,7 @@ export const getUserSchools = createServerFn().handler(async () => {
  * Get current school context
  */
 export const getCurrentSchoolContext = createServerFn().handler(async () => {
-  return await getSchoolContext()
+  return await retrieveSchoolContext()
 })
 
 /**
