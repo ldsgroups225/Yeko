@@ -1469,6 +1469,11 @@ const fr = {
         saved: 'Enregistré',
         error: 'Erreur d\'enregistrement',
       },
+      assignment: {
+        quickAssign: 'Assigner rapidement un enseignant',
+        assigning: 'Assignation...',
+        success: 'Enseignant assigné avec succès',
+      },
     },
     coefficients: {
       title: 'Gestion des Coefficients',
@@ -1921,6 +1926,11 @@ const fr = {
       delete: 'Supprimer',
       deleting: 'Suppression...',
       deleteTitle: 'Confirmation de suppression',
+    },
+    updateAssignment: {
+      title: 'Changer l\'enseignant ?',
+      description: 'Voulez-vous assigner {teacherName} à la matière {subjectName} ?',
+      confirm: 'Confirmer l\'assignation',
     },
   },
   buttons: {

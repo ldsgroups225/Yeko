@@ -1469,6 +1469,11 @@ const en: Translation = {
         saved: 'Saved',
         error: 'Save error',
       },
+      assignment: {
+        quickAssign: 'Quickly assign a teacher',
+        assigning: 'Assigning...',
+        success: 'Teacher assigned successfully',
+      },
     },
     coefficients: {
       title: 'Coefficient Management',
@@ -1880,6 +1885,11 @@ const en: Translation = {
       delete: 'Delete',
       deleting: 'Deleting...',
       deleteTitle: 'Delete Confirmation',
+    },
+    updateAssignment: {
+      title: 'Change Teacher?',
+      description: 'Do you want to assign {teacherName} to {subjectName}?',
+      confirm: 'Confirm Assignment',
     },
   },
   empty: {

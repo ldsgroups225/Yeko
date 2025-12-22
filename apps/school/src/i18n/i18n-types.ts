@@ -5420,6 +5420,20 @@ type RootTranslation = {
 				 */
 				error: string
 			}
+			assignment: {
+				/**
+				 * A​s​s​i​g​n​e​r​ ​r​a​p​i​d​e​m​e​n​t​ ​u​n​ ​e​n​s​e​i​g​n​a​n​t
+				 */
+				quickAssign: string
+				/**
+				 * A​s​s​i​g​n​a​t​i​o​n​.​.​.
+				 */
+				assigning: string
+				/**
+				 * E​n​s​e​i​g​n​a​n​t​ ​a​s​s​i​g​n​é​ ​a​v​e​c​ ​s​u​c​c​è​s
+				 */
+				success: string
+			}
 		}
 		coefficients: {
 			/**
@@ -7019,6 +7033,22 @@ type RootTranslation = {
 			 * C​o​n​f​i​r​m​a​t​i​o​n​ ​d​e​ ​s​u​p​p​r​e​s​s​i​o​n
 			 */
 			deleteTitle: string
+		}
+		updateAssignment: {
+			/**
+			 * C​h​a​n​g​e​r​ ​l​'​e​n​s​e​i​g​n​a​n​t​ ​?
+			 */
+			title: string
+			/**
+			 * V​o​u​l​e​z​-​v​o​u​s​ ​a​s​s​i​g​n​e​r​ ​{​t​e​a​c​h​e​r​N​a​m​e​}​ ​à​ ​l​a​ ​m​a​t​i​è​r​e​ ​{​s​u​b​j​e​c​t​N​a​m​e​}​ ​?
+			 * @param {unknown} subjectName
+			 * @param {unknown} teacherName
+			 */
+			description: RequiredParams<'subjectName' | 'teacherName'>
+			/**
+			 * C​o​n​f​i​r​m​e​r​ ​l​'​a​s​s​i​g​n​a​t​i​o​n
+			 */
+			confirm: string
 		}
 	}
 	buttons: {
@@ -12734,6 +12764,20 @@ export type TranslationFunctions = {
 				 */
 				error: () => LocalizedString
 			}
+			assignment: {
+				/**
+				 * Assigner rapidement un enseignant
+				 */
+				quickAssign: () => LocalizedString
+				/**
+				 * Assignation...
+				 */
+				assigning: () => LocalizedString
+				/**
+				 * Enseignant assigné avec succès
+				 */
+				success: () => LocalizedString
+			}
 		}
 		coefficients: {
 			/**
@@ -14320,6 +14364,20 @@ export type TranslationFunctions = {
 			 * Confirmation de suppression
 			 */
 			deleteTitle: () => LocalizedString
+		}
+		updateAssignment: {
+			/**
+			 * Changer l'enseignant ?
+			 */
+			title: () => LocalizedString
+			/**
+			 * Voulez-vous assigner {teacherName} à la matière {subjectName} ?
+			 */
+			description: (arg: { subjectName: unknown, teacherName: unknown }) => LocalizedString
+			/**
+			 * Confirmer l'assignation
+			 */
+			confirm: () => LocalizedString
 		}
 	}
 	buttons: {

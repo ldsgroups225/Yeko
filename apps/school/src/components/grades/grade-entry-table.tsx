@@ -1,11 +1,20 @@
 import type { GradeStatus, GradeType } from '@/schemas/grade'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { AlertTriangle, Cloud, CloudOff, Hash, Loader2, Save, Send, User } from 'lucide-react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { AlertTriangle, Cloud, CloudOff, Hash, Loader2, Save, Send, User, UserPlus } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
+import { ConfirmationDialog } from '@/components/ui/confirmation-dialog'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import {
   Table,
   TableBody,
@@ -15,8 +24,14 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { useTranslations } from '@/i18n'
+import {
+  classSubjectsKeys,
+  classSubjectsOptions,
+} from '@/lib/queries/class-subjects'
 import { gradesKeys } from '@/lib/queries/grades'
+import { teacherOptions } from '@/lib/queries/teachers'
 import { cn } from '@/lib/utils'
+import { assignTeacherToClassSubject } from '@/school/functions/class-subjects'
 import {
   createBulkGrades,
   submitGradesForValidation,
@@ -71,10 +86,15 @@ export function GradeEntryTable({
 }: GradeEntryTableProps) {
   const t = useTranslations()
   const queryClient = useQueryClient()
+  const isMissingTeacher = !teacherId
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set())
   const [pendingChanges, setPendingChanges] = useState<Map<string, number>>(() => new Map())
   const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
   const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [pendingAssignment, setPendingAssignment] = useState<{
+    teacherId: string
+    teacherName: string
+  } | null>(null)
   const AUTO_SAVE_DELAY = 30000
 
   const gradesByStudent = useMemo(() => {
@@ -124,6 +144,33 @@ export function GradeEntryTable({
       setAutoSaveStatus('error')
     },
   })
+
+  // Quick Teacher Assignment
+  const { data: teachersData } = useQuery({
+    ...teacherOptions.list({}, { page: 1, limit: 100 }),
+    enabled: isMissingTeacher,
+  })
+
+  const { data: classSubjectsData } = useQuery(
+    classSubjectsOptions.list({ classId }),
+  )
+  const currentSubject = classSubjectsData?.find(cs => cs.subject.id === subjectId)
+  const subjectName = currentSubject?.subject.name || ''
+
+  const assignMutation = useMutation({
+    mutationFn: (teacherId: string) =>
+      assignTeacherToClassSubject({ data: { classId, subjectId, teacherId } }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: classSubjectsKeys.list({ classId }) })
+      toast.success(t.academic.grades.assignment.success())
+      setPendingAssignment(null)
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : t.common.error())
+    },
+  })
+
+  const teachers = teachersData?.teachers || []
 
   const submitMutation = useMutation({
     mutationFn: (params: { gradeIds: string[] }) => submitGradesForValidation({ data: params }),
@@ -239,7 +286,6 @@ export function GradeEntryTable({
   const someDraftsSelected = draftGrades.some(g => selectedIds.has(g.id))
 
   const isLoading = updateMutation.isPending || createBulkMutation.isPending || submitMutation.isPending
-  const isMissingTeacher = !teacherId
 
   return (
     <div className="space-y-6">
@@ -249,14 +295,50 @@ export function GradeEntryTable({
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="p-4 rounded-2xl bg-destructive/10 border border-destructive/20 flex items-center gap-3 text-destructive"
+          className="p-4 rounded-2xl bg-destructive/10 border border-destructive/20 flex items-center flex-wrap gap-4 text-destructive"
         >
-          <AlertTriangle className="size-5 shrink-0" />
-          <div className="flex-1">
-            <p className="text-sm font-bold">{t.academic.grades.errors.noTeacherTitle() || 'Aucun enseignant assigné'}</p>
-            <p className="text-xs opacity-80 font-medium">
-              {t.academic.grades.errors.noTeacherDescription() || 'Vous ne pouvez pas enregistrer de notes car aucun enseignant n\'est assigné à cette matière dans cette classe.'}
-            </p>
+          <div className="flex items-center gap-3 flex-1 min-w-[200px]">
+            <AlertTriangle className="size-5 shrink-0" />
+            <div className="flex-1">
+              <p className="text-sm font-bold">{t.academic.grades.errors.noTeacherTitle()}</p>
+              <p className="text-xs opacity-80 font-medium">
+                {t.academic.grades.errors.noTeacherDescription()}
+              </p>
+            </div>
+          </div>
+
+          <div className="shrink-0">
+            <Select
+              disabled={assignMutation.isPending}
+              onValueChange={(val) => {
+                const teacher = teachers.find(t => t.id === val)
+                if (teacher) {
+                  setPendingAssignment({
+                    teacherId: val,
+                    teacherName: teacher.user.name,
+                  })
+                }
+              }}
+            >
+              <SelectTrigger className="bg-destructive/10 border-destructive/20 h-9 min-w-[200px] text-xs font-bold ring-offset-background focus:ring-destructive/30">
+                <div className="flex items-center gap-2">
+                  {assignMutation.isPending ? <Loader2 className="size-3 animate-spin" /> : <UserPlus className="size-3" />}
+                  <SelectValue placeholder={t.academic.grades.assignment.quickAssign()} />
+                </div>
+              </SelectTrigger>
+              <SelectContent className="backdrop-blur-xl bg-card/95 border-border/40">
+                {teachers.map(teacher => (
+                  <SelectItem key={teacher.id} value={teacher.id} className="text-xs font-medium focus:bg-primary/5 focus:text-primary">
+                    {teacher.user.name}
+                  </SelectItem>
+                ))}
+                {teachers.length === 0 && (
+                  <div className="p-2 text-center text-xs text-muted-foreground italic">
+                    {t.common.noResults()}
+                  </div>
+                )}
+              </SelectContent>
+            </Select>
           </div>
         </motion.div>
       )}
@@ -478,6 +560,23 @@ export function GradeEntryTable({
           </Button>
         </div>
       </motion.div>
+
+      <ConfirmationDialog
+        open={!!pendingAssignment}
+        onOpenChange={open => !open && setPendingAssignment(null)}
+        title={t.dialogs.updateAssignment.title()}
+        description={t.dialogs.updateAssignment.description({
+          teacherName: pendingAssignment?.teacherName || '',
+          subjectName,
+        })}
+        confirmLabel={t.dialogs.updateAssignment.confirm()}
+        onConfirm={() => {
+          if (pendingAssignment) {
+            assignMutation.mutate(pendingAssignment.teacherId)
+          }
+        }}
+        isLoading={assignMutation.isPending}
+      />
     </div>
   )
 }
