@@ -96,17 +96,17 @@ function ClassDetailPage() {
             <h1 className="text-3xl font-bold tracking-tight">{className}</h1>
             {classroom
               ? (
-                <Link
-                  to="/spaces/classrooms/$classroomId"
-                  params={{ classroomId: classroom.id }}
-                  className="text-muted-foreground hover:underline"
-                >
-                  {classroom.name}
-                </Link>
-              )
+                  <Link
+                    to="/spaces/classrooms/$classroomId"
+                    params={{ classroomId: classroom.id }}
+                    className="text-muted-foreground hover:underline"
+                  >
+                    {classroom.name}
+                  </Link>
+                )
               : (
-                <p className="text-muted-foreground">{t.classes.noClassroom()}</p>
-              )}
+                  <p className="text-muted-foreground">{t.classes.noClassroom()}</p>
+                )}
           </div>
         </div>
         <div className="flex gap-2">
@@ -147,13 +147,15 @@ function ClassDetailPage() {
                   </span>
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground italic">
-                  {t.classes.boys()}:
+                  {t.classes.boys()}
+                  :
                   {' '}
                   <span className="font-bold text-foreground">{boysCount}</span>
                   {' '}
                   /
                   {' '}
-                  {t.classes.girls()}:
+                  {t.classes.girls()}
+                  :
                   {' '}
                   <span className="font-bold text-foreground">{girlsCount}</span>
                 </p>
@@ -178,11 +180,11 @@ function ClassDetailPage() {
               <CardContent>
                 {classroom
                   ? (
-                    <span className="text-lg font-medium">{classroom.name}</span>
-                  )
+                      <span className="text-lg font-medium">{classroom.name}</span>
+                    )
                   : (
-                    <span className="text-lg font-medium text-muted-foreground">-</span>
-                  )}
+                      <span className="text-lg font-medium text-muted-foreground">-</span>
+                    )}
               </CardContent>
             </Card>
           </div>

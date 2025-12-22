@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/table'
 import { useTranslations } from '@/i18n'
 import { enrollmentsOptions } from '@/lib/queries/enrollments'
+import { generateUUID } from '@/utils/generateUUID'
 
 interface ClassStudentListProps {
   classId: string
@@ -40,8 +41,8 @@ export function ClassStudentList({ classId }: ClassStudentListProps) {
   if (isLoading) {
     return (
       <div className="space-y-4">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="flex items-center gap-4 p-4 border rounded-xl border-border/40">
+        {Array.from({ length: 5 }).map(() => (
+          <div key={generateUUID()} className="flex items-center gap-4 p-4 border rounded-xl border-border/40">
             <Skeleton className="size-10 rounded-full" />
             <div className="space-y-2 flex-1">
               <Skeleton className="h-4 w-1/4" />
