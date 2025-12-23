@@ -1,7 +1,7 @@
 import type { TimetableSessionData } from './timetable-session-card'
 
 import { motion } from 'motion/react'
-import { useMemo } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 
 import { Skeleton } from '@/components/ui/skeleton'
@@ -9,7 +9,6 @@ import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { dayOfWeekLabels, defaultTimeSlots } from '@/schemas/timetable'
 
-import { generateUUID } from '@/utils/generateUUID'
 import { TimetableSessionCard } from './timetable-session-card'
 
 const defaultDaysToShow = [1, 2, 3, 4, 5, 6]
@@ -26,14 +25,15 @@ interface TimetableGridProps {
 
 function GridSkeleton() {
   return (
-    <div className="space-y-3">
-      {Array.from({ length: 6 }).map(() => (
-        <div key={generateUUID()} className="flex gap-2">
-          <Skeleton className="h-20 w-20 shrink-0 rounded-2xl" />
-          {Array.from({ length: 6 }).map(() => (
-            <Skeleton key={generateUUID()} className="h-20 flex-1 rounded-2xl" />
+    <div className="grid grid-cols-[80px_repeat(6,1fr)] gap-2">
+      <div className="h-12 col-span-7 rounded-xl bg-muted/20" />
+      {Array.from({ length: 8 }).map((_, i) => (
+        <Fragment key={i}>
+          <Skeleton className="h-[96px] w-full rounded-xl" />
+          {Array.from({ length: 6 }).map((_, j) => (
+            <Skeleton key={j} className="h-[96px] w-full rounded-xl" />
           ))}
-        </div>
+        </Fragment>
       ))}
     </div>
   )
@@ -50,18 +50,78 @@ export function TimetableGrid({
 }: TimetableGridProps) {
   const t = useTranslations()
 
-  // Group sessions by day and time slot
-  const sessionsBySlot = useMemo(() => {
-    const map = new Map<string, TimetableSessionData[]>()
+  // Helper to get row index for a time string
+  const getRowIndex = (time: string, isEnd = false) => {
+    const slotIndex = timeSlots.findIndex(s => s.start === time)
+    if (slotIndex !== -1)
+      return slotIndex + 2 // +1 for header, +1 for 1-based indexing
 
-    for (const session of sessions) {
-      const key = `${session.dayOfWeek}-${session.startTime}`
-      const existing = map.get(key) ?? []
-      map.set(key, [...existing, session])
+    // If it's an end time and matches the end of the last slot
+    const lastSlot = timeSlots[timeSlots.length - 1]
+    if (isEnd && lastSlot && lastSlot.end === time)
+      return timeSlots.length + 2
+
+    // If it's an end time, find the slot where it ends
+    if (isEnd) {
+      const endSlotIndex = timeSlots.findIndex(s => s.end === time)
+      if (endSlotIndex !== -1)
+        return endSlotIndex + 2
     }
 
-    return map
-  }, [sessions])
+    return -1
+  }
+
+  // Group and position sessions
+  const positionedSessions = useMemo(() => {
+    return sessions.map((session) => {
+      const startRow = getRowIndex(session.startTime)
+      const endRow = getRowIndex(session.endTime, true)
+      const colIndex = daysToShow.indexOf(session.dayOfWeek) + 2 // +1 for time col, +1 for 1-based
+
+      return {
+        ...session,
+        gridRow: startRow !== -1 && endRow !== -1 ? `${startRow} / ${endRow}` : undefined,
+        gridColumn: colIndex > 1 ? colIndex : undefined,
+      }
+    }).filter(s => s.gridRow && s.gridColumn)
+  }, [sessions, timeSlots, daysToShow])
+
+  // Real-time progress indicator
+  const [now, setNow] = useState(new Date())
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 60000)
+    return () => clearInterval(timer)
+  }, [])
+
+  const timePosition = useMemo(() => {
+    const hours = now.getHours()
+    const minutes = now.getMinutes()
+    const timeInMins = hours * 60 + minutes
+
+    for (let i = 0; i < timeSlots.length; i++) {
+      const slot = timeSlots[i]
+      if (!slot)
+        continue
+
+      const [startStr = '00:00', endStr = '00:00'] = [slot.start, slot.end]
+      const [startH = 0, startM = 0] = startStr.split(':').map(Number)
+      const [endH = 0, endM = 0] = endStr.split(':').map(Number)
+
+      const startMin = startH * 60 + startM
+      const endMin = endH * 60 + endM
+
+      if (timeInMins >= startMin && timeInMins < endMin) {
+        const progress = (timeInMins - startMin) / (endMin - startMin)
+        return {
+          row: i + 2,
+          offset: progress * 96,
+        }
+      }
+    }
+    return null
+  }, [now, timeSlots])
+
+  const currentDay = now.getDay() === 0 ? 7 : now.getDay() // Convert Sun=0 to 7
 
   if (isLoading) {
     return <GridSkeleton />
@@ -81,97 +141,101 @@ export function TimetableGrid({
         transition={{ duration: 0.5 }}
         className="min-w-[800px]"
       >
-        {/* Header row with days */}
-        <div className="grid grid-cols-[80px_repeat(6,1fr)] gap-2 mb-2 sticky top-0 z-10">
-          <div className="h-12 bg-background/80 backdrop-blur-md sticky left-0 z-20" />
-          {' '}
-          {/* Empty corner cell */}
-          {daysToShow.map(day => (
+        <div
+          className="grid gap-1 relative"
+          style={{
+            gridTemplateColumns: `80px repeat(${daysToShow.length}, 1fr)`,
+            gridTemplateRows: `48px repeat(${timeSlots.length}, 96px)`,
+          }}
+        >
+          {/* Header row with days */}
+          <div className="h-12 bg-background/80 backdrop-blur-md sticky top-0 z-20 col-start-1 row-start-1" />
+          {daysToShow.map((day, idx) => (
             <div
               key={day}
-              className="h-12 flex items-center justify-center bg-card/50 backdrop-blur-md border border-border/40 rounded-xl font-black text-xs uppercase tracking-widest text-muted-foreground shadow-sm"
+              className={cn(
+                'h-12 flex items-center justify-center bg-card/50 backdrop-blur-md border border-border/40 rounded-xl font-black text-xs uppercase tracking-widest text-muted-foreground shadow-sm sticky top-0 z-20',
+                day === currentDay && 'text-primary ring-1 ring-primary/20 bg-primary/5',
+              )}
+              style={{ gridColumn: idx + 2, gridRow: 1 }}
             >
               {dayOfWeekLabels[day]}
             </div>
           ))}
-        </div>
 
-        {/* Time slots rows */}
-        <div className="space-y-2">
-          {timeSlots.map((slot, index) => (
-            <motion.div
-              key={slot.start}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-              className="grid grid-cols-[80px_repeat(6,1fr)] gap-2"
+          {/* Time column */}
+          {timeSlots.map((slot, idx) => (
+            <div
+              key={`time-${slot.start}`}
+              className="flex items-start justify-center text-[10px] font-bold text-muted-foreground/60 bg-muted/20 rounded-xl border border-border/10 h-full sticky left-0 z-10"
+              style={{ gridColumn: 1, gridRow: idx + 2 }}
             >
-              {/* Time label */}
-              <div className="h-24 flex items-center justify-center text-[10px] font-bold text-muted-foreground/60 bg-muted/20 rounded-xl border border-border/10">
-                {slot.start}
-              </div>
-
-              {/* Day cells */}
-              {daysToShow.map((day) => {
-                const key = `${day}-${slot.start}`
-                const slotSessions = sessionsBySlot.get(key) ?? []
-                const isClickable = !readOnly && onSlotClick && slotSessions.length === 0
-
-                return (
-                  // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-                  <div
-                    key={key}
-                    role={isClickable ? 'button' : undefined}
-                    // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-                    tabIndex={isClickable ? 0 : undefined}
-                    onClick={isClickable ? () => handleSlotClick(day, slot) : undefined}
-                    onKeyDown={
-                      isClickable
-                        ? (e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              e.preventDefault()
-                              handleSlotClick(day, slot)
-                            }
-                          }
-                        : undefined
-                    }
-                    className={cn(
-                      'h-24 rounded-2xl border border-dashed border-border/30 p-1.5 transition-all duration-200',
-                      !readOnly && slotSessions.length === 0 && 'hover:bg-primary/5 hover:border-primary/30 cursor-pointer group',
-                      slotSessions.length > 0 && 'border-none p-0 bg-transparent',
-                    )}
-                  >
-                    {slotSessions.length > 0
-                      ? (
-                          <div className="h-full space-y-1.5 overflow-hidden">
-                            {slotSessions.map(session => (
-                              <TimetableSessionCard
-                                key={session.id}
-                                session={session}
-                                onClick={onSessionClick}
-                                compact={slotSessions.length > 1}
-                                className="h-full"
-                              />
-                            ))}
-                          </div>
-                        )
-                      : (
-                          !readOnly && (
-                            <div className="h-full flex items-center justify-center">
-                              <div
-                                className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all scale-90 group-hover:scale-100"
-                                aria-label={t.timetables.addSession()}
-                              >
-                                <span className="text-lg font-light leading-none">+</span>
-                              </div>
-                            </div>
-                          )
-                        )}
-                  </div>
-                )
-              })}
-            </motion.div>
+              {slot.start}
+            </div>
           ))}
+
+          {/* Background cells for interactions */}
+          {timeSlots.map((slot, rowIdx) => (
+            daysToShow.map((day, colIdx) => (
+              <div
+                key={`cell-${day}-${slot.start}`}
+                role={!readOnly ? 'button' : undefined}
+                tabIndex={!readOnly ? 0 : undefined}
+                onClick={() => handleSlotClick(day, slot)}
+                className={cn(
+                  'rounded-2xl border border-dashed border-border/10 transition-all duration-200',
+                  !readOnly && 'hover:bg-primary/5 hover:border-primary/20 cursor-pointer group',
+                  day === currentDay && 'bg-primary/5 border-primary/10 border-solid',
+                )}
+                style={{ gridColumn: colIdx + 2, gridRow: rowIdx + 2 }}
+              >
+                {!readOnly && (
+                  <div className="h-full flex items-center justify-center">
+                    <div
+                      className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all scale-90 group-hover:scale-100"
+                      aria-label={t.timetables.addSession()}
+                    >
+                      <span className="text-lg font-light leading-none">+</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))
+          ))}
+
+          {/* Session Cards */}
+          {positionedSessions.map(session => (
+            <div
+              key={session.id}
+              className="p-0.5 z-10"
+              style={{
+                gridRow: session.gridRow,
+                gridColumn: session.gridColumn,
+              }}
+            >
+              <TimetableSessionCard
+                session={session}
+                onClick={onSessionClick}
+                className="h-full"
+              />
+            </div>
+          ))}
+
+          {/* Current Time Indicator */}
+          {timePosition && (
+            <div
+              className="z-30 pointer-events-none flex items-center"
+              style={{
+                gridColumn: '2 / -1',
+                gridRow: timePosition.row,
+                transform: `translateY(${timePosition.offset}px)`,
+              }}
+            >
+              <div className="w-full h-0.5 bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.4)] relative">
+                <div className="absolute -left-1 -top-1 w-2.5 h-2.5 rounded-full bg-red-500 shadow-sm" />
+              </div>
+            </div>
+          )}
         </div>
       </motion.div>
       <ScrollBar orientation="horizontal" />

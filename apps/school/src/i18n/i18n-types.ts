@@ -5906,6 +5906,150 @@ type RootTranslation = {
 		 * L​i​g​n​e
 		 */
 		row: string
+		/**
+		 * T​é​l​é​c​h​a​r​g​e​r​ ​l​e​ ​m​o​d​è​l​e
+		 */
+		downloadTemplate: string
+		/**
+		 * T​é​l​é​c​h​a​r​g​e​z​ ​l​e​ ​m​o​d​è​l​e​,​ ​r​e​m​p​l​i​s​s​e​z​-​l​e​ ​e​t​ ​u​p​l​o​a​d​e​z​-​l​e​ ​i​c​i​.
+		 */
+		downloadTemplateDescription: string
+		/**
+		 * A​u​c​u​n​e​ ​d​o​n​n​é​e​ ​à​ ​e​x​p​o​r​t​e​r
+		 */
+		noDataToExport: string
+		/**
+		 * I​m​p​o​r​t​e​r​ ​u​n​ ​e​m​p​l​o​i​ ​d​u​ ​t​e​m​p​s
+		 */
+		importTitle: string
+		columns: {
+			/**
+			 * C​l​a​s​s​e
+			 */
+			'class': string
+			/**
+			 * M​a​t​i​è​r​e
+			 */
+			subject: string
+			/**
+			 * P​r​o​f
+			 */
+			teacher: string
+			/**
+			 * J​o​u​r
+			 */
+			day: string
+			/**
+			 * H​o​r​a​i​r​e
+			 */
+			time: string
+			/**
+			 * S​t​a​t​u​t
+			 */
+			status: string
+		}
+		status: {
+			/**
+			 * O​K
+			 */
+			ok: string
+			/**
+			 * E​r​r
+			 */
+			error: string
+			/**
+			 * I​n​t​r​o​u​v​a​b​l​e
+			 */
+			notFound: string
+		}
+		errors: {
+			/**
+			 * C​o​l​o​n​n​e​s​ ​m​a​n​q​u​a​n​t​e​s​.​ ​V​é​r​i​f​i​e​z​ ​l​e​ ​m​o​d​è​l​e​.
+			 */
+			missingColumns: string
+			/**
+			 * E​r​r​e​u​r​ ​d​e​ ​l​e​c​t​u​r​e​ ​d​u​ ​f​i​c​h​i​e​r
+			 */
+			readError: string
+		}
+		preview: {
+			/**
+			 * A​p​e​r​ç​u
+			 */
+			title: string
+			/**
+			 * v​a​l​i​d​e​s
+			 */
+			validLines: string
+			/**
+			 * l​i​g​n​e​s​ ​d​é​t​e​c​t​é​e​s
+			 */
+			totalLines: string
+		}
+		template: {
+			/**
+			 * M​o​d​è​l​e​ ​E​m​p​l​o​i​ ​d​u​ ​T​e​m​p​s
+			 */
+			sheetName: string
+			columns: {
+				/**
+				 * C​l​a​s​s​e
+				 */
+				className: string
+				/**
+				 * M​a​t​i​è​r​e
+				 */
+				subjectName: string
+				/**
+				 * E​n​s​e​i​g​n​a​n​t
+				 */
+				teacherName: string
+				/**
+				 * S​a​l​l​e
+				 */
+				classroomName: string
+				/**
+				 * J​o​u​r
+				 */
+				day: string
+				/**
+				 * D​é​b​u​t
+				 */
+				startTime: string
+				/**
+				 * F​i​n
+				 */
+				endTime: string
+			}
+			example: {
+				/**
+				 * M​a​t​h​é​m​a​t​i​q​u​e​s
+				 */
+				math: string
+				/**
+				 * F​r​a​n​ç​a​i​s
+				 */
+				french: string
+				/**
+				 * L​u​n​d​i
+				 */
+				monday: string
+				/**
+				 * M​a​r​d​i
+				 */
+				tuesday: string
+			}
+		}
+		'export': {
+			/**
+			 * e​m​p​l​o​i​_​d​u​_​t​e​m​p​s
+			 */
+			fileName: string
+			/**
+			 * E​m​p​l​o​i​ ​d​u​ ​t​e​m​p​s
+			 */
+			sheetName: string
+		}
 	}
 	curriculum: {
 		/**
@@ -13362,6 +13506,150 @@ export type TranslationFunctions = {
 		 * Ligne
 		 */
 		row: () => LocalizedString
+		/**
+		 * Télécharger le modèle
+		 */
+		downloadTemplate: () => LocalizedString
+		/**
+		 * Téléchargez le modèle, remplissez-le et uploadez-le ici.
+		 */
+		downloadTemplateDescription: () => LocalizedString
+		/**
+		 * Aucune donnée à exporter
+		 */
+		noDataToExport: () => LocalizedString
+		/**
+		 * Importer un emploi du temps
+		 */
+		importTitle: () => LocalizedString
+		columns: {
+			/**
+			 * Classe
+			 */
+			'class': () => LocalizedString
+			/**
+			 * Matière
+			 */
+			subject: () => LocalizedString
+			/**
+			 * Prof
+			 */
+			teacher: () => LocalizedString
+			/**
+			 * Jour
+			 */
+			day: () => LocalizedString
+			/**
+			 * Horaire
+			 */
+			time: () => LocalizedString
+			/**
+			 * Statut
+			 */
+			status: () => LocalizedString
+		}
+		status: {
+			/**
+			 * OK
+			 */
+			ok: () => LocalizedString
+			/**
+			 * Err
+			 */
+			error: () => LocalizedString
+			/**
+			 * Introuvable
+			 */
+			notFound: () => LocalizedString
+		}
+		errors: {
+			/**
+			 * Colonnes manquantes. Vérifiez le modèle.
+			 */
+			missingColumns: () => LocalizedString
+			/**
+			 * Erreur de lecture du fichier
+			 */
+			readError: () => LocalizedString
+		}
+		preview: {
+			/**
+			 * Aperçu
+			 */
+			title: () => LocalizedString
+			/**
+			 * valides
+			 */
+			validLines: () => LocalizedString
+			/**
+			 * lignes détectées
+			 */
+			totalLines: () => LocalizedString
+		}
+		template: {
+			/**
+			 * Modèle Emploi du Temps
+			 */
+			sheetName: () => LocalizedString
+			columns: {
+				/**
+				 * Classe
+				 */
+				className: () => LocalizedString
+				/**
+				 * Matière
+				 */
+				subjectName: () => LocalizedString
+				/**
+				 * Enseignant
+				 */
+				teacherName: () => LocalizedString
+				/**
+				 * Salle
+				 */
+				classroomName: () => LocalizedString
+				/**
+				 * Jour
+				 */
+				day: () => LocalizedString
+				/**
+				 * Début
+				 */
+				startTime: () => LocalizedString
+				/**
+				 * Fin
+				 */
+				endTime: () => LocalizedString
+			}
+			example: {
+				/**
+				 * Mathématiques
+				 */
+				math: () => LocalizedString
+				/**
+				 * Français
+				 */
+				french: () => LocalizedString
+				/**
+				 * Lundi
+				 */
+				monday: () => LocalizedString
+				/**
+				 * Mardi
+				 */
+				tuesday: () => LocalizedString
+			}
+		}
+		'export': {
+			/**
+			 * emploi_du_temps
+			 */
+			fileName: () => LocalizedString
+			/**
+			 * Emploi du temps
+			 */
+			sheetName: () => LocalizedString
+		}
 	}
 	curriculum: {
 		/**

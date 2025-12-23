@@ -1,8 +1,14 @@
-import { AlertCircle, CheckCircle2, FileSpreadsheet, Loader2, Upload } from 'lucide-react'
-import { useState } from 'react'
+'use client'
+
+import type { ParsedSession } from '@/lib/excel-parser'
+import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
+import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
+import { AlertCircle, CheckCircle2, Download, FileSpreadsheet, Loader2, Upload, X } from 'lucide-react'
+import { useCallback, useState } from 'react'
+import { toast } from 'sonner'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 
-import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog,
   DialogContent,
@@ -11,258 +17,340 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Progress } from '@/components/ui/progress'
+import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
-import { generateUUID } from '@/utils/generateUUID'
-
-interface ImportResult {
-  total: number
-  success: number
-  failed: number
-  conflicts: { index: number, message: string }[]
-}
+import { parseTimetableExcel } from '@/lib/excel-parser'
+import { dayOfWeekLabels } from '@/schemas/timetable'
+import { getClasses } from '@/school/functions/classes'
+import { getClassrooms } from '@/school/functions/classrooms'
+import { getAllSubjects } from '@/school/functions/subjects'
+import { getTeachers } from '@/school/functions/teachers'
+import { importTimetable } from '@/school/functions/timetables'
 
 interface TimetableImportDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onImport: (file: File, replaceExisting: boolean) => Promise<ImportResult>
+  schoolId: string
 }
 
-type ImportState = 'idle' | 'uploading' | 'processing' | 'complete'
+interface ImportResult {
+  success: number
+  failed: number
+  conflicts: any[]
+}
 
-export function TimetableImportDialog({
-  open,
-  onOpenChange,
-  onImport,
-}: TimetableImportDialogProps) {
+export function TimetableImportDialog({ open, onOpenChange, schoolId }: TimetableImportDialogProps) {
   const t = useTranslations()
+  const queryClient = useQueryClient()
+  const { schoolYearId } = useSchoolYearContext()
+
   const [file, setFile] = useState<File | null>(null)
-  const [replaceExisting, setReplaceExisting] = useState(false)
-  const [state, setState] = useState<ImportState>('idle')
-  const [progress, setProgress] = useState(0)
+  const [preview, setPreview] = useState<ParsedSession[]>([])
+  const [allParsed, setAllParsed] = useState<ParsedSession[]>([])
+  const [parseError, setParseError] = useState<string | null>(null)
   const [result, setResult] = useState<ImportResult | null>(null)
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0]
-    if (selectedFile) {
-      setFile(selectedFile)
-    }
-  }
+  // Fetch data for validation/mapping
+  const { data: classesData } = useSuspenseQuery({
+    queryKey: ['classes', schoolYearId],
+    queryFn: () => getClasses({ data: { schoolYearId: schoolYearId || '' } }),
+  })
 
-  const handleImport = async () => {
-    if (!file)
+  const { data: subjectsData } = useSuspenseQuery({
+    queryKey: ['subjects'],
+    queryFn: () => getAllSubjects({ data: {} }),
+  })
+
+  const { data: teachersData } = useSuspenseQuery({
+    queryKey: ['teachers'],
+    queryFn: () => getTeachers({ data: {} }),
+  })
+
+  const { data: classroomsData } = useSuspenseQuery({
+    queryKey: ['classrooms'],
+    queryFn: () => getClassrooms({ data: {} }),
+  })
+
+  // Lookup Maps
+
+  const importMutation = useMutation({
+    mutationFn: (sessions: ParsedSession[]) => {
+      // Filter only valid sessions and map to required format
+      const validSessions = sessions
+        .filter(s => s.classId && s.subjectId && s.teacherId && s.dayOfWeek > 0 && s.startTime && s.endTime)
+        .map(s => ({
+          classId: s.classId!,
+          subjectId: s.subjectId!,
+          teacherId: s.teacherId!,
+          classroomId: s.classroomId,
+          dayOfWeek: s.dayOfWeek,
+          startTime: s.startTime,
+          endTime: s.endTime,
+        }))
+
+      return importTimetable({
+        data: {
+          schoolId,
+          schoolYearId: schoolYearId || '',
+          sessions: validSessions,
+        },
+      })
+    },
+    onSuccess: (res) => {
+      if (res.success && res.data) {
+        setResult(res.data)
+        queryClient.invalidateQueries({ queryKey: ['timetables'] })
+        toast.success(t.common.success())
+      }
+    },
+    onError: (err: Error) => {
+      toast.error(err.message)
+    },
+  })
+
+  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0]
+    if (!selectedFile)
       return
 
-    setState('uploading')
-    setProgress(20)
+    setFile(selectedFile)
+    setParseError(null)
+    setResult(null)
+    setPreview([])
+    setAllParsed([])
 
-    // Simulate upload progress
-    await new Promise(resolve => setTimeout(resolve, 500))
-    setState('processing')
-    setProgress(50)
+    // Prepare context
+    const context = {
+      classes: classesData || [],
+      subjects: subjectsData?.subjects || [],
+      teachers: teachersData?.teachers || [],
+      classrooms: (Array.isArray(classroomsData) ? classroomsData : (classroomsData as any)?.classrooms) || [],
+    }
 
-    try {
-      const importResult = await onImport(file, replaceExisting)
-      setResult(importResult)
-      setProgress(100)
-    }
-    finally {
-      setState('complete')
-    }
+    // Call parser
+    parseTimetableExcel(selectedFile, context).then((res) => {
+      if (res.success && res.parsed) {
+        setAllParsed(res.parsed)
+        setPreview(res.parsed.slice(0, 5))
+      }
+      else {
+        // @ts-expect-error - dynamic key access
+        const errorMsg = res.errorKey ? t.timetables.errors[res.errorKey.split('.').pop()] : t.timetables.errors.readError()
+        setParseError(String(errorMsg))
+      }
+    })
+  }, [classesData, subjectsData, teachersData, classroomsData, t])
+
+  const handleImport = () => {
+    if (allParsed.length === 0)
+      return
+    importMutation.mutate(allParsed)
   }
 
   const handleClose = () => {
-    if (state !== 'uploading' && state !== 'processing') {
-      setState('idle')
-      setFile(null)
-      setProgress(0)
-      setResult(null)
-      setReplaceExisting(false)
-      onOpenChange(false)
-    }
+    setFile(null)
+    setPreview([])
+    setAllParsed([])
+    setParseError(null)
+    setResult(null)
+    onOpenChange(false)
   }
+
+  const downloadTemplate = () => {
+    interface TimetableTemplate {
+      Classe: string
+      Matière: string
+      Enseignant: string
+      Salle: string
+      Jour: string
+      Début: string
+      Fin: string
+    }
+
+    const templateData: TimetableTemplate[] = [
+      {
+        Classe: '6ème A',
+        Matière: t.timetables.template.example.math(),
+        Enseignant: 'M. Koné',
+        Salle: 'Salle 1',
+        Jour: t.timetables.template.example.monday(),
+        Début: '08:00',
+        Fin: '10:00',
+      },
+      {
+        Classe: '6ème A',
+        Matière: t.timetables.template.example.french(),
+        Enseignant: 'Mme Dubois',
+        Salle: 'Salle 2',
+        Jour: t.timetables.template.example.tuesday(),
+        Début: '10:00',
+        Fin: '12:00',
+      },
+    ]
+
+    const schema = ExcelSchemaBuilder.create<TimetableTemplate>()
+      .column('className', { key: t.timetables.template.columns.className() })
+      .column('subjectName', { key: t.timetables.template.columns.subjectName() })
+      .column('teacherName', { key: t.timetables.template.columns.teacherName() })
+      .column('classroomName', { key: t.timetables.template.columns.classroomName() })
+      .column('day', { key: t.timetables.template.columns.day() })
+      .column('startTime', { key: t.timetables.template.columns.startTime() })
+      .column('endTime', { key: t.timetables.template.columns.endTime() })
+      .build()
+
+    const excelFile = ExcelBuilder.create()
+      .sheet(t.timetables.template.sheetName())
+      .addTable({ data: templateData, schema })
+      .build({ output: 'buffer' })
+
+    const blob = new Blob([new Uint8Array(excelFile)], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = 'modele_emploi_du_temps.xlsx'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
+  const countValid = allParsed.filter(s => s.classId && s.subjectId && s.teacherId && s.dayOfWeek > 0).length
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6">
+      <DialogContent className="max-w-4xl backdrop-blur-xl bg-card/95 border-border/40">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-xl font-black uppercase tracking-tight italic">
-            <div className="p-2 rounded-lg bg-primary/10">
-              <FileSpreadsheet className="h-5 w-5 text-primary" />
-            </div>
-            {t.timetables.importTimetable()}
-          </DialogTitle>
-          <DialogDescription className="text-base font-medium text-muted-foreground/60 italic">
-            {t.timetables.importDescription()}
+          <DialogTitle>{t.timetables.importTitle()}</DialogTitle>
+          <DialogDescription>
+            {t.timetables.downloadTemplateDescription()}
           </DialogDescription>
         </DialogHeader>
 
-        {state === 'idle' && (
-          <>
+        {result
+          ? (
+            <div className="space-y-4">
+              <Alert variant={result.failed === 0 ? 'default' : 'destructive'}>
+                {result.failed === 0 ? <CheckCircle2 className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
+                <AlertTitle>{t.timetables.importComplete()}</AlertTitle>
+                <AlertDescription>
+                  {t.timetables.importSummary({ success: result.success, total: result.success + result.failed })}
+                  {result.failed > 0 && ` - ${result.failed} ${t.timetables.status.error()}`}
+                </AlertDescription>
+              </Alert>
+              <DialogFooter><Button onClick={handleClose}>{t.common.close()}</Button></DialogFooter>
+            </div>
+          )
+          : (
             <div className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="file" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">{t.common.selectFile()}</Label>
-                <div className="relative group cursor-pointer">
-                  <Input
-                    id="file"
-                    type="file"
-                    accept=".csv,.xlsx,.xls"
-                    onChange={handleFileChange}
-                    className="cursor-pointer file:cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 h-12 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-medium pt-1.5"
-                  />
-                </div>
-                <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground pl-1 opacity-70">
-                  {t.timetables.supportedFormats()}
-                </p>
+              <div className="flex justify-between">
+                <Button variant="outline" onClick={downloadTemplate} size="sm">
+                  <Download className="mr-2 h-4 w-4" />
+                  {' '}
+                  {t.timetables.downloadTemplate()}
+                </Button>
               </div>
 
-              {file && (
-                <div className="flex items-center gap-3 rounded-xl bg-primary/5 border border-primary/10 p-3">
-                  <div className="p-2 bg-background rounded-lg shadow-sm">
-                    <FileSpreadsheet className="h-5 w-5 text-primary" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold truncate text-foreground">{file.name}</p>
-                    <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">
-                      {(file.size / 1024).toFixed(1)}
-                      {' '}
-                      KB
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              <div
-                className="flex items-center gap-3 p-3 rounded-xl hover:bg-muted/30 transition-colors cursor-pointer"
-                onClick={() => setReplaceExisting(!replaceExisting)}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    setReplaceExisting(!replaceExisting)
-                  }
-                }}
-              >
-                <Checkbox
-                  id="replaceExisting"
-                  checked={replaceExisting}
-                  onCheckedChange={checked => setReplaceExisting(checked === true)}
-                  className="rounded-md border-border/60 data-[state=checked]:bg-destructive data-[state=checked]:border-destructive"
-                />
-                <Label htmlFor="replaceExisting" className="text-sm font-bold cursor-pointer flex-1">
-                  {t.timetables.replaceExisting()}
-                </Label>
-              </div>
-
-              {replaceExisting && (
-                <div className="rounded-xl bg-destructive/10 border border-destructive/10 p-4 flex gap-3 text-destructive animate-in fade-in slide-in-from-top-2">
-                  <AlertCircle className="h-5 w-5 shrink-0" />
-                  <span className="text-xs font-medium leading-relaxed">
-                    {t.timetables.replaceWarning()}
-                  </span>
-                </div>
-              )}
-            </div>
-
-            <DialogFooter className="gap-2 pt-2">
-              <Button variant="outline" onClick={handleClose} className="rounded-xl font-bold uppercase tracking-wider text-xs">
-                {t.common.cancel()}
-              </Button>
-              <Button
-                onClick={handleImport}
-                disabled={!file}
-                className="rounded-xl font-bold uppercase tracking-wider text-xs bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20"
-              >
-                <Upload className="mr-2 h-4 w-4" />
-                {t.common.import()}
-              </Button>
-            </DialogFooter>
-          </>
-        )}
-
-        {(state === 'uploading' || state === 'processing') && (
-          <div className="space-y-6 py-8">
-            <div className="flex flex-col items-center justify-center gap-4">
-              <div className="relative">
-                <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full" />
-                <Loader2 className="h-12 w-12 animate-spin text-primary relative z-10" />
-              </div>
-              <p className="text-center font-bold text-lg animate-pulse">
-                {state === 'uploading'
-                  ? t.timetables.uploading()
-                  : t.timetables.processing()}
-              </p>
-            </div>
-            <div className="space-y-1">
-              <Progress value={progress} className="h-2 rounded-full" />
-              <p className="text-center text-xs font-bold text-muted-foreground uppercase tracking-widest">
-                {progress}
-                %
-              </p>
-            </div>
-          </div>
-        )}
-
-        {state === 'complete' && result && (
-          <div className="space-y-6 py-4">
-            <div className="flex flex-col items-center justify-center gap-4">
-              <div className="p-4 rounded-full bg-background border shadow-lg">
-                {result.failed === 0
+              <div className="rounded-lg border-2 border-dashed p-6 text-center border-muted">
+                {file
                   ? (
-                      <CheckCircle2 className="h-12 w-12 text-green-500" />
-                    )
-                  : (
-                      <AlertCircle className="h-12 w-12 text-yellow-500" />
-                    )}
-              </div>
-
-              <div className="text-center space-y-1">
-                <p className="text-xl font-black uppercase italic tracking-tight">{t.timetables.importComplete()}</p>
-                <p className="text-sm font-medium text-muted-foreground">
-                  {t.timetables.importSummary({
-                    success: result.success,
-                    total: result.total,
-                  })}
-                </p>
-              </div>
-            </div>
-
-            {result.conflicts.length > 0 && (
-              <div className="rounded-xl bg-destructive/5 border border-destructive/10 p-4 max-h-48 overflow-y-auto custom-scrollbar">
-                <p className="text-xs font-black uppercase text-destructive mb-3 tracking-widest sticky top-0 bg-destructive/5 py-1 backdrop-blur-sm">
-                  {t.timetables.importConflicts({ count: result.failed })}
-                </p>
-                <ul className="text-sm font-medium text-destructive/80 space-y-2">
-                  {result.conflicts.slice(0, 5).map(c => (
-                    <li key={generateUUID()} className="flex gap-2 items-start bg-background/50 p-2 rounded-lg">
-                      <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-current shrink-0" />
-                      <div>
-                        <span className="font-bold text-xs uppercase opacity-75">
-                          {t.timetables.row()}
+                    <div className="flex items-center justify-center gap-4">
+                      <FileSpreadsheet className="h-8 w-8 text-primary" />
+                      <div className="text-left">
+                        <p className="font-bold">{file.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {allParsed.length}
                           {' '}
-                          {c.index + 1}
-                          :
-                        </span>
-                        <span className="block text-xs">{c.message}</span>
+                          {t.timetables.preview.totalLines()}
+                        </p>
                       </div>
-                    </li>
-                  ))}
-                  {result.conflicts.length > 5 && (
-                    <li className="text-xs font-bold italic opacity-70 text-center pt-2">
-                      {t.common.andMore({ count: result.conflicts.length - 5 })}
-                    </li>
+                      <Button variant="ghost" size="icon" onClick={() => setFile(null)}><X className="h-4 w-4" /></Button>
+                    </div>
+                  )
+                  : (
+                    <label className="cursor-pointer block">
+                      <Upload className="mx-auto h-10 w-10 text-muted-foreground mb-2" />
+                      <span className="font-medium text-primary hover:underline">{t.timetables.importDescription()}</span>
+                      <input type="file" accept=".xlsx,.xls" onChange={handleFileChange} className="hidden" />
+                    </label>
                   )}
-                </ul>
               </div>
-            )}
 
-            <DialogFooter>
-              <Button onClick={handleClose} className="w-full rounded-xl font-bold uppercase tracking-wider text-xs">{t.common.close()}</Button>
-            </DialogFooter>
-          </div>
-        )}
+              {parseError && <p className="text-destructive text-sm font-medium">{parseError}</p>}
+
+              {preview.length > 0 && (
+                <div className="rounded-xl border border-border/40 overflow-hidden">
+                  <div className="bg-muted/30 px-4 py-2 text-xs font-bold uppercase tracking-wider text-muted-foreground border-b border-border/40">
+                    {t.timetables.preview.title()}
+                    {' '}
+                    (
+                    {countValid}
+                    {' '}
+                    {t.timetables.preview.validLines()}
+                    {' '}
+                    /
+                    {' '}
+                    {allParsed.length}
+                    )
+                  </div>
+                  <div className="max-h-[300px] overflow-auto">
+                    <table className="w-full text-xs">
+                      <thead className="bg-muted/10 sticky top-0">
+                        <tr>
+                          <th className="px-3 py-2 text-left">{t.timetables.columns.class()}</th>
+                          <th className="px-3 py-2 text-left">{t.timetables.columns.subject()}</th>
+                          <th className="px-3 py-2 text-left">{t.timetables.columns.teacher()}</th>
+                          <th className="px-3 py-2 text-left">{t.timetables.columns.day()}</th>
+                          <th className="px-3 py-2 text-left">{t.timetables.columns.time()}</th>
+                          <th className="px-3 py-2 text-left">{t.timetables.columns.status()}</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border/20">
+                        {allParsed.slice(0, 100).map((row, i) => {
+                          const isValid = row.classId && row.subjectId && row.teacherId && row.dayOfWeek > 0
+                          return (
+                            <tr key={i} className={!isValid ? 'bg-destructive/10' : ''}>
+                              <td className="px-3 py-2">
+                                {row.className}
+                                {!row.classId && <span className="block text-[10px] text-destructive font-bold">{t.timetables.status.notFound()}</span>}
+                              </td>
+                              <td className="px-3 py-2">
+                                {row.subjectName}
+                                {!row.subjectId && <span className="block text-[10px] text-destructive font-bold">{t.timetables.status.notFound()}</span>}
+                              </td>
+                              <td className="px-3 py-2">
+                                {row.teacherName}
+                                {!row.teacherId && <span className="block text-[10px] text-destructive font-bold">{t.timetables.status.notFound()}</span>}
+                              </td>
+                              <td className="px-3 py-2">{dayOfWeekLabels[row.dayOfWeek] || row.dayOfWeek || t.timetables.status.error()}</td>
+                              <td className="px-3 py-2">
+                                {row.startTime}
+                                {' '}
+                                -
+                                {' '}
+                                {row.endTime}
+                              </td>
+                              <td className="px-3 py-2 font-bold">{isValid ? <span className="text-green-500">{t.timetables.status.ok()}</span> : <span className="text-destructive">{t.timetables.status.error()}</span>}</td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              <DialogFooter>
+                <Button variant="ghost" onClick={handleClose}>{t.common.cancel()}</Button>
+                <Button onClick={handleImport} disabled={countValid === 0 || importMutation.isPending}>
+                  {importMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {t.common.import()}
+                  {' '}
+                  (
+                  {countValid}
+                  )
+                </Button>
+              </DialogFooter>
+            </div>
+          )}
       </DialogContent>
     </Dialog>
   )
