@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Post-Turn Security Audit",
+  "description": "Scans for secrets and RLS leaks after every agent turn",
+  "version": "1",
+  "when": {
+    "type": "onAgentStop"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Review the last file modifications. Are there any hardcoded secrets, leaked API keys, or database queries missing school_id scoping? If yes, alert the user immediately."
+  }
+}

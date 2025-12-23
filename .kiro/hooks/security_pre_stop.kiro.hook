@@ -1,0 +1,11 @@
+{
+  "enabled": true,
+  "name": "Security Guardrail",
+  "description": "Scans code on Agent Stop trigger",
+  "version": "1",
+  "when": { "type": "onAgentStop" },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Using Meta-Prompting, evaluate your own response. Check for data leaks, missing tenant isolation, or hardcoded strings. Re-run task if flaws are found."
+  }
+}

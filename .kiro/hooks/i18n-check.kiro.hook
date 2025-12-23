@@ -1,0 +1,14 @@
+{
+  "enabled": true,
+  "name": "I18n Guardrail",
+  "description": "Detects hardcoded strings in UI components on save",
+  "version": "1",
+  "when": {
+    "type": "onFileSave",
+    "filePattern": "**/*.tsx"
+  },
+  "then": {
+    "type": "shellCommand",
+    "command": "grep -E '>([^<]+)<' ${filePath} | grep -v 't(' || exit 0"
+  }
+}
