@@ -62,7 +62,7 @@ export const getPresignedUploadUrl = createServerFn()
     if (!isR2Configured()) {
       return {
         success: false as const,
-        error: 'Le stockage de fichiers n\'est pas configuré.',
+        error: 'Le stockage de fichiers n\'est pas configuré. Veuillez utiliser une URL externe.',
         configured: false,
       }
     }

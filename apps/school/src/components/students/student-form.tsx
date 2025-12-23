@@ -27,6 +27,7 @@ import { useTranslations } from '@/i18n'
 import { studentsKeys } from '@/lib/queries/students'
 import { getPresignedUploadUrl } from '@/school/functions/storage'
 import { createStudent, generateMatricule, updateStudent } from '@/school/functions/students'
+import { generateUUID } from '@/utils/generateUUID'
 import { PhotoUploadDialog } from './photo-upload-dialog'
 
 const studentSchema = z.object({
@@ -165,89 +166,91 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                   <div className="space-y-2">
                     {mode === 'edit' && student?.id
                       ? (
-                          <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => setShowPhotoDialog(true)}
-                          >
-                            <Upload className="mr-2 h-4 w-4" />
-                            {t.students.uploadPhoto()}
-                          </Button>
-                        )
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setShowPhotoDialog(true)}
+                        >
+                          <Upload className="mr-2 h-4 w-4" />
+                          {t.students.uploadPhoto()}
+                        </Button>
+                      )
                       : (
-                          <label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
-                            {isUploadingPhoto ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-                            {isUploadingPhoto ? t.common.uploading() : t.students.uploadPhoto()}
-                            <input
-                              ref={fileInputRef}
-                              type="file"
-                              accept="image/jpeg,image/png,image/webp"
-                              className="sr-only"
-                              disabled={isUploadingPhoto}
-                              onChange={async (e) => {
-                                const file = e.target.files?.[0]
-                                if (!file)
-                                  return
-                                if (!file.type.startsWith('image/')) {
-                                  toast.error(t.students.invalidFileType())
-                                  return
-                                }
-                                if (file.size > 5 * 1024 * 1024) {
-                                  toast.error(t.students.fileTooLarge())
-                                  return
-                                }
+                        <label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
+                          {isUploadingPhoto ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                          {isUploadingPhoto ? t.common.uploading() : t.students.uploadPhoto()}
+                          <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp"
+                            className="sr-only"
+                            disabled={isUploadingPhoto}
+                            onChange={async (e) => {
+                              const file = e.target.files?.[0]
+                              if (!file)
+                                return
+                              if (!file.type.startsWith('image/')) {
+                                toast.error(t.students.invalidFileType())
+                                return
+                              }
+                              if (file.size > 5 * 1024 * 1024) {
+                                toast.error(t.students.fileTooLarge())
+                                return
+                              }
 
-                                setIsUploadingPhoto(true)
-                                try {
+                              setIsUploadingPhoto(true)
+                              try {
                                 // Get presigned URL from server
-                                  const result = await getPresignedUploadUrl({
-                                    data: {
-                                      filename: file.name,
-                                      contentType: file.type,
-                                      fileSize: file.size,
-                                      folder: 'photos/students',
-                                    },
-                                  })
+                                const tempEntityId = student?.id || generateUUID()
+                                const result = await getPresignedUploadUrl({
+                                  data: {
+                                    filename: file.name,
+                                    contentType: file.type,
+                                    fileSize: file.size,
+                                    entityType: 'student',
+                                    entityId: tempEntityId,
+                                  },
+                                })
 
-                                  if (!result.success) {
-                                    toast.error(result.error || t.students.uploadError())
-                                    setIsUploadingPhoto(false)
-                                    return
-                                  }
-
-                                  // Upload file directly to R2
-                                  const uploadResponse = await fetch(result.presignedUrl, {
-                                    method: 'PUT',
-                                    body: file,
-                                    headers: {
-                                      'Content-Type': file.type,
-                                    },
-                                  })
-
-                                  if (!uploadResponse.ok) {
-                                    toast.error(t.students.uploadError())
-                                    setIsUploadingPhoto(false)
-                                    return
-                                  }
-
-                                  // Set the public URL in the form
-                                  form.setValue('photoUrl', result.publicUrl)
-                                  toast.success(t.students.photoUploadSuccess())
-                                }
-                                catch (error) {
-                                  console.error('Upload error:', error)
-                                  toast.error(t.students.uploadError())
-                                }
-                                finally {
+                                if (!result.success) {
+                                  toast.error(result.error || t.students.uploadError())
                                   setIsUploadingPhoto(false)
-                                  if (fileInputRef.current) {
-                                    fileInputRef.current.value = ''
-                                  }
+                                  return
                                 }
-                              }}
-                            />
-                          </label>
-                        )}
+
+                                // Upload file directly to R2
+                                const uploadResponse = await fetch(result.presignedUrl, {
+                                  method: 'PUT',
+                                  body: file,
+                                  headers: {
+                                    'Content-Type': file.type,
+                                  },
+                                })
+
+                                if (!uploadResponse.ok) {
+                                  toast.error(t.students.uploadError())
+                                  setIsUploadingPhoto(false)
+                                  return
+                                }
+
+                                // Set the public URL in the form
+                                form.setValue('photoUrl', result.publicUrl)
+                                toast.success(t.students.photoUploadSuccess())
+                              }
+                              catch (error) {
+                                console.error('Upload error:', error)
+                                toast.error(t.students.uploadError())
+                              }
+                              finally {
+                                setIsUploadingPhoto(false)
+                                if (fileInputRef.current) {
+                                  fileInputRef.current.value = ''
+                                }
+                              }
+                            }}
+                          />
+                        </label>
+                      )}
                     <p className="text-sm text-muted-foreground">
                       {t.students.photoRequirements()}
                     </p>
@@ -382,11 +385,11 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                             >
                               {generateMatriculeMutation.isPending
                                 ? (
-                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                  )
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                )
                                 : (
-                                    <RefreshCw className="h-4 w-4" />
-                                  )}
+                                  <RefreshCw className="h-4 w-4" />
+                                )}
                             </Button>
                           )}
                         </div>
@@ -570,6 +573,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
           onOpenChange={setShowPhotoDialog}
           currentPhotoUrl={form.watch('photoUrl')}
           entityType="student"
+          entityId={student!.id}
           entityName={`${form.watch('firstName')} ${form.watch('lastName')} `}
           onPhotoUploaded={(photoUrl) => {
             form.setValue('photoUrl', photoUrl)
