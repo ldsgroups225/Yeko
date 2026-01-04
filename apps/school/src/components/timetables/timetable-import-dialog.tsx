@@ -26,6 +26,7 @@ import { getClassrooms } from '@/school/functions/classrooms'
 import { getAllSubjects } from '@/school/functions/subjects'
 import { getTeachers } from '@/school/functions/teachers'
 import { importTimetable } from '@/school/functions/timetables'
+import { generateUUID } from '@/utils/generateUUID'
 
 interface TimetableImportDialogProps {
   open: boolean
@@ -189,13 +190,13 @@ export function TimetableImportDialog({ open, onOpenChange, schoolId }: Timetabl
     ]
 
     const schema = ExcelSchemaBuilder.create<TimetableTemplate>()
-      .column('className', { key: t.timetables.template.columns.className() })
-      .column('subjectName', { key: t.timetables.template.columns.subjectName() })
-      .column('teacherName', { key: t.timetables.template.columns.teacherName() })
-      .column('classroomName', { key: t.timetables.template.columns.classroomName() })
-      .column('day', { key: t.timetables.template.columns.day() })
-      .column('startTime', { key: t.timetables.template.columns.startTime() })
-      .column('endTime', { key: t.timetables.template.columns.endTime() })
+      .column('className', { key: 'Classe' })
+      .column('subjectName', { key: 'Matière' })
+      .column('teacherName', { key: 'Enseignant' })
+      .column('classroomName', { key: 'Salle' })
+      .column('day', { key: 'Jour' })
+      .column('startTime', { key: 'Début' })
+      .column('endTime', { key: 'Fin' })
       .build()
 
     const excelFile = ExcelBuilder.create()
@@ -304,10 +305,10 @@ export function TimetableImportDialog({ open, onOpenChange, schoolId }: Timetabl
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-border/20">
-                        {allParsed.slice(0, 100).map((row, i) => {
+                        {allParsed.slice(0, 100).map((row) => {
                           const isValid = row.classId && row.subjectId && row.teacherId && row.dayOfWeek > 0
                           return (
-                            <tr key={i} className={!isValid ? 'bg-destructive/10' : ''}>
+                            <tr key={generateUUID()} className={!isValid ? 'bg-destructive/10' : ''}>
                               <td className="px-3 py-2">
                                 {row.className}
                                 {!row.classId && <span className="block text-[10px] text-destructive font-bold">{t.timetables.status.notFound()}</span>}

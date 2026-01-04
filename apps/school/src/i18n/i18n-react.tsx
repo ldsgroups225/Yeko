@@ -5,14 +5,34 @@ import { initFormatters as initBaseFormatters } from './formatters.js'
 import baseTranslations from './fr/index.js'
 import { baseLocale, i18nObject, isLocale, loadedFormatters, loadedLocales } from './i18n-util'
 
-// Preload base locale synchronously so initial render has translations
-if (!loadedLocales[baseLocale]) {
-  loadedLocales[baseLocale] = baseTranslations as Translations
+// Helper function to ensure locale is initialized and create i18n object
+function getI18nObject(locale: Locales): TranslationFunctions {
+  // Ensure translations are loaded
+  if (!loadedLocales[locale]) {
+    if (locale === baseLocale) {
+      loadedLocales[locale] = baseTranslations as Translations
+    }
+    else {
+      // For non-base locales without loaded translations, fall back to base
+      if (!loadedLocales[baseLocale]) {
+        loadedLocales[baseLocale] = baseTranslations as Translations
+      }
+      console.warn(`Translations for '${locale}' not loaded, using '${baseLocale}'`)
+      locale = baseLocale
+    }
+  }
+
+  // Ensure formatters are loaded
+  if (!loadedFormatters[locale]) {
+    loadedFormatters[locale] = initBaseFormatters(locale)
+  }
+
+  return i18nObject(locale)
 }
 
-if (!loadedFormatters[baseLocale]) {
-  loadedFormatters[baseLocale] = initBaseFormatters(baseLocale)
-}
+// Initialize base locale immediately (synchronously)
+loadedLocales[baseLocale] = baseTranslations as Translations
+loadedFormatters[baseLocale] = initBaseFormatters(baseLocale)
 
 // Import locale loaders for dynamic locales
 async function loadLocale(locale: Locales): Promise<Translations> {
@@ -63,23 +83,15 @@ interface I18nProviderProps {
 }
 
 export function I18nProvider({ children, locale: initialLocale }: I18nProviderProps) {
-  const detectedLocale = initialLocale || detectBrowserLocale()
-  const hasDetectedLocaleLoaded = Boolean(loadedLocales[detectedLocale])
-  const initialResolvedLocale = hasDetectedLocaleLoaded ? detectedLocale : baseLocale
-
-  const [locale, setLocaleState] = useState<Locales>(initialResolvedLocale)
-  const [t, setT] = useState<TranslationFunctions>(() => i18nObject(initialResolvedLocale))
-  const [isLoading, setIsLoading] = useState(!hasDetectedLocaleLoaded)
+  // Always use baseLocale for initial render to ensure hydration consistency
+  // The getI18nObject helper ensures translations are always available
+  const [locale, setLocaleState] = useState<Locales>(baseLocale)
+  const [t, setT] = useState<TranslationFunctions>(() => getI18nObject(baseLocale))
 
   const setLocale = async (newLocale: Locales) => {
     if (!isLocale(newLocale)) {
       console.warn(`Locale '${newLocale}' is not supported. Falling back to '${baseLocale}'.`)
       newLocale = baseLocale
-    }
-
-    const localeAlreadyLoaded = loadedLocales[newLocale]
-    if (!localeAlreadyLoaded) {
-      setIsLoading(true)
     }
 
     try {
@@ -95,9 +107,9 @@ export function I18nProvider({ children, locale: initialLocale }: I18nProviderPr
         loadedFormatters[newLocale] = formatters
       }
 
-      // Update state
+      // Update state with the new translation object
       setLocaleState(newLocale)
-      setT(i18nObject(newLocale))
+      setT(getI18nObject(newLocale))
 
       // Persist to localStorage
       if (typeof window !== 'undefined') {
@@ -107,26 +119,20 @@ export function I18nProvider({ children, locale: initialLocale }: I18nProviderPr
     catch (error) {
       console.error(`Failed to load locale '${newLocale}':`, error)
     }
-    finally {
-      setIsLoading(false)
-    }
   }
 
-  // Load initial locale
+  // Detect and apply user's preferred locale ONLY on client after hydration
   useEffect(() => {
-    if (!hasDetectedLocaleLoaded) {
-      setLocale(detectedLocale)
+    const targetLocale = initialLocale || detectBrowserLocale()
+    if (targetLocale !== baseLocale) {
+      setLocale(targetLocale)
     }
-  }, [detectedLocale, hasDetectedLocaleLoaded])
+  }, [initialLocale])
 
   const contextValue: I18nContextValue = {
     locale,
     t,
     setLocale,
-  }
-
-  if (isLoading) {
-    return <div>Loading translations...</div>
   }
 
   return (

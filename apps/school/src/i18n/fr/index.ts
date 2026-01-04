@@ -1718,7 +1718,7 @@ const fr = {
     markAllPresent: 'Marquer tous présents',
     lateThisMonth: 'retards ce mois',
     saved: 'Présence enregistrée',
-    saveFailed: "Échec de l'enregistrement",
+    saveFailed: 'Échec de l\'enregistrement',
     save: 'Enregistrer la présence',
     saveConfirmDescription: 'Êtes-vous sûr de vouloir enregistrer ces présences ?',
     punctualityReport: 'Rapport de ponctualité',

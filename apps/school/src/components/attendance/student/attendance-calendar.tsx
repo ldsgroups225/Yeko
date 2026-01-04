@@ -196,11 +196,11 @@ export function AttendanceCalendar({
 
                         {config
                           ? (
-                            <div className={cn('size-1.5 rounded-full shadow-sm', config.color)} />
-                          )
+                              <div className={cn('size-1.5 rounded-full shadow-sm', config.color)} />
+                            )
                           : (
-                            <div className="size-1.5 rounded-full bg-border/20 group-hover:bg-primary/20 transition-colors" />
-                          )}
+                              <div className="size-1.5 rounded-full bg-border/20 group-hover:bg-primary/20 transition-colors" />
+                            )}
                       </motion.div>
                     </TooltipTrigger>
                     {config && (

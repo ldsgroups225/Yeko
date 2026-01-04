@@ -7,8 +7,8 @@ import { env } from 'cloudflare:workers'
 
 console.warn('[server-entry]: using custom server entry in \'src/server.ts\'')
 
-// Extended Env interface with queue binding
-interface ExtendedEnv extends Env {
+// Extended Env interface with queue binding (LOGS_QUEUE is optional in workers that don't have queue binding)
+interface ExtendedEnv extends Omit<Env, 'LOGS_QUEUE'> {
   LOGS_QUEUE?: LogsQueue
 }
 

@@ -87,7 +87,7 @@ function TimetablesPage() {
     queryFn: () => getTeachers({ data: {} }),
     staleTime: 5 * 60 * 1000,
   })
-  const teachers = teachersData?.teachers ?? []
+  const teachers = useMemo(() => teachersData?.teachers ?? [], [teachersData])
 
   // Fetch classrooms
   const { data: classroomsData } = useQuery({
@@ -95,7 +95,7 @@ function TimetablesPage() {
     queryFn: () => getClassrooms({ data: {} }),
     staleTime: 5 * 60 * 1000,
   })
-  const classrooms = (Array.isArray(classroomsData) ? classroomsData : (classroomsData as any)?.classrooms) ?? []
+  const classrooms = useMemo(() => (Array.isArray(classroomsData) ? classroomsData : (classroomsData as any)?.classrooms) ?? [], [classroomsData])
 
   // Fetch subjects for class
   const { data: classSubjectsData } = useQuery({
@@ -103,7 +103,7 @@ function TimetablesPage() {
     queryFn: () => getClassSubjects({ data: { classId: selectedClassId, schoolYearId: effectiveYearId } }),
     enabled: !!selectedClassId,
   })
-  const classSubjects = (Array.isArray(classSubjectsData) ? classSubjectsData : (classSubjectsData as any)?.data) ?? []
+  const classSubjects = useMemo(() => (Array.isArray(classSubjectsData) ? classSubjectsData : (classSubjectsData as any)?.data) ?? [], [classSubjectsData])
 
   // Fetch timetable for class view
   const { data: classTimetable, isLoading: classTimetableLoading } = useQuery({
@@ -235,12 +235,12 @@ function TimetablesPage() {
     }
 
     const schema = ExcelSchemaBuilder.create<any>()
-      .column('day', { key: t.timetables.columns.day() })
-      .column('startTime', { key: t.timetables.columns.startTime() })
-      .column('endTime', { key: t.timetables.columns.endTime() })
-      .column('subject', { key: t.timetables.columns.subject() })
-      .column('teacher', { key: t.timetables.columns.teacher() })
-      .column('classroom', { key: t.timetables.columns.classroom() })
+      .column('day', { key: 'Jour' })
+      .column('startTime', { key: 'Début' })
+      .column('endTime', { key: 'Fin' })
+      .column('subject', { key: 'Matière' })
+      .column('teacher', { key: 'Enseignant' })
+      .column('classroom', { key: 'Salle' })
       .build()
 
     const data = transformedTimetable.map(s => ({
@@ -269,8 +269,8 @@ function TimetablesPage() {
 
   const canShowTimetable
     = effectiveYearId
-    && ((viewMode === 'class' && selectedClassId)
-      || (viewMode === 'teacher' && selectedTeacherId))
+      && ((viewMode === 'class' && selectedClassId)
+        || (viewMode === 'teacher' && selectedTeacherId))
 
   // Formatting for dialog
   const formattedSubjects = useMemo(() => classSubjects.map((cs: any) => ({
@@ -350,24 +350,24 @@ function TimetablesPage() {
               </label>
               {yearsLoading
                 ? (
-                  <Skeleton className="h-11 w-full rounded-xl" />
-                )
+                    <Skeleton className="h-11 w-full rounded-xl" />
+                  )
                 : (
-                  <Select value={effectiveYearId} onValueChange={setLocalYearId}>
-                    <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
-                      <SelectValue placeholder={t.schoolYear.select()} />
-                    </SelectTrigger>
-                    <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
-                      {schoolYears?.map(year => (
-                        <SelectItem key={year.id} value={year.id} className="rounded-lg focus:bg-primary/10 font-medium">
-                          {year.template.name}
-                          {' '}
-                          {year.isActive && t.schoolYear.activeSuffix()}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
+                    <Select value={effectiveYearId} onValueChange={setLocalYearId}>
+                      <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
+                        <SelectValue placeholder={t.schoolYear.select()} />
+                      </SelectTrigger>
+                      <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
+                        {schoolYears?.map(year => (
+                          <SelectItem key={year.id} value={year.id} className="rounded-lg focus:bg-primary/10 font-medium">
+                            {year.template.name}
+                            {' '}
+                            {year.isActive && t.schoolYear.activeSuffix()}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
             </div>
 
             {/* Class selector (for class view) */}
@@ -382,28 +382,28 @@ function TimetablesPage() {
                 </label>
                 {classesLoading
                   ? (
-                    <Skeleton className="h-11 w-full rounded-xl" />
-                  )
+                      <Skeleton className="h-11 w-full rounded-xl" />
+                    )
                   : (
-                    <Select
-                      value={selectedClassId}
-                      onValueChange={setSelectedClassId}
-                      disabled={!effectiveYearId}
-                    >
-                      <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
-                        <SelectValue placeholder={t.classes.select()} />
-                      </SelectTrigger>
-                      <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
-                        {classes?.map(item => (
-                          <SelectItem key={item.class.id} value={item.class.id} className="rounded-lg focus:bg-primary/10 font-medium">
-                            {item.grade.name}
-                            {' '}
-                            {item.class.section}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
+                      <Select
+                        value={selectedClassId}
+                        onValueChange={setSelectedClassId}
+                        disabled={!effectiveYearId}
+                      >
+                        <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
+                          <SelectValue placeholder={t.classes.select()} />
+                        </SelectTrigger>
+                        <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
+                          {classes?.map(item => (
+                            <SelectItem key={item.class.id} value={item.class.id} className="rounded-lg focus:bg-primary/10 font-medium">
+                              {item.grade.name}
+                              {' '}
+                              {item.class.section}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
               </motion.div>
             )}
 
@@ -419,25 +419,25 @@ function TimetablesPage() {
                 </label>
                 {teachersLoading
                   ? (
-                    <Skeleton className="h-11 w-full rounded-xl" />
-                  )
+                      <Skeleton className="h-11 w-full rounded-xl" />
+                    )
                   : (
-                    <Select
-                      value={selectedTeacherId}
-                      onValueChange={setSelectedTeacherId}
-                    >
-                      <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
-                        <SelectValue placeholder={t.teachers.select()} />
-                      </SelectTrigger>
-                      <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
-                        {teachers?.map(teacher => (
-                          <SelectItem key={teacher.id} value={teacher.id} className="rounded-lg focus:bg-primary/10 font-medium">
-                            {teacher.user.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
+                      <Select
+                        value={selectedTeacherId}
+                        onValueChange={setSelectedTeacherId}
+                      >
+                        <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
+                          <SelectValue placeholder={t.teachers.select()} />
+                        </SelectTrigger>
+                        <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
+                          {teachers?.map(teacher => (
+                            <SelectItem key={teacher.id} value={teacher.id} className="rounded-lg focus:bg-primary/10 font-medium">
+                              {teacher.user.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
               </motion.div>
             )}
           </div>
@@ -448,41 +448,41 @@ function TimetablesPage() {
         <AnimatePresence mode="wait">
           {canShowTimetable
             ? (
-              <motion.div
-                key="grid"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="bg-card/40 backdrop-blur-xl border border-border/40 p-1 rounded-3xl overflow-hidden shadow-xl"
-              >
-                <div className="p-4">
-                  <TimetableGrid
-                    sessions={transformedTimetable}
-                    isLoading={timetableLoading}
-                    onSlotClick={handleSlotClick}
-                    onSessionClick={handleSessionClick}
-                    readOnly={viewMode !== 'class'}
-                  />
-                </div>
-              </motion.div>
-            )
+                <motion.div
+                  key="grid"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="bg-card/40 backdrop-blur-xl border border-border/40 p-1 rounded-3xl overflow-hidden shadow-xl"
+                >
+                  <div className="p-4">
+                    <TimetableGrid
+                      sessions={transformedTimetable}
+                      isLoading={timetableLoading}
+                      onSlotClick={handleSlotClick}
+                      onSessionClick={handleSessionClick}
+                      readOnly={viewMode !== 'class'}
+                    />
+                  </div>
+                </motion.div>
+              )
             : (
-              <motion.div
-                key="empty"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="flex flex-col items-center justify-center h-[400px] text-muted-foreground/60 bg-card/20 border-2 border-dashed border-border/40 rounded-3xl"
-              >
-                <div className="p-4 rounded-full bg-primary/5 mb-4">
-                  <CalendarSearch className="size-8 text-primary/40" />
-                </div>
-                <p className="font-bold text-lg">{t.timetables.selectFiltersPrompt()}</p>
-                <p className="text-sm font-medium opacity-70 max-w-sm text-center mt-2">
-                  {t.timetables.description()}
-                </p>
-              </motion.div>
-            )}
+                <motion.div
+                  key="empty"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="flex flex-col items-center justify-center h-[400px] text-muted-foreground/60 bg-card/20 border-2 border-dashed border-border/40 rounded-3xl"
+                >
+                  <div className="p-4 rounded-full bg-primary/5 mb-4">
+                    <CalendarSearch className="size-8 text-primary/40" />
+                  </div>
+                  <p className="font-bold text-lg">{t.timetables.selectFiltersPrompt()}</p>
+                  <p className="text-sm font-medium opacity-70 max-w-sm text-center mt-2">
+                    {t.timetables.description()}
+                  </p>
+                </motion.div>
+              )}
         </AnimatePresence>
       </div>
 
@@ -493,21 +493,21 @@ function TimetablesPage() {
         initialData={
           dialogMode === 'edit' && selectedSession
             ? {
-              id: selectedSession.id,
-              subjectId: selectedSession.subjectId,
-              teacherId: selectedSession.teacherId ?? '',
-              classroomId: (selectedSession.classroomId ?? '') as string,
-              dayOfWeek: selectedSession.dayOfWeek,
-              startTime: selectedSession.startTime,
-              endTime: selectedSession.endTime,
-              color: selectedSession.color ?? undefined,
-            }
+                id: selectedSession.id,
+                subjectId: selectedSession.subjectId,
+                teacherId: selectedSession.teacherId ?? '',
+                classroomId: (selectedSession.classroomId ?? '') as string,
+                dayOfWeek: selectedSession.dayOfWeek,
+                startTime: selectedSession.startTime,
+                endTime: selectedSession.endTime,
+                color: selectedSession.color ?? undefined,
+              }
             : selectedSlot
               ? {
-                dayOfWeek: selectedSlot.dayOfWeek,
-                startTime: selectedSlot.startTime,
-                endTime: selectedSlot.endTime,
-              }
+                  dayOfWeek: selectedSlot.dayOfWeek,
+                  startTime: selectedSlot.startTime,
+                  endTime: selectedSlot.endTime,
+                }
               : undefined
         }
         subjects={formattedSubjects}

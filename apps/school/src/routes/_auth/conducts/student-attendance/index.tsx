@@ -190,38 +190,38 @@ function StudentAttendancePage() {
       <AnimatePresence mode="wait">
         {classId
           ? (
-            <motion.div
-              key={`${classId}-${dateStr}`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ delay: 0.1 }}
-            >
-              <StudentAttendanceGrid
+              <motion.div
                 key={`${classId}-${dateStr}`}
-                className={className}
-                entries={entries}
-                onSave={handleSave}
-                isLoading={isLoading}
-                isSaving={mutation.isPending}
-              />
-            </motion.div>
-          )
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ delay: 0.1 }}
+              >
+                <StudentAttendanceGrid
+                  key={`${classId}-${dateStr}`}
+                  className={className}
+                  entries={entries}
+                  onSave={handleSave}
+                  isLoading={isLoading}
+                  isSaving={mutation.isPending}
+                />
+              </motion.div>
+            )
           : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="rounded-3xl border border-dashed border-border/60 bg-card/10 backdrop-blur-sm p-20 flex flex-col items-center text-center space-y-4"
-            >
-              <div className="p-4 rounded-full bg-primary/5">
-                <Sparkles className="size-12 text-primary/40" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-xl font-black uppercase tracking-tight text-muted-foreground/60">{t.attendance.selectClass()}</h3>
-                <p className="text-sm font-medium text-muted-foreground/40 italic">{t.attendance.selectClassAndDate()}</p>
-              </div>
-            </motion.div>
-          )}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="rounded-3xl border border-dashed border-border/60 bg-card/10 backdrop-blur-sm p-20 flex flex-col items-center text-center space-y-4"
+              >
+                <div className="p-4 rounded-full bg-primary/5">
+                  <Sparkles className="size-12 text-primary/40" />
+                </div>
+                <div className="space-y-1">
+                  <h3 className="text-xl font-black uppercase tracking-tight text-muted-foreground/60">{t.attendance.selectClass()}</h3>
+                  <p className="text-sm font-medium text-muted-foreground/40 italic">{t.attendance.selectClassAndDate()}</p>
+                </div>
+              </motion.div>
+            )}
       </AnimatePresence>
     </div>
   )

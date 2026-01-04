@@ -28,9 +28,11 @@ function GridSkeleton() {
     <div className="grid grid-cols-[80px_repeat(6,1fr)] gap-2">
       <div className="h-12 col-span-7 rounded-xl bg-muted/20" />
       {Array.from({ length: 8 }).map((_, i) => (
+        // eslint-disable-next-line react/no-array-index-key
         <Fragment key={i}>
           <Skeleton className="h-[96px] w-full rounded-xl" />
           {Array.from({ length: 6 }).map((_, j) => (
+            // eslint-disable-next-line react/no-array-index-key
             <Skeleton key={j} className="h-[96px] w-full rounded-xl" />
           ))}
         </Fragment>
@@ -50,29 +52,29 @@ export function TimetableGrid({
 }: TimetableGridProps) {
   const t = useTranslations()
 
-  // Helper to get row index for a time string
-  const getRowIndex = (time: string, isEnd = false) => {
-    const slotIndex = timeSlots.findIndex(s => s.start === time)
-    if (slotIndex !== -1)
-      return slotIndex + 2 // +1 for header, +1 for 1-based indexing
+  // Positioned sessions
+  const positionedSessions = useMemo(() => {
+    // Helper to get row index for a time string (now inside useMemo to avoid dependency issues)
+    const getRowIndex = (time: string, isEnd = false) => {
+      const slotIndex = timeSlots.findIndex(s => s.start === time)
+      if (slotIndex !== -1)
+        return slotIndex + 2 // +1 for header, +1 for 1-based indexing
 
-    // If it's an end time and matches the end of the last slot
-    const lastSlot = timeSlots[timeSlots.length - 1]
-    if (isEnd && lastSlot && lastSlot.end === time)
-      return timeSlots.length + 2
+      // If it's an end time and matches the end of the last slot
+      const lastSlot = timeSlots[timeSlots.length - 1]
+      if (isEnd && lastSlot && lastSlot.end === time)
+        return timeSlots.length + 2
 
-    // If it's an end time, find the slot where it ends
-    if (isEnd) {
-      const endSlotIndex = timeSlots.findIndex(s => s.end === time)
-      if (endSlotIndex !== -1)
-        return endSlotIndex + 2
+      // If it's an end time, find the slot where it ends
+      if (isEnd) {
+        const endSlotIndex = timeSlots.findIndex(s => s.end === time)
+        if (endSlotIndex !== -1)
+          return endSlotIndex + 2
+      }
+
+      return -1
     }
 
-    return -1
-  }
-
-  // Group and position sessions
-  const positionedSessions = useMemo(() => {
     return sessions.map((session) => {
       const startRow = getRowIndex(session.startTime)
       const endRow = getRowIndex(session.endTime, true)
@@ -86,8 +88,8 @@ export function TimetableGrid({
     }).filter(s => s.gridRow && s.gridColumn)
   }, [sessions, timeSlots, daysToShow])
 
-  // Real-time progress indicator
-  const [now, setNow] = useState(new Date())
+  // Real-time progress indicator - use lazy initialization
+  const [now, setNow] = useState(() => new Date())
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 60000)
     return () => clearInterval(timer)
@@ -176,31 +178,33 @@ export function TimetableGrid({
 
           {/* Background cells for interactions */}
           {timeSlots.map((slot, rowIdx) => (
-            daysToShow.map((day, colIdx) => (
-              <div
-                key={`cell-${day}-${slot.start}`}
-                role={!readOnly ? 'button' : undefined}
-                tabIndex={!readOnly ? 0 : undefined}
-                onClick={() => handleSlotClick(day, slot)}
-                className={cn(
-                  'rounded-2xl border border-dashed border-border/10 transition-all duration-200',
-                  !readOnly && 'hover:bg-primary/5 hover:border-primary/20 cursor-pointer group',
-                  day === currentDay && 'bg-primary/5 border-primary/10 border-solid',
-                )}
-                style={{ gridColumn: colIdx + 2, gridRow: rowIdx + 2 }}
-              >
-                {!readOnly && (
-                  <div className="h-full flex items-center justify-center">
-                    <div
-                      className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all scale-90 group-hover:scale-100"
-                      aria-label={t.timetables.addSession()}
-                    >
-                      <span className="text-lg font-light leading-none">+</span>
+            daysToShow.map((day, colIdx) => {
+              const Tag = !readOnly ? 'button' : 'div'
+              return (
+                <Tag
+                  key={`cell-${day}-${slot.start}`}
+                  type={!readOnly ? 'button' : undefined}
+                  onClick={() => handleSlotClick(day, slot)}
+                  className={cn(
+                    'w-full h-full rounded-2xl border border-dashed border-border/10 transition-all duration-200 bg-transparent p-0 appearance-none text-left outline-none',
+                    !readOnly && 'hover:bg-primary/5 hover:border-primary/20 cursor-pointer group focus-visible:ring-2 focus-visible:ring-primary',
+                    day === currentDay && 'bg-primary/5 border-primary/10 border-solid',
+                  )}
+                  style={{ gridColumn: colIdx + 2, gridRow: rowIdx + 2 }}
+                >
+                  {!readOnly && (
+                    <div className="h-full flex items-center justify-center">
+                      <div
+                        className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all scale-90 group-hover:scale-100"
+                        aria-label={t.timetables.addSession()}
+                      >
+                        <span className="text-lg font-light leading-none">+</span>
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            ))
+                  )}
+                </Tag>
+              )
+            })
           ))}
 
           {/* Session Cards */}
