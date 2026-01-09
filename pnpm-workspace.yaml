@@ -129,7 +129,7 @@ catalog:
   web-vitals: ^5.1.0
   wrangler: ^4.55.0
   xlsx: ^0.18.5
-  zod: ^4.2.1
+  zod: ^4.3.5
 
 catalogs:
   conflicts_vitest_t4_0_15:
