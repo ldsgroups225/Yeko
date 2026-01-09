@@ -226,7 +226,7 @@ catalogs:
       specifier: ^1.1.1
       version: 1.1.1
     date-fns:
-      specifier: ^4.1.0
+      specifier: 4.1.0
       version: 4.1.0
     dompurify:
       specifier: ^3.3.1
@@ -491,6 +491,9 @@ importers:
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
+      date-fns:
+        specifier: 'catalog:'
+        version: 4.1.0
       dompurify:
         specifier: 'catalog:'
         version: 3.3.1
@@ -8228,6 +8231,7 @@ packages:
   whatwg-encoding@3.1.1:
     resolution: {integrity: sha512-6qN4hJdMwfYBtE3YBTTHhoeuUrDBPZmbQaxWAqSALV/MeEnR5z1xd8UKud2RAkFoPkmB+hli1TZSnyi84xz1vQ==}
     engines: {node: '>=18'}
+    deprecated: Use @exodus/bytes instead for a more spec-conformant and faster implementation
 
   whatwg-mimetype@4.0.0:
     resolution: {integrity: sha512-QaKxh0eNIi2mE9p2vEdzfagOKHCcj1pJ56EEHGQOVxp8r9/iszLUUV7v89x9O1p/T+NlTM5W7jW6+cz4Fq1YVg==}
@@ -8283,6 +8287,7 @@ packages:
   wrangler@4.55.0:
     resolution: {integrity: sha512-50icmLX8UbNaq0FmFHbcvvOh7I6rDA/FyaMYRcNSl1iX0JwuKswezmmtYvYPxPTkbYz7FUYR8GPZLaT23uzFqw==}
     engines: {node: '>=20.0.0'}
+    deprecated: This version can incorrectly automatically delegate 'wrangler deploy' to 'opennextjs-cloudflare'
     hasBin: true
     peerDependencies:
       '@cloudflare/workers-types': ^4.20251213.0

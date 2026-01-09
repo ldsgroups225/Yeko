@@ -31,6 +31,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { deleteSchoolMutationOptions, schoolQueryOptions } from '@/integrations/tanstack-query/schools-options'
 import { useLogger } from '@/lib/logger'
 import { parseServerFnError } from '@/utils/error-handlers'
+import { formatDate } from '@/utils/formatDate'
 
 export const Route = createFileRoute('/_auth/app/schools/$schoolId')({
   component: SchoolDetails,
@@ -179,7 +180,7 @@ function SchoolDetails() {
                 <span>•</span>
                 <span>
                   Rejoint le
-                  {new Date(school.createdAt).toLocaleDateString()}
+                  <span className="ml-1 capitalize">{formatDate(school.createdAt, 'MEDIUM')}</span>
                 </span>
               </div>
             </div>
