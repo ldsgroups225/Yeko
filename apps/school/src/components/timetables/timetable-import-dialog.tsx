@@ -228,130 +228,130 @@ export function TimetableImportDialog({ open, onOpenChange, schoolId }: Timetabl
 
         {result
           ? (
-            <div className="space-y-4">
-              <Alert variant={result.failed === 0 ? 'default' : 'destructive'}>
-                {result.failed === 0 ? <CheckCircle2 className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
-                <AlertTitle>{t.timetables.importComplete()}</AlertTitle>
-                <AlertDescription>
-                  {t.timetables.importSummary({ success: result.success, total: result.success + result.failed })}
-                  {result.failed > 0 && ` - ${result.failed} ${t.timetables.status.error()}`}
-                </AlertDescription>
-              </Alert>
-              <DialogFooter><Button onClick={handleClose}>{t.common.close()}</Button></DialogFooter>
-            </div>
-          )
+              <div className="space-y-4">
+                <Alert variant={result.failed === 0 ? 'default' : 'destructive'}>
+                  {result.failed === 0 ? <CheckCircle2 className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
+                  <AlertTitle>{t.timetables.importComplete()}</AlertTitle>
+                  <AlertDescription>
+                    {t.timetables.importSummary({ success: result.success, total: result.success + result.failed })}
+                    {result.failed > 0 && ` - ${result.failed} ${t.timetables.status.error()}`}
+                  </AlertDescription>
+                </Alert>
+                <DialogFooter><Button onClick={handleClose}>{t.common.close()}</Button></DialogFooter>
+              </div>
+            )
           : (
-            <div className="space-y-6">
-              <div className="flex justify-between">
-                <Button variant="outline" onClick={downloadTemplate} size="sm">
-                  <Download className="mr-2 h-4 w-4" />
-                  {' '}
-                  {t.timetables.downloadTemplate()}
-                </Button>
-              </div>
+              <div className="space-y-6">
+                <div className="flex justify-between">
+                  <Button variant="outline" onClick={downloadTemplate} size="sm">
+                    <Download className="mr-2 h-4 w-4" />
+                    {' '}
+                    {t.timetables.downloadTemplate()}
+                  </Button>
+                </div>
 
-              <div className="rounded-lg border-2 border-dashed p-6 text-center border-muted">
-                {file
-                  ? (
-                    <div className="flex items-center justify-center gap-4">
-                      <FileSpreadsheet className="h-8 w-8 text-primary" />
-                      <div className="text-left">
-                        <p className="font-bold">{file.name}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {allParsed.length}
-                          {' '}
-                          {t.timetables.preview.totalLines()}
-                        </p>
-                      </div>
-                      <Button variant="ghost" size="icon" onClick={() => setFile(null)}><X className="h-4 w-4" /></Button>
+                <div className="rounded-lg border-2 border-dashed p-6 text-center border-muted">
+                  {file
+                    ? (
+                        <div className="flex items-center justify-center gap-4">
+                          <FileSpreadsheet className="h-8 w-8 text-primary" />
+                          <div className="text-left">
+                            <p className="font-bold">{file.name}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {allParsed.length}
+                              {' '}
+                              {t.timetables.preview.totalLines()}
+                            </p>
+                          </div>
+                          <Button variant="ghost" size="icon" onClick={() => setFile(null)}><X className="h-4 w-4" /></Button>
+                        </div>
+                      )
+                    : (
+                        <label className="cursor-pointer block">
+                          <Upload className="mx-auto h-10 w-10 text-muted-foreground mb-2" />
+                          <span className="font-medium text-primary hover:underline">{t.timetables.importDescription()}</span>
+                          <input type="file" accept=".xlsx,.xls" onChange={handleFileChange} className="hidden" />
+                        </label>
+                      )}
+                </div>
+
+                {parseError && <p className="text-destructive text-sm font-medium">{parseError}</p>}
+
+                {preview.length > 0 && (
+                  <div className="rounded-xl border border-border/40 overflow-hidden">
+                    <div className="bg-muted/30 px-4 py-2 text-xs font-bold uppercase tracking-wider text-muted-foreground border-b border-border/40">
+                      {t.timetables.preview.title()}
+                      {' '}
+                      (
+                      {countValid}
+                      {' '}
+                      {t.timetables.preview.validLines()}
+                      {' '}
+                      /
+                      {' '}
+                      {allParsed.length}
+                      )
                     </div>
-                  )
-                  : (
-                    <label className="cursor-pointer block">
-                      <Upload className="mx-auto h-10 w-10 text-muted-foreground mb-2" />
-                      <span className="font-medium text-primary hover:underline">{t.timetables.importDescription()}</span>
-                      <input type="file" accept=".xlsx,.xls" onChange={handleFileChange} className="hidden" />
-                    </label>
-                  )}
-              </div>
+                    <div className="max-h-[300px] overflow-auto">
+                      <table className="w-full text-xs">
+                        <thead className="bg-muted/10 sticky top-0">
+                          <tr>
+                            <th className="px-3 py-2 text-left">{t.timetables.columns.class()}</th>
+                            <th className="px-3 py-2 text-left">{t.timetables.columns.subject()}</th>
+                            <th className="px-3 py-2 text-left">{t.timetables.columns.teacher()}</th>
+                            <th className="px-3 py-2 text-left">{t.timetables.columns.day()}</th>
+                            <th className="px-3 py-2 text-left">{t.timetables.columns.time()}</th>
+                            <th className="px-3 py-2 text-left">{t.timetables.columns.status()}</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-border/20">
+                          {allParsed.slice(0, 100).map((row) => {
+                            const isValid = row.classId && row.subjectId && row.teacherId && row.dayOfWeek > 0
+                            return (
+                              <tr key={generateUUID()} className={!isValid ? 'bg-destructive/10' : ''}>
+                                <td className="px-3 py-2">
+                                  {row.className}
+                                  {!row.classId && <span className="block text-[10px] text-destructive font-bold">{t.timetables.status.notFound()}</span>}
+                                </td>
+                                <td className="px-3 py-2">
+                                  {row.subjectName}
+                                  {!row.subjectId && <span className="block text-[10px] text-destructive font-bold">{t.timetables.status.notFound()}</span>}
+                                </td>
+                                <td className="px-3 py-2">
+                                  {row.teacherName}
+                                  {!row.teacherId && <span className="block text-[10px] text-destructive font-bold">{t.timetables.status.notFound()}</span>}
+                                </td>
+                                <td className="px-3 py-2">{dayOfWeekLabels[row.dayOfWeek] || row.dayOfWeek || t.timetables.status.error()}</td>
+                                <td className="px-3 py-2">
+                                  {row.startTime}
+                                  {' '}
+                                  -
+                                  {' '}
+                                  {row.endTime}
+                                </td>
+                                <td className="px-3 py-2 font-bold">{isValid ? <span className="text-green-500">{t.timetables.status.ok()}</span> : <span className="text-destructive">{t.timetables.status.error()}</span>}</td>
+                              </tr>
+                            )
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
 
-              {parseError && <p className="text-destructive text-sm font-medium">{parseError}</p>}
-
-              {preview.length > 0 && (
-                <div className="rounded-xl border border-border/40 overflow-hidden">
-                  <div className="bg-muted/30 px-4 py-2 text-xs font-bold uppercase tracking-wider text-muted-foreground border-b border-border/40">
-                    {t.timetables.preview.title()}
+                <DialogFooter>
+                  <Button variant="ghost" onClick={handleClose}>{t.common.cancel()}</Button>
+                  <Button onClick={handleImport} disabled={countValid === 0 || importMutation.isPending}>
+                    {importMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {t.common.import()}
                     {' '}
                     (
                     {countValid}
-                    {' '}
-                    {t.timetables.preview.validLines()}
-                    {' '}
-                    /
-                    {' '}
-                    {allParsed.length}
                     )
-                  </div>
-                  <div className="max-h-[300px] overflow-auto">
-                    <table className="w-full text-xs">
-                      <thead className="bg-muted/10 sticky top-0">
-                        <tr>
-                          <th className="px-3 py-2 text-left">{t.timetables.columns.class()}</th>
-                          <th className="px-3 py-2 text-left">{t.timetables.columns.subject()}</th>
-                          <th className="px-3 py-2 text-left">{t.timetables.columns.teacher()}</th>
-                          <th className="px-3 py-2 text-left">{t.timetables.columns.day()}</th>
-                          <th className="px-3 py-2 text-left">{t.timetables.columns.time()}</th>
-                          <th className="px-3 py-2 text-left">{t.timetables.columns.status()}</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-border/20">
-                        {allParsed.slice(0, 100).map((row) => {
-                          const isValid = row.classId && row.subjectId && row.teacherId && row.dayOfWeek > 0
-                          return (
-                            <tr key={generateUUID()} className={!isValid ? 'bg-destructive/10' : ''}>
-                              <td className="px-3 py-2">
-                                {row.className}
-                                {!row.classId && <span className="block text-[10px] text-destructive font-bold">{t.timetables.status.notFound()}</span>}
-                              </td>
-                              <td className="px-3 py-2">
-                                {row.subjectName}
-                                {!row.subjectId && <span className="block text-[10px] text-destructive font-bold">{t.timetables.status.notFound()}</span>}
-                              </td>
-                              <td className="px-3 py-2">
-                                {row.teacherName}
-                                {!row.teacherId && <span className="block text-[10px] text-destructive font-bold">{t.timetables.status.notFound()}</span>}
-                              </td>
-                              <td className="px-3 py-2">{dayOfWeekLabels[row.dayOfWeek] || row.dayOfWeek || t.timetables.status.error()}</td>
-                              <td className="px-3 py-2">
-                                {row.startTime}
-                                {' '}
-                                -
-                                {' '}
-                                {row.endTime}
-                              </td>
-                              <td className="px-3 py-2 font-bold">{isValid ? <span className="text-green-500">{t.timetables.status.ok()}</span> : <span className="text-destructive">{t.timetables.status.error()}</span>}</td>
-                            </tr>
-                          )
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
-
-              <DialogFooter>
-                <Button variant="ghost" onClick={handleClose}>{t.common.cancel()}</Button>
-                <Button onClick={handleImport} disabled={countValid === 0 || importMutation.isPending}>
-                  {importMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {t.common.import()}
-                  {' '}
-                  (
-                  {countValid}
-                  )
-                </Button>
-              </DialogFooter>
-            </div>
-          )}
+                  </Button>
+                </DialogFooter>
+              </div>
+            )}
       </DialogContent>
     </Dialog>
   )
