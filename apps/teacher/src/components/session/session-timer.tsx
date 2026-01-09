@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks-extra/no-direct-set-state-in-use-effect */
-import { Clock } from 'lucide-react'
+import { IconClock } from '@tabler/icons-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -36,7 +36,7 @@ export function SessionTimer({ startedAt, className }: SessionTimerProps) {
   return (
     <div className={className}>
       <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-        <Clock className="h-4 w-4" />
+        <IconClock className="h-4 w-4" />
         <span>{t('session.timer')}</span>
       </div>
       <p className="font-mono text-2xl font-bold tabular-nums">

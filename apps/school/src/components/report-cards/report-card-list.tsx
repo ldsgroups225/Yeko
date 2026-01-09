@@ -1,7 +1,7 @@
 import type { ReportCardData } from './report-card-card'
 import type { ReportCardStatus } from '@/schemas/report-card'
-import { FileX } from 'lucide-react'
-import { Skeleton } from '@/components/ui/skeleton'
+import { IconFileX } from '@tabler/icons-react'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import { useTranslations } from '@/i18n'
 import { generateUUID } from '@/utils/generateUUID'
 import { ReportCardCard } from './report-card-card'
@@ -69,7 +69,7 @@ export function ReportCardList({
   if (filteredCards.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
-        <FileX className="h-12 w-12 text-muted-foreground mb-4" />
+        <IconFileX className="h-12 w-12 text-muted-foreground mb-4" />
         <h3 className="font-semibold text-lg">{t.reportCards.noReportCards()}</h3>
         <p className="text-muted-foreground text-sm">
           {t.reportCards.noReportCardsDescription()}

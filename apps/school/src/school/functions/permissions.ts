@@ -28,7 +28,7 @@ export const getUserPermissions = createServerFn().handler(async () => {
 })
 
 /**
- * Check if user has a specific permission
+ * IconCheck if user has a specific permission
  */
 export const checkUserPermission = createServerFn()
   .inputValidator((data: { action: string, resource: string }) => data)

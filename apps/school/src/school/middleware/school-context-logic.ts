@@ -34,7 +34,7 @@ export async function retrieveSchoolContext() {
     const internalUserId = await syncUserAuthOnLogin(authContext.userId, authContext.email)
 
     if (!internalUserId) {
-      console.error('User not found in database for email:', authContext.email)
+      console.error('IconUser not found in database for email:', authContext.email)
       return null
     }
 

@@ -1,4 +1,4 @@
-import { CheckCircle, FileText, UserPlus, Users } from 'lucide-react'
+import { IconCircleCheck, IconFileText, IconUserPlus, IconUsers } from '@tabler/icons-react'
 import { motion } from 'motion/react'
 import { useTranslations } from '@/i18n'
 
@@ -45,25 +45,25 @@ export function RegistrarDashboard() {
           title={t.dashboard.registrar.totalStudents()}
           value="1,234"
           subtitle={t.dashboard.registrar.active()}
-          icon={Users}
+          icon={IconUsers}
         />
         <MetricCard
           title={t.dashboard.registrar.newEnrollments()}
           value="45"
           subtitle={t.common.pending()}
-          icon={UserPlus}
+          icon={IconUserPlus}
         />
         <MetricCard
           title={t.dashboard.registrar.incompleteFiles()}
           value="12"
           subtitle={t.common.pending()}
-          icon={FileText}
+          icon={IconFileText}
         />
         <MetricCard
           title={t.dashboard.registrar.enrollmentsValidated()}
           value="33"
           subtitle={t.common.pending()}
-          icon={CheckCircle}
+          icon={IconCircleCheck}
         />
       </motion.div>
 
@@ -95,7 +95,7 @@ export function RegistrarDashboard() {
         </div>
       </motion.div>
 
-      {/* Recent Activity & Statistics */}
+      {/* Recent IconActivity & Statistics */}
       <div className="grid gap-4 lg:grid-cols-2">
         <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
           <h2 className="mb-4 text-lg font-semibold">{t.dashboard.registrar.recentActivity()}</h2>

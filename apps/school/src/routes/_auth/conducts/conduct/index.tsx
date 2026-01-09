@@ -1,23 +1,23 @@
+import { IconChartBar, IconInfoCircle, IconPlus, IconSearch, IconSparkles, IconTrash, IconX } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { BarChart3, Info, Plus, Search, Sparkles, Trash2, X } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { z } from 'zod'
-import { ConductRecordTable } from '@/components/conduct/conduct-record-table'
-
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Input } from '@workspace/ui/components/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from '@workspace/ui/components/select'
+import { AnimatePresence, motion } from 'motion/react'
+
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { z } from 'zod'
+import { ConductRecordTable } from '@/components/conduct/conduct-record-table'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { conductRecordsOptions } from '@/lib/queries/conduct-records'
@@ -123,7 +123,7 @@ function ConductPage() {
           className="flex items-center gap-4"
         >
           <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-            <Info className="size-8 text-primary" />
+            <IconInfoCircle className="size-8 text-primary" />
           </div>
           <div>
             <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.schoolLife.conduct()}</h1>
@@ -138,13 +138,13 @@ function ConductPage() {
         >
           <Link to="/conducts/conduct/reports">
             <Button variant="outline" className="h-12 rounded-2xl border-border/40 font-black uppercase tracking-widest text-[10px] hover:bg-muted/50 px-6 transition-all">
-              <BarChart3 className="mr-2 h-4 w-4" />
+              <IconChartBar className="mr-2 h-4 w-4" />
               {t.conduct.reports()}
             </Button>
           </Link>
           <Link to="/conducts/conduct/new">
             <Button className="h-12 rounded-2xl bg-primary shadow-xl shadow-primary/20 font-black uppercase tracking-widest text-[10px] px-8 transition-all hover:scale-105 active:scale-95">
-              <Plus className="mr-2 h-4 w-4" />
+              <IconPlus className="mr-2 h-4 w-4" />
               {t.conduct.newRecord()}
             </Button>
           </Link>
@@ -161,7 +161,7 @@ function ConductPage() {
         <div className="flex flex-1 flex-col sm:flex-row gap-4">
           <div className="flex-1 space-y-2">
             <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1 flex items-center gap-2">
-              <Search className="size-3" />
+              <IconSearch className="size-3" />
               {t.conduct.searchPlaceholder()}
             </label>
             <div className="relative">
@@ -182,7 +182,7 @@ function ConductPage() {
                     handleSearch()
                   }}
                 >
-                  <X className="size-4" />
+                  <IconX className="size-4" />
                 </Button>
               )}
             </div>
@@ -190,10 +190,10 @@ function ConductPage() {
 
           <div className="space-y-2 w-full sm:w-[180px]">
             <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1 flex items-center gap-2">
-              <Sparkles className="size-3" />
+              <IconSparkles className="size-3" />
               {t.conduct.filterByType()}
             </label>
-            <Select value={search.type ?? 'all'} onValueChange={handleTypeChange}>
+            <Select value={search.type ?? 'all'} onValueChange={v => handleTypeChange(v ?? 'all')}>
               <SelectTrigger className="h-12 rounded-2xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
                 <SelectValue placeholder={t.conduct.filterByType()} />
               </SelectTrigger>
@@ -209,10 +209,10 @@ function ConductPage() {
 
           <div className="space-y-2 w-full sm:w-[180px]">
             <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1 flex items-center gap-2">
-              <Info className="size-3" />
+              <IconInfoCircle className="size-3" />
               {t.conduct.filterByStatus()}
             </label>
-            <Select value={search.status ?? 'all'} onValueChange={handleStatusChange}>
+            <Select value={search.status ?? 'all'} onValueChange={v => handleStatusChange(v ?? 'all')}>
               <SelectTrigger className="h-12 rounded-2xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
                 <SelectValue placeholder={t.conduct.filterByStatus()} />
               </SelectTrigger>
@@ -249,7 +249,7 @@ function ConductPage() {
                   onClick={handleBulkDelete}
                   className="h-12 rounded-xl font-bold uppercase tracking-widest text-[10px] border-destructive/30 text-destructive hover:bg-destructive hover:text-destructive-foreground transition-all shadow-sm"
                 >
-                  <Trash2 className="mr-1.5 size-4" />
+                  <IconTrash className="mr-1.5 size-4" />
                   {t.common.delete()}
                 </Button>
               </motion.div>

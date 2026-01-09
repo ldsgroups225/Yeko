@@ -1,21 +1,21 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { AlertCircle, Calendar, Clock, MapPin, Tag, Type, Users } from 'lucide-react'
-import { motion } from 'motion/react'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { StudentCombobox } from '@/components/attendance/student/student-combobox'
-import { Button } from '@/components/ui/button'
-import { DatePicker } from '@/components/ui/date-picker'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { IconAlertCircle, IconCalendar, IconClock, IconMapPin, IconTag, IconTypography, IconUsers } from '@tabler/icons-react'
+import { Button } from '@workspace/ui/components/button'
+import { DatePicker } from '@workspace/ui/components/date-picker'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
+} from '@workspace/ui/components/select'
+import { Textarea } from '@workspace/ui/components/textarea'
+import { motion } from 'motion/react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { StudentCombobox } from '@/components/attendance/student/student-combobox'
 import { useTranslations } from '@/i18n'
 
 const conductTypes = ['incident', 'sanction', 'reward', 'note'] as const
@@ -89,7 +89,7 @@ export function ConductRecordForm({
           className="space-y-3"
         >
           <Label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
-            <Users className="size-3.5" />
+            <IconUsers className="size-3.5" />
             {t.conduct.student()}
           </Label>
           <StudentCombobox
@@ -109,7 +109,7 @@ export function ConductRecordForm({
           className="space-y-3"
         >
           <Label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
-            <Type className="size-3.5" />
+            <IconTypography className="size-3.5" />
             {t.conduct.form.type()}
           </Label>
           <Select
@@ -135,7 +135,7 @@ export function ConductRecordForm({
           className="space-y-3"
         >
           <Label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
-            <Tag className="size-3.5" />
+            <IconTag className="size-3.5" />
             {t.conduct.form.category()}
           </Label>
           <Select
@@ -162,7 +162,7 @@ export function ConductRecordForm({
         className="space-y-3"
       >
         <Label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
-          <Type className="size-3.5" />
+          <IconTypography className="size-3.5" />
           {t.conduct.form.title()}
         </Label>
         <Input
@@ -183,7 +183,7 @@ export function ConductRecordForm({
         className="space-y-3"
       >
         <Label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
-          <Tag className="size-3.5" />
+          <IconTag className="size-3.5" />
           {t.conduct.form.description()}
         </Label>
         <Textarea
@@ -204,7 +204,7 @@ export function ConductRecordForm({
           className="space-y-3 overflow-hidden"
         >
           <Label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
-            <AlertCircle className="size-3.5" />
+            <IconAlertCircle className="size-3.5" />
             {t.conduct.form.severity()}
           </Label>
           <Select
@@ -228,7 +228,7 @@ export function ConductRecordForm({
       <div className="grid gap-6 md:grid-cols-3">
         <div className="space-y-3">
           <Label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
-            <Calendar className="size-3.5" />
+            <IconCalendar className="size-3.5" />
             {t.conduct.form.incidentDate()}
           </Label>
           <DatePicker
@@ -240,7 +240,7 @@ export function ConductRecordForm({
 
         <div className="space-y-3">
           <Label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
-            <Clock className="size-3.5" />
+            <IconClock className="size-3.5" />
             {t.conduct.form.incidentTime()}
           </Label>
           <Input
@@ -253,7 +253,7 @@ export function ConductRecordForm({
 
         <div className="space-y-3">
           <Label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
-            <MapPin className="size-3.5" />
+            <IconMapPin className="size-3.5" />
             {t.conduct.form.location()}
           </Label>
           <Input
@@ -272,7 +272,7 @@ export function ConductRecordForm({
         className="space-y-3"
       >
         <Label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
-          <Users className="size-3.5" />
+          <IconUsers className="size-3.5" />
           {t.conduct.form.witnesses()}
         </Label>
         <Input

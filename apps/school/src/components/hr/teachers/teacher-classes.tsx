@@ -1,7 +1,7 @@
+import { IconBook, IconBuilding, IconUser } from '@tabler/icons-react'
 import { Link } from '@tanstack/react-router'
-import { Book, Building2, User } from 'lucide-react'
+import { Badge } from '@workspace/ui/components/badge'
 import { motion } from 'motion/react'
-import { Badge } from '@/components/ui/badge'
 import { useTranslations } from '@/i18n'
 
 interface TeacherClassesProps {
@@ -25,7 +25,7 @@ export function TeacherClasses({ classes, isLoading }: TeacherClassesProps) {
   if (!classes || classes.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center bg-card/40 rounded-2xl border border-dashed border-border/40 backdrop-blur-sm">
-        <Building2 className="mb-4 size-12 text-muted-foreground/40" />
+        <IconBuilding className="mb-4 size-12 text-muted-foreground/40" />
         <h3 className="text-lg font-semibold">{t.hr.teachers.noClasses()}</h3>
         <p className="text-sm text-muted-foreground">Cet enseignant n'a pas encore de classes assignées.</p>
       </div>
@@ -61,13 +61,13 @@ export function TeacherClasses({ classes, isLoading }: TeacherClassesProps) {
                 )}
               </Link>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Building2 className="size-3.5" />
+                <IconBuilding className="size-3.5" />
                 <span>{cls.classroomName || 'N/A'}</span>
               </div>
             </div>
             {cls.isHomeroom && (
               <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 text-[10px] uppercase font-bold tracking-wider">
-                <User className="mr-1 size-3" />
+                <IconUser className="mr-1 size-3" />
                 Titulaire
               </Badge>
             )}
@@ -80,7 +80,7 @@ export function TeacherClasses({ classes, isLoading }: TeacherClassesProps) {
                 variant="secondary"
                 className="bg-secondary/30 text-xs font-medium px-2 py-0"
               >
-                <Book className="mr-1 size-3 opacity-60" />
+                <IconBook className="mr-1 size-3 opacity-60" />
                 {subject}
               </Badge>
             ))}

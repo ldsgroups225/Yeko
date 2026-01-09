@@ -47,7 +47,7 @@ describe('staffForm Component', () => {
     })
   })
 
-  describe('rendering - Edit Mode', () => {
+  describe('rendering - IconEdit Mode', () => {
     const initialData = {
       id: 'staff-123',
       userId: 'user-123',

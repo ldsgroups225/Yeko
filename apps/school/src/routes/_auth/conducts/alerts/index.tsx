@@ -1,11 +1,11 @@
+import { IconBell, IconSparkles } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { Bell, Sparkles } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { motion } from 'motion/react'
 import { toast } from 'sonner'
 import { AlertsTable } from '@/components/attendance/alerts/alerts-table'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useTranslations } from '@/i18n'
 import {
   acknowledgeAlert,
@@ -83,7 +83,7 @@ function AlertsPage() {
         className="flex items-center gap-4"
       >
         <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-          <Bell className="size-8 text-primary" />
+          <IconBell className="size-8 text-primary" />
         </div>
         <div>
           <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.schoolLife.alerts()}</h1>
@@ -98,11 +98,11 @@ function AlertsPage() {
       >
         <Card className="relative overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl">
           <div className="absolute top-0 right-0 p-6 opacity-5">
-            <Sparkles className="size-32" />
+            <IconSparkles className="size-32" />
           </div>
           <CardHeader className="relative border-b border-border/10 bg-muted/20">
             <CardTitle className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
-              <Bell className="h-3 w-3" />
+              <IconBell className="h-3 w-3" />
               {t.alerts.activeAlerts()}
             </CardTitle>
           </CardHeader>

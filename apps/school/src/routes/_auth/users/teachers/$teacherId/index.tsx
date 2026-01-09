@@ -1,16 +1,16 @@
+import { IconBook, IconCalendar, IconChevronLeft, IconEdit, IconMail, IconPhone, IconTrash, IconUser, IconUserCheck } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Skeleton } from '@workspace/ui/components/skeleton'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
 import { format } from 'date-fns'
-import { BookOpen, Calendar, ChevronLeft, Edit, Mail, Phone, Trash2, User, UserCheck } from 'lucide-react'
 import { motion } from 'motion/react'
 import { TeacherClasses } from '@/components/hr/teachers/teacher-classes'
 import { TeacherTimetable } from '@/components/hr/teachers/teacher-timetable'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useTranslations } from '@/i18n'
 import { teacherOptions } from '@/lib/queries/teachers'
 import { cn } from '@/lib/utils'
@@ -52,13 +52,13 @@ function TeacherDetailsPage() {
     return (
       <div className="flex min-h-[400px] flex-col items-center justify-center text-center">
         <div className="size-16 rounded-full bg-red-500/10 flex items-center justify-center mb-4">
-          <UserCheck className="size-8 text-red-500" />
+          <IconUserCheck className="size-8 text-red-500" />
         </div>
         <h2 className="text-2xl font-bold">{t.errors.notFound()}</h2>
         <p className="text-muted-foreground mt-2 max-w-xs">Cet enseignant n'existe pas ou vous n'avez pas la permission de le voir.</p>
         <Button asChild className="mt-6 rounded-xl" variant="outline">
           <Link to="/users/teachers" search={{ page: 1 }}>
-            <ChevronLeft className="mr-2 size-4" />
+            <IconChevronLeft className="mr-2 size-4" />
             {t.common.back()}
           </Link>
         </Button>
@@ -108,18 +108,18 @@ function TeacherDetailsPage() {
               </div>
               <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1.5 font-medium">
-                  <BookOpen className="size-4 text-primary/60" />
+                  <IconBook className="size-4 text-primary/60" />
                   {teacher.specialization || t.hr.teachers.noSpecialization()}
                 </div>
                 {user?.email && (
                   <div className="flex items-center gap-1.5">
-                    <Mail className="size-4 opacity-70" />
+                    <IconMail className="size-4 opacity-70" />
                     <a href={`mailto:${user.email}`} className="hover:text-primary transition-colors underline-offset-4 hover:underline">{user.email}</a>
                   </div>
                 )}
                 {user?.phone && (
                   <div className="flex items-center gap-1.5">
-                    <Phone className="size-4 opacity-70" />
+                    <IconPhone className="size-4 opacity-70" />
                     <span>{user.phone}</span>
                   </div>
                 )}
@@ -130,11 +130,11 @@ function TeacherDetailsPage() {
 
         <div className="flex items-center gap-3">
           <Button variant="outline" size="lg" className="rounded-2xl border-border/40 hover:bg-red-500/5 hover:text-red-500 hover:border-red-500/20 transition-all shadow-sm">
-            <Trash2 className="mr-2 size-4" />
+            <IconTrash className="mr-2 size-4" />
             {t.common.delete()}
           </Button>
           <Button size="lg" className="rounded-2xl shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5 active:translate-y-0">
-            <Edit className="mr-2 size-4" />
+            <IconEdit className="mr-2 size-4" />
             {t.common.edit()}
           </Button>
         </div>
@@ -165,7 +165,7 @@ function TeacherDetailsPage() {
           <TabsContent value="info" className="space-y-6 m-0">
             <div className="rounded-3xl border border-border/40 bg-card/40 p-8 backdrop-blur-md shadow-sm">
               <h2 className="text-xl font-bold mb-8 flex items-center gap-2">
-                <User className="size-5 text-primary" />
+                <IconUser className="size-5 text-primary" />
                 {t.hr.teachers.personalInfo()}
               </h2>
               <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
@@ -174,7 +174,7 @@ function TeacherDetailsPage() {
                     <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">{t.hr.teachers.hireDate()}</span>
                     <div className="flex items-center gap-2.5 mt-1 font-semibold text-foreground">
                       <div className="size-8 rounded-lg bg-primary/5 flex items-center justify-center border border-primary/10">
-                        <Calendar className="size-4 text-primary" />
+                        <IconCalendar className="size-4 text-primary" />
                       </div>
                       {format(new Date(teacher.hireDate), 'PPP')}
                     </div>
@@ -213,7 +213,7 @@ function TeacherDetailsPage() {
                   <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">{t.hr.teachers.specialization()}</span>
                   <div className="flex items-center gap-2.5 mt-1 font-semibold text-foreground text-lg">
                     <div className="size-8 rounded-lg bg-blue-500/5 flex items-center justify-center border border-blue-500/10">
-                      <BookOpen className="size-4 text-blue-500" />
+                      <IconBook className="size-4 text-blue-500" />
                     </div>
                     {teacher.specialization || t.hr.teachers.noSpecialization()}
                   </div>
@@ -225,7 +225,7 @@ function TeacherDetailsPage() {
           <TabsContent value="subjects" className="m-0">
             <div className="rounded-3xl border border-border/40 bg-card/40 p-8 backdrop-blur-md shadow-sm">
               <h2 className="text-xl font-bold mb-8 flex items-center gap-2">
-                <BookOpen className="size-5 text-primary" />
+                <IconBook className="size-5 text-primary" />
                 {t.hr.teachers.assignedSubjects()}
               </h2>
               <div className="flex flex-wrap gap-3">
@@ -237,14 +237,14 @@ function TeacherDetailsPage() {
                           className="bg-primary/5 text-primary border-primary/20 px-4 py-2 text-sm font-semibold rounded-xl hover:bg-primary/10 transition-colors cursor-default"
                           variant="outline"
                         >
-                          <BookOpen className="mr-2 size-3.5" />
+                          <IconBook className="mr-2 size-3.5" />
                           {sub.subjectName}
                         </Badge>
                       ))
                     )
                   : (
                       <div className="flex flex-col items-center justify-center py-10 w-full text-center">
-                        <BookOpen className="mb-4 size-10 text-muted-foreground/30" />
+                        <IconBook className="mb-4 size-10 text-muted-foreground/30" />
                         <p className="text-muted-foreground font-medium">{t.hr.teachers.noSubjects()}</p>
                       </div>
                     )}

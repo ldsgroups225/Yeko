@@ -1,9 +1,9 @@
+import { IconArrowRight, IconCheck } from '@tabler/icons-react'
 import { Link } from '@tanstack/react-router'
-import { ArrowRight, Check } from 'lucide-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { useTranslation } from 'react-i18next'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 export function PricingSection() {
   const { t } = useTranslation()
@@ -71,7 +71,7 @@ export function PricingSection() {
                   <ul className="space-y-3 mb-8">
                     {planData.features.map((feature: string) => (
                       <li key={`${plan.key}-${feature.replace(/\s+/g, '-').toLowerCase()}`} className="flex items-start gap-3">
-                        <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                        <IconCheck className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                         <span className="text-sm text-muted-foreground">{feature}</span>
                       </li>
                     ))}
@@ -84,7 +84,7 @@ export function PricingSection() {
                   >
                     <Link to={plan.key === 'enterprise' ? '/demo-request' : '/demo-request'}>
                       {plan.key === 'enterprise' ? t('pricing.contactUs') : t('pricing.cta')}
-                      <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      <IconArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </Link>
                   </Button>
                 </CardContent>

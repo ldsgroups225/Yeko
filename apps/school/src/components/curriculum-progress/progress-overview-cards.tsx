@@ -1,7 +1,7 @@
-import { BookOpen, CheckCircle2, Clock, TrendingDown } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { IconBook, IconCircleCheck, IconClock, IconTrendingDown } from '@tabler/icons-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 
-import { Skeleton } from '@/components/ui/skeleton'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import { useTranslations } from '@/i18n'
 
 interface ProgressOverviewData {
@@ -52,25 +52,25 @@ export function ProgressOverviewCards({ data, isLoading }: ProgressOverviewCards
     {
       title: t.curriculum.totalClasses(),
       value: data.totalClasses,
-      icon: BookOpen,
+      icon: IconBook,
       color: 'text-blue-500',
     },
     {
       title: t.curriculum.onTrack(),
       value: data.onTrack + data.ahead,
-      icon: CheckCircle2,
+      icon: IconCircleCheck,
       color: 'text-green-500',
     },
     {
       title: t.curriculum.behind(),
       value: data.slightlyBehind + data.significantlyBehind,
-      icon: TrendingDown,
+      icon: IconTrendingDown,
       color: 'text-red-500',
     },
     {
       title: t.curriculum.averageProgress(),
       value: `${data.averageProgress.toFixed(0)}%`,
-      icon: Clock,
+      icon: IconClock,
       color: 'text-purple-500',
     },
   ]

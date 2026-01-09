@@ -1,14 +1,14 @@
-import { Calendar, MapPin, MoreHorizontal, Sparkles } from 'lucide-react'
-import { motion } from 'motion/react'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { IconCalendar, IconDots, IconMapPin, IconSparkles } from '@tabler/icons-react'
+import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardHeader } from '@workspace/ui/components/card'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from '@workspace/ui/components/dropdown-menu'
+import { motion } from 'motion/react'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { ConductSeverityBadge } from './conduct-severity-badge'
@@ -68,7 +68,7 @@ export function ConductRecordCard({
     >
       <Card className={cn('group overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl transition-all hover:bg-card/50 hover:shadow-primary/5', className)}>
         <div className="absolute top-0 right-0 p-3 opacity-0 group-hover:opacity-10 transition-opacity duration-500">
-          <Sparkles className="size-16" />
+          <IconSparkles className="size-16" />
         </div>
 
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
@@ -95,7 +95,7 @@ export function ConductRecordCard({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="rounded-xl hover:bg-primary/10 hover:text-primary transition-colors">
-                <MoreHorizontal className="h-5 w-5" />
+                <IconDots className="h-5 w-5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40">
@@ -136,13 +136,13 @@ export function ConductRecordCard({
           <div className="flex items-center gap-6 pt-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 border-t border-border/10 mt-auto">
             {record.incidentDate && (
               <div className="flex items-center gap-2">
-                <Calendar className="h-3.5 w-3.5 text-primary/40" />
+                <IconCalendar className="h-3.5 w-3.5 text-primary/40" />
                 {new Date(record.incidentDate).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}
               </div>
             )}
             {record.location && (
               <div className="flex items-center gap-2">
-                <MapPin className="h-3.5 w-3.5 text-primary/40" />
+                <IconMapPin className="h-3.5 w-3.5 text-primary/40" />
                 {record.location}
               </div>
             )}

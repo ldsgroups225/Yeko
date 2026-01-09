@@ -1,12 +1,10 @@
+import { IconBuilding, IconCircleCheck, IconCircleX, IconPlus, IconUsers } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
-import { Building2, CheckCircle, Plus, Users, XCircle } from 'lucide-react'
-import { motion } from 'motion/react'
-import { TableSkeleton } from '@/components/hr/table-skeleton'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Progress } from '@/components/ui/progress'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { Progress } from '@workspace/ui/components/progress'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -14,7 +12,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { motion } from 'motion/react'
+import { TableSkeleton } from '@/components/hr/table-skeleton'
 import { useTranslations } from '@/i18n'
 import { getClassrooms } from '@/school/functions/classrooms'
 
@@ -25,7 +25,7 @@ function StatsCards({ available, occupied, maintenance, inactive }: { available:
     {
       title: t.spaces.classrooms.available(),
       value: available,
-      icon: CheckCircle,
+      icon: IconCircleCheck,
       color: 'text-green-600',
       bgColor: 'bg-green-500/10 border-green-500/20',
       description: 'Prêtes à l\'emploi',
@@ -33,7 +33,7 @@ function StatsCards({ available, occupied, maintenance, inactive }: { available:
     {
       title: t.spaces.classrooms.occupied(),
       value: occupied,
-      icon: Users,
+      icon: IconUsers,
       color: 'text-blue-600',
       bgColor: 'bg-blue-500/10 border-blue-500/20',
       description: 'En cours d\'utilisation',
@@ -41,7 +41,7 @@ function StatsCards({ available, occupied, maintenance, inactive }: { available:
     {
       title: t.spaces.classrooms.maintenance(),
       value: maintenance,
-      icon: Building2,
+      icon: IconBuilding,
       color: 'text-yellow-600',
       bgColor: 'bg-yellow-500/10 border-yellow-500/20',
       description: 'Intervention requise',
@@ -49,7 +49,7 @@ function StatsCards({ available, occupied, maintenance, inactive }: { available:
     {
       title: t.spaces.classrooms.inactive(),
       value: inactive,
-      icon: XCircle,
+      icon: IconCircleX,
       color: 'text-gray-600',
       bgColor: 'bg-gray-500/10 border-gray-500/20',
       description: 'Hors service',
@@ -97,7 +97,7 @@ function EmptyState() {
       <CardContent className="p-16">
         <div className="flex flex-col items-center justify-center text-center space-y-6">
           <div className="rounded-full bg-muted/30 p-8 ring-1 ring-border/50">
-            <Building2 className="h-12 w-12 text-muted-foreground/50" />
+            <IconBuilding className="h-12 w-12 text-muted-foreground/50" />
           </div>
           <div className="space-y-2">
             <h3 className="text-xl font-bold">{t.empty.noClassrooms()}</h3>
@@ -107,7 +107,7 @@ function EmptyState() {
           </div>
           <Button asChild className="mt-4 rounded-xl shadow-lg shadow-primary/20 h-11 px-8">
             <a href="/spaces/classrooms">
-              <Plus className="mr-2 h-4 w-4" />
+              <IconPlus className="mr-2 h-4 w-4" />
               {t.empty.createClassroom()}
             </a>
           </Button>
@@ -161,7 +161,7 @@ export function ClassroomAvailability() {
       <Card className="border-border/40 bg-card/40 backdrop-blur-xl shadow-sm overflow-hidden">
         <CardHeader className="border-b border-border/40 bg-muted/5">
           <CardTitle className="text-lg font-bold flex items-center gap-2">
-            <Building2 className="h-5 w-5 text-primary" />
+            <IconBuilding className="h-5 w-5 text-primary" />
             {t.spaces.classrooms.details()}
           </CardTitle>
         </CardHeader>

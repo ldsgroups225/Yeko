@@ -1,16 +1,11 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { IconAlertCircle, IconCircleCheck, IconLoader2 } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { AlertCircle, CheckCircle2, Loader2 } from 'lucide-react'
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import { z } from 'zod'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
+import { Alert, AlertDescription, AlertTitle } from '@workspace/ui/components/alert'
+import { Button } from '@workspace/ui/components/button'
+import { Checkbox } from '@workspace/ui/components/checkbox'
 import {
   Dialog,
   DialogContent,
@@ -18,7 +13,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from '@workspace/ui/components/dialog'
 import {
   Form,
   FormControl,
@@ -27,8 +22,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+} from '@workspace/ui/components/form'
+
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
 import { useTranslations } from '@/i18n'
 import { studentsKeys } from '@/lib/queries/students'
 import { bulkReEnroll } from '@/school/functions/enrollments'
@@ -117,10 +117,10 @@ export function BulkReEnrollDialog({ open, onOpenChange }: BulkReEnrollDialogPro
                 <Alert variant={result.errors.length > 0 ? 'destructive' : 'default'}>
                   {result.errors.length > 0
                     ? (
-                        <AlertCircle className="h-4 w-4" />
+                        <IconAlertCircle className="h-4 w-4" />
                       )
                     : (
-                        <CheckCircle2 className="h-4 w-4" />
+                        <IconCircleCheck className="h-4 w-4" />
                       )}
                   <AlertTitle>{t.students.reEnrollComplete()}</AlertTitle>
                   <AlertDescription>
@@ -251,7 +251,7 @@ export function BulkReEnrollDialog({ open, onOpenChange }: BulkReEnrollDialogPro
                       {t.common.cancel()}
                     </Button>
                     <Button type="submit" disabled={reEnrollMutation.isPending}>
-                      {reEnrollMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                      {reEnrollMutation.isPending && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
                       {t.students.startReEnrollment()}
                     </Button>
                   </DialogFooter>

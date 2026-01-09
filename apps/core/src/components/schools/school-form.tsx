@@ -1,12 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2, Save, School } from 'lucide-react'
+import { IconDeviceFloppy, IconLoader2, IconSchool } from '@tabler/icons-react'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
 import { useEffect, useRef, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { checkStorageConfigured, getPresignedUploadUrl } from '@/core/functions/storage'
 import { CreateSchoolSchema } from '@/schemas/school'
 
@@ -124,7 +124,7 @@ export function SchoolForm({
         <Card className="md:col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <School className="h-5 w-5" />
+              <IconSchool className="h-5 w-5" />
               Informations de Base
             </CardTitle>
             <CardDescription>
@@ -220,7 +220,7 @@ export function SchoolForm({
                       )
                     : (
                         <div className="w-24 h-24 border-2 border-dashed rounded-lg flex items-center justify-center bg-muted">
-                          <School className="h-8 w-8 text-muted-foreground" />
+                          <IconSchool className="h-8 w-8 text-muted-foreground" />
                         </div>
                       )}
                 </div>
@@ -243,7 +243,7 @@ export function SchoolForm({
                       />
                       {isUploading && (
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <IconLoader2 className="h-4 w-4 animate-spin" />
                           <span>Téléversement...</span>
                         </div>
                       )}
@@ -324,13 +324,13 @@ export function SchoolForm({
           {isSubmitting
             ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <IconLoader2 className="h-4 w-4 animate-spin" />
                   {mode === 'create' ? 'Création en cours...' : 'Enregistrement...'}
                 </>
               )
             : (
                 <>
-                  <Save className="h-4 w-4" />
+                  <IconDeviceFloppy className="h-4 w-4" />
                   {mode === 'create' ? 'Créer l\'École' : 'Enregistrer les modifications'}
                 </>
               )}

@@ -1,12 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { IconCheck, IconCopy, IconLoader2, IconUserPlus } from '@tabler/icons-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Check, Copy, Loader2, UserPlus } from 'lucide-react'
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import { z } from 'zod'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
+import { Alert, AlertDescription } from '@workspace/ui/components/alert'
+import { Button } from '@workspace/ui/components/button'
 import {
   Dialog,
   DialogContent,
@@ -15,9 +11,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+} from '@workspace/ui/components/dialog'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
 import { createSchoolAdmin } from '@/core/functions/create-school-admin'
 
 const createAdminSchema = z.object({
@@ -107,7 +107,7 @@ export function CreateAdminDialog({ schoolId, schoolName }: CreateAdminDialogPro
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="gap-2">
-          <UserPlus className="h-4 w-4" />
+          <IconUserPlus className="h-4 w-4" />
           Créer un administrateur
         </Button>
       </DialogTrigger>
@@ -173,7 +173,7 @@ export function CreateAdminDialog({ schoolId, schoolName }: CreateAdminDialogPro
                       {createAdminMutation.isPending
                         ? (
                             <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
                               Création...
                             </>
                           )
@@ -218,10 +218,10 @@ export function CreateAdminDialog({ schoolId, schoolName }: CreateAdminDialogPro
                         >
                           {copiedField === 'email'
                             ? (
-                                <Check className="h-4 w-4 text-green-600" />
+                                <IconCheck className="h-4 w-4 text-green-600" />
                               )
                             : (
-                                <Copy className="h-4 w-4" />
+                                <IconCopy className="h-4 w-4" />
                               )}
                         </Button>
                       </div>
@@ -244,10 +244,10 @@ export function CreateAdminDialog({ schoolId, schoolName }: CreateAdminDialogPro
                         >
                           {copiedField === 'password'
                             ? (
-                                <Check className="h-4 w-4 text-green-600" />
+                                <IconCheck className="h-4 w-4 text-green-600" />
                               )
                             : (
-                                <Copy className="h-4 w-4" />
+                                <IconCopy className="h-4 w-4" />
                               )}
                         </Button>
                       </div>

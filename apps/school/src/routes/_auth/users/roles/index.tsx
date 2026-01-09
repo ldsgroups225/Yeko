@@ -1,9 +1,9 @@
+import { IconPlus } from '@tabler/icons-react'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { Plus } from 'lucide-react'
+import { Button } from '@workspace/ui/components/button'
 import { z } from 'zod'
 import { RolesTable } from '@/components/hr/roles/roles-table'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Button } from '@/components/ui/button'
 import { useTranslations } from '@/i18n'
 
 const rolesSearchSchema = z.object({
@@ -38,7 +38,7 @@ function RolesListPage() {
         <div className="flex gap-2">
           <Button asChild>
             <Link to="/users/roles/new">
-              <Plus className="mr-2 h-4 w-4" />
+              <IconPlus className="mr-2 h-4 w-4" />
               {t.hr.roles.addRole()}
             </Link>
           </Button>

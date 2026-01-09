@@ -1,24 +1,24 @@
+import { IconSparkles } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { Sparkles } from 'lucide-react'
-import { motion } from 'motion/react'
-import { useState } from 'react'
-
-import {
-  BehindScheduleAlert,
-  ProgressCard,
-  ProgressOverviewCards,
-} from '@/components/curriculum-progress'
-
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
+} from '@workspace/ui/components/select'
+import { Skeleton } from '@workspace/ui/components/skeleton'
+
+import { motion } from 'motion/react'
+
+import { useState } from 'react'
+import {
+  BehindScheduleAlert,
+  ProgressCard,
+  ProgressOverviewCards,
+} from '@/components/curriculum-progress'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { progressOptions } from '@/lib/queries/curriculum-progress'
@@ -115,7 +115,7 @@ function CurriculumProgressPage() {
           className="flex items-center gap-4"
         >
           <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-            <Sparkles className="size-8 text-primary" />
+            <IconSparkles className="size-8 text-primary" />
           </div>
           <div>
             <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.curriculum.title()}</h1>
@@ -138,7 +138,7 @@ function CurriculumProgressPage() {
                   <Skeleton className="h-11 w-full rounded-xl" />
                 )
               : (
-                  <Select value={effectiveYearId} onValueChange={setLocalYearId}>
+                  <Select value={effectiveYearId} onValueChange={val => setLocalYearId(val ?? '')}>
                     <SelectTrigger className="h-11 rounded-xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all font-bold shadow-sm hover:bg-card/80">
                       <SelectValue placeholder={t.schoolYear.select()} />
                     </SelectTrigger>
@@ -167,7 +167,7 @@ function CurriculumProgressPage() {
               : (
                   <Select
                     value={selectedTermId}
-                    onValueChange={setSelectedTermId}
+                    onValueChange={val => setSelectedTermId(val ?? '')}
                     disabled={!effectiveYearId}
                   >
                     <SelectTrigger className="h-11 rounded-xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all font-bold shadow-sm hover:bg-card/80">
@@ -196,7 +196,7 @@ function CurriculumProgressPage() {
               : (
                   <Select
                     value={selectedClassId}
-                    onValueChange={setSelectedClassId}
+                    onValueChange={val => setSelectedClassId(val ?? '')}
                     disabled={!effectiveYearId}
                   >
                     <SelectTrigger className="h-11 rounded-xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all font-bold shadow-sm hover:bg-card/80">

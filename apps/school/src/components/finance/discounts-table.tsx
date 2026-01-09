@@ -1,15 +1,14 @@
-import { Edit, MoreHorizontal, Tag, Trash2 } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { IconDots, IconEdit, IconTag, IconTrash } from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Skeleton } from '@/components/ui/skeleton'
+} from '@workspace/ui/components/dropdown-menu'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -17,7 +16,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
 import { useTranslations } from '@/i18n'
 import { generateUUID } from '@/utils/generateUUID'
 
@@ -84,7 +84,7 @@ export function DiscountsTable({
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground border-2 border-dashed border-border/30 rounded-xl bg-card/10 m-4">
         <div className="p-4 rounded-full bg-muted/20 mb-4">
-          <Tag className="h-8 w-8 text-muted-foreground/50" />
+          <IconTag className="h-8 w-8 text-muted-foreground/50" />
         </div>
         <p className="text-lg font-medium">{t.finance.discounts.noDiscounts()}</p>
         <p className="text-sm max-w-sm mt-1 text-muted-foreground/70">{t.finance.discounts.createDescription()}</p>
@@ -149,12 +149,12 @@ export function DiscountsTable({
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                          <MoreHorizontal className="h-4 w-4" />
+                          <IconDots className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="backdrop-blur-xl bg-card/95 border-border/40 shadow-xl rounded-xl p-1">
                         <DropdownMenuItem onClick={() => onEdit?.(discount)} className="rounded-lg cursor-pointer focus:bg-primary/10 font-medium">
-                          <Edit className="mr-2 h-4 w-4 text-muted-foreground" />
+                          <IconEdit className="mr-2 h-4 w-4 text-muted-foreground" />
                           {t.common.edit()}
                         </DropdownMenuItem>
                         <DropdownMenuSeparator className="bg-border/40" />
@@ -162,7 +162,7 @@ export function DiscountsTable({
                           onClick={() => onDelete?.(discount)}
                           className="text-destructive focus:bg-destructive/10 focus:text-destructive rounded-lg cursor-pointer font-medium"
                         >
-                          <Trash2 className="mr-2 h-4 w-4" />
+                          <IconTrash className="mr-2 h-4 w-4" />
                           {t.common.delete()}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -195,12 +195,12 @@ export function DiscountsTable({
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg -mr-2 -mt-2">
-                      <MoreHorizontal className="h-4 w-4" />
+                      <IconDots className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="backdrop-blur-xl bg-card/95 border-border/40 shadow-xl rounded-xl p-1">
                     <DropdownMenuItem onClick={() => onEdit?.(discount)} className="rounded-lg cursor-pointer focus:bg-primary/10 font-medium">
-                      <Edit className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <IconEdit className="mr-2 h-4 w-4 text-muted-foreground" />
                       {t.common.edit()}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator className="bg-border/40" />
@@ -208,7 +208,7 @@ export function DiscountsTable({
                       onClick={() => onDelete?.(discount)}
                       className="text-destructive focus:bg-destructive/10 focus:text-destructive rounded-lg cursor-pointer font-medium"
                     >
-                      <Trash2 className="mr-2 h-4 w-4" />
+                      <IconTrash className="mr-2 h-4 w-4" />
                       {t.common.delete()}
                     </DropdownMenuItem>
                   </DropdownMenuContent>

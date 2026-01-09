@@ -1,20 +1,10 @@
+import { IconAdjustmentsHorizontal, IconBook, IconDownload, IconPlus, IconSearch } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
-import {
-  BookOpen,
-  Download,
-  Plus,
-  Search,
-  SlidersHorizontal,
-} from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { TableSkeleton } from '@/components/hr/table-skeleton'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Input } from '@workspace/ui/components/input'
+import { Popover, PopoverContent, PopoverTrigger } from '@workspace/ui/components/popover'
 import {
   Table,
   TableBody,
@@ -22,7 +12,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { TableSkeleton } from '@/components/hr/table-skeleton'
 import { useTranslations } from '@/i18n'
 import { teacherOptions } from '@/lib/queries/teachers'
 import { TeacherAssignmentDialog } from './teacher-assignment-dialog'
@@ -55,7 +49,7 @@ export function TeacherAssignmentList() {
       >
         <div className="flex flex-1 gap-3">
           <div className="relative max-w-sm flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder={t.academic.assignments.searchPlaceholder()}
               value={search}
@@ -67,7 +61,7 @@ export function TeacherAssignmentList() {
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline" className="border-border/40 bg-card/50 backdrop-blur-sm shadow-none hover:bg-card/80">
-                <SlidersHorizontal className="mr-2 h-4 w-4" />
+                <IconAdjustmentsHorizontal className="mr-2 h-4 w-4" />
                 {t.common.actions()}
               </Button>
             </PopoverTrigger>
@@ -75,7 +69,7 @@ export function TeacherAssignmentList() {
               <div className="pt-2 space-y-2">
                 <h4 className="font-medium leading-none text-muted-foreground text-xs mb-3 uppercase tracking-wider">{t.common.quickActions()}</h4>
                 <Button variant="ghost" className="w-full justify-start text-sm" onClick={() => toast.info(t.common.comingSoon())}>
-                  <Download className="mr-2 h-4 w-4" />
+                  <IconDownload className="mr-2 h-4 w-4" />
                   {t.common.export()}
                 </Button>
               </div>
@@ -89,7 +83,7 @@ export function TeacherAssignmentList() {
           ? (
               <div className="flex flex-col items-center justify-center py-24 text-center">
                 <div className="rounded-full bg-white/10 p-6 backdrop-blur-xl mb-4">
-                  <BookOpen className="h-12 w-12 text-muted-foreground/50" />
+                  <IconBook className="h-12 w-12 text-muted-foreground/50" />
                 </div>
                 <h3 className="text-lg font-semibold">{t.academic.assignments.noTeachers()}</h3>
                 <p className="mt-2 max-w-sm text-sm text-muted-foreground">
@@ -190,7 +184,7 @@ export function TeacherAssignmentList() {
                                 name: teacher.user.name,
                               })}
                           >
-                            <Plus className="mr-2 h-3 w-3" />
+                            <IconPlus className="mr-2 h-3 w-3" />
                             {t.academic.assignments.assign()}
                           </Button>
                         </TableCell>

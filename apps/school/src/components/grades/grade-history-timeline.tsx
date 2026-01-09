@@ -1,7 +1,7 @@
+import { IconCircleCheck, IconCircleX, IconClock, IconEdit, IconMessageCircle, IconSend, IconUser } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
-import { CheckCircle2, Clock, Edit3, MessageCircle, Send, User, XCircle } from 'lucide-react'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import { motion } from 'motion/react'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useTranslations } from '@/i18n'
 import { gradesOptions } from '@/lib/queries/grades'
 import { cn } from '@/lib/utils'
@@ -23,10 +23,10 @@ interface ValidationEntry {
 }
 
 const actionIcons = {
-  submitted: Send,
-  validated: CheckCircle2,
-  rejected: XCircle,
-  edited: Edit3,
+  submitted: IconSend,
+  validated: IconCircleCheck,
+  rejected: IconCircleX,
+  edited: IconEdit,
 }
 
 const actionColors = {
@@ -65,7 +65,7 @@ export function GradeHistoryTimeline({ gradeId }: GradeHistoryTimelineProps) {
         animate={{ opacity: 1 }}
         className="flex flex-col items-center justify-center py-12 text-muted-foreground bg-muted/20 rounded-xl border border-dashed border-border/40"
       >
-        <Clock className="mb-2 size-8 opacity-20" />
+        <IconClock className="mb-2 size-8 opacity-20" />
         <p className="text-sm font-medium italic">{t.academic.grades.history.empty()}</p>
       </motion.div>
     )
@@ -123,7 +123,7 @@ export function GradeHistoryTimeline({ gradeId }: GradeHistoryTimelineProps) {
 
                 <div className="flex items-center gap-1.5 mb-2">
                   <div className="size-4 rounded-full bg-muted flex items-center justify-center">
-                    <User className="size-2.5 text-muted-foreground" />
+                    <IconUser className="size-2.5 text-muted-foreground" />
                   </div>
                   <p className="text-xs font-semibold text-muted-foreground italic">
                     {t.academic.grades.history.by({ name: entry.validator.name })}
@@ -145,7 +145,7 @@ export function GradeHistoryTimeline({ gradeId }: GradeHistoryTimelineProps) {
                     <div className="absolute -left-2 top-0 h-full w-0.5 bg-primary/20 rounded-full" />
                     <div className="rounded-xl bg-card/30 backdrop-blur-sm border border-border/40 p-3 shadow-sm">
                       <div className="flex gap-2 text-xs italic text-muted-foreground leading-relaxed">
-                        <MessageCircle className="size-3 shrink-0 mt-0.5 opacity-50" />
+                        <IconMessageCircle className="size-3 shrink-0 mt-0.5 opacity-50" />
                         "
                         {entry.comment}
                         "

@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-// Phone validation regex for Ivory Coast format
+// IconPhone validation regex for Ivory Coast format
 const phoneRegex = /^(\+225)?\d{10}$/
 
 // Student import row schema

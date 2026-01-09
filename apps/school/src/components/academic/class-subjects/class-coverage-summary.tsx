@@ -1,7 +1,7 @@
 import type { ClassSubject, Subject } from '@repo/data-ops'
-import { AlertCircle, CheckCircle2 } from 'lucide-react'
+import { IconAlertCircle, IconCircleCheck } from '@tabler/icons-react'
+import { Progress } from '@workspace/ui/components/progress'
 import { motion } from 'motion/react'
-import { Progress } from '@/components/ui/progress'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
@@ -102,13 +102,13 @@ export function ClassCoverageSummary({ subjects }: ClassCoverageSummaryProps) {
           {isComplete
             ? (
                 <div className="flex items-center text-xs text-primary font-medium bg-primary/10 px-2 py-1 rounded-full w-fit">
-                  <CheckCircle2 className="mr-1 h-3.1 w-3.1" />
+                  <IconCircleCheck className="mr-1 h-3.1 w-3.1" />
                   {t.academic.classes.allSubjectsAssigned()}
                 </div>
               )
             : (
                 <div className="flex items-center text-xs text-amber-500 font-medium bg-amber-500/10 px-2 py-1 rounded-full w-fit">
-                  <AlertCircle className="mr-1 h-3.1 w-3.1" />
+                  <IconAlertCircle className="mr-1 h-3.1 w-3.1" />
                   {t.academic.classes.unassignedCount({
                     count: totalSubjects - assignedSubjects,
                   })}

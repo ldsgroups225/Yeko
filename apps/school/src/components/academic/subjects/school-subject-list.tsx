@@ -1,4 +1,5 @@
 import type { ColumnDef } from '@tanstack/react-table'
+import { IconAdjustmentsHorizontal, IconBook, IconChevronLeft, IconChevronRight, IconDownload, IconPlus, IconSearch } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   flexRender,
@@ -6,31 +7,18 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import {
-  BookOpen,
-  ChevronLeft,
-  ChevronRight,
-  Download,
-  Plus,
-  Search,
-  SlidersHorizontal,
-} from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { useMemo, useState } from 'react'
-import { toast } from 'sonner'
-import { TableSkeleton } from '@/components/hr/table-skeleton'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
+import { Popover, PopoverContent, PopoverTrigger } from '@workspace/ui/components/popover'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from '@workspace/ui/components/select'
 import {
   Table,
   TableBody,
@@ -38,7 +26,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
+import { useMemo, useState } from 'react'
+import { toast } from 'sonner'
+import { TableSkeleton } from '@/components/hr/table-skeleton'
 import { useTranslations } from '@/i18n'
 import {
   schoolSubjectsKeys,
@@ -208,7 +200,7 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
       >
         <div className="flex flex-1 gap-3">
           <div className="relative max-w-sm flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder={t.academic.subjects.searchPlaceholder()}
               value={search}
@@ -220,7 +212,7 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline" className="border-border/40 bg-card/50 backdrop-blur-sm shadow-none hover:bg-card/80">
-                <SlidersHorizontal className="mr-2 h-4 w-4" />
+                <IconAdjustmentsHorizontal className="mr-2 h-4 w-4" />
                 {t.common.actions()}
                 {isFiltered && <Badge className="ml-2 h-2 w-2 rounded-full p-0" />}
               </Button>
@@ -239,7 +231,7 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
                 <div className="space-y-3">
                   <div className="space-y-2">
                     <Label className="text-[11px] text-muted-foreground">{t.academic.subjects.filterByCategory()}</Label>
-                    <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                    <Select value={categoryFilter} onValueChange={val => val && setCategoryFilter(val)}>
                       <SelectTrigger className="h-8 text-xs bg-card/50 border-border/40">
                         <SelectValue />
                       </SelectTrigger>
@@ -256,7 +248,7 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
 
                   <div className="space-y-2">
                     <Label className="text-[11px] text-muted-foreground">{t.academic.subjects.filterByStatus()}</Label>
-                    <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <Select value={statusFilter} onValueChange={val => val && setStatusFilter(val)}>
                       <SelectTrigger className="h-8 text-xs bg-card/50 border-border/40">
                         <SelectValue />
                       </SelectTrigger>
@@ -272,7 +264,7 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
                 <div className="pt-2 border-t border-border/40 space-y-2">
                   <h4 className="font-medium leading-none text-muted-foreground text-xs mb-3 uppercase tracking-wider">{t.common.quickActions()}</h4>
                   <Button variant="ghost" className="w-full justify-start text-sm" onClick={() => toast.info(t.common.comingSoon())}>
-                    <Download className="mr-2 h-4 w-4" />
+                    <IconDownload className="mr-2 h-4 w-4" />
                     {t.common.export()}
                   </Button>
                 </div>
@@ -282,7 +274,7 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
         </div>
 
         <Button onClick={() => setPickerOpen(true)} className="shadow-lg shadow-primary/20">
-          <Plus className="mr-2 h-4 w-4" />
+          <IconPlus className="mr-2 h-4 w-4" />
           {t.academic.subjects.addSubjects()}
         </Button>
       </motion.div>
@@ -293,7 +285,7 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
           ? (
               <div className="flex flex-col items-center justify-center py-24 text-center">
                 <div className="rounded-full bg-white/10 p-6 backdrop-blur-xl mb-4">
-                  <BookOpen className="h-12 w-12 text-muted-foreground/50" />
+                  <IconBook className="h-12 w-12 text-muted-foreground/50" />
                 </div>
                 <h3 className="text-lg font-semibold">{t.academic.subjects.noSubjects()}</h3>
                 <p className="mt-2 max-w-sm text-sm text-muted-foreground">
@@ -345,7 +337,7 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
         {hasNoData
           ? (
               <div className="flex flex-col items-center justify-center py-12 text-center rounded-xl border border-dashed border-border/40 bg-card/50 p-6">
-                <BookOpen className="h-10 w-10 text-muted-foreground/50 mb-3" />
+                <IconBook className="h-10 w-10 text-muted-foreground/50 mb-3" />
                 <h3 className="text-base font-semibold">{t.academic.subjects.noSubjects()}</h3>
               </div>
             )
@@ -396,7 +388,7 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
             disabled={!table.getCanPreviousPage()}
             className="border-border/40 bg-card/50 backdrop-blur-sm"
           >
-            <ChevronLeft className="h-4 w-4 mr-1" />
+            <IconChevronLeft className="h-4 w-4 mr-1" />
             {t.common.previous()}
           </Button>
           <span className="text-sm text-muted-foreground">
@@ -413,7 +405,7 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
             className="border-border/40 bg-card/50 backdrop-blur-sm"
           >
             {t.common.next()}
-            <ChevronRight className="h-4 w-4 ml-1" />
+            <IconChevronRight className="h-4 w-4 ml-1" />
           </Button>
         </div>
       )}

@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { StudentForm } from '@/components/students'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useTranslations } from '@/i18n'
 import { studentsOptions } from '@/lib/queries/students'
 

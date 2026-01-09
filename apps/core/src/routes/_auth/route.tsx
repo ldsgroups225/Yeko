@@ -1,10 +1,10 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { SidebarInset, SidebarProvider } from '@workspace/ui/components/sidebar'
 import { useState } from 'react'
 import { GoogleLogin } from '@/components/auth/google-login'
 import { Header } from '@/components/layout/header'
 import { MobileSidebar } from '@/components/layout/mobile-sidebar'
 import { Sidebar } from '@/components/layout/sidebar'
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { authClient } from '@/lib/auth-client'
 
 export const Route = createFileRoute('/_auth')({

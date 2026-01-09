@@ -1,33 +1,33 @@
+import {
+  IconArrowLeft,
+  IconBuilding,
+  IconCalendar,
+  IconCircleCheck,
+  IconCircleX,
+  IconClock,
+  IconCreditCard,
+  IconDotsVertical,
+  IconEdit,
+  IconMail,
+  IconMapPin,
+  IconMessage,
+  IconPhone,
+  IconSchool,
+  IconShield,
+  IconUsers,
+} from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import {
-  ArrowLeft,
-  Building,
-  Calendar,
-  CheckCircle,
-  Clock,
-  CreditCard,
-  Edit,
-  GraduationCap,
-  Mail,
-  MapPin,
-  MessageSquare,
-  MoreVertical,
-  Phone,
-  Shield,
-  Users,
-  XCircle,
-} from 'lucide-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
+import { Separator } from '@workspace/ui/components/separator'
+import { Skeleton } from '@workspace/ui/components/skeleton'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { CreateAdminDialog } from '@/components/schools/create-admin-dialog'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog'
-import { Separator } from '@/components/ui/separator'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { deleteSchoolMutationOptions, schoolQueryOptions } from '@/integrations/tanstack-query/schools-options'
 import { useLogger } from '@/lib/logger'
 import { parseServerFnError } from '@/utils/error-handlers'
@@ -131,21 +131,21 @@ function SchoolDetails() {
       case 'active':
         return (
           <Badge variant="default">
-            <CheckCircle className="mr-1 h-3 w-3" />
+            <IconCircleCheck className="mr-1 h-3 w-3" />
             Active
           </Badge>
         )
       case 'inactive':
         return (
           <Badge variant="secondary">
-            <Clock className="mr-1 h-3 w-3" />
+            <IconClock className="mr-1 h-3 w-3" />
             Inactive
           </Badge>
         )
       case 'suspended':
         return (
           <Badge variant="destructive">
-            <XCircle className="mr-1 h-3 w-3" />
+            <IconCircleX className="mr-1 h-3 w-3" />
             Suspendue
           </Badge>
         )
@@ -161,12 +161,12 @@ function SchoolDetails() {
         <div className="flex items-center gap-4">
           <Link to="/app/schools">
             <Button variant="ghost" size="icon" className="h-8 w-8">
-              <ArrowLeft className="h-4 w-4" />
+              <IconArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
           <div className="flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-              <Building className="h-6 w-6 text-primary" />
+              <IconBuilding className="h-6 w-6 text-primary" />
             </div>
             <div>
               <div className="flex items-center gap-3">
@@ -189,7 +189,7 @@ function SchoolDetails() {
         <div className="flex items-center gap-2">
           <Link to="/app/schools/$schoolId/edit" params={{ schoolId }}>
             <Button variant="outline" className="gap-2">
-              <Edit className="h-4 w-4" />
+              <IconEdit className="h-4 w-4" />
               Modifier
             </Button>
           </Link>
@@ -198,11 +198,11 @@ function SchoolDetails() {
             className="gap-2"
             onClick={() => setDeleteDialogOpen(true)}
           >
-            <XCircle className="h-4 w-4" />
+            <IconCircleX className="h-4 w-4" />
             Supprimer
           </Button>
           <Button variant="ghost" size="icon">
-            <MoreVertical className="h-4 w-4" />
+            <IconDotsVertical className="h-4 w-4" />
           </Button>
         </div>
       </div>
@@ -226,7 +226,7 @@ function SchoolDetails() {
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex items-start gap-3">
-                  <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
+                  <IconMapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
                   <div className="space-y-1">
                     <p className="text-sm font-medium leading-none">Adresse</p>
                     <p className="text-sm text-muted-foreground">
@@ -235,7 +235,7 @@ function SchoolDetails() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
+                  <IconPhone className="h-4 w-4 text-muted-foreground" />
                   <div className="space-y-1">
                     <p className="text-sm font-medium leading-none">Téléphone</p>
                     <p className="text-sm text-muted-foreground">
@@ -244,7 +244,7 @@ function SchoolDetails() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Mail className="h-4 w-4 text-muted-foreground" />
+                  <IconMail className="h-4 w-4 text-muted-foreground" />
                   <div className="space-y-1">
                     <p className="text-sm font-medium leading-none">Email</p>
                     <p className="text-sm text-muted-foreground">
@@ -262,21 +262,21 @@ function SchoolDetails() {
               <CardContent className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Users className="h-4 w-4 text-muted-foreground" />
+                    <IconUsers className="h-4 w-4 text-muted-foreground" />
                     <span className="text-sm">Élèves inscrits</span>
                   </div>
                   <span className="font-bold">--</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <GraduationCap className="h-4 w-4 text-muted-foreground" />
+                    <IconSchool className="h-4 w-4 text-muted-foreground" />
                     <span className="text-sm">Enseignants</span>
                   </div>
                   <span className="font-bold">--</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <CreditCard className="h-4 w-4 text-muted-foreground" />
+                    <IconCreditCard className="h-4 w-4 text-muted-foreground" />
                     <span className="text-sm">Paiements (Mois)</span>
                   </div>
                   <span className="font-bold">--</span>
@@ -328,7 +328,7 @@ function SchoolDetails() {
 
                 {/* User list placeholder */}
                 <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
-                  <Users className="h-12 w-12 mb-4 opacity-20" />
+                  <IconUsers className="h-12 w-12 mb-4 opacity-20" />
                   <p className="font-medium">Aucun utilisateur pour le moment</p>
                   <p className="text-sm">Commencez par ajouter des administrateurs et enseignants</p>
                 </div>
@@ -349,7 +349,7 @@ function SchoolDetails() {
                   </CardDescription>
                 </div>
                 <Button>
-                  <Calendar className="h-4 w-4 mr-2" />
+                  <IconCalendar className="h-4 w-4 mr-2" />
                   Nouvelle année
                 </Button>
               </div>
@@ -378,7 +378,7 @@ function SchoolDetails() {
 
                 {/* Years history placeholder */}
                 <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
-                  <Calendar className="h-12 w-12 mb-4 opacity-20" />
+                  <IconCalendar className="h-12 w-12 mb-4 opacity-20" />
                   <p className="font-medium">Aucune année scolaire configurée</p>
                   <p className="text-sm">Créez votre première année scolaire pour commencer</p>
                 </div>
@@ -399,7 +399,7 @@ function SchoolDetails() {
                   </CardDescription>
                 </div>
                 <Button variant="outline">
-                  <Edit className="h-4 w-4 mr-2" />
+                  <IconEdit className="h-4 w-4 mr-2" />
                   Modifier
                 </Button>
               </div>
@@ -455,7 +455,7 @@ function SchoolDetails() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <MessageSquare className="h-5 w-5" />
+                  <IconMessage className="h-5 w-5" />
                   Notes CRM
                 </CardTitle>
                 <CardDescription>Notes internes sur cette école</CardDescription>
@@ -480,7 +480,7 @@ function SchoolDetails() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Shield className="h-5 w-5" />
+                  <IconShield className="h-5 w-5" />
                   Tickets de Support
                 </CardTitle>
                 <CardDescription>Historique des demandes de support</CardDescription>

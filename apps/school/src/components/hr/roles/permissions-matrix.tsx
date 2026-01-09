@@ -1,7 +1,7 @@
+import { Button } from '@workspace/ui/components/button'
+import { Checkbox } from '@workspace/ui/components/checkbox'
+import { Label } from '@workspace/ui/components/label'
 import { motion } from 'motion/react'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Label } from '@/components/ui/label'
 import { useTranslations } from '@/i18n'
 
 interface PermissionsMatrixProps {

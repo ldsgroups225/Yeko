@@ -1,9 +1,9 @@
+import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
+import { Button } from '@workspace/ui/components/button'
+
+import { Input } from '@workspace/ui/components/input'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 
 import { ParticipationGradeInput } from './participation-grade-input'
 

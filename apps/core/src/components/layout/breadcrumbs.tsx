@@ -1,5 +1,5 @@
+import { IconChevronRight, IconHome } from '@tabler/icons-react'
 import { Link, useRouterState } from '@tanstack/react-router'
-import { ChevronRight, Home } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { generateUUID } from '@/utils/generateUUID'
 
@@ -66,7 +66,7 @@ export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
   return (
     <nav className={cn('flex items-center space-x-1 text-sm text-muted-foreground', className)}>
       <Link to="/app/dashboard" className="flex items-center hover:text-foreground transition-colors">
-        <Home className="h-4 w-4" />
+        <IconHome className="h-4 w-4" />
       </Link>
 
       {breadcrumbItems.map((item, index) => {
@@ -74,7 +74,7 @@ export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
 
         return (
           <div key={generateUUID()} className="flex items-center space-x-1">
-            <ChevronRight className="h-4 w-4" />
+            <IconChevronRight className="h-4 w-4" />
             {item.href && !isLast
               ? (
                   <Link to={item.href} className="hover:text-foreground transition-colors">

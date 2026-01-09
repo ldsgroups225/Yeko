@@ -1,5 +1,5 @@
-import { AlertCircle, AlertTriangle, Info } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
+import { IconAlertCircle, IconAlertTriangle, IconInfoCircle } from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
@@ -12,12 +12,12 @@ interface AlertSeverityBadgeProps {
 }
 
 const severityConfig: Record<AlertSeverity, {
-  icon: typeof Info
+  icon: typeof IconInfoCircle
   colorClass: string
 }> = {
-  info: { icon: Info, colorClass: 'bg-blue-500/10 text-blue-600 border-blue-200' },
-  warning: { icon: AlertTriangle, colorClass: 'bg-amber-500/10 text-amber-600 border-amber-200' },
-  critical: { icon: AlertCircle, colorClass: 'bg-red-500/10 text-red-600 border-red-200' },
+  info: { icon: IconInfoCircle, colorClass: 'bg-blue-500/10 text-blue-600 border-blue-200' },
+  warning: { icon: IconAlertTriangle, colorClass: 'bg-amber-500/10 text-amber-600 border-amber-200' },
+  critical: { icon: IconAlertCircle, colorClass: 'bg-red-500/10 text-red-600 border-red-200' },
 }
 
 export function AlertSeverityBadge({

@@ -1,24 +1,24 @@
-import { useMutation } from '@tanstack/react-query'
 import {
-  AlertCircle,
-  CheckCircle,
-  Code2,
-  Loader2,
-  Play,
-  Server,
-  Zap,
-} from 'lucide-react'
-import { useState } from 'react'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+  IconAlertCircle,
+  IconBolt,
+  IconCircleCheck,
+  IconCode,
+  IconLoader2,
+  IconPlayerPlay,
+  IconServer,
+} from '@tabler/icons-react'
+import { useMutation } from '@tanstack/react-query'
+import { Alert, AlertDescription } from '@workspace/ui/components/alert'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
+} from '@workspace/ui/components/card'
+import { useState } from 'react'
 import { examplefunction } from '@/core/functions/example-functions'
 
 export function MiddlewareDemo() {
@@ -47,7 +47,7 @@ export function MiddlewareDemo() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <Badge variant="outline" className="mb-4">
-            <Server className="w-4 h-4 mr-2" />
+            <IconServer className="w-4 h-4 mr-2" />
             Server Functions & Middleware
           </Badge>
           <h2 className="text-3xl lg:text-4xl font-bold tracking-tight mb-4">
@@ -65,7 +65,7 @@ export function MiddlewareDemo() {
             <Card className="lg:col-span-1">
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <Play className="w-5 h-5 mr-2 text-primary" />
+                  <IconPlayerPlay className="w-5 h-5 mr-2 text-primary" />
                   Interactive Demo
                 </CardTitle>
                 <CardDescription>
@@ -98,10 +98,10 @@ export function MiddlewareDemo() {
                 >
                   {mutation.isPending
                     ? (
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        <IconLoader2 className="w-4 h-4 mr-2 animate-spin" />
                       )
                     : (
-                        <Zap className="w-4 h-4 mr-2" />
+                        <IconBolt className="w-4 h-4 mr-2" />
                       )}
                   Execute Server Function
                 </Button>
@@ -110,7 +110,7 @@ export function MiddlewareDemo() {
                 <div className="space-y-2">
                   {mutation.isPending && (
                     <Alert>
-                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <IconLoader2 className="w-4 h-4 animate-spin" />
                       <AlertDescription>
                         Executing server function with middleware...
                       </AlertDescription>
@@ -119,7 +119,7 @@ export function MiddlewareDemo() {
 
                   {mutation.isSuccess && (
                     <Alert className="border-primary/50 bg-primary/10">
-                      <CheckCircle className="w-4 h-4 text-primary" />
+                      <IconCircleCheck className="w-4 h-4 text-primary" />
                       <AlertDescription className="text-primary">
                         <strong>Success!</strong>
                         {' '}
@@ -132,7 +132,7 @@ export function MiddlewareDemo() {
 
                   {mutation.isError && (
                     <Alert className="border-destructive/50 bg-destructive/10">
-                      <AlertCircle className="w-4 h-4 text-destructive" />
+                      <IconAlertCircle className="w-4 h-4 text-destructive" />
                       <AlertDescription className="text-destructive">
                         <strong>Error:</strong>
                         {' '}
@@ -148,7 +148,7 @@ export function MiddlewareDemo() {
             <Card className="lg:col-span-1">
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <Code2 className="w-5 h-5 mr-2 text-primary" />
+                  <IconCode className="w-5 h-5 mr-2 text-primary" />
                   What's Happening
                 </CardTitle>
                 <CardDescription>
@@ -201,7 +201,7 @@ export function MiddlewareDemo() {
 
                   <div className="pt-4 border-t border-border">
                     <Alert>
-                      <Server className="w-4 h-4" />
+                      <IconServer className="w-4 h-4" />
                       <AlertDescription>
                         <strong>Check your server logs!</strong>
                         {' '}
@@ -237,7 +237,7 @@ export function MiddlewareDemo() {
           {/* Additional Info */}
           <div className="mt-8 p-6 bg-muted/50 rounded-xl">
             <h3 className="text-lg font-semibold mb-3 flex items-center">
-              <Zap className="w-5 h-5 mr-2 text-primary" />
+              <IconBolt className="w-5 h-5 mr-2 text-primary" />
               Key Benefits
             </h3>
             <div className="grid md:grid-cols-3 gap-4 text-sm">

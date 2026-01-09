@@ -1,13 +1,13 @@
 import type { ProgressStatus } from '@/schemas/curriculum-progress'
 
-import { Progress } from '@/components/ui/progress'
+import { Progress } from '@workspace/ui/components/progress'
 
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip'
+} from '@workspace/ui/components/tooltip'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 

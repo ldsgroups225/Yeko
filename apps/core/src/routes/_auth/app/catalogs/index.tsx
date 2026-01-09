@@ -1,21 +1,21 @@
+import {
+  IconArrowRight,
+  IconAward,
+  IconBook,
+  IconDatabase,
+  IconPlus,
+  IconSchool,
+  IconSearch,
+  IconTrendingUp,
+} from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import {
-  ArrowRight,
-  Award,
-  BookOpen,
-  Database,
-  GraduationCap,
-  Plus,
-  Search,
-  TrendingUp,
-} from 'lucide-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { Input } from '@workspace/ui/components/input'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import { useEffect } from 'react'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Skeleton } from '@/components/ui/skeleton'
 import { catalogStatsQueryOptions } from '@/integrations/tanstack-query/catalogs-options'
 import { useLogger } from '@/lib/logger'
 
@@ -41,7 +41,7 @@ function Catalogs() {
     {
       title: 'Niveaux et Filières d\'Éducation',
       description: 'Définir les niveaux éducatifs (Primaire, Secondaire, etc.) et les filières (Générale, Technique)',
-      icon: GraduationCap,
+      icon: IconSchool,
       href: '/app/catalogs/tracks',
       stats: isLoading ? '...' : `${catalogStats?.educationLevels || 0} niveaux, ${catalogStats?.tracks || 0} filières`,
       variant: 'default' as const,
@@ -49,7 +49,7 @@ function Catalogs() {
     {
       title: 'Niveaux et Séries',
       description: 'Gérer les niveaux de classe (6ème à Terminale) et les séries académiques (C, D, A, etc.)',
-      icon: Award,
+      icon: IconAward,
       href: '/app/catalogs/grades',
       stats: isLoading ? '...' : `${catalogStats?.grades || 0} classes, ${catalogStats?.series || 0} séries`,
       variant: 'default' as const,
@@ -57,7 +57,7 @@ function Catalogs() {
     {
       title: 'Matières',
       description: 'Catalogue global de toutes les matières enseignées dans les écoles (Mathématiques, Physique, etc.)',
-      icon: BookOpen,
+      icon: IconBook,
       href: '/app/catalogs/subjects',
       stats: isLoading ? '...' : `${catalogStats?.subjects || 0} matières`,
       variant: 'secondary' as const,
@@ -65,7 +65,7 @@ function Catalogs() {
     {
       title: 'Modèles de Programmes',
       description: 'Programmes ministériels et modèles de curriculum pour différentes matières et classes',
-      icon: Database,
+      icon: IconDatabase,
       href: '/app/catalogs/programs',
       stats: 'Bientôt disponible',
       variant: 'secondary' as const,
@@ -91,11 +91,11 @@ function Catalogs() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" className="gap-2">
-            <TrendingUp className="h-4 w-4" />
+            <IconTrendingUp className="h-4 w-4" />
             Exporter les Catalogues
           </Button>
           <Button className="gap-2">
-            <Plus className="h-4 w-4" />
+            <IconPlus className="h-4 w-4" />
             Ajout Rapide
           </Button>
         </div>
@@ -106,7 +106,7 @@ function Catalogs() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Niveaux d'Éducation</CardTitle>
-            <GraduationCap className="h-4 w-4 text-muted-foreground" />
+            <IconSchool className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             {isLoading ? <Skeleton className="h-8 w-16" /> : <div className="text-2xl font-bold">{catalogStats?.educationLevels || 0}</div>}
@@ -119,7 +119,7 @@ function Catalogs() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total des Filières</CardTitle>
-            <Award className="h-4 w-4 text-muted-foreground" />
+            <IconAward className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             {isLoading ? <Skeleton className="h-8 w-16" /> : <div className="text-2xl font-bold">{catalogStats?.tracks || 0}</div>}
@@ -132,7 +132,7 @@ function Catalogs() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Matières</CardTitle>
-            <BookOpen className="h-4 w-4 text-muted-foreground" />
+            <IconBook className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             {isLoading ? <Skeleton className="h-8 w-16" /> : <div className="text-2xl font-bold">{catalogStats?.subjects || 0}</div>}
@@ -145,7 +145,7 @@ function Catalogs() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Classes & Séries</CardTitle>
-            <Database className="h-4 w-4 text-muted-foreground" />
+            <IconDatabase className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             {isLoading ? <Skeleton className="h-8 w-16" /> : <div className="text-2xl font-bold">{(catalogStats?.grades || 0) + (catalogStats?.series || 0)}</div>}
@@ -166,7 +166,7 @@ function Catalogs() {
         </CardHeader>
         <CardContent>
           <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Rechercher des matières, programmes, classes..."
               className="pl-9"
@@ -201,7 +201,7 @@ function Catalogs() {
                 Gérer
                 {' '}
                 {section.title.split(' ')[0]}
-                <ArrowRight className="h-4 w-4" />
+                <IconArrowRight className="h-4 w-4" />
               </Button>
             </CardContent>
           </Card>

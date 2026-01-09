@@ -1,14 +1,14 @@
 import type { FormEvent } from 'react'
+import { IconArrowLeft, IconCircleCheck } from '@tabler/icons-react'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowLeft, CheckCircle2 } from 'lucide-react'
+import { Alert, AlertDescription } from '@workspace/ui/components/alert'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
+import { Textarea } from '@workspace/ui/components/textarea'
 import { useState } from 'react'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
 
 export const Route = createFileRoute('/demo-request')({
   component: DemoRequest,
@@ -60,7 +60,7 @@ function DemoRequest() {
           <div className="mb-8">
             <Link to="/">
               <Button variant="ghost" className="mb-4">
-                <ArrowLeft className="w-4 h-4 mr-2" />
+                <IconArrowLeft className="w-4 h-4 mr-2" />
                 Back to Home
               </Button>
             </Link>
@@ -68,7 +68,7 @@ function DemoRequest() {
 
           <Card className="text-center">
             <CardContent className="pt-6">
-              <CheckCircle2 className="w-16 h-16 text-primary mx-auto mb-4" />
+              <IconCircleCheck className="w-16 h-16 text-primary mx-auto mb-4" />
               <CardTitle className="mb-2">Demo Request Received!</CardTitle>
               <CardDescription className="text-lg mb-6">
                 Thank you for your interest in Yeko! Our team will contact you within 24 hours to schedule your personalized demo.
@@ -99,7 +99,7 @@ function DemoRequest() {
         <div className="mb-8">
           <Link to="/">
             <Button variant="ghost" className="mb-4">
-              <ArrowLeft className="w-4 h-4 mr-2" />
+              <IconArrowLeft className="w-4 h-4 mr-2" />
               Back to Home
             </Button>
           </Link>
@@ -175,7 +175,7 @@ function DemoRequest() {
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="schoolType">School Type *</Label>
-                  <Select value={formData.schoolType} onValueChange={(value: string) => handleInputChange('schoolType', value)}>
+                  <Select value={formData.schoolType} onValueChange={value => value && handleInputChange('schoolType', value)}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select school type" />
                     </SelectTrigger>
@@ -191,7 +191,7 @@ function DemoRequest() {
 
                 <div className="space-y-2">
                   <Label htmlFor="role">Your Role *</Label>
-                  <Select value={formData.role} onValueChange={(value: string) => handleInputChange('role', value)}>
+                  <Select value={formData.role} onValueChange={value => value && handleInputChange('role', value)}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select your role" />
                     </SelectTrigger>
@@ -210,7 +210,7 @@ function DemoRequest() {
 
               <div className="space-y-2">
                 <Label htmlFor="studentsCount">Number of Students *</Label>
-                <Select value={formData.studentsCount} onValueChange={(value: string) => handleInputChange('studentsCount', value)}>
+                <Select value={formData.studentsCount} onValueChange={value => value && handleInputChange('studentsCount', value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select student count range" />
                   </SelectTrigger>

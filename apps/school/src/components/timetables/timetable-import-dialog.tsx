@@ -2,13 +2,10 @@
 
 import type { ParsedSession } from '@/lib/excel-parser'
 import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
+import { IconAlertCircle, IconCircleCheck, IconDownload, IconFileSpreadsheet, IconLoader2, IconUpload, IconX } from '@tabler/icons-react'
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
-import { AlertCircle, CheckCircle2, Download, FileSpreadsheet, Loader2, Upload, X } from 'lucide-react'
-import { useCallback, useState } from 'react'
-import { toast } from 'sonner'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
-
+import { Alert, AlertDescription, AlertTitle } from '@workspace/ui/components/alert'
+import { Button } from '@workspace/ui/components/button'
 import {
   Dialog,
   DialogContent,
@@ -16,7 +13,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from '@workspace/ui/components/dialog'
+import { useCallback, useState } from 'react'
+
+import { toast } from 'sonner'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { parseTimetableExcel } from '@/lib/excel-parser'
@@ -76,7 +76,7 @@ export function TimetableImportDialog({ open, onOpenChange, schoolId }: Timetabl
 
   const importMutation = useMutation({
     mutationFn: (sessions: ParsedSession[]) => {
-      // Filter only valid sessions and map to required format
+      // IconFilter only valid sessions and map to required format
       const validSessions = sessions
         .filter(s => s.classId && s.subjectId && s.teacherId && s.dayOfWeek > 0 && s.startTime && s.endTime)
         .map(s => ({
@@ -230,7 +230,7 @@ export function TimetableImportDialog({ open, onOpenChange, schoolId }: Timetabl
           ? (
               <div className="space-y-4">
                 <Alert variant={result.failed === 0 ? 'default' : 'destructive'}>
-                  {result.failed === 0 ? <CheckCircle2 className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
+                  {result.failed === 0 ? <IconCircleCheck className="h-4 w-4" /> : <IconAlertCircle className="h-4 w-4" />}
                   <AlertTitle>{t.timetables.importComplete()}</AlertTitle>
                   <AlertDescription>
                     {t.timetables.importSummary({ success: result.success, total: result.success + result.failed })}
@@ -244,7 +244,7 @@ export function TimetableImportDialog({ open, onOpenChange, schoolId }: Timetabl
               <div className="space-y-6">
                 <div className="flex justify-between">
                   <Button variant="outline" onClick={downloadTemplate} size="sm">
-                    <Download className="mr-2 h-4 w-4" />
+                    <IconDownload className="mr-2 h-4 w-4" />
                     {' '}
                     {t.timetables.downloadTemplate()}
                   </Button>
@@ -254,7 +254,7 @@ export function TimetableImportDialog({ open, onOpenChange, schoolId }: Timetabl
                   {file
                     ? (
                         <div className="flex items-center justify-center gap-4">
-                          <FileSpreadsheet className="h-8 w-8 text-primary" />
+                          <IconFileSpreadsheet className="h-8 w-8 text-primary" />
                           <div className="text-left">
                             <p className="font-bold">{file.name}</p>
                             <p className="text-sm text-muted-foreground">
@@ -263,12 +263,12 @@ export function TimetableImportDialog({ open, onOpenChange, schoolId }: Timetabl
                               {t.timetables.preview.totalLines()}
                             </p>
                           </div>
-                          <Button variant="ghost" size="icon" onClick={() => setFile(null)}><X className="h-4 w-4" /></Button>
+                          <Button variant="ghost" size="icon" onClick={() => setFile(null)}><IconX className="h-4 w-4" /></Button>
                         </div>
                       )
                     : (
                         <label className="cursor-pointer block">
-                          <Upload className="mx-auto h-10 w-10 text-muted-foreground mb-2" />
+                          <IconUpload className="mx-auto h-10 w-10 text-muted-foreground mb-2" />
                           <span className="font-medium text-primary hover:underline">{t.timetables.importDescription()}</span>
                           <input type="file" accept=".xlsx,.xls" onChange={handleFileChange} className="hidden" />
                         </label>
@@ -342,7 +342,7 @@ export function TimetableImportDialog({ open, onOpenChange, schoolId }: Timetabl
                 <DialogFooter>
                   <Button variant="ghost" onClick={handleClose}>{t.common.cancel()}</Button>
                   <Button onClick={handleImport} disabled={countValid === 0 || importMutation.isPending}>
-                    {importMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {importMutation.isPending && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
                     {t.common.import()}
                     {' '}
                     (

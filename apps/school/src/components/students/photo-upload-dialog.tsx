@@ -1,14 +1,10 @@
 'use client'
 
 import type { Crop } from 'react-image-crop'
+import { IconCamera, IconLoader2, IconUpload, IconX } from '@tabler/icons-react'
 import { useMutation } from '@tanstack/react-query'
-import { Camera, Loader2, Upload, X } from 'lucide-react'
-import { useCallback, useRef, useState } from 'react'
-import ReactCrop, { centerCrop, makeAspectCrop } from 'react-image-crop'
-import { toast } from 'sonner'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
-
+import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
+import { Button } from '@workspace/ui/components/button'
 import {
   Dialog,
   DialogContent,
@@ -16,7 +12,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from '@workspace/ui/components/dialog'
+import { useCallback, useRef, useState } from 'react'
+import ReactCrop, { centerCrop, makeAspectCrop } from 'react-image-crop'
+
+import { toast } from 'sonner'
 import { useTranslations } from '@/i18n'
 import { getPresignedUploadUrl } from '@/school/functions/storage'
 import 'react-image-crop/dist/ReactCrop.css'
@@ -84,7 +84,7 @@ export function PhotoUploadDialog({
         throw new Error(result.error || 'Failed to get upload URL')
       }
 
-      // Upload file directly to R2
+      // IconUpload file directly to R2
       const uploadResponse = await fetch(result.presignedUrl, {
         method: 'PUT',
         body: croppedImageBlob,
@@ -217,7 +217,7 @@ export function PhotoUploadDialog({
                   </Avatar>
 
                   <label className="flex w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-border/40 bg-card/30 p-8 transition-all hover:border-primary hover:bg-card/50 hover:shadow-sm">
-                    <Upload className="h-10 w-10 text-muted-foreground mb-4" />
+                    <IconUpload className="h-10 w-10 text-muted-foreground mb-4" />
                     <p className="font-medium text-lg">{t.students.clickToUpload()}</p>
                     <p className="text-sm text-muted-foreground text-center mt-2 max-w-xs">{t.students.photoRequirements()}</p>
                     <input
@@ -264,7 +264,7 @@ export function PhotoUploadDialog({
                         setCompletedCrop(undefined)
                       }}
                     >
-                      <X className="mr-2 h-4 w-4" />
+                      <IconX className="mr-2 h-4 w-4" />
                       {t.students.chooseAnother()}
                     </Button>
                   </div>
@@ -282,10 +282,10 @@ export function PhotoUploadDialog({
           >
             {uploadMutation.isPending
               ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
                 )
               : (
-                  <Camera className="mr-2 h-4 w-4" />
+                  <IconCamera className="mr-2 h-4 w-4" />
                 )}
             {t.students.savePhoto()}
           </Button>

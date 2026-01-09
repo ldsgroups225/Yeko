@@ -1,5 +1,5 @@
+import { IconCalendar } from '@tabler/icons-react'
 import { createFileRoute } from '@tanstack/react-router'
-import { CalendarDays } from 'lucide-react'
 import { motion } from 'motion/react'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { ClassroomAvailability } from '@/components/spaces/classroom-availability'
@@ -27,7 +27,7 @@ function AvailabilityPage() {
         className="flex items-center gap-4"
       >
         <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-          <CalendarDays className="size-8 text-primary" />
+          <IconCalendar className="size-8 text-primary" />
         </div>
         <div>
           <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.spaces.availability.title()}</h1>

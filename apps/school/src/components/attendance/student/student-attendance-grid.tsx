@@ -1,13 +1,11 @@
-import { CheckCircle, Clock, Save, Search, UserCheck, UserMinus, UserX } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { useMemo, useState } from 'react'
+import { IconCircleCheck, IconClock, IconDeviceFloppy, IconSearch, IconUserCheck, IconUserMinus, IconUserX } from '@tabler/icons-react'
+import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
+import { Button } from '@workspace/ui/components/button'
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ConfirmationDialog } from '@/components/ui/confirmation-dialog'
-import { Input } from '@/components/ui/input'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { ConfirmationDialog } from '@workspace/ui/components/confirmation-dialog'
+import { Input } from '@workspace/ui/components/input'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -15,7 +13,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
+import { useMemo, useState } from 'react'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { generateUUID } from '@/utils/generateUUID'
@@ -50,7 +50,7 @@ const statusConfig: Record<StudentAttendanceStatus, {
 }> = {
   present: {
     label: t => t.attendance.status.present(),
-    icon: UserCheck,
+    icon: IconUserCheck,
     color: 'text-emerald-500',
     bgColor: 'bg-emerald-500/10',
     borderColor: 'border-emerald-500/20',
@@ -58,7 +58,7 @@ const statusConfig: Record<StudentAttendanceStatus, {
   },
   late: {
     label: t => t.attendance.status.late(),
-    icon: Clock,
+    icon: IconClock,
     color: 'text-amber-500',
     bgColor: 'bg-amber-500/10',
     borderColor: 'border-amber-500/20',
@@ -66,7 +66,7 @@ const statusConfig: Record<StudentAttendanceStatus, {
   },
   absent: {
     label: t => t.attendance.status.absent(),
-    icon: UserX,
+    icon: IconUserX,
     color: 'text-rose-500',
     bgColor: 'bg-rose-500/10',
     borderColor: 'border-rose-500/20',
@@ -74,7 +74,7 @@ const statusConfig: Record<StudentAttendanceStatus, {
   },
   excused: {
     label: t => t.attendance.status.excused(),
-    icon: UserMinus,
+    icon: IconUserMinus,
     color: 'text-blue-500',
     bgColor: 'bg-blue-500/10',
     borderColor: 'border-blue-500/20',
@@ -151,7 +151,7 @@ export function StudentAttendanceGrid({
               onClick={handleMarkAllPresent}
               className="h-9 rounded-2xl border-border/40 font-black uppercase tracking-widest text-[10px] hover:bg-emerald-500/10 hover:text-emerald-500 transition-all px-4"
             >
-              <CheckCircle className="mr-2 h-4 w-4" />
+              <IconCircleCheck className="mr-2 h-4 w-4" />
               {t.attendance.markAllPresent()}
             </Button>
             <Button
@@ -159,7 +159,7 @@ export function StudentAttendanceGrid({
               disabled={!hasChanges || isSaving}
               className="h-9 rounded-2xl bg-primary shadow-xl shadow-primary/20 font-black uppercase tracking-widest text-[10px] px-6 transition-all hover:scale-105 active:scale-95 disabled:grayscale"
             >
-              <Save className="mr-2 h-4 w-4" />
+              <IconDeviceFloppy className="mr-2 h-4 w-4" />
               {isSaving ? t.common.saving() : t.common.save()}
             </Button>
           </div>
@@ -189,7 +189,7 @@ export function StudentAttendanceGrid({
         </div>
 
         <div className="mt-4 relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/40" />
+          <IconSearch className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/40" />
           <Input
             placeholder={t.common.search()}
             value={searchQuery}
@@ -282,7 +282,7 @@ export function StudentAttendanceGrid({
         {filteredEntries.length === 0 && (
           <div className="py-12 flex flex-col items-center text-center space-y-3">
             <div className="p-3 rounded-full bg-primary/5">
-              <Search className="size-6 text-primary/20" />
+              <IconSearch className="size-6 text-primary/20" />
             </div>
             <div>
               <h3 className="text-base font-black uppercase tracking-tight text-muted-foreground/40 italic">{t.common.noResults()}</h3>

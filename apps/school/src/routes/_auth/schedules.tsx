@@ -1,12 +1,21 @@
 import type { TimetableViewMode } from '@/components/timetables'
 import type { TimetableSessionData } from '@/components/timetables/timetable-session-card'
 import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
+import { IconCalendarSearch, IconDownload, IconSparkles, IconUpload } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { CalendarSearch, Download, Sparkles, Upload } from 'lucide-react'
 
+import { Button } from '@workspace/ui/components/button'
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@workspace/ui/components/select'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import { AnimatePresence, motion } from 'motion/react'
-
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
@@ -16,15 +25,6 @@ import {
 } from '@/components/timetables'
 import { TimetableImportDialog } from '@/components/timetables/timetable-import-dialog'
 import { TimetableSessionDialog } from '@/components/timetables/timetable-session-dialog'
-import { Button } from '@/components/ui/button'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useSchoolContext } from '@/hooks/use-school-context'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
@@ -304,7 +304,7 @@ function TimetablesPage() {
           className="flex items-center gap-4"
         >
           <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-            <Sparkles className="size-8 text-primary" />
+            <IconSparkles className="size-8 text-primary" />
           </div>
           <div>
             <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.timetables.title()}</h1>
@@ -319,7 +319,7 @@ function TimetablesPage() {
             onClick={() => setIsImportDialogOpen(true)}
             disabled={!effectiveYearId}
           >
-            <Upload className="mr-2 h-4 w-4" />
+            <IconUpload className="mr-2 h-4 w-4" />
             Importer
           </Button>
           <Button
@@ -328,7 +328,7 @@ function TimetablesPage() {
             onClick={handleExport}
             disabled={!canShowTimetable}
           >
-            <Download className="mr-2 h-4 w-4" />
+            <IconDownload className="mr-2 h-4 w-4" />
             Exporter
           </Button>
         </div>
@@ -353,7 +353,7 @@ function TimetablesPage() {
                     <Skeleton className="h-11 w-full rounded-xl" />
                   )
                 : (
-                    <Select value={effectiveYearId} onValueChange={setLocalYearId}>
+                    <Select value={effectiveYearId} onValueChange={val => setLocalYearId(val ?? '')}>
                       <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
                         <SelectValue placeholder={t.schoolYear.select()} />
                       </SelectTrigger>
@@ -387,7 +387,7 @@ function TimetablesPage() {
                   : (
                       <Select
                         value={selectedClassId}
-                        onValueChange={setSelectedClassId}
+                        onValueChange={val => setSelectedClassId(val ?? '')}
                         disabled={!effectiveYearId}
                       >
                         <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
@@ -424,7 +424,7 @@ function TimetablesPage() {
                   : (
                       <Select
                         value={selectedTeacherId}
-                        onValueChange={setSelectedTeacherId}
+                        onValueChange={val => setSelectedTeacherId(val ?? '')}
                       >
                         <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
                           <SelectValue placeholder={t.teachers.select()} />
@@ -475,7 +475,7 @@ function TimetablesPage() {
                   className="flex flex-col items-center justify-center h-[400px] text-muted-foreground/60 bg-card/20 border-2 border-dashed border-border/40 rounded-3xl"
                 >
                   <div className="p-4 rounded-full bg-primary/5 mb-4">
-                    <CalendarSearch className="size-8 text-primary/40" />
+                    <IconCalendarSearch className="size-8 text-primary/40" />
                   </div>
                   <p className="font-bold text-lg">{t.timetables.selectFiltersPrompt()}</p>
                   <p className="text-sm font-medium opacity-70 max-w-sm text-center mt-2">

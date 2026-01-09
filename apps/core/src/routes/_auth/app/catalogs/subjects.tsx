@@ -1,33 +1,32 @@
 import type { Subject } from '@repo/data-ops'
 import type { FormEvent } from 'react'
 import type { CreateSubjectInput, UpdateSubjectInput } from '@/schemas/catalog'
+import {
+  IconBook,
+  IconCircleX,
+  IconDeviceFloppy,
+  IconDownload,
+  IconEdit,
+  IconPlus,
+  IconSearch,
+  IconTrash,
+  IconUpload,
+  IconX,
+} from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import {
-  BookOpen,
-  Download,
-  Edit,
-  FileUp,
-  Plus,
-  Save,
-  Search,
-  Trash2,
-  Upload,
-  X,
-  XCircle,
-} from 'lucide-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { CatalogListSkeleton, CatalogStatsSkeleton } from '@/components/catalogs/catalog-skeleton'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useInfiniteScroll } from '@/hooks/use-infinite-scroll'
 import {
@@ -240,7 +239,7 @@ function SubjectsCatalog() {
   if (error) {
     return (
       <div className="text-center py-8">
-        <XCircle className="h-8 w-8 text-destructive mx-auto mb-2" />
+        <IconCircleX className="h-8 w-8 text-destructive mx-auto mb-2" />
         <h3 className="text-lg font-medium text-destructive">Erreur de chargement</h3>
         <p className="text-muted-foreground">{error.message}</p>
         <Button
@@ -266,15 +265,15 @@ function SubjectsCatalog() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={downloadSubjectsTemplate}>
-            <FileUp className="h-4 w-4 mr-2" />
+            <IconDownload className="h-4 w-4 mr-2" />
             Template
           </Button>
           <Button variant="outline" size="sm" onClick={handleExport} disabled={allSubjects.length === 0}>
-            <Download className="h-4 w-4 mr-2" />
+            <IconDownload className="h-4 w-4 mr-2" />
             Exporter
           </Button>
           <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
-            <Upload className="h-4 w-4 mr-2" />
+            <IconUpload className="h-4 w-4 mr-2" />
             Importer
           </Button>
           <input
@@ -285,7 +284,7 @@ function SubjectsCatalog() {
             onChange={handleImport}
           />
           <Button className="gap-2" onClick={() => setIsCreating(true)}>
-            <Plus className="h-4 w-4" />
+            <IconPlus className="h-4 w-4" />
             Ajouter
           </Button>
         </div>
@@ -301,7 +300,7 @@ function SubjectsCatalog() {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Total</CardTitle>
-                  <BookOpen className="h-4 w-4 text-muted-foreground" />
+                  <IconBook className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{pagination?.total || 0}</div>
@@ -313,7 +312,7 @@ function SubjectsCatalog() {
                 <Card key={category.name}>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">{category.name}</CardTitle>
-                    <BookOpen className="h-4 w-4 text-muted-foreground" />
+                    <IconBook className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">{category.count}</div>
@@ -369,11 +368,11 @@ function SubjectsCatalog() {
               </div>
               <div className="flex justify-end gap-2">
                 <Button type="button" variant="outline" onClick={() => setIsCreating(false)}>
-                  <X className="h-4 w-4 mr-2" />
+                  <IconX className="h-4 w-4 mr-2" />
                   Annuler
                 </Button>
                 <Button type="submit" disabled={createMutation.isPending}>
-                  <Save className="h-4 w-4 mr-2" />
+                  <IconDeviceFloppy className="h-4 w-4 mr-2" />
                   {createMutation.isPending ? 'Création...' : 'Créer'}
                 </Button>
               </div>
@@ -393,7 +392,7 @@ function SubjectsCatalog() {
         <CardContent>
           <div className="flex gap-4 items-center">
             <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Rechercher des matières..."
                 className="pl-9"
@@ -407,8 +406,10 @@ function SubjectsCatalog() {
             <Select
               value={categoryFilter}
               onValueChange={(value) => {
-                setCategoryFilter(value)
-                setPage(1)
+                if (value) {
+                  setCategoryFilter(value)
+                  setPage(1)
+                }
               }}
             >
               <SelectTrigger className="w-[200px]">
@@ -444,7 +445,7 @@ function SubjectsCatalog() {
             : allSubjects.length === 0
               ? (
                   <div className="text-center py-8">
-                    <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <IconBook className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                     <h3 className="text-lg font-medium">Aucune matière trouvée</h3>
                     <p className="text-muted-foreground">
                       {search || categoryFilter !== 'all'
@@ -512,11 +513,11 @@ function SubjectsCatalog() {
                                         variant="outline"
                                         onClick={() => setEditingSubject(null)}
                                       >
-                                        <X className="h-4 w-4 mr-2" />
+                                        <IconX className="h-4 w-4 mr-2" />
                                         Annuler
                                       </Button>
                                       <Button type="submit" disabled={updateMutation.isPending}>
-                                        <Save className="h-4 w-4 mr-2" />
+                                        <IconDeviceFloppy className="h-4 w-4 mr-2" />
                                         {updateMutation.isPending ? 'Enregistrement...' : 'Enregistrer'}
                                       </Button>
                                     </div>
@@ -526,7 +527,7 @@ function SubjectsCatalog() {
                                   <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors">
                                     <div className="flex items-center gap-4">
                                       <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                                        <BookOpen className="h-5 w-5 text-primary" />
+                                        <IconBook className="h-5 w-5 text-primary" />
                                       </div>
                                       <div>
                                         <div className="flex items-center gap-2">
@@ -555,7 +556,7 @@ function SubjectsCatalog() {
                                         size="icon"
                                         onClick={() => setEditingSubject(subject.id)}
                                       >
-                                        <Edit className="h-4 w-4" />
+                                        <IconEdit className="h-4 w-4" />
                                       </Button>
                                       <Button
                                         variant="ghost"
@@ -563,7 +564,7 @@ function SubjectsCatalog() {
                                         onClick={() => setDeletingSubject({ id: subject.id, name: subject.name })}
                                         disabled={deleteMutation.isPending}
                                       >
-                                        <Trash2 className="h-4 w-4" />
+                                        <IconTrash className="h-4 w-4" />
                                       </Button>
                                     </div>
                                   </div>

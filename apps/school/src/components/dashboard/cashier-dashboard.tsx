@@ -1,4 +1,4 @@
-import { CheckCircle, Clock, CreditCard, DollarSign } from 'lucide-react'
+import { IconCircleCheck, IconClock, IconCreditCard, IconCurrencyDollar } from '@tabler/icons-react'
 import { motion } from 'motion/react'
 import { useTranslations } from '@/i18n'
 
@@ -45,25 +45,25 @@ export function CashierDashboard() {
           title={t.dashboard.cashier.dailyCollections()}
           value="180,000"
           currency="FCFA"
-          icon={DollarSign}
+          icon={IconCurrencyDollar}
         />
         <MetricCard
           title={t.dashboard.cashier.transactions()}
           value="12"
           currency={t.dashboard.cashier.today()}
-          icon={CreditCard}
+          icon={IconCreditCard}
         />
         <MetricCard
           title={t.dashboard.cashier.validated()}
           value="10"
           currency={t.dashboard.cashier.today()}
-          icon={CheckCircle}
+          icon={IconCircleCheck}
         />
         <MetricCard
           title={t.dashboard.cashier.pending()}
           value="2"
           currency={t.common.pending()}
-          icon={Clock}
+          icon={IconClock}
         />
       </motion.div>
 

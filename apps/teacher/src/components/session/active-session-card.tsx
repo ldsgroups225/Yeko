@@ -1,10 +1,10 @@
+import { IconClock, IconPlayerPlay, IconUsers } from '@tabler/icons-react'
 import { Link } from '@tanstack/react-router'
-import { Clock, Play, Users } from 'lucide-react'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent } from '@workspace/ui/components/card'
+
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 
 interface ActiveSessionCardProps {
   session: {
@@ -59,7 +59,7 @@ export function ActiveSessionCard({ session, onComplete }: ActiveSessionCardProp
           </div>
           <div className="text-right">
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
-              <Clock className="h-3.5 w-3.5" />
+              <IconClock className="h-3.5 w-3.5" />
               <span>{t('session.timer')}</span>
             </div>
             <p className="font-mono text-lg font-semibold tabular-nums">
@@ -74,12 +74,12 @@ export function ActiveSessionCard({ session, onComplete }: ActiveSessionCardProp
               to="/app/sessions/$sessionId"
               params={{ sessionId: session.id }}
             >
-              <Users className="mr-1.5 h-4 w-4" />
+              <IconUsers className="mr-1.5 h-4 w-4" />
               {t('session.participation')}
             </Link>
           </Button>
           <Button size="sm" className="flex-1" onClick={onComplete}>
-            <Play className="mr-1.5 h-4 w-4" />
+            <IconPlayerPlay className="mr-1.5 h-4 w-4" />
             {t('session.complete')}
           </Button>
         </div>

@@ -1,10 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2, Save } from 'lucide-react'
+import { IconDeviceFloppy, IconLoader2 } from '@tabler/icons-react'
+import { Button } from '@workspace/ui/components/button'
+import { Label } from '@workspace/ui/components/label'
+import { Textarea } from '@workspace/ui/components/textarea'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import { useTranslations } from '@/i18n'
 
 const teacherCommentSchema = z.object({
@@ -91,10 +91,10 @@ export function TeacherCommentForm({
         >
           {isSubmitting
             ? (
-                <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                <IconLoader2 className="mr-1 h-3 w-3 animate-spin" />
               )
             : (
-                <Save className="mr-1 h-3 w-3" />
+                <IconDeviceFloppy className="mr-1 h-3 w-3" />
               )}
           {t.common.save()}
         </Button>

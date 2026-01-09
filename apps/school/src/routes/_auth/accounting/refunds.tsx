@@ -1,11 +1,11 @@
+import { IconRotate } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { RotateCcw } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { motion } from 'motion/react'
 import { toast } from 'sonner'
 import { RefundsTable } from '@/components/finance'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useTranslations } from '@/i18n'
 import { refundsKeys, refundsOptions } from '@/lib/queries'
 import { approveExistingRefund, rejectExistingRefund } from '@/school/functions/refunds'
@@ -62,7 +62,7 @@ function RefundsPage() {
         className="flex items-center gap-4"
       >
         <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-          <RotateCcw className="size-8 text-primary" />
+          <IconRotate className="size-8 text-primary" />
         </div>
         <div>
           <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.finance.refunds.title()}</h1>

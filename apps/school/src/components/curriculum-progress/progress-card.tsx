@@ -1,7 +1,7 @@
 import type { ProgressStatus } from '@/schemas/curriculum-progress'
 
-import { BookOpen, TrendingDown, TrendingUp } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { IconBook, IconTrendingDown, IconTrendingUp } from '@tabler/icons-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
@@ -65,7 +65,7 @@ export function ProgressCard({
       <CardHeader className="pb-2">
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center gap-2">
-            <BookOpen className="h-5 w-5 text-muted-foreground" />
+            <IconBook className="h-5 w-5 text-muted-foreground" />
             <div>
               <CardTitle className="text-base">{subjectName}</CardTitle>
               {teacherName && (
@@ -100,8 +100,8 @@ export function ProgressCard({
                 !isAhead && !isBehind && 'text-green-600 dark:text-green-400',
               )}
             >
-              {isAhead && <TrendingUp className="h-4 w-4" />}
-              {isBehind && <TrendingDown className="h-4 w-4" />}
+              {isAhead && <IconTrendingUp className="h-4 w-4" />}
+              {isBehind && <IconTrendingDown className="h-4 w-4" />}
               {variance > 0 ? '+' : ''}
               {variance.toFixed(0)}
               %

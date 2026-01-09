@@ -1,18 +1,10 @@
 'use client'
 
-import {
-  Banknote,
-  CreditCard,
-  PiggyBank,
-  Receipt,
-  TrendingDown,
-  TrendingUp,
-  Users,
-} from 'lucide-react'
+import { IconCashBanknote, IconCreditCard, IconPigMoney, IconReceipt, IconTrendingDown, IconTrendingUp, IconUsers } from '@tabler/icons-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { Progress } from '@workspace/ui/components/progress'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import { motion } from 'motion/react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Progress } from '@/components/ui/progress'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useTranslations } from '@/i18n'
 import { generateUUID } from '@/utils/generateUUID'
 
@@ -84,7 +76,7 @@ export function FinancialDashboard({
       title: t.finance.dashboard.expectedRevenue(),
       value: formatCurrency(totalExpectedRevenue),
       suffix: 'FCFA',
-      icon: PiggyBank,
+      icon: IconPigMoney,
       color: 'text-blue-600',
       bgColor: 'bg-blue-500/10 border-blue-500/20',
       gradient: 'from-blue-500/10 to-transparent',
@@ -93,7 +85,7 @@ export function FinancialDashboard({
       title: t.finance.dashboard.collected(),
       value: formatCurrency(totalCollected),
       suffix: 'FCFA',
-      icon: TrendingUp,
+      icon: IconTrendingUp,
       color: 'text-green-600',
       bgColor: 'bg-green-500/10 border-green-500/20',
       gradient: 'from-green-500/10 to-transparent',
@@ -102,7 +94,7 @@ export function FinancialDashboard({
       title: t.finance.dashboard.outstanding(),
       value: formatCurrency(totalOutstanding),
       suffix: 'FCFA',
-      icon: TrendingDown,
+      icon: IconTrendingDown,
       color: 'text-orange-600',
       bgColor: 'bg-orange-500/10 border-orange-500/20',
       gradient: 'from-orange-500/10 to-transparent',
@@ -110,7 +102,7 @@ export function FinancialDashboard({
     {
       title: t.finance.dashboard.paymentsThisMonth(),
       value: paymentsThisMonth.toString(),
-      icon: CreditCard,
+      icon: IconCreditCard,
       color: 'text-purple-600',
       bgColor: 'bg-purple-500/10 border-purple-500/20',
       gradient: 'from-purple-500/10 to-transparent',
@@ -162,7 +154,7 @@ export function FinancialDashboard({
             <CardHeader>
               <CardTitle className="flex items-center gap-3 text-lg font-bold">
                 <div className="p-2 rounded-xl bg-primary/10 border border-primary/20">
-                  <Banknote className="h-5 w-5 text-primary" />
+                  <IconCashBanknote className="h-5 w-5 text-primary" />
                 </div>
                 {t.finance.dashboard.collectionRate()}
               </CardTitle>
@@ -201,7 +193,7 @@ export function FinancialDashboard({
             <CardHeader>
               <CardTitle className="flex items-center gap-3 text-lg font-bold">
                 <div className="p-2 rounded-xl bg-primary/10 border border-primary/20">
-                  <Users className="h-5 w-5 text-primary" />
+                  <IconUsers className="h-5 w-5 text-primary" />
                 </div>
                 {t.finance.dashboard.studentPaymentStatus()}
               </CardTitle>
@@ -219,7 +211,7 @@ export function FinancialDashboard({
               </div>
               {refundsPending > 0 && (
                 <div className="flex items-center gap-3 p-3 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-700 dark:text-yellow-500">
-                  <Receipt className="h-5 w-5" />
+                  <IconReceipt className="h-5 w-5" />
                   <span className="text-sm font-semibold">
                     {refundsPending}
                     {' '}

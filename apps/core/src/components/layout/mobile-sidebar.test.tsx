@@ -17,7 +17,7 @@ vi.mock('@tanstack/react-router', () => ({
 }))
 
 // Mock Sheet component
-vi.mock('@/components/ui/sheet', () => ({
+vi.mock('@workspace/ui/components/sheet', () => ({
   Sheet: ({ children, open, onOpenChange }: any) => (
     <div
       data-testid="sheet"
@@ -56,7 +56,7 @@ vi.mock('@/components/ui/sheet', () => ({
 }))
 
 // Mock other UI components
-vi.mock('@/components/ui/button', () => ({
+vi.mock('@workspace/ui/components/button', () => ({
   Button: ({ children, onClick, className, variant, ...props }: any) => (
     <button
       type={props.type || 'button'}
@@ -71,7 +71,7 @@ vi.mock('@/components/ui/button', () => ({
   ),
 }))
 
-vi.mock('@/components/ui/scroll-area', () => ({
+vi.mock('@workspace/ui/components/scroll-area', () => ({
   ScrollArea: ({ children, className }: any) => (
     <div className={className} data-testid="scroll-area">
       {children}
@@ -88,7 +88,7 @@ vi.mock('@/lib/utils', () => ({
 }))
 
 // Mock Sidebar components
-vi.mock('@/components/ui/sidebar', () => ({
+vi.mock('@workspace/ui/components/sidebar', () => ({
   Sidebar: ({ children, ...props }: any) => <aside {...props}>{children}</aside>,
   SidebarContent: ({ children }: any) => <div>{children}</div>,
   SidebarFooter: ({ children }: any) => <div>{children}</div>,
@@ -111,7 +111,7 @@ vi.mock('@/components/ui/sidebar', () => ({
 }))
 
 // Mock Avatar
-vi.mock('@/components/ui/avatar', () => ({
+vi.mock('@workspace/ui/components/avatar', () => ({
   Avatar: ({ children, ...props }: any) => <div {...props}>{children}</div>,
   AvatarFallback: ({ children }: any) => <div>{children}</div>,
   AvatarImage: ({ src, alt }: any) => <img src={src} alt={alt} />,

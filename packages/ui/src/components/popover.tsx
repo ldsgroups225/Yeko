@@ -1,6 +1,7 @@
 'use client'
 
-import { Popover as PopoverPrimitive } from '@base-ui/react/popover'
+import { Popover as PopoverPrimitive } from '@base-ui-components/react/popover'
+import { Slot } from '@radix-ui/react-slot'
 import { cn } from '@workspace/ui/lib/utils'
 
 import * as React from 'react'
@@ -9,8 +10,23 @@ function Popover({ ...props }: PopoverPrimitive.Root.Props) {
   return <PopoverPrimitive.Root data-slot="popover" {...props} />
 }
 
-function PopoverTrigger({ ...props }: PopoverPrimitive.Trigger.Props) {
-  return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />
+function PopoverTrigger({
+  asChild,
+  children,
+  ...props
+}: PopoverPrimitive.Trigger.Props & { asChild?: boolean }) {
+  if (asChild) {
+    return (
+      <PopoverPrimitive.Trigger data-slot="popover-trigger" render={<Slot />} {...props}>
+        {children}
+      </PopoverPrimitive.Trigger>
+    )
+  }
+  return (
+    <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props}>
+      {children}
+    </PopoverPrimitive.Trigger>
+  )
 }
 
 function PopoverContent({

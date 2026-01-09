@@ -1,6 +1,6 @@
 import type { GradeStatus } from '@/schemas/grade'
+import { Badge } from '@workspace/ui/components/badge'
 import { motion } from 'motion/react'
-import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import { gradeStatusLabels } from '@/schemas/grade'
 

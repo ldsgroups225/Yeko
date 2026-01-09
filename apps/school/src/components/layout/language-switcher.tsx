@@ -1,13 +1,13 @@
 import type { Locales } from '@/i18n/i18n-types'
 
-import { Languages } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { IconLanguage } from '@tabler/icons-react'
+import { Button } from '@workspace/ui/components/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from '@workspace/ui/components/dropdown-menu'
 import { useTranslations } from '@/i18n'
 import { useI18nContext } from '@/i18n/i18n-react'
 
@@ -29,7 +29,7 @@ export function LanguageSwitcher() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" title={t.language.switchLanguage()}>
-          <Languages className="h-5 w-5" />
+          <IconLanguage className="h-5 w-5" />
           <span className="sr-only">{t.language.switchLanguage()}</span>
         </Button>
       </DropdownMenuTrigger>

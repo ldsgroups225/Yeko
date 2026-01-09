@@ -1,10 +1,9 @@
 'use client'
 
-import { Check, RotateCcw, X } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
+import { IconCheck, IconRotate, IconX } from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -12,7 +11,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
 import { useTranslations } from '@/i18n'
 import { generateUUID } from '@/utils/generateUUID'
 
@@ -79,7 +79,7 @@ export function RefundsTable({ refunds, isLoading, onApprove, onReject }: Refund
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground border-2 border-dashed border-border/30 rounded-xl bg-card/10 m-4">
         <div className="p-4 rounded-full bg-muted/20 mb-4">
-          <RotateCcw className="h-8 w-8 text-muted-foreground/50" />
+          <IconRotate className="h-8 w-8 text-muted-foreground/50" />
         </div>
         <p className="text-lg font-medium">{t.finance.refunds.noRefunds()}</p>
         <p className="text-sm max-w-sm mt-1 text-muted-foreground/70">{t.finance.refunds.description()}</p>
@@ -140,7 +140,7 @@ export function RefundsTable({ refunds, isLoading, onApprove, onReject }: Refund
                           onClick={() => onApprove?.(refund.id)}
                           aria-label={t.finance.refunds.approve()}
                         >
-                          <Check className="h-4 w-4" />
+                          <IconCheck className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="ghost"
@@ -149,7 +149,7 @@ export function RefundsTable({ refunds, isLoading, onApprove, onReject }: Refund
                           onClick={() => onReject?.(refund.id)}
                           aria-label={t.finance.refunds.reject()}
                         >
-                          <X className="h-4 w-4" />
+                          <IconX className="h-4 w-4" />
                         </Button>
                       </div>
                     )}
@@ -210,7 +210,7 @@ export function RefundsTable({ refunds, isLoading, onApprove, onReject }: Refund
                     className="flex-1 rounded-xl border-green-200 text-green-700 bg-green-50 hover:bg-green-100 hover:text-green-800 dark:border-green-900/30 dark:bg-green-900/10 dark:text-green-400 dark:hover:bg-green-900/20"
                     onClick={() => onApprove?.(refund.id)}
                   >
-                    <Check className="mr-2 h-4 w-4" />
+                    <IconCheck className="mr-2 h-4 w-4" />
                     {t.finance.refunds.approve()}
                   </Button>
                   <Button
@@ -218,7 +218,7 @@ export function RefundsTable({ refunds, isLoading, onApprove, onReject }: Refund
                     className="flex-1 rounded-xl border-red-200 text-red-700 bg-red-50 hover:bg-red-100 hover:text-red-800 dark:border-red-900/30 dark:bg-red-900/10 dark:text-red-400 dark:hover:bg-red-900/20"
                     onClick={() => onReject?.(refund.id)}
                   >
-                    <X className="mr-2 h-4 w-4" />
+                    <IconX className="mr-2 h-4 w-4" />
                     {t.finance.refunds.reject()}
                   </Button>
                 </div>

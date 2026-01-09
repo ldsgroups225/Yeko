@@ -100,7 +100,7 @@ export const createNewUser = createServerFn()
       throw new Error('No school context')
     const { schoolId, userId } = context
 
-    // Check email uniqueness (returns true if email is available)
+    // IconCheck email uniqueness (returns true if email is available)
     const emailIsAvailable = await checkEmailUniqueness(data.email, schoolId)
     if (!emailIsAvailable) {
       throw new Error('Email already exists in this school')
@@ -147,7 +147,7 @@ export const updateExistingUser = createServerFn()
       throw new Error('No school context')
     const { schoolId, userId } = context
 
-    // Check email uniqueness if email is being changed (returns true if email is available)
+    // IconCheck email uniqueness if email is being changed (returns true if email is available)
     if (data.email) {
       const emailIsAvailable = await checkEmailUniqueness(data.email, schoolId, targetUserId)
       if (!emailIsAvailable) {

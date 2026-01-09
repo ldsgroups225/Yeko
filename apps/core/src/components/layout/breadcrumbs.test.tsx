@@ -25,7 +25,7 @@ vi.mock('@/utils/generateUUID', () => ({
 }))
 
 // Mock lucide-react icons
-vi.mock('lucide-react', () => ({
+vi.mock('@tabler/icons-react', () => ({
   ChevronRight: () => <span data-testid="chevron-right">›</span>,
   Home: () => <span data-testid="home-icon">🏠</span>,
 }))

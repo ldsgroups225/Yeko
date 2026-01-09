@@ -1,23 +1,23 @@
+import { IconArrowLeft, IconCalendar, IconClock, IconHistory, IconMapPin, IconSparkles, IconUser } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowLeft, Calendar, Clock, History, MapPin, Sparkles, User } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { toast } from 'sonner'
-import { ConductSeverityBadge } from '@/components/conduct/conduct-severity-badge'
-import { ConductStatusBadge } from '@/components/conduct/conduct-status-badge'
-import { ConductTypeBadge } from '@/components/conduct/conduct-type-badge'
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
+} from '@workspace/ui/components/select'
+import { Skeleton } from '@workspace/ui/components/skeleton'
+import { AnimatePresence, motion } from 'motion/react'
+import { toast } from 'sonner'
+import { ConductSeverityBadge } from '@/components/conduct/conduct-severity-badge'
+import { ConductStatusBadge } from '@/components/conduct/conduct-status-badge'
+import { ConductTypeBadge } from '@/components/conduct/conduct-type-badge'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
 import { conductRecordOptions } from '@/lib/queries/conduct-records'
 import { changeStatus } from '@/school/functions/conduct-records'
@@ -95,7 +95,7 @@ function ConductRecordDetailPage() {
       >
         <Link to="/conducts/conduct">
           <Button variant="ghost" size="sm" className="rounded-xl hover:bg-primary/10 hover:text-primary transition-all font-black uppercase tracking-widest text-[10px]">
-            <ArrowLeft className="mr-2 h-4 w-4" />
+            <IconArrowLeft className="mr-2 h-4 w-4" />
             {t.common.back()}
           </Button>
         </Link>
@@ -104,7 +104,7 @@ function ConductRecordDetailPage() {
             {t.common.status()}
             :
           </span>
-          <Select value={record.status} onValueChange={handleStatusChange}>
+          <Select value={record.status} onValueChange={v => handleStatusChange(v ?? 'open')}>
             <SelectTrigger className="w-[180px] h-10 rounded-xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all font-bold">
               <SelectValue />
             </SelectTrigger>
@@ -128,7 +128,7 @@ function ConductRecordDetailPage() {
           >
             <Card className="relative overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl">
               <div className="absolute top-0 right-0 p-6 opacity-5">
-                <Sparkles className="size-32" />
+                <IconSparkles className="size-32" />
               </div>
               <CardHeader className="relative pb-0">
                 <div className="space-y-4">
@@ -153,7 +153,7 @@ function ConductRecordDetailPage() {
                   {record.incidentDate && (
                     <div className="flex items-center gap-4 group">
                       <div className="p-3 rounded-2xl bg-primary/5 border border-primary/10 group-hover:bg-primary/10 transition-colors">
-                        <Calendar className="size-5 text-primary" />
+                        <IconCalendar className="size-5 text-primary" />
                       </div>
                       <div>
                         <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">{t.conduct.form.incidentDate()}</div>
@@ -172,7 +172,7 @@ function ConductRecordDetailPage() {
                   {record.location && (
                     <div className="flex items-center gap-4 group">
                       <div className="p-3 rounded-2xl bg-primary/5 border border-primary/10 group-hover:bg-primary/10 transition-colors">
-                        <MapPin className="size-5 text-primary" />
+                        <IconMapPin className="size-5 text-primary" />
                       </div>
                       <div>
                         <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">{t.conduct.form.location()}</div>
@@ -190,7 +190,7 @@ function ConductRecordDetailPage() {
                       className="pt-6 border-t border-border/10"
                     >
                       <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 mb-4 ml-1">
-                        <User className="inline-block size-3 mr-1" />
+                        <IconUser className="inline-block size-3 mr-1" />
                         {t.conduct.form.witnesses()}
                       </h4>
                       <div className="flex flex-wrap gap-2">
@@ -216,7 +216,7 @@ function ConductRecordDetailPage() {
               >
                 <div className="flex items-center gap-2 ml-1">
                   <div className="h-px flex-1 bg-border/20" />
-                  <History className="size-4 text-emerald-500" />
+                  <IconHistory className="size-4 text-emerald-500" />
                   <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500/60">{t.conduct.resolution()}</span>
                   <div className="h-px flex-1 bg-border/20" />
                 </div>
@@ -274,13 +274,13 @@ function ConductRecordDetailPage() {
               <CardContent className="pt-6 space-y-4">
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-xl bg-primary/5">
-                    <User className="size-4 text-primary" />
+                    <IconUser className="size-4 text-primary" />
                   </div>
                   <span className="font-bold tracking-tight">{record.recordedByName ?? 'Unknown'}</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-xl bg-primary/5">
-                    <Clock className="size-4 text-primary" />
+                    <IconClock className="size-4 text-primary" />
                   </div>
                   <div className="text-xs font-medium text-muted-foreground">
                     {new Date(record.createdAt).toLocaleDateString(undefined, {

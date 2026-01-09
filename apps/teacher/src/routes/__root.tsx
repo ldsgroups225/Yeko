@@ -1,5 +1,6 @@
 import type { QueryClient } from '@tanstack/react-query'
 import type { ReactNode } from 'react'
+import { IconHome } from '@tabler/icons-react'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import {
   createRootRouteWithContext,
@@ -9,10 +10,9 @@ import {
   Scripts,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-import { Home } from 'lucide-react'
+import { Button } from '@workspace/ui/components/button'
 import { useTranslation } from 'react-i18next'
 import { Toaster } from 'sonner'
-import { Button } from '@/components/ui/button'
 import appCss from '@/styles.css?url'
 import '@/i18n/config'
 
@@ -70,7 +70,7 @@ function NotFoundComponent() {
         <p className="text-xl text-muted-foreground">{t('errors.notFound')}</p>
         <Button asChild>
           <Link to="/login">
-            <Home className="mr-2 h-4 w-4" />
+            <IconHome className="mr-2 h-4 w-4" />
             {t('nav.home')}
           </Link>
         </Button>

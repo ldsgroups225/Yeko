@@ -1,5 +1,5 @@
+import { IconBuilding, IconSelector } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
-import { Building2, ChevronsUpDown } from 'lucide-react'
 import { useSchoolContext } from '@/hooks/use-school-context'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
@@ -19,7 +19,7 @@ export function SchoolSwitcher() {
   if (isLoading) {
     return (
       <div className="flex h-10 w-[200px] items-center gap-2 rounded-md border border-input bg-background px-3">
-        <Building2 className="h-4 w-4 text-muted-foreground" />
+        <IconBuilding className="h-4 w-4 text-muted-foreground" />
         <span className="text-sm text-muted-foreground">{t.common.loading()}</span>
       </div>
     )
@@ -28,7 +28,7 @@ export function SchoolSwitcher() {
   if (!schools || schools.length === 0) {
     return (
       <div className="flex h-10 w-[200px] items-center gap-2 rounded-md border border-input bg-background px-3">
-        <Building2 className="h-4 w-4 text-muted-foreground" />
+        <IconBuilding className="h-4 w-4 text-muted-foreground" />
         <span className="text-sm text-muted-foreground">{t.common.noSchool()}</span>
       </div>
     )
@@ -47,10 +47,10 @@ export function SchoolSwitcher() {
         )}
       >
         <div className="flex items-center gap-2 overflow-hidden">
-          <Building2 className="h-4 w-4 shrink-0 text-muted-foreground" />
+          <IconBuilding className="h-4 w-4 shrink-0 text-muted-foreground" />
           <span className="truncate">{currentSchool?.name || t.common.select()}</span>
         </div>
-        <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
+        <IconSelector className="h-4 w-4 shrink-0 opacity-50" />
       </button>
 
       {/* TODO: Add dropdown menu with school list */}

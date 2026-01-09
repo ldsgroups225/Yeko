@@ -17,11 +17,11 @@ const mockFieldValues: Record<string, any> = {
 }
 
 // Mock the necessary UI components that might not be directly needed for testing
-vi.mock('@/components/ui/button', () => ({
+vi.mock('@workspace/ui/components/button', () => ({
   Button: ({ children, ...props }: any) => <button type="submit" {...props}>{children}</button>,
 }))
 
-vi.mock('@/components/ui/card', () => ({
+vi.mock('@workspace/ui/components/card', () => ({
   Card: ({ children, ...props }: any) => <div data-testid="card" {...props}>{children}</div>,
   CardContent: ({ children }: any) => <div data-testid="card-content">{children}</div>,
   CardDescription: ({ children }: any) => <div data-testid="card-description">{children}</div>,
@@ -29,15 +29,15 @@ vi.mock('@/components/ui/card', () => ({
   CardTitle: ({ children }: any) => <h3 data-testid="card-title">{children}</h3>,
 }))
 
-vi.mock('@/components/ui/input', () => ({
+vi.mock('@workspace/ui/components/input', () => ({
   Input: ({ ...props }: any) => <input {...props} />,
 }))
 
-vi.mock('@/components/ui/label', () => ({
+vi.mock('@workspace/ui/components/label', () => ({
   Label: ({ children, htmlFor }: any) => <label htmlFor={htmlFor}>{children}</label>,
 }))
 
-vi.mock('@/components/ui/select', () => ({
+vi.mock('@workspace/ui/components/select', () => ({
   Select: ({ children, onValueChange, value }: any) => (
     <select
       value={value}

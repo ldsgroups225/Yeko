@@ -1,11 +1,11 @@
+import { IconLoader2, IconSchool } from '@tabler/icons-react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { GraduationCap, Loader2 } from 'lucide-react'
+import { Button } from '@workspace/ui/components/button'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { signIn } from '@/lib/auth-client'
 import { cn } from '@/lib/utils'
 
@@ -67,7 +67,7 @@ function LoginPage() {
         {/* Logo */}
         <div className="flex flex-col items-center space-y-2">
           <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary">
-            <GraduationCap className="h-8 w-8 text-primary-foreground" />
+            <IconSchool className="h-8 w-8 text-primary-foreground" />
           </div>
           <h1 className="text-2xl font-bold">{t('app.name')}</h1>
         </div>
@@ -108,7 +108,7 @@ function LoginPage() {
           >
             {isLoading
               ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <IconLoader2 className="h-4 w-4 animate-spin" />
                 )
               : (
                   t('auth.loginButton')

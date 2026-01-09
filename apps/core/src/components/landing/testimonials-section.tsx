@@ -1,6 +1,6 @@
-import { Star } from 'lucide-react'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Card, CardContent } from '@/components/ui/card'
+import { IconStar } from '@tabler/icons-react'
+import { Avatar, AvatarFallback } from '@workspace/ui/components/avatar'
+import { Card, CardContent } from '@workspace/ui/components/card'
 import { generateUUID } from '@/utils/generateUUID'
 
 const testimonials = [
@@ -49,7 +49,7 @@ export function TestimonialsSection() {
               <CardContent className="p-8">
                 <div className="flex gap-1 mb-4">
                   {Array.from({ length: testimonial.rating }).map(() => (
-                    <Star key={generateUUID()} className="h-5 w-5 fill-primary text-primary" />
+                    <IconStar key={generateUUID()} className="h-5 w-5 fill-primary text-primary" />
                   ))}
                 </div>
                 <blockquote className="text-muted-foreground mb-6 leading-relaxed">

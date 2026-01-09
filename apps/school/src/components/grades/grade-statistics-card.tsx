@@ -1,6 +1,6 @@
-import { AlertCircle, ChevronsDown, ChevronsUp, Percent, Star, TrendingUp, Users } from 'lucide-react'
+import { IconAlertCircle, IconChevronsDown, IconChevronsUp, IconPercentage, IconStar, IconTrendingUp, IconUsers } from '@tabler/icons-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { motion } from 'motion/react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
@@ -35,12 +35,12 @@ export function GradeStatisticsCard({ statistics, className }: GradeStatisticsCa
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-inner">
-                <TrendingUp className="size-5" />
+                <IconTrendingUp className="size-5" />
               </div>
               <CardTitle className="text-xl font-bold tracking-tight">{t.academic.grades.statistics.title()}</CardTitle>
             </div>
             <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
-              <Percent className="size-3.5" />
+              <IconPercentage className="size-3.5" />
               <span className="text-[10px] font-bold uppercase tracking-widest leading-none">
                 {t.academic.grades.statistics.passRate()}
               </span>
@@ -52,41 +52,41 @@ export function GradeStatisticsCard({ statistics, className }: GradeStatisticsCa
             <StatItem
               label={t.academic.grades.statistics.gradeCount()}
               value={statistics.count}
-              icon={Users}
+              icon={IconUsers}
               color="bg-primary/10 text-primary"
             />
             <StatItem
               label={t.academic.grades.statistics.classAverage()}
               value={statistics.average.toFixed(2)}
-              icon={TrendingUp}
+              icon={IconTrendingUp}
               color={getAverageBgColor(statistics.average)}
               valueClassName={getAverageTextColor(statistics.average)}
             />
             <StatItem
               label={t.academic.grades.statistics.min()}
               value={statistics.min.toFixed(2)}
-              icon={ChevronsDown}
+              icon={IconChevronsDown}
               color="bg-amber-500/10 text-amber-600"
               valueClassName="text-amber-600"
             />
             <StatItem
               label={t.academic.grades.statistics.max()}
               value={statistics.max.toFixed(2)}
-              icon={ChevronsUp}
+              icon={IconChevronsUp}
               color="bg-indigo-500/10 text-indigo-600"
               valueClassName="text-indigo-600"
             />
             <StatItem
               label={t.academic.grades.statistics.below10()}
               value={statistics.below10}
-              icon={AlertCircle}
+              icon={IconAlertCircle}
               color="bg-destructive/10 text-destructive"
               valueClassName="text-destructive"
             />
             <StatItem
               label={t.academic.grades.statistics.above15()}
               value={statistics.above15}
-              icon={Star}
+              icon={IconStar}
               color="bg-emerald-500/10 text-emerald-600"
               valueClassName="text-emerald-600"
             />
@@ -109,7 +109,7 @@ export function GradeStatisticsCard({ statistics, className }: GradeStatisticsCa
                 passRate >= 50 ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' : 'bg-destructive/10 text-destructive border-destructive/20',
               )}
               >
-                <TrendingUp className={cn('size-6', passRate < 50 && 'rotate-180')} />
+                <IconTrendingUp className={cn('size-6', passRate < 50 && 'rotate-180')} />
               </div>
             </div>
 

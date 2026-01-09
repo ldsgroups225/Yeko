@@ -4,31 +4,30 @@ import type {
   CreateTermTemplateInput,
   UpdateTermTemplateInput,
 } from '@/schemas/programs'
+import {
+  IconCalendar,
+  IconCheck,
+  IconChevronRight,
+  IconClock,
+  IconDeviceFloppy,
+  IconEdit,
+  IconPlus,
+  IconTrash,
+  IconX,
+} from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import {
-  Calendar,
-  CalendarDays,
-  Check,
-  ChevronRight,
-  Clock,
-  Edit2,
-  Plus,
-  Save,
-  Trash2,
-  X,
-} from 'lucide-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
 import {
   createSchoolYearTemplateMutationOptions,
   createTermTemplateMutationOptions,
@@ -267,7 +266,7 @@ function SchoolYearsCatalog() {
           </p>
         </div>
         <Button onClick={() => setIsCreatingYear(true)}>
-          <Plus className="h-4 w-4 mr-2" />
+          <IconPlus className="h-4 w-4 mr-2" />
           Nouvelle Année
         </Button>
       </div>
@@ -277,7 +276,7 @@ function SchoolYearsCatalog() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Années Scolaires</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <IconCalendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{schoolYears?.length || 0}</div>
@@ -288,7 +287,7 @@ function SchoolYearsCatalog() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Périodes</CardTitle>
-            <CalendarDays className="h-4 w-4 text-muted-foreground" />
+            <IconCalendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalTerms}</div>
@@ -299,7 +298,7 @@ function SchoolYearsCatalog() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Année Active</CardTitle>
-            <Check className="h-4 w-4 text-muted-foreground" />
+            <IconCheck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{activeYear?.name || 'Aucune'}</div>
@@ -350,11 +349,11 @@ function SchoolYearsCatalog() {
                   </div>
                   <div className="flex justify-end gap-2">
                     <Button type="button" variant="outline" onClick={() => setIsCreatingYear(false)}>
-                      <X className="h-4 w-4 mr-2" />
+                      <IconX className="h-4 w-4 mr-2" />
                       Annuler
                     </Button>
                     <Button type="submit" disabled={createYearMutation.isPending}>
-                      <Save className="h-4 w-4 mr-2" />
+                      <IconDeviceFloppy className="h-4 w-4 mr-2" />
                       {createYearMutation.isPending ? 'Création...' : 'Créer'}
                     </Button>
                   </div>
@@ -371,13 +370,13 @@ function SchoolYearsCatalog() {
           ? (
               <Card>
                 <CardContent className="py-12 text-center">
-                  <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <IconCalendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                   <h3 className="text-lg font-medium">Aucune année scolaire</h3>
                   <p className="text-muted-foreground mb-4">
                     Commencez par créer votre première année scolaire
                   </p>
                   <Button onClick={() => setIsCreatingYear(true)}>
-                    <Plus className="h-4 w-4 mr-2" />
+                    <IconPlus className="h-4 w-4 mr-2" />
                     Créer une année
                   </Button>
                 </CardContent>
@@ -411,11 +410,11 @@ function SchoolYearsCatalog() {
                                   animate={{ rotate: isExpanded ? 90 : 0 }}
                                   transition={{ duration: 0.2 }}
                                 >
-                                  <ChevronRight className="h-5 w-5" />
+                                  <IconChevronRight className="h-5 w-5" />
                                 </motion.div>
                               </button>
                               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                                <Calendar className="h-5 w-5 text-primary" />
+                                <IconCalendar className="h-5 w-5 text-primary" />
                               </div>
                               {isEditing
                                 ? (
@@ -438,7 +437,7 @@ function SchoolYearsCatalog() {
                                         </SelectContent>
                                       </Select>
                                       <Button type="submit" size="sm" disabled={updateYearMutation.isPending}>
-                                        <Check className="h-4 w-4" />
+                                        <IconCheck className="h-4 w-4" />
                                       </Button>
                                       <Button
                                         type="button"
@@ -446,7 +445,7 @@ function SchoolYearsCatalog() {
                                         variant="ghost"
                                         onClick={() => setEditingYear(null)}
                                       >
-                                        <X className="h-4 w-4" />
+                                        <IconX className="h-4 w-4" />
                                       </Button>
                                     </form>
                                   )
@@ -474,7 +473,7 @@ function SchoolYearsCatalog() {
                                   onClick={() => setEditingYear(year.id)}
                                   aria-label="Modifier"
                                 >
-                                  <Edit2 className="h-4 w-4" />
+                                  <IconEdit className="h-4 w-4" />
                                 </Button>
                                 <Button
                                   variant="ghost"
@@ -482,7 +481,7 @@ function SchoolYearsCatalog() {
                                   onClick={() => setDeletingYear({ id: year.id, name: year.name })}
                                   aria-label="Supprimer"
                                 >
-                                  <Trash2 className="h-4 w-4" />
+                                  <IconTrash className="h-4 w-4" />
                                 </Button>
                               </div>
                             )}
@@ -501,7 +500,7 @@ function SchoolYearsCatalog() {
                                 <div className="space-y-4">
                                   <div className="flex items-center justify-between">
                                     <h4 className="font-medium flex items-center gap-2">
-                                      <Clock className="h-4 w-4" />
+                                      <IconClock className="h-4 w-4" />
                                       Périodes (Trimestres/Semestres)
                                     </h4>
                                     <Button
@@ -509,7 +508,7 @@ function SchoolYearsCatalog() {
                                       variant="outline"
                                       onClick={() => setAddingTermToYear(year.id)}
                                     >
-                                      <Plus className="h-4 w-4 mr-1" />
+                                      <IconPlus className="h-4 w-4 mr-1" />
                                       Ajouter
                                     </Button>
                                   </div>
@@ -585,7 +584,7 @@ function SchoolYearsCatalog() {
                                   {year.terms.length === 0
                                     ? (
                                         <div className="text-center py-6 text-muted-foreground">
-                                          <CalendarDays className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                                          <IconCalendar className="h-8 w-8 mx-auto mb-2 opacity-50" />
                                           <p>Aucune période configurée</p>
                                           <p className="text-sm">
                                             Ajoutez des trimestres ou semestres pour cette année
@@ -633,7 +632,7 @@ function SchoolYearsCatalog() {
                                                           size="sm"
                                                           disabled={updateTermMutation.isPending}
                                                         >
-                                                          <Check className="h-4 w-4" />
+                                                          <IconCheck className="h-4 w-4" />
                                                         </Button>
                                                         <Button
                                                           type="button"
@@ -641,7 +640,7 @@ function SchoolYearsCatalog() {
                                                           variant="ghost"
                                                           onClick={() => setEditingTerm(null)}
                                                         >
-                                                          <X className="h-4 w-4" />
+                                                          <IconX className="h-4 w-4" />
                                                         </Button>
                                                       </form>
                                                     )
@@ -664,7 +663,7 @@ function SchoolYearsCatalog() {
                                                             onClick={() => setEditingTerm(term)}
                                                             aria-label="Modifier"
                                                           >
-                                                            <Edit2 className="h-3 w-3" />
+                                                            <IconEdit className="h-3 w-3" />
                                                           </Button>
                                                           <Button
                                                             variant="ghost"
@@ -673,7 +672,7 @@ function SchoolYearsCatalog() {
                                                             onClick={() => setDeletingTerm({ id: term.id, name: term.name })}
                                                             aria-label="Supprimer"
                                                           >
-                                                            <Trash2 className="h-3 w-3" />
+                                                            <IconTrash className="h-3 w-3" />
                                                           </Button>
                                                         </div>
                                                       </>
@@ -702,7 +701,11 @@ function SchoolYearsCatalog() {
         title="Supprimer l'année scolaire"
         description={`Êtes-vous sûr de vouloir supprimer l'année "${deletingYear?.name}" ? Cette action supprimera également toutes les périodes associées.`}
         confirmText={deletingYear?.name}
-        onConfirm={() => deletingYear && deleteYearMutation.mutate({ id: deletingYear.id })}
+        onConfirm={() => {
+          if (deletingYear) {
+            deleteYearMutation.mutate({ id: deletingYear.id })
+          }
+        }}
         isLoading={deleteYearMutation.isPending}
       />
 
@@ -713,7 +716,11 @@ function SchoolYearsCatalog() {
         title="Supprimer la période"
         description={`Êtes-vous sûr de vouloir supprimer la période "${deletingTerm?.name}" ?`}
         confirmText={deletingTerm?.name}
-        onConfirm={() => deletingTerm && deleteTermMutation.mutate({ id: deletingTerm.id })}
+        onConfirm={() => {
+          if (deletingTerm) {
+            deleteTermMutation.mutate({ id: deletingTerm.id })
+          }
+        }}
         isLoading={deleteTermMutation.isPending}
       />
     </div>

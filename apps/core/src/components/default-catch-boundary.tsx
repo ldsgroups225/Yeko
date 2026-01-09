@@ -1,23 +1,23 @@
 import type { ErrorComponentProps } from '@tanstack/react-router'
-import { Link, rootRouteId, useMatch, useRouter } from '@tanstack/react-router'
 import {
-  AlertTriangle,
-  ArrowLeft,
-  Bug,
-  ChevronDown,
-  Home,
-  Mail,
-  RefreshCw,
-} from 'lucide-react'
-import { useState } from 'react'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+  IconAlertTriangle,
+  IconArrowLeft,
+  IconBug,
+  IconChevronDown,
+  IconHome,
+  IconMail,
+  IconRefresh,
+} from '@tabler/icons-react'
+import { Link, rootRouteId, useMatch, useRouter } from '@tanstack/react-router'
+import { Alert, AlertDescription } from '@workspace/ui/components/alert'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@/components/ui/collapsible'
+} from '@workspace/ui/components/collapsible'
+import { useState } from 'react'
 
 export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
   const router = useRouter()
@@ -48,7 +48,7 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
         <CardHeader>
           <div className="flex items-center space-x-2">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-destructive/10">
-              <AlertTriangle className="h-5 w-5 text-destructive" />
+              <IconAlertTriangle className="h-5 w-5 text-destructive" />
             </div>
             <div>
               <CardTitle className="text-xl">Something went wrong</CardTitle>
@@ -62,7 +62,7 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
         <CardContent className="space-y-6">
           {/* Error Alert */}
           <Alert variant="destructive">
-            <AlertTriangle className="h-4 w-4" />
+            <IconAlertTriangle className="h-4 w-4" />
             <AlertDescription className="font-medium">
               {errorMessage}
             </AlertDescription>
@@ -74,7 +74,7 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
               onClick={() => router.invalidate()}
               className="flex items-center gap-2"
             >
-              <RefreshCw className="h-4 w-4" />
+              <IconRefresh className="h-4 w-4" />
               Try Again
             </Button>
 
@@ -82,7 +82,7 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
               ? (
                   <Button variant="outline" asChild>
                     <Link to="/" className="flex items-center gap-2">
-                      <Home className="h-4 w-4" />
+                      <IconHome className="h-4 w-4" />
                       Go to Home
                     </Link>
                   </Button>
@@ -93,7 +93,7 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
                     onClick={() => window.history.back()}
                     className="flex items-center gap-2"
                   >
-                    <ArrowLeft className="h-4 w-4" />
+                    <IconArrowLeft className="h-4 w-4" />
                     Go Back
                   </Button>
                 )}
@@ -102,15 +102,15 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
           {/* Error Details (Collapsible) */}
           {hasStack && (
             <Collapsible open={showDetails} onOpenChange={setShowDetails}>
-              <CollapsibleTrigger asChild>
+              <CollapsibleTrigger>
                 <Button
                   variant="ghost"
                   size="sm"
                   className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
                 >
-                  <Bug className="h-4 w-4" />
+                  <IconBug className="h-4 w-4" />
                   Technical Details
-                  <ChevronDown
+                  <IconChevronDown
                     className={`h-4 w-4 transition-transform duration-200 ${showDetails ? 'rotate-180' : ''}`}
                   />
                 </Button>
@@ -120,7 +120,7 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
                   <h4 className="text-sm font-medium mb-2">
                     Error Stack Trace:
                   </h4>
-                  <pre className="text-xs text-muted-foreground whitespace-pre-wrap break-words max-h-40 overflow-y-auto">
+                  <pre className="mt-4 p-4 rounded-lg bg-muted overflow-x-auto text-xs font-mono wrap-break-word whitespace-pre-wrap border border-border/50">
                     {errorStack}
                   </pre>
                 </div>
@@ -140,7 +140,7 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
                 onClick={handleReportError}
                 className="flex items-center gap-2"
               >
-                <Mail className="h-4 w-4" />
+                <IconMail className="h-4 w-4" />
                 Report Error
               </Button>
             </div>

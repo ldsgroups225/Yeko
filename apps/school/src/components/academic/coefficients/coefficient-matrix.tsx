@@ -1,18 +1,15 @@
+import { IconAlertCircle, IconDeviceFloppy, IconInfoCircle, IconLayoutGrid } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { AlertCircle, Info, LayoutGrid, Save } from 'lucide-react'
-import { motion } from 'motion/react'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
+} from '@workspace/ui/components/card'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -20,7 +17,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { motion } from 'motion/react'
+import { useState } from 'react'
+import { toast } from 'sonner'
 import { useTranslations } from '@/i18n'
 import {
   schoolCoefficientsKeys,
@@ -111,7 +111,7 @@ export function CoefficientMatrix({
       <Card className="border-destructive">
         <CardHeader>
           <CardTitle className="text-destructive flex items-center gap-2">
-            <AlertCircle className="h-5 w-5" />
+            <IconAlertCircle className="h-5 w-5" />
             {t.academic.coefficients.messages.matrixError()}
           </CardTitle>
           <CardDescription>{(error as Error).message}</CardDescription>
@@ -172,7 +172,7 @@ export function CoefficientMatrix({
               onClick={handleSaveChanges}
               disabled={bulkUpdateMutation.isPending}
             >
-              <Save className="mr-2 h-4 w-4" />
+              <IconDeviceFloppy className="mr-2 h-4 w-4" />
               {t.academic.coefficients.bulk.saveChanges()}
             </Button>
           </div>
@@ -184,7 +184,7 @@ export function CoefficientMatrix({
         <CardHeader className="border-b border-border/10 pb-4">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-              <LayoutGrid className="h-5 w-5 text-primary" />
+              <IconLayoutGrid className="h-5 w-5 text-primary" />
             </div>
             <div>
               <CardTitle>{t.academic.coefficients.matrix.title()}</CardTitle>
@@ -271,7 +271,7 @@ export function CoefficientMatrix({
           {subjects.length === 0 && (
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <div className="h-12 w-12 rounded-full bg-muted/30 flex items-center justify-center mb-4">
-                <Info className="h-6 w-6 text-muted-foreground/50" />
+                <IconInfoCircle className="h-6 w-6 text-muted-foreground/50" />
               </div>
               <p className="text-foreground font-medium">{t.academic.coefficients.matrix.noData()}</p>
               <p className="text-sm text-muted-foreground max-w-[250px] mx-auto mt-1">

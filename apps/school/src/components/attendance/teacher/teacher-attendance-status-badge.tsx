@@ -1,5 +1,5 @@
-import { Calendar, CheckCircle, Clock, FileCheck, XCircle } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
+import { IconCalendar, IconCircleCheck, IconCircleX, IconClock, IconFileCheck } from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
@@ -13,14 +13,14 @@ interface TeacherAttendanceStatusBadgeProps {
 
 const statusConfig: Record<TeacherAttendanceStatus, {
   variant: 'default' | 'secondary' | 'destructive' | 'outline'
-  icon: typeof CheckCircle
+  icon: typeof IconCircleCheck
   colorClass: string
 }> = {
-  present: { variant: 'default', icon: CheckCircle, colorClass: 'bg-green-500/10 text-green-600 border-green-200' },
-  late: { variant: 'secondary', icon: Clock, colorClass: 'bg-amber-500/10 text-amber-600 border-amber-200' },
-  absent: { variant: 'destructive', icon: XCircle, colorClass: 'bg-red-500/10 text-red-600 border-red-200' },
-  excused: { variant: 'outline', icon: FileCheck, colorClass: 'bg-blue-500/10 text-blue-600 border-blue-200' },
-  on_leave: { variant: 'outline', icon: Calendar, colorClass: 'bg-purple-500/10 text-purple-600 border-purple-200' },
+  present: { variant: 'default', icon: IconCircleCheck, colorClass: 'bg-green-500/10 text-green-600 border-green-200' },
+  late: { variant: 'secondary', icon: IconClock, colorClass: 'bg-amber-500/10 text-amber-600 border-amber-200' },
+  absent: { variant: 'destructive', icon: IconCircleX, colorClass: 'bg-red-500/10 text-red-600 border-red-200' },
+  excused: { variant: 'outline', icon: IconFileCheck, colorClass: 'bg-blue-500/10 text-blue-600 border-blue-200' },
+  on_leave: { variant: 'outline', icon: IconCalendar, colorClass: 'bg-purple-500/10 text-purple-600 border-purple-200' },
 }
 
 export function TeacherAttendanceStatusBadge({

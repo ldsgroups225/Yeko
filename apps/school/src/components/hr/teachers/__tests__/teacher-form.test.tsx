@@ -53,7 +53,7 @@ describe('teacherForm Component', () => {
     })
   })
 
-  describe('rendering - Edit Mode', () => {
+  describe('rendering - IconEdit Mode', () => {
     const existingTeacher = {
       id: 'teacher-123',
       userId: 'user-123',

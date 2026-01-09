@@ -1,32 +1,32 @@
 import type { FormEvent } from 'react'
 import type { CreateProgramTemplateInput } from '@/schemas/programs'
+import {
+  IconBook,
+  IconCalendar,
+  IconChevronRight,
+  IconCopy,
+  IconDatabase,
+  IconDeviceFloppy,
+  IconFileText,
+  IconPlus,
+  IconSearch,
+  IconTrash,
+  IconX,
+} from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link, Outlet, useMatch, useNavigate } from '@tanstack/react-router'
-import {
-  BookOpen,
-  Calendar,
-  ChevronRight,
-  Copy,
-  Database,
-  FileText,
-  Plus,
-  Save,
-  Search,
-  Trash2,
-  X,
-} from 'lucide-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { CatalogListSkeleton, CatalogStatsSkeleton } from '@/components/catalogs/catalog-skeleton'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useDebounce } from '@/hooks/use-debounce'
 import { gradesQueryOptions, subjectsQueryOptions } from '@/integrations/tanstack-query/catalogs-options'
 import {
@@ -211,7 +211,7 @@ function ProgramsCatalog() {
           </p>
         </div>
         <Button onClick={() => setIsCreatingProgram(true)}>
-          <Plus className="h-4 w-4 mr-2" />
+          <IconPlus className="h-4 w-4 mr-2" />
           Créer un Programme
         </Button>
       </div>
@@ -221,7 +221,7 @@ function ProgramsCatalog() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Programmes</CardTitle>
-            <Database className="h-4 w-4 text-muted-foreground" />
+            <IconDatabase className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats?.programs || 0}</div>
@@ -232,7 +232,7 @@ function ProgramsCatalog() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Chapitres</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
+            <IconFileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats?.chapters || 0}</div>
@@ -244,7 +244,7 @@ function ProgramsCatalog() {
           <Card className="hover:bg-accent/50 transition-colors cursor-pointer">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Années Scolaires</CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
+              <IconCalendar className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stats?.schoolYears || 0}</div>
@@ -256,7 +256,7 @@ function ProgramsCatalog() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Année Active</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <IconCalendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{activeYear?.name || 'Aucune'}</div>
@@ -333,11 +333,11 @@ function ProgramsCatalog() {
               </div>
               <div className="flex justify-end gap-2">
                 <Button type="button" variant="outline" onClick={() => setIsCreatingProgram(false)}>
-                  <X className="h-4 w-4 mr-2" />
+                  <IconX className="h-4 w-4 mr-2" />
                   Annuler
                 </Button>
                 <Button type="submit" disabled={createProgramMutation.isPending}>
-                  <Save className="h-4 w-4 mr-2" />
+                  <IconDeviceFloppy className="h-4 w-4 mr-2" />
                   {createProgramMutation.isPending ? 'Création...' : 'Créer'}
                 </Button>
               </div>
@@ -355,7 +355,7 @@ function ProgramsCatalog() {
         <CardContent>
           <div className="flex flex-col md:flex-row gap-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Rechercher des programmes..."
                 className="pl-9"
@@ -363,7 +363,7 @@ function ProgramsCatalog() {
                 onChange={e => setSearch(e.target.value)}
               />
             </div>
-            <Select value={yearFilter} onValueChange={setYearFilter}>
+            <Select value={yearFilter} onValueChange={val => val && setYearFilter(val)}>
               <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder="Année" />
               </SelectTrigger>
@@ -376,7 +376,7 @@ function ProgramsCatalog() {
                 ))}
               </SelectContent>
             </Select>
-            <Select value={subjectFilter} onValueChange={setSubjectFilter}>
+            <Select value={subjectFilter} onValueChange={val => val && setSubjectFilter(val)}>
               <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder="Matière" />
               </SelectTrigger>
@@ -389,7 +389,7 @@ function ProgramsCatalog() {
                 ))}
               </SelectContent>
             </Select>
-            <Select value={gradeFilter} onValueChange={setGradeFilter}>
+            <Select value={gradeFilter} onValueChange={val => val && setGradeFilter(val)}>
               <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder="Classe" />
               </SelectTrigger>
@@ -402,7 +402,7 @@ function ProgramsCatalog() {
                 ))}
               </SelectContent>
             </Select>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <Select value={statusFilter} onValueChange={val => val && setStatusFilter(val)}>
               <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder="Statut" />
               </SelectTrigger>
@@ -435,7 +435,7 @@ function ProgramsCatalog() {
             : !programsData || programsData.programs.length === 0
                 ? (
                     <div className="text-center py-8">
-                      <Database className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                      <IconDatabase className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                       <h3 className="text-lg font-medium">Aucun programme trouvé</h3>
                       <p className="text-muted-foreground">
                         {search || yearFilter !== 'all' || subjectFilter !== 'all' || gradeFilter !== 'all'
@@ -460,7 +460,7 @@ function ProgramsCatalog() {
                           >
                             <div className="flex items-center gap-4 flex-1">
                               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                                <BookOpen className="h-5 w-5 text-primary" />
+                                <IconBook className="h-5 w-5 text-primary" />
                               </div>
                               <div className="flex-1">
                                 <div className="flex items-center gap-2">
@@ -486,7 +486,7 @@ function ProgramsCatalog() {
                                   <span>{program.schoolYearTemplate?.name}</span>
                                 </div>
                               </div>
-                              <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                              <IconChevronRight className="h-5 w-5 text-muted-foreground" />
                             </div>
                             <div
                               className="flex gap-2"
@@ -504,14 +504,14 @@ function ProgramsCatalog() {
                                 size="icon"
                                 onClick={() => setCloningProgram({ id: program.id, name: program.name })}
                               >
-                                <Copy className="h-4 w-4" />
+                                <IconCopy className="h-4 w-4" />
                               </Button>
                               <Button
                                 variant="ghost"
                                 size="icon"
                                 onClick={() => setDeletingProgram({ id: program.id, name: program.name })}
                               >
-                                <Trash2 className="h-4 w-4" />
+                                <IconTrash className="h-4 w-4" />
                               </Button>
                             </div>
                           </motion.div>

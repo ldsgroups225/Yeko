@@ -2,51 +2,35 @@
 
 import type { StudentFilters } from '@/lib/queries/students'
 import type { getStudents } from '@/school/functions/students'
+import { IconAdjustmentsHorizontal, IconChevronLeft, IconChevronRight, IconDots, IconDownload, IconEdit, IconEye, IconPlus, IconSearch, IconTrash, IconUpload, IconUsers, IconUserX, IconWand, IconX } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate } from '@tanstack/react-router'
-import {
-  ChevronLeft,
-  ChevronRight,
-  Download,
-  Edit,
-  Eye,
-  MoreHorizontal,
-  Plus,
-  Search,
-  SlidersHorizontal,
-  Trash2,
-  Upload,
-  Users,
-  UserX,
-  Wand2,
-  X,
-} from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { useState } from 'react'
+import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
+import { Badge } from '@workspace/ui/components/badge'
 
-import { toast } from 'sonner'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-
-import { Checkbox } from '@/components/ui/checkbox'
-import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog'
+import { Button } from '@workspace/ui/components/button'
+import { Checkbox } from '@workspace/ui/components/checkbox'
+import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+} from '@workspace/ui/components/dropdown-menu'
+
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+} from '@workspace/ui/components/popover'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
+import { Skeleton } from '@workspace/ui/components/skeleton'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
+import { useState } from 'react'
+import { toast } from 'sonner'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useTranslations } from '@/i18n'
 import { downloadExcelFile, exportStudentsToExcel } from '@/lib/excel-export'
@@ -207,7 +191,7 @@ export function StudentsList() {
         sheetName: t.students.title(),
       })
 
-      // Download Excel file
+      // IconDownload Excel file
       downloadExcelFile(
         excelBuffer,
         `${t.students.title()}_${new Date().toISOString().split('T')[0]}.xlsx`,
@@ -226,7 +210,7 @@ export function StudentsList() {
   if (error) {
     return (
       <div className="flex min-h-[400px] flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
-        <UserX className="mx-auto h-12 w-12 text-muted-foreground" />
+        <IconUserX className="mx-auto h-12 w-12 text-muted-foreground" />
         <h3 className="mt-4 text-lg font-semibold">{t.common.error()}</h3>
         <p className="mt-2 max-w-sm text-sm text-muted-foreground">{error.message}</p>
         <Button onClick={() => queryClient.invalidateQueries({ queryKey: studentsKeys.all })} className="mt-6">
@@ -246,7 +230,7 @@ export function StudentsList() {
       >
         <div className="flex flex-1 gap-3">
           <div className="relative max-w-sm flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder={t.students.searchPlaceholder()}
               value={search}
@@ -258,7 +242,7 @@ export function StudentsList() {
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline" className="border-border/40 bg-card/50 backdrop-blur-sm shadow-none hover:bg-card/80">
-                <SlidersHorizontal className="mr-2 h-4 w-4" />
+                <IconAdjustmentsHorizontal className="mr-2 h-4 w-4" />
                 {t.common.actions()}
                 {(status || gender) && (
                   <Badge variant="secondary" className="ml-2 h-5 rounded-full px-1.5 text-xs">
@@ -271,7 +255,7 @@ export function StudentsList() {
               <div className="space-y-2">
                 <h4 className="font-medium leading-none text-muted-foreground text-xs mb-3 uppercase tracking-wider">{t.common.filters()}</h4>
                 <Label>{t.students.status()}</Label>
-                <Select value={status} onValueChange={setStatus}>
+                <Select value={status} onValueChange={val => setStatus(val ?? '')}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder={t.students.status()} />
                   </SelectTrigger>
@@ -286,7 +270,7 @@ export function StudentsList() {
               </div>
               <div className="space-y-2">
                 <Label>{t.students.gender()}</Label>
-                <Select value={gender} onValueChange={setGender}>
+                <Select value={gender} onValueChange={val => setGender(val ?? '')}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder={t.students.gender()} />
                   </SelectTrigger>
@@ -312,19 +296,19 @@ export function StudentsList() {
               <div className="pt-4 border-t border-border/40 space-y-2">
                 <h4 className="font-medium leading-none text-muted-foreground text-xs mb-3 uppercase tracking-wider">{t.common.quickActions()}</h4>
                 <Button variant="ghost" onClick={() => setAutoMatchDialogOpen(true)} className="w-full justify-start">
-                  <Wand2 className="mr-2 h-4 w-4" />
+                  <IconWand className="mr-2 h-4 w-4" />
                   {t.students.autoMatch()}
                 </Button>
                 <Button variant="ghost" onClick={() => setReEnrollDialogOpen(true)} className="w-full justify-start">
-                  <Users className="mr-2 h-4 w-4" />
+                  <IconUsers className="mr-2 h-4 w-4" />
                   {t.students.bulkReEnroll()}
                 </Button>
                 <Button variant="ghost" onClick={() => setImportDialogOpen(true)} className="w-full justify-start">
-                  <Upload className="mr-2 h-4 w-4" />
+                  <IconUpload className="mr-2 h-4 w-4" />
                   {t.common.import()}
                 </Button>
                 <Button variant="ghost" onClick={handleExport} disabled={isExporting} className="w-full justify-start">
-                  <Download className="mr-2 h-4 w-4" />
+                  <IconDownload className="mr-2 h-4 w-4" />
                   {isExporting ? t.common.exporting() : t.common.export()}
                 </Button>
               </div>
@@ -336,7 +320,7 @@ export function StudentsList() {
               onClick={handleClearFilters}
               className="h-10 px-3 text-muted-foreground hover:text-foreground hover:bg-white/20 dark:hover:bg-white/10"
             >
-              <X className="mr-2 h-4 w-4" />
+              <IconX className="mr-2 h-4 w-4" />
               {t.students.clearFilters()}
             </Button>
           )}
@@ -352,7 +336,7 @@ export function StudentsList() {
           )}
 
           <Button size="sm" onClick={() => navigate({ to: '/students/new' })} className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm">
-            <Plus className="mr-2 h-4 w-4" />
+            <IconPlus className="mr-2 h-4 w-4" />
             {t.students.addStudent()}
           </Button>
         </div>
@@ -378,11 +362,11 @@ export function StudentsList() {
           : data?.data.length === 0
             ? (
                 <div className="flex min-h-[300px] flex-col items-center justify-center rounded-xl border border-dashed border-white/20 bg-white/30 p-8 text-center backdrop-blur-sm">
-                  <Users className="mx-auto h-12 w-12 text-muted-foreground/50" />
+                  <IconUsers className="mx-auto h-12 w-12 text-muted-foreground/50" />
                   <h3 className="mt-4 text-lg font-semibold">{t.students.noStudents()}</h3>
                   <p className="mt-2 max-w-sm text-sm text-muted-foreground">{t.students.noStudentsDescription()}</p>
                   <Button onClick={() => navigate({ to: '/students/new' })} className="mt-6">
-                    <Plus className="mr-2 h-4 w-4" />
+                    <IconPlus className="mr-2 h-4 w-4" />
                     {t.students.addStudent()}
                   </Button>
                 </div>
@@ -430,31 +414,31 @@ export function StudentsList() {
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon" className="hover:bg-card/20">
-                              <MoreHorizontal className="h-4 w-4" />
+                              <IconDots className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="backdrop-blur-xl bg-popover/90 border border-border/40">
                             <DropdownMenuItem asChild>
                               <Link to="/students/$studentId" params={{ studentId: item.student.id }}>
-                                <Eye className="mr-2 h-4 w-4" />
+                                <IconEye className="mr-2 h-4 w-4" />
                                 {t.common.view()}
                               </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild>
                               <Link to="/students/$studentId/edit" params={{ studentId: item.student.id }}>
-                                <Edit className="mr-2 h-4 w-4" />
+                                <IconEdit className="mr-2 h-4 w-4" />
                                 {t.common.edit()}
                               </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => handleStatusChange(item)}>
-                              <Edit className="mr-2 h-4 w-4" />
+                              <IconEdit className="mr-2 h-4 w-4" />
                               {t.students.changeStatus()}
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               onClick={() => handleDelete(item)}
                               className="text-destructive focus:text-destructive"
                             >
-                              <Trash2 className="mr-2 h-4 w-4" />
+                              <IconTrash className="mr-2 h-4 w-4" />
                               {t.common.delete()}
                             </DropdownMenuItem>
                           </DropdownMenuContent>
@@ -532,12 +516,12 @@ export function StudentsList() {
                       <TableCell colSpan={8} className="h-96">
                         <div className="flex flex-col items-center justify-center text-center">
                           <div className="rounded-full bg-white/50 p-6 backdrop-blur-xl mb-4">
-                            <Users className="h-12 w-12 text-muted-foreground/50" />
+                            <IconUsers className="h-12 w-12 text-muted-foreground/50" />
                           </div>
                           <h3 className="text-lg font-semibold">{t.students.noStudents()}</h3>
                           <p className="mt-2 max-w-sm text-sm text-muted-foreground">{t.students.noStudentsDescription()}</p>
                           <Button onClick={() => navigate({ to: '/students/new' })} className="mt-6">
-                            <Plus className="mr-2 h-4 w-4" />
+                            <IconPlus className="mr-2 h-4 w-4" />
                             {t.students.addStudent()}
                           </Button>
                         </div>
@@ -623,31 +607,31 @@ export function StudentsList() {
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" size="icon" className="hover:bg-card/20">
-                                  <MoreHorizontal className="h-4 w-4" />
+                                  <IconDots className="h-4 w-4" />
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end" className="backdrop-blur-xl bg-popover/90 border border-border/40">
                                 <DropdownMenuItem asChild>
                                   <Link to="/students/$studentId" params={{ studentId: item.student.id }}>
-                                    <Eye className="mr-2 h-4 w-4" />
+                                    <IconEye className="mr-2 h-4 w-4" />
                                     {t.common.view()}
                                   </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem asChild>
                                   <Link to="/students/$studentId/edit" params={{ studentId: item.student.id }}>
-                                    <Edit className="mr-2 h-4 w-4" />
+                                    <IconEdit className="mr-2 h-4 w-4" />
                                     {t.common.edit()}
                                   </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => handleStatusChange(item)}>
-                                  <Edit className="mr-2 h-4 w-4" />
+                                  <IconEdit className="mr-2 h-4 w-4" />
                                   {t.students.changeStatus()}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
                                   onClick={() => handleDelete(item)}
                                   className="text-destructive focus:text-destructive"
                                 >
-                                  <Trash2 className="mr-2 h-4 w-4" />
+                                  <IconTrash className="mr-2 h-4 w-4" />
                                   {t.common.delete()}
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
@@ -670,7 +654,7 @@ export function StudentsList() {
             onClick={() => setPage(p => Math.max(1, p - 1))}
             disabled={page === 1}
           >
-            <ChevronLeft className="h-4 w-4" />
+            <IconChevronLeft className="h-4 w-4" />
             {t.common.previous()}
           </Button>
           <span className="text-sm text-muted-foreground">
@@ -683,7 +667,7 @@ export function StudentsList() {
             disabled={page === data.totalPages}
           >
             {t.common.next()}
-            <ChevronRight className="h-4 w-4" />
+            <IconChevronRight className="h-4 w-4" />
           </Button>
         </div>
       )}
@@ -696,7 +680,11 @@ export function StudentsList() {
         description={t.students.deleteDescription({
           name: `${selectedStudent?.student.firstName} ${selectedStudent?.student.lastName}`,
         })}
-        onConfirm={() => selectedStudent && deleteMutation.mutate(selectedStudent.student.id)}
+        onConfirm={() => {
+          if (selectedStudent) {
+            deleteMutation.mutate(selectedStudent.student.id)
+          }
+        }}
         isLoading={deleteMutation.isPending}
       />
 

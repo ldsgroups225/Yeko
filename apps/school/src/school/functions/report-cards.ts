@@ -100,7 +100,7 @@ export const getReportCardByStudentTerm = createServerFn()
 export const generateReportCard = createServerFn()
   .inputValidator(generateReportCardSchema.extend({ generatedBy: z.string() }))
   .handler(async ({ data }) => {
-    // Check if report card already exists
+    // IconCheck if report card already exists
     const existing = await reportCardQueries.getReportCardByStudentTerm(
       data.studentId,
       data.termId,

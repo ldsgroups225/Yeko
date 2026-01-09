@@ -1,8 +1,8 @@
-import { Bell } from 'lucide-react'
+import { IconBell } from '@tabler/icons-react'
+import { SidebarTrigger } from '@workspace/ui/components/sidebar'
 import { AccountMenu } from '@/components/auth/account-menu'
 import { SchoolSwitcher } from '@/components/school/school-switcher'
 import { SchoolYearSwitcher } from '@/components/school/school-year-switcher'
-import { SidebarTrigger } from '@/components/ui/sidebar'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
@@ -33,7 +33,7 @@ export function Header() {
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
           )}
         >
-          <Bell className="h-5 w-5" />
+          <IconBell className="h-5 w-5" />
           <span className="sr-only">{t.common.notifications()}</span>
           {/* Notification badge */}
           <span className="absolute right-1 top-1 flex h-2 w-2">
@@ -42,7 +42,7 @@ export function Header() {
           </span>
         </button>
 
-        {/* User menu */}
+        {/* IconUser menu */}
         <AccountMenu />
       </div>
     </header>

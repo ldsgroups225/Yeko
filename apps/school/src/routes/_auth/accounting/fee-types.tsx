@@ -1,12 +1,12 @@
+import { IconPlus, IconTag } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { Plus, Tag } from 'lucide-react'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { motion } from 'motion/react'
 import { useState } from 'react'
 import { FeeTypeFormDialog, FeeTypesTable } from '@/components/finance'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useTranslations } from '@/i18n'
 import { feeTypesOptions } from '@/lib/queries'
 
@@ -46,7 +46,7 @@ function FeeTypesPage() {
           className="flex items-center gap-4"
         >
           <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-            <Tag className="size-8 text-primary" />
+            <IconTag className="size-8 text-primary" />
           </div>
           <div>
             <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.finance.feeTypes.title()}</h1>
@@ -59,7 +59,7 @@ function FeeTypesPage() {
           animate={{ opacity: 1, x: 0 }}
         >
           <Button onClick={() => setIsCreateOpen(true)} className="shadow-lg shadow-primary/20">
-            <Plus className="mr-2 h-4 w-4" />
+            <IconPlus className="mr-2 h-4 w-4" />
             {t.finance.feeTypes.create()}
           </Button>
         </motion.div>

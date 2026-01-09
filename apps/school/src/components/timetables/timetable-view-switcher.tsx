@@ -1,6 +1,6 @@
-import { Building2, GraduationCap, Users } from 'lucide-react'
+import { IconBuilding, IconSchool, IconUsers } from '@tabler/icons-react'
 
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+import { ToggleGroup, ToggleGroupItem } from '@workspace/ui/components/toggle-group'
 import { useTranslations } from '@/i18n'
 
 export type TimetableViewMode = 'class' | 'teacher' | 'classroom'
@@ -20,9 +20,8 @@ export function TimetableViewSwitcher({
 
   return (
     <ToggleGroup
-      type="single"
-      value={value}
-      onValueChange={v => v && onChange(v as TimetableViewMode)}
+      value={[value]}
+      onValueChange={v => v && v[0] && onChange(v[0] as TimetableViewMode)}
       disabled={disabled}
       className="bg-card/30 backdrop-blur-md border border-border/40 p-1 rounded-2xl gap-1"
     >
@@ -31,7 +30,7 @@ export function TimetableViewSwitcher({
         aria-label={t.timetables.viewByClass()}
         className="rounded-xl data-[state=on]:bg-primary data-[state=on]:text-primary-foreground transition-all hover:bg-muted/50 data-[state=on]:shadow-lg"
       >
-        <Users className="h-4 w-4 mr-2" />
+        <IconUsers className="h-4 w-4 mr-2" />
         {t.timetables.class()}
       </ToggleGroupItem>
       <ToggleGroupItem
@@ -39,7 +38,7 @@ export function TimetableViewSwitcher({
         aria-label={t.timetables.viewByTeacher()}
         className="rounded-xl data-[state=on]:bg-primary data-[state=on]:text-primary-foreground transition-all hover:bg-muted/50 data-[state=on]:shadow-lg"
       >
-        <GraduationCap className="h-4 w-4 mr-2" />
+        <IconSchool className="h-4 w-4 mr-2" />
         {t.timetables.teacher()}
       </ToggleGroupItem>
       <ToggleGroupItem
@@ -47,7 +46,7 @@ export function TimetableViewSwitcher({
         aria-label={t.timetables.viewByClassroom()}
         className="rounded-xl data-[state=on]:bg-primary data-[state=on]:text-primary-foreground transition-all hover:bg-muted/50 data-[state=on]:shadow-lg"
       >
-        <Building2 className="h-4 w-4 mr-2" />
+        <IconBuilding className="h-4 w-4 mr-2" />
         {t.timetables.classroom()}
       </ToggleGroupItem>
     </ToggleGroup>

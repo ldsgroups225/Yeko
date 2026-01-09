@@ -84,7 +84,7 @@ describe('form Rendering Performance', () => {
 
       const startTime = performance.now()
 
-      // Type 50 characters
+      // IconTypography 50 characters
       await user.type(nameInput, 'A'.repeat(50))
 
       const endTime = performance.now()

@@ -1,7 +1,6 @@
-import { FileText, Hash, Percent, TrendingUp, Trophy, User } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { IconFileText, IconHash, IconPercentage, IconTrendingUp, IconTrophy, IconUser } from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import {
   Table,
   TableBody,
@@ -9,7 +8,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
@@ -64,7 +64,7 @@ export function ClassAveragesTable({ averages, className }: ClassAveragesTablePr
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-inner">
-              <Trophy className="size-5" />
+              <IconTrophy className="size-5" />
             </div>
             <CardTitle className="text-xl font-bold tracking-tight">{t.academic.grades.averages.title()}</CardTitle>
           </div>
@@ -72,7 +72,7 @@ export function ClassAveragesTable({ averages, className }: ClassAveragesTablePr
           <div className="flex flex-wrap gap-3">
             <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-background/50 border border-border/40 shadow-sm">
               <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
-                <TrendingUp className="size-3.5" />
+                <IconTrendingUp className="size-3.5" />
               </div>
               <div className="flex flex-col">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground opacity-70 leading-none mb-1">
@@ -86,7 +86,7 @@ export function ClassAveragesTable({ averages, className }: ClassAveragesTablePr
 
             <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-background/50 border border-border/40 shadow-sm">
               <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600">
-                <Percent className="size-3.5" />
+                <IconPercentage className="size-3.5" />
               </div>
               <div className="flex flex-col">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground opacity-70 leading-none mb-1">
@@ -112,19 +112,19 @@ export function ClassAveragesTable({ averages, className }: ClassAveragesTablePr
                 </TableHead>
                 <TableHead>
                   <div className="flex items-center gap-2">
-                    <User className="size-3.5 text-muted-foreground" />
+                    <IconUser className="size-3.5 text-muted-foreground" />
                     <span className="font-bold uppercase tracking-tight text-[10px]">{t.academic.grades.averages.student()}</span>
                   </div>
                 </TableHead>
                 <TableHead className="w-32">
                   <div className="flex items-center gap-2">
-                    <Hash className="size-3.5 text-muted-foreground" />
+                    <IconHash className="size-3.5 text-muted-foreground" />
                     <span className="font-bold uppercase tracking-tight text-[10px]">{t.academic.grades.averages.matricule()}</span>
                   </div>
                 </TableHead>
                 <TableHead className="w-24 text-center">
                   <div className="flex items-center justify-center gap-2">
-                    <FileText className="size-3.5 text-muted-foreground" />
+                    <IconFileText className="size-3.5 text-muted-foreground" />
                     <span className="font-bold uppercase tracking-tight text-[10px]">{t.academic.grades.averages.gradeCount()}</span>
                   </div>
                 </TableHead>

@@ -1,9 +1,9 @@
 import type { ProgressStatus } from '@/schemas/curriculum-progress'
 
-import { AlertTriangle, TrendingDown } from 'lucide-react'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { IconAlertTriangle, IconTrendingDown } from '@tabler/icons-react'
+import { Alert, AlertDescription, AlertTitle } from '@workspace/ui/components/alert'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@workspace/ui/components/button'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
@@ -45,9 +45,9 @@ export function BehindScheduleAlert({
         className,
       )}
     >
-      <AlertTriangle className="h-4 w-4" />
+      <IconAlertTriangle className="h-4 w-4" />
       <AlertTitle className="flex items-center gap-2">
-        <TrendingDown className="h-4 w-4" />
+        <IconTrendingDown className="h-4 w-4" />
         {t.curriculum.behindScheduleAlert({ count: classes.length })}
       </AlertTitle>
       <AlertDescription className="mt-2">

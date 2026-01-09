@@ -1,14 +1,10 @@
 'use client'
 
 import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
+import { IconAlertCircle, IconCircleCheck, IconDownload, IconFileSpreadsheet, IconLoader2, IconUpload, IconX } from '@tabler/icons-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { AlertCircle, CheckCircle2, Download, FileSpreadsheet, Loader2, Upload, X } from 'lucide-react'
-import { useCallback, useState } from 'react'
-import { toast } from 'sonner'
-import * as XLSX from 'xlsx'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-
-import { Button } from '@/components/ui/button'
+import { Alert, AlertDescription, AlertTitle } from '@workspace/ui/components/alert'
+import { Button } from '@workspace/ui/components/button'
 import {
   Dialog,
   DialogContent,
@@ -16,7 +12,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from '@workspace/ui/components/dialog'
+import { useCallback, useState } from 'react'
+
+import { toast } from 'sonner'
+import * as XLSX from 'xlsx'
 import { useTranslations } from '@/i18n'
 import { studentsKeys } from '@/lib/queries/students'
 import { bulkImportStudents } from '@/school/functions/students'
@@ -148,7 +148,7 @@ function mapRowToStudent(row: Record<string, any>, headerMapping: Record<string,
     }
   }
 
-  // Check required fields
+  // IconCheck required fields
   if (!data.firstName || !data.lastName || !data.dob) {
     return null
   }
@@ -224,7 +224,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
           }
         }
 
-        // Check for required columns
+        // IconCheck for required columns
         const mappedFields = Object.values(headerMapping)
         const hasFirstName = mappedFields.includes('firstName')
         const hasLastName = mappedFields.includes('lastName')
@@ -335,7 +335,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
       })
       .build({ output: 'buffer' })
 
-    // Download file
+    // IconDownload file
     const uint8Array = new Uint8Array(excelFile)
     const blob = new Blob([uint8Array], {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -362,7 +362,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
           ? (
               <div className="space-y-4">
                 <Alert variant={result.errors.length > 0 ? 'destructive' : 'default'}>
-                  {result.errors.length > 0 ? <AlertCircle className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
+                  {result.errors.length > 0 ? <IconAlertCircle className="h-4 w-4" /> : <IconCircleCheck className="h-4 w-4" />}
                   <AlertTitle>{t.students.importComplete()}</AlertTitle>
                   <AlertDescription>
                     <ul className="mt-2 space-y-1 text-sm">
@@ -396,7 +396,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <Button variant="outline" size="sm" onClick={downloadTemplate}>
-                    <Download className="mr-2 h-4 w-4" />
+                    <IconDownload className="mr-2 h-4 w-4" />
                     {t.students.downloadTemplate()}
                   </Button>
                 </div>
@@ -405,7 +405,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
                   {file
                     ? (
                         <div className="flex items-center justify-center gap-3">
-                          <FileSpreadsheet className="h-8 w-8 text-muted-foreground" />
+                          <IconFileSpreadsheet className="h-8 w-8 text-muted-foreground" />
                           <div className="text-left">
                             <p className="font-medium">{file.name}</p>
                             <p className="text-sm text-muted-foreground">
@@ -422,13 +422,13 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
                               setParseError(null)
                             }}
                           >
-                            <X className="h-4 w-4" />
+                            <IconX className="h-4 w-4" />
                           </Button>
                         </div>
                       )
                     : (
                         <label className="cursor-pointer">
-                          <Upload className="mx-auto h-10 w-10 text-muted-foreground" />
+                          <IconUpload className="mx-auto h-10 w-10 text-muted-foreground" />
                           <p className="mt-2 font-medium">{t.students.importDropFile()}</p>
                           <p className="text-sm text-muted-foreground">{t.students.importFileTypesExcel()}</p>
                           <input
@@ -443,7 +443,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
 
                 {parseError && (
                   <Alert variant="destructive">
-                    <AlertCircle className="h-4 w-4" />
+                    <IconAlertCircle className="h-4 w-4" />
                     <AlertDescription>{parseError}</AlertDescription>
                   </Alert>
                 )}
@@ -484,7 +484,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
                 <DialogFooter>
                   <Button variant="outline" onClick={handleClose}>{t.common.cancel()}</Button>
                   <Button onClick={handleImport} disabled={allParsed.length === 0 || importMutation.isPending}>
-                    {importMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {importMutation.isPending && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
                     {t.students.importStart()}
                   </Button>
                 </DialogFooter>

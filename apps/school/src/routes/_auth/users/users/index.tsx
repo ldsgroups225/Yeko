@@ -1,9 +1,9 @@
+import { IconPlus } from '@tabler/icons-react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { Plus } from 'lucide-react'
+import { Button } from '@workspace/ui/components/button'
 import { z } from 'zod'
 import { UsersTable } from '@/components/hr/users/users-table'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Button } from '@/components/ui/button'
 import { useTranslations } from '@/i18n'
 
 const usersSearchSchema = z.object({
@@ -39,7 +39,7 @@ function UsersListPage() {
         </div>
         <div className="flex gap-2">
           <Button onClick={() => navigate({ to: '/users/users/new' })}>
-            <Plus className="mr-2 h-4 w-4" />
+            <IconPlus className="mr-2 h-4 w-4" />
             {t.hr.users.addUser()}
           </Button>
         </div>

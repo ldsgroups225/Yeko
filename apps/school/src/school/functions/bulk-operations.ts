@@ -46,7 +46,7 @@ export const bulkEnrollStudents = createServerFn()
       errors: [] as Array<{ studentId: string, error: string }>,
     }
 
-    // Check class exists and get capacity
+    // IconCheck class exists and get capacity
     const [targetClass] = await db
       .select()
       .from(classes)
@@ -60,7 +60,7 @@ export const bulkEnrollStudents = createServerFn()
       throw new Error('Class not found')
     }
 
-    // Check for existing enrollments
+    // IconCheck for existing enrollments
     const existingEnrollments = await db
       .select({ studentId: enrollments.studentId })
       .from(enrollments)
@@ -167,7 +167,7 @@ export const bulkReEnrollFromPreviousYear = createServerFn()
       errors: [] as Array<{ studentId: string, error: string }>,
     }
 
-    // Check existing enrollments in target year
+    // IconCheck existing enrollments in target year
     const existingEnrollmentsTarget = await db
       .select({ studentId: enrollments.studentId })
       .from(enrollments)

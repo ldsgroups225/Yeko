@@ -1,22 +1,11 @@
 'use client'
 
+import { IconCircleCheck, IconDots, IconFileText, IconLoader2, IconPlus, IconTrash } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import {
-  CheckCircle2,
-  FileText,
-  Loader2,
-  MoreHorizontal,
-  Plus,
-  Trash2,
-} from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { Badge } from '@/components/ui/badge'
-
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import {
   Dialog,
   DialogContent,
@@ -24,17 +13,18 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from '@workspace/ui/components/dialog'
+
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Skeleton } from '@/components/ui/skeleton'
+} from '@workspace/ui/components/dropdown-menu'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -42,7 +32,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
+import { useState } from 'react'
+import { toast } from 'sonner'
 import { useSchoolContext } from '@/hooks/use-school-context'
 import { useTranslations } from '@/i18n'
 import {
@@ -108,7 +101,7 @@ function ReportCardTemplatesSettingsPage() {
           {/* Header handled by layout */}
         </div>
         <Button onClick={() => setIsCreateDialogOpen(true)} className="rounded-xl shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90">
-          <Plus className="mr-2 h-4 w-4" />
+          <IconPlus className="mr-2 h-4 w-4" />
           {t.common.create()}
         </Button>
       </motion.div>
@@ -122,7 +115,7 @@ function ReportCardTemplatesSettingsPage() {
         <Card className="rounded-3xl border border-border/40 bg-card/40 backdrop-blur-xl shadow-sm overflow-hidden">
           <CardHeader className="border-b border-border/40 bg-muted/5">
             <CardTitle className="flex items-center gap-2 text-xl font-bold uppercase tracking-wider text-muted-foreground">
-              <FileText className="h-5 w-5 text-primary" />
+              <IconFileText className="h-5 w-5 text-primary" />
               {t.settings.reportCards.title()}
             </CardTitle>
             <CardDescription className="text-muted-foreground/80">
@@ -165,7 +158,7 @@ function ReportCardTemplatesSettingsPage() {
                                 {template.isDefault
                                   ? (
                                       <Badge variant="default" className="gap-1 bg-green-500/15 text-green-700 hover:bg-green-500/25 border-green-200 dark:border-green-800 dark:text-green-400 rounded-lg pr-3 pl-3">
-                                        <CheckCircle2 className="h-3.5 w-3.5" />
+                                        <IconCircleCheck className="h-3.5 w-3.5" />
                                         Default
                                       </Badge>
                                     )
@@ -177,7 +170,7 @@ function ReportCardTemplatesSettingsPage() {
                                 <DropdownMenu>
                                   <DropdownMenuTrigger asChild>
                                     <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                                      <MoreHorizontal className="h-4 w-4" />
+                                      <IconDots className="h-4 w-4" />
                                     </Button>
                                   </DropdownMenuTrigger>
                                   <DropdownMenuContent align="end" className="rounded-xl border-border/40 bg-card/95 backdrop-blur-xl shadow-xl w-48">
@@ -187,7 +180,7 @@ function ReportCardTemplatesSettingsPage() {
                                         disabled={setDefaultMutation.isPending}
                                         className="rounded-lg cursor-pointer focus:bg-primary/10 font-medium"
                                       >
-                                        <CheckCircle2 className="mr-2 h-4 w-4 text-green-600" />
+                                        <IconCircleCheck className="mr-2 h-4 w-4 text-green-600" />
                                         {t.settings.reportCards.isDefault()}
                                       </DropdownMenuItem>
                                     )}
@@ -196,7 +189,7 @@ function ReportCardTemplatesSettingsPage() {
                                       className="text-destructive focus:bg-destructive/10 focus:text-destructive rounded-lg cursor-pointer font-medium"
                                       onClick={() => setDeleteConfirmId(template.id)}
                                     >
-                                      <Trash2 className="mr-2 h-4 w-4" />
+                                      <IconTrash className="mr-2 h-4 w-4" />
                                       {t.common.delete()}
                                     </DropdownMenuItem>
                                   </DropdownMenuContent>
@@ -211,7 +204,7 @@ function ReportCardTemplatesSettingsPage() {
                 : (
                     <div className="flex flex-col items-center justify-center py-16 text-center space-y-4">
                       <div className="p-4 rounded-full bg-muted/20">
-                        <FileText className="h-10 w-10 text-muted-foreground/50" />
+                        <IconFileText className="h-10 w-10 text-muted-foreground/50" />
                       </div>
                       <div className="space-y-1">
                         <h3 className="text-lg font-bold text-foreground">
@@ -222,7 +215,7 @@ function ReportCardTemplatesSettingsPage() {
                         </p>
                       </div>
                       <Button className="mt-4 rounded-xl" onClick={() => setIsCreateDialogOpen(true)}>
-                        <Plus className="mr-2 h-4 w-4" />
+                        <IconPlus className="mr-2 h-4 w-4" />
                         {t.common.create()}
                       </Button>
                     </div>
@@ -257,7 +250,7 @@ function ReportCardTemplatesSettingsPage() {
               disabled={deleteMutation.isPending}
               className="rounded-xl shadow-lg shadow-destructive/20"
             >
-              {deleteMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {deleteMutation.isPending && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
               {t.common.delete()}
             </Button>
           </DialogFooter>
@@ -354,7 +347,7 @@ function CreateTemplateDialog({ open, onOpenChange, schoolId }: CreateTemplateDi
               {t.common.cancel()}
             </Button>
             <Button type="submit" disabled={createMutation.isPending} className="rounded-xl shadow-lg shadow-primary/20">
-              {createMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {createMutation.isPending && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
               {t.common.create()}
             </Button>
           </DialogFooter>

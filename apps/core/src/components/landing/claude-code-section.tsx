@@ -1,16 +1,16 @@
-import { Sparkles } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
+import { IconSparkles } from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
 
 export function ClaudeCodeSection() {
   return (
     <section
       id="claude-code"
-      className="sm:py-6 bg-gradient-to-b from-background to-muted/20"
+      className="sm:py-6 bg-linear-to-b from-background to-muted/20"
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <Badge variant="outline" className="mb-4">
-            <Sparkles className="h-3 w-3 mr-1" />
+            <IconSparkles className="h-3 w-3 mr-1" />
             AI-Powered Setup
           </Badge>
           <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">

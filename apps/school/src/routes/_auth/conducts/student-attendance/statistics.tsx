@@ -1,21 +1,21 @@
+import { IconAlertTriangle, IconArrowLeft, IconChartBar, IconFilter, IconShieldCheck, IconSparkles, IconTrendingUp } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { AlertTriangle, ArrowLeft, BarChart3, Filter, ShieldCheck, Sparkles, TrendingUp } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { useState } from 'react'
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { DatePicker } from '@/components/ui/date-picker'
-import { Progress } from '@/components/ui/progress'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { DatePicker } from '@workspace/ui/components/date-picker'
+import { Progress } from '@workspace/ui/components/progress'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
+} from '@workspace/ui/components/select'
+import { Skeleton } from '@workspace/ui/components/skeleton'
+import { AnimatePresence, motion } from 'motion/react'
+import { useState } from 'react'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { attendanceStatisticsOptions } from '@/lib/queries/student-attendance'
@@ -108,7 +108,7 @@ function StudentAttendanceStatisticsPage() {
           className="flex items-center gap-4"
         >
           <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-            <BarChart3 className="size-8 text-primary" />
+            <IconChartBar className="size-8 text-primary" />
           </div>
           <div>
             <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.attendance.statistics()}</h1>
@@ -122,7 +122,7 @@ function StudentAttendanceStatisticsPage() {
         >
           <Link to="/conducts/student-attendance">
             <Button variant="ghost" size="sm" className="rounded-xl hover:bg-primary/10 hover:text-primary transition-all font-black uppercase tracking-widest text-[10px]">
-              <ArrowLeft className="mr-2 h-4 w-4" />
+              <IconArrowLeft className="mr-2 h-4 w-4" />
               {t.common.back()}
             </Button>
           </Link>
@@ -135,11 +135,11 @@ function StudentAttendanceStatisticsPage() {
         className="bg-card/20 backdrop-blur-xl border border-border/40 p-6 rounded-3xl"
       >
         <div className="flex items-center gap-2 mb-4 ml-1">
-          <Filter className="size-3 text-muted-foreground/60" />
+          <IconFilter className="size-3 text-muted-foreground/60" />
           <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{t.attendance.filters()}</span>
         </div>
         <div className="flex flex-wrap gap-4">
-          <Select value={classId || 'all'} onValueChange={v => setClassId(v === 'all' ? '' : v)}>
+          <Select value={classId || 'all'} onValueChange={v => setClassId(v === 'all' || v === null ? '' : v)}>
             <SelectTrigger className="w-[200px] h-12 rounded-2xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
               <SelectValue placeholder={t.attendance.allClasses()} />
             </SelectTrigger>
@@ -189,7 +189,7 @@ function StudentAttendanceStatisticsPage() {
                     <motion.div variants={item}>
                       <Card className="relative overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl p-6 hover:translate-y-[-4px] transition-all group">
                         <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                          <TrendingUp className="size-12" />
+                          <IconTrendingUp className="size-12" />
                         </div>
                         <div className="space-y-4">
                           <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{t.attendance.attendanceRate()}</p>
@@ -205,7 +205,7 @@ function StudentAttendanceStatisticsPage() {
                     <motion.div variants={item}>
                       <Card className="relative overflow-hidden rounded-3xl border-emerald-500/20 bg-emerald-500/5 backdrop-blur-xl shadow-xl p-6 hover:translate-y-[-4px] transition-all group">
                         <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                          <ShieldCheck className="size-12 text-emerald-500" />
+                          <IconShieldCheck className="size-12 text-emerald-500" />
                         </div>
                         <div className="space-y-4">
                           <p className="text-[10px] font-black uppercase tracking-widest text-emerald-500/60">{t.attendance.status.present()}</p>
@@ -226,7 +226,7 @@ function StudentAttendanceStatisticsPage() {
                     <motion.div variants={item}>
                       <Card className="relative overflow-hidden rounded-3xl border-rose-500/20 bg-rose-500/5 backdrop-blur-xl shadow-xl p-6 hover:translate-y-[-4px] transition-all group">
                         <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                          <AlertTriangle className="size-12 text-rose-500" />
+                          <IconAlertTriangle className="size-12 text-rose-500" />
                         </div>
                         <div className="space-y-4">
                           <p className="text-[10px] font-black uppercase tracking-widest text-rose-500/60">{t.attendance.status.absent()}</p>
@@ -247,7 +247,7 @@ function StudentAttendanceStatisticsPage() {
                     <motion.div variants={item}>
                       <Card className="relative overflow-hidden rounded-3xl border-orange-500/20 bg-orange-500/5 backdrop-blur-xl shadow-xl p-6 hover:translate-y-[-4px] transition-all group">
                         <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                          <AlertTriangle className="size-12 text-orange-500" />
+                          <IconAlertTriangle className="size-12 text-orange-500" />
                         </div>
                         <div className="space-y-4">
                           <p className="text-[10px] font-black uppercase tracking-widest text-orange-500/60">{t.attendance.chronicAbsentees()}</p>
@@ -263,11 +263,11 @@ function StudentAttendanceStatisticsPage() {
                   <motion.div variants={item}>
                     <Card className="relative overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl">
                       <div className="absolute top-0 right-0 p-6 opacity-5">
-                        <Sparkles className="size-32" />
+                        <IconSparkles className="size-32" />
                       </div>
                       <CardHeader className="relative border-b border-border/10 bg-muted/20">
                         <CardTitle className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
-                          <BarChart3 className="h-3 w-3" />
+                          <IconChartBar className="h-3 w-3" />
                           {t.attendance.breakdown()}
                         </CardTitle>
                       </CardHeader>
@@ -280,7 +280,7 @@ function StudentAttendanceStatisticsPage() {
                         </div>
                         <div className="flex flex-col justify-center items-center text-center p-8 rounded-3xl bg-primary/5 border border-primary/10">
                           <div className="p-4 rounded-2xl bg-primary/10 mb-4">
-                            <BarChart3 className="size-12 text-primary" />
+                            <IconChartBar className="size-12 text-primary" />
                           </div>
                           <h4 className="text-lg font-black uppercase tracking-tight italic">{t.schoolLife.studentAttendance()}</h4>
                           <p className="text-sm font-medium text-muted-foreground italic mt-2 max-w-xs">{t.schoolLife.studentAttendanceDescription()}</p>

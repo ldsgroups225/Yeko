@@ -1,7 +1,7 @@
-import { ArrowRight, CheckCircle2, Play } from 'lucide-react'
+import { IconArrowRight, IconCircleCheck, IconPlayerPlay } from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 import { useTranslation } from 'react-i18next'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 
 export function HeroSection() {
   const { t } = useTranslation()
@@ -12,7 +12,7 @@ export function HeroSection() {
         <div className="text-center">
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 fill-mode-backwards">
             <Badge variant="secondary" className="mb-6 px-4 py-2 hover:bg-secondary/80 transition-colors cursor-default">
-              <CheckCircle2 className="mr-2 h-4 w-4 text-primary animate-pulse" />
+              <IconCircleCheck className="mr-2 h-4 w-4 text-primary animate-pulse" />
               {t('socialProof.trustedBy')}
             </Badge>
           </div>
@@ -30,13 +30,13 @@ export function HeroSection() {
             <Button size="lg" className="group h-14 px-8 text-lg shadow-lg shadow-primary/20" asChild>
               <a href="/signup">
                 {t('hero.cta.primary')}
-                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                <IconArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
               </a>
             </Button>
 
             <Button variant="outline" size="lg" className="h-14 px-8 text-lg backdrop-blur-sm bg-background/50" asChild>
               <a href="/demo">
-                <Play className="mr-2 h-5 w-5" />
+                <IconPlayerPlay className="mr-2 h-5 w-5" />
                 {t('hero.cta.secondary')}
               </a>
             </Button>
@@ -44,15 +44,15 @@ export function HeroSection() {
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground animate-in fade-in duration-1000 delay-500 fill-mode-backwards">
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-primary" />
+              <IconCircleCheck className="h-4 w-4 text-primary" />
               {t('hero.features.0')}
             </div>
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-primary" />
+              <IconCircleCheck className="h-4 w-4 text-primary" />
               {t('hero.features.1')}
             </div>
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-primary" />
+              <IconCircleCheck className="h-4 w-4 text-primary" />
               {t('hero.features.2')}
             </div>
           </div>

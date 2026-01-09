@@ -80,7 +80,7 @@ export const getChapterCompletions = createServerFn()
 export const markChapterComplete = createServerFn()
   .inputValidator(markChapterCompleteSchema)
   .handler(async ({ data }) => {
-    // Check if already completed
+    // IconCheck if already completed
     const isCompleted = await progressQueries.isChapterCompleted(data.classId, data.chapterId)
     if (isCompleted) {
       return { success: false, error: 'Chapitre déjà marqué comme terminé' }

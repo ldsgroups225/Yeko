@@ -1,11 +1,8 @@
-import { AlertCircle, CheckCircle2, Database, Download, FileText, Info, Loader2, Mail, Phone, Settings, Shield, Upload } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { IconAlertCircle, IconCircleCheck, IconDatabase, IconDownload, IconFileText, IconInfoCircle, IconLoader2, IconMail, IconPhone, IconSettings, IconShield, IconUpload } from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
 import {
   Table,
   TableBody,
@@ -13,7 +10,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
+import { useState } from 'react'
+import { toast } from 'sonner'
 import { useTranslations } from '@/i18n'
 import { generateUUID } from '@/utils/generateUUID'
 
@@ -143,7 +143,7 @@ Jane Smith,jane@example.com,+225 05 06 07 08,academic_coordinator,active`
         >
           <div className="flex items-center gap-2 mb-4">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <FileText className="h-4 w-4" />
+              <IconFileText className="h-4 w-4" />
             </div>
             <h2 className="text-xl font-serif font-semibold">{t.hr.users.step1()}</h2>
           </div>
@@ -155,7 +155,7 @@ Jane Smith,jane@example.com,+225 05 06 07 08,academic_coordinator,active`
             variant="outline"
             className="w-full rounded-xl h-11 font-semibold border-border/40 bg-background/50 hover:bg-background transition-all shadow-sm group"
           >
-            <Download className="mr-2 h-4 w-4 transition-transform group-hover:-translate-y-0.5" />
+            <IconDownload className="mr-2 h-4 w-4 transition-transform group-hover:-translate-y-0.5" />
             {t.hr.users.downloadTemplate()}
           </Button>
         </motion.div>
@@ -170,7 +170,7 @@ Jane Smith,jane@example.com,+225 05 06 07 08,academic_coordinator,active`
         >
           <div className="flex items-center gap-2 mb-4">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <Upload className="h-4 w-4" />
+              <IconUpload className="h-4 w-4" />
             </div>
             <h2 className="text-xl font-serif font-semibold">{t.hr.users.step2()}</h2>
           </div>
@@ -202,7 +202,7 @@ Jane Smith,jane@example.com,+225 05 06 07 08,academic_coordinator,active`
             <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-2">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <Database className="h-4 w-4" />
+                  <IconDatabase className="h-4 w-4" />
                 </div>
                 <h2 className="text-xl font-serif font-semibold">{t.hr.users.step3()}</h2>
               </div>
@@ -252,19 +252,19 @@ Jane Smith,jane@example.com,+225 05 06 07 08,academic_coordinator,active`
                         {row.error
                           ? (
                               <div className="flex h-7 w-7 items-center justify-center rounded-full bg-destructive/10 text-destructive">
-                                <AlertCircle className="h-4 w-4" />
+                                <IconAlertCircle className="h-4 w-4" />
                               </div>
                             )
                           : (
                               <div className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600">
-                                <CheckCircle2 className="h-4 w-4" />
+                                <IconCircleCheck className="h-4 w-4" />
                               </div>
                             )}
                       </TableCell>
                       <TableCell className="font-semibold text-foreground py-4">{row.name}</TableCell>
                       <TableCell className="py-4 font-medium text-muted-foreground">
                         <div className="flex items-center gap-1.5">
-                          <Mail className="h-3 w-3" />
+                          <IconMail className="h-3 w-3" />
                           {row.email}
                         </div>
                       </TableCell>
@@ -272,7 +272,7 @@ Jane Smith,jane@example.com,+225 05 06 07 08,academic_coordinator,active`
                         {row.phone
                           ? (
                               <div className="flex items-center gap-1.5">
-                                <Phone className="h-3 w-3" />
+                                <IconPhone className="h-3 w-3" />
                                 {row.phone}
                               </div>
                             )
@@ -280,14 +280,14 @@ Jane Smith,jane@example.com,+225 05 06 07 08,academic_coordinator,active`
                       </TableCell>
                       <TableCell className="py-4">
                         <div className="flex items-center gap-1.5">
-                          <Shield className="h-3 w-3 text-primary/60" />
+                          <IconShield className="h-3 w-3 text-primary/60" />
                           <span className="font-medium text-foreground">{row.roles}</span>
                         </div>
                       </TableCell>
                       <TableCell className="py-4">
                         {row.error && (
                           <div className="flex items-center gap-1.5 text-xs font-bold text-destructive uppercase tracking-tight">
-                            <Info className="h-3 w-3" />
+                            <IconInfoCircle className="h-3 w-3" />
                             {row.error}
                           </div>
                         )}
@@ -321,13 +321,13 @@ Jane Smith,jane@example.com,+225 05 06 07 08,academic_coordinator,active`
                 {isProcessing
                   ? (
                       <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin text-primary-foreground/80" />
+                        <IconLoader2 className="mr-2 h-4 w-4 animate-spin text-primary-foreground/80" />
                         {t.hr.users.importing()}
                       </>
                     )
                   : (
                       <>
-                        <Upload className="mr-2 h-4 w-4 group-hover:-translate-y-0.5" />
+                        <IconUpload className="mr-2 h-4 w-4 group-hover:-translate-y-0.5" />
                         {t.hr.users.importUsers()}
                       </>
                     )}
@@ -347,7 +347,7 @@ Jane Smith,jane@example.com,+225 05 06 07 08,academic_coordinator,active`
           >
             <div className="flex items-center gap-2 mb-6">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <Settings className="h-4 w-4" />
+                <IconSettings className="h-4 w-4" />
               </div>
               <h2 className="text-xl font-serif font-semibold">{t.hr.users.importResults()}</h2>
             </div>
@@ -355,7 +355,7 @@ Jane Smith,jane@example.com,+225 05 06 07 08,academic_coordinator,active`
             <div className="grid gap-4 sm:grid-cols-2 max-w-2xl">
               <div className="flex items-center gap-4 p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/10 shadow-sm">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600">
-                  <CheckCircle2 className="h-6 w-6" />
+                  <IconCircleCheck className="h-6 w-6" />
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-emerald-600 leading-none">{results.success}</p>
@@ -366,7 +366,7 @@ Jane Smith,jane@example.com,+225 05 06 07 08,academic_coordinator,active`
               {results.failed > 0 && (
                 <div className="flex items-center gap-4 p-4 rounded-xl bg-destructive/5 border border-destructive/10 shadow-sm">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-destructive/10 text-destructive">
-                    <AlertCircle className="h-6 w-6" />
+                    <IconAlertCircle className="h-6 w-6" />
                   </div>
                   <div>
                     <p className="text-2xl font-bold text-destructive leading-none">{results.failed}</p>

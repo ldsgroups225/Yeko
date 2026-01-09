@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button'
+import { Button } from '@workspace/ui/components/button'
 import { useTranslations } from '@/i18n'
 import { useI18nContext } from '@/i18n/i18n-react'
 

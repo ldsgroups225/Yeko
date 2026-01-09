@@ -155,7 +155,7 @@ describe('grades Security Audit', () => {
     })
   })
 
-  describe('input Validation - Type Coercion Attacks', () => {
+  describe('input Validation - IconTypography Coercion Attacks', () => {
     test('should reject non-numeric grade values', () => {
       const invalidValues = [
         'fifteen',
@@ -384,7 +384,7 @@ describe('grades Security Audit', () => {
     })
   })
 
-  describe('input Validation - Type Enum Validation', () => {
+  describe('input Validation - IconTypography Enum Validation', () => {
     test('should only accept valid grade types', () => {
       const validTypes = ['quiz', 'test', 'exam', 'participation', 'homework', 'project']
       const invalidTypes = ['invalid', 'QUIZ', 'Test', 'EXAM', '', 'midterm', 'final']

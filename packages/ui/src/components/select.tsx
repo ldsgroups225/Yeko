@@ -1,4 +1,4 @@
-import { Select as SelectPrimitive } from '@base-ui/react/select'
+import { Select as SelectPrimitive } from '@base-ui-components/react/select'
 import { IconCheck, IconChevronDown, IconChevronUp, IconSelector } from '@tabler/icons-react'
 
 import { cn } from '@workspace/ui/lib/utils'
@@ -16,13 +16,15 @@ function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
   )
 }
 
-function SelectValue({ className, ...props }: SelectPrimitive.Value.Props) {
+function SelectValue({ className, placeholder, ...props }: SelectPrimitive.Value.Props & { placeholder?: React.ReactNode }) {
   return (
     <SelectPrimitive.Value
       data-slot="select-value"
       className={cn('flex flex-1 text-left', className)}
       {...props}
-    />
+    >
+      {props.children || placeholder}
+    </SelectPrimitive.Value>
   )
 }
 

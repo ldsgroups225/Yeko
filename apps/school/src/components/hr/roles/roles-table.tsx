@@ -1,4 +1,5 @@
 import type { ColumnDef } from '@tanstack/react-table'
+import { IconDots, IconEdit, IconEye, IconSearch, IconShield, IconTrash } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import {
@@ -6,26 +7,21 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { Edit, Eye, MoreHorizontal, Search, Shield, Trash2 } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { useMemo, useState } from 'react'
-import { EmptyState } from '@/components/hr/empty-state'
-import { TableSkeleton } from '@/components/hr/table-skeleton'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
+} from '@workspace/ui/components/card'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
+} from '@workspace/ui/components/dropdown-menu'
+import { Input } from '@workspace/ui/components/input'
 import {
   Table,
   TableBody,
@@ -33,7 +29,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
+import { useMemo, useState } from 'react'
+import { EmptyState } from '@/components/hr/empty-state'
+import { TableSkeleton } from '@/components/hr/table-skeleton'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useTranslations } from '@/i18n'
 import { getRoles } from '@/school/functions/roles'
@@ -90,7 +90,7 @@ export function RolesTable({ filters }: RolesTableProps) {
         cell: ({ row }) => (
           <div className="flex items-center gap-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <Shield className="h-4 w-4" />
+              <IconShield className="h-4 w-4" />
             </div>
             <div className="flex flex-col">
               <span className="font-semibold text-foreground">{row.original.name}</span>
@@ -142,7 +142,7 @@ export function RolesTable({ filters }: RolesTableProps) {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="hover:bg-primary/10 hover:text-primary transition-colors">
-                <MoreHorizontal className="h-4 w-4" />
+                <IconDots className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="backdrop-blur-2xl bg-popover/90 border-border/40 min-w-[160px]">
@@ -150,7 +150,7 @@ export function RolesTable({ filters }: RolesTableProps) {
                 className="cursor-pointer gap-2"
                 onClick={() => navigate({ to: `/users/roles/${row.original.id}` })}
               >
-                <Eye className="h-4 w-4" />
+                <IconEye className="h-4 w-4" />
                 {t.common.view()}
               </DropdownMenuItem>
               {!row.original.isSystemRole && (
@@ -160,11 +160,11 @@ export function RolesTable({ filters }: RolesTableProps) {
                     onClick={() =>
                       navigate({ to: `/users/roles/${row.original.id}/edit` })}
                   >
-                    <Edit className="h-4 w-4" />
+                    <IconEdit className="h-4 w-4" />
                     {t.common.edit()}
                   </DropdownMenuItem>
                   <DropdownMenuItem className="cursor-pointer gap-2 text-destructive focus:text-destructive focus:bg-destructive/10">
-                    <Trash2 className="h-4 w-4" />
+                    <IconTrash className="h-4 w-4" />
                     {t.common.delete()}
                   </DropdownMenuItem>
                 </>
@@ -199,7 +199,7 @@ export function RolesTable({ filters }: RolesTableProps) {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <CardTitle className="text-2xl font-serif">{t.hr.roles.listTitle()}</CardTitle>
             <div className="relative w-full sm:w-72">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder={t.hr.roles.searchPlaceholder()}
                 value={searchInput}
@@ -215,7 +215,7 @@ export function RolesTable({ filters }: RolesTableProps) {
           {hasNoData && !hasNoResults && (
             <div className="py-12">
               <EmptyState
-                icon={Shield}
+                icon={IconShield}
                 title={t.hr.roles.noRoles()}
                 description={t.hr.roles.noRolesDescription()}
                 action={{
@@ -230,7 +230,7 @@ export function RolesTable({ filters }: RolesTableProps) {
           {hasNoResults && (
             <div className="py-12">
               <EmptyState
-                icon={Search}
+                icon={IconSearch}
                 title={t.common.noResults()}
                 description={t.common.noResultsDescription()}
               />

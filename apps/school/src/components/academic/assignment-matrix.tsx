@@ -1,25 +1,22 @@
+import { IconAlertTriangle, IconPlus, IconSchool, IconSettings, IconX } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { AlertTriangle, GraduationCap, Plus, Settings, X } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
+} from '@workspace/ui/components/card'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
+} from '@workspace/ui/components/select'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -27,13 +24,16 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip'
+} from '@workspace/ui/components/tooltip'
+import { AnimatePresence, motion } from 'motion/react'
+import { useState } from 'react'
+import { toast } from 'sonner'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { assignTeacherToClassSubject, getAssignmentMatrix, removeTeacherFromClassSubject } from '@/school/functions/class-subjects'
@@ -83,7 +83,7 @@ function EmptyState() {
       <CardContent className="p-8">
         <div className="flex flex-col items-center justify-center text-center space-y-4">
           <div className="rounded-full bg-muted p-4">
-            <Settings className="h-8 w-8 text-muted-foreground" />
+            <IconSettings className="h-8 w-8 text-muted-foreground" />
           </div>
           <div className="space-y-2">
             <h3 className="text-lg font-semibold">{t.assignmentMatrix.emptyTitle()}</h3>
@@ -94,13 +94,13 @@ function EmptyState() {
           <div className="flex gap-2 pt-2">
             <Button variant="outline" asChild>
               <a href="/classes">
-                <Plus className="mr-2 h-4 w-4" />
+                <IconPlus className="mr-2 h-4 w-4" />
                 {t.classes.create()}
               </a>
             </Button>
             <Button variant="outline" asChild>
               <a href="/settings/subjects">
-                <Settings className="mr-2 h-4 w-4" />
+                <IconSettings className="mr-2 h-4 w-4" />
                 {t.subjects.configure()}
               </a>
             </Button>
@@ -227,7 +227,7 @@ export function AssignmentMatrix({ schoolYearId: propSchoolYearId }: AssignmentM
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                <GraduationCap className="h-5 w-5 text-primary" />
+                <IconSchool className="h-5 w-5 text-primary" />
               </div>
               <div>
                 <CardTitle>{t.assignmentMatrix.title()}</CardTitle>
@@ -299,12 +299,12 @@ export function AssignmentMatrix({ schoolYearId: propSchoolYearId }: AssignmentM
                                     className="flex items-center gap-1 justify-center"
                                   >
                                     <Select
-                                      onValueChange={(teacherId) => {
-                                        if (teacherId === 'none') {
+                                      onValueChange={(val) => {
+                                        if (val === 'none') {
                                           removeMutation.mutate({ classId: cls.id, subjectId: subject.id })
                                         }
-                                        else {
-                                          assignMutation.mutate({ classId: cls.id, subjectId: subject.id, teacherId })
+                                        else if (val) {
+                                          assignMutation.mutate({ classId: cls.id, subjectId: subject.id, teacherId: val })
                                         }
                                       }}
                                       defaultValue={assignment?.teacherId || 'none'}
@@ -341,7 +341,7 @@ export function AssignmentMatrix({ schoolYearId: propSchoolYearId }: AssignmentM
                                       onClick={() => setEditingCell(null)}
                                       aria-label={t.common.cancel()}
                                     >
-                                      <X className="h-4 w-4" />
+                                      <IconX className="h-4 w-4" />
                                     </Button>
                                   </motion.div>
                                 )
@@ -370,12 +370,12 @@ export function AssignmentMatrix({ schoolYearId: propSchoolYearId }: AssignmentM
                                                   <div className="flex items-center gap-1.5 truncate">
                                                     <span className="truncate">{assignment.teacherName}</span>
                                                     {teacherOverloaded && (
-                                                      <AlertTriangle className="h-3.5 w-3.5 text-amber-500 shrink-0 animate-pulse" />
+                                                      <IconAlertTriangle className="h-3.5 w-3.5 text-amber-500 shrink-0 animate-pulse" />
                                                     )}
                                                   </div>
                                                 )
                                               : (
-                                                  <Plus className="h-3.5 w-3.5 opacity-40 group-hover:opacity-100 transition-opacity" />
+                                                  <IconPlus className="h-3.5 w-3.5 opacity-40 group-hover:opacity-100 transition-opacity" />
                                                 )}
                                           </Button>
                                         </TooltipTrigger>
@@ -386,7 +386,7 @@ export function AssignmentMatrix({ schoolYearId: propSchoolYearId }: AssignmentM
                                                   <p className="font-semibold">{assignment.teacherName}</p>
                                                   {teacherOverloaded && (
                                                     <p className="text-amber-500 flex items-center gap-1">
-                                                      <AlertTriangle className="h-3 w-3" />
+                                                      <IconAlertTriangle className="h-3 w-3" />
                                                       {t.assignmentMatrix.overloaded()}
                                                     </p>
                                                   )}

@@ -158,7 +158,7 @@ export const getStatistics = createServerFn()
   })
 
 /**
- * Check chronic absence for a student
+ * IconCheck chronic absence for a student
  */
 export const checkChronicAbsence = createServerFn()
   .inputValidator(z.object({

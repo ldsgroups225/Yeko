@@ -1,4 +1,4 @@
-import { NavigationMenu as NavigationMenuPrimitive } from '@base-ui/react/navigation-menu'
+import { NavigationMenu as NavigationMenuPrimitive } from '@base-ui-components/react/navigation-menu'
 import { IconChevronDown } from '@tabler/icons-react'
 
 import { cn } from '@workspace/ui/lib/utils'

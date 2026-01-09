@@ -1,5 +1,5 @@
+import { IconCalendar } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
-import { Calendar } from 'lucide-react'
 import { TimetableGrid } from '@/components/timetables/timetable-grid'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
@@ -37,7 +37,7 @@ export function TeacherTimetable({ teacherId }: TeacherTimetableProps) {
   if (formattedSessions.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center bg-card/40 rounded-2xl border border-dashed border-border/40 backdrop-blur-sm">
-        <Calendar className="mb-4 size-12 text-muted-foreground/40" />
+        <IconCalendar className="mb-4 size-12 text-muted-foreground/40" />
         <h3 className="text-lg font-semibold">{t.hr.teachers.noSchedule?.() || 'Aucun emploi du temps'}</h3>
         <p className="text-sm text-muted-foreground">Cet enseignant n'a pas encore de séances d'emploi du temps.</p>
       </div>

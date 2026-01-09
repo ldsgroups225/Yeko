@@ -1,18 +1,18 @@
+import { IconUsers } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Users } from 'lucide-react'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { Label } from '@workspace/ui/components/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Switch } from '@/components/ui/switch'
+} from '@workspace/ui/components/select'
+import { Switch } from '@workspace/ui/components/switch'
+import { useState } from 'react'
+import { toast } from 'sonner'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { classesOptions } from '@/lib/queries/classes'
@@ -77,7 +77,7 @@ export function BulkEnrollmentCard() {
     <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Users className="h-5 w-5" />
+          <IconUsers className="h-5 w-5" />
           {t.students.bulkOperations.bulkEnroll()}
         </CardTitle>
         <CardDescription>
@@ -87,7 +87,7 @@ export function BulkEnrollmentCard() {
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <Label>{t.students.class()}</Label>
-          <Select value={selectedClassId} onValueChange={setSelectedClassId}>
+          <Select value={selectedClassId} onValueChange={val => setSelectedClassId(val ?? '')}>
             <SelectTrigger>
               <SelectValue placeholder={t.students.selectClass()} />
             </SelectTrigger>

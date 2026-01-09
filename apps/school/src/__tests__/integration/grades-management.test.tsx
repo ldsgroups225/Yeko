@@ -26,7 +26,7 @@ describe('grades Management Integration', () => {
     })
   })
 
-  describe('grade Type Selector', () => {
+  describe('grade IconTypography Selector', () => {
     test('should render combobox trigger', () => {
       const onValueChange = vi.fn()
 

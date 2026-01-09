@@ -1,23 +1,23 @@
+import { IconCalendar, IconChecks, IconFileText, IconFilter, IconLayoutGrid, IconSchool, IconSearch } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { BookOpenCheck, Calendar, FileText, Filter, GraduationCap, LayoutGrid, Search } from 'lucide-react'
-import { motion } from 'motion/react'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { BulkGenerationDialog, ReportCardList } from '@/components/report-cards'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent } from '@workspace/ui/components/card'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
+} from '@workspace/ui/components/select'
+import { Skeleton } from '@workspace/ui/components/skeleton'
+import { motion } from 'motion/react'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { BulkGenerationDialog, ReportCardList } from '@/components/report-cards'
 import { useSchoolContext } from '@/hooks/use-school-context'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
@@ -106,14 +106,14 @@ function ReportCardsPage() {
   const generateMutation = useMutation({
     mutationFn: async (studentIds: string[]) => {
       if (!authUserId)
-        throw new Error('User not found')
+        throw new Error('IconUser not found')
 
       if (!activeTemplate)
         throw new Error('No report card template found. Please create one in settings.')
 
       const internalUserId = await getUserIdFromAuthUserId({ data: { authUserId } })
       if (!internalUserId)
-        throw new Error('User not found')
+        throw new Error('IconUser not found')
 
       return await bulkGenerateReportCards({
         data: {
@@ -182,7 +182,7 @@ function ReportCardsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-500/10 text-indigo-500 shadow-inner">
-            <BookOpenCheck className="size-8" />
+            <IconChecks className="size-8" />
           </div>
           <div>
             <h1 className="text-3xl font-black tracking-tight">{t.reportCards.title()}</h1>
@@ -210,11 +210,11 @@ function ReportCardsPage() {
               : (
                   <Select
                     value={effectiveYearId}
-                    onValueChange={val => setLocalYearId(val)}
+                    onValueChange={val => setLocalYearId(val ?? '')}
                   >
                     <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
                       <div className="flex items-center gap-2">
-                        <Calendar className="size-3.5 text-muted-foreground" />
+                        <IconCalendar className="size-3.5 text-muted-foreground" />
                         <SelectValue placeholder={t.schoolYear.select()} />
                       </div>
                     </SelectTrigger>
@@ -242,7 +242,7 @@ function ReportCardsPage() {
               : (
                   <Select
                     value={selectedTermId}
-                    onValueChange={setSelectedTermId}
+                    onValueChange={val => setSelectedTermId(val ?? '')}
                     disabled={!effectiveYearId}
                   >
                     <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
@@ -271,12 +271,12 @@ function ReportCardsPage() {
               : (
                   <Select
                     value={selectedClassId}
-                    onValueChange={setSelectedClassId}
+                    onValueChange={val => setSelectedClassId(val ?? '')}
                     disabled={!effectiveYearId}
                   >
                     <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
                       <div className="flex items-center gap-2">
-                        <LayoutGrid className="size-3.5 text-muted-foreground" />
+                        <IconLayoutGrid className="size-3.5 text-muted-foreground" />
                         <SelectValue placeholder={t.classes.select()} />
                       </div>
                     </SelectTrigger>
@@ -297,7 +297,7 @@ function ReportCardsPage() {
         {canShowReportCards && (
           <div className="pt-4 border-t border-border/10 flex flex-col sm:flex-row items-center gap-4">
             <div className="relative flex-1 w-full">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
+              <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
               <Input
                 placeholder={t.students.searchPlaceholder()}
                 value={search}
@@ -310,7 +310,7 @@ function ReportCardsPage() {
                 variant="outline"
                 className="h-11 px-6 border-border/40 bg-background/40 hover:bg-background rounded-xl font-bold uppercase tracking-widest text-[10px]"
               >
-                <Filter className="mr-2 h-4 w-4" />
+                <IconFilter className="mr-2 h-4 w-4" />
                 {t.common.filters()}
               </Button>
               <Button
@@ -318,7 +318,7 @@ function ReportCardsPage() {
                 className="h-11 px-6 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl font-bold uppercase tracking-widest text-[10px]"
                 onClick={() => setIsGenerationDialogOpen(true)}
               >
-                <FileText className="mr-2 h-4 w-4" />
+                <IconFileText className="mr-2 h-4 w-4" />
                 {t.reportCards.generate()}
               </Button>
             </div>
@@ -343,7 +343,7 @@ function ReportCardsPage() {
               <Card className="rounded-3xl border border-dashed border-border/60 bg-card/20 backdrop-blur-sm">
                 <CardContent className="flex flex-col items-center justify-center py-20 text-center">
                   <div className="p-6 rounded-full bg-background/50 mb-6 shadow-inner">
-                    <GraduationCap className="size-16 text-muted-foreground/20" />
+                    <IconSchool className="size-16 text-muted-foreground/20" />
                   </div>
                   <h3 className="text-xl font-bold text-muted-foreground mb-2">{t.reportCards.selectFiltersPrompt()}</h3>
                   <p className="text-sm text-muted-foreground max-w-xs">{t.academic.grades.statistics.description()}</p>

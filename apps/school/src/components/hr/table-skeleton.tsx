@@ -1,5 +1,4 @@
-import { motion } from 'motion/react'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -7,7 +6,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { motion } from 'motion/react'
 import { generateUUID } from '@/utils/generateUUID'
 
 interface TableSkeletonProps {
@@ -23,7 +23,7 @@ export function TableSkeleton({ columns = 6, rows = 5 }: TableSkeletonProps) {
       exit={{ opacity: 0 }}
       className="space-y-6"
     >
-      {/* Search and Filters Skeleton */}
+      {/* IconSearch and Filters Skeleton */}
       <div className="flex items-center gap-4">
         <Skeleton className="h-10 flex-1 rounded-xl" />
         <Skeleton className="h-10 w-32 rounded-xl" />

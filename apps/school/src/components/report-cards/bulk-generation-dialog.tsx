@@ -1,7 +1,6 @@
-import { AlertCircle, CheckCircle2, FileText, Loader2 } from 'lucide-react'
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
+import { IconAlertCircle, IconCircleCheck, IconFileText, IconLoader2 } from '@tabler/icons-react'
+import { Button } from '@workspace/ui/components/button'
+import { Checkbox } from '@workspace/ui/components/checkbox'
 import {
   Dialog,
   DialogContent,
@@ -9,10 +8,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Label } from '@/components/ui/label'
-import { Progress } from '@/components/ui/progress'
-import { ScrollArea } from '@/components/ui/scroll-area'
+} from '@workspace/ui/components/dialog'
+import { Label } from '@workspace/ui/components/label'
+import { Progress } from '@workspace/ui/components/progress'
+import { ScrollArea } from '@workspace/ui/components/scroll-area'
+import { useState } from 'react'
 import { useTranslations } from '@/i18n'
 import { generateUUID } from '@/utils/generateUUID'
 
@@ -114,7 +114,7 @@ export function BulkGenerationDialog({
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <FileText className="h-5 w-5" />
+            <IconFileText className="h-5 w-5" />
             {t.reportCards.bulkGeneration()}
           </DialogTitle>
           <DialogDescription>
@@ -168,7 +168,7 @@ export function BulkGenerationDialog({
                         )}
                       </Label>
                       {student.hasReportCard && (
-                        <CheckCircle2 className="h-4 w-4 text-green-500" />
+                        <IconCircleCheck className="h-4 w-4 text-green-500" />
                       )}
                     </div>
                   ))}
@@ -194,7 +194,7 @@ export function BulkGenerationDialog({
         {state === 'generating' && (
           <div className="space-y-4 py-4">
             <div className="flex items-center justify-center">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <IconLoader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
             <Progress value={progress} className="w-full" />
             <p className="text-center text-sm text-muted-foreground">
@@ -208,10 +208,10 @@ export function BulkGenerationDialog({
             <div className="flex items-center justify-center">
               {result.failed === 0
                 ? (
-                    <CheckCircle2 className="h-12 w-12 text-green-500" />
+                    <IconCircleCheck className="h-12 w-12 text-green-500" />
                   )
                 : (
-                    <AlertCircle className="h-12 w-12 text-yellow-500" />
+                    <IconAlertCircle className="h-12 w-12 text-yellow-500" />
                   )}
             </div>
 

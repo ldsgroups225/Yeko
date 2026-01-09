@@ -1,9 +1,9 @@
+import { IconChevronRight, IconCircleCheck, IconCircleX, IconClock, IconFileText, IconUser } from '@tabler/icons-react'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardFooter, CardHeader } from '@workspace/ui/components/card'
 import { formatDistanceToNow } from 'date-fns'
 import { fr } from 'date-fns/locale'
-import { CheckCircle2, ChevronRight, Clock, FileText, User, XCircle } from 'lucide-react'
 import { motion } from 'motion/react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
@@ -55,7 +55,7 @@ export function GradeValidationCard({
           <div className="flex items-start justify-between">
             <div className="flex gap-4">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary group-hover:scale-110 transition-transform shadow-inner">
-                <FileText className="size-6" />
+                <IconFileText className="size-6" />
               </div>
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
@@ -80,7 +80,7 @@ export function GradeValidationCard({
           <div className="flex flex-col gap-3 p-4 rounded-xl bg-muted/30 border border-border/20">
             <div className="flex items-center gap-2 text-sm">
               <div className="flex h-6 w-6 items-center justify-center rounded-full bg-background/50 border border-border/40">
-                <User className="size-3 text-muted-foreground" />
+                <IconUser className="size-3 text-muted-foreground" />
               </div>
               <span className="text-muted-foreground italic truncate">
                 {t.academic.grades.validations.submittedBy()}
@@ -90,7 +90,7 @@ export function GradeValidationCard({
             </div>
             <div className="flex items-center gap-2 text-xs">
               <div className="flex h-6 w-6 items-center justify-center rounded-full bg-background/50 border border-border/40">
-                <Clock className="size-3 text-muted-foreground" />
+                <IconClock className="size-3 text-muted-foreground" />
               </div>
               <span className="text-muted-foreground font-medium uppercase tracking-wider opacity-60">
                 {t.academic.grades.validations.submittedAt()}
@@ -110,7 +110,7 @@ export function GradeValidationCard({
             className="flex-1 rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-background/80"
           >
             {t.academic.grades.validations.viewDetails()}
-            <ChevronRight className="ml-1 size-3" />
+            <IconChevronRight className="ml-1 size-3" />
           </Button>
 
           <Button
@@ -120,7 +120,7 @@ export function GradeValidationCard({
             disabled={isLoading}
             className="flex-1 rounded-xl font-bold uppercase tracking-widest text-[10px] border-destructive/30 text-destructive hover:bg-destructive hover:text-destructive-foreground transition-all shadow-sm"
           >
-            <XCircle className="mr-1.5 size-3.5" />
+            <IconCircleX className="mr-1.5 size-3.5" />
             {t.academic.grades.validations.reject()}
           </Button>
 
@@ -131,7 +131,7 @@ export function GradeValidationCard({
             disabled={isLoading}
             className="flex-1 rounded-xl font-bold uppercase tracking-widest text-[10px] bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-500/20"
           >
-            <CheckCircle2 className="mr-1.5 size-3.5" />
+            <IconCircleCheck className="mr-1.5 size-3.5" />
             {t.academic.grades.validations.validate()}
           </Button>
         </CardFooter>

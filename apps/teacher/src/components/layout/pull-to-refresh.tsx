@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { Loader2 } from 'lucide-react'
+import { IconLoader2 } from '@tabler/icons-react'
 import { useCallback, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -92,7 +92,7 @@ export function PullToRefresh({
         style={{ top: Math.max(pullDistance - 40, 8) }}
       >
         <div className="flex flex-col items-center gap-1 rounded-full bg-background p-2 shadow-md">
-          <Loader2
+          <IconLoader2
             className={cn(
               'h-5 w-5 text-primary',
               isRefreshing && 'animate-spin',

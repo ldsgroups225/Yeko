@@ -1,5 +1,5 @@
+import { IconChevronRight, IconHome } from '@tabler/icons-react'
 import { Link } from '@tanstack/react-router'
-import { ChevronRight, Home } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
@@ -31,7 +31,7 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
           'rounded-sm',
         )}
       >
-        <Home className="h-4 w-4" />
+        <IconHome className="h-4 w-4" />
         <span className="sr-only">{t.common.home()}</span>
       </Link>
 
@@ -46,7 +46,7 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
             transition={{ delay: index * 0.05, duration: 0.2 }}
             className="flex items-center gap-2"
           >
-            <ChevronRight className="h-4 w-4" />
+            <IconChevronRight className="h-4 w-4" />
             {item.href && !isLast
               ? (
                   <Link

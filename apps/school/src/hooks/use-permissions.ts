@@ -33,7 +33,7 @@ export function usePermissions() {
   })
 
   /**
-   * Check if user has a specific permission
+   * IconCheck if user has a specific permission
    * @param action - The action to check (e.g., 'view', 'create', 'edit', 'delete')
    * @param resource - The resource to check (e.g., 'users', 'students', 'classes')
    * @returns true if user has the permission, false otherwise
@@ -45,7 +45,7 @@ export function usePermissions() {
   }
 
   /**
-   * Check if user has ANY of the specified permissions
+   * IconCheck if user has ANY of the specified permissions
    * @param actions - Array of actions to check
    * @param resource - The resource to check
    * @returns true if user has at least one of the permissions
@@ -55,7 +55,7 @@ export function usePermissions() {
   }
 
   /**
-   * Check if user has ALL of the specified permissions
+   * IconCheck if user has ALL of the specified permissions
    * @param actions - Array of actions to check
    * @param resource - The resource to check
    * @returns true if user has all of the permissions

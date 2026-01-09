@@ -1,6 +1,6 @@
 'use client'
 
-import { ContextMenu as ContextMenuPrimitive } from '@base-ui/react/context-menu'
+import { ContextMenu as ContextMenuPrimitive } from '@base-ui-components/react/context-menu'
 import { IconCheck, IconChevronRight } from '@tabler/icons-react'
 
 import { cn } from '@workspace/ui/lib/utils'

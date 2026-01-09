@@ -1,11 +1,11 @@
-import { Button } from '@/components/ui/button'
+import { Button } from '@workspace/ui/components/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
+} from '@workspace/ui/components/card'
 import { authClient } from '@/lib/auth-client'
 
 export function GoogleLogin() {

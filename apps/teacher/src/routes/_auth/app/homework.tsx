@@ -1,25 +1,18 @@
 import type { Locale } from 'date-fns'
+
+import { IconBook, IconCalendar, IconCircleCheck, IconCircleX, IconClock, IconFileText, IconPlus } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent } from '@workspace/ui/components/card'
+
+import { Skeleton } from '@workspace/ui/components/skeleton'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
 import { format, isPast, isToday } from 'date-fns'
 import { fr } from 'date-fns/locale'
-import {
-  BookOpen,
-  Calendar,
-  CheckCircle,
-  Clock,
-  FileText,
-  Plus,
-  XCircle,
-} from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { homeworkListQueryOptions } from '@/lib/queries/homework'
 
@@ -50,7 +43,7 @@ function HomeworkPage() {
         <h1 className="text-xl font-semibold">{t('homework.title')}</h1>
         <Link to="/app/homework/new">
           <Button size="sm">
-            <Plus className="mr-2 h-4 w-4" />
+            <IconPlus className="mr-2 h-4 w-4" />
             {t('homework.new')}
           </Button>
         </Link>
@@ -62,15 +55,15 @@ function HomeworkPage() {
       >
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="active" className="gap-1.5">
-            <Clock className="h-4 w-4" />
+            <IconClock className="h-4 w-4" />
             <span className="hidden sm:inline">{t('homework.status.active')}</span>
           </TabsTrigger>
           <TabsTrigger value="closed" className="gap-1.5">
-            <CheckCircle className="h-4 w-4" />
+            <IconCircleCheck className="h-4 w-4" />
             <span className="hidden sm:inline">{t('homework.status.closed')}</span>
           </TabsTrigger>
           <TabsTrigger value="draft" className="gap-1.5">
-            <FileText className="h-4 w-4" />
+            <IconFileText className="h-4 w-4" />
             <span className="hidden sm:inline">{t('homework.status.draft')}</span>
           </TabsTrigger>
         </TabsList>
@@ -131,7 +124,7 @@ function HomeworkCard({ homework, locale }: HomeworkCardProps) {
                 {homework.subjectName}
               </p>
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Calendar className="h-3.5 w-3.5" />
+                <IconCalendar className="h-3.5 w-3.5" />
                 <span className={isOverdue ? 'text-destructive' : isDueToday ? 'text-warning' : ''}>
                   {format(dueDate, 'd MMM yyyy', { locale })}
                   {homework.dueTime && ` à ${homework.dueTime}`}
@@ -161,16 +154,16 @@ function StatusBadge({ status, isOverdue }: { status: string, isOverdue: boolean
   if (isOverdue) {
     return (
       <Badge variant="destructive" className="gap-1">
-        <XCircle className="h-3 w-3" />
+        <IconCircleX className="h-3 w-3" />
         {t('homework.overdue', 'En retard')}
       </Badge>
     )
   }
 
-  const config: Record<string, { icon: typeof Clock, variant: 'default' | 'secondary' | 'outline' }> = {
-    active: { icon: Clock, variant: 'default' },
-    closed: { icon: CheckCircle, variant: 'secondary' },
-    draft: { icon: FileText, variant: 'outline' },
+  const config: Record<string, { icon: typeof IconClock, variant: 'default' | 'secondary' | 'outline' }> = {
+    active: { icon: IconClock, variant: 'default' },
+    closed: { icon: IconCircleCheck, variant: 'secondary' },
+    draft: { icon: IconFileText, variant: 'outline' },
   }
 
   const statusConfig = config[status] ?? config.active!
@@ -191,14 +184,14 @@ function EmptyHomework({ status }: { status: string }) {
   return (
     <Card>
       <CardContent className="flex flex-col items-center justify-center py-12">
-        <BookOpen className="h-12 w-12 text-muted-foreground/50" />
+        <IconBook className="h-12 w-12 text-muted-foreground/50" />
         <p className="mt-4 text-sm text-muted-foreground">
           {t('homework.noHomework')}
         </p>
         {status === 'active' && (
           <Link to="/app/homework/new">
             <Button variant="outline" className="mt-4">
-              <Plus className="mr-2 h-4 w-4" />
+              <IconPlus className="mr-2 h-4 w-4" />
               {t('homework.new')}
             </Button>
           </Link>

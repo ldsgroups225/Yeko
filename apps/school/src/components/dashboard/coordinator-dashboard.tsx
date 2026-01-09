@@ -1,4 +1,4 @@
-import { BookOpen, ClipboardCheck, TrendingUp, Users } from 'lucide-react'
+import { IconBook, IconClipboardCheck, IconTrendingUp, IconUsers } from '@tabler/icons-react'
 import { motion } from 'motion/react'
 import { useTranslations } from '@/i18n'
 
@@ -43,10 +43,10 @@ export function CoordinatorDashboard() {
         animate="show"
         className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
       >
-        <MetricCard title={t.dashboard.coordinator.subjects()} value="24" subtitle="8 levels" icon={BookOpen} />
-        <MetricCard title={t.dashboard.coordinator.pendingGrades()} value="156" subtitle={t.common.pending()} icon={ClipboardCheck} />
-        <MetricCard title={t.dashboard.coordinator.averageGrade()} value="12.8/20" subtitle="+0.5 pts" icon={TrendingUp} />
-        <MetricCard title={t.dashboard.coordinator.teachers()} value="89" subtitle={t.common.active()} icon={Users} />
+        <MetricCard title={t.dashboard.coordinator.subjects()} value="24" subtitle="8 levels" icon={IconBook} />
+        <MetricCard title={t.dashboard.coordinator.pendingGrades()} value="156" subtitle={t.common.pending()} icon={IconClipboardCheck} />
+        <MetricCard title={t.dashboard.coordinator.averageGrade()} value="12.8/20" subtitle="+0.5 pts" icon={IconTrendingUp} />
+        <MetricCard title={t.dashboard.coordinator.teachers()} value="89" subtitle={t.common.active()} icon={IconUsers} />
       </motion.div>
 
       {/* Validation Queue */}

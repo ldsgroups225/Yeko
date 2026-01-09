@@ -1,13 +1,12 @@
 import type { ComponentType } from 'react'
-import { useNavigate, useRouterState } from '@tanstack/react-router'
 import {
-  BarChart3,
-  BookOpen,
-  GraduationCap,
-  HelpCircle,
-  Home,
-  School,
-} from 'lucide-react'
+  IconBook,
+  IconChartBar,
+  IconHelpCircle,
+  IconHome,
+  IconSchool,
+} from '@tabler/icons-react'
+import { useNavigate, useRouterState } from '@tanstack/react-router'
 import {
   Sidebar,
   SidebarContent,
@@ -18,7 +17,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@/components/ui/sidebar'
+} from '@workspace/ui/components/sidebar'
 
 interface NavigationItem {
   name: string
@@ -30,37 +29,37 @@ interface NavigationItem {
 const navigationItems: NavigationItem[] = [
   {
     name: 'Tableau de bord',
-    icon: Home,
+    icon: IconHome,
     href: '/app/dashboard',
     description: 'Vue d\'ensemble du système',
   },
   {
     name: 'Écoles',
-    icon: School,
+    icon: IconSchool,
     href: '/app/schools',
     description: 'Écoles partenaires',
   },
   {
     name: 'Catalogues',
-    icon: BookOpen,
+    icon: IconBook,
     href: '/app/catalogs',
     description: 'Catalogues globaux',
   },
   {
     name: 'Programmes',
-    icon: GraduationCap,
+    icon: IconSchool,
     href: '/app/catalogs/programs',
     description: 'Programmes ministériels',
   },
   {
     name: 'Analytiques',
-    icon: BarChart3,
+    icon: IconChartBar,
     href: '/app/analytics',
     description: 'Analytiques du système',
   },
   {
     name: 'Support',
-    icon: HelpCircle,
+    icon: IconHelpCircle,
     href: '/app/support',
     description: 'CRM & tickets',
   },

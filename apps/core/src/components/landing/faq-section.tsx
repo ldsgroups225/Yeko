@@ -1,10 +1,10 @@
-import { ChevronDown } from 'lucide-react'
-import { useState } from 'react'
+import { IconChevronDown } from '@tabler/icons-react'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@/components/ui/collapsible'
+} from '@workspace/ui/components/collapsible'
+import { useState } from 'react'
 
 const faqs = [
   {
@@ -64,7 +64,7 @@ export function FAQSection() {
               <div className="border-2 rounded-lg bg-background hover:shadow-md transition-all duration-300">
                 <CollapsibleTrigger className="flex w-full items-center justify-between p-6 text-left">
                   <span className="font-semibold text-lg pr-8">{faq.question}</span>
-                  <ChevronDown
+                  <IconChevronDown
                     className={`h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-300 ${openItems.includes(index) ? 'rotate-180' : ''
                     }`}
                   />

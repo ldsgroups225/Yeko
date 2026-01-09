@@ -20,7 +20,7 @@ describe('permissionsMatrix Component', () => {
     test('should render all resource rows', () => {
       render(<PermissionsMatrix value={{}} onChange={mockOnChange} />)
 
-      // Check for translated resource names
+      // IconCheck for translated resource names
       expect(screen.getByText('Users')).toBeInTheDocument()
       expect(screen.getByText('Teachers')).toBeInTheDocument()
       expect(screen.getByText('Staff')).toBeInTheDocument()

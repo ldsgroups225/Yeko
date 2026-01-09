@@ -1,11 +1,11 @@
+import { IconPlus, IconSparkles } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { Plus, Sparkles } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { motion } from 'motion/react'
 import { toast } from 'sonner'
 import { ConductRecordForm } from '@/components/conduct/conduct-record-form'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { createRecord } from '@/school/functions/conduct-records'
@@ -98,7 +98,7 @@ function NewConductRecordPage() {
         className="flex items-center gap-4"
       >
         <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-          <Plus className="size-8 text-primary" />
+          <IconPlus className="size-8 text-primary" />
         </div>
         <div>
           <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.conduct.newRecord()}</h1>
@@ -113,7 +113,7 @@ function NewConductRecordPage() {
       >
         <Card className="max-w-4xl relative overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl">
           <div className="absolute top-0 right-0 p-6 opacity-5">
-            <Sparkles className="size-32" />
+            <IconSparkles className="size-32" />
           </div>
           <CardHeader className="relative border-b border-border/10 bg-muted/20">
             <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">{t.conduct.form.title()}</CardTitle>

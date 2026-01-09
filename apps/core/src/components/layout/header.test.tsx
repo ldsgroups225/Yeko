@@ -41,7 +41,7 @@ vi.mock('@/components/auth/account-dialog', () => ({
 }))
 
 // Mock UI components
-vi.mock('@/components/ui/button', () => ({
+vi.mock('@workspace/ui/components/button', () => ({
   Button: ({ children, onClick, className, ...props }: any) => (
     <button
       type="button"
@@ -55,7 +55,7 @@ vi.mock('@/components/ui/button', () => ({
   ),
 }))
 
-vi.mock('@/components/ui/input', () => ({
+vi.mock('@workspace/ui/components/input', () => ({
   Input: ({ onChange, value, placeholder, ...props }: any) => (
     <input
       onChange={onChange}
@@ -67,7 +67,7 @@ vi.mock('@/components/ui/input', () => ({
   ),
 }))
 
-vi.mock('@/components/ui/avatar', () => ({
+vi.mock('@workspace/ui/components/avatar', () => ({
   Avatar: ({ children, className, ...props }: any) => (
     <div className={className} data-testid="avatar" {...props}>
       {children}
@@ -89,7 +89,7 @@ vi.mock('@/lib/utils', () => ({
 }))
 
 // Mock SidebarProvider
-vi.mock('@/components/ui/sidebar', () => ({
+vi.mock('@workspace/ui/components/sidebar', () => ({
   SidebarProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   SidebarTrigger: ({ children, ...props }: any) => <button type="button" {...props}>{children}</button>,
   useSidebar: () => ({

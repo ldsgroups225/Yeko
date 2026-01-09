@@ -103,7 +103,7 @@ export const updateSchoolSettings = createServerFn()
   })
 
 /**
- * Upload school logo
+ * IconUpload school logo
  */
 export const updateSchoolLogo = createServerFn()
   .inputValidator(z.object({ logoUrl: z.string() }))

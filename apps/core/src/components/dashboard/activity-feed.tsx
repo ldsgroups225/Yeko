@@ -1,8 +1,8 @@
-import { AlertCircle, AlertTriangle, CheckCircle, Info } from 'lucide-react'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
+import { IconAlertCircle, IconAlertTriangle, IconCircleCheck, IconInfoCircle } from '@tabler/icons-react'
+import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
+import { Badge } from '@workspace/ui/components/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 
 interface ActivityItem {
   id: string
@@ -67,7 +67,7 @@ export function ActivityFeed({ activities, isLoading, error, limit = 5 }: Activi
         </CardHeader>
         <CardContent>
           <div className="text-center text-muted-foreground py-8">
-            <Info className="h-8 w-8 mx-auto mb-2 opacity-50" />
+            <IconInfoCircle className="h-8 w-8 mx-auto mb-2 opacity-50" />
             <p>Aucune activité récente</p>
           </div>
         </CardContent>
@@ -78,13 +78,13 @@ export function ActivityFeed({ activities, isLoading, error, limit = 5 }: Activi
   const getIcon = (type: ActivityItem['type']) => {
     switch (type) {
       case 'success':
-        return <CheckCircle className="h-4 w-4 text-primary" />
+        return <IconCircleCheck className="h-4 w-4 text-primary" />
       case 'warning':
-        return <AlertTriangle className="h-4 w-4 text-secondary" />
+        return <IconAlertTriangle className="h-4 w-4 text-secondary" />
       case 'error':
-        return <AlertCircle className="h-4 w-4 text-destructive" />
+        return <IconAlertCircle className="h-4 w-4 text-destructive" />
       default:
-        return <Info className="h-4 w-4 text-primary" />
+        return <IconInfoCircle className="h-4 w-4 text-primary" />
     }
   }
 

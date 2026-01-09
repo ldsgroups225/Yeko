@@ -1,10 +1,10 @@
+import { IconEdit, IconShield, IconTrash } from '@tabler/icons-react'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { Edit, Shield, Trash2 } from 'lucide-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useTranslations } from '@/i18n'
 import { getRole } from '@/school/functions/roles'
 
@@ -45,7 +45,7 @@ function RoleDetailPage() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-            <Shield className="h-8 w-8" />
+            <IconShield className="h-8 w-8" />
           </div>
           <div>
             <div className="flex items-center gap-2">
@@ -62,12 +62,12 @@ function RoleDetailPage() {
             <>
               <Button variant="outline" asChild>
                 <Link to="/users/roles/$roleId/edit" params={{ roleId }}>
-                  <Edit className="mr-2 h-4 w-4" />
+                  <IconEdit className="mr-2 h-4 w-4" />
                   {t.common.edit()}
                 </Link>
               </Button>
               <Button variant="destructive">
-                <Trash2 className="mr-2 h-4 w-4" />
+                <IconTrash className="mr-2 h-4 w-4" />
                 {t.common.delete()}
               </Button>
             </>

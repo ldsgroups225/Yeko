@@ -1,10 +1,8 @@
 import type { GradeType } from '@/schemas/grade'
+import { IconFileSpreadsheet, IconHash, IconLoader2, IconUpload, IconUser } from '@tabler/icons-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { FileSpreadsheet, Hash, Loader2, Upload, User } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { useState } from 'react'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 import {
   Dialog,
   DialogContent,
@@ -13,8 +11,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
+} from '@workspace/ui/components/dialog'
+import { Input } from '@workspace/ui/components/input'
 import {
   Table,
   TableBody,
@@ -22,7 +20,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
+import { useState } from 'react'
 import { useTranslations } from '@/i18n'
 import { gradesKeys } from '@/lib/queries/grades'
 import { cn } from '@/lib/utils'
@@ -114,7 +114,7 @@ export function BulkGradeEntry({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" className="rounded-xl border-border/40 bg-background/50 hover:bg-background shadow-sm h-10 px-4 group">
-          <FileSpreadsheet className="mr-2 size-4 text-primary transition-transform group-hover:scale-110" />
+          <IconFileSpreadsheet className="mr-2 size-4 text-primary transition-transform group-hover:scale-110" />
           <span className="font-bold tracking-tight uppercase text-xs">{t.academic.grades.bulk.title()}</span>
         </Button>
       </DialogTrigger>
@@ -122,7 +122,7 @@ export function BulkGradeEntry({
         <DialogHeader className="p-6 pb-0">
           <div className="flex items-center gap-3 mb-2">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-inner">
-              <FileSpreadsheet className="size-5" />
+              <IconFileSpreadsheet className="size-5" />
             </div>
             <div>
               <DialogTitle className="text-xl font-bold tracking-tight">{t.academic.grades.bulk.title()}</DialogTitle>
@@ -140,13 +140,13 @@ export function BulkGradeEntry({
                 <TableRow className="border-b-border/40 hover:bg-transparent">
                   <TableHead className="py-4">
                     <div className="flex items-center gap-2">
-                      <User className="size-3.5 text-muted-foreground" />
+                      <IconUser className="size-3.5 text-muted-foreground" />
                       <span className="font-bold uppercase tracking-tight text-[10px]">{t.academic.grades.averages.student()}</span>
                     </div>
                   </TableHead>
                   <TableHead className="w-24">
                     <div className="flex items-center gap-2">
-                      <Hash className="size-3.5 text-muted-foreground" />
+                      <IconHash className="size-3.5 text-muted-foreground" />
                       <span className="font-bold uppercase tracking-tight text-[10px]">{t.academic.grades.averages.matricule()}</span>
                     </div>
                   </TableHead>
@@ -221,10 +221,10 @@ export function BulkGradeEntry({
             >
               {createMutation.isPending
                 ? (
-                    <Loader2 className="mr-2 size-3.5 animate-spin" />
+                    <IconLoader2 className="mr-2 size-3.5 animate-spin" />
                   )
                 : (
-                    <Upload className="mr-2 size-3.5" />
+                    <IconUpload className="mr-2 size-3.5" />
                   )}
               {t.common.save()}
             </Button>

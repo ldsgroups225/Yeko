@@ -1,6 +1,7 @@
 'use client'
 
-import { AlertDialog as AlertDialogPrimitive } from '@base-ui/react/alert-dialog'
+import { AlertDialog as AlertDialogPrimitive } from '@base-ui-components/react/alert-dialog'
+import { Slot } from '@radix-ui/react-slot'
 import { Button } from '@workspace/ui/components/button'
 
 import { cn } from '@workspace/ui/lib/utils'
@@ -10,7 +11,20 @@ function AlertDialog({ ...props }: AlertDialogPrimitive.Root.Props) {
   return <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />
 }
 
-function AlertDialogTrigger({ ...props }: AlertDialogPrimitive.Trigger.Props) {
+type AlertDialogTriggerProps = AlertDialogPrimitive.Trigger.Props & {
+  asChild?: boolean
+}
+
+function AlertDialogTrigger({ asChild, ...props }: AlertDialogTriggerProps) {
+  if (asChild) {
+    return (
+      <AlertDialogPrimitive.Trigger
+        data-slot="alert-dialog-trigger"
+        render={<Slot />}
+        {...props}
+      />
+    )
+  }
   return (
     <AlertDialogPrimitive.Trigger data-slot="alert-dialog-trigger" {...props} />
   )

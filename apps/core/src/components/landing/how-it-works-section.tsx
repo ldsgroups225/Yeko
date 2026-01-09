@@ -1,21 +1,21 @@
-import { Rocket, Settings, UserPlus } from 'lucide-react'
-import { Card, CardContent } from '@/components/ui/card'
+import { IconRocket, IconSettings, IconUserPlus } from '@tabler/icons-react'
+import { Card, CardContent } from '@workspace/ui/components/card'
 
 const steps = [
   {
-    icon: UserPlus,
+    icon: IconUserPlus,
     step: '1',
     title: 'Sign Up & Setup',
     description: 'Create your school account and add your staff, teachers, and students in minutes.',
   },
   {
-    icon: Settings,
+    icon: IconSettings,
     step: '2',
     title: 'Configure Your School',
     description: 'Set up classes, subjects, fee structures, and academic calendar with our intuitive interface.',
   },
   {
-    icon: Rocket,
+    icon: IconRocket,
     step: '3',
     title: 'Go Live',
     description: 'Start managing grades, attendance, and communication. Your school is now digital!',

@@ -77,7 +77,7 @@ export const schoolSubjectsOptions = {
     }),
 
   /**
-   * Check if a subject is in use
+   * IconCheck if a subject is in use
    */
   inUse: (subjectId: string, schoolYearId?: string) =>
     queryOptions({

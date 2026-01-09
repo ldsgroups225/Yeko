@@ -48,7 +48,7 @@ export const getTimetableSession = createServerFn()
 export const createTimetableSession = createServerFn()
   .inputValidator(createTimetableSessionSchema)
   .handler(async ({ data }) => {
-    // Check for conflicts before creating
+    // IconCheck for conflicts before creating
     const conflicts = await timetableQueries.detectConflicts({
       schoolId: data.schoolId,
       schoolYearId: data.schoolYearId,
@@ -87,7 +87,7 @@ export const updateTimetableSession = createServerFn()
       return { success: false, error: 'Séance non trouvée' }
     }
 
-    // Check for conflicts if time/day/teacher/classroom changed
+    // IconCheck for conflicts if time/day/teacher/classroom changed
     if (
       updateData.dayOfWeek !== undefined
       || updateData.startTime !== undefined
@@ -155,7 +155,7 @@ export const importTimetable = createServerFn()
       if (!session)
         continue
 
-      // Check for conflicts
+      // IconCheck for conflicts
       const conflicts = await timetableQueries.detectConflicts({
         schoolId: data.schoolId,
         schoolYearId: data.schoolYearId,

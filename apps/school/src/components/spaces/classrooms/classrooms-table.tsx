@@ -1,4 +1,5 @@
 import type { ColumnDef } from '@tanstack/react-table'
+import { IconBuilding, IconDots, IconEye, IconSearch, IconStack2, IconTrash, IconUsers } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import {
@@ -7,11 +8,6 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { Building2, Eye, Layers, MoreHorizontal, Search, Trash2, Users } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { useMemo, useState } from 'react'
-import { toast } from 'sonner'
-import { TableSkeleton } from '@/components/hr/table-skeleton'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,29 +17,29 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+} from '@workspace/ui/components/alert-dialog'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
+} from '@workspace/ui/components/card'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from '@workspace/ui/components/dropdown-menu'
 import {
   Empty,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from '@/components/ui/empty'
-import { Input } from '@/components/ui/input'
+} from '@workspace/ui/components/empty'
+import { Input } from '@workspace/ui/components/input'
 import {
   Table,
   TableBody,
@@ -51,7 +47,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
+import { useMemo, useState } from 'react'
+import { toast } from 'sonner'
+import { TableSkeleton } from '@/components/hr/table-skeleton'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useTranslations } from '@/i18n'
 import { deleteClassroom, getClassrooms } from '@/school/functions/classrooms'
@@ -139,7 +139,7 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
         cell: ({ row }) => (
           <div className="flex items-center gap-2">
             <div className="p-1 rounded bg-muted/20">
-              <Users className="h-3.5 w-3.5 text-muted-foreground" />
+              <IconUsers className="h-3.5 w-3.5 text-muted-foreground" />
             </div>
             <span className="font-medium tabular-nums">{row.original.classroom.capacity}</span>
           </div>
@@ -151,7 +151,7 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
         cell: ({ row }) => (
           <div className="flex items-center gap-2">
             <div className="p-1 rounded bg-muted/20">
-              <Layers className="h-3.5 w-3.5 text-muted-foreground" />
+              <IconStack2 className="h-3.5 w-3.5 text-muted-foreground" />
             </div>
             <span className="font-medium tabular-nums">{row.original.assignedClassesCount}</span>
           </div>
@@ -181,7 +181,7 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                <MoreHorizontal className="h-4 w-4" />
+                <IconDots className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="backdrop-blur-xl bg-card/95 border-border/40 shadow-xl rounded-xl p-1">
@@ -189,14 +189,14 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
                 className="rounded-lg cursor-pointer focus:bg-primary/10 font-medium"
                 onClick={() => navigate({ to: `/spaces/classrooms/${row.original.classroom.id}` })}
               >
-                <Eye className="mr-2 h-4 w-4 text-muted-foreground" />
+                <IconEye className="mr-2 h-4 w-4 text-muted-foreground" />
                 {t.common.view()}
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-destructive focus:bg-destructive/10 focus:text-destructive rounded-lg cursor-pointer font-medium"
                 onClick={() => setItemToDelete(row.original)}
               >
-                <Trash2 className="mr-2 h-4 w-4" />
+                <IconTrash className="mr-2 h-4 w-4" />
                 {t.common.delete()}
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -239,7 +239,7 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg font-bold">{t.spaces.title()}</CardTitle>
             <div className="relative w-full max-w-sm">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder={t.common.search()}
                 value={searchInput}
@@ -253,7 +253,7 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
           {(hasNoData && !hasNoResults) && (
             <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground border-b border-border/40 bg-card/10">
               <div className="p-4 rounded-full bg-muted/20 mb-4">
-                <Building2 className="size-8 text-muted-foreground/50" />
+                <IconBuilding className="size-8 text-muted-foreground/50" />
               </div>
               <p className="text-lg font-medium">{t.tables.noClassroomsFound()}</p>
               <p className="text-sm max-w-sm mt-1 text-muted-foreground/70">{t.tables.createFirstClassroom()}</p>
@@ -264,7 +264,7 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
             <Empty>
               <EmptyHeader>
                 <EmptyMedia variant="icon">
-                  <Search />
+                  <IconSearch />
                 </EmptyMedia>
                 <EmptyTitle>{t.empty.noResults()}</EmptyTitle>
                 <EmptyDescription>{t.empty.tryModifyingFilters()}</EmptyDescription>
@@ -340,7 +340,7 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
                           className="h-8 w-8 rounded-lg -mr-2 -mt-2 text-muted-foreground"
                           onClick={() => navigate({ to: `/spaces/classrooms/${item.classroom.id}` })}
                         >
-                          <Eye className="h-4 w-4" />
+                          <IconEye className="h-4 w-4" />
                         </Button>
                       </div>
 
@@ -353,12 +353,12 @@ export function ClassroomsTable({ filters = DEFAULT_FILTERS }: ClassroomsTablePr
 
                       <div className="grid grid-cols-2 gap-3 pt-2">
                         <div className="p-2 rounded-xl bg-muted/20 flex flex-col items-center justify-center text-center">
-                          <Users className="h-4 w-4 text-muted-foreground mb-1" />
+                          <IconUsers className="h-4 w-4 text-muted-foreground mb-1" />
                           <span className="text-xs text-muted-foreground">Capacité</span>
                           <span className="font-bold">{item.classroom.capacity}</span>
                         </div>
                         <div className="p-2 rounded-xl bg-muted/20 flex flex-col items-center justify-center text-center">
-                          <Layers className="h-4 w-4 text-muted-foreground mb-1" />
+                          <IconStack2 className="h-4 w-4 text-muted-foreground mb-1" />
                           <span className="text-xs text-muted-foreground">Classes</span>
                           <span className="font-bold">{item.assignedClassesCount}</span>
                         </div>

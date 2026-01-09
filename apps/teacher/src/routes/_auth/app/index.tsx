@@ -1,20 +1,20 @@
+import {
+  IconBook,
+  IconCalendar,
+  IconClipboardList,
+  IconMessageCircle,
+  IconSchool,
+} from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { Badge } from '@workspace/ui/components/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { Skeleton } from '@workspace/ui/components/skeleton'
+
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
-import {
-  BookOpen,
-  Calendar,
-  ClipboardList,
-  GraduationCap,
-  MessageSquare,
-} from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-
 import { ActiveSessionCard } from '@/components/session/active-session-card'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { teacherDashboardQueryOptions } from '@/lib/queries/dashboard'
 
@@ -70,7 +70,7 @@ function DashboardPage() {
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
-            <Calendar className="h-4 w-4" />
+            <IconCalendar className="h-4 w-4" />
             {t('dashboard.todaySchedule')}
           </CardTitle>
         </CardHeader>
@@ -98,22 +98,22 @@ function DashboardPage() {
         </h2>
         <div className="grid grid-cols-4 gap-2">
           <QuickActionButton
-            icon={<ClipboardList className="h-5 w-5" />}
+            icon={<IconClipboardList className="h-5 w-5" />}
             label={t('session.notes')}
             href="/app/sessions"
           />
           <QuickActionButton
-            icon={<BookOpen className="h-5 w-5" />}
+            icon={<IconBook className="h-5 w-5" />}
             label={t('homework.title')}
             href="/app/sessions"
           />
           <QuickActionButton
-            icon={<GraduationCap className="h-5 w-5" />}
+            icon={<IconSchool className="h-5 w-5" />}
             label={t('grades.title')}
             href="/app/grades"
           />
           <QuickActionButton
-            icon={<MessageSquare className="h-5 w-5" />}
+            icon={<IconMessageCircle className="h-5 w-5" />}
             label={t('messages.title')}
             href="/app/messages"
           />

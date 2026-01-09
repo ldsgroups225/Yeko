@@ -1,9 +1,6 @@
+import { IconCheck, IconClock, IconHash, IconLoader2, IconSparkles } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Check, Clock, Hash, Loader2, Sparkles } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
+import { Button } from '@workspace/ui/components/button'
 import {
   Dialog,
   DialogContent,
@@ -11,10 +8,13 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { ScrollArea } from '@/components/ui/scroll-area'
+} from '@workspace/ui/components/dialog'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
+import { ScrollArea } from '@workspace/ui/components/scroll-area'
+import { AnimatePresence, motion } from 'motion/react'
+import { useState } from 'react'
+import { toast } from 'sonner'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { classSubjectsKeys } from '@/lib/queries/class-subjects'
@@ -90,7 +90,7 @@ export function ClassSubjectDialog({
           <DialogHeader>
             <div className="flex items-center gap-3 mb-1">
               <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <Sparkles className="h-5 w-5 text-primary" />
+                <IconSparkles className="h-5 w-5 text-primary" />
               </div>
               <div>
                 <DialogTitle className="text-xl font-bold">{t.academic.classes.addSubjectTitle()}</DialogTitle>
@@ -117,7 +117,7 @@ export function ClassSubjectDialog({
                         exit={{ opacity: 0 }}
                         className="flex flex-col items-center justify-center h-full gap-3 py-10"
                       >
-                        <Loader2 className="h-6 w-6 animate-spin text-primary/40" />
+                        <IconLoader2 className="h-6 w-6 animate-spin text-primary/40" />
                         <p className="text-xs font-medium text-muted-foreground">{t.common.loading()}</p>
                       </motion.div>
                     )
@@ -156,7 +156,7 @@ export function ClassSubjectDialog({
                                   {item.subject.shortName}
                                 </span>
                               </div>
-                              {isSelected && <Check className="h-4 w-4" />}
+                              {isSelected && <IconCheck className="h-4 w-4" />}
                             </div>
                           )
                         })}
@@ -169,7 +169,7 @@ export function ClassSubjectDialog({
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="coeff" className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground ml-1">
-                <Hash className="h-3 w-3" />
+                <IconHash className="h-3 w-3" />
                 {t.academic.classes.coefficient()}
               </Label>
               <Input
@@ -184,7 +184,7 @@ export function ClassSubjectDialog({
             </div>
             <div className="space-y-2">
               <Label htmlFor="hours" className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground ml-1">
-                <Clock className="h-3 w-3" />
+                <IconClock className="h-3 w-3" />
                 {t.academic.classes.hoursPerWeek()}
               </Label>
               <Input
@@ -216,10 +216,10 @@ export function ClassSubjectDialog({
             >
               {saveMutation.isPending
                 ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
                   )
                 : (
-                    <Check className="mr-2 h-4 w-4" />
+                    <IconCheck className="mr-2 h-4 w-4" />
                   )}
               {t.academic.classes.addSubject()}
             </Button>

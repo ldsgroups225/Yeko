@@ -1,11 +1,11 @@
+import { IconAlertCircle, IconArrowLeft } from '@tabler/icons-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { AlertCircle, ArrowLeft } from 'lucide-react'
+import { Alert, AlertDescription } from '@workspace/ui/components/alert'
+import { Button } from '@workspace/ui/components/button'
 import { useEffect } from 'react'
 import { toast } from 'sonner'
 import { SchoolForm } from '@/components/schools/school-form'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
 import { createSchoolMutationOptions } from '@/integrations/tanstack-query/schools-options'
 import { useLogger } from '@/lib/logger'
 import { parseServerFnError } from '@/utils/error-handlers'
@@ -70,7 +70,7 @@ function CreateSchool() {
           onClick={() => navigate({ to: '/app/schools' })}
           className="h-8 w-8"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <IconArrowLeft className="h-4 w-4" />
         </Button>
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Créer une École</h1>
@@ -83,7 +83,7 @@ function CreateSchool() {
       {/* Error Display */}
       {createSchoolMutation.error && (
         <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
+          <IconAlertCircle className="h-4 w-4" />
           <AlertDescription>
             {createSchoolMutation.error.message || 'Une erreur est survenue lors de la création de l\'école'}
           </AlertDescription>

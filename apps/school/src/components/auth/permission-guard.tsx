@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
-import { ShieldAlert } from 'lucide-react'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { IconShieldExclamation } from '@tabler/icons-react'
+import { Alert, AlertDescription, AlertTitle } from '@workspace/ui/components/alert'
 import { usePermissions } from '@/hooks/use-permissions'
 
 interface PermissionGuardProps {
@@ -48,14 +48,14 @@ export function PermissionGuard({
     return null
   }
 
-  // Check permission
+  // IconCheck permission
   const hasPermission = can(action, resource)
 
   if (!hasPermission) {
     if (showDenied) {
       return (
         <Alert variant="destructive">
-          <ShieldAlert className="h-4 w-4" />
+          <IconShieldExclamation className="h-4 w-4" />
           <AlertTitle>Accès refusé</AlertTitle>
           <AlertDescription>
             Vous n'avez pas la permission d'accéder à cette ressource.

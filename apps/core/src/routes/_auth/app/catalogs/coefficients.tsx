@@ -1,32 +1,32 @@
 import type { FormEvent } from 'react'
 import type { CreateCoefficientTemplateInput } from '@/schemas/coefficients'
+import {
+  IconAlertTriangle,
+  IconCalculator,
+  IconCopy,
+  IconDeviceFloppy,
+  IconDownload,
+  IconFileDownload,
+  IconFileUpload,
+  IconPlus,
+  IconTrash,
+  IconX,
+} from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import {
-  AlertTriangle,
-  Calculator,
-  Copy,
-  Download,
-  FileDown,
-  FileUp,
-  Plus,
-  Save,
-  Trash2,
-  X,
-} from 'lucide-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
+import { Skeleton } from '@workspace/ui/components/skeleton'
+import { Tabs, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { CatalogListSkeleton, CatalogStatsSkeleton } from '@/components/catalogs/catalog-skeleton'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { COEFFICIENT_LIMITS, COEFFICIENT_MESSAGES } from '@/constants/coefficients'
 import { gradesQueryOptions, seriesQueryOptions, subjectsQueryOptions } from '@/integrations/tanstack-query/catalogs-options'
 import {
@@ -451,11 +451,11 @@ function CoefficientsCatalog() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={handleDownloadTemplate}>
-            <FileDown className="h-4 w-4 mr-2" />
+            <IconFileDownload className="h-4 w-4 mr-2" />
             Modèle
           </Button>
           <Button variant="outline" size="sm" onClick={handleImportClick} disabled={isImporting}>
-            <FileUp className="h-4 w-4 mr-2" />
+            <IconFileUpload className="h-4 w-4 mr-2" />
             {isImporting ? 'Import...' : 'Importer'}
           </Button>
           <input
@@ -466,15 +466,15 @@ function CoefficientsCatalog() {
             className="hidden"
           />
           <Button variant="outline" size="sm" onClick={handleExport} disabled={!coefficientsData || coefficientsData.coefficients.length === 0}>
-            <Download className="h-4 w-4 mr-2" />
+            <IconDownload className="h-4 w-4 mr-2" />
             Exporter
           </Button>
           <Button variant="outline" onClick={handleCopyFromPreviousYear} disabled={copyMutation.isPending}>
-            <Copy className="h-4 w-4 mr-2" />
+            <IconCopy className="h-4 w-4 mr-2" />
             Copier Année Précédente
           </Button>
           <Button onClick={() => setIsCreating(true)}>
-            <Plus className="h-4 w-4 mr-2" />
+            <IconPlus className="h-4 w-4 mr-2" />
             Nouveau Coefficient
           </Button>
         </div>
@@ -485,7 +485,7 @@ function CoefficientsCatalog() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Coefficients</CardTitle>
-            <Calculator className="h-4 w-4 text-muted-foreground" />
+            <IconCalculator className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats?.total || 0}</div>
@@ -496,7 +496,7 @@ function CoefficientsCatalog() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Année Active</CardTitle>
-            <Calculator className="h-4 w-4 text-muted-foreground" />
+            <IconCalculator className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{activeYear?.name || 'Aucune'}</div>
@@ -507,7 +507,7 @@ function CoefficientsCatalog() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Modifications</CardTitle>
-            <Save className="h-4 w-4 text-muted-foreground" />
+            <IconDeviceFloppy className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{Object.keys(editingCells).length}</div>
@@ -612,11 +612,11 @@ function CoefficientsCatalog() {
               </div>
               <div className="flex justify-end gap-2">
                 <Button type="button" variant="outline" onClick={() => setIsCreating(false)}>
-                  <X className="h-4 w-4 mr-2" />
+                  <IconX className="h-4 w-4 mr-2" />
                   Annuler
                 </Button>
                 <Button type="submit" disabled={createMutation.isPending}>
-                  <Save className="h-4 w-4 mr-2" />
+                  <IconDeviceFloppy className="h-4 w-4 mr-2" />
                   {createMutation.isPending ? 'Création...' : 'Créer'}
                 </Button>
               </div>
@@ -643,7 +643,7 @@ function CoefficientsCatalog() {
         </CardHeader>
         <CardContent>
           <div className="flex flex-col md:flex-row gap-4">
-            <Select value={yearFilter} onValueChange={setYearFilter}>
+            <Select value={yearFilter} onValueChange={val => val && setYearFilter(val)}>
               <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder="Année" />
               </SelectTrigger>
@@ -656,7 +656,7 @@ function CoefficientsCatalog() {
                 ))}
               </SelectContent>
             </Select>
-            <Select value={gradeFilter} onValueChange={setGradeFilter}>
+            <Select value={gradeFilter} onValueChange={val => val && setGradeFilter(val)}>
               <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder="Classe" />
               </SelectTrigger>
@@ -669,7 +669,7 @@ function CoefficientsCatalog() {
                 ))}
               </SelectContent>
             </Select>
-            <Select value={seriesFilter} onValueChange={setSeriesFilter}>
+            <Select value={seriesFilter} onValueChange={val => val && setSeriesFilter(val)}>
               <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder="Série" />
               </SelectTrigger>
@@ -684,7 +684,7 @@ function CoefficientsCatalog() {
             </Select>
             {Object.keys(editingCells).length > 0 && (
               <Button onClick={handleSaveChanges} disabled={bulkUpdateMutation.isPending} className="ml-auto">
-                <Save className="h-4 w-4 mr-2" />
+                <IconDeviceFloppy className="h-4 w-4 mr-2" />
                 Enregistrer (
                 {Object.keys(editingCells).length}
                 )
@@ -705,7 +705,7 @@ function CoefficientsCatalog() {
             {matrixData.columns.length === 0
               ? (
                   <div className="text-center py-8">
-                    <Calculator className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <IconCalculator className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                     <h3 className="text-lg font-medium">Aucun coefficient trouvé</h3>
                     <p className="text-muted-foreground">
                       Commencez par créer votre premier coefficient.
@@ -758,7 +758,7 @@ function CoefficientsCatalog() {
                                           />
                                           {coef.weight === 0 && (
                                             <div className="flex items-center gap-1 text-xs text-secondary">
-                                              <AlertTriangle className="h-3 w-3" />
+                                              <IconAlertTriangle className="h-3 w-3" />
                                               <span>Coef 0</span>
                                             </div>
                                           )}
@@ -799,7 +799,7 @@ function CoefficientsCatalog() {
               : !coefficientsData || coefficientsData.coefficients.length === 0
                   ? (
                       <div className="text-center py-8">
-                        <Calculator className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                        <IconCalculator className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                         <h3 className="text-lg font-medium">Aucun coefficient trouvé</h3>
                         <p className="text-muted-foreground">
                           Commencez par créer votre premier coefficient.
@@ -844,7 +844,7 @@ function CoefficientsCatalog() {
                                   name: `${coef.subject?.name} - ${coef.grade?.name}`,
                                 })}
                               >
-                                <Trash2 className="h-4 w-4" />
+                                <IconTrash className="h-4 w-4" />
                               </Button>
                             </motion.div>
                           ))}

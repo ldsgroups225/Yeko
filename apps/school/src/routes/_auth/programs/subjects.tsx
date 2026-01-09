@@ -1,19 +1,19 @@
+import { IconSparkles } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { Sparkles } from 'lucide-react'
-import { motion } from 'motion/react'
-import { useState } from 'react'
-
-import { SchoolSubjectList } from '@/components/academic/subjects/school-subject-list'
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
+} from '@workspace/ui/components/select'
+import { Skeleton } from '@workspace/ui/components/skeleton'
+
+import { motion } from 'motion/react'
+import { useState } from 'react'
+import { SchoolSubjectList } from '@/components/academic/subjects/school-subject-list'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
 import { getSchoolYears } from '@/school/functions/school-years'
 
@@ -56,7 +56,7 @@ function SchoolSubjectsPage() {
           className="flex items-center gap-4"
         >
           <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-            <Sparkles className="size-8 text-primary" />
+            <IconSparkles className="size-8 text-primary" />
           </div>
           <div>
             <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.academic.subjects.title()}</h1>
@@ -79,7 +79,7 @@ function SchoolSubjectsPage() {
             : (
                 <Select
                   value={selectedYearId}
-                  onValueChange={setSelectedYearId}
+                  onValueChange={val => setSelectedYearId(val ?? '')}
                 >
                   <SelectTrigger className="h-11 rounded-xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all font-bold shadow-sm hover:bg-card/80">
                     <SelectValue placeholder={t.schoolYear.select()} />

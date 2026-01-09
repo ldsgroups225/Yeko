@@ -115,7 +115,7 @@ export async function parseTimetableExcel(
             headerMapping[header] = mapped
         }
 
-        // Check required
+        // IconCheck required
         const mappedFields = Object.values(headerMapping)
         const required = ['className', 'subjectName', 'teacherName', 'day', 'startTime']
         if (!required.every(f => mappedFields.includes(f))) {

@@ -1,22 +1,17 @@
+import { IconCircleCheck, IconCircleX, IconClipboardCheck, IconDots, IconFileText, IconFilter, IconSearch, IconUser, IconX } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { CheckCircle, CheckCircle2, ClipboardCheck, FileText, Filter, MoreHorizontal, Search, User, X, XCircle } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { GradeValidationDialog } from '@/components/grades'
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Checkbox } from '@workspace/ui/components/checkbox'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
-import { Skeleton } from '@/components/ui/skeleton'
+} from '@workspace/ui/components/dropdown-menu'
+import { Input } from '@workspace/ui/components/input'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -24,7 +19,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { GradeValidationDialog } from '@/components/grades'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useSchoolContext } from '@/hooks/use-school-context'
 import { useTranslations } from '@/i18n'
 import { authClient } from '@/lib/auth-client'
@@ -242,7 +242,7 @@ function GradeValidationsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-500 shadow-inner">
-            <ClipboardCheck className="size-8" />
+            <IconClipboardCheck className="size-8" />
           </div>
           <div>
             <h1 className="text-3xl font-black tracking-tight">{t.academic.grades.validations.title()}</h1>
@@ -259,7 +259,7 @@ function GradeValidationsPage() {
       >
         <div className="flex flex-1 gap-3">
           <div className="relative max-w-sm flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
+            <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
             <Input
               placeholder={t.common.search()}
               value={search}
@@ -273,13 +273,13 @@ function GradeValidationsPage() {
                 className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 text-muted-foreground/40 hover:text-muted-foreground"
                 onClick={() => setSearch('')}
               >
-                <X className="size-4" />
+                <IconX className="size-4" />
               </Button>
             )}
           </div>
 
           <Button variant="outline" className="h-11 px-4 border-border/40 bg-background/50 backdrop-blur-sm shadow-none hover:bg-background rounded-xl">
-            <Filter className="mr-2 h-4 w-4" />
+            <IconFilter className="mr-2 h-4 w-4" />
             {t.academic.grades.filters.title()}
           </Button>
         </div>
@@ -311,7 +311,7 @@ function GradeValidationsPage() {
                   onClick={handleBulkReject}
                   className="h-11 rounded-xl font-bold uppercase tracking-widest text-[10px] border-destructive/30 text-destructive hover:bg-destructive hover:text-destructive-foreground transition-all shadow-sm"
                 >
-                  <XCircle className="mr-1.5 size-4" />
+                  <IconCircleX className="mr-1.5 size-4" />
                   {t.academic.grades.validations.reject()}
                 </Button>
 
@@ -321,7 +321,7 @@ function GradeValidationsPage() {
                   onClick={handleBulkValidate}
                   className="h-11 rounded-xl font-bold uppercase tracking-widest text-[10px] bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-500/20"
                 >
-                  <CheckCircle2 className="mr-1.5 size-4" />
+                  <IconCircleCheck className="mr-1.5 size-4" />
                   {t.academic.grades.validations.validate()}
                 </Button>
               </motion.div>
@@ -393,7 +393,7 @@ function GradeValidationsPage() {
                             <TableCell className="py-4">
                               <div className="flex items-center gap-3">
                                 <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                                  <FileText className="size-4" />
+                                  <IconFileText className="size-4" />
                                 </div>
                                 <span className="font-bold tracking-tight">{validation.gradeName}</span>
                               </div>
@@ -409,7 +409,7 @@ function GradeValidationsPage() {
                             <TableCell>
                               <div className="flex items-center gap-2">
                                 <div className="h-7 w-7 rounded-full bg-linear-to-br from-primary/20 to-primary/5 border border-primary/10 flex items-center justify-center">
-                                  <User className="size-3 text-primary" />
+                                  <IconUser className="size-3 text-primary" />
                                 </div>
                                 <span className="text-sm font-medium">{validation.teacherName}</span>
                               </div>
@@ -423,20 +423,20 @@ function GradeValidationsPage() {
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                   <Button variant="ghost" size="icon" className="hover:bg-background/80 ml-auto flex rounded-xl">
-                                    <MoreHorizontal className="size-4" />
+                                    <IconDots className="size-4" />
                                   </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40 min-w-[160px]">
                                   <DropdownMenuItem onClick={() => handleValidate(validation)} className="rounded-lg py-2 cursor-pointer">
-                                    <CheckCircle className="mr-2 size-4 text-emerald-500" />
+                                    <IconCircleCheck className="mr-2 size-4 text-emerald-500" />
                                     <span className="font-semibold">{t.academic.grades.validations.validate()}</span>
                                   </DropdownMenuItem>
                                   <DropdownMenuItem onClick={() => handleReject(validation)} className="rounded-lg py-2 cursor-pointer text-destructive focus:text-destructive">
-                                    <XCircle className="mr-2 size-4" />
+                                    <IconCircleX className="mr-2 size-4" />
                                     <span className="font-semibold">{t.academic.grades.validations.reject()}</span>
                                   </DropdownMenuItem>
                                   <DropdownMenuItem className="rounded-lg py-2 cursor-pointer border-t border-border/10 mt-1">
-                                    <FileText className="mr-2 size-4" />
+                                    <IconFileText className="mr-2 size-4" />
                                     <span className="font-semibold">{t.academic.grades.validations.viewDetails()}</span>
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
@@ -451,7 +451,7 @@ function GradeValidationsPage() {
                     <TableRow>
                       <TableCell colSpan={7} className="h-64 text-center">
                         <div className="flex flex-col items-center justify-center opacity-40 italic">
-                          <ClipboardCheck className="size-12 mb-4" />
+                          <IconClipboardCheck className="size-12 mb-4" />
                           <p className="text-lg font-bold">{t.academic.grades.validations.noValidations()}</p>
                           <p className="text-sm font-medium">{t.academic.grades.validations.allValidated()}</p>
                         </div>

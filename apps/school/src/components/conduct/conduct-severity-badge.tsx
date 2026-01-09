@@ -1,5 +1,5 @@
+import { Badge } from '@workspace/ui/components/badge'
 import { motion } from 'motion/react'
-import { Badge } from '@/components/ui/badge'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 

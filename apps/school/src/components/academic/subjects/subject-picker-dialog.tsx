@@ -1,11 +1,8 @@
+import { IconBook, IconCheck, IconFilter, IconLoader2, IconSearch, IconSparkles } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { BookOpen, Check, Filter, Loader2, Search, Sparkles } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Checkbox } from '@workspace/ui/components/checkbox'
 import {
   Dialog,
   DialogContent,
@@ -13,18 +10,21 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { ScrollArea } from '@/components/ui/scroll-area'
+} from '@workspace/ui/components/dialog'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
+import { ScrollArea } from '@workspace/ui/components/scroll-area'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
+} from '@workspace/ui/components/select'
+import { Skeleton } from '@workspace/ui/components/skeleton'
+import { AnimatePresence, motion } from 'motion/react'
+import { useState } from 'react'
+import { toast } from 'sonner'
 import { useTranslations } from '@/i18n'
 import {
   schoolSubjectsKeys,
@@ -143,7 +143,7 @@ export function SubjectPickerDialog({
           <DialogHeader>
             <div className="flex items-center gap-3 mb-1">
               <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <Sparkles className="h-5 w-5 text-primary" />
+                <IconSparkles className="h-5 w-5 text-primary" />
               </div>
               <div>
                 <DialogTitle className="text-xl font-bold">{t.academic.subjects.picker.title()}</DialogTitle>
@@ -157,7 +157,7 @@ export function SubjectPickerDialog({
 
         <div className="px-6 py-4 flex flex-col sm:flex-row gap-4 bg-white/5 border-b border-border/10">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder={t.academic.subjects.searchPlaceholder()}
               value={search}
@@ -166,8 +166,8 @@ export function SubjectPickerDialog({
             />
           </div>
           <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-muted-foreground hidden sm:block" />
-            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+            <IconFilter className="h-4 w-4 text-muted-foreground hidden sm:block" />
+            <Select value={categoryFilter} onValueChange={val => val && setCategoryFilter(val)}>
               <SelectTrigger id="category-filter" className="w-full sm:w-[180px] h-10 bg-white/5 border-white/10 focus:ring-primary/40 shadow-none text-sm">
                 <SelectValue placeholder={t.academic.subjects.allCategories()} />
               </SelectTrigger>
@@ -214,7 +214,7 @@ export function SubjectPickerDialog({
                       className="flex flex-col items-center justify-center py-20 text-center space-y-4"
                     >
                       <div className="h-16 w-16 rounded-full bg-white/5 flex items-center justify-center">
-                        <BookOpen className="h-8 w-8 text-muted-foreground/30" />
+                        <IconBook className="h-8 w-8 text-muted-foreground/30" />
                       </div>
                       <div className="space-y-1">
                         <p className="font-semibold text-foreground">{t.academic.subjects.picker.noAvailable()}</p>
@@ -286,7 +286,7 @@ export function SubjectPickerDialog({
                                       isSelected ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-white/5 text-muted-foreground',
                                     )}
                                     >
-                                      {isSelected ? <Check className="h-5 w-5" /> : <BookOpen className="h-5 w-5" />}
+                                      {isSelected ? <IconCheck className="h-5 w-5" /> : <IconBook className="h-5 w-5" />}
                                     </div>
 
                                     <div className="flex-1 min-w-0">
@@ -346,10 +346,10 @@ export function SubjectPickerDialog({
               >
                 {addMutation.isPending
                   ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
                     )
                   : (
-                      <Check className="mr-2 h-4 w-4" />
+                      <IconCheck className="mr-2 h-4 w-4" />
                     )}
                 {t.academic.subjects.picker.addSelected()}
               </Button>

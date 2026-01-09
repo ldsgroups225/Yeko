@@ -1,20 +1,20 @@
 import type { StaffFormData } from '@/schemas/staff'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Briefcase, Info, Loader2, Shield } from 'lucide-react'
-import { motion } from 'motion/react'
-import { useForm } from 'react-hook-form'
-import { UserCombobox } from '@/components/hr/staff/user-combobox'
-import { Button } from '@/components/ui/button'
-import { DatePicker } from '@/components/ui/date-picker'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { IconBriefcase, IconInfoCircle, IconLoader2, IconShield } from '@tabler/icons-react'
+import { Button } from '@workspace/ui/components/button'
+import { DatePicker } from '@workspace/ui/components/date-picker'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from '@workspace/ui/components/select'
+import { motion } from 'motion/react'
+import { useForm } from 'react-hook-form'
+import { UserCombobox } from '@/components/hr/staff/user-combobox'
 import { useTranslations } from '@/i18n'
 import { staffPositions, staffSchema } from '@/schemas/staff'
 
@@ -71,7 +71,7 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
       >
         <div className="flex items-center gap-2 mb-8">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <Info className="h-4 w-4" />
+            <IconInfoCircle className="h-4 w-4" />
           </div>
           <h2 className="text-xl font-serif font-semibold">{t.hr.staff.basicInfo()}</h2>
         </div>
@@ -118,7 +118,7 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
                   return (
                     <SelectItem key={position} value={position} className="rounded-lg py-2.5">
                       <div className="flex items-center gap-2">
-                        <Briefcase className="h-3.5 w-3.5 text-muted-foreground" />
+                        <IconBriefcase className="h-3.5 w-3.5 text-muted-foreground" />
                         {positionTranslations[position]()}
                       </div>
                     </SelectItem>
@@ -147,7 +147,6 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
               date={watch('hireDate') || undefined}
               onSelect={date => setValue('hireDate', date)}
               placeholder={t.hr.staff.selectHireDate()}
-              maxDate={new Date()}
             />
           </div>
 
@@ -207,14 +206,14 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
         >
           {isSubmitting
             ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
               )
             : isEditing
               ? (
-                  <Shield className="mr-2 h-4 w-4" />
+                  <IconShield className="mr-2 h-4 w-4" />
                 )
               : (
-                  <Briefcase className="mr-2 h-4 w-4" />
+                  <IconBriefcase className="mr-2 h-4 w-4" />
                 )}
           {isEditing ? t.common.save() : t.common.create()}
         </Button>

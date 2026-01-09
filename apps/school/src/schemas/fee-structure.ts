@@ -8,7 +8,7 @@ export const amountSchema = z.string()
 // Create fee structure schema
 export const createFeeStructureSchema = z.object({
   schoolYearId: z.string().min(1, 'Année scolaire requise'),
-  feeTypeId: z.string().min(1, 'Type de frais requis'),
+  feeTypeId: z.string().min(1, 'IconTypography de frais requis'),
   gradeId: z.string().optional().nullable(),
   seriesId: z.string().optional().nullable(),
   amount: amountSchema,

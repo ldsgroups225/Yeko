@@ -1,9 +1,9 @@
+import { IconPlus } from '@tabler/icons-react'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { Plus } from 'lucide-react'
+import { Button } from '@workspace/ui/components/button'
 import { z } from 'zod'
 import { StaffTable } from '@/components/hr/staff/staff-table'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Button } from '@/components/ui/button'
 import { useTranslations } from '@/i18n'
 
 const staffSearchSchema = z.object({
@@ -39,7 +39,7 @@ function StaffListPage() {
         <div className="flex gap-2">
           <Button asChild>
             <Link to="/users/staff/new">
-              <Plus className="mr-2 h-4 w-4" />
+              <IconPlus className="mr-2 h-4 w-4" />
               {t.hr.staff.addStaff()}
             </Link>
           </Button>

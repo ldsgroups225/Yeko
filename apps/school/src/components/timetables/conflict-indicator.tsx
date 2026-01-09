@@ -1,12 +1,12 @@
-import { AlertTriangle } from 'lucide-react'
+import { IconAlertTriangle } from '@tabler/icons-react'
 
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@workspace/ui/components/badge'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip'
+} from '@workspace/ui/components/tooltip'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { generateUUID } from '@/utils/generateUUID'
@@ -44,7 +44,7 @@ export function ConflictIndicator({ conflicts, className }: ConflictIndicatorPro
             variant="destructive"
             className={cn('gap-1 cursor-help', className)}
           >
-            <AlertTriangle className="h-3 w-3" />
+            <IconAlertTriangle className="h-3 w-3" />
             {conflicts.length}
             {' '}
             {t.timetables.conflicts()}

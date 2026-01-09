@@ -1,14 +1,14 @@
 import type { TimetableSessionData } from './timetable-session-card'
 
+import { ScrollArea, ScrollBar } from '@workspace/ui/components/scroll-area'
+import { Skeleton } from '@workspace/ui/components/skeleton'
+
 import { motion } from 'motion/react'
 import { Fragment, useEffect, useMemo, useState } from 'react'
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
-
-import { Skeleton } from '@/components/ui/skeleton'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
-import { dayOfWeekLabels, defaultTimeSlots } from '@/schemas/timetable'
 
+import { dayOfWeekLabels, defaultTimeSlots } from '@/schemas/timetable'
 import { TimetableSessionCard } from './timetable-session-card'
 
 const defaultDaysToShow = [1, 2, 3, 4, 5, 6]
@@ -179,9 +179,9 @@ export function TimetableGrid({
           {/* Background cells for interactions */}
           {timeSlots.map((slot, rowIdx) => (
             daysToShow.map((day, colIdx) => {
-              const Tag = !readOnly ? 'button' : 'div'
+              const IconTag = !readOnly ? 'button' : 'div'
               return (
-                <Tag
+                <IconTag
                   key={`cell-${day}-${slot.start}`}
                   type={!readOnly ? 'button' : undefined}
                   onClick={() => handleSlotClick(day, slot)}
@@ -202,7 +202,7 @@ export function TimetableGrid({
                       </div>
                     </div>
                   )}
-                </Tag>
+                </IconTag>
               )
             })
           ))}

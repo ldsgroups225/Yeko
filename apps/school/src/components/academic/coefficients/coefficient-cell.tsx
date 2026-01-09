@@ -1,13 +1,13 @@
-import { Check, RotateCcw, X } from 'lucide-react'
-import { motion } from 'motion/react'
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { IconCheck, IconRotate, IconX } from '@tabler/icons-react'
+import { Button } from '@workspace/ui/components/button'
+import { Input } from '@workspace/ui/components/input'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover'
+} from '@workspace/ui/components/popover'
+import { motion } from 'motion/react'
+import { useState } from 'react'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
@@ -139,7 +139,7 @@ export function CoefficientCell({
               className="flex-1 h-9 hover:bg-white/10"
               onClick={handleCancel}
             >
-              <X className="mr-1.5 h-3.5 w-3.5" />
+              <IconX className="mr-1.5 h-3.5 w-3.5" />
               {t.academic.coefficients.cell.cancel()}
             </Button>
             <div className="flex gap-1 flex-1">
@@ -151,7 +151,7 @@ export function CoefficientCell({
                   onClick={handleReset}
                   title={t.academic.coefficients.cell.reset()}
                 >
-                  <RotateCcw className="h-3.5 w-3.5" />
+                  <IconRotate className="h-3.5 w-3.5" />
                 </Button>
               )}
               <Button
@@ -159,7 +159,7 @@ export function CoefficientCell({
                 className="flex-1 h-9 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20"
                 onClick={handleSave}
               >
-                <Check className="mr-1.5 h-3.5 w-3.5" />
+                <IconCheck className="mr-1.5 h-3.5 w-3.5" />
                 {t.academic.coefficients.cell.save()}
               </Button>
             </div>

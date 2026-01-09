@@ -1,6 +1,6 @@
 import type { DeliveryMethod } from '@/schemas/report-card'
-import { Mail, MessageSquare, Printer, Smartphone } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
+import { IconDeviceMobile, IconMail, IconMessage, IconPrinter } from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
 import { cn } from '@/lib/utils'
 import { deliveryMethodLabels } from '@/schemas/report-card'
 
@@ -17,10 +17,10 @@ const methodVariants: Record<DeliveryMethod, string> = {
 }
 
 const methodIcons: Record<DeliveryMethod, React.ReactNode> = {
-  email: <Mail className="h-3 w-3" />,
-  in_app: <Smartphone className="h-3 w-3" />,
-  sms: <MessageSquare className="h-3 w-3" />,
-  print: <Printer className="h-3 w-3" />,
+  email: <IconMail className="h-3 w-3" />,
+  in_app: <IconDeviceMobile className="h-3 w-3" />,
+  sms: <IconMessage className="h-3 w-3" />,
+  print: <IconPrinter className="h-3 w-3" />,
 }
 
 export function DeliveryStatusBadge({ method, className }: DeliveryStatusBadgeProps) {

@@ -1,12 +1,12 @@
 import type { UpdateSchoolProfileInput } from '@/schemas/school-profile'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Building2, Upload } from 'lucide-react'
+import { IconBuilding, IconUpload } from '@tabler/icons-react'
+import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
+import { Button } from '@workspace/ui/components/button'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
+import { Textarea } from '@workspace/ui/components/textarea'
 import { useForm } from 'react-hook-form'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import { useTranslations } from '@/i18n'
 import {
   updateSchoolProfileSchema,
@@ -67,7 +67,7 @@ export function SchoolProfileForm({
         <Avatar className="h-24 w-24 border-4 border-background shadow-lg">
           <AvatarImage src={school.logoUrl ?? undefined} alt={school.name} />
           <AvatarFallback className="bg-primary/10 text-primary">
-            <Building2 className="h-10 w-10" />
+            <IconBuilding className="h-10 w-10" />
           </AvatarFallback>
         </Avatar>
         <div className="space-y-4">
@@ -92,7 +92,7 @@ export function SchoolProfileForm({
               onClick={() => document.getElementById('logo')?.click()}
               className="rounded-xl border-border/40 shadow-sm"
             >
-              <Upload className="mr-2 h-4 w-4" />
+              <IconUpload className="mr-2 h-4 w-4" />
               {t.settings.profile.uploadLogo()}
             </Button>
           </div>

@@ -1,5 +1,5 @@
+import { IconBell, IconBuilding, IconCalendar, IconFileText, IconSettings } from '@tabler/icons-react'
 import { Link, useLocation } from '@tanstack/react-router'
-import { Bell, Building2, Calendar, FileText, Settings } from 'lucide-react'
 import { motion } from 'motion/react'
 import * as React from 'react'
 import { useTranslations } from '@/i18n'
@@ -14,7 +14,7 @@ interface SettingsNavItem {
 }
 
 /**
- * Settings navigation tabs component
+ * IconSettings navigation tabs component
  * Provides a unified navigation experience for settings pages
  * Following the Tabs View pattern from PLAN.md
  */
@@ -26,25 +26,25 @@ export function SettingsNav() {
     {
       title: t.settings.profile.title(),
       href: '/settings/profile',
-      icon: Building2,
+      icon: IconBuilding,
       description: t.settings.profile.description(),
     },
     {
       title: t.settings.schoolYears.title(),
       href: '/settings/school-years',
-      icon: Calendar,
+      icon: IconCalendar,
       description: t.settings.schoolYears.description(),
     },
     {
       title: t.settings.notifications(),
       href: '/settings/notifications',
-      icon: Bell,
+      icon: IconBell,
       description: t.settings.notificationsDescription(),
     },
     {
       title: t.settings.reportCards.title(),
       href: '/settings/report-cards',
-      icon: FileText,
+      icon: IconFileText,
       description: t.settings.reportCards.description(),
     },
   ]
@@ -85,13 +85,13 @@ export function SettingsNav() {
 }
 
 /**
- * Settings page header component
+ * IconSettings page header component
  * Provides consistent header styling for all settings pages
  */
 export function SettingsHeader({
   title,
   description,
-  icon: Icon = Settings,
+  icon: Icon = IconSettings,
 }: {
   title: string
   description?: string
@@ -117,7 +117,7 @@ export function SettingsHeader({
 }
 
 /**
- * Settings page layout wrapper
+ * IconSettings page layout wrapper
  * Provides consistent layout for all settings pages
  */
 export function SettingsLayout({ children }: { children: React.ReactNode }) {

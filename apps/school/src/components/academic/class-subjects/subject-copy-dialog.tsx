@@ -1,11 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { IconAlertCircle, IconCheck, IconCopy, IconLoader2, IconSparkles } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { AlertCircle, Check, Copy, Loader2, Sparkles } from 'lucide-react'
-import { motion } from 'motion/react'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import { z } from 'zod'
-import { Button } from '@/components/ui/button'
+import { Button } from '@workspace/ui/components/button'
 import {
   Dialog,
   DialogContent,
@@ -13,7 +9,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from '@workspace/ui/components/dialog'
 import {
   Form,
   FormControl,
@@ -22,15 +18,19 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
+} from '@workspace/ui/components/form'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Switch } from '@/components/ui/switch'
+} from '@workspace/ui/components/select'
+import { Switch } from '@workspace/ui/components/switch'
+import { motion } from 'motion/react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { classSubjectsKeys } from '@/lib/queries/class-subjects'
@@ -112,7 +112,7 @@ export function SubjectCopyDialog({
           <DialogHeader>
             <div className="flex items-center gap-3 mb-1">
               <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <Copy className="h-5 w-5 text-primary" />
+                <IconCopy className="h-5 w-5 text-primary" />
               </div>
               <div>
                 <DialogTitle className="text-xl font-bold">{t.academic.classes.copySubjectsTitle()}</DialogTitle>
@@ -137,7 +137,7 @@ export function SubjectCopyDialog({
               render={({ field }) => (
                 <FormItem className="space-y-3">
                   <FormLabel className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground">
-                    <Sparkles className="h-3 w-3" />
+                    <IconSparkles className="h-3 w-3" />
                     {t.academic.classes.sourceClass()}
                   </FormLabel>
                   <Select
@@ -184,7 +184,7 @@ export function SubjectCopyDialog({
                 <FormItem className="flex flex-row items-center justify-between rounded-xl border border-white/5 bg-white/5 p-4 transition-colors hover:bg-white/10">
                   <div className="space-y-1">
                     <FormLabel className="text-sm font-bold flex items-center gap-2">
-                      <AlertCircle className="h-3.5 w-3.5 text-amber-500" />
+                      <IconAlertCircle className="h-3.5 w-3.5 text-amber-500" />
                       {t.academic.classes.overwriteExisting()}
                     </FormLabel>
                     <FormDescription className="text-[11px] leading-relaxed max-w-[200px]">
@@ -219,10 +219,10 @@ export function SubjectCopyDialog({
                 >
                   {copyMutation.isPending
                     ? (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
                       )
                     : (
-                        <Check className="mr-2 h-4 w-4" />
+                        <IconCheck className="mr-2 h-4 w-4" />
                       )}
                   {t.academic.classes.copySubjects()}
                 </Button>

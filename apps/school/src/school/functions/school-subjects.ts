@@ -113,7 +113,7 @@ export const toggleSchoolSubjectStatus = createServerFn()
     }
     await requirePermission('school_subjects', 'edit')
 
-    // Check if subject is in use before deactivating
+    // IconCheck if subject is in use before deactivating
     if (data.status === 'inactive') {
       const existing = await schoolSubjectQueries.getSchoolSubjectById(data.id)
       if (existing) {
@@ -157,7 +157,7 @@ export const deleteSchoolSubject = createServerFn()
     }
     await requirePermission('school_subjects', 'delete')
 
-    // Check if subject is in use
+    // IconCheck if subject is in use
     const existing = await schoolSubjectQueries.getSchoolSubjectById(id)
     if (existing) {
       const usage = await schoolSubjectQueries.checkSubjectInUse({
@@ -224,7 +224,7 @@ export const getSchoolSubjectById = createServerFn()
   })
 
 /**
- * Check if a subject is in use (for UI confirmation dialogs)
+ * IconCheck if a subject is in use (for UI confirmation dialogs)
  */
 export const checkSubjectInUse = createServerFn()
   .inputValidator(

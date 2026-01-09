@@ -1,9 +1,9 @@
 import type { ErrorInfo, ReactNode } from 'react'
-import { AlertCircle } from 'lucide-react'
+import { IconAlertCircle } from '@tabler/icons-react'
+import { Alert, AlertDescription, AlertTitle } from '@workspace/ui/components/alert'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { Component } from 'react'
-import { Alert, AlertDescription, AlertTitle } from './ui/alert'
-import { Button } from './ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 
 interface Props {
   children: ReactNode
@@ -54,7 +54,7 @@ export class ErrorBoundary extends Component<Props, State> {
           <Card className="max-w-lg w-full">
             <CardHeader>
               <div className="flex items-center gap-2">
-                <AlertCircle className="h-5 w-5 text-destructive" />
+                <IconAlertCircle className="h-5 w-5 text-destructive" />
                 <CardTitle>Une erreur s'est produite</CardTitle>
               </div>
               <CardDescription>
@@ -123,7 +123,7 @@ export class AnalyticsErrorBoundary extends Component<Props, State> {
           <Card className="max-w-lg w-full">
             <CardHeader>
               <div className="flex items-center gap-2">
-                <AlertCircle className="h-5 w-5 text-destructive" />
+                <IconAlertCircle className="h-5 w-5 text-destructive" />
                 <CardTitle>Erreur de chargement des analytiques</CardTitle>
               </div>
               <CardDescription>

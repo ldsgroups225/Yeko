@@ -1,12 +1,12 @@
+import { IconAlertCircle, IconBook, IconChartBar, IconChevronRight, IconCircleCheck, IconClock, IconSparkles, IconTrendingUp } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { AlertCircle, BarChart3, BookOpen, CheckCircle, ChevronRight, Clock, Sparkles, TrendingUp } from 'lucide-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import { motion } from 'motion/react'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useSchoolContext } from '@/hooks/use-school-context'
 import { useTranslations } from '@/i18n'
 import { gradesOptions } from '@/lib/queries/grades'
@@ -39,7 +39,7 @@ function GradesIndexPage() {
 
       <div className="flex items-center gap-4">
         <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-inner">
-          <BookOpen className="size-8" />
+          <IconBook className="size-8" />
         </div>
         <div>
           <h1 className="text-3xl font-black tracking-tight">{t.nav.grades()}</h1>
@@ -60,7 +60,7 @@ function GradesIndexPage() {
                 {t.academic.grades.validations.title()}
               </CardTitle>
               <div className="p-2 rounded-xl bg-amber-500/10 text-amber-500">
-                <Clock className="size-4" />
+                <IconClock className="size-4" />
               </div>
             </CardHeader>
             <CardContent>
@@ -91,7 +91,7 @@ function GradesIndexPage() {
                 {t.academic.grades.statistics.classAverage()}
               </CardTitle>
               <div className="p-2 rounded-xl bg-primary/10 text-primary">
-                <BarChart3 className="size-4" />
+                <IconChartBar className="size-4" />
               </div>
             </CardHeader>
             <CardContent>
@@ -116,7 +116,7 @@ function GradesIndexPage() {
                 {t.academic.grades.statistics.passRate()}
               </CardTitle>
               <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-500">
-                <CheckCircle className="size-4" />
+                <IconCircleCheck className="size-4" />
               </div>
             </CardHeader>
             <CardContent>
@@ -140,11 +140,11 @@ function GradesIndexPage() {
         >
           <Card className="border-amber-500/20 bg-amber-500/5 backdrop-blur-sm overflow-hidden relative group">
             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-500 mt-2">
-              <Sparkles className="size-20" />
+              <IconSparkles className="size-20" />
             </div>
             <CardContent className="flex flex-col sm:flex-row items-center gap-6 py-6 relative z-10">
               <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-amber-500/20 text-amber-600 shadow-inner">
-                <AlertCircle className="size-7" />
+                <IconAlertCircle className="size-7" />
               </div>
               <div className="flex-1 text-center sm:text-left">
                 <h3 className="text-lg font-bold text-amber-900 dark:text-amber-100">
@@ -175,14 +175,14 @@ function GradesIndexPage() {
           <QuickActionCard
             title={t.academic.grades.quickActions.entry()}
             description={t.academic.grades.quickActions.entryDescription()}
-            icon={BookOpen}
+            icon={IconBook}
             href="/grades/entry"
             index={0}
           />
           <QuickActionCard
             title={t.academic.grades.quickActions.validations()}
             description={t.academic.grades.quickActions.validationsDescription()}
-            icon={CheckCircle}
+            icon={IconCircleCheck}
             href="/grades/validations"
             badge={pendingCount > 0 ? pendingCount : undefined}
             index={1}
@@ -190,7 +190,7 @@ function GradesIndexPage() {
           <QuickActionCard
             title={t.academic.grades.quickActions.statistics()}
             description={t.academic.grades.quickActions.statisticsDescription()}
-            icon={BarChart3}
+            icon={IconChartBar}
             href="/grades/statistics"
             index={2}
           />
@@ -239,13 +239,13 @@ function QuickActionCard({
                 )}
               </div>
             </div>
-            <TrendingUp className="size-5 text-primary/20 group-hover:text-primary/40 transition-colors" />
+            <IconTrendingUp className="size-5 text-primary/20 group-hover:text-primary/40 transition-colors" />
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm font-medium text-muted-foreground/70 leading-relaxed italic">{description}</p>
             <div className="flex items-center text-[10px] font-black uppercase tracking-widest text-primary opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-[-10px] group-hover:translate-x-0">
               {t.academic.grades.quickActions.access()}
-              <ChevronRight className="ml-2 size-4" />
+              <IconChevronRight className="ml-2 size-4" />
             </div>
           </CardContent>
           <div className="absolute bottom-0 right-0 h-1 w-0 bg-primary group-hover:w-full transition-all duration-500" />

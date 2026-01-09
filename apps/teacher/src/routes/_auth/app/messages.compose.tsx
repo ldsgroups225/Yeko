@@ -1,17 +1,17 @@
+import { IconArrowLeft, IconSearch, IconSend, IconUser } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { ArrowLeft, Search, Send, User } from 'lucide-react'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent } from '@workspace/ui/components/card'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
+
+import { Skeleton } from '@workspace/ui/components/skeleton'
+import { Textarea } from '@workspace/ui/components/textarea'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod'
-
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Textarea } from '@/components/ui/textarea'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { parentSearchQueryOptions } from '@/lib/queries/messages'
 import { sendMessage } from '@/teacher/functions/messages'
@@ -88,7 +88,7 @@ function ComposeMessagePage() {
       <div className="flex items-center gap-3">
         <Link to="/app/messages">
           <Button variant="ghost" size="icon">
-            <ArrowLeft className="h-5 w-5" />
+            <IconArrowLeft className="h-5 w-5" />
           </Button>
         </Link>
         <h1 className="text-lg font-semibold">{t('messages.compose')}</h1>
@@ -107,7 +107,7 @@ function ComposeMessagePage() {
                         <CardContent className="flex items-center justify-between p-3">
                           <div className="flex items-center gap-3">
                             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
-                              <User className="h-4 w-4 text-muted-foreground" />
+                              <IconUser className="h-4 w-4 text-muted-foreground" />
                             </div>
                             <div>
                               <p className="text-sm font-medium">
@@ -134,7 +134,7 @@ function ComposeMessagePage() {
                   : (
                       <div className="space-y-2">
                         <div className="relative">
-                          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                          <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                           <Input
                             placeholder={t('messages.searchParent')}
                             value={searchQuery}
@@ -172,7 +172,7 @@ function ComposeMessagePage() {
                                           >
                                             {' '}
                                             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
-                                              <User className="h-4 w-4 text-muted-foreground" />
+                                              <IconUser className="h-4 w-4 text-muted-foreground" />
                                             </div>
                                             <div>
                                               <p className="text-sm font-medium">
@@ -232,7 +232,7 @@ function ComposeMessagePage() {
           onClick={handleSend}
           disabled={!selectedParent || !content.trim() || sendMutation.isPending}
         >
-          <Send className="mr-2 h-4 w-4" />
+          <IconSend className="mr-2 h-4 w-4" />
           {t('messages.send')}
         </Button>
       </div>

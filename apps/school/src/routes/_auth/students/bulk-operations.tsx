@@ -1,10 +1,10 @@
+import { IconRefresh } from '@tabler/icons-react'
 import { createFileRoute } from '@tanstack/react-router'
-import { RefreshCw } from 'lucide-react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { BulkEnrollmentCard } from '@/components/students/bulk-enrollment-card'
 import { BulkFeeAssignmentCard } from '@/components/students/bulk-fee-assignment-card'
 import { StudentImportCard } from '@/components/students/student-import-card'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useTranslations } from '@/i18n'
 
 export const Route = createFileRoute('/_auth/students/bulk-operations')({
@@ -40,7 +40,7 @@ function BulkOperationsPage() {
         <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <RefreshCw className="h-5 w-5" />
+              <IconRefresh className="h-5 w-5" />
               {t.students.bulkReEnroll()}
             </CardTitle>
             <CardDescription>

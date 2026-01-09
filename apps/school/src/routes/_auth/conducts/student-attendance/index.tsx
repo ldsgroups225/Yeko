@@ -1,20 +1,20 @@
+import { IconCalendar, IconChartBar, IconClipboardCheck, IconHistory, IconSparkles } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { BarChart3, Calendar, ClipboardCheck, History, Sparkles } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { StudentAttendanceGrid } from '@/components/attendance/student/student-attendance-grid'
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Button } from '@/components/ui/button'
-import { DatePicker } from '@/components/ui/date-picker'
+import { Button } from '@workspace/ui/components/button'
+import { DatePicker } from '@workspace/ui/components/date-picker'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from '@workspace/ui/components/select'
+import { AnimatePresence, motion } from 'motion/react'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { StudentAttendanceGrid } from '@/components/attendance/student/student-attendance-grid'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { classAttendanceOptions } from '@/lib/queries/student-attendance'
@@ -131,7 +131,7 @@ function StudentAttendancePage() {
           className="flex items-center gap-4"
         >
           <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-            <ClipboardCheck className="size-8 text-primary" />
+            <IconClipboardCheck className="size-8 text-primary" />
           </div>
           <div>
             <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.schoolLife.studentAttendance()}</h1>
@@ -146,13 +146,13 @@ function StudentAttendancePage() {
         >
           <Link to="/conducts/student-attendance/history">
             <Button variant="outline" size="sm" className="rounded-xl border-border/40 hover:bg-primary/10 hover:text-primary transition-all font-black uppercase tracking-widest text-[10px] h-10 px-4">
-              <History className="mr-2 h-4 w-4" />
+              <IconHistory className="mr-2 h-4 w-4" />
               {t.attendance.history()}
             </Button>
           </Link>
           <Link to="/conducts/student-attendance/statistics">
             <Button variant="outline" size="sm" className="rounded-xl border-border/40 hover:bg-primary/10 hover:text-primary transition-all font-black uppercase tracking-widest text-[10px] h-10 px-4">
-              <BarChart3 className="mr-2 h-4 w-4" />
+              <IconChartBar className="mr-2 h-4 w-4" />
               {t.attendance.statistics()}
             </Button>
           </Link>
@@ -165,11 +165,11 @@ function StudentAttendancePage() {
         className="bg-card/20 backdrop-blur-xl border border-border/40 p-6 rounded-3xl"
       >
         <div className="flex items-center gap-2 mb-4 ml-1">
-          <Calendar className="size-3 text-muted-foreground/60" />
+          <IconCalendar className="size-3 text-muted-foreground/60" />
           <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{t.attendance.selectClassAndDate()}</span>
         </div>
         <div className="flex flex-wrap gap-4">
-          <Select value={classId} onValueChange={setClassId}>
+          <Select value={classId} onValueChange={val => setClassId(val ?? '')}>
             <SelectTrigger className="w-[280px] h-12 rounded-2xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
               <SelectValue placeholder={t.attendance.selectClass()} />
             </SelectTrigger>
@@ -214,7 +214,7 @@ function StudentAttendancePage() {
                 className="rounded-3xl border border-dashed border-border/60 bg-card/10 backdrop-blur-sm p-20 flex flex-col items-center text-center space-y-4"
               >
                 <div className="p-4 rounded-full bg-primary/5">
-                  <Sparkles className="size-12 text-primary/40" />
+                  <IconSparkles className="size-12 text-primary/40" />
                 </div>
                 <div className="space-y-1">
                   <h3 className="text-xl font-black uppercase tracking-tight text-muted-foreground/60">{t.attendance.selectClass()}</h3>

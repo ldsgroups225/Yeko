@@ -1,14 +1,14 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { IconLoader2 } from '@tabler/icons-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Loader2 } from 'lucide-react'
+import { Button } from '@workspace/ui/components/button'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
+import { Textarea } from '@workspace/ui/components/textarea'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
 import { useTranslations } from '@/i18n'
 import { createClassroom, updateClassroom } from '@/school/functions/classrooms'
 
@@ -155,7 +155,7 @@ export function ClassroomForm({ classroom, onSuccess }: ClassroomFormProps) {
 
       <div className="flex justify-end gap-2 pt-2">
         <Button type="submit" disabled={mutation.isPending} className="rounded-xl shadow-lg shadow-primary/20">
-          {mutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          {mutation.isPending && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
           {isEditing ? t.common.update() : t.common.create()}
         </Button>
       </div>

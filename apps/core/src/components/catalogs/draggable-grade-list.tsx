@@ -17,9 +17,9 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Edit, GripVertical, Trash2 } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { IconEdit, IconGripVertical, IconTrash } from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 
 interface DraggableGradeListProps {
   grades: Grade[]
@@ -65,10 +65,10 @@ function SortableGradeItem({
           {...attributes}
           {...listeners}
         >
-          <GripVertical className="h-5 w-5 text-muted-foreground" />
+          <IconGripVertical className="h-5 w-5 text-muted-foreground" />
         </button>
         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-          <GripVertical className="h-5 w-5 text-primary" />
+          <IconGripVertical className="h-5 w-5 text-primary" />
         </div>
         <div>
           <h3 className="font-semibold">{grade.name}</h3>
@@ -90,14 +90,14 @@ function SortableGradeItem({
           size="icon"
           onClick={() => onEdit(grade.id)}
         >
-          <Edit className="h-4 w-4" />
+          <IconEdit className="h-4 w-4" />
         </Button>
         <Button
           variant="ghost"
           size="icon"
           onClick={() => onDelete({ id: grade.id, name: grade.name })}
         >
-          <Trash2 className="h-4 w-4" />
+          <IconTrash className="h-4 w-4" />
         </Button>
       </div>
     </div>

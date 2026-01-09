@@ -1,13 +1,7 @@
+import { IconBrandGithub, IconExternalLink, IconLogin, IconMenu } from '@tabler/icons-react'
 import { Link } from '@tanstack/react-router'
-import { ExternalLink, Github, LogIn, Menu } from 'lucide-react'
-import { motion } from 'motion/react'
-import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { AccountDialog } from '@/components/auth/account-dialog'
-import { LanguageSwitcher } from '@/components/language-switcher'
-import { ThemeToggle } from '@/components/theme'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
+import { Button } from '@workspace/ui/components/button'
 import {
   Sheet,
   SheetContent,
@@ -15,7 +9,13 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet'
+} from '@workspace/ui/components/sheet'
+import { motion } from 'motion/react'
+import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { AccountDialog } from '@/components/auth/account-dialog'
+import { LanguageSwitcher } from '@/components/language-switcher'
+import { ThemeToggle } from '@/components/theme'
 import { authClient } from '@/lib/auth-client'
 import { cn } from '@/lib/utils'
 
@@ -133,10 +133,10 @@ export function NavigationBar() {
                         <span>{item.label}</span>
                         {item.label === 'GitHub'
                           ? (
-                              <Github className="h-4 w-4" />
+                              <IconBrandGithub className="h-4 w-4" />
                             )
                           : (
-                              <ExternalLink className="h-4 w-4" />
+                              <IconExternalLink className="h-4 w-4" />
                             )}
                       </a>
                     )
@@ -206,7 +206,7 @@ export function NavigationBar() {
                       size="sm"
                       className="gap-2"
                     >
-                      <LogIn className="h-4 w-4" />
+                      <IconLogin className="h-4 w-4" />
                       {t('nav.signIn')}
                     </Button>
                   </div>
@@ -218,13 +218,13 @@ export function NavigationBar() {
             <LanguageSwitcher />
             <ThemeToggle variant="ghost" align="end" />
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
-              <SheetTrigger asChild>
+              <SheetTrigger>
                 <Button
                   variant="ghost"
                   size="icon"
                   className="relative h-10 w-10 hover:bg-accent/50"
                 >
-                  <Menu className="h-5 w-5" />
+                  <IconMenu className="h-5 w-5" />
                   <span className="sr-only">Open navigation menu</span>
                 </Button>
               </SheetTrigger>
@@ -263,10 +263,10 @@ export function NavigationBar() {
                               <span>{item.label}</span>
                               {item.label === 'GitHub'
                                 ? (
-                                    <Github className="h-4 w-4" />
+                                    <IconBrandGithub className="h-4 w-4" />
                                   )
                                 : (
-                                    <ExternalLink className="h-4 w-4" />
+                                    <IconExternalLink className="h-4 w-4" />
                                   )}
                             </a>
                           )
@@ -317,7 +317,7 @@ export function NavigationBar() {
                             variant="default"
                             className="w-full gap-2"
                           >
-                            <LogIn className="h-4 w-4" />
+                            <IconLogin className="h-4 w-4" />
                             {t('nav.signInWithGoogle')}
                           </Button>
                         </div>

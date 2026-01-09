@@ -1,12 +1,12 @@
+import { IconAlertTriangle, IconCircleCheck, IconClock, IconPlus, IconUser, IconUsers } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
-import { AlertTriangle, CheckCircle, Clock, Plus, User, Users } from 'lucide-react'
+import { Alert, AlertDescription, AlertTitle } from '@workspace/ui/components/alert'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { Progress } from '@workspace/ui/components/progress'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import { motion } from 'motion/react'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Progress } from '@/components/ui/progress'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { getClassSubjects } from '@/school/functions/class-subjects'
@@ -52,7 +52,7 @@ function EmptyState() {
       <CardContent className="p-8">
         <div className="flex flex-col items-center justify-center text-center space-y-4">
           <div className="rounded-full bg-muted p-4">
-            <Users className="h-8 w-8 text-muted-foreground" />
+            <IconUsers className="h-8 w-8 text-muted-foreground" />
           </div>
           <div className="space-y-2">
             <h3 className="text-lg font-semibold">{t.workload.emptyTitle()}</h3>
@@ -62,7 +62,7 @@ function EmptyState() {
           </div>
           <Button asChild className="mt-2">
             <a href="/users/teachers">
-              <Plus className="mr-2 h-4 w-4" />
+              <IconPlus className="mr-2 h-4 w-4" />
               {t.teachers.add()}
             </a>
           </Button>
@@ -124,7 +124,7 @@ export function TeacherWorkload() {
     <div className="space-y-6" role="region" aria-label={t.workload.ariaLabel()}>
       {overloadedTeachers.length > 0 && (
         <Alert variant="destructive" role="alert">
-          <AlertTriangle className="h-4 w-4" aria-hidden="true" />
+          <IconAlertTriangle className="h-4 w-4" aria-hidden="true" />
           <AlertTitle>{t.workload.overloadDetected()}</AlertTitle>
           <AlertDescription>
             {overloadedTeachers.length}
@@ -153,20 +153,20 @@ export function TeacherWorkload() {
               <CardHeader className="pb-2">
                 <CardTitle className="flex items-center justify-between text-base">
                   <span className="flex items-center gap-2">
-                    <User className="h-4 w-4" aria-hidden="true" />
+                    <IconUser className="h-4 w-4" aria-hidden="true" />
                     {teacher.user.name}
                   </span>
                   {isOverloaded
                     ? (
                         <Badge variant="destructive" className="bg-destructive/10 text-destructive border-0">
-                          <AlertTriangle className="h-3 w-3 mr-1" aria-hidden="true" />
+                          <IconAlertTriangle className="h-3 w-3 mr-1" aria-hidden="true" />
                           {t.workload.overloaded()}
                         </Badge>
                       )
                     : totalHours > 0
                       ? (
                           <Badge variant="secondary" className="bg-primary/10 text-primary border-0">
-                            <CheckCircle className="h-3 w-3 mr-1" aria-hidden="true" />
+                            <IconCircleCheck className="h-3 w-3 mr-1" aria-hidden="true" />
                             OK
                           </Badge>
                         )
@@ -178,7 +178,7 @@ export function TeacherWorkload() {
               <CardContent className="space-y-3">
                 <div className="flex items-center justify-between text-sm">
                   <span className="flex items-center gap-1 text-muted-foreground">
-                    <Clock className="h-4 w-4" aria-hidden="true" />
+                    <IconClock className="h-4 w-4" aria-hidden="true" />
                     {t.workload.hoursPerWeek()}
                   </span>
                   <span className={`font-medium ${isOverloaded ? 'text-destructive' : ''}`}>

@@ -1,10 +1,10 @@
 import type { ReportCardStatus } from '@/schemas/report-card'
 
-import { Award, GraduationCap, MessageSquare, User } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { IconAward, IconMessage, IconSchool, IconUser } from '@tabler/icons-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 
-import { Separator } from '@/components/ui/separator'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Separator } from '@workspace/ui/components/separator'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import { useTranslations } from '@/i18n'
 
 import { ReportCardStatusBadge } from './report-card-status-badge'
@@ -102,7 +102,7 @@ export function ReportCardPreview({ data, isLoading }: ReportCardPreviewProps) {
                     />
                   )
                 : (
-                    <User className="h-8 w-8 text-muted-foreground" />
+                    <IconUser className="h-8 w-8 text-muted-foreground" />
                   )}
             </div>
             <div>
@@ -130,7 +130,7 @@ export function ReportCardPreview({ data, isLoading }: ReportCardPreviewProps) {
         {/* Overall Results */}
         <div className="grid gap-4 sm:grid-cols-3">
           <div className="flex items-center gap-3 rounded-lg bg-primary/10 p-4">
-            <GraduationCap className="h-8 w-8 text-primary" />
+            <IconSchool className="h-8 w-8 text-primary" />
             <div>
               <p className="text-sm text-muted-foreground">{t.reportCards.average()}</p>
               <p className="text-2xl font-bold">
@@ -141,7 +141,7 @@ export function ReportCardPreview({ data, isLoading }: ReportCardPreviewProps) {
           </div>
           {data.rank && data.totalStudents && (
             <div className="flex items-center gap-3 rounded-lg bg-secondary p-4">
-              <Award className="h-8 w-8 text-secondary-foreground" />
+              <IconAward className="h-8 w-8 text-secondary-foreground" />
               <div>
                 <p className="text-sm text-muted-foreground">{t.reportCards.rank()}</p>
                 <p className="text-2xl font-bold">
@@ -222,7 +222,7 @@ export function ReportCardPreview({ data, isLoading }: ReportCardPreviewProps) {
               {data.homeroomComment && (
                 <div>
                   <h3 className="mb-2 flex items-center gap-2 font-semibold">
-                    <MessageSquare className="h-4 w-4" />
+                    <IconMessage className="h-4 w-4" />
                     {t.reportCards.homeroomComment()}
                   </h3>
                   <p className="rounded-md bg-muted p-3 text-sm italic">

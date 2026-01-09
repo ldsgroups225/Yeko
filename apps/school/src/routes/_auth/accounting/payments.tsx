@@ -1,19 +1,19 @@
+import { IconCreditCard, IconPlus } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { CreditCard, Plus } from 'lucide-react'
-import { motion } from 'motion/react'
-import { useState } from 'react'
-import { FinanceStats, PaymentFormDialog, PaymentsTable } from '@/components/finance'
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from '@workspace/ui/components/select'
+import { motion } from 'motion/react'
+import { useState } from 'react'
+import { FinanceStats, PaymentFormDialog, PaymentsTable } from '@/components/finance'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
 import { paymentsOptions } from '@/lib/queries'
 
@@ -60,7 +60,7 @@ function PaymentsPage() {
           className="flex items-center gap-4"
         >
           <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-            <CreditCard className="size-8 text-primary" />
+            <IconCreditCard className="size-8 text-primary" />
           </div>
           <div>
             <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.finance.payments.title()}</h1>
@@ -73,7 +73,7 @@ function PaymentsPage() {
           animate={{ opacity: 1, x: 0 }}
           className="flex items-center gap-2"
         >
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <Select value={statusFilter} onValueChange={val => setStatusFilter(val ?? '')}>
             <SelectTrigger className="w-[180px] h-10 rounded-xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all font-bold shadow-sm hover:bg-card/80">
               <SelectValue placeholder={t.common.filter()} />
             </SelectTrigger>
@@ -86,7 +86,7 @@ function PaymentsPage() {
           </Select>
 
           <Button onClick={() => setShowPaymentDialog(true)} className="h-10 rounded-xl shadow-lg shadow-primary/20">
-            <Plus className="mr-2 h-4 w-4" />
+            <IconPlus className="mr-2 h-4 w-4" />
             {t.finance.payments.recordPayment()}
           </Button>
         </motion.div>

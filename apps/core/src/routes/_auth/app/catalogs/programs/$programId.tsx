@@ -1,33 +1,33 @@
 import type { FormEvent } from 'react'
 import type { CreateProgramTemplateChapterInput, UpdateProgramTemplateChapterInput } from '@/schemas/programs'
+import {
+  IconArrowLeft,
+  IconBook,
+  IconCalendar,
+  IconClock,
+  IconDeviceFloppy,
+  IconEdit,
+  IconFileText,
+  IconHistory,
+  IconPlus,
+  IconTrash,
+  IconUpload,
+  IconX,
+} from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import {
-  ArrowLeft,
-  BookOpen,
-  Calendar,
-  Clock,
-  Edit,
-  FileText,
-  History,
-  Plus,
-  Save,
-  Trash2,
-  Upload,
-  X,
-} from 'lucide-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
+import { Skeleton } from '@workspace/ui/components/skeleton'
+import { Textarea } from '@workspace/ui/components/textarea'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Textarea } from '@/components/ui/textarea'
 import {
   bulkCreateChaptersMutationOptions,
   createProgramTemplateChapterMutationOptions,
@@ -253,7 +253,7 @@ function ProgramDetails() {
   if (!program) {
     return (
       <div className="text-center py-12">
-        <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+        <IconBook className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
         <h3 className="text-lg font-medium">Programme non trouvé</h3>
         <p className="text-muted-foreground mb-4">Le programme demandé n'existe pas.</p>
         <Button onClick={() => navigate({ to: '/app/catalogs/programs' })}>
@@ -272,7 +272,7 @@ function ProgramDetails() {
           size="icon"
           onClick={() => navigate({ to: '/app/catalogs/programs' })}
         >
-          <ArrowLeft className="h-5 w-5" />
+          <IconArrowLeft className="h-5 w-5" />
         </Button>
         <div className="flex-1">
           <div className="flex items-center gap-3">
@@ -302,15 +302,15 @@ function ProgramDetails() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => setShowHistory(true)}>
-            <History className="h-4 w-4 mr-2" />
+            <IconHistory className="h-4 w-4 mr-2" />
             Historique
           </Button>
           <Button variant="outline" onClick={() => setShowImport(true)}>
-            <Upload className="h-4 w-4 mr-2" />
+            <IconUpload className="h-4 w-4 mr-2" />
             Importer
           </Button>
           <Button onClick={() => setIsCreatingChapter(true)}>
-            <Plus className="h-4 w-4 mr-2" />
+            <IconPlus className="h-4 w-4 mr-2" />
             Ajouter
           </Button>
         </div>
@@ -321,7 +321,7 @@ function ProgramDetails() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Chapitres</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
+            <IconFileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{chapters?.length || 0}</div>
@@ -332,7 +332,7 @@ function ProgramDetails() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Durée Totale</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
+            <IconClock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -346,7 +346,7 @@ function ProgramDetails() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Année Scolaire</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <IconCalendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{program.schoolYearTemplate?.name}</div>
@@ -409,11 +409,11 @@ function ProgramDetails() {
               </div>
               <div className="flex justify-end gap-2">
                 <Button type="button" variant="outline" onClick={() => setIsCreatingChapter(false)}>
-                  <X className="h-4 w-4 mr-2" />
+                  <IconX className="h-4 w-4 mr-2" />
                   Annuler
                 </Button>
                 <Button type="submit" disabled={createChapterMutation.isPending}>
-                  <Save className="h-4 w-4 mr-2" />
+                  <IconDeviceFloppy className="h-4 w-4 mr-2" />
                   {createChapterMutation.isPending ? 'Création...' : 'Créer'}
                 </Button>
               </div>
@@ -434,13 +434,13 @@ function ProgramDetails() {
           {!chapters || chapters.length === 0
             ? (
                 <div className="text-center py-8">
-                  <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <IconFileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                   <h3 className="text-lg font-medium">Aucun chapitre</h3>
                   <p className="text-muted-foreground mb-4">
                     Commencez par ajouter le premier chapitre de ce programme.
                   </p>
                   <Button onClick={() => setIsCreatingChapter(true)}>
-                    <Plus className="h-4 w-4 mr-2" />
+                    <IconPlus className="h-4 w-4 mr-2" />
                     Ajouter un Chapitre
                   </Button>
                 </div>
@@ -510,11 +510,11 @@ function ProgramDetails() {
                                     variant="outline"
                                     onClick={() => setEditingChapter(null)}
                                   >
-                                    <X className="h-4 w-4 mr-2" />
+                                    <IconX className="h-4 w-4 mr-2" />
                                     Annuler
                                   </Button>
                                   <Button type="submit" disabled={updateChapterMutation.isPending}>
-                                    <Save className="h-4 w-4 mr-2" />
+                                    <IconDeviceFloppy className="h-4 w-4 mr-2" />
                                     {updateChapterMutation.isPending ? 'Enregistrement...' : 'Enregistrer'}
                                   </Button>
                                 </div>
@@ -536,7 +536,7 @@ function ProgramDetails() {
                                     <div className="flex items-center gap-2 mt-2">
                                       {chapter.durationHours && (
                                         <Badge variant="outline" className="text-xs">
-                                          <Clock className="h-3 w-3 mr-1" />
+                                          <IconClock className="h-3 w-3 mr-1" />
                                           {chapter.durationHours}
                                           h
                                         </Badge>
@@ -550,14 +550,14 @@ function ProgramDetails() {
                                     size="icon"
                                     onClick={() => setEditingChapter(chapter.id)}
                                   >
-                                    <Edit className="h-4 w-4" />
+                                    <IconEdit className="h-4 w-4" />
                                   </Button>
                                   <Button
                                     variant="ghost"
                                     size="icon"
                                     onClick={() => setDeletingChapter({ id: chapter.id, title: chapter.title })}
                                   >
-                                    <Trash2 className="h-4 w-4" />
+                                    <IconTrash className="h-4 w-4" />
                                   </Button>
                                 </div>
                               </div>
@@ -580,7 +580,7 @@ function ProgramDetails() {
                 <CardDescription>Voir et restaurer les versions précédentes</CardDescription>
               </div>
               <Button variant="ghost" size="icon" onClick={() => setShowHistory(false)}>
-                <X className="h-4 w-4" />
+                <IconX className="h-4 w-4" />
               </Button>
             </CardHeader>
             <CardContent>

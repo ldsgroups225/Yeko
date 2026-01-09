@@ -1,7 +1,7 @@
 import type { QueryClient } from '@tanstack/react-query'
 import type { ReactNode } from 'react'
 import { QueryClientProvider } from '@tanstack/react-query'
-import { Toaster } from '@/components/ui/sonner'
+import { Toaster } from '@workspace/ui/components/sonner'
 
 export function Provider({
   children,

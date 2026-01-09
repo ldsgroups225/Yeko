@@ -1,4 +1,5 @@
 import type { ColumnDef, Row, Table as TanStackTable } from '@tanstack/react-table'
+import { IconDots, IconEdit, IconEye, IconFileAlert, IconTrash } from '@tabler/icons-react'
 import { Link } from '@tanstack/react-router'
 import {
   flexRender,
@@ -6,21 +7,17 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { Edit, Eye, FileWarning, MoreHorizontal, Trash2 } from 'lucide-react'
-import { motion } from 'motion/react'
-import { useMemo } from 'react'
-import { TableSkeleton } from '@/components/hr/table-skeleton'
+import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
+import { Button } from '@workspace/ui/components/button'
+import { Checkbox } from '@workspace/ui/components/checkbox'
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from '@workspace/ui/components/dropdown-menu'
 import {
   Table,
   TableBody,
@@ -28,7 +25,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { motion } from 'motion/react'
+import { useMemo } from 'react'
+import { TableSkeleton } from '@/components/hr/table-skeleton'
 import { useTranslations } from '@/i18n'
 
 import { ConductSeverityBadge } from './conduct-severity-badge'
@@ -181,19 +181,19 @@ export function ConductRecordTable({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="rounded-xl hover:bg-primary/10 hover:text-primary transition-colors">
-                <MoreHorizontal className="h-5 w-5" />
+                <IconDots className="h-5 w-5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40">
               {onView && (
                 <DropdownMenuItem onClick={() => onView(row.original.id)} className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-2">
-                  <Eye className="mr-2 h-4 w-4 text-primary/60" />
+                  <IconEye className="mr-2 h-4 w-4 text-primary/60" />
                   {t.common.view()}
                 </DropdownMenuItem>
               )}
               {onEdit && (
                 <DropdownMenuItem onClick={() => onEdit(row.original.id)} className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-2">
-                  <Edit className="mr-2 h-4 w-4 text-primary/60" />
+                  <IconEdit className="mr-2 h-4 w-4 text-primary/60" />
                   {t.common.edit()}
                 </DropdownMenuItem>
               )}
@@ -204,7 +204,7 @@ export function ConductRecordTable({
                     onClick={() => onDelete(row.original.id)}
                     className="rounded-xl text-destructive focus:text-destructive font-bold uppercase tracking-widest text-[10px] py-2"
                   >
-                    <Trash2 className="mr-2 h-4 w-4" />
+                    <IconTrash className="mr-2 h-4 w-4" />
                     {t.common.delete()}
                   </DropdownMenuItem>
                 </>
@@ -268,7 +268,7 @@ export function ConductRecordTable({
         className="rounded-3xl border border-dashed border-border/60 bg-card/20 backdrop-blur-sm p-20 flex flex-col items-center text-center"
       >
         <div className="p-6 rounded-full bg-background/50 mb-6 shadow-inner">
-          <FileWarning className="size-12 text-muted-foreground/20" />
+          <IconFileAlert className="size-12 text-muted-foreground/20" />
         </div>
         <h3 className="text-xl font-bold text-muted-foreground mb-2">{t.conduct.noRecords()}</h3>
         <p className="text-sm text-muted-foreground max-w-xs">{t.conduct.noRecordsDescription()}</p>

@@ -1,23 +1,23 @@
 import type { GradeType } from '@/schemas/grade'
+import { IconClipboardCheck, IconLayoutGrid, IconListCheck, IconRotate, IconSettings, IconSparkles, IconUserCheck } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { ClipboardCheck, LayoutGrid, ListTodo, RotateCcw, Settings2, Sparkles, UserCheck } from 'lucide-react'
-import { motion } from 'motion/react'
-import { useState } from 'react'
-import { GradeEntryTable, GradeTypeSelector } from '@/components/grades'
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
+} from '@workspace/ui/components/select'
+import { Skeleton } from '@workspace/ui/components/skeleton'
+import { motion } from 'motion/react'
+import { useState } from 'react'
+import { GradeEntryTable, GradeTypeSelector } from '@/components/grades'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useCurrentTeacher } from '@/hooks/use-current-teacher'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
@@ -139,7 +139,7 @@ function GradeEntryPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-inner">
-            <ClipboardCheck className="size-8" />
+            <IconClipboardCheck className="size-8" />
           </div>
           <div>
             <h1 className="text-3xl font-black tracking-tight">{t.academic.grades.entry.title()}</h1>
@@ -158,7 +158,7 @@ function GradeEntryPage() {
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-xl bg-background/50 text-muted-foreground shadow-sm">
-                  <Settings2 className="size-4" />
+                  <IconSettings className="size-4" />
                 </div>
                 <CardTitle className="text-sm font-black uppercase tracking-[0.2em]">{t.academic.grades.entry.parameters()}</CardTitle>
               </div>
@@ -168,7 +168,7 @@ function GradeEntryPage() {
                 onClick={handleReset}
                 className="h-8 gap-2 rounded-lg text-xs font-bold hover:bg-background/50 text-muted-foreground hover:text-primary transition-all"
               >
-                <RotateCcw className="size-3.5" />
+                <IconRotate className="size-3.5" />
                 {t.common.reset()}
               </Button>
             </div>
@@ -184,7 +184,7 @@ function GradeEntryPage() {
                       <Skeleton className="h-11 w-full rounded-xl" />
                     )
                   : (
-                      <Select value={selectedClassId} onValueChange={handleClassChange}>
+                      <Select value={selectedClassId} onValueChange={val => handleClassChange(val ?? '')}>
                         <SelectTrigger id="class-select" className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
                           <SelectValue placeholder={t.academic.grades.entry.selectClass()} />
                         </SelectTrigger>
@@ -192,7 +192,7 @@ function GradeEntryPage() {
                           {classesData?.map(item => (
                             <SelectItem key={item.class.id} value={item.class.id} className="rounded-lg">
                               <div className="flex items-center gap-2">
-                                <LayoutGrid className="size-3.5 text-primary/60" />
+                                <IconLayoutGrid className="size-3.5 text-primary/60" />
                                 <span className="font-semibold">
                                   {item.grade.name}
                                   {' '}
@@ -217,7 +217,7 @@ function GradeEntryPage() {
                   : (
                       <Select
                         value={selectedSubjectId}
-                        onValueChange={setSelectedSubjectId}
+                        onValueChange={val => setSelectedSubjectId(val ?? '')}
                         disabled={!selectedClassId || !classSubjectsData?.length}
                       >
                         <SelectTrigger id="subject-select" className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
@@ -227,7 +227,7 @@ function GradeEntryPage() {
                           {classSubjectsData?.map(cs => (
                             <SelectItem key={cs.subject.id} value={cs.subject.id} className="rounded-lg">
                               <div className="flex items-center gap-2">
-                                <Sparkles className="size-3.5 text-primary/60" />
+                                <IconSparkles className="size-3.5 text-primary/60" />
                                 <span className="font-semibold">{cs.subject.name}</span>
                               </div>
                             </SelectItem>
@@ -248,7 +248,7 @@ function GradeEntryPage() {
                   : (
                       <Select
                         value={selectedTermId}
-                        onValueChange={setSelectedTermId}
+                        onValueChange={val => setSelectedTermId(val ?? '')}
                         disabled={!termsData?.length}
                       >
                         <SelectTrigger id="term-select" className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
@@ -292,7 +292,7 @@ function GradeEntryPage() {
                     className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all font-bold"
                   />
                   <div className="absolute right-3 top-1/2 -translate-y-1/2 opacity-20 group-hover:opacity-40 transition-opacity">
-                    <UserCheck className="size-4" />
+                    <IconUserCheck className="size-4" />
                   </div>
                 </div>
               </div>
@@ -337,7 +337,7 @@ function GradeEntryPage() {
             <CardHeader className="bg-muted/20 border-b border-border/20 py-5">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-xl bg-primary/10 text-primary shadow-inner">
-                  <ListTodo className="size-5" />
+                  <IconListCheck className="size-5" />
                 </div>
                 <CardTitle className="text-xl font-black tracking-tight">{t.academic.grades.entry.studentGrades()}</CardTitle>
               </div>

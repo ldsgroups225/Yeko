@@ -1,12 +1,11 @@
+import { IconArrowLeft } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowLeft } from 'lucide-react'
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { DatePicker } from '@/components/ui/date-picker'
-import { Skeleton } from '@/components/ui/skeleton'
+import { DatePicker } from '@workspace/ui/components/date-picker'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -14,7 +13,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { useState } from 'react'
 import { useTranslations } from '@/i18n'
 import { teacherPunctualityReportOptions } from '@/lib/queries/teacher-attendance'
 import { generateUUID } from '@/utils/generateUUID'
@@ -63,7 +63,7 @@ function TeacherPunctualityReportsPage() {
       <div className="mb-4">
         <Link to="/conducts/teacher-attendance">
           <Button variant="ghost" size="sm">
-            <ArrowLeft className="mr-2 h-4 w-4" />
+            <IconArrowLeft className="mr-2 h-4 w-4" />
             {t.common.back()}
           </Button>
         </Link>

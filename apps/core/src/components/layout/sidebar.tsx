@@ -1,22 +1,19 @@
 import type { ComponentType } from 'react'
 import type { FileRoutesByTo } from '@/routeTree.gen'
-import { useNavigate, useRouterState } from '@tanstack/react-router'
 import {
-  Award,
-  BarChart3,
-  BookMarked,
-  BookOpen,
-  Calculator,
-  Calendar,
-  ChevronDown,
-  GraduationCap,
-  HelpCircle,
-  Home,
-  Route,
-  School,
-} from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { useState } from 'react'
+  IconAward,
+  IconBook,
+  IconBookmark,
+  IconCalculator,
+  IconCalendar,
+  IconChartBar,
+  IconChevronDown,
+  IconHelpCircle,
+  IconHome,
+  IconRoute,
+  IconSchool,
+} from '@tabler/icons-react'
+import { useNavigate, useRouterState } from '@tanstack/react-router'
 import {
   SidebarContent,
   SidebarFooter,
@@ -31,7 +28,9 @@ import {
   SidebarMenuSubItem,
   Sidebar as SidebarRoot,
   useSidebar,
-} from '@/components/ui/sidebar'
+} from '@workspace/ui/components/sidebar'
+import { AnimatePresence, motion } from 'motion/react'
+import { useState } from 'react'
 import { cn } from '@/lib/utils'
 
 interface NavigationItem {
@@ -46,55 +45,55 @@ interface NavigationItem {
 const navigationItems: NavigationItem[] = [
   {
     name: 'Tableau de bord',
-    icon: Home,
+    icon: IconHome,
     href: '/app/dashboard',
     description: 'Vue d\'ensemble du système',
   },
   {
     name: 'Écoles',
-    icon: School,
+    icon: IconSchool,
     href: '/app/schools',
     description: 'Écoles partenaires',
   },
   {
     name: 'Catalogues',
-    icon: BookOpen,
+    icon: IconBook,
     href: '/app/catalogs',
     description: 'Catalogues globaux',
     children: [
       {
         name: 'Programmes',
-        icon: GraduationCap,
+        icon: IconSchool,
         href: '/app/catalogs/programs',
         description: 'Programmes ministériels',
       },
       {
         name: 'Matières',
-        icon: BookMarked,
+        icon: IconBookmark,
         href: '/app/catalogs/subjects',
         description: 'Matières académiques',
       },
       {
         name: 'Filières',
-        icon: Route,
+        icon: IconRoute,
         href: '/app/catalogs/tracks',
         description: 'Filières d\'études',
       },
       {
         name: 'Niveaux',
-        icon: Award,
+        icon: IconAward,
         href: '/app/catalogs/grades',
         description: 'Niveaux et séries',
       },
       {
         name: 'Coefficients',
-        icon: Calculator,
+        icon: IconCalculator,
         href: '/app/catalogs/coefficients',
         description: 'Coefficients des matières',
       },
       {
         name: 'Années Scolaires',
-        icon: Calendar,
+        icon: IconCalendar,
         href: '/app/catalogs/school-years',
         description: 'Modèles et périodes',
       },
@@ -102,13 +101,13 @@ const navigationItems: NavigationItem[] = [
   },
   {
     name: 'Analytiques',
-    icon: BarChart3,
+    icon: IconChartBar,
     href: '/app/analytics',
     description: 'Analytiques du système',
   },
   {
     name: 'Support',
-    icon: HelpCircle,
+    icon: IconHelpCircle,
     href: '/app/support',
     description: 'CRM & tickets',
   },
@@ -190,7 +189,7 @@ export function Sidebar({ className }: SidebarProps) {
                 animate={{ rotate: isExpanded ? 180 : 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <ChevronDown className="h-4 w-4" />
+                <IconChevronDown className="h-4 w-4" />
               </motion.div>
             </button>
           )}
@@ -207,7 +206,6 @@ export function Sidebar({ className }: SidebarProps) {
                 {item.children?.map(child => (
                   <SidebarMenuSubItem key={child.href}>
                     <SidebarMenuSubButton
-                      asChild
                       isActive={currentPath === child.href}
                     >
                       <button

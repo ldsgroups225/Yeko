@@ -1,10 +1,10 @@
+import { IconCalendarTime } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { CalendarClock } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { motion } from 'motion/react'
 import { PaymentPlansTable } from '@/components/finance'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useTranslations } from '@/i18n'
 import { paymentPlansOptions } from '@/lib/queries'
 
@@ -43,7 +43,7 @@ function PaymentPlansPage() {
         className="flex items-center gap-4"
       >
         <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-          <CalendarClock className="size-8 text-primary" />
+          <IconCalendarTime className="size-8 text-primary" />
         </div>
         <div>
           <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.finance.paymentPlans.title()}</h1>

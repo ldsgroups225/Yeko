@@ -1,9 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { AlertCircle, CheckCircle2, MessageSquare, XCircle } from 'lucide-react'
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { Button } from '@/components/ui/button'
+import { IconAlertCircle, IconCircleCheck, IconCircleX, IconMessage } from '@tabler/icons-react'
+import { Button } from '@workspace/ui/components/button'
 import {
   Dialog,
   DialogContent,
@@ -11,7 +8,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from '@workspace/ui/components/dialog'
 import {
   Form,
   FormControl,
@@ -19,9 +16,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
+} from '@workspace/ui/components/form'
+import { Label } from '@workspace/ui/components/label'
+import { Textarea } from '@workspace/ui/components/textarea'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
@@ -89,7 +89,7 @@ export function GradeValidationDialog({
               isReject ? 'bg-destructive/10 text-destructive' : 'bg-emerald-500/10 text-emerald-600',
             )}
             >
-              {isReject ? <XCircle className="size-6" /> : <CheckCircle2 className="size-6" />}
+              {isReject ? <IconCircleX className="size-6" /> : <IconCircleCheck className="size-6" />}
             </div>
             <div>
               <DialogTitle className="text-xl font-bold tracking-tight">
@@ -113,7 +113,7 @@ export function GradeValidationDialog({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
-                            <AlertCircle className="size-3" />
+                            <IconAlertCircle className="size-3" />
                             {t.academic.grades.validations.rejectReason()}
                             {' '}
                             *
@@ -135,7 +135,7 @@ export function GradeValidationDialog({
             : (
                 <div className="space-y-3">
                   <Label htmlFor="comment" className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
-                    <MessageSquare className="size-3" />
+                    <IconMessage className="size-3" />
                     {t.academic.grades.validations.comment()}
                   </Label>
                   <Textarea

@@ -38,7 +38,7 @@ describe('error Handling Integration', () => {
 
       render(<RoleForm onSubmit={mockOnSubmit} />)
 
-      // Type name with special characters
+      // IconTypography name with special characters
       const nameInput = screen.getByLabelText(/Role Name/i)
       await user.type(nameInput, 'Test Role 123')
 
@@ -55,7 +55,7 @@ describe('error Handling Integration', () => {
 
       render(<RoleForm onSubmit={mockOnSubmit} />)
 
-      // Type a reasonable length to avoid timeout
+      // IconTypography a reasonable length to avoid timeout
       const longName = 'A'.repeat(50)
       const nameInput = screen.getByLabelText(/Role Name/i)
       await user.type(nameInput, longName)
@@ -137,7 +137,7 @@ describe('error Handling Integration', () => {
       const emailInput = screen.getByLabelText(/Email/i)
       await user.type(emailInput, 'test@example.com')
 
-      // Phone and avatar are optional, leave them empty
+      // IconPhone and avatar are optional, leave them empty
       expect(nameInput).toHaveValue('Test User')
       expect(emailInput).toHaveValue('test@example.com')
     })

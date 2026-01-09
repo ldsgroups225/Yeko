@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-// User validation schema
+// IconUser validation schema
 export const userSchema = z.object({
   name: z.string().min(2, 'Minimum 2 caractères').max(100, 'Maximum 100 caractères'),
   email: z.string().email('Email invalide'),

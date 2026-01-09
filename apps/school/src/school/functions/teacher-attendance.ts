@@ -70,7 +70,7 @@ export const recordAttendance = createServerFn()
       expectedArrival: settings.teacherExpectedArrival ?? '07:30',
     })
 
-    // Check for repeated lateness alert
+    // IconCheck for repeated lateness alert
     if (data.status === 'late') {
       const now = new Date()
       const lateCount = await countTeacherLatenessInMonth(

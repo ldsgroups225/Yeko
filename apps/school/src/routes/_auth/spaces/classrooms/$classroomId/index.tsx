@@ -1,15 +1,15 @@
+import { IconBuilding, IconEdit, IconMapPin, IconTrash, IconUsers } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { Building2, Edit, MapPin, Trash2, Users } from 'lucide-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
 import { motion } from 'motion/react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useTranslations } from '@/i18n'
 import { deleteClassroom, getClassroomById } from '@/school/functions/classrooms'
 
@@ -81,7 +81,7 @@ function ClassroomDetailPage() {
       >
         <div className="flex items-center gap-4">
           <div className="p-4 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-            <Building2 className="size-10 text-primary" />
+            <IconBuilding className="size-10 text-primary" />
           </div>
           <div>
             <h1 className="text-4xl font-black tracking-tight uppercase italic">{classroom.name}</h1>
@@ -90,7 +90,7 @@ function ClassroomDetailPage() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={() => setShowDeleteDialog(true)} className="rounded-xl h-10 border-destructive/20 text-destructive hover:bg-destructive/10 hover:text-destructive hover:border-destructive/40 transition-colors">
-            <Trash2 className="mr-2 h-4 w-4" />
+            <IconTrash className="mr-2 h-4 w-4" />
             {t.common.delete()}
           </Button>
           <Button
@@ -98,7 +98,7 @@ function ClassroomDetailPage() {
             onClick={() => navigate({ to: '/spaces/classrooms/$classroomId/edit', params: { classroomId } })}
             className="rounded-xl h-10 shadow-lg shadow-primary/20"
           >
-            <Edit className="mr-2 h-4 w-4" />
+            <IconEdit className="mr-2 h-4 w-4" />
             {t.common.edit()}
           </Button>
         </div>
@@ -135,7 +135,7 @@ function ClassroomDetailPage() {
                 <div className="flex items-center justify-between p-3 rounded-xl bg-muted/10 hover:bg-muted/20 transition-colors">
                   <span className="text-sm font-medium text-muted-foreground">{t.spaces.classroom.capacity()}</span>
                   <span className="flex items-center gap-2 font-bold">
-                    <Users className="h-4 w-4 text-muted-foreground" />
+                    <IconUsers className="h-4 w-4 text-muted-foreground" />
                     {classroom.capacity}
                     {' '}
                     <span className="text-xs font-normal text-muted-foreground">{t.students.title().toLowerCase()}</span>
@@ -152,7 +152,7 @@ function ClassroomDetailPage() {
                 <div className="flex items-center justify-between p-3 rounded-xl bg-muted/10 hover:bg-muted/20 transition-colors">
                   <span className="text-sm font-medium text-muted-foreground">{t.spaces.classroom.building()}</span>
                   <span className="flex items-center gap-2 font-bold">
-                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                    <IconMapPin className="h-4 w-4 text-muted-foreground" />
                     {classroom.building || '-'}
                   </span>
                 </div>
@@ -262,7 +262,7 @@ function ClassroomDetailPage() {
                   : (
                       <div className="p-12 text-center">
                         <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-muted/20 mb-4">
-                          <Users className="h-8 w-8 text-muted-foreground/30" />
+                          <IconUsers className="h-8 w-8 text-muted-foreground/30" />
                         </div>
                         <p className="text-muted-foreground font-medium">{t.spaces.classroom.noAssignedClasses()}</p>
                       </div>

@@ -1,15 +1,14 @@
-import { Edit, MoreHorizontal, Tag, Trash2 } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { IconDots, IconEdit, IconTag, IconTrash } from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Skeleton } from '@/components/ui/skeleton'
+} from '@workspace/ui/components/dropdown-menu'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -17,7 +16,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
 import { useTranslations } from '@/i18n'
 import { generateUUID } from '@/utils/generateUUID'
 
@@ -75,7 +75,7 @@ export function FeeTypesTable({
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground border-2 border-dashed border-border/30 rounded-xl bg-card/10 m-4">
         <div className="p-4 rounded-full bg-muted/20 mb-4">
-          <Tag className="h-8 w-8 text-muted-foreground/50" />
+          <IconTag className="h-8 w-8 text-muted-foreground/50" />
         </div>
         <p className="text-lg font-medium">{t.finance.feeTypes.noFeeTypes()}</p>
         <p className="text-sm max-w-sm mt-1">{t.finance.feeTypes.description()}</p>
@@ -138,12 +138,12 @@ export function FeeTypesTable({
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-muted">
-                          <MoreHorizontal className="h-4 w-4" />
+                          <IconDots className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-48 backdrop-blur-xl bg-card/95 border-border/40 shadow-xl rounded-xl p-1">
                         <DropdownMenuItem onClick={() => onEdit?.(feeType)} className="rounded-lg cursor-pointer focus:bg-primary/10 focus:text-primary font-medium">
-                          <Edit className="mr-2 h-4 w-4" />
+                          <IconEdit className="mr-2 h-4 w-4" />
                           {t.common.edit()}
                         </DropdownMenuItem>
                         <DropdownMenuSeparator className="bg-border/40" />
@@ -151,7 +151,7 @@ export function FeeTypesTable({
                           onClick={() => onDelete?.(feeType)}
                           className="text-destructive rounded-lg cursor-pointer focus:bg-destructive/10 focus:text-destructive font-medium"
                         >
-                          <Trash2 className="mr-2 h-4 w-4" />
+                          <IconTrash className="mr-2 h-4 w-4" />
                           {t.common.delete()}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -202,11 +202,11 @@ export function FeeTypesTable({
 
               <div className="flex justify-end gap-2 pt-2 border-t border-border/30">
                 <Button size="sm" variant="ghost" className="h-8 rounded-lg" onClick={() => onEdit?.(feeType)}>
-                  <Edit className="mr-2 h-3.5 w-3.5" />
+                  <IconEdit className="mr-2 h-3.5 w-3.5" />
                   {t.common.edit()}
                 </Button>
                 <Button size="sm" variant="ghost" className="h-8 rounded-lg text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => onDelete?.(feeType)}>
-                  <Trash2 className="mr-2 h-3.5 w-3.5" />
+                  <IconTrash className="mr-2 h-3.5 w-3.5" />
                   {t.common.delete()}
                 </Button>
               </div>

@@ -25,7 +25,7 @@ export const updateTeacherSchema = teacherUpdateSchema
 
 // Teacher with new user creation
 export const teacherWithUserSchema = z.object({
-  // User fields
+  // IconUser fields
   name: z.string().min(2, 'Minimum 2 caractères'),
   email: z.string().email('Email invalide'),
   phone: z.string().optional().nullable(),

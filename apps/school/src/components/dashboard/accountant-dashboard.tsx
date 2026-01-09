@@ -1,4 +1,4 @@
-import { AlertCircle, CheckCircle, DollarSign, TrendingUp } from 'lucide-react'
+import { IconAlertCircle, IconCircleCheck, IconCurrencyDollar, IconTrendingUp } from '@tabler/icons-react'
 import { motion } from 'motion/react'
 import { useTranslations } from '@/i18n'
 
@@ -45,28 +45,28 @@ export function AccountantDashboard() {
           title={t.dashboard.accountant.monthlyRevenue()}
           value="2,450,000"
           currency="FCFA"
-          icon={DollarSign}
+          icon={IconCurrencyDollar}
           trend="positive"
         />
         <MetricCard
           title={t.dashboard.accountant.monthlyExpenses()}
           value="1,230,000"
           currency="FCFA"
-          icon={TrendingUp}
+          icon={IconTrendingUp}
           trend="neutral"
         />
         <MetricCard
           title={t.dashboard.accountant.balance()}
           value="1,220,000"
           currency="FCFA"
-          icon={CheckCircle}
+          icon={IconCircleCheck}
           trend="positive"
         />
         <MetricCard
           title={t.dashboard.accountant.unpaidFees()}
           value="450,000"
           currency="FCFA"
-          icon={AlertCircle}
+          icon={IconAlertCircle}
           trend="negative"
         />
       </motion.div>

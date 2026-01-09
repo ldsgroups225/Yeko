@@ -1,19 +1,16 @@
 import type { GradeStatus, GradeType } from '@/schemas/grade'
+import { IconAlertTriangle, IconCloud, IconCloudOff, IconDeviceFloppy, IconHash, IconLoader2, IconPlus, IconSend, IconUser, IconUserPlus } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { AlertTriangle, Cloud, CloudOff, Hash, Loader2, Plus, Save, Send, User, UserPlus } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { toast } from 'sonner'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { ConfirmationDialog } from '@/components/ui/confirmation-dialog'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { ConfirmationDialog } from '@workspace/ui/components/confirmation-dialog'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from '@workspace/ui/components/select'
 import {
   Table,
   TableBody,
@@ -21,7 +18,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { toast } from 'sonner'
 import { useTranslations } from '@/i18n'
 import {
   classSubjectsKeys,
@@ -328,7 +328,7 @@ export function GradeEntryTable({
   }
 
   const handleNewEvaluation = () => {
-    // Check if there are pending changes OR draft grades in the database
+    // IconCheck if there are pending changes OR draft grades in the database
     const hasDraftGrades = gradesByStudent.size > 0
     if (pendingChanges.size > 0 || hasDraftGrades) {
       setIsConfirmingReset(true)
@@ -364,7 +364,7 @@ export function GradeEntryTable({
           className="p-4 rounded-2xl bg-destructive/10 border border-destructive/20 flex items-center flex-wrap gap-4 text-destructive"
         >
           <div className="flex items-center gap-3 flex-1 min-w-[200px]">
-            <AlertTriangle className="size-5 shrink-0" />
+            <IconAlertTriangle className="size-5 shrink-0" />
             <div className="flex-1">
               <p className="text-sm font-bold">{t.academic.grades.errors.noTeacherTitle()}</p>
               <p className="text-xs opacity-80 font-medium">
@@ -377,10 +377,11 @@ export function GradeEntryTable({
             <Select
               disabled={assignMutation.isPending}
               onValueChange={(val) => {
-                const teacher = teachers.find(t => t.id === val)
+                const teacherId = val as string
+                const teacher = teachers.find(t => t.id === teacherId)
                 if (teacher) {
                   setPendingAssignment({
-                    teacherId: val,
+                    teacherId,
                     teacherName: teacher.user.name,
                   })
                 }
@@ -388,7 +389,7 @@ export function GradeEntryTable({
             >
               <SelectTrigger className="bg-destructive/10 border-destructive/20 h-9 min-w-[200px] text-xs font-bold ring-offset-background focus:ring-destructive/30">
                 <div className="flex items-center gap-2">
-                  {assignMutation.isPending ? <Loader2 className="size-3 animate-spin" /> : <UserPlus className="size-3" />}
+                  {assignMutation.isPending ? <IconLoader2 className="size-3 animate-spin" /> : <IconUserPlus className="size-3" />}
                   <SelectValue placeholder={t.academic.grades.assignment.quickAssign()} />
                 </div>
               </SelectTrigger>
@@ -415,13 +416,13 @@ export function GradeEntryTable({
             <TableRow className="bg-muted/30 border-b-border/40 hover:bg-muted/30">
               <TableHead className="min-w-[240px]">
                 <div className="flex items-center gap-2">
-                  <User className="size-4 text-muted-foreground" />
+                  <IconUser className="size-4 text-muted-foreground" />
                   <span className="font-bold uppercase tracking-tight text-xs">{t.academic.grades.averages.student()}</span>
                 </div>
               </TableHead>
               <TableHead className="w-24">
                 <div className="flex items-center gap-1.5">
-                  <Hash className="size-3.5 text-muted-foreground" />
+                  <IconHash className="size-3.5 text-muted-foreground" />
                   <span className="font-bold uppercase tracking-tight text-xs">{t.academic.grades.averages.matricule()}</span>
                 </div>
               </TableHead>
@@ -500,7 +501,7 @@ export function GradeEntryTable({
                 exit={{ opacity: 0, scale: 0.9 }}
                 className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600"
               >
-                <AlertTriangle className="size-4" />
+                <IconAlertTriangle className="size-4" />
                 <span className="text-xs font-bold uppercase tracking-tight">
                   {t.academic.grades.validations.pendingCount({ count: pendingChanges.size })}
                 </span>
@@ -518,7 +519,7 @@ export function GradeEntryTable({
                   exit={{ opacity: 0, x: 10 }}
                   className="flex items-center gap-2 text-xs font-semibold text-muted-foreground"
                 >
-                  <Loader2 className="size-3.5 animate-spin" />
+                  <IconLoader2 className="size-3.5 animate-spin" />
                   {t.academic.grades.autoSave.saving()}
                 </motion.span>
               )}
@@ -531,7 +532,7 @@ export function GradeEntryTable({
                   className="flex items-center gap-2 text-xs font-bold text-emerald-600"
                 >
                   <div className="p-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-                    <Cloud className="size-3" />
+                    <IconCloud className="size-3" />
                   </div>
                   {t.academic.grades.autoSave.saved()}
                 </motion.span>
@@ -545,7 +546,7 @@ export function GradeEntryTable({
                   className="flex items-center gap-2 text-xs font-bold text-destructive"
                 >
                   <div className="p-1 rounded-full bg-destructive/10 border border-destructive/20">
-                    <CloudOff className="size-3" />
+                    <IconCloudOff className="size-3" />
                   </div>
                   {t.academic.grades.autoSave.error()}
                 </motion.span>
@@ -560,7 +561,7 @@ export function GradeEntryTable({
             variant="outline"
             className="rounded-xl font-bold border-primary/20 hover:bg-primary/5 text-primary"
           >
-            <Plus className="mr-2 size-4" />
+            <IconPlus className="mr-2 size-4" />
             {t.academic.grades.entry.newEvaluation()}
           </Button>
 
@@ -579,10 +580,10 @@ export function GradeEntryTable({
                 >
                   {createBulkMutation.isPending
                     ? (
-                        <Loader2 className="mr-2 size-4 animate-spin text-amber-600" />
+                        <IconLoader2 className="mr-2 size-4 animate-spin text-amber-600" />
                       )
                     : (
-                        <Save className="mr-2 size-4 text-amber-600" />
+                        <IconDeviceFloppy className="mr-2 size-4 text-amber-600" />
                       )}
                   {t.common.save()}
                 </Button>
@@ -597,10 +598,10 @@ export function GradeEntryTable({
           >
             {submitMutation.isPending
               ? (
-                  <Loader2 className="mr-2 size-4 animate-spin" />
+                  <IconLoader2 className="mr-2 size-4 animate-spin" />
                 )
               : (
-                  <Send className="mr-2 size-4" />
+                  <IconSend className="mr-2 size-4" />
                 )}
             {t.common.submit()}
             {gradesByStudent.size > 0 && (

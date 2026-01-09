@@ -1,14 +1,14 @@
+import { IconCalendar, IconEdit, IconMail, IconPhone, IconTrash } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
 import { format } from 'date-fns'
-import { Calendar, Edit, Mail, Phone, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useTranslations } from '@/i18n'
 import { deleteExistingUser, getUser, getUserActivity } from '@/school/functions/users'
 
@@ -105,14 +105,14 @@ function UserDetailsPage() {
             size="sm"
             onClick={() => setShowDeleteDialog(true)}
           >
-            <Trash2 className="mr-2 h-4 w-4" />
+            <IconTrash className="mr-2 h-4 w-4" />
             {t.common.delete()}
           </Button>
           <Button
             size="sm"
             onClick={() => navigate({ to: '/users/users/$userId/edit', params: { userId } })}
           >
-            <Edit className="mr-2 h-4 w-4" />
+            <IconEdit className="mr-2 h-4 w-4" />
             {t.common.edit()}
           </Button>
         </div>
@@ -130,7 +130,7 @@ function UserDetailsPage() {
             <h2 className="mb-4 text-lg font-semibold">{t.hr.users.personalInfo()}</h2>
             <div className="grid gap-4 md:grid-cols-2">
               <div className="flex items-center gap-3">
-                <Mail className="h-4 w-4 text-muted-foreground" />
+                <IconMail className="h-4 w-4 text-muted-foreground" />
                 <div>
                   <p className="text-sm text-muted-foreground">{t.hr.common.email()}</p>
                   <p className="font-medium">{user.email}</p>
@@ -138,7 +138,7 @@ function UserDetailsPage() {
               </div>
               {user.phone && (
                 <div className="flex items-center gap-3">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
+                  <IconPhone className="h-4 w-4 text-muted-foreground" />
                   <div>
                     <p className="text-sm text-muted-foreground">{t.hr.common.phone()}</p>
                     <p className="font-medium">{user.phone}</p>
@@ -146,7 +146,7 @@ function UserDetailsPage() {
                 </div>
               )}
               <div className="flex items-center gap-3">
-                <Calendar className="h-4 w-4 text-muted-foreground" />
+                <IconCalendar className="h-4 w-4 text-muted-foreground" />
                 <div>
                   <p className="text-sm text-muted-foreground">{t.hr.common.createdAt()}</p>
                   <p className="font-medium">

@@ -1,12 +1,9 @@
 'use client'
 
+import { IconLoader2, IconSearch, IconUser, IconUserPlus } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Loader2, Search, User, UserPlus } from 'lucide-react'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-
-import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback } from '@workspace/ui/components/avatar'
+import { Button } from '@workspace/ui/components/button'
 import {
   Dialog,
   DialogContent,
@@ -14,13 +11,16 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Switch } from '@/components/ui/switch'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+} from '@workspace/ui/components/dialog'
+
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
+import { RadioGroup, RadioGroupItem } from '@workspace/ui/components/radio-group'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
+import { Switch } from '@workspace/ui/components/switch'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
+import { useState } from 'react'
+import { toast } from 'sonner'
 import { useTranslations } from '@/i18n'
 import { parentsOptions } from '@/lib/queries/parents'
 import { studentsKeys } from '@/lib/queries/students'
@@ -145,7 +145,7 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
           {/* Link Existing Parent */}
           <TabsContent value="existing" className="space-y-4 pt-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder={t.parents.searchPlaceholder()}
                 value={search}
@@ -156,13 +156,13 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
 
             {parentsLoading && (
               <div className="flex justify-center py-8">
-                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                <IconLoader2 className="h-6 w-6 animate-spin text-primary" />
               </div>
             )}
 
             {!parentsLoading && search.length >= 2 && parentsData?.data && parentsData.data.length === 0 && (
               <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
-                <User className="h-8 w-8 opacity-50 mb-2" />
+                <IconUser className="h-8 w-8 opacity-50 mb-2" />
                 <p>{t.parents.noParents()}</p>
                 <Button variant="link" onClick={() => setTab('new')} className="mt-2">
                   {t.parents.addParent()}
@@ -171,7 +171,7 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
             )}
 
             {parentsData?.data && parentsData.data.length > 0 && (
-              <RadioGroup value={selectedParentId || ''} onValueChange={setSelectedParentId} className="max-h-[240px] overflow-y-auto pr-2">
+              <RadioGroup value={selectedParentId || ''} onValueChange={v => setSelectedParentId(v as string | null)} className="max-h-[240px] overflow-y-auto pr-2">
                 <div className="space-y-2">
                   {parentsData.data.map(parent => (
                     <div key={parent.parent.id} className="flex items-center space-x-3 rounded-lg border p-3 transition-colors hover:bg-muted/50">
@@ -203,7 +203,7 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
                     <Label>{t.parents.relationship()}</Label>
-                    <Select value={linkRelationship} onValueChange={v => setLinkRelationship(v as Relationship)}>
+                    <Select value={linkRelationship} onValueChange={v => setLinkRelationship((v ?? 'guardian') as Relationship)}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -233,7 +233,7 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
                 onClick={() => linkExistingMutation.mutate()}
                 disabled={!selectedParentId || linkExistingMutation.isPending}
               >
-                {linkExistingMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {linkExistingMutation.isPending && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {t.students.linkParent()}
               </Button>
             </DialogFooter>
@@ -276,7 +276,7 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
                   {' '}
                   <span className="text-destructive">*</span>
                 </Label>
-                <Select value={newRelationship} onValueChange={v => setNewRelationship(v as Relationship)}>
+                <Select value={newRelationship} onValueChange={v => setNewRelationship((v ?? 'guardian') as Relationship)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -319,8 +319,8 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
                 onClick={() => createAndLinkMutation.mutate()}
                 disabled={!canSubmitNew || createAndLinkMutation.isPending}
               >
-                {createAndLinkMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {!createAndLinkMutation.isPending && <UserPlus className="mr-2 h-4 w-4" />}
+                {createAndLinkMutation.isPending && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {!createAndLinkMutation.isPending && <IconUserPlus className="mr-2 h-4 w-4" />}
                 Link parent
               </Button>
             </DialogFooter>

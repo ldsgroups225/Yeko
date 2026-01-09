@@ -1,14 +1,12 @@
 'use client'
 
+import { IconCircleCheck, IconLoader2, IconUserPlus, IconUsers, IconWand } from '@tabler/icons-react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { CheckCircle2, Loader2, UserPlus, Users, Wand2 } from 'lucide-react'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback } from '@workspace/ui/components/avatar'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
+import { Checkbox } from '@workspace/ui/components/checkbox'
 import {
   Dialog,
   DialogContent,
@@ -16,9 +14,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+} from '@workspace/ui/components/dialog'
+import { Label } from '@workspace/ui/components/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
+import { useState } from 'react'
+import { toast } from 'sonner'
 import { useTranslations } from '@/i18n'
 import { parentsOptions } from '@/lib/queries/parents'
 import { studentsKeys } from '@/lib/queries/students'
@@ -169,7 +169,7 @@ export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
       <DialogContent className="max-w-2xl backdrop-blur-xl bg-card/95 border-border/40">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Wand2 className="h-5 w-5" />
+            <IconWand className="h-5 w-5" />
             {t.students.autoMatchParents()}
           </DialogTitle>
           <DialogDescription>{t.students.autoMatchDescription()}</DialogDescription>
@@ -179,7 +179,7 @@ export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
           ? (
               <div className="space-y-4 py-4">
                 <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-border/40 bg-card/50 backdrop-blur-sm p-6">
-                  <CheckCircle2 className="h-12 w-12 text-green-500" />
+                  <IconCircleCheck className="h-12 w-12 text-green-500" />
                   <h3 className="text-lg font-semibold">{t.students.autoMatchComplete()}</h3>
                   <div className="text-center text-sm text-muted-foreground">
                     <p>{t.students.autoMatchLinked({ count: results.linked })}</p>
@@ -196,13 +196,13 @@ export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
           : isLoading
             ? (
                 <div className="flex items-center justify-center py-8">
-                  <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                  <IconLoader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                 </div>
               )
             : suggestions.length === 0
               ? (
                   <div className="flex flex-col items-center justify-center gap-3 py-8 text-center">
-                    <Users className="h-12 w-12 text-muted-foreground" />
+                    <IconUsers className="h-12 w-12 text-muted-foreground" />
                     <h3 className="font-semibold">{t.students.noMatchSuggestions()}</h3>
                     <p className="text-sm text-muted-foreground">{t.students.noMatchSuggestionsDescription()}</p>
                     <DialogFooter className="mt-4">
@@ -251,7 +251,7 @@ export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
                                   {suggestion.existingParent
                                     ? (
                                         <Badge variant="secondary" className="flex items-center gap-1">
-                                          <UserPlus className="h-3 w-3" />
+                                          <IconUserPlus className="h-3 w-3" />
                                           {t.students.existingParentFound()}
                                         </Badge>
                                       )
@@ -287,7 +287,7 @@ export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
                                     </Label>
                                     <Select
                                       value={match?.relationship || 'guardian'}
-                                      onValueChange={v => updateRelationship(suggestion.studentId, v as Relationship)}
+                                      onValueChange={v => updateRelationship(suggestion.studentId, (v ?? 'guardian') as Relationship)}
                                     >
                                       <SelectTrigger className="h-8 w-[140px]">
                                         <SelectValue />
@@ -315,8 +315,8 @@ export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
                         onClick={processMatches}
                         disabled={selectedMatches.size === 0 || isProcessing}
                       >
-                        {isProcessing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        <Wand2 className="mr-2 h-4 w-4" />
+                        {isProcessing && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        <IconWand className="mr-2 h-4 w-4" />
                         {t.students.linkSelected({ count: selectedMatches.size })}
                       </Button>
                     </DialogFooter>

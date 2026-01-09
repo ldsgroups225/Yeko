@@ -1,5 +1,5 @@
-import { Calendar, CheckCircle, Clock, FileCheck, XCircle } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
+import { IconCalendar, IconCircleCheck, IconCircleX, IconClock, IconFileCheck } from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
@@ -19,28 +19,28 @@ interface StudentAttendanceStatusBadgeProps {
 const statusConfig: Record<
   StudentAttendanceStatus,
   {
-    icon: typeof CheckCircle
+    icon: typeof IconCircleCheck
     colorClass: string
   }
 > = {
   present: {
-    icon: CheckCircle,
+    icon: IconCircleCheck,
     colorClass: 'bg-green-500/10 text-green-600 border-green-200',
   },
   late: {
-    icon: Clock,
+    icon: IconClock,
     colorClass: 'bg-amber-500/10 text-amber-600 border-amber-200',
   },
   absent: {
-    icon: XCircle,
+    icon: IconCircleX,
     colorClass: 'bg-red-500/10 text-red-600 border-red-200',
   },
   excused: {
-    icon: FileCheck,
+    icon: IconFileCheck,
     colorClass: 'bg-blue-500/10 text-blue-600 border-blue-200',
   },
   on_leave: {
-    icon: Calendar,
+    icon: IconCalendar,
     colorClass: 'bg-purple-500/10 text-purple-600 border-purple-200',
   },
 }

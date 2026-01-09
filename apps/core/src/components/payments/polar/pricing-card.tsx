@@ -1,14 +1,14 @@
 import type { Price, Product, Subscription } from './types'
-import { Check } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { IconCheck } from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
+} from '@workspace/ui/components/card'
 
 interface PricingCardProps {
   product: Product
@@ -163,7 +163,7 @@ export function PricingCard({
           <div className="space-y-3 mb-6">
             {features.map(feature => (
               <div key={`feature-${feature.toString().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`} className="flex items-start gap-2">
-                <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                <IconCheck className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                 <span className="text-sm">{feature}</span>
               </div>
             ))}

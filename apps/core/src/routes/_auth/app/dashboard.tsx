@@ -1,19 +1,19 @@
+import {
+  IconAlertCircle,
+  IconBook,
+  IconCircleCheck,
+  IconClock,
+  IconPlus,
+  IconSchool,
+  IconTrendingUp,
+} from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import {
-  AlertCircle,
-  BookOpen,
-  CheckCircle,
-  Clock,
-  Plus,
-  School,
-  TrendingUp,
-} from 'lucide-react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { useEffect } from 'react'
 import { ActivityFeed } from '@/components/dashboard/activity-feed'
 import { StatsCard } from '@/components/dashboard/stats-card'
 import { SystemHealth } from '@/components/dashboard/system-health'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { dashboardStatsQueryOptions, recentActivityQueryOptions, systemHealthQueryOptions } from '@/integrations/tanstack-query/dashboard-options'
 import { authClient } from '@/lib/auth-client'
 import { useLogger } from '@/lib/logger'
@@ -46,7 +46,7 @@ function Dashboard() {
     {
       title: 'Ajouter une école',
       description: 'Enregistrer une nouvelle école partenaire',
-      icon: Plus,
+      icon: IconPlus,
       href: '/schools/create',
       color: 'text-primary',
       bgColor: 'bg-primary/10',
@@ -54,7 +54,7 @@ function Dashboard() {
     {
       title: 'Créer un programme',
       description: 'Définir des modèles de programmes ministériels',
-      icon: BookOpen,
+      icon: IconBook,
       href: '/catalogs/programs',
       color: 'text-primary',
       bgColor: 'bg-primary/10',
@@ -62,7 +62,7 @@ function Dashboard() {
     {
       title: 'Voir les analytiques',
       description: 'Mesures de performance du système',
-      icon: TrendingUp,
+      icon: IconTrendingUp,
       href: '/analytics',
       color: 'text-secondary',
       bgColor: 'bg-secondary/10',
@@ -70,7 +70,7 @@ function Dashboard() {
     {
       title: 'Tickets de support',
       description: 'Gérer les demandes de support',
-      icon: AlertCircle,
+      icon: IconAlertCircle,
       href: '/support',
       color: 'text-secondary',
       bgColor: 'bg-secondary/10',
@@ -157,7 +157,7 @@ function Dashboard() {
           value={stats?.totalSchools || 0}
           change={12}
           changeLabel="actives ce mois"
-          icon={School}
+          icon={IconSchool}
           isLoading={statsLoading}
           error={statsError?.message}
         />
@@ -167,7 +167,7 @@ function Dashboard() {
           value={stats?.activeSchools || 0}
           change={8}
           changeLabel="ce mois"
-          icon={CheckCircle}
+          icon={IconCircleCheck}
           isLoading={statsLoading}
           error={statsError?.message}
         />
@@ -177,7 +177,7 @@ function Dashboard() {
           value={stats?.recentRegistrations || 0}
           change={15}
           changeLabel="ces 30 derniers jours"
-          icon={TrendingUp}
+          icon={IconTrendingUp}
           isLoading={statsLoading}
           error={statsError?.message}
         />
@@ -187,7 +187,7 @@ function Dashboard() {
           value={stats?.inactiveSchools || 0}
           change={-5}
           changeLabel="ce mois"
-          icon={Clock}
+          icon={IconClock}
           isLoading={statsLoading}
           error={statsError?.message}
         />
@@ -238,7 +238,7 @@ function Dashboard() {
                 <div key={school.id} className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
                     <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                      <School className="h-5 w-5 text-primary" />
+                      <IconSchool className="h-5 w-5 text-primary" />
                     </div>
                     <div>
                       <p className="text-sm font-medium leading-none">
@@ -255,13 +255,13 @@ function Dashboard() {
                     {school.status === 'active'
                       ? (
                           <>
-                            <CheckCircle className="h-4 w-4 text-primary" />
+                            <IconCircleCheck className="h-4 w-4 text-primary" />
                             <span className="text-sm text-primary">Active</span>
                           </>
                         )
                       : (
                           <>
-                            <Clock className="h-4 w-4 text-secondary" />
+                            <IconClock className="h-4 w-4 text-secondary" />
                             <span className="text-sm text-secondary">En attente</span>
                           </>
                         )}

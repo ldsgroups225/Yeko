@@ -1,15 +1,15 @@
+import { IconCalendar, IconCheck, IconSelector } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
-import { Calendar, Check, ChevronsUpDown } from 'lucide-react'
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@workspace/ui/components/button'
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandItem,
   CommandList,
-} from '@/components/ui/command'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+} from '@workspace/ui/components/command'
+import { Popover, PopoverContent, PopoverTrigger } from '@workspace/ui/components/popover'
+import { useState } from 'react'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
@@ -46,7 +46,7 @@ export function SchoolYearSwitcher() {
   if (isLoading) {
     return (
       <div className="flex h-9 w-[156px] items-center gap-2 rounded-md border border-input bg-background px-3">
-        <Calendar className="h-4 w-4 text-muted-foreground" />
+        <IconCalendar className="h-4 w-4 text-muted-foreground" />
         <span className="text-sm text-muted-foreground">{t.common.loading()}</span>
       </div>
     )
@@ -55,7 +55,7 @@ export function SchoolYearSwitcher() {
   if (!schoolYears || schoolYears.length === 0) {
     return (
       <div className="flex h-9 w-[156px] items-center gap-2 rounded-md border border-input bg-background px-3">
-        <Calendar className="h-4 w-4 text-muted-foreground" />
+        <IconCalendar className="h-4 w-4 text-muted-foreground" />
         <span className="text-xs text-muted-foreground">{t.schoolYear.noYears()}</span>
       </div>
     )
@@ -75,12 +75,12 @@ export function SchoolYearSwitcher() {
           className="h-9 w-[156px] justify-between"
         >
           <div className="flex items-center gap-2 overflow-hidden">
-            <Calendar className="h-4 w-4 shrink-0 text-muted-foreground" />
+            <IconCalendar className="h-4 w-4 shrink-0 text-muted-foreground" />
             <span className="truncate text-sm">
               {currentYear?.template?.name || t.schoolYear.select()}
             </span>
           </div>
-          <ChevronsUpDown className="ml-1 h-4 w-4 shrink-0 opacity-50" />
+          <IconSelector className="ml-1 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0" align="start">
@@ -103,7 +103,7 @@ export function SchoolYearSwitcher() {
                       </span>
                     )}
                   </div>
-                  <Check
+                  <IconCheck
                     className={cn(
                       'h-4 w-4',
                       schoolYearId === year.id ? 'opacity-100' : 'opacity-0',

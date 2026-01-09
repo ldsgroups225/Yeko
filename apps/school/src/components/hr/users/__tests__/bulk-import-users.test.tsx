@@ -73,7 +73,7 @@ Kouadio Yao,kouadio@example.com,+225 01 23 45 67,staff,active`
       // Generate 100 rows
       let csvContent = 'name,email,phone,roles,status\n'
       for (let i = 1; i <= 100; i++) {
-        csvContent += `User ${i},user${i}@example.com,+225 0${i},teacher,active\n`
+        csvContent += `IconUser ${i},user${i}@example.com,+225 0${i},teacher,active\n`
       }
 
       const file = new File([csvContent], 'users.csv', { type: 'text/csv' })
@@ -82,8 +82,8 @@ Kouadio Yao,kouadio@example.com,+225 01 23 45 67,staff,active`
       await user.upload(input, file)
 
       await waitFor(() => {
-        expect(screen.getByText('User 1')).toBeInTheDocument()
-        // Check that the total rows badge is displayed
+        expect(screen.getByText('IconUser 1')).toBeInTheDocument()
+        // IconCheck that the total rows badge is displayed
         expect(screen.getByText(/total rows/i)).toBeInTheDocument()
       })
     })
@@ -174,9 +174,9 @@ Jane Smith,jane@example.com,+225 09 10 11 12,teacher,active`
       await user.upload(input, file)
 
       await waitFor(() => {
-        // Check for row counts - text is split across elements
+        // IconCheck for row counts - text is split across elements
         expect(screen.getByText(/total rows/i)).toBeInTheDocument()
-        // Check that both valid and invalid badges are present
+        // IconCheck that both valid and invalid badges are present
         const badges = screen.getAllByText(/valid/i)
         expect(badges.length).toBeGreaterThanOrEqual(2) // "valid" and "invalid"
       })
@@ -372,7 +372,7 @@ John Doe,john@example.com,+225 01 02 03 04,teacher,active`
       const user = userEvent.setup()
       render(<BulkImportUsers />)
 
-      const downloadButton = screen.getByRole('button', { name: /Download Template/i })
+      const downloadButton = screen.getByRole('button', { name: /IconDownload Template/i })
       await user.click(downloadButton)
 
       // Template download is triggered (we can't test actual download in jsdom)

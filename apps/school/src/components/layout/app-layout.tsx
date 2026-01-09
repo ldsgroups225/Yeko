@@ -1,4 +1,4 @@
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
+import { SidebarInset, SidebarProvider } from '@workspace/ui/components/sidebar'
 import { Header } from './header'
 import { AppSidebar } from './sidebar'
 

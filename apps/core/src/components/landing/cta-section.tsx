@@ -1,16 +1,16 @@
-import { ArrowRight, Sparkles } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { IconArrowRight, IconSparkles } from '@tabler/icons-react'
+import { Button } from '@workspace/ui/components/button'
 
 export function CTASection() {
   return (
     <section className="relative py-24 sm:py-32 overflow-hidden">
       {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
+      <div className="absolute inset-0 bg-linear-to-br from-primary/10 via-background to-secondary/10" />
 
       <div className="relative mx-auto max-w-4xl px-6 lg:px-8">
         <div className="text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary font-medium mb-6">
-            <Sparkles className="h-4 w-4" />
+            <IconSparkles className="h-4 w-4" />
             <span>Join 200+ Schools Already Using Yeko</span>
           </div>
 
@@ -27,7 +27,7 @@ export function CTASection() {
             <Button size="lg" className="group h-14 px-8 text-lg" asChild>
               <a href="/signup">
                 Start Free Trial Now
-                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                <IconArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
               </a>
             </Button>
             <Button variant="outline" size="lg" className="h-14 px-8 text-lg" asChild>

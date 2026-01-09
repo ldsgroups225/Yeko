@@ -32,7 +32,7 @@ export const getClasses = createServerFn()
       throw new Error('No school context')
     await requirePermission('classes', 'view')
 
-    // Filter out null values to match ClassFilters type
+    // IconFilter out null values to match ClassFilters type
     const filters = {
       ...data,
       schoolId: context.schoolId,

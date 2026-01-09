@@ -58,7 +58,7 @@ export const getPresignedUploadUrl = createServerFn()
     // Try to initialize R2 from environment variables
     ensureR2Initialized()
 
-    // Check if R2 is configured
+    // IconCheck if R2 is configured
     if (!isR2Configured()) {
       return {
         success: false as const,
@@ -71,7 +71,7 @@ export const getPresignedUploadUrl = createServerFn()
     if (!isValidImageType(contentType)) {
       return {
         success: false as const,
-        error: 'Type de fichier non supporté. Utilisez JPEG, PNG, GIF, WebP ou SVG.',
+        error: 'IconTypography de fichier non supporté. Utilisez JPEG, PNG, GIF, WebP ou SVG.',
         configured: true,
       }
     }

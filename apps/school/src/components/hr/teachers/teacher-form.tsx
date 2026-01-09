@@ -1,23 +1,23 @@
 import type { TeacherFormData } from '@/schemas/teacher'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { IconBook, IconInfoCircle, IconLoader2, IconSchool, IconShield } from '@tabler/icons-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { BookOpen, GraduationCap, Info, Loader2, Shield } from 'lucide-react'
-import { motion } from 'motion/react'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import { UserCombobox } from '@/components/hr/staff/user-combobox'
-import { SubjectMultiSelect } from '@/components/hr/teachers/subject-multi-select'
-import { Button } from '@/components/ui/button'
-import { DatePicker } from '@/components/ui/date-picker'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { Button } from '@workspace/ui/components/button'
+import { DatePicker } from '@workspace/ui/components/date-picker'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from '@workspace/ui/components/select'
+import { motion } from 'motion/react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { UserCombobox } from '@/components/hr/staff/user-combobox'
+import { SubjectMultiSelect } from '@/components/hr/teachers/subject-multi-select'
 import { useTranslations } from '@/i18n'
 import { teacherCreateSchema } from '@/schemas/teacher'
 import { createNewTeacher, updateExistingTeacher } from '@/school/functions/teachers'
@@ -117,7 +117,7 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
       >
         <div className="flex items-center gap-2 mb-8">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <Info className="h-4 w-4" />
+            <IconInfoCircle className="h-4 w-4" />
           </div>
           <h2 className="text-xl font-serif font-semibold">{t.hr.teachers.basicInfo()}</h2>
         </div>
@@ -157,7 +157,6 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
               date={watch('hireDate') || undefined}
               onSelect={date => setValue('hireDate', date)}
               placeholder={t.hr.teachers.selectHireDate()}
-              maxDate={new Date()}
             />
           </div>
 
@@ -209,7 +208,7 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
       >
         <div className="flex items-center gap-2 mb-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <BookOpen className="h-4 w-4" />
+            <IconBook className="h-4 w-4" />
           </div>
           <h2 className="text-xl font-serif font-semibold">{t.hr.teachers.subjectAssignment()}</h2>
         </div>
@@ -249,14 +248,14 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
         >
           {isLoading
             ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
               )
             : isEditing
               ? (
-                  <Shield className="mr-2 h-4 w-4" />
+                  <IconShield className="mr-2 h-4 w-4" />
                 )
               : (
-                  <GraduationCap className="mr-2 h-4 w-4" />
+                  <IconSchool className="mr-2 h-4 w-4" />
                 )}
           {isEditing ? t.common.save() : t.common.create()}
         </Button>

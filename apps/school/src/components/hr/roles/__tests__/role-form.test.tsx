@@ -52,7 +52,7 @@ describe('roleForm Component', () => {
     })
   })
 
-  describe('rendering - Edit Mode', () => {
+  describe('rendering - IconEdit Mode', () => {
     const initialData = {
       id: '123',
       name: 'Administrator',

@@ -1,16 +1,16 @@
 import type { ReactNode } from 'react'
-import { Languages, LogOut, Palette } from 'lucide-react'
-import { LanguageSwitcher } from '@/components/language-switcher'
-import { ThemeToggle } from '@/components/theme/theme-toggle'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
+import { IconLanguage, IconLogout, IconPalette } from '@tabler/icons-react'
+import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
+import { Button } from '@workspace/ui/components/button'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
+} from '@workspace/ui/components/dialog'
+import { LanguageSwitcher } from '@/components/language-switcher'
+import { ThemeToggle } from '@/components/theme/theme-toggle'
 import { authClient } from '@/lib/auth-client'
 
 interface AccountDialogProps {
@@ -63,14 +63,14 @@ export function AccountDialog({ children }: AccountDialogProps) {
           <div className="flex flex-col gap-4 w-full mt-6">
             <div className="flex items-center justify-between w-full py-3 px-4 rounded-lg border bg-card">
               <span className="text-sm font-medium flex items-center gap-2">
-                <Palette className="h-4 w-4" />
+                <IconPalette className="h-4 w-4" />
                 Theme
               </span>
               <ThemeToggle />
             </div>
             <div className="flex items-center justify-between w-full py-3 px-4 rounded-lg border bg-card">
               <span className="text-sm font-medium flex items-center gap-2">
-                <Languages className="h-4 w-4" />
+                <IconLanguage className="h-4 w-4" />
                 Language
               </span>
               <LanguageSwitcher />
@@ -81,7 +81,7 @@ export function AccountDialog({ children }: AccountDialogProps) {
               size="lg"
               className="w-full gap-2"
             >
-              <LogOut className="h-5 w-5" />
+              <IconLogout className="h-5 w-5" />
               Sign Out
             </Button>
           </div>

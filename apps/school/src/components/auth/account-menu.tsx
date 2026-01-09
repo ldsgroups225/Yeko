@@ -1,13 +1,10 @@
-import { Languages, LogOut, Palette, Settings, User } from 'lucide-react'
-import { toast } from 'sonner'
-import { LanguageSwitcher } from '@/components/layout/language-switcher'
-import { ThemeToggle } from '@/components/theme/theme-toggle'
+import { IconLanguage, IconLogout, IconPalette, IconSettings, IconUser } from '@tabler/icons-react'
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
+} from '@workspace/ui/components/avatar'
+import { Button } from '@workspace/ui/components/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,7 +13,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from '@workspace/ui/components/dropdown-menu'
+import { toast } from 'sonner'
+import { LanguageSwitcher } from '@/components/layout/language-switcher'
+import { ThemeToggle } from '@/components/theme/theme-toggle'
 import { useTranslations } from '@/i18n'
 import { authClient, signOutWithCache } from '@/lib/auth-client'
 
@@ -58,7 +58,7 @@ export function AccountMenu() {
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-80" align="end" forceMount>
+      <DropdownMenuContent className="w-80" align="end">
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">{user.name}</p>
@@ -70,11 +70,11 @@ export function AccountMenu() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem>
-            <User className="mr-2 h-4 w-4" />
+            <IconUser className="mr-2 h-4 w-4" />
             <span>{t.account.profile()}</span>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Settings className="mr-2 h-4 w-4" />
+            <IconSettings className="mr-2 h-4 w-4" />
             <span>{t.account.settings()}</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
@@ -84,7 +84,7 @@ export function AccountMenu() {
         <div className="px-2 py-2">
           <div className="flex items-center justify-between py-2 px-2 rounded-lg border bg-card pointer-events-none">
             <span className="text-sm font-medium flex items-center gap-2">
-              <Palette className="h-4 w-4" />
+              <IconPalette className="h-4 w-4" />
               {t.account.theme()}
             </span>
             <div className="pointer-events-auto">
@@ -97,7 +97,7 @@ export function AccountMenu() {
         <div className="px-2 pb-2">
           <div className="flex items-center justify-between py-2 px-2 rounded-lg border bg-card pointer-events-none">
             <span className="text-sm font-medium flex items-center gap-2">
-              <Languages className="h-4 w-4" />
+              <IconLanguage className="h-4 w-4" />
               {t.account.language()}
             </span>
             <div className="pointer-events-auto">
@@ -108,7 +108,7 @@ export function AccountMenu() {
 
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
-          <LogOut className="mr-2 h-4 w-4" />
+          <IconLogout className="mr-2 h-4 w-4" />
           <span>{t.auth.signOut()}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>

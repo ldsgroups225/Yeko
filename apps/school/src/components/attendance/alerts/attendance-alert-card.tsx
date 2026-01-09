@@ -1,6 +1,6 @@
-import { Check, X } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { IconCheck, IconX } from '@tabler/icons-react'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardHeader } from '@workspace/ui/components/card'
 import { useTranslations } from '@/i18n'
 import { AlertSeverityBadge } from './alert-severity-badge'
 
@@ -65,7 +65,7 @@ export function AttendanceAlertCard({
                   variant="outline"
                   onClick={() => onAcknowledge(alert.id)}
                 >
-                  <Check className="mr-1 h-3 w-3" />
+                  <IconCheck className="mr-1 h-3 w-3" />
                   {t.alerts.acknowledge()}
                 </Button>
               )}
@@ -75,7 +75,7 @@ export function AttendanceAlertCard({
                   variant="ghost"
                   onClick={() => onDismiss(alert.id)}
                 >
-                  <X className="mr-1 h-3 w-3" />
+                  <IconX className="mr-1 h-3 w-3" />
                   {t.alerts.dismiss()}
                 </Button>
               )}

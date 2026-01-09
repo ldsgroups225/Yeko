@@ -7998,11 +7998,11 @@ export type TranslationFunctions = {
 		 */
 		noSchool: () => LocalizedString
 		/**
-		 * Plus
+		 * IconPlus
 		 */
 		more: () => LocalizedString
 		/**
-		 * Plus de pages
+		 * IconPlus de pages
 		 */
 		morePages: () => LocalizedString
 		/**
@@ -9262,7 +9262,7 @@ export type TranslationFunctions = {
 		 */
 		photoUploadSuccess: () => LocalizedString
 		/**
-		 * Type de fichier invalide. Veuillez télécharger une image.
+		 * IconTypography de fichier invalide. Veuillez télécharger une image.
 		 */
 		invalidFileType: () => LocalizedString
 		/**
@@ -10033,7 +10033,7 @@ export type TranslationFunctions = {
 			 */
 			rolesRequired: () => LocalizedString
 			/**
-			 * Type de fichier invalide. Veuillez sélectionner un fichier CSV
+			 * IconTypography de fichier invalide. Veuillez sélectionner un fichier CSV
 			 */
 			invalidFileType: () => LocalizedString
 			/**
@@ -11261,7 +11261,7 @@ export type TranslationFunctions = {
 			 */
 			createDescription: () => LocalizedString
 			/**
-			 * Type de frais créé avec succès
+			 * IconTypography de frais créé avec succès
 			 */
 			created: () => LocalizedString
 			/**
@@ -11385,7 +11385,7 @@ export type TranslationFunctions = {
 			 */
 			noAccounts: () => LocalizedString
 			/**
-			 * Type de compte
+			 * IconTypography de compte
 			 */
 			type: () => LocalizedString
 			/**
@@ -11457,11 +11457,11 @@ export type TranslationFunctions = {
 			 */
 			code: () => LocalizedString
 			/**
-			 * Type de réduction
+			 * IconTypography de réduction
 			 */
 			type: () => LocalizedString
 			/**
-			 * Type de calcul
+			 * IconTypography de calcul
 			 */
 			calculationType: () => LocalizedString
 			/**
@@ -12920,11 +12920,11 @@ export type TranslationFunctions = {
 				 */
 				selectTerm: () => LocalizedString
 				/**
-				 * Type de note
+				 * IconTypography de note
 				 */
 				gradeType: () => LocalizedString
 				/**
-				 * Type de note
+				 * IconTypography de note
 				 */
 				selectGradeType: () => LocalizedString
 				/**
@@ -13144,7 +13144,7 @@ export type TranslationFunctions = {
 				 */
 				allStatuses: () => LocalizedString
 				/**
-				 * Type de note
+				 * IconTypography de note
 				 */
 				gradeType: () => LocalizedString
 				/**
@@ -14443,7 +14443,7 @@ export type TranslationFunctions = {
 			 */
 			title: () => LocalizedString
 			/**
-			 * Type
+			 * IconTypography
 			 */
 			type: () => LocalizedString
 			/**
@@ -15203,7 +15203,7 @@ export type TranslationFunctions = {
 			 */
 			status: () => LocalizedString
 			/**
-			 * Type
+			 * IconTypography
 			 */
 			type: () => LocalizedString
 			/**
@@ -15307,7 +15307,7 @@ export type TranslationFunctions = {
 			 */
 			codePlaceholder: () => LocalizedString
 			/**
-			 * Type
+			 * IconTypography
 			 */
 			type: () => LocalizedString
 			/**

@@ -1,6 +1,6 @@
+import { Label } from '@workspace/ui/components/label'
+import { Switch } from '@workspace/ui/components/switch'
 import { motion } from 'motion/react'
-import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 

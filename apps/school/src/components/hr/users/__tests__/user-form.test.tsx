@@ -53,7 +53,7 @@ describe('userForm Component', () => {
     })
   })
 
-  describe('rendering - Edit Mode', () => {
+  describe('rendering - IconEdit Mode', () => {
     const existingUser = {
       id: 'user-123',
       name: 'John Doe',

@@ -1,8 +1,8 @@
 import type { NotificationSettings, SchoolSettings } from '@/schemas/school-profile'
+import { Button } from '@workspace/ui/components/button'
+import { Label } from '@workspace/ui/components/label'
+import { Switch } from '@workspace/ui/components/switch'
 import { useForm } from 'react-hook-form'
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
 import { useTranslations } from '@/i18n'
 
 interface NotificationSettingsFormProps {

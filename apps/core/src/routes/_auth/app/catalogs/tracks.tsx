@@ -1,24 +1,24 @@
 import type { FormEvent } from 'react'
 import type { CreateTrackInput, UpdateTrackInput } from '@/schemas/catalog'
+import {
+  IconAward,
+  IconDeviceFloppy,
+  IconEdit,
+  IconPlus,
+  IconSchool,
+  IconTrash,
+  IconX,
+} from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import {
-  Award,
-  Edit,
-  GraduationCap,
-  Plus,
-  Save,
-  Trash2,
-  X,
-} from 'lucide-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import {
   createTrackMutationOptions,
   deleteTrackMutationOptions,
@@ -150,7 +150,7 @@ function TracksManagement() {
           </p>
         </div>
         <Button className="gap-2" onClick={() => setIsCreating(true)}>
-          <Plus className="h-4 w-4" />
+          <IconPlus className="h-4 w-4" />
           Ajouter une Filière
         </Button>
       </div>
@@ -202,11 +202,11 @@ function TracksManagement() {
               </div>
               <div className="flex justify-end gap-2">
                 <Button type="button" variant="outline" onClick={() => setIsCreating(false)}>
-                  <X className="h-4 w-4 mr-2" />
+                  <IconX className="h-4 w-4 mr-2" />
                   Annuler
                 </Button>
                 <Button type="submit" disabled={createMutation.isPending}>
-                  <Save className="h-4 w-4 mr-2" />
+                  <IconDeviceFloppy className="h-4 w-4 mr-2" />
                   {createMutation.isPending ? 'Création...' : 'Créer'}
                 </Button>
               </div>
@@ -221,7 +221,7 @@ function TracksManagement() {
           <CardHeader>
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                <GraduationCap className="h-5 w-5 text-primary" />
+                <IconSchool className="h-5 w-5 text-primary" />
               </div>
               <div>
                 <CardTitle>{level.name}</CardTitle>
@@ -292,11 +292,11 @@ function TracksManagement() {
                                     variant="outline"
                                     onClick={() => setEditingTrack(null)}
                                   >
-                                    <X className="h-4 w-4 mr-2" />
+                                    <IconX className="h-4 w-4 mr-2" />
                                     Annuler
                                   </Button>
                                   <Button type="submit" disabled={updateMutation.isPending}>
-                                    <Save className="h-4 w-4 mr-2" />
+                                    <IconDeviceFloppy className="h-4 w-4 mr-2" />
                                     {updateMutation.isPending ? 'Enregistrement...' : 'Enregistrer'}
                                   </Button>
                                 </div>
@@ -306,7 +306,7 @@ function TracksManagement() {
                               <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors">
                                 <div className="flex items-center gap-4">
                                   <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                                    <Award className="h-5 w-5 text-primary" />
+                                    <IconAward className="h-5 w-5 text-primary" />
                                   </div>
                                   <div>
                                     <h3 className="font-semibold">{track.name}</h3>
@@ -328,7 +328,7 @@ function TracksManagement() {
                                     size="icon"
                                     onClick={() => setEditingTrack(track.id)}
                                   >
-                                    <Edit className="h-4 w-4" />
+                                    <IconEdit className="h-4 w-4" />
                                   </Button>
                                   <Button
                                     variant="ghost"
@@ -336,7 +336,7 @@ function TracksManagement() {
                                     onClick={() => setDeletingTrack({ id: track.id, name: track.name })}
                                     disabled={deleteMutation.isPending}
                                   >
-                                    <Trash2 className="h-4 w-4" />
+                                    <IconTrash className="h-4 w-4" />
                                   </Button>
                                 </div>
                               </div>

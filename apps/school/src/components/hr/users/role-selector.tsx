@@ -1,8 +1,8 @@
+import { IconCheck, IconInfoCircle, IconLoader2, IconShield, IconShieldExclamation, IconSparkles, IconX } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
-import { CheckIcon, Info, Loader2, Shield, ShieldAlert, Sparkles, XIcon } from 'lucide-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 import { AnimatePresence, motion } from 'motion/react'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { getRoles } from '@/school/functions/roles'
@@ -71,7 +71,7 @@ export function RoleSelector({
     return (
       <div className="flex flex-col items-center justify-center py-16 space-y-4">
         <div className="relative">
-          <Loader2 className="h-10 w-10 animate-spin text-primary/60" />
+          <IconLoader2 className="h-10 w-10 animate-spin text-primary/60" />
           <div className="absolute inset-0 blur-xl bg-primary/20 animate-pulse rounded-full" />
         </div>
         <p className="text-sm font-medium text-muted-foreground animate-pulse">{t.common.loading()}</p>
@@ -87,7 +87,7 @@ export function RoleSelector({
         className="rounded-xl border border-dashed border-border/40 bg-card/30 backdrop-blur-sm p-12 text-center"
       >
         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-muted/50 mb-4">
-          <ShieldAlert className="h-6 w-6 text-muted-foreground" />
+          <IconShieldExclamation className="h-6 w-6 text-muted-foreground" />
         </div>
         <p className="text-sm font-medium text-muted-foreground">
           {t.hr.roles.noRoles()}
@@ -102,7 +102,7 @@ export function RoleSelector({
       <div className="flex items-center justify-between pb-2 border-b border-border/40">
         <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <Shield className="h-4 w-4" />
+            <IconShield className="h-4 w-4" />
           </div>
           <div className="text-sm font-semibold text-foreground">
             {selectedRoleIds.length > 0
@@ -126,7 +126,7 @@ export function RoleSelector({
             onClick={handleSelectAll}
             disabled={disabled || roles.length === selectedRoleIds.length}
           >
-            <Sparkles className="mr-1.5 h-3 w-3" />
+            <IconSparkles className="mr-1.5 h-3 w-3" />
             {t.hr.roles.selectAll()}
           </Button>
           <Button
@@ -137,7 +137,7 @@ export function RoleSelector({
             onClick={handleDeselectAll}
             disabled={disabled || selectedRoleIds.length === 0}
           >
-            <XIcon className="mr-1.5 h-3 w-3" />
+            <IconX className="mr-1.5 h-3 w-3" />
             {t.hr.roles.deselectAll()}
           </Button>
         </div>
@@ -201,7 +201,7 @@ export function RoleSelector({
                             )}
                           </div>
                           <div className="h-8 w-8 flex items-center justify-center rounded-lg bg-primary/5 text-primary opacity-0 group-hover:opacity-100 transition-all transform translate-x-1 group-hover:translate-x-0">
-                            <CheckIcon className="h-4 w-4" />
+                            <IconCheck className="h-4 w-4" />
                           </div>
                         </div>
                       </motion.div>
@@ -267,7 +267,7 @@ export function RoleSelector({
                             )}
                           </div>
                           <div className="h-8 w-8 flex items-center justify-center rounded-lg bg-destructive/5 text-destructive opacity-0 group-hover:opacity-100 transition-all transform translate-x-1 group-hover:translate-x-0">
-                            <XIcon className="h-4 w-4" />
+                            <IconX className="h-4 w-4" />
                           </div>
                         </div>
                       </motion.div>
@@ -280,7 +280,7 @@ export function RoleSelector({
 
       {/* Helper Text */}
       <div className="flex items-center gap-2 px-1">
-        <Info className="h-3 w-3 text-muted-foreground" />
+        <IconInfoCircle className="h-3 w-3 text-muted-foreground" />
         <p className="text-[11px] font-medium text-muted-foreground">
           {t.hr.roles.doubleClickHint()}
         </p>

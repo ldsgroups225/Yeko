@@ -5,8 +5,8 @@
  * These examples can be used as reference when implementing features.
  */
 
+import { Button } from '@workspace/ui/components/button'
 import { MultiPermissionGuard, PermissionGuard } from '@/components/auth/permission-guard'
-import { Button } from '@/components/ui/button'
 import { usePermissions } from '@/hooks/use-permissions'
 
 /**
@@ -24,8 +24,8 @@ export function UserManagementExample() {
       {/* Show user list if user can view users */}
       {can('view', 'users') && (
         <div>
-          <h2>Users List</h2>
-          {/* User list component */}
+          <h2>IconUsers List</h2>
+          {/* IconUser list component */}
         </div>
       )}
 
@@ -79,7 +79,7 @@ export function StudentManagementExample() {
 export function FinanceManagementExample() {
   return (
     <div className="space-y-4">
-      {/* User needs EITHER view OR create permission */}
+      {/* IconUser needs EITHER view OR create permission */}
       <MultiPermissionGuard
         actions={['view', 'create']}
         resource="finance"
@@ -88,7 +88,7 @@ export function FinanceManagementExample() {
         <div>Finance Dashboard</div>
       </MultiPermissionGuard>
 
-      {/* User needs BOTH edit AND delete permissions */}
+      {/* IconUser needs BOTH edit AND delete permissions */}
       <MultiPermissionGuard
         actions={['edit', 'delete']}
         resource="finance"

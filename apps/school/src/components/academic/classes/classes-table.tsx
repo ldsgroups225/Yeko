@@ -1,4 +1,5 @@
 import type { ColumnDef } from '@tanstack/react-table'
+import { IconAdjustmentsHorizontal, IconBook, IconChevronLeft, IconChevronRight, IconDots, IconDownload, IconEye, IconPlus, IconSearch, IconTrash, IconUsers, IconX } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import {
@@ -8,25 +9,6 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import {
-  BookOpen,
-  ChevronLeft,
-  ChevronRight,
-  Download,
-  Eye,
-  MoreHorizontal,
-  Plus,
-  Search,
-  SlidersHorizontal,
-  Trash2,
-  Users,
-  X,
-} from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { useCallback, useMemo, useState } from 'react'
-import { toast } from 'sonner'
-import { ClassForm } from '@/components/academic/class-form'
-import { TableSkeleton } from '@/components/hr/table-skeleton'
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -35,21 +17,21 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+} from '@workspace/ui/components/alert-dialog'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Checkbox } from '@workspace/ui/components/checkbox'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@workspace/ui/components/dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+} from '@workspace/ui/components/dropdown-menu'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
+import { Popover, PopoverContent, PopoverTrigger } from '@workspace/ui/components/popover'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
 import {
   Table,
   TableBody,
@@ -57,7 +39,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
+import { useCallback, useMemo, useState } from 'react'
+import { toast } from 'sonner'
+import { ClassForm } from '@/components/academic/class-form'
+import { TableSkeleton } from '@/components/hr/table-skeleton'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useTranslations } from '@/i18n'
 import { deleteClass, getClasses } from '@/school/functions/classes'
@@ -206,7 +193,7 @@ export function ClassesTable({ filters: initialFilters = DEFAULT_FILTERS }: Clas
         header: t.classes.students(),
         cell: ({ row }) => (
           <div className="flex items-center gap-1">
-            <Users className="h-3 w-3 text-muted-foreground" />
+            <IconUsers className="h-3 w-3 text-muted-foreground" />
             <span>
               {row.original.studentsCount}
               {' '}
@@ -221,7 +208,7 @@ export function ClassesTable({ filters: initialFilters = DEFAULT_FILTERS }: Clas
         header: t.classes.subjects(),
         cell: ({ row }) => (
           <div className="flex items-center gap-1">
-            <BookOpen className="h-3 w-3 text-muted-foreground" />
+            <IconBook className="h-3 w-3 text-muted-foreground" />
             <span>{row.original.subjectsCount}</span>
           </div>
         ),
@@ -249,21 +236,21 @@ export function ClassesTable({ filters: initialFilters = DEFAULT_FILTERS }: Clas
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon">
-                <MoreHorizontal className="h-4 w-4" />
+                <IconDots className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="backdrop-blur-xl bg-popover/90 border border-border/40">
               <DropdownMenuItem
                 onClick={() => navigate({ to: `/classes/${row.original.class.id}` })}
               >
-                <Eye className="mr-2 h-4 w-4" />
+                <IconEye className="mr-2 h-4 w-4" />
                 {t.common.view()}
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-destructive focus:text-destructive"
                 onClick={() => setClassToDelete(row.original)}
               >
-                <Trash2 className="mr-2 h-4 w-4" />
+                <IconTrash className="mr-2 h-4 w-4" />
                 {t.common.delete()}
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -303,7 +290,7 @@ export function ClassesTable({ filters: initialFilters = DEFAULT_FILTERS }: Clas
       >
         <div className="flex flex-1 gap-3">
           <div className="relative max-w-sm flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder={t.common.search()}
               value={searchInput}
@@ -315,7 +302,7 @@ export function ClassesTable({ filters: initialFilters = DEFAULT_FILTERS }: Clas
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline" className="border-border/40 bg-card/50 backdrop-blur-sm shadow-none hover:bg-card/80">
-                <SlidersHorizontal className="mr-2 h-4 w-4" />
+                <IconAdjustmentsHorizontal className="mr-2 h-4 w-4" />
                 {t.common.actions()}
                 {status && status !== 'all' && (
                   <Badge variant="secondary" className="ml-2 h-5 rounded-full px-1.5 text-xs">
@@ -328,7 +315,7 @@ export function ClassesTable({ filters: initialFilters = DEFAULT_FILTERS }: Clas
               <div className="space-y-2">
                 <h4 className="font-medium leading-none text-muted-foreground text-xs mb-3 uppercase tracking-wider">{t.common.filters()}</h4>
                 <Label>{t.classes.status()}</Label>
-                <Select value={status} onValueChange={setStatus}>
+                <Select value={status} onValueChange={val => val && setStatus(val)}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder={t.classes.status()} />
                   </SelectTrigger>
@@ -357,7 +344,7 @@ export function ClassesTable({ filters: initialFilters = DEFAULT_FILTERS }: Clas
                   onClick={() => navigate({ to: '/classes/assignments' })}
                   className="w-full justify-start text-sm"
                 >
-                  <Plus className="mr-2 h-4 w-4" />
+                  <IconPlus className="mr-2 h-4 w-4" />
                   {t.academic.assignments.title()}
                 </Button>
                 <Button
@@ -365,7 +352,7 @@ export function ClassesTable({ filters: initialFilters = DEFAULT_FILTERS }: Clas
                   className="w-full justify-start text-sm"
                   onClick={() => toast.info(t.common.comingSoon())}
                 >
-                  <Download className="mr-2 h-4 w-4" />
+                  <IconDownload className="mr-2 h-4 w-4" />
                   {t.common.export()}
                 </Button>
               </div>
@@ -378,7 +365,7 @@ export function ClassesTable({ filters: initialFilters = DEFAULT_FILTERS }: Clas
               onClick={handleClearFilters}
               className="h-10 px-3 text-muted-foreground hover:text-foreground hover:bg-white/20 dark:hover:bg-white/10"
             >
-              <X className="mr-2 h-4 w-4" />
+              <IconX className="mr-2 h-4 w-4" />
               {t.common.refresh()}
             </Button>
           )}
@@ -394,7 +381,7 @@ export function ClassesTable({ filters: initialFilters = DEFAULT_FILTERS }: Clas
           )}
 
           <Button size="sm" onClick={() => setIsAddDialogOpen(true)} className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm">
-            <Plus className="mr-2 h-4 w-4" />
+            <IconPlus className="mr-2 h-4 w-4" />
             {t.classes.addClass()}
           </Button>
         </div>
@@ -418,7 +405,7 @@ export function ClassesTable({ filters: initialFilters = DEFAULT_FILTERS }: Clas
           : data?.length === 0
             ? (
                 <div className="flex min-h-[300px] flex-col items-center justify-center rounded-xl border border-dashed border-border/40 bg-card/50 p-8 text-center backdrop-blur-sm">
-                  <Users className="mx-auto h-12 w-12 text-muted-foreground/50" />
+                  <IconUsers className="mx-auto h-12 w-12 text-muted-foreground/50" />
                   <h3 className="mt-4 text-lg font-semibold">{t.tables.noClassesFound()}</h3>
                   <p className="mt-2 max-w-sm text-sm text-muted-foreground">{t.tables.createFirstClass()}</p>
                 </div>
@@ -467,19 +454,19 @@ export function ClassesTable({ filters: initialFilters = DEFAULT_FILTERS }: Clas
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon" className="hover:bg-card/20">
-                              <MoreHorizontal className="h-4 w-4" />
+                              <IconDots className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="backdrop-blur-xl bg-popover/90 border border-border/40">
                             <DropdownMenuItem onClick={() => navigate({ to: `/classes/${item.class.id}` })}>
-                              <Eye className="mr-2 h-4 w-4" />
+                              <IconEye className="mr-2 h-4 w-4" />
                               {t.common.view()}
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               onClick={() => setClassToDelete(item)}
                               className="text-destructive focus:text-destructive"
                             >
-                              <Trash2 className="mr-2 h-4 w-4" />
+                              <IconTrash className="mr-2 h-4 w-4" />
                               {t.common.delete()}
                             </DropdownMenuItem>
                           </DropdownMenuContent>
@@ -490,7 +477,7 @@ export function ClassesTable({ filters: initialFilters = DEFAULT_FILTERS }: Clas
                           {item.class.status === 'active' ? t.common.active() : t.common.archived()}
                         </Badge>
                         <Badge variant="outline" className="border-border/40 bg-card/20 backdrop-blur-md">
-                          <Users className="mr-1 h-3 w-3" />
+                          <IconUsers className="mr-1 h-3 w-3" />
                           {item.studentsCount}
                         </Badge>
                       </div>
@@ -526,7 +513,7 @@ export function ClassesTable({ filters: initialFilters = DEFAULT_FILTERS }: Clas
                     <TableCell colSpan={columns.length} className="h-96">
                       <div className="flex flex-col items-center justify-center text-center">
                         <div className="rounded-full bg-white/10 p-6 backdrop-blur-xl mb-4">
-                          <Users className="h-12 w-12 text-muted-foreground/50" />
+                          <IconUsers className="h-12 w-12 text-muted-foreground/50" />
                         </div>
                         <h3 className="text-lg font-semibold">{t.tables.noClassesFound()}</h3>
                         <p className="mt-2 max-w-sm text-sm text-muted-foreground">{t.tables.createFirstClass()}</p>
@@ -568,7 +555,7 @@ export function ClassesTable({ filters: initialFilters = DEFAULT_FILTERS }: Clas
             disabled={!table.getCanPreviousPage()}
             className="border-border/40 bg-card/50 backdrop-blur-sm"
           >
-            <ChevronLeft className="h-4 w-4 mr-1" />
+            <IconChevronLeft className="h-4 w-4 mr-1" />
             {t.common.previous()}
           </Button>
           <span className="text-sm text-muted-foreground">
@@ -588,7 +575,7 @@ export function ClassesTable({ filters: initialFilters = DEFAULT_FILTERS }: Clas
             className="border-border/40 bg-card/50 backdrop-blur-sm"
           >
             {t.common.next()}
-            <ChevronRight className="h-4 w-4 ml-1" />
+            <IconChevronRight className="h-4 w-4 ml-1" />
           </Button>
         </div>
       )}

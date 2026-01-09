@@ -1,17 +1,17 @@
+import { IconEdit, IconSchool, IconTrash, IconUsers } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { Edit, GraduationCap, Trash2, Users } from 'lucide-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
+import { Skeleton } from '@workspace/ui/components/skeleton'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { ClassSubjectManager } from '@/components/academic/class-subjects/class-subject-manager'
 import { ClassStudentList } from '@/components/academic/classes/class-student-list'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useTranslations } from '@/i18n'
 import { deleteClass, getClassById } from '@/school/functions/classes'
 
@@ -90,7 +90,7 @@ function ClassDetailPage() {
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-4">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-            <GraduationCap className="h-8 w-8 text-primary" />
+            <IconSchool className="h-8 w-8 text-primary" />
           </div>
           <div>
             <h1 className="text-3xl font-bold tracking-tight">{className}</h1>
@@ -111,14 +111,14 @@ function ClassDetailPage() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={() => setShowDeleteDialog(true)}>
-            <Trash2 className="mr-2 h-4 w-4" />
+            <IconTrash className="mr-2 h-4 w-4" />
             {t.common.delete()}
           </Button>
           <Button
             size="sm"
             onClick={() => navigate({ to: '/classes/$classId/edit', params: { classId } })}
           >
-            <Edit className="mr-2 h-4 w-4" />
+            <IconEdit className="mr-2 h-4 w-4" />
             {t.common.edit()}
           </Button>
         </div>
@@ -139,7 +139,7 @@ function ClassDetailPage() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center gap-2">
-                  <Users className="h-5 w-5 text-primary" />
+                  <IconUsers className="h-5 w-5 text-primary" />
                   <span className="text-2xl font-bold">{studentsCount}</span>
                   <span className="text-muted-foreground">
                     /

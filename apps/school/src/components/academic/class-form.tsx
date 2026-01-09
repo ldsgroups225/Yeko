@@ -1,16 +1,16 @@
 import type { getClasses } from '@/school/functions/classes'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { IconActivity, IconCalendar, IconCheck, IconLayoutGrid, IconLoader2, IconSchool, IconUser, IconUsers } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
-import { Activity, Calendar as CalendarIcon, Check, GraduationCap, LayoutGrid, Loader2, User as UserIcon, Users as UsersIcon } from 'lucide-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
 import { motion } from 'motion/react'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { createClass, updateClass } from '@/school/functions/classes'
@@ -135,7 +135,7 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
         {/* Grade Selection */}
         <div className="space-y-2">
           <Label htmlFor="gradeId" className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            <GraduationCap className="h-3.5 w-3.5" />
+            <IconSchool className="h-3.5 w-3.5" />
             {t.classes.grade()}
             {' '}
             *
@@ -166,7 +166,7 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
         {/* Series Selection */}
         <div className="space-y-2">
           <Label htmlFor="seriesId" className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            <LayoutGrid className="h-3.5 w-3.5" />
+            <IconLayoutGrid className="h-3.5 w-3.5" />
             {t.classes.series()}
           </Label>
           <Select value={watch('seriesId') || '__none__'} onValueChange={v => setValue('seriesId', v === '__none__' ? null : v)}>
@@ -185,7 +185,7 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
         {/* Section Input */}
         <div className="space-y-2">
           <Label htmlFor="section" className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            <Activity className="h-3.5 w-3.5" />
+            <IconActivity className="h-3.5 w-3.5" />
             {t.classes.section()}
             {' '}
             *
@@ -206,7 +206,7 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
         {/* Max Students */}
         <div className="space-y-2">
           <Label htmlFor="maxStudents" className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            <UsersIcon className="h-3.5 w-3.5" />
+            <IconUsers className="h-3.5 w-3.5" />
             {t.classes.maxStudents()}
             {' '}
             *
@@ -227,7 +227,7 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
         {/* Classroom Selection */}
         <div className="space-y-2">
           <Label htmlFor="classroomId" className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            <CalendarIcon className="h-3.5 w-3.5" />
+            <IconCalendar className="h-3.5 w-3.5" />
             {t.classes.classroom()}
           </Label>
           <Select value={watch('classroomId') || '__none__'} onValueChange={v => setValue('classroomId', v === '__none__' ? null : v)}>
@@ -251,7 +251,7 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
         {/* Homeroom Teacher */}
         <div className="space-y-2">
           <Label htmlFor="homeroomTeacherId" className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            <UserIcon className="h-3.5 w-3.5" />
+            <IconUser className="h-3.5 w-3.5" />
             {t.classes.homeroomTeacher()}
           </Label>
           <Select value={watch('homeroomTeacherId') || '__none__'} onValueChange={v => setValue('homeroomTeacherId', v === '__none__' ? null : v)}>
@@ -272,7 +272,7 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
         {/* Status Selection */}
         <div className="space-y-2">
           <Label htmlFor="status" className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            <Activity className="h-3.5 w-3.5" />
+            <IconActivity className="h-3.5 w-3.5" />
             {t.common.status()}
             {' '}
             *
@@ -307,10 +307,10 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
         >
           {mutation.isPending
             ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
               )
             : (
-                <Check className="mr-2 h-4 w-4" />
+                <IconCheck className="mr-2 h-4 w-4" />
               )}
           {isEditing ? t.common.update() : t.common.create()}
         </Button>

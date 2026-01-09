@@ -3,31 +3,20 @@
 import type {
   getEnrollments,
 } from '@/school/functions/enrollments'
+import { IconCheck, IconClipboardCheck, IconDots, IconRefresh, IconSearch, IconX } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
-import {
-  Check,
-  ClipboardCheck,
-  MoreHorizontal,
-  RefreshCw,
-  Search,
-  X,
-} from 'lucide-react'
-import { motion } from 'motion/react'
-import { useMemo, useState } from 'react'
-import { toast } from 'sonner'
+import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 
-import { EmptyState } from '@/components/hr/empty-state'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
+} from '@workspace/ui/components/card'
 import {
   Dialog,
   DialogContent,
@@ -35,23 +24,23 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from '@workspace/ui/components/dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
+} from '@workspace/ui/components/dropdown-menu'
+import { Input } from '@workspace/ui/components/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
+} from '@workspace/ui/components/select'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -59,8 +48,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { Textarea } from '@/components/ui/textarea'
+} from '@workspace/ui/components/table'
+import { Textarea } from '@workspace/ui/components/textarea'
+import { motion } from 'motion/react'
+import { useMemo, useState } from 'react'
+import { toast } from 'sonner'
+import { EmptyState } from '@/components/hr/empty-state'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
@@ -166,7 +159,7 @@ export function EnrollmentsList() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-1 gap-2 flex-wrap">
           <div className="relative flex-1 min-w-[200px] max-w-sm">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder={t.enrollments.searchPlaceholder()}
               value={search}
@@ -174,7 +167,7 @@ export function EnrollmentsList() {
               className="pl-9"
             />
           </div>
-          <Select value={status} onValueChange={setStatus}>
+          <Select value={status} onValueChange={val => setStatus(val ?? '')}>
             <SelectTrigger className="w-[150px]">
               <SelectValue placeholder={t.enrollments.filterByStatus()} />
             </SelectTrigger>
@@ -186,7 +179,7 @@ export function EnrollmentsList() {
               <SelectItem value="transferred">{t.enrollments.statusTransferred()}</SelectItem>
             </SelectContent>
           </Select>
-          <Select value={classId} onValueChange={setClassId}>
+          <Select value={classId} onValueChange={val => setClassId(val ?? '')}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder={t.enrollments.filterByClass()} />
             </SelectTrigger>
@@ -205,7 +198,7 @@ export function EnrollmentsList() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => setBulkReEnrollOpen(true)}>
-            <RefreshCw className="mr-2 h-4 w-4" />
+            <IconRefresh className="mr-2 h-4 w-4" />
             {t.students.bulkReEnroll()}
           </Button>
         </div>
@@ -256,7 +249,7 @@ export function EnrollmentsList() {
                       <TableRow>
                         <TableCell colSpan={6}>
                           <EmptyState
-                            icon={ClipboardCheck}
+                            icon={IconClipboardCheck}
                             title={t.enrollments.noEnrollments()}
                             description={t.enrollments.noEnrollmentsDescription()}
                           />
@@ -332,7 +325,7 @@ export function EnrollmentsList() {
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" size="icon">
-                                  <MoreHorizontal className="h-4 w-4" />
+                                  <IconDots className="h-4 w-4" />
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
@@ -351,14 +344,14 @@ export function EnrollmentsList() {
                                       onClick={() => confirmMutation.mutate(item.enrollment.id)}
                                       disabled={confirmMutation.isPending}
                                     >
-                                      <Check className="mr-2 h-4 w-4 text-green-600" />
+                                      <IconCheck className="mr-2 h-4 w-4 text-green-600" />
                                       {t.enrollments.confirm()}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
                                       className="text-destructive"
                                       onClick={() => handleCancel(item)}
                                     >
-                                      <X className="mr-2 h-4 w-4" />
+                                      <IconX className="mr-2 h-4 w-4" />
                                       {t.enrollments.cancel()}
                                     </DropdownMenuItem>
                                   </>
@@ -370,7 +363,7 @@ export function EnrollmentsList() {
                                       className="text-destructive"
                                       onClick={() => handleCancel(item)}
                                     >
-                                      <X className="mr-2 h-4 w-4" />
+                                      <IconX className="mr-2 h-4 w-4" />
                                       {t.enrollments.cancel()}
                                     </DropdownMenuItem>
                                   </>

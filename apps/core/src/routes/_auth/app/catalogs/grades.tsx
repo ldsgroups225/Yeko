@@ -1,30 +1,30 @@
 import type { Grade } from '@repo/data-ops'
 import type { FormEvent } from 'react'
 import type { CreateGradeInput, CreateSerieInput, UpdateGradeInput, UpdateSerieInput } from '@/schemas/catalog'
+import {
+  IconAward,
+  IconDeviceFloppy,
+  IconDownload,
+  IconEdit,
+  IconPlus,
+  IconSchool,
+  IconTrash,
+  IconUpload,
+  IconX,
+} from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import {
-  Award,
-  Download,
-  Edit,
-  GraduationCap,
-  Plus,
-  Save,
-  Trash2,
-  Upload,
-  X,
-} from 'lucide-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { CatalogListSkeleton, CatalogStatsSkeleton } from '@/components/catalogs/catalog-skeleton'
 import { DraggableGradeList } from '@/components/catalogs/draggable-grade-list'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import {
   bulkCreateSeriesMutationOptions,
   bulkUpdateGradesOrderMutationOptions,
@@ -345,7 +345,7 @@ function GradesManagement() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Niveaux</CardTitle>
-            <GraduationCap className="h-4 w-4 text-muted-foreground" />
+            <IconSchool className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{grades?.length || 0}</div>
@@ -356,7 +356,7 @@ function GradesManagement() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Séries</CardTitle>
-            <Award className="h-4 w-4 text-muted-foreground" />
+            <IconAward className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{series?.length || 0}</div>
@@ -367,7 +367,7 @@ function GradesManagement() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Filières</CardTitle>
-            <Award className="h-4 w-4 text-muted-foreground" />
+            <IconAward className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{tracks?.length || 0}</div>
@@ -382,11 +382,11 @@ function GradesManagement() {
           <h2 className="text-2xl font-bold">Niveau</h2>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={handleExportGrades} disabled={!grades || grades.length === 0}>
-              <Download className="h-4 w-4 mr-2" />
+              <IconDownload className="h-4 w-4 mr-2" />
               Exporter
             </Button>
             <Button className="gap-2" onClick={() => setIsCreatingGrade(true)}>
-              <Plus className="h-4 w-4" />
+              <IconPlus className="h-4 w-4" />
               Ajouter
             </Button>
           </div>
@@ -449,11 +449,11 @@ function GradesManagement() {
                 </div>
                 <div className="flex justify-end gap-2">
                   <Button type="button" variant="outline" onClick={() => setIsCreatingGrade(false)}>
-                    <X className="h-4 w-4 mr-2" />
+                    <IconX className="h-4 w-4 mr-2" />
                     Annuler
                   </Button>
                   <Button type="submit" disabled={createGradeMutation.isPending}>
-                    <Save className="h-4 w-4 mr-2" />
+                    <IconDeviceFloppy className="h-4 w-4 mr-2" />
                     {createGradeMutation.isPending ? 'Création...' : 'Créer'}
                   </Button>
                 </div>
@@ -468,7 +468,7 @@ function GradesManagement() {
             <CardHeader>
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                  <GraduationCap className="h-5 w-5 text-primary" />
+                  <IconSchool className="h-5 w-5 text-primary" />
                 </div>
                 <div>
                   <CardTitle>{track.name}</CardTitle>
@@ -550,11 +550,11 @@ function GradesManagement() {
                                         variant="outline"
                                         onClick={() => setEditingGrade(null)}
                                       >
-                                        <X className="h-4 w-4 mr-2" />
+                                        <IconX className="h-4 w-4 mr-2" />
                                         Annuler
                                       </Button>
                                       <Button type="submit" disabled={updateGradeMutation.isPending}>
-                                        <Save className="h-4 w-4 mr-2" />
+                                        <IconDeviceFloppy className="h-4 w-4 mr-2" />
                                         {updateGradeMutation.isPending ? 'Enregistrement...' : 'Enregistrer'}
                                       </Button>
                                     </div>
@@ -564,7 +564,7 @@ function GradesManagement() {
                                   <div className="flex items-center justify-4 border rounded-lg hover:bg-accent/50 transition-colors">
                                     <div className="flex items-center gap-4">
                                       <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                                        <GraduationCap className="h-5 w-5 text-primary" />
+                                        <IconSchool className="h-5 w-5 text-primary" />
                                       </div>
                                       <div>
                                         <h3 className="font-semibold">{grade.name}</h3>
@@ -586,7 +586,7 @@ function GradesManagement() {
                                         size="icon"
                                         onClick={() => setEditingGrade(grade.id)}
                                       >
-                                        <Edit className="h-4 w-4" />
+                                        <IconEdit className="h-4 w-4" />
                                       </Button>
                                       <Button
                                         variant="ghost"
@@ -594,7 +594,7 @@ function GradesManagement() {
                                         onClick={() => setDeletingGrade({ id: grade.id, name: grade.name })}
                                         disabled={deleteGradeMutation.isPending}
                                       >
-                                        <Trash2 className="h-4 w-4" />
+                                        <IconTrash className="h-4 w-4" />
                                       </Button>
                                     </div>
                                   </div>
@@ -622,7 +622,7 @@ function GradesManagement() {
           <h2 className="text-2xl font-bold">Séries</h2>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={handleExportSeries} disabled={!series || series.length === 0}>
-              <Download className="h-4 w-4 mr-2" />
+              <IconDownload className="h-4 w-4 mr-2" />
               Exporter
             </Button>
             <div className="relative">
@@ -633,12 +633,12 @@ function GradesManagement() {
                 onChange={handleImportSeries}
               />
               <Button variant="outline" size="sm">
-                <Upload className="h-4 w-4 mr-2" />
+                <IconUpload className="h-4 w-4 mr-2" />
                 Importer
               </Button>
             </div>
             <Button className="gap-2" onClick={() => setIsCreatingSerie(true)}>
-              <Plus className="h-4 w-4" />
+              <IconPlus className="h-4 w-4" />
               Ajouter
             </Button>
           </div>
@@ -691,11 +691,11 @@ function GradesManagement() {
                 </div>
                 <div className="flex justify-end gap-2">
                   <Button type="button" variant="outline" onClick={() => setIsCreatingSerie(false)}>
-                    <X className="h-4 w-4 mr-2" />
+                    <IconX className="h-4 w-4 mr-2" />
                     Annuler
                   </Button>
                   <Button type="submit" disabled={createSerieMutation.isPending}>
-                    <Save className="h-4 w-4 mr-2" />
+                    <IconDeviceFloppy className="h-4 w-4 mr-2" />
                     {createSerieMutation.isPending ? 'Création...' : 'Créer'}
                   </Button>
                 </div>
@@ -710,7 +710,7 @@ function GradesManagement() {
             <CardHeader>
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary/10">
-                  <Award className="h-5 w-5 text-secondary" />
+                  <IconAward className="h-5 w-5 text-secondary" />
                 </div>
                 <div>
                   <CardTitle>{track.name}</CardTitle>
@@ -794,11 +794,11 @@ function GradesManagement() {
                                         variant="outline"
                                         onClick={() => setEditingSerie(null)}
                                       >
-                                        <X className="h-4 w-4 mr-2" />
+                                        <IconX className="h-4 w-4 mr-2" />
                                         Annuler
                                       </Button>
                                       <Button type="submit" disabled={updateSerieMutation.isPending}>
-                                        <Save className="h-4 w-4 mr-2" />
+                                        <IconDeviceFloppy className="h-4 w-4 mr-2" />
                                         {updateSerieMutation.isPending ? 'Enregistrement...' : 'Enregistrer'}
                                       </Button>
                                     </div>
@@ -808,7 +808,7 @@ function GradesManagement() {
                                   <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors">
                                     <div className="flex items-center gap-4">
                                       <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary/10">
-                                        <Award className="h-5 w-5 text-secondary" />
+                                        <IconAward className="h-5 w-5 text-secondary" />
                                       </div>
                                       <div>
                                         <h3 className="font-semibold">{serie.name}</h3>
@@ -825,7 +825,7 @@ function GradesManagement() {
                                         size="icon"
                                         onClick={() => setEditingSerie(serie.id)}
                                       >
-                                        <Edit className="h-4 w-4" />
+                                        <IconEdit className="h-4 w-4" />
                                       </Button>
                                       <Button
                                         variant="ghost"
@@ -833,7 +833,7 @@ function GradesManagement() {
                                         onClick={() => setDeletingSerie({ id: serie.id, name: serie.name })}
                                         disabled={deleteSerieMutation.isPending}
                                       >
-                                        <Trash2 className="h-4 w-4" />
+                                        <IconTrash className="h-4 w-4" />
                                       </Button>
                                     </div>
                                   </div>

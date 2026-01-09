@@ -25,7 +25,7 @@ export type PermissionResource
     | 'student_grades'
 
 /**
- * Check if the current user has a specific permission
+ * IconCheck if the current user has a specific permission
  * Throws an error if the user doesn't have the required permission
  */
 export async function requirePermission(
@@ -42,7 +42,7 @@ export async function requirePermission(
 
   const permissions = await getUserPermissionsBySchool(userId, schoolId)
 
-  // Check if user has the required permission
+  // IconCheck if user has the required permission
   const resourcePermissions = permissions[resource]
 
   if (!resourcePermissions || !resourcePermissions.includes(action)) {
@@ -51,7 +51,7 @@ export async function requirePermission(
 }
 
 /**
- * Check if the current user has any of the specified permissions
+ * IconCheck if the current user has any of the specified permissions
  * Returns true if user has at least one of the permissions
  */
 export async function hasAnyPermission(
@@ -73,7 +73,7 @@ export async function hasAnyPermission(
 }
 
 /**
- * Check if the current user has all of the specified permissions
+ * IconCheck if the current user has all of the specified permissions
  * Returns true only if user has all permissions
  */
 export async function hasAllPermissions(

@@ -1,9 +1,7 @@
 'use client'
 
-import { Loader2 } from 'lucide-react'
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-
+import { IconLoader2 } from '@tabler/icons-react'
+import { Button } from '@workspace/ui/components/button'
 import {
   Dialog,
   DialogContent,
@@ -11,10 +9,12 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
+} from '@workspace/ui/components/dialog'
+
+import { Label } from '@workspace/ui/components/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
+import { Textarea } from '@workspace/ui/components/textarea'
+import { useState } from 'react'
 import { useTranslations } from '@/i18n'
 
 interface StudentStatusDialogProps {
@@ -60,7 +60,7 @@ export function StudentStatusDialog({
         <div className="space-y-4 py-4">
           <div className="space-y-2">
             <Label>{t.students.newStatus()}</Label>
-            <Select value={status} onValueChange={setStatus}>
+            <Select value={status} onValueChange={val => setStatus(val ?? '')}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -91,7 +91,7 @@ export function StudentStatusDialog({
             {t.common.cancel()}
           </Button>
           <Button onClick={handleConfirm} disabled={isLoading || (requiresReason && !reason)}>
-            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isLoading && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
             {t.common.confirm()}
           </Button>
         </DialogFooter>

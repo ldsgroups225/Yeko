@@ -1,14 +1,14 @@
+import { IconCalendar, IconChevronLeft, IconChevronRight } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent } from '@workspace/ui/components/card'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import { addDays, format, startOfWeek } from 'date-fns'
+
 import { fr } from 'date-fns/locale'
-import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { teacherScheduleQueryOptions } from '@/lib/queries/dashboard'
 
@@ -83,7 +83,7 @@ function SchedulePage() {
           onClick={() => setWeekOffset(prev => prev - 1)}
           aria-label="Semaine précédente"
         >
-          <ChevronLeft className="h-5 w-5" />
+          <IconChevronLeft className="h-5 w-5" />
         </Button>
         <span className="text-sm font-medium">
           {t('schedule.weekOf', {
@@ -100,7 +100,7 @@ function SchedulePage() {
           onClick={() => setWeekOffset(prev => prev + 1)}
           aria-label="Semaine suivante"
         >
-          <ChevronRight className="h-5 w-5" />
+          <IconChevronRight className="h-5 w-5" />
         </Button>
       </div>
 
@@ -145,7 +145,7 @@ function SchedulePage() {
           : (
               <Card>
                 <CardContent className="flex flex-col items-center justify-center py-12">
-                  <Calendar className="h-12 w-12 text-muted-foreground/50" />
+                  <IconCalendar className="h-12 w-12 text-muted-foreground/50" />
                   <p className="mt-4 text-sm text-muted-foreground">
                     {t('schedule.noSessions')}
                   </p>

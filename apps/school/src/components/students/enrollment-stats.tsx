@@ -1,11 +1,11 @@
 'use client'
 
+import { IconChartBar, IconLoader2, IconTrendingUp, IconUsers, IconUserX } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
-import { BarChart3, Loader2, TrendingUp, Users, UserX } from 'lucide-react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
 
-import { Progress } from '@/components/ui/progress'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Progress } from '@workspace/ui/components/progress'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { enrollmentsOptions } from '@/lib/queries/enrollments'
@@ -54,7 +54,7 @@ function StatCard({ title, value, description, icon, trend }: StatCardProps) {
         {description && <p className="text-xs text-muted-foreground">{description}</p>}
         {trend !== undefined && (
           <div className={`flex items-center text-xs ${trend >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-            <TrendingUp className={`mr-1 h-3 w-3 ${trend < 0 ? 'rotate-180' : ''}`} />
+            <IconTrendingUp className={`mr-1 h-3 w-3 ${trend < 0 ? 'rotate-180' : ''}`} />
             {Math.abs(trend)}
             % vs last month
           </div>
@@ -122,7 +122,7 @@ export function EnrollmentStats() {
   if (error) {
     return (
       <div className="flex min-h-[200px] flex-col items-center justify-center rounded-xl border border-dashed border-border/40 bg-card/30 p-8 text-center">
-        <UserX className="h-12 w-12 text-muted-foreground" />
+        <IconUserX className="h-12 w-12 text-muted-foreground" />
         <p className="mt-2 text-muted-foreground">{error.message}</p>
       </div>
     )
@@ -145,25 +145,25 @@ export function EnrollmentStats() {
         <StatCard
           title={t.students.totalEnrollments()}
           value={data.total}
-          icon={<Users className="h-4 w-4 text-muted-foreground" />}
+          icon={<IconUsers className="h-4 w-4 text-muted-foreground" />}
         />
         <StatCard
           title={t.students.confirmedEnrollments()}
           value={data.confirmed}
           description={`${data.total > 0 ? Math.round((data.confirmed / data.total) * 100) : 0}% ${t.students.ofTotal()}`}
-          icon={<BarChart3 className="h-4 w-4 text-green-600" />}
+          icon={<IconChartBar className="h-4 w-4 text-green-600" />}
         />
         <StatCard
           title={t.students.pendingEnrollments()}
           value={data.pending}
           description={t.students.awaitingConfirmation()}
-          icon={<Loader2 className="h-4 w-4 text-yellow-600" />}
+          icon={<IconLoader2 className="h-4 w-4 text-yellow-600" />}
         />
         <StatCard
           title={t.students.genderRatio()}
           value={`${totalBoys}/${totalGirls}`}
           description={t.students.boysGirls()}
-          icon={<Users className="h-4 w-4 text-blue-600" />}
+          icon={<IconUsers className="h-4 w-4 text-blue-600" />}
         />
       </div>
 

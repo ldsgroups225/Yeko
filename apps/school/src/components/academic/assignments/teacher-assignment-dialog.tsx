@@ -1,11 +1,8 @@
+import { IconBook, IconCheck, IconLoader2, IconSparkles } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { BookOpen, Check, Loader2, Sparkles } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { useEffect, useState } from 'react'
-import { toast } from 'sonner'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Checkbox } from '@workspace/ui/components/checkbox'
 import {
   Dialog,
   DialogContent,
@@ -13,8 +10,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { ScrollArea } from '@/components/ui/scroll-area'
+} from '@workspace/ui/components/dialog'
+import { ScrollArea } from '@workspace/ui/components/scroll-area'
+import { AnimatePresence, motion } from 'motion/react'
+import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { schoolSubjectsOptions } from '@/lib/queries/school-subjects'
@@ -122,7 +122,7 @@ export function TeacherAssignmentDialog({
           <DialogHeader>
             <div className="flex items-center gap-3 mb-1">
               <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <Sparkles className="h-5 w-5 text-primary" />
+                <IconSparkles className="h-5 w-5 text-primary" />
               </div>
               <div>
                 <DialogTitle className="text-xl font-bold">{t.academic.assignments.dialogTitle()}</DialogTitle>
@@ -145,7 +145,7 @@ export function TeacherAssignmentDialog({
                     exit={{ opacity: 0 }}
                     className="flex flex-col items-center justify-center h-[350px] gap-3"
                   >
-                    <Loader2 className="h-8 w-8 animate-spin text-primary/40" />
+                    <IconLoader2 className="h-8 w-8 animate-spin text-primary/40" />
                     <p className="text-sm text-muted-foreground animate-pulse">{t.common.loading()}</p>
                   </motion.div>
                 )
@@ -158,7 +158,7 @@ export function TeacherAssignmentDialog({
                       className="flex flex-col items-center justify-center h-[350px] text-center space-y-4"
                     >
                       <div className="h-16 w-16 rounded-full bg-white/5 flex items-center justify-center">
-                        <BookOpen className="h-8 w-8 text-muted-foreground/30" />
+                        <IconBook className="h-8 w-8 text-muted-foreground/30" />
                       </div>
                       <div className="space-y-1">
                         <p className="font-semibold text-foreground">{t.academic.assignments.noAvailableSubjects()}</p>
@@ -207,7 +207,7 @@ export function TeacherAssignmentDialog({
                                     isSelected ? 'bg-primary text-white' : 'bg-white/5 text-muted-foreground',
                                   )}
                                   >
-                                    {isSelected ? <Check className="h-5 w-5" /> : <BookOpen className="h-5 w-5" />}
+                                    {isSelected ? <IconCheck className="h-5 w-5" /> : <IconBook className="h-5 w-5" />}
                                   </div>
                                   <div className="flex-1 min-w-0">
                                     <p className={cn('font-bold text-sm truncate', isSelected ? 'text-primary' : 'text-foreground')}>
@@ -263,10 +263,10 @@ export function TeacherAssignmentDialog({
               >
                 {assignMutation.isPending
                   ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
                     )
                   : (
-                      <Check className="mr-2 h-4 w-4" />
+                      <IconCheck className="mr-2 h-4 w-4" />
                     )}
                 {t.academic.assignments.assignSelected()}
               </Button>

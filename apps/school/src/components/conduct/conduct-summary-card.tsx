@@ -1,6 +1,6 @@
-import { AlertTriangle, Award, Ban, FileText, UserCircle } from 'lucide-react'
+import { IconAlertTriangle, IconAward, IconBan, IconFileText, IconUserCircle } from '@tabler/icons-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { motion } from 'motion/react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
@@ -22,10 +22,10 @@ export function ConductSummaryCard({ studentName, summary, className }: ConductS
   const t = useTranslations()
 
   const stats = [
-    { label: t.conduct.type.incident(), value: summary.incidents, icon: AlertTriangle, color: 'text-orange-500', bg: 'bg-orange-500/10' },
-    { label: t.conduct.type.sanction(), value: summary.sanctions, icon: Ban, color: 'text-red-500', bg: 'bg-red-500/10' },
-    { label: t.conduct.type.reward(), value: summary.rewards, icon: Award, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-    { label: t.conduct.type.note(), value: summary.notes, icon: FileText, color: 'text-blue-500', bg: 'bg-blue-500/10' },
+    { label: t.conduct.type.incident(), value: summary.incidents, icon: IconAlertTriangle, color: 'text-orange-500', bg: 'bg-orange-500/10' },
+    { label: t.conduct.type.sanction(), value: summary.sanctions, icon: IconBan, color: 'text-red-500', bg: 'bg-red-500/10' },
+    { label: t.conduct.type.reward(), value: summary.rewards, icon: IconAward, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+    { label: t.conduct.type.note(), value: summary.notes, icon: IconFileText, color: 'text-blue-500', bg: 'bg-blue-500/10' },
   ]
 
   return (
@@ -38,7 +38,7 @@ export function ConductSummaryCard({ studentName, summary, className }: ConductS
         <CardHeader className="bg-muted/20 border-b border-border/20 pb-4">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-xl bg-background/50 text-muted-foreground shadow-sm">
-              <UserCircle className="size-4" />
+              <IconUserCircle className="size-4" />
             </div>
             <CardTitle className="text-sm font-black uppercase tracking-[0.2em]">{studentName}</CardTitle>
           </div>

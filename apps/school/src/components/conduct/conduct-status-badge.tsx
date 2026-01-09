@@ -1,6 +1,6 @@
-import { AlertTriangle, CheckCircle, Circle, Clock, Search, XCircle } from 'lucide-react'
+import { IconAlertTriangle, IconCircle, IconCircleCheck, IconCircleX, IconClock, IconSearch } from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
 import { motion } from 'motion/react'
-import { Badge } from '@/components/ui/badge'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
@@ -13,15 +13,15 @@ interface ConductStatusBadgeProps {
 }
 
 const statusConfig: Record<ConductStatus, {
-  icon: typeof Circle
+  icon: typeof IconCircle
   colorClass: string
 }> = {
-  open: { icon: Circle, colorClass: 'bg-blue-500/10 text-blue-600 border-blue-500/20' },
-  investigating: { icon: Search, colorClass: 'bg-purple-500/10 text-purple-600 border-purple-500/20' },
-  pending_decision: { icon: Clock, colorClass: 'bg-amber-500/10 text-amber-600 border-amber-500/20' },
-  resolved: { icon: CheckCircle, colorClass: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' },
-  closed: { icon: XCircle, colorClass: 'bg-zinc-500/10 text-zinc-600 border-zinc-500/20' },
-  appealed: { icon: AlertTriangle, colorClass: 'bg-orange-500/10 text-orange-600 border-orange-500/20' },
+  open: { icon: IconCircle, colorClass: 'bg-blue-500/10 text-blue-600 border-blue-500/20' },
+  investigating: { icon: IconSearch, colorClass: 'bg-purple-500/10 text-purple-600 border-purple-500/20' },
+  pending_decision: { icon: IconClock, colorClass: 'bg-amber-500/10 text-amber-600 border-amber-500/20' },
+  resolved: { icon: IconCircleCheck, colorClass: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' },
+  closed: { icon: IconCircleX, colorClass: 'bg-zinc-500/10 text-zinc-600 border-zinc-500/20' },
+  appealed: { icon: IconAlertTriangle, colorClass: 'bg-orange-500/10 text-orange-600 border-orange-500/20' },
 }
 
 export function ConductStatusBadge({

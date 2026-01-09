@@ -1,9 +1,8 @@
 'use client'
 
-import { Users } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { Badge } from '@/components/ui/badge'
-import { Skeleton } from '@/components/ui/skeleton'
+import { IconUsers } from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -11,7 +10,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
 import { useTranslations } from '@/i18n'
 import { generateUUID } from '@/utils/generateUUID'
 
@@ -70,7 +70,7 @@ export function StudentFeesTable({ studentFees, isLoading }: StudentFeesTablePro
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground border-2 border-dashed border-border/30 rounded-xl bg-card/10 m-4">
         <div className="p-4 rounded-full bg-muted/20 mb-4">
-          <Users className="h-8 w-8 text-muted-foreground/50" />
+          <IconUsers className="h-8 w-8 text-muted-foreground/50" />
         </div>
         <p className="text-lg font-medium">{t.finance.studentFees.noStudentFees()}</p>
         <p className="text-sm max-w-sm mt-1 text-muted-foreground/70">{t.finance.studentFees.description()}</p>

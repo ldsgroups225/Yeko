@@ -1,15 +1,15 @@
 import type { TeacherAttendanceEntry } from '@/components/attendance/teacher/teacher-attendance-grid'
+import { IconCalendar, IconChartBar } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { BarChart3, Calendar } from 'lucide-react'
+import { Button } from '@workspace/ui/components/button'
+import { DatePicker } from '@workspace/ui/components/date-picker'
+
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
-
 import { toast } from 'sonner'
 import { TeacherAttendanceGrid } from '@/components/attendance/teacher/teacher-attendance-grid'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Button } from '@/components/ui/button'
-import { DatePicker } from '@/components/ui/date-picker'
 import { useTranslations } from '@/i18n'
 import { dailyTeacherAttendanceOptions } from '@/lib/queries/teacher-attendance'
 import { bulkRecordAttendance } from '@/school/functions/teacher-attendance'
@@ -90,7 +90,7 @@ function TeacherAttendancePage() {
           className="flex items-center gap-4"
         >
           <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-            <BarChart3 className="size-8 text-primary" />
+            <IconChartBar className="size-8 text-primary" />
           </div>
           <div>
             <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.schoolLife.teacherAttendance()}</h1>
@@ -105,7 +105,7 @@ function TeacherAttendancePage() {
         >
           <Link to="/conducts/teacher-attendance/reports">
             <Button variant="outline" size="sm" className="rounded-xl border-border/40 hover:bg-primary/10 hover:text-primary transition-all font-black uppercase tracking-widest text-[10px] h-10 px-4">
-              <BarChart3 className="mr-2 h-4 w-4" />
+              <IconChartBar className="mr-2 h-4 w-4" />
               {t.attendance.punctualityReport()}
             </Button>
           </Link>
@@ -118,7 +118,7 @@ function TeacherAttendancePage() {
         className="bg-card/20 backdrop-blur-xl border border-border/40 p-6 rounded-3xl"
       >
         <div className="flex items-center gap-2 mb-4 ml-1">
-          <Calendar className="size-3 text-muted-foreground/60" />
+          <IconCalendar className="size-3 text-muted-foreground/60" />
           <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{t.common.date()}</span>
         </div>
         <div className="flex flex-wrap gap-4">

@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { Spinner } from '@workspace/ui/components/spinner'
 import { LoginForm } from '@/components/auth/login-form'
 import { AppLayout } from '@/components/layout/app-layout'
-import { Spinner } from '@/components/ui/spinner'
 import { authClient } from '@/lib/auth-client'
 
 export const Route = createFileRoute('/_auth')({

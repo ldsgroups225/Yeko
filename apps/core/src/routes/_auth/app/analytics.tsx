@@ -1,23 +1,23 @@
+import {
+  IconChartBar,
+  IconChartPie,
+  IconDownload,
+  IconFileText,
+  IconMapPin,
+  IconTrendingUp,
+  IconUsers,
+} from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import {
-  BarChart3,
-  Download,
-  FileText,
-  MapPin,
-  PieChart,
-  TrendingUp,
-  Users,
-} from 'lucide-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
+import { Skeleton } from '@workspace/ui/components/skeleton'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { AnalyticsErrorBoundary } from '@/components/error-boundary'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   analyticsOverviewQueryOptions,
   platformUsageQueryOptions,
@@ -106,11 +106,11 @@ function AnalyticsPage() {
             </SelectContent>
           </Select>
           <Button variant="outline" onClick={() => handleExportReport('excel')}>
-            <Download className="h-4 w-4 mr-2" />
+            <IconDownload className="h-4 w-4 mr-2" />
             Excel
           </Button>
           <Button variant="outline" onClick={() => handleExportReport('pdf')}>
-            <FileText className="h-4 w-4 mr-2" />
+            <IconFileText className="h-4 w-4 mr-2" />
             PDF
           </Button>
         </div>
@@ -148,7 +148,7 @@ function AnalyticsPage() {
                     <Card>
                       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Total Écoles</CardTitle>
-                        <BarChart3 className="h-4 w-4 text-muted-foreground" />
+                        <IconChartBar className="h-4 w-4 text-muted-foreground" />
                       </CardHeader>
                       <CardContent>
                         <div className="text-2xl font-bold">{overview?.totalSchools || 0}</div>
@@ -163,7 +163,7 @@ function AnalyticsPage() {
                     <Card>
                       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Utilisateurs Actifs</CardTitle>
-                        <Users className="h-4 w-4 text-muted-foreground" />
+                        <IconUsers className="h-4 w-4 text-muted-foreground" />
                       </CardHeader>
                       <CardContent>
                         <div className="text-2xl font-bold">{overview?.activeUsers || 0}</div>
@@ -177,7 +177,7 @@ function AnalyticsPage() {
                     <Card>
                       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Taux d'Engagement</CardTitle>
-                        <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                        <IconTrendingUp className="h-4 w-4 text-muted-foreground" />
                       </CardHeader>
                       <CardContent>
                         <div className="text-2xl font-bold">
@@ -193,7 +193,7 @@ function AnalyticsPage() {
                     <Card>
                       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Temps de Réponse</CardTitle>
-                        <PieChart className="h-4 w-4 text-muted-foreground" />
+                        <IconChartPie className="h-4 w-4 text-muted-foreground" />
                       </CardHeader>
                       <CardContent>
                         <div className="text-2xl font-bold">
@@ -219,7 +219,7 @@ function AnalyticsPage() {
               <CardContent>
                 <div className="h-[300px] flex items-center justify-center border-2 border-dashed rounded-lg">
                   <div className="text-center text-muted-foreground">
-                    <BarChart3 className="h-12 w-12 mx-auto mb-2" />
+                    <IconChartBar className="h-12 w-12 mx-auto mb-2" />
                     <p>Graphique à venir</p>
                     <p className="text-xs">Intégration Recharts en cours</p>
                   </div>
@@ -235,7 +235,7 @@ function AnalyticsPage() {
               <CardContent>
                 <div className="h-[300px] flex items-center justify-center border-2 border-dashed rounded-lg">
                   <div className="text-center text-muted-foreground">
-                    <PieChart className="h-12 w-12 mx-auto mb-2" />
+                    <IconChartPie className="h-12 w-12 mx-auto mb-2" />
                     <p>Graphique à venir</p>
                     <p className="text-xs">Intégration Recharts en cours</p>
                   </div>
@@ -312,7 +312,7 @@ function AnalyticsPage() {
               <CardContent>
                 <div className="h-[200px] flex items-center justify-center border-2 border-dashed rounded-lg">
                   <div className="text-center text-muted-foreground">
-                    <MapPin className="h-12 w-12 mx-auto mb-2" />
+                    <IconMapPin className="h-12 w-12 mx-auto mb-2" />
                     <p>Carte à venir</p>
                     <p className="text-xs">Intégration de carte en cours</p>
                   </div>
@@ -453,7 +453,7 @@ function AnalyticsPage() {
             <CardContent>
               <div className="h-[300px] flex items-center justify-center border-2 border-dashed rounded-lg">
                 <div className="text-center text-muted-foreground">
-                  <BarChart3 className="h-12 w-12 mx-auto mb-2" />
+                  <IconChartBar className="h-12 w-12 mx-auto mb-2" />
                   <p>Graphique à venir</p>
                   <p className="text-xs">Intégration Recharts en cours</p>
                 </div>

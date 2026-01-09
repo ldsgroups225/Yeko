@@ -28,7 +28,7 @@ vi.mock('sonner', () => ({
 }))
 
 // Mock UI components
-vi.mock('@/components/ui/card', () => ({
+vi.mock('@workspace/ui/components/card', () => ({
   Card: ({ children, className, ...props }: any) => (
     <div className={className} {...props}>{children}</div>
   ),
@@ -38,7 +38,7 @@ vi.mock('@/components/ui/card', () => ({
   CardDescription: ({ children, ...props }: any) => <p {...props}>{children}</p>,
 }))
 
-vi.mock('@/components/ui/input', () => ({
+vi.mock('@workspace/ui/components/input', () => ({
   Input: ({ value, onChange, min, max, className, ...props }: any) => (
     <input
       type="number"
@@ -52,7 +52,7 @@ vi.mock('@/components/ui/input', () => ({
   ),
 }))
 
-vi.mock('@/components/ui/button', () => ({
+vi.mock('@workspace/ui/components/button', () => ({
   Button: ({ children, onClick, ...props }: any) => (
     <button type="button" onClick={onClick} {...props}>{children}</button>
   ),

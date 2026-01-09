@@ -1,15 +1,15 @@
 import type { Locale } from 'date-fns'
+import { IconArrowBackUp, IconArrowLeft, IconMail, IconStar, IconUser } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardHeader } from '@workspace/ui/components/card'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import { format } from 'date-fns'
+
 import { fr } from 'date-fns/locale'
-import { ArrowLeft, Mail, Reply, Star, User } from 'lucide-react'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { messageDetailQueryOptions } from '@/lib/queries/messages'
 import { markMessageRead } from '@/teacher/functions/messages'
@@ -61,7 +61,7 @@ function MessageDetailPage() {
       <div className="flex items-center gap-3">
         <Link to="/app/messages">
           <Button variant="ghost" size="icon">
-            <ArrowLeft className="h-5 w-5" />
+            <IconArrowLeft className="h-5 w-5" />
           </Button>
         </Link>
         <h1 className="text-lg font-semibold">{t('messages.title')}</h1>
@@ -78,7 +78,7 @@ function MessageDetailPage() {
           : (
               <Card>
                 <CardContent className="py-12 text-center">
-                  <Mail className="mx-auto h-12 w-12 text-muted-foreground/50" />
+                  <IconMail className="mx-auto h-12 w-12 text-muted-foreground/50" />
                   <p className="mt-4 text-sm text-muted-foreground">
                     {t('errors.notFound')}
                   </p>
@@ -123,7 +123,7 @@ function MessageContent({ message, locale }: MessageContentProps) {
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
-                <User className="h-5 w-5 text-muted-foreground" />
+                <IconUser className="h-5 w-5 text-muted-foreground" />
               </div>
               <div>
                 <p className="font-semibold">
@@ -141,7 +141,7 @@ function MessageContent({ message, locale }: MessageContentProps) {
             </div>
             <div className="flex items-center gap-2">
               {message.isStarred && (
-                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                <IconStar className="h-4 w-4 fill-yellow-400 text-yellow-400" />
               )}
               <span className="text-xs text-muted-foreground">
                 {format(date, 'd MMM yyyy, HH:mm', { locale })}
@@ -193,7 +193,7 @@ function MessageContent({ message, locale }: MessageContentProps) {
           className="w-full"
         >
           <Button className="w-full">
-            <Reply className="mr-2 h-4 w-4" />
+            <IconArrowBackUp className="mr-2 h-4 w-4" />
             {t('messages.reply')}
           </Button>
         </Link>

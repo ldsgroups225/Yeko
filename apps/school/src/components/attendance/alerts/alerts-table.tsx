@@ -1,30 +1,27 @@
 import type { ColumnDef } from '@tanstack/react-table'
+import { IconBell, IconCheck, IconDots, IconX } from '@tabler/icons-react'
 import {
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { Bell, Check, MoreHorizontal, X } from 'lucide-react'
-import { useMemo } from 'react'
-import { AlertSeverityBadge } from '@/components/attendance/alerts/alert-severity-badge'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 
-import { TableSkeleton } from '@/components/hr/table-skeleton'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from '@workspace/ui/components/dropdown-menu'
 import {
   Empty,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from '@/components/ui/empty'
+} from '@workspace/ui/components/empty'
 import {
   Table,
   TableBody,
@@ -32,7 +29,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { useMemo } from 'react'
+import { AlertSeverityBadge } from '@/components/attendance/alerts/alert-severity-badge'
+import { TableSkeleton } from '@/components/hr/table-skeleton'
 import { useTranslations } from '@/i18n'
 
 type AlertSeverity = 'info' | 'warning' | 'critical'
@@ -144,19 +144,19 @@ export function AlertsTable({
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon">
-                      <MoreHorizontal className="h-4 w-4" />
+                      <IconDots className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     {onAcknowledge && (
                       <DropdownMenuItem onClick={() => onAcknowledge(row.original.id)}>
-                        <Check className="mr-2 h-4 w-4" />
+                        <IconCheck className="mr-2 h-4 w-4" />
                         {t.alerts.acknowledge()}
                       </DropdownMenuItem>
                     )}
                     {onDismiss && (
                       <DropdownMenuItem onClick={() => onDismiss(row.original.id)}>
-                        <X className="mr-2 h-4 w-4" />
+                        <IconX className="mr-2 h-4 w-4" />
                         {t.alerts.dismiss()}
                       </DropdownMenuItem>
                     )}
@@ -191,7 +191,7 @@ export function AlertsTable({
       <Empty>
         <EmptyHeader>
           <EmptyMedia variant="icon">
-            <Bell className="h-6 w-6" />
+            <IconBell className="h-6 w-6" />
           </EmptyMedia>
           <EmptyTitle>{t.alerts.noAlerts()}</EmptyTitle>
           <EmptyDescription>{t.alerts.noAlertsDescription()}</EmptyDescription>

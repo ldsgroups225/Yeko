@@ -1,4 +1,5 @@
-import { Dialog as DialogPrimitive } from '@base-ui/react/dialog'
+import { Dialog as DialogPrimitive } from '@base-ui-components/react/dialog'
+import { Slot } from '@radix-ui/react-slot'
 import { IconX } from '@tabler/icons-react'
 
 import { Button } from '@workspace/ui/components/button'
@@ -9,8 +10,23 @@ function Dialog({ ...props }: DialogPrimitive.Root.Props) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />
 }
 
-function DialogTrigger({ ...props }: DialogPrimitive.Trigger.Props) {
-  return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />
+function DialogTrigger({
+  asChild,
+  children,
+  ...props
+}: DialogPrimitive.Trigger.Props & { asChild?: boolean }) {
+  if (asChild) {
+    return (
+      <DialogPrimitive.Trigger data-slot="dialog-trigger" render={<Slot />} {...props}>
+        {children}
+      </DialogPrimitive.Trigger>
+    )
+  }
+  return (
+    <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props}>
+      {children}
+    </DialogPrimitive.Trigger>
+  )
 }
 
 function DialogPortal({ ...props }: DialogPrimitive.Portal.Props) {

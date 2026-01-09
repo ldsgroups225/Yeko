@@ -1,10 +1,9 @@
 'use client'
 
-import { CalendarClock } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
-import { Skeleton } from '@/components/ui/skeleton'
+import { IconCalendarTime } from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Progress } from '@workspace/ui/components/progress'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -12,7 +11,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
 import { useTranslations } from '@/i18n'
 import { generateUUID } from '@/utils/generateUUID'
 
@@ -69,7 +69,7 @@ export function PaymentPlansTable({ paymentPlans, isLoading }: PaymentPlansTable
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground border-2 border-dashed border-border/30 rounded-xl bg-card/10 m-4">
         <div className="p-4 rounded-full bg-muted/20 mb-4">
-          <CalendarClock className="h-8 w-8 text-muted-foreground/50" />
+          <IconCalendarTime className="h-8 w-8 text-muted-foreground/50" />
         </div>
         <p className="text-lg font-medium">{t.finance.paymentPlans.noPaymentPlans()}</p>
         <p className="text-sm max-w-sm mt-1 text-muted-foreground/70">{t.finance.paymentPlans.description()}</p>

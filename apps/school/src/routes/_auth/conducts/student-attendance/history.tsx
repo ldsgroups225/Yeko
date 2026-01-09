@@ -1,14 +1,14 @@
+import { IconArrowLeft, IconHistory, IconSearch, IconSparkles } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowLeft, History, Search, Sparkles } from 'lucide-react'
+import { Button } from '@workspace/ui/components/button'
+import { Card } from '@workspace/ui/components/card'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { AttendanceCalendar } from '@/components/attendance/student/attendance-calendar'
 import { StudentCombobox } from '@/components/attendance/student/student-combobox'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useTranslations } from '@/i18n'
 import { studentAttendanceHistoryOptions } from '@/lib/queries/student-attendance'
 
@@ -68,7 +68,7 @@ function StudentAttendanceHistoryPage() {
           className="flex items-center gap-4"
         >
           <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-            <History className="size-8 text-primary" />
+            <IconHistory className="size-8 text-primary" />
           </div>
           <div>
             <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.attendance.history()}</h1>
@@ -82,7 +82,7 @@ function StudentAttendanceHistoryPage() {
         >
           <Link to="/conducts/student-attendance">
             <Button variant="ghost" size="sm" className="rounded-xl hover:bg-primary/10 hover:text-primary transition-all font-black uppercase tracking-widest text-[10px]">
-              <ArrowLeft className="mr-2 h-4 w-4" />
+              <IconArrowLeft className="mr-2 h-4 w-4" />
               {t.common.back()}
             </Button>
           </Link>
@@ -95,7 +95,7 @@ function StudentAttendanceHistoryPage() {
         className="bg-card/20 backdrop-blur-xl border border-border/40 p-6 rounded-3xl"
       >
         <div className="flex items-center gap-2 mb-4 ml-1">
-          <Search className="size-3 text-muted-foreground/60" />
+          <IconSearch className="size-3 text-muted-foreground/60" />
           <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{t.attendance.selectStudent()}</span>
         </div>
         <StudentCombobox
@@ -147,7 +147,7 @@ function StudentAttendanceHistoryPage() {
                     transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
                     className="relative p-6 rounded-4xl bg-card/50 border border-primary/10 shadow-2xl"
                   >
-                    <Sparkles className="size-16 text-primary" />
+                    <IconSparkles className="size-16 text-primary" />
                   </motion.div>
                 </div>
                 <div className="space-y-2">

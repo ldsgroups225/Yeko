@@ -1,20 +1,20 @@
+import { IconChartBar, IconLayoutGrid, IconSettings } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { BarChart3, LayoutGrid, Settings2 } from 'lucide-react'
-import { motion } from 'motion/react'
-import { useState } from 'react'
-import { ClassAveragesTable, GradeStatisticsCard } from '@/components/grades'
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { Label } from '@workspace/ui/components/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
+} from '@workspace/ui/components/select'
+import { Skeleton } from '@workspace/ui/components/skeleton'
+import { motion } from 'motion/react'
+import { useState } from 'react'
+import { ClassAveragesTable, GradeStatisticsCard } from '@/components/grades'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { classesOptions } from '@/lib/queries/classes'
@@ -70,7 +70,7 @@ function GradeStatisticsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-inner">
-            <BarChart3 className="size-8" />
+            <IconChartBar className="size-8" />
           </div>
           <div>
             <h1 className="text-3xl font-black tracking-tight">{t.academic.grades.statistics.title()}</h1>
@@ -88,7 +88,7 @@ function GradeStatisticsPage() {
           <CardHeader className="bg-muted/20 border-b border-border/20 pb-4">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-xl bg-background/50 text-muted-foreground shadow-sm">
-                <Settings2 className="size-4" />
+                <IconSettings className="size-4" />
               </div>
               <CardTitle className="text-sm font-black uppercase tracking-[0.2em]">{t.academic.grades.filters.title()}</CardTitle>
             </div>
@@ -104,7 +104,7 @@ function GradeStatisticsPage() {
                       <Skeleton className="h-11 w-full rounded-xl" />
                     )
                   : (
-                      <Select value={selectedClassId} onValueChange={setSelectedClassId}>
+                      <Select value={selectedClassId} onValueChange={val => setSelectedClassId(val ?? '')}>
                         <SelectTrigger id="class-select" className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
                           <SelectValue placeholder={t.academic.grades.entry.selectClass()} />
                         </SelectTrigger>
@@ -112,7 +112,7 @@ function GradeStatisticsPage() {
                           {classesData?.map(item => (
                             <SelectItem key={item.class.id} value={item.class.id} className="rounded-lg font-semibold">
                               <div className="flex items-center gap-2">
-                                <LayoutGrid className="size-3.5 text-primary/60" />
+                                <IconLayoutGrid className="size-3.5 text-primary/60" />
                                 {item.grade.name}
                                 {' '}
                                 {item.class.section}
@@ -133,7 +133,7 @@ function GradeStatisticsPage() {
                       <Skeleton className="h-11 w-full rounded-xl" />
                     )
                   : (
-                      <Select value={selectedTermId} onValueChange={setSelectedTermId}>
+                      <Select value={selectedTermId} onValueChange={val => setSelectedTermId(val ?? '')}>
                         <SelectTrigger id="term-select" className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
                           <SelectValue placeholder={t.academic.grades.entry.selectTerm()} />
                         </SelectTrigger>

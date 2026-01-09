@@ -72,7 +72,7 @@ describe('school Life Management Integration', () => {
     })
   })
 
-  describe('conduct Type Badge', () => {
+  describe('conduct IconTypography Badge', () => {
     test('should display all conduct types correctly', () => {
       const { rerender } = render(<ConductTypeBadge type="incident" />)
       expect(screen.getByText('Incident')).toBeInTheDocument()

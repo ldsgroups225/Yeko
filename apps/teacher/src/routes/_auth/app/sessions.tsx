@@ -1,14 +1,14 @@
 import type { Locale } from 'date-fns'
+import { IconBook, IconCalendar, IconCircleCheck, IconCircleX, IconClock } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { Badge } from '@workspace/ui/components/badge'
+import { Card, CardContent } from '@workspace/ui/components/card'
+
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
-import { BookOpen, Calendar, CheckCircle, Clock, XCircle } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { sessionHistoryQueryOptions } from '@/lib/queries/sessions'
 
@@ -58,7 +58,7 @@ function SessionsPage() {
         : (
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-12">
-                <BookOpen className="h-12 w-12 text-muted-foreground/50" />
+                <IconBook className="h-12 w-12 text-muted-foreground/50" />
                 <p className="mt-4 text-sm text-muted-foreground">
                   {t('session.noHistory')}
                 </p>
@@ -89,17 +89,17 @@ function SessionHistoryCard({ session, locale }: SessionHistoryCardProps) {
 
   const statusConfig = {
     scheduled: {
-      icon: Clock,
+      icon: IconClock,
       label: t('session.active'),
       variant: 'default' as const,
     },
     completed: {
-      icon: CheckCircle,
+      icon: IconCircleCheck,
       label: t('session.completed'),
       variant: 'secondary' as const,
     },
     cancelled: {
-      icon: XCircle,
+      icon: IconCircleX,
       label: t('session.cancelled'),
       variant: 'destructive' as const,
     },
@@ -115,7 +115,7 @@ function SessionHistoryCard({ session, locale }: SessionHistoryCardProps) {
           <div className="flex items-start justify-between">
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Calendar className="h-3.5 w-3.5" />
+                <IconCalendar className="h-3.5 w-3.5" />
                 <span>
                   {format(new Date(session.date), 'EEEE d MMM', { locale })}
                 </span>

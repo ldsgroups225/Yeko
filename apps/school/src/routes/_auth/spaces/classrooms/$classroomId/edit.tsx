@@ -1,11 +1,11 @@
+import { IconArrowLeft, IconEdit } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { ArrowLeft, Edit } from 'lucide-react'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { motion } from 'motion/react'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { ClassroomForm } from '@/components/spaces/classroom-form'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useTranslations } from '@/i18n'
 import { getClassroomById } from '@/school/functions/classrooms'
 
@@ -64,7 +64,7 @@ function EditClassroomPage() {
           className="flex items-center gap-4"
         >
           <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-            <Edit className="size-8 text-primary" />
+            <IconEdit className="size-8 text-primary" />
           </div>
           <div>
             <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.spaces.classroom.editClassroom()}</h1>
@@ -80,7 +80,7 @@ function EditClassroomPage() {
         >
           <Button variant="outline" asChild className="rounded-xl border-border/40">
             <Link to="/spaces/classrooms/$classroomId" params={{ classroomId }}>
-              <ArrowLeft className="mr-2 h-4 w-4" />
+              <IconArrowLeft className="mr-2 h-4 w-4" />
               {t.common.back()}
             </Link>
           </Button>

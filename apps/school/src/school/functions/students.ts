@@ -7,7 +7,7 @@ import { getSchoolContext, getSchoolYearContext } from '../middleware/school-con
 
 // ==================== Schemas ====================
 
-// Phone validation regex for Ivory Coast format
+// IconPhone validation regex for Ivory Coast format
 const phoneRegex = /^(\+225)?\d{10}$/
 
 // Simple HTML tag stripper for text sanitization

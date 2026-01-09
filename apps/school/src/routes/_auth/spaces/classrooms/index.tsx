@@ -1,13 +1,13 @@
+import { IconBuilding, IconPlus } from '@tabler/icons-react'
 import { createFileRoute } from '@tanstack/react-router'
-import { Building2, Plus } from 'lucide-react'
+import { Button } from '@workspace/ui/components/button'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@workspace/ui/components/dialog'
 import { motion } from 'motion/react'
 import { useState } from 'react'
 import { z } from 'zod'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { ClassroomForm } from '@/components/spaces/classroom-form'
 import { ClassroomsTable } from '@/components/spaces/classrooms/classrooms-table'
-import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { useTranslations } from '@/i18n'
 
 const classroomsSearchSchema = z.object({
@@ -40,7 +40,7 @@ function ClassroomsPage() {
           className="flex items-center gap-4"
         >
           <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-            <Building2 className="size-8 text-primary" />
+            <IconBuilding className="size-8 text-primary" />
           </div>
           <div>
             <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.spaces.title()}</h1>
@@ -55,7 +55,7 @@ function ClassroomsPage() {
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button className="h-10 rounded-xl shadow-lg shadow-primary/20">
-                <Plus className="mr-2 h-4 w-4" />
+                <IconPlus className="mr-2 h-4 w-4" />
                 {t.buttons.newClassroom()}
               </Button>
             </DialogTrigger>

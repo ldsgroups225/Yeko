@@ -1,8 +1,8 @@
-import { Activity, AlertCircle, AlertTriangle, CheckCircle, ChevronDown, ChevronUp } from 'lucide-react'
+import { IconActivity, IconAlertCircle, IconAlertTriangle, IconChevronDown, IconChevronUp, IconCircleCheck } from '@tabler/icons-react'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 
 interface HealthMetric {
@@ -55,7 +55,7 @@ export function SystemHealth({ health, isLoading, error, collapsedByDefault = fa
       <Card className="border-destructive/20 bg-destructive/10 dark:border-destructive/40 dark:bg-destructive/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-destructive">
-            <AlertCircle className="h-5 w-5" />
+            <IconAlertCircle className="h-5 w-5" />
             Santé du système
           </CardTitle>
           <CardDescription className="text-destructive">
@@ -69,13 +69,13 @@ export function SystemHealth({ health, isLoading, error, collapsedByDefault = fa
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'healthy':
-        return <CheckCircle className="h-4 w-4 text-primary" />
+        return <IconCircleCheck className="h-4 w-4 text-primary" />
       case 'warning':
-        return <AlertTriangle className="h-4 w-4 text-secondary" />
+        return <IconAlertTriangle className="h-4 w-4 text-secondary" />
       case 'error':
-        return <AlertCircle className="h-4 w-4 text-destructive" />
+        return <IconAlertCircle className="h-4 w-4 text-destructive" />
       default:
-        return <Activity className="h-4 w-4 text-muted-foreground" />
+        return <IconActivity className="h-4 w-4 text-muted-foreground" />
     }
   }
 
@@ -140,7 +140,7 @@ export function SystemHealth({ health, isLoading, error, collapsedByDefault = fa
       <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
         <div className="space-y-1">
           <CardTitle className="flex items-center gap-2">
-            <Activity className="h-5 w-5" />
+            <IconActivity className="h-5 w-5" />
             Santé du système
             {isCollapsed && (
               <span className={cn(
@@ -169,7 +169,7 @@ export function SystemHealth({ health, isLoading, error, collapsedByDefault = fa
           className="h-8 w-8 p-0"
           onClick={() => setIsCollapsed(!isCollapsed)}
         >
-          {isCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+          {isCollapsed ? <IconChevronDown className="h-4 w-4" /> : <IconChevronUp className="h-4 w-4" />}
         </Button>
       </CardHeader>
       {!isCollapsed && (

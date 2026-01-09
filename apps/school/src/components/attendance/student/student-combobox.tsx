@@ -1,8 +1,6 @@
+import { IconCheck, IconLoader2, IconSelector } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
-import { CheckIcon, ChevronsUpDownIcon, Loader2 } from 'lucide-react'
-import * as React from 'react'
-import { Button } from '@/components/ui/button'
-
+import { Button } from '@workspace/ui/components/button'
 import {
   Command,
   CommandEmpty,
@@ -10,12 +8,14 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command'
+} from '@workspace/ui/components/command'
+
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover'
+} from '@workspace/ui/components/popover'
+import * as React from 'react'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { getStudents } from '@/school/functions/students'
@@ -112,7 +112,7 @@ export function StudentCombobox({
                   {placeholder ?? t.attendance.selectStudent()}
                 </span>
               )}
-          <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <IconSelector className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[400px] p-0" align="start">
@@ -126,7 +126,7 @@ export function StudentCombobox({
             {isLoading
               ? (
                   <div className="flex items-center justify-center py-6">
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <IconLoader2 className="h-4 w-4 animate-spin" />
                   </div>
                 )
               : students.length === 0
@@ -144,7 +144,7 @@ export function StudentCombobox({
                             setOpen(false)
                           }}
                         >
-                          <CheckIcon
+                          <IconCheck
                             className={cn(
                               'mr-2 h-4 w-4',
                               value === student.id ? 'opacity-100' : 'opacity-0',

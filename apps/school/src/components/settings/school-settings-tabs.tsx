@@ -1,5 +1,5 @@
 import type { SchoolSettings } from '@/schemas/school-profile'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
 import { useTranslations } from '@/i18n'
 import { GradingScaleConfig } from './grading-scale-config'
 import { NotificationSettingsForm } from './notification-settings-form'

@@ -1,8 +1,8 @@
+import { IconArrowLeft, IconBell, IconMenu2 } from '@tabler/icons-react'
 import { Link, useRouter } from '@tanstack/react-router'
-import { ArrowLeft, Bell, Menu } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
+import { Button } from '@workspace/ui/components/button'
 
-import { Button } from '@/components/ui/button'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 
 interface MobileHeaderProps {
@@ -47,7 +47,7 @@ export function MobileHeader({
             onClick={handleBack}
             aria-label={t('common.back')}
           >
-            <ArrowLeft className="h-5 w-5" />
+            <IconArrowLeft className="h-5 w-5" />
           </Button>
         )}
         {showMenu && (
@@ -57,7 +57,7 @@ export function MobileHeader({
             className="touch-target"
             aria-label="Menu"
           >
-            <Menu className="h-5 w-5" />
+            <IconMenu2 className="h-5 w-5" />
           </Button>
         )}
         {title && (
@@ -75,7 +75,7 @@ export function MobileHeader({
               className="relative touch-target"
               aria-label={t('notifications.title')}
             >
-              <Bell className="h-5 w-5" />
+              <IconBell className="h-5 w-5" />
               {notificationCount > 0 && (
                 <span className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-medium text-destructive-foreground">
                   {notificationCount > 99

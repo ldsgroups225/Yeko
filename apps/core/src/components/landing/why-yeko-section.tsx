@@ -1,12 +1,12 @@
-import { Globe, Shield, Smartphone, Zap } from 'lucide-react'
+import { IconBolt, IconDeviceMobile, IconGlobe, IconShield } from '@tabler/icons-react'
+import { Card, CardContent } from '@workspace/ui/components/card'
 import { useTranslation } from 'react-i18next'
-import { Card, CardContent } from '@/components/ui/card'
 
 const iconMap = {
-  lightning: Zap,
-  secure: Shield,
-  africa: Globe,
-  mobile: Smartphone,
+  lightning: IconBolt,
+  secure: IconShield,
+  africa: IconGlobe,
+  mobile: IconDeviceMobile,
 }
 
 const reasonKeys = ['lightning', 'secure', 'africa', 'mobile'] as const

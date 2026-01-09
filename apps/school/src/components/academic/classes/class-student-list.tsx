@@ -1,19 +1,18 @@
 'use client'
 
+import { IconDots, IconUser, IconUsers } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
-import { MoreHorizontal, User, Users } from 'lucide-react'
-import { motion } from 'motion/react'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Skeleton } from '@/components/ui/skeleton'
+} from '@workspace/ui/components/dropdown-menu'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -21,7 +20,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { motion } from 'motion/react'
 import { useTranslations } from '@/i18n'
 import { enrollmentsOptions } from '@/lib/queries/enrollments'
 import { generateUUID } from '@/utils/generateUUID'
@@ -60,7 +60,7 @@ export function ClassStudentList({ classId }: ClassStudentListProps) {
   if (enrollments.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center bg-card/50 rounded-xl border border-dashed border-border/40">
-        <Users className="size-12 text-muted-foreground/50 mb-4" />
+        <IconUsers className="size-12 text-muted-foreground/50 mb-4" />
         <h3 className="text-lg font-semibold">{t.classes.noStudents()}</h3>
         <p className="text-sm text-muted-foreground">This class has no confirmed enrollments yet.</p>
       </div>
@@ -124,13 +124,13 @@ export function ClassStudentList({ classId }: ClassStudentListProps) {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon" className="size-8">
-                      <MoreHorizontal className="size-4" />
+                      <IconDots className="size-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="backdrop-blur-xl bg-popover/90 border border-border/40">
                     <DropdownMenuItem asChild>
                       <Link to="/students/$studentId" params={{ studentId: item.student?.id }}>
-                        <User className="mr-2 size-4" />
+                        <IconUser className="mr-2 size-4" />
                         {t.enrollments.viewStudent()}
                       </Link>
                     </DropdownMenuItem>

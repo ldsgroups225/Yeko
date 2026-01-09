@@ -1,26 +1,23 @@
+import { IconCopy, IconLoader2, IconPlus, IconTrash, IconUserPlus } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Copy, Loader2, Plus, Trash2, UserPlus } from 'lucide-react'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { ConfirmationDialog } from '@/components/ui/confirmation-dialog'
-import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog'
+} from '@workspace/ui/components/card'
+import { ConfirmationDialog } from '@workspace/ui/components/confirmation-dialog'
+import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-} from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
-
+} from '@workspace/ui/components/select'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -28,7 +25,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { useState } from 'react'
+
+import { toast } from 'sonner'
 import { useTranslations } from '@/i18n'
 import {
   classSubjectsKeys,
@@ -132,11 +132,11 @@ export function ClassSubjectManager({
               variant="outline"
               size="sm"
             >
-              <Copy className="mr-2 h-4 w-4" />
+              <IconCopy className="mr-2 h-4 w-4" />
               {t.academic.classes.copyFrom()}
             </Button>
             <Button onClick={() => setIsDialogOpen(true)} size="sm">
-              <Plus className="mr-2 h-4 w-4" />
+              <IconPlus className="mr-2 h-4 w-4" />
               {t.academic.classes.addSubject()}
             </Button>
           </div>
@@ -209,13 +209,14 @@ export function ClassSubjectManager({
                                 disabled={assignMutation.isPending}
                                 value={item.teacher?.id || 'none'}
                                 onValueChange={(val) => {
-                                  if (val !== 'none') {
-                                    const teacher = teachers.find(t => t.id === val)
+                                  if (val && val !== 'none') {
+                                    const teacherId = val as string
+                                    const teacher = teachers.find(t => t.id === teacherId)
                                     if (teacher) {
                                       setPendingAssignment({
                                         subjectId: item.subject.id,
                                         subjectName: item.subject.name,
-                                        teacherId: val,
+                                        teacherId,
                                         teacherName: teacher.user.name,
                                       })
                                     }
@@ -226,7 +227,7 @@ export function ClassSubjectManager({
                                   <div className="flex items-center gap-2">
                                     {assignMutation.isPending && assignMutation.variables?.subjectId === item.subject.id
                                       ? (
-                                          <Loader2 className="size-3 animate-spin" />
+                                          <IconLoader2 className="size-3 animate-spin" />
                                         )
                                       : item.teacher?.name
                                         ? (
@@ -234,7 +235,7 @@ export function ClassSubjectManager({
                                           )
                                         : (
                                             <div className="flex items-center gap-2 text-muted-foreground italic">
-                                              <UserPlus className="size-3" />
+                                              <IconUserPlus className="size-3" />
                                               <span>{t.academic.classes.unassigned()}</span>
                                             </div>
                                           )}
@@ -279,7 +280,7 @@ export function ClassSubjectManager({
                                   })
                                 }}
                               >
-                                <Trash2 className="h-4 w-4" />
+                                <IconTrash className="h-4 w-4" />
                               </Button>
                             </TableCell>
                           </TableRow>

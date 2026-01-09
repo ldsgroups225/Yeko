@@ -36,7 +36,7 @@ vi.mock('motion/react', () => ({
 }))
 
 // Mock ScrollArea to avoid rendering complexity
-vi.mock('@/components/ui/scroll-area', () => ({
+vi.mock('@workspace/ui/components/scroll-area', () => ({
   ScrollArea: ({ children, className }: any) => (
     <div className={className} data-testid="scroll-area">
       {children}
@@ -45,7 +45,7 @@ vi.mock('@/components/ui/scroll-area', () => ({
 }))
 
 // Mock Button component
-vi.mock('@/components/ui/button', () => ({
+vi.mock('@workspace/ui/components/button', () => ({
   Button: ({ children, onClick, className, ...props }: any) => (
     <button
       type="button"
@@ -65,7 +65,7 @@ vi.mock('@/lib/utils', () => ({
 }))
 
 // Mock Sidebar components
-vi.mock('@/components/ui/sidebar', () => ({
+vi.mock('@workspace/ui/components/sidebar', () => ({
   Sidebar: ({ children, ...props }: any) => <aside {...props}>{children}</aside>,
   SidebarContent: ({ children }: any) => <div>{children}</div>,
   SidebarFooter: ({ children }: any) => <div>{children}</div>,
@@ -93,14 +93,14 @@ vi.mock('@/components/ui/sidebar', () => ({
 }))
 
 // Mock Collapsible
-vi.mock('@/components/ui/collapsible', () => ({
+vi.mock('@workspace/ui/components/collapsible', () => ({
   Collapsible: ({ children, ...props }: any) => <div {...props}>{children}</div>,
   CollapsibleContent: ({ children }: any) => <div>{children}</div>,
   CollapsibleTrigger: ({ children, ...props }: any) => <button type="button" {...props}>{children}</button>,
 }))
 
 // Mock Tooltip
-vi.mock('@/components/ui/tooltip', () => ({
+vi.mock('@workspace/ui/components/tooltip', () => ({
   Tooltip: ({ children }: any) => <>{children}</>,
   TooltipContent: ({ children }: any) => <div>{children}</div>,
   TooltipProvider: ({ children }: any) => <>{children}</>,

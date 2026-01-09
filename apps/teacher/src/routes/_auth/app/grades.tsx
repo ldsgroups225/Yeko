@@ -1,11 +1,11 @@
+import { IconChevronRight, IconSchool } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ChevronRight, GraduationCap } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
+import { Badge } from '@workspace/ui/components/badge'
 
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Card, CardContent } from '@workspace/ui/components/card'
+import { Skeleton } from '@workspace/ui/components/skeleton'
+import { useTranslation } from 'react-i18next'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { teacherClassesQueryOptions } from '@/lib/queries/dashboard'
 
@@ -105,7 +105,7 @@ function ClassCard({ classData }: ClassCardProps) {
                   </p>
                 )}
               </div>
-              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+              <IconChevronRight className="h-4 w-4 text-muted-foreground" />
             </Link>
           ))}
         </div>
@@ -120,7 +120,7 @@ function EmptyClasses() {
   return (
     <Card>
       <CardContent className="flex flex-col items-center justify-center py-12">
-        <GraduationCap className="h-12 w-12 text-muted-foreground/50" />
+        <IconSchool className="h-12 w-12 text-muted-foreground/50" />
         <p className="mt-4 text-sm text-muted-foreground">
           {t('grades.noClasses')}
         </p>

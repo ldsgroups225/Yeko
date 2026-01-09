@@ -17,9 +17,12 @@
   },
   "peerDependencies": {
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-hook-form": "^7.0.0"
   },
   "dependencies": {
+    "@base-ui-components/react": "catalog:",
+    "@radix-ui/react-slot": "catalog:",
     "@tabler/icons-react": "catalog:",
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",

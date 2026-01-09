@@ -1,21 +1,21 @@
 import type { UserFormData } from '@/schemas/user'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { IconCamera, IconDeviceFloppy, IconInfoCircle, IconLoader2, IconMail, IconPhone, IconShield, IconUserPlus } from '@tabler/icons-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Camera, Info, Loader2, Mail, Phone, Save, Shield, UserPlus } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import { RoleSelector } from '@/components/hr/users/role-selector'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { Button } from '@workspace/ui/components/button'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from '@workspace/ui/components/select'
+import { AnimatePresence, motion } from 'motion/react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { RoleSelector } from '@/components/hr/users/role-selector'
 import { useTranslations } from '@/i18n'
 import { userCreateSchema } from '@/schemas/user'
 import { createNewUser, updateExistingUser } from '@/school/functions/users'
@@ -123,7 +123,7 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
       >
         <div className="flex items-center gap-2 mb-8">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <Info className="h-4 w-4" />
+            <IconInfoCircle className="h-4 w-4" />
           </div>
           <h2 className="text-xl font-serif font-semibold">{t.hr.users.basicInfo()}</h2>
         </div>
@@ -154,7 +154,7 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
               <span className="text-destructive">*</span>
             </Label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <IconMail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 id="email"
                 type="email"
@@ -180,7 +180,7 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
           <div className="space-y-2">
             <Label htmlFor="phone" className="font-semibold text-foreground">{t.hr.common.phone()}</Label>
             <div className="relative">
-              <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <IconPhone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 id="phone"
                 type="tel"
@@ -234,7 +234,7 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
           <div className="space-y-2 md:col-span-2">
             <Label htmlFor="avatarUrl" className="font-semibold text-foreground">{t.hr.common.avatar()}</Label>
             <div className="relative">
-              <Camera className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <IconCamera className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 id="avatarUrl"
                 type="url"
@@ -260,7 +260,7 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
       >
         <div className="flex items-center gap-2 mb-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <Shield className="h-4 w-4" />
+            <IconShield className="h-4 w-4" />
           </div>
           <h2 className="text-xl font-serif font-semibold">{t.hr.users.roleAssignment()}</h2>
         </div>
@@ -301,14 +301,14 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
         >
           {isLoading
             ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
               )
             : isEditing
               ? (
-                  <Save className="mr-2 h-4 w-4" />
+                  <IconDeviceFloppy className="mr-2 h-4 w-4" />
                 )
               : (
-                  <UserPlus className="mr-2 h-4 w-4" />
+                  <IconUserPlus className="mr-2 h-4 w-4" />
                 )}
           {isEditing ? t.common.save() : t.common.create()}
         </Button>

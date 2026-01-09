@@ -1,13 +1,13 @@
-import { Download, FileSpreadsheet, FileText, Loader2 } from 'lucide-react'
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-
+import { IconDownload, IconFileSpreadsheet, IconFileText, IconLoader2 } from '@tabler/icons-react'
+import { Button } from '@workspace/ui/components/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from '@workspace/ui/components/dropdown-menu'
+
+import { useState } from 'react'
 import { useTranslations } from '@/i18n'
 
 type ExportFormat = 'pdf' | 'csv' | 'xlsx'
@@ -43,10 +43,10 @@ export function TimetableExportButton({
         <Button variant="outline" disabled={disabled || isExporting}>
           {isExporting
             ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
               )
             : (
-                <Download className="mr-2 h-4 w-4" />
+                <IconDownload className="mr-2 h-4 w-4" />
               )}
           {t.common.export()}
         </Button>
@@ -57,7 +57,7 @@ export function TimetableExportButton({
           disabled={isExporting}
           className="rounded-xl focus:bg-primary/10 focus:text-primary cursor-pointer py-2.5 font-medium text-sm"
         >
-          <FileText className="mr-2 h-4 w-4" />
+          <IconFileText className="mr-2 h-4 w-4" />
           {exportingFormat === 'pdf' ? t.common.exporting() : 'PDF'}
         </DropdownMenuItem>
         <DropdownMenuItem
@@ -65,7 +65,7 @@ export function TimetableExportButton({
           disabled={isExporting}
           className="rounded-xl focus:bg-primary/10 focus:text-primary cursor-pointer py-2.5 font-medium text-sm"
         >
-          <FileSpreadsheet className="mr-2 h-4 w-4" />
+          <IconFileSpreadsheet className="mr-2 h-4 w-4" />
           {exportingFormat === 'csv' ? t.common.exporting() : 'CSV'}
         </DropdownMenuItem>
         <DropdownMenuItem
@@ -73,7 +73,7 @@ export function TimetableExportButton({
           disabled={isExporting}
           className="rounded-xl focus:bg-primary/10 focus:text-primary cursor-pointer py-2.5 font-medium text-sm"
         >
-          <FileSpreadsheet className="mr-2 h-4 w-4" />
+          <IconFileSpreadsheet className="mr-2 h-4 w-4" />
           {exportingFormat === 'xlsx' ? t.common.exporting() : 'Excel'}
         </DropdownMenuItem>
       </DropdownMenuContent>

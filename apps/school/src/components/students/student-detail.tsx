@@ -1,29 +1,18 @@
 'use client'
 
+import { IconCalendar, IconEdit, IconHeart, IconMail, IconMapPin, IconPhone, IconPlus, IconSchool, IconUser, IconUsers } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
-import {
-  Calendar,
-  Edit,
-  GraduationCap,
-  Heart,
-  Mail,
-  MapPin,
-  Phone,
-  Plus,
-  User,
-  Users,
-} from 'lucide-react'
+import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
+import { Badge } from '@workspace/ui/components/badge'
+
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { Separator } from '@workspace/ui/components/separator'
+import { Skeleton } from '@workspace/ui/components/skeleton'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
 import { motion } from 'motion/react'
 import { useState } from 'react'
-
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useTranslations } from '@/i18n'
 import { studentsKeys, studentsOptions } from '@/lib/queries/students'
 
@@ -105,7 +94,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
                   </AvatarFallback>
                 </Avatar>
                 <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                  <Edit className="h-8 w-8 text-white drop-shadow-md" />
+                  <IconEdit className="h-8 w-8 text-white drop-shadow-md" />
                 </div>
               </div>
             </button>
@@ -134,7 +123,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
 
           <Button asChild size="lg" className="rounded-full shadow-sm hover:shadow-md">
             <Link to="/students/$studentId/edit" params={{ studentId }}>
-              <Edit className="mr-2 h-4 w-4" />
+              <IconEdit className="mr-2 h-4 w-4" />
               {t.common.edit()}
             </Link>
           </Button>
@@ -154,7 +143,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
           </TabsTrigger>
         </TabsList>
 
-        {/* Personal Info Tab */}
+        {/* Personal IconInfoCircle Tab */}
         <TabsContent value="info" className="space-y-6">
           <div className="grid gap-6 md:grid-cols-2">
             {/* Personal Details */}
@@ -163,7 +152,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg text-primary">
                     <div className="p-2 rounded-lg bg-primary/10">
-                      <User className="h-5 w-5" />
+                      <IconUser className="h-5 w-5" />
                     </div>
                     {t.students.personalInfo()}
                   </CardTitle>
@@ -185,7 +174,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg text-primary">
                     <div className="p-2 rounded-lg bg-primary/10">
-                      <GraduationCap className="h-5 w-5" />
+                      <IconSchool className="h-5 w-5" />
                     </div>
                     {t.students.currentEnrollment()}
                   </CardTitle>
@@ -245,13 +234,13 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
               </Card>
             </motion.div>
 
-            {/* Contact Info */}
+            {/* Contact IconInfoCircle */}
             <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }} initial="hidden" animate="show" transition={{ delay: 0.3 }}>
               <Card className="h-full border-white/20 bg-white/50 backdrop-blur-xl dark:bg-black/20">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg text-primary">
                     <div className="p-2 rounded-lg bg-primary/10">
-                      <MapPin className="h-5 w-5" />
+                      <IconMapPin className="h-5 w-5" />
                     </div>
                     {t.students.contactInfo()}
                   </CardTitle>
@@ -265,13 +254,13 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
               </Card>
             </motion.div>
 
-            {/* Medical Info */}
+            {/* Medical IconInfoCircle */}
             <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }} initial="hidden" animate="show" transition={{ delay: 0.4 }}>
               <Card className="h-full border-white/20 bg-white/50 backdrop-blur-xl dark:bg-black/20">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg text-pink-500">
                     <div className="p-2 rounded-lg bg-pink-500/10">
-                      <Heart className="h-5 w-5" />
+                      <IconHeart className="h-5 w-5" />
                     </div>
                     {t.students.medicalInfo()}
                   </CardTitle>
@@ -291,13 +280,13 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
             <CardHeader className="flex flex-row items-center justify-between border-b border-white/10 bg-white/30 px-6 py-4">
               <div>
                 <CardTitle className="flex items-center gap-2 text-lg">
-                  <Users className="h-5 w-5 text-primary" />
+                  <IconUsers className="h-5 w-5 text-primary" />
                   {t.students.linkedParents()}
                 </CardTitle>
                 <CardDescription>{t.students.linkedParentsDescription()}</CardDescription>
               </div>
               <Button size="sm" onClick={() => setParentDialogOpen(true)} className="shadow-sm">
-                <Plus className="mr-2 h-4 w-4" />
+                <IconPlus className="mr-2 h-4 w-4" />
                 {t.students.linkParent()}
               </Button>
             </CardHeader>
@@ -350,13 +339,13 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
                               <div className="mt-2 space-y-1">
                                 {item.parent.phone && (
                                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                    <Phone className="h-3 w-3" />
+                                    <IconPhone className="h-3 w-3" />
                                     {item.parent.phone}
                                   </div>
                                 )}
                                 {item.parent.email && (
                                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                    <Mail className="h-3 w-3" />
+                                    <IconMail className="h-3 w-3" />
                                     {item.parent.email}
                                   </div>
                                 )}
@@ -373,7 +362,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
                   )
                 : (
                     <div className="flex flex-col items-center justify-center py-12 text-center text-muted-foreground">
-                      <Users className="h-12 w-12 opacity-20 mb-3" />
+                      <IconUsers className="h-12 w-12 opacity-20 mb-3" />
                       <p>{t.students.noParentsLinked()}</p>
                     </div>
                   )}
@@ -381,16 +370,16 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
           </Card>
         </TabsContent>
 
-        {/* Enrollment History Tab */}
+        {/* Enrollment IconHistory Tab */}
         <TabsContent value="enrollments" className="space-y-4">
           <Card className="border-white/20 bg-white/50 backdrop-blur-xl dark:bg-black/20">
             <CardHeader className="flex flex-row items-center justify-between border-b border-white/10 bg-white/30 px-6 py-4">
               <CardTitle className="flex items-center gap-2 text-lg">
-                <Calendar className="h-5 w-5 text-primary" />
+                <IconCalendar className="h-5 w-5 text-primary" />
                 {t.students.enrollmentHistory()}
               </CardTitle>
               <Button size="sm" onClick={() => setEnrollmentDialogOpen(true)} className="shadow-sm">
-                <Plus className="mr-2 h-4 w-4" />
+                <IconPlus className="mr-2 h-4 w-4" />
                 {t.students.enrollStudent()}
               </Button>
             </CardHeader>

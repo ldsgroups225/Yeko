@@ -9,7 +9,7 @@ vi.unmock('react-hook-form')
 const { UserForm } = await import('@/components/hr/users/user-form')
 
 describe('user Management Integration', () => {
-  describe('create User Flow', () => {
+  describe('create IconUser Flow', () => {
     test('should create a new user with all fields', async () => {
       const user = userEvent.setup()
       const mockOnSuccess = vi.fn()
@@ -52,7 +52,7 @@ describe('user Management Integration', () => {
     })
   })
 
-  describe('edit User Flow', () => {
+  describe('edit IconUser Flow', () => {
     test('should edit existing user', async () => {
       const user = userEvent.setup()
       const mockOnSuccess = vi.fn()

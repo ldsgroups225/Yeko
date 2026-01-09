@@ -220,7 +220,7 @@ export const getCoefficientMatrix = createServerFn()
   })
 
 /**
- * Copy coefficients from one school year to another
+ * IconCopy coefficients from one school year to another
  */
 export const copySchoolCoefficientsFromYear = createServerFn()
   .inputValidator(

@@ -1,4 +1,4 @@
-import { Slider as SliderPrimitive } from '@base-ui/react/slider'
+import { Slider as SliderPrimitive } from '@base-ui-components/react/slider'
 import { cn } from '@workspace/ui/lib/utils'
 
 import * as React from 'react'

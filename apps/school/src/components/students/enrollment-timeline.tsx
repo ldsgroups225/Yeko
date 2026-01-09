@@ -1,7 +1,7 @@
 'use client'
 
-import { ArrowRight, Calendar, CheckCircle2, Clock, GraduationCap, XCircle } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
+import { IconArrowRight, IconCalendar, IconCircleCheck, IconCircleX, IconClock, IconSchool } from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
 
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
@@ -34,25 +34,25 @@ interface EnrollmentTimelineProps {
 
 const statusConfig = {
   confirmed: {
-    icon: CheckCircle2,
+    icon: IconCircleCheck,
     color: 'text-green-600',
     bgColor: 'bg-green-100',
     borderColor: 'border-green-500',
   },
   pending: {
-    icon: Clock,
+    icon: IconClock,
     color: 'text-yellow-600',
     bgColor: 'bg-yellow-100',
     borderColor: 'border-yellow-500',
   },
   cancelled: {
-    icon: XCircle,
+    icon: IconCircleX,
     color: 'text-red-600',
     bgColor: 'bg-red-100',
     borderColor: 'border-red-500',
   },
   transferred: {
-    icon: ArrowRight,
+    icon: IconArrowRight,
     color: 'text-blue-600',
     bgColor: 'bg-blue-100',
     borderColor: 'border-blue-500',
@@ -65,7 +65,7 @@ export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
   if (!enrollments || enrollments.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-8 text-center">
-        <GraduationCap className="h-12 w-12 text-muted-foreground" />
+        <IconSchool className="h-12 w-12 text-muted-foreground" />
         <p className="mt-2 text-muted-foreground">{t.students.noEnrollmentHistory()}</p>
       </div>
     )
@@ -139,7 +139,7 @@ export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
 
                 <div className="mt-3 flex flex-wrap gap-4 text-sm text-muted-foreground">
                   <div className="flex items-center gap-1">
-                    <Calendar className="h-3.5 w-3.5" />
+                    <IconCalendar className="h-3.5 w-3.5" />
                     <span>
                       {t.students.enrolled()}
                       :
@@ -158,7 +158,7 @@ export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
                   )}
                   {item.enrollment.confirmedAt && (
                     <div className="flex items-center gap-1">
-                      <CheckCircle2 className="h-3.5 w-3.5 text-green-600" />
+                      <IconCircleCheck className="h-3.5 w-3.5 text-green-600" />
                       <span>
                         {t.students.confirmedOn()}
                         :
@@ -169,7 +169,7 @@ export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
                   )}
                   {item.enrollment.transferredAt && (
                     <div className="flex items-center gap-1">
-                      <ArrowRight className="h-3.5 w-3.5 text-blue-600" />
+                      <IconArrowRight className="h-3.5 w-3.5 text-blue-600" />
                       <span>
                         {t.students.transferredOn()}
                         :
@@ -180,7 +180,7 @@ export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
                   )}
                   {item.enrollment.cancelledAt && (
                     <div className="flex items-center gap-1">
-                      <XCircle className="h-3.5 w-3.5 text-red-600" />
+                      <IconCircleX className="h-3.5 w-3.5 text-red-600" />
                       <span>
                         {t.students.cancelledOn()}
                         :

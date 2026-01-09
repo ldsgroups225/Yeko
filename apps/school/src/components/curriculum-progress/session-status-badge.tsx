@@ -1,6 +1,6 @@
 import type { ClassSessionStatus } from '@/schemas/curriculum-progress'
 
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@workspace/ui/components/badge'
 import { cn } from '@/lib/utils'
 import { classSessionStatusColors, classSessionStatusLabels } from '@/schemas/curriculum-progress'
 

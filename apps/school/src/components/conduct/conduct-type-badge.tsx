@@ -1,6 +1,6 @@
-import { AlertTriangle, Award, Ban, FileText } from 'lucide-react'
+import { IconAlertTriangle, IconAward, IconBan, IconFileText } from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
 import { motion } from 'motion/react'
-import { Badge } from '@/components/ui/badge'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
@@ -13,13 +13,13 @@ interface ConductTypeBadgeProps {
 }
 
 const typeConfig: Record<ConductType, {
-  icon: typeof AlertTriangle
+  icon: typeof IconAlertTriangle
   colorClass: string
 }> = {
-  incident: { icon: AlertTriangle, colorClass: 'bg-orange-500/10 text-orange-600 border-orange-500/20' },
-  sanction: { icon: Ban, colorClass: 'bg-red-500/10 text-red-600 border-red-500/20' },
-  reward: { icon: Award, colorClass: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' },
-  note: { icon: FileText, colorClass: 'bg-blue-500/10 text-blue-600 border-blue-500/20' },
+  incident: { icon: IconAlertTriangle, colorClass: 'bg-orange-500/10 text-orange-600 border-orange-500/20' },
+  sanction: { icon: IconBan, colorClass: 'bg-red-500/10 text-red-600 border-red-500/20' },
+  reward: { icon: IconAward, colorClass: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' },
+  note: { icon: IconFileText, colorClass: 'bg-blue-500/10 text-blue-600 border-blue-500/20' },
 }
 
 export function ConductTypeBadge({

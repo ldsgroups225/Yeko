@@ -1,4 +1,5 @@
 import type { ColumnDef } from '@tanstack/react-table'
+import { IconCalendar, IconDots, IconEdit, IconEye, IconLoader2, IconMail, IconPhone, IconSearch, IconTrash, IconUsers } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import {
@@ -6,13 +7,6 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { format } from 'date-fns'
-import { Calendar, Edit, Eye, Loader2, Mail, MoreHorizontal, Phone, Search, Trash2, Users } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { useMemo, useState } from 'react'
-import { toast } from 'sonner'
-import { EmptyState } from '@/components/hr/empty-state'
-import { TableSkeleton } from '@/components/hr/table-skeleton'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,22 +16,22 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+} from '@workspace/ui/components/alert-dialog'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
+} from '@workspace/ui/components/card'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
+} from '@workspace/ui/components/dropdown-menu'
+import { Input } from '@workspace/ui/components/input'
 import {
   Table,
   TableBody,
@@ -45,12 +39,18 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { format } from 'date-fns'
+import { AnimatePresence, motion } from 'motion/react'
+import { useMemo, useState } from 'react'
+import { toast } from 'sonner'
+import { EmptyState } from '@/components/hr/empty-state'
+import { TableSkeleton } from '@/components/hr/table-skeleton'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useTranslations } from '@/i18n'
 import { deleteExistingUser, getUsers } from '@/school/functions/users'
 
-interface User {
+interface IconUser {
   id: string
   name: string
   email: string
@@ -74,7 +74,7 @@ export function UsersTable({ filters }: UsersTableProps) {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [searchInput, setSearchInput] = useState(filters.search || '')
-  const [userToDelete, setUserToDelete] = useState<User | null>(null)
+  const [userToDelete, setUserToDelete] = useState<IconUser | null>(null)
   const debouncedSearch = useDebounce(searchInput, 500)
 
   const deleteMutation = useMutation({
@@ -109,7 +109,7 @@ export function UsersTable({ filters }: UsersTableProps) {
     },
   })
 
-  const columns = useMemo<ColumnDef<User>[]>(
+  const columns = useMemo<ColumnDef<IconUser>[]>(
     () => [
       {
         accessorKey: 'name',
@@ -118,7 +118,7 @@ export function UsersTable({ filters }: UsersTableProps) {
           <div className="flex flex-col">
             <span className="font-semibold text-foreground">{row.original.name}</span>
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
-              <Mail className="h-3 w-3" />
+              <IconMail className="h-3 w-3" />
               {row.original.email}
             </div>
           </div>
@@ -132,7 +132,7 @@ export function UsersTable({ filters }: UsersTableProps) {
             {row.original.phone
               ? (
                   <>
-                    <Phone className="h-3.5 w-3.5" />
+                    <IconPhone className="h-3.5 w-3.5" />
                     {row.original.phone}
                   </>
                 )
@@ -183,7 +183,7 @@ export function UsersTable({ filters }: UsersTableProps) {
         header: t.hr.users.lastLogin(),
         cell: ({ row }) => (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Calendar className="h-3.5 w-3.5" />
+            <IconCalendar className="h-3.5 w-3.5" />
             {row.original.lastLoginAt
               ? format(new Date(row.original.lastLoginAt), 'dd MMM yyyy HH:mm')
               : t.hr.users.neverLoggedIn()}
@@ -196,7 +196,7 @@ export function UsersTable({ filters }: UsersTableProps) {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="hover:bg-primary/10 hover:text-primary transition-colors">
-                <MoreHorizontal className="h-4 w-4" />
+                <IconDots className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="backdrop-blur-2xl bg-popover/90 border-border/40 min-w-[160px]">
@@ -204,21 +204,21 @@ export function UsersTable({ filters }: UsersTableProps) {
                 className="cursor-pointer gap-2"
                 onClick={() => navigate({ to: `/users/users/${row.original.id}` })}
               >
-                <Eye className="h-4 w-4" />
+                <IconEye className="h-4 w-4" />
                 {t.common.view()}
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="cursor-pointer gap-2"
                 onClick={() => navigate({ to: `/users/users/${row.original.id}/edit` })}
               >
-                <Edit className="h-4 w-4" />
+                <IconEdit className="h-4 w-4" />
                 {t.common.edit()}
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="cursor-pointer gap-2 text-destructive focus:text-destructive focus:bg-destructive/10"
                 onClick={() => setUserToDelete(row.original)}
               >
-                <Trash2 className="h-4 w-4" />
+                <IconTrash className="h-4 w-4" />
                 {t.common.delete()}
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -251,7 +251,7 @@ export function UsersTable({ filters }: UsersTableProps) {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <CardTitle className="text-2xl font-serif">{t.hr.users.listTitle()}</CardTitle>
             <div className="relative w-full sm:w-72">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder={t.hr.users.searchPlaceholder()}
                 value={searchInput}
@@ -266,7 +266,7 @@ export function UsersTable({ filters }: UsersTableProps) {
           {hasNoData && !hasNoResults && (
             <div className="py-12">
               <EmptyState
-                icon={Users}
+                icon={IconUsers}
                 title={t.hr.users.noUsers()}
                 description={t.hr.users.noUsersDescription()}
                 action={{
@@ -281,7 +281,7 @@ export function UsersTable({ filters }: UsersTableProps) {
           {hasNoResults && (
             <div className="py-12">
               <EmptyState
-                icon={Search}
+                icon={IconSearch}
                 title={t.common.noResults()}
                 description={t.common.noResultsDescription()}
               />
@@ -408,10 +408,10 @@ export function UsersTable({ filters }: UsersTableProps) {
             >
               {deleteMutation.isPending
                 ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
                   )
                 : (
-                    <Trash2 className="mr-2 h-4 w-4" />
+                    <IconTrash className="mr-2 h-4 w-4" />
                   )}
               {deleteMutation.isPending ? t.common.deleting() : t.common.delete()}
             </AlertDialogAction>

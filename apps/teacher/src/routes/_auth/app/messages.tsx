@@ -1,25 +1,25 @@
 import type { Locale } from 'date-fns'
+import {
+  IconArchive,
+  IconInbox,
+  IconMail,
+  IconMessageCircle,
+  IconPencil,
+  IconSend,
+  IconStar,
+} from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent } from '@workspace/ui/components/card'
+import { Skeleton } from '@workspace/ui/components/skeleton'
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
-import {
-  Archive,
-  Inbox,
-  Mail,
-  MessageSquare,
-  PenSquare,
-  Send,
-  Star,
-} from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { teacherMessagesQueryOptions } from '@/lib/queries/messages'
 
@@ -50,7 +50,7 @@ function MessagesPage() {
         <h1 className="text-xl font-semibold">{t('messages.title')}</h1>
         <Link to="/app/messages/compose">
           <Button size="sm">
-            <PenSquare className="mr-2 h-4 w-4" />
+            <IconPencil className="mr-2 h-4 w-4" />
             {t('messages.compose')}
           </Button>
         </Link>
@@ -59,15 +59,15 @@ function MessagesPage() {
       <Tabs value={folder} onValueChange={v => setFolder(v as typeof folder)}>
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="inbox" className="gap-1.5">
-            <Inbox className="h-4 w-4" />
+            <IconInbox className="h-4 w-4" />
             <span className="hidden sm:inline">{t('messages.inbox')}</span>
           </TabsTrigger>
           <TabsTrigger value="sent" className="gap-1.5">
-            <Send className="h-4 w-4" />
+            <IconSend className="h-4 w-4" />
             <span className="hidden sm:inline">{t('messages.sent')}</span>
           </TabsTrigger>
           <TabsTrigger value="archived" className="gap-1.5">
-            <Archive className="h-4 w-4" />
+            <IconArchive className="h-4 w-4" />
             <span className="hidden sm:inline">{t('messages.archived')}</span>
           </TabsTrigger>
         </TabsList>
@@ -126,7 +126,7 @@ function MessageItem({ message, locale }: MessageItemProps) {
         <CardContent className="p-3">
           <div className="flex items-start gap-3">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted">
-              <Mail className="h-5 w-5 text-muted-foreground" />
+              <IconMail className="h-5 w-5 text-muted-foreground" />
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center justify-between gap-2">
@@ -159,7 +159,7 @@ function MessageItem({ message, locale }: MessageItemProps) {
             </div>
             <div className="flex flex-col items-center gap-1">
               {message.isStarred && (
-                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                <IconStar className="h-4 w-4 fill-yellow-400 text-yellow-400" />
               )}
               {!message.isRead && (
                 <Badge variant="default" className="h-2 w-2 rounded-full p-0" />
@@ -178,14 +178,14 @@ function EmptyMessages({ folder }: { folder: string }) {
   return (
     <Card>
       <CardContent className="flex flex-col items-center justify-center py-12">
-        <MessageSquare className="h-12 w-12 text-muted-foreground/50" />
+        <IconMessageCircle className="h-12 w-12 text-muted-foreground/50" />
         <p className="mt-4 text-sm text-muted-foreground">
           {t('messages.noMessages')}
         </p>
         {folder === 'inbox' && (
           <Link to="/app/messages/compose">
             <Button variant="outline" className="mt-4">
-              <PenSquare className="mr-2 h-4 w-4" />
+              <IconPencil className="mr-2 h-4 w-4" />
               {t('messages.compose')}
             </Button>
           </Link>

@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle, Clock } from 'lucide-react'
+import { IconAlertTriangle, IconCircleCheck, IconClock } from '@tabler/icons-react'
 import { motion } from 'motion/react'
 
 const container = {
@@ -44,28 +44,28 @@ export function DisciplineDashboard() {
           title="Taux de présence"
           value="94.5%"
           subtitle="Cette semaine"
-          icon={CheckCircle}
+          icon={IconCircleCheck}
           trend="positive"
         />
         <MetricCard
           title="Absences"
           value="67"
           subtitle="Aujourd'hui"
-          icon={AlertTriangle}
+          icon={IconAlertTriangle}
           trend="negative"
         />
         <MetricCard
           title="Retards"
           value="23"
           subtitle="Aujourd'hui"
-          icon={Clock}
+          icon={IconClock}
           trend="negative"
         />
         <MetricCard
           title="Incidents"
           value="5"
           subtitle="Cette semaine"
-          icon={AlertTriangle}
+          icon={IconAlertTriangle}
           trend="neutral"
         />
       </motion.div>

@@ -1,8 +1,8 @@
+import { IconAlertTriangle, IconArrowRight, IconBell, IconSettings, IconSparkles, IconUserCheck, IconUsers } from '@tabler/icons-react'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { AlertTriangle, ArrowRight, Bell, Settings, Sparkles, UserCheck, Users } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { motion } from 'motion/react'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
@@ -17,7 +17,7 @@ function SchoolLifeDashboard() {
     {
       title: t.schoolLife.teacherAttendance(),
       description: t.schoolLife.teacherAttendanceDescription(),
-      icon: UserCheck,
+      icon: IconUserCheck,
       href: '/conducts/teacher-attendance',
       color: 'text-blue-500',
       bgColor: 'bg-blue-500/10',
@@ -26,7 +26,7 @@ function SchoolLifeDashboard() {
     {
       title: t.schoolLife.studentAttendance(),
       description: t.schoolLife.studentAttendanceDescription(),
-      icon: Users,
+      icon: IconUsers,
       href: '/conducts/student-attendance',
       color: 'text-emerald-500',
       bgColor: 'bg-emerald-500/10',
@@ -35,7 +35,7 @@ function SchoolLifeDashboard() {
     {
       title: t.schoolLife.conduct(),
       description: t.schoolLife.conductDescription(),
-      icon: AlertTriangle,
+      icon: IconAlertTriangle,
       href: '/conducts/conduct',
       color: 'text-orange-500',
       bgColor: 'bg-orange-500/10',
@@ -44,7 +44,7 @@ function SchoolLifeDashboard() {
     {
       title: t.schoolLife.alerts(),
       description: t.schoolLife.alertsDescription(),
-      icon: Bell,
+      icon: IconBell,
       href: '/conducts/alerts',
       color: 'text-rose-500',
       bgColor: 'bg-rose-500/10',
@@ -53,7 +53,7 @@ function SchoolLifeDashboard() {
     {
       title: t.schoolLife.settings(),
       description: t.schoolLife.settingsDescription(),
-      icon: Settings,
+      icon: IconSettings,
       href: '/conducts/settings',
       color: 'text-zinc-500',
       bgColor: 'bg-zinc-500/10',
@@ -71,11 +71,11 @@ function SchoolLifeDashboard() {
         className="relative overflow-hidden rounded-3xl border border-primary/20 bg-primary/5 p-8 text-primary"
       >
         <div className="absolute top-0 right-0 p-4 opacity-10">
-          <Sparkles className="size-32" />
+          <IconSparkles className="size-32" />
         </div>
         <div className="relative z-10 flex flex-col md:flex-row items-center gap-6">
           <div className="p-4 rounded-2xl bg-primary/10 backdrop-blur-xl border border-primary/20 shadow-lg">
-            <AlertTriangle className="size-12" />
+            <IconAlertTriangle className="size-12" />
           </div>
           <div className="text-center md:text-left">
             <h1 className="text-3xl font-black tracking-tight mb-2 uppercase italic">{t.nav.conducts()}</h1>
@@ -118,7 +118,7 @@ function SchoolLifeDashboard() {
                   <div className="pt-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary/40 group-hover:translate-x-1 transition-transform">
                     {t.common.view()}
                     {' '}
-                    <ArrowRight className="size-3" />
+                    <IconArrowRight className="size-3" />
                   </div>
                 </CardContent>
               </Card>

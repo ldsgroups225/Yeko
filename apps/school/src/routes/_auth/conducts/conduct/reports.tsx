@@ -1,23 +1,18 @@
+import { IconAlertTriangle, IconArrowLeft, IconChartBar, IconChartPie, IconFilter, IconInfoCircle, IconShieldCheck, IconTrendingUp, IconTrophy } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { AlertTriangle, ArrowLeft, BarChart3, Filter, Info, PieChart, ShieldCheck, TrendingUp, Trophy } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { useState } from 'react'
-import { ConductSeverityBadge } from '@/components/conduct/conduct-severity-badge'
-import { ConductTypeBadge } from '@/components/conduct/conduct-type-badge'
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { DatePicker } from '@/components/ui/date-picker'
-import { Progress } from '@/components/ui/progress'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { DatePicker } from '@workspace/ui/components/date-picker'
+import { Progress } from '@workspace/ui/components/progress'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
+} from '@workspace/ui/components/select'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -25,7 +20,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
+import { useState } from 'react'
+import { ConductSeverityBadge } from '@/components/conduct/conduct-severity-badge'
+import { ConductTypeBadge } from '@/components/conduct/conduct-type-badge'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { conductRecordsOptions } from '@/lib/queries/conduct-records'
@@ -128,7 +128,7 @@ function ConductReportsPage() {
           className="flex items-center gap-4"
         >
           <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-            <BarChart3 className="size-8 text-primary" />
+            <IconChartBar className="size-8 text-primary" />
           </div>
           <div>
             <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.conduct.reports()}</h1>
@@ -142,7 +142,7 @@ function ConductReportsPage() {
         >
           <Link to="/conducts/conduct">
             <Button variant="ghost" size="sm" className="rounded-xl hover:bg-primary/10 hover:text-primary transition-all font-black uppercase tracking-widest text-[10px]">
-              <ArrowLeft className="mr-2 h-4 w-4" />
+              <IconArrowLeft className="mr-2 h-4 w-4" />
               {t.common.back()}
             </Button>
           </Link>
@@ -155,11 +155,11 @@ function ConductReportsPage() {
         className="bg-card/20 backdrop-blur-xl border border-border/40 p-6 rounded-3xl"
       >
         <div className="flex items-center gap-2 mb-4 ml-1">
-          <Filter className="size-3 text-muted-foreground/60" />
+          <IconFilter className="size-3 text-muted-foreground/60" />
           <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{t.conduct.filters()}</span>
         </div>
         <div className="flex flex-wrap gap-4">
-          <Select value={classId || 'all'} onValueChange={v => setClassId(v === 'all' ? '' : v)}>
+          <Select value={classId || 'all'} onValueChange={v => setClassId(v === 'all' || v === null ? '' : v)}>
             <SelectTrigger className="w-[200px] h-12 rounded-2xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
               <SelectValue placeholder={t.conduct.allClasses()} />
             </SelectTrigger>
@@ -175,7 +175,7 @@ function ConductReportsPage() {
             </SelectContent>
           </Select>
 
-          <Select value={type ?? 'all'} onValueChange={v => setType(v === 'all' ? undefined : v as typeof type)}>
+          <Select value={type ?? 'all'} onValueChange={v => setType(v === 'all' || v === null ? undefined : v as typeof type)}>
             <SelectTrigger className="w-[180px] h-12 rounded-2xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
               <SelectValue placeholder={t.conduct.allTypes()} />
             </SelectTrigger>
@@ -222,7 +222,7 @@ function ConductReportsPage() {
                   <motion.div variants={item}>
                     <Card className="relative overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl group">
                       <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
-                        <TrendingUp className="size-16 text-primary" />
+                        <IconTrendingUp className="size-16 text-primary" />
                       </div>
                       <CardHeader className="pb-2">
                         <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{t.conduct.totalRecords()}</CardTitle>
@@ -236,7 +236,7 @@ function ConductReportsPage() {
                   <motion.div variants={item}>
                     <Card className="relative overflow-hidden rounded-3xl border-rose-500/20 bg-rose-500/5 backdrop-blur-xl shadow-xl group">
                       <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
-                        <AlertTriangle className="size-16 text-rose-500" />
+                        <IconAlertTriangle className="size-16 text-rose-500" />
                       </div>
                       <CardHeader className="pb-2">
                         <CardTitle className="text-[10px] font-black uppercase tracking-widest text-rose-500/60">{t.conduct.type.incident()}</CardTitle>
@@ -254,7 +254,7 @@ function ConductReportsPage() {
                   <motion.div variants={item}>
                     <Card className="relative overflow-hidden rounded-3xl border-orange-500/20 bg-orange-500/5 backdrop-blur-xl shadow-xl group">
                       <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
-                        <ShieldCheck className="size-16 text-orange-500" />
+                        <IconShieldCheck className="size-16 text-orange-500" />
                       </div>
                       <CardHeader className="pb-2">
                         <CardTitle className="text-[10px] font-black uppercase tracking-widest text-orange-500/60">{t.conduct.type.sanction()}</CardTitle>
@@ -272,7 +272,7 @@ function ConductReportsPage() {
                   <motion.div variants={item}>
                     <Card className="relative overflow-hidden rounded-3xl border-emerald-500/20 bg-emerald-500/5 backdrop-blur-xl shadow-xl group">
                       <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
-                        <Trophy className="size-16 text-emerald-500" />
+                        <IconTrophy className="size-16 text-emerald-500" />
                       </div>
                       <CardHeader className="pb-2">
                         <CardTitle className="text-[10px] font-black uppercase tracking-widest text-emerald-500/60">{t.conduct.type.reward()}</CardTitle>
@@ -293,7 +293,7 @@ function ConductReportsPage() {
                     <Card className="rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl h-full">
                       <CardHeader className="border-b border-border/10 bg-muted/20">
                         <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 flex items-center gap-2">
-                          <PieChart className="size-3" />
+                          <IconChartPie className="size-3" />
                           {t.conduct.bySeverity()}
                         </CardTitle>
                       </CardHeader>
@@ -320,7 +320,7 @@ function ConductReportsPage() {
                     <Card className="rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl h-full">
                       <CardHeader className="border-b border-border/10 bg-muted/20">
                         <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 flex items-center gap-2">
-                          <BarChart3 className="size-3" />
+                          <IconChartBar className="size-3" />
                           {t.conduct.byCategory()}
                         </CardTitle>
                       </CardHeader>
@@ -365,7 +365,7 @@ function ConductReportsPage() {
                   <Card className="rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl overflow-hidden">
                     <CardHeader className="border-b border-border/10 bg-muted/20">
                       <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 flex items-center gap-2">
-                        <Info className="size-3" />
+                        <IconInfoCircle className="size-3" />
                         {t.conduct.recentRecords()}
                       </CardTitle>
                     </CardHeader>

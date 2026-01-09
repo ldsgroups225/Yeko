@@ -38,13 +38,13 @@ vi.mock('sonner', () => ({
 }))
 
 // Mock UI components
-vi.mock('@/components/ui/badge', () => ({
+vi.mock('@workspace/ui/components/badge', () => ({
   Badge: ({ children, className, ...props }: any) => (
     <span className={className} {...props}>{children}</span>
   ),
 }))
 
-vi.mock('@/components/ui/button', () => ({
+vi.mock('@workspace/ui/components/button', () => ({
   Button: ({ children, onClick, ...props }: any) => (
     <button type="button" onClick={onClick} {...props}>{children}</button>
   ),

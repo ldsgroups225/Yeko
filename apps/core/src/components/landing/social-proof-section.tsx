@@ -1,14 +1,14 @@
-import { Award, School, TrendingUp, Users } from 'lucide-react'
+import { IconAward, IconSchool, IconTrendingUp, IconUsers } from '@tabler/icons-react'
 import { useTranslation } from 'react-i18next'
 
 export function SocialProofSection() {
   const { t } = useTranslation()
 
   const stats = [
-    { icon: School, value: '200+', labelKey: 'stats.schools' },
-    { icon: Users, value: '50K+', labelKey: 'stats.students' },
-    { icon: TrendingUp, value: '98%', labelKey: 'stats.satisfaction' },
-    { icon: Award, value: '15+', labelKey: 'stats.countries' },
+    { icon: IconSchool, value: '200+', labelKey: 'stats.schools' },
+    { icon: IconUsers, value: '50K+', labelKey: 'stats.students' },
+    { icon: IconTrendingUp, value: '98%', labelKey: 'stats.satisfaction' },
+    { icon: IconAward, value: '15+', labelKey: 'stats.countries' },
   ]
 
   return (

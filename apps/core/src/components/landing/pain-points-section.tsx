@@ -1,11 +1,11 @@
-import { Clock, FileX, MessageCircleX } from 'lucide-react'
+import { IconClock, IconFileX, IconMessageCircleX } from '@tabler/icons-react'
+import { Card, CardContent } from '@workspace/ui/components/card'
 import { useTranslation } from 'react-i18next'
-import { Card, CardContent } from '@/components/ui/card'
 
 const iconMap = {
-  paperwork: FileX,
-  communication: MessageCircleX,
-  admin: Clock,
+  paperwork: IconFileX,
+  communication: IconMessageCircleX,
+  admin: IconClock,
 }
 
 const painPointKeys = ['paperwork', 'communication', 'admin'] as const

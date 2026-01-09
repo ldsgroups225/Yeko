@@ -1,33 +1,19 @@
 'use client'
 
 import type { getParents } from '@/school/functions/parents'
+import { IconDots, IconMail, IconPhone, IconPlus, IconSearch, IconSend, IconTrash, IconUserPlus, IconUsers } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import {
-  Mail,
-  MoreHorizontal,
-  Phone,
-  Plus,
-  Search,
-  Send,
-  Trash2,
-  UserPlus,
-  Users,
-} from 'lucide-react'
-import { motion } from 'motion/react'
-import { useState } from 'react'
-import { toast } from 'sonner'
+import { Avatar, AvatarFallback } from '@workspace/ui/components/avatar'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 
-import { EmptyState } from '@/components/hr/empty-state'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
+} from '@workspace/ui/components/card'
 import {
   Dialog,
   DialogContent,
@@ -35,23 +21,23 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from '@workspace/ui/components/dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
+} from '@workspace/ui/components/dropdown-menu'
+import { Input } from '@workspace/ui/components/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
+} from '@workspace/ui/components/select'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -59,7 +45,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { motion } from 'motion/react'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { EmptyState } from '@/components/hr/empty-state'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useTranslations } from '@/i18n'
 import { parentsKeys, parentsOptions } from '@/lib/queries/parents'
@@ -140,7 +130,7 @@ export function ParentsList() {
             <CardTitle className="text-sm font-medium">
               {t.parents.totalParents()}
             </CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <IconUsers className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{data?.total || 0}</div>
@@ -151,7 +141,7 @@ export function ParentsList() {
             <CardTitle className="text-sm font-medium">
               {t.parents.invitationPending()}
             </CardTitle>
-            <Mail className="h-4 w-4 text-muted-foreground" />
+            <IconMail className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-yellow-600">
@@ -164,7 +154,7 @@ export function ParentsList() {
             <CardTitle className="text-sm font-medium">
               {t.parents.invitationSentCount()}
             </CardTitle>
-            <Send className="h-4 w-4 text-muted-foreground" />
+            <IconSend className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600">
@@ -177,7 +167,7 @@ export function ParentsList() {
             <CardTitle className="text-sm font-medium">
               {t.parents.registered()}
             </CardTitle>
-            <UserPlus className="h-4 w-4 text-muted-foreground" />
+            <IconUserPlus className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
@@ -191,7 +181,7 @@ export function ParentsList() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-1 gap-2">
           <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder={t.parents.searchPlaceholder()}
               value={search}
@@ -199,7 +189,7 @@ export function ParentsList() {
               className="pl-9"
             />
           </div>
-          <Select value={invitationStatus} onValueChange={setInvitationStatus}>
+          <Select value={invitationStatus} onValueChange={val => setInvitationStatus(val ?? '')}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder={t.parents.filterByStatus()} />
             </SelectTrigger>
@@ -214,11 +204,11 @@ export function ParentsList() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => setAutoMatchDialogOpen(true)}>
-            <UserPlus className="mr-2 h-4 w-4" />
+            <IconUserPlus className="mr-2 h-4 w-4" />
             {t.students.autoMatch()}
           </Button>
           <Button onClick={() => setCreateDialogOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
+            <IconPlus className="mr-2 h-4 w-4" />
             {t.parents.addParent()}
           </Button>
         </div>
@@ -266,7 +256,7 @@ export function ParentsList() {
                       <TableRow>
                         <TableCell colSpan={6}>
                           <EmptyState
-                            icon={Users}
+                            icon={IconUsers}
                             title={t.parents.noParents()}
                             description={t.parents.noParentsDescription()}
                             action={{
@@ -310,7 +300,7 @@ export function ParentsList() {
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-1">
-                              <Phone className="h-3 w-3 text-muted-foreground" />
+                              <IconPhone className="h-3 w-3 text-muted-foreground" />
                               {item.parent.phone}
                             </div>
                           </TableCell>
@@ -318,7 +308,7 @@ export function ParentsList() {
                             {item.parent.email
                               ? (
                                   <div className="flex items-center gap-1">
-                                    <Mail className="h-3 w-3 text-muted-foreground" />
+                                    <IconMail className="h-3 w-3 text-muted-foreground" />
                                     {item.parent.email}
                                   </div>
                                 )
@@ -347,7 +337,7 @@ export function ParentsList() {
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" size="icon">
-                                  <MoreHorizontal className="h-4 w-4" />
+                                  <IconDots className="h-4 w-4" />
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
@@ -356,7 +346,7 @@ export function ParentsList() {
                                     onClick={() => inviteMutation.mutate(item.parent.id)}
                                     disabled={inviteMutation.isPending}
                                   >
-                                    <Send className="mr-2 h-4 w-4" />
+                                    <IconSend className="mr-2 h-4 w-4" />
                                     {t.parents.sendInvitation()}
                                   </DropdownMenuItem>
                                 )}
@@ -365,7 +355,7 @@ export function ParentsList() {
                                   className="text-destructive"
                                   onClick={() => handleDelete(item)}
                                 >
-                                  <Trash2 className="mr-2 h-4 w-4" />
+                                  <IconTrash className="mr-2 h-4 w-4" />
                                   {t.common.delete()}
                                 </DropdownMenuItem>
                               </DropdownMenuContent>

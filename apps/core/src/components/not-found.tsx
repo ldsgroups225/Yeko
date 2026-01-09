@@ -1,7 +1,7 @@
+import { IconArrowLeft, IconHelpCircle, IconHome, IconSearch } from '@tabler/icons-react'
 import { Link } from '@tanstack/react-router'
-import { ArrowLeft, FileQuestion, Home, Search } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent } from '@workspace/ui/components/card'
 
 export function NotFound({ children }: { children?: any }) {
   return (
@@ -11,7 +11,7 @@ export function NotFound({ children }: { children?: any }) {
           <div className="flex flex-col items-center text-center space-y-6">
             {/* Icon */}
             <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted">
-              <FileQuestion className="h-10 w-10 text-muted-foreground" />
+              <IconHelpCircle className="h-10 w-10 text-muted-foreground" />
             </div>
 
             {/* Heading */}
@@ -35,12 +35,12 @@ export function NotFound({ children }: { children?: any }) {
                 onClick={() => window.history.back()}
                 className="flex items-center gap-2"
               >
-                <ArrowLeft className="h-4 w-4" />
+                <IconArrowLeft className="h-4 w-4" />
                 Go Back
               </Button>
               <Button variant="outline" asChild>
                 <Link to="/" className="flex items-center gap-2">
-                  <Home className="h-4 w-4" />
+                  <IconHome className="h-4 w-4" />
                   Home
                 </Link>
               </Button>
@@ -49,7 +49,7 @@ export function NotFound({ children }: { children?: any }) {
             {/* Help text */}
             <div className="pt-4 border-t w-full">
               <div className="flex items-center gap-2 text-sm text-muted-foreground justify-center">
-                <Search className="h-4 w-4" />
+                <IconSearch className="h-4 w-4" />
                 <span>
                   Try checking the URL or use the search functionality
                 </span>

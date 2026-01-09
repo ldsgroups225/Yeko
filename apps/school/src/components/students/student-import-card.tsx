@@ -1,10 +1,10 @@
+import { IconDownload, IconFileSpreadsheet, IconUpload } from '@tabler/icons-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Download, FileSpreadsheet, Upload } from 'lucide-react'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { Progress } from '@workspace/ui/components/progress'
 import { useCallback, useState } from 'react'
 import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Progress } from '@/components/ui/progress'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { importStudents, validateImportData } from '@/school/functions/bulk-operations'
@@ -167,7 +167,7 @@ export function StudentImportCard() {
     <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <FileSpreadsheet className="h-5 w-5" />
+          <IconFileSpreadsheet className="h-5 w-5" />
           {t.students.importStudents()}
         </CardTitle>
         <CardDescription>
@@ -176,7 +176,7 @@ export function StudentImportCard() {
       </CardHeader>
       <CardContent className="space-y-4">
         <Button variant="outline" onClick={downloadTemplate} className="w-full">
-          <Download className="mr-2 h-4 w-4" />
+          <IconDownload className="mr-2 h-4 w-4" />
           {t.students.downloadTemplate()}
         </Button>
 
@@ -194,7 +194,7 @@ export function StudentImportCard() {
             className="w-full"
             disabled={validateMutation.isPending}
           >
-            <Upload className="mr-2 h-4 w-4" />
+            <IconUpload className="mr-2 h-4 w-4" />
             {file ? file.name : t.students.importDropFile()}
           </Button>
         </div>

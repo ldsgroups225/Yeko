@@ -1,14 +1,14 @@
 import type { GradeStatus } from '@/schemas/grade'
-import { AlertCircle } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { useCallback, useRef, useState } from 'react'
-import { Input } from '@/components/ui/input'
+import { IconAlertCircle } from '@tabler/icons-react'
+import { Input } from '@workspace/ui/components/input'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip'
+} from '@workspace/ui/components/tooltip'
+import { AnimatePresence, motion } from 'motion/react'
+import { useCallback, useRef, useState } from 'react'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
@@ -196,7 +196,7 @@ export function GradeCell({
 
       {status === 'rejected' && !isEditing && !error && (
         <div className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-destructive text-destructive-foreground border-2 border-background flex items-center justify-center shadow-lg">
-          <AlertCircle className="h-2.5 w-2.5" />
+          <IconAlertCircle className="h-2.5 w-2.5" />
         </div>
       )}
     </div>
@@ -212,7 +212,7 @@ export function GradeCell({
             className="max-w-xs rounded-xl backdrop-blur-xl bg-destructive/90 text-destructive-foreground border-none p-4 shadow-xl"
           >
             <div className="flex items-start gap-2">
-              <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+              <IconAlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
               <div>
                 <p className="mb-1 text-xs font-bold uppercase tracking-wider">
                   {t.academic.grades.validations.rejectReason()}

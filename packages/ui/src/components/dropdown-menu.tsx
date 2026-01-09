@@ -1,6 +1,7 @@
 'use client'
 
-import { Menu as MenuPrimitive } from '@base-ui/react/menu'
+import { Menu as MenuPrimitive } from '@base-ui-components/react/menu'
+import { Slot } from '@radix-ui/react-slot'
 import { IconCheck, IconChevronRight } from '@tabler/icons-react'
 
 import { cn } from '@workspace/ui/lib/utils'
@@ -14,8 +15,23 @@ function DropdownMenuPortal({ ...props }: MenuPrimitive.Portal.Props) {
   return <MenuPrimitive.Portal data-slot="dropdown-menu-portal" {...props} />
 }
 
-function DropdownMenuTrigger({ ...props }: MenuPrimitive.Trigger.Props) {
-  return <MenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />
+function DropdownMenuTrigger({
+  asChild,
+  children,
+  ...props
+}: MenuPrimitive.Trigger.Props & { asChild?: boolean }) {
+  if (asChild) {
+    return (
+      <MenuPrimitive.Trigger data-slot="dropdown-menu-trigger" render={<Slot />} {...props}>
+        {children}
+      </MenuPrimitive.Trigger>
+    )
+  }
+  return (
+    <MenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props}>
+      {children}
+    </MenuPrimitive.Trigger>
+  )
 }
 
 function DropdownMenuContent({
@@ -73,10 +89,12 @@ function DropdownMenuLabel({
 function DropdownMenuItem({
   className,
   inset,
+  asChild,
   variant = 'default',
   ...props
 }: MenuPrimitive.Item.Props & {
   inset?: boolean
+  asChild?: boolean
   variant?: 'default' | 'destructive'
 }) {
   return (
@@ -84,6 +102,7 @@ function DropdownMenuItem({
       data-slot="dropdown-menu-item"
       data-inset={inset}
       data-variant={variant}
+      render={asChild ? <Slot /> : undefined}
       className={cn(
         'focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 dark:data-[variant=destructive]:focus:bg-destructive/20 data-[variant=destructive]:focus:text-destructive data-[variant=destructive]:*:[svg]:text-destructive not-data-[variant=destructive]:focus:**:text-accent-foreground gap-1.5 rounded-md px-1.5 py-1 text-sm [&_svg:not([class*=\'size-\'])]:size-4 group/dropdown-menu-item relative flex cursor-default items-center outline-hidden select-none data-disabled:pointer-events-none data-disabled:opacity-50 data-[inset]:pl-8 [&_svg]:pointer-events-none [&_svg]:shrink-0',
         className,

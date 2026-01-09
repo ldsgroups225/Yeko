@@ -1,5 +1,5 @@
+import { IconChevronRight } from '@tabler/icons-react'
 import { Link, useLocation } from '@tanstack/react-router'
-import { ChevronRight } from 'lucide-react'
 import * as React from 'react'
 
 import { cn } from '@/lib/utils'
@@ -244,7 +244,7 @@ export function QuickAction({ title, description, icon: Icon, href, badge, class
               )}
             </div>
           </div>
-          <ChevronRight className="size-4 text-muted-foreground" />
+          <IconChevronRight className="size-4 text-muted-foreground" />
         </div>
       </div>
     </Link>

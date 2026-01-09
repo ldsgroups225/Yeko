@@ -1,11 +1,11 @@
-import { useTranslation } from 'react-i18next'
-import { Button } from '@/components/ui/button'
+import { Button } from '@workspace/ui/components/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from '@workspace/ui/components/dropdown-menu'
+import { useTranslation } from 'react-i18next'
 
 const languages = [
   { code: 'fr', name: 'Français', flag: '🇫🇷' },

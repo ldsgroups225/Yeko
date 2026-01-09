@@ -1,9 +1,10 @@
-import type { LucideIcon } from 'lucide-react'
+import { Button } from '@workspace/ui/components/button'
 import { motion } from 'motion/react'
-import { Button } from '@/components/ui/button'
+
+import * as React from 'react'
 
 interface EmptyStateProps {
-  icon: LucideIcon
+  icon: React.ElementType<{ className?: string }>
   title: string
   description: string
   action?: {

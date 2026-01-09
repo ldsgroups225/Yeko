@@ -1,7 +1,7 @@
 'use client'
 
-import { Menu as MenuPrimitive } from '@base-ui/react/menu'
-import { Menubar as MenubarPrimitive } from '@base-ui/react/menubar'
+import { Menu as MenuPrimitive } from '@base-ui-components/react/menu'
+import { Menubar as MenubarPrimitive } from '@base-ui-components/react/menubar'
 import { IconCheck } from '@tabler/icons-react'
 
 import {

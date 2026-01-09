@@ -1,10 +1,10 @@
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, Info, UserX } from 'lucide-react'
+import { IconCalendar, IconChevronLeft, IconChevronRight, IconClock, IconInfoCircle, IconUserX } from '@tabler/icons-react'
+import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@workspace/ui/components/tooltip'
 import { AnimatePresence, motion } from 'motion/react'
 import { useMemo } from 'react'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useLocale, useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { generateUUID } from '@/utils/generateUUID'
@@ -38,7 +38,7 @@ const statusConfig: Record<AttendanceStatus, {
     borderColor: 'border-emerald-500/20',
     textColor: 'text-emerald-500',
     label: t => t.attendance.status.present(),
-    icon: CalendarIcon,
+    icon: IconCalendar,
   },
   late: {
     color: 'bg-amber-500',
@@ -46,7 +46,7 @@ const statusConfig: Record<AttendanceStatus, {
     borderColor: 'border-amber-500/20',
     textColor: 'text-amber-500',
     label: t => t.attendance.status.late(),
-    icon: Clock,
+    icon: IconClock,
   },
   absent: {
     color: 'bg-rose-500',
@@ -54,7 +54,7 @@ const statusConfig: Record<AttendanceStatus, {
     borderColor: 'border-rose-500/20',
     textColor: 'text-rose-500',
     label: t => t.attendance.status.absent(),
-    icon: UserX,
+    icon: IconUserX,
   },
   excused: {
     color: 'bg-blue-500',
@@ -62,7 +62,7 @@ const statusConfig: Record<AttendanceStatus, {
     borderColor: 'border-blue-500/20',
     textColor: 'text-blue-500',
     label: t => t.attendance.status.excused(),
-    icon: Info,
+    icon: IconInfoCircle,
   },
 }
 
@@ -131,7 +131,7 @@ export function AttendanceCalendar({
                 </AvatarFallback>
               </Avatar>
               <div className="absolute -bottom-1 -right-1 p-1 rounded-lg bg-background border border-border/40 shadow-sm">
-                <CalendarIcon className="size-2.5 text-primary" />
+                <IconCalendar className="size-2.5 text-primary" />
               </div>
             </div>
             <div>
@@ -141,11 +141,11 @@ export function AttendanceCalendar({
           </div>
           <div className="flex items-center gap-1">
             <Button variant="ghost" size="icon" onClick={handlePrevMonth} className="h-8 w-8 rounded-lg hover:bg-primary/5">
-              <ChevronLeft className="h-4 w-4" />
+              <IconChevronLeft className="h-4 w-4" />
             </Button>
             <span className="text-[10px] font-black uppercase tracking-widest w-28 text-center italic">{monthName}</span>
             <Button variant="ghost" size="icon" onClick={handleNextMonth} className="h-8 w-8 rounded-lg hover:bg-primary/5">
-              <ChevronRight className="h-4 w-4" />
+              <IconChevronRight className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -245,7 +245,7 @@ export function AttendanceCalendar({
         </div>
 
         <div className="mt-4 flex items-center gap-2 p-3 rounded-2xl bg-primary/5 border border-primary/10">
-          <Info className="size-3 text-primary/40" />
+          <IconInfoCircle className="size-3 text-primary/40" />
           <p className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest italic leading-relaxed">
             {t.attendance.historyDescription()}
           </p>

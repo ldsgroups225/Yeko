@@ -1,8 +1,8 @@
 import type { TranslationFunctions } from '@/i18n'
-import { Calendar, GraduationCap, Hash, Info, Star, TrendingDown, TrendingUp, User as UserIcon } from 'lucide-react'
+import { IconCalendar, IconHash, IconInfoCircle, IconSchool, IconStar, IconTrendingDown, IconTrendingUp, IconUser } from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { AnimatePresence, motion } from 'motion/react'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { GradeStatusBadge } from './grade-status-badge'
@@ -96,7 +96,7 @@ export function StudentGradeCard({
             <div className="flex items-center gap-5">
               <div className="relative">
                 <div className="flex size-16 items-center justify-center rounded-2xl bg-linear-to-br from-primary/20 to-primary/5 text-primary shadow-inner border border-primary/20 group-hover:scale-105 transition-transform duration-500">
-                  <UserIcon className="size-8" />
+                  <IconUser className="size-8" />
                 </div>
                 {rank !== undefined && rank <= 3 && (
                   <motion.div
@@ -104,7 +104,7 @@ export function StudentGradeCard({
                     animate={{ scale: 1 }}
                     className="absolute -top-2 -right-2 flex h-7 w-7 items-center justify-center rounded-full bg-amber-500 text-white shadow-lg shadow-amber-500/30 ring-2 ring-background z-20"
                   >
-                    <Star className="size-3.5 fill-current" />
+                    <IconStar className="size-3.5 fill-current" />
                   </motion.div>
                 )}
               </div>
@@ -117,7 +117,7 @@ export function StudentGradeCard({
                 </CardTitle>
                 <div className="flex items-center gap-3">
                   <Badge variant="outline" className="font-mono text-[10px] font-bold tracking-widest bg-background/50 border-border/40 py-0.5 px-2 rounded-lg">
-                    <Hash className="size-3 mr-1 text-muted-foreground" />
+                    <IconHash className="size-3 mr-1 text-muted-foreground" />
                     {student.matricule}
                   </Badge>
                   {rank !== undefined && (
@@ -139,7 +139,7 @@ export function StudentGradeCard({
                     <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-widest">/ 20</span>
                   </div>
                   <div className="mt-1 flex items-center gap-2 px-3 py-1 rounded-lg bg-background/40 border border-border/10 shadow-inner">
-                    <GraduationCap className="size-3 text-muted-foreground" />
+                    <IconSchool className="size-3 text-muted-foreground" />
                     <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/80 leading-none">
                       {t.academic.grades.averages.average()}
                     </p>
@@ -162,8 +162,8 @@ export function StudentGradeCard({
                   )}
                   >
                     {rank <= 3
-                      ? <TrendingUp className="size-3.5" />
-                      : rank > totalStudents - 3 ? <TrendingDown className="size-3.5" /> : <TrendingUp className="size-3.5 opacity-30" />}
+                      ? <IconTrendingUp className="size-3.5" />
+                      : rank > totalStudents - 3 ? <IconTrendingDown className="size-3.5" /> : <IconTrendingUp className="size-3.5 opacity-30" />}
                   </div>
                   <span className="font-bold text-[10px] uppercase tracking-widest text-muted-foreground/80">
                     Niveau Global
@@ -201,7 +201,7 @@ export function StudentGradeCard({
                     className="flex flex-col items-center justify-center py-12 space-y-4 opacity-50"
                   >
                     <div className="p-4 rounded-full bg-muted/20 border border-border/10">
-                      <Info className="size-8 text-muted-foreground" />
+                      <IconInfoCircle className="size-8 text-muted-foreground" />
                     </div>
                     <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground">
                       {t.academic.grades.noGrades()}
@@ -290,7 +290,7 @@ export function StudentGradeCard({
 
           {grades.length > 0 && (
             <div className="mt-8 flex items-center justify-center gap-2 text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40 pt-4">
-              <Calendar className="size-3" />
+              <IconCalendar className="size-3" />
               {t.academic.grades.lastUpdated({
                 date: new Date(
                   Math.max(...grades.map(g => new Date(g.gradeDate).getTime())),

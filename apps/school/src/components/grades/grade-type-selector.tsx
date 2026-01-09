@@ -1,12 +1,12 @@
 import type { GradeType } from '@/schemas/grade'
-import { Briefcase, FileText, GraduationCap, HelpCircle, Home, UserCheck } from 'lucide-react'
+import { IconBriefcase, IconFileText, IconHelpCircle, IconHome, IconSchool, IconUserCheck } from '@tabler/icons-react'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from '@workspace/ui/components/select'
 import { useTranslations } from '@/i18n'
 import { gradeTypeLabels, gradeTypes } from '@/schemas/grade'
 
@@ -18,12 +18,12 @@ interface GradeTypeSelectorProps {
 }
 
 const gradeTypeIcons: Record<GradeType, React.ElementType> = {
-  quiz: HelpCircle,
-  test: FileText,
-  exam: GraduationCap,
-  participation: UserCheck,
-  homework: Home,
-  project: Briefcase,
+  quiz: IconHelpCircle,
+  test: IconFileText,
+  exam: IconSchool,
+  participation: IconUserCheck,
+  homework: IconHome,
+  project: IconBriefcase,
 }
 
 export function GradeTypeSelector({
@@ -37,7 +37,7 @@ export function GradeTypeSelector({
   return (
     <Select
       value={value}
-      onValueChange={onValueChange as (value: string) => void}
+      onValueChange={val => val && onValueChange(val as GradeType)}
       disabled={disabled}
     >
       <SelectTrigger className={`rounded-xl h-11 border-border/40 bg-background/50 focus:bg-background transition-all ${className}`}>

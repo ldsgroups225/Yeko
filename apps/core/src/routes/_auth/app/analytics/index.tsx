@@ -1,17 +1,17 @@
-import { createFileRoute } from '@tanstack/react-router'
 import {
-  Activity,
-  BarChart3,
-  Calendar,
-  Download,
-  Filter,
-  School,
-  TrendingUp,
-  Users,
-} from 'lucide-react'
+  IconActivity,
+  IconCalendar,
+  IconChartBar,
+  IconDownload,
+  IconFilter,
+  IconSchool,
+  IconTrendingUp,
+  IconUsers,
+} from '@tabler/icons-react'
+import { createFileRoute } from '@tanstack/react-router'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useLogger } from '@/lib/logger'
 
 export const Route = createFileRoute('/_auth/app/analytics/')({
@@ -63,28 +63,28 @@ function Analytics() {
     {
       title: 'Résumé des Écoles',
       description: 'Vue complète de toutes les écoles du système',
-      icon: School,
+      icon: IconSchool,
       color: 'text-primary',
       bgColor: 'bg-primary/10 dark:bg-primary/20',
     },
     {
       title: 'Activité des Utilisateurs',
       description: 'Analyse détaillée de l\'engagement et de l\'activité des utilisateurs',
-      icon: Users,
+      icon: IconUsers,
       color: 'text-primary',
       bgColor: 'bg-primary/10 dark:bg-primary/20',
     },
     {
       title: 'Santé du Système',
       description: 'Métriques de performance et rapports d\'état du système',
-      icon: Activity,
+      icon: IconActivity,
       color: 'text-secondary',
       bgColor: 'bg-secondary/10 dark:bg-secondary/20',
     },
     {
       title: 'Tendances de Croissance',
       description: 'Métriques de croissance et analyse des tendances d\'utilisation',
-      icon: TrendingUp,
+      icon: IconTrendingUp,
       color: 'text-secondary',
       bgColor: 'bg-secondary/10 dark:bg-secondary/20',
     },
@@ -129,15 +129,15 @@ function Analytics() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" className="gap-2">
-            <Calendar className="h-4 w-4" />
+            <IconCalendar className="h-4 w-4" />
             Période
           </Button>
           <Button variant="outline" className="gap-2">
-            <Filter className="h-4 w-4" />
+            <IconFilter className="h-4 w-4" />
             Filtres
           </Button>
           <Button className="gap-2">
-            <Download className="h-4 w-4" />
+            <IconDownload className="h-4 w-4" />
             Exporter le Rapport
           </Button>
         </div>
@@ -149,7 +149,7 @@ function Analytics() {
           <Card key={kpi.title}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">{kpi.title}</CardTitle>
-              <BarChart3 className="h-4 w-4 text-muted-foreground" />
+              <IconChartBar className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{kpi.value}</div>
@@ -197,7 +197,7 @@ function Analytics() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <School className="h-5 w-5" />
+              <IconSchool className="h-5 w-5" />
               Croissance des Écoles
             </CardTitle>
             <CardDescription>
@@ -237,7 +237,7 @@ function Analytics() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
+              <IconUsers className="h-5 w-5" />
               Activité des Utilisateurs
             </CardTitle>
             <CardDescription>
@@ -278,7 +278,7 @@ function Analytics() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Activity className="h-5 w-5" />
+            <IconActivity className="h-5 w-5" />
             Métriques de Performance du Système
           </CardTitle>
           <CardDescription>
@@ -334,7 +334,7 @@ function Analytics() {
       <Card>
         <CardContent className="py-12">
           <div className="text-center">
-            <BarChart3 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <IconChartBar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">Analytiques Avancées Bientôt Disponibles</h3>
             <p className="text-muted-foreground mb-4">
               Les analytiques et rapports complets seront disponibles dans la Phase 9: Analytiques & Rapports

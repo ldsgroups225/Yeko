@@ -73,7 +73,7 @@ export function exportStudentsToExcel(
 }
 
 /**
- * Download Excel file in browser
+ * IconDownload Excel file in browser
  */
 export function downloadExcelFile(buffer: ArrayBuffer, filename: string) {
   const blob = new Blob([buffer], {

@@ -170,7 +170,7 @@ describe('edge Cases and Stress Testing', () => {
       const nameInput = screen.getByLabelText(/Role Name/i)
       const descriptionInput = screen.getByLabelText(/Description/i)
 
-      // Type in fields sequentially (concurrent typing isn't realistic in user-event)
+      // IconTypography in fields sequentially (concurrent typing isn't realistic in user-event)
       await user.type(nameInput, 'Test Role')
       await user.type(descriptionInput, 'Test Description')
 
@@ -212,7 +212,7 @@ describe('edge Cases and Stress Testing', () => {
       const longText = 'A'.repeat(10000)
       const descriptionInput = screen.getByLabelText(/Description/i)
 
-      await user.type(descriptionInput, longText.substring(0, 100)) // Type subset for performance
+      await user.type(descriptionInput, longText.substring(0, 100)) // IconTypography subset for performance
 
       expect(descriptionInput).toHaveValue(longText.substring(0, 100))
     })
@@ -365,7 +365,7 @@ describe('edge Cases and Stress Testing', () => {
       const maxLength = 'A'.repeat(255)
       const nameInput = screen.getByLabelText(/Role Name/i)
 
-      // Type a reasonable subset
+      // IconTypography a reasonable subset
       await user.type(nameInput, maxLength.substring(0, 50))
 
       expect(nameInput).toHaveValue(maxLength.substring(0, 50))

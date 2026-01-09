@@ -1,13 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { CheckCircle, Loader2 } from 'lucide-react'
+import { IconCircleCheck, IconLoader2 } from '@tabler/icons-react'
+import { Button } from '@workspace/ui/components/button'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
 import { motion } from 'motion/react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { useTranslations } from '@/i18n'
 import { authClient } from '@/lib/auth-client'
 
@@ -80,7 +80,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
             variants={itemVariants}
             className="mx-auto size-16 rounded-full bg-green-500/10 flex items-center justify-center"
           >
-            <CheckCircle className="size-8 text-green-500" />
+            <IconCircleCheck className="size-8 text-green-500" />
           </motion.div>
 
           <motion.div variants={itemVariants} className="space-y-2">
@@ -176,7 +176,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
             {isLoading
               ? (
                   <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    <IconLoader2 className="mr-2 h-5 w-5 animate-spin" />
                     {t.auth.resetPassword.submitting()}
                   </>
                 )

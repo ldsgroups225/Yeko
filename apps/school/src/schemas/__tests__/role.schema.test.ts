@@ -336,7 +336,7 @@ describe('generateSlug utility', () => {
     })
 
     test('should handle role names with special formatting', () => {
-      expect(generateSlug('Admin (Super User)')).toBe('admin-super-user')
+      expect(generateSlug('Admin (Super IconUser)')).toBe('admin-super-user')
       expect(generateSlug('Teacher - Grade 1')).toBe('teacher-grade-1')
       expect(generateSlug('Staff: Finance')).toBe('staff-finance')
     })

@@ -1,6 +1,6 @@
+import { IconSparkles } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { Sparkles } from 'lucide-react'
 import { motion } from 'motion/react'
 import { FinancialDashboard } from '@/components/finance'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
@@ -61,7 +61,7 @@ function FinanceDashboardPage() {
         className="flex items-center gap-4"
       >
         <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-          <Sparkles className="size-8 text-primary" />
+          <IconSparkles className="size-8 text-primary" />
         </div>
         <div>
           <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.finance.dashboard.title()}</h1>

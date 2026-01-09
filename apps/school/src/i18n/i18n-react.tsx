@@ -56,12 +56,12 @@ function detectBrowserLocale(): Locales {
   if (typeof window === 'undefined')
     return baseLocale
 
-  // Check localStorage first
+  // IconCheck localStorage first
   const stored = localStorage.getItem('yeko_school_language')
   if (stored && isLocale(stored))
     return stored
 
-  // Check browser language
+  // IconCheck browser language
   const browserLang = navigator.language.split('-')[0]
   if (browserLang && isLocale(browserLang))
     return browserLang

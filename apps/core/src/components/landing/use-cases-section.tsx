@@ -1,6 +1,6 @@
-import { BookOpen, GraduationCap, Users } from 'lucide-react'
+import { IconBook, IconSchool, IconUsers } from '@tabler/icons-react'
+import { Card, CardContent } from '@workspace/ui/components/card'
 import { useTranslation } from 'react-i18next'
-import { Card, CardContent } from '@/components/ui/card'
 
 const useCaseColors = [
   'bg-primary/10 text-primary dark:text-primary',
@@ -8,7 +8,7 @@ const useCaseColors = [
   'bg-secondary/10 text-secondary dark:text-secondary',
 ]
 
-const useCaseIcons = [GraduationCap, BookOpen, Users]
+const useCaseIcons = [IconSchool, IconBook, IconUsers]
 
 export function UseCasesSection() {
   const { t } = useTranslation()

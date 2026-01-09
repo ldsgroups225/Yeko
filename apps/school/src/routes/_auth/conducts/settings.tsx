@@ -1,16 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { IconBell, IconDeviceFloppy, IconSchool, IconSettings, IconSparkles, IconUserCheck } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { Bell, GraduationCap, Save, Settings, Sparkles, UserCheck } from 'lucide-react'
-import { motion } from 'motion/react'
-import * as React from 'react'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import { z } from 'zod'
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { Checkbox } from '@workspace/ui/components/checkbox'
 import {
   Form,
   FormControl,
@@ -19,9 +13,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Skeleton } from '@/components/ui/skeleton'
+} from '@workspace/ui/components/form'
+import { Input } from '@workspace/ui/components/input'
+import { Skeleton } from '@workspace/ui/components/skeleton'
+import { motion } from 'motion/react'
+import * as React from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
 import { getSettings, updateSettings } from '@/school/functions/attendance-settings'
 
@@ -135,7 +135,7 @@ function AttendanceSettingsPage() {
         className="flex items-center gap-4"
       >
         <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-          <Settings className="size-8 text-primary" />
+          <IconSettings className="size-8 text-primary" />
         </div>
         <div>
           <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.schoolLife.settings()}</h1>
@@ -154,11 +154,11 @@ function AttendanceSettingsPage() {
           <motion.div variants={item}>
             <Card className="relative overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl">
               <div className="absolute top-0 right-0 p-6 opacity-5">
-                <UserCheck className="size-32" />
+                <IconUserCheck className="size-32" />
               </div>
               <CardHeader className="relative border-b border-border/10 bg-muted/20">
                 <CardTitle className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
-                  <UserCheck className="h-3 w-3" />
+                  <IconUserCheck className="h-3 w-3" />
                   {t.settings.teacherAttendance()}
                 </CardTitle>
                 <CardDescription className="italic font-medium">{t.settings.teacherAttendanceDescription()}</CardDescription>
@@ -217,11 +217,11 @@ function AttendanceSettingsPage() {
           <motion.div variants={item}>
             <Card className="relative overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl">
               <div className="absolute top-0 right-0 p-6 opacity-5">
-                <GraduationCap className="size-32" />
+                <IconSchool className="size-32" />
               </div>
               <CardHeader className="relative border-b border-border/10 bg-muted/20">
                 <CardTitle className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
-                  <GraduationCap className="h-3 w-3" />
+                  <IconSchool className="h-3 w-3" />
                   {t.settings.studentAttendance()}
                 </CardTitle>
                 <CardDescription className="italic font-medium">{t.settings.studentAttendanceDescription()}</CardDescription>
@@ -265,11 +265,11 @@ function AttendanceSettingsPage() {
           <motion.div variants={item}>
             <Card className="relative overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl">
               <div className="absolute top-0 right-0 p-6 opacity-5">
-                <Bell className="size-32" />
+                <IconBell className="size-32" />
               </div>
               <CardHeader className="relative border-b border-border/10 bg-muted/20">
                 <CardTitle className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
-                  <Bell className="h-3 w-3" />
+                  <IconBell className="h-3 w-3" />
                   {t.settings.notifications()}
                 </CardTitle>
                 <CardDescription className="italic font-medium">{t.settings.notificationsDescription()}</CardDescription>
@@ -319,13 +319,13 @@ function AttendanceSettingsPage() {
               {mutation.isPending
                 ? (
                     <>
-                      <Sparkles className="mr-2 size-4 animate-spin" />
+                      <IconSparkles className="mr-2 size-4 animate-spin" />
                       {t.common.saving()}
                     </>
                   )
                 : (
                     <>
-                      <Save className="mr-2 size-4 font-black" />
+                      <IconDeviceFloppy className="mr-2 size-4 font-black" />
                       {t.common.save()}
                     </>
                   )}

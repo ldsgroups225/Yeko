@@ -1,30 +1,30 @@
 import type { School } from '@repo/data-ops'
+import {
+  IconCalendar,
+  IconCircleCheck,
+  IconCircleX,
+  IconClock,
+  IconDots,
+  IconDownload,
+  IconLoader2,
+  IconMail,
+  IconMapPin,
+  IconPhone,
+  IconPlus,
+  IconSchool,
+  IconSearch,
+  IconUpload,
+} from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import {
-  Calendar,
-  CheckCircle,
-  Clock,
-  Download,
-  Loader2,
-  Mail,
-  MapPin,
-  MoreHorizontal,
-  Phone,
-  Plus,
-  SchoolIcon,
-  Search,
-  Upload,
-  XCircle,
-} from 'lucide-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { Input } from '@workspace/ui/components/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useDebounce } from '@/hooks/use-debounce'
 import { bulkCreateSchoolsMutationOptions, schoolsQueryOptions } from '@/integrations/tanstack-query/schools-options'
 import { useLogger } from '@/lib/logger'
@@ -145,21 +145,21 @@ function Schools() {
       case 'active':
         return (
           <Badge variant="default">
-            <CheckCircle className="mr-1 h-3 w-3" />
+            <IconCircleCheck className="mr-1 h-3 w-3" />
             Active
           </Badge>
         )
       case 'pending':
         return (
           <Badge variant="secondary">
-            <Clock className="mr-1 h-3 w-3" />
+            <IconClock className="mr-1 h-3 w-3" />
             En attente
           </Badge>
         )
       case 'suspended':
         return (
           <Badge variant="destructive">
-            <XCircle className="mr-1 h-3 w-3" />
+            <IconCircleX className="mr-1 h-3 w-3" />
             Suspendu
           </Badge>
         )
@@ -185,7 +185,7 @@ function Schools() {
             onClick={() => exportSchoolsToExcel(allSchools)}
             disabled={allSchools.length === 0}
           >
-            <Download className="h-4 w-4" />
+            <IconDownload className="h-4 w-4" />
             Exporter
           </Button>
           <Button
@@ -247,13 +247,13 @@ function Schools() {
             }}
           >
             {bulkCreateMutation.isPending
-              ? <Loader2 className="h-4 w-4 animate-spin" />
-              : <Upload className="h-4 w-4" />}
+              ? <IconLoader2 className="h-4 w-4 animate-spin" />
+              : <IconUpload className="h-4 w-4" />}
             Importer
           </Button>
           <Link to="/app/schools/create">
             <Button className="gap-2">
-              <Plus className="h-4 w-4" />
+              <IconPlus className="h-4 w-4" />
               Ajouter une école
             </Button>
           </Link>
@@ -265,7 +265,7 @@ function Schools() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total des écoles</CardTitle>
-            <SchoolIcon className="h-4 w-4 text-muted-foreground" />
+            <IconSchool className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -280,7 +280,7 @@ function Schools() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Écoles Actives</CardTitle>
-            <CheckCircle className="h-4 w-4 text-muted-foreground" />
+            <IconCircleCheck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -295,7 +295,7 @@ function Schools() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Écoles Inactives</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
+            <IconClock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -310,7 +310,7 @@ function Schools() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Écoles Suspendues</CardTitle>
-            <XCircle className="h-4 w-4 text-muted-foreground" />
+            <IconCircleX className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -334,7 +334,7 @@ function Schools() {
         <CardContent>
           <div className="flex gap-4 items-center flex-wrap">
             <div className="relative flex-1 min-w-[300px]">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Rechercher des écoles..."
                 className="pl-9"
@@ -343,7 +343,7 @@ function Schools() {
               />
             </div>
 
-            <Select value={status} onValueChange={handleStatusFilter}>
+            <Select value={status} onValueChange={val => val && handleStatusFilter(val)}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Statut" />
               </SelectTrigger>
@@ -355,7 +355,7 @@ function Schools() {
               </SelectContent>
             </Select>
 
-            <Select value={sortBy} onValueChange={(value: any) => handleSort(value)}>
+            <Select value={sortBy} onValueChange={(value: any) => value && handleSort(value)}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Trier par" />
               </SelectTrigger>
@@ -391,7 +391,7 @@ function Schools() {
           {isLoading
             ? (
                 <div className="flex justify-center py-8">
-                  <Loader2 className="h-8 w-8 animate-spin" />
+                  <IconLoader2 className="h-8 w-8 animate-spin" />
                   <span className="ml-2">Chargement des écoles...</span>
                 </div>
               )
@@ -399,7 +399,7 @@ function Schools() {
                 error
                   ? (
                       <div className="text-center py-8">
-                        <XCircle className="h-8 w-8 text-destructive mx-auto mb-2" />
+                        <IconCircleX className="h-8 w-8 text-destructive mx-auto mb-2" />
                         <h3 className="text-lg font-medium text-destructive">Erreur de chargement</h3>
                         <p className="text-muted-foreground">{error.message}</p>
                         <Button
@@ -415,7 +415,7 @@ function Schools() {
                       schools.length === 0
                         ? (
                             <div className="text-center py-8">
-                              <SchoolIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                              <IconSchool className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                               <h3 className="text-lg font-medium">Aucune école trouvée</h3>
                               <p className="text-muted-foreground">
                                 {search || status !== 'all'
@@ -425,7 +425,7 @@ function Schools() {
                               {(!search && status === 'all') && (
                                 <Link to="/app/schools/create">
                                   <Button className="mt-4">
-                                    <Plus className="h-4 w-4 mr-2" />
+                                    <IconPlus className="h-4 w-4 mr-2" />
                                     Ajouter une école
                                   </Button>
                                 </Link>
@@ -446,7 +446,7 @@ function Schools() {
                                       <div className="flex items-center space-x-4">
                                         {/* School Logo/Avatar */}
                                         <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                                          <SchoolIcon className="h-6 w-6 text-primary" />
+                                          <IconSchool className="h-6 w-6 text-primary" />
                                         </div>
 
                                         {/* School Info */}
@@ -459,7 +459,7 @@ function Schools() {
                                             <span className="font-mono bg-muted px-2 py-1 rounded">{school.code}</span>
                                             {school.address && (
                                               <div className="flex items-center gap-1">
-                                                <MapPin className="h-3 w-3" />
+                                                <IconMapPin className="h-3 w-3" />
                                                 {school.address}
                                               </div>
                                             )}
@@ -467,18 +467,18 @@ function Schools() {
                                           <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
                                             {school.email && (
                                               <div className="flex items-center gap-1">
-                                                <Mail className="h-3 w-3" />
+                                                <IconMail className="h-3 w-3" />
                                                 {school.email}
                                               </div>
                                             )}
                                             {school.phone && (
                                               <div className="flex items-center gap-1">
-                                                <Phone className="h-3 w-3" />
+                                                <IconPhone className="h-3 w-3" />
                                                 {school.phone}
                                               </div>
                                             )}
                                             <div className="flex items-center gap-1">
-                                              <Calendar className="h-3 w-3" />
+                                              <IconCalendar className="h-3 w-3" />
                                               Rejoint
                                               {' '}
                                               {new Date(school.createdAt).toLocaleDateString()}
@@ -490,7 +490,7 @@ function Schools() {
                                       {/* Actions */}
                                       <div className="flex items-center space-x-2">
                                         <Button variant="ghost" size="icon">
-                                          <MoreHorizontal className="h-4 w-4" />
+                                          <IconDots className="h-4 w-4" />
                                         </Button>
                                       </div>
                                     </div>

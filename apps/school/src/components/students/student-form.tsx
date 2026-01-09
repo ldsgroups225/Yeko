@@ -1,15 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { IconDeviceFloppy, IconLoader2, IconRefresh, IconUpload, IconX } from '@tabler/icons-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
-import { Loader2, RefreshCw, Save, Upload, X } from 'lucide-react'
-import { motion } from 'motion/react'
-import { useRef, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import { z } from 'zod'
-
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
+import { Button } from '@workspace/ui/components/button'
 import {
   Form,
   FormControl,
@@ -18,11 +12,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Textarea } from '@/components/ui/textarea'
+} from '@workspace/ui/components/form'
+import { Input } from '@workspace/ui/components/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
+import { Textarea } from '@workspace/ui/components/textarea'
+import { motion } from 'motion/react'
+import { useRef, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
 import { useTranslations } from '@/i18n'
 import { studentsKeys } from '@/lib/queries/students'
 import { getPresignedUploadUrl } from '@/school/functions/storage'
@@ -154,7 +154,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                 <h3 className="text-lg font-semibold">{t.students.personalInfo()}</h3>
               </div>
               <div className="p-6 space-y-8">
-                {/* Photo Upload */}
+                {/* Photo IconUpload */}
                 <div className="flex items-center gap-4">
                   <Avatar className="h-24 w-24">
                     <AvatarImage src={form.watch('photoUrl') || undefined} />
@@ -171,13 +171,13 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                             variant="outline"
                             onClick={() => setShowPhotoDialog(true)}
                           >
-                            <Upload className="mr-2 h-4 w-4" />
+                            <IconUpload className="mr-2 h-4 w-4" />
                             {t.students.uploadPhoto()}
                           </Button>
                         )
                       : (
                           <label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
-                            {isUploadingPhoto ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                            {isUploadingPhoto ? <IconLoader2 className="h-4 w-4 animate-spin" /> : <IconUpload className="h-4 w-4" />}
                             {isUploadingPhoto ? t.common.uploading() : t.students.uploadPhoto()}
                             <input
                               ref={fileInputRef}
@@ -218,7 +218,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                                     return
                                   }
 
-                                  // Upload file directly to R2
+                                  // IconUpload file directly to R2
                                   const uploadResponse = await fetch(result.presignedUrl, {
                                     method: 'PUT',
                                     body: file,
@@ -238,7 +238,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                                   toast.success(t.students.photoUploadSuccess())
                                 }
                                 catch (error) {
-                                  console.error('Upload error:', error)
+                                  console.error('IconUpload error:', error)
                                   toast.error(t.students.uploadError())
                                 }
                                 finally {
@@ -385,10 +385,10 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                             >
                               {generateMatriculeMutation.isPending
                                 ? (
-                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                    <IconLoader2 className="h-4 w-4 animate-spin" />
                                   )
                                 : (
-                                    <RefreshCw className="h-4 w-4" />
+                                    <IconRefresh className="h-4 w-4" />
                                   )}
                             </Button>
                           )}
@@ -557,11 +557,11 @@ export function StudentForm({ student, mode }: StudentFormProps) {
             onClick={() => navigate({ to: '/students', search: { page: 1 } })}
             className="hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/30"
           >
-            <X className="mr-2 h-4 w-4" />
+            <IconX className="mr-2 h-4 w-4" />
             {t.common.cancel()}
           </Button>
           <Button type="submit" disabled={isLoading} className="bg-primary text-primary-foreground shadow-sm hover:shadow-md transition-all">
-            {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+            {isLoading ? <IconLoader2 className="mr-2 h-4 w-4 animate-spin" /> : <IconDeviceFloppy className="mr-2 h-4 w-4" />}
             {mode === 'create' ? t.students.createStudent() : t.students.updateStudent()}
           </Button>
         </div>

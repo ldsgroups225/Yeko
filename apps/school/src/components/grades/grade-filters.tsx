@@ -1,20 +1,20 @@
 import type { GradeStatus, GradeType } from '@/schemas/grade'
-import { Briefcase, CheckCircle2, Edit3, FileText, Filter, GraduationCap, HelpCircle, Home, LayoutDashboard, Send, UserCheck, X, XCircle } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
+import { IconBriefcase, IconCircleCheck, IconCircleX, IconEdit, IconFileText, IconFilter, IconHelpCircle, IconHome, IconLayoutDashboard, IconSchool, IconSend, IconUserCheck, IconX } from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Label } from '@workspace/ui/components/label'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover'
+} from '@workspace/ui/components/popover'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from '@workspace/ui/components/select'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { gradeStatuses, gradeStatusLabels, gradeTypeLabels, gradeTypes } from '@/schemas/grade'
@@ -28,19 +28,19 @@ interface GradeFiltersProps {
 }
 
 const statusIcons: Record<GradeStatus, React.ElementType> = {
-  draft: Edit3,
-  submitted: Send,
-  validated: CheckCircle2,
-  rejected: XCircle,
+  draft: IconEdit,
+  submitted: IconSend,
+  validated: IconCircleCheck,
+  rejected: IconCircleX,
 }
 
 const gradeTypeIcons: Record<GradeType, React.ElementType> = {
-  quiz: HelpCircle,
-  test: FileText,
-  exam: GraduationCap,
-  participation: UserCheck,
-  homework: Home,
-  project: Briefcase,
+  quiz: IconHelpCircle,
+  test: IconFileText,
+  exam: IconSchool,
+  participation: IconUserCheck,
+  homework: IconHome,
+  project: IconBriefcase,
 }
 
 export function GradeFilters({
@@ -57,7 +57,7 @@ export function GradeFilters({
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="outline" size="sm" className="h-10 rounded-xl border-border/40 bg-background/50 hover:bg-background transition-all shadow-sm group">
-          <Filter className="mr-2 size-4 transition-transform group-hover:rotate-12" />
+          <IconFilter className="mr-2 size-4 transition-transform group-hover:rotate-12" />
           <span className="font-semibold">{t.academic.grades.filters.title()}</span>
           {activeFilters > 0 && (
             <Badge variant="secondary" className="ml-2 rounded-full px-1.5 h-5 min-w-[20px] bg-primary text-primary-foreground font-bold text-[10px]">
@@ -71,7 +71,7 @@ export function GradeFilters({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <Filter className="h-3.5 w-3.5" />
+                <IconFilter className="h-3.5 w-3.5" />
               </div>
               <h4 className="text-sm font-bold uppercase tracking-wider text-foreground">{t.academic.grades.filters.title()}</h4>
             </div>
@@ -82,7 +82,7 @@ export function GradeFilters({
                 onClick={onClear}
                 className="h-7 px-2 text-[10px] font-bold uppercase tracking-widest text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
               >
-                <X className="mr-1 size-3" />
+                <IconX className="mr-1 size-3" />
                 {t.academic.grades.filters.clear()}
               </Button>
             )}
@@ -103,7 +103,7 @@ export function GradeFilters({
                 <SelectItem value="all" className="rounded-lg py-2.5">
                   <div className="flex items-center gap-2">
                     <div className="flex h-6 w-6 items-center justify-center rounded-md bg-muted text-muted-foreground">
-                      <LayoutDashboard className="h-3.5 w-3.5" />
+                      <IconLayoutDashboard className="h-3.5 w-3.5" />
                     </div>
                     <span className="font-medium">{t.academic.grades.filters.allStatuses()}</span>
                   </div>
@@ -147,7 +147,7 @@ export function GradeFilters({
                 <SelectItem value="all" className="rounded-lg py-2.5">
                   <div className="flex items-center gap-2">
                     <div className="flex h-6 w-6 items-center justify-center rounded-md bg-muted text-muted-foreground">
-                      <LayoutDashboard className="h-3.5 w-3.5" />
+                      <IconLayoutDashboard className="h-3.5 w-3.5" />
                     </div>
                     <span className="font-medium">{t.academic.grades.filters.allTypes()}</span>
                   </div>

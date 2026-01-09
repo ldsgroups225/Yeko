@@ -1,7 +1,7 @@
-import { CheckCircle2, Circle, Loader2 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { IconCircle, IconCircleCheck, IconLoader2 } from '@tabler/icons-react'
+import { Button } from '@workspace/ui/components/button'
 
-import { ScrollArea } from '@/components/ui/scroll-area'
+import { ScrollArea } from '@workspace/ui/components/scroll-area'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
@@ -59,10 +59,10 @@ export function ChapterChecklist({
                 ? (
                     chapter.isCompleted
                       ? (
-                          <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0" />
+                          <IconCircleCheck className="h-5 w-5 text-green-500 shrink-0" />
                         )
                       : (
-                          <Circle className="h-5 w-5 text-muted-foreground shrink-0" />
+                          <IconCircle className="h-5 w-5 text-muted-foreground shrink-0" />
                         )
                   )
                 : (
@@ -80,14 +80,14 @@ export function ChapterChecklist({
                     >
                       {isToggling === chapter.id
                         ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
+                            <IconLoader2 className="h-4 w-4 animate-spin" />
                           )
                         : chapter.isCompleted
                           ? (
-                              <CheckCircle2 className="h-5 w-5 text-green-500" />
+                              <IconCircleCheck className="h-5 w-5 text-green-500" />
                             )
                           : (
-                              <Circle className="h-5 w-5 text-muted-foreground" />
+                              <IconCircle className="h-5 w-5 text-muted-foreground" />
                             )}
                     </Button>
                   )}

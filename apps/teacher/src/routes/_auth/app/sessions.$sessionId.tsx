@@ -1,15 +1,15 @@
+import { IconArrowLeft, IconBook, IconCircleCheck, IconUsers } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { ArrowLeft, BookOpen, CheckCircle, Users } from 'lucide-react'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-
 import { SessionTimer } from '@/components/session/session-timer'
 import { StudentParticipationList } from '@/components/session/student-participation-list'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   participationGradesQueryOptions,
   sessionDetailsQueryOptions,
@@ -129,7 +129,7 @@ function SessionDetailPage() {
           onClick={() => navigate({ to: '/app' })}
           aria-label={t('common.back')}
         >
-          <ArrowLeft className="h-5 w-5" />
+          <IconArrowLeft className="h-5 w-5" />
         </Button>
         <div className="flex-1">
           <h1 className="font-semibold">{session?.className ?? t('session.title')}</h1>
@@ -146,11 +146,11 @@ function SessionDetailPage() {
       <Tabs defaultValue="participation" className="flex-1">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="participation" className="gap-1.5">
-            <Users className="h-4 w-4" />
+            <IconUsers className="h-4 w-4" />
             {t('session.participation')}
           </TabsTrigger>
           <TabsTrigger value="details" className="gap-1.5">
-            <BookOpen className="h-4 w-4" />
+            <IconBook className="h-4 w-4" />
             {t('session.notes')}
           </TabsTrigger>
         </TabsList>
@@ -188,7 +188,7 @@ function SessionDetailPage() {
           onClick={() => completeMutation.mutate()}
           disabled={completeMutation.isPending}
         >
-          <CheckCircle className="mr-2 h-5 w-5" />
+          <IconCircleCheck className="mr-2 h-5 w-5" />
           {completeMutation.isPending ? t('common.loading') : t('session.complete')}
         </Button>
       </div>

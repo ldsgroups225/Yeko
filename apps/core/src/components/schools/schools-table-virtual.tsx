@@ -2,13 +2,12 @@
 'use no memo'
 
 import type { School } from '@repo/data-ops'
+import { IconBan, IconDots, IconEye, IconMail, IconMapPin, IconPencil, IconPhone, IconUsers } from '@tabler/icons-react'
 import { Link } from '@tanstack/react-router'
 import { useVirtualizer } from '@tanstack/react-virtual'
-import { Ban, Eye, Mail, MapPin, MoreHorizontal, Pencil, Phone, Users } from 'lucide-react'
-import { useRef } from 'react'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,7 +15,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from '@workspace/ui/components/dropdown-menu'
 import {
   Table,
   TableBody,
@@ -24,7 +23,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { useRef } from 'react'
 
 interface SchoolsTableVirtualProps {
   schools: School[]
@@ -108,7 +108,7 @@ export function SchoolsTableVirtual({ schools, onSchoolClick }: SchoolsTableVirt
                         <div className="font-medium">{school.name}</div>
                         {school.address && (
                           <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                            <MapPin className="h-3 w-3" />
+                            <IconMapPin className="h-3 w-3" />
                             {school.address}
                           </div>
                         )}
@@ -124,13 +124,13 @@ export function SchoolsTableVirtual({ schools, onSchoolClick }: SchoolsTableVirt
                     <div className="space-y-1">
                       {school.email && (
                         <div className="flex items-center gap-1 text-xs">
-                          <Mail className="h-3 w-3 text-muted-foreground" />
+                          <IconMail className="h-3 w-3 text-muted-foreground" />
                           {school.email}
                         </div>
                       )}
                       {school.phone && (
                         <div className="flex items-center gap-1 text-xs">
-                          <Phone className="h-3 w-3 text-muted-foreground" />
+                          <IconPhone className="h-3 w-3 text-muted-foreground" />
                           {school.phone}
                         </div>
                       )}
@@ -141,7 +141,7 @@ export function SchoolsTableVirtual({ schools, onSchoolClick }: SchoolsTableVirt
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={e => e.stopPropagation()}>
-                          <MoreHorizontal className="h-4 w-4" />
+                          <IconDots className="h-4 w-4" />
                           <span className="sr-only">Actions</span>
                         </Button>
                       </DropdownMenuTrigger>
@@ -149,28 +149,28 @@ export function SchoolsTableVirtual({ schools, onSchoolClick }: SchoolsTableVirt
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem asChild>
                           <Link to="/app/schools/$schoolId" params={{ schoolId: school.id }}>
-                            <Eye className="mr-2 h-4 w-4" />
+                            <IconEye className="mr-2 h-4 w-4" />
                             {' '}
                             Voir détails
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                           <Link to="/app/schools/$schoolId" params={{ schoolId: school.id }} search={{ tab: 'users' }}>
-                            <Users className="mr-2 h-4 w-4" />
+                            <IconUsers className="mr-2 h-4 w-4" />
                             {' '}
                             Gérer utilisateurs
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                           <Link to="/app/schools/$schoolId" params={{ schoolId: school.id }} search={{ edit: true }}>
-                            <Pencil className="mr-2 h-4 w-4" />
+                            <IconPencil className="mr-2 h-4 w-4" />
                             {' '}
                             Modifier
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem className="text-destructive focus:text-destructive">
-                          <Ban className="mr-2 h-4 w-4" />
+                          <IconBan className="mr-2 h-4 w-4" />
                           {' '}
                           Suspendre
                         </DropdownMenuItem>

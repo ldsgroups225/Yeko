@@ -1,13 +1,13 @@
 import type { RoleFormData } from '@/schemas/role'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Info, Key, Loader2, Shield } from 'lucide-react'
+import { IconInfoCircle, IconKey, IconLoader2, IconShield } from '@tabler/icons-react'
+import { Button } from '@workspace/ui/components/button'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
+import { Textarea } from '@workspace/ui/components/textarea'
 import { motion } from 'motion/react'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import { useTranslations } from '@/i18n'
 import { generateSlug, roleSchema } from '@/schemas/role'
 import { PermissionsMatrix } from './permissions-matrix'
@@ -66,7 +66,7 @@ export function RoleForm({ initialData, onSubmit }: RoleFormProps) {
       >
         <div className="flex items-center gap-2 mb-6">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <Info className="h-4 w-4" />
+            <IconInfoCircle className="h-4 w-4" />
           </div>
           <h2 className="text-xl font-serif font-semibold">{t.hr.roles.basicInfo()}</h2>
         </div>
@@ -136,7 +136,7 @@ export function RoleForm({ initialData, onSubmit }: RoleFormProps) {
       >
         <div className="flex items-center gap-2 mb-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <Key className="h-4 w-4" />
+            <IconKey className="h-4 w-4" />
           </div>
           <h2 className="text-xl font-serif font-semibold">{t.hr.roles.permissions()}</h2>
         </div>
@@ -165,14 +165,14 @@ export function RoleForm({ initialData, onSubmit }: RoleFormProps) {
         >
           {isSubmitting
             ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
               )
             : isEditing
               ? (
-                  <Shield className="mr-2 h-4 w-4" />
+                  <IconShield className="mr-2 h-4 w-4" />
                 )
               : (
-                  <Loader2 className="mr-2 h-4 w-4" />
+                  <IconLoader2 className="mr-2 h-4 w-4" />
                 )}
           {isEditing ? t.common.save() : t.common.create()}
         </Button>

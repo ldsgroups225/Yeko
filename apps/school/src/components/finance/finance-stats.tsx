@@ -1,12 +1,7 @@
-import {
-  Banknote,
-  CreditCard,
-  Receipt,
-  TrendingUp,
-} from 'lucide-react'
+import { IconCashBanknote, IconCreditCard, IconReceipt, IconTrendingUp } from '@tabler/icons-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import { motion } from 'motion/react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useTranslations } from '@/i18n'
 import { generateUUID } from '@/utils/generateUUID'
 
@@ -40,7 +35,7 @@ export function FinanceStats({
       title: t.finance.income(),
       value: formatCurrency(totalRevenue),
       suffix: 'FCFA',
-      icon: TrendingUp,
+      icon: IconTrendingUp,
       color: 'text-green-600 dark:text-green-400',
       bgColor: 'bg-linear-to-br from-green-500/20 to-green-500/5 border-green-500/20',
       borderColor: 'border-green-200 dark:border-green-800/30',
@@ -48,7 +43,7 @@ export function FinanceStats({
     {
       title: t.finance.payments.title(),
       value: totalPayments.toString(),
-      icon: CreditCard,
+      icon: IconCreditCard,
       color: 'text-blue-600 dark:text-blue-400',
       bgColor: 'bg-linear-to-br from-blue-500/20 to-blue-500/5 border-blue-500/20',
       borderColor: 'border-blue-200 dark:border-blue-800/30',
@@ -57,7 +52,7 @@ export function FinanceStats({
       title: t.finance.payments.status.pending(),
       value: formatCurrency(pendingPayments),
       suffix: 'FCFA',
-      icon: Receipt,
+      icon: IconReceipt,
       color: 'text-yellow-600 dark:text-yellow-400',
       bgColor: 'bg-linear-to-br from-yellow-500/20 to-yellow-500/5 border-yellow-500/20',
       borderColor: 'border-yellow-200 dark:border-yellow-800/30',
@@ -66,7 +61,7 @@ export function FinanceStats({
       title: t.dashboard.accountant.unpaidFees(),
       value: formatCurrency(overdueAmount),
       suffix: 'FCFA',
-      icon: Banknote,
+      icon: IconCashBanknote,
       color: 'text-red-600 dark:text-red-400',
       bgColor: 'bg-linear-to-br from-red-500/20 to-red-500/5 border-red-500/20',
       borderColor: 'border-red-200 dark:border-red-800/30',

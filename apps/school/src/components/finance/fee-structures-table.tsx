@@ -1,10 +1,9 @@
 'use client'
 
-import { Layers, Pencil, Trash2 } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
+import { IconPencil, IconStack2, IconTrash } from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -12,7 +11,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
 import { useTranslations } from '@/i18n'
 import { generateUUID } from '@/utils/generateUUID'
 
@@ -55,7 +55,7 @@ export function FeeStructuresTable({ feeStructures, isLoading, onEdit, onDelete 
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground border-2 border-dashed border-border/30 rounded-xl bg-card/10 m-4">
         <div className="p-4 rounded-full bg-muted/20 mb-4">
-          <Layers className="h-8 w-8 text-muted-foreground/50" />
+          <IconStack2 className="h-8 w-8 text-muted-foreground/50" />
         </div>
         <p className="text-lg font-medium">{t.finance.feeStructures.noFeeStructures()}</p>
         <p className="text-sm max-w-sm mt-1 text-muted-foreground/70">{t.finance.feeStructures.description()}</p>
@@ -132,7 +132,7 @@ export function FeeStructuresTable({ feeStructures, isLoading, onEdit, onDelete 
                         onClick={() => onEdit?.(structure.id)}
                         aria-label={t.common.edit()}
                       >
-                        <Pencil className="h-4 w-4" />
+                        <IconPencil className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
@@ -141,7 +141,7 @@ export function FeeStructuresTable({ feeStructures, isLoading, onEdit, onDelete 
                         onClick={() => onDelete?.(structure.id)}
                         aria-label={t.common.delete()}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <IconTrash className="h-4 w-4" />
                       </Button>
                     </div>
                   </TableCell>
@@ -197,11 +197,11 @@ export function FeeStructuresTable({ feeStructures, isLoading, onEdit, onDelete 
 
               <div className="flex justify-end gap-2 pt-2 border-t border-border/30">
                 <Button size="sm" variant="ghost" className="h-8 rounded-lg" onClick={() => onEdit?.(structure.id)}>
-                  <Pencil className="mr-2 h-3.5 w-3.5" />
+                  <IconPencil className="mr-2 h-3.5 w-3.5" />
                   {t.common.edit()}
                 </Button>
                 <Button size="sm" variant="ghost" className="h-8 rounded-lg text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => onDelete?.(structure.id)}>
-                  <Trash2 className="mr-2 h-3.5 w-3.5" />
+                  <IconTrash className="mr-2 h-3.5 w-3.5" />
                   {t.common.delete()}
                 </Button>
               </div>

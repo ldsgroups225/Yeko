@@ -1,9 +1,7 @@
+import { IconBook, IconCheck, IconLoader2, IconSearch, IconSelector, IconX } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
-import { BookOpen, CheckIcon, ChevronsUpDownIcon, Loader2, Search, XIcon } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import * as React from 'react'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 import {
   Command,
   CommandEmpty,
@@ -11,12 +9,14 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command'
+} from '@workspace/ui/components/command'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover'
+} from '@workspace/ui/components/popover'
+import { AnimatePresence, motion } from 'motion/react'
+import * as React from 'react'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { getAllSubjects } from '@/school/functions/subjects'
@@ -79,20 +79,20 @@ export function SubjectMultiSelect({ value = DEFAULT_VALUE, onChange }: SubjectM
             )}
           >
             <div className="flex items-center gap-2 truncate">
-              <BookOpen className="h-4 w-4 text-muted-foreground" />
+              <IconBook className="h-4 w-4 text-muted-foreground" />
               <span className="truncate">
                 {value.length > 0
                   ? `${value.length} ${t.hr.teachers.subjects().toLowerCase()}`
                   : t.hr.teachers.selectSubjects()}
               </span>
             </div>
-            <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            <IconSelector className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-(--radix-popover-trigger-width) p-0 rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40 shadow-xl overflow-hidden" align="start">
           <Command className="bg-transparent" shouldFilter={false}>
             <div className="relative border-b border-border/40">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <CommandInput
                 placeholder={t.common.search()}
                 value={search}
@@ -111,7 +111,7 @@ export function SubjectMultiSelect({ value = DEFAULT_VALUE, onChange }: SubjectM
                         exit={{ opacity: 0 }}
                         className="flex items-center justify-center py-8"
                       >
-                        <Loader2 className="h-5 w-5 animate-spin text-primary/60" />
+                        <IconLoader2 className="h-5 w-5 animate-spin text-primary/60" />
                       </motion.div>
                     )
                   : subjects.length === 0
@@ -144,10 +144,10 @@ export function SubjectMultiSelect({ value = DEFAULT_VALUE, onChange }: SubjectM
                                 >
                                   {value.includes(subject.id)
                                     ? (
-                                        <CheckIcon className="h-4 w-4" />
+                                        <IconCheck className="h-4 w-4" />
                                       )
                                     : (
-                                        <BookOpen className="h-4 w-4" />
+                                        <IconBook className="h-4 w-4" />
                                       )}
                                 </div>
                                 <div className="flex flex-col flex-1 truncate">
@@ -195,7 +195,7 @@ export function SubjectMultiSelect({ value = DEFAULT_VALUE, onChange }: SubjectM
                     onClick={() => handleRemove(subject.id)}
                     className="flex h-5 w-5 items-center justify-center rounded-md hover:bg-destructive/10 hover:text-destructive transition-colors"
                   >
-                    <XIcon className="h-3 w-3" />
+                    <IconX className="h-3 w-3" />
                   </button>
                 </Badge>
               </motion.div>

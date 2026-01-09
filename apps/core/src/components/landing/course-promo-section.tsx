@@ -1,10 +1,10 @@
-import { CheckCircle } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { IconCircleCheck } from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 
 export function CoursePromoSection() {
   return (
-    <section className="w-full py-16 bg-gradient-to-b from-background to-muted/20">
+    <section className="py-24 sm:py-32 bg-linear-to-b from-background to-muted/30">
       <div className="container mx-auto px-4 md:px-6">
         <div className="max-w-4xl mx-auto">
           <div className="aspect-video w-full bg-black rounded-lg overflow-hidden">
@@ -41,23 +41,23 @@ export function CoursePromoSection() {
               <h3 className="font-semibold text-lg mb-2">What You'll Build</h3>
               <div className="space-y-2">
                 <div className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-primary mt-0.5" />
+                  <IconCircleCheck className="w-5 h-5 text-primary mt-0.5" />
                   <span className="text-sm">
                     SmartLinks - Complete short link service
                   </span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-primary mt-0.5" />
+                  <IconCircleCheck className="w-5 h-5 text-primary mt-0.5" />
                   <span className="text-sm">
                     Location-based intelligent redirects
                   </span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-primary mt-0.5" />
+                  <IconCircleCheck className="w-5 h-5 text-primary mt-0.5" />
                   <span className="text-sm">AI-powered link analysis</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-primary mt-0.5" />
+                  <IconCircleCheck className="w-5 h-5 text-primary mt-0.5" />
                   <span className="text-sm">Real-time analytics dashboard</span>
                 </div>
               </div>
@@ -69,25 +69,25 @@ export function CoursePromoSection() {
               </h3>
               <div className="space-y-2">
                 <div className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-primary mt-0.5" />
+                  <IconCircleCheck className="w-5 h-5 text-primary mt-0.5" />
                   <span className="text-sm">
                     Enterprise-grade Scalability & Storage
                   </span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-primary mt-0.5" />
+                  <IconCircleCheck className="w-5 h-5 text-primary mt-0.5" />
                   <span className="text-sm">
                     Real-time Collaboration Engine
                   </span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-primary mt-0.5" />
+                  <IconCircleCheck className="w-5 h-5 text-primary mt-0.5" />
                   <span className="text-sm">
                     Secure Authentication & Payments
                   </span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-primary mt-0.5" />
+                  <IconCircleCheck className="w-5 h-5 text-primary mt-0.5" />
                   <span className="text-sm">Modern, High-Performance Architecture</span>
                 </div>
               </div>

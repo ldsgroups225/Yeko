@@ -1,14 +1,14 @@
-import type { LucideIcon } from 'lucide-react'
-import { AlertCircle, TrendingDown, TrendingUp } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
+import type { Icon as TablerIcon } from '@tabler/icons-react'
+import { IconAlertCircle, IconTrendingDown, IconTrendingUp } from '@tabler/icons-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 
 interface StatsCardProps {
   title: string
   value: number | string
   change?: number
   changeLabel?: string
-  icon: LucideIcon
+  icon: TablerIcon
   isLoading?: boolean
   error?: string
 }
@@ -46,7 +46,7 @@ export function StatsCard({
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-2">
-            <AlertCircle className="h-4 w-4 text-destructive" />
+            <IconAlertCircle className="h-4 w-4 text-destructive" />
             <span className="text-sm text-destructive">Erreur de chargement</span>
           </div>
         </CardContent>
@@ -67,8 +67,8 @@ export function StatsCard({
         <div className="text-2xl font-bold">{typeof value === 'number' ? value.toLocaleString() : value}</div>
         {change !== undefined && (
           <p className="text-xs text-muted-foreground flex items-center gap-1">
-            {isPositive && <TrendingUp className="h-3 w-3 text-primary" />}
-            {isNegative && <TrendingDown className="h-3 w-3 text-destructive" />}
+            {isPositive && <IconTrendingUp className="h-3 w-3 text-primary" />}
+            {isNegative && <IconTrendingDown className="h-3 w-3 text-destructive" />}
             <span className={isPositive ? 'text-primary' : isNegative ? 'text-destructive' : ''}>
               {change > 0 ? '+' : ''}
               {change}

@@ -1,17 +1,17 @@
+import { IconWallet } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Wallet } from 'lucide-react'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { Label } from '@workspace/ui/components/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from '@workspace/ui/components/select'
+import { useState } from 'react'
+import { toast } from 'sonner'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { classesOptions } from '@/lib/queries/classes'
@@ -75,7 +75,7 @@ export function BulkFeeAssignmentCard() {
     <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Wallet className="h-5 w-5" />
+          <IconWallet className="h-5 w-5" />
           {t.students.bulkOperations.assignFees()}
         </CardTitle>
         <CardDescription>
@@ -85,7 +85,7 @@ export function BulkFeeAssignmentCard() {
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <Label>{t.students.bulkOperations.filterByGrade()}</Label>
-          <Select value={selectedGradeId || 'all'} onValueChange={v => setSelectedGradeId(v === 'all' ? '' : v)}>
+          <Select value={selectedGradeId || 'all'} onValueChange={v => setSelectedGradeId(v === 'all' || v === null ? '' : v)}>
             <SelectTrigger>
               <SelectValue placeholder={t.common.all()} />
             </SelectTrigger>
@@ -102,7 +102,7 @@ export function BulkFeeAssignmentCard() {
 
         <div className="space-y-2">
           <Label>{t.students.bulkOperations.filterByClass()}</Label>
-          <Select value={selectedClassId || 'all'} onValueChange={v => setSelectedClassId(v === 'all' ? '' : v)}>
+          <Select value={selectedClassId || 'all'} onValueChange={v => setSelectedClassId(v === 'all' || v === null ? '' : v)}>
             <SelectTrigger>
               <SelectValue placeholder={t.common.all()} />
             </SelectTrigger>

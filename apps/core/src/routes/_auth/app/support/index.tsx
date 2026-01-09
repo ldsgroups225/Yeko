@@ -1,22 +1,22 @@
-import { createFileRoute } from '@tanstack/react-router'
 import {
-  AlertCircle,
-  CheckCircle,
-  Clock,
-  HelpCircle,
-  Mail,
-  MessageSquare,
-  Phone,
-  Plus,
-  Search,
-  TrendingUp,
-  Users,
-} from 'lucide-react'
+  IconAlertCircle,
+  IconCircleCheck,
+  IconClock,
+  IconHelpCircle,
+  IconMail,
+  IconMessage,
+  IconPhone,
+  IconPlus,
+  IconSearch,
+  IconTrendingUp,
+  IconUsers,
+} from '@tabler/icons-react'
+import { createFileRoute } from '@tanstack/react-router'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { Input } from '@workspace/ui/components/input'
 import { useEffect } from 'react'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
 import { useLogger } from '@/lib/logger'
 
 export const Route = createFileRoute('/_auth/app/support/')({
@@ -102,21 +102,21 @@ function Support() {
       case 'open':
         return (
           <Badge variant="destructive">
-            <AlertCircle className="mr-1 h-3 w-3" />
+            <IconAlertCircle className="mr-1 h-3 w-3" />
             Ouvert
           </Badge>
         )
       case 'in_progress':
         return (
           <Badge variant="secondary">
-            <Clock className="mr-1 h-3 w-3" />
+            <IconClock className="mr-1 h-3 w-3" />
             En Cours
           </Badge>
         )
       case 'resolved':
         return (
           <Badge variant="default">
-            <CheckCircle className="mr-1 h-3 w-3" />
+            <IconCircleCheck className="mr-1 h-3 w-3" />
             Résolu
           </Badge>
         )
@@ -150,11 +150,11 @@ function Support() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" className="gap-2">
-            <TrendingUp className="h-4 w-4" />
+            <IconTrendingUp className="h-4 w-4" />
             Analytiques
           </Button>
           <Button className="gap-2">
-            <Plus className="h-4 w-4" />
+            <IconPlus className="h-4 w-4" />
             Créer un Ticket
           </Button>
         </div>
@@ -165,7 +165,7 @@ function Support() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total des Tickets</CardTitle>
-            <HelpCircle className="h-4 w-4 text-muted-foreground" />
+            <IconHelpCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{supportStats.totalTickets}</div>
@@ -176,7 +176,7 @@ function Support() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Ouverts</CardTitle>
-            <AlertCircle className="h-4 w-4 text-muted-foreground" />
+            <IconAlertCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{supportStats.openTickets}</div>
@@ -187,7 +187,7 @@ function Support() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">En Cours</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
+            <IconClock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{supportStats.inProgressTickets}</div>
@@ -198,7 +198,7 @@ function Support() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Résolus</CardTitle>
-            <CheckCircle className="h-4 w-4 text-muted-foreground" />
+            <IconCircleCheck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{supportStats.resolvedTickets}</div>
@@ -209,7 +209,7 @@ function Support() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Temps de Résolution</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
+            <IconClock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{supportStats.averageResolutionTime}</div>
@@ -220,7 +220,7 @@ function Support() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Satisfaction</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <IconUsers className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -250,7 +250,7 @@ function Support() {
                 >
                   <div className="flex items-center space-x-4">
                     <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                      <MessageSquare className="h-5 w-5 text-primary" />
+                      <IconMessage className="h-5 w-5 text-primary" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
@@ -317,15 +317,15 @@ function Support() {
               <h4 className="text-sm font-medium mb-4">Actions Rapides</h4>
               <div className="space-y-2">
                 <Button variant="outline" className="w-full justify-start gap-2" size="sm">
-                  <Phone className="h-4 w-4" />
+                  <IconPhone className="h-4 w-4" />
                   Appeler l'Équipe de Support
                 </Button>
                 <Button variant="outline" className="w-full justify-start gap-2" size="sm">
-                  <Mail className="h-4 w-4" />
+                  <IconMail className="h-4 w-4" />
                   Modèles d'Email
                 </Button>
                 <Button variant="outline" className="w-full justify-start gap-2" size="sm">
-                  <MessageSquare className="h-4 w-4" />
+                  <IconMessage className="h-4 w-4" />
                   Base de Connaissances
                 </Button>
               </div>
@@ -344,7 +344,7 @@ function Support() {
         </CardHeader>
         <CardContent>
           <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Rechercher des tickets..."
               className="pl-9"
@@ -357,7 +357,7 @@ function Support() {
       <Card>
         <CardContent className="py-12">
           <div className="text-center">
-            <HelpCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <IconHelpCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">Fonctionnalités de Support Avancées Bientôt Disponibles</h3>
             <p className="text-muted-foreground mb-4">
               Le CRM et système de support complet sera disponible dans la Phase 5: Gestion Scolaire (section CRM)

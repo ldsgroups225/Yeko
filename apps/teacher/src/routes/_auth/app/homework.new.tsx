@@ -1,23 +1,23 @@
+import { IconArrowLeft, IconCalendar, IconDeviceFloppy, IconSend } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { ArrowLeft, Calendar, Save, Send } from 'lucide-react'
-import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
+import { Button } from '@workspace/ui/components/button'
+import { Input } from '@workspace/ui/components/input'
 
-import { Button } from '@/components/ui/button'
+import { Label } from '@workspace/ui/components/label'
 
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Textarea } from '@/components/ui/textarea'
+} from '@workspace/ui/components/select'
+import { Skeleton } from '@workspace/ui/components/skeleton'
+import { Textarea } from '@workspace/ui/components/textarea'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { teacherClassesQueryOptions } from '@/lib/queries/dashboard'
 import { createHomework } from '@/teacher/functions/homework'
@@ -92,7 +92,7 @@ function NewHomeworkPage() {
       <div className="flex items-center gap-3">
         <Link to="/app/homework">
           <Button variant="ghost" size="icon">
-            <ArrowLeft className="h-5 w-5" />
+            <IconArrowLeft className="h-5 w-5" />
           </Button>
         </Link>
         <h1 className="text-lg font-semibold">{t('homework.new')}</h1>
@@ -106,14 +106,14 @@ function NewHomeworkPage() {
               <div className="space-y-2">
                 <Label>{t('grades.selectClass')}</Label>
                 <Select
-                  value={selectedClassId}
+                  value={selectedClassId || null}
                   onValueChange={(v) => {
-                    setSelectedClassId(v)
+                    setSelectedClassId(v ?? '')
                     setSelectedSubjectId('')
                   }}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={t('grades.selectClass')} />
+                    <SelectValue>{selectedClassId ? classesData?.classes?.find((c: any) => c.id === selectedClassId)?.name : t('grades.selectClass')}</SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     {classesData?.classes?.map((cls: any) => (
@@ -129,9 +129,9 @@ function NewHomeworkPage() {
               {selectedClass && (
                 <div className="space-y-2">
                   <Label>{t('grades.selectSubject')}</Label>
-                  <Select value={selectedSubjectId} onValueChange={setSelectedSubjectId}>
+                  <Select value={selectedSubjectId || null} onValueChange={v => setSelectedSubjectId(v ?? '')}>
                     <SelectTrigger>
-                      <SelectValue placeholder={t('grades.selectSubject')} />
+                      <SelectValue>{selectedSubjectId ? selectedClass.subjects?.find((s: any) => s.id === selectedSubjectId)?.name : t('grades.selectSubject')}</SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {selectedClass.subjects?.map((subject: any) => (
@@ -171,7 +171,7 @@ function NewHomeworkPage() {
                 <div className="space-y-2">
                   <Label>{t('homework.dueDate')}</Label>
                   <div className="relative">
-                    <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <IconCalendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <Input
                       type="date"
                       value={dueDate}
@@ -202,7 +202,7 @@ function NewHomeworkPage() {
             onClick={() => handleSubmit('draft')}
             disabled={!canSubmit || createMutation.isPending}
           >
-            <Save className="mr-2 h-4 w-4" />
+            <IconDeviceFloppy className="mr-2 h-4 w-4" />
             {t('homework.status.draft')}
           </Button>
           <Button
@@ -210,7 +210,7 @@ function NewHomeworkPage() {
             onClick={() => handleSubmit('active')}
             disabled={!canSubmit || createMutation.isPending}
           >
-            <Send className="mr-2 h-4 w-4" />
+            <IconSend className="mr-2 h-4 w-4" />
             {t('homework.create')}
           </Button>
         </div>

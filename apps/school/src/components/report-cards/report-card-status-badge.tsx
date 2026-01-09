@@ -1,5 +1,5 @@
 import type { ReportCardStatus } from '@/schemas/report-card'
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@workspace/ui/components/badge'
 import { cn } from '@/lib/utils'
 import { reportCardStatusLabels } from '@/schemas/report-card'
 

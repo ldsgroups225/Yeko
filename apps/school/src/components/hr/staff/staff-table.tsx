@@ -1,4 +1,5 @@
 import type { ColumnDef } from '@tanstack/react-table'
+import { IconBriefcase, IconCalendar, IconDots, IconEdit, IconEye, IconMail, IconSearch, IconTrash } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import {
@@ -6,27 +7,21 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { format } from 'date-fns'
-import { Briefcase, Calendar, Edit, Eye, Mail, MoreHorizontal, Search, Trash2 } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { useMemo, useState } from 'react'
-import { EmptyState } from '@/components/hr/empty-state'
-import { TableSkeleton } from '@/components/hr/table-skeleton'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
+} from '@workspace/ui/components/card'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
+} from '@workspace/ui/components/dropdown-menu'
+import { Input } from '@workspace/ui/components/input'
 import {
   Table,
   TableBody,
@@ -34,7 +29,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@workspace/ui/components/table'
+import { format } from 'date-fns'
+import { AnimatePresence, motion } from 'motion/react'
+import { useMemo, useState } from 'react'
+import { EmptyState } from '@/components/hr/empty-state'
+import { TableSkeleton } from '@/components/hr/table-skeleton'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useTranslations } from '@/i18n'
 import { getStaffList } from '@/school/functions/staff'
@@ -86,7 +86,7 @@ export function StaffTable({ filters }: StaffTableProps) {
           <div className="flex flex-col">
             <span className="font-semibold text-foreground">{row.original.user.name}</span>
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
-              <Mail className="h-3 w-3" />
+              <IconMail className="h-3 w-3" />
               {row.original.user.email}
             </div>
           </div>
@@ -106,7 +106,7 @@ export function StaffTable({ filters }: StaffTableProps) {
           }
           return (
             <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-muted/50 border border-border/40 text-xs font-medium">
-              <Briefcase className="h-3 w-3 text-primary" />
+              <IconBriefcase className="h-3 w-3 text-primary" />
               {positionTranslations[
                 row.original.position as keyof typeof positionTranslations
               ]()}
@@ -149,7 +149,7 @@ export function StaffTable({ filters }: StaffTableProps) {
         header: t.hr.staff.hireDate(),
         cell: ({ row }) => (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Calendar className="h-3.5 w-3.5" />
+            <IconCalendar className="h-3.5 w-3.5" />
             {row.original.hireDate
               ? format(new Date(row.original.hireDate), 'dd MMM yyyy')
               : '-'}
@@ -162,7 +162,7 @@ export function StaffTable({ filters }: StaffTableProps) {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="hover:bg-primary/10 hover:text-primary transition-colors">
-                <MoreHorizontal className="h-4 w-4" />
+                <IconDots className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="backdrop-blur-2xl bg-popover/90 border-border/40 min-w-[160px]">
@@ -170,7 +170,7 @@ export function StaffTable({ filters }: StaffTableProps) {
                 className="cursor-pointer gap-2"
                 onClick={() => navigate({ to: `/users/staff/${row.original.id}` })}
               >
-                <Eye className="h-4 w-4" />
+                <IconEye className="h-4 w-4" />
                 {t.common.view()}
               </DropdownMenuItem>
               <DropdownMenuItem
@@ -178,11 +178,11 @@ export function StaffTable({ filters }: StaffTableProps) {
                 onClick={() =>
                   navigate({ to: `/users/staff/${row.original.id}/edit` })}
               >
-                <Edit className="h-4 w-4" />
+                <IconEdit className="h-4 w-4" />
                 {t.common.edit()}
               </DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer gap-2 text-destructive focus:text-destructive focus:bg-destructive/10">
-                <Trash2 className="h-4 w-4" />
+                <IconTrash className="h-4 w-4" />
                 {t.common.delete()}
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -215,7 +215,7 @@ export function StaffTable({ filters }: StaffTableProps) {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <CardTitle className="text-2xl font-serif">{t.hr.staff.listTitle()}</CardTitle>
             <div className="relative w-full sm:w-72">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder={t.hr.staff.searchPlaceholder()}
                 value={searchInput}
@@ -231,7 +231,7 @@ export function StaffTable({ filters }: StaffTableProps) {
           {hasNoData && !hasNoResults && (
             <div className="py-12">
               <EmptyState
-                icon={Briefcase}
+                icon={IconBriefcase}
                 title={t.hr.staff.noStaff()}
                 description={t.hr.staff.noStaffDescription()}
                 action={{
@@ -246,7 +246,7 @@ export function StaffTable({ filters }: StaffTableProps) {
           {hasNoResults && (
             <div className="py-12">
               <EmptyState
-                icon={Search}
+                icon={IconSearch}
                 title={t.common.noResults()}
                 description={t.common.noResultsDescription()}
               />

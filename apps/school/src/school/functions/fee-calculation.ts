@@ -71,7 +71,7 @@ export const calculateStudentFees = createServerFn()
       return { success: false as const, error: 'Student not enrolled for this year' }
     }
 
-    // Check if student is new (first enrollment)
+    // IconCheck if student is new (first enrollment)
     const previousEnrollments = await db
       .select({ id: enrollments.id })
       .from(enrollments)
@@ -201,7 +201,7 @@ export const assignFeesToStudent = createServerFn()
 
     const { enrollmentId, fees } = calculation.data
 
-    // Check for existing fees
+    // IconCheck for existing fees
     const existingFees = await db
       .select({ feeStructureId: studentFees.feeStructureId })
       .from(studentFees)
@@ -259,7 +259,7 @@ export async function executeBulkFeeAssignment(params: {
   if (params.studentIds.length === 0)
     return results
 
-  // 1. Check which students are "new" (only have 0 or 1 confirmed enrollment ever)
+  // 1. IconCheck which students are "new" (only have 0 or 1 confirmed enrollment ever)
   const allEnrollments = await db
     .select({ studentId: enrollments.studentId })
     .from(enrollments)
@@ -330,7 +330,7 @@ export async function executeBulkFeeAssignment(params: {
     discountMap.get(sd.studentId)!.push(sd)
   }
 
-  // 5. Check existing student fees to avoid duplicates
+  // 5. IconCheck existing student fees to avoid duplicates
   const enrollmentIds = currentEnrollments.map(e => e.id)
   const existingStudentFees = await db
     .select({ studentId: studentFees.studentId, feeStructureId: studentFees.feeStructureId })
@@ -346,7 +346,7 @@ export async function executeBulkFeeAssignment(params: {
     const isNewStudent = (enrollmentCounts.get(enrollment.studentId) || 0) <= 1
     const studentDiscountsList = discountMap.get(enrollment.studentId) || []
 
-    // Filter applicable fees for this specific enrollment
+    // IconFilter applicable fees for this specific enrollment
     const studentApplicableFees = applicableFees.filter(f =>
       f.fee_structures.gradeId === enrollment.gradeId
       && (enrollment.seriesId
@@ -595,7 +595,7 @@ export const applySiblingDiscount = createServerFn()
       return { success: false as const, error: 'No siblings enrolled' }
     }
 
-    // Check if discount already applied
+    // IconCheck if discount already applied
     const existingDiscount = await db
       .select()
       .from(studentDiscounts)

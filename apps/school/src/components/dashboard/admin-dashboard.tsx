@@ -1,13 +1,4 @@
-import {
-  AlertCircle,
-  BarChart3,
-  BookOpen,
-  DollarSign,
-  GraduationCap,
-  PieChart as PieChartIcon,
-  TrendingUp,
-  Users,
-} from 'lucide-react'
+import { IconAlertCircle, IconBook, IconChartBar, IconChartPie, IconCurrencyDollar, IconSchool, IconTrendingUp, IconUsers } from '@tabler/icons-react'
 import { motion } from 'motion/react'
 import {
   Area,
@@ -17,7 +8,6 @@ import {
   CartesianGrid,
   Cell,
   Pie,
-  PieChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -69,28 +59,28 @@ export function AdminDashboard() {
           value="1,234"
           change="+12%"
           trend="up"
-          icon={GraduationCap}
+          icon={IconSchool}
         />
         <MetricCard
           title={t.dashboard.teachers()}
           value="89"
           change="+3"
           trend="up"
-          icon={Users}
+          icon={IconUsers}
         />
         <MetricCard
           title={t.dashboard.activeClasses()}
           value="42"
           change="0"
           trend="neutral"
-          icon={BookOpen}
+          icon={IconBook}
         />
         <MetricCard
           title={t.dashboard.revenueThisMonth()}
           value="245,000 FCFA"
           change="+8%"
           trend="up"
-          icon={DollarSign}
+          icon={IconCurrencyDollar}
         />
       </motion.div>
 
@@ -104,7 +94,7 @@ export function AdminDashboard() {
           <div className="mb-6 flex items-center justify-between">
             <div>
               <h2 className="text-lg font-semibold flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-primary" />
+                <IconTrendingUp className="h-5 w-5 text-primary" />
                 {t.dashboard.overview()}
               </h2>
               <p className="text-sm text-muted-foreground">{t.dashboard.revenueSubtitle()}</p>
@@ -121,7 +111,7 @@ export function AdminDashboard() {
           <div className="mb-6 flex items-center justify-between">
             <div>
               <h2 className="text-lg font-semibold flex items-center gap-2">
-                <BarChart3 className="h-5 w-5 text-purple-500" />
+                <IconChartBar className="h-5 w-5 text-purple-500" />
                 {t.dashboard.enrollmentChartTitle()}
               </h2>
               <p className="text-sm text-muted-foreground">{t.dashboard.enrollmentChartSubtitle()}</p>
@@ -139,7 +129,7 @@ export function AdminDashboard() {
         >
           <div className="mb-4">
             <h2 className="text-lg font-semibold flex items-center gap-2">
-              <PieChartIcon className="h-5 w-5 text-pink-500" />
+              <IconChartPie className="h-5 w-5 text-pink-500" />
               {t.dashboard.genderChartTitle()}
             </h2>
             <p className="text-sm text-muted-foreground">{t.dashboard.genderChartSubtitle()}</p>
@@ -151,15 +141,15 @@ export function AdminDashboard() {
         <motion.div variants={item} className="lg:col-span-2 rounded-xl border border-border/40 bg-card/50 backdrop-blur-xl p-6 shadow-sm">
           <h2 className="mb-4 text-lg font-semibold">{t.dashboard.quickActions()}</h2>
           <div className="grid gap-3 sm:grid-cols-2">
-            <QuickActionButton icon={Users} label={t.dashboard.addUser()} color="bg-blue-500/10 text-blue-600" />
-            <QuickActionButton icon={GraduationCap} label={t.dashboard.enrollStudent()} color="bg-green-500/10 text-green-600" />
-            <QuickActionButton icon={BookOpen} label={t.dashboard.createClass()} color="bg-orange-500/10 text-orange-600" />
-            <QuickActionButton icon={DollarSign} label={t.dashboard.recordPayment()} color="bg-purple-500/10 text-purple-600" />
+            <QuickActionButton icon={IconUsers} label={t.dashboard.addUser()} color="bg-blue-500/10 text-blue-600" />
+            <QuickActionButton icon={IconSchool} label={t.dashboard.enrollStudent()} color="bg-green-500/10 text-green-600" />
+            <QuickActionButton icon={IconBook} label={t.dashboard.createClass()} color="bg-orange-500/10 text-orange-600" />
+            <QuickActionButton icon={IconCurrencyDollar} label={t.dashboard.recordPayment()} color="bg-purple-500/10 text-purple-600" />
           </div>
         </motion.div>
       </div>
 
-      {/* Recent Activity & Alerts */}
+      {/* Recent IconActivity & Alerts */}
       <div className="grid gap-4 lg:grid-cols-2">
         <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
           <h2 className="mb-4 text-lg font-semibold">{t.dashboard.recentActivity()}</h2>
@@ -302,7 +292,7 @@ function AlertItem({ type, title, description }: AlertItemProps) {
 
   return (
     <div className="flex gap-3">
-      <AlertCircle className={`mt-0.5 h-4 w-4 shrink-0 ${colors[type]}`} />
+      <IconAlertCircle className={`mt-0.5 h-4 w-4 shrink-0 ${colors[type]}`} />
       <div className="flex-1 space-y-1">
         <p className="text-sm font-medium">{title}</p>
         <p className="text-xs text-muted-foreground">{description}</p>
@@ -430,7 +420,7 @@ function GenderPieChart() {
   return (
     <div className="h-[200px] w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <PieChart>
+        <IconChartPie>
           <Pie
             data={genderData}
             cx="50%"
@@ -453,7 +443,7 @@ function GenderPieChart() {
             }}
             itemStyle={{ color: 'var(--foreground)' }}
           />
-        </PieChart>
+        </IconChartPie>
       </ResponsiveContainer>
       <div className="flex justify-center gap-6">
         {genderData.map(entry => (

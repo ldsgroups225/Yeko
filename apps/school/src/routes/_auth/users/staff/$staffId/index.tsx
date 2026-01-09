@@ -1,11 +1,11 @@
+import { IconEdit, IconTrash, IconUser } from '@tabler/icons-react'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { Edit, Trash2, User } from 'lucide-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useTranslations } from '@/i18n'
 import { getStaffMember } from '@/school/functions/staff'
 
@@ -57,7 +57,7 @@ function StaffDetailPage() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-            <User className="h-8 w-8" />
+            <IconUser className="h-8 w-8" />
           </div>
           <div>
             <h1 className="text-3xl font-bold tracking-tight">{staff.position}</h1>
@@ -67,12 +67,12 @@ function StaffDetailPage() {
         <div className="flex gap-2">
           <Button variant="outline" asChild>
             <Link to="/users/staff/$staffId/edit" params={{ staffId }}>
-              <Edit className="mr-2 h-4 w-4" />
+              <IconEdit className="mr-2 h-4 w-4" />
               {t.common.edit()}
             </Link>
           </Button>
           <Button variant="destructive">
-            <Trash2 className="mr-2 h-4 w-4" />
+            <IconTrash className="mr-2 h-4 w-4" />
             {t.common.delete()}
           </Button>
         </div>

@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import { AccountantDashboard } from '@/components/dashboard/accountant-dashboard'
 import { AdminDashboard } from '@/components/dashboard/admin-dashboard'
 import { CashierDashboard } from '@/components/dashboard/cashier-dashboard'
@@ -6,7 +7,6 @@ import { CoordinatorDashboard } from '@/components/dashboard/coordinator-dashboa
 import { DisciplineDashboard } from '@/components/dashboard/discipline-dashboard'
 import { RegistrarDashboard } from '@/components/dashboard/registrar-dashboard'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useRole } from '@/hooks/use-role'
 import { useTranslations } from '@/i18n'
 

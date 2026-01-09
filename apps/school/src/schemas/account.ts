@@ -17,7 +17,7 @@ export const createAccountSchema = z.object({
   code: z.string().min(1, 'Code requis').max(20, 'Code trop long'),
   name: z.string().min(1, 'Nom requis').max(100, 'Nom trop long'),
   nameEn: z.string().max(100).optional(),
-  type: z.enum(accountTypes, { message: 'Type de compte invalide' }),
+  type: z.enum(accountTypes, { message: 'IconTypography de compte invalide' }),
   parentId: z.string().optional().nullable(),
   isHeader: z.boolean().default(false),
   normalBalance: z.enum(normalBalances, { message: 'Solde normal invalide' }),

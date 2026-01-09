@@ -1,10 +1,7 @@
 import type { Conflict } from './conflict-indicator'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2, Save, Trash2 } from 'lucide-react'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-
-import { Button } from '@/components/ui/button'
+import { IconDeviceFloppy, IconLoader2, IconTrash } from '@tabler/icons-react'
+import { Button } from '@workspace/ui/components/button'
 import {
   Dialog,
   DialogContent,
@@ -12,17 +9,20 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+} from '@workspace/ui/components/dialog'
+
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
+} from '@workspace/ui/components/select'
+import { Textarea } from '@workspace/ui/components/textarea'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 import { useTranslations } from '@/i18n'
 
 import { dayOfWeekLabels } from '@/schemas/timetable'
@@ -145,7 +145,7 @@ export function TimetableSessionDialog({
               <Label htmlFor="subjectId" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">{t.subjects.subject()}</Label>
               <Select
                 value={form.watch('subjectId')}
-                onValueChange={v => form.setValue('subjectId', v)}
+                onValueChange={v => form.setValue('subjectId', v ?? '')}
               >
                 <SelectTrigger id="subjectId" className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
                   <SelectValue placeholder={t.common.select()} />
@@ -168,7 +168,7 @@ export function TimetableSessionDialog({
               <Label htmlFor="teacherId" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">{t.teachers.teacher()}</Label>
               <Select
                 value={form.watch('teacherId')}
-                onValueChange={v => form.setValue('teacherId', v)}
+                onValueChange={v => form.setValue('teacherId', v ?? '')}
               >
                 <SelectTrigger id="teacherId" className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
                   <SelectValue placeholder={t.common.select()} />
@@ -191,7 +191,7 @@ export function TimetableSessionDialog({
               <Label htmlFor="classroomId" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/80 pl-1">{t.classrooms.classroom()}</Label>
               <Select
                 value={form.watch('classroomId') ?? 'none'}
-                onValueChange={v => form.setValue('classroomId', v === 'none' ? undefined : v)}
+                onValueChange={v => form.setValue('classroomId', v === 'none' || v === null ? undefined : v)}
               >
                 <SelectTrigger id="classroomId" className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
                   <SelectValue placeholder={t.common.optional()} />
@@ -298,10 +298,10 @@ export function TimetableSessionDialog({
               >
                 {isDeleting
                   ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
                     )
                   : (
-                      <Trash2 className="mr-2 h-4 w-4" />
+                      <IconTrash className="mr-2 h-4 w-4" />
                     )}
                 {t.common.delete()}
               </Button>
@@ -313,10 +313,10 @@ export function TimetableSessionDialog({
             >
               {isSubmitting
                 ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
                   )
                 : (
-                    <Save className="mr-2 h-4 w-4" />
+                    <IconDeviceFloppy className="mr-2 h-4 w-4" />
                   )}
               {t.common.save()}
             </Button>

@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react'
 import type { TranslationFunctions } from '@/i18n'
-import { AlertTriangle } from 'lucide-react'
+import { IconAlertTriangle } from '@tabler/icons-react'
+import { Button } from '@workspace/ui/components/button'
 import { Component } from 'react'
-import { Button } from '@/components/ui/button'
 import { useTranslations } from '@/i18n'
 
 interface Props {
@@ -39,7 +39,7 @@ class ErrorBoundaryComponent extends Component<Props, State> {
       return (
         <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
-            <AlertTriangle className="h-6 w-6 text-destructive" />
+            <IconAlertTriangle className="h-6 w-6 text-destructive" />
           </div>
           <h3 className="mt-4 text-lg font-semibold">{this.props.t.common.somethingWentWrong()}</h3>
           <p className="mt-2 text-sm text-muted-foreground max-w-sm">
