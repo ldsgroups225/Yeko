@@ -188,8 +188,8 @@ catalogs:
       specifier: ^11.11.1
       version: 11.11.1
     hono:
-      specifier: ^4.11.1
-      version: 4.11.1
+      specifier: ^4.11.3
+      version: 4.11.3
     i18next:
       specifier: ^25.7.3
       version: 25.7.3
@@ -543,7 +543,7 @@ importers:
         version: link:../../packages/data-ops
       hono:
         specifier: 'catalog:'
-        version: 4.11.1
+        version: 4.11.3
       zod:
         specifier: 'catalog:'
         version: 4.2.1
@@ -5767,8 +5767,8 @@ packages:
     resolution: {integrity: sha512-Xwwo44whKBVCYoliBQwaPvtd/2tYFkRQtXDWj1nackaV2JPXx3L0+Jvd8/qCJ2p+ML0/XVkJ2q+Mr+UVdpJK5w==}
     engines: {node: '>=12.0.0'}
 
-  hono@4.11.1:
-    resolution: {integrity: sha512-KsFcH0xxHes0J4zaQgWbYwmz3UPOOskdqZmItstUG93+Wk1ePBLkLGwbP9zlmh1BFUiL8Qp+Xfu9P7feJWpGNg==}
+  hono@4.11.3:
+    resolution: {integrity: sha512-PmQi306+M/ct/m5s66Hrg+adPnkD5jiO6IjA7WhWw0gSBSo1EcRegwuI1deZ+wd5pzCGynCcn2DprnE4/yEV4w==}
     engines: {node: '>=16.9.0'}
 
   html-encoding-sniffer@4.0.0:
@@ -13315,7 +13315,7 @@ snapshots:
 
   highlight.js@11.11.1: {}
 
-  hono@4.11.1: {}
+  hono@4.11.3: {}
 
   html-encoding-sniffer@4.0.0:
     dependencies:
