@@ -963,3 +963,309 @@ export async function submitStudentGrades(params: {
     return { success: true, count: results.length }
   })
 }
+
+// ============================================
+// DASHBOARD QUERIES
+// ============================================
+
+/**
+ * Get teacher's schedule for a specific day
+ */
+export async function getTeacherDaySchedule(params: {
+  teacherId: string
+  schoolYearId: string
+  dayOfWeek: number
+}) {
+  const db = getDb()
+
+  // Import timetable sessions table
+  const { timetableSessions, classrooms } = await import('../drizzle/school-schema')
+
+  const result = await db
+    .select({
+      id: timetableSessions.id,
+      dayOfWeek: timetableSessions.dayOfWeek,
+      startTime: timetableSessions.startTime,
+      endTime: timetableSessions.endTime,
+      class: {
+        id: classes.id,
+        gradeName: grades.name,
+        section: classes.section,
+      },
+      subject: {
+        id: subjects.id,
+        name: subjects.name,
+        shortName: subjects.shortName,
+      },
+      classroom: {
+        id: classrooms.id,
+        name: classrooms.name,
+        code: classrooms.code,
+      },
+    })
+    .from(timetableSessions)
+    .innerJoin(classes, eq(timetableSessions.classId, classes.id))
+    .innerJoin(grades, eq(classes.gradeId, grades.id))
+    .innerJoin(subjects, eq(timetableSessions.subjectId, subjects.id))
+    .leftJoin(classrooms, eq(timetableSessions.classroomId, classrooms.id))
+    .where(
+      and(
+        eq(timetableSessions.teacherId, params.teacherId),
+        eq(classes.schoolYearId, params.schoolYearId),
+        eq(timetableSessions.dayOfWeek, params.dayOfWeek),
+      ),
+    )
+    .orderBy(asc(timetableSessions.startTime))
+
+  return result
+}
+
+/**
+ * Get teacher's weekly schedule
+ */
+export async function getTeacherWeeklySchedule(params: {
+  teacherId: string
+  schoolYearId: string
+}) {
+  const db = getDb()
+
+  const { timetableSessions, classrooms } = await import('../drizzle/school-schema')
+
+  const result = await db
+    .select({
+      id: timetableSessions.id,
+      dayOfWeek: timetableSessions.dayOfWeek,
+      startTime: timetableSessions.startTime,
+      endTime: timetableSessions.endTime,
+      class: {
+        id: classes.id,
+        gradeName: grades.name,
+        section: classes.section,
+      },
+      subject: {
+        id: subjects.id,
+        name: subjects.name,
+        shortName: subjects.shortName,
+      },
+      classroom: {
+        id: classrooms.id,
+        name: classrooms.name,
+        code: classrooms.code,
+      },
+    })
+    .from(timetableSessions)
+    .innerJoin(classes, eq(timetableSessions.classId, classes.id))
+    .innerJoin(grades, eq(classes.gradeId, grades.id))
+    .innerJoin(subjects, eq(timetableSessions.subjectId, subjects.id))
+    .leftJoin(classrooms, eq(timetableSessions.classroomId, classrooms.id))
+    .where(
+      and(
+        eq(timetableSessions.teacherId, params.teacherId),
+        eq(classes.schoolYearId, params.schoolYearId),
+      ),
+    )
+    .orderBy(asc(timetableSessions.dayOfWeek), asc(timetableSessions.startTime))
+
+  return result
+}
+
+/**
+ * Get teacher's active session for today
+ */
+export async function getTeacherActiveSession(params: {
+  teacherId: string
+  date: string
+}) {
+  const db = getDb()
+
+  const result = await db
+    .select({
+      id: classSessions.id,
+      classId: classSessions.classId,
+      className: sql<string>`${grades.name} || ' ' || ${classes.section}`,
+      subjectName: subjects.name,
+      startTime: classSessions.startTime,
+      startedAt: classSessions.createdAt,
+    })
+    .from(classSessions)
+    .innerJoin(classes, eq(classSessions.classId, classes.id))
+    .innerJoin(grades, eq(classes.gradeId, grades.id))
+    .innerJoin(subjects, eq(classSessions.subjectId, subjects.id))
+    .where(
+      and(
+        eq(classSessions.teacherId, params.teacherId),
+        eq(classSessions.date, params.date),
+        eq(classSessions.status, 'scheduled'),
+      ),
+    )
+    .limit(1)
+
+  return result[0] ?? null
+}
+
+/**
+ * Get count of pending grades for teacher
+ */
+export async function getTeacherPendingGradesCount(teacherId: string): Promise<number> {
+  const db = getDb()
+
+  const result = await db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(studentGrades)
+    .where(
+      and(
+        eq(studentGrades.teacherId, teacherId),
+        eq(studentGrades.status, 'draft'),
+      ),
+    )
+
+  return result[0]?.count ?? 0
+}
+
+/**
+ * Get count of unread messages for teacher
+ */
+export async function getTeacherUnreadMessagesCount(teacherId: string): Promise<number> {
+  const db = getDb()
+
+  const result = await db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(teacherMessages)
+    .where(
+      and(
+        eq(teacherMessages.recipientType, 'teacher'),
+        eq(teacherMessages.recipientId, teacherId),
+        eq(teacherMessages.isRead, false),
+        eq(teacherMessages.isArchived, false),
+      ),
+    )
+
+  return result[0]?.count ?? 0
+}
+
+/**
+ * Get recent messages for teacher
+ */
+export async function getTeacherRecentMessages(params: {
+  teacherId: string
+  limit?: number
+}) {
+  const db = getDb()
+  const limit = params.limit ?? 5
+
+  return db
+    .select({
+      id: teacherMessages.id,
+      senderType: teacherMessages.senderType,
+      subject: teacherMessages.subject,
+      content: teacherMessages.content,
+      isRead: teacherMessages.isRead,
+      createdAt: teacherMessages.createdAt,
+    })
+    .from(teacherMessages)
+    .where(
+      and(
+        eq(teacherMessages.recipientType, 'teacher'),
+        eq(teacherMessages.recipientId, params.teacherId),
+        eq(teacherMessages.isArchived, false),
+      ),
+    )
+    .orderBy(desc(teacherMessages.createdAt))
+    .limit(limit)
+}
+
+/**
+ * Get notifications for teacher
+ */
+export async function getTeacherNotificationsQuery(params: {
+  teacherId: string
+  unreadOnly?: boolean
+  limit?: number
+}) {
+  const db = getDb()
+  const limit = params.limit ?? 10
+
+  const { teacherNotifications } = await import('../drizzle/school-schema')
+
+  const conditions = [
+    eq(teacherNotifications.teacherId, params.teacherId),
+  ]
+
+  if (params.unreadOnly) {
+    conditions.push(eq(teacherNotifications.isRead, false))
+  }
+
+  return db
+    .select({
+      id: teacherNotifications.id,
+      type: teacherNotifications.type,
+      title: teacherNotifications.title,
+      body: teacherNotifications.body,
+      isRead: teacherNotifications.isRead,
+      createdAt: teacherNotifications.createdAt,
+    })
+    .from(teacherNotifications)
+    .where(and(...conditions))
+    .orderBy(desc(teacherNotifications.createdAt))
+    .limit(limit)
+}
+
+/**
+ * Get current term for a school year
+ */
+export async function getCurrentTermForSchoolYear(schoolYearId: string) {
+  const db = getDb()
+
+  const { terms } = await import('../drizzle/school-schema')
+  const { termTemplates } = await import('../drizzle/core-schema')
+
+  const today = new Date().toISOString().split('T')[0]!
+
+  const result = await db
+    .select({
+      id: terms.id,
+      name: termTemplates.name,
+      startDate: terms.startDate,
+      endDate: terms.endDate,
+    })
+    .from(terms)
+    .innerJoin(termTemplates, eq(terms.termTemplateId, termTemplates.id))
+    .where(
+      and(
+        eq(terms.schoolYearId, schoolYearId),
+        lte(terms.startDate, today),
+        gte(terms.endDate, today),
+      ),
+    )
+    .limit(1)
+
+  return result[0] ?? null
+}
+
+/**
+ * Get class and subject info
+ */
+export async function getClassSubjectInfo(params: {
+  classId: string
+  subjectId: string
+}) {
+  const db = getDb()
+
+  const result = await db
+    .select({
+      className: sql<string>`${grades.name} || ' ' || ${classes.section}`,
+      subjectName: subjects.name,
+    })
+    .from(classes)
+    .innerJoin(grades, eq(classes.gradeId, grades.id))
+    .crossJoin(subjects)
+    .where(
+      and(
+        eq(classes.id, params.classId),
+        eq(subjects.id, params.subjectId),
+      ),
+    )
+    .limit(1)
+
+  return result[0] ?? null
+}

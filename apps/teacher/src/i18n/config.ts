@@ -1,12 +1,13 @@
 import i18n from 'i18next'
-import LanguageDetector from 'i18next-browser-languagedetector'
 import { initReactI18next } from 'react-i18next'
 import { en } from './locales/en'
 import { fr } from './locales/fr'
 
-// Initialize i18next with French as default
+// Check if we're in a browser environment
+const isBrowser = typeof window !== 'undefined'
+
+// Initialize i18next with French as default (SSR-compatible)
 i18n
-  .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources: {
@@ -20,11 +21,17 @@ i18n
     interpolation: {
       escapeValue: false, // React already escapes values
     },
-    detection: {
-      order: ['localStorage', 'navigator'],
-      caches: ['localStorage'],
-      lookupLocalStorage: 'i18nextLng',
-    },
   })
+
+// Only run language detection on the client side
+if (isBrowser) {
+  // Detect and set language from localStorage or navigator
+  const detectedLng = localStorage.getItem('i18nextLng')
+    || (navigator.language?.startsWith('en') ? 'en' : 'fr')
+
+  if (detectedLng && detectedLng !== i18n.language) {
+    i18n.changeLanguage(detectedLng)
+  }
+}
 
 export default i18n
