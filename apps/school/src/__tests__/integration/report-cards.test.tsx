@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import { describe, expect, vi } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 
 // Unmock react-hook-form to use real implementation
 vi.unmock('react-hook-form')

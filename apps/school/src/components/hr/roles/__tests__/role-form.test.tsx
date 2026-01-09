@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
-import { describe, expect, vi } from 'vitest'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 
 // Unmock react-hook-form to use real implementation
 vi.unmock('react-hook-form')

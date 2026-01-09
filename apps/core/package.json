@@ -86,6 +86,7 @@
     "@types/xlsx": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "@vitest/coverage-v8": "catalog:",
+    "@workspace/typescript-config": "workspace:*",
     "@yeko/eslint-config": "workspace:^",
     "eslint": "catalog:",
     "eslint-plugin-format": "catalog:",

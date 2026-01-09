@@ -1,4 +1,4 @@
-import { describe, expect } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { generateSlug, roleSchema } from '../role'
 
 describe('role Schema Validation', () => {

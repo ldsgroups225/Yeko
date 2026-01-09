@@ -20,6 +20,7 @@
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "catalog:",
     "@types/node": "catalog:",
+    "@workspace/typescript-config": "workspace:*",
     "@yeko/eslint-config": "workspace:^",
     "eslint": "catalog:",
     "typescript": "catalog:",

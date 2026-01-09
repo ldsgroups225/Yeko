@@ -42,6 +42,7 @@
     "@logtape/logtape": "catalog:"
   },
   "devDependencies": {
+    "@workspace/typescript-config": "workspace:*",
     "@yeko/eslint-config": "workspace:^",
     "eslint": "catalog:",
     "tsup": "catalog:",

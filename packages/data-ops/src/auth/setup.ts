@@ -16,14 +16,14 @@ export function createBetterAuth(config: {
     trustedOrigins: config.trustedOrigins,
     emailAndPassword: config.emailAndPassword
       ? {
-        ...config.emailAndPassword,
-        enabled: config.emailAndPassword.enabled ?? true,
-        requireEmailVerification: config.emailAndPassword.requireEmailVerification ?? false,
-      }
+          ...config.emailAndPassword,
+          enabled: config.emailAndPassword.enabled ?? true,
+          requireEmailVerification: config.emailAndPassword.requireEmailVerification ?? false,
+        }
       : {
-        enabled: true,
-        requireEmailVerification: false,
-      },
+          enabled: true,
+          requireEmailVerification: false,
+        },
     socialProviders: config.socialProviders,
     user: {
       modelName: 'auth_user',

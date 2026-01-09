@@ -1,16 +1,7 @@
 {
+  "extends": "@workspace/typescript-config/vite-react-library.json",
   "compilerOptions": {
-    "target": "ES2022",
-    "jsx": "react-jsx",
-    "lib": [
-      "ES2022",
-      "DOM",
-      "DOM.Iterable"
-    ],
     "baseUrl": ".",
-    "module": "ESNext",
-    /* Bundler mode */
-    "moduleResolution": "bundler",
     "paths": {
       "@/*": [
         "./src/*"
@@ -18,18 +9,11 @@
     },
     "types": [
       "vite/client",
-      "vitest/globals"
+      "./worker-configuration.d.ts",
+      "node"
     ],
-    "allowImportingTsExtensions": true,
-    "strict": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noEmit": true,
-    "verbatimModuleSyntax": false,
-    /* Linting */
-    "skipLibCheck": true
+    "declaration": false,
+    "declarationMap": false
   },
   "include": [
     "**/*.ts",

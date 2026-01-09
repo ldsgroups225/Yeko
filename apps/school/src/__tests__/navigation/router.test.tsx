@@ -1,5 +1,5 @@
 import { createMemoryHistory, createRouter } from '@tanstack/react-router'
-import { describe, expect, vi } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 
 // Unmock react-query to use real implementation
 vi.unmock('@tanstack/react-query')

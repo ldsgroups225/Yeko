@@ -1,7 +1,7 @@
 import type { GradeStatus } from '@/schemas/grade'
 import { render, screen } from '@testing-library/react'
 
-import { describe, expect } from 'vitest'
+import { describe, expect, test } from 'vitest'
 
 import { GradeStatusBadge } from '../grade-status-badge'
 

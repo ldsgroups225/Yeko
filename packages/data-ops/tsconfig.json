@@ -1,21 +1,25 @@
 {
+  "extends": "@workspace/typescript-config/vite-react-library.json",
   "compilerOptions": {
-    "target": "ESNext",
-    "lib": ["ESNext"],
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     },
-    "resolveJsonModule": true,
-    "types": ["@cloudflare/workers-types", "vitest/globals"],
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
+    "types": [
+      "@cloudflare/workers-types",
+      "vitest/globals",
+      "node"
+    ],
+    "allowImportingTsExtensions": false,
     "declaration": true,
+    "declarationMap": false,
     "noEmit": false,
-    "outDir": "./dist",
-    "isolatedModules": true,
-    "skipLibCheck": true
+    "outDir": "./dist"
   },
-  "include": ["src"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx"
+  ]
 }

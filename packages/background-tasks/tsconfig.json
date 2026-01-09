@@ -1,27 +1,24 @@
 {
+  "extends": "@workspace/typescript-config/vite-react-library.json",
   "compilerOptions": {
-    "target": "ES2022",
-    "lib": [
-      "ES2022"
-    ],
-    "rootDir": "./src",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
     "types": [
-      "@cloudflare/workers-types"
+      "@cloudflare/workers-types",
+      "node"
     ],
-    "strict": true,
+    "allowImportingTsExtensions": false,
     "declaration": true,
     "declarationMap": true,
-    "outDir": "./dist",
-    "esModuleInterop": true,
-    "skipLibCheck": true
+    "noEmit": false,
+    "outDir": "./dist"
   },
   "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
+    "**/*.ts",
+    "**/*.tsx"
   ]
 }
