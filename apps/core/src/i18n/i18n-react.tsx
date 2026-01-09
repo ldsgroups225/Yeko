@@ -1,17 +1,48 @@
 import type { ReactNode } from 'react'
-import type { Locales, TranslationFunctions } from './i18n-types'
-import { createContext, use, useEffect, useState } from 'react'
+import type { Locales, TranslationFunctions, Translations } from './i18n-types'
+import { createContext, use, useEffect, useMemo, useState } from 'react'
+import { initFormatters as initBaseFormatters } from './formatters.js'
+import baseTranslations from './fr/index.js'
 import { baseLocale, i18nObject, isLocale, loadedFormatters, loadedLocales } from './i18n-util'
 
-// Import locale loaders
-async function loadLocale(locale: Locales) {
+// Helper function to ensure locale is initialized and create i18n object
+function getI18nObject(locale: Locales): TranslationFunctions {
+  // Ensure translations are loaded
+  if (!loadedLocales[locale]) {
+    if (locale === baseLocale) {
+      loadedLocales[locale] = baseTranslations as Translations
+    }
+    else {
+      // For non-base locales without loaded translations, fall back to base
+      if (!loadedLocales[baseLocale]) {
+        loadedLocales[baseLocale] = baseTranslations as Translations
+      }
+      console.warn(`Translations for '${locale}' not loaded, using '${baseLocale}'`)
+      locale = baseLocale
+    }
+  }
+
+  // Ensure formatters are loaded
+  if (!loadedFormatters[locale]) {
+    loadedFormatters[locale] = initBaseFormatters(locale)
+  }
+
+  return i18nObject(locale)
+}
+
+// Initialize base locale immediately (synchronously)
+loadedLocales[baseLocale] = baseTranslations as Translations
+loadedFormatters[baseLocale] = initBaseFormatters(baseLocale)
+
+// Import locale loaders for dynamic locales
+async function loadLocale(locale: Locales): Promise<Translations> {
   switch (locale) {
     case 'fr':
-      return (await import('./fr/index.js')).default
+      return (await import('./fr/index.js')).default as Translations
     case 'en':
-      return (await import('./en/index.js')).default
+      return (await import('./en/index.js')).default as Translations
     default:
-      return (await import('./fr/index.js')).default
+      return (await import('./fr/index.js')).default as Translations
   }
 }
 
@@ -26,13 +57,13 @@ function detectBrowserLocale(): Locales {
     return baseLocale
 
   // Check localStorage first
-  const stored = localStorage.getItem('locale')
+  const stored = localStorage.getItem('yeko_core_language')
   if (stored && isLocale(stored))
     return stored
 
   // Check browser language
   const browserLang = navigator.language.split('-')[0]
-  if (isLocale(browserLang))
+  if (browserLang && isLocale(browserLang))
     return browserLang
 
   return baseLocale
@@ -40,7 +71,7 @@ function detectBrowserLocale(): Locales {
 
 interface I18nContextValue {
   locale: Locales
-  LL: TranslationFunctions
+  t: TranslationFunctions
   setLocale: (locale: Locales) => Promise<void>
 }
 
@@ -52,23 +83,15 @@ interface I18nProviderProps {
 }
 
 export function I18nProvider({ children, locale: initialLocale }: I18nProviderProps) {
-  // Detect initial locale
-  const detectedLocale = initialLocale || detectBrowserLocale()
-
-  const [locale, setLocaleState] = useState<Locales>(detectedLocale)
-  const [LL, setLL] = useState<TranslationFunctions>(() => {
-    // Return empty object initially, will be loaded in useEffect
-    return {} as TranslationFunctions
-  })
-  const [isLoading, setIsLoading] = useState(true)
+  // Always use baseLocale for initial render to ensure hydration consistency
+  const [locale, setLocaleState] = useState<Locales>(baseLocale)
+  const [t, setT] = useState<TranslationFunctions>(() => getI18nObject(baseLocale))
 
   const setLocale = async (newLocale: Locales) => {
     if (!isLocale(newLocale)) {
       console.warn(`Locale '${newLocale}' is not supported. Falling back to '${baseLocale}'.`)
       newLocale = baseLocale
     }
-
-    setIsLoading(true)
 
     try {
       // Load translations if not already loaded
@@ -83,37 +106,33 @@ export function I18nProvider({ children, locale: initialLocale }: I18nProviderPr
         loadedFormatters[newLocale] = formatters
       }
 
-      // Update state
+      // Update state with the new translation object
       setLocaleState(newLocale)
-      setLL(i18nObject(newLocale))
+      setT(getI18nObject(newLocale))
 
       // Persist to localStorage
       if (typeof window !== 'undefined') {
-        localStorage.setItem('locale', newLocale)
+        localStorage.setItem('yeko_core_language', newLocale)
       }
     }
     catch (error) {
       console.error(`Failed to load locale '${newLocale}':`, error)
     }
-    finally {
-      setIsLoading(false)
-    }
   }
 
-  // Load initial locale
+  // Detect and apply user's preferred locale ONLY on client after hydration
   useEffect(() => {
-    setLocale(locale)
-  }, [])
+    const targetLocale = initialLocale || detectBrowserLocale()
+    if (targetLocale !== baseLocale) {
+      setLocale(targetLocale)
+    }
+  }, [initialLocale])
 
-  const contextValue: I18nContextValue = {
+  const contextValue: I18nContextValue = useMemo(() => ({
     locale,
-    LL,
+    t,
     setLocale,
-  }
-
-  if (isLoading) {
-    return <div>Loading translations...</div>
-  }
+  }), [locale, t])
 
   return (
     <I18nContext value={contextValue}>
@@ -130,10 +149,10 @@ export function useI18nContext(): I18nContextValue {
   return context
 }
 
-// Convenience hook that returns just the translation functions
+// Convenience hook that returns just the translation functions (named 't' as user prefers)
 export function useTranslations() {
-  const { LL } = useI18nContext()
-  return LL
+  const { t } = useI18nContext()
+  return t
 }
 
 // Hook that returns current locale
