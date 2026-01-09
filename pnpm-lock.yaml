@@ -62,8 +62,8 @@ catalogs:
       specifier: ^0.41.5
       version: 0.41.5
     '@polar-sh/tanstack-start':
-      specifier: ^0.4.1
-      version: 0.4.1
+      specifier: ^0.4.3
+      version: 0.4.3
     '@radix-ui/react-slot':
       specifier: ^1.2.4
       version: 1.2.4
@@ -347,7 +347,7 @@ importers:
         version: 0.41.5
       '@polar-sh/tanstack-start':
         specifier: 'catalog:'
-        version: 0.4.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vite@7.1.2(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.2))
+        version: 0.4.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vite@7.1.2(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.2))
       '@repo/data-ops':
         specifier: workspace:^
         version: link:../../packages/data-ops
@@ -2755,8 +2755,8 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  '@polar-sh/adapter-utils@0.4.1':
-    resolution: {integrity: sha512-rkU/xc0488CRFj19P0kkVcQSNHL3tWAPG8rZK44JLVPq+ninO/DEw+atKErdE3EmHNfFUF9bdVvxUcnQyCsYyA==}
+  '@polar-sh/adapter-utils@0.4.3':
+    resolution: {integrity: sha512-9xjOyaAVWRFaFZKkSdZr8J6i5LToUoFKeoczXCEu6+uxAhKmkjA3Qlc8otI4be1DSouWgrYB/VUGHOW7dIgCuQ==}
 
   '@polar-sh/better-auth@1.6.1':
     resolution: {integrity: sha512-3RNMvkgVID1R8qpUZjpybF1SVZM4IOZmSx44CbS9uKg9MVHvHQr/T0nersjRJoiYXm+0jrMNWmKVZYqAGwn8hg==}
@@ -2779,8 +2779,11 @@ packages:
   '@polar-sh/sdk@0.41.5':
     resolution: {integrity: sha512-E+VoVV+WvebZKmj+KZ/fj1byBZbG7J8hHyzYD9kktvAToigPM19sywo2tFCHeb44aWGCVACMOP8r31e6je7dxA==}
 
-  '@polar-sh/tanstack-start@0.4.1':
-    resolution: {integrity: sha512-Gx2CNjGdzD+vfXb6sf6nja7szfDMI/kT278ewFp6Ny9492Y3RvhWosPtWp1bjre5ZUgzAbcvL7Hfm19iIRLmEw==}
+  '@polar-sh/sdk@0.42.1':
+    resolution: {integrity: sha512-4euyChnpZcjho2KhwnSXCBhJr5m8k+oaIicvwFHOZ/cXxKIKh7+EicJagSKg6jmuuq4YMOFhsxreHk3qqKXdWQ==}
+
+  '@polar-sh/tanstack-start@0.4.3':
+    resolution: {integrity: sha512-HRT/xuGar03wMY/+dhhIPqmV7EJUJbdkGIVTy0O/o9mGM5Z18rB862bqeXh0R3eK+Byh1khSIFmOd/k5ywx/Bg==}
     engines: {node: '>=16'}
 
   '@polar-sh/ui@0.1.2':
@@ -9832,9 +9835,9 @@ snapshots:
     dependencies:
       playwright: 1.57.0
 
-  '@polar-sh/adapter-utils@0.4.1':
+  '@polar-sh/adapter-utils@0.4.3':
     dependencies:
-      '@polar-sh/sdk': 0.41.5
+      '@polar-sh/sdk': 0.42.1
 
   '@polar-sh/better-auth@1.6.1(@polar-sh/sdk@0.41.5)(@stripe/react-stripe-js@4.0.2(@stripe/stripe-js@7.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@stripe/stripe-js@7.9.0)(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(better-auth@1.4.7(@tanstack/react-start@1.141.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vite@7.1.2(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.2)))(better-sqlite3@12.5.0)(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20251217.0)(@neondatabase/serverless@1.0.2)(@planetscale/database@1.19.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.16.0)(better-sqlite3@12.5.0)(kysely@0.28.9)(mysql2@3.16.0)(pg@8.16.3)(postgres@3.4.7))(mysql2@3.16.0)(pg@8.16.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.10)(vitest@4.0.16(@types/node@25.0.3)(jiti@2.6.1)(jsdom@27.3.0)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.2)))(react-dom@19.2.3(react@19.2.3))(react-is@18.3.1)(react@19.2.3)(redux@5.0.1)(zod@4.2.1)':
     dependencies:
@@ -9880,10 +9883,15 @@ snapshots:
       standardwebhooks: 1.0.0
       zod: 4.2.1
 
-  '@polar-sh/tanstack-start@0.4.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vite@7.1.2(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.2))':
+  '@polar-sh/sdk@0.42.1':
     dependencies:
-      '@polar-sh/adapter-utils': 0.4.1
-      '@polar-sh/sdk': 0.41.5
+      standardwebhooks: 1.0.0
+      zod: 4.2.1
+
+  '@polar-sh/tanstack-start@0.4.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vite@7.1.2(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.2))':
+    dependencies:
+      '@polar-sh/adapter-utils': 0.4.3
+      '@polar-sh/sdk': 0.42.1
       '@tanstack/react-start': 1.141.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vite@7.1.2(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.2))
     transitivePeerDependencies:
       - '@rsbuild/core'
