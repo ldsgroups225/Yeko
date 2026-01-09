@@ -135,6 +135,9 @@ catalogs:
     '@radix-ui/react-tooltip':
       specifier: ^1.2.8
       version: 1.2.8
+    '@tabler/icons-react':
+      specifier: ^3.31.0
+      version: 3.36.1
     '@tailwindcss/typography':
       specifier: ^0.5.19
       version: 0.5.19
@@ -223,7 +226,7 @@ catalogs:
       specifier: ^2.1.1
       version: 2.1.1
     cmdk:
-      specifier: ^1.1.1
+      specifier: 1.1.1
       version: 1.1.1
     date-fns:
       specifier: 4.1.0
@@ -241,7 +244,7 @@ catalogs:
       specifier: ^0.45.1
       version: 0.45.1
     embla-carousel-react:
-      specifier: ^8.6.0
+      specifier: 8.6.0
       version: 8.6.0
     eslint:
       specifier: ^9.39.2
@@ -262,7 +265,7 @@ catalogs:
       specifier: ^8.2.0
       version: 8.2.0
     input-otp:
-      specifier: ^1.4.2
+      specifier: 1.4.2
       version: 1.4.2
     jsdom:
       specifier: ^27.3.0
@@ -280,7 +283,7 @@ catalogs:
       specifier: ^5.1.6
       version: 5.1.6
     next-themes:
-      specifier: ^0.4.6
+      specifier: 0.4.6
       version: 0.4.6
     pg:
       specifier: ^8.16.3
@@ -316,7 +319,7 @@ catalogs:
       specifier: ^10.1.0
       version: 10.1.0
     react-resizable-panels:
-      specifier: ^4.0.7
+      specifier: 4.0.7
       version: 4.0.7
     recharts:
       specifier: 2.15.4
@@ -334,7 +337,7 @@ catalogs:
       specifier: ^6.6.0
       version: 6.6.0
     sonner:
-      specifier: ^2.0.7
+      specifier: 2.0.7
       version: 2.0.7
     tailwind-merge:
       specifier: ^3.4.0
@@ -358,7 +361,7 @@ catalogs:
       specifier: ^5.9.3
       version: 5.9.3
     vaul:
-      specifier: ^1.1.2
+      specifier: 1.1.2
       version: 1.1.2
     vite:
       specifier: 7.1.2
@@ -1377,6 +1380,91 @@ importers:
         version: 4.55.0(@cloudflare/workers-types@4.20251217.0)
 
   packages/typescript-config: {}
+
+  packages/ui:
+    dependencies:
+      '@tabler/icons-react':
+        specifier: 'catalog:'
+        version: 3.36.1(react@19.2.3)
+      class-variance-authority:
+        specifier: 'catalog:'
+        version: 0.7.1
+      clsx:
+        specifier: 'catalog:'
+        version: 2.1.1
+      cmdk:
+        specifier: 'catalog:'
+        version: 1.1.1(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      date-fns:
+        specifier: 'catalog:'
+        version: 4.1.0
+      embla-carousel-react:
+        specifier: 'catalog:'
+        version: 8.6.0(react@19.2.3)
+      input-otp:
+        specifier: 'catalog:'
+        version: 1.4.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      next-themes:
+        specifier: 'catalog:'
+        version: 0.4.6(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      react-day-picker:
+        specifier: ^9.13.0
+        version: 9.13.0(react@19.2.3)
+      react-resizable-panels:
+        specifier: 'catalog:'
+        version: 4.0.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      recharts:
+        specifier: 'catalog:'
+        version: 2.15.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      sonner:
+        specifier: 'catalog:'
+        version: 2.0.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      tailwind-merge:
+        specifier: 'catalog:'
+        version: 3.4.0
+      tw-animate-css:
+        specifier: 'catalog:'
+        version: 1.4.0
+      vaul:
+        specifier: 'catalog:'
+        version: 1.1.2(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      zod:
+        specifier: 'catalog:'
+        version: 4.2.1
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 25.0.3
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.2.7
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.2.3(@types/react@19.2.7)
+      '@workspace/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@yeko/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      eslint:
+        specifier: 'catalog:'
+        version: 9.39.2(jiti@2.6.1)
+      react:
+        specifier: 'catalog:'
+        version: 19.2.3
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.2.3(react@19.2.3)
+      tailwindcss:
+        specifier: 'catalog:'
+        version: 4.1.18
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vite:
+        specifier: 'catalog:'
+        version: 7.1.2(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.2)
 
 packages:
 
@@ -3970,6 +4058,14 @@ packages:
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       eslint: '>=9.0.0'
+
+  '@tabler/icons-react@3.36.1':
+    resolution: {integrity: sha512-/8nOXeNeMoze9xY/QyEKG65wuvRhkT3q9aytaur6Gj8bYU2A98YVJyLc9MRmc5nVvpy+bRlrrwK/Ykr8WGyUWg==}
+    peerDependencies:
+      react: '>= 16'
+
+  '@tabler/icons@3.36.1':
+    resolution: {integrity: sha512-f4Jg3Fof/Vru5ioix/UO4GX+sdDsF9wQo47FbtvG+utIYYVQ/QVAC0QYgcBbAjQGfbdOh2CCf0BgiFOF9Ixtjw==}
 
   '@tailwindcss/node@4.1.18':
     resolution: {integrity: sha512-DoR7U1P7iYhw16qJ49fgXUlry1t4CpXeErJHnQ44JgTSKMaZUdf17cfn5mHchfJ4KRBZRFA/Coo+MUF5+gOaCQ==}
@@ -7228,6 +7324,12 @@ packages:
 
   react-day-picker@9.12.0:
     resolution: {integrity: sha512-t8OvG/Zrciso5CQJu5b1A7yzEmebvST+S3pOVQJWxwjjVngyG/CA2htN/D15dLI4uTEuLLkbZyS4YYt480FAtA==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      react: '>=16.8.0'
+
+  react-day-picker@9.13.0:
+    resolution: {integrity: sha512-euzj5Hlq+lOHqI53NiuNhCP8HWgsPf/bBAVijR50hNaY1XwjKjShAnIe8jm8RD2W9IJUvihDIZ+KrmqfFzNhFQ==}
     engines: {node: '>=18'}
     peerDependencies:
       react: '>=16.8.0'
@@ -11327,6 +11429,13 @@ snapshots:
       estraverse: 5.3.0
       picomatch: 4.0.3
 
+  '@tabler/icons-react@3.36.1(react@19.2.3)':
+    dependencies:
+      '@tabler/icons': 3.36.1
+      react: 19.2.3
+
+  '@tabler/icons@3.36.1': {}
+
   '@tailwindcss/node@4.1.18':
     dependencies:
       '@jridgewell/remapping': 2.3.5
@@ -15159,6 +15268,13 @@ snapshots:
       strip-json-comments: 2.0.1
 
   react-day-picker@9.12.0(react@19.2.3):
+    dependencies:
+      '@date-fns/tz': 1.4.1
+      date-fns: 4.1.0
+      date-fns-jalali: 4.1.0-0
+      react: 19.2.3
+
+  react-day-picker@9.13.0(react@19.2.3):
     dependencies:
       '@date-fns/tz': 1.4.1
       date-fns: 4.1.0
