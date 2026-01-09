@@ -1,18 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2 } from 'lucide-react'
+import { ArrowLeft, Loader2, Mail } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
@@ -20,26 +13,35 @@ import { useTranslations } from '@/i18n'
 import { authClient } from '@/lib/auth-client'
 
 const loginSchema = z.object({
-  email: z.email(),
+  email: z.string().email(),
   password: z.string().min(6),
 })
 
+const forgotPasswordSchema = z.object({
+  email: z.string().email(),
+})
+
 type LoginFormData = z.infer<typeof loginSchema>
+type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>
+
+type AuthView = 'login' | 'forgot-password' | 'email-sent'
 
 export function LoginForm() {
   const t = useTranslations()
   const [isLoading, setIsLoading] = useState(false)
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
+  const [view, setView] = useState<AuthView>('login')
+  const [sentEmail, setSentEmail] = useState('')
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormData>({
+  const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   })
 
-  const onSubmit = async (data: LoginFormData) => {
+  const forgotForm = useForm<ForgotPasswordFormData>({
+    resolver: zodResolver(forgotPasswordSchema),
+  })
+
+  const onLoginSubmit = async (data: LoginFormData) => {
     setIsLoading(true)
     try {
       await authClient.signIn.email({
@@ -51,6 +53,24 @@ export function LoginForm() {
     }
     catch {
       toast.error(t.auth.login.error())
+    }
+    finally {
+      setIsLoading(false)
+    }
+  }
+
+  const onForgotSubmit = async (data: ForgotPasswordFormData) => {
+    setIsLoading(true)
+    try {
+      await authClient.requestPasswordReset({
+        email: data.email,
+        redirectTo: '/reset-password',
+      })
+      setSentEmail(data.email)
+      setView('email-sent')
+    }
+    catch {
+      toast.error(t.auth.forgotPassword.error())
     }
     finally {
       setIsLoading(false)
@@ -71,164 +91,313 @@ export function LoginForm() {
     }
   }
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.08 },
+    },
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 12 },
+    visible: { opacity: 1, y: 0 },
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted/30 p-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-      >
-        <Card className="w-full max-w-md">
-          <CardHeader className="space-y-1">
+    <div className="min-h-screen flex">
+      {/* Left Panel - Branding */}
+      <div className="hidden lg:flex lg:w-1/2 bg-linear-to-br from-primary via-primary/90 to-primary/80 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItSDI0di0yaDEyek0zNiAyNHYySDI0di0yaDEyeiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
+        <div className="relative z-10 flex flex-col justify-center px-12 xl:px-16">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="flex items-center gap-3 mb-8">
+              <div className="size-12 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
+                <span className="text-2xl font-bold text-white">Y</span>
+              </div>
+              <span className="text-2xl font-bold text-white">{t.app.name()}</span>
+            </div>
+            <h1 className="text-4xl xl:text-5xl font-bold text-white mb-4 leading-tight">
+              {t.app.tagline()}
+            </h1>
+            <p className="text-lg text-white/80 max-w-md">
+              {t.auth.login.brandDescription()}
+            </p>
+          </motion.div>
+
+          {/* Decorative elements */}
+          <motion.div
+            className="absolute bottom-12 left-12 xl:left-16"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+          >
+            <div className="flex items-center gap-4 text-white/60 text-sm">
+              <div className="flex -space-x-2">
+                {[1, 2, 3].map(i => (
+                  <div
+                    key={i}
+                    className="size-8 rounded-full bg-white/20 border-2 border-white/30"
+                  />
+                ))}
+              </div>
+              <span>{t.auth.login.trustedBy()}</span>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Right Panel - Auth Forms */}
+      <div className="flex-1 flex items-center justify-center p-6 sm:p-8 lg:p-12 bg-background">
+        <div className="w-full max-w-md">
+          {view === 'login' && (
             <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
+              key="login"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="space-y-6"
             >
-              <CardTitle className="text-2xl font-bold text-center">
-                {t.auth.login.title()}
-              </CardTitle>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-            >
-              <CardDescription className="text-center">
-                {t.auth.login.subtitle()}
-              </CardDescription>
-            </motion.div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Google OAuth Button */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-            >
-              <Button
-                onClick={handleGoogleSignIn}
-                disabled={isGoogleLoading || isLoading}
-                className="w-full h-11"
-                variant="outline"
-                type="button"
+              {/* Mobile Logo */}
+              <motion.div variants={itemVariants} className="lg:hidden text-center mb-8">
+                <div className="inline-flex items-center gap-2">
+                  <div className="size-10 rounded-xl bg-primary flex items-center justify-center">
+                    <span className="text-xl font-bold text-primary-foreground">Y</span>
+                  </div>
+                  <span className="text-xl font-bold">{t.app.name()}</span>
+                </div>
+              </motion.div>
+
+              <motion.div variants={itemVariants} className="space-y-2">
+                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
+                  {t.auth.login.title()}
+                </h2>
+                <p className="text-muted-foreground">
+                  {t.auth.login.subtitle()}
+                </p>
+              </motion.div>
+
+              {/* Google OAuth */}
+              <motion.div variants={itemVariants}>
+                <Button
+                  onClick={handleGoogleSignIn}
+                  disabled={isGoogleLoading || isLoading}
+                  className="w-full h-12 text-base"
+                  variant="outline"
+                  type="button"
+                >
+                  {isGoogleLoading
+                    ? <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    : (
+                        <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                        </svg>
+                      )}
+                  {t.auth.login.continueWithGoogle()}
+                </Button>
+              </motion.div>
+
+              <motion.div variants={itemVariants} className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <Separator />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-3 text-muted-foreground">
+                    {t.auth.login.orContinueWith()}
+                  </span>
+                </div>
+              </motion.div>
+
+              {/* Login Form */}
+              <motion.form
+                onSubmit={loginForm.handleSubmit(onLoginSubmit)}
+                className="space-y-4"
+                variants={itemVariants}
               >
-                {isGoogleLoading
-                  ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    )
-                  : (
-                      <svg
-                        className="mr-2 h-5 w-5"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                      >
-                        <path
-                          d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                          fill="#4285F4"
-                        />
-                        <path
-                          d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                          fill="#34A853"
-                        />
-                        <path
-                          d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                          fill="#FBBC05"
-                        />
-                        <path
-                          d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                          fill="#EA4335"
-                        />
-                      </svg>
-                    )}
-                {t.auth.login.continueWithGoogle()}
-              </Button>
-            </motion.div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">{t.auth.login.email()}</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder={t.auth.login.emailPlaceholder()}
+                    disabled={isLoading || isGoogleLoading}
+                    className="h-12"
+                    {...loginForm.register('email')}
+                  />
+                  {loginForm.formState.errors.email && (
+                    <p className="text-sm text-destructive">
+                      {loginForm.formState.errors.email.message}
+                    </p>
+                  )}
+                </div>
 
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="password">{t.auth.login.password()}</Label>
+                    <button
+                      type="button"
+                      onClick={() => setView('forgot-password')}
+                      className="text-sm text-primary hover:text-primary/80 transition-colors"
+                    >
+                      {t.auth.login.forgotPassword()}
+                    </button>
+                  </div>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder={t.auth.login.passwordPlaceholder()}
+                    disabled={isLoading || isGoogleLoading}
+                    className="h-12"
+                    {...loginForm.register('password')}
+                  />
+                  {loginForm.formState.errors.password && (
+                    <p className="text-sm text-destructive">
+                      {loginForm.formState.errors.password.message}
+                    </p>
+                  )}
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full h-12 text-base"
+                  disabled={isLoading || isGoogleLoading}
+                >
+                  {isLoading
+                    ? (
+                        <>
+                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                          {t.auth.login.submitting()}
+                        </>
+                      )
+                    : t.auth.login.submit()}
+                </Button>
+              </motion.form>
+            </motion.div>
+          )}
+
+          {view === 'forgot-password' && (
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              className="relative"
+              key="forgot"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="space-y-6"
             >
-              <div className="absolute inset-0 flex items-center">
-                <Separator />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">
-                  {t.auth.login.orContinueWith()}
-                </span>
-              </div>
-            </motion.div>
+              <motion.div variants={itemVariants}>
+                <button
+                  type="button"
+                  onClick={() => setView('login')}
+                  className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
+                >
+                  <ArrowLeft className="size-4" />
+                  {t.auth.forgotPassword.backToLogin()}
+                </button>
+              </motion.div>
 
-            {/* Email/Password Form */}
-            <motion.form
-              onSubmit={handleSubmit(onSubmit)}
-              className="space-y-4"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-            >
-              <div className="space-y-2">
-                <Label htmlFor="email">{t.auth.login.email()}</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder={t.auth.login.emailPlaceholder()}
-                  disabled={isLoading || isGoogleLoading}
-                  {...register('email')}
-                />
-                {errors.email && (
-                  <motion.p
-                    initial={{ opacity: 0, y: -5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-sm text-destructive"
-                  >
-                    {errors.email.message}
-                  </motion.p>
-                )}
-              </div>
+              <motion.div variants={itemVariants} className="space-y-2">
+                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
+                  {t.auth.forgotPassword.title()}
+                </h2>
+                <p className="text-muted-foreground">
+                  {t.auth.forgotPassword.subtitle()}
+                </p>
+              </motion.div>
 
-              <div className="space-y-2">
-                <Label htmlFor="password">{t.auth.login.password()}</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder={t.auth.login.passwordPlaceholder()}
-                  disabled={isLoading || isGoogleLoading}
-                  {...register('password')}
-                />
-                {errors.password && (
-                  <motion.p
-                    initial={{ opacity: 0, y: -5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-sm text-destructive"
-                  >
-                    {errors.password.message}
-                  </motion.p>
-                )}
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={isLoading || isGoogleLoading}
+              <motion.form
+                onSubmit={forgotForm.handleSubmit(onForgotSubmit)}
+                className="space-y-4"
+                variants={itemVariants}
               >
-                {isLoading
-                  ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        {t.auth.login.submitting()}
-                      </>
-                    )
-                  : (
-                      t.auth.login.submit()
-                    )}
-              </Button>
-            </motion.form>
-          </CardContent>
-        </Card>
-      </motion.div>
+                <div className="space-y-2">
+                  <Label htmlFor="forgot-email">{t.auth.login.email()}</Label>
+                  <Input
+                    id="forgot-email"
+                    type="email"
+                    placeholder={t.auth.login.emailPlaceholder()}
+                    disabled={isLoading}
+                    className="h-12"
+                    {...forgotForm.register('email')}
+                  />
+                  {forgotForm.formState.errors.email && (
+                    <p className="text-sm text-destructive">
+                      {forgotForm.formState.errors.email.message}
+                    </p>
+                  )}
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full h-12 text-base"
+                  disabled={isLoading}
+                >
+                  {isLoading
+                    ? (
+                        <>
+                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                          {t.auth.forgotPassword.submitting()}
+                        </>
+                      )
+                    : t.auth.forgotPassword.submit()}
+                </Button>
+              </motion.form>
+            </motion.div>
+          )}
+
+          {view === 'email-sent' && (
+            <motion.div
+              key="sent"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="space-y-6 text-center"
+            >
+              <motion.div
+                variants={itemVariants}
+                className="mx-auto size-16 rounded-full bg-primary/10 flex items-center justify-center"
+              >
+                <Mail className="size-8 text-primary" />
+              </motion.div>
+
+              <motion.div variants={itemVariants} className="space-y-2">
+                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
+                  {t.auth.forgotPassword.emailSentTitle()}
+                </h2>
+                <p className="text-muted-foreground">
+                  {t.auth.forgotPassword.emailSentDescription({ email: sentEmail })}
+                </p>
+              </motion.div>
+
+              <motion.div variants={itemVariants} className="space-y-3">
+                <Button
+                  variant="outline"
+                  className="w-full h-12"
+                  onClick={() => setView('login')}
+                >
+                  {t.auth.forgotPassword.backToLogin()}
+                </Button>
+                <p className="text-sm text-muted-foreground">
+                  {t.auth.forgotPassword.noEmail()}
+                  {' '}
+                  <button
+                    type="button"
+                    onClick={() => setView('forgot-password')}
+                    className="text-primary hover:text-primary/80 transition-colors"
+                  >
+                    {t.auth.forgotPassword.tryAgain()}
+                  </button>
+                </p>
+              </motion.div>
+            </motion.div>
+          )}
+        </div>
+      </div>
     </div>
   )
 }

@@ -5,6 +5,7 @@ export function createBetterAuth(config: {
   database: BetterAuthOptions['database']
   secret?: BetterAuthOptions['secret']
   baseURL?: BetterAuthOptions['baseURL']
+  trustedOrigins?: BetterAuthOptions['trustedOrigins']
   socialProviders?: BetterAuthOptions['socialProviders']
   emailAndPassword?: BetterAuthOptions['emailAndPassword']
 }): ReturnType<typeof betterAuth> {
@@ -12,10 +13,17 @@ export function createBetterAuth(config: {
     database: config.database,
     secret: config.secret,
     baseURL: config.baseURL,
-    emailAndPassword: config.emailAndPassword ?? {
-      enabled: true,
-      requireEmailVerification: false,
-    },
+    trustedOrigins: config.trustedOrigins,
+    emailAndPassword: config.emailAndPassword
+      ? {
+        ...config.emailAndPassword,
+        enabled: config.emailAndPassword.enabled ?? true,
+        requireEmailVerification: config.emailAndPassword.requireEmailVerification ?? false,
+      }
+      : {
+        enabled: true,
+        requireEmailVerification: false,
+      },
     socialProviders: config.socialProviders,
     user: {
       modelName: 'auth_user',

@@ -29,6 +29,7 @@ export default {
       },
       secret: env.BETTER_AUTH_SECRET,
       baseURL: env.BETTER_AUTH_URL,
+      trustedOrigins: [env.BETTER_AUTH_URL, 'http://localhost:3001'],
       socialProviders: {
         google: {
           clientId: env.GOOGLE_CLIENT_ID,
@@ -38,6 +39,12 @@ export default {
       emailAndPassword: {
         enabled: true,
         requireEmailVerification: false,
+        sendResetPassword: async ({ user, url, token }) => {
+          // TODO: Integrate with email service (e.g., Resend, SendGrid)
+          // For now, log the reset URL for development
+          console.warn(`[Password Reset] User: ${user.email}, Reset URL: ${url}, Token: ${token}`)
+          // Return void - the function must complete successfully for the endpoint to work
+        },
       },
     })
 

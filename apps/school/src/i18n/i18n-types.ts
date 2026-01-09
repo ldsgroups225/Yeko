@@ -4061,6 +4061,127 @@ type RootTranslation = {
 			 * E​r​r​e​u​r​ ​l​o​r​s​ ​d​e​ ​l​a​ ​c​o​n​n​e​x​i​o​n​ ​a​v​e​c​ ​G​o​o​g​l​e
 			 */
 			googleError: string
+			/**
+			 * M​o​t​ ​d​e​ ​p​a​s​s​e​ ​o​u​b​l​i​é​ ​?
+			 */
+			forgotPassword: string
+			/**
+			 * S​i​m​p​l​i​f​i​e​z​ ​l​a​ ​g​e​s​t​i​o​n​ ​d​e​ ​v​o​t​r​e​ ​é​t​a​b​l​i​s​s​e​m​e​n​t​ ​a​v​e​c​ ​n​o​t​r​e​ ​p​l​a​t​e​f​o​r​m​e​ ​t​o​u​t​-​e​n​-​u​n​.
+			 */
+			brandDescription: string
+			/**
+			 * U​t​i​l​i​s​é​ ​p​a​r​ ​+​1​0​0​ ​é​c​o​l​e​s
+			 */
+			trustedBy: string
+		}
+		forgotPassword: {
+			/**
+			 * M​o​t​ ​d​e​ ​p​a​s​s​e​ ​o​u​b​l​i​é
+			 */
+			title: string
+			/**
+			 * E​n​t​r​e​z​ ​v​o​t​r​e​ ​e​m​a​i​l​ ​e​t​ ​n​o​u​s​ ​v​o​u​s​ ​e​n​v​e​r​r​o​n​s​ ​u​n​ ​l​i​e​n​ ​d​e​ ​r​é​i​n​i​t​i​a​l​i​s​a​t​i​o​n​.
+			 */
+			subtitle: string
+			/**
+			 * E​n​v​o​y​e​r​ ​l​e​ ​l​i​e​n
+			 */
+			submit: string
+			/**
+			 * E​n​v​o​i​ ​e​n​ ​c​o​u​r​s​.​.​.
+			 */
+			submitting: string
+			/**
+			 * R​e​t​o​u​r​ ​à​ ​l​a​ ​c​o​n​n​e​x​i​o​n
+			 */
+			backToLogin: string
+			/**
+			 * E​m​a​i​l​ ​e​n​v​o​y​é​ ​!
+			 */
+			emailSentTitle: string
+			/**
+			 * N​o​u​s​ ​a​v​o​n​s​ ​e​n​v​o​y​é​ ​u​n​ ​l​i​e​n​ ​d​e​ ​r​é​i​n​i​t​i​a​l​i​s​a​t​i​o​n​ ​à​ ​{​e​m​a​i​l​}​.
+			 * @param {string} email
+			 */
+			emailSentDescription: RequiredParams<'email'>
+			/**
+			 * V​o​u​s​ ​n​'​a​v​e​z​ ​p​a​s​ ​r​e​ç​u​ ​l​'​e​m​a​i​l​ ​?
+			 */
+			noEmail: string
+			/**
+			 * R​é​e​s​s​a​y​e​r
+			 */
+			tryAgain: string
+			/**
+			 * E​r​r​e​u​r​ ​l​o​r​s​ ​d​e​ ​l​'​e​n​v​o​i​ ​d​e​ ​l​'​e​m​a​i​l
+			 */
+			error: string
+		}
+		resetPassword: {
+			/**
+			 * N​o​u​v​e​a​u​ ​m​o​t​ ​d​e​ ​p​a​s​s​e
+			 */
+			title: string
+			/**
+			 * C​h​o​i​s​i​s​s​e​z​ ​u​n​ ​n​o​u​v​e​a​u​ ​m​o​t​ ​d​e​ ​p​a​s​s​e​ ​s​é​c​u​r​i​s​é​.
+			 */
+			subtitle: string
+			/**
+			 * N​o​u​v​e​a​u​ ​m​o​t​ ​d​e​ ​p​a​s​s​e
+			 */
+			newPassword: string
+			/**
+			 * M​i​n​i​m​u​m​ ​8​ ​c​a​r​a​c​t​è​r​e​s
+			 */
+			newPasswordPlaceholder: string
+			/**
+			 * C​o​n​f​i​r​m​e​r​ ​l​e​ ​m​o​t​ ​d​e​ ​p​a​s​s​e
+			 */
+			confirmPassword: string
+			/**
+			 * R​é​p​é​t​e​z​ ​l​e​ ​m​o​t​ ​d​e​ ​p​a​s​s​e
+			 */
+			confirmPasswordPlaceholder: string
+			/**
+			 * L​e​s​ ​m​o​t​s​ ​d​e​ ​p​a​s​s​e​ ​n​e​ ​c​o​r​r​e​s​p​o​n​d​e​n​t​ ​p​a​s
+			 */
+			passwordMismatch: string
+			/**
+			 * R​é​i​n​i​t​i​a​l​i​s​e​r​ ​l​e​ ​m​o​t​ ​d​e​ ​p​a​s​s​e
+			 */
+			submit: string
+			/**
+			 * R​é​i​n​i​t​i​a​l​i​s​a​t​i​o​n​.​.​.
+			 */
+			submitting: string
+			/**
+			 * M​o​t​ ​d​e​ ​p​a​s​s​e​ ​r​é​i​n​i​t​i​a​l​i​s​é​ ​a​v​e​c​ ​s​u​c​c​è​s
+			 */
+			success: string
+			/**
+			 * E​r​r​e​u​r​ ​l​o​r​s​ ​d​e​ ​l​a​ ​r​é​i​n​i​t​i​a​l​i​s​a​t​i​o​n
+			 */
+			error: string
+			/**
+			 * M​o​t​ ​d​e​ ​p​a​s​s​e​ ​m​i​s​ ​à​ ​j​o​u​r​ ​!
+			 */
+			successTitle: string
+			/**
+			 * V​o​t​r​e​ ​m​o​t​ ​d​e​ ​p​a​s​s​e​ ​a​ ​é​t​é​ ​r​é​i​n​i​t​i​a​l​i​s​é​.​ ​V​o​u​s​ ​p​o​u​v​e​z​ ​m​a​i​n​t​e​n​a​n​t​ ​v​o​u​s​ ​c​o​n​n​e​c​t​e​r​.
+			 */
+			successDescription: string
+			/**
+			 * S​e​ ​c​o​n​n​e​c​t​e​r
+			 */
+			goToLogin: string
+			/**
+			 * L​i​e​n​ ​i​n​v​a​l​i​d​e
+			 */
+			invalidLink: string
+			/**
+			 * C​e​ ​l​i​e​n​ ​d​e​ ​r​é​i​n​i​t​i​a​l​i​s​a​t​i​o​n​ ​e​s​t​ ​i​n​v​a​l​i​d​e​ ​o​u​ ​a​ ​e​x​p​i​r​é​.
+			 */
+			invalidLinkDescription: string
 		}
 	}
 	roles: {
@@ -11695,6 +11816,126 @@ export type TranslationFunctions = {
 			 * Erreur lors de la connexion avec Google
 			 */
 			googleError: () => LocalizedString
+			/**
+			 * Mot de passe oublié ?
+			 */
+			forgotPassword: () => LocalizedString
+			/**
+			 * Simplifiez la gestion de votre établissement avec notre plateforme tout-en-un.
+			 */
+			brandDescription: () => LocalizedString
+			/**
+			 * Utilisé par +100 écoles
+			 */
+			trustedBy: () => LocalizedString
+		}
+		forgotPassword: {
+			/**
+			 * Mot de passe oublié
+			 */
+			title: () => LocalizedString
+			/**
+			 * Entrez votre email et nous vous enverrons un lien de réinitialisation.
+			 */
+			subtitle: () => LocalizedString
+			/**
+			 * Envoyer le lien
+			 */
+			submit: () => LocalizedString
+			/**
+			 * Envoi en cours...
+			 */
+			submitting: () => LocalizedString
+			/**
+			 * Retour à la connexion
+			 */
+			backToLogin: () => LocalizedString
+			/**
+			 * Email envoyé !
+			 */
+			emailSentTitle: () => LocalizedString
+			/**
+			 * Nous avons envoyé un lien de réinitialisation à {email}.
+			 */
+			emailSentDescription: (arg: { email: string }) => LocalizedString
+			/**
+			 * Vous n'avez pas reçu l'email ?
+			 */
+			noEmail: () => LocalizedString
+			/**
+			 * Réessayer
+			 */
+			tryAgain: () => LocalizedString
+			/**
+			 * Erreur lors de l'envoi de l'email
+			 */
+			error: () => LocalizedString
+		}
+		resetPassword: {
+			/**
+			 * Nouveau mot de passe
+			 */
+			title: () => LocalizedString
+			/**
+			 * Choisissez un nouveau mot de passe sécurisé.
+			 */
+			subtitle: () => LocalizedString
+			/**
+			 * Nouveau mot de passe
+			 */
+			newPassword: () => LocalizedString
+			/**
+			 * Minimum 8 caractères
+			 */
+			newPasswordPlaceholder: () => LocalizedString
+			/**
+			 * Confirmer le mot de passe
+			 */
+			confirmPassword: () => LocalizedString
+			/**
+			 * Répétez le mot de passe
+			 */
+			confirmPasswordPlaceholder: () => LocalizedString
+			/**
+			 * Les mots de passe ne correspondent pas
+			 */
+			passwordMismatch: () => LocalizedString
+			/**
+			 * Réinitialiser le mot de passe
+			 */
+			submit: () => LocalizedString
+			/**
+			 * Réinitialisation...
+			 */
+			submitting: () => LocalizedString
+			/**
+			 * Mot de passe réinitialisé avec succès
+			 */
+			success: () => LocalizedString
+			/**
+			 * Erreur lors de la réinitialisation
+			 */
+			error: () => LocalizedString
+			/**
+			 * Mot de passe mis à jour !
+			 */
+			successTitle: () => LocalizedString
+			/**
+			 * Votre mot de passe a été réinitialisé. Vous pouvez maintenant vous connecter.
+			 */
+			successDescription: () => LocalizedString
+			/**
+			 * Se connecter
+			 */
+			goToLogin: () => LocalizedString
+			/**
+			 * Lien invalide
+			 */
+			invalidLink: () => LocalizedString
+			/**
+			 * Ce lien de réinitialisation est invalide ou a expiré.
+			 */
+			invalidLinkDescription: () => LocalizedString
 		}
 	}
 	roles: {
