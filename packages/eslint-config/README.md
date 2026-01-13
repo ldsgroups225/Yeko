@@ -1,13 +1,13 @@
-# @kurama/eslint-config
+# @yeko/eslint-config
 
-ESLint configuration for the Kurama project, based on [@antfu/eslint-config](https://github.com/antfu/eslint-config) with TypeScript and React support.
+ESLint configuration for the Yeko project, based on [@antfu/eslint-config](https://github.com/antfu/eslint-config) with TypeScript and React support.
 
 ## Installation
 
 Add this package to your workspace dependencies:
 
 ```bash
-pnpm add -D @kurama/eslint-config @antfu/eslint-config eslint
+pnpm add -D @yeko/eslint-config @antfu/eslint-config eslint
 ```
 
 ## Usage
@@ -15,18 +15,18 @@ pnpm add -D @kurama/eslint-config @antfu/eslint-config eslint
 Create an `eslint.config.js` file in your project root:
 
 ```js
-import kuramaConfig from '@kurama/eslint-config'
+import yekoConfig from '@yeko/eslint-config'
 
-export default kuramaConfig
+export default yekoConfig
 ```
 
 Or extend it with additional configuration:
 
 ```js
-import kuramaConfig from '@kurama/eslint-config'
+import yekoConfig from '@yeko/eslint-config'
 
 export default [
-  ...kuramaConfig,
+  ...yekoConfig,
   {
     rules: {
       // Your custom rules here
@@ -53,33 +53,39 @@ This ESLint configuration includes:
 ## Features
 
 ### TypeScript
+
 - Type checking
 - Import/export validation
 - Interface and type usage
 - Generic type safety
 
 ### React
+
 - JSX syntax support
 - React hooks rules
 - Component prop validation
 - Accessibility checks
 
 ### Stylistic Rules
+
 - Consistent indentation
 - Quote style enforcement
 - Semicolon policy
 - Trailing comma rules
 
 ### Accessibility (a11y)
+
 - Alt text for images and media
 - ARIA attributes validation
+- ARIA role validation
 - Keyboard navigation support
 - Focus management
 - Semantic HTML enforcement
-- Component mapping for custom components (shadcn/ui, Kurama components)
+- Component mapping for custom components (shadcn/ui components)
 - Polymorphic component support with `as` prop
 
 **Key Rules:**
+
 - `alt-text`: Enforce alternative text on images
 - `aria-props`: Validate ARIA attributes
 - `aria-role`: Enforce valid ARIA roles
@@ -91,8 +97,8 @@ This ESLint configuration includes:
 
 **Component Mapping:**
 The configuration includes mappings for:
+
 - shadcn/ui components (Button, Link, Card, Dialog, etc.)
-- Kurama custom components (LevelBadge, AchievementBadge, StreakCalendar, LeaderboardWidget)
 
 **Polymorphic Components:**
 Supports polymorphic components using the `as` prop for Button, Link, and Card components.
@@ -112,7 +118,7 @@ Add these scripts to your `package.json`:
 
 ## Workspace Usage
 
-This package is designed to be used as a workspace dependency within the Kurama monorepo. Other packages and apps can reference it directly in their `eslint.config.js` files.
+This package is designed to be used as a workspace dependency within the Yeko monorepo. Other packages and apps can reference it directly in their `eslint.config.js` files.
 
 ## Customization
 
@@ -125,10 +131,10 @@ To customize the configuration for your specific needs, you can:
 Example:
 
 ```js
-import kuramaConfig from '@kurama/eslint-config'
+import yekoConfig from '@yeko/eslint-config'
 
 export default [
-  ...kuramaConfig,
+  ...yekoConfig,
   {
     files: ['**/*.test.ts'],
     rules: {

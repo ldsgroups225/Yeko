@@ -18,6 +18,7 @@
     "deploy:queue-worker": "pnpm run build:data-ops && pnpm run --filter @repo/queue-worker deploy",
     "typecheck": "pnpm run --filter \"*\" typecheck || echo \"No typecheck script found\"",
     "lint": "pnpm run --filter \"*\" lint:fix || echo \"No lint script found\"",
+    "lint:check": "pnpm run --filter \"*\" lint || echo \"No lint script found\"",
     "test": "pnpm run --filter \"*\" test || echo \"No test script found\""
   },
   "keywords": [],

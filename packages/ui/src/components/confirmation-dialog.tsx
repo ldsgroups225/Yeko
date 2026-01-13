@@ -1,8 +1,6 @@
 'use client'
 
 import { IconAlertTriangle, IconLoader2 } from '@tabler/icons-react'
-import * as React from 'react'
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,7 +11,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@workspace/ui/components/alert-dialog'
+
 import { cn } from '@workspace/ui/lib/utils'
+import * as React from 'react'
 
 interface ConfirmationDialogProps {
   open: boolean
@@ -71,8 +71,8 @@ function ConfirmationDialog({
             onClick={handleConfirm}
             disabled={isLoading}
             className={cn(
-              variant === 'destructive' &&
-              'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+              variant === 'destructive'
+              && 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
             )}
           >
             {isLoading && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
