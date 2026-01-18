@@ -33,6 +33,10 @@ export function LoginForm() {
   const [view, setView] = useState<AuthView>('login')
   const [sentEmail, setSentEmail] = useState('')
 
+  // Safety check for translations
+  const appName = t?.app?.name?.() || 'Yeko School'
+  const tagline = t?.app?.tagline?.() || 'Gestion scolaire intelligente'
+
   const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   })
@@ -49,10 +53,10 @@ export function LoginForm() {
         password: data.password,
         callbackURL: '/dashboard',
       })
-      toast.success(t.auth.login.success())
+      toast.success(t?.auth?.login?.success?.() || 'Connexion réussie')
     }
     catch {
-      toast.error(t.auth.login.error())
+      toast.error(t?.auth?.login?.error?.() || 'Erreur de connexion')
     }
     finally {
       setIsLoading(false)
@@ -70,7 +74,7 @@ export function LoginForm() {
       setView('email-sent')
     }
     catch {
-      toast.error(t.auth.forgotPassword.error())
+      toast.error(t?.auth?.forgotPassword?.error?.() || 'Erreur lors de la réinitialisation du mot de passe')
     }
     finally {
       setIsLoading(false)
@@ -86,7 +90,7 @@ export function LoginForm() {
       })
     }
     catch {
-      toast.error(t.auth.login.googleError())
+      toast.error(t?.auth?.login?.googleError?.() || 'Erreur lors de la connexion avec Google')
       setIsGoogleLoading(false)
     }
   }
@@ -119,10 +123,10 @@ export function LoginForm() {
               <div className="size-12 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
                 <span className="text-2xl font-bold text-white">Y</span>
               </div>
-              <span className="text-2xl font-bold text-white">{t.app.name()}</span>
+              <span className="text-2xl font-bold text-white">{appName}</span>
             </div>
             <h1 className="text-4xl xl:text-5xl font-bold text-white mb-4 leading-tight">
-              {t.app.tagline()}
+              {tagline}
             </h1>
             <p className="text-lg text-white/80 max-w-md">
               {t.auth.login.brandDescription()}
@@ -168,7 +172,7 @@ export function LoginForm() {
                   <div className="size-10 rounded-xl bg-primary flex items-center justify-center">
                     <span className="text-xl font-bold text-primary-foreground">Y</span>
                   </div>
-                  <span className="text-xl font-bold">{t.app.name()}</span>
+                  <span className="text-xl font-bold">{appName}</span>
                 </div>
               </motion.div>
 
