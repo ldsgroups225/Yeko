@@ -7,7 +7,7 @@ description: Enforces elite engineering standards and CoT reasoning
 # Top 2% Engineering Standard
 - **Reasoning:** Always use Chain-of-Thought (CoT) and Least-to-Most decomposition.
 - **Protocol:** Before writing code, verbalize your plan.
-- **Source of Truth:** Adhere to `./kiro/steering/project_constitution.md`.
+- **Source of Truth:** Adhere to `./.kiro/steering/project_constitution.md`.
 
 <constraints>
 - Use TypeScript Strict mode.
