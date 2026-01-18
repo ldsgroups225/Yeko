@@ -605,27 +605,27 @@ export interface FileRoutesByFullPath {
   '/users/teachers/new': typeof AuthUsersTeachersNewRoute
   '/users/users/import': typeof AuthUsersUsersImportRoute
   '/users/users/new': typeof AuthUsersUsersNewRoute
-  '/classes/$classId': typeof AuthClassesClassIdIndexRoute
-  '/conducts/alerts': typeof AuthConductsAlertsIndexRoute
-  '/conducts/conduct': typeof AuthConductsConductIndexRoute
-  '/conducts/student-attendance': typeof AuthConductsStudentAttendanceIndexRoute
-  '/conducts/teacher-attendance': typeof AuthConductsTeacherAttendanceIndexRoute
-  '/spaces/classrooms': typeof AuthSpacesClassroomsIndexRoute
-  '/students/$studentId': typeof AuthStudentsStudentIdIndexRoute
-  '/users/roles': typeof AuthUsersRolesIndexRoute
-  '/users/staff': typeof AuthUsersStaffIndexRoute
-  '/users/teachers': typeof AuthUsersTeachersIndexRoute
-  '/users/users': typeof AuthUsersUsersIndexRoute
+  '/classes/$classId/': typeof AuthClassesClassIdIndexRoute
+  '/conducts/alerts/': typeof AuthConductsAlertsIndexRoute
+  '/conducts/conduct/': typeof AuthConductsConductIndexRoute
+  '/conducts/student-attendance/': typeof AuthConductsStudentAttendanceIndexRoute
+  '/conducts/teacher-attendance/': typeof AuthConductsTeacherAttendanceIndexRoute
+  '/spaces/classrooms/': typeof AuthSpacesClassroomsIndexRoute
+  '/students/$studentId/': typeof AuthStudentsStudentIdIndexRoute
+  '/users/roles/': typeof AuthUsersRolesIndexRoute
+  '/users/staff/': typeof AuthUsersStaffIndexRoute
+  '/users/teachers/': typeof AuthUsersTeachersIndexRoute
+  '/users/users/': typeof AuthUsersUsersIndexRoute
   '/spaces/classrooms/$classroomId/edit': typeof AuthSpacesClassroomsClassroomIdEditRoute
   '/users/roles/$roleId/edit': typeof AuthUsersRolesRoleIdEditRoute
   '/users/staff/$staffId/edit': typeof AuthUsersStaffStaffIdEditRoute
   '/users/teachers/$teacherId/edit': typeof AuthUsersTeachersTeacherIdEditRoute
   '/users/users/$userId/edit': typeof AuthUsersUsersUserIdEditRoute
-  '/spaces/classrooms/$classroomId': typeof AuthSpacesClassroomsClassroomIdIndexRoute
-  '/users/roles/$roleId': typeof AuthUsersRolesRoleIdIndexRoute
-  '/users/staff/$staffId': typeof AuthUsersStaffStaffIdIndexRoute
-  '/users/teachers/$teacherId': typeof AuthUsersTeachersTeacherIdIndexRoute
-  '/users/users/$userId': typeof AuthUsersUsersUserIdIndexRoute
+  '/spaces/classrooms/$classroomId/': typeof AuthSpacesClassroomsClassroomIdIndexRoute
+  '/users/roles/$roleId/': typeof AuthUsersRolesRoleIdIndexRoute
+  '/users/staff/$staffId/': typeof AuthUsersStaffStaffIdIndexRoute
+  '/users/teachers/$teacherId/': typeof AuthUsersTeachersTeacherIdIndexRoute
+  '/users/users/$userId/': typeof AuthUsersUsersUserIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -856,27 +856,27 @@ export interface FileRouteTypes {
     | '/users/teachers/new'
     | '/users/users/import'
     | '/users/users/new'
-    | '/classes/$classId'
-    | '/conducts/alerts'
-    | '/conducts/conduct'
-    | '/conducts/student-attendance'
-    | '/conducts/teacher-attendance'
-    | '/spaces/classrooms'
-    | '/students/$studentId'
-    | '/users/roles'
-    | '/users/staff'
-    | '/users/teachers'
-    | '/users/users'
+    | '/classes/$classId/'
+    | '/conducts/alerts/'
+    | '/conducts/conduct/'
+    | '/conducts/student-attendance/'
+    | '/conducts/teacher-attendance/'
+    | '/spaces/classrooms/'
+    | '/students/$studentId/'
+    | '/users/roles/'
+    | '/users/staff/'
+    | '/users/teachers/'
+    | '/users/users/'
     | '/spaces/classrooms/$classroomId/edit'
     | '/users/roles/$roleId/edit'
     | '/users/staff/$staffId/edit'
     | '/users/teachers/$teacherId/edit'
     | '/users/users/$userId/edit'
-    | '/spaces/classrooms/$classroomId'
-    | '/users/roles/$roleId'
-    | '/users/staff/$staffId'
-    | '/users/teachers/$teacherId'
-    | '/users/users/$userId'
+    | '/spaces/classrooms/$classroomId/'
+    | '/users/roles/$roleId/'
+    | '/users/staff/$staffId/'
+    | '/users/teachers/$teacherId/'
+    | '/users/users/$userId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -1061,7 +1061,7 @@ declare module '@tanstack/react-router' {
     '/_auth': {
       id: '/_auth'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -1404,77 +1404,77 @@ declare module '@tanstack/react-router' {
     '/_auth/users/users/': {
       id: '/_auth/users/users/'
       path: '/users'
-      fullPath: '/users/users'
+      fullPath: '/users/users/'
       preLoaderRoute: typeof AuthUsersUsersIndexRouteImport
       parentRoute: typeof AuthUsersRoute
     }
     '/_auth/users/teachers/': {
       id: '/_auth/users/teachers/'
       path: '/teachers'
-      fullPath: '/users/teachers'
+      fullPath: '/users/teachers/'
       preLoaderRoute: typeof AuthUsersTeachersIndexRouteImport
       parentRoute: typeof AuthUsersRoute
     }
     '/_auth/users/staff/': {
       id: '/_auth/users/staff/'
       path: '/staff'
-      fullPath: '/users/staff'
+      fullPath: '/users/staff/'
       preLoaderRoute: typeof AuthUsersStaffIndexRouteImport
       parentRoute: typeof AuthUsersRoute
     }
     '/_auth/users/roles/': {
       id: '/_auth/users/roles/'
       path: '/roles'
-      fullPath: '/users/roles'
+      fullPath: '/users/roles/'
       preLoaderRoute: typeof AuthUsersRolesIndexRouteImport
       parentRoute: typeof AuthUsersRoute
     }
     '/_auth/students/$studentId/': {
       id: '/_auth/students/$studentId/'
       path: '/$studentId'
-      fullPath: '/students/$studentId'
+      fullPath: '/students/$studentId/'
       preLoaderRoute: typeof AuthStudentsStudentIdIndexRouteImport
       parentRoute: typeof AuthStudentsRoute
     }
     '/_auth/spaces/classrooms/': {
       id: '/_auth/spaces/classrooms/'
       path: '/classrooms'
-      fullPath: '/spaces/classrooms'
+      fullPath: '/spaces/classrooms/'
       preLoaderRoute: typeof AuthSpacesClassroomsIndexRouteImport
       parentRoute: typeof AuthSpacesRoute
     }
     '/_auth/conducts/teacher-attendance/': {
       id: '/_auth/conducts/teacher-attendance/'
       path: '/teacher-attendance'
-      fullPath: '/conducts/teacher-attendance'
+      fullPath: '/conducts/teacher-attendance/'
       preLoaderRoute: typeof AuthConductsTeacherAttendanceIndexRouteImport
       parentRoute: typeof AuthConductsRoute
     }
     '/_auth/conducts/student-attendance/': {
       id: '/_auth/conducts/student-attendance/'
       path: '/student-attendance'
-      fullPath: '/conducts/student-attendance'
+      fullPath: '/conducts/student-attendance/'
       preLoaderRoute: typeof AuthConductsStudentAttendanceIndexRouteImport
       parentRoute: typeof AuthConductsRoute
     }
     '/_auth/conducts/conduct/': {
       id: '/_auth/conducts/conduct/'
       path: '/conduct'
-      fullPath: '/conducts/conduct'
+      fullPath: '/conducts/conduct/'
       preLoaderRoute: typeof AuthConductsConductIndexRouteImport
       parentRoute: typeof AuthConductsRoute
     }
     '/_auth/conducts/alerts/': {
       id: '/_auth/conducts/alerts/'
       path: '/alerts'
-      fullPath: '/conducts/alerts'
+      fullPath: '/conducts/alerts/'
       preLoaderRoute: typeof AuthConductsAlertsIndexRouteImport
       parentRoute: typeof AuthConductsRoute
     }
     '/_auth/classes/$classId/': {
       id: '/_auth/classes/$classId/'
       path: '/$classId'
-      fullPath: '/classes/$classId'
+      fullPath: '/classes/$classId/'
       preLoaderRoute: typeof AuthClassesClassIdIndexRouteImport
       parentRoute: typeof AuthClassesRoute
     }
@@ -1572,35 +1572,35 @@ declare module '@tanstack/react-router' {
     '/_auth/users/users/$userId/': {
       id: '/_auth/users/users/$userId/'
       path: '/users/$userId'
-      fullPath: '/users/users/$userId'
+      fullPath: '/users/users/$userId/'
       preLoaderRoute: typeof AuthUsersUsersUserIdIndexRouteImport
       parentRoute: typeof AuthUsersRoute
     }
     '/_auth/users/teachers/$teacherId/': {
       id: '/_auth/users/teachers/$teacherId/'
       path: '/teachers/$teacherId'
-      fullPath: '/users/teachers/$teacherId'
+      fullPath: '/users/teachers/$teacherId/'
       preLoaderRoute: typeof AuthUsersTeachersTeacherIdIndexRouteImport
       parentRoute: typeof AuthUsersRoute
     }
     '/_auth/users/staff/$staffId/': {
       id: '/_auth/users/staff/$staffId/'
       path: '/staff/$staffId'
-      fullPath: '/users/staff/$staffId'
+      fullPath: '/users/staff/$staffId/'
       preLoaderRoute: typeof AuthUsersStaffStaffIdIndexRouteImport
       parentRoute: typeof AuthUsersRoute
     }
     '/_auth/users/roles/$roleId/': {
       id: '/_auth/users/roles/$roleId/'
       path: '/roles/$roleId'
-      fullPath: '/users/roles/$roleId'
+      fullPath: '/users/roles/$roleId/'
       preLoaderRoute: typeof AuthUsersRolesRoleIdIndexRouteImport
       parentRoute: typeof AuthUsersRoute
     }
     '/_auth/spaces/classrooms/$classroomId/': {
       id: '/_auth/spaces/classrooms/$classroomId/'
       path: '/classrooms/$classroomId'
-      fullPath: '/spaces/classrooms/$classroomId'
+      fullPath: '/spaces/classrooms/$classroomId/'
       preLoaderRoute: typeof AuthSpacesClassroomsClassroomIdIndexRouteImport
       parentRoute: typeof AuthSpacesRoute
     }
