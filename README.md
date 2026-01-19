@@ -4,15 +4,35 @@
 
 A monorepo SaaS application with user-facing frontend and data service backend.
 
-## Setup
+## Docker Development (Recommended)
 
+For a consistent development environment with hot-reload, use Docker:
+
+```bash
+# Quick start with all services
+make docker-up
+
+# Access applications:
+# yeko-core: http://localhost:3000
+# yeko-school: http://localhost:3001
+# yeko-teacher: http://localhost:3002
+# data-service: http://localhost:8787
+
+# Stop all services
+make docker-down
+
+# View all available commands
+make help
+```
+
+See [DOCKER.md](./DOCKER.md) for complete Docker documentation.
+
+## Local Development
+
+### Setup
 ```bash
 pnpm run setup
 ```
-
-This installs all dependencies and builds required packages.
-
-## Development
 
 ### User Application
 ```bash

@@ -185,9 +185,9 @@ export interface FileRoutesByFullPath {
   '/app/schools/$schoolId': typeof AuthAppSchoolsSchoolIdRoute
   '/app/schools/create': typeof AuthAppSchoolsCreateRoute
   '/app/analytics/': typeof AuthAppAnalyticsIndexRoute
-  '/app/catalogs': typeof AuthAppCatalogsIndexRoute
-  '/app/schools': typeof AuthAppSchoolsIndexRoute
-  '/app/support': typeof AuthAppSupportIndexRoute
+  '/app/catalogs/': typeof AuthAppCatalogsIndexRoute
+  '/app/schools/': typeof AuthAppSchoolsIndexRoute
+  '/app/support/': typeof AuthAppSupportIndexRoute
   '/app/catalogs/programs/$programId': typeof AuthAppCatalogsProgramsProgramIdRoute
   '/app/polar/checkout/success': typeof AuthAppPolarCheckoutSuccessRoute
   '/app/schools/$schoolId/edit': typeof AuthAppSchoolsSchoolIdEditRoute
@@ -265,9 +265,9 @@ export interface FileRouteTypes {
     | '/app/schools/$schoolId'
     | '/app/schools/create'
     | '/app/analytics/'
-    | '/app/catalogs'
-    | '/app/schools'
-    | '/app/support'
+    | '/app/catalogs/'
+    | '/app/schools/'
+    | '/app/support/'
     | '/app/catalogs/programs/$programId'
     | '/app/polar/checkout/success'
     | '/app/schools/$schoolId/edit'
@@ -343,7 +343,7 @@ declare module '@tanstack/react-router' {
     '/_auth': {
       id: '/_auth'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof AuthRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -392,21 +392,21 @@ declare module '@tanstack/react-router' {
     '/_auth/app/support/': {
       id: '/_auth/app/support/'
       path: '/support'
-      fullPath: '/app/support'
+      fullPath: '/app/support/'
       preLoaderRoute: typeof AuthAppSupportIndexRouteImport
       parentRoute: typeof AuthAppRouteRoute
     }
     '/_auth/app/schools/': {
       id: '/_auth/app/schools/'
       path: '/schools'
-      fullPath: '/app/schools'
+      fullPath: '/app/schools/'
       preLoaderRoute: typeof AuthAppSchoolsIndexRouteImport
       parentRoute: typeof AuthAppRouteRoute
     }
     '/_auth/app/catalogs/': {
       id: '/_auth/app/catalogs/'
       path: '/catalogs'
-      fullPath: '/app/catalogs'
+      fullPath: '/app/catalogs/'
       preLoaderRoute: typeof AuthAppCatalogsIndexRouteImport
       parentRoute: typeof AuthAppRouteRoute
     }

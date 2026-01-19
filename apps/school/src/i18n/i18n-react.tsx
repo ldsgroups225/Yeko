@@ -27,7 +27,28 @@ function getI18nObject(locale: Locales): TranslationFunctions {
     loadedFormatters[locale] = initBaseFormatters(locale)
   }
 
-  return i18nObject(locale)
+  // Ensure we have valid data before creating i18n object
+  const finalLocale = locale
+  const translations = loadedLocales[locale]
+  const formatters = loadedFormatters[locale]
+
+  // If anything is missing, fall back to base
+  if (!translations || !formatters) {
+    if (!loadedLocales[baseLocale]) {
+      loadedLocales[baseLocale] = baseTranslations as Translations
+    }
+    if (!loadedFormatters[baseLocale]) {
+      loadedFormatters[baseLocale] = initBaseFormatters(baseLocale)
+    }
+    // Use base locale for fallback
+    return i18nObject(baseLocale)
+  }
+
+  // Set the global values before creating the object
+  loadedLocales[finalLocale] = translations
+  loadedFormatters[finalLocale] = formatters
+
+  return i18nObject(finalLocale)
 }
 
 // Initialize base locale immediately (synchronously)
@@ -152,8 +173,21 @@ export function useI18nContext(): I18nContextValue {
 
 // Convenience hook that returns just the translation functions (named 't' as user prefers)
 export function useTranslations() {
-  const { t } = useI18nContext()
-  return t
+  try {
+    const { t } = useI18nContext()
+    // Ensure the translation object is properly structured
+    if (!t || typeof t !== 'object') {
+      console.warn('Translation object is invalid, falling back to base translations')
+      return getI18nObject(baseLocale)
+    }
+    return t
+  }
+  catch (error) {
+    // Fallback for SSR or when context is not available
+    // Return base translations to prevent undefined errors
+    console.warn('i18n context not available, falling back to base translations')
+    return getI18nObject(baseLocale)
+  }
 }
 
 // Hook that returns current locale

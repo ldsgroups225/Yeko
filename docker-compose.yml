@@ -1,0 +1,154 @@
+# Development Docker Compose configuration for Yeko Project
+# Supports hot-reload with volume mounts for all services
+
+networks:
+  yeko-network:
+    driver: bridge
+
+services:
+  # yeko-core - TanStack Start application
+  yeko-core:
+    build:
+      context: .
+      dockerfile: apps/core/Dockerfile
+    container_name: yeko-core-dev
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./apps/core:/app/apps/core:delegated
+      - ./packages:/app/packages:delegated
+      - node_modules_core:/app/node_modules
+    environment:
+      - NODE_ENV=development
+      - BETTER_AUTH_URL=http://localhost:3000
+      - APP_URL=http://localhost:3000
+      # DNS configuration for Neon DB access
+      - DNS_SERVERS=8.8.8.8,1.1.1.1
+    env_file:
+      - ./apps/core/.env
+    networks:
+      - yeko-network
+    # Explicit DNS for proper Neon DB resolution
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    # healthcheck:
+    #   test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/", "||", "exit", "0"]
+    #   #   interval: 60s
+    #   timeout: 15s
+    #   retries: 5
+    #   start_period: 30s
+
+  # yeko-school - TanStack Start application
+  yeko-school:
+    build:
+      context: .
+      dockerfile: apps/school/Dockerfile
+    container_name: yeko-school-dev
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./apps/school:/app/apps/school:delegated
+      - ./packages:/app/packages:delegated
+      - node_modules_school:/app/node_modules
+      - /app/apps/school/node_modules
+    environment:
+      - NODE_ENV=development
+      - BETTER_AUTH_URL=http://localhost:3001
+      - APP_URL=http://localhost:3001
+    env_file:
+      - ./apps/school/.env
+    networks:
+      - yeko-network
+    depends_on:
+      - yeko-core
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+
+  # yeko-teacher - TanStack Start application
+  yeko-teacher:
+    build:
+      context: .
+      dockerfile: apps/teacher/Dockerfile
+    container_name: yeko-teacher-dev
+    restart: unless-stopped
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./apps/teacher:/app/apps/teacher:delegated
+      - ./packages:/app/packages:delegated
+      - node_modules_teacher:/app/node_modules
+      - /app/apps/teacher/node_modules
+    environment:
+      - NODE_ENV=development
+      - BETTER_AUTH_URL=http://localhost:3002
+      - APP_URL=http://localhost:3002
+    env_file:
+      - ./apps/teacher/.env
+    networks:
+      - yeko-network
+    depends_on:
+      - yeko-core
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+
+  # data-service - Cloudflare Worker (Hono)
+  data-service:
+    build:
+      context: .
+      dockerfile: apps/data-service/Dockerfile
+    container_name: yeko-data-service-dev
+    restart: unless-stopped
+    ports:
+      - "8787:8787"
+    volumes:
+      - ./apps/data-service:/app/apps/data-service:delegated
+      - ./packages:/app/packages:delegated
+      - node_modules_data_service:/app/node_modules
+      - /app/apps/data-service/node_modules
+    environment:
+      - NODE_ENV=development
+    env_file:
+      - ./apps/data-service/.env
+    networks:
+      - yeko-network
+    depends_on:
+      - yeko-core
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+
+  # queue-worker - Cloudflare Worker (background tasks)
+  queue-worker:
+    build:
+      context: .
+      dockerfile: packages/queue-worker/Dockerfile
+    container_name: yeko-queue-worker-dev
+    restart: unless-stopped
+    volumes:
+      - ./packages/queue-worker:/app/packages/queue-worker:delegated
+      - ./packages:/app/packages:delegated
+      - node_modules_queue_worker:/app/node_modules
+      - /app/packages/queue-worker/node_modules
+    environment:
+      - NODE_ENV=development
+    env_file:
+      - ./packages/queue-worker/.env
+    networks:
+      - yeko-network
+    depends_on:
+      - yeko-core
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+
+volumes:
+  node_modules_core:
+  node_modules_school:
+  node_modules_teacher:
+  node_modules_data_service:
+  node_modules_queue_worker:

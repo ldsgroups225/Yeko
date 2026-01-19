@@ -1,0 +1,198 @@
+# Production Docker Compose configuration for Yeko Project
+# Optimized for production deployment without source code mounts
+
+networks:
+  yeko-network:
+    driver: bridge
+
+services:
+  # yeko-core - TanStack Start application (Production)
+  yeko-core:
+    build:
+      context: .
+      dockerfile: apps/core/Dockerfile.prod
+      target: runner
+    container_name: yeko-core-prod
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - BETTER_AUTH_URL=${CORE_BETTER_AUTH_URL:-https://core.yeko.com}
+      - APP_URL=${CORE_APP_URL:-https://core.yeko.com}
+    env_file:
+      - ./apps/core/.env.prod
+    networks:
+      - yeko-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+
+  # yeko-school - TanStack Start application (Production)
+  yeko-school:
+    build:
+      context: .
+      dockerfile: apps/school/Dockerfile.prod
+      target: runner
+    container_name: yeko-school-prod
+    restart: always
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - BETTER_AUTH_URL=${SCHOOL_BETTER_AUTH_URL:-https://school.yeko.com}
+      - APP_URL=${SCHOOL_APP_URL:-https://school.yeko.com}
+      - APP_NAME=${SCHOOL_APP_NAME:-Yeko School}
+    env_file:
+      - ./apps/school/.env.prod
+    networks:
+      - yeko-network
+    depends_on:
+      yeko-core:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+
+  # yeko-teacher - TanStack Start application (Production)
+  yeko-teacher:
+    build:
+      context: .
+      dockerfile: apps/teacher/Dockerfile.prod
+      target: runner
+    container_name: yeko-teacher-prod
+    restart: always
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=production
+      - BETTER_AUTH_URL=${TEACHER_BETTER_AUTH_URL:-https://teacher.yeko.com}
+      - APP_URL=${TEACHER_APP_URL:-https://teacher.yeko.com}
+    env_file:
+      - ./apps/teacher/.env.prod
+    networks:
+      - yeko-network
+    depends_on:
+      yeko-core:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3002/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+
+  # data-service - Cloudflare Worker (Production)
+  data-service:
+    build:
+      context: .
+      dockerfile: apps/data-service/Dockerfile.prod
+      target: runner
+    container_name: yeko-data-service-prod
+    restart: always
+    ports:
+      - "8787:8787"
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - ./apps/data-service/.env.prod
+    networks:
+      - yeko-network
+    depends_on:
+      yeko-core:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8787/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 128M
+
+  # queue-worker - Cloudflare Worker (Production)
+  queue-worker:
+    build:
+      context: .
+      dockerfile: packages/queue-worker/Dockerfile.prod
+      target: runner
+    container_name: yeko-queue-worker-prod
+    restart: always
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - ./packages/queue-worker/.env.prod
+    networks:
+      - yeko-network
+    depends_on:
+      yeko-core:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "echo", "Queue worker is running"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 128M
+
+# Optional: Add nginx reverse proxy for load balancing
+  nginx:
+    image: nginx:alpine
+    container_name: yeko-nginx-prod
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    networks:
+      - yeko-network
+    depends_on:
+      yeko-core:
+        condition: service_healthy
+      yeko-school:
+        condition: service_healthy
+      yeko-teacher:
+        condition: service_healthy
+      data-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

@@ -7,7 +7,7 @@ import viteTsConfigPaths from 'vite-tsconfig-paths'
 
 const config = defineConfig({
   plugins: [
-    // this is the plugin that enables path aliases
+    // this is plugin that enables path aliases
     viteTsConfigPaths({
       projects: ['./tsconfig.json'],
     }),
@@ -24,11 +24,6 @@ const config = defineConfig({
       },
     }),
   ],
-  server: {
-    hmr: {
-      port: 3002, // Use different port for HMR to avoid conflicts
-    },
-  },
 })
 
 export default config

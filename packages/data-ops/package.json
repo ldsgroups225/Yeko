@@ -8,29 +8,37 @@
   "license": "ISC",
   "keywords": [],
   "exports": {
+    "./auth/server": {
+      "types": "./dist/src/auth/server.d.ts",
+      "default": "./dist/src/auth/server.js"
+    },
+    "./auth/setup": {
+      "types": "./dist/src/auth/setup.d.ts",
+      "default": "./dist/src/auth/setup.js"
+    },
     "./auth/*": {
-      "types": "./dist/auth/*.d.ts",
-      "default": "./dist/auth/*.js"
+      "types": "./dist/src/auth/*.d.ts",
+      "default": "./dist/src/auth/*.js"
     },
     "./database/*": {
-      "types": "./dist/database/*.d.ts",
-      "default": "./dist/database/*.js"
+      "types": "./dist/src/database/*.d.ts",
+      "default": "./dist/src/database/*.js"
     },
     "./zod-schema/*": {
-      "types": "./dist/zod-schema/*.d.ts",
-      "default": "./dist/zod-schema/*.js"
+      "types": "./dist/src/zod-schema/*.d.ts",
+      "default": "./dist/src/zod-schema/*.js"
     },
     "./queries/*": {
-      "types": "./dist/queries/*.d.ts",
-      "default": "./dist/queries/*.js"
+      "types": "./dist/src/queries/*.d.ts",
+      "default": "./dist/src/queries/*.js"
     },
     "./services/*": {
-      "types": "./dist/services/*.d.ts",
-      "default": "./dist/services/*.js"
+      "types": "./dist/src/services/*.d.ts",
+      "default": "./dist/src/services/*.js"
     },
     ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+      "types": "./dist/src/index.d.ts",
+      "default": "./dist/src/index.js"
     }
   },
   "scripts": {

@@ -1,0 +1,73 @@
+# App-specific .dockerignore for yeko-core
+
+# Exclude dependencies (will be installed in container)
+node_modules/
+
+# Exclude build outputs (will be built in container)
+dist/
+build/
+
+# Exclude environment files (use .env.prod in production)
+.env
+.env.local
+.env.development.local
+.env.test.local
+
+# Exclude IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Exclude OS generated files
+.DS_Store
+Thumbs.db
+
+# Exclude logs and runtime data
+logs/
+*.log
+pids/
+*.pid
+
+# Exclude testing files
+test/
+tests/
+__tests__/
+*.test.js
+*.test.ts
+*.spec.js
+*.spec.ts
+coverage/
+.nyc_output/
+
+# Exclude cache directories
+.cache/
+.parcel-cache/
+.eslintcache
+.rpt2_cache/
+
+# Exclude documentation
+docs/
+*.md
+
+# Exclude git files
+.git/
+.gitignore
+
+# Exclude Docker files
+Dockerfile*
+docker-compose*
+
+# Exclude TypeScript build info
+*.tsbuildinfo
+
+# Exclude development tools
+playwright-report/
+test-results/
+
+# Exclude temporary files
+tmp/
+temp/
+
+# Exclude source maps (will be generated in production)
+*.map

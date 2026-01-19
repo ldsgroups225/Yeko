@@ -189,22 +189,27 @@ export async function createUserWithSchool(data: {
 
   let createdUser: typeof users.$inferSelect | null = null
 
-  await db.transaction(async (tx: any) => {
-    // Create user
-    const [user] = await tx.insert(users).values({
-      id: crypto.randomUUID(),
-      email: data.email,
-      name: data.name,
-      authUserId: data.authUserId,
-      phone: data.phone,
-      avatarUrl: data.avatarUrl,
-      status: 'active',
-    }).returning()
+  // Create user
+  const insertedUsers = await db.insert(users).values({
+    id: crypto.randomUUID(),
+    email: data.email,
+    name: data.name,
+    authUserId: data.authUserId,
+    phone: data.phone,
+    avatarUrl: data.avatarUrl,
+    status: 'active',
+  }).returning()
 
-    createdUser = user
+  const user = insertedUsers[0]
+  if (!user) {
+    throw new Error('Failed to create user')
+  }
 
+  createdUser = user
+
+  try {
     // Link to school
-    await tx.insert(userSchools).values({
+    await db.insert(userSchools).values({
       id: crypto.randomUUID(),
       userId: user.id,
       schoolId: data.schoolId,
@@ -212,7 +217,7 @@ export async function createUserWithSchool(data: {
 
     // Assign roles
     if (data.roleIds.length > 0) {
-      await tx.insert(userRoles).values(
+      await db.insert(userRoles).values(
         data.roleIds.map(roleId => ({
           id: crypto.randomUUID(),
           userId: user.id,
@@ -221,7 +226,17 @@ export async function createUserWithSchool(data: {
         })),
       )
     }
-  })
+  }
+  catch (error) {
+    // If linking to school or assigning roles fails, clean up the created user
+    try {
+      await db.delete(users).where(eq(users.id, user.id))
+    }
+    catch (cleanupError) {
+      console.error('Failed to cleanup user after error:', cleanupError)
+    }
+    throw error
+  }
 
   return createdUser!
 }
