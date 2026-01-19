@@ -1,368 +1,398 @@
-import type { AbsenceReasonCategory, StudentAttendanceInsert, StudentAttendanceStatus } from '../drizzle/school-schema'
-import { and, count, desc, eq, gte, lte, sql } from 'drizzle-orm'
+/**
+ * Student Attendance Queries
+ * Handles student attendance tracking during class sessions
+ */
+import { and, asc, desc, eq, gte, lte, sql } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
 
 import { getDb } from '../database/setup'
+import { grades, subjects } from '../drizzle/core-schema'
 import {
+  classes,
+  classSessions,
   enrollments,
   studentAttendance,
   students,
 } from '../drizzle/school-schema'
 
-// Get class attendance for a date (with optional session)
-export async function getClassAttendance(params: {
+export interface StudentAttendanceRecord {
+  id: string
+  studentId: string
+  studentFirstName: string
+  studentLastName: string
+  studentMatricule: string | null
+  studentPhotoUrl: string | null
+  status: 'present' | 'absent' | 'late' | 'excused'
+  sessionId: string
+  recordedAt: Date
+  notes: string | null
+}
+
+export interface ClassAttendanceSummary {
   classId: string
+  className: string
+  totalEnrolled: number
+  present: number
+  absent: number
+  late: number
+  excused: number
+  attendanceRate: number
+}
+
+// Get students enrolled in a class for attendance taking
+export async function getClassRosterForAttendance(params: {
+  classId: string
+  schoolYearId: string
   date: string
-  classSessionId?: string
 }) {
   const db = getDb()
 
-  // Get enrolled students
-  const enrolledStudents = await db
+  const results = await db
     .select({
-      student: students,
-      enrollment: enrollments,
+      studentId: students.id,
+      firstName: students.firstName,
+      lastName: students.lastName,
+      matricule: students.matricule,
+      photoUrl: students.photoUrl,
+      enrollmentId: enrollments.id,
+      existingAttendanceId: studentAttendance.id,
+      existingStatus: studentAttendance.status,
+      existingNotes: studentAttendance.notes,
+      existingRecordedAt: studentAttendance.recordedAt,
     })
     .from(enrollments)
     .innerJoin(students, eq(enrollments.studentId, students.id))
+    .leftJoin(
+      studentAttendance,
+      and(
+        eq(studentAttendance.enrollmentId, enrollments.id),
+        eq(studentAttendance.sessionDate, params.date)
+      )
+    )
     .where(
       and(
         eq(enrollments.classId, params.classId),
-        eq(enrollments.status, 'confirmed'),
-      ),
+        eq(enrollments.schoolYearId, params.schoolYearId),
+        eq(enrollments.status, 'confirmed')
+      )
     )
-    .orderBy(students.lastName, students.firstName)
+    .orderBy(asc(students.lastName), asc(students.firstName))
 
-  // Get attendance records for the date
-  const attendanceConditions = [
-    eq(studentAttendance.classId, params.classId),
-    eq(studentAttendance.date, params.date),
-  ]
-  if (params.classSessionId) {
-    attendanceConditions.push(eq(studentAttendance.classSessionId, params.classSessionId))
-  }
-
-  const attendanceRecords = await db
-    .select()
-    .from(studentAttendance)
-    .where(and(...attendanceConditions))
-
-  // Map attendance to students
-  const attendanceMap = new Map(
-    attendanceRecords.map((a: typeof studentAttendance.$inferSelect) => [a.studentId, a]),
-  )
-
-  return enrolledStudents.map(({ student, enrollment }: { student: typeof students.$inferSelect, enrollment: typeof enrollments.$inferSelect }) => ({
-    studentId: student.id,
-    studentName: `${student.lastName} ${student.firstName}`,
-    matricule: student.matricule,
-    photoUrl: student.photoUrl,
-    rollNumber: enrollment.rollNumber,
-    attendance: attendanceMap.get(student.id) ?? null,
+  return results.map((r) => ({
+    studentId: r.studentId,
+    firstName: r.firstName,
+    lastName: r.lastName,
+    matricule: r.matricule,
+    photoUrl: r.photoUrl,
+    enrollmentId: r.enrollmentId,
+    attendance: r.existingAttendanceId
+      ? {
+          id: r.existingAttendanceId,
+          status: r.existingStatus as 'present' | 'absent' | 'late' | 'excused',
+          notes: r.existingNotes,
+          recordedAt: r.existingRecordedAt,
+        }
+      : null,
   }))
 }
 
-// Get student attendance history
-export async function getStudentAttendanceHistory(params: {
-  studentId: string
-  startDate: string
-  endDate: string
-  classId?: string
-}) {
-  const db = getDb()
-  const conditions = [
-    eq(studentAttendance.studentId, params.studentId),
-    gte(studentAttendance.date, params.startDate),
-    lte(studentAttendance.date, params.endDate),
-  ]
-
-  if (params.classId) {
-    conditions.push(eq(studentAttendance.classId, params.classId))
-  }
-
-  const records = await db
-    .select()
-    .from(studentAttendance)
-    .where(and(...conditions))
-    .orderBy(desc(studentAttendance.date))
-
-  // Calculate statistics
-  const stats = {
-    totalDays: records.length,
-    presentDays: records.filter((r: typeof studentAttendance.$inferSelect) => r.status === 'present').length,
-    lateDays: records.filter((r: typeof studentAttendance.$inferSelect) => r.status === 'late').length,
-    absentDays: records.filter((r: typeof studentAttendance.$inferSelect) => r.status === 'absent').length,
-    excusedDays: records.filter((r: typeof studentAttendance.$inferSelect) => r.status === 'excused').length,
-  }
-
-  const attendanceRate = stats.totalDays > 0
-    ? ((stats.presentDays + stats.lateDays) / stats.totalDays) * 100
-    : 0
-
-  return {
-    records,
-    stats: {
-      ...stats,
-      attendanceRate: Math.round(attendanceRate * 100) / 100,
-    },
-  }
-}
-
-// Create or update student attendance
-export async function upsertStudentAttendance(data: {
-  studentId: string
+// Get or create session for attendance
+export async function getOrCreateAttendanceSession(params: {
   classId: string
-  schoolId: string
+  subjectId: string
+  teacherId: string
   date: string
-  status: StudentAttendanceStatus
-  classSessionId?: string | null
-  arrivalTime?: string | null
-  reason?: string | null
-  reasonCategory?: AbsenceReasonCategory | null
-  notes?: string | null
-  recordedBy?: string | null
-  lateThresholdMinutes?: number
+  startTime: string
+  endTime: string
 }) {
   const db = getDb()
 
-  // Calculate late minutes if status is 'late' and arrival time is provided
-  let lateMinutes: number | null = null
-  if (data.status === 'late' && data.arrivalTime && data.lateThresholdMinutes) {
-    lateMinutes = data.lateThresholdMinutes
+  // Check if session already exists
+  const [existingSession] = await db
+    .select()
+    .from(classSessions)
+    .where(
+      and(
+        eq(classSessions.classId, params.classId),
+        eq(classSessions.subjectId, params.subjectId),
+        eq(classSessions.date, params.date)
+      )
+    )
+    .limit(1)
+
+  if (existingSession) {
+    return { session: existingSession, isNew: false }
   }
 
-  const insertData: StudentAttendanceInsert = {
-    id: nanoid(),
-    studentId: data.studentId,
-    classId: data.classId,
-    schoolId: data.schoolId,
-    classSessionId: data.classSessionId,
-    date: data.date,
-    status: data.status,
-    arrivalTime: data.arrivalTime,
-    lateMinutes,
-    reason: data.reason,
-    reasonCategory: data.reasonCategory,
-    notes: data.notes,
-    recordedBy: data.recordedBy,
-  }
-
-  // Use upsert - if session is provided, use session-based uniqueness
-  const [result] = await db
-    .insert(studentAttendance)
-    .values(insertData)
-    .onConflictDoNothing()
+  // Create new session
+  const [newSession] = await db
+    .insert(classSessions)
+    .values({
+      id: nanoid(),
+      classId: params.classId,
+      subjectId: params.subjectId,
+      teacherId: params.teacherId,
+      date: params.date,
+      startTime: params.startTime,
+      endTime: params.endTime,
+      status: 'scheduled',
+    })
     .returning()
 
-  // If no result (conflict), try to update existing
-  if (!result) {
-    const conditions = [
-      eq(studentAttendance.studentId, data.studentId),
-      eq(studentAttendance.date, data.date),
-      eq(studentAttendance.classId, data.classId),
-    ]
-    if (data.classSessionId) {
-      conditions.push(eq(studentAttendance.classSessionId, data.classSessionId))
-    }
+  return { session: newSession, isNew: true }
+}
 
+// Save individual student attendance
+export async function saveStudentAttendance(params: {
+  enrollmentId: string
+  sessionId: string
+  sessionDate: string
+  status: 'present' | 'absent' | 'late' | 'excused'
+  notes?: string
+  teacherId: string
+}) {
+  const db = getDb()
+
+  // Check if attendance already exists
+  const [existing] = await db
+    .select()
+    .from(studentAttendance)
+    .where(
+      and(
+        eq(studentAttendance.enrollmentId, params.enrollmentId),
+        eq(studentAttendance.sessionDate, params.sessionDate)
+      )
+    )
+    .limit(1)
+
+  if (existing) {
+    // Update existing attendance
     const [updated] = await db
       .update(studentAttendance)
       .set({
-        status: data.status,
-        arrivalTime: data.arrivalTime,
-        lateMinutes,
-        reason: data.reason,
-        reasonCategory: data.reasonCategory,
-        notes: data.notes,
-        recordedBy: data.recordedBy,
-        updatedAt: new Date(),
+        status: params.status,
+        notes: params.notes,
+        recordedAt: new Date(),
+        recordedBy: params.teacherId,
       })
-      .where(and(...conditions))
+      .where(eq(studentAttendance.id, existing.id))
       .returning()
 
-    return updated
+    return { attendance: updated, isNew: false }
   }
 
-  return result
-}
-
-// Bulk create/update class attendance
-export async function bulkUpsertClassAttendance(params: {
-  classId: string
-  schoolId: string
-  date: string
-  classSessionId?: string
-  entries: Array<{
-    studentId: string
-    status: StudentAttendanceStatus
-    arrivalTime?: string | null
-    reason?: string | null
-    reasonCategory?: AbsenceReasonCategory | null
-  }>
-  recordedBy?: string
-}) {
-  const db = getDb()
-
-  if (params.entries.length === 0)
-    return []
-
-  const values: StudentAttendanceInsert[] = params.entries.map(entry => ({
-    id: nanoid(),
-    studentId: entry.studentId,
-    classId: params.classId,
-    schoolId: params.schoolId,
-    classSessionId: params.classSessionId,
-    date: params.date,
-    status: entry.status,
-    arrivalTime: entry.arrivalTime,
-    reason: entry.reason,
-    reasonCategory: entry.reasonCategory,
-    recordedBy: params.recordedBy,
-  }))
-
-  return db
+  // Create new attendance record
+  const [newAttendance] = await db
     .insert(studentAttendance)
-    .values(values)
-    .onConflictDoUpdate({
-      target: [
-        studentAttendance.studentId,
-        studentAttendance.date,
-        studentAttendance.classId,
-        studentAttendance.classSessionId,
-      ],
-      set: {
-        status: sql`EXCLUDED.status`,
-        arrivalTime: sql`EXCLUDED.arrival_time`,
-        reason: sql`EXCLUDED.reason`,
-        reasonCategory: sql`EXCLUDED.reason_category`,
-        recordedBy: sql`EXCLUDED.recorded_by`,
-        updatedAt: new Date(),
-      },
+    .values({
+      id: nanoid(),
+      enrollmentId: params.enrollmentId,
+      sessionId: params.sessionId,
+      sessionDate: params.sessionDate,
+      status: params.status,
+      notes: params.notes,
+      recordedAt: new Date(),
+      recordedBy: params.teacherId,
     })
     .returning()
+
+  return { attendance: newAttendance, isNew: true }
 }
 
-// Excuse student absence
-export async function excuseStudentAbsence(params: {
-  attendanceId: string
-  reason: string
-  reasonCategory: AbsenceReasonCategory
-  excusedBy: string
+// Bulk save attendance for multiple students
+export async function bulkSaveAttendance(params: {
+  classId: string
+  sessionId: string
+  sessionDate: string
+  teacherId: string
+  attendanceRecords: Array<{
+    enrollmentId: string
+    status: 'present' | 'absent' | 'late' | 'excused'
+    notes?: string
+  }>
 }) {
   const db = getDb()
-  const [result] = await db
-    .update(studentAttendance)
-    .set({
-      status: 'excused',
-      reason: params.reason,
-      reasonCategory: params.reasonCategory,
-      excusedBy: params.excusedBy,
-      excusedAt: new Date(),
-      updatedAt: new Date(),
+
+  const results = await Promise.all(
+    params.attendanceRecords.map(async (record) => {
+      return saveStudentAttendance({
+        enrollmentId: record.enrollmentId,
+        sessionId: params.sessionId,
+        sessionDate: params.sessionDate,
+        status: record.status,
+        notes: record.notes,
+        teacherId: params.teacherId,
+      })
     })
-    .where(eq(studentAttendance.id, params.attendanceId))
-    .returning()
+  )
 
-  return result
-}
-
-// Mark parent notified
-export async function markParentNotified(params: {
-  attendanceId: string
-  method: 'email' | 'sms' | 'in_app'
-}) {
-  const db = getDb()
-  const [result] = await db
-    .update(studentAttendance)
-    .set({
-      parentNotified: true,
-      notifiedAt: new Date(),
-      notificationMethod: params.method,
-      updatedAt: new Date(),
-    })
-    .where(eq(studentAttendance.id, params.attendanceId))
-    .returning()
-
-  return result
-}
-
-// Get attendance statistics for a class or school
-export async function getAttendanceStatistics(params: {
-  schoolId: string
-  startDate: string
-  endDate: string
-  classId?: string
-}) {
-  const db = getDb()
-  const conditions = [
-    eq(studentAttendance.schoolId, params.schoolId),
-    gte(studentAttendance.date, params.startDate),
-    lte(studentAttendance.date, params.endDate),
-  ]
-
-  if (params.classId) {
-    conditions.push(eq(studentAttendance.classId, params.classId))
-  }
-
-  const [stats] = await db
-    .select({
-      totalRecords: count(),
-      presentCount: sql<number>`COUNT(*) FILTER (WHERE ${studentAttendance.status} = 'present')`,
-      lateCount: sql<number>`COUNT(*) FILTER (WHERE ${studentAttendance.status} = 'late')`,
-      absentCount: sql<number>`COUNT(*) FILTER (WHERE ${studentAttendance.status} = 'absent')`,
-      excusedCount: sql<number>`COUNT(*) FILTER (WHERE ${studentAttendance.status} = 'excused')`,
-    })
-    .from(studentAttendance)
-    .where(and(...conditions))
-
-  const total = stats?.totalRecords ?? 0
-  const present = Number(stats?.presentCount ?? 0)
-  const late = Number(stats?.lateCount ?? 0)
-  const absent = Number(stats?.absentCount ?? 0)
-  const excused = Number(stats?.excusedCount ?? 0)
+  const newCount = results.filter((r) => r.isNew).length
+  const updatedCount = results.filter((r) => !r.isNew).length
 
   return {
-    totalRecords: total,
-    presentCount: present,
-    lateCount: late,
-    absentCount: absent,
-    excusedCount: excused,
-    attendanceRate: total > 0 ? ((present + late) / total) * 100 : 0,
-    punctualityRate: (present + late) > 0 ? (present / (present + late)) * 100 : 100,
+    total: results.length,
+    new: newCount,
+    updated: updatedCount,
+    attendances: results.map((r) => r.attendance),
   }
 }
 
-// Count student absences (for chronic absence detection)
-export async function countStudentAbsences(params: {
+// Get attendance history for a student
+export async function getStudentAttendanceHistory(params: {
   studentId: string
-  startDate: string
-  endDate: string
-  excludeExcused?: boolean
+  classId?: string
+  schoolYearId: string
+  startDate?: string
+  endDate?: string
+  limit?: number
+  offset?: number
 }) {
   const db = getDb()
-  const conditions = [
-    eq(studentAttendance.studentId, params.studentId),
-    gte(studentAttendance.date, params.startDate),
-    lte(studentAttendance.date, params.endDate),
-  ]
 
-  if (params.excludeExcused) {
-    conditions.push(eq(studentAttendance.status, 'absent'))
-  }
-  else {
-    conditions.push(sql`${studentAttendance.status} IN ('absent', 'excused')`)
+  const conditions = [eq(enrollments.studentId, params.studentId)]
+
+  if (params.classId) {
+    conditions.push(eq(enrollments.classId, params.classId))
   }
 
-  const [result] = await db
-    .select({ count: count() })
+  conditions.push(eq(enrollments.schoolYearId, params.schoolYearId))
+
+  if (params.startDate) {
+    conditions.push(gte(studentAttendance.sessionDate, params.startDate))
+  }
+
+  if (params.endDate) {
+    conditions.push(lte(studentAttendance.sessionDate, params.endDate))
+  }
+
+  const results = await db
+    .select({
+      id: studentAttendance.id,
+      date: studentAttendance.sessionDate,
+      status: studentAttendance.status,
+      notes: studentAttendance.notes,
+      recordedAt: studentAttendance.recordedAt,
+      className: classes.name,
+      subjectName: subjects.name,
+    })
     .from(studentAttendance)
+    .innerJoin(enrollments, eq(studentAttendance.enrollmentId, enrollments.id))
+    .innerJoin(classes, eq(enrollments.classId, classes.id))
+    .leftJoin(classSessions, eq(studentAttendance.sessionId, classSessions.id))
+    .leftJoin(subjects, eq(classSessions.subjectId, subjects.id))
     .where(and(...conditions))
+    .orderBy(desc(studentAttendance.sessionDate))
+    .limit(params.limit ?? 50)
+    .offset(params.offset ?? 0)
 
-  return result?.count ?? 0
+  return results
 }
 
-// Delete student attendance record
-export async function deleteStudentAttendance(id: string) {
+// Get attendance statistics for a class
+export async function getClassAttendanceStats(params: {
+  classId: string
+  schoolYearId: string
+  startDate?: string
+  endDate?: string
+}): Promise<ClassAttendanceSummary> {
   const db = getDb()
-  return db.delete(studentAttendance).where(eq(studentAttendance.id, id))
+
+  const conditions = [
+    eq(enrollments.classId, params.classId),
+    eq(enrollments.schoolYearId, params.schoolYearId),
+    eq(enrollments.status, 'confirmed'),
+  ]
+
+  if (params.startDate) {
+    conditions.push(gte(studentAttendance.sessionDate, params.startDate))
+  }
+
+  if (params.endDate) {
+    conditions.push(lte(studentAttendance.sessionDate, params.endDate))
+  }
+
+  const stats = await db
+    .select({
+      totalEnrolled: sql<number>`count(distinct ${enrollments.studentId})::int`,
+      present: sql<number>`count(*) filter (where ${studentAttendance.status} = 'present')::int`,
+      absent: sql<number>`count(*) filter (where ${studentAttendance.status} = 'absent')::int`,
+      late: sql<number>`count(*) filter (where ${studentAttendance.status} = 'late')::int`,
+      excused: sql<number>`count(*) filter (where ${studentAttendance.status} = 'excused')::int`,
+    })
+    .from(enrollments)
+    .leftJoin(
+      studentAttendance,
+      and(
+        eq(studentAttendance.enrollmentId, enrollments.id),
+        params.startDate ? gte(studentAttendance.sessionDate, params.startDate) : undefined,
+        params.endDate ? lte(studentAttendance.sessionDate, params.endDate) : undefined
+      )
+    )
+    .where(and(...conditions))
+
+  const s = stats[0] || {
+    totalEnrolled: 0,
+    present: 0,
+    absent: 0,
+    late: 0,
+    excused: 0,
+  }
+
+  const totalRecorded = Number(s.present) + Number(s.absent) + Number(s.late) + Number(s.excused)
+  const attendanceRate = totalRecorded > 0 ? (Number(s.present) / totalRecorded) * 100 : 0
+
+  // Get class name
+  const [classResult] = await db
+    .select({ name: classes.name })
+    .from(classes)
+    .where(eq(classes.id, params.classId))
+    .limit(1)
+
+  return {
+    classId: params.classId,
+    className: classResult?.name || 'Unknown Class',
+    totalEnrolled: Number(s.totalEnrolled),
+    present: Number(s.present),
+    absent: Number(s.absent),
+    late: Number(s.late),
+    excused: Number(s.excused),
+    attendanceRate: Math.round(attendanceRate * 100) / 100,
+  }
+}
+
+// Get attendance rate trend for a student
+export async function getStudentAttendanceTrend(params: {
+  studentId: string
+  schoolYearId: string
+  months: number
+}) {
+  const db = getDb()
+
+  const startDate = new Date()
+  startDate.setMonth(startDate.getMonth() - params.months)
+
+  const results = await db
+    .select({
+      month: sql<string>`to_char(${studentAttendance.sessionDate}, 'YYYY-MM')`,
+      present: sql<number>`count(*) filter (where ${studentAttendance.status} = 'present')::int`,
+      total: sql<number>`count(*)::int`,
+    })
+    .from(studentAttendance)
+    .innerJoin(enrollments, eq(studentAttendance.enrollmentId, enrollments.id))
+    .where(
+      and(
+        eq(enrollments.studentId, params.studentId),
+        eq(enrollments.schoolYearId, params.schoolYearId),
+        gte(studentAttendance.sessionDate, startDate.toISOString())
+      )
+    )
+    .groupBy(sql`to_char(${studentAttendance.sessionDate}, 'YYYY-MM')`)
+    .orderBy(sql`to_char(${studentAttendance.sessionDate}, 'YYYY-MM')`)
+
+  return results.map((r) => ({
+    month: r.month,
+    present: Number(r.present),
+    total: Number(r.total),
+    rate: Number(r.total) > 0 ? Math.round((Number(r.present) / Number(r.total)) * 10000) / 100 : 0,
+  }))
 }
