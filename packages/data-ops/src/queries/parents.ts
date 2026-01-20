@@ -126,6 +126,22 @@ export async function getParentById(id: string) {
   return { ...parent, children }
 }
 
+
+export async function getStudentParents(studentId: string) {
+  const db = getDb()
+  const results = await db
+    .select({
+      parent: parents,
+      relationship: studentParents.relationship,
+      isPrimary: studentParents.isPrimary,
+    })
+    .from(studentParents)
+    .innerJoin(parents, eq(studentParents.parentId, parents.id))
+    .where(eq(studentParents.studentId, studentId))
+
+  return results
+}
+
 // ==================== Auto-Matching ====================
 
 export async function findParentByPhone(phone: string) {
