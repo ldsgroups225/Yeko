@@ -5,9 +5,9 @@
 import { queryOptions } from '@tanstack/react-query'
 
 import {
-  getStudentNotes,
   getBehaviorSummary,
   getNotesTrend,
+  getStudentNotes,
 } from '@/teacher/functions/student-notes'
 
 // Options for getting student notes

@@ -60,7 +60,7 @@ export const getStudentHistorySchema = z.object({
 export const getClassRoster = createServerFn()
   .inputValidator(getClassRosterSchema)
   .handler(async ({ data }) => {
-    const { getClassRosterForAttendance } = await import('@repo/data-ops/queries/teacher-app')
+    const { getClassRosterForAttendance } = await import('@repo/data-ops/queries/student-attendance')
     const roster = await getClassRosterForAttendance({
       classId: data.classId,
       schoolYearId: data.schoolYearId,

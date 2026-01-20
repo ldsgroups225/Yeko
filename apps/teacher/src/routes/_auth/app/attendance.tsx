@@ -57,7 +57,7 @@ function AttendancePage() {
   const queryClient = useQueryClient()
 
   const [selectedClassId, setSelectedClassId] = useState<string>('')
-  const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0])
+  const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]!)
 
   // Query for class roster
   const { data: rosterData, isLoading: isLoadingRoster } = useQuery({
@@ -230,8 +230,8 @@ function AttendancePage() {
             {isLoadingRoster
               ? (
                   <div className="space-y-3">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Skeleton key={i} className="h-16 w-full" />
+                    {[1, 2, 3, 4, 5].map(el => (
+                      <Skeleton key={el} className="h-16 w-full" />
                     ))}
                   </div>
                 )

@@ -1,13 +1,102 @@
 #!/usr/bin/env node
 import { Pool } from 'pg'
+import { scryptAsync } from '@noble/hashes/scrypt.js'
+import { hex } from '@better-auth/utils/hex'
+import { randomUUID } from 'crypto'
+import fs from 'fs'
+import path from 'path'
 
-const connectionString = 'postgresql://root:root@127.0.0.1:5432/app'
-const pool = new Pool({ connectionString })
+// Read .env file
+const envPath = path.resolve(process.cwd(), '../../apps/teacher/.env')
+const envFile = fs.readFileSync(envPath, 'utf-8')
+const envConfig = Object.fromEntries(
+  envFile.split('\n').map(line => {
+    const [key, ...value] = line.split('=')
+    return [key, value.join('=').replace(/"/g, '')]
+  }),
+)
+
+const connectionString = `postgresql://${envConfig.DATABASE_USERNAME}:${envConfig.DATABASE_PASSWORD}@${envConfig.DATABASE_HOST}`
+const pool = new Pool({
+  connectionString,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+})
+
+// Configuration for scryptAsync, matching better-auth's defaults
+const scryptConfig = {
+  N: 16384,
+  r: 16,
+  p: 1,
+  dkLen: 64,
+};
+
+async function generateKey(password, salt) {
+    return await scryptAsync(password.normalize("NFKC"), salt, {
+        N: scryptConfig.N,
+        p: scryptConfig.p,
+        r: scryptConfig.r,
+        dkLen: scryptConfig.dkLen,
+        maxmem: 128 * scryptConfig.N * scryptConfig.r * 2,
+    });
+}
+
+export const hashPassword = async (password) => {
+    const salt = hex.encode(crypto.getRandomValues(new Uint8Array(16)));
+    const key = await generateKey(password, salt);
+    return `${salt}:${hex.encode(key)}`;
+};
+
 
 async function seedDatabase() {
   try {
     console.log('🌱 Seeding test database...')
 
+    // Test user credentials
+    const email = 'enseignant@ecole.com'
+    const name = 'Test Teacher'
+    const password = 'password'
+
+    // Remove existing user with this email first
+    console.log(`🗑️  Removing existing user: ${email}`)
+    await pool.query(
+      `DELETE FROM auth_account WHERE user_id IN (SELECT id FROM auth_user WHERE email = $1)`,
+      [email]
+    )
+    await pool.query(
+      `DELETE FROM auth_user WHERE email = $1`,
+      [email]
+    )
+    console.log('✓ Existing user removed')
+
+    // Generate new user ID and password hash
+    const userId = randomUUID()
+
+    // Use better-auth's hashPassword logic
+    const hashedPasswordString = await hashPassword(password);
+
+    // Insert new user
+    const userResult = await pool.query(
+      `
+      INSERT INTO auth_user (id, name, email, email_verified, created_at, updated_at)
+      VALUES ($1, $2, $3, true, NOW(), NOW())
+      RETURNING id;
+    `,
+      [userId, name, email],
+    )
+    const newUserId = userResult.rows[0].id
+
+    // Insert account with "credential" provider_id (correct for Better Auth)
+    await pool.query(
+      `
+      INSERT INTO auth_account (id, "account_id", provider_id, user_id, password, created_at, updated_at)
+      VALUES ($1, $2, 'credential', $3, $4, NOW(), NOW())
+      ON CONFLICT DO NOTHING;
+    `,
+      [randomUUID(), email, newUserId, hashedPasswordString],
+    )
+    console.log('✓ Test user seeded with credential provider')
     // Insert education levels
     await pool.query(`
       INSERT INTO education_levels (id, name, "order") VALUES

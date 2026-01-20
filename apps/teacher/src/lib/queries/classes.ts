@@ -4,7 +4,7 @@
  */
 import { queryOptions } from '@tanstack/react-query'
 
-import { getClassDetails, getClassStudents, getClassStats, getTeacherClasses } from '@/teacher/functions/classes'
+import { getClassDetails, getClassStats, getClassStudents, getTeacherClasses } from '@/teacher/functions/classes'
 
 // Options for getting teacher's classes
 export function teacherClassesQueryOptions(params: {

@@ -10,7 +10,7 @@ import { fr } from 'date-fns/locale'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
-import { teacherScheduleQueryOptions } from '@/lib/queries/dashboard'
+import { detailedScheduleQueryOptions } from '@/lib/queries/schedule'
 
 export const Route = createFileRoute('/_auth/app/schedule')({
   component: SchedulePage,
@@ -42,7 +42,7 @@ function SchedulePage() {
   const weekEnd = addDays(weekStart, 6)
 
   const { data, isLoading: dataLoading } = useQuery({
-    ...teacherScheduleQueryOptions({
+    ...detailedScheduleQueryOptions({
       teacherId: context?.teacherId ?? '',
       schoolId: context?.schoolId ?? '',
       schoolYearId: context?.schoolYearId ?? '',

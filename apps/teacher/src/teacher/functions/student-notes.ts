@@ -9,6 +9,7 @@ import { z } from 'zod'
 export const createNoteSchema = z.object({
   studentId: z.string(),
   classId: z.string(),
+  teacherId: z.string(),
   title: z.string().min(1).max(200),
   content: z.string().min(1).max(2000),
   type: z.enum(['behavior', 'academic', 'attendance', 'general']),
@@ -49,12 +50,12 @@ export const deleteNoteSchema = z.object({
 // Create a student note
 export const createStudentNote = createServerFn()
   .inputValidator(createNoteSchema)
-  .handler(async ({ data, context }) => {
+  .handler(async ({ data }) => {
     const { createStudentNote: createNote } = await import('@repo/data-ops/queries/teacher-notes')
     const note = await createNote({
       studentId: data.studentId,
       classId: data.classId,
-      teacherId: context?.userId ?? data.teacherId ?? '',
+      teacherId: data.teacherId,
       title: data.title,
       content: data.content,
       type: data.type,
@@ -108,11 +109,11 @@ export const getBehaviorSummary = createServerFn()
 // Update a student note
 export const updateStudentNote = createServerFn()
   .inputValidator(updateNoteSchema)
-  .handler(async ({ data, context }) => {
+  .handler(async ({ data }) => {
     const { updateStudentNote: updateNote } = await import('@repo/data-ops/queries/teacher-notes')
     const note = await updateNote({
       noteId: data.noteId,
-      teacherId: context?.userId ?? '',
+      teacherId: '',
       title: data.title,
       content: data.content,
       priority: data.priority,
@@ -127,11 +128,11 @@ export const updateStudentNote = createServerFn()
 // Delete a student note
 export const deleteStudentNote = createServerFn()
   .inputValidator(deleteNoteSchema)
-  .handler(async ({ data, context }) => {
+  .handler(async ({ data }) => {
     const { deleteStudentNote: deleteNote } = await import('@repo/data-ops/queries/teacher-notes')
     await deleteNote({
       noteId: data.noteId,
-      teacherId: context?.userId ?? '',
+      teacherId: '',
     })
 
     return {
@@ -145,7 +146,7 @@ export const getNotesTrend = createServerFn()
     z.object({
       studentId: z.string(),
       months: z.number().default(6),
-    })
+    }),
   )
   .handler(async ({ data }) => {
     const { getNotesTrend: fetchTrend } = await import('@repo/data-ops/queries/teacher-notes')

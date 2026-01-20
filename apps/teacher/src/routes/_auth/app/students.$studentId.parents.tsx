@@ -1,3 +1,4 @@
+import { getStudentParents } from '@repo/data-ops/queries/parents'
 import { IconMail, IconMessage, IconPhone, IconUser } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
@@ -5,9 +6,8 @@ import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { Skeleton } from '@workspace/ui/components/skeleton'
 import { useTranslation } from 'react-i18next'
-import { studentParentsQueryOptions } from '@/lib/queries/parent-communication'
 
-export const Route = createFileRoute('/_auth/app/students.$studentId.parents')({
+export const Route = createFileRoute('/_auth/app/students/$studentId/parents')({
   component: StudentParentsPage,
 })
 
@@ -16,7 +16,8 @@ function StudentParentsPage() {
   const { t } = useTranslation()
 
   const { data, isLoading } = useQuery({
-    ...studentParentsQueryOptions({ studentId }),
+    queryKey: ['student-parents', studentId],
+    queryFn: () => getStudentParents(studentId),
     enabled: !!studentId,
   })
 
@@ -28,11 +29,11 @@ function StudentParentsPage() {
     <div className="flex flex-col gap-4 p-4 pb-20">
       <h1 className="text-xl font-semibold">{t('parents.title')}</h1>
 
-      {data?.parents && data.parents.length > 0
+      {data && data.length > 0
         ? (
             <div className="space-y-4">
-              {data.parents.map(parent => (
-                <ParentCard key={parent.id} parent={parent} studentId={studentId} />
+              {data.map(({ parent, relationship, isPrimary }) => (
+                <ParentCard key={parent.id} parent={{ ...parent, relationship, isPrimary, preferredContact: null, isVerified: false }} />
               ))}
             </div>
           )
@@ -62,7 +63,7 @@ interface Parent {
   isVerified: boolean
 }
 
-function ParentCard({ parent, studentId }: { parent: Parent; studentId: string }) {
+function ParentCard({ parent }: { parent: Parent }) {
   const { t } = useTranslation()
 
   const getRelationshipLabel = (rel: string) => {
@@ -76,7 +77,8 @@ function ParentCard({ parent, studentId }: { parent: Parent; studentId: string }
   }
 
   const getPreferredContactLabel = (pref: string | null) => {
-    if (!pref) return null
+    if (!pref)
+      return null
     const labels: Record<string, string> = {
       phone: t('parents.contactPhone'),
       email: t('parents.contactEmail'),
@@ -89,7 +91,9 @@ function ParentCard({ parent, studentId }: { parent: Parent; studentId: string }
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg">
-            {parent.firstName} {parent.lastName}
+            {parent.firstName}
+            {' '}
+            {parent.lastName}
           </CardTitle>
           <div className="flex gap-2">
             {parent.isPrimary && (
@@ -127,7 +131,9 @@ function ParentCard({ parent, studentId }: { parent: Parent; studentId: string }
         )}
         {parent.preferredContact && (
           <p className="text-xs text-muted-foreground">
-            {t('parents.prefers')}: {getPreferredContactLabel(parent.preferredContact)}
+            {t('parents.prefers')}
+            :
+            {getPreferredContactLabel(parent.preferredContact)}
           </p>
         )}
         <div className="flex gap-2 pt-2">
