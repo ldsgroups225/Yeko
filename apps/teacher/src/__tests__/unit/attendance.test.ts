@@ -98,7 +98,7 @@ describe('attendance Functions - Unit Tests', () => {
       })
 
       test('should allow optional date filter', () => {
-        const query: { classId: string; date?: string; schoolYearId: string } = {
+        const query: { classId: string, date?: string, schoolYearId: string } = {
           classId: 'class-123',
           schoolYearId: '2024-2025',
         }
@@ -358,7 +358,7 @@ describe('notes Functions - Unit Tests', () => {
       })
 
       test('should allow optional filters', () => {
-        const minimalQuery: { studentId: string; type?: string } = {
+        const minimalQuery: { studentId: string, type?: string } = {
           studentId: 'student-123',
         }
         expect(minimalQuery.type).toBeUndefined()
@@ -394,16 +394,16 @@ describe('notes Functions - Unit Tests', () => {
       expect(priorityOrder[3]).toBe('urgent')
     })
 
-      test('should map priority to severity', () => {
-        const priorityMap: Record<string, number> = {
-          low: 1,
-          medium: 2,
-          high: 3,
-          urgent: 4,
-        }
-        expect(priorityMap.high!).toBeGreaterThan(priorityMap.medium!)
-        expect(priorityMap.urgent!).toBeGreaterThan(priorityMap.high!)
-      })
+    test('should map priority to severity', () => {
+      const priorityMap: Record<string, number> = {
+        low: 1,
+        medium: 2,
+        high: 3,
+        urgent: 4,
+      }
+      expect(priorityMap.high!).toBeGreaterThan(priorityMap.medium!)
+      expect(priorityMap.urgent!).toBeGreaterThan(priorityMap.high!)
+    })
   })
 })
 

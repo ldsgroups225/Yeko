@@ -7,14 +7,14 @@ export const amountSchema = z.string()
 
 // Create fee structure schema
 export const createFeeStructureSchema = z.object({
-  schoolYearId: z.string().min(1, 'Année scolaire requise'),
-  feeTypeId: z.string().min(1, 'IconTypography de frais requis'),
+  schoolYearId: z.string().trim().min(1, 'Année scolaire requise'),
+  feeTypeId: z.string().trim().min(1, 'Type de frais requis'),
   gradeId: z.string().optional().nullable(),
   seriesId: z.string().optional().nullable(),
   amount: amountSchema,
   currency: z.string().default('XOF'),
   newStudentAmount: amountSchema.optional().nullable(),
-  effectiveDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  effectiveDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().nullable(),
 })
 
 export type CreateFeeStructureInput = z.infer<typeof createFeeStructureSchema>

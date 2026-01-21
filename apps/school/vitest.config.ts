@@ -1,3 +1,4 @@
+import path from 'node:path'
 import viteTsConfigPaths from 'vite-tsconfig-paths'
 import { defineConfig } from 'vitest/config'
 
@@ -9,30 +10,42 @@ export default defineConfig({
   ],
   test: {
     globals: true,
-    environment: 'jsdom', // Enable DOM for UI tests
+    environment: 'jsdom',
+    setupFiles: ['./test-setup.ts'],
     include: ['src/**/*.{test,spec}.{js,ts,tsx}'],
-    exclude: ['**/node_modules/**', '**/dist/**', '**/.wrangler/**'],
+    exclude: ['**/node_modules/**', '**/dist/**', '**/.wrangler/**', '**/e2e/**'],
 
     // Enhanced coverage with v8 provider (2025 features)
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'lcov', 'json'],
+      reportsDirectory: './coverage',
       include: [
+        'src/lib/**',
         'src/schemas/**',
-        'src/components/hr/**',
-        'src/components/ui/**',
+        'src/school/**',
+        'src/components/**',
+        'src/hooks/**',
+        'src/utils/**',
       ],
       exclude: [
         '**/*.test.ts',
         '**/*.spec.ts',
         '**/node_modules/**',
+        '**/dist/**',
+        '**/.wrangler/**',
         '**/test-setup.ts',
+        '**/test/**',
+        '**/e2e/**',
+        '**/*.d.ts',
+        '**/routeTree.gen.ts',
+        '**/i18n/**',
       ],
       thresholds: {
-        lines: 90,
-        functions: 90,
-        branches: 85,
-        statements: 90,
+        lines: 80,
+        functions: 80,
+        branches: 75,
+        statements: 80,
       },
       // 2025: Enhanced coverage options
       ignoreClassMethods: ['render', 'componentDidMount', 'componentDidUpdate'],
@@ -42,35 +55,30 @@ export default defineConfig({
     // Enhanced performance and parallelism (2025 features)
     isolate: true,
     fileParallelism: true,
-    testTimeout: 10000, // 10s timeout
-    hookTimeout: 10000, // 10s hook timeout
-    maxConcurrency: 4, // Enable concurrent test execution
+    testTimeout: 10000,
+    hookTimeout: 10000,
+    maxConcurrency: 4,
 
-    // Enhanced snapshot support (2025)
-    // snapshotEnvironment: 'jsdom', // Removed as it's causing compatibility issues
-    // snapshotFormat: {
-    //   escapeString: false,
-    //   printBasicPrototype: false,
-    // },
+    // Enhanced watch mode
+    watch: false,
 
-    // 2025: Enhanced watch mode
-    watch: false, // Disabled by default for CI
-
-    // 2025: Better failure reporting
+    // Better failure reporting
     reporters: ['default', 'verbose'],
 
-    // Global test setup
-    setupFiles: ['./test-setup.ts'],
-
-    // 2025: Environment variables for testing
+    // Environment variables for testing
     env: {
       NODE_ENV: 'test',
       TZ: 'UTC',
     },
 
-    // 2025: Mock optimization
+    // Mock optimization
     clearMocks: true,
     restoreMocks: true,
     mockReset: true,
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
   },
 })

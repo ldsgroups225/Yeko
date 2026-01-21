@@ -23,11 +23,23 @@ const localeMap: Record<DateLocale, DateFnsLocale> = {
   fr,
 }
 
-const formatMap: Record<DateFormatStyle, string> = {
-  SHORT: 'yyyy-MM-dd',
-  MEDIUM: 'd MMM yyyy',
-  LONG: 'd MMMM yyyy',
-  FULL: 'EEEE d MMMM yyyy',
+const formatMap: Record<DateFormatStyle, Record<DateLocale, string>> = {
+  SHORT: {
+    en: 'yyyy-MM-dd',
+    fr: 'yyyy-MM-dd',
+  },
+  MEDIUM: {
+    en: 'MMM d, yyyy',
+    fr: 'd MMM yyyy',
+  },
+  LONG: {
+    en: 'd MMMM yyyy',
+    fr: 'd MMMM yyyy',
+  },
+  FULL: {
+    en: 'EEEE d MMMM yyyy',
+    fr: 'EEEE d MMMM yyyy',
+  },
 }
 
 /**
@@ -59,5 +71,5 @@ export function formatDate(
   const dateObj = typeof date === 'string' ? new Date(date) : date
   const resolvedLocale = locale ?? getCurrentLocale()
 
-  return dateFnsFormat(dateObj, formatMap[style], { locale: localeMap[resolvedLocale] })
+  return dateFnsFormat(dateObj, formatMap[style][resolvedLocale], { locale: localeMap[resolvedLocale] })
 }

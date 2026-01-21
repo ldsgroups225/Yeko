@@ -77,6 +77,8 @@ interface I18nContextValue {
 
 const I18nContext = createContext<I18nContextValue | null>(null)
 
+export { I18nContext, type I18nContextValue }
+
 interface I18nProviderProps {
   children: ReactNode
   locale?: Locales
@@ -139,24 +141,4 @@ export function I18nProvider({ children, locale: initialLocale }: I18nProviderPr
       {children}
     </I18nContext>
   )
-}
-
-export function useI18nContext(): I18nContextValue {
-  const context = use(I18nContext)
-  if (!context) {
-    throw new Error('useI18nContext must be used within an I18nProvider')
-  }
-  return context
-}
-
-// Convenience hook that returns just the translation functions (named 't' as user prefers)
-export function useTranslations() {
-  const { t } = useI18nContext()
-  return t
-}
-
-// Hook that returns current locale
-export function useLocale() {
-  const { locale, setLocale } = useI18nContext()
-  return { locale, setLocale }
 }

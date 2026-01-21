@@ -1,7 +1,4 @@
 import { defineConfig, devices } from '@playwright/test'
-import v8Coverage from 'v8-coverage'
-import path from 'path'
-import fs from 'fs'
 
 export default defineConfig({
   testDir: './e2e-tests',
@@ -13,7 +10,7 @@ export default defineConfig({
   reporter: [
     'list',
     ['html', { outputFolder: 'coverage-report' }],
-    ['json', { outputFile: 'coverage-results.json' }]
+    ['json', { outputFile: 'coverage-results.json' }],
   ],
   globalSetup: './e2e-tests/setup/global.setup.ts',
   use: {
@@ -32,7 +29,7 @@ export default defineConfig({
     url: 'http://localhost:3002',
     reuseExistingServer: !process.env.CI,
   },
-  
+
   // Coverage configuration
   coverage: {
     provider: 'v8',

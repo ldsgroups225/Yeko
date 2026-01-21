@@ -248,7 +248,7 @@ describe('generateSlug utility', () => {
     test('should convert to lowercase', () => {
       expect(generateSlug('Admin Role')).toBe('admin-role')
       expect(generateSlug('TEACHER')).toBe('teacher')
-      expect(generateSlug('MixedCase')).toBe('mixedcase')
+      expect(generateSlug('MixedCase')).toBe('mixed-case')
     })
 
     test('should replace spaces with hyphens', () => {
@@ -336,7 +336,7 @@ describe('generateSlug utility', () => {
     })
 
     test('should handle role names with special formatting', () => {
-      expect(generateSlug('Admin (Super IconUser)')).toBe('admin-super-user')
+      expect(generateSlug('Admin (Super IconUser)')).toBe('admin-super-icon-user')
       expect(generateSlug('Teacher - Grade 1')).toBe('teacher-grade-1')
       expect(generateSlug('Staff: Finance')).toBe('staff-finance')
     })

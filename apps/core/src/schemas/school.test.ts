@@ -129,7 +129,7 @@ describe('school Schema Validation', () => {
       const result = CreateSchoolSchema.safeParse(invalidSchool)
       expect(result.success).toBe(false)
       if (!result.success) {
-        expect(result.error?.issues?.[0]?.message).toContain('URL invalide pour le logo')
+        expect(result.error?.issues?.[0]?.message).toContain('URL ou image invalide pour le logo')
       }
     })
 

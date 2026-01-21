@@ -47,16 +47,16 @@ export const conductStatuses = ['open', 'investigating', 'pending_decision', 're
 export type ConductStatus = (typeof conductStatuses)[number]
 
 export const conductRecordSchema = z.object({
-  studentId: z.string().min(1, 'Student is required'),
+  studentId: z.string().trim().min(1, 'Student is required'),
   classId: z.string().optional().nullable(),
-  schoolYearId: z.string().min(1, 'School year is required'),
+  schoolYearId: z.string().trim().min(1, 'School year is required'),
   type: z.enum(conductTypes),
   category: z.enum(conductCategories),
   title: z.string().min(1, 'Title is required').max(200),
   description: z.string().min(1, 'Description is required').max(5000),
   severity: z.enum(severityLevels).optional().nullable(),
   incidentDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format').optional().nullable(),
-  incidentTime: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format').optional().nullable(),
+  incidentTime: z.string().regex(/^(?:[01]\d|2[0-3]):[0-5]\d$/, 'Invalid time format').optional().nullable(),
   location: z.string().max(200).optional().nullable(),
   witnesses: z.array(z.string()).optional().nullable(),
   sanctionType: z.enum(sanctionTypes).optional().nullable(),
@@ -67,7 +67,7 @@ export const conductRecordSchema = z.object({
   pointsAwarded: z.number().int().min(0).optional().nullable(),
   assignedTo: z.string().optional().nullable(),
   attachments: z.array(z.object({
-    name: z.string(),
+    name: z.string().trim().min(1, 'Attachment name is required'),
     url: z.string().url(),
     type: z.string(),
   })).optional().nullable(),

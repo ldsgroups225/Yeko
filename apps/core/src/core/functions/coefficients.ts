@@ -9,13 +9,13 @@ import {
   getCoefficientTemplates,
   getDb,
   grades,
-  inArray,
   schoolYearTemplates,
   series,
   subjects,
   updateCoefficientTemplate,
 } from '@repo/data-ops'
 import { createServerFn } from '@tanstack/react-start'
+import { inArray } from 'drizzle-orm'
 import { z } from 'zod'
 import { COEFFICIENT_LIMITS } from '@/constants/coefficients'
 import { exampleMiddlewareWithContext } from '@/core/middleware/example-middleware'

@@ -102,6 +102,30 @@ vi.mock('@workspace/ui/components/sidebar', () => ({
   }),
 }))
 
+// Mock @tabler/icons-react icons with data-testid attributes
+vi.mock('@tabler/icons-react', () => ({
+  IconMenu: ({ className }: { className?: string }) => (
+    <svg className={className} data-testid="icon-menu">
+      <path d="M4 6h16a2 2 0 012-2 2v12a2 2 0 01-2-2H4a2 2 0 00-2-2v-12a2 2 0 012 2z" />
+    </svg>
+  ),
+  IconSearch: ({ className }: { className?: string }) => (
+    <svg className={className} data-testid="icon-search">
+      <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 11 14 0 7-7-7-7a7 7 0 00-14 0 14-14zm0 14a1 1 0 00-2-2v3a1 1 0 012-2H3" />
+    </svg>
+  ),
+  IconBell: ({ className }: { className?: string }) => (
+    <svg className={className} data-testid="icon-bell">
+      <path d="M18 8A6 6 0 016-6v2c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2v-2a6 6 0 016 6z" />
+    </svg>
+  ),
+  IconSettings: ({ className }: { className?: string }) => (
+    <svg className={className} data-testid="icon-settings">
+      <path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 002 2h.44a2 2 0 002-2V4a2 2 0 00-2-2h-.44z" />
+    </svg>
+  ),
+}))
+
 describe('header Component', () => {
   const mockOnMobileMenuToggle = vi.fn()
 
@@ -145,8 +169,8 @@ describe('header Component', () => {
     test('should show mobile menu button only on mobile', () => {
       render(<Header onMobileMenuToggle={mockOnMobileMenuToggle} />)
 
-      // Mobile menu button should be present - find by menu icon
-      const mobileMenuButton = document.querySelector('svg.lucide-menu')?.closest('button')
+      // Mobile menu button contains IconMenu - find by data-testid
+      const mobileMenuButton = document.querySelector('[data-testid="icon-menu"]')?.closest('button')
       expect(mobileMenuButton).toBeInTheDocument()
       expect(mobileMenuButton).toHaveAttribute('type', 'button')
     })
@@ -157,20 +181,20 @@ describe('header Component', () => {
       const searchInput = screen.getByPlaceholderText('Rechercher des écoles, programmes...')
       expect(searchInput).toBeInTheDocument()
 
-      // Search icon should be present (using lucide-search class)
-      const searchIcon = document.querySelector('svg.lucide-search')
+      // Search icon should be present - find by data-testid
+      const searchIcon = document.querySelector('[data-testid="icon-search"]')
       expect(searchIcon).toBeInTheDocument()
     })
 
     test('should show notification and settings buttons', () => {
       render(<Header onMobileMenuToggle={mockOnMobileMenuToggle} />)
 
-      // Find notification and settings buttons using their SVG icons
-      const notificationButton = document.querySelector('svg.lucide-bell')?.closest('button')
-      const settingsButton = document.querySelector('svg.lucide-settings')?.closest('button')
+      // Find notification and settings buttons using their icons' data-testid
+      const iconBell = document.querySelector('[data-testid="icon-bell"]')?.closest('button')
+      const iconSettings = document.querySelector('[data-testid="icon-settings"]')?.closest('button')
 
-      expect(notificationButton).toBeInTheDocument()
-      expect(settingsButton).toBeInTheDocument()
+      expect(iconBell).toBeInTheDocument()
+      expect(iconSettings).toBeInTheDocument()
     })
 
     test('should render breadcrumbs component', () => {
@@ -183,7 +207,7 @@ describe('header Component', () => {
     test('should show notification indicator', () => {
       render(<Header onMobileMenuToggle={mockOnMobileMenuToggle} />)
 
-      // Look for the notification indicator (red dot)
+      // Look for notification indicator (red dot)
       const notificationIndicator = document.querySelector('.bg-destructive')
       expect(notificationIndicator).toBeInTheDocument()
     })
@@ -394,7 +418,7 @@ describe('header Component', () => {
       const user = userEvent.setup()
       render(<Header onMobileMenuToggle={mockOnMobileMenuToggle} />)
 
-      const mobileMenuButton = document.querySelector('svg.lucide-menu')?.closest('button')
+      const mobileMenuButton = document.querySelector('[data-testid="icon-menu"]')?.closest('button')
       await user.click(mobileMenuButton!)
 
       expect(mockOnMobileMenuToggle).toHaveBeenCalledTimes(1)
@@ -403,15 +427,15 @@ describe('header Component', () => {
     test('should render menu icon on mobile button', () => {
       render(<Header onMobileMenuToggle={mockOnMobileMenuToggle} />)
 
-      const mobileMenuButton = document.querySelector('svg.lucide-menu')?.closest('button')
-      const menuIcon = mobileMenuButton?.querySelector('svg')
+      const mobileMenuButton = document.querySelector('[data-testid="icon-menu"]')?.closest('button')
+      const menuIcon = mobileMenuButton?.querySelector('[data-testid="icon-menu"]')
       expect(menuIcon).toBeInTheDocument()
     })
 
     test('should hide mobile menu button on large screens', () => {
       render(<Header onMobileMenuToggle={mockOnMobileMenuToggle} />)
 
-      const mobileMenuButton = document.querySelector('svg.lucide-menu')?.closest('button')
+      const mobileMenuButton = document.querySelector('[data-testid="icon-menu"]')?.closest('button')
       expect(mobileMenuButton).toBeInTheDocument()
     })
   })
@@ -423,7 +447,7 @@ describe('header Component', () => {
       const accountDialog = screen.getByTestId('account-dialog')
       expect(accountDialog).toBeInTheDocument()
 
-      // Should contain the user menu button
+      // Should contain user menu button
       const userMenuButton = accountDialog.querySelector('button')
       expect(userMenuButton).toBeInTheDocument()
     })

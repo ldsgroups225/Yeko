@@ -26,30 +26,39 @@ vi.mock('@repo/data-ops', () => ({
   getCoefficientStats: vi.fn(),
 }))
 
-// Mock createServerFn to execute the handler directly
-vi.mock('@tanstack/react-start', () => ({
-  createServerFn: () => {
-    const chain = {
-      middleware: () => chain,
-      inputValidator: (validator: any) => {
-        return {
-          handler: (cb: any) => {
-            return async (payload: any) => {
-              const parsedData = validator ? validator(payload?.data || {}) : (payload?.data || {})
-              return cb({ data: parsedData, context: {} })
-            }
-          },
-        }
-      },
-      handler: (cb: any) => {
-        return async (payload: any) => {
-          return cb({ data: payload?.data || {}, context: {} })
-        }
-      },
-    }
-    return chain
-  },
-}))
+// Mock createServerFn to execute the handler directly with proper data handling
+vi.mock('@tanstack/react-start', async () => {
+  const actual = await vi.importActual('@tanstack/react-start')
+  return {
+    ...actual,
+    createServerFn: () => {
+      const chain = {
+        middleware: () => chain,
+        inputValidator: (validator: any) => {
+          return {
+            handler: (cb: any) => {
+              return async (payload: any) => {
+                try {
+                  // Pass payload through as-is for Zod validation
+                  const parsedData = validator ? validator(payload) : payload
+                  return cb({ data: parsedData, context: {} })
+                } catch (error) {
+                  throw error
+                }
+              }
+            },
+          }
+        },
+        handler: (cb: any) => {
+          return async (payload: any) => {
+            return cb({ data: payload?.data || {}, context: {} })
+          }
+        },
+      }
+      return chain
+    },
+  }
+})
 
 // Mock the middleware
 vi.mock('@/core/middleware/example-middleware', () => ({
@@ -98,448 +107,332 @@ describe('coefficients Server Functions', () => {
       expect(result.coefficients).toHaveLength(2)
     })
 
-    test('should return matrix structure', async () => {
-      const mockMatrix = [
-        { grade: 'Grade 1', subject: 'Math', weight: 3 },
-        { grade: 'Grade 1', subject: 'Physics', weight: 2 },
-        { grade: 'Grade 2', subject: 'Math', weight: 3 },
-        { grade: 'Grade 2', subject: 'Physics', weight: 2 },
-      ]
-
+    test('should handle empty results', async () => {
       vi.mocked(dataOps.getCoefficientTemplates).mockResolvedValue({
-        coefficients: mockMatrix as any,
-        pagination: { total: 4, page: 1, limit: 50, totalPages: 1 },
-      })
-
-      const result = await coefficientTemplatesQuery({
-        data: { schoolYearTemplateId: '1', format: 'matrix' },
-      })
-
-      expect(result.coefficients).toHaveLength(4)
-      expect(result.coefficients[0]).toMatchObject({
-        grade: 'Grade 1',
-        subject: 'Math',
-        weight: 3,
-      })
-    })
-
-    test('should handle missing weights gracefully', async () => {
-      vi.mocked(dataOps.getCoefficientTemplates).mockResolvedValue({
-        coefficients: [] as any,
+        coefficients: [],
         pagination: { total: 0, page: 1, limit: 10, totalPages: 0 },
       })
 
       const result = await coefficientTemplatesQuery({
-        data: { schoolYearTemplateId: 'nonexistent' },
+        data: { page: 1, limit: 10, schoolYearTemplateId: 'nonexistent' },
       })
 
       expect(result.coefficients).toHaveLength(0)
       expect(result.pagination.total).toBe(0)
     })
 
-    test('should optimize performance for large datasets', async () => {
-      const largeDataset = Array.from({ length: 1000 }, (_, i) => ({
-        id: `${i + 1}`,
-        schoolYearTemplateId: '1',
-        subjectId: `${(i % 10) + 1}`,
-        gradeId: `${(i % 5) + 1}`,
-        weight: Math.floor(Math.random() * 5) + 1,
-      }))
-
+    test('should pass pagination parameters', async () => {
       vi.mocked(dataOps.getCoefficientTemplates).mockResolvedValue({
-        coefficients: largeDataset as any,
-        pagination: { total: 1000, page: 1, limit: 50, totalPages: 20 },
+        coefficients: [],
+        pagination: { total: 0, page: 2, limit: 5, totalPages: 1 },
       })
 
-      const startTime = Date.now()
-      const result = await coefficientTemplatesQuery({
-        data: { page: 1, limit: 50, schoolYearTemplateId: '1' },
+      await coefficientTemplatesQuery({
+        data: { page: 2, limit: 5, schoolYearTemplateId: '1' },
       })
-      const endTime = Date.now()
 
-      expect(endTime - startTime).toBeLessThan(1000) // Should complete in less than 1 second
-      expect(result.coefficients).toHaveLength(1000) // Mock returns full dataset
+      expect(dataOps.getCoefficientTemplates).toHaveBeenCalledWith(
+        expect.objectContaining({
+          page: 2,
+          limit: 5,
+        }),
+      )
+    })
+
+    test('should default to page 1 with limit 10', async () => {
+      vi.mocked(dataOps.getCoefficientTemplates).mockResolvedValue({
+        coefficients: [],
+        pagination: { total: 0, page: 1, limit: 10, totalPages: 0 },
+      })
+
+      await coefficientTemplatesQuery({ data: { schoolYearTemplateId: '1' } })
+
+      expect(dataOps.getCoefficientTemplates).toHaveBeenCalledWith(
+        expect.objectContaining({
+          page: 1,
+          limit: 10,
+        }),
+      )
+    })
+
+    test('should filter by subject', async () => {
+      vi.mocked(dataOps.getCoefficientTemplates).mockResolvedValue({
+        coefficients: [{ id: '1', schoolYearTemplateId: '1', subjectId: 'math', gradeId: '1', weight: 3 }],
+        pagination: { total: 1, page: 1, limit: 10, totalPages: 1 },
+      })
+
+      await coefficientTemplatesQuery({
+        data: { schoolYearTemplateId: '1', subjectId: 'math' },
+      })
+
+      expect(dataOps.getCoefficientTemplates).toHaveBeenCalledWith(
+        expect.objectContaining({ subjectId: 'math' }),
+      )
+    })
+
+    test('should combine multiple filters', async () => {
+      vi.mocked(dataOps.getCoefficientTemplates).mockResolvedValue({
+        coefficients: [],
+        pagination: { total: 0, page: 1, limit: 10, totalPages: 0 },
+      })
+
+      await coefficientTemplatesQuery({
+        data: {
+          schoolYearTemplateId: '1',
+          gradeId: '1',
+          subjectId: 'math',
+          page: 1,
+          limit: 10,
+        },
+      })
+
+      expect(dataOps.getCoefficientTemplates).toHaveBeenCalledWith({
+        schoolYearTemplateId: '1',
+        gradeId: '1',
+        subjectId: 'math',
+        page: 1,
+        limit: 10,
+      })
+    })
+  })
+
+  describe('coefficientTemplateByIdQuery', () => {
+    test('should return template by ID', async () => {
+      const mockTemplate = {
+        id: '1',
+        schoolYearTemplateId: '1',
+        subjectId: '1',
+        gradeId: '1',
+        weight: 3,
+      }
+
+      vi.mocked(dataOps.getCoefficientTemplateById).mockResolvedValue(mockTemplate as any)
+
+      const result = await coefficientTemplateByIdQuery({ data: { id: '1' } })
+
+      expect(result).toEqual(mockTemplate)
+      expect(dataOps.getCoefficientTemplateById).toHaveBeenCalledWith('1')
     })
   })
 
   describe('createCoefficientTemplateMutation', () => {
-    test('should create weight template with valid data', async () => {
-      const newCoefficientData = {
-        schoolYearTemplateId: '1',
-        subjectId: '1',
-        gradeId: '1',
-        weight: 3,
-      }
-      const createdCoefficient = {
-        ...newCoefficientData,
-        id: '1',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }
-
-      vi.mocked(dataOps.createCoefficientTemplate).mockResolvedValue(createdCoefficient as any)
-
-      const result = await createCoefficientTemplateMutation({ data: newCoefficientData })
-
-      expect(dataOps.createCoefficientTemplate).toHaveBeenCalledWith(newCoefficientData)
-      expect(result).toStrictEqual(createdCoefficient)
-      expect(result.weight).toBe(3)
-    })
-
-    test('should reject duplicate weight', async () => {
-      const duplicateData = {
+    test('should create template with valid data', async () => {
+      const newTemplate = {
         schoolYearTemplateId: '1',
         subjectId: '1',
         gradeId: '1',
         weight: 3,
       }
 
-      vi.mocked(dataOps.createCoefficientTemplate).mockRejectedValue(
-        new Error('Coefficient already exists for this subject-grade combination'),
-      )
-
-      await expect(createCoefficientTemplateMutation({ data: duplicateData }))
-        .rejects
-        .toThrow('Coefficient already exists for this subject-grade combination')
-    })
-
-    test('should warn about zero weight weight', async () => {
-      const zeroWeightData = {
-        schoolYearTemplateId: '1',
-        subjectId: '1',
-        gradeId: '1',
-        weight: 0,
-      }
-      const createdCoefficient = {
-        ...zeroWeightData,
-        id: '1',
+      vi.mocked(dataOps.createCoefficientTemplate).mockResolvedValue({
+        id: 'new-id',
+        ...newTemplate,
+        seriesId: null,
         createdAt: new Date(),
         updatedAt: new Date(),
+      } as any)
+
+      const result = await createCoefficientTemplateMutation({ data: newTemplate })
+
+      expect(result.schoolYearTemplateId).toBe('1')
+      expect(result.subjectId).toBe('1')
+      expect(dataOps.createCoefficientTemplate).toHaveBeenCalledWith(newTemplate)
+    })
+
+    test('should throw on invalid data', async () => {
+      const invalidData = {
+        schoolYearTemplateId: '',
+        subjectId: '',
+        gradeId: '',
+        weight: -1,
       }
 
-      vi.mocked(dataOps.createCoefficientTemplate).mockResolvedValue(createdCoefficient as any)
-
-      const result = await createCoefficientTemplateMutation({ data: zeroWeightData })
-
-      expect(result.weight).toBe(0)
+      await expect(createCoefficientTemplateMutation({ data: invalidData })).rejects.toThrow()
     })
   })
 
   describe('updateCoefficientTemplateMutation', () => {
-    test('should update weight template', async () => {
+    test('should update template with valid data', async () => {
       const updateData = {
         id: '1',
         weight: 4,
       }
-      const updatedCoefficient = {
-        id: '1',
-        schoolYearTemplateId: '1',
-        subjectId: '1',
-        gradeId: '1',
-        weight: 4,
-        updatedAt: new Date(),
-      }
 
-      vi.mocked(dataOps.updateCoefficientTemplate).mockResolvedValue(updatedCoefficient as any)
+      vi.mocked(dataOps.updateCoefficientTemplate).mockResolvedValue({ id: '1', weight: 4 } as any)
 
       const result = await updateCoefficientTemplateMutation({ data: updateData })
 
-      expect(dataOps.updateCoefficientTemplate).toHaveBeenCalledWith('1', {
-        weight: 4,
-      })
       expect(result.weight).toBe(4)
+      expect(dataOps.updateCoefficientTemplate).toHaveBeenCalledWith(updateData)
     })
   })
 
   describe('deleteCoefficientTemplateMutation', () => {
-    test('should delete weight template', async () => {
-      vi.mocked(dataOps.deleteCoefficientTemplate).mockResolvedValue(undefined)
+    test('should delete template by ID', async () => {
+      vi.mocked(dataOps.deleteCoefficientTemplate).mockResolvedValue({ success: true })
 
       const result = await deleteCoefficientTemplateMutation({ data: { id: '1' } })
 
+      expect(result.success).toBe(true)
       expect(dataOps.deleteCoefficientTemplate).toHaveBeenCalledWith('1')
-      expect(result).toStrictEqual({ success: true, id: '1' })
     })
   })
 
   describe('bulkCreateCoefficientsMutation', () => {
-    test('should create multiple weight templates', async () => {
-      const coefficientsData = {
+    test('should create multiple coefficients', async () => {
+      const newCoefficients = {
         coefficients: [
-          {
-            schoolYearTemplateId: '1',
-            subjectId: '1',
-            gradeId: '1',
-            weight: 3,
-          },
-          {
-            schoolYearTemplateId: '1',
-            subjectId: '2',
-            gradeId: '1',
-            weight: 2,
-          },
+          { schoolYearTemplateId: '1', subjectId: '1', gradeId: '1', weight: 3 },
+          { schoolYearTemplateId: '1', subjectId: '2', gradeId: '1', weight: 2 },
         ],
       }
-      const createdCoefficients = coefficientsData.coefficients.map((coeff, index) => ({
-        ...coeff,
-        id: `${index + 1}`,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }))
 
-      vi.mocked(dataOps.bulkCreateCoefficients).mockResolvedValue(createdCoefficients as any)
+      vi.mocked(dataOps.bulkCreateCoefficients).mockResolvedValue([] as any)
 
-      const result = await bulkCreateCoefficientsMutation({ data: coefficientsData })
+      const result = await bulkCreateCoefficientsMutation({ data: newCoefficients })
 
-      expect(dataOps.bulkCreateCoefficients).toHaveBeenCalledWith(coefficientsData.coefficients)
-      expect(result).toHaveLength(2)
+      expect(result.created).toBe(2)
+      expect(dataOps.bulkCreateCoefficients).toHaveBeenCalledWith(newCoefficients.coefficients)
+    })
+
+    test('should handle empty array', async () => {
+      vi.mocked(dataOps.bulkCreateCoefficients).mockResolvedValue({ created: 0 } as any)
+
+      const result = await bulkCreateCoefficientsMutation({ data: { coefficients: [] } })
+
+      expect(result.created).toBe(0)
     })
   })
 
   describe('bulkUpdateCoefficientsMutation', () => {
-    test('should update multiple weights with transaction handling', async () => {
-      const updateData = [
-        { id: '1', weight: 4 },
-        { id: '2', weight: 3 },
-      ]
+    test('should update multiple coefficients', async () => {
+      const updateData = {
+        coefficients: [
+          { id: '1', weight: 4 },
+          { id: '2', weight: 5 },
+        ],
+      }
 
-      vi.mocked(dataOps.bulkUpdateCoefficients).mockResolvedValue(undefined)
+      vi.mocked(dataOps.bulkUpdateCoefficients).mockResolvedValue([] as any)
 
       const result = await bulkUpdateCoefficientsMutation({ data: updateData })
 
-      expect(dataOps.bulkUpdateCoefficients).toHaveBeenCalledWith(updateData)
-      expect(result).toStrictEqual({ success: true })
-    })
-
-    test('should handle validation on all updates', async () => {
-      const invalidUpdateData = [
-        { id: '1', weight: 4 },
-        { id: '2', weight: -1 }, // Invalid negative weight
-      ]
-
-      vi.mocked(dataOps.bulkUpdateCoefficients).mockRejectedValue(
-        new Error('Coefficient cannot be negative'),
-      )
-
-      await expect(bulkUpdateCoefficientsMutation({ data: invalidUpdateData }))
-        .rejects
-        .toThrow()
+      expect(result.updated).toBe(2)
+      expect(dataOps.bulkUpdateCoefficients).toHaveBeenCalledWith(updateData.coefficients)
     })
   })
 
   describe('copyCoefficientsMutation', () => {
-    test('should copy weights from previous year', async () => {
-      const copyData = { sourceYearId: '2023', targetYearId: '2024' }
-      const copiedCoefficients = [
-        {
-          id: 'new1',
-          schoolYearTemplateId: '2024',
-          subjectId: '1',
-          gradeId: '1',
-          weight: 3,
-          sourceId: 'old1',
-        },
-        {
-          id: 'new2',
-          schoolYearTemplateId: '2024',
-          subjectId: '2',
-          gradeId: '1',
-          weight: 2,
-          sourceId: 'old2',
-        },
-      ]
+    test('should copy coefficients to new school year', async () => {
+      vi.mocked(dataOps.copyCoefficientTemplates).mockResolvedValue([] as any)
 
-      vi.mocked(dataOps.copyCoefficientTemplates).mockResolvedValue(copiedCoefficients as any)
-
-      const result = await copyCoefficientsMutation({ data: copyData }) as any[]
-
-      expect(dataOps.copyCoefficientTemplates).toHaveBeenCalledWith('2023', '2024')
-      expect(result).toHaveLength(2)
-      expect(result[0]!.schoolYearTemplateId).toBe('2024')
-      expect(result[0]!.sourceId).toBe('old1')
-    })
-
-    test('should handle missing subjects/grades during copy', async () => {
-      const copyData = { sourceYearId: '2023', targetYearId: '2024' }
-
-      vi.mocked(dataOps.copyCoefficientTemplates).mockResolvedValue([
-        {
-          id: 'new1',
-          schoolYearTemplateId: '2024',
-          subjectId: '1',
-          gradeId: '1',
-          weight: 3,
-          sourceId: 'old1',
-          status: 'copied',
-        },
-        {
-          sourceId: 'old2',
-          status: 'skipped',
-          reason: 'Subject not found in target year',
-        },
-      ] as any)
-
-      const result = await copyCoefficientsMutation({ data: copyData }) as any[]
-
-      expect(result).toHaveLength(2)
-      expect(result[0]!.status).toBe('copied')
-      expect(result[1]!.status).toBe('skipped')
-      expect(result[1]!.reason).toBe('Subject not found in target year')
-    })
-
-    test('should maintain relationships during copy', async () => {
-      const copyData = { sourceYearId: '2023', targetYearId: '2024' }
-
-      const copiedCoefficients = [
-        {
-          id: 'new1',
-          schoolYearTemplateId: '2024',
-          subjectId: '1',
-          gradeId: '1',
-          weight: 3,
-          sourceId: 'old1',
-          relationships: {
-            subject: { id: '1', name: 'Mathematics' },
-            grade: { id: '1', name: 'Grade 1' },
-          },
-        },
-      ]
-
-      vi.mocked(dataOps.copyCoefficientTemplates).mockResolvedValue(copiedCoefficients as any)
-
-      const result = await copyCoefficientsMutation({ data: copyData }) as any[]
-
-      expect(result[0]!.relationships.subject.name).toBe('Mathematics')
-      expect(result[0]!.relationships.grade.name).toBe('Grade 1')
-    })
-  })
-
-  describe('getCoefficientMatrix', () => {
-    test('should return weight matrix structure', async () => {
-      const matrixData = [
-        {
-          grade: 'Grade 1',
-          subjects: [
-            { name: 'Mathematics', weight: 3 },
-            { name: 'Physics', weight: 2 },
-          ],
-        },
-        {
-          grade: 'Grade 2',
-          subjects: [
-            { name: 'Mathematics', weight: 3 },
-            { name: 'Physics', weight: 2 },
-            { name: 'Chemistry', weight: 1 },
-          ],
-        },
-      ]
-
-      vi.mocked(dataOps.getCoefficientTemplates).mockResolvedValue({
-        coefficients: matrixData as any,
-        pagination: { total: 5, page: 1, limit: 50, totalPages: 1 },
+      const result = await copyCoefficientsMutation({
+        data: { fromSchoolYearId: '1', toSchoolYearId: '2' },
       })
 
-      const result = await coefficientTemplatesQuery({
-        data: { schoolYearTemplateId: '1', format: 'matrix' },
-      })
-
-      expect(result.coefficients).toHaveLength(2)
-      expect(result.coefficients[0]).toMatchObject({
-        grade: 'Grade 1',
-        subjects: [
-          { name: 'Mathematics', weight: 3 },
-          { name: 'Physics', weight: 2 },
-        ],
-      })
+      expect(result.copied).toBe(5)
+      expect(dataOps.copyCoefficientTemplates).toHaveBeenCalledWith('1', '2')
     })
   })
 
   describe('coefficientStatsQuery', () => {
-    test('should return weight statistics', async () => {
+    test('should return coefficient statistics', async () => {
       const mockStats = {
         total: 1200,
+        average: 2.5,
+        byGrade: {},
+        bySubject: {},
       }
 
-      vi.mocked(dataOps.getCoefficientStats).mockResolvedValue(mockStats as any)
+      vi.mocked(dataOps.getCoefficientStats).mockResolvedValue({ total: 1200 } as any)
 
       const result = await coefficientStatsQuery()
 
-      // The actual implementation returns { total }
       expect(result.total).toBe(1200)
+    })
+
+    test('should return zero stats when no coefficients exist', async () => {
+      const emptyStats = {
+        total: 0,
+        average: 0,
+        byGrade: {},
+        bySubject: {},
+      }
+
+      vi.mocked(dataOps.getCoefficientStats).mockResolvedValue(emptyStats as any)
+
+      const result = await coefficientStatsQuery()
+
+      expect(result.total).toBe(0)
+      expect(result.average).toBe(0)
     })
   })
 
   describe('validateCoefficientImportMutation', () => {
-    test('should validate Excel import data format', async () => {
-      /*
+    test('should validate import data successfully', async () => {
       const validImportData = [
         {
-          grade: 'Grade 1',
-          subject: 'Mathematics',
+          schoolYearTemplateId: '1',
+          subjectId: '1',
+          gradeId: '1',
           weight: 3,
-          category: 'core',
         },
         {
-          grade: 'Grade 1',
-          subject: 'Physics',
+          schoolYearTemplateId: '1',
+          subjectId: '2',
+          gradeId: '1',
           weight: 2,
-          category: 'elective',
         },
       ]
-      */
 
-      const result = await validateCoefficientImportMutation()
+      const result = await validateCoefficientImportMutation({ data: validImportData })
 
       expect(result.valid).toBe(true)
       expect(result.errors).toHaveLength(0)
     })
 
     test('should identify missing required fields', async () => {
-      /*
       const invalidImportData = [
         {
-          grade: '',
-          subject: 'Mathematics',
+          schoolYearTemplateId: '',
+          subjectId: '1',
+          gradeId: '1',
           weight: 3,
         },
         {
-          grade: 'Grade 1',
-          subject: '',
+          schoolYearTemplateId: '1',
+          subjectId: '',
+          gradeId: '1',
           weight: 2,
         },
       ]
-      */
 
-      // This is a placeholder implementation - in reality this would validate
-      // against the database and return specific validation errors
-      const result = await validateCoefficientImportMutation()
+      const result = await validateCoefficientImportMutation({ data: invalidImportData })
 
-      // Currently returns true as the validation is not implemented (TODO in the function)
-      expect(result.valid).toBe(true)
+      expect(result.valid).toBe(false)
+      expect(result.errors.length).toBeGreaterThan(0)
     })
 
     test('should check for duplicate entries', async () => {
-      /*
       const duplicateData = [
         {
-          grade: 'Grade 1',
-          subject: 'Mathematics',
+          schoolYearTemplateId: '1',
+          subjectId: '1',
+          gradeId: '1',
           weight: 3,
-          category: 'core',
         },
         {
-          grade: 'Grade 1',
-          subject: 'Mathematics',
+          schoolYearTemplateId: '1',
+          subjectId: '1',
+          gradeId: '1',
           weight: 3,
-          category: 'core',
         },
       ]
-      */
 
-      const result = await validateCoefficientImportMutation()
+      const result = await validateCoefficientImportMutation({ data: duplicateData })
 
-      expect(result.valid).toBe(true)
-      expect(result.errors).toHaveLength(0)
+      expect(result.valid).toBe(false)
+      expect(result.errors.some((e: any) => e.field === 'duplicate')).toBe(true)
     })
   })
 

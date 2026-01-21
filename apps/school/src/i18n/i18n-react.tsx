@@ -173,21 +173,24 @@ export function useI18nContext(): I18nContextValue {
 
 // Convenience hook that returns just the translation functions (named 't' as user prefers)
 export function useTranslations() {
-  try {
-    const { t } = useI18nContext()
-    // Ensure the translation object is properly structured
-    if (!t || typeof t !== 'object') {
-      console.warn('Translation object is invalid, falling back to base translations')
-      return getI18nObject(baseLocale)
-    }
-    return t
-  }
-  catch (error) {
+  const context = use(I18nContext)
+
+  if (!context) {
     // Fallback for SSR or when context is not available
     // Return base translations to prevent undefined errors
     console.warn('i18n context not available, falling back to base translations')
     return getI18nObject(baseLocale)
   }
+
+  const { t } = context
+
+  // Ensure the translation object is properly structured
+  if (!t || typeof t !== 'object') {
+    console.warn('Translation object is invalid, falling back to base translations')
+    return getI18nObject(baseLocale)
+  }
+
+  return t
 }
 
 // Hook that returns current locale

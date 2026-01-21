@@ -8,7 +8,7 @@ export const roleSchema = z.object({
   permissions: z.record(z.string(), z.array(z.string())),
   scope: z.enum(['school', 'system'], {
     message: 'Portée invalide',
-  }),
+  }).default('school'),
 })
 
 export const createRoleSchema = roleSchema
@@ -18,6 +18,8 @@ export const updateRoleSchema = roleSchema.omit({ slug: true, scope: true }).par
 // Helper to generate slug from name
 export function generateSlug(name: string): string {
   return name
+    // Handle CamelCase patterns BEFORE lowercasing (e.g., "IconUser" -> "Icon-User")
+    .replace(/([a-z])([A-Z])/g, '$1-$2')
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036F]/g, '') // Remove accents

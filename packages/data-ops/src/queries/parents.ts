@@ -126,7 +126,6 @@ export async function getParentById(id: string) {
   return { ...parent, children }
 }
 
-
 export async function getStudentParents(studentId: string) {
   const db = getDb()
   const results = await db

@@ -1,17 +1,15 @@
 import {
-  and,
   classes,
   enrollments,
-  eq,
   getDb,
   grades,
-  inArray,
   parents,
   series,
   studentParents,
   students,
 } from '@repo/data-ops'
 import { createServerFn } from '@tanstack/react-start'
+import { and, eq, inArray } from 'drizzle-orm'
 import { z } from 'zod'
 import {
   bulkEnrollmentSchema,
