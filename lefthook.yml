@@ -1,0 +1,156 @@
+# Lefthook Configuration for Yeko Monorepo
+# https://lefthook.dev/
+
+# Colors for terminal output
+colors:
+  cyan: "#06b6d4"
+  green: "#22c55e"
+  yellow: "#eab308"
+  red: "#ef4444"
+  purple: "#a855f7"
+
+# Global settings
+# Use verbose output for debugging
+# Set timeout to prevent hanging hooks
+default:
+  verbose: true
+  timeout: 120
+
+# Pre-commit hook - runs before each commit
+# Optimized for speed by only checking staged files
+pre-commit:
+  # Run jobs in parallel for maximum speed
+  parallel: true
+  
+  # List of jobs to run
+  jobs:
+    # ─────────────────────────────────────────────────────────
+    # LINTING - ESLint with auto-fix on staged files
+    # ─────────────────────────────────────────────────────────
+    - name: "ESLint (TypeScript/TSX)"
+      # Run ESLint with auto-fix on staged TypeScript files
+      run: pnpm exec eslint {staged_files} --fix --quiet
+      # Only run on TypeScript files
+      glob:
+        - "**/*.ts"
+        - "**/*.tsx"
+        - "**/*.js"
+        - "**/*.jsx"
+      # Stage the fixed files automatically
+      stage_fixed: true
+      # Skip if no matching files
+      skip_empty: true
+
+    - name: "ESLint (JSON/ YAML/Markdown)"
+      run: pnpm exec eslint {staged_files} --fix --quiet
+      glob:
+        - "**/*.json"
+        - "**/*.jsonc"
+        - "**/*.yaml"
+        - "**/*.yml"
+        - "**/*.md"
+      stage_fixed: true
+      skip_empty: true
+
+    # ─────────────────────────────────────────────────────────
+    # TYPECHECKING - TypeScript without emit
+    # ─────────────────────────────────────────────────────────
+    # Note: TypeScript type checking on individual files is limited
+    # but catches many common issues. For full typecheck, use root command.
+    - name: "TypeScript (staged files)"
+      run: pnpm exec tsc --noEmit --project {staged_files_directories}/tsconfig.json 2>/dev/null || pnpm exec tsc --noEmit --skipLibCheck {staged_files} 2>/dev/null || true
+      glob:
+        - "**/*.ts"
+        - "**/*.tsx"
+      skip_empty: true
+      # Allow this to fail without blocking commit (type errors may require full rebuild)
+      allow_empty: true
+
+    # ─────────────────────────────────────────────────────────
+    # PRETTIER - Format code if not auto-fixed by ESLint
+    # ─────────────────────────────────────────────────────────
+    - name: "Prettier (format unformatted files)"
+      run: pnpm exec prettier --write {staged_files}
+      glob:
+        - "**/*.ts"
+        - "**/*.tsx"
+        - "**/*.js"
+        - "**/*.jsx"
+        - "**/*.css"
+        - "**/*.json"
+        - "**/*.yaml"
+        - "**/*.yml"
+        - "**/*.md"
+      stage_fixed: true
+      skip_empty: true
+
+# Pre-push hook - runs before code is pushed to remote
+# More comprehensive checks since this is before shared history
+pre-push:
+  parallel: false
+  jobs:
+    # Full lint check on all files in the push
+    - name: "Full ESLint Check"
+      run: pnpm lint:check
+      description: "Run full lint check on all packages"
+      allow_empty: true
+
+    # Full typecheck on all packages
+    - name: "Full TypeScript Check"
+      run: pnpm typecheck
+      description: "Run full TypeScript check on all packages"
+      allow_empty: true
+
+# Commit-msg hook - validate commit messages
+# Uncomment to enable conventional commits validation
+# commit-msg:
+#   parallel: true
+#   jobs:
+#     - name: "Validate Commit Message"
+#       run: pnpm exec commitlint --edit "$1"
+#       glob:
+#         - "**/*.js"
+#         - "**/*.ts"
+
+# Post-merge hook - run after git merge
+# Reinstall dependencies if package.json changed
+post-merge:
+  parallel: true
+  jobs:
+    - name: "Install Dependencies (if package.json changed)"
+      run: |
+        if git diff --name-only HEAD~1 HEAD | grep -q "package.json\|pnpm-lock.yaml"; then
+          pnpm install
+        fi
+      glob:
+        - "**/package.json"
+        - "**/pnpm-lock.yaml"
+      skip_empty: true
+
+# Post-checkout hook - run after git checkout
+# Useful for ensuring dependencies are up to date
+post-checkout:
+  parallel: true
+  jobs:
+    - name: "Install Dependencies (if needed)"
+      run: |
+        if [ ! -d "node_modules" ] || [ ! -d "packages/data-ops/node_modules" ]; then
+          pnpm install
+        fi
+      skip_empty: true
+
+# Custom hooks - can be run manually with `lefthook run <hook-name>`
+
+# Run with: lefthook run auto-fix
+auto-fix:
+  jobs:
+    - name: "Auto-fix all issues"
+      run: pnpm lint:fix
+      description: "Run lint:fix across all packages"
+
+# Run with: lefthook run typecheck-all
+typecheck-all:
+  jobs:
+    - name: "Full TypeScript Check"
+      run: pnpm typecheck
+      description: "Run typecheck across all packages"

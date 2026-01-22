@@ -27,6 +27,7 @@
   "packageManager": "pnpm@10.28.0",
   "devDependencies": {
     "@types/node": "^25.0.9",
+    "lefthook": "^2.0.15",
     "typescript": "^5.9.3"
   }
 }
