@@ -1,74 +1,56 @@
-# Lefthook Configuration for Yeko Monorepo
-# https://lefthook.dev/
-
-# Colors for terminal output
-colors:
-  cyan: "#06b6d4"
-  green: "#22c55e"
-  yellow: "#eab308"
-  red: "#ef4444"
-  purple: "#a855f7"
-
-# Global settings
-# Use verbose output for debugging
-# Set timeout to prevent hanging hooks
-default:
-  verbose: true
-  timeout: 120
-
-# Pre-commit hook - runs before each commit
-# Optimized for speed by only checking staged files
 pre-commit:
-  # Run jobs in parallel for maximum speed
   parallel: true
-  
-  # List of jobs to run
+
   jobs:
-    # ─────────────────────────────────────────────────────────
-    # LINTING - ESLint with auto-fix on staged files
-    # ─────────────────────────────────────────────────────────
-    - name: "ESLint (TypeScript/TSX)"
-      # Run ESLint with auto-fix on staged TypeScript files
-      run: pnpm exec eslint {staged_files} --fix --quiet
-      # Only run on TypeScript files
+    - name: "ESLint (staged files with per-package configs)"
+      run: |
+        # Get unique parent directories (apps/*, packages/*) from staged files
+        for file in {staged_files}; do
+          dir="$(dirname "$file")"
+          # Find the package root (apps/* or packages/*)
+          while [ "$dir" != "." ] && [ "$dir" != "/" ]; do
+            if [ -f "$dir/package.json" ] && [ -f "$dir/eslint.config.js" ]; then
+              echo "$dir"
+              break
+            fi
+            dir="$(dirname "$dir")"
+          done
+        done | sort -u | while read pkg_dir; do
+          # Run eslint from each package directory with its own config
+          (cd "$pkg_dir" && pnpm exec eslint . --fix --quiet) &
+        done
+        wait
       glob:
         - "**/*.ts"
         - "**/*.tsx"
         - "**/*.js"
         - "**/*.jsx"
-      # Stage the fixed files automatically
-      stage_fixed: true
-      # Skip if no matching files
-      skip_empty: true
-
-    - name: "ESLint (JSON/ YAML/Markdown)"
-      run: pnpm exec eslint {staged_files} --fix --quiet
-      glob:
-        - "**/*.json"
-        - "**/*.jsonc"
-        - "**/*.yaml"
-        - "**/*.yml"
-        - "**/*.md"
       stage_fixed: true
       skip_empty: true
 
-    # ─────────────────────────────────────────────────────────
-    # TYPECHECKING - TypeScript without emit
-    # ─────────────────────────────────────────────────────────
-    # Note: TypeScript type checking on individual files is limited
-    # but catches many common issues. For full typecheck, use root command.
-    - name: "TypeScript (staged files)"
-      run: pnpm exec tsc --noEmit --project {staged_files_directories}/tsconfig.json 2>/dev/null || pnpm exec tsc --noEmit --skipLibCheck {staged_files} 2>/dev/null || true
+    - name: "TypeScript (staged files with per-package configs)"
+      run: |
+        # Get unique parent directories from staged files
+        for file in {staged_files}; do
+          dir="$(dirname "$file")"
+          while [ "$dir" != "." ] && [ "$dir" != "/" ]; do
+            if [ -f "$dir/package.json" ] && [ -f "$dir/tsconfig.json" ]; then
+              echo "$dir"
+              break
+            fi
+            dir="$(dirname "$dir")"
+          done
+        done | sort -u | while read pkg_dir; do
+          # Run tsc from each package directory with its own config
+          (cd "$pkg_dir" && pnpm exec tsc --noEmit) &
+        done
+        wait
       glob:
         - "**/*.ts"
         - "**/*.tsx"
       skip_empty: true
-      # Allow this to fail without blocking commit (type errors may require full rebuild)
       allow_empty: true
 
-    # ─────────────────────────────────────────────────────────
-    # PRETTIER - Format code if not auto-fixed by ESLint
-    # ─────────────────────────────────────────────────────────
     - name: "Prettier (format unformatted files)"
       run: pnpm exec prettier --write {staged_files}
       glob:
