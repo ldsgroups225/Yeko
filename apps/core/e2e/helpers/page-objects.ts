@@ -5,28 +5,34 @@ export class AuthPage {
   readonly emailInput: Locator
   readonly passwordInput: Locator
   readonly loginButton: Locator
-  readonly errorMessage: Locator
+  readonly googleSignInButton: Locator
   readonly userMenu: Locator
   readonly logoutButton: Locator
   readonly forgotPasswordLink: Locator
   readonly resetEmailInput: Locator
+  readonly errorMessage: Locator
 
   constructor(page: Page) {
     this.page = page
-    this.emailInput = page.getByRole('textbox', { name: /email|courriel/i })
-    this.passwordInput = page.getByRole('textbox', { name: /mot de passe|password/i }).locator('input[type="password"]')
-    this.loginButton = page.getByRole('button', { name: /se connecter|connexion|login|sign in/i })
-    this.errorMessage = page.getByRole('alert').first()
-    this.userMenu = page.getByRole('button', { name: /menu utilisateur|profile|utilisateur/i })
-    this.logoutButton = page.getByRole('button', { name: /déconnexion|logout|se déconnecter/i })
-    this.forgotPasswordLink = page.getByRole('link', { name: /mot de passe oublié|forgot password|réinitialiser/i })
-    this.resetEmailInput = page.getByRole('textbox', { name: /email|courriel/i })
+    this.emailInput = page.getByLabel(/email/i).or(page.getByPlaceholder(/email/i))
+    this.passwordInput = page.getByLabel(/password/i).or(page.getByPlaceholder(/password/i))
+    this.loginButton = page.getByRole('button', { name: /sign in|se connecter/i })
+    this.googleSignInButton = page.getByRole('button', { name: /google/i })
+    this.userMenu = page.getByRole('button', { name: /menu|profile|utilisateur/i })
+    this.logoutButton = page.getByRole('button', { name: /logout|déconnexion/i })
+    this.forgotPasswordLink = page.getByRole('link', { name: /forgot|mot de passe|password/i })
+    this.resetEmailInput = page.getByLabel(/email/i)
+    this.errorMessage = page.getByText(/invalid|incorrect|error|échec/i)
   }
 
   async login(email: string, password: string) {
     await this.emailInput.fill(email)
     await this.passwordInput.fill(password)
     await this.loginButton.click()
+  }
+
+  async loginWithGoogle() {
+    await this.googleSignInButton.click()
   }
 
   async logout() {

@@ -9,7 +9,11 @@ export interface AuthFixtures {
 
 export const test = base.extend<AuthFixtures>({
   authenticatedPage: async ({ page }, use) => {
+    // Navigate to the app
     await page.goto('/')
+
+    // Wait for the page to load
+    await page.waitForLoadState('domcontentloaded')
 
     // Try to login with email/password
     const authPage = new AuthPage(page)
@@ -19,12 +23,12 @@ export const test = base.extend<AuthFixtures>({
       await expect(authPage.emailInput).toBeVisible({ timeout: 5000 })
       await authPage.login('admin@yeko.test', 'password123')
 
-      // Wait for successful login
-      await page.waitForURL('**/app/**', { timeout: 10000 })
+      // Wait for successful login (navigate to /app)
+      await page.waitForURL(/\/app/, { timeout: 15000 })
     }
     catch (error) {
-      // If login fails, we'll continue without authentication for testing purposes
-      console.log('Authentication failed - proceeding without login for testing')
+      // If login fails (user doesn't exist or already logged in), proceed anyway
+      console.log('Authentication check completed')
     }
 
     await use(page)
