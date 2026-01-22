@@ -33,11 +33,25 @@ export const createDiscountSchema = z.object({
 
 export type CreateDiscountInput = z.infer<typeof createDiscountSchema>
 
-// Update discount schema
-export const updateDiscountSchema = createDiscountSchema.partial().extend({
+export const updateDiscountSchema = z.object({
   id: z.string().min(1),
+  code: z.string().min(1, 'Code requis').max(20, 'Code trop long').optional(),
+  name: z.string().min(1, 'Nom requis').max(100, 'Nom trop long').optional(),
+  nameEn: z.string().max(100).optional(),
+  type: z.enum(discountTypes, { message: 'Type de réduction invalide' }).optional(),
+  calculationType: z.enum(calculationTypes, { message: 'Type de calcul invalide' }).optional(),
+  value: z.string().regex(/^\d+(\.\d{1,2})?$/, 'Valeur invalide').optional(),
+  appliesToFeeTypes: z.array(z.string()).optional(),
+  maxDiscountAmount: z.string().regex(/^\d+(\.\d{1,2})?$/).optional().nullable(),
+  requiresApproval: z.boolean().default(false).optional(),
+  autoApply: z.boolean().default(false).optional(),
+  validFrom: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().nullable(),
+  validUntil: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().nullable(),
   status: z.enum(discountStatuses).optional(),
-})
+}).refine(
+  data => data.calculationType !== 'percentage' || data.value === undefined || Number.parseFloat(data.value) <= 100,
+  { message: 'Le pourcentage ne peut pas dépasser 100%', path: ['value'] },
+)
 
 export type UpdateDiscountInput = z.infer<typeof updateDiscountSchema>
 
