@@ -31,6 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@workspace/ui/components/select";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -42,7 +43,10 @@ import {
   discountTypeLabels,
   discountTypes,
 } from "@/schemas/discount";
-import { createNewDiscount } from "@/school/functions/discounts";
+import {
+  createNewDiscount,
+  updateExistingDiscount,
+} from "@/school/functions/discounts";
 
 const discountFormSchema = z
   .object({
@@ -69,46 +73,71 @@ type DiscountFormData = z.infer<typeof discountFormSchema>;
 interface DiscountFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  initialData?: any;
 }
 
 export function DiscountFormDialog({
   open,
   onOpenChange,
+  initialData,
 }: DiscountFormDialogProps) {
   const t = useTranslations();
   const queryClient = useQueryClient();
 
   const form = useForm<DiscountFormData>({
     resolver: zodResolver(discountFormSchema),
-    defaultValues: {
-      code: "",
-      name: "",
-      nameEn: "",
-      type: "sibling",
-      calculationType: "percentage",
-      value: "",
-      requiresApproval: false,
-      autoApply: false,
-    },
+    defaultValues: {},
   });
 
+  useEffect(() => {
+    if (open) {
+      if (initialData) {
+        form.reset({
+          code: initialData.code || "",
+          name: initialData.name || "",
+          nameEn: initialData.nameEn || "",
+          type: initialData.type || "sibling",
+          calculationType: initialData.calculationType || "percentage",
+          value: String(initialData.value || ""),
+          requiresApproval: !!initialData.requiresApproval,
+          autoApply: !!initialData.autoApply,
+        });
+      } else {
+        form.reset({
+          code: "",
+          name: "",
+          nameEn: "",
+          type: "sibling",
+          calculationType: "percentage",
+          value: "",
+          requiresApproval: false,
+          autoApply: false,
+        });
+      }
+    }
+  }, [open, initialData, form]);
+
+  const isEditing = !!initialData;
+
   const mutation = useMutation({
-    mutationFn: (data: DiscountFormData) =>
-      createNewDiscount({
-        data: {
-          code: data.code,
-          name: data.name,
-          nameEn: data.nameEn,
-          type: data.type,
-          calculationType: data.calculationType,
-          value: data.value,
-          requiresApproval: data.requiresApproval,
-          autoApply: data.autoApply,
-        },
-      }),
+    mutationFn: (data: DiscountFormData) => {
+      if (isEditing) {
+        return updateExistingDiscount({
+          data: {
+            id: initialData.id,
+            ...data,
+          },
+        });
+      }
+      return createNewDiscount({
+        data,
+      });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: discountsKeys.all });
-      toast.success(t.finance.discounts.created());
+      toast.success(
+        isEditing ? "Réduction mise à jour" : t.finance.discounts.created(),
+      );
       form.reset();
       onOpenChange(false);
     },
@@ -128,10 +157,12 @@ export function DiscountFormDialog({
       <DialogContent className="sm:max-w-[500px] backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">
-            {t.finance.discounts.create()}
+            {isEditing ? "Modifier la réduction" : t.finance.discounts.create()}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground/80">
-            {t.finance.discounts.createDescription()}
+            {isEditing
+              ? "Modifier les paramètres de cette réduction"
+              : t.finance.discounts.createDescription()}
           </DialogDescription>
         </DialogHeader>
 
@@ -305,7 +336,7 @@ export function DiscountFormDialog({
                         onCheckedChange={field.onChange}
                       />
                     </FormControl>
-                    <FormLabel className="font-bold text-sm cursor-pointer w-full">
+                    <FormLabel className="font-bold text-xs cursor-pointer w-full truncate">
                       {t.finance.discounts.requiresApproval()}
                     </FormLabel>
                   </FormItem>
@@ -323,7 +354,7 @@ export function DiscountFormDialog({
                         onCheckedChange={field.onChange}
                       />
                     </FormControl>
-                    <FormLabel className="font-bold text-sm cursor-pointer w-full">
+                    <FormLabel className="font-bold text-x                          s cursor-pointer w-full truncate">
                       {t.finance.discounts.autoApply()}
                     </FormLabel>
                   </FormItem>

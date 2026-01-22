@@ -1,42 +1,75 @@
-import { IconPlus, IconTag } from '@tabler/icons-react'
-import { useQuery } from '@tanstack/react-query'
-import { createFileRoute } from '@tanstack/react-router'
-import { Button } from '@workspace/ui/components/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
-import { motion } from 'motion/react'
-import { useState } from 'react'
-import { DiscountFormDialog, DiscountsTable } from '@/components/finance'
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { useTranslations } from '@/i18n'
-import { discountsOptions } from '@/lib/queries'
+import { IconPlus, IconTag } from "@tabler/icons-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import { Button } from "@workspace/ui/components/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card";
+import { motion } from "motion/react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { DiscountFormDialog, DiscountsTable } from "@/components/finance";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
+import { useTranslations } from "@/i18n";
+import { discountsKeys, discountsOptions } from "@/lib/queries";
+import { deleteExistingDiscount } from "@/school/functions/discounts";
+import { DeleteConfirmationDialog } from "@workspace/ui/components/delete-confirmation-dialog";
 
-export const Route = createFileRoute('/_auth/accounting/discounts')({
+export const Route = createFileRoute("/_auth/accounting/discounts")({
   component: DiscountsPage,
-})
+});
 
 function DiscountsPage() {
-  const t = useTranslations()
-  const [isCreateOpen, setIsCreateOpen] = useState(false)
+  const t = useTranslations();
+  const queryClient = useQueryClient();
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [editingDiscount, setEditingDiscount] = useState<any>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const { data: discounts, isLoading } = useQuery(discountsOptions.list())
+  const { data: discounts, isLoading } = useQuery(discountsOptions.list());
 
-  const discountsList = discounts?.map(d => ({
-    id: d.id,
-    code: d.code,
-    name: d.name,
-    type: d.type,
-    calculationType: d.calculationType,
-    value: Number(d.value),
-    requiresApproval: d.requiresApproval ?? false,
-    autoApply: d.autoApply ?? false,
-    status: d.status ?? 'active',
-  })) ?? []
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => deleteExistingDiscount({ data: id }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: discountsKeys.all });
+      toast.success("Réduction supprimée");
+      setDeletingId(null);
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Erreur lors de la suppression");
+    },
+  });
+
+  const handleEdit = (discount: any) => {
+    setEditingDiscount(discount);
+    setIsCreateOpen(true);
+  };
+
+  const handleDelete = (discount: any) => {
+    setDeletingId(discount.id);
+  };
+
+  const discountsList =
+    discounts?.map((d) => ({
+      id: d.id,
+      code: d.code,
+      name: d.name,
+      type: d.type,
+      calculationType: d.calculationType,
+      value: Number(d.value),
+      requiresApproval: d.requiresApproval ?? false,
+      autoApply: d.autoApply ?? false,
+      status: d.status ?? "active",
+    })) ?? [];
 
   return (
     <div className="space-y-8 p-1">
       <Breadcrumbs
         items={[
-          { label: t.nav.finance(), href: '/accounting' },
+          { label: t.nav.finance(), href: "/accounting" },
           { label: t.finance.discounts.title() },
         ]}
       />
@@ -51,8 +84,12 @@ function DiscountsPage() {
             <IconTag className="size-8 text-primary" />
           </div>
           <div>
-            <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.finance.discounts.title()}</h1>
-            <p className="text-sm font-medium text-muted-foreground italic max-w-lg">{t.finance.discounts.description()}</p>
+            <h1 className="text-3xl font-black tracking-tight uppercase italic">
+              {t.finance.discounts.title()}
+            </h1>
+            <p className="text-sm font-medium text-muted-foreground italic max-w-lg">
+              {t.finance.discounts.description()}
+            </p>
           </div>
         </motion.div>
 
@@ -60,7 +97,10 @@ function DiscountsPage() {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
         >
-          <Button onClick={() => setIsCreateOpen(true)} className="h-10 rounded-xl shadow-lg shadow-primary/20">
+          <Button
+            onClick={() => setIsCreateOpen(true)}
+            className="h-10 rounded-xl shadow-lg shadow-primary/20"
+          >
             <IconPlus className="mr-2 h-4 w-4" />
             {t.finance.discounts.create()}
           </Button>
@@ -74,12 +114,16 @@ function DiscountsPage() {
       >
         <Card className="border-border/40 bg-card/40 backdrop-blur-xl overflow-hidden shadow-sm">
           <CardHeader className="border-b border-border/40 bg-muted/5">
-            <CardTitle className="text-lg font-bold">{t.finance.discounts.title()}</CardTitle>
+            <CardTitle className="text-lg font-bold">
+              {t.finance.discounts.title()}
+            </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             <DiscountsTable
               discounts={discountsList}
               isLoading={isLoading}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
             />
           </CardContent>
         </Card>
@@ -87,8 +131,23 @@ function DiscountsPage() {
 
       <DiscountFormDialog
         open={isCreateOpen}
-        onOpenChange={setIsCreateOpen}
+        onOpenChange={(open) => {
+          setIsCreateOpen(open);
+          if (!open) setEditingDiscount(null);
+        }}
+        initialData={editingDiscount}
+      />
+
+      <DeleteConfirmationDialog
+        open={!!deletingId}
+        onOpenChange={(open) => !open && setDeletingId(null)}
+        onConfirm={() => {
+          if (deletingId) deleteMutation.mutate(deletingId);
+        }}
+        isLoading={deleteMutation.isPending}
+        title="Supprimer la réduction"
+        description="Voulez-vous vraiment supprimer cette réduction ? Cette action est irréversible."
       />
     </div>
-  )
+  );
 }
