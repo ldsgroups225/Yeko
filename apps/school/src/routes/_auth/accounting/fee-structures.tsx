@@ -5,7 +5,7 @@ import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { motion } from 'motion/react'
 import { useState } from 'react'
-import { FeeStructuresTable } from '@/components/finance'
+import { FeeStructureFormDialog, FeeStructuresTable } from '@/components/finance'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
 import { feeStructuresOptions } from '@/lib/queries'
@@ -16,7 +16,7 @@ export const Route = createFileRoute('/_auth/accounting/fee-structures')({
 
 function FeeStructuresPage() {
   const t = useTranslations()
-  const [_isCreateOpen, setIsCreateOpen] = useState(false)
+  const [isCreateOpen, setIsCreateOpen] = useState(false)
 
   const { data: feeStructures, isLoading } = useQuery(feeStructuresOptions.withDetails())
 
@@ -83,6 +83,11 @@ function FeeStructuresPage() {
           </CardContent>
         </Card>
       </motion.div>
+
+      <FeeStructureFormDialog
+        open={isCreateOpen}
+        onOpenChange={setIsCreateOpen}
+      />
     </div>
   )
 }
