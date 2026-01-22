@@ -80,7 +80,7 @@ export function CreateAdminDialog({ schoolId, schoolName }: CreateAdminDialogPro
 
       // Invalidate queries
       queryClient.invalidateQueries({ queryKey: ['school', schoolId] })
-      queryClient.invalidateQueries({ queryKey: ['users', schoolId] })
+      queryClient.invalidateQueries({ queryKey: ['schoolUsers'] })
     },
     onError: () => {
       toast.error('Erreur lors de la création du compte')

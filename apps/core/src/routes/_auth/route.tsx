@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router'
 import { SidebarInset, SidebarProvider } from '@workspace/ui/components/sidebar'
 import { useState } from 'react'
-import { GoogleLogin } from '@/components/auth/google-login'
+import { EmailLogin } from '@/components/auth/email-login'
 import { Header } from '@/components/layout/header'
 import { MobileSidebar } from '@/components/layout/mobile-sidebar'
 import { Sidebar } from '@/components/layout/sidebar'
@@ -48,7 +48,7 @@ function RouteComponent() {
               </SidebarProvider>
             )
           : (
-              <GoogleLogin />
+              <EmailLogin />
             )}
     </>
   )

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import type { Locales, TranslationFunctions, Translations } from './i18n-types'
-import { createContext, use, useEffect, useMemo, useState } from 'react'
+import { createContext, useEffect, useMemo, useState } from 'react'
 import { initFormatters as initBaseFormatters } from './formatters.js'
 import baseTranslations from './fr/index.js'
 import { baseLocale, i18nObject, isLocale, loadedFormatters, loadedLocales } from './i18n-util'

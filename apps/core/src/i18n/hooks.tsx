@@ -1,5 +1,5 @@
 import type { I18nContextValue } from './i18n-react'
-import type { Locales, TranslationFunctions } from './i18n-types'
+import type { TranslationFunctions } from './i18n-types'
 import { use } from 'react'
 import { I18nContext } from './i18n-react'
 

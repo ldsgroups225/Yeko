@@ -111,7 +111,7 @@ describe('8.1 Database Errors', () => {
   describe('constraint violation', () => {
     test('should handle unique constraint violation', async () => {
       const mockCreate = vi.fn().mockRejectedValue(new Error('UNIQUE constraint failed'))
-      
+
       try {
         await mockCreate({
           name: 'Duplicate Code School',
@@ -125,7 +125,7 @@ describe('8.1 Database Errors', () => {
 
     test('should handle not null constraint violation', async () => {
       const mockCreate = vi.fn().mockRejectedValue(new Error('NOT NULL constraint failed'))
-      
+
       try {
         await mockCreate({
           name: '',
@@ -210,7 +210,7 @@ describe('8.2 API Errors', () => {
   describe('400 bad request', () => {
     test('should return 400 for invalid input', async () => {
       const mockCreate = vi.fn().mockRejectedValue(new Error('Validation failed'))
-      
+
       try {
         await mockCreate({
           name: '',
@@ -227,7 +227,7 @@ describe('8.2 API Errors', () => {
   describe('404 not found', () => {
     test('should handle missing school', async () => {
       const mockUpdate = vi.fn().mockRejectedValue(new Error('School not found'))
-      
+
       try {
         await mockUpdate('non-existent-id', { name: 'Updated' })
       }
@@ -268,7 +268,7 @@ describe('8.3 Validation Errors', () => {
   describe('email validation', () => {
     test('should reject invalid email format', async () => {
       const mockCreate = vi.fn().mockRejectedValue(new Error('Invalid email'))
-      
+
       try {
         await mockCreate({
           name: 'Test School',
@@ -299,7 +299,7 @@ describe('8.3 Validation Errors', () => {
   describe('phone validation', () => {
     test('should reject invalid phone format', async () => {
       const mockCreate = vi.fn().mockRejectedValue(new Error('Invalid phone'))
-      
+
       try {
         await mockCreate({
           name: 'Test School',
@@ -317,7 +317,7 @@ describe('8.3 Validation Errors', () => {
   describe('required field validation', () => {
     test('should reject missing name', async () => {
       const mockCreate = vi.fn().mockRejectedValue(new Error('Name required'))
-      
+
       try {
         await mockCreate({
           name: '',

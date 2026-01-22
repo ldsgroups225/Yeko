@@ -14,4 +14,8 @@ export const auth = createBetterAuth({
       provider: 'pg',
     },
   ),
+  emailAndPassword: {
+    enabled: true,
+    requireEmailVerification: false,
+  },
 })
