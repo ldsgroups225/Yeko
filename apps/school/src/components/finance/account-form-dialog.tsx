@@ -1,10 +1,10 @@
-'use client'
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import { IconLoader2 } from '@tabler/icons-react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Button } from '@workspace/ui/components/button'
-import { Checkbox } from '@workspace/ui/components/checkbox'
+import { zodResolver } from "@hookform/resolvers/zod";
+import { IconLoader2 } from "@tabler/icons-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Button } from "@workspace/ui/components/button";
+import { Checkbox } from "@workspace/ui/components/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -12,7 +12,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@workspace/ui/components/dialog'
+} from "@workspace/ui/components/dialog";
 import {
   Form,
   FormControl,
@@ -21,63 +21,66 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@workspace/ui/components/form'
+} from "@workspace/ui/components/form";
 
-import { Input } from '@workspace/ui/components/input'
+import { Input } from "@workspace/ui/components/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@workspace/ui/components/select'
-import { Textarea } from '@workspace/ui/components/textarea'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import { z } from 'zod'
-import { useTranslations } from '@/i18n'
-import { accountsKeys } from '@/lib/queries/accounts'
+} from "@workspace/ui/components/select";
+import { Textarea } from "@workspace/ui/components/textarea";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { useTranslations } from "@/i18n";
+import { accountsKeys } from "@/lib/queries/accounts";
 import {
   accountTypeLabels,
   accountTypes,
   normalBalanceLabels,
   normalBalances,
-} from '@/schemas/account'
-import { createNewAccount } from '@/school/functions/accounts'
+} from "@/schemas/account";
+import { createNewAccount } from "@/school/functions/accounts";
 
 const accountFormSchema = z.object({
-  code: z.string().min(1, 'Code requis').max(20, 'Code trop long'),
-  name: z.string().min(1, 'Nom requis').max(100, 'Nom trop long'),
+  code: z.string().min(1, "Code requis").max(20, "Code trop long"),
+  name: z.string().min(1, "Nom requis").max(100, "Nom trop long"),
   nameEn: z.string().max(100).optional(),
-  type: z.enum(accountTypes, { message: 'IconTypography de compte invalide' }),
-  normalBalance: z.enum(normalBalances, { message: 'Solde normal invalide' }),
+  type: z.enum(accountTypes, { message: "Type de compte invalide" }),
+  normalBalance: z.enum(normalBalances, { message: "Solde normal invalide" }),
   isHeader: z.boolean(),
   description: z.string().max(500).optional(),
-})
+});
 
-type AccountFormData = z.infer<typeof accountFormSchema>
+type AccountFormData = z.infer<typeof accountFormSchema>;
 
 interface AccountFormDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
-export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps) {
-  const t = useTranslations()
-  const queryClient = useQueryClient()
+export function AccountFormDialog({
+  open,
+  onOpenChange,
+}: AccountFormDialogProps) {
+  const t = useTranslations();
+  const queryClient = useQueryClient();
 
   const form = useForm<AccountFormData>({
     resolver: zodResolver(accountFormSchema),
     defaultValues: {
-      code: '',
-      name: '',
-      nameEn: '',
-      type: 'asset',
-      normalBalance: 'debit',
+      code: "",
+      name: "",
+      nameEn: "",
+      type: "asset",
+      normalBalance: "debit",
       isHeader: false,
-      description: '',
+      description: "",
     },
-  })
+  });
 
   const mutation = useMutation({
     mutationFn: (data: AccountFormData) =>
@@ -93,32 +96,33 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
         },
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: accountsKeys.all })
-      toast.success(t.finance.accounts.created())
-      form.reset()
-      onOpenChange(false)
+      queryClient.invalidateQueries({ queryKey: accountsKeys.all });
+      toast.success(t.finance.accounts.created());
+      form.reset();
+      onOpenChange(false);
     },
     onError: (err: Error) => {
-      toast.error(err.message)
+      toast.error(err.message);
     },
-  })
+  });
 
   const onSubmit = (data: AccountFormData) => {
-    mutation.mutate(data)
-  }
+    mutation.mutate(data);
+  };
 
   // Auto-set normal balance based on account type
   const getDefaultNormalBalance = (type: string) => {
-    if (type === 'asset' || type === 'expense')
-      return 'debit'
-    return 'credit'
-  }
+    if (type === "asset" || type === "expense") return "debit";
+    return "credit";
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px] backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold">{t.finance.accounts.create()}</DialogTitle>
+          <DialogTitle className="text-xl font-bold">
+            {t.finance.accounts.create()}
+          </DialogTitle>
           <DialogDescription className="text-muted-foreground/80">
             {t.finance.accounts.createDescription()}
           </DialogDescription>
@@ -133,12 +137,14 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
-                      {t.common.code()}
-                      {' '}
-                      *
+                      {t.common.code()} *
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="1000" className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors font-mono" />
+                      <Input
+                        {...field}
+                        placeholder="1000"
+                        className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors font-mono"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -151,15 +157,16 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
-                      {t.finance.accounts.type()}
-                      {' '}
-                      *
+                      {t.finance.accounts.type()} *
                     </FormLabel>
                     <Select
                       onValueChange={(value) => {
-                        field.onChange(value)
+                        field.onChange(value);
                         if (value) {
-                          form.setValue('normalBalance', getDefaultNormalBalance(value))
+                          form.setValue(
+                            "normalBalance",
+                            getDefaultNormalBalance(value),
+                          );
                         }
                       }}
                       value={field.value}
@@ -170,8 +177,12 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">
-                        {accountTypes.map(type => (
-                          <SelectItem key={type} value={type} className="rounded-lg cursor-pointer focus:bg-primary/10">
+                        {accountTypes.map((type) => (
+                          <SelectItem
+                            key={type}
+                            value={type}
+                            className="rounded-lg cursor-pointer focus:bg-primary/10"
+                          >
                             {accountTypeLabels[type]}
                           </SelectItem>
                         ))}
@@ -189,12 +200,14 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
-                    {t.common.name()}
-                    {' '}
-                    *
+                    {t.common.name()} *
                   </FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder={t.finance.accounts.placeholders.name()} className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors" />
+                    <Input
+                      {...field}
+                      placeholder={t.finance.accounts.placeholders.name()}
+                      className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -206,9 +219,15 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
               name="nameEn"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">{t.common.nameEn()}</FormLabel>
+                  <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
+                    {t.common.nameEn()}
+                  </FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder={t.finance.accounts.placeholders.nameEn()} className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors" />
+                    <Input
+                      {...field}
+                      placeholder={t.finance.accounts.placeholders.nameEn()}
+                      className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors"
+                    />
                   </FormControl>
                   <FormDescription className="text-[11px]">
                     {t.common.optionalEnglishName()}
@@ -224,9 +243,7 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
-                    {t.finance.accounts.normalBalance()}
-                    {' '}
-                    *
+                    {t.finance.accounts.normalBalance()} *
                   </FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
@@ -235,8 +252,12 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">
-                      {normalBalances.map(balance => (
-                        <SelectItem key={balance} value={balance} className="rounded-lg cursor-pointer focus:bg-primary/10">
+                      {normalBalances.map((balance) => (
+                        <SelectItem
+                          key={balance}
+                          value={balance}
+                          className="rounded-lg cursor-pointer focus:bg-primary/10"
+                        >
                           {normalBalanceLabels[balance]}
                         </SelectItem>
                       ))}
@@ -252,9 +273,15 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">{t.common.description()}</FormLabel>
+                  <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
+                    {t.common.description()}
+                  </FormLabel>
                   <FormControl>
-                    <Textarea {...field} rows={2} className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors resize-none" />
+                    <Textarea
+                      {...field}
+                      rows={2}
+                      className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors resize-none"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -293,7 +320,11 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
               >
                 {t.common.cancel()}
               </Button>
-              <Button type="submit" disabled={mutation.isPending} className="rounded-xl shadow-lg shadow-primary/20">
+              <Button
+                type="submit"
+                disabled={mutation.isPending}
+                className="rounded-xl shadow-lg shadow-primary/20"
+              >
                 {mutation.isPending && (
                   <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
@@ -304,5 +335,5 @@ export function AccountFormDialog({ open, onOpenChange }: AccountFormDialogProps
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

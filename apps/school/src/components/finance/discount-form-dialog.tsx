@@ -1,10 +1,10 @@
-'use client'
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import { IconLoader2 } from '@tabler/icons-react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Button } from '@workspace/ui/components/button'
-import { Checkbox } from '@workspace/ui/components/checkbox'
+import { zodResolver } from "@hookform/resolvers/zod";
+import { IconLoader2 } from "@tabler/icons-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Button } from "@workspace/ui/components/button";
+import { Checkbox } from "@workspace/ui/components/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -12,7 +12,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@workspace/ui/components/dialog'
+} from "@workspace/ui/components/dialog";
 import {
   Form,
   FormControl,
@@ -21,67 +21,76 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@workspace/ui/components/form'
+} from "@workspace/ui/components/form";
 
-import { Input } from '@workspace/ui/components/input'
+import { Input } from "@workspace/ui/components/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@workspace/ui/components/select'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import { z } from 'zod'
-import { useTranslations } from '@/i18n'
-import { discountsKeys } from '@/lib/queries/discounts'
+} from "@workspace/ui/components/select";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { useTranslations } from "@/i18n";
+import { discountsKeys } from "@/lib/queries/discounts";
 import {
   calculationTypeLabels,
   calculationTypes,
   discountTypeLabels,
   discountTypes,
-} from '@/schemas/discount'
-import { createNewDiscount } from '@/school/functions/discounts'
+} from "@/schemas/discount";
+import { createNewDiscount } from "@/school/functions/discounts";
 
-const discountFormSchema = z.object({
-  code: z.string().min(1, 'Code requis').max(20, 'Code trop long'),
-  name: z.string().min(1, 'Nom requis').max(100, 'Nom trop long'),
-  nameEn: z.string().max(100).optional(),
-  type: z.enum(discountTypes, { message: 'IconTypography de réduction invalide' }),
-  calculationType: z.enum(calculationTypes, { message: 'IconTypography de calcul invalide' }),
-  value: z.string().regex(/^\d+(\.\d{1,2})?$/, 'Valeur invalide'),
-  requiresApproval: z.boolean(),
-  autoApply: z.boolean(),
-}).refine(
-  data => data.calculationType !== 'percentage' || Number.parseFloat(data.value) <= 100,
-  { message: 'Le pourcentage ne peut pas dépasser 100%', path: ['value'] },
-)
+const discountFormSchema = z
+  .object({
+    code: z.string().min(1, "Code requis").max(20, "Code trop long"),
+    name: z.string().min(1, "Nom requis").max(100, "Nom trop long"),
+    nameEn: z.string().max(100).optional(),
+    type: z.enum(discountTypes, { message: "Type de réduction invalide" }),
+    calculationType: z.enum(calculationTypes, {
+      message: "Type de calcul invalide",
+    }),
+    value: z.string().regex(/^\d+(\.\d{1,2})?$/, "Valeur invalide"),
+    requiresApproval: z.boolean(),
+    autoApply: z.boolean(),
+  })
+  .refine(
+    (data) =>
+      data.calculationType !== "percentage" ||
+      Number.parseFloat(data.value) <= 100,
+    { message: "Le pourcentage ne peut pas dépasser 100%", path: ["value"] },
+  );
 
-type DiscountFormData = z.infer<typeof discountFormSchema>
+type DiscountFormData = z.infer<typeof discountFormSchema>;
 
 interface DiscountFormDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
-export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogProps) {
-  const t = useTranslations()
-  const queryClient = useQueryClient()
+export function DiscountFormDialog({
+  open,
+  onOpenChange,
+}: DiscountFormDialogProps) {
+  const t = useTranslations();
+  const queryClient = useQueryClient();
 
   const form = useForm<DiscountFormData>({
     resolver: zodResolver(discountFormSchema),
     defaultValues: {
-      code: '',
-      name: '',
-      nameEn: '',
-      type: 'sibling',
-      calculationType: 'percentage',
-      value: '',
+      code: "",
+      name: "",
+      nameEn: "",
+      type: "sibling",
+      calculationType: "percentage",
+      value: "",
       requiresApproval: false,
       autoApply: false,
     },
-  })
+  });
 
   const mutation = useMutation({
     mutationFn: (data: DiscountFormData) =>
@@ -98,27 +107,29 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
         },
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: discountsKeys.all })
-      toast.success(t.finance.discounts.created())
-      form.reset()
-      onOpenChange(false)
+      queryClient.invalidateQueries({ queryKey: discountsKeys.all });
+      toast.success(t.finance.discounts.created());
+      form.reset();
+      onOpenChange(false);
     },
     onError: (err: Error) => {
-      toast.error(err.message)
+      toast.error(err.message);
     },
-  })
+  });
 
   const onSubmit = (data: DiscountFormData) => {
-    mutation.mutate(data)
-  }
+    mutation.mutate(data);
+  };
 
-  const watchCalculationType = form.watch('calculationType')
+  const watchCalculationType = form.watch("calculationType");
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px] backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold">{t.finance.discounts.create()}</DialogTitle>
+          <DialogTitle className="text-xl font-bold">
+            {t.finance.discounts.create()}
+          </DialogTitle>
           <DialogDescription className="text-muted-foreground/80">
             {t.finance.discounts.createDescription()}
           </DialogDescription>
@@ -133,12 +144,14 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
-                      {t.common.code()}
-                      {' '}
-                      *
+                      {t.common.code()} *
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder={t.finance.discounts.placeholders.code()} className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors font-mono" />
+                      <Input
+                        {...field}
+                        placeholder={t.finance.discounts.placeholders.code()}
+                        className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors font-mono"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -151,9 +164,7 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
-                      {t.finance.discounts.type()}
-                      {' '}
-                      *
+                      {t.finance.discounts.type()} *
                     </FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
@@ -162,8 +173,12 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">
-                        {discountTypes.map(type => (
-                          <SelectItem key={type} value={type} className="rounded-lg cursor-pointer focus:bg-primary/10">
+                        {discountTypes.map((type) => (
+                          <SelectItem
+                            key={type}
+                            value={type}
+                            className="rounded-lg cursor-pointer focus:bg-primary/10"
+                          >
                             {discountTypeLabels[type]}
                           </SelectItem>
                         ))}
@@ -181,12 +196,14 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
-                    {t.common.name()}
-                    {' '}
-                    *
+                    {t.common.name()} *
                   </FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder={t.finance.discounts.placeholders.name()} className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors" />
+                    <Input
+                      {...field}
+                      placeholder={t.finance.discounts.placeholders.name()}
+                      className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -198,9 +215,15 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
               name="nameEn"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">{t.common.nameEn()}</FormLabel>
+                  <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
+                    {t.common.nameEn()}
+                  </FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder={t.finance.discounts.placeholders.nameEn()} className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors" />
+                    <Input
+                      {...field}
+                      placeholder={t.finance.discounts.placeholders.nameEn()}
+                      className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors"
+                    />
                   </FormControl>
                   <FormDescription className="text-[11px]">
                     {t.common.optionalEnglishName()}
@@ -217,9 +240,7 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
-                      {t.finance.discounts.calculationType()}
-                      {' '}
-                      *
+                      {t.finance.discounts.calculationType()} *
                     </FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
@@ -228,8 +249,12 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">
-                        {calculationTypes.map(type => (
-                          <SelectItem key={type} value={type} className="rounded-lg cursor-pointer focus:bg-primary/10">
+                        {calculationTypes.map((type) => (
+                          <SelectItem
+                            key={type}
+                            value={type}
+                            className="rounded-lg cursor-pointer focus:bg-primary/10"
+                          >
                             {calculationTypeLabels[type]}
                           </SelectItem>
                         ))}
@@ -246,9 +271,7 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
-                      {t.finance.discounts.value()}
-                      {' '}
-                      *
+                      {t.finance.discounts.value()} *
                     </FormLabel>
                     <FormControl>
                       <div className="relative">
@@ -260,7 +283,7 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
                           placeholder="0"
                         />
                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-muted-foreground">
-                          {watchCalculationType === 'percentage' ? '%' : 'FCFA'}
+                          {watchCalculationType === "percentage" ? "%" : "FCFA"}
                         </span>
                       </div>
                     </FormControl>
@@ -317,7 +340,11 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
               >
                 {t.common.cancel()}
               </Button>
-              <Button type="submit" disabled={mutation.isPending} className="rounded-xl shadow-lg shadow-primary/20">
+              <Button
+                type="submit"
+                disabled={mutation.isPending}
+                className="rounded-xl shadow-lg shadow-primary/20"
+              >
                 {mutation.isPending && (
                   <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
@@ -328,5 +355,5 @@ export function DiscountFormDialog({ open, onOpenChange }: DiscountFormDialogPro
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

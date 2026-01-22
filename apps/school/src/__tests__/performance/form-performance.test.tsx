@@ -1,8 +1,8 @@
-import { describe } from 'vitest'
+import { describe } from "vitest";
 
 // Performance tests are environment-dependent and may vary
 // These tests are marked as todo by default but can be run manually
-describe.todo('performance Testing')
+describe.todo("performance Testing");
 
 /*
 describe('form Rendering Performance', () => {
@@ -84,7 +84,7 @@ describe('form Rendering Performance', () => {
 
       const startTime = performance.now()
 
-      // IconTypography 50 characters
+      // Type 50 characters
       await user.type(nameInput, 'A'.repeat(50))
 
       const endTime = performance.now()
