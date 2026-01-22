@@ -32,6 +32,7 @@ import {
   SelectValue,
 } from "@workspace/ui/components/select";
 import { Textarea } from "@workspace/ui/components/textarea";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -43,7 +44,10 @@ import {
   normalBalanceLabels,
   normalBalances,
 } from "@/schemas/account";
-import { createNewAccount } from "@/school/functions/accounts";
+import {
+  createNewAccount,
+  updateExistingAccount,
+} from "@/school/functions/accounts";
 
 const accountFormSchema = z.object({
   code: z.string().min(1, "Code requis").max(20, "Code trop long"),
@@ -60,44 +64,68 @@ type AccountFormData = z.infer<typeof accountFormSchema>;
 interface AccountFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  initialData?: any;
 }
 
 export function AccountFormDialog({
   open,
   onOpenChange,
+  initialData,
 }: AccountFormDialogProps) {
   const t = useTranslations();
   const queryClient = useQueryClient();
 
   const form = useForm<AccountFormData>({
     resolver: zodResolver(accountFormSchema),
-    defaultValues: {
-      code: "",
-      name: "",
-      nameEn: "",
-      type: "asset",
-      normalBalance: "debit",
-      isHeader: false,
-      description: "",
-    },
   });
 
+  useEffect(() => {
+    if (open) {
+      if (initialData) {
+        form.reset({
+          code: initialData.code || "",
+          name: initialData.name || "",
+          nameEn: initialData.nameEn || "",
+          type: initialData.type || "asset",
+          normalBalance: initialData.normalBalance || "debit",
+          isHeader: !!initialData.isHeader,
+          description: initialData.description || "",
+        });
+      } else {
+        form.reset({
+          code: "",
+          name: "",
+          nameEn: "",
+          type: "asset",
+          normalBalance: "debit",
+          isHeader: false,
+          description: "",
+        });
+      }
+    }
+  }, [open, initialData, form]);
+
+  const isEditing = !!initialData;
+
   const mutation = useMutation({
-    mutationFn: (data: AccountFormData) =>
-      createNewAccount({
-        data: {
-          code: data.code,
-          name: data.name,
-          nameEn: data.nameEn,
-          type: data.type,
-          normalBalance: data.normalBalance,
-          isHeader: data.isHeader,
-          description: data.description,
-        },
-      }),
+    mutationFn: (data: AccountFormData) => {
+      if (isEditing) {
+        return updateExistingAccount({
+          data: {
+            id: initialData.id,
+            ...data,
+          },
+        });
+      }
+      return createNewAccount({
+        data,
+      });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: accountsKeys.all });
-      toast.success(t.finance.accounts.created());
+      toast.success(
+        isEditing ? "Compte mis à jour" : t.finance.accounts.created(),
+      );
       form.reset();
       onOpenChange(false);
     },
@@ -121,10 +149,12 @@ export function AccountFormDialog({
       <DialogContent className="sm:max-w-[500px] backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">
-            {t.finance.accounts.create()}
+            {isEditing ? "Modifier le compte" : t.finance.accounts.create()}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground/80">
-            {t.finance.accounts.createDescription()}
+            {isEditing
+              ? "Modifier les paramètres de ce compte"
+              : t.finance.accounts.createDescription()}
           </DialogDescription>
         </DialogHeader>
 
