@@ -24,6 +24,24 @@ const config = defineConfig({
       },
     }),
   ],
+  // Fix SSR dependency optimization issues
+  optimizeDeps: {
+    // Exclude packages that have ESM/CJS interop issues
+    exclude: [
+      '@tanstack/react-router',
+      '@tanstack/react-query',
+      '@tanstack/react-start',
+      'better-auth',
+    ],
+  },
+  ssr: {
+    // Ensure proper module resolution for SSR
+    noExternal: [
+      '@tanstack/react-router',
+      '@tanstack/react-query',
+      '@tanstack/react-start',
+    ],
+  },
 })
 
 export default config
