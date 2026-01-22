@@ -200,25 +200,33 @@ export function Sidebar({ className }: SidebarProps) {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className="overflow-hidden"
             >
-              <SidebarMenuSub>
-                {item.children?.map(child => (
-                  <SidebarMenuSubItem key={child.href}>
-                    <SidebarMenuSubButton
-                      isActive={currentPath === child.href}
-                    >
-                      <button
-                        type="button"
-                        onClick={() => navigate({ to: child.href })}
-                        className="cursor-pointer w-full"
+              <SidebarMenuSub className="border-l-2 border-border/40 ml-2 mt-1 py-1">
+                {item.children?.map(child => {
+                  const isChildActive = currentPath === child.href
+                  return (
+                    <SidebarMenuSubItem key={child.href} className="px-1">
+                      <a
+                        href={child.href}
+                        className={cn(
+                          'flex items-center gap-3 py-2 px-3 rounded-md transition-all duration-200 text-sm',
+                          'hover:bg-accent/80 hover:translate-x-1',
+                          isChildActive
+                            ? 'bg-primary/10 text-primary font-medium'
+                            : 'text-muted-foreground hover:text-foreground',
+                        )}
                       >
-                        <child.icon className="h-4 w-4" />
-                        <span>{child.name}</span>
-                      </button>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                ))}
+                        <child.icon className={cn(
+                          'h-4 w-4 shrink-0 transition-colors',
+                          isChildActive ? 'text-primary' : 'text-muted-foreground group-hover/menu-sub-item:text-foreground',
+                        )} />
+                        <span className="truncate">{child.name}</span>
+                      </a>
+                    </SidebarMenuSubItem>
+                  )
+                })}
               </SidebarMenuSub>
             </motion.div>
           )}
