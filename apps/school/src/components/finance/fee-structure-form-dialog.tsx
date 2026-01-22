@@ -3,6 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { IconLoader2 } from '@tabler/icons-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { Button } from '@workspace/ui/components/button'
 import {
   Dialog,
@@ -32,7 +33,7 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { useTranslations } from '@/i18n'
-import { feeTypesKeys } from '@/lib/queries/fee-types'
+import { feeTypesKeys, feeTypesOptions } from '@/lib/queries/fee-types'
 import { createNewFeeStructure } from '@/school/functions/fee-structures'
 import { getSchoolYearContext } from '@/school/middleware/school-context'
 
@@ -55,6 +56,8 @@ interface FeeStructureFormDialogProps {
 export function FeeStructureFormDialog({ open, onOpenChange }: FeeStructureFormDialogProps) {
   const t = useTranslations()
   const queryClient = useQueryClient()
+
+  const { data: feeTypes } = useQuery(feeTypesOptions.list())
 
   const form = useForm<FeeStructureFormData>({
     resolver: zodResolver(feeStructureFormSchema) as never,
@@ -117,6 +120,35 @@ export function FeeStructureFormDialog({ open, onOpenChange }: FeeStructureFormD
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="feeTypeId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
+                    Type de frais
+                    {' '}
+                    *
+                  </FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors">
+                        <SelectValue placeholder="Sélectionner un type de frais" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">
+                      {feeTypes?.map(ft => (
+                        <SelectItem key={ft.id} value={ft.id} className="rounded-lg cursor-pointer focus:bg-primary/10">
+                          {ft.name} ({ft.code})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="amount"
