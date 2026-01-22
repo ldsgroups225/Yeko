@@ -48,14 +48,19 @@ export function LoginForm() {
   const onLoginSubmit = async (data: LoginFormData) => {
     setIsLoading(true)
     try {
-      await authClient.signIn.email({
+      const result = await authClient.signIn.email({
         email: data.email,
         password: data.password,
         callbackURL: '/dashboard',
       })
-      toast.success(t?.auth?.login?.success?.() || 'Connexion réussie')
+
+      if (result.error) {
+        toast.error(result.error.message || t?.auth?.login?.error?.() || 'Erreur de connexion')
+      } else {
+        toast.success(t?.auth?.login?.success?.() || 'Connexion réussie')
+      }
     }
-    catch {
+    catch (error) {
       toast.error(t?.auth?.login?.error?.() || 'Erreur de connexion')
     }
     finally {
