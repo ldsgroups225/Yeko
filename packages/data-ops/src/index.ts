@@ -38,9 +38,64 @@ export * from "./queries/schools";
 export * from "./queries/student-attendance";
 export * from "./queries/student-fees";
 export * from "./queries/students";
-export * from "./queries/teacher-app";
+
+// Explicitly handle teacher-app exports to avoid conflicts
+export {
+  completeTeacherClassSession,
+  createHomeworkAssignment,
+  createTeacherClassSession,
+  deleteHomeworkAssignment,
+  getClassSubjectInfo,
+  getCurrentTermForSchoolYear,
+  getHomeworkById,
+  getMessageDetailsQuery,
+  getMessageTemplatesQuery,
+  getSessionParticipationGrades,
+  getTeacherActiveSession,
+  getTeacherAssignedClasses,
+  getTeacherClassSessionById,
+  getTeacherDaySchedule,
+  getTeacherHomework,
+  getTeacherMessagesQuery,
+  getTeacherNotificationsQuery,
+  getTeacherPendingGradesCount,
+  getTeacherRecentMessages,
+  getTeacherSessionHistory,
+  getTeacherUnreadMessagesCount,
+  getTeacherWeeklySchedule,
+  markMessageAsRead,
+  searchParentsForTeacher,
+  sendTeacherMessage,
+  submitStudentGrades,
+  updateHomeworkAssignment,
+  upsertParticipationGrades,
+} from "./queries/teacher-app";
+
 export * from "./queries/teacher-attendance";
-export * from "./queries/teacher-student-attendance";
+
+export {
+  addStudentToClass as addTeacherStudentToClass,
+  getClassDetails as getTeacherClassDetails,
+  getTeacherClasses,
+  getClassStats as getTeacherClassStats,
+  getClassStudents as getTeacherClassStudents,
+  removeStudentFromClass as removeTeacherStudentFromClass,
+} from "./queries/teacher-classes";
+
+export * from "./queries/teacher-notes";
+export * from "./queries/teacher-schedule";
+
+export {
+  bulkSaveAttendance,
+  getClassRosterForAttendance,
+  getOrCreateAttendanceSession,
+  getClassAttendanceRates as getTeacherClassAttendanceRates,
+  getClassAttendanceStats as getTeacherClassAttendanceStats,
+  getStudentAttendanceHistory as getTeacherStudentAttendanceHistory,
+  getStudentAttendanceTrend as getTeacherStudentAttendanceTrend,
+  saveStudentAttendance,
+} from "./queries/teacher-student-attendance";
+
 export * from "./queries/teacher-subjects";
 export * from "./queries/timetables";
 export * from "./queries/transactions";
