@@ -22,7 +22,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@workspace/ui/components/form'
-
 import { Input } from '@workspace/ui/components/input'
 import {
   Select,
@@ -37,9 +36,10 @@ import { z } from 'zod'
 import { useTranslations } from '@/i18n'
 import { feeTypesKeys } from '@/lib/queries/fee-types'
 import { feeCategories, feeCategoryLabels } from '@/schemas/fee-type'
-import { createNewFeeType } from '@/school/functions/fee-types'
+import { createNewFeeType, updateExistingFeeType } from '@/school/functions/fee-types'
 
 const feeTypeFormSchema = z.object({
+  id: z.string().optional(),
   code: z.string().min(1, 'Code requis').max(20, 'Code trop long'),
   name: z.string().min(1, 'Nom requis').max(100, 'Nom trop long'),
   nameEn: z.string().max(100).optional(),
@@ -54,11 +54,13 @@ type FeeTypeFormData = z.output<typeof feeTypeFormSchema>
 interface FeeTypeFormDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  editData?: FeeTypeFormData | null
 }
 
-export function FeeTypeFormDialog({ open, onOpenChange }: FeeTypeFormDialogProps) {
+export function FeeTypeFormDialog({ open, onOpenChange, editData }: FeeTypeFormDialogProps) {
   const t = useTranslations()
   const queryClient = useQueryClient()
+  const isEditMode = !!editData
 
   const form = useForm<FeeTypeFormData>({
     resolver: zodResolver(feeTypeFormSchema) as never,
@@ -73,7 +75,38 @@ export function FeeTypeFormDialog({ open, onOpenChange }: FeeTypeFormDialogProps
     },
   })
 
-  const mutation = useMutation({
+  // Reset form when opening/closing or switching modes
+  const resetForm = () => {
+    if (editData) {
+      form.reset({
+        id: editData.id,
+        code: editData.code,
+        name: editData.name,
+        nameEn: editData.nameEn,
+        category: editData.category,
+        isMandatory: editData.isMandatory,
+        isRecurring: editData.isRecurring,
+        displayOrder: editData.displayOrder,
+      })
+    } else {
+      form.reset({
+        code: '',
+        name: '',
+        nameEn: '',
+        category: 'tuition',
+        isMandatory: true,
+        isRecurring: true,
+        displayOrder: 0,
+      })
+    }
+  }
+
+  // Reset form when editData changes
+  if (open && form.formState.isDirty === false && editData) {
+    resetForm()
+  }
+
+  const createMutation = useMutation({
     mutationFn: (data: FeeTypeFormData) =>
       createNewFeeType({
         data: {
@@ -89,7 +122,32 @@ export function FeeTypeFormDialog({ open, onOpenChange }: FeeTypeFormDialogProps
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: feeTypesKeys.all })
       toast.success(t.finance.feeTypes.created())
-      form.reset()
+      resetForm()
+      onOpenChange(false)
+    },
+    onError: (err: Error) => {
+      toast.error(err.message)
+    },
+  })
+
+  const updateMutation = useMutation({
+    mutationFn: (data: FeeTypeFormData) =>
+      updateExistingFeeType({
+        data: {
+          id: data.id!,
+          code: data.code,
+          name: data.name,
+          nameEn: data.nameEn,
+          category: data.category,
+          isMandatory: data.isMandatory,
+          isRecurring: data.isRecurring,
+          displayOrder: data.displayOrder,
+        },
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: feeTypesKeys.all })
+      toast.success('Type de frais mis à jour')
+      resetForm()
       onOpenChange(false)
     },
     onError: (err: Error) => {
@@ -98,16 +156,31 @@ export function FeeTypeFormDialog({ open, onOpenChange }: FeeTypeFormDialogProps
   })
 
   const onSubmit = (data: FeeTypeFormData) => {
-    mutation.mutate(data)
+    if (isEditMode) {
+      updateMutation.mutate(data)
+    } else {
+      createMutation.mutate(data)
+    }
   }
 
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!newOpen) {
+      resetForm()
+    }
+    onOpenChange(newOpen)
+  }
+
+  const isPending = createMutation.isPending || updateMutation.isPending
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[500px] backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold">{t.finance.feeTypes.create()}</DialogTitle>
+          <DialogTitle className="text-xl font-bold">
+            {isEditMode ? 'Modifier le type de frais' : t.finance.feeTypes.create()}
+          </DialogTitle>
           <DialogDescription className="text-muted-foreground/80">
-            {t.finance.feeTypes.createDescription()}
+            {isEditMode ? 'Modifier les informations du type de frais' : t.finance.feeTypes.createDescription()}
           </DialogDescription>
         </DialogHeader>
 
@@ -255,16 +328,16 @@ export function FeeTypeFormDialog({ open, onOpenChange }: FeeTypeFormDialogProps
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => onOpenChange(false)}
+                onClick={() => handleOpenChange(false)}
                 className="rounded-xl border-border/40"
               >
                 {t.common.cancel()}
               </Button>
-              <Button type="submit" disabled={mutation.isPending} className="rounded-xl shadow-lg shadow-primary/20">
-                {mutation.isPending && (
+              <Button type="submit" disabled={isPending} className="rounded-xl shadow-lg shadow-primary/20">
+                {isPending && (
                   <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                {t.common.save()}
+                {isEditMode ? t.common.save() : t.finance.feeTypes.create()}
               </Button>
             </DialogFooter>
           </form>
