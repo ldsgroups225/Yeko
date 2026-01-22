@@ -3,6 +3,7 @@ import {
   IconCircleCheck,
   IconClock,
   IconHelpCircle,
+  IconLoader,
   IconMail,
   IconMessage,
   IconPhone,
@@ -11,11 +12,13 @@ import {
   IconTrendingUp,
   IconUsers,
 } from '@tabler/icons-react'
+import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'
 import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { Input } from '@workspace/ui/components/input'
+import { recentTicketsQueryOptions, supportQueries, ticketStatsQueryOptions } from '@/integrations/tanstack-query/support-options'
 import { useEffect } from 'react'
 import { useLogger } from '@/lib/logger'
 
@@ -33,69 +36,9 @@ function Support() {
     })
   }, [logger])
 
-  // Mock data for demonstration - will be replaced with real data from Phase 5+
-  const supportStats = {
-    totalTickets: 234,
-    openTickets: 45,
-    inProgressTickets: 12,
-    resolvedTickets: 177,
-    averageResolutionTime: '2.3 hours',
-    satisfactionScore: 4.6,
-  }
-
-  const recentTickets = [
-    {
-      id: 1,
-      title: 'Impossible d\'accéder aux notes des étudiants',
-      school: 'Lycée Saint-Exupéry',
-      category: 'Problème Technique',
-      priority: 'Haute',
-      status: 'open',
-      createdAt: '2025-01-22 14:30',
-      lastUpdate: '2025-01-22 16:45',
-      assignee: 'Jean Dupont',
-    },
-    {
-      id: 2,
-      title: 'Demande de modification de programme',
-      school: 'Collège Jean-Moulin',
-      category: 'Demande de Fonctionnalité',
-      priority: 'Moyenne',
-      status: 'in_progress',
-      createdAt: '2025-01-22 11:20',
-      lastUpdate: '2025-01-22 15:30',
-      assignee: 'Jeanne Martin',
-    },
-    {
-      id: 3,
-      title: 'Problème d\'authentification',
-      school: 'Ecole Primaire Victor Hugo',
-      category: 'Authentification',
-      priority: 'Haute',
-      status: 'resolved',
-      createdAt: '2025-01-22 09:15',
-      lastUpdate: '2025-01-22 10:30',
-      assignee: 'Robert Bernard',
-    },
-    {
-      id: 4,
-      title: 'Erreur de génération de bulletin',
-      school: 'Lycée Marie Curie',
-      category: 'Rapport de Bogue',
-      priority: 'Moyenne',
-      status: 'open',
-      createdAt: '2025-01-21 16:45',
-      lastUpdate: '2025-01-21 16:45',
-      assignee: 'Non assigné',
-    },
-  ]
-
-  const categories = [
-    { name: 'Problème Technique', count: 89, variant: 'destructive' as const },
-    { name: 'Demande de Fonctionnalité', count: 45, variant: 'default' as const },
-    { name: 'Rapport de Bogue', count: 67, variant: 'secondary' as const },
-    { name: 'Authentification', count: 33, variant: 'secondary' as const },
-  ]
+  // Fetch real data using TanStack Query
+  const { data: stats, isLoading: statsLoading } = useQuery(ticketStatsQueryOptions())
+  const { data: recentTicketsData, isLoading: ticketsLoading } = useQuery(recentTicketsQueryOptions(5))
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -120,6 +63,13 @@ function Support() {
             Résolu
           </Badge>
         )
+      case 'closed':
+        return (
+          <Badge variant="outline">
+            <IconCircleCheck className="mr-1 h-3 w-3" />
+            Fermé
+          </Badge>
+        )
       default:
         return <Badge variant="secondary">{status}</Badge>
     }
@@ -127,14 +77,38 @@ function Support() {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'Haute':
-        return 'text-destructive bg-destructive/10 dark:bg-destructive/20'
-      case 'Moyenne':
-        return 'text-secondary bg-secondary/10 dark:bg-secondary/20'
-      case 'Faible':
-        return 'text-primary bg-primary/10 dark:bg-primary/20'
+      case 'critical':
+        return 'text-red-600 bg-red-100 dark:bg-red-900/30'
+      case 'high':
+        return 'text-orange-600 bg-orange-100 dark:bg-orange-900/30'
+      case 'medium':
+        return 'text-yellow-600 bg-yellow-100 dark:bg-yellow-900/30'
+      case 'low':
+        return 'text-green-600 bg-green-100 dark:bg-green-900/30'
       default:
-        return 'text-muted-foreground bg-muted dark:bg-muted/80'
+        return 'text-muted-foreground bg-muted'
+    }
+  }
+
+  const formatPriority = (priority: string): string => {
+    switch (priority) {
+      case 'critical': return 'Critique'
+      case 'high': return 'Haute'
+      case 'medium': return 'Moyenne'
+      case 'low': return 'Faible'
+      default: return priority
+    }
+  }
+
+  const formatCategory = (category: string): string => {
+    switch (category) {
+      case 'technical': return 'Problème Technique'
+      case 'feature': return 'Demande de Fonctionnalité'
+      case 'bug': return 'Rapport de Bogue'
+      case 'billing': return 'Facturation'
+      case 'account': return 'Compte'
+      case 'other': return 'Autre'
+      default: return category
     }
   }
 
@@ -168,7 +142,11 @@ function Support() {
             <IconHelpCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{supportStats.totalTickets}</div>
+            {statsLoading ? (
+              <div className="h-8 w-16 animate-pulse bg-muted rounded" />
+            ) : (
+              <div className="text-2xl font-bold">{stats?.total ?? 0}</div>
+            )}
             <p className="text-xs text-muted-foreground">Depuis le début</p>
           </CardContent>
         </Card>
@@ -179,7 +157,11 @@ function Support() {
             <IconAlertCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{supportStats.openTickets}</div>
+            {statsLoading ? (
+              <div className="h-8 w-16 animate-pulse bg-muted rounded" />
+            ) : (
+              <div className="text-2xl font-bold">{stats?.open ?? 0}</div>
+            )}
             <p className="text-xs text-muted-foreground">Nécessitent une attention</p>
           </CardContent>
         </Card>
@@ -190,7 +172,11 @@ function Support() {
             <IconClock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{supportStats.inProgressTickets}</div>
+            {statsLoading ? (
+              <div className="h-8 w-16 animate-pulse bg-muted rounded" />
+            ) : (
+              <div className="text-2xl font-bold">{stats?.inProgress ?? 0}</div>
+            )}
             <p className="text-xs text-muted-foreground">En cours de traitement</p>
           </CardContent>
         </Card>
@@ -201,7 +187,11 @@ function Support() {
             <IconCircleCheck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{supportStats.resolvedTickets}</div>
+            {statsLoading ? (
+              <div className="h-8 w-16 animate-pulse bg-muted rounded" />
+            ) : (
+              <div className="text-2xl font-bold">{stats?.resolved ?? 0}</div>
+            )}
             <p className="text-xs text-muted-foreground">Terminés</p>
           </CardContent>
         </Card>
@@ -212,7 +202,13 @@ function Support() {
             <IconClock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{supportStats.averageResolutionTime}</div>
+            {statsLoading ? (
+              <div className="h-8 w-20 animate-pulse bg-muted rounded" />
+            ) : (
+              <div className="text-2xl font-bold">
+                {stats?.averageResolutionTime ? `${stats.averageResolutionTime.toFixed(1)}h` : 'N/A'}
+              </div>
+            )}
             <p className="text-xs text-muted-foreground">Moyenne</p>
           </CardContent>
         </Card>
@@ -223,10 +219,13 @@ function Support() {
             <IconUsers className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {supportStats.satisfactionScore}
-              /5
-            </div>
+            {statsLoading ? (
+              <div className="h-8 w-16 animate-pulse bg-muted rounded" />
+            ) : (
+              <div className="text-2xl font-bold">
+                {stats?.satisfactionScore ? `${stats.satisfactionScore.toFixed(1)}/5` : 'N/A'}
+              </div>
+            )}
             <p className="text-xs text-muted-foreground">Note utilisateur</p>
           </CardContent>
         </Card>
@@ -242,50 +241,68 @@ function Support() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {recentTickets.map(ticket => (
-                <div
-                  key={ticket.id}
-                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
-                >
-                  <div className="flex items-center space-x-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                      <IconMessage className="h-5 w-5 text-primary" />
+            {ticketsLoading ? (
+              <div className="space-y-4">
+                {[1, 2, 3, 4].map(i => (
+                  <div key={i} className="flex items-center space-x-4 p-4 border rounded-lg">
+                    <div className="h-10 w-10 animate-pulse bg-muted rounded-lg" />
+                    <div className="flex-1 space-y-2">
+                      <div className="h-4 w-3/4 animate-pulse bg-muted rounded" />
+                      <div className="h-3 w-1/2 animate-pulse bg-muted rounded" />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h4 className="text-sm font-medium truncate">{ticket.title}</h4>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(ticket.priority)}`}>
-                          {ticket.priority}
-                        </span>
-                        {getStatusBadge(ticket.status)}
+                  </div>
+                ))}
+              </div>
+            ) : recentTicketsData && recentTicketsData.length > 0 ? (
+              <div className="space-y-4">
+                {recentTicketsData.map(ticket => (
+                  <div
+                    key={ticket.id}
+                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
+                  >
+                    <div className="flex items-center space-x-4">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                        <IconMessage className="h-5 w-5 text-primary" />
                       </div>
-                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                        <span>{ticket.school}</span>
-                        <span>•</span>
-                        <span>{ticket.category}</span>
-                        <span>•</span>
-                        <span>
-                          Assigné à:
-                          {ticket.assignee}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-4 text-xs text-muted-foreground mt-1">
-                        <span>
-                          Créé:
-                          {ticket.createdAt}
-                        </span>
-                        <span>•</span>
-                        <span>
-                          Mis à jour:
-                          {ticket.lastUpdate}
-                        </span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h4 className="text-sm font-medium truncate">{ticket.title}</h4>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(ticket.priority)}`}>
+                            {formatPriority(ticket.priority)}
+                          </span>
+                          {getStatusBadge(ticket.status)}
+                        </div>
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                          {ticket.schoolName && (
+                            <>
+                              <span>{ticket.schoolName}</span>
+                              <span>•</span>
+                            </>
+                          )}
+                          <span>{formatCategory(ticket.category)}</span>
+                          {ticket.assigneeName && (
+                            <>
+                              <span>•</span>
+                              <span>Assigné à: {ticket.assigneeName}</span>
+                            </>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground mt-1">
+                          <span>
+                            Créé: {ticket.createdAt instanceof Date ? ticket.createdAt.toLocaleDateString('fr-FR') : String(ticket.createdAt)}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <IconMessage className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>Aucun ticket de support disponible</p>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -298,19 +315,9 @@ function Support() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {categories.map(category => (
-                <div key={category.name} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium">{category.name}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant={category.variant}>
-                      {category.count}
-                    </Badge>
-                  </div>
-                </div>
-              ))}
+            <div className="text-center py-8 text-muted-foreground">
+              <IconLoader className="h-12 w-12 mx-auto mb-4 opacity-50 animate-spin" />
+              <p>Chargement des catégories...</p>
             </div>
 
             <div className="mt-6 pt-6 border-t">
@@ -353,24 +360,18 @@ function Support() {
         </CardContent>
       </Card>
 
-      {/* Coming Soon */}
+      {/* System Status */}
       <Card>
-        <CardContent className="py-12">
-          <div className="text-center">
-            <IconHelpCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Fonctionnalités de Support Avancées Bientôt Disponibles</h3>
-            <p className="text-muted-foreground mb-4">
-              Le CRM et système de support complet sera disponible dans la Phase 5: Gestion Scolaire (section CRM)
-            </p>
-            <div className="text-sm text-muted-foreground">
-              <p>Fonctionnalités à venir:</p>
-              <ul className="mt-2 space-y-1">
-                <li>• Flux de travail avancé de gestion des tickets</li>
-                <li>• Intégration de la base de connaissances</li>
-                <li>• Assignation automatique des tickets</li>
-                <li>• Enquêtes de satisfaction client</li>
-                <li>• Analytiques de performance de l'équipe de support</li>
-              </ul>
+        <CardContent className="py-6">
+          <div className="flex items-center gap-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30">
+              <IconCircleCheck className="h-5 w-5 text-green-600 dark:text-green-400" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold">Système de Support Opérationnel</h3>
+              <p className="text-muted-foreground">
+                Le système de support et CRM est maintenant actif avec {stats?.total ?? 0} tickets traités.
+              </p>
             </div>
           </div>
         </CardContent>
