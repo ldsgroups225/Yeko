@@ -1,16 +1,16 @@
-import { IconSchool, IconChevronRight } from '@tabler/icons-react'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { IconChevronRight, IconSchool } from "@tabler/icons-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute("/")({
   component: IndexComponent,
-})
+});
 
 function IndexComponent() {
   return (
     <main className="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8">
       <div className="w-full max-w-md animate-in fade-in zoom-in-95 duration-500">
         <div className="bg-card rounded-xl shadow-lg border border-border/50 p-8 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-transparent pointer-events-none" />
 
           <div className="relative space-y-6">
             <div className="flex justify-center">
@@ -49,5 +49,5 @@ function IndexComponent() {
         </p>
       </div>
     </main>
-  )
+  );
 }
