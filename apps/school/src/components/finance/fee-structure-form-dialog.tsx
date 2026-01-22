@@ -26,6 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@workspace/ui/components/select";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -35,7 +36,10 @@ import {
   feeTypesKeys,
   feeTypesOptions,
 } from "@/lib/queries";
-import { createNewFeeStructure } from "@/school/functions/fee-structures";
+import {
+  createNewFeeStructure,
+  updateExistingFeeStructure,
+} from "@/school/functions/fee-structures";
 import { getGrades } from "@/school/functions/grades";
 import { getSeries } from "@/school/functions/series";
 import { getSchoolYearContext } from "@/school/middleware/school-context";
@@ -62,11 +66,13 @@ type FeeStructureFormData = z.infer<typeof feeStructureFormSchema>;
 interface FeeStructureFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  initialData?: any;
 }
 
 export function FeeStructureFormDialog({
   open,
   onOpenChange,
+  initialData,
 }: FeeStructureFormDialogProps) {
   const t = useTranslations();
   const queryClient = useQueryClient();
@@ -94,6 +100,38 @@ export function FeeStructureFormDialog({
     },
   });
 
+  useEffect(() => {
+    if (open) {
+      if (initialData) {
+        form.reset({
+          feeTypeId: initialData.feeTypeId || "",
+          gradeId: initialData.gradeId || "all",
+          seriesId: initialData.seriesId || "all",
+          amount: String(initialData.amount || ""),
+          currency: initialData.currency || "XOF",
+          newStudentAmount: initialData.newStudentAmount
+            ? String(initialData.newStudentAmount)
+            : "",
+          effectiveDate: initialData.effectiveDate
+            ? new Date(initialData.effectiveDate).toISOString().split("T")[0]
+            : new Date().toISOString().split("T")[0],
+        });
+      } else {
+        form.reset({
+          feeTypeId: "",
+          gradeId: "all",
+          seriesId: "all",
+          amount: "",
+          currency: "XOF",
+          newStudentAmount: "",
+          effectiveDate: new Date().toISOString().split("T")[0],
+        });
+      }
+    }
+  }, [open, initialData, form]);
+
+  const isEditing = !!initialData;
+
   // Get selected fee type for display
   const selectedFeeType = feeTypes?.find(
     (ft) => ft.id === form.watch("feeTypeId"),
@@ -108,6 +146,24 @@ export function FeeStructureFormDialog({
 
       const gradeId = data.gradeId === "all" ? null : data.gradeId;
       const seriesId = data.seriesId === "all" ? null : data.seriesId;
+
+      if (isEditing) {
+        return updateExistingFeeStructure({
+          data: {
+            id: initialData.id,
+            feeTypeId: data.feeTypeId,
+            gradeId: gradeId?.trim() || null,
+            seriesId: seriesId?.trim() || null,
+            amount: data.amount,
+            currency: data.currency,
+            newStudentAmount:
+              data.newStudentAmount && data.newStudentAmount.trim() !== ""
+                ? data.newStudentAmount.trim()
+                : null,
+            effectiveDate: data.effectiveDate || null,
+          } as any,
+        });
+      }
 
       return createNewFeeStructure({
         data: {
@@ -128,7 +184,11 @@ export function FeeStructureFormDialog({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: feeTypesKeys.lists() });
       queryClient.invalidateQueries({ queryKey: feeStructuresKeys.lists() });
-      toast.success("Structure de frais créée avec succès");
+      toast.success(
+        isEditing
+          ? "Structure de frais modifiée avec succès"
+          : "Structure de frais créée avec succès",
+      );
       form.reset();
       onOpenChange(false);
     },
@@ -171,10 +231,14 @@ export function FeeStructureFormDialog({
       <DialogContent className="sm:max-w-[500px] backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">
-            Créer une structure de frais
+            {isEditing
+              ? "Modifier une structure de frais"
+              : "Créer une structure de frais"}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground/80">
-            Définir les frais pour une classe ou série
+            {isEditing
+              ? "Modifier les paramètres de cette structure"
+              : "Définir les frais pour une classe ou série"}
           </DialogDescription>
         </DialogHeader>
 
