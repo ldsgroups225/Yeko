@@ -710,7 +710,7 @@ export function ClassesTable({
       </AlertDialog>
 
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent className="max-w-2xl backdrop-blur-xl bg-card/95 border-border/40">
+        <DialogContent className="max-w-2xl sm:max-w-3xl backdrop-blur-xl bg-card/95 border-border/40">
           <DialogHeader>
             <DialogTitle>{t.dialogs.createClass.title()}</DialogTitle>
             <DialogDescription>

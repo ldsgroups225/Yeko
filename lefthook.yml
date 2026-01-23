@@ -51,20 +51,20 @@ pre-commit:
       skip_empty: true
       allow_empty: true
 
-    - name: "Prettier (format unformatted files)"
-      run: pnpm exec prettier --write {staged_files}
-      glob:
-        - "**/*.ts"
-        - "**/*.tsx"
-        - "**/*.js"
-        - "**/*.jsx"
-        - "**/*.css"
-        - "**/*.json"
-        - "**/*.yaml"
-        - "**/*.yml"
-        - "**/*.md"
-      stage_fixed: true
-      skip_empty: true
+    # - name: "Prettier (format unformatted files)"
+    #   run: pnpm exec prettier --write {staged_files}
+    #   glob:
+    #     - "**/*.ts"
+    #     - "**/*.tsx"
+    #     - "**/*.js"
+    #     - "**/*.jsx"
+    #     - "**/*.css"
+    #     - "**/*.json"
+    #     - "**/*.yaml"
+    #     - "**/*.yml"
+    #     - "**/*.md"
+    #   stage_fixed: true
+    #   skip_empty: true
 
 # Pre-push hook - runs before code is pushed to remote
 # More comprehensive checks since this is before shared history

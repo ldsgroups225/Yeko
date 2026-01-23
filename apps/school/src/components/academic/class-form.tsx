@@ -146,7 +146,9 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
             render={({ field }) => (
               <Select value={field.value || ''} onValueChange={field.onChange}>
                 <SelectTrigger className="bg-white/5 border-white/10 focus:ring-primary/40 h-11">
-                  <SelectValue placeholder={t.classes.selectGrade()} />
+                  <SelectValue placeholder={t.classes.selectGrade()}>
+                    {grades.find(g => g.id === field.value)?.name}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent className="backdrop-blur-xl bg-card/95 border-white/10">
                   {grades.map(g => (
@@ -171,7 +173,11 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
           </Label>
           <Select value={watch('seriesId') || '__none__'} onValueChange={v => setValue('seriesId', v === '__none__' ? null : v)}>
             <SelectTrigger className="bg-white/5 border-white/10 focus:ring-primary/40 h-11">
-              <SelectValue placeholder={t.classes.selectSeries()} />
+              <SelectValue placeholder={t.classes.selectSeries()}>
+                {watch('seriesId')
+                  ? series.find(s => s.id === watch('seriesId'))?.name
+                  : t.common.none()}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent className="backdrop-blur-xl bg-card/95 border-white/10">
               <SelectItem value="__none__">{t.common.none()}</SelectItem>
@@ -232,7 +238,19 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
           </Label>
           <Select value={watch('classroomId') || '__none__'} onValueChange={v => setValue('classroomId', v === '__none__' ? null : v)}>
             <SelectTrigger className="bg-white/5 border-white/10 focus:ring-primary/40 h-11">
-              <SelectValue placeholder={t.classes.selectClassroom()} />
+              <SelectValue placeholder={t.classes.selectClassroom()}>
+                {watch('classroomId')
+                  ? (() => {
+                      const c = classrooms.find(cr => cr.classroom.id === watch('classroomId'))
+                      return c ? (
+                        <div className="flex items-center gap-2">
+                          <span>{c.classroom.name}</span>
+                          <Badge variant="outline" className="text-[10px] bg-white/5 border-white/10">{c.classroom.code}</Badge>
+                        </div>
+                      ) : null
+                    })()
+                  : t.common.none()}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent className="backdrop-blur-xl bg-card/95 border-white/10">
               <SelectItem value="__none__">{t.common.none()}</SelectItem>
@@ -256,7 +274,11 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
           </Label>
           <Select value={watch('homeroomTeacherId') || '__none__'} onValueChange={v => setValue('homeroomTeacherId', v === '__none__' ? null : v)}>
             <SelectTrigger className="bg-white/5 border-white/10 focus:ring-primary/40 h-11">
-              <SelectValue placeholder={t.classes.selectTeacher()} />
+              <SelectValue placeholder={t.classes.selectTeacher()}>
+                {watch('homeroomTeacherId')
+                  ? teachersData.teachers.find(tr => tr.id === watch('homeroomTeacherId'))?.user.name
+                  : t.common.none()}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent className="backdrop-blur-xl bg-card/95 border-white/10">
               <SelectItem value="__none__">{t.common.none()}</SelectItem>
@@ -279,7 +301,19 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
           </Label>
           <Select value={watch('status') || 'active'} onValueChange={v => setValue('status', v as 'active' | 'archived')}>
             <SelectTrigger className="bg-white/5 border-white/10 focus:ring-primary/40 h-11">
-              <SelectValue />
+              <SelectValue>
+                {watch('status') === 'active' ? (
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-primary" />
+                    {t.common.active()}
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-muted-foreground" />
+                    {t.common.archived()}
+                  </div>
+                )}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent className="backdrop-blur-xl bg-card/95 border-white/10">
               <SelectItem value="active">

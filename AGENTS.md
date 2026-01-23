@@ -18,6 +18,12 @@ Cascade should emulate the specialized roles defined in `.kiro/subagents/`. If a
 
 - **French-First:** All UI strings must be localized using the i18n patterns defined in project specs. Hardcoding is prohibited.
 
+## UI/UX Standards
+
+- **Select Component Labels:** When using `Select` components, the `SelectTrigger` MUST display the human-readable label (e.g., name, title) of the selected item, NEVER the internal ID or raw value (like `__none__`).
+  - **Implementation:** Explicitly pass the resolved label as children to `SelectValue`.
+  - **Example:** `<SelectValue>{items.find(i => i.id === value)?.name}</SelectValue>` instead of `<SelectValue />`.
+
 ## Database Protocols
 
 - **Neon HTTP Driver:** AVOID transactions when using neon-http driver. The driver doesn't support database transactions and will throw "No transactions support in neon-http driver" errors.
