@@ -21,8 +21,7 @@
     "react-hook-form": "^7.0.0"
   },
   "dependencies": {
-    "@base-ui-components/react": "catalog:",
-    "@radix-ui/react-slot": "catalog:",
+    "@base-ui/react": "catalog:",
     "@tabler/icons-react": "catalog:",
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
@@ -31,7 +30,7 @@
     "embla-carousel-react": "catalog:",
     "input-otp": "catalog:",
     "next-themes": "catalog:",
-    "react-day-picker": "catalog:conflicts_react-day-picker_h9_13_0",
+    "react-day-picker": "catalog:",
     "react-resizable-panels": "catalog:",
     "recharts": "catalog:",
     "sonner": "catalog:",
