@@ -2,7 +2,7 @@
   "name": "@repo/data-ops",
   "type": "module",
   "version": "1.0.0",
-  "packageManager": "pnpm@10.26.0",
+  "packageManager": "pnpm@10.28.1",
   "description": "Manage auth, database, schemas, and queries",
   "author": "",
   "license": "ISC",
