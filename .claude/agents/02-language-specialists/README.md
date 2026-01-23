@@ -70,6 +70,12 @@ Go language expert focusing on concurrent programming, channels, and goroutines.
 
 **Use when:** Building concurrent systems, creating microservices in Go, developing CLI tools, or implementing high-performance network services.
 
+### [**i18n-specialist**](i18n-specialist.md) - Internationalization and localization expert
+
+Internationalization specialist focusing on eliminating hardcoded text and implementing robust multi-language support. Masters automated text detection, translation management, and cultural adaptation across different locales. Implements iterative workflows for comprehensive localization coverage.
+
+**Use when:** Detecting and fixing hardcoded text, implementing i18n/l10n solutions, managing translation files, optimizing for multiple languages, or ensuring cultural adaptation in web applications.
+
 ### [**java-architect**](java-architect.md) - Enterprise Java expert
 
 Java ecosystem master with expertise in Spring, Jakarta EE, and enterprise patterns. Specializes in building robust, scalable applications with modern Java features and frameworks.
@@ -174,32 +180,33 @@ Vue.js framework specialist mastering the Composition API, reactivity system, an
 
 ## Quick Selection Guide
 
-| Language/Framework | Subagent                        | Best For                                       |
-| ------------------ | ------------------------------- | ---------------------------------------------- |
-| Angular            | **angular-architect**           | Enterprise web apps, complex SPAs              |
-| C++                | **cpp-pro**                     | Systems programming, performance-critical code |
-| C#/.NET            | **csharp-developer**            | Windows apps, enterprise software              |
-| Django             | **django-developer**            | Python web apps, REST APIs                     |
-| .NET Core          | **dotnet-core-expert**          | Cross-platform .NET, microservices             |
-| .NET Framework     | **dotnet-framework-4.8-expert** | Legacy enterprise apps, Windows services       |
-| Elixir             | **elixir-expert**               | Fault-tolerant systems, Phoenix/LiveView       |
-| Flutter            | **flutter-expert**              | Cross-platform mobile apps                     |
-| Go                 | **golang-pro**                  | Concurrent systems, microservices              |
-| Java               | **java-architect**              | Enterprise applications                        |
-| JavaScript         | **javascript-pro**              | Web development, Node.js                       |
-| Kotlin             | **kotlin-specialist**           | Android apps, modern JVM                       |
-| Laravel            | **laravel-specialist**          | PHP web applications                           |
-| Next.js            | **nextjs-developer**            | Full-stack React apps                          |
-| PHP                | **php-pro**                     | Web development, APIs                          |
-| Python             | **python-pro**                  | General purpose, data science                  |
-| Rails              | **rails-expert**                | Rapid web development                          |
-| React              | **react-specialist**            | Modern web UIs                                 |
-| Rust               | **rust-engineer**               | Systems software, WebAssembly                  |
-| Spring Boot        | **spring-boot-engineer**        | Java microservices                             |
-| SQL                | **sql-pro**                     | Database queries, optimization                 |
-| Swift              | **swift-expert**                | iOS/macOS development                          |
-| TypeScript         | **typescript-pro**              | Type-safe JavaScript                           |
-| Vue                | **vue-expert**                  | Progressive web apps                           |
+| Language/Framework | Subagent                        | Best For                                        |
+| ------------------ | ------------------------------- | ----------------------------------------------- |
+| Angular            | **angular-architect**           | Enterprise web apps, complex SPAs               |
+| C++                | **cpp-pro**                     | Systems programming, performance-critical code  |
+| C#/.NET            | **csharp-developer**            | Windows apps, enterprise software               |
+| Django             | **django-developer**            | Python web apps, REST APIs                      |
+| .NET Core          | **dotnet-core-expert**          | Cross-platform .NET, microservices              |
+| .NET Framework     | **dotnet-framework-4.8-expert** | Legacy enterprise apps, Windows services        |
+| Elixir             | **elixir-expert**               | Fault-tolerant systems, Phoenix/LiveView        |
+| Flutter            | **flutter-expert**              | Cross-platform mobile apps                      |
+| Go                 | **golang-pro**                  | Concurrent systems, microservices               |
+| i18n/l10n          | **i18n-specialist**             | Multi-language apps, hardcoded text elimination |
+| Java               | **java-architect**              | Enterprise applications                         |
+| JavaScript         | **javascript-pro**              | Web development, Node.js                        |
+| Kotlin             | **kotlin-specialist**           | Android apps, modern JVM                        |
+| Laravel            | **laravel-specialist**          | PHP web applications                            |
+| Next.js            | **nextjs-developer**            | Full-stack React apps                           |
+| PHP                | **php-pro**                     | Web development, APIs                           |
+| Python             | **python-pro**                  | General purpose, data science                   |
+| Rails              | **rails-expert**                | Rapid web development                           |
+| React              | **react-specialist**            | Modern web UIs                                  |
+| Rust               | **rust-engineer**               | Systems software, WebAssembly                   |
+| Spring Boot        | **spring-boot-engineer**        | Java microservices                              |
+| SQL                | **sql-pro**                     | Database queries, optimization                  |
+| Swift              | **swift-expert**                | iOS/macOS development                           |
+| TypeScript         | **typescript-pro**              | Type-safe JavaScript                            |
+| Vue                | **vue-expert**                  | Progressive web apps                            |
 
 ## Common Technology Stacks
 
