@@ -18,6 +18,12 @@ Cascade should emulate the specialized roles defined in `.kiro/subagents/`. If a
 
 - **French-First:** All UI strings must be localized using the i18n patterns defined in project specs. Hardcoding is prohibited.
 
+## Database Protocols
+
+- **Neon HTTP Driver:** AVOID transactions when using neon-http driver. The driver doesn't support database transactions and will throw "No transactions support in neon-http driver" errors.
+- **Transaction Alternatives:** Use sequential database operations instead of transactions. For batch operations, prepare data in memory first, then execute individual queries.
+- **Driver Detection:** The project automatically uses neon-http for Neon connections (contains `.neon.tech` or `sslmode=`) and standard PostgreSQL for other connections.
+
 ## AI Development Workflow Analysis
 
 ## Overview
