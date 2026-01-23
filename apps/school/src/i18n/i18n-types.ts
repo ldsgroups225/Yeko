@@ -378,6 +378,10 @@ type RootTranslation = {
 		 */
 		deselectAll: string
 		/**
+		 * S​é​l​e​c​t​i​o​n​n​e​r​ ​l​a​ ​l​i​g​n​e
+		 */
+		selectRow: string
+		/**
 		 * A​p​e​r​ç​u
 		 */
 		preview: string
@@ -3620,6 +3624,10 @@ type RootTranslation = {
 			 * M​o​n​t​a​n​t​ ​n​o​u​v​e​l​ ​é​l​è​v​e
 			 */
 			newStudentAmount: string
+			/**
+			 * T​o​u​s​ ​l​e​s​ ​n​i​v​e​a​u​x
+			 */
+			allLevels: string
 		}
 		accounts: {
 			/**
@@ -4626,6 +4634,36 @@ type RootTranslation = {
 			 * j​o​u​r​s
 			 */
 			daysAgo: string
+		}
+		discipline: {
+			/**
+			 * T​a​b​l​e​a​u​ ​d​e​ ​b​o​r​d​ ​R​e​s​p​o​n​s​a​b​l​e​ ​D​i​s​c​i​p​l​i​n​e
+			 */
+			title: string
+			/**
+			 * T​a​u​x​ ​d​e​ ​p​r​é​s​e​n​c​e
+			 */
+			presenceRate: string
+			/**
+			 * A​b​s​e​n​c​e​s
+			 */
+			absences: string
+			/**
+			 * R​e​t​a​r​d​s
+			 */
+			delays: string
+			/**
+			 * I​n​c​i​d​e​n​t​s
+			 */
+			incidents: string
+			/**
+			 * C​e​t​t​e​ ​s​e​m​a​i​n​e
+			 */
+			thisWeek: string
+			/**
+			 * A​u​j​o​u​r​d​'​h​u​i
+			 */
+			today: string
 		}
 	}
 	academic: {
@@ -6284,6 +6322,10 @@ type RootTranslation = {
 		 * S​a​l​l​e​ ​d​e​ ​c​l​a​s​s​e
 		 */
 		classroom: string
+		/**
+		 * S​t​a​t​i​s​t​i​q​u​e​s​ ​d​e​s​ ​s​a​l​l​e​s
+		 */
+		roomStatistics: string
 	}
 	schoolLife: {
 		/**
@@ -7571,6 +7613,10 @@ type RootTranslation = {
 			 * I​n​a​c​t​i​f
 			 */
 			statusInactive: string
+			/**
+			 * S​t​a​t​i​s​t​i​q​u​e​s​ ​d​e​s​ ​s​a​l​l​e​s
+			 */
+			roomStatistics: string
 			tabs: {
 				/**
 				 * I​n​f​o​r​m​a​t​i​o​n​s
@@ -7663,6 +7709,10 @@ type RootTranslation = {
 			 * O​c​c​u​p​a​t​i​o​n
 			 */
 			occupation: string
+			/**
+			 * S​t​a​t​i​s​t​i​q​u​e​s​ ​d​e​s​ ​s​a​l​l​e​s
+			 */
+			roomStatistics: string
 			/**
 			 * M​a​i​n​t​e​n​a​n​c​e
 			 */
@@ -7825,6 +7875,49 @@ type RootTranslation = {
 			 * V​a​l​i​d​a​t​i​o​n​s
 			 */
 			title: string
+		}
+	}
+	accounting: {
+		accounts: {
+			/**
+			 * S​u​p​p​r​i​m​e​r​ ​l​e​ ​c​o​m​p​t​e
+			 */
+			deleteAccount: string
+			/**
+			 * V​o​u​l​e​z​-​v​o​u​s​ ​v​r​a​i​m​e​n​t​ ​s​u​p​p​r​i​m​e​r​ ​c​e​ ​c​o​m​p​t​e​ ​?​ ​C​e​t​t​e​ ​a​c​t​i​o​n​ ​e​s​t​ ​i​r​r​é​v​e​r​s​i​b​l​e​.
+			 */
+			deleteAccountConfirm: string
+		}
+		feeStructures: {
+			/**
+			 * S​u​p​p​r​i​m​e​r​ ​l​a​ ​s​t​r​u​c​t​u​r​e​ ​d​e​ ​f​r​a​i​s
+			 */
+			deleteFeeStructure: string
+			/**
+			 * V​o​u​l​e​z​-​v​o​u​s​ ​v​r​a​i​m​e​n​t​ ​s​u​p​p​r​i​m​e​r​ ​c​e​t​t​e​ ​s​t​r​u​c​t​u​r​e​ ​d​e​ ​f​r​a​i​s​ ​?​ ​C​e​t​t​e​ ​a​c​t​i​o​n​ ​e​s​t​ ​i​r​r​é​v​e​r​s​i​b​l​e​.
+			 */
+			deleteFeeStructureConfirm: string
+		}
+		discounts: {
+			/**
+			 * S​u​p​p​r​i​m​e​r​ ​l​a​ ​r​é​d​u​c​t​i​o​n
+			 */
+			deleteDiscount: string
+			/**
+			 * V​o​u​l​e​z​-​v​o​u​s​ ​v​r​a​i​m​e​n​t​ ​s​u​p​p​r​i​m​e​r​ ​c​e​t​t​e​ ​r​é​d​u​c​t​i​o​n​ ​?​ ​C​e​t​t​e​ ​a​c​t​i​o​n​ ​e​s​t​ ​i​r​r​é​v​e​r​s​i​b​l​e​.
+			 */
+			deleteDiscountConfirm: string
+		}
+		feeTypes: {
+			/**
+			 * C​o​n​f​i​r​m​e​r​ ​l​a​ ​s​u​p​p​r​e​s​s​i​o​n
+			 */
+			deleteConfirmTitle: string
+			/**
+			 * Ê​t​e​s​-​v​o​u​s​ ​s​û​r​ ​d​e​ ​v​o​u​l​o​i​r​ ​s​u​p​p​r​i​m​e​r​ ​"​{​n​a​m​e​}​"​ ​?
+			 * @param {unknown} name
+			 */
+			deleteConfirmDescription: RequiredParams<'name'>
 		}
 	}
 }
@@ -8189,6 +8282,10 @@ export type TranslationFunctions = {
 		 * Tout désélectionner
 		 */
 		deselectAll: () => LocalizedString
+		/**
+		 * Sélectionner la ligne
+		 */
+		selectRow: () => LocalizedString
 		/**
 		 * Aperçu
 		 */
@@ -11398,6 +11495,10 @@ export type TranslationFunctions = {
 			 * Montant nouvel élève
 			 */
 			newStudentAmount: () => LocalizedString
+			/**
+			 * Tous les niveaux
+			 */
+			allLevels: () => LocalizedString
 		}
 		accounts: {
 			/**
@@ -12396,6 +12497,36 @@ export type TranslationFunctions = {
 			 * jours
 			 */
 			daysAgo: () => LocalizedString
+		}
+		discipline: {
+			/**
+			 * Tableau de bord Responsable Discipline
+			 */
+			title: () => LocalizedString
+			/**
+			 * Taux de présence
+			 */
+			presenceRate: () => LocalizedString
+			/**
+			 * Absences
+			 */
+			absences: () => LocalizedString
+			/**
+			 * Retards
+			 */
+			delays: () => LocalizedString
+			/**
+			 * Incidents
+			 */
+			incidents: () => LocalizedString
+			/**
+			 * Cette semaine
+			 */
+			thisWeek: () => LocalizedString
+			/**
+			 * Aujourd'hui
+			 */
+			today: () => LocalizedString
 		}
 	}
 	academic: {
@@ -14023,6 +14154,10 @@ export type TranslationFunctions = {
 		 * Salle de classe
 		 */
 		classroom: () => LocalizedString
+		/**
+		 * Statistiques des salles
+		 */
+		roomStatistics: () => LocalizedString
 	}
 	schoolLife: {
 		/**
@@ -15306,6 +15441,10 @@ export type TranslationFunctions = {
 			 * Inactif
 			 */
 			statusInactive: () => LocalizedString
+			/**
+			 * Statistiques des salles
+			 */
+			roomStatistics: () => LocalizedString
 			tabs: {
 				/**
 				 * Informations
@@ -15398,6 +15537,10 @@ export type TranslationFunctions = {
 			 * Occupation
 			 */
 			occupation: () => LocalizedString
+			/**
+			 * Statistiques des salles
+			 */
+			roomStatistics: () => LocalizedString
 			/**
 			 * Maintenance
 			 */
@@ -15560,6 +15703,48 @@ export type TranslationFunctions = {
 			 * Validations
 			 */
 			title: () => LocalizedString
+		}
+	}
+	accounting: {
+		accounts: {
+			/**
+			 * Supprimer le compte
+			 */
+			deleteAccount: () => LocalizedString
+			/**
+			 * Voulez-vous vraiment supprimer ce compte ? Cette action est irréversible.
+			 */
+			deleteAccountConfirm: () => LocalizedString
+		}
+		feeStructures: {
+			/**
+			 * Supprimer la structure de frais
+			 */
+			deleteFeeStructure: () => LocalizedString
+			/**
+			 * Voulez-vous vraiment supprimer cette structure de frais ? Cette action est irréversible.
+			 */
+			deleteFeeStructureConfirm: () => LocalizedString
+		}
+		discounts: {
+			/**
+			 * Supprimer la réduction
+			 */
+			deleteDiscount: () => LocalizedString
+			/**
+			 * Voulez-vous vraiment supprimer cette réduction ? Cette action est irréversible.
+			 */
+			deleteDiscountConfirm: () => LocalizedString
+		}
+		feeTypes: {
+			/**
+			 * Confirmer la suppression
+			 */
+			deleteConfirmTitle: () => LocalizedString
+			/**
+			 * Êtes-vous sûr de vouloir supprimer "{name}" ?
+			 */
+			deleteConfirmDescription: (arg: { name: unknown }) => LocalizedString
 		}
 	}
 }

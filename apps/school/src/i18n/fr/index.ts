@@ -95,6 +95,7 @@ const fr = {
       "Êtes-vous sûr de vouloir supprimer {name} ? Cette action est irréversible.",
     selectAll: "Tout sélectionner",
     deselectAll: "Tout désélectionner",
+    selectRow: "Sélectionner la ligne",
     preview: "Aperçu",
     download: "Télécharger",
     week: "Semaine",
@@ -997,6 +998,7 @@ const fr = {
       create: "Créer une structure",
       noFeeStructures: "Aucune structure tarifaire configurée",
       newStudentAmount: "Montant nouvel élève",
+      allLevels: "Tous les niveaux",
     },
     accounts: {
       title: "Plan comptable",
@@ -1295,6 +1297,15 @@ const fr = {
       today: "Aujourd'hui",
       yesterday: "Hier",
       daysAgo: "jours",
+    },
+    discipline: {
+      title: "Tableau de bord Responsable Discipline",
+      presenceRate: "Taux de présence",
+      absences: "Absences",
+      delays: "Retards",
+      incidents: "Incidents",
+      thisWeek: "Cette semaine",
+      today: "Aujourd'hui",
     },
   },
   academic: {
@@ -1809,6 +1820,7 @@ const fr = {
   },
   classrooms: {
     classroom: "Salle de classe",
+    roomStatistics: "Statistiques des salles",
   },
   schoolLife: {
     title: "Vie Scolaire",
@@ -2209,6 +2221,7 @@ const fr = {
       statusActive: "Actif",
       statusMaintenance: "Maintenance",
       statusInactive: "Inactif",
+      roomStatistics: "Statistiques des salles",
       tabs: {
         info: "Informations",
         classes: "Classes assignées",
@@ -2235,6 +2248,7 @@ const fr = {
       inactive: "Inactives",
       classroom: "Salle",
       occupation: "Occupation",
+      roomStatistics: "Statistiques des salles",
       maintenance: "Maintenance",
       details: "Détails",
       classes: "Classes",
@@ -2289,6 +2303,27 @@ const fr = {
     },
     validations: {
       title: "Validations",
+    },
+  },
+  accounting: {
+    accounts: {
+      deleteAccount: "Supprimer le compte",
+      deleteAccountConfirm:
+        "Voulez-vous vraiment supprimer ce compte ? Cette action est irréversible.",
+    },
+    feeStructures: {
+      deleteFeeStructure: "Supprimer la structure de frais",
+      deleteFeeStructureConfirm:
+        "Voulez-vous vraiment supprimer cette structure de frais ? Cette action est irréversible.",
+    },
+    discounts: {
+      deleteDiscount: "Supprimer la réduction",
+      deleteDiscountConfirm:
+        "Voulez-vous vraiment supprimer cette réduction ? Cette action est irréversible.",
+    },
+    feeTypes: {
+      deleteConfirmTitle: "Confirmer la suppression",
+      deleteConfirmDescription: 'Êtes-vous sûr de vouloir supprimer "{name}" ?',
     },
   },
 } satisfies BaseTranslation;

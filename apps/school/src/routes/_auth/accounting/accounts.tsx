@@ -168,8 +168,8 @@ function AccountsPage() {
           if (deletingId) deleteMutation.mutate(deletingId);
         }}
         isLoading={deleteMutation.isPending}
-        title="Supprimer le compte"
-        description="Voulez-vous vraiment supprimer ce compte ? Cette action est irréversible."
+        title={t.accounting.accounts.deleteAccount()}
+        description={t.accounting.accounts.deleteAccountConfirm()}
       />
     </div>
   );

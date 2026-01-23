@@ -105,7 +105,7 @@ export const getPresignedUploadUrl = createServerFn()
       console.error("Failed to generate presigned URL:", error);
       return {
         success: false as const,
-        error: "Erreur lors de la génération de l'URL de téléversement.",
+        error: "Failed to generate upload URL.",
         configured: true,
       };
     }

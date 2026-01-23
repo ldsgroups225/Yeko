@@ -78,6 +78,9 @@ export const en = {
     currency: "FCFA",
     timeAgo: "{{time}} ago",
     totalCount: "Total: {{count}}",
+    selectAll: "Select All",
+    deselectAll: "Deselect All",
+    selectRow: "Select Row",
   },
   nav: {
     dashboard: "Dashboard",
@@ -111,6 +114,7 @@ export const en = {
     settings: "Settings",
     spaces: "Spaces",
     classrooms: "Classrooms",
+    roomStatistics: "Room Statistics",
     schoolYears: "School Years",
     reportCardTemplates: "Report Card Templates",
   },
@@ -1942,6 +1946,27 @@ export const en = {
     studentMatricule: "AB2024C001",
     schoolEmail: "contact@school.ci",
     classSection: "A, B, C...",
+  },
+  accounting: {
+    accounts: {
+      deleteAccount: "Delete Account",
+      deleteAccountConfirm:
+        "Are you sure you want to delete this account? This action is irreversible.",
+    },
+    feeStructures: {
+      deleteFeeStructure: "Delete Fee Structure",
+      deleteFeeStructureConfirm:
+        "Are you sure you want to delete this fee structure? This action is irreversible.",
+    },
+    discounts: {
+      deleteDiscount: "Delete Discount",
+      deleteDiscountConfirm:
+        "Are you sure you want to delete this discount? This action is irreversible.",
+    },
+    feeTypes: {
+      deleteConfirmTitle: "Confirm Deletion",
+      deleteConfirmDescription: 'Are you sure you want to delete "{name}"?',
+    },
   },
 };
 

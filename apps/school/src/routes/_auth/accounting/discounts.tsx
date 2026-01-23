@@ -145,8 +145,8 @@ function DiscountsPage() {
           if (deletingId) deleteMutation.mutate(deletingId);
         }}
         isLoading={deleteMutation.isPending}
-        title="Supprimer la réduction"
-        description="Voulez-vous vraiment supprimer cette réduction ? Cette action est irréversible."
+        title={t.accounting.discounts.deleteDiscount()}
+        description={t.accounting.discounts.deleteDiscountConfirm()}
       />
     </div>
   );

@@ -1,5 +1,10 @@
-import { IconAlertTriangle, IconCircleCheck, IconClock } from '@tabler/icons-react'
-import { motion } from 'motion/react'
+import {
+  IconAlertTriangle,
+  IconCircleCheck,
+  IconClock,
+} from "@tabler/icons-react";
+import { motion } from "motion/react";
+import { useTranslations } from "@/i18n";
 
 const container = {
   hidden: { opacity: 0 },
@@ -9,14 +14,16 @@ const container = {
       staggerChildren: 0.1,
     },
   },
-}
+};
 
 const item = {
   hidden: { opacity: 0, y: 20 },
   show: { opacity: 1, y: 0 },
-}
+};
 
 export function DisciplineDashboard() {
+  const t = useTranslations();
+
   return (
     <motion.div
       className="space-y-6"
@@ -26,7 +33,7 @@ export function DisciplineDashboard() {
     >
       <div>
         <h1 className="text-3xl font-bold tracking-tight">
-          Tableau de bord Responsable Discipline
+          {t.dashboard.discipline.title()}
         </h1>
         <p className="text-muted-foreground">
           Suivi de la présence, ponctualité et conduite des élèves
@@ -41,37 +48,40 @@ export function DisciplineDashboard() {
         className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
       >
         <MetricCard
-          title="Taux de présence"
+          title={t.dashboard.discipline.presenceRate()}
           value="94.5%"
-          subtitle="Cette semaine"
+          subtitle={t.dashboard.discipline.thisWeek()}
           icon={IconCircleCheck}
           trend="positive"
         />
         <MetricCard
-          title="Absences"
+          title={t.dashboard.discipline.absences()}
           value="67"
-          subtitle="Aujourd'hui"
+          subtitle={t.dashboard.discipline.today()}
           icon={IconAlertTriangle}
           trend="negative"
         />
         <MetricCard
-          title="Retards"
+          title={t.dashboard.discipline.delays()}
           value="23"
-          subtitle="Aujourd'hui"
+          subtitle={t.dashboard.discipline.today()}
           icon={IconClock}
           trend="negative"
         />
         <MetricCard
-          title="Incidents"
+          title={t.dashboard.discipline.incidents()}
           value="5"
-          subtitle="Cette semaine"
+          subtitle={t.dashboard.discipline.thisWeek()}
           icon={IconAlertTriangle}
           trend="neutral"
         />
       </motion.div>
 
       {/* Today's Absences */}
-      <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
+      <motion.div
+        variants={item}
+        className="rounded-lg border border-border/40 bg-card p-6"
+      >
         <h2 className="mb-4 text-lg font-semibold">Absences du Jour</h2>
         <div className="space-y-3">
           <AbsenceItem
@@ -97,7 +107,10 @@ export function DisciplineDashboard() {
 
       {/* Conduct & Punctuality */}
       <div className="grid gap-4 lg:grid-cols-2">
-        <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
+        <motion.div
+          variants={item}
+          className="rounded-lg border border-border/40 bg-card p-6"
+        >
           <h2 className="mb-4 text-lg font-semibold">Incidents de Conduite</h2>
           <div className="space-y-3">
             <ConductItem
@@ -124,33 +137,57 @@ export function DisciplineDashboard() {
           </div>
         </motion.div>
 
-        <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
+        <motion.div
+          variants={item}
+          className="rounded-lg border border-border/40 bg-card p-6"
+        >
           <h2 className="mb-4 text-lg font-semibold">Retards Fréquents</h2>
           <div className="space-y-3">
-            <LateItem name="Ibrahim Traoré" class="6ème A" count={8} period="Ce mois" />
-            <LateItem name="Aisha Bamba" class="5ème B" count={6} period="Ce mois" />
-            <LateItem name="Yao Kouassi" class="4ème C" count={5} period="Ce mois" />
+            <LateItem
+              name="Ibrahim Traoré"
+              class="6ème A"
+              count={8}
+              period="Ce mois"
+            />
+            <LateItem
+              name="Aisha Bamba"
+              class="5ème B"
+              count={6}
+              period="Ce mois"
+            />
+            <LateItem
+              name="Yao Kouassi"
+              class="4ème C"
+              count={5}
+              period="Ce mois"
+            />
           </div>
         </motion.div>
       </div>
     </motion.div>
-  )
+  );
 }
 
 interface MetricCardProps {
-  title: string
-  value: string
-  subtitle: string
-  icon: React.ComponentType<{ className?: string }>
-  trend: 'positive' | 'negative' | 'neutral'
+  title: string;
+  value: string;
+  subtitle: string;
+  icon: React.ComponentType<{ className?: string }>;
+  trend: "positive" | "negative" | "neutral";
 }
 
-function MetricCard({ title, value, subtitle, icon: Icon, trend }: MetricCardProps) {
+function MetricCard({
+  title,
+  value,
+  subtitle,
+  icon: Icon,
+  trend,
+}: MetricCardProps) {
   const trendColors = {
-    positive: 'text-green-600 dark:text-green-400',
-    negative: 'text-red-600 dark:text-red-400',
-    neutral: 'text-muted-foreground',
-  }
+    positive: "text-green-600 dark:text-green-400",
+    negative: "text-red-600 dark:text-red-400",
+    neutral: "text-muted-foreground",
+  };
 
   return (
     <motion.div
@@ -167,22 +204,38 @@ function MetricCard({ title, value, subtitle, icon: Icon, trend }: MetricCardPro
         <p className="text-xs text-muted-foreground">{subtitle}</p>
       </div>
     </motion.div>
-  )
+  );
 }
 
 interface AbsenceItemProps {
-  name: string
-  class: string
-  status: 'justified' | 'unjustified' | 'pending'
-  reason: string
+  name: string;
+  class: string;
+  status: "justified" | "unjustified" | "pending";
+  reason: string;
 }
 
-function AbsenceItem({ name, class: className, status, reason }: AbsenceItemProps) {
+function AbsenceItem({
+  name,
+  class: className,
+  status,
+  reason,
+}: AbsenceItemProps) {
   const statusConfig = {
-    justified: { label: 'Justifiée', color: 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' },
-    unjustified: { label: 'Non justifiée', color: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400' },
-    pending: { label: 'En attente', color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400' },
-  }
+    justified: {
+      label: "Justifiée",
+      color:
+        "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400",
+    },
+    unjustified: {
+      label: "Non justifiée",
+      color: "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400",
+    },
+    pending: {
+      label: "En attente",
+      color:
+        "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400",
+    },
+  };
 
   return (
     <div className="flex items-center justify-between rounded-md border border-border/40 bg-background p-4">
@@ -191,27 +244,46 @@ function AbsenceItem({ name, class: className, status, reason }: AbsenceItemProp
         <p className="text-xs text-muted-foreground">{className}</p>
         <p className="text-xs text-muted-foreground">{reason}</p>
       </div>
-      <span className={`rounded-full px-2 py-1 text-xs font-medium ${statusConfig[status].color}`}>
+      <span
+        className={`rounded-full px-2 py-1 text-xs font-medium ${statusConfig[status].color}`}
+      >
         {statusConfig[status].label}
       </span>
     </div>
-  )
+  );
 }
 
 interface ConductItemProps {
-  name: string
-  class: string
-  incident: string
-  severity: 'minor' | 'moderate' | 'major'
-  date: string
+  name: string;
+  class: string;
+  incident: string;
+  severity: "minor" | "moderate" | "major";
+  date: string;
 }
 
-function ConductItem({ name, class: className, incident, severity, date }: ConductItemProps) {
+function ConductItem({
+  name,
+  class: className,
+  incident,
+  severity,
+  date,
+}: ConductItemProps) {
   const severityConfig = {
-    minor: { label: 'Mineur', color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400' },
-    moderate: { label: 'Modéré', color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400' },
-    major: { label: 'Grave', color: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400' },
-  }
+    minor: {
+      label: "Mineur",
+      color:
+        "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400",
+    },
+    moderate: {
+      label: "Modéré",
+      color:
+        "bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400",
+    },
+    major: {
+      label: "Grave",
+      color: "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400",
+    },
+  };
 
   return (
     <div className="space-y-2 rounded-md border border-border/40 bg-background p-4">
@@ -220,21 +292,23 @@ function ConductItem({ name, class: className, incident, severity, date }: Condu
           <p className="text-sm font-medium">{name}</p>
           <p className="text-xs text-muted-foreground">{className}</p>
         </div>
-        <span className={`rounded-full px-2 py-1 text-xs font-medium ${severityConfig[severity].color}`}>
+        <span
+          className={`rounded-full px-2 py-1 text-xs font-medium ${severityConfig[severity].color}`}
+        >
           {severityConfig[severity].label}
         </span>
       </div>
       <p className="text-sm">{incident}</p>
       <p className="text-xs text-muted-foreground">{date}</p>
     </div>
-  )
+  );
 }
 
 interface LateItemProps {
-  name: string
-  class: string
-  count: number
-  period: string
+  name: string;
+  class: string;
+  count: number;
+  period: string;
 }
 
 function LateItem({ name, class: className, count, period }: LateItemProps) {
@@ -245,13 +319,9 @@ function LateItem({ name, class: className, count, period }: LateItemProps) {
         <p className="text-xs text-muted-foreground">{className}</p>
       </div>
       <div className="text-right">
-        <p className="text-sm font-bold">
-          {count}
-          {' '}
-          retards
-        </p>
+        <p className="text-sm font-bold">{count} retards</p>
         <p className="text-xs text-muted-foreground">{period}</p>
       </div>
     </div>
-  )
+  );
 }

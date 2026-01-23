@@ -81,6 +81,9 @@ export const fr: TypedLocale = {
     currency: "FCFA",
     timeAgo: "Il y a {{time}}",
     totalCount: "Total: {{count}}",
+    selectAll: "Tout sélectionner",
+    deselectAll: "Tout désélectionner",
+    selectRow: "Sélectionner la ligne",
   },
   nav: {
     dashboard: "Tableau de bord",
@@ -114,6 +117,7 @@ export const fr: TypedLocale = {
     settings: "Paramètres",
     spaces: "Espaces",
     classrooms: "Salles de classe",
+    roomStatistics: "Statistiques des salles",
     schoolYears: "Années Scolaires",
     reportCardTemplates: "Modèles de bulletins",
   },
@@ -1995,5 +1999,26 @@ export const fr: TypedLocale = {
     studentMatricule: "AB2024C001",
     schoolEmail: "contact@ecole.ci",
     classSection: "A, B, C...",
+  },
+  accounting: {
+    accounts: {
+      deleteAccount: "Supprimer le compte",
+      deleteAccountConfirm:
+        "Voulez-vous vraiment supprimer ce compte ? Cette action est irréversible.",
+    },
+    feeStructures: {
+      deleteFeeStructure: "Supprimer la structure de frais",
+      deleteFeeStructureConfirm:
+        "Voulez-vous vraiment supprimer cette structure de frais ? Cette action est irréversible.",
+    },
+    discounts: {
+      deleteDiscount: "Supprimer la réduction",
+      deleteDiscountConfirm:
+        "Voulez-vous vraiment supprimer cette réduction ? Cette action est irréversible.",
+    },
+    feeTypes: {
+      deleteConfirmTitle: "Confirmer la suppression",
+      deleteConfirmDescription: 'Êtes-vous sûr de vouloir supprimer "{name}" ?',
+    },
   },
 };

@@ -92,8 +92,9 @@ const en: Translation = {
     deleteConfirmTitle: "Confirm deletion",
     deleteConfirmDescription:
       "Are you sure you want to delete {name}? This action cannot be undone.",
-    selectAll: "Select all",
-    deselectAll: "Deselect all",
+    selectAll: "Select All",
+    deselectAll: "Deselect All",
+    selectRow: "Select Row",
     preview: "Preview",
     download: "Download",
     week: "Week",
@@ -970,10 +971,11 @@ const en: Translation = {
     },
     feeStructures: {
       title: "Fee Structures",
-      description: "Configure fee amounts by grade and series",
+      description: "Configure fee amounts by level and series",
       create: "Create Structure",
       noFeeStructures: "No fee structures configured",
       newStudentAmount: "New Student Amount",
+      allLevels: "All Levels",
     },
     accounts: {
       title: "Chart of Accounts",
@@ -1268,6 +1270,15 @@ const en: Translation = {
       today: "Today",
       yesterday: "Yesterday",
       daysAgo: "days ago",
+    },
+    discipline: {
+      title: "Discipline Officer Dashboard",
+      presenceRate: "Presence Rate",
+      absences: "Absences",
+      delays: "Delays",
+      incidents: "Incidents",
+      thisWeek: "This week",
+      today: "Today",
     },
   },
   academic: {
@@ -1769,6 +1780,7 @@ const en: Translation = {
   },
   classrooms: {
     classroom: "Classroom",
+    roomStatistics: "Room Statistics",
   },
   schoolLife: {
     title: "School Life",
@@ -2113,6 +2125,7 @@ const en: Translation = {
       statusActive: "Active",
       statusMaintenance: "Maintenance",
       statusInactive: "Inactive",
+      roomStatistics: "Room Statistics",
       tabs: {
         info: "Information",
         classes: "Assigned Classes",
@@ -2139,6 +2152,7 @@ const en: Translation = {
       inactive: "Inactive",
       classroom: "Classroom",
       occupation: "Occupation",
+      roomStatistics: "Room Statistics",
       maintenance: "Maintenance",
       details: "Details",
       classes: "Classes",
@@ -2229,6 +2243,27 @@ const en: Translation = {
     },
     validations: {
       title: "Validations",
+    },
+  },
+  accounting: {
+    accounts: {
+      deleteAccount: "Delete Account",
+      deleteAccountConfirm:
+        "Are you sure you want to delete this account? This action is irreversible.",
+    },
+    feeStructures: {
+      deleteFeeStructure: "Delete Fee Structure",
+      deleteFeeStructureConfirm:
+        "Are you sure you want to delete this fee structure? This action is irreversible.",
+    },
+    discounts: {
+      deleteDiscount: "Delete Discount",
+      deleteDiscountConfirm:
+        "Are you sure you want to delete this discount? This action is irreversible.",
+    },
+    feeTypes: {
+      deleteConfirmTitle: "Confirm Deletion",
+      deleteConfirmDescription: 'Are you sure you want to delete "{name}"?',
     },
   },
 };

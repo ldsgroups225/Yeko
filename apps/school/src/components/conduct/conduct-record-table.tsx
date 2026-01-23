@@ -1,15 +1,29 @@
-import type { ColumnDef, Row, Table as TanStackTable } from '@tanstack/react-table'
-import { IconDots, IconEdit, IconEye, IconFileAlert, IconTrash } from '@tabler/icons-react'
-import { Link } from '@tanstack/react-router'
+import type {
+  ColumnDef,
+  Row,
+  Table as TanStackTable,
+} from "@tanstack/react-table";
+import {
+  IconDots,
+  IconEdit,
+  IconEye,
+  IconFileAlert,
+  IconTrash,
+} from "@tabler/icons-react";
+import { Link } from "@tanstack/react-router";
 import {
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
   useReactTable,
-} from '@tanstack/react-table'
-import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
-import { Button } from '@workspace/ui/components/button'
-import { Checkbox } from '@workspace/ui/components/checkbox'
+} from "@tanstack/react-table";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@workspace/ui/components/avatar";
+import { Button } from "@workspace/ui/components/button";
+import { Checkbox } from "@workspace/ui/components/checkbox";
 
 import {
   DropdownMenu,
@@ -17,7 +31,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@workspace/ui/components/dropdown-menu'
+} from "@workspace/ui/components/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -25,46 +39,52 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@workspace/ui/components/table'
-import { motion } from 'motion/react'
-import { useMemo } from 'react'
-import { TableSkeleton } from '@/components/hr/table-skeleton'
-import { useTranslations } from '@/i18n'
+} from "@workspace/ui/components/table";
+import { motion } from "motion/react";
+import { useMemo } from "react";
+import { TableSkeleton } from "@/components/hr/table-skeleton";
+import { useTranslations } from "@/i18n";
 
-import { ConductSeverityBadge } from './conduct-severity-badge'
-import { ConductStatusBadge } from './conduct-status-badge'
-import { ConductTypeBadge } from './conduct-type-badge'
+import { ConductSeverityBadge } from "./conduct-severity-badge";
+import { ConductStatusBadge } from "./conduct-status-badge";
+import { ConductTypeBadge } from "./conduct-type-badge";
 
-type ConductType = 'incident' | 'sanction' | 'reward' | 'note'
-type ConductSeverity = 'low' | 'medium' | 'high' | 'critical'
-type ConductStatus = 'open' | 'investigating' | 'pending_decision' | 'resolved' | 'closed' | 'appealed'
+type ConductType = "incident" | "sanction" | "reward" | "note";
+type ConductSeverity = "low" | "medium" | "high" | "critical";
+type ConductStatus =
+  | "open"
+  | "investigating"
+  | "pending_decision"
+  | "resolved"
+  | "closed"
+  | "appealed";
 
 export interface ConductRecord {
-  id: string
-  studentId: string
-  studentName: string
-  studentPhoto?: string | null
-  type: ConductType
-  category: string
-  title: string
-  description: string
-  severity?: ConductSeverity | null
-  status: ConductStatus
-  incidentDate?: string | null
-  location?: string | null
-  createdAt: string
+  id: string;
+  studentId: string;
+  studentName: string;
+  studentPhoto?: string | null;
+  type: ConductType;
+  category: string;
+  title: string;
+  description: string;
+  severity?: ConductSeverity | null;
+  status: ConductStatus;
+  incidentDate?: string | null;
+  location?: string | null;
+  createdAt: string;
 }
 
 interface ConductRecordTableProps {
-  records: ConductRecord[]
-  isLoading?: boolean
-  onView?: (id: string) => void
-  onEdit?: (id: string) => void
-  onDelete?: (id: string) => void
+  records: ConductRecord[];
+  isLoading?: boolean;
+  onView?: (id: string) => void;
+  onEdit?: (id: string) => void;
+  onDelete?: (id: string) => void;
   selection?: {
-    selectedIds: Set<string>
-    onSelectionChange: (ids: Set<string>) => void
-  }
+    selectedIds: Set<string>;
+    onSelectionChange: (ids: Set<string>) => void;
+  };
 }
 
 export function ConductRecordTable({
@@ -75,27 +95,29 @@ export function ConductRecordTable({
   onDelete,
   selection,
 }: ConductRecordTableProps) {
-  const t = useTranslations()
+  const t = useTranslations();
 
   const columns = useMemo<ColumnDef<ConductRecord>[]>(
     () => [
       ...(selection
         ? [
             {
-              id: 'select',
+              id: "select",
               header: ({ table }: { table: TanStackTable<ConductRecord> }) => (
                 <Checkbox
                   checked={table.getIsAllPageRowsSelected()}
-                  onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
-                  aria-label="Select all"
+                  onCheckedChange={(value) =>
+                    table.toggleAllPageRowsSelected(!!value)
+                  }
+                  aria-label={t.common.selectAll()}
                   className="translate-y-[2px] border-primary/50 data-[state=checked]:border-primary"
                 />
               ),
               cell: ({ row }: { row: Row<ConductRecord> }) => (
                 <Checkbox
                   checked={row.getIsSelected()}
-                  onCheckedChange={value => row.toggleSelected(!!value)}
-                  aria-label="Select row"
+                  onCheckedChange={(value) => row.toggleSelected(!!value)}
+                  aria-label={t.common.selectRow()}
                   className="translate-y-[2px] border-primary/50 data-[state=checked]:border-primary"
                 />
               ),
@@ -105,33 +127,45 @@ export function ConductRecordTable({
           ]
         : []),
       {
-        accessorKey: 'incidentDate',
+        accessorKey: "incidentDate",
         header: t.conduct.date(),
         cell: ({ row }) => {
           const date = row.original.incidentDate
             ? new Date(row.original.incidentDate)
-            : new Date(row.original.createdAt)
+            : new Date(row.original.createdAt);
 
           return (
             <div className="flex flex-col gap-0.5">
               <span className="font-black tracking-tight text-sm">
-                {date.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })}
+                {date.toLocaleDateString(undefined, {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })}
               </span>
               <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">
-                {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                {date.toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
               </span>
             </div>
-          )
+          );
         },
       },
       {
-        accessorKey: 'studentName',
+        accessorKey: "studentName",
         header: t.conduct.student(),
         cell: ({ row }) => (
           <div className="flex items-center gap-3">
             <Avatar className="h-9 w-9 border-2 border-primary/10 shadow-inner group-hover:scale-110 transition-transform duration-500">
-              <AvatarImage src={row.original.studentPhoto || undefined} alt={row.original.studentName} />
-              <AvatarFallback className="bg-primary/5 text-primary text-[10px] font-black uppercase tracking-widest">{row.original.studentName.substring(0, 2).toUpperCase()}</AvatarFallback>
+              <AvatarImage
+                src={row.original.studentPhoto || undefined}
+                alt={row.original.studentName}
+              />
+              <AvatarFallback className="bg-primary/5 text-primary text-[10px] font-black uppercase tracking-widest">
+                {row.original.studentName.substring(0, 2).toUpperCase()}
+              </AvatarFallback>
             </Avatar>
             <div className="flex flex-col">
               <Link
@@ -146,53 +180,79 @@ export function ConductRecordTable({
         ),
       },
       {
-        accessorKey: 'type',
+        accessorKey: "type",
         header: t.conduct.form.type(),
         cell: ({ row }) => <ConductTypeBadge type={row.original.type} />,
       },
       {
-        accessorKey: 'title',
+        accessorKey: "title",
         header: t.conduct.title(),
         cell: ({ row }) => (
           <div className="flex flex-col max-w-[300px]">
-            <span className="font-bold tracking-tight text-sm truncate" title={row.original.title}>{row.original.title}</span>
-            <span className="text-[10px] font-medium text-muted-foreground/60 truncate italic" title={row.original.description}>
+            <span
+              className="font-bold tracking-tight text-sm truncate"
+              title={row.original.title}
+            >
+              {row.original.title}
+            </span>
+            <span
+              className="text-[10px] font-medium text-muted-foreground/60 truncate italic"
+              title={row.original.description}
+            >
               {row.original.description}
             </span>
           </div>
         ),
       },
       {
-        accessorKey: 'severity',
+        accessorKey: "severity",
         header: t.conduct.form.severity(),
-        cell: ({ row }) => row.original.severity
-          ? <ConductSeverityBadge severity={row.original.severity} />
-          : <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/30">-</span>,
+        cell: ({ row }) =>
+          row.original.severity ? (
+            <ConductSeverityBadge severity={row.original.severity} />
+          ) : (
+            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/30">
+              -
+            </span>
+          ),
       },
       {
-        accessorKey: 'status',
+        accessorKey: "status",
         header: t.common.status(),
         cell: ({ row }) => <ConductStatusBadge status={row.original.status} />,
       },
       {
-        id: 'actions',
-        header: '',
+        id: "actions",
+        header: "",
         cell: ({ row }) => (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-xl hover:bg-primary/10 hover:text-primary transition-colors">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-xl hover:bg-primary/10 hover:text-primary transition-colors"
+              >
                 <IconDots className="h-5 w-5" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40">
+            <DropdownMenuContent
+              align="end"
+              className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40"
+            >
               {onView && (
-                <DropdownMenuItem onClick={() => onView(row.original.id)} className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-2">
+                <DropdownMenuItem
+                  onClick={() => onView(row.original.id)}
+                  className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-2"
+                >
                   <IconEye className="mr-2 h-4 w-4 text-primary/60" />
                   {t.common.view()}
                 </DropdownMenuItem>
               )}
               {onEdit && (
-                <DropdownMenuItem onClick={() => onEdit(row.original.id)} className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-2">
+                <DropdownMenuItem
+                  onClick={() => onEdit(row.original.id)}
+                  className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-2"
+                >
                   <IconEdit className="mr-2 h-4 w-4 text-primary/60" />
                   {t.common.edit()}
                 </DropdownMenuItem>
@@ -215,24 +275,23 @@ export function ConductRecordTable({
       },
     ],
     [t, onView, onEdit, onDelete, selection],
-  )
+  );
 
   const rowSelection = useMemo(() => {
-    if (!selection)
-      return {}
-    const selections: Record<string, boolean> = {}
+    if (!selection) return {};
+    const selections: Record<string, boolean> = {};
     selection.selectedIds.forEach((id) => {
-      selections[id] = true
-    })
-    return selections
-  }, [selection])
+      selections[id] = true;
+    });
+    return selections;
+  }, [selection]);
 
   const table = useReactTable({
     data: records,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getRowId: row => row.id,
+    getRowId: (row) => row.id,
     enableRowSelection: !!selection,
     state: {
       rowSelection: selection ? rowSelection : {},
@@ -242,22 +301,22 @@ export function ConductRecordTable({
       },
     },
     onRowSelectionChange: (updater) => {
-      if (!selection)
-        return
-      if (typeof updater === 'function') {
-        const newSelection = updater(rowSelection)
-        const newSet = new Set(Object.keys(newSelection).filter(k => newSelection[k]))
-        selection.onSelectionChange(newSet)
-      }
-      else {
-        const newSet = new Set(Object.keys(updater).filter(k => updater[k]))
-        selection.onSelectionChange(newSet)
+      if (!selection) return;
+      if (typeof updater === "function") {
+        const newSelection = updater(rowSelection);
+        const newSet = new Set(
+          Object.keys(newSelection).filter((k) => newSelection[k]),
+        );
+        selection.onSelectionChange(newSet);
+      } else {
+        const newSet = new Set(Object.keys(updater).filter((k) => updater[k]));
+        selection.onSelectionChange(newSet);
       }
     },
-  })
+  });
 
   if (isLoading) {
-    return <TableSkeleton columns={7} rows={5} />
+    return <TableSkeleton columns={7} rows={5} />;
   }
 
   if (records.length === 0) {
@@ -270,10 +329,14 @@ export function ConductRecordTable({
         <div className="p-6 rounded-full bg-background/50 mb-6 shadow-inner">
           <IconFileAlert className="size-12 text-muted-foreground/20" />
         </div>
-        <h3 className="text-xl font-bold text-muted-foreground mb-2">{t.conduct.noRecords()}</h3>
-        <p className="text-sm text-muted-foreground max-w-xs">{t.conduct.noRecordsDescription()}</p>
+        <h3 className="text-xl font-bold text-muted-foreground mb-2">
+          {t.conduct.noRecords()}
+        </h3>
+        <p className="text-sm text-muted-foreground max-w-xs">
+          {t.conduct.noRecordsDescription()}
+        </p>
       </motion.div>
-    )
+    );
   }
 
   return (
@@ -285,10 +348,16 @@ export function ConductRecordTable({
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id} className="hover:bg-transparent border-b border-border/20 bg-muted/20">
-                {headerGroup.headers.map(header => (
-                  <TableHead key={header.id} className="h-14 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 px-6">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow
+                key={headerGroup.id}
+                className="hover:bg-transparent border-b border-border/20 bg-muted/20"
+              >
+                {headerGroup.headers.map((header) => (
+                  <TableHead
+                    key={header.id}
+                    className="h-14 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 px-6"
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -310,7 +379,7 @@ export function ConductRecordTable({
                 className="group border-b border-border/10 hover:bg-primary/5 transition-colors data-[selected=true]:bg-primary/5"
                 data-selected={row.getIsSelected()}
               >
-                {row.getVisibleCells().map(cell => (
+                {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id} className="px-6 py-4">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
@@ -324,12 +393,7 @@ export function ConductRecordTable({
       {table.getPageCount() > 1 && (
         <div className="flex items-center justify-between py-4 px-6 bg-muted/10 border-t border-border/20">
           <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
-            Page
-            {' '}
-            {table.getState().pagination.pageIndex + 1}
-            {' '}
-            of
-            {' '}
+            Page {table.getState().pagination.pageIndex + 1} of{" "}
             {table.getPageCount()}
           </div>
           <div className="flex items-center gap-2">
@@ -355,5 +419,5 @@ export function ConductRecordTable({
         </div>
       )}
     </motion.div>
-  )
+  );
 }

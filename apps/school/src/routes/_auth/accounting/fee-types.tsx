@@ -177,10 +177,12 @@ function FeeTypesPage() {
         open={!!deleteData}
         onOpenChange={(open) => !open && setDeleteData(null)}
         onConfirm={handleDeleteConfirm}
-        title="Confirmer la suppression"
+        title={t.accounting.feeTypes.deleteConfirmTitle()}
         description={
           deleteData
-            ? `Êtes-vous sûr de vouloir supprimer "${deleteData.name}" ?`
+            ? t.accounting.feeTypes.deleteConfirmDescription({
+                name: deleteData.name,
+              })
             : ""
         }
         confirmText={t.common.delete()}

@@ -153,8 +153,8 @@ function FeeStructuresPage() {
           if (deletingId) deleteMutation.mutate(deletingId);
         }}
         isLoading={deleteMutation.isPending}
-        title="Supprimer la structure de frais"
-        description="Voulez-vous vraiment supprimer cette structure de frais ? Cette action est irréversible."
+        title={t.accounting.feeStructures.deleteFeeStructure()}
+        description={t.accounting.feeStructures.deleteFeeStructureConfirm()}
       />
     </div>
   );

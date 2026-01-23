@@ -300,11 +300,15 @@ export function FeeStructureFormDialog({
                     >
                       <FormControl>
                         <SelectTrigger className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors">
-                          <SelectValue placeholder="Tous les niveaux" />
+                          <SelectValue
+                            placeholder={t.finance.feeStructures.allLevels()}
+                          />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="rounded-xl backdrop-blur-xl">
-                        <SelectItem value="all">Tous les niveaux</SelectItem>
+                        <SelectItem value="all">
+                          {t.finance.feeStructures.allLevels()}
+                        </SelectItem>
                         {grades?.map((g) => (
                           <SelectItem key={g.id} value={g.id}>
                             {g.name}
