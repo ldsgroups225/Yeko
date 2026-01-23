@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1716420610707,
-      "tag": "0000_nifty_liz_osborn",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1766420875590,
-      "tag": "0001_omniscient_odin",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1766420977628,
-      "tag": "0002_overrated_hiroim",
+      "when": 1769168062496,
+      "tag": "0000_productive_skreet",
       "breakpoints": true
     }
   ]

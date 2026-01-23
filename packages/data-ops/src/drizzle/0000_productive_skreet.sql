@@ -221,7 +221,7 @@ CREATE TABLE "attendance_alerts" (
 	"severity" text NOT NULL,
 	"title" text NOT NULL,
 	"message" text NOT NULL,
-	"data" jsonb DEFAULT '{}'::jsonb,
+	"data" jsonb,
 	"status" text DEFAULT 'active' NOT NULL,
 	"acknowledged_by" text,
 	"acknowledged_at" timestamp,
@@ -463,7 +463,7 @@ CREATE TABLE "fee_structures" (
 	"effective_date" date,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
-	CONSTRAINT "unique_fee_structure" UNIQUE("school_id","school_year_id","fee_type_id","grade_id","series_id")
+	CONSTRAINT "unique_fee_structure" UNIQUE NULLS NOT DISTINCT("school_id","school_year_id","fee_type_id","grade_id","series_id")
 );
 --> statement-breakpoint
 CREATE TABLE "fee_types" (
@@ -851,7 +851,8 @@ CREATE TABLE "student_attendance" (
 	"notes" text,
 	"recorded_by" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "unique_student_attendance" UNIQUE NULLS NOT DISTINCT("student_id","date","class_id","class_session_id")
 );
 --> statement-breakpoint
 CREATE TABLE "student_averages" (
@@ -1419,6 +1420,7 @@ CREATE INDEX "idx_enrollments_class" ON "enrollments" USING btree ("class_id");-
 CREATE INDEX "idx_enrollments_school_year" ON "enrollments" USING btree ("school_year_id");--> statement-breakpoint
 CREATE INDEX "idx_enrollments_class_year_status" ON "enrollments" USING btree ("class_id","school_year_id","status");--> statement-breakpoint
 CREATE INDEX "idx_enrollments_student_year" ON "enrollments" USING btree ("student_id","school_year_id");--> statement-breakpoint
+CREATE INDEX "idx_enrollments_student_year_status" ON "enrollments" USING btree ("student_id","school_year_id","status");--> statement-breakpoint
 CREATE INDEX "idx_enrollments_status" ON "enrollments" USING btree ("status");--> statement-breakpoint
 CREATE INDEX "idx_enrollments_confirmed_by" ON "enrollments" USING btree ("confirmed_by");--> statement-breakpoint
 CREATE INDEX "idx_enrollments_roll_number" ON "enrollments" USING btree ("class_id","roll_number");--> statement-breakpoint
@@ -1435,7 +1437,7 @@ CREATE INDEX "idx_fiscal_years_dates" ON "fiscal_years" USING btree ("school_id"
 CREATE INDEX "idx_validations_grade" ON "grade_validations" USING btree ("grade_id");--> statement-breakpoint
 CREATE INDEX "idx_validations_validator" ON "grade_validations" USING btree ("validator_id");--> statement-breakpoint
 CREATE INDEX "idx_homework_class" ON "homework" USING btree ("class_id");--> statement-breakpoint
-CREATE INDEX "idx_homework_teacher" ON "homework" USING btree ("teacher_id");--> statement-breakpoint
+CREATE INDEX "idx_homework_teacher_status" ON "homework" USING btree ("teacher_id","status");--> statement-breakpoint
 CREATE INDEX "idx_homework_due_date" ON "homework" USING btree ("due_date");--> statement-breakpoint
 CREATE INDEX "idx_homework_status" ON "homework" USING btree ("status");--> statement-breakpoint
 CREATE INDEX "idx_homework_class_due" ON "homework" USING btree ("class_id","due_date");--> statement-breakpoint
@@ -1500,12 +1502,13 @@ CREATE INDEX "idx_staff_user" ON "staff" USING btree ("user_id");--> statement-b
 CREATE INDEX "idx_staff_school" ON "staff" USING btree ("school_id");--> statement-breakpoint
 CREATE INDEX "idx_staff_position" ON "staff" USING btree ("position");--> statement-breakpoint
 CREATE INDEX "idx_student_attendance_student_date" ON "student_attendance" USING btree ("student_id","date");--> statement-breakpoint
-CREATE INDEX "idx_student_attendance_class_date" ON "student_attendance" USING btree ("class_id","date");--> statement-breakpoint
+CREATE INDEX "idx_student_attendance_class_date_session" ON "student_attendance" USING btree ("class_id","date","class_session_id");--> statement-breakpoint
 CREATE INDEX "idx_student_attendance_session" ON "student_attendance" USING btree ("class_session_id");--> statement-breakpoint
 CREATE INDEX "idx_student_attendance_status" ON "student_attendance" USING btree ("status");--> statement-breakpoint
-CREATE INDEX "idx_student_attendance_school_date" ON "student_attendance" USING btree ("school_id","date");--> statement-breakpoint
+CREATE INDEX "idx_student_attendance_school_date_status" ON "student_attendance" USING btree ("school_id","date","status");--> statement-breakpoint
 CREATE INDEX "idx_averages_student_term" ON "student_averages" USING btree ("student_id","term_id");--> statement-breakpoint
 CREATE INDEX "idx_averages_class_term" ON "student_averages" USING btree ("class_id","term_id");--> statement-breakpoint
+CREATE INDEX "idx_averages_class_term_final" ON "student_averages" USING btree ("class_id","term_id","is_final");--> statement-breakpoint
 CREATE INDEX "idx_student_discounts_student" ON "student_discounts" USING btree ("student_id");--> statement-breakpoint
 CREATE INDEX "idx_student_discounts_year" ON "student_discounts" USING btree ("school_year_id");--> statement-breakpoint
 CREATE INDEX "idx_student_discounts_status" ON "student_discounts" USING btree ("status");--> statement-breakpoint
@@ -1514,7 +1517,7 @@ CREATE INDEX "idx_student_fees_enrollment" ON "student_fees" USING btree ("enrol
 CREATE INDEX "idx_student_fees_status" ON "student_fees" USING btree ("status");--> statement-breakpoint
 CREATE INDEX "idx_grades_student_term_subject" ON "student_grades" USING btree ("student_id","term_id","subject_id");--> statement-breakpoint
 CREATE INDEX "idx_grades_class_subject_term" ON "student_grades" USING btree ("class_id","subject_id","term_id");--> statement-breakpoint
-CREATE INDEX "idx_grades_teacher" ON "student_grades" USING btree ("teacher_id");--> statement-breakpoint
+CREATE INDEX "idx_grades_teacher_status" ON "student_grades" USING btree ("teacher_id","status");--> statement-breakpoint
 CREATE INDEX "idx_grades_status" ON "student_grades" USING btree ("status");--> statement-breakpoint
 CREATE INDEX "idx_grades_term_status" ON "student_grades" USING btree ("term_id","status");--> statement-breakpoint
 CREATE INDEX "idx_grades_class_term" ON "student_grades" USING btree ("class_id","term_id");--> statement-breakpoint
@@ -1535,8 +1538,8 @@ CREATE INDEX "idx_teacher_attendance_date_range" ON "teacher_attendance" USING b
 CREATE INDEX "idx_teacher_comments_report" ON "teacher_comments" USING btree ("report_card_id");--> statement-breakpoint
 CREATE INDEX "idx_teacher_comments_teacher" ON "teacher_comments" USING btree ("teacher_id");--> statement-breakpoint
 CREATE INDEX "idx_messages_sender" ON "teacher_messages" USING btree ("sender_type","sender_id");--> statement-breakpoint
-CREATE INDEX "idx_messages_recipient" ON "teacher_messages" USING btree ("recipient_type","recipient_id");--> statement-breakpoint
-CREATE INDEX "idx_messages_thread" ON "teacher_messages" USING btree ("thread_id");--> statement-breakpoint
+CREATE INDEX "idx_messages_recipient_archived" ON "teacher_messages" USING btree ("recipient_type","recipient_id","is_archived");--> statement-breakpoint
+CREATE INDEX "idx_messages_thread_created" ON "teacher_messages" USING btree ("thread_id","created_at");--> statement-breakpoint
 CREATE INDEX "idx_messages_created" ON "teacher_messages" USING btree ("created_at");--> statement-breakpoint
 CREATE INDEX "idx_notifications_teacher" ON "teacher_notifications" USING btree ("teacher_id");--> statement-breakpoint
 CREATE INDEX "idx_notifications_created" ON "teacher_notifications" USING btree ("created_at");--> statement-breakpoint
@@ -1549,7 +1552,7 @@ CREATE INDEX "idx_timetable_class_day" ON "timetable_sessions" USING btree ("cla
 CREATE INDEX "idx_timetable_teacher_day" ON "timetable_sessions" USING btree ("teacher_id","day_of_week");--> statement-breakpoint
 CREATE INDEX "idx_timetable_classroom_day" ON "timetable_sessions" USING btree ("classroom_id","day_of_week");--> statement-breakpoint
 CREATE INDEX "idx_timetable_conflicts" ON "timetable_sessions" USING btree ("school_id","day_of_week","start_time","end_time");--> statement-breakpoint
-CREATE INDEX "idx_timetable_school_year" ON "timetable_sessions" USING btree ("school_id","school_year_id");--> statement-breakpoint
+CREATE INDEX "idx_timetable_school_year_day" ON "timetable_sessions" USING btree ("school_id","school_year_id","day_of_week");--> statement-breakpoint
 CREATE INDEX "idx_transaction_lines_transaction" ON "transaction_lines" USING btree ("transaction_id");--> statement-breakpoint
 CREATE INDEX "idx_transaction_lines_account" ON "transaction_lines" USING btree ("account_id");--> statement-breakpoint
 CREATE INDEX "idx_transaction_lines_amounts" ON "transaction_lines" USING btree ("account_id","debit_amount","credit_amount");--> statement-breakpoint

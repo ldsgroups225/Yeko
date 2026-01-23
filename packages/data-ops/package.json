@@ -52,6 +52,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "reset:db": "npx tsx src/seed/reset-db.ts",
     "seed": "npx tsx src/seed/index.ts",
     "seed:fresh": "npx tsx src/seed/index.ts --fresh",
     "seed:test": "node scripts/seed-test-db.mjs",
