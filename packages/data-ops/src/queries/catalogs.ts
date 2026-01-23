@@ -1,38 +1,53 @@
-import type { EducationLevel, Grade, Serie, Subject, SubjectCategory, Track } from '@/drizzle/core-schema'
-import { and, asc, count, eq, ilike, or } from 'drizzle-orm'
-import { getDb } from '@/database/setup'
-import { educationLevels, grades, series, subjects, tracks } from '@/drizzle/core-schema'
+import type {
+  EducationLevel,
+  Grade,
+  Serie,
+  Subject,
+  SubjectCategory,
+  Track,
+} from "@/drizzle/core-schema";
+import { and, asc, count, eq, ilike, or } from "drizzle-orm";
+import { getDb } from "@/database/setup";
+import {
+  educationLevels,
+  grades,
+  series,
+  subjects,
+  tracks,
+} from "@/drizzle/core-schema";
 
 // ===== EDUCATION LEVELS =====
 
 export async function getEducationLevels(): Promise<EducationLevel[]> {
-  const db = getDb()
-  return db.select().from(educationLevels).orderBy(asc(educationLevels.order))
+  const db = getDb();
+  return db.select().from(educationLevels).orderBy(asc(educationLevels.order));
 }
 
 // ===== TRACKS =====
 
 export async function getTracks(options?: {
-  educationLevelId?: number
+  educationLevelId?: number;
 }): Promise<Track[]> {
-  const db = getDb()
-  const query = db.select().from(tracks)
+  const db = getDb();
+  const query = db.select().from(tracks);
 
   if (options?.educationLevelId) {
-    query.where(eq(tracks.educationLevelId, options.educationLevelId))
+    query.where(eq(tracks.educationLevelId, options.educationLevelId));
   }
 
-  return query.orderBy(asc(tracks.name))
+  return query.orderBy(asc(tracks.name));
 }
 
 export async function getTrackById(id: string): Promise<Track | null> {
-  const db = getDb()
-  const [track] = await db.select().from(tracks).where(eq(tracks.id, id))
-  return track || null
+  const db = getDb();
+  const [track] = await db.select().from(tracks).where(eq(tracks.id, id));
+  return track || null;
 }
 
-export async function createTrack(data: Omit<typeof tracks.$inferInsert, 'id' | 'createdAt' | 'updatedAt'>): Promise<Track> {
-  const db = getDb()
+export async function createTrack(
+  data: Omit<typeof tracks.$inferInsert, "id" | "createdAt" | "updatedAt">,
+): Promise<Track> {
+  const db = getDb();
   const [newTrack] = await db
     .insert(tracks)
     .values({
@@ -41,15 +56,17 @@ export async function createTrack(data: Omit<typeof tracks.$inferInsert, 'id' | 
       createdAt: new Date(),
       updatedAt: new Date(),
     })
-    .returning()
-  return newTrack!
+    .returning();
+  return newTrack!;
 }
 
 export async function updateTrack(
   id: string,
-  data: Partial<Omit<typeof tracks.$inferInsert, 'id' | 'createdAt' | 'updatedAt'>>,
+  data: Partial<
+    Omit<typeof tracks.$inferInsert, "id" | "createdAt" | "updatedAt">
+  >,
 ): Promise<Track> {
-  const db = getDb()
+  const db = getDb();
   const [updatedTrack] = await db
     .update(tracks)
     .set({
@@ -57,43 +74,45 @@ export async function updateTrack(
       updatedAt: new Date(),
     })
     .where(eq(tracks.id, id))
-    .returning()
+    .returning();
 
   if (!updatedTrack) {
-    throw new Error(`Track with id ${id} not found`)
+    throw new Error(`Track with id ${id} not found`);
   }
 
-  return updatedTrack
+  return updatedTrack;
 }
 
 export async function deleteTrack(id: string): Promise<void> {
-  const db = getDb()
-  await db.delete(tracks).where(eq(tracks.id, id))
+  const db = getDb();
+  await db.delete(tracks).where(eq(tracks.id, id));
 }
 
 // ===== GRADES =====
 
 export async function getGrades(options?: {
-  trackId?: string
+  trackId?: string;
 }): Promise<Grade[]> {
-  const db = getDb()
-  const query = db.select().from(grades)
+  const db = getDb();
+  const query = db.select().from(grades);
 
   if (options?.trackId) {
-    query.where(eq(grades.trackId, options.trackId))
+    query.where(eq(grades.trackId, options.trackId));
   }
 
-  return query.orderBy(asc(grades.order))
+  return query.orderBy(asc(grades.order));
 }
 
 export async function getGradeById(id: string): Promise<Grade | null> {
-  const db = getDb()
-  const [grade] = await db.select().from(grades).where(eq(grades.id, id))
-  return grade || null
+  const db = getDb();
+  const [grade] = await db.select().from(grades).where(eq(grades.id, id));
+  return grade || null;
 }
 
-export async function createGrade(data: Omit<typeof grades.$inferInsert, 'id' | 'createdAt' | 'updatedAt'>): Promise<Grade> {
-  const db = getDb()
+export async function createGrade(
+  data: Omit<typeof grades.$inferInsert, "id" | "createdAt" | "updatedAt">,
+): Promise<Grade> {
+  const db = getDb();
   const [newGrade] = await db
     .insert(grades)
     .values({
@@ -102,15 +121,17 @@ export async function createGrade(data: Omit<typeof grades.$inferInsert, 'id' | 
       createdAt: new Date(),
       updatedAt: new Date(),
     })
-    .returning()
-  return newGrade!
+    .returning();
+  return newGrade!;
 }
 
 export async function updateGrade(
   id: string,
-  data: Partial<Omit<typeof grades.$inferInsert, 'id' | 'createdAt' | 'updatedAt'>>,
+  data: Partial<
+    Omit<typeof grades.$inferInsert, "id" | "createdAt" | "updatedAt">
+  >,
 ): Promise<Grade> {
-  const db = getDb()
+  const db = getDb();
   const [updatedGrade] = await db
     .update(grades)
     .set({
@@ -118,24 +139,25 @@ export async function updateGrade(
       updatedAt: new Date(),
     })
     .where(eq(grades.id, id))
-    .returning()
+    .returning();
 
   if (!updatedGrade) {
-    throw new Error(`Grade with id ${id} not found`)
+    throw new Error(`Grade with id ${id} not found`);
   }
 
-  return updatedGrade
+  return updatedGrade;
 }
 
 export async function deleteGrade(id: string): Promise<void> {
-  const db = getDb()
-  await db.delete(grades).where(eq(grades.id, id))
+  const db = getDb();
+  await db.delete(grades).where(eq(grades.id, id));
 }
 
-export async function bulkUpdateGradesOrder(items: { id: string, order: number }[]): Promise<void> {
-  const db = getDb()
-  if (items.length === 0)
-    return
+export async function bulkUpdateGradesOrder(
+  items: { id: string; order: number }[],
+): Promise<void> {
+  const db = getDb();
+  if (items.length === 0) return;
 
   await db.transaction(async (tx: any) => {
     for (const item of items) {
@@ -145,34 +167,36 @@ export async function bulkUpdateGradesOrder(items: { id: string, order: number }
           order: item.order,
           updatedAt: new Date(),
         })
-        .where(eq(grades.id, item.id))
+        .where(eq(grades.id, item.id));
     }
-  })
+  });
 }
 
 // ===== SERIES =====
 
 export async function getSeries(options?: {
-  trackId?: string
+  trackId?: string;
 }): Promise<Serie[]> {
-  const db = getDb()
-  const query = db.select().from(series)
+  const db = getDb();
+  const query = db.select().from(series);
 
   if (options?.trackId) {
-    query.where(eq(series.trackId, options.trackId))
+    query.where(eq(series.trackId, options.trackId));
   }
 
-  return query.orderBy(asc(series.name))
+  return query.orderBy(asc(series.name));
 }
 
 export async function getSerieById(id: string): Promise<Serie | null> {
-  const db = getDb()
-  const [serie] = await db.select().from(series).where(eq(series.id, id))
-  return serie || null
+  const db = getDb();
+  const [serie] = await db.select().from(series).where(eq(series.id, id));
+  return serie || null;
 }
 
-export async function createSerie(data: Omit<typeof series.$inferInsert, 'id' | 'createdAt' | 'updatedAt'>): Promise<Serie> {
-  const db = getDb()
+export async function createSerie(
+  data: Omit<typeof series.$inferInsert, "id" | "createdAt" | "updatedAt">,
+): Promise<Serie> {
+  const db = getDb();
   const [newSerie] = await db
     .insert(series)
     .values({
@@ -181,15 +205,17 @@ export async function createSerie(data: Omit<typeof series.$inferInsert, 'id' | 
       createdAt: new Date(),
       updatedAt: new Date(),
     })
-    .returning()
-  return newSerie!
+    .returning();
+  return newSerie!;
 }
 
 export async function updateSerie(
   id: string,
-  data: Partial<Omit<typeof series.$inferInsert, 'id' | 'createdAt' | 'updatedAt'>>,
+  data: Partial<
+    Omit<typeof series.$inferInsert, "id" | "createdAt" | "updatedAt">
+  >,
 ): Promise<Serie> {
-  const db = getDb()
+  const db = getDb();
   const [updatedSerie] = await db
     .update(series)
     .set({
@@ -197,57 +223,63 @@ export async function updateSerie(
       updatedAt: new Date(),
     })
     .where(eq(series.id, id))
-    .returning()
+    .returning();
 
   if (!updatedSerie) {
-    throw new Error(`Serie with id ${id} not found`)
+    throw new Error(`Serie with id ${id} not found`);
   }
 
-  return updatedSerie
+  return updatedSerie;
 }
 
 export async function deleteSerie(id: string): Promise<void> {
-  const db = getDb()
-  await db.delete(series).where(eq(series.id, id))
+  const db = getDb();
+  await db.delete(series).where(eq(series.id, id));
 }
 
-export async function bulkCreateSeries(data: Omit<typeof series.$inferInsert, 'id' | 'createdAt' | 'updatedAt'>[]): Promise<Serie[]> {
-  const db = getDb()
-  if (data.length === 0)
-    return []
+export async function bulkCreateSeries(
+  data: Omit<typeof series.$inferInsert, "id" | "createdAt" | "updatedAt">[],
+): Promise<Serie[]> {
+  const db = getDb();
+  if (data.length === 0) return [];
 
-  const values = data.map(item => ({
+  const values = data.map((item) => ({
     id: crypto.randomUUID(),
     ...item,
     createdAt: new Date(),
     updatedAt: new Date(),
-  }))
+  }));
 
-  const newSeries = await db
-    .insert(series)
-    .values(values)
-    .returning()
+  const newSeries = await db.insert(series).values(values).returning();
 
-  return newSeries
+  return newSeries;
 }
 
 // ===== SUBJECTS =====
 
 export async function getSubjects(options?: {
-  category?: SubjectCategory
-  search?: string
-  page?: number
-  limit?: number
-}): Promise<{ subjects: Subject[], pagination: { total: number, page: number, limit: number, totalPages: number } }> {
-  const db = getDb()
-  const { category, search, page = 1, limit = 20 } = options || {}
-  const offset = (page - 1) * limit
+  category?: SubjectCategory;
+  search?: string;
+  page?: number;
+  limit?: number;
+}): Promise<{
+  subjects: Subject[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}> {
+  const db = getDb();
+  const { category, search, page = 1, limit = 20 } = options || {};
+  const offset = (page - 1) * limit;
 
   // Build where conditions
-  const conditions = []
+  const conditions = [];
 
   if (category) {
-    conditions.push(eq(subjects.category, category))
+    conditions.push(eq(subjects.category, category));
   }
 
   if (search) {
@@ -256,18 +288,18 @@ export async function getSubjects(options?: {
         ilike(subjects.name, `%${search}%`),
         ilike(subjects.shortName, `%${search}%`),
       ),
-    )
+    );
   }
 
-  const whereClause = conditions.length > 0 ? and(...conditions) : undefined
+  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
   // Get total count
   const [countResult] = await db
     .select({ count: count() })
     .from(subjects)
-    .where(whereClause)
+    .where(whereClause);
 
-  const total = countResult?.count || 0
+  const total = countResult?.count || 0;
 
   // Get subjects with stable ordering
   const subjectsList = await db
@@ -276,7 +308,7 @@ export async function getSubjects(options?: {
     .where(whereClause)
     .orderBy(asc(subjects.name), asc(subjects.id)) // Add id as secondary sort for stability
     .limit(limit)
-    .offset(offset)
+    .offset(offset);
 
   return {
     subjects: subjectsList,
@@ -286,17 +318,19 @@ export async function getSubjects(options?: {
       total,
       totalPages: Math.ceil(total / limit),
     },
-  }
+  };
 }
 
 export async function getSubjectById(id: string): Promise<Subject | null> {
-  const db = getDb()
-  const [subject] = await db.select().from(subjects).where(eq(subjects.id, id))
-  return subject || null
+  const db = getDb();
+  const [subject] = await db.select().from(subjects).where(eq(subjects.id, id));
+  return subject || null;
 }
 
-export async function createSubject(data: Omit<typeof subjects.$inferInsert, 'id' | 'createdAt' | 'updatedAt'>): Promise<Subject> {
-  const db = getDb()
+export async function createSubject(
+  data: Omit<typeof subjects.$inferInsert, "id" | "createdAt" | "updatedAt">,
+): Promise<Subject> {
+  const db = getDb();
   const [newSubject] = await db
     .insert(subjects)
     .values({
@@ -305,15 +339,17 @@ export async function createSubject(data: Omit<typeof subjects.$inferInsert, 'id
       createdAt: new Date(),
       updatedAt: new Date(),
     })
-    .returning()
-  return newSubject!
+    .returning();
+  return newSubject!;
 }
 
 export async function updateSubject(
   id: string,
-  data: Partial<Omit<typeof subjects.$inferInsert, 'id' | 'createdAt' | 'updatedAt'>>,
+  data: Partial<
+    Omit<typeof subjects.$inferInsert, "id" | "createdAt" | "updatedAt">
+  >,
 ): Promise<Subject> {
-  const db = getDb()
+  const db = getDb();
   const [updatedSubject] = await db
     .update(subjects)
     .set({
@@ -321,50 +357,50 @@ export async function updateSubject(
       updatedAt: new Date(),
     })
     .where(eq(subjects.id, id))
-    .returning()
+    .returning();
 
   if (!updatedSubject) {
-    throw new Error(`Subject with id ${id} not found`)
+    throw new Error(`Subject with id ${id} not found`);
   }
 
-  return updatedSubject
+  return updatedSubject;
 }
 
 export async function deleteSubject(id: string): Promise<void> {
-  const db = getDb()
-  await db.delete(subjects).where(eq(subjects.id, id))
+  const db = getDb();
+  await db.delete(subjects).where(eq(subjects.id, id));
 }
 
-export async function bulkCreateSubjects(data: Omit<typeof subjects.$inferInsert, 'id' | 'createdAt' | 'updatedAt'>[]): Promise<Subject[]> {
-  const db = getDb()
-  if (data.length === 0)
-    return []
+export async function bulkCreateSubjects(
+  data: Omit<typeof subjects.$inferInsert, "id" | "createdAt" | "updatedAt">[],
+): Promise<Subject[]> {
+  const db = getDb();
+  if (data.length === 0) return [];
 
-  const values = data.map(item => ({
+  const values = data.map((item) => ({
     id: crypto.randomUUID(),
     ...item,
     createdAt: new Date(),
     updatedAt: new Date(),
-  }))
+  }));
 
-  const newSubjects = await db
-    .insert(subjects)
-    .values(values)
-    .returning()
+  const newSubjects = await db.insert(subjects).values(values).returning();
 
-  return newSubjects
+  return newSubjects;
 }
 
 // ===== CATALOG STATS =====
 
 export async function getCatalogStats() {
-  const db = getDb()
+  const db = getDb();
 
-  const [educationLevelsCount] = await db.select({ count: count() }).from(educationLevels)
-  const [tracksCount] = await db.select({ count: count() }).from(tracks)
-  const [gradesCount] = await db.select({ count: count() }).from(grades)
-  const [seriesCount] = await db.select({ count: count() }).from(series)
-  const [subjectsCount] = await db.select({ count: count() }).from(subjects)
+  const [educationLevelsCount] = await db
+    .select({ count: count() })
+    .from(educationLevels);
+  const [tracksCount] = await db.select({ count: count() }).from(tracks);
+  const [gradesCount] = await db.select({ count: count() }).from(grades);
+  const [seriesCount] = await db.select({ count: count() }).from(series);
+  const [subjectsCount] = await db.select({ count: count() }).from(subjects);
 
   return {
     educationLevels: educationLevelsCount?.count || 0,
@@ -372,5 +408,23 @@ export async function getCatalogStats() {
     grades: gradesCount?.count || 0,
     series: seriesCount?.count || 0,
     subjects: subjectsCount?.count || 0,
-  }
+  };
+}
+
+export async function getSmartCatalogData(): Promise<{
+  educationLevels: EducationLevel[];
+  tracks: Track[];
+  series: Serie[];
+}> {
+  const [educationLevels, tracks, series] = await Promise.all([
+    getEducationLevels(),
+    getTracks(),
+    getSeries(),
+  ]);
+
+  return {
+    educationLevels,
+    tracks,
+    series,
+  };
 }
