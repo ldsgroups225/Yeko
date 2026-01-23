@@ -1,7 +1,12 @@
-import { IconArrowLeft, IconHelpCircle, IconHome, IconSearch } from '@tabler/icons-react'
-import { Link } from '@tanstack/react-router'
-import { Button } from '@workspace/ui/components/button'
-import { Card, CardContent } from '@workspace/ui/components/card'
+import {
+  IconArrowLeft,
+  IconHelpCircle,
+  IconHome,
+  IconSearch,
+} from "@tabler/icons-react";
+import { Link } from "@tanstack/react-router";
+import { Button } from "@workspace/ui/components/button";
+import { Card, CardContent } from "@workspace/ui/components/card";
 
 export function NotFound({ children }: { children?: any }) {
   return (
@@ -38,12 +43,15 @@ export function NotFound({ children }: { children?: any }) {
                 <IconArrowLeft className="h-4 w-4" />
                 Go Back
               </Button>
-              <Button variant="outline" asChild>
-                <Link to="/" className="flex items-center gap-2">
-                  <IconHome className="h-4 w-4" />
-                  Home
-                </Link>
-              </Button>
+              <Button
+                variant="outline"
+                render={
+                  <Link to="/" className="flex items-center gap-2">
+                    <IconHome className="h-4 w-4" />
+                    Home
+                  </Link>
+                }
+              />
             </div>
 
             {/* Help text */}
@@ -59,5 +67,5 @@ export function NotFound({ children }: { children?: any }) {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

@@ -1,11 +1,22 @@
-'use client'
-
-import { IconCircleCheck, IconDots, IconFileText, IconLoader2, IconPlus, IconTrash } from '@tabler/icons-react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { createFileRoute } from '@tanstack/react-router'
-import { Badge } from '@workspace/ui/components/badge'
-import { Button } from '@workspace/ui/components/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import {
+  IconCircleCheck,
+  IconDots,
+  IconFileText,
+  IconLoader2,
+  IconPlus,
+  IconTrash,
+} from "@tabler/icons-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card";
 import {
   Dialog,
   DialogContent,
@@ -13,7 +24,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@workspace/ui/components/dialog'
+} from "@workspace/ui/components/dialog";
 
 import {
   DropdownMenu,
@@ -21,10 +32,10 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@workspace/ui/components/dropdown-menu'
-import { Input } from '@workspace/ui/components/input'
-import { Label } from '@workspace/ui/components/label'
-import { Skeleton } from '@workspace/ui/components/skeleton'
+} from "@workspace/ui/components/dropdown-menu";
+import { Input } from "@workspace/ui/components/input";
+import { Label } from "@workspace/ui/components/label";
+import { Skeleton } from "@workspace/ui/components/skeleton";
 import {
   Table,
   TableBody,
@@ -32,62 +43,64 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@workspace/ui/components/table'
-import { AnimatePresence, motion } from 'motion/react'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { useSchoolContext } from '@/hooks/use-school-context'
-import { useTranslations } from '@/i18n'
+} from "@workspace/ui/components/table";
+import { AnimatePresence, motion } from "motion/react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { useSchoolContext } from "@/hooks/use-school-context";
+import { useTranslations } from "@/i18n";
 import {
   createReportCardTemplate,
   deleteReportCardTemplate,
   getReportCardTemplates,
   updateReportCardTemplate,
-} from '@/school/functions/report-cards'
-import { generateUUID } from '@/utils/generateUUID'
+} from "@/school/functions/report-cards";
+import { generateUUID } from "@/utils/generateUUID";
 
-export const Route = createFileRoute('/_auth/settings/report-cards')({
+export const Route = createFileRoute("/_auth/settings/report-cards")({
   component: ReportCardTemplatesSettingsPage,
-})
+});
 
 function ReportCardTemplatesSettingsPage() {
-  const t = useTranslations()
-  const { schoolId } = useSchoolContext()
-  const queryClient = useQueryClient()
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
-  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
+  const t = useTranslations();
+  const { schoolId } = useSchoolContext();
+  const queryClient = useQueryClient();
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   // Fetch templates
   const { data: templates, isLoading } = useQuery({
-    queryKey: ['report-card-templates', schoolId],
-    queryFn: () => getReportCardTemplates({ data: { schoolId: schoolId ?? '' } }),
+    queryKey: ["report-card-templates", schoolId],
+    queryFn: () =>
+      getReportCardTemplates({ data: { schoolId: schoolId ?? "" } }),
     enabled: !!schoolId,
-  })
+  });
 
   // Set default mutation
   const setDefaultMutation = useMutation({
-    mutationFn: (id: string) => updateReportCardTemplate({ data: { id, isDefault: true } }),
+    mutationFn: (id: string) =>
+      updateReportCardTemplate({ data: { id, isDefault: true } }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['report-card-templates'] })
-      toast.success(t.common.success())
+      queryClient.invalidateQueries({ queryKey: ["report-card-templates"] });
+      toast.success(t.common.success());
     },
     onError: () => {
-      toast.error(t.common.error())
+      toast.error(t.common.error());
     },
-  })
+  });
 
   // Delete mutation
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteReportCardTemplate({ data: { id } }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['report-card-templates'] })
-      toast.success(t.common.deleteSuccess())
-      setDeleteConfirmId(null)
+      queryClient.invalidateQueries({ queryKey: ["report-card-templates"] });
+      toast.success(t.common.deleteSuccess());
+      setDeleteConfirmId(null);
     },
     onError: () => {
-      toast.error(t.common.error())
+      toast.error(t.common.error());
     },
-  })
+  });
 
   return (
     <div className="space-y-8">
@@ -97,10 +110,11 @@ function ReportCardTemplatesSettingsPage() {
         animate={{ opacity: 1, x: 0 }}
         className="flex items-center justify-between"
       >
-        <div>
-          {/* Header handled by layout */}
-        </div>
-        <Button onClick={() => setIsCreateDialogOpen(true)} className="rounded-xl shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90">
+        <div>{/* Header handled by layout */}</div>
+        <Button
+          onClick={() => setIsCreateDialogOpen(true)}
+          className="rounded-xl shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90"
+        >
           <IconPlus className="mr-2 h-4 w-4" />
           {t.common.create()}
         </Button>
@@ -123,103 +137,125 @@ function ReportCardTemplatesSettingsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="p-0">
-            {isLoading
-              ? (
-                  <div className="space-y-4 p-6">
-                    {Array.from({ length: 3 }).map(() => (
-                      <Skeleton key={generateUUID()} className="h-16 w-full rounded-xl" />
-                    ))}
-                  </div>
-                )
-              : templates && templates.length > 0
-                ? (
-                    <Table>
-                      <TableHeader className="bg-muted/50">
-                        <TableRow className="hover:bg-transparent border-border/40">
-                          <TableHead className="font-semibold text-muted-foreground pl-6">{t.common.name()}</TableHead>
-                          <TableHead className="font-semibold text-muted-foreground">{t.common.status()}</TableHead>
-                          <TableHead className="text-right font-semibold text-muted-foreground pr-6">{t.common.actions()}</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        <AnimatePresence>
-                          {templates.map((template, index) => (
-                            <motion.tr
-                              key={template.id}
-                              initial={{ opacity: 0, x: -10 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: index * 0.05 }}
-                              className="group hover:bg-muted/30 border-border/40 transition-colors"
+            {isLoading ? (
+              <div className="space-y-4 p-6">
+                {Array.from({ length: 3 }).map(() => (
+                  <Skeleton
+                    key={generateUUID()}
+                    className="h-16 w-full rounded-xl"
+                  />
+                ))}
+              </div>
+            ) : templates && templates.length > 0 ? (
+              <Table>
+                <TableHeader className="bg-muted/50">
+                  <TableRow className="hover:bg-transparent border-border/40">
+                    <TableHead className="font-semibold text-muted-foreground pl-6">
+                      {t.common.name()}
+                    </TableHead>
+                    <TableHead className="font-semibold text-muted-foreground">
+                      {t.common.status()}
+                    </TableHead>
+                    <TableHead className="text-right font-semibold text-muted-foreground pr-6">
+                      {t.common.actions()}
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <AnimatePresence>
+                    {templates.map((template, index) => (
+                      <motion.tr
+                        key={template.id}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        className="group hover:bg-muted/30 border-border/40 transition-colors"
+                      >
+                        <TableCell className="font-bold pl-6 text-foreground">
+                          {template.name}
+                        </TableCell>
+                        <TableCell>
+                          {template.isDefault ? (
+                            <Badge
+                              variant="default"
+                              className="gap-1 bg-green-500/15 text-green-700 hover:bg-green-500/25 border-green-200 dark:border-green-800 dark:text-green-400 rounded-lg pr-3 pl-3"
                             >
-                              <TableCell className="font-bold pl-6 text-foreground">
-                                {template.name}
-                              </TableCell>
-                              <TableCell>
-                                {template.isDefault
-                                  ? (
-                                      <Badge variant="default" className="gap-1 bg-green-500/15 text-green-700 hover:bg-green-500/25 border-green-200 dark:border-green-800 dark:text-green-400 rounded-lg pr-3 pl-3">
-                                        <IconCircleCheck className="h-3.5 w-3.5" />
-                                        Default
-                                      </Badge>
-                                    )
-                                  : (
-                                      <span className="text-muted-foreground text-sm">-</span>
-                                    )}
-                              </TableCell>
-                              <TableCell className="text-right pr-6">
-                                <DropdownMenu>
-                                  <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                                      <IconDots className="h-4 w-4" />
-                                    </Button>
-                                  </DropdownMenuTrigger>
-                                  <DropdownMenuContent align="end" className="rounded-xl border-border/40 bg-card/95 backdrop-blur-xl shadow-xl w-48">
-                                    {!template.isDefault && (
-                                      <DropdownMenuItem
-                                        onClick={() => setDefaultMutation.mutate(template.id)}
-                                        disabled={setDefaultMutation.isPending}
-                                        className="rounded-lg cursor-pointer focus:bg-primary/10 font-medium"
-                                      >
-                                        <IconCircleCheck className="mr-2 h-4 w-4 text-green-600" />
-                                        {t.settings.reportCards.isDefault()}
-                                      </DropdownMenuItem>
-                                    )}
-                                    <DropdownMenuSeparator className="bg-border/40" />
-                                    <DropdownMenuItem
-                                      className="text-destructive focus:bg-destructive/10 focus:text-destructive rounded-lg cursor-pointer font-medium"
-                                      onClick={() => setDeleteConfirmId(template.id)}
-                                    >
-                                      <IconTrash className="mr-2 h-4 w-4" />
-                                      {t.common.delete()}
-                                    </DropdownMenuItem>
-                                  </DropdownMenuContent>
-                                </DropdownMenu>
-                              </TableCell>
-                            </motion.tr>
-                          ))}
-                        </AnimatePresence>
-                      </TableBody>
-                    </Table>
-                  )
-                : (
-                    <div className="flex flex-col items-center justify-center py-16 text-center space-y-4">
-                      <div className="p-4 rounded-full bg-muted/20">
-                        <IconFileText className="h-10 w-10 text-muted-foreground/50" />
-                      </div>
-                      <div className="space-y-1">
-                        <h3 className="text-lg font-bold text-foreground">
-                          {t.empty.noResults()}
-                        </h3>
-                        <p className="text-sm text-muted-foreground max-w-sm mx-auto">
-                          {t.settings.reportCards.createDescription()}
-                        </p>
-                      </div>
-                      <Button className="mt-4 rounded-xl" onClick={() => setIsCreateDialogOpen(true)}>
-                        <IconPlus className="mr-2 h-4 w-4" />
-                        {t.common.create()}
-                      </Button>
-                    </div>
-                  )}
+                              <IconCircleCheck className="h-3.5 w-3.5" />
+                              Default
+                            </Badge>
+                          ) : (
+                            <span className="text-muted-foreground text-sm">
+                              -
+                            </span>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-right pr-6">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger
+                              render={
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                                >
+                                  <IconDots className="h-4 w-4" />
+                                </Button>
+                              }
+                            />
+                            <DropdownMenuContent
+                              align="end"
+                              className="rounded-xl border-border/40 bg-card/95 backdrop-blur-xl shadow-xl w-48"
+                            >
+                              {!template.isDefault && (
+                                <DropdownMenuItem
+                                  onClick={() =>
+                                    setDefaultMutation.mutate(template.id)
+                                  }
+                                  disabled={setDefaultMutation.isPending}
+                                  className="rounded-lg cursor-pointer focus:bg-primary/10 font-medium"
+                                >
+                                  <IconCircleCheck className="mr-2 h-4 w-4 text-green-600" />
+                                  {t.settings.reportCards.isDefault()}
+                                </DropdownMenuItem>
+                              )}
+                              <DropdownMenuSeparator className="bg-border/40" />
+                              <DropdownMenuItem
+                                className="text-destructive focus:bg-destructive/10 focus:text-destructive rounded-lg cursor-pointer font-medium"
+                                onClick={() => setDeleteConfirmId(template.id)}
+                              >
+                                <IconTrash className="mr-2 h-4 w-4" />
+                                {t.common.delete()}
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </motion.tr>
+                    ))}
+                  </AnimatePresence>
+                </TableBody>
+              </Table>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-16 text-center space-y-4">
+                <div className="p-4 rounded-full bg-muted/20">
+                  <IconFileText className="h-10 w-10 text-muted-foreground/50" />
+                </div>
+                <div className="space-y-1">
+                  <h3 className="text-lg font-bold text-foreground">
+                    {t.empty.noResults()}
+                  </h3>
+                  <p className="text-sm text-muted-foreground max-w-sm mx-auto">
+                    {t.settings.reportCards.createDescription()}
+                  </p>
+                </div>
+                <Button
+                  className="mt-4 rounded-xl"
+                  onClick={() => setIsCreateDialogOpen(true)}
+                >
+                  <IconPlus className="mr-2 h-4 w-4" />
+                  {t.common.create()}
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       </motion.div>
@@ -228,54 +264,71 @@ function ReportCardTemplatesSettingsPage() {
       <CreateTemplateDialog
         open={isCreateDialogOpen}
         onOpenChange={setIsCreateDialogOpen}
-        schoolId={schoolId || ''}
+        schoolId={schoolId || ""}
       />
 
       {/* Delete Confirmation Dialog */}
-      <Dialog open={!!deleteConfirmId} onOpenChange={() => setDeleteConfirmId(null)}>
+      <Dialog
+        open={!!deleteConfirmId}
+        onOpenChange={() => setDeleteConfirmId(null)}
+      >
         <DialogContent className="backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6 sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold">{t.settings.reportCards.deleteTitle()}</DialogTitle>
+            <DialogTitle className="text-xl font-bold">
+              {t.settings.reportCards.deleteTitle()}
+            </DialogTitle>
             <DialogDescription className="text-muted-foreground/80">
               {t.settings.reportCards.deleteDescription()}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="outline" onClick={() => setDeleteConfirmId(null)} className="rounded-xl border-border/40">
+            <Button
+              variant="outline"
+              onClick={() => setDeleteConfirmId(null)}
+              className="rounded-xl border-border/40"
+            >
               {t.common.cancel()}
             </Button>
             <Button
               variant="destructive"
-              onClick={() => deleteConfirmId && deleteMutation.mutate(deleteConfirmId)}
+              onClick={() =>
+                deleteConfirmId && deleteMutation.mutate(deleteConfirmId)
+              }
               disabled={deleteMutation.isPending}
               className="rounded-xl shadow-lg shadow-destructive/20"
             >
-              {deleteMutation.isPending && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {deleteMutation.isPending && (
+                <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
               {t.common.delete()}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }
 
 interface CreateTemplateDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  schoolId: string
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  schoolId: string;
 }
 
-function CreateTemplateDialog({ open, onOpenChange, schoolId }: CreateTemplateDialogProps) {
-  const t = useTranslations()
-  const queryClient = useQueryClient()
-  const [name, setName] = useState('')
-  const [isDefault, setIsDefault] = useState(false)
+function CreateTemplateDialog({
+  open,
+  onOpenChange,
+  schoolId,
+}: CreateTemplateDialogProps) {
+  const t = useTranslations();
+  const queryClient = useQueryClient();
+  const [name, setName] = useState("");
+  const [isDefault, setIsDefault] = useState(false);
 
   const resetForm = () => {
-    setName('')
-    setIsDefault(false)
-  }
+    setName("");
+    setIsDefault(false);
+  };
 
   const createMutation = useMutation({
     mutationFn: () =>
@@ -287,43 +340,51 @@ function CreateTemplateDialog({ open, onOpenChange, schoolId }: CreateTemplateDi
         },
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['report-card-templates'] })
-      toast.success(t.common.success())
-      onOpenChange(false)
-      resetForm()
+      queryClient.invalidateQueries({ queryKey: ["report-card-templates"] });
+      toast.success(t.common.success());
+      onOpenChange(false);
+      resetForm();
     },
     onError: () => {
-      toast.error(t.common.error())
+      toast.error(t.common.error());
     },
-  })
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (!name) {
-      toast.error(t.common.error())
-      return
+      toast.error(t.common.error());
+      return;
     }
-    createMutation.mutate()
-  }
+    createMutation.mutate();
+  };
 
-  const inputClass = 'rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors'
+  const inputClass =
+    "rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6 sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-black tracking-tight uppercase italic">{t.settings.reportCards.createTitle()}</DialogTitle>
+          <DialogTitle className="text-2xl font-black tracking-tight uppercase italic">
+            {t.settings.reportCards.createTitle()}
+          </DialogTitle>
           <DialogDescription className="text-muted-foreground/80 font-medium">
             {t.settings.reportCards.createDescription()}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-6 mt-4">
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-xs uppercase font-bold tracking-wider text-muted-foreground">{t.settings.reportCards.templateName()}</Label>
+            <Label
+              htmlFor="name"
+              className="text-xs uppercase font-bold tracking-wider text-muted-foreground"
+            >
+              {t.settings.reportCards.templateName()}
+            </Label>
             <Input
               id="name"
               value={name}
-              onChange={e => setName(e.target.value)}
+              onChange={(e) => setName(e.target.value)}
               className={inputClass}
               placeholder={t.settings.reportCards.templateNamePlaceholder()}
             />
@@ -334,25 +395,39 @@ function CreateTemplateDialog({ open, onOpenChange, schoolId }: CreateTemplateDi
               type="checkbox"
               id="isDefault"
               checked={isDefault}
-              onChange={e => setIsDefault(e.target.checked)}
+              onChange={(e) => setIsDefault(e.target.checked)}
               className="h-5 w-5 rounded-md border-border/40 text-primary focus:ring-primary/20 bg-muted/20"
             />
-            <Label htmlFor="isDefault" className="text-sm font-medium cursor-pointer select-none">
+            <Label
+              htmlFor="isDefault"
+              className="text-sm font-medium cursor-pointer select-none"
+            >
               {t.settings.reportCards.setAsDefault()}
             </Label>
           </div>
 
           <DialogFooter className="gap-2 sm:gap-0 pt-2">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="rounded-xl border-border/40">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              className="rounded-xl border-border/40"
+            >
               {t.common.cancel()}
             </Button>
-            <Button type="submit" disabled={createMutation.isPending} className="rounded-xl shadow-lg shadow-primary/20">
-              {createMutation.isPending && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <Button
+              type="submit"
+              disabled={createMutation.isPending}
+              className="rounded-xl shadow-lg shadow-primary/20"
+            >
+              {createMutation.isPending && (
+                <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
               {t.common.create()}
             </Button>
           </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

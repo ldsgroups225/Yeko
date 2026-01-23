@@ -1,14 +1,14 @@
-import { IconDots, IconEdit, IconTag, IconTrash } from '@tabler/icons-react'
-import { Badge } from '@workspace/ui/components/badge'
-import { Button } from '@workspace/ui/components/button'
+import { IconDots, IconEdit, IconTag, IconTrash } from "@tabler/icons-react";
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@workspace/ui/components/dropdown-menu'
-import { Skeleton } from '@workspace/ui/components/skeleton'
+} from "@workspace/ui/components/dropdown-menu";
+import { Skeleton } from "@workspace/ui/components/skeleton";
 import {
   Table,
   TableBody,
@@ -16,28 +16,28 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@workspace/ui/components/table'
-import { AnimatePresence, motion } from 'motion/react'
-import { useTranslations } from '@/i18n'
-import { generateUUID } from '@/utils/generateUUID'
+} from "@workspace/ui/components/table";
+import { AnimatePresence, motion } from "motion/react";
+import { useTranslations } from "@/i18n";
+import { generateUUID } from "@/utils/generateUUID";
 
 interface Discount {
-  id: string
-  code: string
-  name: string
-  type: string
-  calculationType: string
-  value: number
-  requiresApproval: boolean
-  autoApply: boolean
-  status: string
+  id: string;
+  code: string;
+  name: string;
+  type: string;
+  calculationType: string;
+  value: number;
+  requiresApproval: boolean;
+  autoApply: boolean;
+  status: string;
 }
 
 interface DiscountsTableProps {
-  discounts: Discount[]
-  isLoading?: boolean
-  onEdit?: (discount: Discount) => void
-  onDelete?: (discount: Discount) => void
+  discounts: Discount[];
+  isLoading?: boolean;
+  onEdit?: (discount: Discount) => void;
+  onDelete?: (discount: Discount) => void;
 }
 
 export function DiscountsTable({
@@ -46,7 +46,7 @@ export function DiscountsTable({
   onEdit,
   onDelete,
 }: DiscountsTableProps) {
-  const t = useTranslations()
+  const t = useTranslations();
 
   const getTypeLabel = (type: string) => {
     const typeTranslations = {
@@ -56,19 +56,19 @@ export function DiscountsTable({
       early_payment: t.finance.discountTypes.early_payment,
       financial_aid: t.finance.discountTypes.financial_aid,
       other: t.finance.discountTypes.other,
-    }
-    return typeTranslations[type as keyof typeof typeTranslations]?.() || type
-  }
+    };
+    return typeTranslations[type as keyof typeof typeTranslations]?.() || type;
+  };
 
   const formatValue = (discount: Discount) => {
-    if (discount.calculationType === 'percentage') {
-      return `${discount.value}%`
+    if (discount.calculationType === "percentage") {
+      return `${discount.value}%`;
     }
-    return `${new Intl.NumberFormat('fr-FR', {
-      style: 'decimal',
+    return `${new Intl.NumberFormat("fr-FR", {
+      style: "decimal",
       minimumFractionDigits: 0,
-    }).format(discount.value)} FCFA`
-  }
+    }).format(discount.value)} FCFA`;
+  };
 
   if (isLoading) {
     return (
@@ -77,7 +77,7 @@ export function DiscountsTable({
           <Skeleton key={generateUUID()} className="h-12 w-full rounded-xl" />
         ))}
       </div>
-    )
+    );
   }
 
   if (discounts.length === 0) {
@@ -86,10 +86,14 @@ export function DiscountsTable({
         <div className="p-4 rounded-full bg-muted/20 mb-4">
           <IconTag className="h-8 w-8 text-muted-foreground/50" />
         </div>
-        <p className="text-lg font-medium">{t.finance.discounts.noDiscounts()}</p>
-        <p className="text-sm max-w-sm mt-1 text-muted-foreground/70">{t.finance.discounts.createDescription()}</p>
+        <p className="text-lg font-medium">
+          {t.finance.discounts.noDiscounts()}
+        </p>
+        <p className="text-sm max-w-sm mt-1 text-muted-foreground/70">
+          {t.finance.discounts.createDescription()}
+        </p>
       </div>
-    )
+    );
   }
 
   return (
@@ -98,12 +102,22 @@ export function DiscountsTable({
         <Table>
           <TableHeader className="bg-muted/50">
             <TableRow className="hover:bg-transparent border-border/40">
-              <TableHead className="font-semibold">{t.finance.discounts.code()}</TableHead>
+              <TableHead className="font-semibold">
+                {t.finance.discounts.code()}
+              </TableHead>
               <TableHead className="font-semibold">{t.common.name()}</TableHead>
-              <TableHead className="font-semibold">{t.finance.discounts.type()}</TableHead>
-              <TableHead className="font-semibold">{t.finance.discounts.value()}</TableHead>
-              <TableHead className="font-semibold">{t.common.status()}</TableHead>
-              <TableHead className="text-right font-semibold">{t.common.actions()}</TableHead>
+              <TableHead className="font-semibold">
+                {t.finance.discounts.type()}
+              </TableHead>
+              <TableHead className="font-semibold">
+                {t.finance.discounts.value()}
+              </TableHead>
+              <TableHead className="font-semibold">
+                {t.common.status()}
+              </TableHead>
+              <TableHead className="text-right font-semibold">
+                {t.common.actions()}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -116,18 +130,28 @@ export function DiscountsTable({
                   transition={{ delay: index * 0.05 }}
                   className="group hover:bg-muted/30 border-border/40 transition-colors"
                 >
-                  <TableCell className="font-mono text-sm font-medium text-muted-foreground">{discount.code}</TableCell>
+                  <TableCell className="font-mono text-sm font-medium text-muted-foreground">
+                    {discount.code}
+                  </TableCell>
                   <TableCell>
                     <div>
-                      <div className="font-bold text-foreground">{discount.name}</div>
+                      <div className="font-bold text-foreground">
+                        {discount.name}
+                      </div>
                       <div className="flex gap-1 mt-1">
                         {discount.autoApply && (
-                          <Badge variant="outline" className="text-[10px] h-5 px-1.5 bg-blue-500/10 text-blue-700 border-blue-200 dark:border-blue-900/30 dark:text-blue-400">
+                          <Badge
+                            variant="outline"
+                            className="text-[10px] h-5 px-1.5 bg-blue-500/10 text-blue-700 border-blue-200 dark:border-blue-900/30 dark:text-blue-400"
+                          >
                             Auto
                           </Badge>
                         )}
                         {discount.requiresApproval && (
-                          <Badge variant="outline" className="text-[10px] h-5 px-1.5 bg-orange-500/10 text-orange-700 border-orange-200 dark:border-orange-900/30 dark:text-orange-400">
+                          <Badge
+                            variant="outline"
+                            className="text-[10px] h-5 px-1.5 bg-orange-500/10 text-orange-700 border-orange-200 dark:border-orange-900/30 dark:text-orange-400"
+                          >
                             Approbation
                           </Badge>
                         )}
@@ -139,21 +163,42 @@ export function DiscountsTable({
                       {getTypeLabel(discount.type)}
                     </Badge>
                   </TableCell>
-                  <TableCell className="font-bold text-primary">{formatValue(discount)}</TableCell>
+                  <TableCell className="font-bold text-primary">
+                    {formatValue(discount)}
+                  </TableCell>
                   <TableCell>
-                    <Badge variant={discount.status === 'active' ? 'default' : 'secondary'} className="capitalize rounded-md">
-                      {discount.status === 'active' ? t.common.active() : t.common.inactive()}
+                    <Badge
+                      variant={
+                        discount.status === "active" ? "default" : "secondary"
+                      }
+                      className="capitalize rounded-md"
+                    >
+                      {discount.status === "active"
+                        ? t.common.active()
+                        : t.common.inactive()}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                          <IconDots className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="backdrop-blur-xl bg-card/95 border-border/40 shadow-xl rounded-xl p-1">
-                        <DropdownMenuItem onClick={() => onEdit?.(discount)} className="rounded-lg cursor-pointer focus:bg-primary/10 font-medium">
+                      <DropdownMenuTrigger
+                        render={
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <IconDots className="h-4 w-4" />
+                          </Button>
+                        }
+                      />
+                      <DropdownMenuContent
+                        align="end"
+                        className="backdrop-blur-xl bg-card/95 border-border/40 shadow-xl rounded-xl p-1"
+                      >
+                        <DropdownMenuItem
+                          onClick={() => onEdit?.(discount)}
+                          className="rounded-lg cursor-pointer focus:bg-primary/10 font-medium"
+                        >
                           <IconEdit className="mr-2 h-4 w-4 text-muted-foreground" />
                           {t.common.edit()}
                         </DropdownMenuItem>
@@ -187,19 +232,40 @@ export function DiscountsTable({
             >
               <div className="flex justify-between items-start">
                 <div className="flex items-center gap-2">
-                  <div className="font-mono text-xs font-bold text-muted-foreground bg-muted/20 px-2 py-1 rounded-md">{discount.code}</div>
-                  <Badge variant={discount.status === 'active' ? 'default' : 'secondary'} className="capitalize rounded-md text-[10px]">
-                    {discount.status === 'active' ? t.common.active() : t.common.inactive()}
+                  <div className="font-mono text-xs font-bold text-muted-foreground bg-muted/20 px-2 py-1 rounded-md">
+                    {discount.code}
+                  </div>
+                  <Badge
+                    variant={
+                      discount.status === "active" ? "default" : "secondary"
+                    }
+                    className="capitalize rounded-md text-[10px]"
+                  >
+                    {discount.status === "active"
+                      ? t.common.active()
+                      : t.common.inactive()}
                   </Badge>
                 </div>
                 <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg -mr-2 -mt-2">
-                      <IconDots className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="backdrop-blur-xl bg-card/95 border-border/40 shadow-xl rounded-xl p-1">
-                    <DropdownMenuItem onClick={() => onEdit?.(discount)} className="rounded-lg cursor-pointer focus:bg-primary/10 font-medium">
+                  <DropdownMenuTrigger
+                    render={
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 rounded-lg -mr-2 -mt-2"
+                      >
+                        <IconDots className="h-4 w-4" />
+                      </Button>
+                    }
+                  />
+                  <DropdownMenuContent
+                    align="end"
+                    className="backdrop-blur-xl bg-card/95 border-border/40 shadow-xl rounded-xl p-1"
+                  >
+                    <DropdownMenuItem
+                      onClick={() => onEdit?.(discount)}
+                      className="rounded-lg cursor-pointer focus:bg-primary/10 font-medium"
+                    >
                       <IconEdit className="mr-2 h-4 w-4 text-muted-foreground" />
                       {t.common.edit()}
                     </DropdownMenuItem>
@@ -222,12 +288,18 @@ export function DiscountsTable({
                     {getTypeLabel(discount.type)}
                   </Badge>
                   {discount.autoApply && (
-                    <Badge variant="outline" className="text-[10px] bg-blue-500/10 text-blue-700 border-blue-200 dark:border-blue-900/30 dark:text-blue-400">
+                    <Badge
+                      variant="outline"
+                      className="text-[10px] bg-blue-500/10 text-blue-700 border-blue-200 dark:border-blue-900/30 dark:text-blue-400"
+                    >
                       Auto
                     </Badge>
                   )}
                   {discount.requiresApproval && (
-                    <Badge variant="outline" className="text-[10px] bg-orange-500/10 text-orange-700 border-orange-200 dark:border-orange-900/30 dark:text-orange-400">
+                    <Badge
+                      variant="outline"
+                      className="text-[10px] bg-orange-500/10 text-orange-700 border-orange-200 dark:border-orange-900/30 dark:text-orange-400"
+                    >
                       Approbation
                     </Badge>
                   )}
@@ -235,13 +307,17 @@ export function DiscountsTable({
               </div>
 
               <div className="p-3 rounded-xl bg-muted/20 border border-border/20 flex items-center justify-between">
-                <span className="text-sm font-medium text-muted-foreground">{t.finance.discounts.value()}</span>
-                <span className="font-bold text-lg text-primary">{formatValue(discount)}</span>
+                <span className="text-sm font-medium text-muted-foreground">
+                  {t.finance.discounts.value()}
+                </span>
+                <span className="font-bold text-lg text-primary">
+                  {formatValue(discount)}
+                </span>
               </div>
             </motion.div>
           ))}
         </AnimatePresence>
       </div>
     </>
-  )
+  );
 }

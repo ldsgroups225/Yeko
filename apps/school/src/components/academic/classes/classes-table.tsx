@@ -264,11 +264,13 @@ export function ClassesTable({
         id: "actions",
         cell: ({ row }) => (
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <IconDots className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
+            <DropdownMenuTrigger
+              render={
+                <Button variant="ghost" size="icon">
+                  <IconDots className="h-4 w-4" />
+                </Button>
+              }
+            />
             <DropdownMenuContent
               align="end"
               className="backdrop-blur-xl bg-popover/90 border border-border/40"
@@ -335,23 +337,25 @@ export function ClassesTable({
           </div>
 
           <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className="border-border/40 bg-card/50 backdrop-blur-sm shadow-none hover:bg-card/80"
-              >
-                <IconAdjustmentsHorizontal className="mr-2 h-4 w-4" />
-                {t.common.actions()}
-                {status && status !== "all" && (
-                  <Badge
-                    variant="secondary"
-                    className="ml-2 h-5 rounded-full px-1.5 text-xs"
-                  >
-                    1
-                  </Badge>
-                )}
-              </Button>
-            </PopoverTrigger>
+            <PopoverTrigger
+              render={
+                <Button
+                  variant="outline"
+                  className="border-border/40 bg-card/50 backdrop-blur-sm shadow-none hover:bg-card/80"
+                >
+                  <IconAdjustmentsHorizontal className="mr-2 h-4 w-4" />
+                  {t.common.actions()}
+                  {status && status !== "all" && (
+                    <Badge
+                      variant="secondary"
+                      className="ml-2 h-5 rounded-full px-1.5 text-xs"
+                    >
+                      1
+                    </Badge>
+                  )}
+                </Button>
+              }
+            />
             <PopoverContent
               className="w-80 p-4 space-y-4 backdrop-blur-2xl bg-popover/90 border border-border/40"
               align="start"
@@ -517,15 +521,17 @@ export function ClassesTable({
                     </div>
                   </div>
                   <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="hover:bg-card/20"
-                      >
-                        <IconDots className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
+                    <DropdownMenuTrigger
+                      render={
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="hover:bg-card/20"
+                        >
+                          <IconDots className="h-4 w-4" />
+                        </Button>
+                      }
+                    />
                     <DropdownMenuContent
                       align="end"
                       className="backdrop-blur-xl bg-popover/90 border border-border/40"

@@ -1,25 +1,25 @@
-import { IconCheck, IconRotate, IconX } from '@tabler/icons-react'
-import { Button } from '@workspace/ui/components/button'
-import { Input } from '@workspace/ui/components/input'
+import { IconCheck, IconRotate, IconX } from "@tabler/icons-react";
+import { Button } from "@workspace/ui/components/button";
+import { Input } from "@workspace/ui/components/input";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@workspace/ui/components/popover'
-import { motion } from 'motion/react'
-import { useState } from 'react'
-import { useTranslations } from '@/i18n'
-import { cn } from '@/lib/utils'
+} from "@workspace/ui/components/popover";
+import { motion } from "motion/react";
+import { useState } from "react";
+import { useTranslations } from "@/i18n";
+import { cn } from "@/lib/utils";
 
 interface CoefficientCellProps {
-  templateId: string
-  templateWeight: number
-  effectiveWeight: number
-  isOverride: boolean
-  overrideId: string | null
-  isEdited: boolean
-  onEdit: (value: number) => void
-  onReset: () => void
+  templateId: string;
+  templateWeight: number;
+  effectiveWeight: number;
+  isOverride: boolean;
+  overrideId: string | null;
+  isEdited: boolean;
+  onEdit: (value: number) => void;
+  onReset: () => void;
 }
 
 export function CoefficientCell({
@@ -31,50 +31,52 @@ export function CoefficientCell({
   onEdit,
   onReset,
 }: CoefficientCellProps) {
-  const t = useTranslations()
-  const [isOpen, setIsOpen] = useState(false)
-  const [inputValue, setInputValue] = useState(effectiveWeight.toString())
+  const t = useTranslations();
+  const [isOpen, setIsOpen] = useState(false);
+  const [inputValue, setInputValue] = useState(effectiveWeight.toString());
 
   const handleSave = () => {
-    const value = Number.parseInt(inputValue, 10)
+    const value = Number.parseInt(inputValue, 10);
     if (Number.isNaN(value) || value < 0 || value > 20) {
-      return
+      return;
     }
-    onEdit(value)
-    setIsOpen(false)
-  }
+    onEdit(value);
+    setIsOpen(false);
+  };
 
   const handleCancel = () => {
-    setInputValue(effectiveWeight.toString())
-    setIsOpen(false)
-  }
+    setInputValue(effectiveWeight.toString());
+    setIsOpen(false);
+  };
 
   const handleReset = () => {
-    onReset()
-    setIsOpen(false)
-  }
+    onReset();
+    setIsOpen(false);
+  };
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
-      <PopoverTrigger asChild>
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          type="button"
-          className={cn(
-            'w-full h-9 rounded-lg border font-medium transition-all relative overflow-hidden group',
-            'focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-1 focus:ring-offset-background',
-            isEdited
-              ? 'border-amber-500/50 bg-amber-500/10 text-amber-600 hover:bg-amber-500/20'
-              : isOverride
-                ? 'border-primary/50 bg-primary/10 text-primary hover:bg-primary/20'
-                : 'border-border/60 bg-white/5 hover:border-primary/40 hover:bg-white/10 text-muted-foreground hover:text-foreground',
-          )}
-        >
-          {effectiveWeight}
-          <div className="absolute inset-0 bg-linear-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-        </motion.button>
-      </PopoverTrigger>
+      <PopoverTrigger
+        render={
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            type="button"
+            className={cn(
+              "w-full h-9 rounded-lg border font-medium transition-all relative overflow-hidden group",
+              "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-1 focus:ring-offset-background",
+              isEdited
+                ? "border-amber-500/50 bg-amber-500/10 text-amber-600 hover:bg-amber-500/20"
+                : isOverride
+                  ? "border-primary/50 bg-primary/10 text-primary hover:bg-primary/20"
+                  : "border-border/60 bg-white/5 hover:border-primary/40 hover:bg-white/10 text-muted-foreground hover:text-foreground",
+            )}
+          >
+            {effectiveWeight}
+            <div className="absolute inset-0 bg-linear-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+          </motion.button>
+        }
+      />
       <PopoverContent
         className="w-72 p-0 overflow-hidden border-border/40 bg-card/95 backdrop-blur-xl shadow-2xl"
         align="center"
@@ -119,14 +121,13 @@ export function CoefficientCell({
               min="0"
               max="20"
               value={inputValue}
-              onChange={e => setInputValue(e.target.value)}
+              onChange={(e) => setInputValue(e.target.value)}
               className="h-10 bg-white/5 border-white/10 focus:ring-primary/40 text-center font-mono text-lg font-bold"
               onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleSave()
-                }
-                else if (e.key === 'Escape') {
-                  handleCancel()
+                if (e.key === "Enter") {
+                  handleSave();
+                } else if (e.key === "Escape") {
+                  handleCancel();
                 }
               }}
             />
@@ -167,5 +168,5 @@ export function CoefficientCell({
         </div>
       </PopoverContent>
     </Popover>
-  )
+  );
 }

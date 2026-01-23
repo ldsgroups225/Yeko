@@ -1,27 +1,36 @@
-import type { ColumnDef } from '@tanstack/react-table'
-import { IconBriefcase, IconCalendar, IconDots, IconEdit, IconEye, IconMail, IconSearch, IconTrash } from '@tabler/icons-react'
-import { useQuery } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
+import type { ColumnDef } from "@tanstack/react-table";
+import {
+  IconBriefcase,
+  IconCalendar,
+  IconDots,
+  IconEdit,
+  IconEye,
+  IconMail,
+  IconSearch,
+  IconTrash,
+} from "@tabler/icons-react";
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import {
   flexRender,
   getCoreRowModel,
   useReactTable,
-} from '@tanstack/react-table'
-import { Badge } from '@workspace/ui/components/badge'
-import { Button } from '@workspace/ui/components/button'
+} from "@tanstack/react-table";
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from '@workspace/ui/components/card'
+} from "@workspace/ui/components/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@workspace/ui/components/dropdown-menu'
-import { Input } from '@workspace/ui/components/input'
+} from "@workspace/ui/components/dropdown-menu";
+import { Input } from "@workspace/ui/components/input";
 import {
   Table,
   TableBody,
@@ -29,36 +38,36 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@workspace/ui/components/table'
-import { format } from 'date-fns'
-import { AnimatePresence, motion } from 'motion/react'
-import { useMemo, useState } from 'react'
-import { EmptyState } from '@/components/hr/empty-state'
-import { TableSkeleton } from '@/components/hr/table-skeleton'
-import { useDebounce } from '@/hooks/use-debounce'
-import { useTranslations } from '@/i18n'
-import { getStaffList } from '@/school/functions/staff'
+} from "@workspace/ui/components/table";
+import { format } from "date-fns";
+import { AnimatePresence, motion } from "motion/react";
+import { useMemo, useState } from "react";
+import { EmptyState } from "@/components/hr/empty-state";
+import { TableSkeleton } from "@/components/hr/table-skeleton";
+import { useDebounce } from "@/hooks/use-debounce";
+import { useTranslations } from "@/i18n";
+import { getStaffList } from "@/school/functions/staff";
 
-type StaffListResponse = Awaited<ReturnType<typeof getStaffList>>
-type StaffMember = StaffListResponse['staff'][number]
+type StaffListResponse = Awaited<ReturnType<typeof getStaffList>>;
+type StaffMember = StaffListResponse["staff"][number];
 
 interface StaffTableProps {
   filters: {
-    page?: number
-    search?: string
-    position?: string
-    status?: 'active' | 'inactive' | 'on_leave'
-  }
+    page?: number;
+    search?: string;
+    position?: string;
+    status?: "active" | "inactive" | "on_leave";
+  };
 }
 
 export function StaffTable({ filters }: StaffTableProps) {
-  const t = useTranslations()
-  const navigate = useNavigate()
-  const [searchInput, setSearchInput] = useState(filters.search || '')
-  const debouncedSearch = useDebounce(searchInput, 500)
+  const t = useTranslations();
+  const navigate = useNavigate();
+  const [searchInput, setSearchInput] = useState(filters.search || "");
+  const debouncedSearch = useDebounce(searchInput, 500);
 
   const { data, isLoading } = useQuery({
-    queryKey: ['staff', { ...filters, search: debouncedSearch }],
+    queryKey: ["staff", { ...filters, search: debouncedSearch }],
     queryFn: async () => {
       const result = await getStaffList({
         data: {
@@ -72,19 +81,21 @@ export function StaffTable({ filters }: StaffTableProps) {
             limit: 20,
           },
         },
-      })
-      return result
+      });
+      return result;
     },
-  })
+  });
 
   const columns = useMemo<ColumnDef<StaffMember>[]>(
     () => [
       {
-        accessorKey: 'user.name',
+        accessorKey: "user.name",
         header: t.hr.staff.name(),
         cell: ({ row }) => (
           <div className="flex flex-col">
-            <span className="font-semibold text-foreground">{row.original.user.name}</span>
+            <span className="font-semibold text-foreground">
+              {row.original.user.name}
+            </span>
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
               <IconMail className="h-3 w-3" />
               {row.original.user.email}
@@ -93,7 +104,7 @@ export function StaffTable({ filters }: StaffTableProps) {
         ),
       },
       {
-        accessorKey: 'position',
+        accessorKey: "position",
         header: t.hr.staff.position(),
         cell: ({ row }) => {
           const positionTranslations = {
@@ -103,7 +114,7 @@ export function StaffTable({ filters }: StaffTableProps) {
             cashier: t.hr.positions.cashier,
             registrar: t.hr.positions.registrar,
             other: t.hr.positions.other,
-          }
+          };
           return (
             <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-muted/50 border border-border/40 text-xs font-medium">
               <IconBriefcase className="h-3 w-3 text-primary" />
@@ -111,11 +122,11 @@ export function StaffTable({ filters }: StaffTableProps) {
                 row.original.position as keyof typeof positionTranslations
               ]()}
             </div>
-          )
+          );
         },
       },
       {
-        accessorKey: 'department',
+        accessorKey: "department",
         header: t.hr.staff.department(),
         cell: ({ row }) => (
           <span className="text-sm font-medium text-foreground">
@@ -124,51 +135,65 @@ export function StaffTable({ filters }: StaffTableProps) {
         ),
       },
       {
-        accessorKey: 'status',
+        accessorKey: "status",
         header: t.hr.staff.status(),
         cell: ({ row }) => {
-          const status = row.original.status
+          const status = row.original.status;
           const variants = {
-            active: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
-            inactive: 'bg-slate-500/10 text-slate-600 border-slate-500/20',
-            on_leave: 'bg-amber-500/10 text-amber-600 border-amber-500/20',
-          } as const
+            active: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
+            inactive: "bg-slate-500/10 text-slate-600 border-slate-500/20",
+            on_leave: "bg-amber-500/10 text-amber-600 border-amber-500/20",
+          } as const;
           return (
-            <Badge variant="outline" className={`rounded-full border ${variants[status]} transition-colors`}>
+            <Badge
+              variant="outline"
+              className={`rounded-full border ${variants[status]} transition-colors`}
+            >
               {{
                 active: t.hr.status.active,
                 inactive: t.hr.status.inactive,
                 on_leave: t.hr.status.on_leave,
               }[status]()}
             </Badge>
-          )
+          );
         },
       },
       {
-        accessorKey: 'hireDate',
+        accessorKey: "hireDate",
         header: t.hr.staff.hireDate(),
         cell: ({ row }) => (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <IconCalendar className="h-3.5 w-3.5" />
             {row.original.hireDate
-              ? format(new Date(row.original.hireDate), 'dd MMM yyyy')
-              : '-'}
+              ? format(new Date(row.original.hireDate), "dd MMM yyyy")
+              : "-"}
           </div>
         ),
       },
       {
-        id: 'actions',
+        id: "actions",
         cell: ({ row }) => (
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="hover:bg-primary/10 hover:text-primary transition-colors">
-                <IconDots className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="backdrop-blur-2xl bg-popover/90 border-border/40 min-w-[160px]">
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="hover:bg-primary/10 hover:text-primary transition-colors"
+                >
+                  <IconDots className="h-4 w-4" />
+                </Button>
+              }
+            />
+            <DropdownMenuContent
+              align="end"
+              className="backdrop-blur-2xl bg-popover/90 border-border/40 min-w-[160px]"
+            >
               <DropdownMenuItem
                 className="cursor-pointer gap-2"
-                onClick={() => navigate({ to: `/users/staff/${row.original.id}` })}
+                onClick={() =>
+                  navigate({ to: `/users/staff/${row.original.id}` })
+                }
               >
                 <IconEye className="h-4 w-4" />
                 {t.common.view()}
@@ -176,7 +201,8 @@ export function StaffTable({ filters }: StaffTableProps) {
               <DropdownMenuItem
                 className="cursor-pointer gap-2"
                 onClick={() =>
-                  navigate({ to: `/users/staff/${row.original.id}/edit` })}
+                  navigate({ to: `/users/staff/${row.original.id}/edit` })
+                }
               >
                 <IconEdit className="h-4 w-4" />
                 {t.common.edit()}
@@ -191,7 +217,7 @@ export function StaffTable({ filters }: StaffTableProps) {
       },
     ],
     [t, navigate],
-  )
+  );
 
   const table = useReactTable({
     data: data?.staff || [],
@@ -199,28 +225,32 @@ export function StaffTable({ filters }: StaffTableProps) {
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
     pageCount: data?.totalPages || 0,
-  })
+  });
 
   if (isLoading) {
-    return <TableSkeleton columns={6} rows={5} />
+    return <TableSkeleton columns={6} rows={5} />;
   }
 
-  const hasNoData = !data?.staff || data.staff.length === 0
-  const hasNoResults = hasNoData && (debouncedSearch || filters.position || filters.status)
+  const hasNoData = !data?.staff || data.staff.length === 0;
+  const hasNoResults =
+    hasNoData && (debouncedSearch || filters.position || filters.status);
 
   return (
     <div className="space-y-6">
       <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm overflow-hidden">
         <CardHeader className="pb-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <CardTitle className="text-2xl font-serif">{t.hr.staff.listTitle()}</CardTitle>
+            <CardTitle className="text-2xl font-serif">
+              {t.hr.staff.listTitle()}
+            </CardTitle>
             <div className="relative w-full sm:w-72">
               <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder={t.hr.staff.searchPlaceholder()}
                 value={searchInput}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setSearchInput(e.target.value)}
+                  setSearchInput(e.target.value)
+                }
                 className="pl-10 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all"
               />
             </div>
@@ -236,7 +266,7 @@ export function StaffTable({ filters }: StaffTableProps) {
                 description={t.hr.staff.noStaffDescription()}
                 action={{
                   label: t.hr.staff.addStaff(),
-                  onClick: () => navigate({ to: '/users/staff/new' }),
+                  onClick: () => navigate({ to: "/users/staff/new" }),
                 }}
               />
             </div>
@@ -258,10 +288,16 @@ export function StaffTable({ filters }: StaffTableProps) {
             <div className="rounded-xl border border-border/40 bg-background/30 overflow-hidden">
               <Table>
                 <TableHeader className="bg-muted/50 backdrop-blur-md">
-                  {table.getHeaderGroups().map(headerGroup => (
-                    <TableRow key={headerGroup.id} className="hover:bg-transparent border-border/40">
-                      {headerGroup.headers.map(header => (
-                        <TableHead key={header.id} className="text-xs uppercase tracking-wider font-semibold py-4">
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <TableRow
+                      key={headerGroup.id}
+                      className="hover:bg-transparent border-border/40"
+                    >
+                      {headerGroup.headers.map((header) => (
+                        <TableHead
+                          key={header.id}
+                          className="text-xs uppercase tracking-wider font-semibold py-4"
+                        >
                           {header.isPlaceholder
                             ? null
                             : flexRender(
@@ -281,13 +317,22 @@ export function StaffTable({ filters }: StaffTableProps) {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.98 }}
-                        transition={{ duration: 0.2, delay: index * 0.03, ease: 'easeOut' }}
+                        transition={{
+                          duration: 0.2,
+                          delay: index * 0.03,
+                          ease: "easeOut",
+                        }}
                         className="group hover:bg-primary/5 transition-colors border-border/40 cursor-pointer"
-                        onClick={() => navigate({ to: `/users/staff/${row.original.id}` })}
+                        onClick={() =>
+                          navigate({ to: `/users/staff/${row.original.id}` })
+                        }
                       >
-                        {row.getVisibleCells().map(cell => (
+                        {row.getVisibleCells().map((cell) => (
                           <TableCell key={cell.id} className="py-4">
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )}
                           </TableCell>
                         ))}
                       </motion.tr>
@@ -302,16 +347,15 @@ export function StaffTable({ filters }: StaffTableProps) {
           {!hasNoData && data && data.totalPages > 1 && (
             <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
               <div className="text-sm text-muted-foreground font-medium">
-                {t.common.showing()}
-                {' '}
-                <span className="text-foreground">{(data.page - 1) * data.limit + 1}</span>
-                {' '}
-                -
-                {' '}
-                <span className="text-foreground">{Math.min(data.page * data.limit, data.total)}</span>
-                {' '}
-                {t.common.of()}
-                {' '}
+                {t.common.showing()}{" "}
+                <span className="text-foreground">
+                  {(data.page - 1) * data.limit + 1}
+                </span>{" "}
+                -{" "}
+                <span className="text-foreground">
+                  {Math.min(data.page * data.limit, data.total)}
+                </span>{" "}
+                {t.common.of()}{" "}
                 <span className="text-foreground">{data.total}</span>
               </div>
               <div className="flex gap-3">
@@ -320,11 +364,11 @@ export function StaffTable({ filters }: StaffTableProps) {
                   size="sm"
                   className="rounded-xl border-border/40 bg-background/50 hover:bg-background transition-all px-4"
                   onClick={(e) => {
-                    e.stopPropagation()
+                    e.stopPropagation();
                     navigate({
-                      to: '/users/staff',
+                      to: "/users/staff",
                       search: { ...filters, page: data.page - 1 },
-                    })
+                    });
                   }}
                   disabled={data.page === 1}
                 >
@@ -335,11 +379,11 @@ export function StaffTable({ filters }: StaffTableProps) {
                   size="sm"
                   className="rounded-xl border-border/40 bg-background/50 hover:bg-background transition-all px-4"
                   onClick={(e) => {
-                    e.stopPropagation()
+                    e.stopPropagation();
                     navigate({
-                      to: '/users/staff',
+                      to: "/users/staff",
                       search: { ...filters, page: data.page + 1 },
-                    })
+                    });
                   }}
                   disabled={data.page === data.totalPages}
                 >
@@ -351,5 +395,5 @@ export function StaffTable({ filters }: StaffTableProps) {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

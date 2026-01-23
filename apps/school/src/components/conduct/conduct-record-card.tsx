@@ -1,46 +1,61 @@
-import { IconCalendar, IconDots, IconMapPin, IconSparkles } from '@tabler/icons-react'
-import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
-import { Button } from '@workspace/ui/components/button'
-import { Card, CardContent, CardHeader } from '@workspace/ui/components/card'
+import {
+  IconCalendar,
+  IconDots,
+  IconMapPin,
+  IconSparkles,
+} from "@tabler/icons-react";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@workspace/ui/components/avatar";
+import { Button } from "@workspace/ui/components/button";
+import { Card, CardContent, CardHeader } from "@workspace/ui/components/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@workspace/ui/components/dropdown-menu'
-import { motion } from 'motion/react'
-import { useTranslations } from '@/i18n'
-import { cn } from '@/lib/utils'
-import { ConductSeverityBadge } from './conduct-severity-badge'
-import { ConductStatusBadge } from './conduct-status-badge'
-import { ConductTypeBadge } from './conduct-type-badge'
+} from "@workspace/ui/components/dropdown-menu";
+import { motion } from "motion/react";
+import { useTranslations } from "@/i18n";
+import { cn } from "@/lib/utils";
+import { ConductSeverityBadge } from "./conduct-severity-badge";
+import { ConductStatusBadge } from "./conduct-status-badge";
+import { ConductTypeBadge } from "./conduct-type-badge";
 
-type ConductType = 'incident' | 'sanction' | 'reward' | 'note'
-type ConductSeverity = 'low' | 'medium' | 'high' | 'critical'
-type ConductStatus = 'open' | 'investigating' | 'pending_decision' | 'resolved' | 'closed' | 'appealed'
+type ConductType = "incident" | "sanction" | "reward" | "note";
+type ConductSeverity = "low" | "medium" | "high" | "critical";
+type ConductStatus =
+  | "open"
+  | "investigating"
+  | "pending_decision"
+  | "resolved"
+  | "closed"
+  | "appealed";
 
 interface ConductRecord {
-  id: string
-  studentId: string
-  studentName: string
-  studentPhoto?: string | null
-  type: ConductType
-  category: string
-  title: string
-  description: string
-  severity?: ConductSeverity | null
-  status: ConductStatus
-  incidentDate?: string | null
-  location?: string | null
-  createdAt: string
+  id: string;
+  studentId: string;
+  studentName: string;
+  studentPhoto?: string | null;
+  type: ConductType;
+  category: string;
+  title: string;
+  description: string;
+  severity?: ConductSeverity | null;
+  status: ConductStatus;
+  incidentDate?: string | null;
+  location?: string | null;
+  createdAt: string;
 }
 
 interface ConductRecordCardProps {
-  record: ConductRecord
-  onView?: (id: string) => void
-  onEdit?: (id: string) => void
-  onDelete?: (id: string) => void
-  className?: string
+  record: ConductRecord;
+  onView?: (id: string) => void;
+  onEdit?: (id: string) => void;
+  onDelete?: (id: string) => void;
+  className?: string;
 }
 
 export function ConductRecordCard({
@@ -50,14 +65,14 @@ export function ConductRecordCard({
   onDelete,
   className,
 }: ConductRecordCardProps) {
-  const t = useTranslations()
+  const t = useTranslations();
 
   const initials = record.studentName
-    .split(' ')
-    .map(n => n[0])
-    .join('')
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
     .toUpperCase()
-    .slice(0, 2)
+    .slice(0, 2);
 
   return (
     <motion.div
@@ -66,7 +81,12 @@ export function ConductRecordCard({
       whileHover={{ y: -4 }}
       transition={{ duration: 0.3 }}
     >
-      <Card className={cn('group overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl transition-all hover:bg-card/50 hover:shadow-primary/5', className)}>
+      <Card
+        className={cn(
+          "group overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl transition-all hover:bg-card/50 hover:shadow-primary/5",
+          className,
+        )}
+      >
         <div className="absolute top-0 right-0 p-3 opacity-0 group-hover:opacity-10 transition-opacity duration-500">
           <IconSparkles className="size-16" />
         </div>
@@ -75,37 +95,67 @@ export function ConductRecordCard({
           <div className="flex items-center gap-4">
             <div className="relative">
               <Avatar className="h-12 w-12 border-2 border-primary/20 shadow-inner group-hover:scale-110 transition-transform duration-500">
-                <AvatarImage src={record.studentPhoto ?? undefined} alt={record.studentName} />
-                <AvatarFallback className="bg-primary/5 text-primary font-black uppercase tracking-widest text-[10px]">{initials}</AvatarFallback>
+                <AvatarImage
+                  src={record.studentPhoto ?? undefined}
+                  alt={record.studentName}
+                />
+                <AvatarFallback className="bg-primary/5 text-primary font-black uppercase tracking-widest text-[10px]">
+                  {initials}
+                </AvatarFallback>
               </Avatar>
               <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-card bg-background flex items-center justify-center">
-                <div className={cn('h-1.5 w-1.5 rounded-full animate-pulse', record.type === 'reward'
-                  ? 'bg-emerald-500'
-                  : record.type === 'incident'
-                    ? 'bg-orange-500'
-                    : record.type === 'sanction' ? 'bg-red-500' : 'bg-blue-500')}
+                <div
+                  className={cn(
+                    "h-1.5 w-1.5 rounded-full animate-pulse",
+                    record.type === "reward"
+                      ? "bg-emerald-500"
+                      : record.type === "incident"
+                        ? "bg-orange-500"
+                        : record.type === "sanction"
+                          ? "bg-red-500"
+                          : "bg-blue-500",
+                  )}
                 />
               </div>
             </div>
             <div>
-              <div className="font-black tracking-tight text-lg leading-none mb-1">{record.studentName}</div>
-              <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{record.title}</div>
+              <div className="font-black tracking-tight text-lg leading-none mb-1">
+                {record.studentName}
+              </div>
+              <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+                {record.title}
+              </div>
             </div>
           </div>
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-xl hover:bg-primary/10 hover:text-primary transition-colors">
-                <IconDots className="h-5 w-5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40">
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-xl hover:bg-primary/10 hover:text-primary transition-colors"
+                >
+                  <IconDots className="h-5 w-5" />
+                </Button>
+              }
+            />
+            <DropdownMenuContent
+              align="end"
+              className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40"
+            >
               {onView && (
-                <DropdownMenuItem onClick={() => onView(record.id)} className="rounded-xl font-bold uppercase tracking-widest text-[10px]">
+                <DropdownMenuItem
+                  onClick={() => onView(record.id)}
+                  className="rounded-xl font-bold uppercase tracking-widest text-[10px]"
+                >
                   {t.common.view()}
                 </DropdownMenuItem>
               )}
               {onEdit && (
-                <DropdownMenuItem onClick={() => onEdit(record.id)} className="rounded-xl font-bold uppercase tracking-widest text-[10px]">
+                <DropdownMenuItem
+                  onClick={() => onEdit(record.id)}
+                  className="rounded-xl font-bold uppercase tracking-widest text-[10px]"
+                >
                   {t.common.edit()}
                 </DropdownMenuItem>
               )}
@@ -122,14 +172,14 @@ export function ConductRecordCard({
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-sm font-medium text-muted-foreground/70 leading-relaxed italic line-clamp-2">
-            "
-            {record.description}
-            "
+            "{record.description}"
           </p>
 
           <div className="flex flex-wrap gap-2 pt-2">
             <ConductTypeBadge type={record.type} />
-            {record.severity && <ConductSeverityBadge severity={record.severity} />}
+            {record.severity && (
+              <ConductSeverityBadge severity={record.severity} />
+            )}
             <ConductStatusBadge status={record.status} />
           </div>
 
@@ -137,7 +187,11 @@ export function ConductRecordCard({
             {record.incidentDate && (
               <div className="flex items-center gap-2">
                 <IconCalendar className="h-3.5 w-3.5 text-primary/40" />
-                {new Date(record.incidentDate).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}
+                {new Date(record.incidentDate).toLocaleDateString(undefined, {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                })}
               </div>
             )}
             {record.location && (
@@ -150,5 +204,5 @@ export function ConductRecordCard({
         </CardContent>
       </Card>
     </motion.div>
-  )
+  );
 }

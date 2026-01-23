@@ -1,24 +1,36 @@
-import type { ColumnDef } from '@tanstack/react-table'
-import { IconAdjustmentsHorizontal, IconBook, IconChevronLeft, IconChevronRight, IconDownload, IconPlus, IconSearch } from '@tabler/icons-react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import type { ColumnDef } from "@tanstack/react-table";
+import {
+  IconAdjustmentsHorizontal,
+  IconBook,
+  IconChevronLeft,
+  IconChevronRight,
+  IconDownload,
+  IconPlus,
+  IconSearch,
+} from "@tabler/icons-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
   useReactTable,
-} from '@tanstack/react-table'
-import { Badge } from '@workspace/ui/components/badge'
-import { Button } from '@workspace/ui/components/button'
-import { Input } from '@workspace/ui/components/input'
-import { Label } from '@workspace/ui/components/label'
-import { Popover, PopoverContent, PopoverTrigger } from '@workspace/ui/components/popover'
+} from "@tanstack/react-table";
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
+import { Input } from "@workspace/ui/components/input";
+import { Label } from "@workspace/ui/components/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@workspace/ui/components/popover";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@workspace/ui/components/select'
+} from "@workspace/ui/components/select";
 import {
   Table,
   TableBody,
@@ -26,109 +38,120 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@workspace/ui/components/table'
-import { AnimatePresence, motion } from 'motion/react'
-import { useMemo, useState } from 'react'
-import { toast } from 'sonner'
-import { TableSkeleton } from '@/components/hr/table-skeleton'
-import { useTranslations } from '@/i18n'
+} from "@workspace/ui/components/table";
+import { AnimatePresence, motion } from "motion/react";
+import { useMemo, useState } from "react";
+import { toast } from "sonner";
+import { TableSkeleton } from "@/components/hr/table-skeleton";
+import { useTranslations } from "@/i18n";
 import {
   schoolSubjectsKeys,
   schoolSubjectsOptions,
-} from '@/lib/queries/school-subjects'
-import { toggleSchoolSubjectStatus } from '@/school/functions/school-subjects'
-import { SubjectPickerDialog } from './subject-picker-dialog'
-import { SubjectStatusToggle } from './subject-status-toggle'
+} from "@/lib/queries/school-subjects";
+import { toggleSchoolSubjectStatus } from "@/school/functions/school-subjects";
+import { SubjectPickerDialog } from "./subject-picker-dialog";
+import { SubjectStatusToggle } from "./subject-status-toggle";
 
 interface SchoolSubjectListProps {
-  schoolYearId?: string
+  schoolYearId?: string;
 }
 
 interface SchoolSubjectItem {
-  id: string
-  schoolId: string
-  subjectId: string
-  schoolYearId: string
-  status: 'active' | 'inactive'
-  createdAt: Date
-  updatedAt: Date
+  id: string;
+  schoolId: string;
+  subjectId: string;
+  schoolYearId: string;
+  status: "active" | "inactive";
+  createdAt: Date;
+  updatedAt: Date;
   subject: {
-    id: string
-    name: string
-    shortName: string
-    category: string | null
-  }
+    id: string;
+    name: string;
+    shortName: string;
+    category: string | null;
+  };
 }
 
-const SUBJECT_CATEGORY_KEYS = ['litteraire', 'scientifique', 'sportif', 'autre'] as const
-type SubjectCategoryKey = (typeof SUBJECT_CATEGORY_KEYS)[number]
+const SUBJECT_CATEGORY_KEYS = [
+  "litteraire",
+  "scientifique",
+  "sportif",
+  "autre",
+] as const;
+type SubjectCategoryKey = (typeof SUBJECT_CATEGORY_KEYS)[number];
 
-const SUBJECT_CATEGORY_FILTER_MAP: Record<SubjectCategoryKey, 'Scientifique' | 'Littéraire' | 'Sportif' | 'Autre'> = {
-  litteraire: 'Littéraire',
-  scientifique: 'Scientifique',
-  sportif: 'Sportif',
-  autre: 'Autre',
-}
+const SUBJECT_CATEGORY_FILTER_MAP: Record<
+  SubjectCategoryKey,
+  "Scientifique" | "Littéraire" | "Sportif" | "Autre"
+> = {
+  litteraire: "Littéraire",
+  scientifique: "Scientifique",
+  sportif: "Sportif",
+  autre: "Autre",
+};
 
 export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
-  const t = useTranslations()
-  const [search, setSearch] = useState('')
-  const [categoryFilter, setCategoryFilter] = useState('all')
-  const [statusFilter, setStatusFilter] = useState('all')
-  const [pickerOpen, setPickerOpen] = useState(false)
+  const t = useTranslations();
+  const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [pickerOpen, setPickerOpen] = useState(false);
 
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   const filters = {
     schoolYearId,
     search: search || undefined,
     category:
-      categoryFilter !== 'all'
+      categoryFilter !== "all"
         ? SUBJECT_CATEGORY_FILTER_MAP[categoryFilter as SubjectCategoryKey]
         : undefined,
     status:
-      statusFilter !== 'all'
-        ? (statusFilter as 'active' | 'inactive')
+      statusFilter !== "all"
+        ? (statusFilter as "active" | "inactive")
         : undefined,
-  }
+  };
 
   const { data, isLoading, error } = useQuery(
     schoolSubjectsOptions.list(filters),
-  )
+  );
 
   const toggleStatusMutation = useMutation({
-    mutationFn: (params: { id: string, status: 'active' | 'inactive' }) =>
+    mutationFn: (params: { id: string; status: "active" | "inactive" }) =>
       toggleSchoolSubjectStatus({ data: params }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: schoolSubjectsKeys.all })
-      toast.success(t.academic.subjects.messages.statusUpdated())
+      queryClient.invalidateQueries({ queryKey: schoolSubjectsKeys.all });
+      toast.success(t.academic.subjects.messages.statusUpdated());
     },
     onError: () => {
-      toast.error(t.academic.subjects.messages.statusError())
+      toast.error(t.academic.subjects.messages.statusError());
     },
-  })
+  });
 
-  const isFiltered = !!search || categoryFilter !== 'all' || statusFilter !== 'all'
+  const isFiltered =
+    !!search || categoryFilter !== "all" || statusFilter !== "all";
 
   const handleClearFilters = () => {
-    setSearch('')
-    setCategoryFilter('all')
-    setStatusFilter('all')
-  }
+    setSearch("");
+    setCategoryFilter("all");
+    setStatusFilter("all");
+  };
 
   const subjectsData = useMemo(
     () => (data?.subjects || []) as SchoolSubjectItem[],
     [data],
-  )
+  );
 
   const columns = useMemo<ColumnDef<SchoolSubjectItem>[]>(
     () => [
       {
-        accessorKey: 'subject.name',
+        accessorKey: "subject.name",
         header: t.academic.subjects.messages.subjectName(),
         cell: ({ row }) => (
           <div>
-            <div className="font-medium text-foreground">{row.original.subject.name}</div>
+            <div className="font-medium text-foreground">
+              {row.original.subject.name}
+            </div>
             <div className="text-xs text-muted-foreground">
               {row.original.subject.shortName}
             </div>
@@ -136,32 +159,36 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
         ),
       },
       {
-        accessorKey: 'subject.category',
+        accessorKey: "subject.category",
         header: t.academic.subjects.filterByCategory(),
         cell: ({ row }) => (
-          <Badge variant="secondary" className="bg-card/30 border-0 shadow-none">
-            {row.original.subject.category || 'Autre'}
+          <Badge
+            variant="secondary"
+            className="bg-card/30 border-0 shadow-none"
+          >
+            {row.original.subject.category || "Autre"}
           </Badge>
         ),
       },
       {
-        accessorKey: 'status',
+        accessorKey: "status",
         header: t.academic.subjects.filterByStatus(),
         cell: ({ row }) => (
           <SubjectStatusToggle
             status={row.original.status}
-            onToggle={status =>
+            onToggle={(status) =>
               toggleStatusMutation.mutate({
                 id: row.original.id,
                 status,
-              })}
+              })
+            }
             disabled={toggleStatusMutation.isPending}
           />
         ),
       },
     ],
     [toggleStatusMutation, t],
-  )
+  );
 
   const table = useReactTable({
     data: subjectsData,
@@ -173,22 +200,26 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
         pageSize: 10,
       },
     },
-  })
+  });
 
   if (error) {
     return (
       <div className="rounded-xl border border-destructive/50 bg-destructive/10 p-6 backdrop-blur-xl">
-        <h3 className="text-lg font-semibold text-destructive">{t.academic.subjects.messages.listError()}</h3>
-        <p className="mt-2 text-sm text-destructive/80">{(error as Error).message}</p>
+        <h3 className="text-lg font-semibold text-destructive">
+          {t.academic.subjects.messages.listError()}
+        </h3>
+        <p className="mt-2 text-sm text-destructive/80">
+          {(error as Error).message}
+        </p>
       </div>
-    )
+    );
   }
 
   if (isLoading) {
-    return <TableSkeleton columns={3} rows={5} />
+    return <TableSkeleton columns={3} rows={5} />;
   }
 
-  const hasNoData = subjectsData.length === 0
+  const hasNoData = subjectsData.length === 0;
 
   return (
     <div className="space-y-6">
@@ -204,25 +235,42 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
             <Input
               placeholder={t.academic.subjects.searchPlaceholder()}
               value={search}
-              onChange={e => setSearch(e.target.value)}
+              onChange={(e) => setSearch(e.target.value)}
               className="border-border/40 bg-card/50 pl-9 transition-all focus:bg-card/80 shadow-none"
             />
           </div>
 
           <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" className="border-border/40 bg-card/50 backdrop-blur-sm shadow-none hover:bg-card/80">
-                <IconAdjustmentsHorizontal className="mr-2 h-4 w-4" />
-                {t.common.actions()}
-                {isFiltered && <Badge className="ml-2 h-2 w-2 rounded-full p-0" />}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80 p-4 space-y-4 backdrop-blur-2xl bg-popover/90 border border-border/40" align="start">
+            <PopoverTrigger
+              render={
+                <Button
+                  variant="outline"
+                  className="border-border/40 bg-card/50 backdrop-blur-sm shadow-none hover:bg-card/80"
+                >
+                  <IconAdjustmentsHorizontal className="mr-2 h-4 w-4" />
+                  {t.common.actions()}
+                  {isFiltered && (
+                    <Badge className="ml-2 h-2 w-2 rounded-full p-0" />
+                  )}
+                </Button>
+              }
+            />
+            <PopoverContent
+              className="w-80 p-4 space-y-4 backdrop-blur-2xl bg-popover/90 border border-border/40"
+              align="start"
+            >
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-medium leading-none text-muted-foreground text-xs uppercase tracking-wider">{t.common.filters()}</h4>
+                  <h4 className="font-medium leading-none text-muted-foreground text-xs uppercase tracking-wider">
+                    {t.common.filters()}
+                  </h4>
                   {isFiltered && (
-                    <Button variant="ghost" size="sm" onClick={handleClearFilters} className="h-6 px-2 text-[10px] text-primary">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleClearFilters}
+                      className="h-6 px-2 text-[10px] text-primary"
+                    >
                       {t.common.clearFilters()}
                     </Button>
                   )}
@@ -230,14 +278,21 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
 
                 <div className="space-y-3">
                   <div className="space-y-2">
-                    <Label className="text-[11px] text-muted-foreground">{t.academic.subjects.filterByCategory()}</Label>
-                    <Select value={categoryFilter} onValueChange={val => val && setCategoryFilter(val)}>
+                    <Label className="text-[11px] text-muted-foreground">
+                      {t.academic.subjects.filterByCategory()}
+                    </Label>
+                    <Select
+                      value={categoryFilter}
+                      onValueChange={(val) => val && setCategoryFilter(val)}
+                    >
                       <SelectTrigger className="h-8 text-xs bg-card/50 border-border/40">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">{t.academic.subjects.allCategories()}</SelectItem>
-                        {SUBJECT_CATEGORY_KEYS.map(cat => (
+                        <SelectItem value="all">
+                          {t.academic.subjects.allCategories()}
+                        </SelectItem>
+                        {SUBJECT_CATEGORY_KEYS.map((cat) => (
                           <SelectItem key={cat} value={cat}>
                             {t.academic.subjects.categories[cat]()}
                           </SelectItem>
@@ -247,23 +302,40 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-[11px] text-muted-foreground">{t.academic.subjects.filterByStatus()}</Label>
-                    <Select value={statusFilter} onValueChange={val => val && setStatusFilter(val)}>
+                    <Label className="text-[11px] text-muted-foreground">
+                      {t.academic.subjects.filterByStatus()}
+                    </Label>
+                    <Select
+                      value={statusFilter}
+                      onValueChange={(val) => val && setStatusFilter(val)}
+                    >
                       <SelectTrigger className="h-8 text-xs bg-card/50 border-border/40">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">{t.academic.subjects.allStatus()}</SelectItem>
-                        <SelectItem value="active">{t.academic.subjects.status.active()}</SelectItem>
-                        <SelectItem value="inactive">{t.academic.subjects.status.inactive()}</SelectItem>
+                        <SelectItem value="all">
+                          {t.academic.subjects.allStatus()}
+                        </SelectItem>
+                        <SelectItem value="active">
+                          {t.academic.subjects.status.active()}
+                        </SelectItem>
+                        <SelectItem value="inactive">
+                          {t.academic.subjects.status.inactive()}
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
 
                 <div className="pt-2 border-t border-border/40 space-y-2">
-                  <h4 className="font-medium leading-none text-muted-foreground text-xs mb-3 uppercase tracking-wider">{t.common.quickActions()}</h4>
-                  <Button variant="ghost" className="w-full justify-start text-sm" onClick={() => toast.info(t.common.comingSoon())}>
+                  <h4 className="font-medium leading-none text-muted-foreground text-xs mb-3 uppercase tracking-wider">
+                    {t.common.quickActions()}
+                  </h4>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-sm"
+                    onClick={() => toast.info(t.common.comingSoon())}
+                  >
                     <IconDownload className="mr-2 h-4 w-4" />
                     {t.common.export()}
                   </Button>
@@ -273,7 +345,10 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
           </Popover>
         </div>
 
-        <Button onClick={() => setPickerOpen(true)} className="shadow-lg shadow-primary/20">
+        <Button
+          onClick={() => setPickerOpen(true)}
+          className="shadow-lg shadow-primary/20"
+        >
           <IconPlus className="mr-2 h-4 w-4" />
           {t.academic.subjects.addSubjects()}
         </Button>
@@ -281,101 +356,125 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
 
       {/* Desktop Table View */}
       <div className="hidden rounded-xl border border-border/40 bg-card/40 backdrop-blur-xl md:block overflow-hidden">
-        {hasNoData
-          ? (
-              <div className="flex flex-col items-center justify-center py-24 text-center">
-                <div className="rounded-full bg-white/10 p-6 backdrop-blur-xl mb-4">
-                  <IconBook className="h-12 w-12 text-muted-foreground/50" />
-                </div>
-                <h3 className="text-lg font-semibold">{t.academic.subjects.noSubjects()}</h3>
-                <p className="mt-2 max-w-sm text-sm text-muted-foreground">
-                  {isFiltered
-                    ? t.academic.subjects.messages.adjustFilters()
-                    : t.academic.subjects.noSubjectsDescription()}
-                </p>
-              </div>
-            )
-          : (
-              <Table>
-                <TableHeader className="bg-card/20">
-                  {table.getHeaderGroups().map(headerGroup => (
-                    <TableRow key={headerGroup.id} className="hover:bg-transparent border-border/40">
-                      {headerGroup.headers.map(header => (
-                        <TableHead key={header.id} className="text-foreground font-semibold">
-                          {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                        </TableHead>
-                      ))}
-                    </TableRow>
+        {hasNoData ? (
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <div className="rounded-full bg-white/10 p-6 backdrop-blur-xl mb-4">
+              <IconBook className="h-12 w-12 text-muted-foreground/50" />
+            </div>
+            <h3 className="text-lg font-semibold">
+              {t.academic.subjects.noSubjects()}
+            </h3>
+            <p className="mt-2 max-w-sm text-sm text-muted-foreground">
+              {isFiltered
+                ? t.academic.subjects.messages.adjustFilters()
+                : t.academic.subjects.noSubjectsDescription()}
+            </p>
+          </div>
+        ) : (
+          <Table>
+            <TableHeader className="bg-card/20">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow
+                  key={headerGroup.id}
+                  className="hover:bg-transparent border-border/40"
+                >
+                  {headerGroup.headers.map((header) => (
+                    <TableHead
+                      key={header.id}
+                      className="text-foreground font-semibold"
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                    </TableHead>
                   ))}
-                </TableHeader>
-                <TableBody>
-                  <AnimatePresence>
-                    {table.getRowModel().rows.map((row, index) => (
-                      <motion.tr
-                        key={row.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ delay: index * 0.02 }}
-                        className="border-border/10 group hover:bg-card/30 transition-colors"
-                      >
-                        {row.getVisibleCells().map(cell => (
-                          <TableCell key={cell.id} className="py-4">
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </TableCell>
-                        ))}
-                      </motion.tr>
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              <AnimatePresence>
+                {table.getRowModel().rows.map((row, index) => (
+                  <motion.tr
+                    key={row.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ delay: index * 0.02 }}
+                    className="border-border/10 group hover:bg-card/30 transition-colors"
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id} className="py-4">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
                     ))}
-                  </AnimatePresence>
-                </TableBody>
-              </Table>
-            )}
+                  </motion.tr>
+                ))}
+              </AnimatePresence>
+            </TableBody>
+          </Table>
+        )}
       </div>
 
       {/* Mobile Card View */}
       <div className="grid gap-4 md:hidden">
-        {hasNoData
-          ? (
-              <div className="flex flex-col items-center justify-center py-12 text-center rounded-xl border border-dashed border-border/40 bg-card/50 p-6">
-                <IconBook className="h-10 w-10 text-muted-foreground/50 mb-3" />
-                <h3 className="text-base font-semibold">{t.academic.subjects.noSubjects()}</h3>
-              </div>
-            )
-          : (
-              <AnimatePresence>
-                {table.getRowModel().rows.map((row, index) => (
-                  <motion.div
-                    key={row.id}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: index * 0.02 }}
-                    className="overflow-hidden rounded-xl border border-border/40 bg-card/50 p-4 backdrop-blur-xl"
+        {hasNoData ? (
+          <div className="flex flex-col items-center justify-center py-12 text-center rounded-xl border border-dashed border-border/40 bg-card/50 p-6">
+            <IconBook className="h-10 w-10 text-muted-foreground/50 mb-3" />
+            <h3 className="text-base font-semibold">
+              {t.academic.subjects.noSubjects()}
+            </h3>
+          </div>
+        ) : (
+          <AnimatePresence>
+            {table.getRowModel().rows.map((row, index) => (
+              <motion.div
+                key={row.id}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: index * 0.02 }}
+                className="overflow-hidden rounded-xl border border-border/40 bg-card/50 p-4 backdrop-blur-xl"
+              >
+                <div className="flex items-start justify-between gap-2 mb-3">
+                  <div>
+                    <h4 className="font-semibold text-foreground">
+                      {row.original.subject.name}
+                    </h4>
+                    <p className="text-xs text-muted-foreground">
+                      {row.original.subject.shortName}
+                    </p>
+                  </div>
+                  <Badge
+                    variant="secondary"
+                    className="bg-card/30 border-0 shadow-none text-[10px]"
                   >
-                    <div className="flex items-start justify-between gap-2 mb-3">
-                      <div>
-                        <h4 className="font-semibold text-foreground">{row.original.subject.name}</h4>
-                        <p className="text-xs text-muted-foreground">{row.original.subject.shortName}</p>
-                      </div>
-                      <Badge variant="secondary" className="bg-card/30 border-0 shadow-none text-[10px]">
-                        {row.original.subject.category || 'Autre'}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center justify-between border-t border-border/10 pt-3 mt-3">
-                      <span className="text-xs text-muted-foreground">{t.common.status()}</span>
-                      <SubjectStatusToggle
-                        status={row.original.status}
-                        onToggle={status =>
-                          toggleStatusMutation.mutate({
-                            id: row.original.id,
-                            status,
-                          })}
-                        disabled={toggleStatusMutation.isPending}
-                      />
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            )}
+                    {row.original.subject.category || "Autre"}
+                  </Badge>
+                </div>
+                <div className="flex items-center justify-between border-t border-border/10 pt-3 mt-3">
+                  <span className="text-xs text-muted-foreground">
+                    {t.common.status()}
+                  </span>
+                  <SubjectStatusToggle
+                    status={row.original.status}
+                    onToggle={(status) =>
+                      toggleStatusMutation.mutate({
+                        id: row.original.id,
+                        status,
+                      })
+                    }
+                    disabled={toggleStatusMutation.isPending}
+                  />
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        )}
       </div>
 
       {/* Pagination */}
@@ -392,10 +491,7 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
             {t.common.previous()}
           </Button>
           <span className="text-sm text-muted-foreground">
-            {table.getState().pagination.pageIndex + 1}
-            {' '}
-            /
-            {table.getPageCount()}
+            {table.getState().pagination.pageIndex + 1} /{table.getPageCount()}
           </span>
           <Button
             variant="outline"
@@ -416,5 +512,5 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
         schoolYearId={schoolYearId}
       />
     </div>
-  )
+  );
 }

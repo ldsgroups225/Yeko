@@ -1,6 +1,6 @@
-import { IconCircleCheck } from '@tabler/icons-react'
-import { Badge } from '@workspace/ui/components/badge'
-import { Button } from '@workspace/ui/components/button'
+import { IconCircleCheck } from "@tabler/icons-react";
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
 
 export function CoursePromoSection() {
   return (
@@ -31,9 +31,10 @@ export function CoursePromoSection() {
           </h2>
 
           <p className="text-lg text-muted-foreground mb-8">
-            Build comprehensive EdTech platforms that transform education management.
-            Learn to create tools for administration, teachers, and parents with modern
-            technology and African educational system integration.
+            Build comprehensive EdTech platforms that transform education
+            management. Learn to create tools for administration, teachers, and
+            parents with modern technology and African educational system
+            integration.
           </p>
 
           <div className="grid md:grid-cols-2 gap-6 mb-8 text-left">
@@ -88,25 +89,30 @@ export function CoursePromoSection() {
                 </div>
                 <div className="flex items-start gap-2">
                   <IconCircleCheck className="w-5 h-5 text-primary mt-0.5" />
-                  <span className="text-sm">Modern, High-Performance Architecture</span>
+                  <span className="text-sm">
+                    Modern, High-Performance Architecture
+                  </span>
                 </div>
               </div>
             </div>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button size="lg" asChild>
-              <a
-                href="https://learn.yeko.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Start Learning Now
-              </a>
-            </Button>
+            <Button
+              size="lg"
+              render={
+                <a
+                  href="https://learn.yeko.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Start Learning Now
+                </a>
+              }
+            />
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }

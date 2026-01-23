@@ -1,51 +1,55 @@
-import { IconPlus } from '@tabler/icons-react'
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { Button } from '@workspace/ui/components/button'
-import { z } from 'zod'
-import { RolesTable } from '@/components/hr/roles/roles-table'
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { useTranslations } from '@/i18n'
+import { IconPlus } from "@tabler/icons-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Button } from "@workspace/ui/components/button";
+import { z } from "zod";
+import { RolesTable } from "@/components/hr/roles/roles-table";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
+import { useTranslations } from "@/i18n";
 
 const rolesSearchSchema = z.object({
   page: z.number().min(1).catch(1),
   search: z.string().optional(),
-  scope: z.enum(['school', 'system']).optional(),
-})
+  scope: z.enum(["school", "system"]).optional(),
+});
 
-export const Route = createFileRoute('/_auth/users/roles/')({
+export const Route = createFileRoute("/_auth/users/roles/")({
   component: RolesListPage,
   validateSearch: rolesSearchSchema,
-})
+});
 
 function RolesListPage() {
-  const t = useTranslations()
-  const search = Route.useSearch()
+  const t = useTranslations();
+  const search = Route.useSearch();
 
   return (
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t.hr.title(), href: '/users' },
+          { label: t.hr.title(), href: "/users" },
           { label: t.hr.roles.title() },
         ]}
       />
 
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t.hr.roles.title()}</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {t.hr.roles.title()}
+          </h1>
           <p className="text-muted-foreground">{t.hr.roles.description()}</p>
         </div>
         <div className="flex gap-2">
-          <Button asChild>
-            <Link to="/users/roles/new">
-              <IconPlus className="mr-2 h-4 w-4" />
-              {t.hr.roles.addRole()}
-            </Link>
-          </Button>
+          <Button
+            render={
+              <Link to="/users/roles/new">
+                <IconPlus className="mr-2 h-4 w-4" />
+                {t.hr.roles.addRole()}
+              </Link>
+            }
+          />
         </div>
       </div>
 
       <RolesTable filters={search} />
     </div>
-  )
+  );
 }

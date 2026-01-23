@@ -1,10 +1,16 @@
-import { IconLanguage, IconLogout, IconPalette, IconSettings, IconUser } from '@tabler/icons-react'
+import {
+  IconLanguage,
+  IconLogout,
+  IconPalette,
+  IconSettings,
+  IconUser,
+} from "@tabler/icons-react";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from '@workspace/ui/components/avatar'
-import { Button } from '@workspace/ui/components/button'
+} from "@workspace/ui/components/avatar";
+import { Button } from "@workspace/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,51 +18,51 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@workspace/ui/components/dropdown-menu'
-import { toast } from 'sonner'
-import { LanguageSwitcher } from '@/components/layout/language-switcher'
-import { ThemeToggle } from '@/components/theme/theme-toggle'
-import { useTranslations } from '@/i18n'
-import { authClient, signOutWithCache } from '@/lib/auth-client'
+} from "@workspace/ui/components/dropdown-menu";
+import { toast } from "sonner";
+import { LanguageSwitcher } from "@/components/layout/language-switcher";
+import { ThemeToggle } from "@/components/theme/theme-toggle";
+import { useTranslations } from "@/i18n";
+import { authClient, signOutWithCache } from "@/lib/auth-client";
 
 export function AccountMenu() {
-  const session = authClient.useSession()
-  const t = useTranslations()
+  const session = authClient.useSession();
+  const t = useTranslations();
 
   const handleSignOut = async () => {
     try {
-      await signOutWithCache()
-      toast.success(t.auth.signOutSuccess())
+      await signOutWithCache();
+      toast.success(t.auth.signOutSuccess());
+    } catch (error) {
+      toast.error(t.auth.signOutError());
+      console.error("Sign out error:", error);
     }
-    catch (error) {
-      toast.error(t.auth.signOutError())
-      console.error('Sign out error:', error)
-    }
-  }
+  };
 
-  if (!session.data)
-    return null
+  if (!session.data) return null;
 
-  const user = session.data.user
+  const user = session.data.user;
   const initials = user.name
     ? user.name
-        .split(' ')
-        .map(n => n[0])
-        .join('')
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
         .toUpperCase()
         .slice(0, 2)
-    : user.email?.[0]?.toUpperCase() || 'U'
+    : user.email?.[0]?.toUpperCase() || "U";
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-          <Avatar className="h-8 w-8">
-            <AvatarImage src={user.image || ''} alt={user.name || ''} />
-            <AvatarFallback>{initials}</AvatarFallback>
-          </Avatar>
-        </Button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger
+        render={
+          <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={user.image || ""} alt={user.name || ""} />
+              <AvatarFallback>{initials}</AvatarFallback>
+            </Avatar>
+          </Button>
+        }
+      />
       <DropdownMenuContent className="w-80" align="end">
         <div className="font-normal">
           <div className="flex flex-col space-y-1">
@@ -106,11 +112,14 @@ export function AccountMenu() {
         </div>
 
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
+        <DropdownMenuItem
+          onClick={handleSignOut}
+          className="text-destructive focus:text-destructive"
+        >
           <IconLogout className="mr-2 h-4 w-4" />
           <span>{t.auth.signOut()}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

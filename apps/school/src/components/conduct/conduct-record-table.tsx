@@ -226,15 +226,17 @@ export function ConductRecordTable({
         header: "",
         cell: ({ row }) => (
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-xl hover:bg-primary/10 hover:text-primary transition-colors"
-              >
-                <IconDots className="h-5 w-5" />
-              </Button>
-            </DropdownMenuTrigger>
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-xl hover:bg-primary/10 hover:text-primary transition-colors"
+                >
+                  <IconDots className="h-5 w-5" />
+                </Button>
+              }
+            />
             <DropdownMenuContent
               align="end"
               className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40"

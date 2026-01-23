@@ -1,47 +1,62 @@
-import { IconEdit, IconSchool, IconTrash, IconUsers } from '@tabler/icons-react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { Badge } from '@workspace/ui/components/badge'
-import { Button } from '@workspace/ui/components/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
-import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
-import { Skeleton } from '@workspace/ui/components/skeleton'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { ClassSubjectManager } from '@/components/academic/class-subjects/class-subject-manager'
-import { ClassStudentList } from '@/components/academic/classes/class-student-list'
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { useTranslations } from '@/i18n'
-import { deleteClass, getClassById } from '@/school/functions/classes'
+import {
+  IconEdit,
+  IconSchool,
+  IconTrash,
+  IconUsers,
+} from "@tabler/icons-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card";
+import { DeleteConfirmationDialog } from "@workspace/ui/components/delete-confirmation-dialog";
+import { Skeleton } from "@workspace/ui/components/skeleton";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@workspace/ui/components/tabs";
+import { useState } from "react";
+import { toast } from "sonner";
+import { ClassSubjectManager } from "@/components/academic/class-subjects/class-subject-manager";
+import { ClassStudentList } from "@/components/academic/classes/class-student-list";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
+import { useTranslations } from "@/i18n";
+import { deleteClass, getClassById } from "@/school/functions/classes";
 
-export const Route = createFileRoute('/_auth/classes/$classId/')({
+export const Route = createFileRoute("/_auth/classes/$classId/")({
   component: ClassDetailPage,
-})
+});
 
 function ClassDetailPage() {
-  const t = useTranslations()
-  const { classId } = Route.useParams()
-  const navigate = useNavigate()
-  const queryClient = useQueryClient()
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const t = useTranslations();
+  const { classId } = Route.useParams();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const { data, isLoading } = useQuery({
-    queryKey: ['class', classId],
+    queryKey: ["class", classId],
     queryFn: () => getClassById({ data: classId }),
-  })
+  });
 
   const deleteMutation = useMutation({
     mutationFn: () => deleteClass({ data: classId }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['classes'] })
-      toast.success(t.classes.deleteSuccess())
-      navigate({ to: '/classes' })
+      queryClient.invalidateQueries({ queryKey: ["classes"] });
+      toast.success(t.classes.deleteSuccess());
+      navigate({ to: "/classes" });
     },
     onError: (error) => {
-      toast.error(error.message || t.classes.deleteError())
+      toast.error(error.message || t.classes.deleteError());
     },
-  })
+  });
 
   if (isLoading) {
     return (
@@ -58,7 +73,7 @@ function ClassDetailPage() {
         </div>
         <Skeleton className="h-[400px] w-full" />
       </div>
-    )
+    );
   }
 
   if (!data?.class) {
@@ -66,23 +81,34 @@ function ClassDetailPage() {
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-center">
           <p className="text-lg font-medium">{t.classes.notFound()}</p>
-          <Button asChild className="mt-4">
-            <Link to="/classes">{t.common.back()}</Link>
-          </Button>
+          <Button
+            render={<Link to="/classes">{t.common.back()}</Link>}
+            className="mt-4"
+          />
         </div>
       </div>
-    )
+    );
   }
 
-  const { class: classData, grade, series, classroom, homeroomTeacher, studentsCount, boysCount, girlsCount } = data
-  const className = `${grade.name} ${series?.name || ''} ${classData.section}`.trim()
+  const {
+    class: classData,
+    grade,
+    series,
+    classroom,
+    homeroomTeacher,
+    studentsCount,
+    boysCount,
+    girlsCount,
+  } = data;
+  const className =
+    `${grade.name} ${series?.name || ""} ${classData.section}`.trim();
 
   return (
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t.nav.academic(), href: '/academic' },
-          { label: t.nav.classes(), href: '/classes' },
+          { label: t.nav.academic(), href: "/academic" },
+          { label: t.nav.classes(), href: "/classes" },
           { label: className },
         ]}
       />
@@ -94,29 +120,33 @@ function ClassDetailPage() {
           </div>
           <div>
             <h1 className="text-3xl font-bold tracking-tight">{className}</h1>
-            {classroom
-              ? (
-                  <Link
-                    to="/spaces/classrooms/$classroomId"
-                    params={{ classroomId: classroom.id }}
-                    className="text-muted-foreground hover:underline"
-                  >
-                    {classroom.name}
-                  </Link>
-                )
-              : (
-                  <p className="text-muted-foreground">{t.classes.noClassroom()}</p>
-                )}
+            {classroom ? (
+              <Link
+                to="/spaces/classrooms/$classroomId"
+                params={{ classroomId: classroom.id }}
+                className="text-muted-foreground hover:underline"
+              >
+                {classroom.name}
+              </Link>
+            ) : (
+              <p className="text-muted-foreground">{t.classes.noClassroom()}</p>
+            )}
           </div>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={() => setShowDeleteDialog(true)}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowDeleteDialog(true)}
+          >
             <IconTrash className="mr-2 h-4 w-4" />
             {t.common.delete()}
           </Button>
           <Button
             size="sm"
-            onClick={() => navigate({ to: '/classes/$classId/edit', params: { classId } })}
+            onClick={() =>
+              navigate({ to: "/classes/$classId/edit", params: { classId } })
+            }
           >
             <IconEdit className="mr-2 h-4 w-4" />
             {t.common.edit()}
@@ -127,64 +157,74 @@ function ClassDetailPage() {
       <Tabs defaultValue="info" className="space-y-4">
         <TabsList>
           <TabsTrigger value="info">{t.classes.tabs.stats()}</TabsTrigger>
-          <TabsTrigger value="students">{t.classes.tabs.students()}</TabsTrigger>
-          <TabsTrigger value="teachers">{t.classes.tabs.teachers()}</TabsTrigger>
+          <TabsTrigger value="students">
+            {t.classes.tabs.students()}
+          </TabsTrigger>
+          <TabsTrigger value="teachers">
+            {t.classes.tabs.teachers()}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="info" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-3">
             <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">{t.classes.studentCount()}</CardTitle>
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  {t.classes.studentCount()}
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center gap-2">
                   <IconUsers className="h-5 w-5 text-primary" />
                   <span className="text-2xl font-bold">{studentsCount}</span>
                   <span className="text-muted-foreground">
-                    /
-                    {classData.maxStudents}
+                    /{classData.maxStudents}
                   </span>
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground italic">
-                  {t.classes.boys()}
-                  :
-                  {' '}
-                  <span className="font-bold text-foreground">{boysCount}</span>
-                  {' '}
-                  /
-                  {' '}
-                  {t.classes.girls()}
-                  :
-                  {' '}
-                  <span className="font-bold text-foreground">{girlsCount}</span>
+                  {t.classes.boys()}:{" "}
+                  <span className="font-bold text-foreground">{boysCount}</span>{" "}
+                  / {t.classes.girls()}:{" "}
+                  <span className="font-bold text-foreground">
+                    {girlsCount}
+                  </span>
                 </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">{t.classes.status()}</CardTitle>
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  {t.classes.status()}
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <Badge variant={classData.status === 'active' ? 'default' : 'secondary'}>
-                  {classData.status === 'active' ? t.common.active() : t.common.archived()}
+                <Badge
+                  variant={
+                    classData.status === "active" ? "default" : "secondary"
+                  }
+                >
+                  {classData.status === "active"
+                    ? t.common.active()
+                    : t.common.archived()}
                 </Badge>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">{t.classes.room()}</CardTitle>
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  {t.classes.room()}
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                {classroom
-                  ? (
-                      <span className="text-lg font-medium">{classroom.name}</span>
-                    )
-                  : (
-                      <span className="text-lg font-medium text-muted-foreground">-</span>
-                    )}
+                {classroom ? (
+                  <span className="text-lg font-medium">{classroom.name}</span>
+                ) : (
+                  <span className="text-lg font-medium text-muted-foreground">
+                    -
+                  </span>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -196,22 +236,32 @@ function ClassDetailPage() {
             <CardContent className="space-y-4">
               <div className="grid gap-6 md:grid-cols-2">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">{t.classes.grade()}</p>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    {t.classes.grade()}
+                  </p>
                   <p className="text-base">{grade.name}</p>
                 </div>
                 {series && (
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">{t.classes.series()}</p>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      {t.classes.series()}
+                    </p>
                     <p className="text-base">{series.name}</p>
                   </div>
                 )}
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">{t.classes.section()}</p>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    {t.classes.section()}
+                  </p>
                   <p className="text-base">{classData.section}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">{t.classes.homeroomTeacher()}</p>
-                  <p className="text-base">{homeroomTeacher?.name || t.common.unassigned()}</p>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    {t.classes.homeroomTeacher()}
+                  </p>
+                  <p className="text-base">
+                    {homeroomTeacher?.name || t.common.unassigned()}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -237,5 +287,5 @@ function ClassDetailPage() {
         isLoading={deleteMutation.isPending}
       />
     </div>
-  )
+  );
 }

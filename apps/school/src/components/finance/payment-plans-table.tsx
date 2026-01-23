@@ -1,9 +1,7 @@
-'use client'
-
-import { IconCalendarTime } from '@tabler/icons-react'
-import { Badge } from '@workspace/ui/components/badge'
-import { Progress } from '@workspace/ui/components/progress'
-import { Skeleton } from '@workspace/ui/components/skeleton'
+import { IconCalendarTime } from "@tabler/icons-react";
+import { Badge } from "@workspace/ui/components/badge";
+import { Progress } from "@workspace/ui/components/progress";
+import { Skeleton } from "@workspace/ui/components/skeleton";
 import {
   Table,
   TableBody,
@@ -11,49 +9,52 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@workspace/ui/components/table'
-import { AnimatePresence, motion } from 'motion/react'
-import { useTranslations } from '@/i18n'
-import { generateUUID } from '@/utils/generateUUID'
+} from "@workspace/ui/components/table";
+import { AnimatePresence, motion } from "motion/react";
+import { useTranslations } from "@/i18n";
+import { generateUUID } from "@/utils/generateUUID";
 
 interface PaymentPlan {
-  id: string
-  studentName: string
-  matricule: string
-  totalAmount: number
-  paidAmount: number
-  installmentsCount: number
-  paidInstallments: number
-  status: string
+  id: string;
+  studentName: string;
+  matricule: string;
+  totalAmount: number;
+  paidAmount: number;
+  installmentsCount: number;
+  paidInstallments: number;
+  status: string;
 }
 
 interface PaymentPlansTableProps {
-  paymentPlans: PaymentPlan[]
-  isLoading?: boolean
+  paymentPlans: PaymentPlan[];
+  isLoading?: boolean;
 }
 
 function getStatusVariant(status: string) {
   switch (status) {
-    case 'completed':
-      return 'default'
-    case 'active':
-      return 'secondary'
-    case 'overdue':
-      return 'destructive'
+    case "completed":
+      return "default";
+    case "active":
+      return "secondary";
+    case "overdue":
+      return "destructive";
     default:
-      return 'outline'
+      return "outline";
   }
 }
 
 function formatCurrency(amount: number) {
-  return new Intl.NumberFormat('fr-FR', {
-    style: 'decimal',
+  return new Intl.NumberFormat("fr-FR", {
+    style: "decimal",
     minimumFractionDigits: 0,
-  }).format(amount)
+  }).format(amount);
 }
 
-export function PaymentPlansTable({ paymentPlans, isLoading }: PaymentPlansTableProps) {
-  const t = useTranslations()
+export function PaymentPlansTable({
+  paymentPlans,
+  isLoading,
+}: PaymentPlansTableProps) {
+  const t = useTranslations();
 
   if (isLoading) {
     return (
@@ -62,7 +63,7 @@ export function PaymentPlansTable({ paymentPlans, isLoading }: PaymentPlansTable
           <Skeleton key={generateUUID()} className="h-12 w-full rounded-xl" />
         ))}
       </div>
-    )
+    );
   }
 
   if (paymentPlans.length === 0) {
@@ -71,10 +72,14 @@ export function PaymentPlansTable({ paymentPlans, isLoading }: PaymentPlansTable
         <div className="p-4 rounded-full bg-muted/20 mb-4">
           <IconCalendarTime className="h-8 w-8 text-muted-foreground/50" />
         </div>
-        <p className="text-lg font-medium">{t.finance.paymentPlans.noPaymentPlans()}</p>
-        <p className="text-sm max-w-sm mt-1 text-muted-foreground/70">{t.finance.paymentPlans.description()}</p>
+        <p className="text-lg font-medium">
+          {t.finance.paymentPlans.noPaymentPlans()}
+        </p>
+        <p className="text-sm max-w-sm mt-1 text-muted-foreground/70">
+          {t.finance.paymentPlans.description()}
+        </p>
       </div>
-    )
+    );
   }
 
   return (
@@ -83,20 +88,33 @@ export function PaymentPlansTable({ paymentPlans, isLoading }: PaymentPlansTable
         <Table>
           <TableHeader className="bg-muted/50">
             <TableRow className="hover:bg-transparent border-border/40">
-              <TableHead className="font-semibold">{t.students.matricule()}</TableHead>
-              <TableHead className="font-semibold">{t.students.name()}</TableHead>
-              <TableHead className="text-right font-semibold">{t.finance.paymentPlans.totalAmount()}</TableHead>
-              <TableHead className="font-semibold">{t.finance.paymentPlans.progress()}</TableHead>
-              <TableHead className="font-semibold">{t.finance.paymentPlans.installments()}</TableHead>
-              <TableHead className="font-semibold">{t.common.status()}</TableHead>
+              <TableHead className="font-semibold">
+                {t.students.matricule()}
+              </TableHead>
+              <TableHead className="font-semibold">
+                {t.students.name()}
+              </TableHead>
+              <TableHead className="text-right font-semibold">
+                {t.finance.paymentPlans.totalAmount()}
+              </TableHead>
+              <TableHead className="font-semibold">
+                {t.finance.paymentPlans.progress()}
+              </TableHead>
+              <TableHead className="font-semibold">
+                {t.finance.paymentPlans.installments()}
+              </TableHead>
+              <TableHead className="font-semibold">
+                {t.common.status()}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             <AnimatePresence>
               {paymentPlans.map((plan, index) => {
-                const progressPercent = plan.totalAmount > 0
-                  ? Math.round((plan.paidAmount / plan.totalAmount) * 100)
-                  : 0
+                const progressPercent =
+                  plan.totalAmount > 0
+                    ? Math.round((plan.paidAmount / plan.totalAmount) * 100)
+                    : 0;
 
                 return (
                   <motion.tr
@@ -106,39 +124,57 @@ export function PaymentPlansTable({ paymentPlans, isLoading }: PaymentPlansTable
                     transition={{ delay: index * 0.05 }}
                     className="group hover:bg-muted/30 border-border/40 transition-colors"
                   >
-                    <TableCell className="font-mono text-sm text-muted-foreground font-medium">{plan.matricule || '-'}</TableCell>
-                    <TableCell className="font-bold text-foreground">{plan.studentName}</TableCell>
+                    <TableCell className="font-mono text-sm text-muted-foreground font-medium">
+                      {plan.matricule || "-"}
+                    </TableCell>
+                    <TableCell className="font-bold text-foreground">
+                      {plan.studentName}
+                    </TableCell>
                     <TableCell className="text-right font-medium">
-                      {formatCurrency(plan.totalAmount)}
-                      {' '}
-                      <span className="text-xs text-muted-foreground ml-1">FCFA</span>
+                      {formatCurrency(plan.totalAmount)}{" "}
+                      <span className="text-xs text-muted-foreground ml-1">
+                        FCFA
+                      </span>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <Progress value={progressPercent} className="h-2 w-20 rounded-full" />
+                        <Progress
+                          value={progressPercent}
+                          className="h-2 w-20 rounded-full"
+                        />
                         <span className="text-sm font-medium text-muted-foreground">
-                          {progressPercent}
-                          %
+                          {progressPercent}%
                         </span>
                       </div>
                     </TableCell>
                     <TableCell className="font-medium">
-                      <span className="text-primary">{plan.paidInstallments}</span>
+                      <span className="text-primary">
+                        {plan.paidInstallments}
+                      </span>
                       <span className="text-muted-foreground mx-1">/</span>
                       <span>{plan.installmentsCount}</span>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={getStatusVariant(plan.status)} className="capitalize rounded-md">
+                      <Badge
+                        variant={getStatusVariant(plan.status)}
+                        className="capitalize rounded-md"
+                      >
                         {{
                           active: t.finance.paymentPlans.status.active,
                           completed: t.finance.paymentPlans.status.completed,
                           overdue: t.finance.paymentPlans.status.overdue,
                           cancelled: t.finance.paymentPlans.status.cancelled,
-                        }[plan.status as 'active' | 'completed' | 'overdue' | 'cancelled']()}
+                        }[
+                          plan.status as
+                            | "active"
+                            | "completed"
+                            | "overdue"
+                            | "cancelled"
+                        ]()}
                       </Badge>
                     </TableCell>
                   </motion.tr>
-                )
+                );
               })}
             </AnimatePresence>
           </TableBody>
@@ -148,9 +184,10 @@ export function PaymentPlansTable({ paymentPlans, isLoading }: PaymentPlansTable
       <div className="md:hidden space-y-4 p-4">
         <AnimatePresence>
           {paymentPlans.map((plan, index) => {
-            const progressPercent = plan.totalAmount > 0
-              ? Math.round((plan.paidAmount / plan.totalAmount) * 100)
-              : 0
+            const progressPercent =
+              plan.totalAmount > 0
+                ? Math.round((plan.paidAmount / plan.totalAmount) * 100)
+                : 0;
 
             return (
               <motion.div
@@ -163,52 +200,72 @@ export function PaymentPlansTable({ paymentPlans, isLoading }: PaymentPlansTable
                 <div className="flex justify-between items-start">
                   <div>
                     <div className="font-bold text-lg">{plan.studentName}</div>
-                    <div className="text-xs font-mono text-muted-foreground mt-0.5">{plan.matricule || 'N/A'}</div>
+                    <div className="text-xs font-mono text-muted-foreground mt-0.5">
+                      {plan.matricule || "N/A"}
+                    </div>
                   </div>
-                  <Badge variant={getStatusVariant(plan.status)} className="capitalize rounded-md">
+                  <Badge
+                    variant={getStatusVariant(plan.status)}
+                    className="capitalize rounded-md"
+                  >
                     {{
                       active: t.finance.paymentPlans.status.active,
                       completed: t.finance.paymentPlans.status.completed,
                       overdue: t.finance.paymentPlans.status.overdue,
                       cancelled: t.finance.paymentPlans.status.cancelled,
-                    }[plan.status as 'active' | 'completed' | 'overdue' | 'cancelled']()}
+                    }[
+                      plan.status as
+                        | "active"
+                        | "completed"
+                        | "overdue"
+                        | "cancelled"
+                    ]()}
                   </Badge>
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">{t.finance.paymentPlans.progress()}</span>
-                    <span className="font-bold">
-                      {progressPercent}
-                      %
+                    <span className="text-muted-foreground">
+                      {t.finance.paymentPlans.progress()}
                     </span>
+                    <span className="font-bold">{progressPercent}%</span>
                   </div>
-                  <Progress value={progressPercent} className="h-2 rounded-full" />
+                  <Progress
+                    value={progressPercent}
+                    className="h-2 rounded-full"
+                  />
                 </div>
 
                 <div className="flex items-center gap-4">
                   <div className="p-3 rounded-xl bg-muted/20 border border-border/20 flex-1">
-                    <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{t.finance.paymentPlans.totalAmount()}</div>
+                    <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+                      {t.finance.paymentPlans.totalAmount()}
+                    </div>
                     <div className="font-bold text-lg">
-                      {formatCurrency(plan.totalAmount)}
-                      {' '}
-                      <span className="text-sm font-normal text-muted-foreground">FCFA</span>
+                      {formatCurrency(plan.totalAmount)}{" "}
+                      <span className="text-sm font-normal text-muted-foreground">
+                        FCFA
+                      </span>
                     </div>
                   </div>
                   <div className="p-3 rounded-xl bg-muted/20 border border-border/20 flex-1">
-                    <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{t.finance.paymentPlans.installments()}</div>
+                    <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+                      {t.finance.paymentPlans.installments()}
+                    </div>
                     <div className="font-bold">
-                      <span className="text-primary">{plan.paidInstallments}</span>
+                      <span className="text-primary">
+                        {plan.paidInstallments}
+                      </span>
                       <span className="text-muted-foreground mx-1">/</span>
                       <span>{plan.installmentsCount}</span>
                     </div>
                   </div>
                 </div>
               </motion.div>
-            )
+            );
           })}
         </AnimatePresence>
       </div>
     </>
-  )
+  );
 }

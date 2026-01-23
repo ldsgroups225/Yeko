@@ -1,9 +1,12 @@
-'use client'
-
-import { IconLoader2, IconSearch, IconUser, IconUserPlus } from '@tabler/icons-react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Avatar, AvatarFallback } from '@workspace/ui/components/avatar'
-import { Button } from '@workspace/ui/components/button'
+import {
+  IconLoader2,
+  IconSearch,
+  IconUser,
+  IconUserPlus,
+} from "@tabler/icons-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Avatar, AvatarFallback } from "@workspace/ui/components/avatar";
+import { Button } from "@workspace/ui/components/button";
 import {
   Dialog,
   DialogContent,
@@ -11,73 +14,106 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@workspace/ui/components/dialog'
+} from "@workspace/ui/components/dialog";
 
-import { Input } from '@workspace/ui/components/input'
-import { Label } from '@workspace/ui/components/label'
-import { RadioGroup, RadioGroupItem } from '@workspace/ui/components/radio-group'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
-import { Switch } from '@workspace/ui/components/switch'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { useTranslations } from '@/i18n'
-import { parentsOptions } from '@/lib/queries/parents'
-import { studentsKeys } from '@/lib/queries/students'
-import { createParent, linkParentToStudent } from '@/school/functions/parents'
+import { Input } from "@workspace/ui/components/input";
+import { Label } from "@workspace/ui/components/label";
+import {
+  RadioGroup,
+  RadioGroupItem,
+} from "@workspace/ui/components/radio-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@workspace/ui/components/select";
+import { Switch } from "@workspace/ui/components/switch";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@workspace/ui/components/tabs";
+import { useState } from "react";
+import { toast } from "sonner";
+import { useTranslations } from "@/i18n";
+import { parentsOptions } from "@/lib/queries/parents";
+import { studentsKeys } from "@/lib/queries/students";
+import { createParent, linkParentToStudent } from "@/school/functions/parents";
 
-type Relationship = 'father' | 'mother' | 'guardian' | 'grandparent' | 'sibling' | 'other'
+type Relationship =
+  | "father"
+  | "mother"
+  | "guardian"
+  | "grandparent"
+  | "sibling"
+  | "other";
 
 interface ParentLinkDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  studentId: string
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  studentId: string;
 }
 
-export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDialogProps) {
-  const t = useTranslations()
-  const queryClient = useQueryClient()
-  const [tab, setTab] = useState<'existing' | 'new'>('existing')
-  const [search, setSearch] = useState('')
-  const [selectedParentId, setSelectedParentId] = useState<string | null>(null)
-  const [linkRelationship, setLinkRelationship] = useState<Relationship>('guardian')
-  const [linkIsPrimary, setLinkIsPrimary] = useState(false)
+export function ParentLinkDialog({
+  open,
+  onOpenChange,
+  studentId,
+}: ParentLinkDialogProps) {
+  const t = useTranslations();
+  const queryClient = useQueryClient();
+  const [tab, setTab] = useState<"existing" | "new">("existing");
+  const [search, setSearch] = useState("");
+  const [selectedParentId, setSelectedParentId] = useState<string | null>(null);
+  const [linkRelationship, setLinkRelationship] =
+    useState<Relationship>("guardian");
+  const [linkIsPrimary, setLinkIsPrimary] = useState(false);
 
   // New parent form state
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [phone, setPhone] = useState('')
-  const [email, setEmail] = useState('')
-  const [occupation, setOccupation] = useState('')
-  const [newRelationship, setNewRelationship] = useState<Relationship>('guardian')
-  const [newIsPrimary, setNewIsPrimary] = useState(false)
-  const [newCanPickup, setNewCanPickup] = useState(true)
-  const [newReceiveNotifications, setNewReceiveNotifications] = useState(true)
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [occupation, setOccupation] = useState("");
+  const [newRelationship, setNewRelationship] =
+    useState<Relationship>("guardian");
+  const [newIsPrimary, setNewIsPrimary] = useState(false);
+  const [newCanPickup, setNewCanPickup] = useState(true);
+  const [newReceiveNotifications, setNewReceiveNotifications] = useState(true);
 
   const { data: parentsData, isLoading: parentsLoading } = useQuery({
     ...parentsOptions.list({ search, limit: 10 }),
-    enabled: open && tab === 'existing' && search.length >= 2,
-  })
+    enabled: open && tab === "existing" && search.length >= 2,
+  });
 
-  const canSubmitNew = firstName.trim() && lastName.trim() && phone.trim().length >= 8
+  const canSubmitNew =
+    firstName.trim() && lastName.trim() && phone.trim().length >= 8;
 
   const resetNewForm = () => {
-    setFirstName('')
-    setLastName('')
-    setPhone('')
-    setEmail('')
-    setOccupation('')
-    setNewRelationship('guardian')
-    setNewIsPrimary(false)
-    setNewCanPickup(true)
-    setNewReceiveNotifications(true)
-  }
+    setFirstName("");
+    setLastName("");
+    setPhone("");
+    setEmail("");
+    setOccupation("");
+    setNewRelationship("guardian");
+    setNewIsPrimary(false);
+    setNewCanPickup(true);
+    setNewReceiveNotifications(true);
+  };
 
   const createAndLinkMutation = useMutation({
     mutationFn: async () => {
       const parent = await createParent({
-        data: { firstName, lastName, phone, email: email || undefined, occupation: occupation || undefined },
-      })
+        data: {
+          firstName,
+          lastName,
+          phone,
+          email: email || undefined,
+          occupation: occupation || undefined,
+        },
+      });
       await linkParentToStudent({
         data: {
           studentId,
@@ -87,24 +123,25 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
           canPickup: newCanPickup,
           receiveNotifications: newReceiveNotifications,
         },
-      })
-      return parent
+      });
+      return parent;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: studentsKeys.detail(studentId) })
-      toast.success(t.parents.parentLinked())
-      onOpenChange(false)
-      resetNewForm()
+      queryClient.invalidateQueries({
+        queryKey: studentsKeys.detail(studentId),
+      });
+      toast.success(t.parents.parentLinked());
+      onOpenChange(false);
+      resetNewForm();
     },
     onError: (err: Error) => {
-      toast.error(err.message)
+      toast.error(err.message);
     },
-  })
+  });
 
   const linkExistingMutation = useMutation({
     mutationFn: async () => {
-      if (!selectedParentId)
-        throw new Error('No parent selected')
+      if (!selectedParentId) throw new Error("No parent selected");
       await linkParentToStudent({
         data: {
           studentId,
@@ -114,19 +151,21 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
           canPickup: true,
           receiveNotifications: true,
         },
-      })
+      });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: studentsKeys.detail(studentId) })
-      toast.success(t.parents.parentLinked())
-      onOpenChange(false)
-      setSelectedParentId(null)
-      setSearch('')
+      queryClient.invalidateQueries({
+        queryKey: studentsKeys.detail(studentId),
+      });
+      toast.success(t.parents.parentLinked());
+      onOpenChange(false);
+      setSelectedParentId(null);
+      setSearch("");
     },
     onError: (err: Error) => {
-      toast.error(err.message)
+      toast.error(err.message);
     },
-  })
+  });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -136,7 +175,10 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
           <DialogDescription>{t.parents.description()}</DialogDescription>
         </DialogHeader>
 
-        <Tabs value={tab} onValueChange={v => setTab(v as 'existing' | 'new')}>
+        <Tabs
+          value={tab}
+          onValueChange={(v) => setTab(v as "existing" | "new")}
+        >
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="existing">{t.parents.list()}</TabsTrigger>
             <TabsTrigger value="new">{t.parents.addParent()}</TabsTrigger>
@@ -149,7 +191,7 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
               <Input
                 placeholder={t.parents.searchPlaceholder()}
                 value={search}
-                onChange={e => setSearch(e.target.value)}
+                onChange={(e) => setSearch(e.target.value)}
                 className="pl-9"
               />
             </div>
@@ -160,23 +202,43 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
               </div>
             )}
 
-            {!parentsLoading && search.length >= 2 && parentsData?.data && parentsData.data.length === 0 && (
-              <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
-                <IconUser className="h-8 w-8 opacity-50 mb-2" />
-                <p>{t.parents.noParents()}</p>
-                <Button variant="link" onClick={() => setTab('new')} className="mt-2">
-                  {t.parents.addParent()}
-                </Button>
-              </div>
-            )}
+            {!parentsLoading &&
+              search.length >= 2 &&
+              parentsData?.data &&
+              parentsData.data.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
+                  <IconUser className="h-8 w-8 opacity-50 mb-2" />
+                  <p>{t.parents.noParents()}</p>
+                  <Button
+                    variant="link"
+                    onClick={() => setTab("new")}
+                    className="mt-2"
+                  >
+                    {t.parents.addParent()}
+                  </Button>
+                </div>
+              )}
 
             {parentsData?.data && parentsData.data.length > 0 && (
-              <RadioGroup value={selectedParentId || ''} onValueChange={v => setSelectedParentId(v as string | null)} className="max-h-[240px] overflow-y-auto pr-2">
+              <RadioGroup
+                value={selectedParentId || ""}
+                onValueChange={(v) => setSelectedParentId(v as string | null)}
+                className="max-h-[240px] overflow-y-auto pr-2"
+              >
                 <div className="space-y-2">
-                  {parentsData.data.map(parent => (
-                    <div key={parent.parent.id} className="flex items-center space-x-3 rounded-lg border p-3 transition-colors hover:bg-muted/50">
-                      <RadioGroupItem value={parent.parent.id} id={parent.parent.id} />
-                      <Label htmlFor={parent.parent.id} className="flex flex-1 cursor-pointer items-center gap-3">
+                  {parentsData.data.map((parent) => (
+                    <div
+                      key={parent.parent.id}
+                      className="flex items-center space-x-3 rounded-lg border p-3 transition-colors hover:bg-muted/50"
+                    >
+                      <RadioGroupItem
+                        value={parent.parent.id}
+                        id={parent.parent.id}
+                      />
+                      <Label
+                        htmlFor={parent.parent.id}
+                        className="flex flex-1 cursor-pointer items-center gap-3"
+                      >
                         <Avatar className="h-10 w-10">
                           <AvatarFallback>
                             {parent.parent.firstName?.[0]}
@@ -185,11 +247,11 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
                         </Avatar>
                         <div>
                           <p className="font-medium">
-                            {parent.parent.lastName}
-                            {' '}
-                            {parent.parent.firstName}
+                            {parent.parent.lastName} {parent.parent.firstName}
                           </p>
-                          <p className="text-sm text-muted-foreground">{parent.parent.phone}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {parent.parent.phone}
+                          </p>
                         </div>
                       </Label>
                     </div>
@@ -203,22 +265,42 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
                     <Label>{t.parents.relationship()}</Label>
-                    <Select value={linkRelationship} onValueChange={v => setLinkRelationship((v ?? 'guardian') as Relationship)}>
+                    <Select
+                      value={linkRelationship}
+                      onValueChange={(v) =>
+                        setLinkRelationship((v ?? "guardian") as Relationship)
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="father">{t.parents.relationshipFather()}</SelectItem>
-                        <SelectItem value="mother">{t.parents.relationshipMother()}</SelectItem>
-                        <SelectItem value="guardian">{t.parents.relationshipGuardian()}</SelectItem>
-                        <SelectItem value="grandparent">{t.parents.relationshipGrandparent()}</SelectItem>
-                        <SelectItem value="sibling">{t.parents.relationshipSibling()}</SelectItem>
-                        <SelectItem value="other">{t.parents.relationshipOther()}</SelectItem>
+                        <SelectItem value="father">
+                          {t.parents.relationshipFather()}
+                        </SelectItem>
+                        <SelectItem value="mother">
+                          {t.parents.relationshipMother()}
+                        </SelectItem>
+                        <SelectItem value="guardian">
+                          {t.parents.relationshipGuardian()}
+                        </SelectItem>
+                        <SelectItem value="grandparent">
+                          {t.parents.relationshipGrandparent()}
+                        </SelectItem>
+                        <SelectItem value="sibling">
+                          {t.parents.relationshipSibling()}
+                        </SelectItem>
+                        <SelectItem value="other">
+                          {t.parents.relationshipOther()}
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="flex items-center space-x-2 pt-8">
-                    <Switch checked={linkIsPrimary} onCheckedChange={setLinkIsPrimary} />
+                    <Switch
+                      checked={linkIsPrimary}
+                      onCheckedChange={setLinkIsPrimary}
+                    />
                     <Label>Primary contact</Label>
                   </div>
                 </div>
@@ -226,14 +308,20 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
             )}
 
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+              >
                 {t.common.cancel()}
               </Button>
               <Button
                 onClick={() => linkExistingMutation.mutate()}
                 disabled={!selectedParentId || linkExistingMutation.isPending}
               >
-                {linkExistingMutation.isPending && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {linkExistingMutation.isPending && (
+                  <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
                 {t.students.linkParent()}
               </Button>
             </DialogFooter>
@@ -244,83 +332,147 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label>
-                  {t.parents.lastName()}
-                  {' '}
+                  {t.parents.lastName()}{" "}
                   <span className="text-destructive">*</span>
                 </Label>
-                <Input value={lastName} onChange={e => setLastName(e.target.value)} />
+                <Input
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                />
               </div>
               <div className="space-y-2">
                 <Label>
-                  {t.parents.firstName()}
-                  {' '}
+                  {t.parents.firstName()}{" "}
                   <span className="text-destructive">*</span>
                 </Label>
-                <Input value={firstName} onChange={e => setFirstName(e.target.value)} />
+                <Input
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                />
               </div>
               <div className="space-y-2">
                 <Label>
-                  {t.parents.phone()}
-                  {' '}
+                  {t.parents.phone()}{" "}
                   <span className="text-destructive">*</span>
                 </Label>
-                <Input value={phone} onChange={e => setPhone(e.target.value)} type="tel" />
+                <Input
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  type="tel"
+                />
               </div>
               <div className="space-y-2">
                 <Label>{t.parents.email()}</Label>
-                <Input value={email} onChange={e => setEmail(e.target.value)} type="email" />
+                <Input
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  type="email"
+                />
               </div>
               <div className="space-y-2">
                 <Label>
-                  {t.parents.relationship()}
-                  {' '}
+                  {t.parents.relationship()}{" "}
                   <span className="text-destructive">*</span>
                 </Label>
-                <Select value={newRelationship} onValueChange={v => setNewRelationship((v ?? 'guardian') as Relationship)}>
+                <Select
+                  value={newRelationship}
+                  onValueChange={(v) =>
+                    setNewRelationship((v ?? "guardian") as Relationship)
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="father">{t.parents.relationshipFather()}</SelectItem>
-                    <SelectItem value="mother">{t.parents.relationshipMother()}</SelectItem>
-                    <SelectItem value="guardian">{t.parents.relationshipGuardian()}</SelectItem>
-                    <SelectItem value="grandparent">{t.parents.relationshipGrandparent()}</SelectItem>
-                    <SelectItem value="sibling">{t.parents.relationshipSibling()}</SelectItem>
-                    <SelectItem value="other">{t.parents.relationshipOther()}</SelectItem>
+                    <SelectItem value="father">
+                      {t.parents.relationshipFather()}
+                    </SelectItem>
+                    <SelectItem value="mother">
+                      {t.parents.relationshipMother()}
+                    </SelectItem>
+                    <SelectItem value="guardian">
+                      {t.parents.relationshipGuardian()}
+                    </SelectItem>
+                    <SelectItem value="grandparent">
+                      {t.parents.relationshipGrandparent()}
+                    </SelectItem>
+                    <SelectItem value="sibling">
+                      {t.parents.relationshipSibling()}
+                    </SelectItem>
+                    <SelectItem value="other">
+                      {t.parents.relationshipOther()}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
                 <Label>{t.parents.occupation()}</Label>
-                <Input value={occupation} onChange={e => setOccupation(e.target.value)} />
+                <Input
+                  value={occupation}
+                  onChange={(e) => setOccupation(e.target.value)}
+                />
               </div>
             </div>
 
             <div className="flex flex-wrap gap-6 rounded-lg border bg-muted/50 p-4">
               <div className="flex items-center space-x-2">
-                <Switch checked={newIsPrimary} onCheckedChange={setNewIsPrimary} />
-                <Label className="cursor-pointer" onClick={() => setNewIsPrimary(!newIsPrimary)}>Primary contact</Label>
+                <Switch
+                  checked={newIsPrimary}
+                  onCheckedChange={setNewIsPrimary}
+                />
+                <Label
+                  className="cursor-pointer"
+                  onClick={() => setNewIsPrimary(!newIsPrimary)}
+                >
+                  Primary contact
+                </Label>
               </div>
               <div className="flex items-center space-x-2">
-                <Switch checked={newCanPickup} onCheckedChange={setNewCanPickup} />
-                <Label className="cursor-pointer" onClick={() => setNewCanPickup(!newCanPickup)}>Can pick up</Label>
+                <Switch
+                  checked={newCanPickup}
+                  onCheckedChange={setNewCanPickup}
+                />
+                <Label
+                  className="cursor-pointer"
+                  onClick={() => setNewCanPickup(!newCanPickup)}
+                >
+                  Can pick up
+                </Label>
               </div>
               <div className="flex items-center space-x-2">
-                <Switch checked={newReceiveNotifications} onCheckedChange={setNewReceiveNotifications} />
-                <Label className="cursor-pointer" onClick={() => setNewReceiveNotifications(!newReceiveNotifications)}>Receives notifications</Label>
+                <Switch
+                  checked={newReceiveNotifications}
+                  onCheckedChange={setNewReceiveNotifications}
+                />
+                <Label
+                  className="cursor-pointer"
+                  onClick={() =>
+                    setNewReceiveNotifications(!newReceiveNotifications)
+                  }
+                >
+                  Receives notifications
+                </Label>
               </div>
             </div>
 
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+              >
                 {t.common.cancel()}
               </Button>
               <Button
                 onClick={() => createAndLinkMutation.mutate()}
                 disabled={!canSubmitNew || createAndLinkMutation.isPending}
               >
-                {createAndLinkMutation.isPending && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {!createAndLinkMutation.isPending && <IconUserPlus className="mr-2 h-4 w-4" />}
+                {createAndLinkMutation.isPending && (
+                  <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                {!createAndLinkMutation.isPending && (
+                  <IconUserPlus className="mr-2 h-4 w-4" />
+                )}
                 Link parent
               </Button>
             </DialogFooter>
@@ -328,5 +480,5 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
         </Tabs>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

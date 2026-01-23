@@ -1,8 +1,6 @@
-'use client'
-
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Button } from '@workspace/ui/components/button'
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Button } from "@workspace/ui/components/button";
 import {
   Dialog,
   DialogContent,
@@ -10,7 +8,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@workspace/ui/components/dialog'
+} from "@workspace/ui/components/dialog";
 import {
   Form,
   FormControl,
@@ -19,92 +17,102 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@workspace/ui/components/form'
-import { Input } from '@workspace/ui/components/input'
+} from "@workspace/ui/components/form";
+import { Input } from "@workspace/ui/components/input";
 
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import { z } from 'zod'
-import { useTranslations } from '@/i18n'
-import { parentsKeys } from '@/lib/queries/parents'
-import { createParent, updateParent } from '@/school/functions/parents'
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { useTranslations } from "@/i18n";
+import { parentsKeys } from "@/lib/queries/parents";
+import { createParent, updateParent } from "@/school/functions/parents";
 
-const phoneRegex = /^(\+225)?\d{10}$/
+const phoneRegex = /^(\+225)?\d{10}$/;
 
 const parentFormSchema = z.object({
-  firstName: z.string().min(1, 'Le prénom est requis').max(100),
-  lastName: z.string().min(1, 'Le nom est requis').max(100),
-  phone: z.string().min(10, 'Le téléphone est requis').regex(phoneRegex, 'Format: +2250701020304 ou 0701020304'),
-  phone2: z.string().regex(phoneRegex, 'Format invalide').optional().or(z.literal('')),
-  email: z.string().email('Email invalide').optional().or(z.literal('')),
+  firstName: z.string().min(1, "Le prénom est requis").max(100),
+  lastName: z.string().min(1, "Le nom est requis").max(100),
+  phone: z
+    .string()
+    .min(10, "Le téléphone est requis")
+    .regex(phoneRegex, "Format: +2250701020304 ou 0701020304"),
+  phone2: z
+    .string()
+    .regex(phoneRegex, "Format invalide")
+    .optional()
+    .or(z.literal("")),
+  email: z.string().email("Email invalide").optional().or(z.literal("")),
   address: z.string().max(500).optional(),
   occupation: z.string().max(100).optional(),
   workplace: z.string().max(200).optional(),
-})
+});
 
-type ParentFormValues = z.infer<typeof parentFormSchema>
+type ParentFormValues = z.infer<typeof parentFormSchema>;
 
 interface ParentFormDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  parent?: ParentFormValues & { id: string }
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  parent?: ParentFormValues & { id: string };
 }
 
-export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialogProps) {
-  const t = useTranslations()
-  const queryClient = useQueryClient()
-  const isEditing = !!parent
+export function ParentFormDialog({
+  open,
+  onOpenChange,
+  parent,
+}: ParentFormDialogProps) {
+  const t = useTranslations();
+  const queryClient = useQueryClient();
+  const isEditing = !!parent;
 
   const form = useForm<ParentFormValues>({
     resolver: zodResolver(parentFormSchema),
     defaultValues: {
-      firstName: parent?.firstName || '',
-      lastName: parent?.lastName || '',
-      phone: parent?.phone || '',
-      phone2: parent?.phone2 || '',
-      email: parent?.email || '',
-      address: parent?.address || '',
-      occupation: parent?.occupation || '',
-      workplace: parent?.workplace || '',
+      firstName: parent?.firstName || "",
+      lastName: parent?.lastName || "",
+      phone: parent?.phone || "",
+      phone2: parent?.phone2 || "",
+      email: parent?.email || "",
+      address: parent?.address || "",
+      occupation: parent?.occupation || "",
+      workplace: parent?.workplace || "",
     },
-  })
+  });
 
   const createMutation = useMutation({
     mutationFn: (data: ParentFormValues) => createParent({ data }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: parentsKeys.all })
-      toast.success(t.parents.createSuccess())
-      onOpenChange(false)
-      form.reset()
+      queryClient.invalidateQueries({ queryKey: parentsKeys.all });
+      toast.success(t.parents.createSuccess());
+      onOpenChange(false);
+      form.reset();
     },
     onError: (error: Error) => {
-      toast.error(error.message)
+      toast.error(error.message);
     },
-  })
+  });
 
   const updateMutation = useMutation({
     mutationFn: (data: ParentFormValues) =>
       updateParent({ data: { id: parent!.id, updates: data } }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: parentsKeys.all })
-      toast.success(t.parents.updateSuccess())
-      onOpenChange(false)
+      queryClient.invalidateQueries({ queryKey: parentsKeys.all });
+      toast.success(t.parents.updateSuccess());
+      onOpenChange(false);
     },
     onError: (error: Error) => {
-      toast.error(error.message)
+      toast.error(error.message);
     },
-  })
+  });
 
   const onSubmit = (data: ParentFormValues) => {
     if (isEditing) {
-      updateMutation.mutate(data)
+      updateMutation.mutate(data);
+    } else {
+      createMutation.mutate(data);
     }
-    else {
-      createMutation.mutate(data)
-    }
-  }
+  };
 
-  const isPending = createMutation.isPending || updateMutation.isPending
+  const isPending = createMutation.isPending || updateMutation.isPending;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -114,7 +122,9 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
             {isEditing ? t.parents.editParent() : t.parents.addParent()}
           </DialogTitle>
           <DialogDescription>
-            {isEditing ? t.parents.editParentDescription() : t.parents.addParentDescription()}
+            {isEditing
+              ? t.parents.editParentDescription()
+              : t.parents.addParentDescription()}
           </DialogDescription>
         </DialogHeader>
 
@@ -128,7 +138,10 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
                   <FormItem>
                     <FormLabel>{t.parents.lastName()}</FormLabel>
                     <FormControl>
-                      <Input placeholder={t.parents.placeholders.lastName()} {...field} />
+                      <Input
+                        placeholder={t.parents.placeholders.lastName()}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -141,7 +154,10 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
                   <FormItem>
                     <FormLabel>{t.parents.firstName()}</FormLabel>
                     <FormControl>
-                      <Input placeholder={t.parents.placeholders.firstName()} {...field} />
+                      <Input
+                        placeholder={t.parents.placeholders.firstName()}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -155,13 +171,12 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
-                      {t.parents.phone()}
-                      {' '}
-                      *
-                    </FormLabel>
+                    <FormLabel>{t.parents.phone()} *</FormLabel>
                     <FormControl>
-                      <Input placeholder={t.parents.placeholders.phone()} {...field} />
+                      <Input
+                        placeholder={t.parents.placeholders.phone()}
+                        {...field}
+                      />
                     </FormControl>
                     <FormDescription>
                       {t.parents.phoneDescription()}
@@ -177,7 +192,10 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
                   <FormItem>
                     <FormLabel>{t.parents.phone2()}</FormLabel>
                     <FormControl>
-                      <Input placeholder={t.parents.placeholders.phone()} {...field} />
+                      <Input
+                        placeholder={t.parents.placeholders.phone()}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -192,7 +210,11 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
                 <FormItem>
                   <FormLabel>{t.parents.email()}</FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder={t.parents.placeholders.email()} {...field} />
+                    <Input
+                      type="email"
+                      placeholder={t.parents.placeholders.email()}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -206,7 +228,10 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
                 <FormItem>
                   <FormLabel>{t.parents.address()}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t.parents.placeholders.address()} {...field} />
+                    <Input
+                      placeholder={t.parents.placeholders.address()}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -221,7 +246,10 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
                   <FormItem>
                     <FormLabel>{t.parents.occupation()}</FormLabel>
                     <FormControl>
-                      <Input placeholder={t.parents.placeholders.occupation()} {...field} />
+                      <Input
+                        placeholder={t.parents.placeholders.occupation()}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -234,7 +262,10 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
                   <FormItem>
                     <FormLabel>{t.parents.workplace()}</FormLabel>
                     <FormControl>
-                      <Input placeholder={t.parents.placeholders.workplace()} {...field} />
+                      <Input
+                        placeholder={t.parents.placeholders.workplace()}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -243,7 +274,11 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
             </div>
 
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+              >
                 {t.common.cancel()}
               </Button>
               <Button type="submit" disabled={isPending}>
@@ -254,5 +289,5 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

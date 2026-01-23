@@ -144,14 +144,14 @@ function EmptyState() {
             </p>
           </div>
           <Button
-            asChild
+            render={
+              <a href="/spaces/classrooms">
+                <IconPlus className="mr-2 h-4 w-4" />
+                {t.empty.createClassroom()}
+              </a>
+            }
             className="mt-4 rounded-xl shadow-lg shadow-primary/20 h-11 px-8"
-          >
-            <a href="/spaces/classrooms">
-              <IconPlus className="mr-2 h-4 w-4" />
-              {t.empty.createClassroom()}
-            </a>
-          </Button>
+          />
         </div>
       </CardContent>
     </Card>

@@ -1,58 +1,56 @@
-import { zodResolver } from '@hookform/resolvers/zod'
-import { IconCircleCheck, IconLoader2 } from '@tabler/icons-react'
-import { Button } from '@workspace/ui/components/button'
-import { Input } from '@workspace/ui/components/input'
-import { Label } from '@workspace/ui/components/label'
-import { motion } from 'motion/react'
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import { z } from 'zod'
-import { useTranslations } from '@/i18n'
-import { authClient } from '@/lib/auth-client'
+import { zodResolver } from "@hookform/resolvers/zod";
+import { IconCircleCheck, IconLoader2 } from "@tabler/icons-react";
+import { Button } from "@workspace/ui/components/button";
+import { Input } from "@workspace/ui/components/input";
+import { Label } from "@workspace/ui/components/label";
+import { motion } from "motion/react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { useTranslations } from "@/i18n";
+import { authClient } from "@/lib/auth-client";
 
 const resetPasswordSchema = z
   .object({
     password: z.string().min(8),
     confirmPassword: z.string().min(8),
   })
-  .refine(data => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
-  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
-type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>
+type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 
 interface ResetPasswordFormProps {
-  token: string
+  token: string;
 }
 
 export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
-  const t = useTranslations()
-  const [isLoading, setIsLoading] = useState(false)
-  const [isSuccess, setIsSuccess] = useState(false)
+  const t = useTranslations();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const form = useForm<ResetPasswordFormData>({
     resolver: zodResolver(resetPasswordSchema),
-  })
+  });
 
   const onSubmit = async (data: ResetPasswordFormData) => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       await authClient.resetPassword({
         newPassword: data.password,
         token,
-      })
-      setIsSuccess(true)
-      toast.success(t.auth.resetPassword.success())
+      });
+      setIsSuccess(true);
+      toast.success(t.auth.resetPassword.success());
+    } catch {
+      toast.error(t.auth.resetPassword.error());
+    } finally {
+      setIsLoading(false);
     }
-    catch {
-      toast.error(t.auth.resetPassword.error())
-    }
-    finally {
-      setIsLoading(false)
-    }
-  }
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -60,12 +58,12 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
       opacity: 1,
       transition: { staggerChildren: 0.08 },
     },
-  }
+  };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 12 },
     visible: { opacity: 1, y: 0 },
-  }
+  };
 
   if (isSuccess) {
     return (
@@ -93,13 +91,16 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
           </motion.div>
 
           <motion.div variants={itemVariants}>
-            <Button asChild className="w-full h-12">
-              <a href="/dashboard">{t.auth.resetPassword.goToLogin()}</a>
-            </Button>
+            <Button
+              className="w-full h-12"
+              render={
+                <a href="/dashboard">{t.auth.resetPassword.goToLogin()}</a>
+              }
+            />
           </motion.div>
         </motion.div>
       </div>
-    )
+    );
   }
 
   return (
@@ -114,7 +115,9 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
         <motion.div variants={itemVariants} className="text-center mb-8">
           <div className="inline-flex items-center gap-2">
             <div className="size-10 rounded-xl bg-primary flex items-center justify-center">
-              <span className="text-xl font-bold text-primary-foreground">Y</span>
+              <span className="text-xl font-bold text-primary-foreground">
+                Y
+              </span>
             </div>
             <span className="text-xl font-bold">{t.app.name()}</span>
           </div>
@@ -135,14 +138,16 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
           variants={itemVariants}
         >
           <div className="space-y-2">
-            <Label htmlFor="password">{t.auth.resetPassword.newPassword()}</Label>
+            <Label htmlFor="password">
+              {t.auth.resetPassword.newPassword()}
+            </Label>
             <Input
               id="password"
               type="password"
               placeholder={t.auth.resetPassword.newPasswordPlaceholder()}
               disabled={isLoading}
               className="h-12"
-              {...form.register('password')}
+              {...form.register("password")}
             />
             {form.formState.errors.password && (
               <p className="text-sm text-destructive">
@@ -152,14 +157,16 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">{t.auth.resetPassword.confirmPassword()}</Label>
+            <Label htmlFor="confirmPassword">
+              {t.auth.resetPassword.confirmPassword()}
+            </Label>
             <Input
               id="confirmPassword"
               type="password"
               placeholder={t.auth.resetPassword.confirmPasswordPlaceholder()}
               disabled={isLoading}
               className="h-12"
-              {...form.register('confirmPassword')}
+              {...form.register("confirmPassword")}
             />
             {form.formState.errors.confirmPassword && (
               <p className="text-sm text-destructive">
@@ -173,17 +180,17 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
             className="w-full h-12 text-base"
             disabled={isLoading}
           >
-            {isLoading
-              ? (
-                  <>
-                    <IconLoader2 className="mr-2 h-5 w-5 animate-spin" />
-                    {t.auth.resetPassword.submitting()}
-                  </>
-                )
-              : t.auth.resetPassword.submit()}
+            {isLoading ? (
+              <>
+                <IconLoader2 className="mr-2 h-5 w-5 animate-spin" />
+                {t.auth.resetPassword.submitting()}
+              </>
+            ) : (
+              t.auth.resetPassword.submit()
+            )}
           </Button>
         </motion.form>
       </motion.div>
     </div>
-  )
+  );
 }

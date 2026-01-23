@@ -1,55 +1,64 @@
-import { IconArrowRight, IconCheck } from '@tabler/icons-react'
-import { Link } from '@tanstack/react-router'
-import { Badge } from '@workspace/ui/components/badge'
-import { Button } from '@workspace/ui/components/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
-import { useTranslation } from 'react-i18next'
+import { IconArrowRight, IconCheck } from "@tabler/icons-react";
+import { Link } from "@tanstack/react-router";
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card";
+import { useTranslation } from "react-i18next";
 
 export function PricingSection() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   const plans = [
     {
-      key: 'starter',
-      price: '$99',
-      period: '/month',
+      key: "starter",
+      price: "$99",
+      period: "/month",
       popular: false,
     },
     {
-      key: 'professional',
-      price: '$299',
-      period: '/month',
+      key: "professional",
+      price: "$299",
+      period: "/month",
       popular: true,
     },
     {
-      key: 'enterprise',
-      price: 'Custom',
-      period: '',
+      key: "enterprise",
+      price: "Custom",
+      period: "",
       popular: false,
     },
-  ]
+  ];
 
   return (
     <section id="pricing" className="py-24 sm:py-32 bg-muted/30">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            {t('pricing.title')}
+            {t("pricing.title")}
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            {t('pricing.subtitle')}
+            {t("pricing.subtitle")}
           </p>
         </div>
 
         <div className="mx-auto mt-16 grid max-w-lg grid-cols-1 gap-8 lg:max-w-none lg:grid-cols-3">
           {plans.map((plan) => {
-            const planData = t(`pricing.plans.${plan.key}`, { returnObjects: true }) as any
+            const planData = t(`pricing.plans.${plan.key}`, {
+              returnObjects: true,
+            }) as any;
             return (
               <Card
                 key={plan.key}
-                className={`relative flex flex-col ${plan.popular
-                  ? 'border-2 border-primary shadow-xl scale-105'
-                  : 'border-2'
+                className={`relative flex flex-col ${
+                  plan.popular
+                    ? "border-2 border-primary shadow-xl scale-105"
+                    : "border-2"
                 }`}
               >
                 {plan.popular && (
@@ -59,46 +68,61 @@ export function PricingSection() {
                 )}
                 <CardHeader className="pb-8">
                   <CardTitle className="text-2xl">{planData.name}</CardTitle>
-                  <CardDescription className="mt-2">{planData.description}</CardDescription>
+                  <CardDescription className="mt-2">
+                    {planData.description}
+                  </CardDescription>
                   <div className="mt-6">
                     <span className="text-4xl font-bold">{plan.price}</span>
                     {plan.period && (
-                      <span className="text-muted-foreground">{plan.period}</span>
+                      <span className="text-muted-foreground">
+                        {plan.period}
+                      </span>
                     )}
                   </div>
                 </CardHeader>
                 <CardContent className="flex-1">
                   <ul className="space-y-3 mb-8">
                     {planData.features.map((feature: string) => (
-                      <li key={`${plan.key}-${feature.replace(/\s+/g, '-').toLowerCase()}`} className="flex items-start gap-3">
+                      <li
+                        key={`${plan.key}-${feature.replace(/\s+/g, "-").toLowerCase()}`}
+                        className="flex items-start gap-3"
+                      >
                         <IconCheck className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                        <span className="text-sm text-muted-foreground">{feature}</span>
+                        <span className="text-sm text-muted-foreground">
+                          {feature}
+                        </span>
                       </li>
                     ))}
                   </ul>
                   <Button
                     className="w-full group"
-                    variant={plan.popular ? 'default' : 'outline'}
+                    variant={plan.popular ? "default" : "outline"}
                     size="lg"
-                    asChild
-                  >
-                    <Link to={plan.key === 'enterprise' ? '/demo-request' : '/demo-request'}>
-                      {plan.key === 'enterprise' ? t('pricing.contactUs') : t('pricing.cta')}
-                      <IconArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                    </Link>
-                  </Button>
+                    render={
+                      <Link
+                        to={
+                          plan.key === "enterprise"
+                            ? "/demo-request"
+                            : "/demo-request"
+                        }
+                      >
+                        {plan.key === "enterprise"
+                          ? t("pricing.contactUs")
+                          : t("pricing.cta")}
+                        <IconArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      </Link>
+                    }
+                  />
                 </CardContent>
               </Card>
-            )
+            );
           })}
         </div>
 
         <div className="mt-12 text-center">
-          <p className="text-sm text-muted-foreground">
-            {t('pricing.footer')}
-          </p>
+          <p className="text-sm text-muted-foreground">{t("pricing.footer")}</p>
         </div>
       </div>
     </section>
-  )
+  );
 }

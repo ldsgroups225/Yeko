@@ -1,5 +1,3 @@
-"use client";
-
 import { IconPencil, IconStack2, IconTrash } from "@tabler/icons-react";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
