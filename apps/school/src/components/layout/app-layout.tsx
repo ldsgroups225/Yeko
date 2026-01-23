@@ -1,14 +1,19 @@
-import { SidebarInset, SidebarProvider } from '@workspace/ui/components/sidebar'
-import { Header } from './header'
-import { AppSidebar } from './sidebar'
+import {
+  SidebarInset,
+  SidebarProvider,
+} from "@workspace/ui/components/sidebar";
+import { CommandPalette } from "./command-palette";
+import { Header } from "./header";
+import { AppSidebar } from "./sidebar";
 
 interface AppLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
   return (
     <SidebarProvider>
+      <CommandPalette />
       <AppSidebar />
       <SidebarInset>
         <Header />
@@ -17,5 +22,5 @@ export function AppLayout({ children }: AppLayoutProps) {
         </main>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }
