@@ -23,6 +23,7 @@ export * from "./queries/fee-types";
 export * from "./queries/fiscal-years";
 export * from "./queries/grades";
 export * from "./queries/installments";
+export * from "./queries/onboarding";
 export * from "./queries/parents";
 export * from "./queries/payment-plan-templates";
 export * from "./queries/payment-plans";
