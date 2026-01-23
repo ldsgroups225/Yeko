@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@workspace/ui/components/card";
+import { DeleteConfirmationDialog } from "@workspace/ui/components/delete-confirmation-dialog";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -16,7 +17,6 @@ import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { useTranslations } from "@/i18n";
 import { accountsKeys, accountsOptions } from "@/lib/queries";
 import { deleteExistingAccount } from "@/school/functions/accounts";
-import { DeleteConfirmationDialog } from "@workspace/ui/components/delete-confirmation-dialog";
 
 export const Route = createFileRoute("/_auth/accounting/accounts")({
   component: AccountsPage,

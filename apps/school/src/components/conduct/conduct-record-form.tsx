@@ -5,7 +5,6 @@ import {
   IconClock,
   IconMapPin,
   IconTag,
-  IconTypography,
   IconUsers,
 } from "@tabler/icons-react";
 import { Button } from "@workspace/ui/components/button";
@@ -119,7 +118,7 @@ export function ConductRecordForm({
           className="space-y-3"
         >
           <Label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
-            <Type className="size-3.5" />
+            <IconTag className="size-3.5" />
             {t.conduct.form.type()}
           </Label>
           <Select
@@ -184,7 +183,7 @@ export function ConductRecordForm({
         className="space-y-3"
       >
         <Label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
-          <Type className="size-3.5" />
+          <IconTag className="size-3.5" />
           {t.conduct.form.title()}
         </Label>
         <Input
