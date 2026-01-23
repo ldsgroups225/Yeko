@@ -154,10 +154,20 @@ const fr = {
     reportCardTemplates: "Modèles de bulletins",
   },
   sidebar: {
+    // Legacy mapping support while transitioning? No, I'll update the keys in keyfile.
+    // New Hubs
+    pilotage: "Pilotage",
+    community: "Communauté",
+    pedagogy: "Pédagogie",
+    exams: "Examens",
+    treasury: "Trésorerie",
+    configuration: "Configuration",
+
+    // Keep these if used elsewhere, otherwise remove if only used in sidebar.tsx
     dailyOperations: "Opérations Quotidiennes",
     academicOperations: "Opérations Académiques",
     administration: "Administration",
-    configuration: "Configuration",
+
     schoolName: "Yeko School",
     schoolSubtitle: "Administration",
   },

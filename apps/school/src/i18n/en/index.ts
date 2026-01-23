@@ -153,10 +153,18 @@ const en: Translation = {
     reportCardTemplates: "Report Card Templates",
   },
   sidebar: {
+    // New Hubs
+    pilotage: "Steering",
+    community: "Community",
+    pedagogy: "Pedagogy",
+    exams: "Exams",
+    treasury: "Treasury",
+    configuration: "Configuration",
+
     dailyOperations: "Daily Operations",
     academicOperations: "Academic Operations",
     administration: "Administration",
-    configuration: "Configuration",
+
     schoolName: "Yeko School",
     schoolSubtitle: "Administration",
   },
