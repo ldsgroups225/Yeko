@@ -2394,6 +2394,18 @@ type RootTranslation = {
 			 */
 			deleteTeacher: string
 			/**
+			 * Ê​t​e​s​-​v​o​u​s​ ​s​û​r​ ​d​e​ ​v​o​u​l​o​i​r​ ​s​u​p​p​r​i​m​e​r​ ​c​e​t​ ​e​n​s​e​i​g​n​a​n​t​ ​?​ ​C​e​t​t​e​ ​a​c​t​i​o​n​ ​e​s​t​ ​i​r​r​é​v​e​r​s​i​b​l​e​.
+			 */
+			deleteConfirm: string
+			/**
+			 * E​n​s​e​i​g​n​a​n​t​ ​s​u​p​p​r​i​m​é​ ​a​v​e​c​ ​s​u​c​c​è​s
+			 */
+			deleteSuccess: string
+			/**
+			 * E​r​r​e​u​r​ ​l​o​r​s​ ​d​e​ ​l​a​ ​s​u​p​p​r​e​s​s​i​o​n​ ​d​e​ ​l​'​e​n​s​e​i​g​n​a​n​t
+			 */
+			deleteError: string
+			/**
 			 * S​é​l​e​c​t​i​o​n​n​e​r​ ​u​n​ ​u​t​i​l​i​s​a​t​e​u​r
 			 */
 			selectUser: string
@@ -10267,6 +10279,18 @@ export type TranslationFunctions = {
 			 * Supprimer l'enseignant
 			 */
 			deleteTeacher: () => LocalizedString
+			/**
+			 * Êtes-vous sûr de vouloir supprimer cet enseignant ? Cette action est irréversible.
+			 */
+			deleteConfirm: () => LocalizedString
+			/**
+			 * Enseignant supprimé avec succès
+			 */
+			deleteSuccess: () => LocalizedString
+			/**
+			 * Erreur lors de la suppression de l'enseignant
+			 */
+			deleteError: () => LocalizedString
 			/**
 			 * Sélectionner un utilisateur
 			 */
