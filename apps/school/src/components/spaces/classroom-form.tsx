@@ -97,7 +97,9 @@ export function ClassroomForm({ classroom, onSuccess }: ClassroomFormProps) {
           </Label>
           <Select value={watch('type')} onValueChange={v => setValue('type', v as 'regular' | 'lab' | 'gym' | 'library' | 'auditorium')}>
             <SelectTrigger className={selectTriggerClass}>
-              <SelectValue />
+              <SelectValue>
+                {t.spaces.classrooms.types[watch('type') as keyof typeof t.spaces.classrooms.types]()}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">
               <SelectItem value="regular" className="rounded-lg cursor-pointer focus:bg-primary/10">{t.spaces.classrooms.types.regular()}</SelectItem>
@@ -137,7 +139,24 @@ export function ClassroomForm({ classroom, onSuccess }: ClassroomFormProps) {
           </Label>
           <Select value={watch('status')} onValueChange={v => setValue('status', v as 'active' | 'maintenance' | 'inactive')}>
             <SelectTrigger className={selectTriggerClass}>
-              <SelectValue />
+              <SelectValue>
+                {watch('status') === 'active' ? (
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-primary" />
+                    {t.common.active()}
+                  </div>
+                ) : watch('status') === 'maintenance' ? (
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-yellow-500" />
+                    {t.spaces.classrooms.status.maintenance()}
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-muted-foreground" />
+                    {t.common.inactive()}
+                  </div>
+                )}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">
               <SelectItem value="active" className="rounded-lg cursor-pointer focus:bg-primary/10">{t.common.active()}</SelectItem>

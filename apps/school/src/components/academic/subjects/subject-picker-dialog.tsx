@@ -138,7 +138,7 @@ export function SubjectPickerDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] backdrop-blur-xl bg-card/95 border-border/40 p-0 overflow-hidden flex flex-col">
+      <DialogContent className="max-w-2xl sm:max-w-3xl max-h-[90vh] backdrop-blur-xl bg-card/95 border-border/40 p-0 overflow-hidden flex flex-col">
         <div className="p-6 pb-4 border-b border-border/10">
           <DialogHeader>
             <div className="flex items-center gap-3 mb-1">

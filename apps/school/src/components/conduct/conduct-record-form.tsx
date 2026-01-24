@@ -238,9 +238,25 @@ export function ConductRecordForm({
               form.setValue("severity", v as (typeof severityLevels)[number])
             }
           >
-            <SelectTrigger className="h-12 rounded-2xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all text-destructive font-black">
-              <SelectValue placeholder={t.conduct.form.selectSeverity()} />
-            </SelectTrigger>
+             <SelectTrigger className="h-12 rounded-2xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all text-destructive font-black">
+               <SelectValue placeholder={t.conduct.form.selectSeverity()}>
+                 {form.watch('severity') && (() => {
+                   const severityConfig = {
+                     low: { color: 'bg-blue-500', label: t.conduct.severity.low(), icon: '🔵' },
+                     medium: { color: 'bg-yellow-500', label: t.conduct.severity.medium(), icon: '🟡' },
+                     high: { color: 'bg-orange-500', label: t.conduct.severity.high(), icon: '🟠' },
+                     critical: { color: 'bg-red-500', label: t.conduct.severity.critical(), icon: '🔴' }
+                   }
+                   const config = severityConfig[form.watch('severity') as keyof typeof severityConfig]
+                   return (
+                     <div className="flex items-center gap-2">
+                       <div className={`h-2 w-2 rounded-full ${config.color}`} />
+                       <span>{config.icon} {config.label}</span>
+                     </div>
+                   )
+                 })()}
+               </SelectValue>
+             </SelectTrigger>
             <SelectContent className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40">
               {severityLevels.map((level) => (
                 <SelectItem

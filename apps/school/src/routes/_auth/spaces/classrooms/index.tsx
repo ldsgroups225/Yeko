@@ -72,7 +72,7 @@ function ClassroomsPage() {
                 </Button>
               }
             />
-            <DialogContent className="max-w-2xl backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6">
+            <DialogContent className="max-w-2xl sm:max-w-3xl backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6">
               <DialogHeader>
                 <DialogTitle className="text-xl font-bold">
                   {t.dialogs.createClassroom.title()}

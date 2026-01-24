@@ -186,7 +186,21 @@ function GradeEntryPage() {
                   : (
                       <Select value={selectedClassId} onValueChange={val => handleClassChange(val ?? '')}>
                         <SelectTrigger id="class-select" className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
-                          <SelectValue placeholder={t.academic.grades.entry.selectClass()} />
+                          <SelectValue placeholder={t.academic.grades.entry.selectClass()}>
+                            {selectedClassId && (() => {
+                              const selectedItem = classesData?.find(item => item.class.id === selectedClassId)
+                              return selectedItem ? (
+                                <div className="flex items-center gap-2">
+                                  <IconLayoutGrid className="size-3.5 text-primary/60" />
+                                  <span className="font-semibold">
+                                    {selectedItem.grade.name}
+                                    {' '}
+                                    {selectedItem.class.section}
+                                  </span>
+                                </div>
+                              ) : null
+                            })()}
+                          </SelectValue>
                         </SelectTrigger>
                         <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
                           {classesData?.map(item => (
@@ -221,7 +235,17 @@ function GradeEntryPage() {
                         disabled={!selectedClassId || !classSubjectsData?.length}
                       >
                         <SelectTrigger id="subject-select" className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
-                          <SelectValue placeholder={t.academic.grades.entry.selectSubject()} />
+                          <SelectValue placeholder={t.academic.grades.entry.selectSubject()}>
+                            {selectedSubjectId && (() => {
+                              const selectedItem = classSubjectsData?.find(cs => cs.subject.id === selectedSubjectId)
+                              return selectedItem ? (
+                                <div className="flex items-center gap-2">
+                                  <IconSparkles className="size-3.5 text-primary/60" />
+                                  <span className="font-semibold">{selectedItem.subject.name}</span>
+                                </div>
+                              ) : null
+                            })()}
+                          </SelectValue>
                         </SelectTrigger>
                         <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
                           {classSubjectsData?.map(cs => (

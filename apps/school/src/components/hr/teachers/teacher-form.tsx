@@ -170,7 +170,22 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
               onValueChange={value => setValue('status', value as 'active' | 'inactive' | 'on_leave')}
             >
               <SelectTrigger className="rounded-xl h-11 border-border/40 bg-background/50 focus:bg-background transition-all">
-                <SelectValue />
+                <SelectValue>
+                  {watch('status') && (() => {
+                    const statusConfig = {
+                      active: { color: 'bg-emerald-500', label: t.hr.status.active() },
+                      inactive: { color: 'bg-slate-400', label: t.hr.status.inactive() },
+                      on_leave: { color: 'bg-amber-500', label: t.hr.status.on_leave() }
+                    }
+                    const config = statusConfig[watch('status') as keyof typeof statusConfig]
+                    return (
+                      <div className="flex items-center gap-2">
+                        <div className={`h-2 w-2 rounded-full ${config.color}`} />
+                        <span>{config.label}</span>
+                      </div>
+                    )
+                  })()}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
                 <SelectItem value="active" className="rounded-lg py-2.5">

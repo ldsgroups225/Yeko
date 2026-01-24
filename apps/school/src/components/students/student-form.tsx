@@ -321,7 +321,22 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                         <Select onValueChange={field.onChange} value={field.value}>
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder={t.students.selectGender()} />
+                              <SelectValue placeholder={t.students.selectGender()}>
+                                {field.value && (
+                                  <div className="flex items-center gap-2">
+                                    {field.value === 'M' ? (
+                                      <div className="h-2 w-2 rounded-full bg-blue-500" />
+                                    ) : field.value === 'F' ? (
+                                      <div className="h-2 w-2 rounded-full bg-pink-500" />
+                                    ) : (
+                                      <div className="h-2 w-2 rounded-full bg-gray-500" />
+                                    )}
+                                    <span className="ml-2">
+                                      {field.value === 'M' ? t.students.male() : field.value === 'F' ? t.students.female() : t.students.other()}
+                                    </span>
+                                  </div>
+                                )}
+                              </SelectValue>
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -514,7 +529,16 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                       <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                           <SelectTrigger className="w-[200px]">
-                            <SelectValue placeholder={t.students.selectBloodType()} />
+                            <SelectValue placeholder={t.students.selectBloodType()}>
+                              {field.value && (
+                                <div className="flex items-center gap-2">
+                                  <div className={`h-2 w-2 rounded-full ${
+                                    field.value.includes('+') ? 'bg-red-500' : 'bg-blue-500'
+                                  }`} />
+                                  <span className="ml-2">{field.value}</span>
+                                </div>
+                              )}
+                            </SelectValue>
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>

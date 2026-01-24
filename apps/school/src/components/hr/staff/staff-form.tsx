@@ -103,7 +103,24 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
               onValueChange={value => setValue('position', value as any)}
             >
               <SelectTrigger className="rounded-xl h-11 border-border/40 bg-background/50 focus:bg-background transition-all">
-                <SelectValue placeholder={t.hr.staff.selectPosition()} />
+                <SelectValue placeholder={t.hr.staff.selectPosition()}>
+                  {watch('position') && (() => {
+                    const positionTranslations = {
+                      academic_coordinator: t.hr.positions.academic_coordinator,
+                      discipline_officer: t.hr.positions.discipline_officer,
+                      accountant: t.hr.positions.accountant,
+                      cashier: t.hr.positions.cashier,
+                      registrar: t.hr.positions.registrar,
+                      other: t.hr.positions.other,
+                    }
+                    return (
+                      <div className="flex items-center gap-2">
+                        <IconBriefcase className="h-3.5 w-3.5 text-muted-foreground" />
+                        {positionTranslations[watch('position') as keyof typeof positionTranslations]()}
+                      </div>
+                    )
+                  })()}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
                 {staffPositions.map((position) => {
@@ -160,7 +177,24 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
               onValueChange={value => setValue('status', value as 'active' | 'inactive' | 'on_leave')}
             >
               <SelectTrigger className="rounded-xl h-11 border-border/40 bg-background/50 focus:bg-background transition-all">
-                <SelectValue />
+                <SelectValue>
+                  {watch('status') === 'active' ? (
+                    <div className="flex items-center gap-2">
+                      <div className="h-2 w-2 rounded-full bg-emerald-500" />
+                      {t.hr.status.active()}
+                    </div>
+                  ) : watch('status') === 'inactive' ? (
+                    <div className="flex items-center gap-2">
+                      <div className="h-2 w-2 rounded-full bg-slate-400" />
+                      {t.hr.status.inactive()}
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <div className="h-2 w-2 rounded-full bg-amber-500" />
+                      {t.hr.status.on_leave()}
+                    </div>
+                  )}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
                 <SelectItem value="active" className="rounded-lg py-2.5">

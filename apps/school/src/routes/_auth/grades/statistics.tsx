@@ -1,4 +1,5 @@
 import { IconChartBar, IconLayoutGrid, IconSettings } from '@tabler/icons-react'
+import { IconCalendar, IconLayoutGrid } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
@@ -106,7 +107,21 @@ function GradeStatisticsPage() {
                   : (
                       <Select value={selectedClassId} onValueChange={val => setSelectedClassId(val ?? '')}>
                         <SelectTrigger id="class-select" className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
-                          <SelectValue placeholder={t.academic.grades.entry.selectClass()} />
+                          <SelectValue placeholder={t.academic.grades.entry.selectClass()}>
+                            {selectedClassId && (() => {
+                              const selectedItem = classesData?.find(item => item.class.id === selectedClassId)
+                              return selectedItem ? (
+                                <div className="flex items-center gap-2">
+                                  <IconLayoutGrid className="size-3.5 text-primary/60" />
+                                  <span className="font-semibold">
+                                    {selectedItem.grade.name}
+                                    {' '}
+                                    {selectedItem.class.section}
+                                  </span>
+                                </div>
+                              ) : null
+                            })()}
+                          </SelectValue>
                         </SelectTrigger>
                         <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
                           {classesData?.map(item => (
@@ -135,7 +150,17 @@ function GradeStatisticsPage() {
                   : (
                       <Select value={selectedTermId} onValueChange={val => setSelectedTermId(val ?? '')}>
                         <SelectTrigger id="term-select" className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
-                          <SelectValue placeholder={t.academic.grades.entry.selectTerm()} />
+                          <SelectValue placeholder={t.academic.grades.entry.selectTerm()}>
+                            {selectedTermId && (() => {
+                              const selectedItem = termsData?.find(term => term.id === selectedTermId)
+                              return selectedItem ? (
+                                <div className="flex items-center gap-2">
+                                  <IconCalendar className="size-3.5 text-primary/60" />
+                                  <span className="font-semibold">{selectedItem.template.name}</span>
+                                </div>
+                              ) : null
+                            })()}
+                          </SelectValue>
                         </SelectTrigger>
                         <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
                           {termsData?.map(term => (
