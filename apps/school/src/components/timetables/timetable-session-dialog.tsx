@@ -1,7 +1,9 @@
+import type { Dialog as DialogPrimitive } from '@base-ui/react/dialog'
 import type { Conflict } from './conflict-indicator'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { IconDeviceFloppy, IconLoader2, IconTrash } from '@tabler/icons-react'
+import { IconCalendar, IconDeviceFloppy, IconLoader2, IconTrash, IconX } from '@tabler/icons-react'
 import { Button } from '@workspace/ui/components/button'
+
 import {
   Dialog,
   DialogContent,
@@ -10,7 +12,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@workspace/ui/components/dialog'
-
 import { Input } from '@workspace/ui/components/input'
 import { Label } from '@workspace/ui/components/label'
 import {
@@ -119,8 +120,18 @@ export function TimetableSessionDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6">
+    <Dialog
+      open={open}
+      onOpenChange={(isOpen, eventDetails: DialogPrimitive.Root.ChangeEventDetails) => {
+        if (!isOpen && eventDetails.reason === 'outside-press') {
+          return
+        }
+        onOpenChange(isOpen)
+      }}
+    >
+      <DialogContent
+        className="max-w-md sm:max-w-lg backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6"
+      >
         <DialogHeader>
           <DialogTitle className="text-xl font-black uppercase tracking-tight italic">
             {mode === 'create'
@@ -148,7 +159,21 @@ export function TimetableSessionDialog({
                 onValueChange={v => form.setValue('subjectId', v ?? '')}
               >
                 <SelectTrigger id="subjectId" className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
-                  <SelectValue placeholder={t.common.select()} />
+                  <SelectValue placeholder={t.common.select()}>
+                    {form.watch('subjectId')
+                      ? (() => {
+                          const s = subjects.find(i => i.id === form.watch('subjectId'))
+                          return s
+                            ? (
+                                <div className="flex items-center gap-2 text-primary">
+                                  <div className="size-2 rounded-full bg-primary" />
+                                  <span>{s.name}</span>
+                                </div>
+                              )
+                            : undefined
+                        })()
+                      : undefined}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
                   {subjects.map(s => (
@@ -171,7 +196,21 @@ export function TimetableSessionDialog({
                 onValueChange={v => form.setValue('teacherId', v ?? '')}
               >
                 <SelectTrigger id="teacherId" className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
-                  <SelectValue placeholder={t.common.select()} />
+                  <SelectValue placeholder={t.common.select()}>
+                    {form.watch('teacherId')
+                      ? (() => {
+                          const teacher = teachers.find(i => i.id === form.watch('teacherId'))
+                          return teacher
+                            ? (
+                                <div className="flex items-center gap-2 text-emerald-500">
+                                  <div className="size-2 rounded-full bg-emerald-500" />
+                                  <span>{teacher.name}</span>
+                                </div>
+                              )
+                            : undefined
+                        })()
+                      : undefined}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
                   {teachers.map(t => (
@@ -194,7 +233,27 @@ export function TimetableSessionDialog({
                 onValueChange={v => form.setValue('classroomId', v === 'none' || v === null ? undefined : v)}
               >
                 <SelectTrigger id="classroomId" className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
-                  <SelectValue placeholder={t.common.optional()} />
+                  <SelectValue placeholder={t.common.optional()}>
+                    {form.watch('classroomId') && form.watch('classroomId') !== 'none'
+                      ? (() => {
+                          const c = classrooms.find(i => i.id === form.watch('classroomId'))
+                          return c
+                            ? (
+                                <div className="flex items-center gap-2 text-amber-500">
+                                  <div className="size-2 rounded-full bg-amber-500" />
+                                  <span>{c.name}</span>
+                                </div>
+                              )
+                            : undefined
+                        })()
+                      : form.watch('classroomId') === 'none' || !form.watch('classroomId')
+                        ? (
+                            <span className="italic text-muted-foreground/60 font-medium lowercase">
+                              {t.common.none()}
+                            </span>
+                          )
+                        : undefined}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
                   <SelectItem value="none" className="rounded-lg focus:bg-primary/10 italic text-muted-foreground">{t.common.none()}</SelectItem>
@@ -213,7 +272,19 @@ export function TimetableSessionDialog({
                 onValueChange={v => form.setValue('dayOfWeek', Number(v))}
               >
                 <SelectTrigger id="dayOfWeek" className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
-                  <SelectValue />
+                  <SelectValue>
+                    {form.watch('dayOfWeek')
+                      ? (() => {
+                          const day = form.watch('dayOfWeek')
+                          return (
+                            <div className="flex items-center gap-2">
+                              <IconCalendar className="size-3.5 text-primary/60" />
+                              <span>{dayOfWeekLabels[day]}</span>
+                            </div>
+                          )
+                        })()
+                      : undefined}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
                   {[1, 2, 3, 4, 5, 6, 7].map(d => (
@@ -288,6 +359,16 @@ export function TimetableSessionDialog({
           </div>
 
           <DialogFooter className="gap-3 sm:gap-2 pt-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              disabled={isSubmitting || isDeleting}
+              className="rounded-xl font-bold uppercase tracking-wider text-xs border-border/40 hover:bg-muted/50"
+            >
+              <IconX className="mr-2 h-4 w-4" />
+              {t.common.cancel()}
+            </Button>
             {mode === 'edit' && onDelete && (
               <Button
                 type="button"

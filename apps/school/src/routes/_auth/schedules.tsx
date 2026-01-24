@@ -1,7 +1,7 @@
 import type { TimetableViewMode } from '@/components/timetables'
 import type { TimetableSessionData } from '@/components/timetables/timetable-session-card'
 import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
-import { IconCalendarSearch, IconDownload, IconSparkles, IconUpload } from '@tabler/icons-react'
+import { IconCalendar, IconCalendarSearch, IconDownload, IconSparkles, IconUpload } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 
@@ -355,7 +355,21 @@ function TimetablesPage() {
                 : (
                     <Select value={effectiveYearId} onValueChange={val => setLocalYearId(val ?? '')}>
                       <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
-                        <SelectValue placeholder={t.schoolYear.select()} />
+                        <SelectValue placeholder={t.schoolYear.select()}>
+                          {effectiveYearId
+                            ? (() => {
+                                const year = schoolYears?.find(y => y.id === effectiveYearId)
+                                return year
+                                  ? (
+                                      <div className="flex items-center gap-2">
+                                        <IconCalendar className="size-3.5 text-primary/60" />
+                                        <span>{year.template.name}</span>
+                                      </div>
+                                    )
+                                  : undefined
+                              })()
+                            : undefined}
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
                         {schoolYears?.map(year => (
@@ -391,7 +405,25 @@ function TimetablesPage() {
                         disabled={!effectiveYearId}
                       >
                         <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
-                          <SelectValue placeholder={t.classes.select()} />
+                          <SelectValue placeholder={t.classes.select()}>
+                            {selectedClassId
+                              ? (() => {
+                                  const item = classes?.find(i => i.class.id === selectedClassId)
+                                  return item
+                                    ? (
+                                        <div className="flex items-center gap-2">
+                                          <div className="size-2 rounded-full bg-primary" />
+                                          <span>
+                                            {item.grade.name}
+                                            {' '}
+                                            {item.class.section}
+                                          </span>
+                                        </div>
+                                      )
+                                    : undefined
+                                })()
+                              : undefined}
+                          </SelectValue>
                         </SelectTrigger>
                         <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
                           {classes?.map(item => (
@@ -427,7 +459,21 @@ function TimetablesPage() {
                         onValueChange={val => setSelectedTeacherId(val ?? '')}
                       >
                         <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
-                          <SelectValue placeholder={t.teachers.select()} />
+                          <SelectValue placeholder={t.teachers.select()}>
+                            {selectedTeacherId
+                              ? (() => {
+                                  const teacher = teachers?.find(t => t.id === selectedTeacherId)
+                                  return teacher
+                                    ? (
+                                        <div className="flex items-center gap-2">
+                                          <div className="size-2 rounded-full bg-emerald-500" />
+                                          <span>{teacher.user.name}</span>
+                                        </div>
+                                      )
+                                    : undefined
+                                })()
+                              : undefined}
+                          </SelectValue>
                         </SelectTrigger>
                         <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
                           {teachers?.map(teacher => (
