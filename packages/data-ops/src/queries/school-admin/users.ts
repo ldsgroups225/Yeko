@@ -607,7 +607,8 @@ export async function updateLastLogin(userId: string) {
 }
 
 // Sync user auth data - updates authUserId and lastLoginAt when user logs in
-export async function syncUserAuthOnLogin(authUserId: string, email: string) {
+// Auto-creates user account if they don't exist (registration flow)
+export async function syncUserAuthOnLogin(authUserId: string, email: string, name?: string) {
   const db = getDb()
 
   // Find user by email
@@ -617,11 +618,24 @@ export async function syncUserAuthOnLogin(authUserId: string, email: string) {
     .where(and(eq(users.email, email), isNull(users.deletedAt)))
     .limit(1)
 
+  // If user doesn't exist, create a new account (registration flow)
   if (!existingUser) {
-    return null // User doesn't exist in school system
+    const [newUser] = await db
+      .insert(users)
+      .values({
+        id: crypto.randomUUID(),
+        email,
+        name: name || email.split('@')[0] || 'User', // Use name from Google or derive from email
+        authUserId,
+        status: 'active',
+        lastLoginAt: new Date(),
+      })
+      .returning()
+
+    return newUser?.id || null
   }
 
-  // Update authUserId if different and update lastLoginAt
+  // Update authUserId if different and update lastLoginAt (login flow)
   const updates: { authUserId?: string, lastLoginAt: Date, updatedAt: Date } = {
     lastLoginAt: new Date(),
     updatedAt: new Date(),
