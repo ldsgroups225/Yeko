@@ -7,6 +7,17 @@
   ],
   "main": "./src/server.ts",
   "vars": {
-    "MY_VAR": "Hello from Cloudflare"
+    // "MY_VAR": "Hello from Cloudflare"
   }
+  // Required Secrets (run `wrangler secret put <NAME>`):
+  // - DATABASE_PASSWORD
+  // - BETTER_AUTH_SECRET
+  // - GOOGLE_CLIENT_SECRET
+  // - POLAR_SECRET
+  // - POLAR_WEBHOOK_SECRET
+  //
+  // Required Environment Variables (set in vars above or dashboard):
+  // - DATABASE_HOST
+  // - DATABASE_USERNAME
+  // - GOOGLE_CLIENT_ID
 }

@@ -7,26 +7,22 @@
     "no_handle_cross_request_promise_resolution"
   ],
   "main": "./src/server.ts",
-  "pages_build_output_dir": "./dist",
-  "routes": [
-    {
-      "pattern": "school.yeko.app",
-      "zone_name": "yeko.app"
-    }
-  ],
   "vars": {
     "APP_NAME": "Yeko School",
-    "APP_URL": "https://school.yeko.app"
+    // Update these in Cloudflare Dashboard after deployment to match your workers.dev URL
+    "APP_URL": "https://school.yeko.app",
+    "BETTER_AUTH_URL": "https://school.yeko.app"
   },
-  // Queue producer binding for background logging
-  "queues": {
-    "producers": [
-      {
-        "queue": "yeko-logs",
-        "binding": "LOGS_QUEUE"
-      }
-    ]
-  },
+  // Required Secrets (run `wrangler secret put <NAME>`):
+  // - DATABASE_PASSWORD
+  // - BETTER_AUTH_SECRET
+  // - GOOGLE_CLIENT_SECRET
+  //
+  // Required Environment Variables (set in vars above or dashboard):
+  // - DATABASE_HOST
+  // - DATABASE_USERNAME
+  // - GOOGLE_CLIENT_ID
+  //
   // R2 bucket for file storage (student photos, documents)
   "r2_buckets": [
     {
