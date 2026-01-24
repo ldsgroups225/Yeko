@@ -36,7 +36,7 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
     formState: { errors },
     setValue,
     watch,
-  } = useForm<UserFormData>({
+  } = useForm({
     resolver: zodResolver(userCreateSchema),
     defaultValues: user
       ? {
@@ -265,23 +265,15 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
           <h2 className="text-xl font-serif font-semibold">{t.hr.users.roleAssignment()}</h2>
         </div>
         <p className="mb-8 text-sm text-muted-foreground leading-relaxed">
-          {t.hr.users.roleAssignmentDescription()}
+          {t.hr.users.roleAssignmentDescription()} (Optionnel)
         </p>
         <div className="space-y-4">
-          <Label className="flex items-center gap-1.5 font-semibold text-foreground">
             {t.hr.common.roles()}
-            <span className="text-destructive">*</span>
-          </Label>
           <RoleSelector
             selectedRoleIds={watch('roleIds') || []}
             onChange={roleIds => setValue('roleIds', roleIds, { shouldValidate: true })}
             disabled={isLoading}
           />
-          <AnimatePresence>
-            {errors.roleIds && (
-              <motion.p initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="text-xs font-medium text-destructive">{errors.roleIds.message}</motion.p>
-            )}
-          </AnimatePresence>
         </div>
       </motion.div>
 

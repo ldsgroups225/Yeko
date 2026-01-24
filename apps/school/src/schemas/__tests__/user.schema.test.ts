@@ -248,7 +248,7 @@ describe('user Schema Validation', () => {
   })
 
   describe('roleIds field', () => {
-    test('should require at least one role', () => {
+    test('should accept empty role list', () => {
       const result = userSchema.safeParse({
         name: 'Test User',
         email: 'test@example.com',
@@ -256,9 +256,9 @@ describe('user Schema Validation', () => {
         roleIds: [],
       })
 
-      expect(result.success).toBe(false)
-      if (!result.success) {
-        expect(result.error.issues[0]?.path).toContain('roleIds')
+      expect(result.success).toBe(true)
+      if (result.success) {
+        expect(result.data.roleIds).toHaveLength(0)
       }
     })
 
@@ -287,14 +287,17 @@ describe('user Schema Validation', () => {
       }
     })
 
-    test('should require roleIds field', () => {
+    test('should accept missing roleIds field (default to empty array)', () => {
       const result = userSchema.safeParse({
         name: 'Test User',
         email: 'test@example.com',
         status: 'active',
       })
 
-      expect(result.success).toBe(false)
+      expect(result.success).toBe(true)
+      if (result.success) {
+        expect(result.data.roleIds).toEqual([])
+      }
     })
   })
 
