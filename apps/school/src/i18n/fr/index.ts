@@ -1324,8 +1324,8 @@ const fr = {
       searchPlaceholder: 'Rechercher des matières...',
       filterByCategory: 'Filtrer par catégorie',
       filterByStatus: 'Filtrer par statut',
-      allCategories: 'Toutes les catégories',
-      allStatus: 'Tous les statuts',
+      allCategories: 'Toutes catégories',
+      allStatus: 'Tous statuts',
       categories: {
         scientifique: 'Scientifique',
         litteraire: 'Littéraire',

@@ -48,6 +48,7 @@ import {
   schoolSubjectsKeys,
   schoolSubjectsOptions,
 } from '@/lib/queries/school-subjects'
+import { cn } from '@/lib/utils'
 import { toggleSchoolSubjectStatus } from '@/school/functions/school-subjects'
 import { SubjectPickerDialog } from './subject-picker-dialog'
 import { SubjectStatusToggle } from './subject-status-toggle'
@@ -79,6 +80,25 @@ const SUBJECT_CATEGORY_KEYS = [
   'autre',
 ] as const
 type SubjectCategoryKey = (typeof SUBJECT_CATEGORY_KEYS)[number]
+
+const CATEGORY_STYLES: Record<string, { className: string, icon: React.ReactNode }> = {
+  Scientifique: {
+    className: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
+    icon: <span className="mr-1.5">🔬</span>,
+  },
+  Littéraire: {
+    className: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
+    icon: <span className="mr-1.5">📖</span>,
+  },
+  Sportif: {
+    className: 'bg-orange-500/10 text-orange-500 border-orange-500/20',
+    icon: <span className="mr-1.5">⚽</span>,
+  },
+  Autre: {
+    className: 'bg-purple-500/10 text-purple-500 border-purple-500/20',
+    icon: <span className="mr-1.5">🎨</span>,
+  },
+}
 
 const SUBJECT_CATEGORY_FILTER_MAP: Record<
   SubjectCategoryKey,
@@ -148,12 +168,17 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
         accessorKey: 'subject.name',
         header: t.academic.subjects.messages.subjectName(),
         cell: ({ row }) => (
-          <div>
-            <div className="font-medium text-foreground">
-              {row.original.subject.name}
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-card border border-border/40 text-primary shadow-sm group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all duration-300">
+              <IconBook className="h-5 w-5" />
             </div>
-            <div className="text-xs text-muted-foreground">
-              {row.original.subject.shortName}
+            <div className="flex flex-col min-w-0">
+              <span className="font-bold text-foreground truncate group-hover:text-primary transition-colors">
+                {row.original.subject.name}
+              </span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                {row.original.subject.shortName}
+              </span>
             </div>
           </div>
         ),
@@ -161,14 +186,24 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
       {
         accessorKey: 'subject.category',
         header: t.academic.subjects.filterByCategory(),
-        cell: ({ row }) => (
-          <Badge
-            variant="secondary"
-            className="bg-card/30 border-0 shadow-none"
-          >
-            {row.original.subject.category || 'Autre'}
-          </Badge>
-        ),
+        cell: ({ row }) => {
+          const category = row.original.subject.category || 'Autre'
+          const style = CATEGORY_STYLES[category] || CATEGORY_STYLES.Autre
+          if (!style)
+            return category // Fallback if something is very wrong
+          return (
+            <Badge
+              variant="outline"
+              className={cn(
+                'rounded-lg px-2.5 py-1 text-[11px] font-semibold border transition-all duration-300 group-hover:shadow-sm',
+                style.className,
+              )}
+            >
+              {style.icon}
+              {category}
+            </Badge>
+          )
+        },
       },
       {
         accessorKey: 'status',
@@ -215,7 +250,12 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
   }
 
   if (isLoading) {
-    return <TableSkeleton columns={3} rows={5} />
+    return (
+      <div className="space-y-6">
+        <div className="h-20 w-full rounded-2xl bg-white/5 animate-pulse" />
+        <TableSkeleton columns={3} rows={5} />
+      </div>
+    )
   }
 
   const hasNoData = subjectsData.length === 0
@@ -373,16 +413,16 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
             )
           : (
               <Table>
-                <TableHeader className="bg-card/20">
+                <TableHeader>
                   {table.getHeaderGroups().map(headerGroup => (
                     <TableRow
                       key={headerGroup.id}
-                      className="hover:bg-transparent border-border/40"
+                      className="hover:bg-transparent border-border/10"
                     >
                       {headerGroup.headers.map(header => (
                         <TableHead
                           key={header.id}
-                          className="text-foreground font-semibold"
+                          className="h-14 text-[11px] font-bold uppercase tracking-widest text-muted-foreground/70"
                         >
                           {header.isPlaceholder
                             ? null
@@ -396,15 +436,15 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
                   ))}
                 </TableHeader>
                 <TableBody>
-                  <AnimatePresence>
+                  <AnimatePresence mode="popLayout">
                     {table.getRowModel().rows.map((row, index) => (
                       <motion.tr
                         key={row.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ delay: index * 0.02 }}
-                        className="border-border/10 group hover:bg-card/30 transition-colors"
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 10 }}
+                        transition={{ delay: index * 0.03 }}
+                        className="group border-border/5 hover:bg-primary/2 transition-colors"
                       >
                         {row.getVisibleCells().map(cell => (
                           <TableCell key={cell.id} className="py-4">

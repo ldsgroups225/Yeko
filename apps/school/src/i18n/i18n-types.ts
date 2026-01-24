@@ -4721,11 +4721,11 @@ type RootTranslation = {
 			 */
 			filterByStatus: string
 			/**
-			 * T​o​u​t​e​s​ ​l​e​s​ ​c​a​t​é​g​o​r​i​e​s
+			 * T​o​u​t​e​s​ ​c​a​t​é​g​o​r​i​e​s
 			 */
 			allCategories: string
 			/**
-			 * T​o​u​s​ ​l​e​s​ ​s​t​a​t​u​t​s
+			 * T​o​u​s​ ​s​t​a​t​u​t​s
 			 */
 			allStatus: string
 			categories: {
@@ -12596,11 +12596,11 @@ export type TranslationFunctions = {
 			 */
 			filterByStatus: () => LocalizedString
 			/**
-			 * Toutes les catégories
+			 * Toutes catégories
 			 */
 			allCategories: () => LocalizedString
 			/**
-			 * Tous les statuts
+			 * Tous statuts
 			 */
 			allStatus: () => LocalizedString
 			categories: {

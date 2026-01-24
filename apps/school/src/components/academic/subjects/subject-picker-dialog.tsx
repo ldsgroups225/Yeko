@@ -13,7 +13,6 @@ import {
 } from '@workspace/ui/components/dialog'
 import { Input } from '@workspace/ui/components/input'
 import { Label } from '@workspace/ui/components/label'
-import { ScrollArea } from '@workspace/ui/components/scroll-area'
 import {
   Select,
   SelectContent,
@@ -169,7 +168,28 @@ export function SubjectPickerDialog({
             <IconFilter className="h-4 w-4 text-muted-foreground hidden sm:block" />
             <Select value={categoryFilter} onValueChange={val => val && setCategoryFilter(val)}>
               <SelectTrigger id="category-filter" className="w-full sm:w-[180px] h-10 bg-white/5 border-white/10 focus:ring-primary/40 shadow-none text-sm">
-                <SelectValue placeholder={t.academic.subjects.allCategories()} />
+                <SelectValue placeholder={t.academic.subjects.allCategories()}>
+                  {categoryFilter && (() => {
+                    const categoryConfig = {
+                      all: { color: 'bg-gray-400', label: t.academic.subjects.allCategories(), icon: '📚' },
+                      Scientifique: { color: 'bg-blue-500', label: t.academic.subjects.categories.scientifique(), icon: '🔬' },
+                      Littéraire: { color: 'bg-green-500', label: t.academic.subjects.categories.litteraire(), icon: '📖' },
+                      Sportif: { color: 'bg-orange-500', label: t.academic.subjects.categories.sportif(), icon: '⚽' },
+                      Autre: { color: 'bg-purple-500', label: t.academic.subjects.categories.autre(), icon: '🎨' },
+                    }
+                    const config = categoryConfig[categoryFilter as keyof typeof categoryConfig] || categoryConfig.all
+                    return (
+                      <div className="flex items-center gap-2">
+                        <div className={`h-2 w-2 rounded-full ${config.color}`} />
+                        <span>
+                          {config.icon}
+                          {' '}
+                          {config.label}
+                        </span>
+                      </div>
+                    )
+                  })()}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent className="backdrop-blur-xl bg-card/95 border-white/10">
                 <SelectItem value="all">{t.academic.subjects.allCategories()}</SelectItem>
@@ -182,7 +202,7 @@ export function SubjectPickerDialog({
           </div>
         </div>
 
-        <ScrollArea className="flex-1 px-6 py-4">
+        <div className="flex-1 px-6 py-4 overflow-y-auto scrollbar-none">
           <AnimatePresence mode="wait">
             {isLoading
               ? (
@@ -319,7 +339,7 @@ export function SubjectPickerDialog({
                     </motion.div>
                   )}
           </AnimatePresence>
-        </ScrollArea>
+        </div>
 
         <div className="p-6 bg-white/5 border-t border-border/10">
           <DialogFooter className="flex flex-col sm:flex-row items-center justify-between gap-4">

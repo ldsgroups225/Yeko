@@ -9,8 +9,8 @@ import {
   IconUser,
   IconUserCheck,
 } from '@tabler/icons-react'
-import { useQuery } from '@tanstack/react-query'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import {
   Avatar,
   AvatarFallback,
@@ -18,6 +18,7 @@ import {
 } from '@workspace/ui/components/avatar'
 import { Badge } from '@workspace/ui/components/badge'
 import { Button } from '@workspace/ui/components/button'
+import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
 import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Tabs,
@@ -26,12 +27,15 @@ import {
   TabsTrigger,
 } from '@workspace/ui/components/tabs'
 import { motion } from 'motion/react'
+import { useState } from 'react'
+import { toast } from 'sonner'
 import { TeacherClasses } from '@/components/hr/teachers/teacher-classes'
 import { TeacherTimetable } from '@/components/hr/teachers/teacher-timetable'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
 import { teacherOptions } from '@/lib/queries/teachers'
 import { cn } from '@/lib/utils'
+import { deleteExistingTeacher } from '@/school/functions/teachers'
 import { formatDate } from '@/utils/formatDate'
 
 export const Route = createFileRoute('/_auth/users/teachers/$teacherId/')({
@@ -41,6 +45,9 @@ export const Route = createFileRoute('/_auth/users/teachers/$teacherId/')({
 function TeacherDetailsPage() {
   const { teacherId } = Route.useParams()
   const t = useTranslations()
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
   const { data: teacher, isLoading } = useQuery({
     ...teacherOptions.detail(teacherId),
@@ -48,6 +55,20 @@ function TeacherDetailsPage() {
 
   const { data: classes, isLoading: isLoadingClasses } = useQuery({
     ...teacherOptions.classes(teacherId),
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: async () => {
+      return await deleteExistingTeacher({ data: teacherId })
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['teachers'] })
+      toast.success(t.hr.teachers.deleteSuccess())
+      navigate({ to: '/users/teachers', search: { page: 1 } })
+    },
+    onError: () => {
+      toast.error(t.hr.teachers.deleteError())
+    },
   })
 
   if (isLoading) {
@@ -166,17 +187,21 @@ function TeacherDetailsPage() {
             variant="outline"
             size="lg"
             className="rounded-2xl border-border/40 hover:bg-red-500/5 hover:text-red-500 hover:border-red-500/20 transition-all shadow-sm"
+            onClick={() => setShowDeleteDialog(true)}
           >
             <IconTrash className="mr-2 size-4" />
             {t.common.delete()}
           </Button>
           <Button
+            render={(
+              <Link to="/users/teachers/$teacherId/edit" params={{ teacherId }}>
+                <IconEdit className="mr-2 size-4" />
+                {t.common.edit()}
+              </Link>
+            )}
             size="lg"
             className="rounded-2xl shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5 active:translate-y-0"
-          >
-            <IconEdit className="mr-2 size-4" />
-            {t.common.edit()}
-          </Button>
+          />
         </div>
       </div>
 
@@ -328,6 +353,15 @@ function TeacherDetailsPage() {
           </TabsContent>
         </motion.div>
       </Tabs>
+
+      <DeleteConfirmationDialog
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        title={t.hr.teachers.deleteTeacher()}
+        description={t.hr.teachers.deleteConfirm()}
+        onConfirm={() => deleteMutation.mutate()}
+        isLoading={deleteMutation.isPending}
+      />
     </div>
   )
 }

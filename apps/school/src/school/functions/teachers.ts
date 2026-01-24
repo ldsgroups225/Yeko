@@ -118,11 +118,17 @@ export const updateExistingTeacher = createServerFn()
       throw new Error('No school context')
     const { schoolId } = context
 
-    return await updateTeacher(teacherId, schoolId, {
+    const updated = await updateTeacher(teacherId, schoolId, {
       specialization: data.specialization || undefined,
       hireDate: data.hireDate || undefined,
       status: data.status,
     })
+
+    if (data.subjectIds) {
+      await assignSubjectsToTeacher(teacherId, schoolId, data.subjectIds)
+    }
+
+    return updated
   })
 
 /**

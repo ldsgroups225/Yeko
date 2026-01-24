@@ -26,14 +26,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import * as React from 'react'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
-import { getAllSubjects } from '@/school/functions/subjects'
-
-interface Subject {
-  id: string
-  name: string
-  shortName: string
-  category: string
-}
+import { getAllSubjectsOfTheSchoolThisCurrentYear } from '@/school/functions/subjects'
 
 interface SubjectMultiSelectProps {
   value?: string[]
@@ -53,13 +46,13 @@ export function SubjectMultiSelect({
   const { data, isLoading } = useQuery({
     queryKey: ['subjects', search],
     queryFn: async () => {
-      const result = await getAllSubjects({ data: { search } })
+      const result = await getAllSubjectsOfTheSchoolThisCurrentYear({ data: { search } })
       return result
     },
   })
 
-  const subjects = (data?.subjects || []) as Subject[]
-  const selectedSubjects = subjects.filter((s: Subject) =>
+  const subjects = data?.subjects || []
+  const selectedSubjects = subjects.filter(s =>
     value.includes(s.id),
   )
 
@@ -147,7 +140,7 @@ export function SubjectMultiSelect({
                       )
                     : (
                         <CommandGroup className="p-2">
-                          {subjects.map((subject: Subject) => (
+                          {subjects.map(subject => (
                             <CommandItem
                               key={subject.id}
                               value={subject.id}
@@ -200,7 +193,7 @@ export function SubjectMultiSelect({
             animate={{ opacity: 1, y: 0 }}
             className="flex flex-wrap gap-2 p-3 rounded-xl bg-primary/5 border border-primary/10"
           >
-            {selectedSubjects.map((subject: Subject) => (
+            {selectedSubjects.map(subject => (
               <motion.div
                 layout
                 initial={{ scale: 0.8, opacity: 0 }}
@@ -209,7 +202,7 @@ export function SubjectMultiSelect({
                 key={subject.id}
               >
                 <Badge
-                  variant="secondary"
+                  variant="ghost"
                   className="pl-3 pr-1 py-1 gap-2 rounded-lg bg-card border-border/40 shadow-sm group hover:border-primary/30 transition-colors"
                 >
                   <span className="text-xs font-semibold">{subject.name}</span>
