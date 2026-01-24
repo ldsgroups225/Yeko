@@ -3,10 +3,10 @@ import {
   IconSearch,
   IconUser,
   IconUserPlus,
-} from "@tabler/icons-react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Avatar, AvatarFallback } from "@workspace/ui/components/avatar";
-import { Button } from "@workspace/ui/components/button";
+} from '@tabler/icons-react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Avatar, AvatarFallback } from '@workspace/ui/components/avatar'
+import { Button } from '@workspace/ui/components/button'
 import {
   Dialog,
   DialogContent,
@@ -14,47 +14,47 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@workspace/ui/components/dialog";
+} from '@workspace/ui/components/dialog'
 
-import { Input } from "@workspace/ui/components/input";
-import { Label } from "@workspace/ui/components/label";
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
 import {
   RadioGroup,
   RadioGroupItem,
-} from "@workspace/ui/components/radio-group";
+} from '@workspace/ui/components/radio-group'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@workspace/ui/components/select";
-import { Switch } from "@workspace/ui/components/switch";
+} from '@workspace/ui/components/select'
+import { Switch } from '@workspace/ui/components/switch'
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@workspace/ui/components/tabs";
-import { useState } from "react";
-import { toast } from "sonner";
-import { useTranslations } from "@/i18n";
-import { parentsOptions } from "@/lib/queries/parents";
-import { studentsKeys } from "@/lib/queries/students";
-import { createParent, linkParentToStudent } from "@/school/functions/parents";
+} from '@workspace/ui/components/tabs'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { useTranslations } from '@/i18n'
+import { parentsOptions } from '@/lib/queries/parents'
+import { studentsKeys } from '@/lib/queries/students'
+import { createParent, linkParentToStudent } from '@/school/functions/parents'
 
-type Relationship =
-  | "father"
-  | "mother"
-  | "guardian"
-  | "grandparent"
-  | "sibling"
-  | "other";
+type Relationship
+  = | 'father'
+    | 'mother'
+    | 'guardian'
+    | 'grandparent'
+    | 'sibling'
+    | 'other'
 
 interface ParentLinkDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  studentId: string;
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  studentId: string
 }
 
 export function ParentLinkDialog({
@@ -62,46 +62,46 @@ export function ParentLinkDialog({
   onOpenChange,
   studentId,
 }: ParentLinkDialogProps) {
-  const t = useTranslations();
-  const queryClient = useQueryClient();
-  const [tab, setTab] = useState<"existing" | "new">("existing");
-  const [search, setSearch] = useState("");
-  const [selectedParentId, setSelectedParentId] = useState<string | null>(null);
-  const [linkRelationship, setLinkRelationship] =
-    useState<Relationship>("guardian");
-  const [linkIsPrimary, setLinkIsPrimary] = useState(false);
+  const t = useTranslations()
+  const queryClient = useQueryClient()
+  const [tab, setTab] = useState<'existing' | 'new'>('existing')
+  const [search, setSearch] = useState('')
+  const [selectedParentId, setSelectedParentId] = useState<string | null>(null)
+  const [linkRelationship, setLinkRelationship]
+    = useState<Relationship>('guardian')
+  const [linkIsPrimary, setLinkIsPrimary] = useState(false)
 
   // New parent form state
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [occupation, setOccupation] = useState("");
-  const [newRelationship, setNewRelationship] =
-    useState<Relationship>("guardian");
-  const [newIsPrimary, setNewIsPrimary] = useState(false);
-  const [newCanPickup, setNewCanPickup] = useState(true);
-  const [newReceiveNotifications, setNewReceiveNotifications] = useState(true);
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [phone, setPhone] = useState('')
+  const [email, setEmail] = useState('')
+  const [occupation, setOccupation] = useState('')
+  const [newRelationship, setNewRelationship]
+    = useState<Relationship>('guardian')
+  const [newIsPrimary, setNewIsPrimary] = useState(false)
+  const [newCanPickup, setNewCanPickup] = useState(true)
+  const [newReceiveNotifications, setNewReceiveNotifications] = useState(true)
 
   const { data: parentsData, isLoading: parentsLoading } = useQuery({
     ...parentsOptions.list({ search, limit: 10 }),
-    enabled: open && tab === "existing" && search.length >= 2,
-  });
+    enabled: open && tab === 'existing' && search.length >= 2,
+  })
 
-  const canSubmitNew =
-    firstName.trim() && lastName.trim() && phone.trim().length >= 8;
+  const canSubmitNew
+    = firstName.trim() && lastName.trim() && phone.trim().length >= 8
 
   const resetNewForm = () => {
-    setFirstName("");
-    setLastName("");
-    setPhone("");
-    setEmail("");
-    setOccupation("");
-    setNewRelationship("guardian");
-    setNewIsPrimary(false);
-    setNewCanPickup(true);
-    setNewReceiveNotifications(true);
-  };
+    setFirstName('')
+    setLastName('')
+    setPhone('')
+    setEmail('')
+    setOccupation('')
+    setNewRelationship('guardian')
+    setNewIsPrimary(false)
+    setNewCanPickup(true)
+    setNewReceiveNotifications(true)
+  }
 
   const createAndLinkMutation = useMutation({
     mutationFn: async () => {
@@ -113,7 +113,7 @@ export function ParentLinkDialog({
           email: email || undefined,
           occupation: occupation || undefined,
         },
-      });
+      })
       await linkParentToStudent({
         data: {
           studentId,
@@ -123,25 +123,26 @@ export function ParentLinkDialog({
           canPickup: newCanPickup,
           receiveNotifications: newReceiveNotifications,
         },
-      });
-      return parent;
+      })
+      return parent
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: studentsKeys.detail(studentId),
-      });
-      toast.success(t.parents.parentLinked());
-      onOpenChange(false);
-      resetNewForm();
+      })
+      toast.success(t.parents.parentLinked())
+      onOpenChange(false)
+      resetNewForm()
     },
     onError: (err: Error) => {
-      toast.error(err.message);
+      toast.error(err.message)
     },
-  });
+  })
 
   const linkExistingMutation = useMutation({
     mutationFn: async () => {
-      if (!selectedParentId) throw new Error("No parent selected");
+      if (!selectedParentId)
+        throw new Error('No parent selected')
       await linkParentToStudent({
         data: {
           studentId,
@@ -151,21 +152,21 @@ export function ParentLinkDialog({
           canPickup: true,
           receiveNotifications: true,
         },
-      });
+      })
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: studentsKeys.detail(studentId),
-      });
-      toast.success(t.parents.parentLinked());
-      onOpenChange(false);
-      setSelectedParentId(null);
-      setSearch("");
+      })
+      toast.success(t.parents.parentLinked())
+      onOpenChange(false)
+      setSelectedParentId(null)
+      setSearch('')
     },
     onError: (err: Error) => {
-      toast.error(err.message);
+      toast.error(err.message)
     },
-  });
+  })
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -177,7 +178,7 @@ export function ParentLinkDialog({
 
         <Tabs
           value={tab}
-          onValueChange={(v) => setTab(v as "existing" | "new")}
+          onValueChange={v => setTab(v as 'existing' | 'new')}
         >
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="existing">{t.parents.list()}</TabsTrigger>
@@ -191,7 +192,7 @@ export function ParentLinkDialog({
               <Input
                 placeholder={t.parents.searchPlaceholder()}
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={e => setSearch(e.target.value)}
                 className="pl-9"
               />
             </div>
@@ -202,31 +203,31 @@ export function ParentLinkDialog({
               </div>
             )}
 
-            {!parentsLoading &&
-              search.length >= 2 &&
-              parentsData?.data &&
-              parentsData.data.length === 0 && (
-                <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
-                  <IconUser className="h-8 w-8 opacity-50 mb-2" />
-                  <p>{t.parents.noParents()}</p>
-                  <Button
-                    variant="link"
-                    onClick={() => setTab("new")}
-                    className="mt-2"
-                  >
-                    {t.parents.addParent()}
-                  </Button>
-                </div>
-              )}
+            {!parentsLoading
+              && search.length >= 2
+              && parentsData?.data
+              && parentsData.data.length === 0 && (
+              <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
+                <IconUser className="h-8 w-8 opacity-50 mb-2" />
+                <p>{t.parents.noParents()}</p>
+                <Button
+                  variant="link"
+                  onClick={() => setTab('new')}
+                  className="mt-2"
+                >
+                  {t.parents.addParent()}
+                </Button>
+              </div>
+            )}
 
             {parentsData?.data && parentsData.data.length > 0 && (
               <RadioGroup
-                value={selectedParentId || ""}
-                onValueChange={(v) => setSelectedParentId(v as string | null)}
+                value={selectedParentId || ''}
+                onValueChange={v => setSelectedParentId(v as string | null)}
                 className="max-h-[240px] overflow-y-auto pr-2"
               >
                 <div className="space-y-2">
-                  {parentsData.data.map((parent) => (
+                  {parentsData.data.map(parent => (
                     <div
                       key={parent.parent.id}
                       className="flex items-center space-x-3 rounded-lg border p-3 transition-colors hover:bg-muted/50"
@@ -247,7 +248,9 @@ export function ParentLinkDialog({
                         </Avatar>
                         <div>
                           <p className="font-medium">
-                            {parent.parent.lastName} {parent.parent.firstName}
+                            {parent.parent.lastName}
+                            {' '}
+                            {parent.parent.firstName}
                           </p>
                           <p className="text-sm text-muted-foreground">
                             {parent.parent.phone}
@@ -267,9 +270,8 @@ export function ParentLinkDialog({
                     <Label>{t.parents.relationship()}</Label>
                     <Select
                       value={linkRelationship}
-                      onValueChange={(v) =>
-                        setLinkRelationship((v ?? "guardian") as Relationship)
-                      }
+                      onValueChange={v =>
+                        setLinkRelationship((v ?? 'guardian') as Relationship)}
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -332,32 +334,35 @@ export function ParentLinkDialog({
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label>
-                  {t.parents.lastName()}{" "}
+                  {t.parents.lastName()}
+                  {' '}
                   <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
+                  onChange={e => setLastName(e.target.value)}
                 />
               </div>
               <div className="space-y-2">
                 <Label>
-                  {t.parents.firstName()}{" "}
+                  {t.parents.firstName()}
+                  {' '}
                   <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
+                  onChange={e => setFirstName(e.target.value)}
                 />
               </div>
               <div className="space-y-2">
                 <Label>
-                  {t.parents.phone()}{" "}
+                  {t.parents.phone()}
+                  {' '}
                   <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={e => setPhone(e.target.value)}
                   type="tel"
                 />
               </div>
@@ -365,20 +370,20 @@ export function ParentLinkDialog({
                 <Label>{t.parents.email()}</Label>
                 <Input
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={e => setEmail(e.target.value)}
                   type="email"
                 />
               </div>
               <div className="space-y-2">
                 <Label>
-                  {t.parents.relationship()}{" "}
+                  {t.parents.relationship()}
+                  {' '}
                   <span className="text-destructive">*</span>
                 </Label>
                 <Select
                   value={newRelationship}
-                  onValueChange={(v) =>
-                    setNewRelationship((v ?? "guardian") as Relationship)
-                  }
+                  onValueChange={v =>
+                    setNewRelationship((v ?? 'guardian') as Relationship)}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -409,7 +414,7 @@ export function ParentLinkDialog({
                 <Label>{t.parents.occupation()}</Label>
                 <Input
                   value={occupation}
-                  onChange={(e) => setOccupation(e.target.value)}
+                  onChange={e => setOccupation(e.target.value)}
                 />
               </div>
             </div>
@@ -447,8 +452,7 @@ export function ParentLinkDialog({
                 <Label
                   className="cursor-pointer"
                   onClick={() =>
-                    setNewReceiveNotifications(!newReceiveNotifications)
-                  }
+                    setNewReceiveNotifications(!newReceiveNotifications)}
                 >
                   Receives notifications
                 </Label>
@@ -480,5 +484,5 @@ export function ParentLinkDialog({
         </Tabs>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

@@ -1,82 +1,82 @@
-import { IconBookmark, IconPlus } from "@tabler/icons-react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
-import { Button } from "@workspace/ui/components/button";
+import { IconBookmark, IconPlus } from '@tabler/icons-react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { createFileRoute } from '@tanstack/react-router'
+import { Button } from '@workspace/ui/components/button'
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@workspace/ui/components/card";
-import { DeleteConfirmationDialog } from "@workspace/ui/components/delete-confirmation-dialog";
-import { motion } from "motion/react";
-import { useState } from "react";
-import { toast } from "sonner";
-import { AccountFormDialog, AccountsTable } from "@/components/finance";
-import { Breadcrumbs } from "@/components/layout/breadcrumbs";
-import { useTranslations } from "@/i18n";
-import { accountsKeys, accountsOptions } from "@/lib/queries";
-import { deleteExistingAccount } from "@/school/functions/accounts";
+} from '@workspace/ui/components/card'
+import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
+import { motion } from 'motion/react'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { AccountFormDialog, AccountsTable } from '@/components/finance'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { useTranslations } from '@/i18n'
+import { accountsKeys, accountsOptions } from '@/lib/queries'
+import { deleteExistingAccount } from '@/school/functions/accounts'
 
-export const Route = createFileRoute("/_auth/accounting/accounts")({
+export const Route = createFileRoute('/_auth/accounting/accounts')({
   component: AccountsPage,
-});
+})
 
 interface AccountNode {
-  id: string;
-  code: string;
-  name: string;
-  type: string;
-  level: number;
-  balance: string | null;
-  isHeader: boolean | null;
-  status: string | null;
-  children?: AccountNode[];
+  id: string
+  code: string
+  name: string
+  type: string
+  level: number
+  balance: string | null
+  isHeader: boolean | null
+  status: string | null
+  children?: AccountNode[]
 }
 
 function flattenAccounts(accounts: AccountNode[]): AccountNode[] {
-  const result: AccountNode[] = [];
+  const result: AccountNode[] = []
   for (const account of accounts) {
-    result.push(account);
+    result.push(account)
     if (account.children && account.children.length > 0) {
-      result.push(...flattenAccounts(account.children));
+      result.push(...flattenAccounts(account.children))
     }
   }
-  return result;
+  return result
 }
 
 function AccountsPage() {
-  const t = useTranslations();
-  const queryClient = useQueryClient();
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [editingAccount, setEditingAccount] = useState<any>(null);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const t = useTranslations()
+  const queryClient = useQueryClient()
+  const [isCreateOpen, setIsCreateOpen] = useState(false)
+  const [editingAccount, setEditingAccount] = useState<any>(null)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
-  const { data: accountsTree, isLoading } = useQuery(accountsOptions.tree());
+  const { data: accountsTree, isLoading } = useQuery(accountsOptions.tree())
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteExistingAccount({ data: id }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: accountsKeys.all });
-      toast.success("Compte supprimé");
-      setDeletingId(null);
+      queryClient.invalidateQueries({ queryKey: accountsKeys.all })
+      toast.success('Compte supprimé')
+      setDeletingId(null)
     },
     onError: (err: any) => {
-      toast.error(err.message || "Erreur lors de la suppression");
+      toast.error(err.message || 'Erreur lors de la suppression')
     },
-  });
+  })
 
   const handleEdit = (account: any) => {
-    setEditingAccount(account);
-    setIsCreateOpen(true);
-  };
+    setEditingAccount(account)
+    setIsCreateOpen(true)
+  }
 
   const handleDelete = (account: any) => {
-    setDeletingId(account.id);
-  };
+    setDeletingId(account.id)
+  }
 
   const accountsList = accountsTree
-    ? flattenAccounts(accountsTree as AccountNode[]).map((acc) => ({
+    ? flattenAccounts(accountsTree as AccountNode[]).map(acc => ({
         id: acc.id,
         code: acc.code,
         name: acc.name,
@@ -84,15 +84,15 @@ function AccountsPage() {
         level: acc.level,
         balance: Number(acc.balance ?? 0),
         isHeader: acc.isHeader ?? false,
-        status: acc.status ?? "active",
+        status: acc.status ?? 'active',
       }))
-    : [];
+    : []
 
   return (
     <div className="space-y-8 p-1">
       <Breadcrumbs
         items={[
-          { label: t.nav.finance(), href: "/accounting" },
+          { label: t.nav.finance(), href: '/accounting' },
           { label: t.finance.accounts.title() },
         ]}
       />
@@ -155,22 +155,24 @@ function AccountsPage() {
       <AccountFormDialog
         open={isCreateOpen}
         onOpenChange={(open) => {
-          setIsCreateOpen(open);
-          if (!open) setEditingAccount(null);
+          setIsCreateOpen(open)
+          if (!open)
+            setEditingAccount(null)
         }}
         initialData={editingAccount}
       />
 
       <DeleteConfirmationDialog
         open={!!deletingId}
-        onOpenChange={(open) => !open && setDeletingId(null)}
+        onOpenChange={open => !open && setDeletingId(null)}
         onConfirm={() => {
-          if (deletingId) deleteMutation.mutate(deletingId);
+          if (deletingId)
+            deleteMutation.mutate(deletingId)
         }}
         isLoading={deleteMutation.isPending}
         title={t.accounting.accounts.deleteAccount()}
         description={t.accounting.accounts.deleteAccountConfirm()}
       />
     </div>
-  );
+  )
 }

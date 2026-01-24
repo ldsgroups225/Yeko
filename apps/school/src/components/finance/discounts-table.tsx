@@ -1,14 +1,14 @@
-import { IconDots, IconEdit, IconTag, IconTrash } from "@tabler/icons-react";
-import { Badge } from "@workspace/ui/components/badge";
-import { Button } from "@workspace/ui/components/button";
+import { IconDots, IconEdit, IconTag, IconTrash } from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@workspace/ui/components/dropdown-menu";
-import { Skeleton } from "@workspace/ui/components/skeleton";
+} from '@workspace/ui/components/dropdown-menu'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -16,28 +16,28 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@workspace/ui/components/table";
-import { AnimatePresence, motion } from "motion/react";
-import { useTranslations } from "@/i18n";
-import { generateUUID } from "@/utils/generateUUID";
+} from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
+import { useTranslations } from '@/i18n'
+import { generateUUID } from '@/utils/generateUUID'
 
 interface Discount {
-  id: string;
-  code: string;
-  name: string;
-  type: string;
-  calculationType: string;
-  value: number;
-  requiresApproval: boolean;
-  autoApply: boolean;
-  status: string;
+  id: string
+  code: string
+  name: string
+  type: string
+  calculationType: string
+  value: number
+  requiresApproval: boolean
+  autoApply: boolean
+  status: string
 }
 
 interface DiscountsTableProps {
-  discounts: Discount[];
-  isLoading?: boolean;
-  onEdit?: (discount: Discount) => void;
-  onDelete?: (discount: Discount) => void;
+  discounts: Discount[]
+  isLoading?: boolean
+  onEdit?: (discount: Discount) => void
+  onDelete?: (discount: Discount) => void
 }
 
 export function DiscountsTable({
@@ -46,7 +46,7 @@ export function DiscountsTable({
   onEdit,
   onDelete,
 }: DiscountsTableProps) {
-  const t = useTranslations();
+  const t = useTranslations()
 
   const getTypeLabel = (type: string) => {
     const typeTranslations = {
@@ -56,19 +56,19 @@ export function DiscountsTable({
       early_payment: t.finance.discountTypes.early_payment,
       financial_aid: t.finance.discountTypes.financial_aid,
       other: t.finance.discountTypes.other,
-    };
-    return typeTranslations[type as keyof typeof typeTranslations]?.() || type;
-  };
+    }
+    return typeTranslations[type as keyof typeof typeTranslations]?.() || type
+  }
 
   const formatValue = (discount: Discount) => {
-    if (discount.calculationType === "percentage") {
-      return `${discount.value}%`;
+    if (discount.calculationType === 'percentage') {
+      return `${discount.value}%`
     }
-    return `${new Intl.NumberFormat("fr-FR", {
-      style: "decimal",
+    return `${new Intl.NumberFormat('fr-FR', {
+      style: 'decimal',
       minimumFractionDigits: 0,
-    }).format(discount.value)} FCFA`;
-  };
+    }).format(discount.value)} FCFA`
+  }
 
   if (isLoading) {
     return (
@@ -77,7 +77,7 @@ export function DiscountsTable({
           <Skeleton key={generateUUID()} className="h-12 w-full rounded-xl" />
         ))}
       </div>
-    );
+    )
   }
 
   if (discounts.length === 0) {
@@ -93,7 +93,7 @@ export function DiscountsTable({
           {t.finance.discounts.createDescription()}
         </p>
       </div>
-    );
+    )
   }
 
   return (
@@ -169,11 +169,11 @@ export function DiscountsTable({
                   <TableCell>
                     <Badge
                       variant={
-                        discount.status === "active" ? "default" : "secondary"
+                        discount.status === 'active' ? 'default' : 'secondary'
                       }
                       className="capitalize rounded-md"
                     >
-                      {discount.status === "active"
+                      {discount.status === 'active'
                         ? t.common.active()
                         : t.common.inactive()}
                     </Badge>
@@ -181,7 +181,7 @@ export function DiscountsTable({
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger
-                        render={
+                        render={(
                           <Button
                             variant="ghost"
                             size="icon"
@@ -189,7 +189,7 @@ export function DiscountsTable({
                           >
                             <IconDots className="h-4 w-4" />
                           </Button>
-                        }
+                        )}
                       />
                       <DropdownMenuContent
                         align="end"
@@ -237,18 +237,18 @@ export function DiscountsTable({
                   </div>
                   <Badge
                     variant={
-                      discount.status === "active" ? "default" : "secondary"
+                      discount.status === 'active' ? 'default' : 'secondary'
                     }
                     className="capitalize rounded-md text-[10px]"
                   >
-                    {discount.status === "active"
+                    {discount.status === 'active'
                       ? t.common.active()
                       : t.common.inactive()}
                   </Badge>
                 </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger
-                    render={
+                    render={(
                       <Button
                         variant="ghost"
                         size="icon"
@@ -256,7 +256,7 @@ export function DiscountsTable({
                       >
                         <IconDots className="h-4 w-4" />
                       </Button>
-                    }
+                    )}
                   />
                   <DropdownMenuContent
                     align="end"
@@ -319,5 +319,5 @@ export function DiscountsTable({
         </AnimatePresence>
       </div>
     </>
-  );
+  )
 }

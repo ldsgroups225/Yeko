@@ -324,13 +324,17 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                               <SelectValue placeholder={t.students.selectGender()}>
                                 {field.value && (
                                   <div className="flex items-center gap-2">
-                                    {field.value === 'M' ? (
-                                      <div className="h-2 w-2 rounded-full bg-blue-500" />
-                                    ) : field.value === 'F' ? (
-                                      <div className="h-2 w-2 rounded-full bg-pink-500" />
-                                    ) : (
-                                      <div className="h-2 w-2 rounded-full bg-gray-500" />
-                                    )}
+                                    {field.value === 'M'
+                                      ? (
+                                          <div className="h-2 w-2 rounded-full bg-blue-500" />
+                                        )
+                                      : field.value === 'F'
+                                        ? (
+                                            <div className="h-2 w-2 rounded-full bg-pink-500" />
+                                          )
+                                        : (
+                                            <div className="h-2 w-2 rounded-full bg-gray-500" />
+                                          )}
                                     <span className="ml-2">
                                       {field.value === 'M' ? t.students.male() : field.value === 'F' ? t.students.female() : t.students.other()}
                                     </span>
@@ -534,7 +538,8 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                                 <div className="flex items-center gap-2">
                                   <div className={`h-2 w-2 rounded-full ${
                                     field.value.includes('+') ? 'bg-red-500' : 'bg-blue-500'
-                                  }`} />
+                                  }`}
+                                  />
                                   <span className="ml-2">{field.value}</span>
                                 </div>
                               )}

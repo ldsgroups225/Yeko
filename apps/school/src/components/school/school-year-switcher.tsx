@@ -1,54 +1,54 @@
-import { IconCalendar, IconCheck, IconSelector } from "@tabler/icons-react";
-import { useQuery } from "@tanstack/react-query";
-import { Button } from "@workspace/ui/components/button";
+import { IconCalendar, IconCheck, IconSelector } from '@tabler/icons-react'
+import { useQuery } from '@tanstack/react-query'
+import { Button } from '@workspace/ui/components/button'
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandItem,
   CommandList,
-} from "@workspace/ui/components/command";
+} from '@workspace/ui/components/command'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@workspace/ui/components/popover";
-import { useState } from "react";
-import { useSchoolYearContext } from "@/hooks/use-school-year-context";
-import { useTranslations } from "@/i18n";
-import { cn } from "@/lib/utils";
-import { getSchoolYears } from "@/school/functions/school-years";
+} from '@workspace/ui/components/popover'
+import { useState } from 'react'
+import { useSchoolYearContext } from '@/hooks/use-school-year-context'
+import { useTranslations } from '@/i18n'
+import { cn } from '@/lib/utils'
+import { getSchoolYears } from '@/school/functions/school-years'
 
 interface SchoolYear {
-  id: string;
-  isActive: boolean;
+  id: string
+  isActive: boolean
   template: {
-    id: string;
-    name: string;
-  };
+    id: string
+    name: string
+  }
 }
 
 export function SchoolYearSwitcher() {
-  const t = useTranslations();
-  const { schoolYearId, switchSchoolYear, isSwitching } =
-    useSchoolYearContext();
-  const [open, setOpen] = useState(false);
+  const t = useTranslations()
+  const { schoolYearId, switchSchoolYear, isSwitching }
+    = useSchoolYearContext()
+  const [open, setOpen] = useState(false)
 
   const { data: schoolYears, isLoading } = useQuery({
-    queryKey: ["school-years"],
+    queryKey: ['school-years'],
     queryFn: async () => await getSchoolYears(),
-  });
+  })
 
   const currentYear = schoolYears?.find(
     (sy: SchoolYear) => sy.id === schoolYearId,
-  );
+  )
 
   const handleSelect = (yearId: string) => {
     if (yearId !== schoolYearId) {
-      switchSchoolYear(yearId);
+      switchSchoolYear(yearId)
     }
-    setOpen(false);
-  };
+    setOpen(false)
+  }
 
   if (isLoading) {
     return (
@@ -58,7 +58,7 @@ export function SchoolYearSwitcher() {
           {t.common.loading()}
         </span>
       </div>
-    );
+    )
   }
 
   if (!schoolYears || schoolYears.length === 0) {
@@ -69,15 +69,15 @@ export function SchoolYearSwitcher() {
           {t.schoolYear.noYears()}
         </span>
       </div>
-    );
+    )
   }
 
-  const listboxId = "school-year-listbox";
+  const listboxId = 'school-year-listbox'
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
-        render={
+        render={(
           <Button
             variant="outline"
             aria-haspopup="listbox"
@@ -94,7 +94,7 @@ export function SchoolYearSwitcher() {
             </div>
             <IconSelector className="ml-1 h-4 w-4 shrink-0 opacity-50" />
           </Button>
-        }
+        )}
       />
       <PopoverContent className="w-[200px] p-0" align="start">
         <Command>
@@ -118,8 +118,8 @@ export function SchoolYearSwitcher() {
                   </div>
                   <IconCheck
                     className={cn(
-                      "h-4 w-4",
-                      schoolYearId === year.id ? "opacity-100" : "opacity-0",
+                      'h-4 w-4',
+                      schoolYearId === year.id ? 'opacity-100' : 'opacity-0',
                     )}
                   />
                 </CommandItem>
@@ -129,5 +129,5 @@ export function SchoolYearSwitcher() {
         </Command>
       </PopoverContent>
     </Popover>
-  );
+  )
 }

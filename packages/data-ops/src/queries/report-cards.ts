@@ -3,73 +3,73 @@ import type {
   ReportCardStatus,
   ReportCardTemplateInsert,
   TeacherCommentInsert,
-} from "../drizzle/school-schema";
-import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
-import { getDb } from "../database/setup";
+} from '../drizzle/school-schema'
+import { and, asc, desc, eq, inArray, sql } from 'drizzle-orm'
+import { getDb } from '../database/setup'
 import {
   reportCards,
   reportCardTemplates,
   studentAverages,
   teacherComments,
-} from "../drizzle/school-schema";
+} from '../drizzle/school-schema'
 
 // ============================================
 // REPORT CARD TEMPLATES
 // ============================================
 
 export async function getReportCardTemplates(schoolId: string) {
-  const db = getDb();
+  const db = getDb()
   return db.query.reportCardTemplates.findMany({
     where: eq(reportCardTemplates.schoolId, schoolId),
     orderBy: [
       desc(reportCardTemplates.isDefault),
       asc(reportCardTemplates.name),
     ],
-  });
+  })
 }
 
 export async function getReportCardTemplateById(id: string) {
-  const db = getDb();
+  const db = getDb()
   return db.query.reportCardTemplates.findFirst({
     where: eq(reportCardTemplates.id, id),
-  });
+  })
 }
 
 export async function getDefaultTemplate(schoolId: string) {
-  const db = getDb();
+  const db = getDb()
   return db.query.reportCardTemplates.findFirst({
     where: and(
       eq(reportCardTemplates.schoolId, schoolId),
       eq(reportCardTemplates.isDefault, true),
     ),
-  });
+  })
 }
 
 export async function createReportCardTemplate(data: ReportCardTemplateInsert) {
-  const db = getDb();
+  const db = getDb()
   const [template] = await db
     .insert(reportCardTemplates)
     .values(data)
-    .returning();
-  return template;
+    .returning()
+  return template
 }
 
 export async function updateReportCardTemplate(
   id: string,
-  data: Partial<Omit<ReportCardTemplateInsert, "id" | "schoolId">>,
+  data: Partial<Omit<ReportCardTemplateInsert, 'id' | 'schoolId'>>,
 ) {
-  const db = getDb();
+  const db = getDb()
   const [updated] = await db
     .update(reportCardTemplates)
     .set({ ...data, updatedAt: new Date() })
     .where(eq(reportCardTemplates.id, id))
-    .returning();
-  return updated;
+    .returning()
+  return updated
 }
 
 export async function deleteReportCardTemplate(id: string) {
-  const db = getDb();
-  await db.delete(reportCardTemplates).where(eq(reportCardTemplates.id, id));
+  const db = getDb()
+  await db.delete(reportCardTemplates).where(eq(reportCardTemplates.id, id))
 }
 
 // ============================================
@@ -77,17 +77,17 @@ export async function deleteReportCardTemplate(id: string) {
 // ============================================
 
 export async function getReportCardsByClass(params: {
-  classId: string;
-  termId: string;
-  status?: ReportCardStatus;
+  classId: string
+  termId: string
+  status?: ReportCardStatus
 }) {
-  const db = getDb();
+  const db = getDb()
   const conditions = [
     eq(reportCards.classId, params.classId),
     eq(reportCards.termId, params.termId),
-  ];
+  ]
   if (params.status) {
-    conditions.push(eq(reportCards.status, params.status));
+    conditions.push(eq(reportCards.status, params.status))
   }
 
   const cards = await db.query.reportCards.findMany({
@@ -106,17 +106,17 @@ export async function getReportCardsByClass(params: {
         columns: { id: true, name: true },
       },
     },
-  });
+  })
 
   return cards.sort((a, b) => {
-    const nameA = `${a.student.lastName} ${a.student.firstName}`;
-    const nameB = `${b.student.lastName} ${b.student.firstName}`;
-    return nameA.localeCompare(nameB);
-  });
+    const nameA = `${a.student.lastName} ${a.student.firstName}`
+    const nameB = `${b.student.lastName} ${b.student.firstName}`
+    return nameA.localeCompare(nameB)
+  })
 }
 
 export async function getReportCardById(id: string) {
-  const db = getDb();
+  const db = getDb()
   return db.query.reportCards.findFirst({
     where: eq(reportCards.id, id),
     with: {
@@ -146,20 +146,20 @@ export async function getReportCardById(id: string) {
         },
       },
     },
-  });
+  })
 }
 
 export async function getReportCardByStudentTerm(
   studentId: string,
   termId: string,
 ) {
-  const db = getDb();
+  const db = getDb()
   return db.query.reportCards.findFirst({
     where: and(
       eq(reportCards.studentId, studentId),
       eq(reportCards.termId, termId),
     ),
-  });
+  })
 }
 
 /**
@@ -170,8 +170,9 @@ export async function getReportCardsByStudentIds(
   studentIds: string[],
   termId: string,
 ) {
-  const db = getDb();
-  if (studentIds.length === 0) return [];
+  const db = getDb()
+  if (studentIds.length === 0)
+    return []
   return db
     .select({ id: reportCards.id, studentId: reportCards.studentId })
     .from(reportCards)
@@ -180,13 +181,13 @@ export async function getReportCardsByStudentIds(
         inArray(reportCards.studentId, studentIds),
         eq(reportCards.termId, termId),
       ),
-    );
+    )
 }
 
 export async function createReportCard(data: ReportCardInsert) {
-  const db = getDb();
-  const [card] = await db.insert(reportCards).values(data).returning();
-  return card;
+  const db = getDb()
+  const [card] = await db.insert(reportCards).values(data).returning()
+  return card
 }
 
 export async function updateReportCard(
@@ -194,42 +195,42 @@ export async function updateReportCard(
   data: Partial<
     Omit<
       ReportCardInsert,
-      "id" | "studentId" | "classId" | "termId" | "schoolYearId"
+      'id' | 'studentId' | 'classId' | 'termId' | 'schoolYearId'
     >
   >,
 ) {
-  const db = getDb();
+  const db = getDb()
   const [updated] = await db
     .update(reportCards)
     .set({ ...data, updatedAt: new Date() })
     .where(eq(reportCards.id, id))
-    .returning();
-  return updated;
+    .returning()
+  return updated
 }
 
 export async function updateReportCardStatus(
   id: string,
   status: ReportCardStatus,
   additionalData?: {
-    generatedAt?: Date;
-    generatedBy?: string;
-    pdfUrl?: string;
-    pdfSize?: number;
-    sentAt?: Date;
-    sentTo?: string;
-    deliveryMethod?: "email" | "in_app" | "sms" | "print";
-    deliveredAt?: Date;
-    viewedAt?: Date;
-    bounceReason?: string;
+    generatedAt?: Date
+    generatedBy?: string
+    pdfUrl?: string
+    pdfSize?: number
+    sentAt?: Date
+    sentTo?: string
+    deliveryMethod?: 'email' | 'in_app' | 'sms' | 'print'
+    deliveredAt?: Date
+    viewedAt?: Date
+    bounceReason?: string
   },
 ) {
-  const db = getDb();
+  const db = getDb()
   const [updated] = await db
     .update(reportCards)
     .set({ status, ...additionalData, updatedAt: new Date() })
     .where(eq(reportCards.id, id))
-    .returning();
-  return updated;
+    .returning()
+  return updated
 }
 
 export async function bulkUpdateReportCardStatus(
@@ -237,18 +238,19 @@ export async function bulkUpdateReportCardStatus(
   status: ReportCardStatus,
   additionalData?: Record<string, unknown>,
 ) {
-  const db = getDb();
+  const db = getDb()
   return db
     .update(reportCards)
     .set({ status, ...additionalData, updatedAt: new Date() })
     .where(inArray(reportCards.id, ids))
-    .returning();
+    .returning()
 }
 
 export async function bulkCreateReportCards(data: ReportCardInsert[]) {
-  const db = getDb();
-  if (data.length === 0) return [];
-  return db.insert(reportCards).values(data).returning();
+  const db = getDb()
+  if (data.length === 0)
+    return []
+  return db.insert(reportCards).values(data).returning()
 }
 
 export async function bulkUpdateReportCards(
@@ -256,22 +258,23 @@ export async function bulkUpdateReportCards(
   data: Partial<
     Omit<
       ReportCardInsert,
-      "id" | "studentId" | "classId" | "termId" | "schoolYearId"
+      'id' | 'studentId' | 'classId' | 'termId' | 'schoolYearId'
     >
   >,
 ) {
-  const db = getDb();
-  if (ids.length === 0) return [];
+  const db = getDb()
+  if (ids.length === 0)
+    return []
   return db
     .update(reportCards)
     .set({ ...data, updatedAt: new Date() })
     .where(inArray(reportCards.id, ids))
-    .returning();
+    .returning()
 }
 
 export async function deleteReportCard(id: string) {
-  const db = getDb();
-  await db.delete(reportCards).where(eq(reportCards.id, id));
+  const db = getDb()
+  await db.delete(reportCards).where(eq(reportCards.id, id))
 }
 
 // ============================================
@@ -282,7 +285,7 @@ export async function getDeliveryStatusSummary(
   classId: string,
   termId: string,
 ) {
-  const db = getDb();
+  const db = getDb()
   return db
     .select({
       status: reportCards.status,
@@ -292,26 +295,26 @@ export async function getDeliveryStatusSummary(
     .where(
       and(eq(reportCards.classId, classId), eq(reportCards.termId, termId)),
     )
-    .groupBy(reportCards.status);
+    .groupBy(reportCards.status)
 }
 
 export async function getUndeliveredReportCards(
   classId: string,
   termId: string,
 ) {
-  const db = getDb();
+  const db = getDb()
   return db.query.reportCards.findMany({
     where: and(
       eq(reportCards.classId, classId),
       eq(reportCards.termId, termId),
-      inArray(reportCards.status, ["generated", "sent"]),
+      inArray(reportCards.status, ['generated', 'sent']),
     ),
     with: {
       student: {
         columns: { id: true, firstName: true, lastName: true },
       },
     },
-  });
+  })
 }
 
 // ============================================
@@ -319,7 +322,7 @@ export async function getUndeliveredReportCards(
 // ============================================
 
 export async function getTeacherCommentsByReportCard(reportCardId: string) {
-  const db = getDb();
+  const db = getDb()
   return db.query.teacherComments.findMany({
     where: eq(teacherComments.reportCardId, reportCardId),
     with: {
@@ -328,44 +331,44 @@ export async function getTeacherCommentsByReportCard(reportCardId: string) {
         with: { user: { columns: { name: true } } },
       },
     },
-  });
+  })
 }
 
 export async function createTeacherComment(data: TeacherCommentInsert) {
-  const db = getDb();
-  const [comment] = await db.insert(teacherComments).values(data).returning();
-  return comment;
+  const db = getDb()
+  const [comment] = await db.insert(teacherComments).values(data).returning()
+  return comment
 }
 
 export async function updateTeacherComment(id: string, comment: string) {
-  const db = getDb();
+  const db = getDb()
   const [updated] = await db
     .update(teacherComments)
     .set({ comment, updatedAt: new Date() })
     .where(eq(teacherComments.id, id))
-    .returning();
-  return updated;
+    .returning()
+  return updated
 }
 
 export async function upsertTeacherComment(data: TeacherCommentInsert) {
-  const db = getDb();
+  const db = getDb()
   // Check if comment exists
   const existing = await db.query.teacherComments.findFirst({
     where: and(
       eq(teacherComments.reportCardId, data.reportCardId),
       eq(teacherComments.subjectId, data.subjectId),
     ),
-  });
+  })
 
   if (existing) {
-    return updateTeacherComment(existing.id, data.comment);
+    return updateTeacherComment(existing.id, data.comment)
   }
-  return createTeacherComment(data);
+  return createTeacherComment(data)
 }
 
 export async function deleteTeacherComment(id: string) {
-  const db = getDb();
-  await db.delete(teacherComments).where(eq(teacherComments.id, id));
+  const db = getDb()
+  await db.delete(teacherComments).where(eq(teacherComments.id, id))
 }
 
 // ============================================
@@ -377,7 +380,7 @@ export async function getReportCardData(
   termId: string,
   classId: string,
 ) {
-  const db = getDb();
+  const db = getDb()
 
   // Get student averages for the term
   const averages = await db.query.studentAverages.findMany({
@@ -389,24 +392,24 @@ export async function getReportCardData(
     with: {
       subject: true,
     },
-  });
+  })
 
   // Get overall average (subjectId is null)
   const overallAverage = averages.find(
     (a: (typeof averages)[number]) => a.subjectId === null,
-  );
+  )
   const subjectAverages = averages.filter(
     (a: (typeof averages)[number]) => a.subjectId !== null,
-  );
+  )
 
   return {
     subjectAverages,
     overallAverage,
-  };
+  }
 }
 
 export async function getClassReportCardStats(classId: string, termId: string) {
-  const db = getDb();
+  const db = getDb()
   return db
     .select({
       total: sql<number>`count(*)`,
@@ -419,5 +422,5 @@ export async function getClassReportCardStats(classId: string, termId: string) {
     .from(reportCards)
     .where(
       and(eq(reportCards.classId, classId), eq(reportCards.termId, termId)),
-    );
+    )
 }

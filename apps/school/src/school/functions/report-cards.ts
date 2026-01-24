@@ -1,7 +1,7 @@
-import { getReportCardsByStudentIds } from "@repo/data-ops";
-import * as reportCardQueries from "@repo/data-ops/queries/report-cards";
-import { createServerFn } from "@tanstack/react-start";
-import { z } from "zod";
+import { getReportCardsByStudentIds } from '@repo/data-ops'
+import * as reportCardQueries from '@repo/data-ops/queries/report-cards'
+import { createServerFn } from '@tanstack/react-start'
+import { z } from 'zod'
 
 import {
   bulkGenerateReportCardsSchema,
@@ -12,7 +12,7 @@ import {
   sendReportCardSchema,
   updateHomeroomCommentSchema,
   updateTeacherCommentSchema,
-} from "@/schemas/report-card";
+} from '@/schemas/report-card'
 
 // ============================================
 // REPORT CARD TEMPLATES
@@ -21,20 +21,20 @@ import {
 export const getReportCardTemplates = createServerFn()
   .inputValidator(z.object({ schoolId: z.string() }))
   .handler(async ({ data }) => {
-    return await reportCardQueries.getReportCardTemplates(data.schoolId);
-  });
+    return await reportCardQueries.getReportCardTemplates(data.schoolId)
+  })
 
 export const getReportCardTemplate = createServerFn()
   .inputValidator(z.object({ id: z.string() }))
   .handler(async ({ data }) => {
-    return await reportCardQueries.getReportCardTemplateById(data.id);
-  });
+    return await reportCardQueries.getReportCardTemplateById(data.id)
+  })
 
 export const getDefaultTemplate = createServerFn()
   .inputValidator(z.object({ schoolId: z.string() }))
   .handler(async ({ data }) => {
-    return await reportCardQueries.getDefaultTemplate(data.schoolId);
-  });
+    return await reportCardQueries.getDefaultTemplate(data.schoolId)
+  })
 
 export const createReportCardTemplate = createServerFn()
   .inputValidator(
@@ -51,9 +51,9 @@ export const createReportCardTemplate = createServerFn()
     const template = await reportCardQueries.createReportCardTemplate({
       id: crypto.randomUUID(),
       ...data,
-    });
-    return { success: true, data: template };
-  });
+    })
+    return { success: true, data: template }
+  })
 
 export const updateReportCardTemplate = createServerFn()
   .inputValidator(
@@ -67,20 +67,20 @@ export const updateReportCardTemplate = createServerFn()
     }),
   )
   .handler(async ({ data }) => {
-    const { id, ...updateData } = data;
+    const { id, ...updateData } = data
     const template = await reportCardQueries.updateReportCardTemplate(
       id,
       updateData,
-    );
-    return { success: true, data: template };
-  });
+    )
+    return { success: true, data: template }
+  })
 
 export const deleteReportCardTemplate = createServerFn()
   .inputValidator(z.object({ id: z.string() }))
   .handler(async ({ data }) => {
-    await reportCardQueries.deleteReportCardTemplate(data.id);
-    return { success: true };
-  });
+    await reportCardQueries.deleteReportCardTemplate(data.id)
+    return { success: true }
+  })
 
 // ============================================
 // REPORT CARDS
@@ -89,14 +89,14 @@ export const deleteReportCardTemplate = createServerFn()
 export const getReportCards = createServerFn()
   .inputValidator(getReportCardsSchema)
   .handler(async ({ data }) => {
-    return await reportCardQueries.getReportCardsByClass(data);
-  });
+    return await reportCardQueries.getReportCardsByClass(data)
+  })
 
 export const getReportCard = createServerFn()
   .inputValidator(z.object({ id: z.string() }))
   .handler(async ({ data }) => {
-    return await reportCardQueries.getReportCardById(data.id);
-  });
+    return await reportCardQueries.getReportCardById(data.id)
+  })
 
 export const getReportCardByStudentTerm = createServerFn()
   .inputValidator(z.object({ studentId: z.string(), termId: z.string() }))
@@ -104,8 +104,8 @@ export const getReportCardByStudentTerm = createServerFn()
     return await reportCardQueries.getReportCardByStudentTerm(
       data.studentId,
       data.termId,
-    );
-  });
+    )
+  })
 
 export const generateReportCard = createServerFn()
   .inputValidator(generateReportCardSchema.extend({ generatedBy: z.string() }))
@@ -114,18 +114,18 @@ export const generateReportCard = createServerFn()
     const existing = await reportCardQueries.getReportCardByStudentTerm(
       data.studentId,
       data.termId,
-    );
+    )
 
     if (existing) {
       // Update existing report card
       const updated = await reportCardQueries.updateReportCard(existing.id, {
         templateId: data.templateId,
         homeroomComment: data.homeroomComment,
-        status: "generated",
+        status: 'generated',
         generatedAt: new Date(),
         generatedBy: data.generatedBy,
-      });
-      return { success: true, data: updated, isNew: false };
+      })
+      return { success: true, data: updated, isNew: false }
     }
 
     // Create new report card
@@ -137,13 +137,13 @@ export const generateReportCard = createServerFn()
       schoolYearId: data.schoolYearId,
       templateId: data.templateId,
       homeroomComment: data.homeroomComment,
-      status: "generated",
+      status: 'generated',
       generatedAt: new Date(),
       generatedBy: data.generatedBy,
-    });
+    })
 
-    return { success: true, data: reportCard, isNew: true };
-  });
+    return { success: true, data: reportCard, isNew: true }
+  })
 
 export const bulkGenerateReportCards = createServerFn()
   .inputValidator(
@@ -154,35 +154,37 @@ export const bulkGenerateReportCards = createServerFn()
       total: 0,
       success: 0,
       failed: 0,
-      errors: [] as { studentId: string; error: string }[],
-    };
+      errors: [] as { studentId: string, error: string }[],
+    }
 
     // Get student IDs - if not provided, we effectively do nothing or could fetch them
-    const studentIds = data.studentIds ?? [];
-    results.total = studentIds.length;
+    const studentIds = data.studentIds ?? []
+    results.total = studentIds.length
 
-    if (studentIds.length === 0) return { success: true, data: results };
+    if (studentIds.length === 0)
+      return { success: true, data: results }
 
     try {
       // 1. Batch fetch existing report cards for these students and term
       const existingCards = await getReportCardsByStudentIds(
         studentIds,
         data.termId,
-      );
+      )
 
       const existingMap = new Map(
-        existingCards.map((c) => [c.studentId, c.id]),
-      );
+        existingCards.map(c => [c.studentId, c.id]),
+      )
 
       // 2. Separate into updates and inserts
-      const toUpdateIds: string[] = [];
-      const toInsert: any[] = [];
+      const toUpdateIds: string[] = []
+      const toInsert: any[] = []
 
       for (const studentId of studentIds) {
-        const existingId = existingMap.get(studentId);
+        const existingId = existingMap.get(studentId)
         if (existingId) {
-          toUpdateIds.push(existingId);
-        } else {
+          toUpdateIds.push(existingId)
+        }
+        else {
           toInsert.push({
             id: crypto.randomUUID(),
             studentId,
@@ -190,10 +192,10 @@ export const bulkGenerateReportCards = createServerFn()
             termId: data.termId,
             schoolYearId: data.schoolYearId,
             templateId: data.templateId,
-            status: "generated",
+            status: 'generated',
             generatedAt: new Date(),
             generatedBy: data.generatedBy,
-          });
+          })
         }
       }
 
@@ -201,29 +203,30 @@ export const bulkGenerateReportCards = createServerFn()
       if (toUpdateIds.length > 0) {
         await reportCardQueries.bulkUpdateReportCards(toUpdateIds, {
           templateId: data.templateId,
-          status: "generated",
+          status: 'generated',
           generatedAt: new Date(),
           generatedBy: data.generatedBy,
-        });
+        })
       }
 
       // 4. Batch Insert
       if (toInsert.length > 0) {
-        await reportCardQueries.bulkCreateReportCards(toInsert);
+        await reportCardQueries.bulkCreateReportCards(toInsert)
       }
 
-      results.success = studentIds.length;
-    } catch (error) {
-      results.failed = studentIds.length;
+      results.success = studentIds.length
+    }
+    catch (error) {
+      results.failed = studentIds.length
       results.errors.push({
-        studentId: "batch",
+        studentId: 'batch',
         error:
-          error instanceof Error ? error.message : "Batch generation failed",
-      });
+          error instanceof Error ? error.message : 'Batch generation failed',
+      })
     }
 
-    return { success: true, data: results };
-  });
+    return { success: true, data: results }
+  })
 
 export const updateHomeroomComment = createServerFn()
   .inputValidator(updateHomeroomCommentSchema)
@@ -233,9 +236,9 @@ export const updateHomeroomComment = createServerFn()
       {
         homeroomComment: data.homeroomComment,
       },
-    );
-    return { success: true, data: updated };
-  });
+    )
+    return { success: true, data: updated }
+  })
 
 export const sendReportCard = createServerFn()
   .inputValidator(sendReportCardSchema)
@@ -243,60 +246,60 @@ export const sendReportCard = createServerFn()
     // Update status to sent
     const updated = await reportCardQueries.updateReportCardStatus(
       data.reportCardId,
-      "sent",
+      'sent',
       {
         sentAt: new Date(),
         sentTo: data.recipientEmail ?? data.recipientPhone,
         deliveryMethod: data.deliveryMethod,
       },
-    );
+    )
 
     // TODO: Implement actual email/SMS sending logic
     // This would integrate with a service like Resend, SendGrid, or Twilio
 
-    return { success: true, data: updated };
-  });
+    return { success: true, data: updated }
+  })
 
 export const bulkSendReportCards = createServerFn()
   .inputValidator(bulkSendReportCardsSchema)
   .handler(async ({ data }) => {
     const updated = await reportCardQueries.bulkUpdateReportCardStatus(
       data.reportCardIds,
-      "sent",
+      'sent',
       {
         sentAt: new Date(),
         deliveryMethod: data.deliveryMethod,
       },
-    );
+    )
 
-    return { success: true, count: updated.length };
-  });
+    return { success: true, count: updated.length }
+  })
 
 export const markReportCardDelivered = createServerFn()
   .inputValidator(z.object({ id: z.string() }))
   .handler(async ({ data }) => {
     const updated = await reportCardQueries.updateReportCardStatus(
       data.id,
-      "delivered",
+      'delivered',
       {
         deliveredAt: new Date(),
       },
-    );
-    return { success: true, data: updated };
-  });
+    )
+    return { success: true, data: updated }
+  })
 
 export const markReportCardViewed = createServerFn()
   .inputValidator(z.object({ id: z.string() }))
   .handler(async ({ data }) => {
     const updated = await reportCardQueries.updateReportCardStatus(
       data.id,
-      "viewed",
+      'viewed',
       {
         viewedAt: new Date(),
       },
-    );
-    return { success: true, data: updated };
-  });
+    )
+    return { success: true, data: updated }
+  })
 
 // ============================================
 // DELIVERY STATUS
@@ -308,8 +311,8 @@ export const getDeliveryStatusSummary = createServerFn()
     return await reportCardQueries.getDeliveryStatusSummary(
       data.classId,
       data.termId,
-    );
-  });
+    )
+  })
 
 export const getClassReportCardStats = createServerFn()
   .inputValidator(z.object({ classId: z.string(), termId: z.string() }))
@@ -317,8 +320,8 @@ export const getClassReportCardStats = createServerFn()
     return await reportCardQueries.getClassReportCardStats(
       data.classId,
       data.termId,
-    );
-  });
+    )
+  })
 
 // ============================================
 // TEACHER COMMENTS
@@ -329,8 +332,8 @@ export const getTeacherComments = createServerFn()
   .handler(async ({ data }) => {
     return await reportCardQueries.getTeacherCommentsByReportCard(
       data.reportCardId,
-    );
-  });
+    )
+  })
 
 export const createTeacherComment = createServerFn()
   .inputValidator(createTeacherCommentSchema)
@@ -338,9 +341,9 @@ export const createTeacherComment = createServerFn()
     const comment = await reportCardQueries.upsertTeacherComment({
       id: crypto.randomUUID(),
       ...data,
-    });
-    return { success: true, data: comment };
-  });
+    })
+    return { success: true, data: comment }
+  })
 
 export const updateTeacherComment = createServerFn()
   .inputValidator(updateTeacherCommentSchema)
@@ -348,16 +351,16 @@ export const updateTeacherComment = createServerFn()
     const comment = await reportCardQueries.updateTeacherComment(
       data.id,
       data.comment,
-    );
-    return { success: true, data: comment };
-  });
+    )
+    return { success: true, data: comment }
+  })
 
 export const deleteTeacherComment = createServerFn()
   .inputValidator(z.object({ id: z.string() }))
   .handler(async ({ data }) => {
-    await reportCardQueries.deleteTeacherComment(data.id);
-    return { success: true };
-  });
+    await reportCardQueries.deleteTeacherComment(data.id)
+    return { success: true }
+  })
 
 // ============================================
 // REPORT CARD DATA
@@ -376,5 +379,5 @@ export const getReportCardData = createServerFn()
       data.studentId,
       data.termId,
       data.classId,
-    );
-  });
+    )
+  })

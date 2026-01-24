@@ -2,27 +2,27 @@
  * Teacher Classes Queries
  * Specific queries for teachers to manage their assigned classes
  */
-import { and, asc, count, eq, sql } from "drizzle-orm";
-import { nanoid } from "nanoid";
-import { getDb } from "../database/setup";
-import { grades, subjects } from "../drizzle/core-schema";
+import { and, asc, count, eq, sql } from 'drizzle-orm'
+import { nanoid } from 'nanoid'
+import { getDb } from '../database/setup'
+import { grades } from '../drizzle/core-schema'
 import {
   classes,
   classSubjects,
   enrollments,
   students,
-} from "../drizzle/school-schema";
+} from '../drizzle/school-schema'
 
 /**
  * Get classes assigned to a teacher for a school year
  */
 export async function getTeacherClasses(params: {
-  teacherId: string;
-  schoolYearId: string;
-  schoolId?: string;
-  includeInactive?: boolean;
+  teacherId: string
+  schoolYearId: string
+  schoolId?: string
+  includeInactive?: boolean
 }) {
-  const db = getDb();
+  const db = getDb()
 
   const results = await db
     .select({
@@ -42,19 +42,19 @@ export async function getTeacherClasses(params: {
       ),
     )
     .groupBy(classes.id, grades.name)
-    .orderBy(grades.name, classes.section);
+    .orderBy(grades.name, classes.section)
 
-  return results;
+  return results
 }
 
 /**
  * Get detailed info for a specific class
  */
 export async function getClassDetails(params: {
-  classId: string;
-  schoolYearId: string;
+  classId: string
+  schoolYearId: string
 }) {
-  const db = getDb();
+  const db = getDb()
 
   const [result] = await db
     .select({
@@ -72,31 +72,31 @@ export async function getClassDetails(params: {
         eq(classes.schoolYearId, params.schoolYearId),
       ),
     )
-    .limit(1);
+    .limit(1)
 
-  return result ?? null;
+  return result ?? null
 }
 
 /**
  * Get students in a class
  */
 export async function getClassStudents(params: {
-  classId: string;
-  schoolYearId: string;
-  searchQuery?: string;
+  classId: string
+  schoolYearId: string
+  searchQuery?: string
 }) {
-  const db = getDb();
+  const db = getDb()
 
   const conditions = [
     eq(enrollments.classId, params.classId),
     eq(enrollments.schoolYearId, params.schoolYearId),
-    eq(enrollments.status, "confirmed"),
-  ];
+    eq(enrollments.status, 'confirmed'),
+  ]
 
   if (params.searchQuery) {
     conditions.push(
       sql`(${students.firstName} || ' ' || ${students.lastName}) ILIKE ${`%${params.searchQuery}%`}`,
-    );
+    )
   }
 
   return db
@@ -110,27 +110,28 @@ export async function getClassStudents(params: {
     .from(students)
     .innerJoin(enrollments, eq(enrollments.studentId, students.id))
     .where(and(...conditions))
-    .orderBy(asc(students.lastName), asc(students.firstName));
+    .orderBy(asc(students.lastName), asc(students.firstName))
 }
 
 /**
  * Add a student to a class (enrollment)
  */
 export async function addStudentToClass(params: {
-  studentId: string;
-  classId: string;
-  schoolYearId: string;
+  studentId: string
+  classId: string
+  schoolYearId: string
 }) {
-  const db = getDb();
+  const db = getDb()
 
   // Get schoolId from class
   const classData = await db
     .select({ schoolId: classes.schoolId })
     .from(classes)
     .where(eq(classes.id, params.classId))
-    .limit(1);
+    .limit(1)
 
-  if (!classData[0]) throw new Error("Class not found");
+  if (!classData[0])
+    throw new Error('Class not found')
 
   // Simplified enrollment
   const [result] = await db
@@ -140,23 +141,23 @@ export async function addStudentToClass(params: {
       studentId: params.studentId,
       classId: params.classId,
       schoolYearId: params.schoolYearId,
-      status: "confirmed",
-      enrollmentDate: new Date().toISOString().split("T")[0]!,
+      status: 'confirmed',
+      enrollmentDate: new Date().toISOString().split('T')[0]!,
     })
-    .returning();
+    .returning()
 
-  return result;
+  return result
 }
 
 /**
  * Remove a student from a class
  */
 export async function removeStudentFromClass(params: {
-  studentId: string;
-  classId: string;
-  schoolYearId: string;
+  studentId: string
+  classId: string
+  schoolYearId: string
 }) {
-  const db = getDb();
+  const db = getDb()
   return db
     .delete(enrollments)
     .where(
@@ -165,17 +166,17 @@ export async function removeStudentFromClass(params: {
         eq(enrollments.classId, params.classId),
         eq(enrollments.schoolYearId, params.schoolYearId),
       ),
-    );
+    )
 }
 
 /**
  * Get class statistics
  */
 export async function getClassStats(params: {
-  classId: string;
-  schoolYearId: string;
+  classId: string
+  schoolYearId: string
 }) {
-  const db = getDb();
+  const db = getDb()
 
   const [result] = await db
     .select({
@@ -191,11 +192,11 @@ export async function getClassStats(params: {
       and(
         eq(enrollments.classId, params.classId),
         eq(enrollments.schoolYearId, params.schoolYearId),
-        eq(enrollments.status, "confirmed"),
+        eq(enrollments.status, 'confirmed'),
       ),
-    );
+    )
 
   return (
     result ?? { totalStudents: 0, genderBreakdown: { male: 0, female: 0 } }
-  );
+  )
 }

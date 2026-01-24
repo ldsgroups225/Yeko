@@ -4,17 +4,17 @@ import {
   IconDots,
   IconEdit,
   IconTrash,
-} from "@tabler/icons-react";
-import { Badge } from "@workspace/ui/components/badge";
-import { Button } from "@workspace/ui/components/button";
+} from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@workspace/ui/components/dropdown-menu";
-import { Skeleton } from "@workspace/ui/components/skeleton";
+} from '@workspace/ui/components/dropdown-menu'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -22,28 +22,28 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@workspace/ui/components/table";
-import { AnimatePresence, motion } from "motion/react";
-import { useTranslations } from "@/i18n";
-import { cn } from "@/lib/utils";
-import { generateUUID } from "@/utils/generateUUID";
+} from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
+import { useTranslations } from '@/i18n'
+import { cn } from '@/lib/utils'
+import { generateUUID } from '@/utils/generateUUID'
 
 interface Account {
-  id: string;
-  code: string;
-  name: string;
-  type: string;
-  level: number;
-  balance: number;
-  isHeader: boolean;
-  status: string;
+  id: string
+  code: string
+  name: string
+  type: string
+  level: number
+  balance: number
+  isHeader: boolean
+  status: string
 }
 
 interface AccountsTableProps {
-  accounts: Account[];
-  isLoading?: boolean;
-  onEdit?: (account: Account) => void;
-  onDelete?: (account: Account) => void;
+  accounts: Account[]
+  isLoading?: boolean
+  onEdit?: (account: Account) => void
+  onDelete?: (account: Account) => void
 }
 
 export function AccountsTable({
@@ -52,42 +52,42 @@ export function AccountsTable({
   onEdit,
   onDelete,
 }: AccountsTableProps) {
-  const t = useTranslations();
+  const t = useTranslations()
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("fr-FR", {
-      style: "decimal",
+    return new Intl.NumberFormat('fr-FR', {
+      style: 'decimal',
       minimumFractionDigits: 0,
-    }).format(amount);
-  };
+    }).format(amount)
+  }
 
   const getTypeLabel = (type: string) => {
     const labels: Record<string, string> = {
-      asset: "Actif",
-      liability: "Passif",
-      equity: "Capitaux",
-      revenue: "Produits",
-      expense: "Charges",
-    };
-    return labels[type] || type;
-  };
+      asset: 'Actif',
+      liability: 'Passif',
+      equity: 'Capitaux',
+      revenue: 'Produits',
+      expense: 'Charges',
+    }
+    return labels[type] || type
+  }
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case "asset":
-        return "bg-blue-500/10 text-blue-700 border-blue-200 dark:border-blue-900/30 dark:text-blue-400";
-      case "liability":
-        return "bg-red-500/10 text-red-700 border-red-200 dark:border-red-900/30 dark:text-red-400";
-      case "equity":
-        return "bg-purple-500/10 text-purple-700 border-purple-200 dark:border-purple-900/30 dark:text-purple-400";
-      case "revenue":
-        return "bg-green-500/10 text-green-700 border-green-200 dark:border-green-900/30 dark:text-green-400";
-      case "expense":
-        return "bg-orange-500/10 text-orange-700 border-orange-200 dark:border-orange-900/30 dark:text-orange-400";
+      case 'asset':
+        return 'bg-blue-500/10 text-blue-700 border-blue-200 dark:border-blue-900/30 dark:text-blue-400'
+      case 'liability':
+        return 'bg-red-500/10 text-red-700 border-red-200 dark:border-red-900/30 dark:text-red-400'
+      case 'equity':
+        return 'bg-purple-500/10 text-purple-700 border-purple-200 dark:border-purple-900/30 dark:text-purple-400'
+      case 'revenue':
+        return 'bg-green-500/10 text-green-700 border-green-200 dark:border-green-900/30 dark:text-green-400'
+      case 'expense':
+        return 'bg-orange-500/10 text-orange-700 border-orange-200 dark:border-orange-900/30 dark:text-orange-400'
       default:
-        return "";
+        return ''
     }
-  };
+  }
 
   if (isLoading) {
     return (
@@ -96,7 +96,7 @@ export function AccountsTable({
           <Skeleton key={generateUUID()} className="h-12 w-full rounded-xl" />
         ))}
       </div>
-    );
+    )
   }
 
   if (accounts.length === 0) {
@@ -110,7 +110,7 @@ export function AccountsTable({
           {t.finance.accounts.createDescription()}
         </p>
       </div>
-    );
+    )
   }
 
   return (
@@ -145,9 +145,9 @@ export function AccountsTable({
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
                   className={cn(
-                    "group hover:bg-muted/30 border-border/40 transition-colors",
+                    'group hover:bg-muted/30 border-border/40 transition-colors',
                     {
-                      "bg-muted/5": account.isHeader,
+                      'bg-muted/5': account.isHeader,
                     },
                   )}
                 >
@@ -156,9 +156,9 @@ export function AccountsTable({
                   </TableCell>
                   <TableCell>
                     <div
-                      className={cn("flex items-center gap-2", {
-                        "font-bold text-foreground": account.isHeader,
-                        "font-medium": !account.isHeader,
+                      className={cn('flex items-center gap-2', {
+                        'font-bold text-foreground': account.isHeader,
+                        'font-medium': !account.isHeader,
                       })}
                       style={{ paddingLeft: `${(account.level - 1) * 24}px` }}
                     >
@@ -172,7 +172,7 @@ export function AccountsTable({
                     <Badge
                       variant="outline"
                       className={cn(
-                        "font-medium border",
+                        'font-medium border',
                         getTypeColor(account.type),
                       )}
                     >
@@ -182,7 +182,8 @@ export function AccountsTable({
                   <TableCell className="text-right font-bold tabular-nums">
                     {!account.isHeader && (
                       <>
-                        {formatCurrency(account.balance)}{" "}
+                        {formatCurrency(account.balance)}
+                        {' '}
                         <span className="text-xs text-muted-foreground font-medium ml-1">
                           FCFA
                         </span>
@@ -192,7 +193,7 @@ export function AccountsTable({
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger
-                        render={
+                        render={(
                           <Button
                             variant="ghost"
                             size="icon"
@@ -200,7 +201,7 @@ export function AccountsTable({
                           >
                             <IconDots className="h-4 w-4" />
                           </Button>
-                        }
+                        )}
                       />
                       <DropdownMenuContent
                         align="end"
@@ -244,10 +245,10 @@ export function AccountsTable({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
               className={cn(
-                "p-4 rounded-2xl border border-border/40 backdrop-blur-md space-y-3",
+                'p-4 rounded-2xl border border-border/40 backdrop-blur-md space-y-3',
                 {
-                  "bg-muted/10": account.isHeader,
-                  "bg-card/50": !account.isHeader,
+                  'bg-muted/10': account.isHeader,
+                  'bg-card/50': !account.isHeader,
                 },
               )}
               style={{ marginLeft: `${(account.level - 1) * 16}px` }}
@@ -260,7 +261,7 @@ export function AccountsTable({
                   <Badge
                     variant="outline"
                     className={cn(
-                      "font-medium border text-[10px]",
+                      'font-medium border text-[10px]',
                       getTypeColor(account.type),
                     )}
                   >
@@ -269,7 +270,7 @@ export function AccountsTable({
                 </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger
-                    render={
+                    render={(
                       <Button
                         variant="ghost"
                         size="icon"
@@ -277,7 +278,7 @@ export function AccountsTable({
                       >
                         <IconDots className="h-4 w-4" />
                       </Button>
-                    }
+                    )}
                   />
                   <DropdownMenuContent
                     align="end"
@@ -314,7 +315,8 @@ export function AccountsTable({
                     {t.finance.accounts.balance()}
                   </span>
                   <div className="font-bold text-lg">
-                    {formatCurrency(account.balance)}{" "}
+                    {formatCurrency(account.balance)}
+                    {' '}
                     <span className="text-sm font-normal text-muted-foreground">
                       FCFA
                     </span>
@@ -326,5 +328,5 @@ export function AccountsTable({
         </AnimatePresence>
       </div>
     </>
-  );
+  )
 }

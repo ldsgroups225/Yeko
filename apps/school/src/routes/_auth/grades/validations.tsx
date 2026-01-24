@@ -8,20 +8,20 @@ import {
   IconSearch,
   IconUser,
   IconX,
-} from "@tabler/icons-react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
-import { Badge } from "@workspace/ui/components/badge";
-import { Button } from "@workspace/ui/components/button";
-import { Checkbox } from "@workspace/ui/components/checkbox";
+} from '@tabler/icons-react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { createFileRoute } from '@tanstack/react-router'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Checkbox } from '@workspace/ui/components/checkbox'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@workspace/ui/components/dropdown-menu";
-import { Input } from "@workspace/ui/components/input";
-import { Skeleton } from "@workspace/ui/components/skeleton";
+} from '@workspace/ui/components/dropdown-menu'
+import { Input } from '@workspace/ui/components/input'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -29,140 +29,143 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@workspace/ui/components/table";
-import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
-import { toast } from "sonner";
-import { GradeValidationDialog } from "@/components/grades";
-import { Breadcrumbs } from "@/components/layout/breadcrumbs";
-import { useSchoolContext } from "@/hooks/use-school-context";
-import { useTranslations } from "@/i18n";
-import { authClient } from "@/lib/auth-client";
-import { gradesKeys, gradesOptions } from "@/lib/queries/grades";
+} from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { GradeValidationDialog } from '@/components/grades'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { useSchoolContext } from '@/hooks/use-school-context'
+import { useTranslations } from '@/i18n'
+import { authClient } from '@/lib/auth-client'
+import { gradesKeys, gradesOptions } from '@/lib/queries/grades'
 import {
   getSubmittedGradeIds,
   rejectGrades,
   validateGrades,
-} from "@/school/functions/student-grades";
-import { getUserIdFromAuthUserId } from "@/school/functions/users";
-import { generateUUID } from "@/utils/generateUUID";
+} from '@/school/functions/student-grades'
+import { getUserIdFromAuthUserId } from '@/school/functions/users'
+import { generateUUID } from '@/utils/generateUUID'
 
 interface PendingValidation {
-  classId: string;
-  className: string;
-  gradeName: string;
-  subjectId: string;
-  subjectName: string;
-  termId: string;
-  teacherId: string;
-  teacherName: string;
-  pendingCount: number;
-  submittedAt: Date;
+  classId: string
+  className: string
+  gradeName: string
+  subjectId: string
+  subjectName: string
+  termId: string
+  teacherId: string
+  teacherName: string
+  pendingCount: number
+  submittedAt: Date
 }
 
-export const Route = createFileRoute("/_auth/grades/validations")({
+export const Route = createFileRoute('/_auth/grades/validations')({
   component: GradeValidationsPage,
-});
+})
 
 function GradeValidationsPage() {
-  const t = useTranslations();
-  const queryClient = useQueryClient();
-  const { schoolId } = useSchoolContext();
-  const session = authClient.useSession();
-  const userId = session.data?.user?.id;
-  const [selectedValidation, setSelectedValidation] =
-    useState<PendingValidation | null>(null);
-  const [dialogMode, setDialogMode] = useState<"validate" | "reject">(
-    "validate",
-  );
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [search, setSearch] = useState("");
-  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const t = useTranslations()
+  const queryClient = useQueryClient()
+  const { schoolId } = useSchoolContext()
+  const session = authClient.useSession()
+  const userId = session.data?.user?.id
+  const [selectedValidation, setSelectedValidation]
+    = useState<PendingValidation | null>(null)
+  const [dialogMode, setDialogMode] = useState<'validate' | 'reject'>(
+    'validate',
+  )
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [search, setSearch] = useState('')
+  const [selectedRows, setSelectedRows] = useState<string[]>([])
 
   const { data: pendingValidations, isLoading } = useQuery(
-    gradesOptions.pending(schoolId ?? ""),
-  );
+    gradesOptions.pending(schoolId ?? ''),
+  )
 
   const validateMutation = useMutation({
     mutationFn: (params: {
-      gradeIds: string[];
-      userId: string;
-      comment?: string;
+      gradeIds: string[]
+      userId: string
+      comment?: string
     }) => validateGrades({ data: params }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: gradesKeys.all });
-      setDialogOpen(false);
-      setSelectedValidation(null);
-      setSelectedRows([]);
-      toast.success(t.academic.grades.validations.validateSuccess());
+      queryClient.invalidateQueries({ queryKey: gradesKeys.all })
+      setDialogOpen(false)
+      setSelectedValidation(null)
+      setSelectedRows([])
+      toast.success(t.academic.grades.validations.validateSuccess())
     },
     onError: () => {
-      toast.error(t.academic.grades.errors.saveError());
+      toast.error(t.academic.grades.errors.saveError())
     },
-  });
+  })
 
   const rejectMutation = useMutation({
     mutationFn: (params: {
-      gradeIds: string[];
-      userId: string;
-      reason: string;
+      gradeIds: string[]
+      userId: string
+      reason: string
     }) => rejectGrades({ data: params }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: gradesKeys.all });
-      setDialogOpen(false);
-      setSelectedValidation(null);
-      setSelectedRows([]);
-      toast.success(t.academic.grades.validations.rejectSuccess());
+      queryClient.invalidateQueries({ queryKey: gradesKeys.all })
+      setDialogOpen(false)
+      setSelectedValidation(null)
+      setSelectedRows([])
+      toast.success(t.academic.grades.validations.rejectSuccess())
     },
     onError: () => {
-      toast.error(t.academic.grades.errors.saveError());
+      toast.error(t.academic.grades.errors.saveError())
     },
-  });
+  })
 
   const handleValidate = (validation: PendingValidation) => {
-    setSelectedValidation(validation);
-    setDialogMode("validate");
-    setDialogOpen(true);
-  };
+    setSelectedValidation(validation)
+    setDialogMode('validate')
+    setDialogOpen(true)
+  }
 
   const handleReject = (validation: PendingValidation) => {
-    setSelectedValidation(validation);
-    setDialogMode("reject");
-    setDialogOpen(true);
-  };
+    setSelectedValidation(validation)
+    setDialogMode('reject')
+    setDialogOpen(true)
+  }
 
   const handleBulkValidate = async () => {
-    if (selectedRows.length === 0 || !userId) return;
+    if (selectedRows.length === 0 || !userId)
+      return
 
-    setDialogMode("validate");
-    setDialogOpen(true);
+    setDialogMode('validate')
+    setDialogOpen(true)
     // We set selectedValidation to null to indicate bulk mode
-    setSelectedValidation(null);
-  };
+    setSelectedValidation(null)
+  }
 
   const handleBulkReject = async () => {
-    if (selectedRows.length === 0 || !userId) return;
+    if (selectedRows.length === 0 || !userId)
+      return
 
-    setDialogMode("reject");
-    setDialogOpen(true);
+    setDialogMode('reject')
+    setDialogOpen(true)
     // We set selectedValidation to null to indicate bulk mode
-    setSelectedValidation(null);
-  };
+    setSelectedValidation(null)
+  }
 
   const handleConfirm = async (reason?: string) => {
-    if (!userId) return;
+    if (!userId)
+      return
 
     try {
       // Convert auth user ID to internal user ID
       const internalUserId = await getUserIdFromAuthUserId({
         data: { authUserId: userId },
-      });
+      })
       if (!internalUserId) {
-        toast.error(t.common.error());
-        return;
+        toast.error(t.common.error())
+        return
       }
 
-      let gradeIds: string[] = [];
+      let gradeIds: string[] = []
 
       if (selectedValidation) {
         // Individual validation
@@ -172,94 +175,99 @@ function GradeValidationsPage() {
             subjectId: selectedValidation.subjectId,
             termId: selectedValidation.termId,
           },
-        });
-      } else if (selectedRows.length > 0) {
+        })
+      }
+      else if (selectedRows.length > 0) {
         // Bulk validation
         const promises = selectedRows.map((rowId) => {
-          const [classId, subjectId, termId] = rowId.split("__") as [
+          const [classId, subjectId, termId] = rowId.split('__') as [
             string,
             string,
             string,
-          ];
+          ]
           return getSubmittedGradeIds({
             data: { classId, subjectId, termId },
-          });
-        });
-        const results = await Promise.all(promises);
-        gradeIds = results.flat();
+          })
+        })
+        const results = await Promise.all(promises)
+        gradeIds = results.flat()
       }
 
       if (gradeIds.length === 0) {
-        toast.error(t.academic.grades.validations.noValidations());
-        return;
+        toast.error(t.academic.grades.validations.noValidations())
+        return
       }
 
-      if (dialogMode === "validate") {
+      if (dialogMode === 'validate') {
         validateMutation.mutate({
           gradeIds,
           userId: internalUserId,
           comment: reason,
-        });
-      } else {
+        })
+      }
+      else {
         if (!reason) {
-          toast.error(t.academic.grades.validations.rejectReason());
-          return;
+          toast.error(t.academic.grades.validations.rejectReason())
+          return
         }
         rejectMutation.mutate({
           gradeIds,
           userId: internalUserId,
           reason,
-        });
+        })
       }
-    } catch {
-      toast.error(t.academic.grades.errors.loadError());
     }
-  };
+    catch {
+      toast.error(t.academic.grades.errors.loadError())
+    }
+  }
 
-  const isMutating = validateMutation.isPending || rejectMutation.isPending;
+  const isMutating = validateMutation.isPending || rejectMutation.isPending
 
   const filteredValidations = (
     (pendingValidations as PendingValidation[]) || []
   ).filter(
-    (v) =>
-      v.className.toLowerCase().includes(search.toLowerCase()) ||
-      v.subjectName.toLowerCase().includes(search.toLowerCase()) ||
-      v.teacherName.toLowerCase().includes(search.toLowerCase()) ||
-      v.gradeName.toLowerCase().includes(search.toLowerCase()),
-  );
+    v =>
+      v.className.toLowerCase().includes(search.toLowerCase())
+      || v.subjectName.toLowerCase().includes(search.toLowerCase())
+      || v.teacherName.toLowerCase().includes(search.toLowerCase())
+      || v.gradeName.toLowerCase().includes(search.toLowerCase()),
+  )
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
       setSelectedRows(
         filteredValidations.map(
-          (v) => `${v.classId}__${v.subjectId}__${v.termId}`,
+          v => `${v.classId}__${v.subjectId}__${v.termId}`,
         ),
-      );
-    } else {
-      setSelectedRows([]);
+      )
     }
-  };
+    else {
+      setSelectedRows([])
+    }
+  }
 
   const handleSelectRow = (id: string, checked: boolean) => {
     if (checked) {
-      setSelectedRows((prev) => [...prev, id]);
-    } else {
-      setSelectedRows((prev) => prev.filter((rowId) => rowId !== id));
+      setSelectedRows(prev => [...prev, id])
     }
-  };
+    else {
+      setSelectedRows(prev => prev.filter(rowId => rowId !== id))
+    }
+  }
 
   const totalPendingSelected = selectedRows.reduce((sum, rowId) => {
     const val = filteredValidations.find(
-      (v) => `${v.classId}__${v.subjectId}__${v.termId}` === rowId,
-    );
-    return sum + (val?.pendingCount || 0);
-  }, 0);
+      v => `${v.classId}__${v.subjectId}__${v.termId}` === rowId,
+    )
+    return sum + (val?.pendingCount || 0)
+  }, 0)
 
   return (
     <div className="space-y-8">
       <Breadcrumbs
         items={[
-          { label: t.nav.grades(), href: "/grades" },
+          { label: t.nav.grades(), href: '/grades' },
           { label: t.academic.grades.validations.title() },
         ]}
       />
@@ -292,7 +300,7 @@ function GradeValidationsPage() {
             <Input
               placeholder={t.common.search()}
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={e => setSearch(e.target.value)}
               className="h-11 border-border/40 bg-background/50 pl-9 transition-all focus:bg-background shadow-none rounded-xl"
             />
             {search && (
@@ -300,7 +308,7 @@ function GradeValidationsPage() {
                 variant="ghost"
                 size="icon"
                 className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 text-muted-foreground/40 hover:text-muted-foreground"
-                onClick={() => setSearch("")}
+                onClick={() => setSearch('')}
               >
                 <IconX className="size-4" />
               </Button>
@@ -329,9 +337,15 @@ function GradeValidationsPage() {
                   variant="secondary"
                   className="h-11 px-4 rounded-xl bg-primary/10 text-primary border border-primary/20 shadow-none font-bold"
                 >
-                  {selectedRows.length} {t.common.selected()} (
-                  {totalPendingSelected}{" "}
-                  {t.academic.grades.entry.studentGrades().toLowerCase()})
+                  {selectedRows.length}
+                  {' '}
+                  {t.common.selected()}
+                  {' '}
+                  (
+                  {totalPendingSelected}
+                  {' '}
+                  {t.academic.grades.entry.studentGrades().toLowerCase()}
+                  )
                 </Badge>
 
                 <Button
@@ -372,10 +386,10 @@ function GradeValidationsPage() {
               <TableHead className="w-[50px] pl-6">
                 <Checkbox
                   checked={
-                    filteredValidations.length > 0 &&
-                    selectedRows.length === filteredValidations.length
+                    filteredValidations.length > 0
+                    && selectedRows.length === filteredValidations.length
                   }
-                  onCheckedChange={(checked) => handleSelectAll(!!checked)}
+                  onCheckedChange={checked => handleSelectAll(!!checked)}
                   className="border-primary/50 data-[state=checked]:border-primary"
                 />
               </TableHead>
@@ -398,152 +412,155 @@ function GradeValidationsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isLoading ? (
-              Array.from({ length: 5 }).map(() => (
-                <TableRow key={generateUUID()} className="border-border/10">
-                  <TableCell className="pl-6">
-                    <Skeleton className="h-4 w-4" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-6 w-32 rounded-lg" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-6 w-24 rounded-lg" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-6 w-40 rounded-lg" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-6 w-32 rounded-lg" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-8 w-12 mx-auto rounded-full" />
-                  </TableCell>
-                  <TableCell className="pr-6">
-                    <Skeleton className="h-8 w-8 ml-auto" />
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : filteredValidations.length > 0 ? (
-              <AnimatePresence>
-                {filteredValidations.map((validation, index) => {
-                  const rowId = `${validation.classId}__${validation.subjectId}__${validation.termId}`;
-                  return (
-                    <motion.tr
-                      key={rowId}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                      className="border-border/10 group hover:bg-primary/5 transition-colors"
-                    >
+            {isLoading
+              ? (
+                  Array.from({ length: 5 }).map(() => (
+                    <TableRow key={generateUUID()} className="border-border/10">
                       <TableCell className="pl-6">
-                        <Checkbox
-                          checked={selectedRows.includes(rowId)}
-                          onCheckedChange={(checked) =>
-                            handleSelectRow(rowId, !!checked)
-                          }
-                          className="border-primary/50 data-[state=checked]:border-primary"
-                        />
-                      </TableCell>
-                      <TableCell className="py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                            <IconFileText className="size-4" />
-                          </div>
-                          <span className="font-bold tracking-tight">
-                            {validation.gradeName}
-                          </span>
-                        </div>
+                        <Skeleton className="h-4 w-4" />
                       </TableCell>
                       <TableCell>
-                        <Badge
-                          variant="outline"
-                          className="rounded-lg bg-background/50 border-border/40 font-bold uppercase tracking-wider text-[10px]"
-                        >
-                          {validation.className}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="font-semibold text-muted-foreground italic">
-                        {validation.subjectName}
+                        <Skeleton className="h-6 w-32 rounded-lg" />
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-2">
-                          <div className="h-7 w-7 rounded-full bg-linear-to-br from-primary/20 to-primary/5 border border-primary/10 flex items-center justify-center">
-                            <IconUser className="size-3 text-primary" />
-                          </div>
-                          <span className="text-sm font-medium">
-                            {validation.teacherName}
-                          </span>
-                        </div>
+                        <Skeleton className="h-6 w-24 rounded-lg" />
                       </TableCell>
-                      <TableCell className="text-center">
-                        <Badge className="bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 border-amber-500/20 font-black px-2.5 rounded-full">
-                          {validation.pendingCount}
-                        </Badge>
+                      <TableCell>
+                        <Skeleton className="h-6 w-40 rounded-lg" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-6 w-32 rounded-lg" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-8 w-12 mx-auto rounded-full" />
                       </TableCell>
                       <TableCell className="pr-6">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger
-                            render={
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="hover:bg-background/80 ml-auto flex rounded-xl"
-                              >
-                                <IconDots className="size-4" />
-                              </Button>
-                            }
-                          />
-                          <DropdownMenuContent
-                            align="end"
-                            className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40 min-w-[160px]"
-                          >
-                            <DropdownMenuItem
-                              onClick={() => handleValidate(validation)}
-                              className="rounded-lg py-2 cursor-pointer"
-                            >
-                              <IconCircleCheck className="mr-2 size-4 text-emerald-500" />
-                              <span className="font-semibold">
-                                {t.academic.grades.validations.validate()}
-                              </span>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => handleReject(validation)}
-                              className="rounded-lg py-2 cursor-pointer text-destructive focus:text-destructive"
-                            >
-                              <IconCircleX className="mr-2 size-4" />
-                              <span className="font-semibold">
-                                {t.academic.grades.validations.reject()}
-                              </span>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="rounded-lg py-2 cursor-pointer border-t border-border/10 mt-1">
-                              <IconFileText className="mr-2 size-4" />
-                              <span className="font-semibold">
-                                {t.academic.grades.validations.viewDetails()}
-                              </span>
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                        <Skeleton className="h-8 w-8 ml-auto" />
                       </TableCell>
-                    </motion.tr>
-                  );
-                })}
-              </AnimatePresence>
-            ) : (
-              <TableRow>
-                <TableCell colSpan={7} className="h-64 text-center">
-                  <div className="flex flex-col items-center justify-center opacity-40 italic">
-                    <IconClipboardCheck className="size-12 mb-4" />
-                    <p className="text-lg font-bold">
-                      {t.academic.grades.validations.noValidations()}
-                    </p>
-                    <p className="text-sm font-medium">
-                      {t.academic.grades.validations.allValidated()}
-                    </p>
-                  </div>
-                </TableCell>
-              </TableRow>
-            )}
+                    </TableRow>
+                  ))
+                )
+              : filteredValidations.length > 0
+                ? (
+                    <AnimatePresence>
+                      {filteredValidations.map((validation, index) => {
+                        const rowId = `${validation.classId}__${validation.subjectId}__${validation.termId}`
+                        return (
+                          <motion.tr
+                            key={rowId}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                            className="border-border/10 group hover:bg-primary/5 transition-colors"
+                          >
+                            <TableCell className="pl-6">
+                              <Checkbox
+                                checked={selectedRows.includes(rowId)}
+                                onCheckedChange={checked =>
+                                  handleSelectRow(rowId, !!checked)}
+                                className="border-primary/50 data-[state=checked]:border-primary"
+                              />
+                            </TableCell>
+                            <TableCell className="py-4">
+                              <div className="flex items-center gap-3">
+                                <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                                  <IconFileText className="size-4" />
+                                </div>
+                                <span className="font-bold tracking-tight">
+                                  {validation.gradeName}
+                                </span>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant="outline"
+                                className="rounded-lg bg-background/50 border-border/40 font-bold uppercase tracking-wider text-[10px]"
+                              >
+                                {validation.className}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="font-semibold text-muted-foreground italic">
+                              {validation.subjectName}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <div className="h-7 w-7 rounded-full bg-linear-to-br from-primary/20 to-primary/5 border border-primary/10 flex items-center justify-center">
+                                  <IconUser className="size-3 text-primary" />
+                                </div>
+                                <span className="text-sm font-medium">
+                                  {validation.teacherName}
+                                </span>
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Badge className="bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 border-amber-500/20 font-black px-2.5 rounded-full">
+                                {validation.pendingCount}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="pr-6">
+                              <DropdownMenu>
+                                <DropdownMenuTrigger
+                                  render={(
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="hover:bg-background/80 ml-auto flex rounded-xl"
+                                    >
+                                      <IconDots className="size-4" />
+                                    </Button>
+                                  )}
+                                />
+                                <DropdownMenuContent
+                                  align="end"
+                                  className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40 min-w-[160px]"
+                                >
+                                  <DropdownMenuItem
+                                    onClick={() => handleValidate(validation)}
+                                    className="rounded-lg py-2 cursor-pointer"
+                                  >
+                                    <IconCircleCheck className="mr-2 size-4 text-emerald-500" />
+                                    <span className="font-semibold">
+                                      {t.academic.grades.validations.validate()}
+                                    </span>
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    onClick={() => handleReject(validation)}
+                                    className="rounded-lg py-2 cursor-pointer text-destructive focus:text-destructive"
+                                  >
+                                    <IconCircleX className="mr-2 size-4" />
+                                    <span className="font-semibold">
+                                      {t.academic.grades.validations.reject()}
+                                    </span>
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem className="rounded-lg py-2 cursor-pointer border-t border-border/10 mt-1">
+                                    <IconFileText className="mr-2 size-4" />
+                                    <span className="font-semibold">
+                                      {t.academic.grades.validations.viewDetails()}
+                                    </span>
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
+                          </motion.tr>
+                        )
+                      })}
+                    </AnimatePresence>
+                  )
+                : (
+                    <TableRow>
+                      <TableCell colSpan={7} className="h-64 text-center">
+                        <div className="flex flex-col items-center justify-center opacity-40 italic">
+                          <IconClipboardCheck className="size-12 mb-4" />
+                          <p className="text-lg font-bold">
+                            {t.academic.grades.validations.noValidations()}
+                          </p>
+                          <p className="text-sm font-medium">
+                            {t.academic.grades.validations.allValidated()}
+                          </p>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
           </TableBody>
         </Table>
       </motion.div>
@@ -561,5 +578,5 @@ function GradeValidationsPage() {
         isLoading={isMutating}
       />
     </div>
-  );
+  )
 }

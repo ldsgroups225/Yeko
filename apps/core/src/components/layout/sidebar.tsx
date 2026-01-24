@@ -1,5 +1,5 @@
-import type { ComponentType } from "react";
-import type { FileRoutesByTo } from "@/routeTree.gen";
+import type { ComponentType } from 'react'
+import type { FileRoutesByTo } from '@/routeTree.gen'
 import {
   IconAward,
   IconBook,
@@ -12,8 +12,8 @@ import {
   IconHome,
   IconRoute,
   IconSchool,
-} from "@tabler/icons-react";
-import { useNavigate, useRouterState } from "@tanstack/react-router";
+} from '@tabler/icons-react'
+import { useNavigate, useRouterState } from '@tanstack/react-router'
 import {
   SidebarContent,
   SidebarFooter,
@@ -27,122 +27,123 @@ import {
   SidebarMenuSubItem,
   Sidebar as SidebarRoot,
   useSidebar,
-} from "@workspace/ui/components/sidebar";
-import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
-import { cn } from "@/lib/utils";
+} from '@workspace/ui/components/sidebar'
+import { AnimatePresence, motion } from 'motion/react'
+import { useState } from 'react'
+import { cn } from '@/lib/utils'
 
 interface NavigationItem {
-  name: string;
-  icon: ComponentType<{ className?: string }>;
-  href: keyof FileRoutesByTo;
-  badge?: string | number;
-  description?: string;
-  children?: NavigationItem[];
+  name: string
+  icon: ComponentType<{ className?: string }>
+  href: keyof FileRoutesByTo
+  badge?: string | number
+  description?: string
+  children?: NavigationItem[]
 }
 
 const navigationItems: NavigationItem[] = [
   {
-    name: "Tableau de bord",
+    name: 'Tableau de bord',
     icon: IconHome,
-    href: "/app/dashboard",
-    description: "Vue d'ensemble du système",
+    href: '/app/dashboard',
+    description: 'Vue d\'ensemble du système',
   },
   {
-    name: "Écoles",
+    name: 'Écoles',
     icon: IconSchool,
-    href: "/app/schools",
-    description: "Écoles partenaires",
+    href: '/app/schools',
+    description: 'Écoles partenaires',
   },
   {
-    name: "Catalogues",
+    name: 'Catalogues',
     icon: IconBook,
-    href: "/app/catalogs",
-    description: "Catalogues globaux",
+    href: '/app/catalogs',
+    description: 'Catalogues globaux',
     children: [
       {
-        name: "Programmes",
+        name: 'Programmes',
         icon: IconSchool,
-        href: "/app/catalogs/programs",
-        description: "Programmes ministériels",
+        href: '/app/catalogs/programs',
+        description: 'Programmes ministériels',
       },
       {
-        name: "Matières",
+        name: 'Matières',
         icon: IconBookmark,
-        href: "/app/catalogs/subjects",
-        description: "Matières académiques",
+        href: '/app/catalogs/subjects',
+        description: 'Matières académiques',
       },
       {
-        name: "Filières",
+        name: 'Filières',
         icon: IconRoute,
-        href: "/app/catalogs/tracks",
-        description: "Filières d'études",
+        href: '/app/catalogs/tracks',
+        description: 'Filières d\'études',
       },
       {
-        name: "Niveaux",
+        name: 'Niveaux',
         icon: IconAward,
-        href: "/app/catalogs/grades",
-        description: "Niveaux et séries",
+        href: '/app/catalogs/grades',
+        description: 'Niveaux et séries',
       },
       {
-        name: "Coefficients",
+        name: 'Coefficients',
         icon: IconCalculator,
-        href: "/app/catalogs/coefficients",
-        description: "Coefficients des matières",
+        href: '/app/catalogs/coefficients',
+        description: 'Coefficients des matières',
       },
       {
-        name: "Années Scolaires",
+        name: 'Années Scolaires',
         icon: IconCalendar,
-        href: "/app/catalogs/school-years",
-        description: "Modèles et périodes",
+        href: '/app/catalogs/school-years',
+        description: 'Modèles et périodes',
       },
     ],
   },
   {
-    name: "Analytiques",
+    name: 'Analytiques',
     icon: IconChartBar,
-    href: "/app/analytics",
-    description: "Analytiques du système",
+    href: '/app/analytics',
+    description: 'Analytiques du système',
   },
   {
-    name: "Support",
+    name: 'Support',
     icon: IconHelpCircle,
-    href: "/app/support",
-    description: "CRM & tickets",
+    href: '/app/support',
+    description: 'CRM & tickets',
   },
-];
+]
 
 interface SidebarProps {
-  className?: string;
+  className?: string
 }
 
 export function Sidebar({ className }: SidebarProps) {
-  const navigate = useNavigate();
-  const routerState = useRouterState();
-  const currentPath = routerState.location.pathname;
+  const navigate = useNavigate()
+  const routerState = useRouterState()
+  const currentPath = routerState.location.pathname
   const [expandedItems, setExpandedItems] = useState<Set<string>>(
     () => new Set(),
-  );
-  const { state } = useSidebar();
-  const isCollapsed = state === "collapsed";
+  )
+  const { state } = useSidebar()
+  const isCollapsed = state === 'collapsed'
 
   const toggleExpanded = (href: string) => {
-    const newExpanded = new Set(expandedItems);
+    const newExpanded = new Set(expandedItems)
     if (newExpanded.has(href)) {
-      newExpanded.delete(href);
-    } else {
-      newExpanded.add(href);
+      newExpanded.delete(href)
     }
-    setExpandedItems(newExpanded);
-  };
+    else {
+      newExpanded.add(href)
+    }
+    setExpandedItems(newExpanded)
+  }
 
   const renderNavigationItem = (item: NavigationItem) => {
-    const itemPath = item.href;
-    const isActive =
-      currentPath === itemPath ||
-      (item.href !== "/app/dashboard" && currentPath.startsWith(itemPath));
-    const hasChildren = item.children && item.children.length > 0;
-    const isExpanded = expandedItems.has(item.href);
+    const itemPath = item.href
+    const isActive
+      = currentPath === itemPath
+        || (item.href !== '/app/dashboard' && currentPath.startsWith(itemPath))
+    const hasChildren = item.children && item.children.length > 0
+    const isExpanded = expandedItems.has(item.href)
 
     return (
       <SidebarMenuItem key={item.href}>
@@ -155,7 +156,7 @@ export function Sidebar({ className }: SidebarProps) {
           >
             <motion.div
               whileHover={{ scale: 1.1, rotate: 5 }}
-              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 10 }}
             >
               <item.icon className="h-5 w-5" />
             </motion.div>
@@ -172,7 +173,7 @@ export function Sidebar({ className }: SidebarProps) {
                 className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                transition={{ type: "spring", stiffness: 500, damping: 15 }}
+                transition={{ type: 'spring', stiffness: 500, damping: 15 }}
               >
                 {item.badge}
               </motion.span>
@@ -182,11 +183,11 @@ export function Sidebar({ className }: SidebarProps) {
             <button
               type="button"
               onClick={(e) => {
-                e.stopPropagation();
-                toggleExpanded(item.href);
+                e.stopPropagation()
+                toggleExpanded(item.href)
               }}
               className="p-2 hover:bg-accent rounded-md transition-colors"
-              aria-label={isExpanded ? "Collapse" : "Expand"}
+              aria-label={isExpanded ? 'Collapse' : 'Expand'}
             >
               <motion.div
                 animate={{ rotate: isExpanded ? 180 : 0 }}
@@ -201,49 +202,49 @@ export function Sidebar({ className }: SidebarProps) {
           {hasChildren && isExpanded && !isCollapsed && (
             <motion.div
               initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
+              animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
               className="overflow-hidden"
             >
               <SidebarMenuSub className="border-l-2 border-border/40 ml-2 mt-1 py-1">
                 {item.children?.map((child) => {
-                  const isChildActive = currentPath === child.href;
+                  const isChildActive = currentPath === child.href
                   return (
                     <SidebarMenuSubItem key={child.href} className="px-1">
                       <a
                         href={child.href}
                         className={cn(
-                          "flex items-center gap-3 py-2 px-3 rounded-md transition-all duration-200 text-sm",
-                          "hover:bg-accent/80 hover:translate-x-1",
+                          'flex items-center gap-3 py-2 px-3 rounded-md transition-all duration-200 text-sm',
+                          'hover:bg-accent/80 hover:translate-x-1',
                           isChildActive
-                            ? "bg-primary/10 text-primary font-medium"
-                            : "text-muted-foreground hover:text-foreground",
+                            ? 'bg-primary/10 text-primary font-medium'
+                            : 'text-muted-foreground hover:text-foreground',
                         )}
                       >
                         <child.icon
                           className={cn(
-                            "h-4 w-4 shrink-0 transition-colors",
+                            'h-4 w-4 shrink-0 transition-colors',
                             isChildActive
-                              ? "text-primary"
-                              : "text-muted-foreground group-hover/menu-sub-item:text-foreground",
+                              ? 'text-primary'
+                              : 'text-muted-foreground group-hover/menu-sub-item:text-foreground',
                           )}
                         />
                         <span className="truncate">{child.name}</span>
                       </a>
                     </SidebarMenuSubItem>
-                  );
+                  )
                 })}
               </SidebarMenuSub>
             </motion.div>
           )}
         </AnimatePresence>
       </SidebarMenuItem>
-    );
-  };
+    )
+  }
 
   return (
-    <SidebarRoot collapsible="icon" className={cn("hidden lg:flex", className)}>
+    <SidebarRoot collapsible="icon" className={cn('hidden lg:flex', className)}>
       <SidebarHeader className="border-b">
         <div className="flex items-center gap-2 px-2">
           <motion.img
@@ -251,12 +252,12 @@ export function Sidebar({ className }: SidebarProps) {
             alt="Yeko Logo"
             className="h-8 w-8 object-contain"
             whileHover={{ scale: 1.1, rotate: 10 }}
-            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 10 }}
           />
           {!isCollapsed && (
             <motion.div
               initial={{ opacity: 0, width: 0 }}
-              animate={{ opacity: 1, width: "auto" }}
+              animate={{ opacity: 1, width: 'auto' }}
               exit={{ opacity: 0, width: 0 }}
               transition={{ duration: 0.3 }}
             >
@@ -275,7 +276,7 @@ export function Sidebar({ className }: SidebarProps) {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navigationItems.map((item) => renderNavigationItem(item))}
+              {navigationItems.map(item => renderNavigationItem(item))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -283,5 +284,5 @@ export function Sidebar({ className }: SidebarProps) {
 
       <SidebarFooter>{/* Add footer content if needed */}</SidebarFooter>
     </SidebarRoot>
-  );
+  )
 }

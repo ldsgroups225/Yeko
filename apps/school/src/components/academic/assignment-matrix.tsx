@@ -4,25 +4,25 @@ import {
   IconSchool,
   IconSettings,
   IconX,
-} from "@tabler/icons-react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Badge } from "@workspace/ui/components/badge";
-import { Button } from "@workspace/ui/components/button";
+} from '@tabler/icons-react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@workspace/ui/components/card";
+} from '@workspace/ui/components/card'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@workspace/ui/components/select";
-import { Skeleton } from "@workspace/ui/components/skeleton";
+} from '@workspace/ui/components/select'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -30,29 +30,29 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@workspace/ui/components/table";
+} from '@workspace/ui/components/table'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@workspace/ui/components/tooltip";
-import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
-import { toast } from "sonner";
-import { useTranslations } from "@/i18n";
-import { cn } from "@/lib/utils";
+} from '@workspace/ui/components/tooltip'
+import { AnimatePresence, motion } from 'motion/react'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { useTranslations } from '@/i18n'
+import { cn } from '@/lib/utils'
 import {
   assignTeacherToClassSubject,
   getAssignmentMatrix,
   removeTeacherFromClassSubject,
-} from "@/school/functions/class-subjects";
-import { getActiveSchoolYear } from "@/school/functions/school-years";
-import { getAllSubjects } from "@/school/functions/subjects";
-import { getTeachers } from "@/school/functions/teachers";
+} from '@/school/functions/class-subjects'
+import { getActiveSchoolYear } from '@/school/functions/school-years'
+import { getAllSubjects } from '@/school/functions/subjects'
+import { getTeachers } from '@/school/functions/teachers'
 
 interface AssignmentMatrixProps {
-  schoolYearId?: string;
+  schoolYearId?: string
 }
 
 function MatrixSkeleton() {
@@ -86,11 +86,11 @@ function MatrixSkeleton() {
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }
 
 function EmptyState() {
-  const t = useTranslations();
+  const t = useTranslations()
   return (
     <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
       <CardContent className="p-8">
@@ -109,148 +109,151 @@ function EmptyState() {
           <div className="flex gap-2 pt-2">
             <Button
               variant="outline"
-              render={
+              render={(
                 <a href="/classes">
                   <IconPlus className="mr-2 h-4 w-4" />
                   {t.classes.create()}
                 </a>
-              }
+              )}
             />
             <Button
               variant="outline"
-              render={
+              render={(
                 <a href="/settings/subjects">
                   <IconSettings className="mr-2 h-4 w-4" />
                   {t.subjects.configure()}
                 </a>
-              }
+              )}
             />
           </div>
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }
 
 export function AssignmentMatrix({
   schoolYearId: propSchoolYearId,
 }: AssignmentMatrixProps) {
-  const t = useTranslations();
-  const queryClient = useQueryClient();
+  const t = useTranslations()
+  const queryClient = useQueryClient()
   const [editingCell, setEditingCell] = useState<{
-    classId: string;
-    subjectId: string;
-  } | null>(null);
+    classId: string
+    subjectId: string
+  } | null>(null)
 
   const { data: schoolYear } = useQuery({
-    queryKey: ["activeSchoolYear"],
+    queryKey: ['activeSchoolYear'],
     queryFn: () => getActiveSchoolYear(),
     enabled: !propSchoolYearId,
-  });
+  })
 
-  const effectiveSchoolYearId = propSchoolYearId || schoolYear?.id;
+  const effectiveSchoolYearId = propSchoolYearId || schoolYear?.id
 
   const { data: matrixData, isLoading: matrixLoading } = useQuery({
-    queryKey: ["assignmentMatrix", effectiveSchoolYearId],
+    queryKey: ['assignmentMatrix', effectiveSchoolYearId],
     queryFn: () => getAssignmentMatrix({ data: effectiveSchoolYearId! }),
     enabled: !!effectiveSchoolYearId,
-  });
+  })
 
   const { data: teachersData } = useQuery({
-    queryKey: ["teachers"],
+    queryKey: ['teachers'],
     queryFn: () => getTeachers({ data: {} }),
-  });
+  })
 
   const { data: subjectsData } = useQuery({
-    queryKey: ["subjects"],
+    queryKey: ['subjects'],
     queryFn: () => getAllSubjects({ data: {} }),
-  });
+  })
 
   const assignMutation = useMutation({
     mutationFn: (data: {
-      classId: string;
-      subjectId: string;
-      teacherId: string;
+      classId: string
+      subjectId: string
+      teacherId: string
     }) => assignTeacherToClassSubject({ data }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["assignmentMatrix"] });
-      toast.success(t.assignmentMatrix.assignedSuccess());
-      setEditingCell(null);
+      queryClient.invalidateQueries({ queryKey: ['assignmentMatrix'] })
+      toast.success(t.assignmentMatrix.assignedSuccess())
+      setEditingCell(null)
     },
     onError: (error: Error) => {
-      if (error.message.includes("not qualified")) {
-        toast.error(t.assignmentMatrix.errorNotQualified());
-      } else if (error.message.includes("permission")) {
-        toast.error(t.common.errorPermission());
-      } else {
-        toast.error(error.message || t.common.error());
+      if (error.message.includes('not qualified')) {
+        toast.error(t.assignmentMatrix.errorNotQualified())
+      }
+      else if (error.message.includes('permission')) {
+        toast.error(t.common.errorPermission())
+      }
+      else {
+        toast.error(error.message || t.common.error())
       }
     },
-  });
+  })
 
   const removeMutation = useMutation({
-    mutationFn: (data: { classId: string; subjectId: string }) =>
+    mutationFn: (data: { classId: string, subjectId: string }) =>
       removeTeacherFromClassSubject({ data }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["assignmentMatrix"] });
-      toast.success(t.assignmentMatrix.removedSuccess());
+      queryClient.invalidateQueries({ queryKey: ['assignmentMatrix'] })
+      toast.success(t.assignmentMatrix.removedSuccess())
     },
     onError: (error: Error) => {
-      if (error.message.includes("permission")) {
-        toast.error(t.common.errorPermission());
-      } else {
-        toast.error(error.message || t.common.error());
+      if (error.message.includes('permission')) {
+        toast.error(t.common.errorPermission())
+      }
+      else {
+        toast.error(error.message || t.common.error())
       }
     },
-  });
+  })
 
   // Calculate teacher workload for overload warnings
-  const teacherWorkload = new Map<string, number>();
+  const teacherWorkload = new Map<string, number>()
   matrixData?.forEach((item) => {
     if (item.teacherId && item.hoursPerWeek) {
-      const current = teacherWorkload.get(item.teacherId) || 0;
-      teacherWorkload.set(item.teacherId, current + item.hoursPerWeek);
+      const current = teacherWorkload.get(item.teacherId) || 0
+      teacherWorkload.set(item.teacherId, current + item.hoursPerWeek)
     }
-  });
+  })
 
   const isTeacherOverloaded = (teacherId: string) => {
-    return (teacherWorkload.get(teacherId) || 0) > 30;
-  };
+    return (teacherWorkload.get(teacherId) || 0) > 30
+  }
 
   if (matrixLoading) {
-    return <MatrixSkeleton />;
+    return <MatrixSkeleton />
   }
 
   if (!matrixData || matrixData.length === 0) {
-    return <EmptyState />;
+    return <EmptyState />
   }
 
   // Build matrix structure
   const classes = [
     ...new Map(
-      matrixData.map((item) => [
+      matrixData.map(item => [
         item.classId,
         { id: item.classId, name: item.className },
       ]),
     ).values(),
-  ];
-  const subjects = subjectsData?.subjects || [];
+  ]
+  const subjects = subjectsData?.subjects || []
 
   // Create assignment lookup
   const assignmentMap = new Map<
     string,
-    { teacherId: string | null; teacherName: string | null }
-  >();
+    { teacherId: string | null, teacherName: string | null }
+  >()
   matrixData.forEach((item) => {
     if (item.subjectId) {
       assignmentMap.set(`${item.classId}-${item.subjectId}`, {
         teacherId: item.teacherId,
         teacherName: item.teacherName,
-      });
+      })
     }
-  });
+  })
 
-  const teachers = teachersData?.teachers || [];
+  const teachers = teachersData?.teachers || []
 
   return (
     <motion.div
@@ -268,13 +271,22 @@ export function AssignmentMatrix({
               <div>
                 <CardTitle>{t.assignmentMatrix.title()}</CardTitle>
                 <CardDescription>
-                  {classes.length} {t.common.classes()} × {subjects.length}{" "}
+                  {classes.length}
+                  {' '}
+                  {t.common.classes()}
+                  {' '}
+                  ×
+                  {' '}
+                  {subjects.length}
+                  {' '}
                   {t.common.subjects()}
                 </CardDescription>
               </div>
             </div>
             <Badge variant="outline" className="border-border/40 bg-white/5">
-              {matrixData.length} {t.common.total()}
+              {matrixData.length}
+              {' '}
+              {t.common.total()}
             </Badge>
           </div>
         </CardHeader>
@@ -295,7 +307,7 @@ export function AssignmentMatrix({
                       {t.common.classes()}
                     </span>
                   </TableHead>
-                  {subjects.map((subject) => (
+                  {subjects.map(subject => (
                     <TableHead
                       key={subject.id}
                       className="text-center min-w-[160px] border-b border-border/10 py-4"
@@ -314,7 +326,7 @@ export function AssignmentMatrix({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {classes.map((cls) => (
+                {classes.map(cls => (
                   <TableRow
                     key={cls.id}
                     className="border-border/5 hover:bg-white/5 transition-colors group"
@@ -326,14 +338,14 @@ export function AssignmentMatrix({
                       {cls.name}
                     </TableCell>
                     {subjects.map((subject) => {
-                      const key = `${cls.id}-${subject.id}`;
-                      const assignment = assignmentMap.get(key);
-                      const isEditing =
-                        editingCell?.classId === cls.id &&
-                        editingCell?.subjectId === subject.id;
+                      const key = `${cls.id}-${subject.id}`
+                      const assignment = assignmentMap.get(key)
+                      const isEditing
+                        = editingCell?.classId === cls.id
+                          && editingCell?.subjectId === subject.id
                       const teacherOverloaded = assignment?.teacherId
                         ? isTeacherOverloaded(assignment.teacherId)
-                        : false;
+                        : false
 
                       return (
                         <TableCell
@@ -341,154 +353,160 @@ export function AssignmentMatrix({
                           className="text-center p-2 relative"
                         >
                           <AnimatePresence mode="wait">
-                            {isEditing ? (
-                              <motion.div
-                                key="editing"
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.95 }}
-                                className="flex items-center gap-1 justify-center"
-                              >
-                                <Select
-                                  onValueChange={(val) => {
-                                    if (val === "none") {
-                                      removeMutation.mutate({
-                                        classId: cls.id,
-                                        subjectId: subject.id,
-                                      });
-                                    } else if (val) {
-                                      assignMutation.mutate({
-                                        classId: cls.id,
-                                        subjectId: subject.id,
-                                        teacherId: val,
-                                      });
-                                    }
-                                  }}
-                                  defaultValue={assignment?.teacherId || "none"}
-                                >
-                                  <SelectTrigger
-                                    className="h-9 w-[150px] bg-white/5 border-white/10 text-xs focus:ring-primary/40"
-                                    aria-label={`${t.assignmentMatrix.selectTeacherFor()} ${cls.name} - ${subject.name}`}
+                            {isEditing
+                              ? (
+                                  <motion.div
+                                    key="editing"
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
+                                    className="flex items-center gap-1 justify-center"
                                   >
-                                    <SelectValue
-                                      placeholder={t.common.select()}
-                                    />
-                                  </SelectTrigger>
-                                  <SelectContent className="backdrop-blur-xl bg-card/95 border-white/10">
-                                    <SelectItem
-                                      value="none"
-                                      className="text-xs"
+                                    <Select
+                                      onValueChange={(val) => {
+                                        if (val === 'none') {
+                                          removeMutation.mutate({
+                                            classId: cls.id,
+                                            subjectId: subject.id,
+                                          })
+                                        }
+                                        else if (val) {
+                                          assignMutation.mutate({
+                                            classId: cls.id,
+                                            subjectId: subject.id,
+                                            teacherId: val,
+                                          })
+                                        }
+                                      }}
+                                      defaultValue={assignment?.teacherId || 'none'}
                                     >
-                                      {t.assignmentMatrix.notAssigned()}
-                                    </SelectItem>
-                                    {teachers.map((teacher) => {
-                                      const overloaded = isTeacherOverloaded(
-                                        teacher.id,
-                                      );
-                                      return (
+                                      <SelectTrigger
+                                        className="h-9 w-[150px] bg-white/5 border-white/10 text-xs focus:ring-primary/40"
+                                        aria-label={`${t.assignmentMatrix.selectTeacherFor()} ${cls.name} - ${subject.name}`}
+                                      >
+                                        <SelectValue
+                                          placeholder={t.common.select()}
+                                        />
+                                      </SelectTrigger>
+                                      <SelectContent className="backdrop-blur-xl bg-card/95 border-white/10">
                                         <SelectItem
-                                          key={teacher.id}
-                                          value={teacher.id}
+                                          value="none"
                                           className="text-xs"
                                         >
-                                          <span className="flex items-center gap-2">
-                                            {teacher.user.name}
-                                            {overloaded && (
-                                              <Badge
-                                                variant="destructive"
-                                                className="h-4 px-1 text-[8px] bg-destructive/10 text-destructive border-0"
-                                              >
-                                                OVERLOAD
-                                              </Badge>
-                                            )}
-                                          </span>
+                                          {t.assignmentMatrix.notAssigned()}
                                         </SelectItem>
-                                      );
-                                    })}
-                                  </SelectContent>
-                                </Select>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-8 w-8 hover:bg-white/10"
-                                  onClick={() => setEditingCell(null)}
-                                  aria-label={t.common.cancel()}
-                                >
-                                  <IconX className="h-4 w-4" />
-                                </Button>
-                              </motion.div>
-                            ) : (
-                              <motion.div
-                                key={`static-${key}`}
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                              >
-                                <TooltipProvider>
-                                  <Tooltip>
-                                    <TooltipTrigger
-                                      render={
-                                        <Button
-                                          variant={
-                                            assignment?.teacherId
-                                              ? "secondary"
-                                              : "ghost"
-                                          }
-                                          size="sm"
-                                          className={cn(
-                                            "h-9 w-full min-w-[130px] rounded-lg transition-all border",
-                                            assignment?.teacherId
-                                              ? "bg-primary/5 hover:bg-primary/10 text-primary border-primary/20"
-                                              : "text-muted-foreground border-dashed border-border/20 hover:border-primary/40 hover:bg-white/5",
-                                          )}
-                                          onClick={() =>
-                                            setEditingCell({
-                                              classId: cls.id,
-                                              subjectId: subject.id,
-                                            })
-                                          }
-                                        >
-                                          {assignment?.teacherId ? (
-                                            <div className="flex items-center gap-1.5 truncate">
-                                              <span className="truncate">
-                                                {assignment.teacherName}
+                                        {teachers.map((teacher) => {
+                                          const overloaded = isTeacherOverloaded(
+                                            teacher.id,
+                                          )
+                                          return (
+                                            <SelectItem
+                                              key={teacher.id}
+                                              value={teacher.id}
+                                              className="text-xs"
+                                            >
+                                              <span className="flex items-center gap-2">
+                                                {teacher.user.name}
+                                                {overloaded && (
+                                                  <Badge
+                                                    variant="destructive"
+                                                    className="h-4 px-1 text-[8px] bg-destructive/10 text-destructive border-0"
+                                                  >
+                                                    OVERLOAD
+                                                  </Badge>
+                                                )}
                                               </span>
-                                              {teacherOverloaded && (
-                                                <IconAlertTriangle className="h-3.5 w-3.5 text-amber-500 shrink-0 animate-pulse" />
+                                            </SelectItem>
+                                          )
+                                        })}
+                                      </SelectContent>
+                                    </Select>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-8 w-8 hover:bg-white/10"
+                                      onClick={() => setEditingCell(null)}
+                                      aria-label={t.common.cancel()}
+                                    >
+                                      <IconX className="h-4 w-4" />
+                                    </Button>
+                                  </motion.div>
+                                )
+                              : (
+                                  <motion.div
+                                    key={`static-${key}`}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                  >
+                                    <TooltipProvider>
+                                      <Tooltip>
+                                        <TooltipTrigger
+                                          render={(
+                                            <Button
+                                              variant={
+                                                assignment?.teacherId
+                                                  ? 'secondary'
+                                                  : 'ghost'
+                                              }
+                                              size="sm"
+                                              className={cn(
+                                                'h-9 w-full min-w-[130px] rounded-lg transition-all border',
+                                                assignment?.teacherId
+                                                  ? 'bg-primary/5 hover:bg-primary/10 text-primary border-primary/20'
+                                                  : 'text-muted-foreground border-dashed border-border/20 hover:border-primary/40 hover:bg-white/5',
                                               )}
-                                            </div>
-                                          ) : (
-                                            <IconPlus className="h-3.5 w-3.5 opacity-40 group-hover:opacity-100 transition-opacity" />
+                                              onClick={() =>
+                                                setEditingCell({
+                                                  classId: cls.id,
+                                                  subjectId: subject.id,
+                                                })}
+                                            >
+                                              {assignment?.teacherId
+                                                ? (
+                                                    <div className="flex items-center gap-1.5 truncate">
+                                                      <span className="truncate">
+                                                        {assignment.teacherName}
+                                                      </span>
+                                                      {teacherOverloaded && (
+                                                        <IconAlertTriangle className="h-3.5 w-3.5 text-amber-500 shrink-0 animate-pulse" />
+                                                      )}
+                                                    </div>
+                                                  )
+                                                : (
+                                                    <IconPlus className="h-3.5 w-3.5 opacity-40 group-hover:opacity-100 transition-opacity" />
+                                                  )}
+                                            </Button>
                                           )}
-                                        </Button>
-                                      }
-                                    />
-                                    <TooltipContent className="backdrop-blur-xl bg-card/95 border-white/10 text-[11px]">
-                                      {assignment?.teacherId ? (
-                                        <div className="space-y-1">
-                                          <p className="font-semibold">
-                                            {assignment.teacherName}
-                                          </p>
-                                          {teacherOverloaded && (
-                                            <p className="text-amber-500 flex items-center gap-1">
-                                              <IconAlertTriangle className="h-3 w-3" />
-                                              {t.assignmentMatrix.overloaded()}
-                                            </p>
-                                          )}
-                                          <p className="opacity-70">
-                                            {t.common.clickToEdit()}
-                                          </p>
-                                        </div>
-                                      ) : (
-                                        t.assignmentMatrix.clickToAssign()
-                                      )}
-                                    </TooltipContent>
-                                  </Tooltip>
-                                </TooltipProvider>
-                              </motion.div>
-                            )}
+                                        />
+                                        <TooltipContent className="backdrop-blur-xl bg-card/95 border-white/10 text-[11px]">
+                                          {assignment?.teacherId
+                                            ? (
+                                                <div className="space-y-1">
+                                                  <p className="font-semibold">
+                                                    {assignment.teacherName}
+                                                  </p>
+                                                  {teacherOverloaded && (
+                                                    <p className="text-amber-500 flex items-center gap-1">
+                                                      <IconAlertTriangle className="h-3 w-3" />
+                                                      {t.assignmentMatrix.overloaded()}
+                                                    </p>
+                                                  )}
+                                                  <p className="opacity-70">
+                                                    {t.common.clickToEdit()}
+                                                  </p>
+                                                </div>
+                                              )
+                                            : (
+                                                t.assignmentMatrix.clickToAssign()
+                                              )}
+                                        </TooltipContent>
+                                      </Tooltip>
+                                    </TooltipProvider>
+                                  </motion.div>
+                                )}
                           </AnimatePresence>
                         </TableCell>
-                      );
+                      )
                     })}
                   </TableRow>
                 ))}
@@ -498,5 +516,5 @@ export function AssignmentMatrix({
         </CardContent>
       </Card>
     </motion.div>
-  );
+  )
 }

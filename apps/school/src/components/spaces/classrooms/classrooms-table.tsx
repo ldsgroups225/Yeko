@@ -1,4 +1,4 @@
-import type { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef } from '@tanstack/react-table'
 import {
   IconBuilding,
   IconDots,
@@ -7,15 +7,15 @@ import {
   IconStack2,
   IconTrash,
   IconUsers,
-} from "@tabler/icons-react";
-import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
+} from '@tabler/icons-react'
+import { useQuery } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
 import {
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
   useReactTable,
-} from "@tanstack/react-table";
+} from '@tanstack/react-table'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,29 +25,29 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@workspace/ui/components/alert-dialog";
-import { Badge } from "@workspace/ui/components/badge";
-import { Button } from "@workspace/ui/components/button";
+} from '@workspace/ui/components/alert-dialog'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@workspace/ui/components/card";
+} from '@workspace/ui/components/card'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@workspace/ui/components/dropdown-menu";
+} from '@workspace/ui/components/dropdown-menu'
 import {
   Empty,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from "@workspace/ui/components/empty";
-import { Input } from "@workspace/ui/components/input";
+} from '@workspace/ui/components/empty'
+import { Input } from '@workspace/ui/components/input'
 import {
   Table,
   TableBody,
@@ -55,75 +55,78 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@workspace/ui/components/table";
-import { AnimatePresence, motion } from "motion/react";
-import { useMemo, useState } from "react";
-import { toast } from "sonner";
-import { TableSkeleton } from "@/components/hr/table-skeleton";
-import { useDebounce } from "@/hooks/use-debounce";
-import { useTranslations } from "@/i18n";
-import { deleteClassroom, getClassrooms } from "@/school/functions/classrooms";
+} from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
+import { useMemo, useState } from 'react'
+import { toast } from 'sonner'
+import { TableSkeleton } from '@/components/hr/table-skeleton'
+import { useDebounce } from '@/hooks/use-debounce'
+import { useTranslations } from '@/i18n'
+import { deleteClassroom, getClassrooms } from '@/school/functions/classrooms'
 
 interface ClassroomItem {
   classroom: {
-    id: string;
-    name: string;
-    code: string;
-    type: string;
-    capacity: number;
-    status: "active" | "maintenance" | "inactive";
-  };
-  assignedClassesCount: number;
+    id: string
+    name: string
+    code: string
+    type: string
+    capacity: number
+    status: 'active' | 'maintenance' | 'inactive'
+  }
+  assignedClassesCount: number
 }
 
 interface ClassroomsTableProps {
   filters?: {
-    search?: string;
-    status?: string;
-  };
+    search?: string
+    status?: string
+  }
 }
 
-const DEFAULT_FILTERS = {};
+const DEFAULT_FILTERS = {}
 
 export function ClassroomsTable({
   filters = DEFAULT_FILTERS,
 }: ClassroomsTableProps) {
-  const t = useTranslations();
-  const navigate = useNavigate();
-  const [searchInput, setSearchInput] = useState(filters.search || "");
-  const [itemToDelete, setItemToDelete] = useState<ClassroomItem | null>(null);
-  const debouncedSearch = useDebounce(searchInput, 500);
+  const t = useTranslations()
+  const navigate = useNavigate()
+  const [searchInput, setSearchInput] = useState(filters.search || '')
+  const [itemToDelete, setItemToDelete] = useState<ClassroomItem | null>(null)
+  const debouncedSearch = useDebounce(searchInput, 500)
 
   const { data, isLoading, refetch } = useQuery({
-    queryKey: ["classrooms", { search: debouncedSearch }],
+    queryKey: ['classrooms', { search: debouncedSearch }],
     queryFn: async () => {
       const result = await getClassrooms({
         data: {
           search: debouncedSearch,
         },
-      });
-      return result as unknown as ClassroomItem[];
+      })
+      return result as unknown as ClassroomItem[]
     },
-  });
+  })
 
   const handleDelete = async () => {
-    if (!itemToDelete) return;
+    if (!itemToDelete)
+      return
     try {
-      await deleteClassroom({ data: itemToDelete.classroom.id });
-      toast.success(t.common.deleteSuccess());
-      refetch();
-    } catch {
-      toast.error(t.common.error());
-    } finally {
-      setItemToDelete(null);
+      await deleteClassroom({ data: itemToDelete.classroom.id })
+      toast.success(t.common.deleteSuccess())
+      refetch()
     }
-  };
+    catch {
+      toast.error(t.common.error())
+    }
+    finally {
+      setItemToDelete(null)
+    }
+  }
 
   const columns = useMemo<ColumnDef<ClassroomItem>[]>(
     () => [
       {
-        accessorKey: "classroom.name",
-        header: "Nom",
+        accessorKey: 'classroom.name',
+        header: 'Nom',
         cell: ({ row }) => (
           <div>
             <div className="font-bold text-foreground">
@@ -136,8 +139,8 @@ export function ClassroomsTable({
         ),
       },
       {
-        accessorKey: "classroom.type",
-        header: "Type",
+        accessorKey: 'classroom.type',
+        header: 'Type',
         cell: ({ row }) => (
           <Badge variant="secondary" className="font-medium">
             <span className="capitalize">{row.original.classroom.type}</span>
@@ -145,8 +148,8 @@ export function ClassroomsTable({
         ),
       },
       {
-        accessorKey: "classroom.capacity",
-        header: "Capacité",
+        accessorKey: 'classroom.capacity',
+        header: 'Capacité',
         cell: ({ row }) => (
           <div className="flex items-center gap-2">
             <div className="p-1 rounded bg-muted/20">
@@ -159,8 +162,8 @@ export function ClassroomsTable({
         ),
       },
       {
-        id: "assigned",
-        header: "Classes assignées",
+        id: 'assigned',
+        header: 'Classes assignées',
         cell: ({ row }) => (
           <div className="flex items-center gap-2">
             <div className="p-1 rounded bg-muted/20">
@@ -173,34 +176,34 @@ export function ClassroomsTable({
         ),
       },
       {
-        accessorKey: "classroom.status",
-        header: "Statut",
+        accessorKey: 'classroom.status',
+        header: 'Statut',
         cell: ({ row }) => {
-          const status = row.original.classroom.status;
+          const status = row.original.classroom.status
           return (
             <Badge
-              variant={status === "active" ? "default" : "secondary"}
+              variant={status === 'active' ? 'default' : 'secondary'}
               className={`rounded-lg capitalize transition-colors ${
-                status === "active"
-                  ? "bg-primary/10 text-primary hover:bg-primary/20 border-primary/20"
-                  : "bg-muted text-muted-foreground"
+                status === 'active'
+                  ? 'bg-primary/10 text-primary hover:bg-primary/20 border-primary/20'
+                  : 'bg-muted text-muted-foreground'
               }`}
             >
-              {status === "active"
-                ? "Actif"
-                : status === "maintenance"
-                  ? "Maintenance"
-                  : "Inactif"}
+              {status === 'active'
+                ? 'Actif'
+                : status === 'maintenance'
+                  ? 'Maintenance'
+                  : 'Inactif'}
             </Badge>
-          );
+          )
         },
       },
       {
-        id: "actions",
+        id: 'actions',
         cell: ({ row }) => (
           <DropdownMenu>
             <DropdownMenuTrigger
-              render={
+              render={(
                 <Button
                   variant="ghost"
                   size="icon"
@@ -208,7 +211,7 @@ export function ClassroomsTable({
                 >
                   <IconDots className="h-4 w-4" />
                 </Button>
-              }
+              )}
             />
             <DropdownMenuContent
               align="end"
@@ -219,8 +222,7 @@ export function ClassroomsTable({
                 onClick={() =>
                   navigate({
                     to: `/spaces/classrooms/${row.original.classroom.id}`,
-                  })
-                }
+                  })}
               >
                 <IconEye className="mr-2 h-4 w-4 text-muted-foreground" />
                 {t.common.view()}
@@ -238,7 +240,7 @@ export function ClassroomsTable({
       },
     ],
     [navigate, t],
-  );
+  )
 
   const table = useReactTable({
     data: data || [],
@@ -250,7 +252,7 @@ export function ClassroomsTable({
         pageSize: 10,
       },
     },
-  });
+  })
 
   if (isLoading) {
     return (
@@ -259,11 +261,11 @@ export function ClassroomsTable({
           <TableSkeleton columns={6} rows={5} />
         </CardContent>
       </Card>
-    );
+    )
   }
 
-  const hasNoData = !data || data.length === 0;
-  const hasNoResults = hasNoData && debouncedSearch;
+  const hasNoData = !data || data.length === 0
+  const hasNoResults = hasNoData && debouncedSearch
 
   return (
     <div className="space-y-6">
@@ -278,7 +280,7 @@ export function ClassroomsTable({
               <Input
                 placeholder={t.common.search()}
                 value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
+                onChange={e => setSearchInput(e.target.value)}
                 className="pl-9 h-9 rounded-xl border-border/40 bg-background/50 focus:bg-background transition-colors"
               />
             </div>
@@ -318,12 +320,12 @@ export function ClassroomsTable({
               <div className="hidden md:block">
                 <Table>
                   <TableHeader className="bg-muted/50">
-                    {table.getHeaderGroups().map((headerGroup) => (
+                    {table.getHeaderGroups().map(headerGroup => (
                       <TableRow
                         key={headerGroup.id}
                         className="hover:bg-transparent border-border/40"
                       >
-                        {headerGroup.headers.map((header) => (
+                        {headerGroup.headers.map(header => (
                           <TableHead
                             key={header.id}
                             className="font-semibold text-muted-foreground"
@@ -349,7 +351,7 @@ export function ClassroomsTable({
                           transition={{ duration: 0.15, delay: index * 0.03 }}
                           className="group hover:bg-muted/30 border-border/40 transition-colors"
                         >
-                          {row.getVisibleCells().map((cell) => (
+                          {row.getVisibleCells().map(cell => (
                             <TableCell key={cell.id}>
                               {flexRender(
                                 cell.column.columnDef.cell,
@@ -381,15 +383,15 @@ export function ClassroomsTable({
                           </div>
                           <Badge
                             variant={
-                              item.classroom.status === "active"
-                                ? "default"
-                                : "secondary"
+                              item.classroom.status === 'active'
+                                ? 'default'
+                                : 'secondary'
                             }
                             className="capitalize rounded-md text-[10px]"
                           >
-                            {item.classroom.status === "active"
-                              ? "Actif"
-                              : "Inactif"}
+                            {item.classroom.status === 'active'
+                              ? 'Actif'
+                              : 'Inactif'}
                           </Badge>
                         </div>
                         <Button
@@ -399,8 +401,7 @@ export function ClassroomsTable({
                           onClick={() =>
                             navigate({
                               to: `/spaces/classrooms/${item.classroom.id}`,
-                            })
-                          }
+                            })}
                         >
                           <IconEye className="h-4 w-4" />
                         </Button>
@@ -448,21 +449,26 @@ export function ClassroomsTable({
           {!hasNoData && table.getPageCount() > 1 && (
             <div className="flex items-center justify-between p-4 border-t border-border/40 bg-muted/5">
               <div className="text-sm text-muted-foreground font-medium">
-                {t.common.showing()}{" "}
+                {t.common.showing()}
+                {' '}
                 <span className="font-bold text-foreground">
-                  {table.getState().pagination.pageIndex *
-                    table.getState().pagination.pageSize +
-                    1}
-                </span>{" "}
-                -{" "}
+                  {table.getState().pagination.pageIndex
+                    * table.getState().pagination.pageSize
+                    + 1}
+                </span>
+                {' '}
+                -
+                {' '}
                 <span className="font-bold text-foreground">
                   {Math.min(
-                    (table.getState().pagination.pageIndex + 1) *
-                      table.getState().pagination.pageSize,
+                    (table.getState().pagination.pageIndex + 1)
+                    * table.getState().pagination.pageSize,
                     data.length,
                   )}
-                </span>{" "}
-                {t.common.of()}{" "}
+                </span>
+                {' '}
+                {t.common.of()}
+                {' '}
                 <span className="font-bold text-foreground">{data.length}</span>
               </div>
               <div className="flex gap-2">
@@ -492,7 +498,7 @@ export function ClassroomsTable({
 
       <AlertDialog
         open={!!itemToDelete}
-        onOpenChange={(open) => !open && setItemToDelete(null)}
+        onOpenChange={open => !open && setItemToDelete(null)}
       >
         <AlertDialogContent className="backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6">
           <AlertDialogHeader>
@@ -501,7 +507,7 @@ export function ClassroomsTable({
             </AlertDialogTitle>
             <AlertDialogDescription className="text-muted-foreground/80">
               {t.dialogs.deleteConfirmation.description({
-                item: itemToDelete ? itemToDelete.classroom.name : "",
+                item: itemToDelete ? itemToDelete.classroom.name : '',
               })}
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -519,5 +525,5 @@ export function ClassroomsTable({
         </AlertDialogContent>
       </AlertDialog>
     </div>
-  );
+  )
 }

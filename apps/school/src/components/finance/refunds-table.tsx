@@ -1,7 +1,7 @@
-import { IconCheck, IconRotate, IconX } from "@tabler/icons-react";
-import { Badge } from "@workspace/ui/components/badge";
-import { Button } from "@workspace/ui/components/button";
-import { Skeleton } from "@workspace/ui/components/skeleton";
+import { IconCheck, IconRotate, IconX } from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -9,55 +9,55 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@workspace/ui/components/table";
-import { AnimatePresence, motion } from "motion/react";
-import { useTranslations } from "@/i18n";
-import { generateUUID } from "@/utils/generateUUID";
+} from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
+import { useTranslations } from '@/i18n'
+import { generateUUID } from '@/utils/generateUUID'
 
 interface Refund {
-  id: string;
-  studentName: string;
-  amount: number;
-  reason: string;
-  status: string;
-  requestedAt: string;
+  id: string
+  studentName: string
+  amount: number
+  reason: string
+  status: string
+  requestedAt: string
 }
 
 interface RefundsTableProps {
-  refunds: Refund[];
-  isLoading?: boolean;
-  onApprove?: (id: string) => void;
-  onReject?: (id: string) => void;
+  refunds: Refund[]
+  isLoading?: boolean
+  onApprove?: (id: string) => void
+  onReject?: (id: string) => void
 }
 
 function getStatusVariant(status: string) {
   switch (status) {
-    case "approved":
-      return "default";
-    case "pending":
-      return "outline";
-    case "rejected":
-      return "destructive";
-    case "processed":
-      return "secondary";
+    case 'approved':
+      return 'default'
+    case 'pending':
+      return 'outline'
+    case 'rejected':
+      return 'destructive'
+    case 'processed':
+      return 'secondary'
     default:
-      return "outline";
+      return 'outline'
   }
 }
 
 function formatCurrency(amount: number) {
-  return new Intl.NumberFormat("fr-FR", {
-    style: "decimal",
+  return new Intl.NumberFormat('fr-FR', {
+    style: 'decimal',
     minimumFractionDigits: 0,
-  }).format(amount);
+  }).format(amount)
 }
 
 function formatDate(dateStr: string) {
-  return new Intl.DateTimeFormat("fr-FR", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(dateStr));
+  return new Intl.DateTimeFormat('fr-FR', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  }).format(new Date(dateStr))
 }
 
 export function RefundsTable({
@@ -66,7 +66,7 @@ export function RefundsTable({
   onApprove,
   onReject,
 }: RefundsTableProps) {
-  const t = useTranslations();
+  const t = useTranslations()
 
   if (isLoading) {
     return (
@@ -75,7 +75,7 @@ export function RefundsTable({
           <Skeleton key={generateUUID()} className="h-12 w-full rounded-xl" />
         ))}
       </div>
-    );
+    )
   }
 
   if (refunds.length === 0) {
@@ -89,7 +89,7 @@ export function RefundsTable({
           {t.finance.refunds.description()}
         </p>
       </div>
-    );
+    )
   }
 
   return (
@@ -130,7 +130,8 @@ export function RefundsTable({
                     {refund.studentName}
                   </TableCell>
                   <TableCell className="text-right font-bold tabular-nums">
-                    {formatCurrency(refund.amount)}{" "}
+                    {formatCurrency(refund.amount)}
+                    {' '}
                     <span className="text-xs text-muted-foreground ml-1">
                       FCFA
                     </span>
@@ -153,15 +154,16 @@ export function RefundsTable({
                         processed: t.finance.refunds.status.processed,
                       }[
                         refund.status as
-                          | "pending"
-                          | "approved"
-                          | "rejected"
-                          | "processed"
+                        | 'pending'
+                        | 'approved'
+                        | 'rejected'
+                        | 'processed'
                       ]()}
                     </Badge>
-                  </TableCell>{" "}
+                  </TableCell>
+                  {' '}
                   <TableCell className="text-right">
-                    {refund.status === "pending" && (
+                    {refund.status === 'pending' && (
                       <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <Button
                           variant="ghost"
@@ -219,10 +221,10 @@ export function RefundsTable({
                     processed: t.finance.refunds.status.processed,
                   }[
                     refund.status as
-                      | "pending"
-                      | "approved"
-                      | "rejected"
-                      | "processed"
+                    | 'pending'
+                    | 'approved'
+                    | 'rejected'
+                    | 'processed'
                   ]()}
                 </Badge>
               </div>
@@ -232,7 +234,8 @@ export function RefundsTable({
                   {t.finance.amount()}
                 </div>
                 <div className="font-bold text-lg">
-                  {formatCurrency(refund.amount)}{" "}
+                  {formatCurrency(refund.amount)}
+                  {' '}
                   <span className="text-sm font-normal text-muted-foreground">
                     FCFA
                   </span>
@@ -247,7 +250,7 @@ export function RefundsTable({
                 </div>
               )}
 
-              {refund.status === "pending" && (
+              {refund.status === 'pending' && (
                 <div className="flex gap-2 pt-2 border-t border-border/30">
                   <Button
                     variant="outline"
@@ -272,5 +275,5 @@ export function RefundsTable({
         </AnimatePresence>
       </div>
     </>
-  );
+  )
 }

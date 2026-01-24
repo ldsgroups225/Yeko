@@ -15,211 +15,211 @@ import {
   IconSchool,
   IconShield,
   IconUsers,
-} from "@tabler/icons-react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Badge } from "@workspace/ui/components/badge";
-import { Button } from "@workspace/ui/components/button";
+} from '@tabler/icons-react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@workspace/ui/components/card";
-import { DeleteConfirmationDialog } from "@workspace/ui/components/delete-confirmation-dialog";
+} from '@workspace/ui/components/card'
+import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@workspace/ui/components/dropdown-menu";
-import { Separator } from "@workspace/ui/components/separator";
-import { Skeleton } from "@workspace/ui/components/skeleton";
+} from '@workspace/ui/components/dropdown-menu'
+import { Separator } from '@workspace/ui/components/separator'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@workspace/ui/components/tabs";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { CreateAdminDialog } from "@/components/schools/create-admin-dialog";
-import { schoolUsersQueryOptions } from "@/integrations/tanstack-query/school-users-options";
+} from '@workspace/ui/components/tabs'
+import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
+import { CreateAdminDialog } from '@/components/schools/create-admin-dialog'
+import { schoolUsersQueryOptions } from '@/integrations/tanstack-query/school-users-options'
 import {
   deleteSchoolMutationOptions,
   schoolQueryOptions,
-} from "@/integrations/tanstack-query/schools-options";
+} from '@/integrations/tanstack-query/schools-options'
 import {
   removeUserMutationOptions,
   suspendUserMutationOptions,
-} from "@/integrations/tanstack-query/user-actions-options";
-import { useLogger } from "@/lib/logger";
-import { parseServerFnError } from "@/utils/error-handlers";
-import { formatDate } from "@/utils/formatDate";
+} from '@/integrations/tanstack-query/user-actions-options'
+import { useLogger } from '@/lib/logger'
+import { parseServerFnError } from '@/utils/error-handlers'
+import { formatDate } from '@/utils/formatDate'
 
-export const Route = createFileRoute("/_auth/app/schools/$schoolId")({
+export const Route = createFileRoute('/_auth/app/schools/$schoolId')({
   component: SchoolDetails,
-});
+})
 
 function SchoolDetails() {
-  const { schoolId } = Route.useParams();
-  const { logger } = useLogger();
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const { schoolId } = Route.useParams()
+  const { logger } = useLogger()
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [selectedUserForSuspend, setSelectedUserForSuspend] = useState<{
-    id: string;
-    name: string;
-  } | null>(null);
+    id: string
+    name: string
+  } | null>(null)
   const [selectedUserForRemove, setSelectedUserForRemove] = useState<{
-    id: string;
-    name: string;
-  } | null>(null);
-  const [suspendDialogOpen, setSuspendDialogOpen] = useState(false);
-  const [removeDialogOpen, setRemoveDialogOpen] = useState(false);
+    id: string
+    name: string
+  } | null>(null)
+  const [suspendDialogOpen, setSuspendDialogOpen] = useState(false)
+  const [removeDialogOpen, setRemoveDialogOpen] = useState(false)
 
   const {
     data: school,
     isLoading,
     error,
-  } = useQuery(schoolQueryOptions(schoolId));
+  } = useQuery(schoolQueryOptions(schoolId))
   const { data: usersData, isLoading: usersLoading } = useQuery(
     schoolUsersQueryOptions({ schoolId }),
-  );
+  )
 
   // Process users data
-  const users = usersData?.data?.users || [];
-  const adminCount = users.filter((user) =>
-    user.roles?.includes("school_administrator"),
-  ).length;
-  const teacherCount = users.filter((user) =>
-    user.roles?.includes("teacher"),
-  ).length;
+  const users = usersData?.data?.users || []
+  const adminCount = users.filter(user =>
+    user.roles?.includes('school_administrator'),
+  ).length
+  const teacherCount = users.filter(user =>
+    user.roles?.includes('teacher'),
+  ).length
   const staffCount = users.filter(
-    (user) =>
-      user.roles?.includes("staff") ||
-      (user.roles &&
-        !user.roles.includes("school_administrator") &&
-        !user.roles.includes("teacher")),
-  ).length;
+    user =>
+      user.roles?.includes('staff')
+      || (user.roles
+        && !user.roles.includes('school_administrator')
+        && !user.roles.includes('teacher')),
+  ).length
 
   // Delete mutation
   const deleteSchoolMutation = useMutation({
     ...deleteSchoolMutationOptions,
     onSuccess: () => {
-      logger.info("School deleted successfully", {
+      logger.info('School deleted successfully', {
         schoolId,
-        action: "delete_school_success",
+        action: 'delete_school_success',
         timestamp: new Date().toISOString(),
-      });
+      })
 
       // Invalidate queries
-      queryClient.invalidateQueries({ queryKey: ["schools"] });
-      queryClient.invalidateQueries({ queryKey: ["schoolUsers"] });
+      queryClient.invalidateQueries({ queryKey: ['schools'] })
+      queryClient.invalidateQueries({ queryKey: ['schoolUsers'] })
 
       // Navigate to schools list
-      navigate({ to: "/app/schools" });
+      navigate({ to: '/app/schools' })
     },
     onError: (error: any) => {
       const message = parseServerFnError(
         error,
-        "Une erreur est survenue lors de la suppression de l'école",
-      );
-      toast.error(message);
-      console.error("School deletion failed:", error);
+        'Une erreur est survenue lors de la suppression de l\'école',
+      )
+      toast.error(message)
+      console.error('School deletion failed:', error)
     },
-  });
+  })
 
   const handleDelete = () => {
-    deleteSchoolMutation.mutate({ id: schoolId });
-  };
+    deleteSchoolMutation.mutate({ id: schoolId })
+  }
 
   // Suspend user mutation
   const suspendUserMutation = useMutation({
     ...suspendUserMutationOptions,
     onSuccess: () => {
-      logger.info("User suspended successfully", {
+      logger.info('User suspended successfully', {
         schoolId,
         userId: selectedUserForSuspend?.id,
-        action: "suspend_user_success",
+        action: 'suspend_user_success',
         timestamp: new Date().toISOString(),
-      });
-      toast.success("Utilisateur suspendu avec succès");
-      queryClient.invalidateQueries({ queryKey: ["schoolUsers"] });
-      setSuspendDialogOpen(false);
-      setSelectedUserForSuspend(null);
+      })
+      toast.success('Utilisateur suspendu avec succès')
+      queryClient.invalidateQueries({ queryKey: ['schoolUsers'] })
+      setSuspendDialogOpen(false)
+      setSelectedUserForSuspend(null)
     },
     onError: (error: any) => {
       const message = parseServerFnError(
         error,
-        "Une erreur est survenue lors de la suspension de l'utilisateur",
-      );
-      toast.error(message);
-      console.error("User suspension failed:", error);
+        'Une erreur est survenue lors de la suspension de l\'utilisateur',
+      )
+      toast.error(message)
+      console.error('User suspension failed:', error)
     },
-  });
+  })
 
   const handleSuspendUser = () => {
     if (selectedUserForSuspend) {
       suspendUserMutation.mutate({
         userId: selectedUserForSuspend.id,
         schoolId,
-      });
+      })
     }
-  };
+  }
 
   // Remove user mutation
   const removeUserMutation = useMutation({
     ...removeUserMutationOptions,
     onSuccess: () => {
-      logger.info("User removed successfully", {
+      logger.info('User removed successfully', {
         schoolId,
         userId: selectedUserForRemove?.id,
-        action: "remove_user_success",
+        action: 'remove_user_success',
         timestamp: new Date().toISOString(),
-      });
-      toast.success("Utilisateur supprimé avec succès");
-      queryClient.invalidateQueries({ queryKey: ["schoolUsers"] });
-      setRemoveDialogOpen(false);
-      setSelectedUserForRemove(null);
+      })
+      toast.success('Utilisateur supprimé avec succès')
+      queryClient.invalidateQueries({ queryKey: ['schoolUsers'] })
+      setRemoveDialogOpen(false)
+      setSelectedUserForRemove(null)
     },
     onError: (error: any) => {
       const message = parseServerFnError(
         error,
-        "Une erreur est survenue lors de la suppression de l'utilisateur",
-      );
-      toast.error(message);
-      console.error("User removal failed:", error);
+        'Une erreur est survenue lors de la suppression de l\'utilisateur',
+      )
+      toast.error(message)
+      console.error('User removal failed:', error)
     },
-  });
+  })
 
   const handleRemoveUser = () => {
     if (selectedUserForRemove) {
-      removeUserMutation.mutate({ userId: selectedUserForRemove.id, schoolId });
+      removeUserMutation.mutate({ userId: selectedUserForRemove.id, schoolId })
     }
-  };
+  }
 
-  const openSuspendDialog = (user: { id: string; name: string }) => {
-    setSelectedUserForSuspend(user);
-    setSuspendDialogOpen(true);
-  };
+  const openSuspendDialog = (user: { id: string, name: string }) => {
+    setSelectedUserForSuspend(user)
+    setSuspendDialogOpen(true)
+  }
 
-  const openRemoveDialog = (user: { id: string; name: string }) => {
-    setSelectedUserForRemove(user);
-    setRemoveDialogOpen(true);
-  };
+  const openRemoveDialog = (user: { id: string, name: string }) => {
+    setSelectedUserForRemove(user)
+    setRemoveDialogOpen(true)
+  }
 
   useEffect(() => {
     if (school) {
-      logger.info("School details viewed", {
+      logger.info('School details viewed', {
         schoolId,
         schoolName: school.name,
         timestamp: new Date().toISOString(),
-      });
+      })
     }
-  }, [school, schoolId, logger]);
+  }, [school, schoolId, logger])
 
   if (isLoading) {
     return (
@@ -235,7 +235,7 @@ function SchoolDetails() {
 
         {/* Info cards skeleton */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {["overview", "contact", "stats", "settings"].map((type) => (
+          {['overview', 'contact', 'stats', 'settings'].map(type => (
             <div key={`skeleton-${type}`} className="space-y-2">
               <Skeleton className="h-24 w-full" />
             </div>
@@ -248,49 +248,49 @@ function SchoolDetails() {
           <Skeleton className="h-64 w-full" />
         </div>
       </div>
-    );
+    )
   }
 
   if (error || !school) {
     return (
       <div className="flex flex-col items-center justify-center h-96 gap-4">
         <div className="text-destructive font-medium">
-          {error?.message || "École non trouvée"}
+          {error?.message || 'École non trouvée'}
         </div>
         <Link to="/app/schools">
           <Button variant="outline">Retour à la liste</Button>
         </Link>
       </div>
-    );
+    )
   }
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case "active":
+      case 'active':
         return (
           <Badge variant="default">
             <IconCircleCheck className="mr-1 h-3 w-3" />
             Active
           </Badge>
-        );
-      case "inactive":
+        )
+      case 'inactive':
         return (
           <Badge variant="secondary">
             <IconClock className="mr-1 h-3 w-3" />
             Inactive
           </Badge>
-        );
-      case "suspended":
+        )
+      case 'suspended':
         return (
           <Badge variant="destructive">
             <IconCircleX className="mr-1 h-3 w-3" />
             Suspendue
           </Badge>
-        );
+        )
       default:
-        return <Badge variant="secondary">{status}</Badge>;
+        return <Badge variant="secondary">{status}</Badge>
     }
-  };
+  }
 
   return (
     <div className="space-y-6">
@@ -321,7 +321,7 @@ function SchoolDetails() {
                 <span>
                   Rejoint le
                   <span className="ml-1 capitalize">
-                    {formatDate(school.createdAt, "MEDIUM")}
+                    {formatDate(school.createdAt, 'MEDIUM')}
                   </span>
                 </span>
               </div>
@@ -374,7 +374,7 @@ function SchoolDetails() {
                   <div className="space-y-1">
                     <p className="text-sm font-medium leading-none">Adresse</p>
                     <p className="text-sm text-muted-foreground">
-                      {school.address || "Non renseignée"}
+                      {school.address || 'Non renseignée'}
                     </p>
                   </div>
                 </div>
@@ -385,7 +385,7 @@ function SchoolDetails() {
                       Téléphone
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {school.phone || "Non renseigné"}
+                      {school.phone || 'Non renseigné'}
                     </p>
                   </div>
                 </div>
@@ -394,7 +394,7 @@ function SchoolDetails() {
                   <div className="space-y-1">
                     <p className="text-sm font-medium leading-none">Email</p>
                     <p className="text-sm text-muted-foreground">
-                      {school.email || "Non renseigné"}
+                      {school.email || 'Non renseigné'}
                     </p>
                   </div>
                 </div>
@@ -453,202 +453,204 @@ function SchoolDetails() {
               </div>
             </CardHeader>
             <CardContent>
-              {usersLoading ? (
-                <div className="space-y-4">
-                  <div className="grid gap-4 md:grid-cols-3">
-                    {[1, 2, 3].map((i) => (
-                      <Card key={i}>
-                        <CardContent className="pt-6">
-                          <Skeleton className="h-8 w-16 mb-2" />
-                          <Skeleton className="h-4 w-24" />
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                  <Separator />
-                  <div className="space-y-2">
-                    {[1, 2, 3, 4].map((i) => (
-                      <div
-                        key={i}
-                        className="flex items-center gap-4 p-4 border rounded-lg"
-                      >
-                        <Skeleton className="h-10 w-10 rounded-full" />
-                        <div className="space-y-2 flex-1">
-                          <Skeleton className="h-4 w-32" />
-                          <Skeleton className="h-3 w-48" />
-                        </div>
-                        <Skeleton className="h-6 w-20" />
+              {usersLoading
+                ? (
+                    <div className="space-y-4">
+                      <div className="grid gap-4 md:grid-cols-3">
+                        {[1, 2, 3].map(i => (
+                          <Card key={i}>
+                            <CardContent className="pt-6">
+                              <Skeleton className="h-8 w-16 mb-2" />
+                              <Skeleton className="h-4 w-24" />
+                            </CardContent>
+                          </Card>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                </div>
-              ) : users.length === 0 ? (
-                <div className="space-y-4">
-                  {/* User roles summary */}
-                  <div className="grid gap-4 md:grid-cols-3">
-                    <Card>
-                      <CardContent className="pt-6">
-                        <div className="text-2xl font-bold">0</div>
-                        <p className="text-xs text-muted-foreground">
-                          Administrateurs
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card>
-                      <CardContent className="pt-6">
-                        <div className="text-2xl font-bold">0</div>
-                        <p className="text-xs text-muted-foreground">
-                          Enseignants
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card>
-                      <CardContent className="pt-6">
-                        <div className="text-2xl font-bold">0</div>
-                        <p className="text-xs text-muted-foreground">
-                          Personnel
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </div>
-
-                  <Separator />
-
-                  {/* Empty state */}
-                  <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
-                    <IconUsers className="h-12 w-12 mb-4 opacity-20" />
-                    <p className="font-medium">
-                      Aucun utilisateur pour le moment
-                    </p>
-                    <p className="text-sm">
-                      Commencez par ajouter des administrateurs et enseignants
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {/* User roles summary */}
-                  <div className="grid gap-4 md:grid-cols-3">
-                    <Card>
-                      <CardContent className="pt-6">
-                        <div className="text-2xl font-bold">{adminCount}</div>
-                        <p className="text-xs text-muted-foreground">
-                          Administrateurs
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card>
-                      <CardContent className="pt-6">
-                        <div className="text-2xl font-bold">{teacherCount}</div>
-                        <p className="text-xs text-muted-foreground">
-                          Enseignants
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card>
-                      <CardContent className="pt-6">
-                        <div className="text-2xl font-bold">{staffCount}</div>
-                        <p className="text-xs text-muted-foreground">
-                          Personnel
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </div>
-
-                  <Separator />
-
-                  {/* User list */}
-                  <div className="space-y-2">
-                    {users.map((user) => (
-                      <div
-                        key={user.id}
-                        className="flex items-center gap-4 p-4 border rounded-lg hover:bg-muted/50 transition-colors"
-                      >
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                          <span className="text-sm font-medium text-primary">
-                            {user.name
-                              ?.split(" ")
-                              .map((n) => n[0])
-                              .join("")
-                              .toUpperCase()
-                              .slice(0, 2) || "U"}
-                          </span>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <p className="text-sm font-medium truncate">
-                              {user.name}
-                            </p>
-                            <Badge variant="outline" className="text-xs">
-                              {user.roles?.[0] || "Utilisateur"}
-                            </Badge>
-                          </div>
-                          <p className="text-sm text-muted-foreground truncate">
-                            {user.email}
-                          </p>
-                          {user.phone && (
-                            <p className="text-xs text-muted-foreground">
-                              {user.phone}
-                            </p>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Badge
-                            variant={
-                              user.status === "active" ? "default" : "secondary"
-                            }
-                            className="text-xs"
+                      <Separator />
+                      <div className="space-y-2">
+                        {[1, 2, 3, 4].map(i => (
+                          <div
+                            key={i}
+                            className="flex items-center gap-4 p-4 border rounded-lg"
                           >
-                            {user.status === "active"
-                              ? "Actif"
-                              : user.status === "inactive"
-                                ? "Inactif"
-                                : "Suspendu"}
-                          </Badge>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger
-                              render={
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-8 w-8"
-                                >
-                                  <IconDotsVertical className="h-4 w-4" />
-                                </Button>
-                              }
-                            />
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem
-                                onClick={() =>
-                                  openSuspendDialog({
-                                    id: user.id,
-                                    name: user.name,
-                                  })
-                                }
-                                disabled={user.status === "suspended"}
-                              >
-                                Suspendre
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem
-                                onClick={() =>
-                                  openRemoveDialog({
-                                    id: user.id,
-                                    name: user.name,
-                                  })
-                                }
-                                className="text-destructive focus:text-destructive"
-                              >
-                                Supprimer
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
+                            <Skeleton className="h-10 w-10 rounded-full" />
+                            <div className="space-y-2 flex-1">
+                              <Skeleton className="h-4 w-32" />
+                              <Skeleton className="h-3 w-48" />
+                            </div>
+                            <Skeleton className="h-6 w-20" />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )
+                : users.length === 0
+                  ? (
+                      <div className="space-y-4">
+                        {/* User roles summary */}
+                        <div className="grid gap-4 md:grid-cols-3">
+                          <Card>
+                            <CardContent className="pt-6">
+                              <div className="text-2xl font-bold">0</div>
+                              <p className="text-xs text-muted-foreground">
+                                Administrateurs
+                              </p>
+                            </CardContent>
+                          </Card>
+                          <Card>
+                            <CardContent className="pt-6">
+                              <div className="text-2xl font-bold">0</div>
+                              <p className="text-xs text-muted-foreground">
+                                Enseignants
+                              </p>
+                            </CardContent>
+                          </Card>
+                          <Card>
+                            <CardContent className="pt-6">
+                              <div className="text-2xl font-bold">0</div>
+                              <p className="text-xs text-muted-foreground">
+                                Personnel
+                              </p>
+                            </CardContent>
+                          </Card>
+                        </div>
+
+                        <Separator />
+
+                        {/* Empty state */}
+                        <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
+                          <IconUsers className="h-12 w-12 mb-4 opacity-20" />
+                          <p className="font-medium">
+                            Aucun utilisateur pour le moment
+                          </p>
+                          <p className="text-sm">
+                            Commencez par ajouter des administrateurs et enseignants
+                          </p>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+                    )
+                  : (
+                      <div className="space-y-4">
+                        {/* User roles summary */}
+                        <div className="grid gap-4 md:grid-cols-3">
+                          <Card>
+                            <CardContent className="pt-6">
+                              <div className="text-2xl font-bold">{adminCount}</div>
+                              <p className="text-xs text-muted-foreground">
+                                Administrateurs
+                              </p>
+                            </CardContent>
+                          </Card>
+                          <Card>
+                            <CardContent className="pt-6">
+                              <div className="text-2xl font-bold">{teacherCount}</div>
+                              <p className="text-xs text-muted-foreground">
+                                Enseignants
+                              </p>
+                            </CardContent>
+                          </Card>
+                          <Card>
+                            <CardContent className="pt-6">
+                              <div className="text-2xl font-bold">{staffCount}</div>
+                              <p className="text-xs text-muted-foreground">
+                                Personnel
+                              </p>
+                            </CardContent>
+                          </Card>
+                        </div>
+
+                        <Separator />
+
+                        {/* User list */}
+                        <div className="space-y-2">
+                          {users.map(user => (
+                            <div
+                              key={user.id}
+                              className="flex items-center gap-4 p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                            >
+                              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                                <span className="text-sm font-medium text-primary">
+                                  {user.name
+                                    ?.split(' ')
+                                    .map(n => n[0])
+                                    .join('')
+                                    .toUpperCase()
+                                    .slice(0, 2) || 'U'}
+                                </span>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2">
+                                  <p className="text-sm font-medium truncate">
+                                    {user.name}
+                                  </p>
+                                  <Badge variant="outline" className="text-xs">
+                                    {user.roles?.[0] || 'Utilisateur'}
+                                  </Badge>
+                                </div>
+                                <p className="text-sm text-muted-foreground truncate">
+                                  {user.email}
+                                </p>
+                                {user.phone && (
+                                  <p className="text-xs text-muted-foreground">
+                                    {user.phone}
+                                  </p>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Badge
+                                  variant={
+                                    user.status === 'active' ? 'default' : 'secondary'
+                                  }
+                                  className="text-xs"
+                                >
+                                  {user.status === 'active'
+                                    ? 'Actif'
+                                    : user.status === 'inactive'
+                                      ? 'Inactif'
+                                      : 'Suspendu'}
+                                </Badge>
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger
+                                    render={(
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-8 w-8"
+                                      >
+                                        <IconDotsVertical className="h-4 w-4" />
+                                      </Button>
+                                    )}
+                                  />
+                                  <DropdownMenuContent align="end">
+                                    <DropdownMenuItem
+                                      onClick={() =>
+                                        openSuspendDialog({
+                                          id: user.id,
+                                          name: user.name,
+                                        })}
+                                      disabled={user.status === 'suspended'}
+                                    >
+                                      Suspendre
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem
+                                      onClick={() =>
+                                        openRemoveDialog({
+                                          id: user.id,
+                                          name: user.name,
+                                        })}
+                                      className="text-destructive focus:text-destructive"
+                                    >
+                                      Supprimer
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -844,9 +846,9 @@ function SchoolDetails() {
       <DeleteConfirmationDialog
         open={suspendDialogOpen}
         onOpenChange={(open) => {
-          setSuspendDialogOpen(open);
+          setSuspendDialogOpen(open)
           if (!open) {
-            setSelectedUserForSuspend(null);
+            setSelectedUserForSuspend(null)
           }
         }}
         title="Suspendre l'utilisateur"
@@ -860,9 +862,9 @@ function SchoolDetails() {
       <DeleteConfirmationDialog
         open={removeDialogOpen}
         onOpenChange={(open) => {
-          setRemoveDialogOpen(open);
+          setRemoveDialogOpen(open)
           if (!open) {
-            setSelectedUserForRemove(null);
+            setSelectedUserForRemove(null)
           }
         }}
         title="Supprimer l'utilisateur"
@@ -872,5 +874,5 @@ function SchoolDetails() {
         isLoading={removeUserMutation.isPending}
       />
     </div>
-  );
+  )
 }

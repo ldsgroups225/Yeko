@@ -1,74 +1,74 @@
-import type { feeCategories } from "@/schemas/fee-type";
-import { IconPlus, IconTag } from "@tabler/icons-react";
-import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
-import { Button } from "@workspace/ui/components/button";
+import type { feeCategories } from '@/schemas/fee-type'
+import { IconPlus, IconTag } from '@tabler/icons-react'
+import { useQuery } from '@tanstack/react-query'
+import { createFileRoute } from '@tanstack/react-router'
+import { Button } from '@workspace/ui/components/button'
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@workspace/ui/components/card";
-import { DeleteConfirmationDialog } from "@workspace/ui/components/delete-confirmation-dialog";
-import { motion } from "motion/react";
-import { useState } from "react";
-import { toast } from "sonner";
-import { FeeTypeFormDialog, FeeTypesTable } from "@/components/finance";
-import { Breadcrumbs } from "@/components/layout/breadcrumbs";
-import { useTranslations } from "@/i18n";
-import { feeTypesOptions } from "@/lib/queries";
-import { deleteExistingFeeType } from "@/school/functions/fee-types";
+} from '@workspace/ui/components/card'
+import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
+import { motion } from 'motion/react'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { FeeTypeFormDialog, FeeTypesTable } from '@/components/finance'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { useTranslations } from '@/i18n'
+import { feeTypesOptions } from '@/lib/queries'
+import { deleteExistingFeeType } from '@/school/functions/fee-types'
 
-export const Route = createFileRoute("/_auth/accounting/fee-types")({
+export const Route = createFileRoute('/_auth/accounting/fee-types')({
   component: FeeTypesPage,
-});
+})
 
 interface FeeTypeItem {
-  id: string;
-  code: string;
-  name: string;
-  category: string;
-  isMandatory: boolean;
-  isRecurring: boolean;
-  status: string;
+  id: string
+  code: string
+  name: string
+  category: string
+  isMandatory: boolean
+  isRecurring: boolean
+  status: string
 }
 
 interface FeeTypeEditData {
-  id: string;
-  code: string;
-  name: string;
-  nameEn?: string;
-  category: (typeof feeCategories)[number];
-  isMandatory: boolean;
-  isRecurring: boolean;
-  displayOrder: number;
+  id: string
+  code: string
+  name: string
+  nameEn?: string
+  category: (typeof feeCategories)[number]
+  isMandatory: boolean
+  isRecurring: boolean
+  displayOrder: number
 }
 
 function FeeTypesPage() {
-  const t = useTranslations();
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [editData, setEditData] = useState<FeeTypeEditData | null>(null);
+  const t = useTranslations()
+  const [isCreateOpen, setIsCreateOpen] = useState(false)
+  const [editData, setEditData] = useState<FeeTypeEditData | null>(null)
   const [deleteData, setDeleteData] = useState<{
-    id: string;
-    name: string;
-  } | null>(null);
+    id: string
+    name: string
+  } | null>(null)
 
   const {
     data: feeTypes,
     isLoading,
     refetch,
-  } = useQuery(feeTypesOptions.list());
+  } = useQuery(feeTypesOptions.list())
 
-  const feeTypesList: FeeTypeItem[] =
-    feeTypes?.map((ft) => ({
+  const feeTypesList: FeeTypeItem[]
+    = feeTypes?.map(ft => ({
       id: ft.id,
       code: ft.code,
       name: ft.name,
       category: ft.category,
       isMandatory: ft.isMandatory ?? true,
       isRecurring: ft.isRecurring ?? true,
-      status: ft.status ?? "active",
-    })) ?? [];
+      status: ft.status ?? 'active',
+    })) ?? []
 
   const handleEdit = (feeType: FeeTypeItem) => {
     setEditData({
@@ -79,31 +79,33 @@ function FeeTypesPage() {
       isMandatory: feeType.isMandatory,
       isRecurring: feeType.isRecurring,
       displayOrder: 0,
-    });
-  };
+    })
+  }
 
   const handleDeleteClick = (feeType: FeeTypeItem) => {
-    setDeleteData({ id: feeType.id, name: feeType.name });
-  };
+    setDeleteData({ id: feeType.id, name: feeType.name })
+  }
 
   const handleDeleteConfirm = async () => {
-    if (!deleteData) return;
+    if (!deleteData)
+      return
     try {
-      await deleteExistingFeeType({ data: deleteData.id });
-      await refetch();
-      toast.success("Type de frais supprimé");
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Une erreur est survenue",
-      );
+      await deleteExistingFeeType({ data: deleteData.id })
+      await refetch()
+      toast.success('Type de frais supprimé')
     }
-  };
+    catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : 'Une erreur est survenue',
+      )
+    }
+  }
 
   return (
     <div className="space-y-8 p-1">
       <Breadcrumbs
         items={[
-          { label: t.nav.finance(), href: "/accounting" },
+          { label: t.nav.finance(), href: '/accounting' },
           { label: t.finance.feeTypes.title() },
         ]}
       />
@@ -168,14 +170,14 @@ function FeeTypesPage() {
       {editData && (
         <FeeTypeFormDialog
           open={true}
-          onOpenChange={(open) => !open && setEditData(null)}
+          onOpenChange={open => !open && setEditData(null)}
           editData={editData}
         />
       )}
 
       <DeleteConfirmationDialog
         open={!!deleteData}
-        onOpenChange={(open) => !open && setDeleteData(null)}
+        onOpenChange={open => !open && setDeleteData(null)}
         onConfirm={handleDeleteConfirm}
         title={t.accounting.feeTypes.deleteConfirmTitle()}
         description={
@@ -183,11 +185,11 @@ function FeeTypesPage() {
             ? t.accounting.feeTypes.deleteConfirmDescription({
                 name: deleteData.name,
               })
-            : ""
+            : ''
         }
         confirmText={t.common.delete()}
         cancelText={t.common.cancel()}
       />
     </div>
-  );
+  )
 }

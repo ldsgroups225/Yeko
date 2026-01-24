@@ -1,25 +1,25 @@
 /**
  * Teacher Schedule Queries
  */
-import { and, eq, sql } from "drizzle-orm";
-import { getDb } from "../database/setup";
-import { grades, subjects } from "../drizzle/core-schema";
+import { and, eq, sql } from 'drizzle-orm'
+import { getDb } from '../database/setup'
+import { grades, subjects } from '../drizzle/core-schema'
 import {
   classes,
   classrooms,
   timetableSessions,
-} from "../drizzle/school-schema";
+} from '../drizzle/school-schema'
 
 /**
  * Get detailed schedule for a teacher
  */
 export async function getTeacherDetailedSchedule(params: {
-  teacherId: string;
-  schoolYearId: string;
-  startDate?: string;
-  endDate?: string;
+  teacherId: string
+  schoolYearId: string
+  startDate?: string
+  endDate?: string
 }) {
-  const db = getDb();
+  const db = getDb()
 
   const sessions = await db
     .select({
@@ -53,11 +53,11 @@ export async function getTeacherDetailedSchedule(params: {
         eq(classes.schoolYearId, params.schoolYearId),
       ),
     )
-    .orderBy(timetableSessions.dayOfWeek, timetableSessions.startTime);
+    .orderBy(timetableSessions.dayOfWeek, timetableSessions.startTime)
 
   return {
     timetableSessions: sessions,
     substitutionMap: {} as Record<string, any>,
     cancellationMap: {} as Record<string, any>,
-  };
+  }
 }

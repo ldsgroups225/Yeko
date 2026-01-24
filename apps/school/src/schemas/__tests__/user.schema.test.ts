@@ -296,7 +296,7 @@ describe('user Schema Validation', () => {
 
       expect(result.success).toBe(true)
       if (result.success) {
-        expect(result.data.roleIds).toEqual([])
+        expect(result.data.roleIds).toStrictEqual([])
       }
     })
   })

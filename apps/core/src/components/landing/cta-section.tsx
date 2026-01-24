@@ -1,5 +1,5 @@
-import { IconArrowRight, IconSparkles } from "@tabler/icons-react";
-import { Button } from "@workspace/ui/components/button";
+import { IconArrowRight, IconSparkles } from '@tabler/icons-react'
+import { Button } from '@workspace/ui/components/button'
 
 export function CTASection() {
   return (
@@ -27,12 +27,12 @@ export function CTASection() {
             <Button
               size="lg"
               className="group h-14 px-8 text-lg"
-              render={
+              render={(
                 <a href="/signup">
                   Start Free Trial Now
                   <IconArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </a>
-              }
+              )}
             />
             <Button
               variant="outline"
@@ -52,5 +52,5 @@ export function CTASection() {
       <div className="absolute top-1/2 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/2" />
       <div className="absolute top-1/2 right-0 w-96 h-96 bg-secondary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
     </section>
-  );
+  )
 }

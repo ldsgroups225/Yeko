@@ -178,22 +178,26 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
             >
               <SelectTrigger className="rounded-xl h-11 border-border/40 bg-background/50 focus:bg-background transition-all">
                 <SelectValue>
-                  {watch('status') === 'active' ? (
-                    <div className="flex items-center gap-2">
-                      <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                      {t.hr.status.active()}
-                    </div>
-                  ) : watch('status') === 'inactive' ? (
-                    <div className="flex items-center gap-2">
-                      <div className="h-2 w-2 rounded-full bg-slate-400" />
-                      {t.hr.status.inactive()}
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <div className="h-2 w-2 rounded-full bg-amber-500" />
-                      {t.hr.status.on_leave()}
-                    </div>
-                  )}
+                  {watch('status') === 'active'
+                    ? (
+                        <div className="flex items-center gap-2">
+                          <div className="h-2 w-2 rounded-full bg-emerald-500" />
+                          {t.hr.status.active()}
+                        </div>
+                      )
+                    : watch('status') === 'inactive'
+                      ? (
+                          <div className="flex items-center gap-2">
+                            <div className="h-2 w-2 rounded-full bg-slate-400" />
+                            {t.hr.status.inactive()}
+                          </div>
+                        )
+                      : (
+                          <div className="flex items-center gap-2">
+                            <div className="h-2 w-2 rounded-full bg-amber-500" />
+                            {t.hr.status.on_leave()}
+                          </div>
+                        )}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">

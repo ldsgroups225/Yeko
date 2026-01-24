@@ -1,43 +1,45 @@
-import { Button } from "@workspace/ui/components/button";
+import { Button } from '@workspace/ui/components/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@workspace/ui/components/card";
-import { Input } from "@workspace/ui/components/input";
-import { Label } from "@workspace/ui/components/label";
-import { useState } from "react";
-import { authClient } from "@/lib/auth-client";
+} from '@workspace/ui/components/card'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
+import { useState } from 'react'
+import { authClient } from '@/lib/auth-client'
 
 export function EmailLogin() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const handleEmailSignIn = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError("");
+    e.preventDefault()
+    setIsLoading(true)
+    setError('')
 
     try {
       const result = await authClient.signIn.email({
         email,
         password,
-        callbackURL: "/app",
-      });
+        callbackURL: '/app',
+      })
 
       if (result.error) {
-        setError(result.error.message || "Invalid credentials");
+        setError(result.error.message || 'Invalid credentials')
       }
-    } catch {
-      setError("An error occurred during sign in");
-    } finally {
-      setIsLoading(false);
     }
-  };
+    catch {
+      setError('An error occurred during sign in')
+    }
+    finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
@@ -55,7 +57,7 @@ export function EmailLogin() {
                 type="email"
                 placeholder="Enter your email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={e => setEmail(e.target.value)}
                 required
               />
             </div>
@@ -66,7 +68,7 @@ export function EmailLogin() {
                 type="password"
                 placeholder="Enter your password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={e => setPassword(e.target.value)}
                 required
               />
             </div>
@@ -76,7 +78,7 @@ export function EmailLogin() {
               </div>
             )}
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Signing in..." : "Sign in"}
+              {isLoading ? 'Signing in...' : 'Sign in'}
             </Button>
           </form>
 
@@ -107,9 +109,9 @@ export function EmailLogin() {
               className="w-full mt-4"
               onClick={() => {
                 authClient.signIn.social({
-                  provider: "google",
-                  callbackURL: "/app",
-                });
+                  provider: 'google',
+                  callbackURL: '/app',
+                })
               }}
             >
               <svg
@@ -140,5 +142,5 @@ export function EmailLogin() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

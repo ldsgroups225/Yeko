@@ -1,14 +1,14 @@
-import { IconDots, IconEdit, IconTag, IconTrash } from "@tabler/icons-react";
-import { Badge } from "@workspace/ui/components/badge";
-import { Button } from "@workspace/ui/components/button";
+import { IconDots, IconEdit, IconTag, IconTrash } from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@workspace/ui/components/dropdown-menu";
-import { Skeleton } from "@workspace/ui/components/skeleton";
+} from '@workspace/ui/components/dropdown-menu'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -16,26 +16,26 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@workspace/ui/components/table";
-import { AnimatePresence, motion } from "motion/react";
-import { useTranslations } from "@/i18n";
-import { generateUUID } from "@/utils/generateUUID";
+} from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
+import { useTranslations } from '@/i18n'
+import { generateUUID } from '@/utils/generateUUID'
 
 interface FeeType {
-  id: string;
-  code: string;
-  name: string;
-  category: string;
-  isMandatory: boolean;
-  isRecurring: boolean;
-  status: string;
+  id: string
+  code: string
+  name: string
+  category: string
+  isMandatory: boolean
+  isRecurring: boolean
+  status: string
 }
 
 interface FeeTypesTableProps {
-  feeTypes: FeeType[];
-  isLoading?: boolean;
-  onEdit?: (feeType: FeeType) => void;
-  onDelete?: (feeType: FeeType) => void;
+  feeTypes: FeeType[]
+  isLoading?: boolean
+  onEdit?: (feeType: FeeType) => void
+  onDelete?: (feeType: FeeType) => void
 }
 
 export function FeeTypesTable({
@@ -44,7 +44,7 @@ export function FeeTypesTable({
   onEdit,
   onDelete,
 }: FeeTypesTableProps) {
-  const t = useTranslations();
+  const t = useTranslations()
 
   const getCategoryLabel = (category: string) => {
     const categoryTranslations = {
@@ -57,12 +57,12 @@ export function FeeTypesTable({
       meals: t.finance.feeCategories.meals,
       activities: t.finance.feeCategories.activities,
       other: t.finance.feeCategories.other,
-    };
+    }
     return (
-      categoryTranslations[category as keyof typeof categoryTranslations]?.() ||
-      category
-    );
-  };
+      categoryTranslations[category as keyof typeof categoryTranslations]?.()
+      || category
+    )
+  }
 
   if (isLoading) {
     return (
@@ -71,7 +71,7 @@ export function FeeTypesTable({
           <Skeleton key={generateUUID()} className="h-14 w-full rounded-xl" />
         ))}
       </div>
-    );
+    )
   }
 
   if (feeTypes.length === 0) {
@@ -85,7 +85,7 @@ export function FeeTypesTable({
           {t.finance.feeTypes.description()}
         </p>
       </div>
-    );
+    )
   }
 
   return (
@@ -158,11 +158,11 @@ export function FeeTypesTable({
                   <TableCell>
                     <Badge
                       variant={
-                        feeType.status === "active" ? "default" : "secondary"
+                        feeType.status === 'active' ? 'default' : 'secondary'
                       }
                       className="rounded-md"
                     >
-                      {feeType.status === "active"
+                      {feeType.status === 'active'
                         ? t.common.active()
                         : t.common.inactive()}
                     </Badge>
@@ -170,7 +170,7 @@ export function FeeTypesTable({
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger
-                        render={
+                        render={(
                           <Button
                             variant="ghost"
                             size="icon"
@@ -178,7 +178,7 @@ export function FeeTypesTable({
                           >
                             <IconDots className="h-4 w-4" />
                           </Button>
-                        }
+                        )}
                       />
                       <DropdownMenuContent
                         align="end"
@@ -228,11 +228,11 @@ export function FeeTypesTable({
                 </div>
                 <Badge
                   variant={
-                    feeType.status === "active" ? "default" : "secondary"
+                    feeType.status === 'active' ? 'default' : 'secondary'
                   }
                   className="rounded-md"
                 >
-                  {feeType.status === "active"
+                  {feeType.status === 'active'
                     ? t.common.active()
                     : t.common.inactive()}
                 </Badge>
@@ -288,5 +288,5 @@ export function FeeTypesTable({
         </AnimatePresence>
       </div>
     </>
-  );
+  )
 }

@@ -1,4 +1,4 @@
-import type { GradeStatus, GradeType } from "@/schemas/grade";
+import type { GradeStatus, GradeType } from '@/schemas/grade'
 import {
   IconBriefcase,
   IconCircleCheck,
@@ -13,37 +13,37 @@ import {
   IconSend,
   IconUserCheck,
   IconX,
-} from "@tabler/icons-react";
-import { Badge } from "@workspace/ui/components/badge";
-import { Button } from "@workspace/ui/components/button";
-import { Label } from "@workspace/ui/components/label";
+} from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Label } from '@workspace/ui/components/label'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@workspace/ui/components/popover";
+} from '@workspace/ui/components/popover'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@workspace/ui/components/select";
-import { useTranslations } from "@/i18n";
-import { cn } from "@/lib/utils";
+} from '@workspace/ui/components/select'
+import { useTranslations } from '@/i18n'
+import { cn } from '@/lib/utils'
 import {
   gradeStatuses,
   gradeStatusLabels,
   gradeTypeLabels,
   gradeTypes,
-} from "@/schemas/grade";
+} from '@/schemas/grade'
 
 interface GradeFiltersProps {
-  status?: GradeStatus;
-  type?: GradeType;
-  onStatusChange: (status: GradeStatus | undefined) => void;
-  onTypeChange: (type: GradeType | undefined) => void;
-  onClear: () => void;
+  status?: GradeStatus
+  type?: GradeType
+  onStatusChange: (status: GradeStatus | undefined) => void
+  onTypeChange: (type: GradeType | undefined) => void
+  onClear: () => void
 }
 
 const statusIcons: Record<GradeStatus, React.ElementType> = {
@@ -51,7 +51,7 @@ const statusIcons: Record<GradeStatus, React.ElementType> = {
   submitted: IconSend,
   validated: IconCircleCheck,
   rejected: IconCircleX,
-};
+}
 
 const gradeTypeIcons: Record<GradeType, React.ElementType> = {
   quiz: IconHelpCircle,
@@ -60,7 +60,7 @@ const gradeTypeIcons: Record<GradeType, React.ElementType> = {
   participation: IconUserCheck,
   homework: IconHome,
   project: IconBriefcase,
-};
+}
 
 export function GradeFilters({
   status,
@@ -69,13 +69,13 @@ export function GradeFilters({
   onTypeChange,
   onClear,
 }: GradeFiltersProps) {
-  const t = useTranslations();
-  const activeFilters = [status, type].filter(Boolean).length;
+  const t = useTranslations()
+  const activeFilters = [status, type].filter(Boolean).length
 
   return (
     <Popover>
       <PopoverTrigger
-        render={
+        render={(
           <Button
             variant="outline"
             size="sm"
@@ -94,7 +94,7 @@ export function GradeFilters({
               </Badge>
             )}
           </Button>
-        }
+        )}
       />
       <PopoverContent
         className="w-80 rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40 p-5 shadow-xl"
@@ -131,10 +131,9 @@ export function GradeFilters({
               {t.academic.grades.filters.status()}
             </Label>
             <Select
-              value={status ?? "all"}
-              onValueChange={(v) =>
-                onStatusChange(v === "all" ? undefined : (v as GradeStatus))
-              }
+              value={status ?? 'all'}
+              onValueChange={v =>
+                onStatusChange(v === 'all' ? undefined : (v as GradeStatus))}
             >
               <SelectTrigger
                 id="grade-status-filter"
@@ -156,21 +155,21 @@ export function GradeFilters({
                   </div>
                 </SelectItem>
                 {gradeStatuses.map((s) => {
-                  const Icon = statusIcons[s];
+                  const Icon = statusIcons[s]
                   return (
                     <SelectItem key={s} value={s} className="rounded-lg py-2.5">
                       <div className="flex items-center gap-2">
                         <div
                           className={cn(
-                            "flex h-6 w-6 items-center justify-center rounded-md border",
-                            s === "draft" &&
-                              "bg-slate-500/10 text-slate-600 border-slate-500/20",
-                            s === "submitted" &&
-                              "bg-blue-500/10 text-blue-600 border-blue-500/20",
-                            s === "validated" &&
-                              "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
-                            s === "rejected" &&
-                              "bg-destructive/10 text-destructive border-destructive/20",
+                            'flex h-6 w-6 items-center justify-center rounded-md border',
+                            s === 'draft'
+                            && 'bg-slate-500/10 text-slate-600 border-slate-500/20',
+                            s === 'submitted'
+                            && 'bg-blue-500/10 text-blue-600 border-blue-500/20',
+                            s === 'validated'
+                            && 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
+                            s === 'rejected'
+                            && 'bg-destructive/10 text-destructive border-destructive/20',
                           )}
                         >
                           <Icon className="h-3.5 w-3.5" />
@@ -180,7 +179,7 @@ export function GradeFilters({
                         </span>
                       </div>
                     </SelectItem>
-                  );
+                  )
                 })}
               </SelectContent>
             </Select>
@@ -194,10 +193,9 @@ export function GradeFilters({
               {t.academic.grades.filters.gradeType()}
             </Label>
             <Select
-              value={type ?? "all"}
-              onValueChange={(v) =>
-                onTypeChange(v === "all" ? undefined : (v as GradeType))
-              }
+              value={type ?? 'all'}
+              onValueChange={v =>
+                onTypeChange(v === 'all' ? undefined : (v as GradeType))}
             >
               <SelectTrigger
                 id="grade-type-filter"
@@ -219,7 +217,7 @@ export function GradeFilters({
                   </div>
                 </SelectItem>
                 {gradeTypes.map((gt) => {
-                  const Icon = gradeTypeIcons[gt];
+                  const Icon = gradeTypeIcons[gt]
                   return (
                     <SelectItem
                       key={gt}
@@ -235,7 +233,7 @@ export function GradeFilters({
                         </span>
                       </div>
                     </SelectItem>
-                  );
+                  )
                 })}
               </SelectContent>
             </Select>
@@ -243,5 +241,5 @@ export function GradeFilters({
         </div>
       </PopoverContent>
     </Popover>
-  );
+  )
 }

@@ -1,41 +1,41 @@
-import { IconArrowLeft, IconEdit } from "@tabler/icons-react";
-import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Button } from "@workspace/ui/components/button";
+import { IconArrowLeft, IconEdit } from '@tabler/icons-react'
+import { useQuery } from '@tanstack/react-query'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { Button } from '@workspace/ui/components/button'
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@workspace/ui/components/card";
-import { motion } from "motion/react";
-import { Breadcrumbs } from "@/components/layout/breadcrumbs";
-import { ClassroomForm } from "@/components/spaces/classroom-form";
-import { useTranslations } from "@/i18n";
-import { getClassroomById } from "@/school/functions/classrooms";
+} from '@workspace/ui/components/card'
+import { motion } from 'motion/react'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { ClassroomForm } from '@/components/spaces/classroom-form'
+import { useTranslations } from '@/i18n'
+import { getClassroomById } from '@/school/functions/classrooms'
 
 export const Route = createFileRoute(
-  "/_auth/spaces/classrooms/$classroomId/edit",
+  '/_auth/spaces/classrooms/$classroomId/edit',
 )({
   component: EditClassroomPage,
-});
+})
 
 function EditClassroomPage() {
-  const t = useTranslations();
-  const { classroomId } = Route.useParams();
-  const navigate = useNavigate();
+  const t = useTranslations()
+  const { classroomId } = Route.useParams()
+  const navigate = useNavigate()
 
   const { data, isLoading } = useQuery({
-    queryKey: ["classroom", classroomId],
+    queryKey: ['classroom', classroomId],
     queryFn: () => getClassroomById({ data: classroomId }),
-  });
+  })
 
   if (isLoading) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
       </div>
-    );
+    )
   }
 
   if (!data?.classroom) {
@@ -51,17 +51,17 @@ function EditClassroomPage() {
           />
         </div>
       </div>
-    );
+    )
   }
 
-  const { classroom } = data;
+  const { classroom } = data
 
   return (
     <div className="space-y-8 p-1">
       <Breadcrumbs
         items={[
-          { label: t.nav.spaces(), href: "/spaces/classrooms" },
-          { label: t.nav.classrooms(), href: "/spaces/classrooms" },
+          { label: t.nav.spaces(), href: '/spaces/classrooms' },
+          { label: t.nav.classrooms(), href: '/spaces/classrooms' },
           { label: classroom.name, href: `/spaces/classrooms/${classroomId}` },
           { label: t.common.edit() },
         ]}
@@ -92,7 +92,7 @@ function EditClassroomPage() {
         >
           <Button
             variant="outline"
-            render={
+            render={(
               <Link
                 to="/spaces/classrooms/$classroomId"
                 params={{ classroomId }}
@@ -100,7 +100,7 @@ function EditClassroomPage() {
                 <IconArrowLeft className="mr-2 h-4 w-4" />
                 {t.common.back()}
               </Link>
-            }
+            )}
             className="rounded-xl border-border/40"
           />
         </motion.div>
@@ -127,14 +127,13 @@ function EditClassroomPage() {
               }}
               onSuccess={() =>
                 navigate({
-                  to: "/spaces/classrooms/$classroomId",
+                  to: '/spaces/classrooms/$classroomId',
                   params: { classroomId },
-                })
-              }
+                })}
             />
           </CardContent>
         </Card>
       </motion.div>
     </div>
-  );
+  )
 }

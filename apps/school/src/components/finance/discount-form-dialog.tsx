@@ -1,8 +1,8 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { IconLoader2 } from "@tabler/icons-react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Button } from "@workspace/ui/components/button";
-import { Checkbox } from "@workspace/ui/components/checkbox";
+import { zodResolver } from '@hookform/resolvers/zod'
+import { IconLoader2 } from '@tabler/icons-react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { Button } from '@workspace/ui/components/button'
+import { Checkbox } from '@workspace/ui/components/checkbox'
 import {
   Dialog,
   DialogContent,
@@ -10,7 +10,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@workspace/ui/components/dialog";
+} from '@workspace/ui/components/dialog'
 import {
   Form,
   FormControl,
@@ -19,59 +19,59 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@workspace/ui/components/form";
+} from '@workspace/ui/components/form'
 
-import { Input } from "@workspace/ui/components/input";
+import { Input } from '@workspace/ui/components/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@workspace/ui/components/select";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { z } from "zod";
-import { useTranslations } from "@/i18n";
-import { discountsKeys } from "@/lib/queries/discounts";
+} from '@workspace/ui/components/select'
+import { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
+import { useTranslations } from '@/i18n'
+import { discountsKeys } from '@/lib/queries/discounts'
 import {
   calculationTypeLabels,
   calculationTypes,
   discountTypeLabels,
   discountTypes,
-} from "@/schemas/discount";
+} from '@/schemas/discount'
 import {
   createNewDiscount,
   updateExistingDiscount,
-} from "@/school/functions/discounts";
+} from '@/school/functions/discounts'
 
 const discountFormSchema = z
   .object({
-    code: z.string().min(1, "Code requis").max(20, "Code trop long"),
-    name: z.string().min(1, "Nom requis").max(100, "Nom trop long"),
+    code: z.string().min(1, 'Code requis').max(20, 'Code trop long'),
+    name: z.string().min(1, 'Nom requis').max(100, 'Nom trop long'),
     nameEn: z.string().max(100).optional(),
-    type: z.enum(discountTypes, { message: "Type de réduction invalide" }),
+    type: z.enum(discountTypes, { message: 'Type de réduction invalide' }),
     calculationType: z.enum(calculationTypes, {
-      message: "Type de calcul invalide",
+      message: 'Type de calcul invalide',
     }),
-    value: z.string().regex(/^\d+(\.\d{1,2})?$/, "Valeur invalide"),
+    value: z.string().regex(/^\d+(\.\d{1,2})?$/, 'Valeur invalide'),
     requiresApproval: z.boolean(),
     autoApply: z.boolean(),
   })
   .refine(
-    (data) =>
-      data.calculationType !== "percentage" ||
-      Number.parseFloat(data.value) <= 100,
-    { message: "Le pourcentage ne peut pas dépasser 100%", path: ["value"] },
-  );
+    data =>
+      data.calculationType !== 'percentage'
+      || Number.parseFloat(data.value) <= 100,
+    { message: 'Le pourcentage ne peut pas dépasser 100%', path: ['value'] },
+  )
 
-type DiscountFormData = z.infer<typeof discountFormSchema>;
+type DiscountFormData = z.infer<typeof discountFormSchema>
 
 interface DiscountFormDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  initialData?: any;
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  initialData?: any
 }
 
 export function DiscountFormDialog({
@@ -79,43 +79,44 @@ export function DiscountFormDialog({
   onOpenChange,
   initialData,
 }: DiscountFormDialogProps) {
-  const t = useTranslations();
-  const queryClient = useQueryClient();
+  const t = useTranslations()
+  const queryClient = useQueryClient()
 
   const form = useForm<DiscountFormData>({
     resolver: zodResolver(discountFormSchema),
     defaultValues: {},
-  });
+  })
 
   useEffect(() => {
     if (open) {
       if (initialData) {
         form.reset({
-          code: initialData.code || "",
-          name: initialData.name || "",
-          nameEn: initialData.nameEn || "",
-          type: initialData.type || "sibling",
-          calculationType: initialData.calculationType || "percentage",
-          value: String(initialData.value || ""),
+          code: initialData.code || '',
+          name: initialData.name || '',
+          nameEn: initialData.nameEn || '',
+          type: initialData.type || 'sibling',
+          calculationType: initialData.calculationType || 'percentage',
+          value: String(initialData.value || ''),
           requiresApproval: !!initialData.requiresApproval,
           autoApply: !!initialData.autoApply,
-        });
-      } else {
+        })
+      }
+      else {
         form.reset({
-          code: "",
-          name: "",
-          nameEn: "",
-          type: "sibling",
-          calculationType: "percentage",
-          value: "",
+          code: '',
+          name: '',
+          nameEn: '',
+          type: 'sibling',
+          calculationType: 'percentage',
+          value: '',
           requiresApproval: false,
           autoApply: false,
-        });
+        })
       }
     }
-  }, [open, initialData, form]);
+  }, [open, initialData, form])
 
-  const isEditing = !!initialData;
+  const isEditing = !!initialData
 
   const mutation = useMutation({
     mutationFn: (data: DiscountFormData) => {
@@ -125,41 +126,41 @@ export function DiscountFormDialog({
             id: initialData.id,
             ...data,
           },
-        });
+        })
       }
       return createNewDiscount({
         data,
-      });
+      })
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: discountsKeys.all });
+      queryClient.invalidateQueries({ queryKey: discountsKeys.all })
       toast.success(
-        isEditing ? "Réduction mise à jour" : t.finance.discounts.created(),
-      );
-      form.reset();
-      onOpenChange(false);
+        isEditing ? 'Réduction mise à jour' : t.finance.discounts.created(),
+      )
+      form.reset()
+      onOpenChange(false)
     },
     onError: (err: Error) => {
-      toast.error(err.message);
+      toast.error(err.message)
     },
-  });
+  })
 
   const onSubmit = (data: DiscountFormData) => {
-    mutation.mutate(data);
-  };
+    mutation.mutate(data)
+  }
 
-  const watchCalculationType = form.watch("calculationType");
+  const watchCalculationType = form.watch('calculationType')
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px] backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">
-            {isEditing ? "Modifier la réduction" : t.finance.discounts.create()}
+            {isEditing ? 'Modifier la réduction' : t.finance.discounts.create()}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground/80">
             {isEditing
-              ? "Modifier les paramètres de cette réduction"
+              ? 'Modifier les paramètres de cette réduction'
               : t.finance.discounts.createDescription()}
           </DialogDescription>
         </DialogHeader>
@@ -173,7 +174,9 @@ export function DiscountFormDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
-                      {t.common.code()} *
+                      {t.common.code()}
+                      {' '}
+                      *
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -193,7 +196,9 @@ export function DiscountFormDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
-                      {t.finance.discounts.type()} *
+                      {t.finance.discounts.type()}
+                      {' '}
+                      *
                     </FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
@@ -202,7 +207,7 @@ export function DiscountFormDialog({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">
-                        {discountTypes.map((type) => (
+                        {discountTypes.map(type => (
                           <SelectItem
                             key={type}
                             value={type}
@@ -225,7 +230,9 @@ export function DiscountFormDialog({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
-                    {t.common.name()} *
+                    {t.common.name()}
+                    {' '}
+                    *
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -269,7 +276,9 @@ export function DiscountFormDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
-                      {t.finance.discounts.calculationType()} *
+                      {t.finance.discounts.calculationType()}
+                      {' '}
+                      *
                     </FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
@@ -278,7 +287,7 @@ export function DiscountFormDialog({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">
-                        {calculationTypes.map((type) => (
+                        {calculationTypes.map(type => (
                           <SelectItem
                             key={type}
                             value={type}
@@ -300,7 +309,9 @@ export function DiscountFormDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
-                      {t.finance.discounts.value()} *
+                      {t.finance.discounts.value()}
+                      {' '}
+                      *
                     </FormLabel>
                     <FormControl>
                       <div className="relative">
@@ -312,7 +323,7 @@ export function DiscountFormDialog({
                           placeholder="0"
                         />
                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-muted-foreground">
-                          {watchCalculationType === "percentage" ? "%" : "FCFA"}
+                          {watchCalculationType === 'percentage' ? '%' : 'FCFA'}
                         </span>
                       </div>
                     </FormControl>
@@ -384,5 +395,5 @@ export function DiscountFormDialog({
         </Form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

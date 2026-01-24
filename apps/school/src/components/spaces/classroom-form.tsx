@@ -140,22 +140,26 @@ export function ClassroomForm({ classroom, onSuccess }: ClassroomFormProps) {
           <Select value={watch('status')} onValueChange={v => setValue('status', v as 'active' | 'maintenance' | 'inactive')}>
             <SelectTrigger className={selectTriggerClass}>
               <SelectValue>
-                {watch('status') === 'active' ? (
-                  <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-primary" />
-                    {t.common.active()}
-                  </div>
-                ) : watch('status') === 'maintenance' ? (
-                  <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-yellow-500" />
-                    {t.spaces.classrooms.status.maintenance()}
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-muted-foreground" />
-                    {t.common.inactive()}
-                  </div>
-                )}
+                {watch('status') === 'active'
+                  ? (
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 w-2 rounded-full bg-primary" />
+                        {t.common.active()}
+                      </div>
+                    )
+                  : watch('status') === 'maintenance'
+                    ? (
+                        <div className="flex items-center gap-2">
+                          <div className="h-2 w-2 rounded-full bg-yellow-500" />
+                          {t.spaces.classrooms.status.maintenance()}
+                        </div>
+                      )
+                    : (
+                        <div className="flex items-center gap-2">
+                          <div className="h-2 w-2 rounded-full bg-muted-foreground" />
+                          {t.common.inactive()}
+                        </div>
+                      )}
               </SelectValue>
             </SelectTrigger>
             <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">

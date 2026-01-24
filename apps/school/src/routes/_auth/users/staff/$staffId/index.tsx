@@ -1,64 +1,64 @@
-import { IconEdit, IconTrash, IconUser } from "@tabler/icons-react";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { Badge } from "@workspace/ui/components/badge";
-import { Button } from "@workspace/ui/components/button";
+import { IconEdit, IconTrash, IconUser } from '@tabler/icons-react'
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@workspace/ui/components/card";
+} from '@workspace/ui/components/card'
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@workspace/ui/components/tabs";
-import { Breadcrumbs } from "@/components/layout/breadcrumbs";
-import { useTranslations } from "@/i18n";
-import { getStaffMember } from "@/school/functions/staff";
+} from '@workspace/ui/components/tabs'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { useTranslations } from '@/i18n'
+import { getStaffMember } from '@/school/functions/staff'
 
-export const Route = createFileRoute("/_auth/users/staff/$staffId/")({
+export const Route = createFileRoute('/_auth/users/staff/$staffId/')({
   component: StaffDetailPage,
   loader: async ({ params }) => {
-    return await getStaffMember({ data: params.staffId });
+    return await getStaffMember({ data: params.staffId })
   },
-});
+})
 
 function StaffDetailPage() {
-  const t = useTranslations();
-  const { staffId } = Route.useParams();
-  const staffData = Route.useLoaderData();
+  const t = useTranslations()
+  const { staffId } = Route.useParams()
+  const staffData = Route.useLoaderData()
 
   const { data: staff } = useSuspenseQuery({
-    queryKey: ["staff", staffId],
+    queryKey: ['staff', staffId],
     queryFn: () => getStaffMember({ data: staffId }),
     initialData: staffData,
-  });
+  })
 
   if (!staff) {
-    return <div>{t.hr.staff.notFound()}</div>;
+    return <div>{t.hr.staff.notFound()}</div>
   }
 
   const getStatusBadge = (status: string) => {
     const variants: Record<
       string,
-      "default" | "secondary" | "destructive" | "outline"
+      'default' | 'secondary' | 'destructive' | 'outline'
     > = {
-      active: "default",
-      inactive: "secondary",
-      on_leave: "outline",
-    };
-    return <Badge variant={variants[status] || "default"}>{status}</Badge>;
-  };
+      active: 'default',
+      inactive: 'secondary',
+      on_leave: 'outline',
+    }
+    return <Badge variant={variants[status] || 'default'}>{status}</Badge>
+  }
 
   return (
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t.hr.title(), href: "/users" },
-          { label: t.hr.staff.title(), href: "/users/staff" },
+          { label: t.hr.title(), href: '/users' },
+          { label: t.hr.staff.title(), href: '/users/staff' },
           { label: staff.position },
         ]}
       />
@@ -80,12 +80,12 @@ function StaffDetailPage() {
         <div className="flex gap-2">
           <Button
             variant="outline"
-            render={
+            render={(
               <Link to="/users/staff/$staffId/edit" params={{ staffId }}>
                 <IconEdit className="mr-2 h-4 w-4" />
                 {t.common.edit()}
               </Link>
-            }
+            )}
           />
           <Button variant="destructive">
             <IconTrash className="mr-2 h-4 w-4" />
@@ -119,7 +119,7 @@ function StaffDetailPage() {
                   <p className="text-sm font-medium text-muted-foreground">
                     {t.hr.staff.department()}
                   </p>
-                  <p className="text-base">{staff.department || "-"}</p>
+                  <p className="text-base">{staff.department || '-'}</p>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">
@@ -128,7 +128,7 @@ function StaffDetailPage() {
                   <p className="text-base">
                     {staff.hireDate
                       ? new Date(staff.hireDate).toLocaleDateString()
-                      : "-"}
+                      : '-'}
                   </p>
                 </div>
                 <div>
@@ -156,5 +156,5 @@ function StaffDetailPage() {
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }

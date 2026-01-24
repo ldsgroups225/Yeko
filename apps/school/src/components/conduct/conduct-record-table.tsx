@@ -2,28 +2,28 @@ import type {
   ColumnDef,
   Row,
   Table as TanStackTable,
-} from "@tanstack/react-table";
+} from '@tanstack/react-table'
 import {
   IconDots,
   IconEdit,
   IconEye,
   IconFileAlert,
   IconTrash,
-} from "@tabler/icons-react";
-import { Link } from "@tanstack/react-router";
+} from '@tabler/icons-react'
+import { Link } from '@tanstack/react-router'
 import {
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
   useReactTable,
-} from "@tanstack/react-table";
+} from '@tanstack/react-table'
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@workspace/ui/components/avatar";
-import { Button } from "@workspace/ui/components/button";
-import { Checkbox } from "@workspace/ui/components/checkbox";
+} from '@workspace/ui/components/avatar'
+import { Button } from '@workspace/ui/components/button'
+import { Checkbox } from '@workspace/ui/components/checkbox'
 
 import {
   DropdownMenu,
@@ -31,7 +31,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@workspace/ui/components/dropdown-menu";
+} from '@workspace/ui/components/dropdown-menu'
 import {
   Table,
   TableBody,
@@ -39,52 +39,52 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@workspace/ui/components/table";
-import { motion } from "motion/react";
-import { useMemo } from "react";
-import { TableSkeleton } from "@/components/hr/table-skeleton";
-import { useTranslations } from "@/i18n";
+} from '@workspace/ui/components/table'
+import { motion } from 'motion/react'
+import { useMemo } from 'react'
+import { TableSkeleton } from '@/components/hr/table-skeleton'
+import { useTranslations } from '@/i18n'
 
-import { ConductSeverityBadge } from "./conduct-severity-badge";
-import { ConductStatusBadge } from "./conduct-status-badge";
-import { ConductTypeBadge } from "./conduct-type-badge";
+import { ConductSeverityBadge } from './conduct-severity-badge'
+import { ConductStatusBadge } from './conduct-status-badge'
+import { ConductTypeBadge } from './conduct-type-badge'
 
-type ConductType = "incident" | "sanction" | "reward" | "note";
-type ConductSeverity = "low" | "medium" | "high" | "critical";
-type ConductStatus =
-  | "open"
-  | "investigating"
-  | "pending_decision"
-  | "resolved"
-  | "closed"
-  | "appealed";
+type ConductType = 'incident' | 'sanction' | 'reward' | 'note'
+type ConductSeverity = 'low' | 'medium' | 'high' | 'critical'
+type ConductStatus
+  = | 'open'
+    | 'investigating'
+    | 'pending_decision'
+    | 'resolved'
+    | 'closed'
+    | 'appealed'
 
 export interface ConductRecord {
-  id: string;
-  studentId: string;
-  studentName: string;
-  studentPhoto?: string | null;
-  type: ConductType;
-  category: string;
-  title: string;
-  description: string;
-  severity?: ConductSeverity | null;
-  status: ConductStatus;
-  incidentDate?: string | null;
-  location?: string | null;
-  createdAt: string;
+  id: string
+  studentId: string
+  studentName: string
+  studentPhoto?: string | null
+  type: ConductType
+  category: string
+  title: string
+  description: string
+  severity?: ConductSeverity | null
+  status: ConductStatus
+  incidentDate?: string | null
+  location?: string | null
+  createdAt: string
 }
 
 interface ConductRecordTableProps {
-  records: ConductRecord[];
-  isLoading?: boolean;
-  onView?: (id: string) => void;
-  onEdit?: (id: string) => void;
-  onDelete?: (id: string) => void;
+  records: ConductRecord[]
+  isLoading?: boolean
+  onView?: (id: string) => void
+  onEdit?: (id: string) => void
+  onDelete?: (id: string) => void
   selection?: {
-    selectedIds: Set<string>;
-    onSelectionChange: (ids: Set<string>) => void;
-  };
+    selectedIds: Set<string>
+    onSelectionChange: (ids: Set<string>) => void
+  }
 }
 
 export function ConductRecordTable({
@@ -95,20 +95,19 @@ export function ConductRecordTable({
   onDelete,
   selection,
 }: ConductRecordTableProps) {
-  const t = useTranslations();
+  const t = useTranslations()
 
   const columns = useMemo<ColumnDef<ConductRecord>[]>(
     () => [
       ...(selection
         ? [
             {
-              id: "select",
+              id: 'select',
               header: ({ table }: { table: TanStackTable<ConductRecord> }) => (
                 <Checkbox
                   checked={table.getIsAllPageRowsSelected()}
-                  onCheckedChange={(value) =>
-                    table.toggleAllPageRowsSelected(!!value)
-                  }
+                  onCheckedChange={value =>
+                    table.toggleAllPageRowsSelected(!!value)}
                   aria-label={t.common.selectAll()}
                   className="translate-y-[2px] border-primary/50 data-[state=checked]:border-primary"
                 />
@@ -116,7 +115,7 @@ export function ConductRecordTable({
               cell: ({ row }: { row: Row<ConductRecord> }) => (
                 <Checkbox
                   checked={row.getIsSelected()}
-                  onCheckedChange={(value) => row.toggleSelected(!!value)}
+                  onCheckedChange={value => row.toggleSelected(!!value)}
                   aria-label={t.common.selectRow()}
                   className="translate-y-[2px] border-primary/50 data-[state=checked]:border-primary"
                 />
@@ -127,34 +126,34 @@ export function ConductRecordTable({
           ]
         : []),
       {
-        accessorKey: "incidentDate",
+        accessorKey: 'incidentDate',
         header: t.conduct.date(),
         cell: ({ row }) => {
           const date = row.original.incidentDate
             ? new Date(row.original.incidentDate)
-            : new Date(row.original.createdAt);
+            : new Date(row.original.createdAt)
 
           return (
             <div className="flex flex-col gap-0.5">
               <span className="font-black tracking-tight text-sm">
                 {date.toLocaleDateString(undefined, {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
+                  day: '2-digit',
+                  month: 'short',
+                  year: 'numeric',
                 })}
               </span>
               <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">
                 {date.toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
+                  hour: '2-digit',
+                  minute: '2-digit',
                 })}
               </span>
             </div>
-          );
+          )
         },
       },
       {
-        accessorKey: "studentName",
+        accessorKey: 'studentName',
         header: t.conduct.student(),
         cell: ({ row }) => (
           <div className="flex items-center gap-3">
@@ -180,12 +179,12 @@ export function ConductRecordTable({
         ),
       },
       {
-        accessorKey: "type",
+        accessorKey: 'type',
         header: t.conduct.form.type(),
         cell: ({ row }) => <ConductTypeBadge type={row.original.type} />,
       },
       {
-        accessorKey: "title",
+        accessorKey: 'title',
         header: t.conduct.title(),
         cell: ({ row }) => (
           <div className="flex flex-col max-w-[300px]">
@@ -205,29 +204,31 @@ export function ConductRecordTable({
         ),
       },
       {
-        accessorKey: "severity",
+        accessorKey: 'severity',
         header: t.conduct.form.severity(),
         cell: ({ row }) =>
-          row.original.severity ? (
-            <ConductSeverityBadge severity={row.original.severity} />
-          ) : (
-            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/30">
-              -
-            </span>
-          ),
+          row.original.severity
+            ? (
+                <ConductSeverityBadge severity={row.original.severity} />
+              )
+            : (
+                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/30">
+                  -
+                </span>
+              ),
       },
       {
-        accessorKey: "status",
+        accessorKey: 'status',
         header: t.common.status(),
         cell: ({ row }) => <ConductStatusBadge status={row.original.status} />,
       },
       {
-        id: "actions",
-        header: "",
+        id: 'actions',
+        header: '',
         cell: ({ row }) => (
           <DropdownMenu>
             <DropdownMenuTrigger
-              render={
+              render={(
                 <Button
                   variant="ghost"
                   size="icon"
@@ -235,7 +236,7 @@ export function ConductRecordTable({
                 >
                   <IconDots className="h-5 w-5" />
                 </Button>
-              }
+              )}
             />
             <DropdownMenuContent
               align="end"
@@ -277,23 +278,24 @@ export function ConductRecordTable({
       },
     ],
     [t, onView, onEdit, onDelete, selection],
-  );
+  )
 
   const rowSelection = useMemo(() => {
-    if (!selection) return {};
-    const selections: Record<string, boolean> = {};
+    if (!selection)
+      return {}
+    const selections: Record<string, boolean> = {}
     selection.selectedIds.forEach((id) => {
-      selections[id] = true;
-    });
-    return selections;
-  }, [selection]);
+      selections[id] = true
+    })
+    return selections
+  }, [selection])
 
   const table = useReactTable({
     data: records,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getRowId: (row) => row.id,
+    getRowId: row => row.id,
     enableRowSelection: !!selection,
     state: {
       rowSelection: selection ? rowSelection : {},
@@ -303,22 +305,24 @@ export function ConductRecordTable({
       },
     },
     onRowSelectionChange: (updater) => {
-      if (!selection) return;
-      if (typeof updater === "function") {
-        const newSelection = updater(rowSelection);
+      if (!selection)
+        return
+      if (typeof updater === 'function') {
+        const newSelection = updater(rowSelection)
         const newSet = new Set(
-          Object.keys(newSelection).filter((k) => newSelection[k]),
-        );
-        selection.onSelectionChange(newSet);
-      } else {
-        const newSet = new Set(Object.keys(updater).filter((k) => updater[k]));
-        selection.onSelectionChange(newSet);
+          Object.keys(newSelection).filter(k => newSelection[k]),
+        )
+        selection.onSelectionChange(newSet)
+      }
+      else {
+        const newSet = new Set(Object.keys(updater).filter(k => updater[k]))
+        selection.onSelectionChange(newSet)
       }
     },
-  });
+  })
 
   if (isLoading) {
-    return <TableSkeleton columns={7} rows={5} />;
+    return <TableSkeleton columns={7} rows={5} />
   }
 
   if (records.length === 0) {
@@ -338,7 +342,7 @@ export function ConductRecordTable({
           {t.conduct.noRecordsDescription()}
         </p>
       </motion.div>
-    );
+    )
   }
 
   return (
@@ -350,12 +354,12 @@ export function ConductRecordTable({
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
+            {table.getHeaderGroups().map(headerGroup => (
               <TableRow
                 key={headerGroup.id}
                 className="hover:bg-transparent border-b border-border/20 bg-muted/20"
               >
-                {headerGroup.headers.map((header) => (
+                {headerGroup.headers.map(header => (
                   <TableHead
                     key={header.id}
                     className="h-14 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 px-6"
@@ -381,7 +385,7 @@ export function ConductRecordTable({
                 className="group border-b border-border/10 hover:bg-primary/5 transition-colors data-[selected=true]:bg-primary/5"
                 data-selected={row.getIsSelected()}
               >
-                {row.getVisibleCells().map((cell) => (
+                {row.getVisibleCells().map(cell => (
                   <TableCell key={cell.id} className="px-6 py-4">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
@@ -395,7 +399,12 @@ export function ConductRecordTable({
       {table.getPageCount() > 1 && (
         <div className="flex items-center justify-between py-4 px-6 bg-muted/10 border-t border-border/20">
           <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
-            Page {table.getState().pagination.pageIndex + 1} of{" "}
+            Page
+            {' '}
+            {table.getState().pagination.pageIndex + 1}
+            {' '}
+            of
+            {' '}
             {table.getPageCount()}
           </div>
           <div className="flex items-center gap-2">
@@ -421,5 +430,5 @@ export function ConductRecordTable({
         </div>
       )}
     </motion.div>
-  );
+  )
 }

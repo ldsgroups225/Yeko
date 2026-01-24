@@ -1,41 +1,41 @@
-import type { ReactNode } from "react";
-import { IconLanguage, IconLogout, IconPalette } from "@tabler/icons-react";
+import type { ReactNode } from 'react'
+import { IconLanguage, IconLogout, IconPalette } from '@tabler/icons-react'
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@workspace/ui/components/avatar";
-import { Button } from "@workspace/ui/components/button";
+} from '@workspace/ui/components/avatar'
+import { Button } from '@workspace/ui/components/button'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@workspace/ui/components/dialog";
-import { LanguageSwitcher } from "@/components/language-switcher";
-import { ThemeToggle } from "@/components/theme/theme-toggle";
-import { authClient } from "@/lib/auth-client";
+} from '@workspace/ui/components/dialog'
+import { LanguageSwitcher } from '@/components/language-switcher'
+import { ThemeToggle } from '@/components/theme/theme-toggle'
+import { authClient } from '@/lib/auth-client'
 
 interface AccountDialogProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
 export function AccountDialog({ children }: AccountDialogProps) {
-  const { data: session } = authClient.useSession();
+  const { data: session } = authClient.useSession()
 
   const signOut = async () => {
-    await authClient.signOut();
-  };
-
-  if (!session) {
-    return null;
+    await authClient.signOut()
   }
 
-  const user = session.user;
+  if (!session) {
+    return null
+  }
+
+  const user = session.user
   const fallbackText = user.name
     ? user.name.charAt(0).toUpperCase()
-    : user.email?.charAt(0).toUpperCase() || "U";
+    : user.email?.charAt(0).toUpperCase() || 'U'
 
   return (
     <Dialog>
@@ -48,7 +48,7 @@ export function AccountDialog({ children }: AccountDialogProps) {
           <Avatar className="h-20 w-20">
             <AvatarImage
               src={user.image || undefined}
-              alt={user.name || "User"}
+              alt={user.name || 'User'}
             />
             <AvatarFallback className="text-2xl font-semibold">
               {fallbackText}
@@ -90,5 +90,5 @@ export function AccountDialog({ children }: AccountDialogProps) {
         </div>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

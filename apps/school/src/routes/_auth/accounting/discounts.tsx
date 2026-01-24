@@ -1,59 +1,59 @@
-import { IconPlus, IconTag } from "@tabler/icons-react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
-import { Button } from "@workspace/ui/components/button";
+import { IconPlus, IconTag } from '@tabler/icons-react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { createFileRoute } from '@tanstack/react-router'
+import { Button } from '@workspace/ui/components/button'
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@workspace/ui/components/card";
-import { DeleteConfirmationDialog } from "@workspace/ui/components/delete-confirmation-dialog";
-import { motion } from "motion/react";
-import { useState } from "react";
-import { toast } from "sonner";
-import { DiscountFormDialog, DiscountsTable } from "@/components/finance";
-import { Breadcrumbs } from "@/components/layout/breadcrumbs";
-import { useTranslations } from "@/i18n";
-import { discountsKeys, discountsOptions } from "@/lib/queries";
-import { deleteExistingDiscount } from "@/school/functions/discounts";
+} from '@workspace/ui/components/card'
+import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
+import { motion } from 'motion/react'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { DiscountFormDialog, DiscountsTable } from '@/components/finance'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { useTranslations } from '@/i18n'
+import { discountsKeys, discountsOptions } from '@/lib/queries'
+import { deleteExistingDiscount } from '@/school/functions/discounts'
 
-export const Route = createFileRoute("/_auth/accounting/discounts")({
+export const Route = createFileRoute('/_auth/accounting/discounts')({
   component: DiscountsPage,
-});
+})
 
 function DiscountsPage() {
-  const t = useTranslations();
-  const queryClient = useQueryClient();
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [editingDiscount, setEditingDiscount] = useState<any>(null);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const t = useTranslations()
+  const queryClient = useQueryClient()
+  const [isCreateOpen, setIsCreateOpen] = useState(false)
+  const [editingDiscount, setEditingDiscount] = useState<any>(null)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
-  const { data: discounts, isLoading } = useQuery(discountsOptions.list());
+  const { data: discounts, isLoading } = useQuery(discountsOptions.list())
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteExistingDiscount({ data: id }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: discountsKeys.all });
-      toast.success("Réduction supprimée");
-      setDeletingId(null);
+      queryClient.invalidateQueries({ queryKey: discountsKeys.all })
+      toast.success('Réduction supprimée')
+      setDeletingId(null)
     },
     onError: (err: any) => {
-      toast.error(err.message || "Erreur lors de la suppression");
+      toast.error(err.message || 'Erreur lors de la suppression')
     },
-  });
+  })
 
   const handleEdit = (discount: any) => {
-    setEditingDiscount(discount);
-    setIsCreateOpen(true);
-  };
+    setEditingDiscount(discount)
+    setIsCreateOpen(true)
+  }
 
   const handleDelete = (discount: any) => {
-    setDeletingId(discount.id);
-  };
+    setDeletingId(discount.id)
+  }
 
-  const discountsList =
-    discounts?.map((d) => ({
+  const discountsList
+    = discounts?.map(d => ({
       id: d.id,
       code: d.code,
       name: d.name,
@@ -62,14 +62,14 @@ function DiscountsPage() {
       value: Number(d.value),
       requiresApproval: d.requiresApproval ?? false,
       autoApply: d.autoApply ?? false,
-      status: d.status ?? "active",
-    })) ?? [];
+      status: d.status ?? 'active',
+    })) ?? []
 
   return (
     <div className="space-y-8 p-1">
       <Breadcrumbs
         items={[
-          { label: t.nav.finance(), href: "/accounting" },
+          { label: t.nav.finance(), href: '/accounting' },
           { label: t.finance.discounts.title() },
         ]}
       />
@@ -132,22 +132,24 @@ function DiscountsPage() {
       <DiscountFormDialog
         open={isCreateOpen}
         onOpenChange={(open) => {
-          setIsCreateOpen(open);
-          if (!open) setEditingDiscount(null);
+          setIsCreateOpen(open)
+          if (!open)
+            setEditingDiscount(null)
         }}
         initialData={editingDiscount}
       />
 
       <DeleteConfirmationDialog
         open={!!deletingId}
-        onOpenChange={(open) => !open && setDeletingId(null)}
+        onOpenChange={open => !open && setDeletingId(null)}
         onConfirm={() => {
-          if (deletingId) deleteMutation.mutate(deletingId);
+          if (deletingId)
+            deleteMutation.mutate(deletingId)
         }}
         isLoading={deleteMutation.isPending}
         title={t.accounting.discounts.deleteDiscount()}
         description={t.accounting.discounts.deleteDiscountConfirm()}
       />
     </div>
-  );
+  )
 }

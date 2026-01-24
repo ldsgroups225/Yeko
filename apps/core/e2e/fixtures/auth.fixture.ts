@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import type { Page } from '@playwright/test'
 import { test as base, expect } from '@playwright/test'
+import { authLogger } from '@repo/logger/dist'
 import { AuthPage } from '../helpers/page-objects'
 
 export interface AuthFixtures {
@@ -26,9 +27,9 @@ export const test = base.extend<AuthFixtures>({
       // Wait for successful login (navigate to /app)
       await page.waitForURL(/\/app/, { timeout: 15000 })
     }
-    catch (error) {
+    catch {
       // If login fails (user doesn't exist or already logged in), proceed anyway
-      console.log('Authentication check completed')
+      authLogger.info('Authentication check completed')
     }
 
     await use(page)

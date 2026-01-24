@@ -1,4 +1,4 @@
-import type { getParents } from "@/school/functions/parents";
+import type { getParents } from '@/school/functions/parents'
 import {
   IconDots,
   IconMail,
@@ -9,11 +9,11 @@ import {
   IconTrash,
   IconUserPlus,
   IconUsers,
-} from "@tabler/icons-react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Avatar, AvatarFallback } from "@workspace/ui/components/avatar";
-import { Badge } from "@workspace/ui/components/badge";
-import { Button } from "@workspace/ui/components/button";
+} from '@tabler/icons-react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Avatar, AvatarFallback } from '@workspace/ui/components/avatar'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 
 import {
   Card,
@@ -21,7 +21,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@workspace/ui/components/card";
+} from '@workspace/ui/components/card'
 import {
   Dialog,
   DialogContent,
@@ -29,23 +29,23 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@workspace/ui/components/dialog";
+} from '@workspace/ui/components/dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@workspace/ui/components/dropdown-menu";
-import { Input } from "@workspace/ui/components/input";
+} from '@workspace/ui/components/dropdown-menu'
+import { Input } from '@workspace/ui/components/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@workspace/ui/components/select";
-import { Skeleton } from "@workspace/ui/components/skeleton";
+} from '@workspace/ui/components/select'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -53,82 +53,82 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@workspace/ui/components/table";
-import { motion } from "motion/react";
-import { useState } from "react";
-import { toast } from "sonner";
-import { EmptyState } from "@/components/hr/empty-state";
-import { useDebounce } from "@/hooks/use-debounce";
-import { useTranslations } from "@/i18n";
-import { parentsKeys, parentsOptions } from "@/lib/queries/parents";
-import { deleteParent, sendParentInvitation } from "@/school/functions/parents";
+} from '@workspace/ui/components/table'
+import { motion } from 'motion/react'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { EmptyState } from '@/components/hr/empty-state'
+import { useDebounce } from '@/hooks/use-debounce'
+import { useTranslations } from '@/i18n'
+import { parentsKeys, parentsOptions } from '@/lib/queries/parents'
+import { deleteParent, sendParentInvitation } from '@/school/functions/parents'
 
-import { generateUUID } from "@/utils/generateUUID";
-import { AutoMatchDialog } from "./auto-match-dialog";
-import { ParentFormDialog } from "./parent-form-dialog";
+import { generateUUID } from '@/utils/generateUUID'
+import { AutoMatchDialog } from './auto-match-dialog'
+import { ParentFormDialog } from './parent-form-dialog'
 
 const invitationStatusColors: Record<string, string> = {
-  pending: "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200",
-  sent: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-  accepted: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
-  expired: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
-};
+  pending: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200',
+  sent: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+  accepted: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+  expired: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+}
 
-type ParentItem = Awaited<ReturnType<typeof getParents>>["data"][number];
+type ParentItem = Awaited<ReturnType<typeof getParents>>['data'][number]
 
 export function ParentsList() {
-  const t = useTranslations();
-  const queryClient = useQueryClient();
+  const t = useTranslations()
+  const queryClient = useQueryClient()
 
-  const [search, setSearch] = useState("");
-  const [invitationStatus, setInvitationStatus] = useState<string>("all");
-  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('')
+  const [invitationStatus, setInvitationStatus] = useState<string>('all')
+  const [page, setPage] = useState(1)
 
-  const [createDialogOpen, setCreateDialogOpen] = useState(false);
-  const [autoMatchDialogOpen, setAutoMatchDialogOpen] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedParent, setSelectedParent] = useState<ParentItem | null>(null);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false)
+  const [autoMatchDialogOpen, setAutoMatchDialogOpen] = useState(false)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [selectedParent, setSelectedParent] = useState<ParentItem | null>(null)
 
-  const debouncedSearch = useDebounce(search, 500);
+  const debouncedSearch = useDebounce(search, 500)
 
   const { data, isLoading } = useQuery(
     parentsOptions.list({
       search: debouncedSearch || undefined,
       invitationStatus:
-        invitationStatus === "all" ? undefined : invitationStatus,
+        invitationStatus === 'all' ? undefined : invitationStatus,
       page,
       limit: 20,
     }),
-  );
+  )
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteParent({ data: id }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: parentsKeys.all });
-      toast.success(t.parents.deleteSuccess());
-      setDeleteDialogOpen(false);
-      setSelectedParent(null);
+      queryClient.invalidateQueries({ queryKey: parentsKeys.all })
+      toast.success(t.parents.deleteSuccess())
+      setDeleteDialogOpen(false)
+      setSelectedParent(null)
     },
     onError: (error: Error) => {
-      toast.error(error.message);
+      toast.error(error.message)
     },
-  });
+  })
 
   const inviteMutation = useMutation({
     mutationFn: (id: string) => sendParentInvitation({ data: id }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: parentsKeys.all });
-      toast.success(t.parents.invitationSent());
+      queryClient.invalidateQueries({ queryKey: parentsKeys.all })
+      toast.success(t.parents.invitationSent())
     },
     onError: (error: Error) => {
-      toast.error(error.message);
+      toast.error(error.message)
     },
-  });
+  })
 
   const handleDelete = (parent: ParentItem) => {
-    setSelectedParent(parent);
-    setDeleteDialogOpen(true);
-  };
+    setSelectedParent(parent)
+    setDeleteDialogOpen(true)
+  }
 
   return (
     <div className="space-y-6">
@@ -155,7 +155,7 @@ export function ParentsList() {
           <CardContent>
             <div className="text-2xl font-bold text-yellow-600">
               {data?.data?.filter(
-                (p) => p.parent.invitationStatus === "pending",
+                p => p.parent.invitationStatus === 'pending',
               ).length || 0}
             </div>
           </CardContent>
@@ -169,7 +169,7 @@ export function ParentsList() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600">
-              {data?.data?.filter((p) => p.parent.invitationStatus === "sent")
+              {data?.data?.filter(p => p.parent.invitationStatus === 'sent')
                 .length || 0}
             </div>
           </CardContent>
@@ -184,7 +184,7 @@ export function ParentsList() {
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
               {data?.data?.filter(
-                (p) => p.parent.invitationStatus === "accepted",
+                p => p.parent.invitationStatus === 'accepted',
               ).length || 0}
             </div>
           </CardContent>
@@ -199,13 +199,13 @@ export function ParentsList() {
             <Input
               placeholder={t.parents.searchPlaceholder()}
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={e => setSearch(e.target.value)}
               className="pl-9"
             />
           </div>
           <Select
             value={invitationStatus}
-            onValueChange={(val) => setInvitationStatus(val ?? "")}
+            onValueChange={val => setInvitationStatus(val ?? '')}
           >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder={t.parents.filterByStatus()} />
@@ -259,153 +259,162 @@ export function ParentsList() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {isLoading ? (
-                Array.from({ length: 5 }, () => (
-                  <TableRow key={`skeleton-${generateUUID()}`}>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <Skeleton className="h-10 w-10 rounded-full" />
-                        <Skeleton className="h-4 w-32" />
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-4 w-24" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-4 w-32" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-4 w-8" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-6 w-20 rounded-full" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-8 w-8" />
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : data?.data?.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6}>
-                    <EmptyState
-                      icon={IconUsers}
-                      title={t.parents.noParents()}
-                      description={t.parents.noParentsDescription()}
-                      action={{
-                        label: t.parents.addParent(),
-                        onClick: () => setCreateDialogOpen(true),
-                      }}
-                    />
-                  </TableCell>
-                </TableRow>
-              ) : (
-                data?.data?.map((item, index: number) => (
-                  <motion.tr
-                    key={item.parent.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.02 }}
-                    className="border-b"
-                  >
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <Avatar>
-                          <AvatarFallback>
-                            {item.parent.firstName?.[0]}
-                            {item.parent.lastName?.[0]}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="font-medium">
-                            {item.parent.lastName} {item.parent.firstName}
-                          </p>
-                          {item.parent.occupation && (
-                            <p className="text-sm text-muted-foreground">
-                              {item.parent.occupation}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1">
-                        <IconPhone className="h-3 w-3 text-muted-foreground" />
-                        {item.parent.phone}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {item.parent.email ? (
-                        <div className="flex items-center gap-1">
-                          <IconMail className="h-3 w-3 text-muted-foreground" />
-                          {item.parent.email}
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground">-</span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="secondary">
-                        {item.childrenCount} {t.parents.childrenCount()}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        className={
-                          invitationStatusColors[
-                            item.parent.invitationStatus || "pending"
-                          ]
-                        }
-                      >
-                        {{
-                          pending: t.parents.statusPending,
-                          sent: t.parents.statusSent,
-                          accepted: t.parents.statusAccepted,
-                          expired: t.parents.statusExpired,
-                        }[
-                          item.parent.invitationStatus as
-                            | "pending"
-                            | "sent"
-                            | "accepted"
-                            | "expired"
-                        ]()}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger
-                          render={
-                            <Button variant="ghost" size="icon">
-                              <IconDots className="h-4 w-4" />
-                            </Button>
-                          }
-                        />
-                        <DropdownMenuContent align="end">
-                          {item.parent.invitationStatus !== "accepted" && (
-                            <DropdownMenuItem
-                              onClick={() =>
-                                inviteMutation.mutate(item.parent.id)
+              {isLoading
+                ? (
+                    Array.from({ length: 5 }, () => (
+                      <TableRow key={`skeleton-${generateUUID()}`}>
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <Skeleton className="h-10 w-10 rounded-full" />
+                            <Skeleton className="h-4 w-32" />
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-4 w-24" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-4 w-32" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-4 w-8" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-6 w-20 rounded-full" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-8 w-8" />
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )
+                : data?.data?.length === 0
+                  ? (
+                      <TableRow>
+                        <TableCell colSpan={6}>
+                          <EmptyState
+                            icon={IconUsers}
+                            title={t.parents.noParents()}
+                            description={t.parents.noParentsDescription()}
+                            action={{
+                              label: t.parents.addParent(),
+                              onClick: () => setCreateDialogOpen(true),
+                            }}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    )
+                  : (
+                      data?.data?.map((item, index: number) => (
+                        <motion.tr
+                          key={item.parent.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.02 }}
+                          className="border-b"
+                        >
+                          <TableCell>
+                            <div className="flex items-center gap-3">
+                              <Avatar>
+                                <AvatarFallback>
+                                  {item.parent.firstName?.[0]}
+                                  {item.parent.lastName?.[0]}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <p className="font-medium">
+                                  {item.parent.lastName}
+                                  {' '}
+                                  {item.parent.firstName}
+                                </p>
+                                {item.parent.occupation && (
+                                  <p className="text-sm text-muted-foreground">
+                                    {item.parent.occupation}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-1">
+                              <IconPhone className="h-3 w-3 text-muted-foreground" />
+                              {item.parent.phone}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            {item.parent.email
+                              ? (
+                                  <div className="flex items-center gap-1">
+                                    <IconMail className="h-3 w-3 text-muted-foreground" />
+                                    {item.parent.email}
+                                  </div>
+                                )
+                              : (
+                                  <span className="text-muted-foreground">-</span>
+                                )}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="secondary">
+                              {item.childrenCount}
+                              {' '}
+                              {t.parents.childrenCount()}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              className={
+                                invitationStatusColors[
+                                  item.parent.invitationStatus || 'pending'
+                                ]
                               }
-                              disabled={inviteMutation.isPending}
                             >
-                              <IconSend className="mr-2 h-4 w-4" />
-                              {t.parents.sendInvitation()}
-                            </DropdownMenuItem>
-                          )}
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            className="text-destructive"
-                            onClick={() => handleDelete(item)}
-                          >
-                            <IconTrash className="mr-2 h-4 w-4" />
-                            {t.common.delete()}
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </motion.tr>
-                ))
-              )}
+                              {{
+                                pending: t.parents.statusPending,
+                                sent: t.parents.statusSent,
+                                accepted: t.parents.statusAccepted,
+                                expired: t.parents.statusExpired,
+                              }[
+                                item.parent.invitationStatus as
+                                | 'pending'
+                                | 'sent'
+                                | 'accepted'
+                                | 'expired'
+                              ]()}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger
+                                render={(
+                                  <Button variant="ghost" size="icon">
+                                    <IconDots className="h-4 w-4" />
+                                  </Button>
+                                )}
+                              />
+                              <DropdownMenuContent align="end">
+                                {item.parent.invitationStatus !== 'accepted' && (
+                                  <DropdownMenuItem
+                                    onClick={() =>
+                                      inviteMutation.mutate(item.parent.id)}
+                                    disabled={inviteMutation.isPending}
+                                  >
+                                    <IconSend className="mr-2 h-4 w-4" />
+                                    {t.parents.sendInvitation()}
+                                  </DropdownMenuItem>
+                                )}
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                  className="text-destructive"
+                                  onClick={() => handleDelete(item)}
+                                >
+                                  <IconTrash className="mr-2 h-4 w-4" />
+                                  {t.common.delete()}
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </motion.tr>
+                      ))
+                    )}
             </TableBody>
           </Table>
 
@@ -413,14 +422,21 @@ export function ParentsList() {
           {data && data.totalPages > 1 && (
             <div className="flex items-center justify-between mt-4">
               <p className="text-sm text-muted-foreground">
-                {t.common.showing()} {(page - 1) * 20 + 1}-
-                {Math.min(page * 20, data.total)} {t.common.of()} {data.total}
+                {t.common.showing()}
+                {' '}
+                {(page - 1) * 20 + 1}
+                -
+                {Math.min(page * 20, data.total)}
+                {' '}
+                {t.common.of()}
+                {' '}
+                {data.total}
               </p>
               <div className="flex gap-2">
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
                   disabled={page === 1}
                 >
                   {t.common.previous()}
@@ -429,8 +445,7 @@ export function ParentsList() {
                   variant="outline"
                   size="sm"
                   onClick={() =>
-                    setPage((p) => Math.min(data.totalPages, p + 1))
-                  }
+                    setPage(p => Math.min(data.totalPages, p + 1))}
                   disabled={page === data.totalPages}
                 >
                   {t.common.next()}
@@ -474,9 +489,8 @@ export function ParentsList() {
             <Button
               variant="destructive"
               onClick={() =>
-                selectedParent &&
-                deleteMutation.mutate(selectedParent.parent.id)
-              }
+                selectedParent
+                && deleteMutation.mutate(selectedParent.parent.id)}
               disabled={deleteMutation.isPending}
             >
               {t.common.delete()}
@@ -485,5 +499,5 @@ export function ParentsList() {
         </DialogContent>
       </Dialog>
     </div>
-  );
+  )
 }

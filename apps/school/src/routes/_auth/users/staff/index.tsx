@@ -1,32 +1,32 @@
-import { IconPlus } from "@tabler/icons-react";
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { Button } from "@workspace/ui/components/button";
-import { z } from "zod";
-import { StaffTable } from "@/components/hr/staff/staff-table";
-import { Breadcrumbs } from "@/components/layout/breadcrumbs";
-import { useTranslations } from "@/i18n";
+import { IconPlus } from '@tabler/icons-react'
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { Button } from '@workspace/ui/components/button'
+import { z } from 'zod'
+import { StaffTable } from '@/components/hr/staff/staff-table'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { useTranslations } from '@/i18n'
 
 const staffSearchSchema = z.object({
   page: z.number().min(1).catch(1),
   search: z.string().optional(),
   position: z.string().optional(),
-  status: z.enum(["active", "inactive", "on_leave"]).optional(),
-});
+  status: z.enum(['active', 'inactive', 'on_leave']).optional(),
+})
 
-export const Route = createFileRoute("/_auth/users/staff/")({
+export const Route = createFileRoute('/_auth/users/staff/')({
   component: StaffListPage,
   validateSearch: staffSearchSchema,
-});
+})
 
 function StaffListPage() {
-  const t = useTranslations();
-  const search = Route.useSearch();
+  const t = useTranslations()
+  const search = Route.useSearch()
 
   return (
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t.hr.title(), href: "/users" },
+          { label: t.hr.title(), href: '/users' },
           { label: t.hr.staff.title() },
         ]}
       />
@@ -40,17 +40,17 @@ function StaffListPage() {
         </div>
         <div className="flex gap-2">
           <Button
-            render={
+            render={(
               <Link to="/users/staff/new">
                 <IconPlus className="mr-2 h-4 w-4" />
                 {t.hr.staff.addStaff()}
               </Link>
-            }
+            )}
           />
         </div>
       </div>
 
       <StaffTable filters={search} />
     </div>
-  );
+  )
 }

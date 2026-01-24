@@ -2,9 +2,9 @@ import {
   IconAlertTriangle,
   IconCircleCheck,
   IconClock,
-} from "@tabler/icons-react";
-import { motion } from "motion/react";
-import { useTranslations } from "@/i18n";
+} from '@tabler/icons-react'
+import { motion } from 'motion/react'
+import { useTranslations } from '@/i18n'
 
 const container = {
   hidden: { opacity: 0 },
@@ -14,15 +14,15 @@ const container = {
       staggerChildren: 0.1,
     },
   },
-};
+}
 
 const item = {
   hidden: { opacity: 0, y: 20 },
   show: { opacity: 1, y: 0 },
-};
+}
 
 export function DisciplineDashboard() {
-  const t = useTranslations();
+  const t = useTranslations()
 
   return (
     <motion.div
@@ -165,15 +165,15 @@ export function DisciplineDashboard() {
         </motion.div>
       </div>
     </motion.div>
-  );
+  )
 }
 
 interface MetricCardProps {
-  title: string;
-  value: string;
-  subtitle: string;
-  icon: React.ComponentType<{ className?: string }>;
-  trend: "positive" | "negative" | "neutral";
+  title: string
+  value: string
+  subtitle: string
+  icon: React.ComponentType<{ className?: string }>
+  trend: 'positive' | 'negative' | 'neutral'
 }
 
 function MetricCard({
@@ -184,10 +184,10 @@ function MetricCard({
   trend,
 }: MetricCardProps) {
   const trendColors = {
-    positive: "text-green-600 dark:text-green-400",
-    negative: "text-red-600 dark:text-red-400",
-    neutral: "text-muted-foreground",
-  };
+    positive: 'text-green-600 dark:text-green-400',
+    negative: 'text-red-600 dark:text-red-400',
+    neutral: 'text-muted-foreground',
+  }
 
   return (
     <motion.div
@@ -204,14 +204,14 @@ function MetricCard({
         <p className="text-xs text-muted-foreground">{subtitle}</p>
       </div>
     </motion.div>
-  );
+  )
 }
 
 interface AbsenceItemProps {
-  name: string;
-  class: string;
-  status: "justified" | "unjustified" | "pending";
-  reason: string;
+  name: string
+  class: string
+  status: 'justified' | 'unjustified' | 'pending'
+  reason: string
 }
 
 function AbsenceItem({
@@ -222,20 +222,20 @@ function AbsenceItem({
 }: AbsenceItemProps) {
   const statusConfig = {
     justified: {
-      label: "Justifiée",
+      label: 'Justifiée',
       color:
-        "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400",
+        'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400',
     },
     unjustified: {
-      label: "Non justifiée",
-      color: "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400",
+      label: 'Non justifiée',
+      color: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400',
     },
     pending: {
-      label: "En attente",
+      label: 'En attente',
       color:
-        "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400",
+        'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400',
     },
-  };
+  }
 
   return (
     <div className="flex items-center justify-between rounded-md border border-border/40 bg-background p-4">
@@ -250,15 +250,15 @@ function AbsenceItem({
         {statusConfig[status].label}
       </span>
     </div>
-  );
+  )
 }
 
 interface ConductItemProps {
-  name: string;
-  class: string;
-  incident: string;
-  severity: "minor" | "moderate" | "major";
-  date: string;
+  name: string
+  class: string
+  incident: string
+  severity: 'minor' | 'moderate' | 'major'
+  date: string
 }
 
 function ConductItem({
@@ -270,20 +270,20 @@ function ConductItem({
 }: ConductItemProps) {
   const severityConfig = {
     minor: {
-      label: "Mineur",
+      label: 'Mineur',
       color:
-        "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400",
+        'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400',
     },
     moderate: {
-      label: "Modéré",
+      label: 'Modéré',
       color:
-        "bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400",
+        'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400',
     },
     major: {
-      label: "Grave",
-      color: "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400",
+      label: 'Grave',
+      color: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400',
     },
-  };
+  }
 
   return (
     <div className="space-y-2 rounded-md border border-border/40 bg-background p-4">
@@ -301,14 +301,14 @@ function ConductItem({
       <p className="text-sm">{incident}</p>
       <p className="text-xs text-muted-foreground">{date}</p>
     </div>
-  );
+  )
 }
 
 interface LateItemProps {
-  name: string;
-  class: string;
-  count: number;
-  period: string;
+  name: string
+  class: string
+  count: number
+  period: string
 }
 
 function LateItem({ name, class: className, count, period }: LateItemProps) {
@@ -319,9 +319,13 @@ function LateItem({ name, class: className, count, period }: LateItemProps) {
         <p className="text-xs text-muted-foreground">{className}</p>
       </div>
       <div className="text-right">
-        <p className="text-sm font-bold">{count} retards</p>
+        <p className="text-sm font-bold">
+          {count}
+          {' '}
+          retards
+        </p>
         <p className="text-xs text-muted-foreground">{period}</p>
       </div>
     </div>
-  );
+  )
 }

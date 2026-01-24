@@ -1,6 +1,6 @@
-import { IconUsers } from "@tabler/icons-react";
-import { Badge } from "@workspace/ui/components/badge";
-import { Skeleton } from "@workspace/ui/components/skeleton";
+import { IconUsers } from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -8,54 +8,54 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@workspace/ui/components/table";
-import { AnimatePresence, motion } from "motion/react";
-import { useTranslations } from "@/i18n";
-import { generateUUID } from "@/utils/generateUUID";
+} from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
+import { useTranslations } from '@/i18n'
+import { generateUUID } from '@/utils/generateUUID'
 
 interface StudentFee {
-  id: string;
-  studentName: string;
-  matricule: string;
-  className: string;
-  totalFees: number;
-  paidAmount: number;
-  balance: number;
-  status: string;
+  id: string
+  studentName: string
+  matricule: string
+  className: string
+  totalFees: number
+  paidAmount: number
+  balance: number
+  status: string
 }
 
 interface StudentFeesTableProps {
-  studentFees: StudentFee[];
-  isLoading?: boolean;
+  studentFees: StudentFee[]
+  isLoading?: boolean
 }
 
 function getStatusVariant(status: string) {
   switch (status) {
-    case "paid":
-      return "default";
-    case "partial":
-      return "secondary";
-    case "pending":
-      return "outline";
-    case "waived":
-      return "secondary";
+    case 'paid':
+      return 'default'
+    case 'partial':
+      return 'secondary'
+    case 'pending':
+      return 'outline'
+    case 'waived':
+      return 'secondary'
     default:
-      return "destructive";
+      return 'destructive'
   }
 }
 
 function formatCurrency(amount: number) {
-  return new Intl.NumberFormat("fr-FR", {
-    style: "decimal",
+  return new Intl.NumberFormat('fr-FR', {
+    style: 'decimal',
     minimumFractionDigits: 0,
-  }).format(amount);
+  }).format(amount)
 }
 
 export function StudentFeesTable({
   studentFees,
   isLoading,
 }: StudentFeesTableProps) {
-  const t = useTranslations();
+  const t = useTranslations()
 
   if (isLoading) {
     return (
@@ -64,7 +64,7 @@ export function StudentFeesTable({
           <Skeleton key={generateUUID()} className="h-12 w-full rounded-xl" />
         ))}
       </div>
-    );
+    )
   }
 
   if (studentFees.length === 0) {
@@ -80,7 +80,7 @@ export function StudentFeesTable({
           {t.finance.studentFees.description()}
         </p>
       </div>
-    );
+    )
   }
 
   return (
@@ -123,34 +123,39 @@ export function StudentFeesTable({
                   className="group hover:bg-muted/30 border-border/40 transition-colors"
                 >
                   <TableCell className="font-mono text-sm text-muted-foreground font-medium">
-                    {fee.matricule || "-"}
+                    {fee.matricule || '-'}
                   </TableCell>
                   <TableCell className="font-bold text-foreground">
                     {fee.studentName}
                   </TableCell>
                   <TableCell>
-                    {fee.className ? (
-                      <Badge variant="outline" className="font-medium">
-                        {fee.className}
-                      </Badge>
-                    ) : (
-                      <span className="text-muted-foreground italic text-sm">
-                        -
-                      </span>
-                    )}
+                    {fee.className
+                      ? (
+                          <Badge variant="outline" className="font-medium">
+                            {fee.className}
+                          </Badge>
+                        )
+                      : (
+                          <span className="text-muted-foreground italic text-sm">
+                            -
+                          </span>
+                        )}
                   </TableCell>
                   <TableCell className="text-right font-medium">
-                    {formatCurrency(fee.totalFees)}{" "}
+                    {formatCurrency(fee.totalFees)}
+                    {' '}
                     <span className="text-xs text-muted-foreground ml-1">
                       FCFA
                     </span>
                   </TableCell>
                   <TableCell className="text-right font-bold text-green-600 dark:text-green-500">
-                    {formatCurrency(fee.paidAmount)}{" "}
+                    {formatCurrency(fee.paidAmount)}
+                    {' '}
                     <span className="text-xs ml-1 opacity-70">FCFA</span>
                   </TableCell>
                   <TableCell className="text-right font-bold text-orange-600 dark:text-orange-500">
-                    {formatCurrency(fee.balance)}{" "}
+                    {formatCurrency(fee.balance)}
+                    {' '}
                     <span className="text-xs ml-1 opacity-70">FCFA</span>
                   </TableCell>
                   <TableCell>
@@ -168,13 +173,13 @@ export function StudentFeesTable({
                         waived: t.finance.payments.status.cancelled,
                       }[
                         fee.status as
-                          | "pending"
-                          | "completed"
-                          | "cancelled"
-                          | "refunded"
-                          | "paid"
-                          | "partial"
-                          | "waived"
+                        | 'pending'
+                        | 'completed'
+                        | 'cancelled'
+                        | 'refunded'
+                        | 'paid'
+                        | 'partial'
+                        | 'waived'
                       ]()}
                     </Badge>
                   </TableCell>
@@ -199,7 +204,7 @@ export function StudentFeesTable({
                 <div>
                   <div className="font-bold text-lg">{fee.studentName}</div>
                   <div className="text-xs font-mono text-muted-foreground mt-0.5">
-                    {fee.matricule || "N/A"}
+                    {fee.matricule || 'N/A'}
                   </div>
                 </div>
                 {fee.className && (
@@ -231,10 +236,13 @@ export function StudentFeesTable({
               <div className="flex items-center justify-between pt-2 border-t border-border/30">
                 <div className="text-sm">
                   <span className="text-muted-foreground mr-2">
-                    {t.finance.studentFees.totalFees()}:
+                    {t.finance.studentFees.totalFees()}
+                    :
                   </span>
                   <span className="font-bold">
-                    {formatCurrency(fee.totalFees)} FCFA
+                    {formatCurrency(fee.totalFees)}
+                    {' '}
+                    FCFA
                   </span>
                 </div>
                 <Badge
@@ -251,13 +259,13 @@ export function StudentFeesTable({
                     waived: t.finance.payments.status.cancelled,
                   }[
                     fee.status as
-                      | "pending"
-                      | "completed"
-                      | "cancelled"
-                      | "refunded"
-                      | "paid"
-                      | "partial"
-                      | "waived"
+                    | 'pending'
+                    | 'completed'
+                    | 'cancelled'
+                    | 'refunded'
+                    | 'paid'
+                    | 'partial'
+                    | 'waived'
                   ]()}
                 </Badge>
               </div>
@@ -266,5 +274,5 @@ export function StudentFeesTable({
         </AnimatePresence>
       </div>
     </>
-  );
+  )
 }

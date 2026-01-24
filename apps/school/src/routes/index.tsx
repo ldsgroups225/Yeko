@@ -1,9 +1,9 @@
-import { IconChevronRight, IconSchool } from "@tabler/icons-react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { IconChevronRight, IconSchool } from '@tabler/icons-react'
+import { createFileRoute, Link } from '@tanstack/react-router'
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute('/')({
   component: IndexComponent,
-});
+})
 
 function IndexComponent() {
   return (
@@ -49,5 +49,5 @@ function IndexComponent() {
         </p>
       </div>
     </main>
-  );
+  )
 }

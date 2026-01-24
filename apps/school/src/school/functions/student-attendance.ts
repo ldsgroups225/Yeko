@@ -9,16 +9,16 @@ import {
   getStudentAttendanceHistory,
   markParentNotified,
   upsertStudentAttendance,
-} from "@repo/data-ops";
-import { createServerFn } from "@tanstack/react-start";
-import { z } from "zod";
+} from '@repo/data-ops'
+import { createServerFn } from '@tanstack/react-start'
+import { z } from 'zod'
 
 import {
   bulkStudentAttendanceSchema,
   excuseAbsenceSchema,
   studentAttendanceSchema,
-} from "@/schemas/student-attendance";
-import { getSchoolContext } from "../middleware/school-context";
+} from '@/schemas/student-attendance'
+import { getSchoolContext } from '../middleware/school-context'
 
 /**
  * Get class attendance for a date
@@ -32,11 +32,12 @@ export const getClassAttendanceForDate = createServerFn()
     }),
   )
   .handler(async ({ data }) => {
-    const context = await getSchoolContext();
-    if (!context) throw new Error("No school context");
+    const context = await getSchoolContext()
+    if (!context)
+      throw new Error('No school context')
 
-    return getClassAttendance(data);
-  });
+    return getClassAttendance(data)
+  })
 
 /**
  * Get student attendance history
@@ -51,11 +52,12 @@ export const getStudentHistory = createServerFn()
     }),
   )
   .handler(async ({ data }) => {
-    const context = await getSchoolContext();
-    if (!context) throw new Error("No school context");
+    const context = await getSchoolContext()
+    if (!context)
+      throw new Error('No school context')
 
-    return getStudentAttendanceHistory(data);
-  });
+    return getStudentAttendanceHistory(data)
+  })
 
 /**
  * Record single student attendance
@@ -63,11 +65,12 @@ export const getStudentHistory = createServerFn()
 export const recordStudentAttendance = createServerFn()
   .inputValidator(studentAttendanceSchema)
   .handler(async ({ data }) => {
-    const context = await getSchoolContext();
-    if (!context) throw new Error("No school context");
+    const context = await getSchoolContext()
+    if (!context)
+      throw new Error('No school context')
 
     // Get school settings
-    const settings = await getAttendanceSettings(context.schoolId);
+    const settings = await getAttendanceSettings(context.schoolId)
 
     const result = await upsertStudentAttendance({
       studentId: data.studentId,
@@ -79,10 +82,10 @@ export const recordStudentAttendance = createServerFn()
       schoolId: context.schoolId,
       recordedBy: context.userId,
       lateThresholdMinutes: settings.studentLateThresholdMinutes ?? 10,
-    });
+    })
 
-    return result;
-  });
+    return result
+  })
 
 /**
  * Bulk record class attendance
@@ -90,28 +93,29 @@ export const recordStudentAttendance = createServerFn()
 export const bulkRecordClassAttendance = createServerFn()
   .inputValidator(bulkStudentAttendanceSchema)
   .handler(async ({ data }) => {
-    const context = await getSchoolContext();
-    if (!context) throw new Error("No school context");
+    const context = await getSchoolContext()
+    if (!context)
+      throw new Error('No school context')
 
     const results = await bulkUpsertClassAttendance({
       classId: data.classId,
       schoolId: context.schoolId,
       date: data.date,
       classSessionId: data.classSessionId ?? undefined,
-      entries: data.entries.map((entry) => ({
+      entries: data.entries.map(entry => ({
         studentId: entry.studentId,
         status: entry.status,
         reason: entry.reason ?? undefined,
       })),
       recordedBy: context.userId,
-    });
+    })
 
     return {
       success: true,
       count: results,
       data: results,
-    };
-  });
+    }
+  })
 
 /**
  * Excuse student absence
@@ -119,16 +123,17 @@ export const bulkRecordClassAttendance = createServerFn()
 export const excuseAbsence = createServerFn()
   .inputValidator(excuseAbsenceSchema)
   .handler(async ({ data }) => {
-    const context = await getSchoolContext();
-    if (!context) throw new Error("No school context");
+    const context = await getSchoolContext()
+    if (!context)
+      throw new Error('No school context')
 
     const result = await excuseStudentAbsence({
       ...data,
       excusedBy: context.userId,
-    });
+    })
 
-    return result;
-  });
+    return result
+  })
 
 /**
  * Notify parent of absence
@@ -137,18 +142,19 @@ export const notifyParent = createServerFn()
   .inputValidator(
     z.object({
       attendanceId: z.string(),
-      method: z.enum(["email", "sms", "in_app"]),
+      method: z.enum(['email', 'sms', 'in_app']),
     }),
   )
   .handler(async ({ data }) => {
-    const context = await getSchoolContext();
-    if (!context) throw new Error("No school context");
+    const context = await getSchoolContext()
+    if (!context)
+      throw new Error('No school context')
 
     // TODO: Implement actual notification sending
-    const result = await markParentNotified(data);
+    const result = await markParentNotified(data)
 
-    return result;
-  });
+    return result
+  })
 
 /**
  * Get attendance statistics
@@ -162,14 +168,15 @@ export const getStatistics = createServerFn()
     }),
   )
   .handler(async ({ data }) => {
-    const context = await getSchoolContext();
-    if (!context) throw new Error("No school context");
+    const context = await getSchoolContext()
+    if (!context)
+      throw new Error('No school context')
 
     return getAttendanceStatistics({
       schoolId: context.schoolId,
       ...data,
-    });
-  });
+    })
+  })
 
 /**
  * IconCheck chronic absence for a student
@@ -183,25 +190,26 @@ export const checkChronicAbsence = createServerFn()
     }),
   )
   .handler(async ({ data }) => {
-    const context = await getSchoolContext();
-    if (!context) throw new Error("No school context");
+    const context = await getSchoolContext()
+    if (!context)
+      throw new Error('No school context')
 
-    const settings = await getAttendanceSettings(context.schoolId);
-    const threshold = Number(settings.chronicAbsenceThresholdPercent ?? 10);
+    const settings = await getAttendanceSettings(context.schoolId)
+    const threshold = Number(settings.chronicAbsenceThresholdPercent ?? 10)
 
     const absenceCount = await countStudentAbsences({
       ...data,
       excludeExcused: true,
-    });
+    })
 
     // Calculate total school days (simplified)
-    const start = new Date(data.startDate);
-    const end = new Date(data.endDate);
-    const diffTime = Math.abs(end.getTime() - start.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    const schoolDays = Math.floor((diffDays * 5) / 7);
+    const start = new Date(data.startDate)
+    const end = new Date(data.endDate)
+    const diffTime = Math.abs(end.getTime() - start.getTime())
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    const schoolDays = Math.floor((diffDays * 5) / 7)
 
-    const absenceRate = schoolDays > 0 ? (absenceCount / schoolDays) * 100 : 0;
+    const absenceRate = schoolDays > 0 ? (absenceCount / schoolDays) * 100 : 0
 
     return {
       absenceCount,
@@ -209,8 +217,8 @@ export const checkChronicAbsence = createServerFn()
       absenceRate: Math.round(absenceRate * 100) / 100,
       isChronicAbsent: absenceRate >= threshold,
       threshold,
-    };
-  });
+    }
+  })
 
 /**
  * Delete student attendance record
@@ -218,9 +226,10 @@ export const checkChronicAbsence = createServerFn()
 export const removeStudentAttendance = createServerFn()
   .inputValidator(z.object({ id: z.string() }))
   .handler(async ({ data }) => {
-    const context = await getSchoolContext();
-    if (!context) throw new Error("No school context");
+    const context = await getSchoolContext()
+    if (!context)
+      throw new Error('No school context')
 
-    await deleteStudentAttendance(data.id);
-    return { success: true };
-  });
+    await deleteStudentAttendance(data.id)
+    return { success: true }
+  })

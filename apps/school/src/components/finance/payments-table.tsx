@@ -3,16 +3,16 @@ import {
   IconDots,
   IconEye,
   IconPrinter,
-} from "@tabler/icons-react";
-import { Badge } from "@workspace/ui/components/badge";
-import { Button } from "@workspace/ui/components/button";
+} from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@workspace/ui/components/dropdown-menu";
-import { Skeleton } from "@workspace/ui/components/skeleton";
+} from '@workspace/ui/components/dropdown-menu'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -20,27 +20,27 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@workspace/ui/components/table";
-import { AnimatePresence, motion } from "motion/react";
-import { useTranslations } from "@/i18n";
-import { generateUUID } from "@/utils/generateUUID";
+} from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
+import { useTranslations } from '@/i18n'
+import { generateUUID } from '@/utils/generateUUID'
 
 interface Payment {
-  id: string;
-  receiptNumber?: string;
-  studentName: string;
-  studentMatricule: string;
-  amount: number;
-  method: string;
-  status: string;
-  createdAt: string;
+  id: string
+  receiptNumber?: string
+  studentName: string
+  studentMatricule: string
+  amount: number
+  method: string
+  status: string
+  createdAt: string
 }
 
 interface PaymentsTableProps {
-  payments: Payment[];
-  isLoading?: boolean;
-  onView?: (payment: Payment) => void;
-  onPrintReceipt?: (payment: Payment) => void;
+  payments: Payment[]
+  isLoading?: boolean
+  onView?: (payment: Payment) => void
+  onPrintReceipt?: (payment: Payment) => void
 }
 
 export function PaymentsTable({
@@ -49,52 +49,52 @@ export function PaymentsTable({
   onView,
   onPrintReceipt,
 }: PaymentsTableProps) {
-  const t = useTranslations();
+  const t = useTranslations()
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("fr-FR", {
-      style: "decimal",
+    return new Intl.NumberFormat('fr-FR', {
+      style: 'decimal',
       minimumFractionDigits: 0,
-    }).format(amount);
-  };
+    }).format(amount)
+  }
 
   const formatDate = (dateString: string) => {
-    return new Intl.DateTimeFormat("fr-FR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    }).format(new Date(dateString));
-  };
+    return new Intl.DateTimeFormat('fr-FR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    }).format(new Date(dateString))
+  }
 
   const getStatusVariant = (status: string) => {
     switch (status) {
-      case "completed":
-        return "default";
-      case "pending":
-        return "secondary";
-      case "cancelled":
-        return "destructive";
-      case "refunded":
-        return "outline";
+      case 'completed':
+        return 'default'
+      case 'pending':
+        return 'secondary'
+      case 'cancelled':
+        return 'destructive'
+      case 'refunded':
+        return 'outline'
       default:
-        return "secondary";
+        return 'secondary'
     }
-  };
+  }
 
   const getMethodLabel = (method: string) => {
     switch (method) {
-      case "cash":
-        return t.finance.cash();
-      case "card":
-        return t.finance.card();
-      case "transfer":
-        return t.finance.transfer();
-      case "mobile_money":
-        return t.finance.mobile();
+      case 'cash':
+        return t.finance.cash()
+      case 'card':
+        return t.finance.card()
+      case 'transfer':
+        return t.finance.transfer()
+      case 'mobile_money':
+        return t.finance.mobile()
       default:
-        return method;
+        return method
     }
-  };
+  }
 
   if (isLoading) {
     return (
@@ -103,7 +103,7 @@ export function PaymentsTable({
           <Skeleton key={generateUUID()} className="h-16 w-full rounded-xl" />
         ))}
       </div>
-    );
+    )
   }
 
   if (payments.length === 0) {
@@ -117,7 +117,7 @@ export function PaymentsTable({
           {t.finance.payments.description()}
         </p>
       </div>
-    );
+    )
   }
 
   return (
@@ -158,7 +158,7 @@ export function PaymentsTable({
                   className="group hover:bg-muted/30 border-border/40 transition-colors"
                 >
                   <TableCell className="font-mono text-sm text-muted-foreground font-medium">
-                    {payment.receiptNumber || "-"}
+                    {payment.receiptNumber || '-'}
                   </TableCell>
                   <TableCell>
                     <div>
@@ -198,10 +198,10 @@ export function PaymentsTable({
                         refunded: t.finance.payments.status.refunded,
                       }[
                         payment.status as
-                          | "pending"
-                          | "completed"
-                          | "cancelled"
-                          | "refunded"
+                        | 'pending'
+                        | 'completed'
+                        | 'cancelled'
+                        | 'refunded'
                       ]()}
                     </Badge>
                   </TableCell>
@@ -211,7 +211,7 @@ export function PaymentsTable({
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger
-                        render={
+                        render={(
                           <Button
                             variant="ghost"
                             size="icon"
@@ -219,7 +219,7 @@ export function PaymentsTable({
                           >
                             <IconDots className="h-4 w-4" />
                           </Button>
-                        }
+                        )}
                       />
                       <DropdownMenuContent
                         align="end"
@@ -232,7 +232,7 @@ export function PaymentsTable({
                           <IconEye className="mr-2 h-4 w-4 text-muted-foreground" />
                           {t.common.view()}
                         </DropdownMenuItem>
-                        {payment.status === "completed" && (
+                        {payment.status === 'completed' && (
                           <DropdownMenuItem
                             onClick={() => onPrintReceipt?.(payment)}
                             className="rounded-lg cursor-pointer focus:bg-primary/10 font-medium"
@@ -265,7 +265,7 @@ export function PaymentsTable({
                 <div>
                   <div className="font-bold text-lg">{payment.studentName}</div>
                   <div className="text-xs font-mono text-muted-foreground mt-0.5">
-                    {payment.receiptNumber || "N/A"}
+                    {payment.receiptNumber || 'N/A'}
                   </div>
                 </div>
                 <Badge
@@ -279,10 +279,10 @@ export function PaymentsTable({
                     refunded: t.finance.payments.status.refunded,
                   }[
                     payment.status as
-                      | "pending"
-                      | "completed"
-                      | "cancelled"
-                      | "refunded"
+                    | 'pending'
+                    | 'completed'
+                    | 'cancelled'
+                    | 'refunded'
                   ]()}
                 </Badge>
               </div>
@@ -293,7 +293,8 @@ export function PaymentsTable({
                     {t.finance.amount()}
                   </div>
                   <div className="font-bold text-lg">
-                    {formatCurrency(payment.amount)}{" "}
+                    {formatCurrency(payment.amount)}
+                    {' '}
                     <span className="text-sm font-normal text-muted-foreground">
                       FCFA
                     </span>
@@ -323,7 +324,7 @@ export function PaymentsTable({
                     <IconEye className="mr-2 h-3.5 w-3.5" />
                     {t.common.view()}
                   </Button>
-                  {payment.status === "completed" && (
+                  {payment.status === 'completed' && (
                     <Button
                       size="sm"
                       variant="ghost"
@@ -341,5 +342,5 @@ export function PaymentsTable({
         </AnimatePresence>
       </div>
     </>
-  );
+  )
 }

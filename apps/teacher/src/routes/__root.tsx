@@ -1,91 +1,91 @@
-import type { QueryClient } from "@tanstack/react-query";
-import type { ReactNode } from "react";
-import { IconHome } from "@tabler/icons-react";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import type { QueryClient } from '@tanstack/react-query'
+import type { ReactNode } from 'react'
+import { IconHome } from '@tabler/icons-react'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import {
   createRootRouteWithContext,
   HeadContent,
   Link,
   Outlet,
   Scripts,
-} from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import { Button } from "@workspace/ui/components/button";
-import { useTranslation } from "react-i18next";
-import { Toaster } from "sonner";
-import appCss from "@/styles.css?url";
-import "@/i18n/config";
+} from '@tanstack/react-router'
+import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+import { Button } from '@workspace/ui/components/button'
+import { useTranslation } from 'react-i18next'
+import { Toaster } from 'sonner'
+import appCss from '@/styles.css?url'
+import '@/i18n/config'
 
 export const Route = createRootRouteWithContext<{
-  queryClient: QueryClient;
+  queryClient: QueryClient
 }>()({
   head: () => ({
     meta: [
-      { charSet: "utf-8" },
+      { charSet: 'utf-8' },
       {
-        name: "viewport",
+        name: 'viewport',
         content:
-          "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover",
+          'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover',
       },
-      { title: "Yeko Enseignant" },
+      { title: 'Yeko Enseignant' },
       {
-        name: "description",
-        content: "Application mobile pour les enseignants Yeko",
+        name: 'description',
+        content: 'Application mobile pour les enseignants Yeko',
       },
-      { name: "theme-color", content: "#2563eb" },
-      { name: "apple-mobile-web-app-capable", content: "yes" },
-      { name: "apple-mobile-web-app-status-bar-style", content: "default" },
+      { name: 'theme-color', content: '#2563eb' },
+      { name: 'apple-mobile-web-app-capable', content: 'yes' },
+      { name: 'apple-mobile-web-app-status-bar-style', content: 'default' },
     ],
     links: [
-      { rel: "stylesheet", href: appCss },
-      { rel: "manifest", href: "/manifest.json" },
-      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+      { rel: 'stylesheet', href: appCss },
+      { rel: 'manifest', href: '/manifest.json' },
+      { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
       {
-        rel: "preconnect",
-        href: "https://fonts.googleapis.com",
+        rel: 'preconnect',
+        href: 'https://fonts.googleapis.com',
       },
       {
-        rel: "preconnect",
-        href: "https://fonts.gstatic.com",
-        crossOrigin: "anonymous",
+        rel: 'preconnect',
+        href: 'https://fonts.gstatic.com',
+        crossOrigin: 'anonymous',
       },
       {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap",
+        rel: 'stylesheet',
+        href: 'https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap',
       },
     ],
   }),
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
-});
+})
 
 function RootComponent() {
   return (
     <RootDocument>
       <Outlet />
     </RootDocument>
-  );
+  )
 }
 
 function NotFoundComponent() {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4">
       <div className="text-center space-y-4">
         <h1 className="text-6xl font-bold text-muted-foreground">404</h1>
-        <p className="text-xl text-muted-foreground">{t("errors.notFound")}</p>
+        <p className="text-xl text-muted-foreground">{t('errors.notFound')}</p>
         <Button
-          render={
+          render={(
             <Link to="/login">
               <IconHome className="mr-2 h-4 w-4" />
-              {t("nav.home")}
+              {t('nav.home')}
             </Link>
-          }
+          )}
         />
       </div>
     </div>
-  );
+  )
 }
 
 function RootDocument({ children }: { children: ReactNode }) {
@@ -102,5 +102,5 @@ function RootDocument({ children }: { children: ReactNode }) {
         <Scripts />
       </body>
     </html>
-  );
+  )
 }

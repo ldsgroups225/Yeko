@@ -265,10 +265,12 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
           <h2 className="text-xl font-serif font-semibold">{t.hr.users.roleAssignment()}</h2>
         </div>
         <p className="mb-8 text-sm text-muted-foreground leading-relaxed">
-          {t.hr.users.roleAssignmentDescription()} (Optionnel)
+          {t.hr.users.roleAssignmentDescription()}
+          {' '}
+          (Optionnel)
         </p>
         <div className="space-y-4">
-            {t.hr.common.roles()}
+          {t.hr.common.roles()}
           <RoleSelector
             selectedRoleIds={watch('roleIds') || []}
             onChange={roleIds => setValue('roleIds', roleIds, { shouldValidate: true })}

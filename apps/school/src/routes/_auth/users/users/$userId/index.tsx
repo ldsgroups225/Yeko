@@ -4,69 +4,69 @@ import {
   IconMail,
   IconPhone,
   IconTrash,
-} from "@tabler/icons-react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Badge } from "@workspace/ui/components/badge";
-import { Button } from "@workspace/ui/components/button";
-import { DeleteConfirmationDialog } from "@workspace/ui/components/delete-confirmation-dialog";
+} from '@tabler/icons-react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@workspace/ui/components/tabs";
-import { format } from "date-fns";
-import { useState } from "react";
-import { toast } from "sonner";
-import { Breadcrumbs } from "@/components/layout/breadcrumbs";
-import { useTranslations } from "@/i18n";
+} from '@workspace/ui/components/tabs'
+import { format } from 'date-fns'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { useTranslations } from '@/i18n'
 import {
   deleteExistingUser,
   getUser,
   getUserActivity,
-} from "@/school/functions/users";
+} from '@/school/functions/users'
 
-export const Route = createFileRoute("/_auth/users/users/$userId/")({
+export const Route = createFileRoute('/_auth/users/users/$userId/')({
   component: UserDetailsPage,
-});
+})
 
 function UserDetailsPage() {
-  const { userId } = Route.useParams();
-  const t = useTranslations();
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const { userId } = Route.useParams()
+  const t = useTranslations()
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
   const { data: user, isLoading } = useQuery({
-    queryKey: ["user", userId],
+    queryKey: ['user', userId],
     queryFn: async () => {
-      const result = await getUser({ data: userId });
-      return result;
+      const result = await getUser({ data: userId })
+      return result
     },
-  });
+  })
 
   const { data: activity } = useQuery({
-    queryKey: ["user-activity", userId],
+    queryKey: ['user-activity', userId],
     queryFn: async () => {
-      const result = await getUserActivity({ data: { userId, limit: 20 } });
-      return result;
+      const result = await getUserActivity({ data: { userId, limit: 20 } })
+      return result
     },
-  });
+  })
 
   const deleteMutation = useMutation({
     mutationFn: async () => {
-      return await deleteExistingUser({ data: userId });
+      return await deleteExistingUser({ data: userId })
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
-      toast.success(t.hr.users.deleteSuccess());
-      navigate({ to: "/users/users", search: { page: 1 } });
+      queryClient.invalidateQueries({ queryKey: ['users'] })
+      toast.success(t.hr.users.deleteSuccess())
+      navigate({ to: '/users/users', search: { page: 1 } })
     },
     onError: () => {
-      toast.error(t.hr.users.deleteError());
+      toast.error(t.hr.users.deleteError())
     },
-  });
+  })
 
   if (isLoading) {
     return (
@@ -78,7 +78,7 @@ function UserDetailsPage() {
           </p>
         </div>
       </div>
-    );
+    )
   }
 
   if (!user) {
@@ -87,24 +87,24 @@ function UserDetailsPage() {
         <div className="text-center">
           <p className="text-lg font-medium">{t.errors.notFound()}</p>
           <Button
-            render={
+            render={(
               <Link to="/users/users" search={{ page: 1 }}>
                 {t.common.back()}
               </Link>
-            }
+            )}
             className="mt-4"
           />
         </div>
       </div>
-    );
+    )
   }
 
   return (
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t.hr.title(), href: "/users" },
-          { label: t.hr.users.title(), href: "/users/users" },
+          { label: t.hr.title(), href: '/users' },
+          { label: t.hr.users.title(), href: '/users/users' },
           { label: user.name },
         ]}
       />
@@ -131,8 +131,7 @@ function UserDetailsPage() {
           <Button
             size="sm"
             onClick={() =>
-              navigate({ to: "/users/users/$userId/edit", params: { userId } })
-            }
+              navigate({ to: '/users/users/$userId/edit', params: { userId } })}
           >
             <IconEdit className="mr-2 h-4 w-4" />
             {t.common.edit()}
@@ -182,7 +181,7 @@ function UserDetailsPage() {
                     {t.hr.common.createdAt()}
                   </p>
                   <p className="font-medium">
-                    {format(new Date(user.createdAt), "dd/MM/yyyy")}
+                    {format(new Date(user.createdAt), 'dd/MM/yyyy')}
                   </p>
                 </div>
               </div>
@@ -193,23 +192,23 @@ function UserDetailsPage() {
                   </p>
                   <Badge
                     variant={
-                      user.status === "active"
-                        ? "default"
-                        : user.status === "suspended"
-                          ? "destructive"
-                          : "secondary"
+                      user.status === 'active'
+                        ? 'default'
+                        : user.status === 'suspended'
+                          ? 'destructive'
+                          : 'secondary'
                     }
                   >
                     {(() => {
                       switch (user.status) {
-                        case "active":
-                          return t.hr.status.active();
-                        case "inactive":
-                          return t.hr.status.inactive();
-                        case "suspended":
-                          return t.hr.status.suspended();
+                        case 'active':
+                          return t.hr.status.active()
+                        case 'inactive':
+                          return t.hr.status.inactive()
+                        case 'suspended':
+                          return t.hr.status.suspended()
                         default:
-                          return user.status;
+                          return user.status
                       }
                     })()}
                   </Badge>
@@ -225,23 +224,25 @@ function UserDetailsPage() {
               {t.hr.users.assignedRoles()}
             </h2>
             <div className="space-y-3">
-              {user.roles && user.roles.length > 0 ? (
-                user.roles.map((role) => (
-                  <div
-                    key={role.roleId}
-                    className="flex items-center justify-between rounded-md border p-3"
-                  >
-                    <div>
-                      <p className="font-medium">{role.roleName}</p>
-                    </div>
-                    <Badge variant="secondary">{t.hr.roles.systemRole()}</Badge>
-                  </div>
-                ))
-              ) : (
-                <p className="text-sm text-muted-foreground">
-                  {t.hr.users.noRoles()}
-                </p>
-              )}
+              {user.roles && user.roles.length > 0
+                ? (
+                    user.roles.map(role => (
+                      <div
+                        key={role.roleId}
+                        className="flex items-center justify-between rounded-md border p-3"
+                      >
+                        <div>
+                          <p className="font-medium">{role.roleName}</p>
+                        </div>
+                        <Badge variant="secondary">{t.hr.roles.systemRole()}</Badge>
+                      </div>
+                    ))
+                  )
+                : (
+                    <p className="text-sm text-muted-foreground">
+                      {t.hr.users.noRoles()}
+                    </p>
+                  )}
             </div>
           </div>
         </TabsContent>
@@ -252,26 +253,28 @@ function UserDetailsPage() {
               {t.hr.users.recentActivity()}
             </h2>
             <div className="space-y-3">
-              {activity && activity.length > 0 ? (
-                activity.map((log) => (
-                  <div
-                    key={log.id}
-                    className="flex gap-3 border-b pb-3 last:border-0"
-                  >
-                    <div className="mt-1 flex h-2 w-2 shrink-0 rounded-full bg-primary" />
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">{log.action}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {format(new Date(log.createdAt), "dd/MM/yyyy HH:mm")}
-                      </p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p className="text-sm text-muted-foreground">
-                  {t.hr.users.noActivity()}
-                </p>
-              )}
+              {activity && activity.length > 0
+                ? (
+                    activity.map(log => (
+                      <div
+                        key={log.id}
+                        className="flex gap-3 border-b pb-3 last:border-0"
+                      >
+                        <div className="mt-1 flex h-2 w-2 shrink-0 rounded-full bg-primary" />
+                        <div className="flex-1">
+                          <p className="text-sm font-medium">{log.action}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {format(new Date(log.createdAt), 'dd/MM/yyyy HH:mm')}
+                          </p>
+                        </div>
+                      </div>
+                    ))
+                  )
+                : (
+                    <p className="text-sm text-muted-foreground">
+                      {t.hr.users.noActivity()}
+                    </p>
+                  )}
             </div>
           </div>
         </TabsContent>
@@ -287,5 +290,5 @@ function UserDetailsPage() {
         isLoading={deleteMutation.isPending}
       />
     </div>
-  );
+  )
 }

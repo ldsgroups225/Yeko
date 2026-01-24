@@ -1,8 +1,8 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { IconLoader2 } from "@tabler/icons-react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Button } from "@workspace/ui/components/button";
-import { Checkbox } from "@workspace/ui/components/checkbox";
+import { zodResolver } from '@hookform/resolvers/zod'
+import { IconLoader2 } from '@tabler/icons-react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { Button } from '@workspace/ui/components/button'
+import { Checkbox } from '@workspace/ui/components/checkbox'
 import {
   Dialog,
   DialogContent,
@@ -10,7 +10,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@workspace/ui/components/dialog";
+} from '@workspace/ui/components/dialog'
 import {
   Form,
   FormControl,
@@ -19,43 +19,43 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@workspace/ui/components/form";
-import { Input } from "@workspace/ui/components/input";
+} from '@workspace/ui/components/form'
+import { Input } from '@workspace/ui/components/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@workspace/ui/components/select";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { z } from "zod";
-import { useTranslations } from "@/i18n";
-import { feeTypesKeys } from "@/lib/queries/fee-types";
-import { feeCategories, feeCategoryLabels } from "@/schemas/fee-type";
+} from '@workspace/ui/components/select'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
+import { useTranslations } from '@/i18n'
+import { feeTypesKeys } from '@/lib/queries/fee-types'
+import { feeCategories, feeCategoryLabels } from '@/schemas/fee-type'
 import {
   createNewFeeType,
   updateExistingFeeType,
-} from "@/school/functions/fee-types";
+} from '@/school/functions/fee-types'
 
 const feeTypeFormSchema = z.object({
   id: z.string().optional(),
-  code: z.string().min(1, "Code requis").max(20, "Code trop long"),
-  name: z.string().min(1, "Nom requis").max(100, "Nom trop long"),
+  code: z.string().min(1, 'Code requis').max(20, 'Code trop long'),
+  name: z.string().min(1, 'Nom requis').max(100, 'Nom trop long'),
   nameEn: z.string().max(100).optional(),
-  category: z.enum(feeCategories, { message: "Catégorie invalide" }),
+  category: z.enum(feeCategories, { message: 'Catégorie invalide' }),
   isMandatory: z.boolean(),
   isRecurring: z.boolean(),
   displayOrder: z.coerce.number().int().min(0),
-});
+})
 
-type FeeTypeFormData = z.output<typeof feeTypeFormSchema>;
+type FeeTypeFormData = z.output<typeof feeTypeFormSchema>
 
 interface FeeTypeFormDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  editData?: FeeTypeFormData | null;
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  editData?: FeeTypeFormData | null
 }
 
 export function FeeTypeFormDialog({
@@ -63,22 +63,22 @@ export function FeeTypeFormDialog({
   onOpenChange,
   editData,
 }: FeeTypeFormDialogProps) {
-  const t = useTranslations();
-  const queryClient = useQueryClient();
-  const isEditMode = !!editData;
+  const t = useTranslations()
+  const queryClient = useQueryClient()
+  const isEditMode = !!editData
 
   const form = useForm<FeeTypeFormData>({
     resolver: zodResolver(feeTypeFormSchema) as never,
     defaultValues: {
-      code: "",
-      name: "",
-      nameEn: "",
-      category: "tuition",
+      code: '',
+      name: '',
+      nameEn: '',
+      category: 'tuition',
       isMandatory: true,
       isRecurring: true,
       displayOrder: 0,
     },
-  });
+  })
 
   // Reset form when opening/closing or switching modes
   const resetForm = () => {
@@ -92,23 +92,24 @@ export function FeeTypeFormDialog({
         isMandatory: editData.isMandatory,
         isRecurring: editData.isRecurring,
         displayOrder: editData.displayOrder,
-      });
-    } else {
+      })
+    }
+    else {
       form.reset({
-        code: "",
-        name: "",
-        nameEn: "",
-        category: "tuition",
+        code: '',
+        name: '',
+        nameEn: '',
+        category: 'tuition',
         isMandatory: true,
         isRecurring: true,
         displayOrder: 0,
-      });
+      })
     }
-  };
+  }
 
   // Reset form when editData changes
   if (open && form.formState.isDirty === false && editData) {
-    resetForm();
+    resetForm()
   }
 
   const createMutation = useMutation({
@@ -125,15 +126,15 @@ export function FeeTypeFormDialog({
         },
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: feeTypesKeys.all });
-      toast.success(t.finance.feeTypes.created());
-      resetForm();
-      onOpenChange(false);
+      queryClient.invalidateQueries({ queryKey: feeTypesKeys.all })
+      toast.success(t.finance.feeTypes.created())
+      resetForm()
+      onOpenChange(false)
     },
     onError: (err: Error) => {
-      toast.error(err.message);
+      toast.error(err.message)
     },
-  });
+  })
 
   const updateMutation = useMutation({
     mutationFn: (data: FeeTypeFormData) =>
@@ -150,32 +151,33 @@ export function FeeTypeFormDialog({
         },
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: feeTypesKeys.all });
-      toast.success("Type de frais mis à jour");
-      resetForm();
-      onOpenChange(false);
+      queryClient.invalidateQueries({ queryKey: feeTypesKeys.all })
+      toast.success('Type de frais mis à jour')
+      resetForm()
+      onOpenChange(false)
     },
     onError: (err: Error) => {
-      toast.error(err.message);
+      toast.error(err.message)
     },
-  });
+  })
 
   const onSubmit = (data: FeeTypeFormData) => {
     if (isEditMode) {
-      updateMutation.mutate(data);
-    } else {
-      createMutation.mutate(data);
+      updateMutation.mutate(data)
     }
-  };
+    else {
+      createMutation.mutate(data)
+    }
+  }
 
   const handleOpenChange = (newOpen: boolean) => {
     if (!newOpen) {
-      resetForm();
+      resetForm()
     }
-    onOpenChange(newOpen);
-  };
+    onOpenChange(newOpen)
+  }
 
-  const isPending = createMutation.isPending || updateMutation.isPending;
+  const isPending = createMutation.isPending || updateMutation.isPending
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -183,12 +185,12 @@ export function FeeTypeFormDialog({
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">
             {isEditMode
-              ? "Modifier le type de frais"
+              ? 'Modifier le type de frais'
               : t.finance.feeTypes.create()}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground/80">
             {isEditMode
-              ? "Modifier les informations du type de frais"
+              ? 'Modifier les informations du type de frais'
               : t.finance.feeTypes.createDescription()}
           </DialogDescription>
         </DialogHeader>
@@ -202,7 +204,9 @@ export function FeeTypeFormDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
-                      {t.common.code()} *
+                      {t.common.code()}
+                      {' '}
+                      *
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -222,7 +226,9 @@ export function FeeTypeFormDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
-                      {t.finance.feeTypes.category()} *
+                      {t.finance.feeTypes.category()}
+                      {' '}
+                      *
                     </FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
@@ -231,7 +237,7 @@ export function FeeTypeFormDialog({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">
-                        {feeCategories.map((cat) => (
+                        {feeCategories.map(cat => (
                           <SelectItem
                             key={cat}
                             value={cat}
@@ -254,7 +260,9 @@ export function FeeTypeFormDialog({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
-                    {t.common.name()} *
+                    {t.common.name()}
+                    {' '}
+                    *
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -376,5 +384,5 @@ export function FeeTypeFormDialog({
         </Form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

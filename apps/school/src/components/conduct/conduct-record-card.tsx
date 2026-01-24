@@ -3,59 +3,59 @@ import {
   IconDots,
   IconMapPin,
   IconSparkles,
-} from "@tabler/icons-react";
+} from '@tabler/icons-react'
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@workspace/ui/components/avatar";
-import { Button } from "@workspace/ui/components/button";
-import { Card, CardContent, CardHeader } from "@workspace/ui/components/card";
+} from '@workspace/ui/components/avatar'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent, CardHeader } from '@workspace/ui/components/card'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@workspace/ui/components/dropdown-menu";
-import { motion } from "motion/react";
-import { useTranslations } from "@/i18n";
-import { cn } from "@/lib/utils";
-import { ConductSeverityBadge } from "./conduct-severity-badge";
-import { ConductStatusBadge } from "./conduct-status-badge";
-import { ConductTypeBadge } from "./conduct-type-badge";
+} from '@workspace/ui/components/dropdown-menu'
+import { motion } from 'motion/react'
+import { useTranslations } from '@/i18n'
+import { cn } from '@/lib/utils'
+import { ConductSeverityBadge } from './conduct-severity-badge'
+import { ConductStatusBadge } from './conduct-status-badge'
+import { ConductTypeBadge } from './conduct-type-badge'
 
-type ConductType = "incident" | "sanction" | "reward" | "note";
-type ConductSeverity = "low" | "medium" | "high" | "critical";
-type ConductStatus =
-  | "open"
-  | "investigating"
-  | "pending_decision"
-  | "resolved"
-  | "closed"
-  | "appealed";
+type ConductType = 'incident' | 'sanction' | 'reward' | 'note'
+type ConductSeverity = 'low' | 'medium' | 'high' | 'critical'
+type ConductStatus
+  = | 'open'
+    | 'investigating'
+    | 'pending_decision'
+    | 'resolved'
+    | 'closed'
+    | 'appealed'
 
 interface ConductRecord {
-  id: string;
-  studentId: string;
-  studentName: string;
-  studentPhoto?: string | null;
-  type: ConductType;
-  category: string;
-  title: string;
-  description: string;
-  severity?: ConductSeverity | null;
-  status: ConductStatus;
-  incidentDate?: string | null;
-  location?: string | null;
-  createdAt: string;
+  id: string
+  studentId: string
+  studentName: string
+  studentPhoto?: string | null
+  type: ConductType
+  category: string
+  title: string
+  description: string
+  severity?: ConductSeverity | null
+  status: ConductStatus
+  incidentDate?: string | null
+  location?: string | null
+  createdAt: string
 }
 
 interface ConductRecordCardProps {
-  record: ConductRecord;
-  onView?: (id: string) => void;
-  onEdit?: (id: string) => void;
-  onDelete?: (id: string) => void;
-  className?: string;
+  record: ConductRecord
+  onView?: (id: string) => void
+  onEdit?: (id: string) => void
+  onDelete?: (id: string) => void
+  className?: string
 }
 
 export function ConductRecordCard({
@@ -65,14 +65,14 @@ export function ConductRecordCard({
   onDelete,
   className,
 }: ConductRecordCardProps) {
-  const t = useTranslations();
+  const t = useTranslations()
 
   const initials = record.studentName
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
+    .split(' ')
+    .map(n => n[0])
+    .join('')
     .toUpperCase()
-    .slice(0, 2);
+    .slice(0, 2)
 
   return (
     <motion.div
@@ -83,7 +83,7 @@ export function ConductRecordCard({
     >
       <Card
         className={cn(
-          "group overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl transition-all hover:bg-card/50 hover:shadow-primary/5",
+          'group overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl transition-all hover:bg-card/50 hover:shadow-primary/5',
           className,
         )}
       >
@@ -106,14 +106,14 @@ export function ConductRecordCard({
               <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-card bg-background flex items-center justify-center">
                 <div
                   className={cn(
-                    "h-1.5 w-1.5 rounded-full animate-pulse",
-                    record.type === "reward"
-                      ? "bg-emerald-500"
-                      : record.type === "incident"
-                        ? "bg-orange-500"
-                        : record.type === "sanction"
-                          ? "bg-red-500"
-                          : "bg-blue-500",
+                    'h-1.5 w-1.5 rounded-full animate-pulse',
+                    record.type === 'reward'
+                      ? 'bg-emerald-500'
+                      : record.type === 'incident'
+                        ? 'bg-orange-500'
+                        : record.type === 'sanction'
+                          ? 'bg-red-500'
+                          : 'bg-blue-500',
                   )}
                 />
               </div>
@@ -129,7 +129,7 @@ export function ConductRecordCard({
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger
-              render={
+              render={(
                 <Button
                   variant="ghost"
                   size="icon"
@@ -137,7 +137,7 @@ export function ConductRecordCard({
                 >
                   <IconDots className="h-5 w-5" />
                 </Button>
-              }
+              )}
             />
             <DropdownMenuContent
               align="end"
@@ -172,7 +172,9 @@ export function ConductRecordCard({
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-sm font-medium text-muted-foreground/70 leading-relaxed italic line-clamp-2">
-            "{record.description}"
+            "
+            {record.description}
+            "
           </p>
 
           <div className="flex flex-wrap gap-2 pt-2">
@@ -188,9 +190,9 @@ export function ConductRecordCard({
               <div className="flex items-center gap-2">
                 <IconCalendar className="h-3.5 w-3.5 text-primary/40" />
                 {new Date(record.incidentDate).toLocaleDateString(undefined, {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric',
                 })}
               </div>
             )}
@@ -204,5 +206,5 @@ export function ConductRecordCard({
         </CardContent>
       </Card>
     </motion.div>
-  );
+  )
 }

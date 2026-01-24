@@ -3,60 +3,60 @@ import {
   IconSchool,
   IconTrash,
   IconUsers,
-} from "@tabler/icons-react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Badge } from "@workspace/ui/components/badge";
-import { Button } from "@workspace/ui/components/button";
+} from '@tabler/icons-react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@workspace/ui/components/card";
-import { DeleteConfirmationDialog } from "@workspace/ui/components/delete-confirmation-dialog";
-import { Skeleton } from "@workspace/ui/components/skeleton";
+} from '@workspace/ui/components/card'
+import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@workspace/ui/components/tabs";
-import { useState } from "react";
-import { toast } from "sonner";
-import { ClassSubjectManager } from "@/components/academic/class-subjects/class-subject-manager";
-import { ClassStudentList } from "@/components/academic/classes/class-student-list";
-import { Breadcrumbs } from "@/components/layout/breadcrumbs";
-import { useTranslations } from "@/i18n";
-import { deleteClass, getClassById } from "@/school/functions/classes";
+} from '@workspace/ui/components/tabs'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { ClassSubjectManager } from '@/components/academic/class-subjects/class-subject-manager'
+import { ClassStudentList } from '@/components/academic/classes/class-student-list'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { useTranslations } from '@/i18n'
+import { deleteClass, getClassById } from '@/school/functions/classes'
 
-export const Route = createFileRoute("/_auth/classes/$classId/")({
+export const Route = createFileRoute('/_auth/classes/$classId/')({
   component: ClassDetailPage,
-});
+})
 
 function ClassDetailPage() {
-  const t = useTranslations();
-  const { classId } = Route.useParams();
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const t = useTranslations()
+  const { classId } = Route.useParams()
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
   const { data, isLoading } = useQuery({
-    queryKey: ["class", classId],
+    queryKey: ['class', classId],
     queryFn: () => getClassById({ data: classId }),
-  });
+  })
 
   const deleteMutation = useMutation({
     mutationFn: () => deleteClass({ data: classId }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["classes"] });
-      toast.success(t.classes.deleteSuccess());
-      navigate({ to: "/classes" });
+      queryClient.invalidateQueries({ queryKey: ['classes'] })
+      toast.success(t.classes.deleteSuccess())
+      navigate({ to: '/classes' })
     },
     onError: (error) => {
-      toast.error(error.message || t.classes.deleteError());
+      toast.error(error.message || t.classes.deleteError())
     },
-  });
+  })
 
   if (isLoading) {
     return (
@@ -73,7 +73,7 @@ function ClassDetailPage() {
         </div>
         <Skeleton className="h-[400px] w-full" />
       </div>
-    );
+    )
   }
 
   if (!data?.class) {
@@ -87,7 +87,7 @@ function ClassDetailPage() {
           />
         </div>
       </div>
-    );
+    )
   }
 
   const {
@@ -99,16 +99,16 @@ function ClassDetailPage() {
     studentsCount,
     boysCount,
     girlsCount,
-  } = data;
-  const className =
-    `${grade.name} ${series?.name || ""} ${classData.section}`.trim();
+  } = data
+  const className
+    = `${grade.name} ${series?.name || ''} ${classData.section}`.trim()
 
   return (
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t.nav.academic(), href: "/academic" },
-          { label: t.nav.classes(), href: "/classes" },
+          { label: t.nav.academic(), href: '/academic' },
+          { label: t.nav.classes(), href: '/classes' },
           { label: className },
         ]}
       />
@@ -120,17 +120,19 @@ function ClassDetailPage() {
           </div>
           <div>
             <h1 className="text-3xl font-bold tracking-tight">{className}</h1>
-            {classroom ? (
-              <Link
-                to="/spaces/classrooms/$classroomId"
-                params={{ classroomId: classroom.id }}
-                className="text-muted-foreground hover:underline"
-              >
-                {classroom.name}
-              </Link>
-            ) : (
-              <p className="text-muted-foreground">{t.classes.noClassroom()}</p>
-            )}
+            {classroom
+              ? (
+                  <Link
+                    to="/spaces/classrooms/$classroomId"
+                    params={{ classroomId: classroom.id }}
+                    className="text-muted-foreground hover:underline"
+                  >
+                    {classroom.name}
+                  </Link>
+                )
+              : (
+                  <p className="text-muted-foreground">{t.classes.noClassroom()}</p>
+                )}
           </div>
         </div>
         <div className="flex gap-2">
@@ -145,8 +147,7 @@ function ClassDetailPage() {
           <Button
             size="sm"
             onClick={() =>
-              navigate({ to: "/classes/$classId/edit", params: { classId } })
-            }
+              navigate({ to: '/classes/$classId/edit', params: { classId } })}
           >
             <IconEdit className="mr-2 h-4 w-4" />
             {t.common.edit()}
@@ -178,13 +179,21 @@ function ClassDetailPage() {
                   <IconUsers className="h-5 w-5 text-primary" />
                   <span className="text-2xl font-bold">{studentsCount}</span>
                   <span className="text-muted-foreground">
-                    /{classData.maxStudents}
+                    /
+                    {classData.maxStudents}
                   </span>
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground italic">
-                  {t.classes.boys()}:{" "}
-                  <span className="font-bold text-foreground">{boysCount}</span>{" "}
-                  / {t.classes.girls()}:{" "}
+                  {t.classes.boys()}
+                  :
+                  {' '}
+                  <span className="font-bold text-foreground">{boysCount}</span>
+                  {' '}
+                  /
+                  {' '}
+                  {t.classes.girls()}
+                  :
+                  {' '}
                   <span className="font-bold text-foreground">
                     {girlsCount}
                   </span>
@@ -201,10 +210,10 @@ function ClassDetailPage() {
               <CardContent>
                 <Badge
                   variant={
-                    classData.status === "active" ? "default" : "secondary"
+                    classData.status === 'active' ? 'default' : 'secondary'
                   }
                 >
-                  {classData.status === "active"
+                  {classData.status === 'active'
                     ? t.common.active()
                     : t.common.archived()}
                 </Badge>
@@ -218,13 +227,15 @@ function ClassDetailPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {classroom ? (
-                  <span className="text-lg font-medium">{classroom.name}</span>
-                ) : (
-                  <span className="text-lg font-medium text-muted-foreground">
-                    -
-                  </span>
-                )}
+                {classroom
+                  ? (
+                      <span className="text-lg font-medium">{classroom.name}</span>
+                    )
+                  : (
+                      <span className="text-lg font-medium text-muted-foreground">
+                        -
+                      </span>
+                    )}
               </CardContent>
             </Card>
           </div>
@@ -287,5 +298,5 @@ function ClassDetailPage() {
         isLoading={deleteMutation.isPending}
       />
     </div>
-  );
+  )
 }

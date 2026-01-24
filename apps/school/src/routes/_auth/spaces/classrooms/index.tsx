@@ -1,6 +1,6 @@
-import { IconBuilding, IconPlus } from "@tabler/icons-react";
-import { createFileRoute } from "@tanstack/react-router";
-import { Button } from "@workspace/ui/components/button";
+import { IconBuilding, IconPlus } from '@tabler/icons-react'
+import { createFileRoute } from '@tanstack/react-router'
+import { Button } from '@workspace/ui/components/button'
 import {
   Dialog,
   DialogContent,
@@ -8,34 +8,34 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@workspace/ui/components/dialog";
-import { motion } from "motion/react";
-import { useState } from "react";
-import { z } from "zod";
-import { Breadcrumbs } from "@/components/layout/breadcrumbs";
-import { ClassroomForm } from "@/components/spaces/classroom-form";
-import { ClassroomsTable } from "@/components/spaces/classrooms/classrooms-table";
-import { useTranslations } from "@/i18n";
+} from '@workspace/ui/components/dialog'
+import { motion } from 'motion/react'
+import { useState } from 'react'
+import { z } from 'zod'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { ClassroomForm } from '@/components/spaces/classroom-form'
+import { ClassroomsTable } from '@/components/spaces/classrooms/classrooms-table'
+import { useTranslations } from '@/i18n'
 
 const classroomsSearchSchema = z.object({
   search: z.string().optional(),
-});
+})
 
-export const Route = createFileRoute("/_auth/spaces/classrooms/")({
+export const Route = createFileRoute('/_auth/spaces/classrooms/')({
   component: ClassroomsPage,
   validateSearch: classroomsSearchSchema,
-});
+})
 
 function ClassroomsPage() {
-  const t = useTranslations();
-  const [open, setOpen] = useState(false);
-  const search = Route.useSearch();
+  const t = useTranslations()
+  const [open, setOpen] = useState(false)
+  const search = Route.useSearch()
 
   return (
     <div className="space-y-8 p-1">
       <Breadcrumbs
         items={[
-          { label: t.nav.spaces(), href: "/spaces/classrooms" },
+          { label: t.nav.spaces(), href: '/spaces/classrooms' },
           { label: t.spaces.title() },
         ]}
       />
@@ -65,12 +65,12 @@ function ClassroomsPage() {
         >
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger
-              render={
+              render={(
                 <Button className="h-10 rounded-xl shadow-lg shadow-primary/20">
                   <IconPlus className="mr-2 h-4 w-4" />
                   {t.buttons.newClassroom()}
                 </Button>
-              }
+              )}
             />
             <DialogContent className="max-w-2xl sm:max-w-3xl backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6">
               <DialogHeader>
@@ -95,5 +95,5 @@ function ClassroomsPage() {
         <ClassroomsTable filters={search} />
       </motion.div>
     </div>
-  );
+  )
 }

@@ -8,47 +8,47 @@ import {
   IconTrash,
   IconUser,
   IconUserCheck,
-} from "@tabler/icons-react";
-import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+} from '@tabler/icons-react'
+import { useQuery } from '@tanstack/react-query'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@workspace/ui/components/avatar";
-import { Badge } from "@workspace/ui/components/badge";
-import { Button } from "@workspace/ui/components/button";
-import { Skeleton } from "@workspace/ui/components/skeleton";
+} from '@workspace/ui/components/avatar'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@workspace/ui/components/tabs";
-import { format } from "date-fns";
-import { motion } from "motion/react";
-import { TeacherClasses } from "@/components/hr/teachers/teacher-classes";
-import { TeacherTimetable } from "@/components/hr/teachers/teacher-timetable";
-import { Breadcrumbs } from "@/components/layout/breadcrumbs";
-import { useTranslations } from "@/i18n";
-import { teacherOptions } from "@/lib/queries/teachers";
-import { cn } from "@/lib/utils";
+} from '@workspace/ui/components/tabs'
+import { format } from 'date-fns'
+import { motion } from 'motion/react'
+import { TeacherClasses } from '@/components/hr/teachers/teacher-classes'
+import { TeacherTimetable } from '@/components/hr/teachers/teacher-timetable'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { useTranslations } from '@/i18n'
+import { teacherOptions } from '@/lib/queries/teachers'
+import { cn } from '@/lib/utils'
 
-export const Route = createFileRoute("/_auth/users/teachers/$teacherId/")({
+export const Route = createFileRoute('/_auth/users/teachers/$teacherId/')({
   component: TeacherDetailsPage,
-});
+})
 
 function TeacherDetailsPage() {
-  const { teacherId } = Route.useParams();
-  const t = useTranslations();
+  const { teacherId } = Route.useParams()
+  const t = useTranslations()
 
   const { data: teacher, isLoading } = useQuery({
     ...teacherOptions.detail(teacherId),
-  });
+  })
 
   const { data: classes, isLoading: isLoadingClasses } = useQuery({
     ...teacherOptions.classes(teacherId),
-  });
+  })
 
   if (isLoading) {
     return (
@@ -64,7 +64,7 @@ function TeacherDetailsPage() {
         <Skeleton className="h-10 w-full rounded-xl" />
         <Skeleton className="h-64 w-full rounded-2xl" />
       </div>
-    );
+    )
   }
 
   if (!teacher) {
@@ -79,20 +79,20 @@ function TeacherDetailsPage() {
           voir.
         </p>
         <Button
-          render={
+          render={(
             <Link to="/users/teachers" search={{ page: 1 }}>
               <IconChevronLeft className="mr-2 size-4" />
               {t.common.back()}
             </Link>
-          }
+          )}
           className="mt-6 rounded-xl"
           variant="outline"
         />
       </div>
-    );
+    )
   }
 
-  const user = teacher.user;
+  const user = teacher.user
 
   return (
     <div className="space-y-8 pb-10">
@@ -100,8 +100,8 @@ function TeacherDetailsPage() {
         <div className="space-y-4">
           <Breadcrumbs
             items={[
-              { label: t.hr.title(), href: "/users" },
-              { label: t.hr.teachers.title(), href: "/users/teachers" },
+              { label: t.hr.title(), href: '/users' },
+              { label: t.hr.teachers.title(), href: '/users/teachers' },
               { label: user?.name || teacherId },
             ]}
           />
@@ -110,7 +110,7 @@ function TeacherDetailsPage() {
             <Avatar className="size-24 ring-4 ring-background shadow-xl border-2 border-primary/20">
               <AvatarImage src={user?.avatarUrl || undefined} />
               <AvatarFallback className="bg-primary/5 text-primary text-3xl font-black">
-                {user?.name?.charAt(0).toUpperCase() || "T"}
+                {user?.name?.charAt(0).toUpperCase() || 'T'}
               </AvatarFallback>
             </Avatar>
             <div>
@@ -120,12 +120,12 @@ function TeacherDetailsPage() {
                 </h1>
                 <Badge
                   className={cn(
-                    "text-[10px] uppercase font-bold tracking-widest px-2",
-                    teacher.status === "active"
-                      ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
-                      : teacher.status === "on_leave"
-                        ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
-                        : "bg-muted text-muted-foreground",
+                    'text-[10px] uppercase font-bold tracking-widest px-2',
+                    teacher.status === 'active'
+                      ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
+                      : teacher.status === 'on_leave'
+                        ? 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+                        : 'bg-muted text-muted-foreground',
                   )}
                   variant="outline"
                 >
@@ -230,7 +230,7 @@ function TeacherDetailsPage() {
                       <div className="size-8 rounded-lg bg-primary/5 flex items-center justify-center border border-primary/10">
                         <IconCalendar className="size-4 text-primary" />
                       </div>
-                      {format(new Date(teacher.hireDate), "PPP")}
+                      {format(new Date(teacher.hireDate), 'PPP')}
                     </div>
                   </div>
                 )}
@@ -242,22 +242,22 @@ function TeacherDetailsPage() {
                   <div className="flex items-center gap-2.5 mt-1">
                     <div
                       className={cn(
-                        "size-8 rounded-lg flex items-center justify-center border",
-                        teacher.status === "active"
-                          ? "bg-emerald-500/10 border-emerald-500/20"
-                          : teacher.status === "on_leave"
-                            ? "bg-amber-500/10 border-amber-500/20"
-                            : "bg-muted border-border/40",
+                        'size-8 rounded-lg flex items-center justify-center border',
+                        teacher.status === 'active'
+                          ? 'bg-emerald-500/10 border-emerald-500/20'
+                          : teacher.status === 'on_leave'
+                            ? 'bg-amber-500/10 border-amber-500/20'
+                            : 'bg-muted border-border/40',
                       )}
                     >
                       <div
                         className={cn(
-                          "size-2 rounded-full",
-                          teacher.status === "active"
-                            ? "bg-emerald-500 animate-pulse"
-                            : teacher.status === "on_leave"
-                              ? "bg-amber-500"
-                              : "bg-muted-foreground",
+                          'size-2 rounded-full',
+                          teacher.status === 'active'
+                            ? 'bg-emerald-500 animate-pulse'
+                            : teacher.status === 'on_leave'
+                              ? 'bg-amber-500'
+                              : 'bg-muted-foreground',
                         )}
                       />
                     </div>
@@ -291,25 +291,27 @@ function TeacherDetailsPage() {
                 {t.hr.teachers.assignedSubjects()}
               </h2>
               <div className="flex flex-wrap gap-3">
-                {teacher.subjects && teacher.subjects.length > 0 ? (
-                  teacher.subjects.map((sub: any) => (
-                    <Badge
-                      key={sub.subjectId}
-                      className="bg-primary/5 text-primary border-primary/20 px-4 py-2 text-sm font-semibold rounded-xl hover:bg-primary/10 transition-colors cursor-default"
-                      variant="outline"
-                    >
-                      <IconBook className="mr-2 size-3.5" />
-                      {sub.subjectName}
-                    </Badge>
-                  ))
-                ) : (
-                  <div className="flex flex-col items-center justify-center py-10 w-full text-center">
-                    <IconBook className="mb-4 size-10 text-muted-foreground/30" />
-                    <p className="text-muted-foreground font-medium">
-                      {t.hr.teachers.noSubjects()}
-                    </p>
-                  </div>
-                )}
+                {teacher.subjects && teacher.subjects.length > 0
+                  ? (
+                      teacher.subjects.map((sub: any) => (
+                        <Badge
+                          key={sub.subjectId}
+                          className="bg-primary/5 text-primary border-primary/20 px-4 py-2 text-sm font-semibold rounded-xl hover:bg-primary/10 transition-colors cursor-default"
+                          variant="outline"
+                        >
+                          <IconBook className="mr-2 size-3.5" />
+                          {sub.subjectName}
+                        </Badge>
+                      ))
+                    )
+                  : (
+                      <div className="flex flex-col items-center justify-center py-10 w-full text-center">
+                        <IconBook className="mb-4 size-10 text-muted-foreground/30" />
+                        <p className="text-muted-foreground font-medium">
+                          {t.hr.teachers.noSubjects()}
+                        </p>
+                      </div>
+                    )}
               </div>
             </div>
           </TabsContent>
@@ -327,5 +329,5 @@ function TeacherDetailsPage() {
         </motion.div>
       </Tabs>
     </div>
-  );
+  )
 }

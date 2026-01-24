@@ -1,14 +1,14 @@
-import type { GradeType } from "@/schemas/grade";
+import type { GradeType } from '@/schemas/grade'
 import {
   IconFileSpreadsheet,
   IconHash,
   IconLoader2,
   IconUpload,
   IconUser,
-} from "@tabler/icons-react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Badge } from "@workspace/ui/components/badge";
-import { Button } from "@workspace/ui/components/button";
+} from '@tabler/icons-react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 import {
   Dialog,
   DialogContent,
@@ -17,8 +17,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@workspace/ui/components/dialog";
-import { Input } from "@workspace/ui/components/input";
+} from '@workspace/ui/components/dialog'
+import { Input } from '@workspace/ui/components/input'
 import {
   Table,
   TableBody,
@@ -26,32 +26,32 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@workspace/ui/components/table";
-import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
-import { useTranslations } from "@/i18n";
-import { gradesKeys } from "@/lib/queries/grades";
-import { cn } from "@/lib/utils";
-import { createBulkGrades } from "@/school/functions/student-grades";
+} from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
+import { useState } from 'react'
+import { useTranslations } from '@/i18n'
+import { gradesKeys } from '@/lib/queries/grades'
+import { cn } from '@/lib/utils'
+import { createBulkGrades } from '@/school/functions/student-grades'
 
 interface Student {
-  id: string;
-  firstName: string;
-  lastName: string;
-  matricule: string;
+  id: string
+  firstName: string
+  lastName: string
+  matricule: string
 }
 
 interface BulkGradeEntryProps {
-  classId: string;
-  subjectId: string;
-  termId: string;
-  teacherId: string;
-  gradeType: GradeType;
-  weight: number;
-  description?: string;
-  gradeDate?: string;
-  students: Student[];
-  onSuccess?: () => void;
+  classId: string
+  subjectId: string
+  termId: string
+  teacherId: string
+  gradeType: GradeType
+  weight: number
+  description?: string
+  gradeDate?: string
+  students: Student[]
+  onSuccess?: () => void
 }
 
 export function BulkGradeEntry({
@@ -66,36 +66,36 @@ export function BulkGradeEntry({
   students,
   onSuccess,
 }: BulkGradeEntryProps) {
-  const t = useTranslations();
-  const queryClient = useQueryClient();
-  const [open, setOpen] = useState(false);
+  const t = useTranslations()
+  const queryClient = useQueryClient()
+  const [open, setOpen] = useState(false)
   const [entries, setEntries] = useState<Map<string, number | null>>(
     () => new Map(),
-  );
+  )
 
   const createMutation = useMutation({
-    mutationFn: (params: Parameters<typeof createBulkGrades>[0]["data"]) =>
+    mutationFn: (params: Parameters<typeof createBulkGrades>[0]['data']) =>
       createBulkGrades({ data: params }),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: gradesKeys.byClass(classId, subjectId, termId),
-      });
-      setOpen(false);
-      setEntries(new Map());
-      onSuccess?.();
+      })
+      setOpen(false)
+      setEntries(new Map())
+      onSuccess?.()
     },
-  });
+  })
 
   const handleValueChange = (studentId: string, value: string) => {
-    const numValue = value === "" ? null : Number.parseFloat(value);
+    const numValue = value === '' ? null : Number.parseFloat(value)
     if (
-      numValue !== null &&
-      (Number.isNaN(numValue) || numValue < 0 || numValue > 20)
+      numValue !== null
+      && (Number.isNaN(numValue) || numValue < 0 || numValue > 20)
     ) {
-      return;
+      return
     }
-    setEntries((prev) => new Map(prev).set(studentId, numValue));
-  };
+    setEntries(prev => new Map(prev).set(studentId, numValue))
+  }
 
   const handleSubmit = () => {
     const grades = Array.from(entries.entries())
@@ -103,9 +103,10 @@ export function BulkGradeEntry({
       .map(([studentId, value]) => ({
         studentId,
         value: value as number,
-      }));
+      }))
 
-    if (grades.length === 0) return;
+    if (grades.length === 0)
+      return
 
     createMutation.mutate({
       classId,
@@ -117,17 +118,17 @@ export function BulkGradeEntry({
       description,
       gradeDate,
       grades,
-    });
-  };
+    })
+  }
 
   const filledCount = Array.from(entries.values()).filter(
-    (v) => v !== null,
-  ).length;
+    v => v !== null,
+  ).length
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
-        render={
+        render={(
           <Button
             variant="outline"
             className="rounded-xl border-border/40 bg-background/50 hover:bg-background shadow-sm h-10 px-4 group"
@@ -137,7 +138,7 @@ export function BulkGradeEntry({
               {t.academic.grades.bulk.title()}
             </span>
           </Button>
-        }
+        )}
       />
       <DialogContent className="max-h-[90vh] max-w-2xl overflow-hidden rounded-3xl border-border/40 bg-popover/90 backdrop-blur-2xl shadow-2xl p-0">
         <DialogHeader className="p-6 pb-0">
@@ -195,7 +196,9 @@ export function BulkGradeEntry({
                       className="group border-b border-border/10 last:border-0 hover:bg-primary/5 transition-colors"
                     >
                       <TableCell className="py-4 font-bold text-sm text-foreground">
-                        {student.lastName} {student.firstName}
+                        {student.lastName}
+                        {' '}
+                        {student.firstName}
                       </TableCell>
                       <TableCell>
                         <Badge
@@ -213,15 +216,14 @@ export function BulkGradeEntry({
                           step={0.5}
                           placeholder="--"
                           className={cn(
-                            "h-10 w-24 text-center font-mono text-sm rounded-xl border-border/40 transition-all focus-visible:ring-primary/30 group-hover:bg-background",
-                            entries.get(student.id) !== undefined &&
-                              entries.get(student.id) !== null &&
-                              "border-primary/40 bg-primary/5 font-bold",
+                            'h-10 w-24 text-center font-mono text-sm rounded-xl border-border/40 transition-all focus-visible:ring-primary/30 group-hover:bg-background',
+                            entries.get(student.id) !== undefined
+                            && entries.get(student.id) !== null
+                            && 'border-primary/40 bg-primary/5 font-bold',
                           )}
-                          value={entries.get(student.id) ?? ""}
-                          onChange={(e) =>
-                            handleValueChange(student.id, e.target.value)
-                          }
+                          value={entries.get(student.id) ?? ''}
+                          onChange={e =>
+                            handleValueChange(student.id, e.target.value)}
                           aria-label={`${t.academic.grades.averages.average()} ${student.lastName}`}
                         />
                       </TableCell>
@@ -237,16 +239,16 @@ export function BulkGradeEntry({
           <div className="flex items-center gap-2">
             <div
               className={cn(
-                "flex h-8 px-3 items-center gap-2 rounded-full border text-[10px] font-bold uppercase tracking-widest shadow-sm transition-all",
+                'flex h-8 px-3 items-center gap-2 rounded-full border text-[10px] font-bold uppercase tracking-widest shadow-sm transition-all',
                 filledCount > 0
-                  ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-600"
-                  : "bg-muted/50 border-border/40 text-muted-foreground",
+                  ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600'
+                  : 'bg-muted/50 border-border/40 text-muted-foreground',
               )}
             >
               <div
                 className={cn(
-                  "size-2 rounded-full animate-pulse",
-                  filledCount > 0 ? "bg-emerald-500" : "bg-muted-foreground/40",
+                  'size-2 rounded-full animate-pulse',
+                  filledCount > 0 ? 'bg-emerald-500' : 'bg-muted-foreground/40',
                 )}
               />
               {t.academic.grades.bulk.filled({
@@ -268,16 +270,18 @@ export function BulkGradeEntry({
               disabled={filledCount === 0 || createMutation.isPending}
               className="rounded-xl font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 px-6"
             >
-              {createMutation.isPending ? (
-                <IconLoader2 className="mr-2 size-3.5 animate-spin" />
-              ) : (
-                <IconUpload className="mr-2 size-3.5" />
-              )}
+              {createMutation.isPending
+                ? (
+                    <IconLoader2 className="mr-2 size-3.5 animate-spin" />
+                  )
+                : (
+                    <IconUpload className="mr-2 size-3.5" />
+                  )}
               {t.common.save()}
             </Button>
           </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

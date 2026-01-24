@@ -1,48 +1,48 @@
-import { IconEdit, IconShield, IconTrash } from "@tabler/icons-react";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { Badge } from "@workspace/ui/components/badge";
-import { Button } from "@workspace/ui/components/button";
+import { IconEdit, IconShield, IconTrash } from '@tabler/icons-react'
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@workspace/ui/components/card";
-import { Breadcrumbs } from "@/components/layout/breadcrumbs";
-import { useTranslations } from "@/i18n";
-import { getRole } from "@/school/functions/roles";
+} from '@workspace/ui/components/card'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { useTranslations } from '@/i18n'
+import { getRole } from '@/school/functions/roles'
 
-export const Route = createFileRoute("/_auth/users/roles/$roleId/")({
+export const Route = createFileRoute('/_auth/users/roles/$roleId/')({
   component: RoleDetailPage,
   loader: async ({ params }) => {
-    return await getRole({ data: params.roleId });
+    return await getRole({ data: params.roleId })
   },
-});
+})
 
 function RoleDetailPage() {
-  const t = useTranslations();
-  const { roleId } = Route.useParams();
-  const roleData = Route.useLoaderData();
+  const t = useTranslations()
+  const { roleId } = Route.useParams()
+  const roleData = Route.useLoaderData()
 
   const { data: role } = useSuspenseQuery({
-    queryKey: ["role", roleId],
+    queryKey: ['role', roleId],
     queryFn: () => getRole({ data: roleId }),
     initialData: roleData,
-  });
+  })
 
   if (!role) {
-    return <div>{t.hr.roles.notFound()}</div>;
+    return <div>{t.hr.roles.notFound()}</div>
   }
 
-  const permissions = role.permissions as Record<string, string[]>;
+  const permissions = role.permissions as Record<string, string[]>
 
   return (
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t.hr.title(), href: "/users" },
-          { label: t.hr.roles.title(), href: "/users/roles" },
+          { label: t.hr.title(), href: '/users' },
+          { label: t.hr.roles.title(), href: '/users/roles' },
           { label: role.name },
         ]}
       />
@@ -69,12 +69,12 @@ function RoleDetailPage() {
             <>
               <Button
                 variant="outline"
-                render={
+                render={(
                   <Link to="/users/roles/$roleId/edit" params={{ roleId }}>
                     <IconEdit className="mr-2 h-4 w-4" />
                     {t.common.edit()}
                   </Link>
-                }
+                )}
               />
               <Button variant="destructive">
                 <IconTrash className="mr-2 h-4 w-4" />
@@ -102,7 +102,7 @@ function RoleDetailPage() {
                 {t.hr.roles.scope()}
               </p>
               <Badge
-                variant={role.scope === "system" ? "default" : "secondary"}
+                variant={role.scope === 'system' ? 'default' : 'secondary'}
               >
                 {role.scope}
               </Badge>
@@ -132,7 +132,7 @@ function RoleDetailPage() {
                 <div key={resource}>
                   <p className="mb-2 text-sm font-medium">{resource}</p>
                   <div className="flex flex-wrap gap-1">
-                    {actions.map((action) => (
+                    {actions.map(action => (
                       <Badge key={action} variant="outline" className="text-xs">
                         {action}
                       </Badge>
@@ -150,5 +150,5 @@ function RoleDetailPage() {
         </Card>
       </div>
     </div>
-  );
+  )
 }

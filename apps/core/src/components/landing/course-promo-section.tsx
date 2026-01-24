@@ -1,6 +1,6 @@
-import { IconCircleCheck } from "@tabler/icons-react";
-import { Badge } from "@workspace/ui/components/badge";
-import { Button } from "@workspace/ui/components/button";
+import { IconCircleCheck } from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 
 export function CoursePromoSection() {
   return (
@@ -100,7 +100,7 @@ export function CoursePromoSection() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button
               size="lg"
-              render={
+              render={(
                 <a
                   href="https://learn.yeko.com/"
                   target="_blank"
@@ -108,11 +108,11 @@ export function CoursePromoSection() {
                 >
                   Start Learning Now
                 </a>
-              }
+              )}
             />
           </div>
         </div>
       </div>
     </section>
-  );
+  )
 }

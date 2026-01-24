@@ -1,4 +1,4 @@
-import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from '@hookform/resolvers/zod'
 import {
   IconAlertCircle,
   IconCalendar,
@@ -6,43 +6,43 @@ import {
   IconMapPin,
   IconTag,
   IconUsers,
-} from "@tabler/icons-react";
-import { Button } from "@workspace/ui/components/button";
-import { DatePicker } from "@workspace/ui/components/date-picker";
-import { Input } from "@workspace/ui/components/input";
-import { Label } from "@workspace/ui/components/label";
+} from '@tabler/icons-react'
+import { Button } from '@workspace/ui/components/button'
+import { DatePicker } from '@workspace/ui/components/date-picker'
+import { Input } from '@workspace/ui/components/input'
+import { Label } from '@workspace/ui/components/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@workspace/ui/components/select";
-import { Textarea } from "@workspace/ui/components/textarea";
-import { motion } from "motion/react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { StudentCombobox } from "@/components/attendance/student/student-combobox";
-import { useTranslations } from "@/i18n";
+} from '@workspace/ui/components/select'
+import { Textarea } from '@workspace/ui/components/textarea'
+import { motion } from 'motion/react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { StudentCombobox } from '@/components/attendance/student/student-combobox'
+import { useTranslations } from '@/i18n'
 
-const conductTypes = ["incident", "sanction", "reward", "note"] as const;
+const conductTypes = ['incident', 'sanction', 'reward', 'note'] as const
 const conductCategories = [
-  "behavior",
-  "academic",
-  "attendance",
-  "uniform",
-  "property",
-  "violence",
-  "bullying",
-  "cheating",
-  "achievement",
-  "improvement",
-  "other",
-] as const;
-const severityLevels = ["low", "medium", "high", "critical"] as const;
+  'behavior',
+  'academic',
+  'attendance',
+  'uniform',
+  'property',
+  'violence',
+  'bullying',
+  'cheating',
+  'achievement',
+  'improvement',
+  'other',
+] as const
+const severityLevels = ['low', 'medium', 'high', 'critical'] as const
 
 const conductRecordFormSchema = z.object({
-  studentId: z.string().min(1, "Student is required"),
+  studentId: z.string().min(1, 'Student is required'),
   type: z.enum(conductTypes),
   category: z.enum(conductCategories),
   title: z.string().min(1).max(200),
@@ -52,40 +52,40 @@ const conductRecordFormSchema = z.object({
   incidentTime: z.string().optional(),
   location: z.string().optional(),
   witnesses: z.string().optional(),
-});
+})
 
-type ConductRecordFormData = z.infer<typeof conductRecordFormSchema>;
+type ConductRecordFormData = z.infer<typeof conductRecordFormSchema>
 
 interface ConductRecordFormProps {
-  studentId?: string;
-  defaultType?: (typeof conductTypes)[number];
-  onSubmit: (data: ConductRecordFormData) => void;
-  onCancel: () => void;
-  isSubmitting?: boolean;
+  studentId?: string
+  defaultType?: (typeof conductTypes)[number]
+  onSubmit: (data: ConductRecordFormData) => void
+  onCancel: () => void
+  isSubmitting?: boolean
 }
 
 export function ConductRecordForm({
   studentId: initialStudentId,
-  defaultType = "incident",
+  defaultType = 'incident',
   onSubmit,
   onCancel,
   isSubmitting,
 }: ConductRecordFormProps) {
-  const t = useTranslations();
+  const t = useTranslations()
 
   const form = useForm<ConductRecordFormData>({
     resolver: zodResolver(conductRecordFormSchema),
     defaultValues: {
-      studentId: initialStudentId ?? "",
+      studentId: initialStudentId ?? '',
       type: defaultType,
-      category: "behavior",
-      title: "",
-      description: "",
+      category: 'behavior',
+      title: '',
+      description: '',
     },
-  });
+  })
 
-  const watchType = form.watch("type");
-  const showSeverity = watchType === "incident" || watchType === "sanction";
+  const watchType = form.watch('type')
+  const showSeverity = watchType === 'incident' || watchType === 'sanction'
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -100,8 +100,8 @@ export function ConductRecordForm({
             {t.conduct.student()}
           </Label>
           <StudentCombobox
-            value={form.watch("studentId")}
-            onSelect={(id) => form.setValue("studentId", id)}
+            value={form.watch('studentId')}
+            onSelect={id => form.setValue('studentId', id)}
           />
           {form.formState.errors.studentId && (
             <p className="text-[10px] font-black uppercase tracking-widest text-destructive ml-1">
@@ -122,16 +122,15 @@ export function ConductRecordForm({
             {t.conduct.form.type()}
           </Label>
           <Select
-            value={form.watch("type")}
-            onValueChange={(v) =>
-              form.setValue("type", v as (typeof conductTypes)[number])
-            }
+            value={form.watch('type')}
+            onValueChange={v =>
+              form.setValue('type', v as (typeof conductTypes)[number])}
           >
             <SelectTrigger className="h-12 rounded-2xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40">
-              {conductTypes.map((type) => (
+              {conductTypes.map(type => (
                 <SelectItem
                   key={type}
                   value={type}
@@ -154,16 +153,15 @@ export function ConductRecordForm({
             {t.conduct.form.category()}
           </Label>
           <Select
-            value={form.watch("category")}
-            onValueChange={(v) =>
-              form.setValue("category", v as (typeof conductCategories)[number])
-            }
+            value={form.watch('category')}
+            onValueChange={v =>
+              form.setValue('category', v as (typeof conductCategories)[number])}
           >
             <SelectTrigger className="h-12 rounded-2xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40 overflow-y-auto max-h-[300px]">
-              {conductCategories.map((cat) => (
+              {conductCategories.map(cat => (
                 <SelectItem
                   key={cat}
                   value={cat}
@@ -188,7 +186,7 @@ export function ConductRecordForm({
         </Label>
         <Input
           id="title"
-          {...form.register("title")}
+          {...form.register('title')}
           className="h-12 rounded-2xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all font-bold"
           placeholder={t.conduct.form.title()}
         />
@@ -211,7 +209,7 @@ export function ConductRecordForm({
         </Label>
         <Textarea
           id="description"
-          {...form.register("description")}
+          {...form.register('description')}
           className="rounded-2xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all min-h-[120px] font-medium italic"
           placeholder={t.conduct.form.description()}
         />
@@ -225,7 +223,7 @@ export function ConductRecordForm({
       {showSeverity && (
         <motion.div
           initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
+          animate={{ opacity: 1, height: 'auto' }}
           className="space-y-3 overflow-hidden"
         >
           <Label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
@@ -233,32 +231,35 @@ export function ConductRecordForm({
             {t.conduct.form.severity()}
           </Label>
           <Select
-            value={form.watch("severity") ?? ""}
-            onValueChange={(v) =>
-              form.setValue("severity", v as (typeof severityLevels)[number])
-            }
+            value={form.watch('severity') ?? ''}
+            onValueChange={v =>
+              form.setValue('severity', v as (typeof severityLevels)[number])}
           >
-             <SelectTrigger className="h-12 rounded-2xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all text-destructive font-black">
-               <SelectValue placeholder={t.conduct.form.selectSeverity()}>
-                 {form.watch('severity') && (() => {
-                   const severityConfig = {
-                     low: { color: 'bg-blue-500', label: t.conduct.severity.low(), icon: '🔵' },
-                     medium: { color: 'bg-yellow-500', label: t.conduct.severity.medium(), icon: '🟡' },
-                     high: { color: 'bg-orange-500', label: t.conduct.severity.high(), icon: '🟠' },
-                     critical: { color: 'bg-red-500', label: t.conduct.severity.critical(), icon: '🔴' }
-                   }
-                   const config = severityConfig[form.watch('severity') as keyof typeof severityConfig]
-                   return (
-                     <div className="flex items-center gap-2">
-                       <div className={`h-2 w-2 rounded-full ${config.color}`} />
-                       <span>{config.icon} {config.label}</span>
-                     </div>
-                   )
-                 })()}
-               </SelectValue>
-             </SelectTrigger>
+            <SelectTrigger className="h-12 rounded-2xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all text-destructive font-black">
+              <SelectValue placeholder={t.conduct.form.selectSeverity()}>
+                {form.watch('severity') && (() => {
+                  const severityConfig = {
+                    low: { color: 'bg-blue-500', label: t.conduct.severity.low(), icon: '🔵' },
+                    medium: { color: 'bg-yellow-500', label: t.conduct.severity.medium(), icon: '🟡' },
+                    high: { color: 'bg-orange-500', label: t.conduct.severity.high(), icon: '🟠' },
+                    critical: { color: 'bg-red-500', label: t.conduct.severity.critical(), icon: '🔴' },
+                  }
+                  const config = severityConfig[form.watch('severity') as keyof typeof severityConfig]
+                  return (
+                    <div className="flex items-center gap-2">
+                      <div className={`h-2 w-2 rounded-full ${config.color}`} />
+                      <span>
+                        {config.icon}
+                        {' '}
+                        {config.label}
+                      </span>
+                    </div>
+                  )
+                })()}
+              </SelectValue>
+            </SelectTrigger>
             <SelectContent className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40">
-              {severityLevels.map((level) => (
+              {severityLevels.map(level => (
                 <SelectItem
                   key={level}
                   value={level}
@@ -279,8 +280,8 @@ export function ConductRecordForm({
             {t.conduct.form.incidentDate()}
           </Label>
           <DatePicker
-            date={form.watch("incidentDate")}
-            onSelect={(d) => form.setValue("incidentDate", d)}
+            date={form.watch('incidentDate')}
+            onSelect={d => form.setValue('incidentDate', d)}
             className="h-12 rounded-2xl bg-card/50 backdrop-blur-xl border-border/40 hover:bg-card/70 transition-all"
           />
         </div>
@@ -293,7 +294,7 @@ export function ConductRecordForm({
           <Input
             id="incidentTime"
             type="time"
-            {...form.register("incidentTime")}
+            {...form.register('incidentTime')}
             className="h-12 rounded-2xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all"
           />
         </div>
@@ -305,7 +306,7 @@ export function ConductRecordForm({
           </Label>
           <Input
             id="location"
-            {...form.register("location")}
+            {...form.register('location')}
             className="h-12 rounded-2xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all"
             placeholder={t.conduct.form.location()}
           />
@@ -324,7 +325,7 @@ export function ConductRecordForm({
         </Label>
         <Input
           id="witnesses"
-          {...form.register("witnesses")}
+          {...form.register('witnesses')}
           className="h-12 rounded-2xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all"
           placeholder={t.conduct.form.witnessesPlaceholder()}
         />
@@ -348,5 +349,5 @@ export function ConductRecordForm({
         </Button>
       </div>
     </form>
-  );
+  )
 }

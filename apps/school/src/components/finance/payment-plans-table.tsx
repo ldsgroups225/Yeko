@@ -1,7 +1,7 @@
-import { IconCalendarTime } from "@tabler/icons-react";
-import { Badge } from "@workspace/ui/components/badge";
-import { Progress } from "@workspace/ui/components/progress";
-import { Skeleton } from "@workspace/ui/components/skeleton";
+import { IconCalendarTime } from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Progress } from '@workspace/ui/components/progress'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -9,52 +9,52 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@workspace/ui/components/table";
-import { AnimatePresence, motion } from "motion/react";
-import { useTranslations } from "@/i18n";
-import { generateUUID } from "@/utils/generateUUID";
+} from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
+import { useTranslations } from '@/i18n'
+import { generateUUID } from '@/utils/generateUUID'
 
 interface PaymentPlan {
-  id: string;
-  studentName: string;
-  matricule: string;
-  totalAmount: number;
-  paidAmount: number;
-  installmentsCount: number;
-  paidInstallments: number;
-  status: string;
+  id: string
+  studentName: string
+  matricule: string
+  totalAmount: number
+  paidAmount: number
+  installmentsCount: number
+  paidInstallments: number
+  status: string
 }
 
 interface PaymentPlansTableProps {
-  paymentPlans: PaymentPlan[];
-  isLoading?: boolean;
+  paymentPlans: PaymentPlan[]
+  isLoading?: boolean
 }
 
 function getStatusVariant(status: string) {
   switch (status) {
-    case "completed":
-      return "default";
-    case "active":
-      return "secondary";
-    case "overdue":
-      return "destructive";
+    case 'completed':
+      return 'default'
+    case 'active':
+      return 'secondary'
+    case 'overdue':
+      return 'destructive'
     default:
-      return "outline";
+      return 'outline'
   }
 }
 
 function formatCurrency(amount: number) {
-  return new Intl.NumberFormat("fr-FR", {
-    style: "decimal",
+  return new Intl.NumberFormat('fr-FR', {
+    style: 'decimal',
     minimumFractionDigits: 0,
-  }).format(amount);
+  }).format(amount)
 }
 
 export function PaymentPlansTable({
   paymentPlans,
   isLoading,
 }: PaymentPlansTableProps) {
-  const t = useTranslations();
+  const t = useTranslations()
 
   if (isLoading) {
     return (
@@ -63,7 +63,7 @@ export function PaymentPlansTable({
           <Skeleton key={generateUUID()} className="h-12 w-full rounded-xl" />
         ))}
       </div>
-    );
+    )
   }
 
   if (paymentPlans.length === 0) {
@@ -79,7 +79,7 @@ export function PaymentPlansTable({
           {t.finance.paymentPlans.description()}
         </p>
       </div>
-    );
+    )
   }
 
   return (
@@ -111,10 +111,10 @@ export function PaymentPlansTable({
           <TableBody>
             <AnimatePresence>
               {paymentPlans.map((plan, index) => {
-                const progressPercent =
-                  plan.totalAmount > 0
+                const progressPercent
+                  = plan.totalAmount > 0
                     ? Math.round((plan.paidAmount / plan.totalAmount) * 100)
-                    : 0;
+                    : 0
 
                 return (
                   <motion.tr
@@ -125,13 +125,14 @@ export function PaymentPlansTable({
                     className="group hover:bg-muted/30 border-border/40 transition-colors"
                   >
                     <TableCell className="font-mono text-sm text-muted-foreground font-medium">
-                      {plan.matricule || "-"}
+                      {plan.matricule || '-'}
                     </TableCell>
                     <TableCell className="font-bold text-foreground">
                       {plan.studentName}
                     </TableCell>
                     <TableCell className="text-right font-medium">
-                      {formatCurrency(plan.totalAmount)}{" "}
+                      {formatCurrency(plan.totalAmount)}
+                      {' '}
                       <span className="text-xs text-muted-foreground ml-1">
                         FCFA
                       </span>
@@ -143,7 +144,8 @@ export function PaymentPlansTable({
                           className="h-2 w-20 rounded-full"
                         />
                         <span className="text-sm font-medium text-muted-foreground">
-                          {progressPercent}%
+                          {progressPercent}
+                          %
                         </span>
                       </div>
                     </TableCell>
@@ -166,15 +168,15 @@ export function PaymentPlansTable({
                           cancelled: t.finance.paymentPlans.status.cancelled,
                         }[
                           plan.status as
-                            | "active"
-                            | "completed"
-                            | "overdue"
-                            | "cancelled"
+                          | 'active'
+                          | 'completed'
+                          | 'overdue'
+                          | 'cancelled'
                         ]()}
                       </Badge>
                     </TableCell>
                   </motion.tr>
-                );
+                )
               })}
             </AnimatePresence>
           </TableBody>
@@ -184,10 +186,10 @@ export function PaymentPlansTable({
       <div className="md:hidden space-y-4 p-4">
         <AnimatePresence>
           {paymentPlans.map((plan, index) => {
-            const progressPercent =
-              plan.totalAmount > 0
+            const progressPercent
+              = plan.totalAmount > 0
                 ? Math.round((plan.paidAmount / plan.totalAmount) * 100)
-                : 0;
+                : 0
 
             return (
               <motion.div
@@ -201,7 +203,7 @@ export function PaymentPlansTable({
                   <div>
                     <div className="font-bold text-lg">{plan.studentName}</div>
                     <div className="text-xs font-mono text-muted-foreground mt-0.5">
-                      {plan.matricule || "N/A"}
+                      {plan.matricule || 'N/A'}
                     </div>
                   </div>
                   <Badge
@@ -215,10 +217,10 @@ export function PaymentPlansTable({
                       cancelled: t.finance.paymentPlans.status.cancelled,
                     }[
                       plan.status as
-                        | "active"
-                        | "completed"
-                        | "overdue"
-                        | "cancelled"
+                      | 'active'
+                      | 'completed'
+                      | 'overdue'
+                      | 'cancelled'
                     ]()}
                   </Badge>
                 </div>
@@ -228,7 +230,10 @@ export function PaymentPlansTable({
                     <span className="text-muted-foreground">
                       {t.finance.paymentPlans.progress()}
                     </span>
-                    <span className="font-bold">{progressPercent}%</span>
+                    <span className="font-bold">
+                      {progressPercent}
+                      %
+                    </span>
                   </div>
                   <Progress
                     value={progressPercent}
@@ -242,7 +247,8 @@ export function PaymentPlansTable({
                       {t.finance.paymentPlans.totalAmount()}
                     </div>
                     <div className="font-bold text-lg">
-                      {formatCurrency(plan.totalAmount)}{" "}
+                      {formatCurrency(plan.totalAmount)}
+                      {' '}
                       <span className="text-sm font-normal text-muted-foreground">
                         FCFA
                       </span>
@@ -262,10 +268,10 @@ export function PaymentPlansTable({
                   </div>
                 </div>
               </motion.div>
-            );
+            )
           })}
         </AnimatePresence>
       </div>
     </>
-  );
+  )
 }

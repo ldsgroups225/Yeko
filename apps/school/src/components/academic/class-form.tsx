@@ -242,12 +242,14 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
                 {watch('classroomId')
                   ? (() => {
                       const c = classrooms.find(cr => cr.classroom.id === watch('classroomId'))
-                      return c ? (
-                        <div className="flex items-center gap-2">
-                          <span>{c.classroom.name}</span>
-                          <Badge variant="outline" className="text-[10px] bg-white/5 border-white/10">{c.classroom.code}</Badge>
-                        </div>
-                      ) : null
+                      return c
+                        ? (
+                            <div className="flex items-center gap-2">
+                              <span>{c.classroom.name}</span>
+                              <Badge variant="outline" className="text-[10px] bg-white/5 border-white/10">{c.classroom.code}</Badge>
+                            </div>
+                          )
+                        : null
                     })()
                   : t.common.none()}
               </SelectValue>
@@ -302,17 +304,19 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
           <Select value={watch('status') || 'active'} onValueChange={v => setValue('status', v as 'active' | 'archived')}>
             <SelectTrigger className="bg-white/5 border-white/10 focus:ring-primary/40 h-11">
               <SelectValue>
-                {watch('status') === 'active' ? (
-                  <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-primary" />
-                    {t.common.active()}
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-muted-foreground" />
-                    {t.common.archived()}
-                  </div>
-                )}
+                {watch('status') === 'active'
+                  ? (
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 w-2 rounded-full bg-primary" />
+                        {t.common.active()}
+                      </div>
+                    )
+                  : (
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 w-2 rounded-full bg-muted-foreground" />
+                        {t.common.archived()}
+                      </div>
+                    )}
               </SelectValue>
             </SelectTrigger>
             <SelectContent className="backdrop-blur-xl bg-card/95 border-white/10">

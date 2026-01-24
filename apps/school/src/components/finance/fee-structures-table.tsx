@@ -1,7 +1,7 @@
-import { IconPencil, IconStack2, IconTrash } from "@tabler/icons-react";
-import { Badge } from "@workspace/ui/components/badge";
-import { Button } from "@workspace/ui/components/button";
-import { Skeleton } from "@workspace/ui/components/skeleton";
+import { IconPencil, IconStack2, IconTrash } from '@tabler/icons-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -9,31 +9,31 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@workspace/ui/components/table";
-import { AnimatePresence, motion } from "motion/react";
-import { useTranslations } from "@/i18n";
-import { generateUUID } from "@/utils/generateUUID";
+} from '@workspace/ui/components/table'
+import { AnimatePresence, motion } from 'motion/react'
+import { useTranslations } from '@/i18n'
+import { generateUUID } from '@/utils/generateUUID'
 
 interface FeeStructure {
-  id: string;
-  feeTypeName: string;
-  feeTypeCode: string;
-  gradeName: string;
-  seriesName?: string;
-  amount: number;
-  newStudentAmount?: number;
-  currency: string;
+  id: string
+  feeTypeName: string
+  feeTypeCode: string
+  gradeName: string
+  seriesName?: string
+  amount: number
+  newStudentAmount?: number
+  currency: string
 }
 
 interface FeeStructuresTableProps {
-  feeStructures: FeeStructure[];
-  isLoading?: boolean;
-  onEdit?: (id: string) => void;
-  onDelete?: (id: string) => void;
+  feeStructures: FeeStructure[]
+  isLoading?: boolean
+  onEdit?: (id: string) => void
+  onDelete?: (id: string) => void
 }
 
-function formatCurrency(amount: number, currency: string = "XOF") {
-  return `${new Intl.NumberFormat("fr-FR").format(amount)} ${currency === "XOF" ? "FCFA" : currency}`;
+function formatCurrency(amount: number, currency: string = 'XOF') {
+  return `${new Intl.NumberFormat('fr-FR').format(amount)} ${currency === 'XOF' ? 'FCFA' : currency}`
 }
 
 export function FeeStructuresTable({
@@ -42,7 +42,7 @@ export function FeeStructuresTable({
   onEdit,
   onDelete,
 }: FeeStructuresTableProps) {
-  const t = useTranslations();
+  const t = useTranslations()
 
   if (isLoading) {
     return (
@@ -51,7 +51,7 @@ export function FeeStructuresTable({
           <Skeleton key={generateUUID()} className="h-12 w-full rounded-xl" />
         ))}
       </div>
-    );
+    )
   }
 
   if (feeStructures.length === 0) {
@@ -67,7 +67,7 @@ export function FeeStructuresTable({
           {t.finance.feeStructures.description()}
         </p>
       </div>
-    );
+    )
   }
 
   return (
@@ -120,21 +120,23 @@ export function FeeStructuresTable({
                     </div>
                   </TableCell>
                   <TableCell className="font-medium">
-                    {structure.gradeName || "Tous les niveaux"}
+                    {structure.gradeName || 'Tous les niveaux'}
                   </TableCell>
                   <TableCell>
-                    {structure.seriesName ? (
-                      <Badge
-                        variant="secondary"
-                        className="bg-secondary/50 font-medium"
-                      >
-                        {structure.seriesName}
-                      </Badge>
-                    ) : (
-                      <span className="text-muted-foreground italic text-sm">
-                        Toutes les séries
-                      </span>
-                    )}
+                    {structure.seriesName
+                      ? (
+                          <Badge
+                            variant="secondary"
+                            className="bg-secondary/50 font-medium"
+                          >
+                            {structure.seriesName}
+                          </Badge>
+                        )
+                      : (
+                          <span className="text-muted-foreground italic text-sm">
+                            Toutes les séries
+                          </span>
+                        )}
                   </TableCell>
                   <TableCell className="text-right">
                     <span className="font-bold tabular-nums">
@@ -142,18 +144,20 @@ export function FeeStructuresTable({
                     </span>
                   </TableCell>
                   <TableCell className="text-right">
-                    {structure.newStudentAmount ? (
-                      <span className="font-medium tabular-nums text-muted-foreground">
-                        {formatCurrency(
-                          structure.newStudentAmount,
-                          structure.currency,
+                    {structure.newStudentAmount
+                      ? (
+                          <span className="font-medium tabular-nums text-muted-foreground">
+                            {formatCurrency(
+                              structure.newStudentAmount,
+                              structure.currency,
+                            )}
+                          </span>
+                        )
+                      : (
+                          <span className="text-muted-foreground italic text-sm">
+                            -
+                          </span>
                         )}
-                      </span>
-                    ) : (
-                      <span className="text-muted-foreground italic text-sm">
-                        -
-                      </span>
-                    )}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -203,16 +207,19 @@ export function FeeStructuresTable({
                     {structure.feeTypeCode}
                   </div>
                 </div>
-                {structure.seriesName ? (
-                  <Badge variant="secondary" className="bg-secondary/50">
-                    {structure.seriesName}
-                  </Badge>
-                ) : (
-                  <span className="text-xs text-muted-foreground italic">
-                    {t.classes.grade()}{" "}
-                    {structure.gradeName || "Tous les niveaux"}
-                  </span>
-                )}
+                {structure.seriesName
+                  ? (
+                      <Badge variant="secondary" className="bg-secondary/50">
+                        {structure.seriesName}
+                      </Badge>
+                    )
+                  : (
+                      <span className="text-xs text-muted-foreground italic">
+                        {t.classes.grade()}
+                        {' '}
+                        {structure.gradeName || 'Tous les niveaux'}
+                      </span>
+                    )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -264,5 +271,5 @@ export function FeeStructuresTable({
         </AnimatePresence>
       </div>
     </>
-  );
+  )
 }

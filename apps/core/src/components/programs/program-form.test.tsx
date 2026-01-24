@@ -1,18 +1,18 @@
-import type { Mock } from "vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
-import * as React from "react";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import type { Mock } from 'vitest'
+import { fireEvent, render, screen } from '@testing-library/react'
+import * as React from 'react'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 
 // Mock UI components
-vi.mock("@workspace/ui/components/button", () => ({
+vi.mock('@workspace/ui/components/button', () => ({
   Button: ({ children, ...props }: any) => (
     <button type="button" {...props}>
       {children}
     </button>
   ),
-}));
+}))
 
-vi.mock("@workspace/ui/components/card", () => ({
+vi.mock('@workspace/ui/components/card', () => ({
   Card: ({ children, ...props }: any) => (
     <div data-testid="card" {...props}>
       {children}
@@ -30,21 +30,21 @@ vi.mock("@workspace/ui/components/card", () => ({
   CardTitle: ({ children }: any) => (
     <h3 data-testid="card-title">{children}</h3>
   ),
-}));
+}))
 
-vi.mock("@workspace/ui/components/input", () => ({
+vi.mock('@workspace/ui/components/input', () => ({
   Input: ({ ...props }: any) => <input {...props} />,
-}));
+}))
 
-vi.mock("@workspace/ui/components/label", () => ({
+vi.mock('@workspace/ui/components/label', () => ({
   Label: ({ children, htmlFor }: any) => (
     <label htmlFor={htmlFor}>{children}</label>
   ),
-}));
+}))
 
-vi.mock("@workspace/ui/components/select", () => ({
+vi.mock('@workspace/ui/components/select', () => ({
   Select: ({ children, onValueChange, value }: any) => (
-    <select value={value} onChange={(e) => onValueChange?.(e.target.value)}>
+    <select value={value} onChange={e => onValueChange?.(e.target.value)}>
       {children}
     </select>
   ),
@@ -62,33 +62,33 @@ vi.mock("@workspace/ui/components/select", () => ({
       {placeholder}
     </option>
   ),
-}));
+}))
 
 // Mock Chapter Form Component
 interface ChapterFormProps {
-  onSubmit: (data: any) => void;
-  onCancel: () => void;
+  onSubmit: (data: any) => void
+  onCancel: () => void
 }
 
 function ChapterForm({ onSubmit, onCancel }: ChapterFormProps) {
   const mockSubmit = () => {
     const titleInput = document.querySelector(
       '[data-testid="chapter-title-input"]',
-    ) as HTMLInputElement;
+    ) as HTMLInputElement
     const descriptionInput = document.querySelector(
       '[data-testid="chapter-description-input"]',
-    ) as HTMLTextAreaElement;
+    ) as HTMLTextAreaElement
     const orderInput = document.querySelector(
       '[data-testid="chapter-order-input"]',
-    ) as HTMLInputElement;
+    ) as HTMLInputElement
 
     const data = {
-      title: titleInput?.value || "",
-      description: descriptionInput?.value || "",
-      order: Number.parseInt(orderInput?.value || "1"),
-    };
-    onSubmit(data);
-  };
+      title: titleInput?.value || '',
+      description: descriptionInput?.value || '',
+      order: Number.parseInt(orderInput?.value || '1'),
+    }
+    onSubmit(data)
+  }
 
   return (
     <div data-testid="chapter-form">
@@ -142,87 +142,88 @@ function ChapterForm({ onSubmit, onCancel }: ChapterFormProps) {
         </button>
       </div>
     </div>
-  );
+  )
 }
 
 // Mock Program Form Component
 interface ProgramFormProps {
-  defaultValues?: any;
-  onSubmit: (data: any) => Promise<void>;
-  isSubmitting?: boolean;
-  mode?: "create" | "edit";
-  onCancel: () => void;
+  defaultValues?: any
+  onSubmit: (data: any) => Promise<void>
+  isSubmitting?: boolean
+  mode?: 'create' | 'edit'
+  onCancel: () => void
 }
 
 interface Chapter {
-  id: string;
-  title: string;
-  description?: string;
-  order: number;
+  id: string
+  title: string
+  description?: string
+  order: number
 }
 
 // Counter for unique IDs to avoid Date.now() collisions
-let chapterIdCounter = 1;
+let chapterIdCounter = 1
 
 function ProgramForm({
   defaultValues,
   onSubmit,
   isSubmitting = false,
-  mode = "create",
+  mode = 'create',
   onCancel,
 }: ProgramFormProps) {
-  const [showChapterForm, setShowChapterForm] = React.useState(false);
+  const [showChapterForm, setShowChapterForm] = React.useState(false)
   const [chapters, setChapters] = React.useState<Chapter[]>(
     defaultValues?.chapters || [],
-  );
+  )
 
-  const handleAddChapter = (chapterData: Omit<Chapter, "id">) => {
+  const handleAddChapter = (chapterData: Omit<Chapter, 'id'>) => {
     const newChapter: Chapter = {
       ...chapterData,
       id: `chapter-${chapterIdCounter++}`,
-    };
-    setChapters([...chapters, newChapter]);
-    setShowChapterForm(false);
-  };
+    }
+    setChapters([...chapters, newChapter])
+    setShowChapterForm(false)
+  }
 
   const handleDeleteChapter = (chapterId: string) => {
-    setChapters(chapters.filter((ch: Chapter) => ch.id !== chapterId));
-  };
+    setChapters(chapters.filter((ch: Chapter) => ch.id !== chapterId))
+  }
 
   const handleReorderChapter = (
     chapterId: string,
-    direction: "up" | "down",
+    direction: 'up' | 'down',
   ) => {
-    const index = chapters.findIndex((ch: Chapter) => ch.id === chapterId);
-    if (index === -1) return;
+    const index = chapters.findIndex((ch: Chapter) => ch.id === chapterId)
+    if (index === -1)
+      return
 
-    const newChapters = [...chapters];
-    const newIndex = direction === "up" ? index - 1 : index + 1;
+    const newChapters = [...chapters]
+    const newIndex = direction === 'up' ? index - 1 : index + 1
 
     if (newIndex >= 0 && newIndex < chapters.length) {
-      const chapter1 = newChapters[index];
-      const chapter2 = newChapters[newIndex];
+      const chapter1 = newChapters[index]
+      const chapter2 = newChapters[newIndex]
       if (chapter1 && chapter2) {
-        newChapters[index] = chapter2;
-        newChapters[newIndex] = chapter1;
-        setChapters(newChapters);
+        newChapters[index] = chapter2
+        newChapters[newIndex] = chapter1
+        setChapters(newChapters)
       }
     }
-  };
+  }
 
   const mockSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const formData = new FormData(e.target as HTMLFormElement);
+    e.preventDefault()
+    const formData = new FormData(e.target as HTMLFormElement)
     const data = {
-      name: formData.get("name"),
-      code: formData.get("code"),
-      description: formData.get("description"),
-      gradeId: formData.get("gradeId"),
-      status: formData.get("status") || "draft",
+      name: formData.get('name'),
+      code: formData.get('code'),
+      description: formData.get('description'),
+      gradeId: formData.get('gradeId'),
+      status: formData.get('status') || 'draft',
       chapters,
-    };
-    onSubmit(data);
-  };
+    }
+    onSubmit(data)
+  }
 
   return (
     <form onSubmit={mockSubmit} data-testid="program-form">
@@ -234,7 +235,7 @@ function ProgramForm({
             <input
               id="name"
               name="name"
-              defaultValue={defaultValues?.name || ""}
+              defaultValue={defaultValues?.name || ''}
               placeholder="e.g., Programme de Mathématiques 6ème"
               data-testid="program-name-input"
               required
@@ -245,7 +246,7 @@ function ProgramForm({
             <input
               id="code"
               name="code"
-              defaultValue={defaultValues?.code || ""}
+              defaultValue={defaultValues?.code || ''}
               placeholder="e.g., MATH_6E"
               data-testid="program-code-input"
               required
@@ -256,7 +257,7 @@ function ProgramForm({
             <textarea
               id="description"
               name="description"
-              defaultValue={defaultValues?.description || ""}
+              defaultValue={defaultValues?.description || ''}
               placeholder="Description du programme..."
               data-testid="program-description-input"
               rows={3}
@@ -267,7 +268,7 @@ function ProgramForm({
             <select
               id="gradeId"
               name="gradeId"
-              defaultValue={defaultValues?.gradeId || ""}
+              defaultValue={defaultValues?.gradeId || ''}
               data-testid="program-grade-select"
               required
             >
@@ -283,7 +284,7 @@ function ProgramForm({
             <select
               id="status"
               name="status"
-              defaultValue={defaultValues?.status || "draft"}
+              defaultValue={defaultValues?.status || 'draft'}
               data-testid="program-status-select"
             >
               <option value="draft">Brouillon</option>
@@ -321,60 +322,62 @@ function ProgramForm({
           )}
 
           <div className="space-y-2" data-testid="chapters-list">
-            {chapters.length === 0 ? (
-              <p
-                className="text-muted-foreground"
-                data-testid="no-chapters-message"
-              >
-                Aucun chapitre ajouté
-              </p>
-            ) : (
-              chapters.map((chapter: Chapter, index: number) => (
-                <div
-                  key={chapter.id}
-                  className="flex items-center justify-between p-3 border rounded"
-                  data-testid={`chapter-item-${chapter.id}`}
-                >
-                  <div>
-                    <h5 className="font-medium">{chapter.title}</h5>
-                    {chapter.description && (
-                      <p className="text-sm text-muted-foreground">
-                        {chapter.description}
-                      </p>
-                    )}
-                    <span className="text-xs text-muted-foreground">
-                      Ordre:
-                      {chapter.order}
-                    </span>
-                  </div>
-                  <div className="flex gap-1">
-                    <button
-                      type="button"
-                      onClick={() => handleReorderChapter(chapter.id, "up")}
-                      disabled={index === 0}
-                      data-testid={`chapter-up-${chapter.id}`}
+            {chapters.length === 0
+              ? (
+                  <p
+                    className="text-muted-foreground"
+                    data-testid="no-chapters-message"
+                  >
+                    Aucun chapitre ajouté
+                  </p>
+                )
+              : (
+                  chapters.map((chapter: Chapter, index: number) => (
+                    <div
+                      key={chapter.id}
+                      className="flex items-center justify-between p-3 border rounded"
+                      data-testid={`chapter-item-${chapter.id}`}
                     >
-                      ↑
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleReorderChapter(chapter.id, "down")}
-                      disabled={index === chapters.length - 1}
-                      data-testid={`chapter-down-${chapter.id}`}
-                    >
-                      ↓
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteChapter(chapter.id)}
-                      data-testid={`chapter-delete-${chapter.id}`}
-                    >
-                      🗑️
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
+                      <div>
+                        <h5 className="font-medium">{chapter.title}</h5>
+                        {chapter.description && (
+                          <p className="text-sm text-muted-foreground">
+                            {chapter.description}
+                          </p>
+                        )}
+                        <span className="text-xs text-muted-foreground">
+                          Ordre:
+                          {chapter.order}
+                        </span>
+                      </div>
+                      <div className="flex gap-1">
+                        <button
+                          type="button"
+                          onClick={() => handleReorderChapter(chapter.id, 'up')}
+                          disabled={index === 0}
+                          data-testid={`chapter-up-${chapter.id}`}
+                        >
+                          ↑
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleReorderChapter(chapter.id, 'down')}
+                          disabled={index === chapters.length - 1}
+                          data-testid={`chapter-down-${chapter.id}`}
+                        >
+                          ↓
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteChapter(chapter.id)}
+                          data-testid={`chapter-delete-${chapter.id}`}
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
           </div>
         </div>
       </div>
@@ -389,65 +392,65 @@ function ProgramForm({
           data-testid="submit-button"
         >
           {isSubmitting
-            ? "Enregistrement..."
-            : mode === "create"
-              ? "Créer"
-              : "Enregistrer"}
+            ? 'Enregistrement...'
+            : mode === 'create'
+              ? 'Créer'
+              : 'Enregistrer'}
         </button>
       </div>
     </form>
-  );
+  )
 }
 
-describe("program Form Component", () => {
-  let mockOnSubmit: Mock<(data: any) => Promise<void>>;
-  let mockOnCancel: Mock<() => void>;
+describe('program Form Component', () => {
+  let mockOnSubmit: Mock<(data: any) => Promise<void>>
+  let mockOnCancel: Mock<() => void>
 
   beforeEach(() => {
-    mockOnSubmit = vi.fn();
-    mockOnCancel = vi.fn();
-    vi.clearAllMocks();
-    vi.useFakeTimers();
+    mockOnSubmit = vi.fn()
+    mockOnCancel = vi.fn()
+    vi.clearAllMocks()
+    vi.useFakeTimers()
     // Reset chapter ID counter for each test
-    chapterIdCounter = 1;
-  });
+    chapterIdCounter = 1
+  })
 
   afterEach(() => {
-    vi.restoreAllMocks();
-    vi.useRealTimers();
-  });
+    vi.restoreAllMocks()
+    vi.useRealTimers()
+  })
 
-  describe("rendering Tests", () => {
-    test("should render all program fields correctly", () => {
+  describe('rendering Tests', () => {
+    test('should render all program fields correctly', () => {
       render(
         <ProgramForm
           onSubmit={mockOnSubmit}
           onCancel={mockOnCancel}
           mode="create"
         />,
-      );
+      )
 
-      expect(screen.getByLabelText(/nom du programme/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/code du programme/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/description/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/classe/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/statut/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/nom du programme/i)).toBeInTheDocument()
+      expect(screen.getByLabelText(/code du programme/i)).toBeInTheDocument()
+      expect(screen.getByLabelText(/description/i)).toBeInTheDocument()
+      expect(screen.getByLabelText(/classe/i)).toBeInTheDocument()
+      expect(screen.getByLabelText(/statut/i)).toBeInTheDocument()
 
-      expect(screen.getByTestId("add-chapter-btn")).toBeInTheDocument();
-      expect(screen.getByTestId("chapters-list")).toBeInTheDocument();
-      expect(screen.getByTestId("submit-button")).toBeInTheDocument();
-      expect(screen.getByTestId("cancel-button")).toBeInTheDocument();
-    });
+      expect(screen.getByTestId('add-chapter-btn')).toBeInTheDocument()
+      expect(screen.getByTestId('chapters-list')).toBeInTheDocument()
+      expect(screen.getByTestId('submit-button')).toBeInTheDocument()
+      expect(screen.getByTestId('cancel-button')).toBeInTheDocument()
+    })
 
-    test("should populate form with default values", () => {
+    test('should populate form with default values', () => {
       const defaultValues = {
-        name: "Programme de Mathématiques 6ème",
-        code: "MATH_6E",
+        name: 'Programme de Mathématiques 6ème',
+        code: 'MATH_6E',
         description:
-          "Programme complet de mathématiques pour la classe de 6ème",
-        gradeId: "grade-1",
-        status: "active",
-      };
+          'Programme complet de mathématiques pour la classe de 6ème',
+        gradeId: 'grade-1',
+        status: 'active',
+      }
 
       render(
         <ProgramForm
@@ -456,51 +459,51 @@ describe("program Form Component", () => {
           onCancel={mockOnCancel}
           mode="edit"
         />,
-      );
+      )
 
       expect(
-        screen.getByDisplayValue("Programme de Mathématiques 6ème"),
-      ).toBeInTheDocument();
-      expect(screen.getByDisplayValue("MATH_6E")).toBeInTheDocument();
+        screen.getByDisplayValue('Programme de Mathématiques 6ème'),
+      ).toBeInTheDocument()
+      expect(screen.getByDisplayValue('MATH_6E')).toBeInTheDocument()
       expect(
         screen.getByDisplayValue(
-          "Programme complet de mathématiques pour la classe de 6ème",
+          'Programme complet de mathématiques pour la classe de 6ème',
         ),
-      ).toBeInTheDocument();
-      expect(screen.getByDisplayValue("Sixième")).toBeInTheDocument();
-      expect(screen.getByDisplayValue("Actif")).toBeInTheDocument();
-    });
+      ).toBeInTheDocument()
+      expect(screen.getByDisplayValue('Sixième')).toBeInTheDocument()
+      expect(screen.getByDisplayValue('Actif')).toBeInTheDocument()
+    })
 
-    test("should display empty chapters message initially", () => {
+    test('should display empty chapters message initially', () => {
       render(
         <ProgramForm
           onSubmit={mockOnSubmit}
           onCancel={mockOnCancel}
           mode="create"
         />,
-      );
+      )
 
-      expect(screen.getByTestId("no-chapters-message")).toBeInTheDocument();
-      expect(screen.getByText("Aucun chapitre ajouté")).toBeInTheDocument();
-    });
+      expect(screen.getByTestId('no-chapters-message')).toBeInTheDocument()
+      expect(screen.getByText('Aucun chapitre ajouté')).toBeInTheDocument()
+    })
 
-    test("should display existing chapters", () => {
+    test('should display existing chapters', () => {
       const defaultValues = {
         chapters: [
           {
-            id: "ch1",
-            title: "Introduction",
-            description: "Chapitre introductif",
+            id: 'ch1',
+            title: 'Introduction',
+            description: 'Chapitre introductif',
             order: 1,
           },
           {
-            id: "ch2",
-            title: "Nombres",
-            description: "Les nombres entiers",
+            id: 'ch2',
+            title: 'Nombres',
+            description: 'Les nombres entiers',
             order: 2,
           },
         ],
-      };
+      }
 
       render(
         <ProgramForm
@@ -509,116 +512,116 @@ describe("program Form Component", () => {
           onCancel={mockOnCancel}
           mode="edit"
         />,
-      );
+      )
 
       expect(
-        screen.queryByTestId("no-chapters-message"),
-      ).not.toBeInTheDocument();
-      expect(screen.getByText("Introduction")).toBeInTheDocument();
-      expect(screen.getByText("Les nombres entiers")).toBeInTheDocument();
-      expect(screen.getByTestId("chapter-item-ch1")).toBeInTheDocument();
-      expect(screen.getByTestId("chapter-item-ch2")).toBeInTheDocument();
-    });
-  });
+        screen.queryByTestId('no-chapters-message'),
+      ).not.toBeInTheDocument()
+      expect(screen.getByText('Introduction')).toBeInTheDocument()
+      expect(screen.getByText('Les nombres entiers')).toBeInTheDocument()
+      expect(screen.getByTestId('chapter-item-ch1')).toBeInTheDocument()
+      expect(screen.getByTestId('chapter-item-ch2')).toBeInTheDocument()
+    })
+  })
 
-  describe("chapter Management Tests", () => {
-    test("should show chapter form when add chapter button is clicked", () => {
+  describe('chapter Management Tests', () => {
+    test('should show chapter form when add chapter button is clicked', () => {
       const { container } = render(
         <ProgramForm
           onSubmit={mockOnSubmit}
           onCancel={mockOnCancel}
           mode="create"
         />,
-      );
+      )
 
-      expect(container).toBeInTheDocument();
-      expect(screen.getByTestId("program-form")).toBeInTheDocument();
+      expect(container).toBeInTheDocument()
+      expect(screen.getByTestId('program-form')).toBeInTheDocument()
 
-      const addChapterBtn = screen.getByTestId("add-chapter-btn");
-      expect(addChapterBtn).toBeInTheDocument();
+      const addChapterBtn = screen.getByTestId('add-chapter-btn')
+      expect(addChapterBtn).toBeInTheDocument()
 
-      fireEvent.click(addChapterBtn);
+      fireEvent.click(addChapterBtn)
 
-      expect(screen.getByTestId("chapter-form-container")).toBeInTheDocument();
-      expect(screen.getByTestId("chapter-form")).toBeInTheDocument();
-      expect(screen.getByLabelText("Titre du Chapitre *")).toBeInTheDocument();
-      expect(screen.getByLabelText("Description")).toBeInTheDocument();
-      expect(screen.getByLabelText("Ordre *")).toBeInTheDocument();
-      expect(addChapterBtn).toBeDisabled();
-    });
+      expect(screen.getByTestId('chapter-form-container')).toBeInTheDocument()
+      expect(screen.getByTestId('chapter-form')).toBeInTheDocument()
+      expect(screen.getByLabelText('Titre du Chapitre *')).toBeInTheDocument()
+      expect(screen.getByLabelText('Description')).toBeInTheDocument()
+      expect(screen.getByLabelText('Ordre *')).toBeInTheDocument()
+      expect(addChapterBtn).toBeDisabled()
+    })
 
-    test("should hide chapter form when cancel is clicked", () => {
+    test('should hide chapter form when cancel is clicked', () => {
       render(
         <ProgramForm
           onSubmit={mockOnSubmit}
           onCancel={mockOnCancel}
           mode="create"
         />,
-      );
+      )
 
-      const addChapterBtn = screen.getByTestId("add-chapter-btn");
-      fireEvent.click(addChapterBtn);
+      const addChapterBtn = screen.getByTestId('add-chapter-btn')
+      fireEvent.click(addChapterBtn)
 
-      expect(screen.getByTestId("chapter-form-container")).toBeInTheDocument();
+      expect(screen.getByTestId('chapter-form-container')).toBeInTheDocument()
 
-      const cancelBtn = screen.getByTestId("chapter-cancel-btn");
-      fireEvent.click(cancelBtn);
+      const cancelBtn = screen.getByTestId('chapter-cancel-btn')
+      fireEvent.click(cancelBtn)
 
       expect(
-        screen.queryByTestId("chapter-form-container"),
-      ).not.toBeInTheDocument();
-      expect(addChapterBtn).not.toBeDisabled();
-    });
+        screen.queryByTestId('chapter-form-container'),
+      ).not.toBeInTheDocument()
+      expect(addChapterBtn).not.toBeDisabled()
+    })
 
-    test("should add chapter when chapter form is submitted", () => {
+    test('should add chapter when chapter form is submitted', () => {
       render(
         <ProgramForm
           onSubmit={mockOnSubmit}
           onCancel={mockOnCancel}
           mode="create"
         />,
-      );
+      )
 
-      const addChapterBtn = screen.getByTestId("add-chapter-btn");
-      fireEvent.click(addChapterBtn);
+      const addChapterBtn = screen.getByTestId('add-chapter-btn')
+      fireEvent.click(addChapterBtn)
 
-      fireEvent.change(screen.getByTestId("chapter-title-input"), {
-        target: { value: "Introduction aux fonctions" },
-      });
-      fireEvent.change(screen.getByTestId("chapter-description-input"), {
-        target: { value: "Ce chapitre couvre les bases des fonctions" },
-      });
-      fireEvent.change(screen.getByTestId("chapter-order-input"), {
-        target: { value: "1" },
-      });
+      fireEvent.change(screen.getByTestId('chapter-title-input'), {
+        target: { value: 'Introduction aux fonctions' },
+      })
+      fireEvent.change(screen.getByTestId('chapter-description-input'), {
+        target: { value: 'Ce chapitre couvre les bases des fonctions' },
+      })
+      fireEvent.change(screen.getByTestId('chapter-order-input'), {
+        target: { value: '1' },
+      })
 
-      const submitBtn = screen.getByTestId("chapter-submit-btn");
-      fireEvent.click(submitBtn);
+      const submitBtn = screen.getByTestId('chapter-submit-btn')
+      fireEvent.click(submitBtn)
 
       expect(
-        screen.queryByTestId("chapter-form-container"),
-      ).not.toBeInTheDocument();
+        screen.queryByTestId('chapter-form-container'),
+      ).not.toBeInTheDocument()
       expect(
-        screen.getByText("Introduction aux fonctions"),
-      ).toBeInTheDocument();
+        screen.getByText('Introduction aux fonctions'),
+      ).toBeInTheDocument()
       expect(
-        screen.getByText("Ce chapitre couvre les bases des fonctions"),
-      ).toBeInTheDocument();
-      expect(screen.getByText("Ordre:1")).toBeInTheDocument();
-      expect(addChapterBtn).not.toBeDisabled();
-    });
+        screen.getByText('Ce chapitre couvre les bases des fonctions'),
+      ).toBeInTheDocument()
+      expect(screen.getByText('Ordre:1')).toBeInTheDocument()
+      expect(addChapterBtn).not.toBeDisabled()
+    })
 
-    test("should delete chapter when delete button is clicked", () => {
+    test('should delete chapter when delete button is clicked', () => {
       const defaultValues = {
         chapters: [
           {
-            id: "ch1",
-            title: "Introduction",
-            description: "Chapitre introductif",
+            id: 'ch1',
+            title: 'Introduction',
+            description: 'Chapitre introductif',
             order: 1,
           },
         ],
-      };
+      }
 
       render(
         <ProgramForm
@@ -627,38 +630,38 @@ describe("program Form Component", () => {
           onCancel={mockOnCancel}
           mode="edit"
         />,
-      );
+      )
 
-      const deleteBtn = screen.getByTestId("chapter-delete-ch1");
-      fireEvent.click(deleteBtn);
+      const deleteBtn = screen.getByTestId('chapter-delete-ch1')
+      fireEvent.click(deleteBtn)
 
-      expect(screen.queryByText("Introduction")).not.toBeInTheDocument();
-      expect(screen.getByTestId("no-chapters-message")).toBeInTheDocument();
-    });
+      expect(screen.queryByText('Introduction')).not.toBeInTheDocument()
+      expect(screen.getByTestId('no-chapters-message')).toBeInTheDocument()
+    })
 
-    test("should reorder chapters up and down", () => {
+    test('should reorder chapters up and down', () => {
       const defaultValues = {
         chapters: [
           {
-            id: "ch1",
-            title: "Premier",
-            description: "Premier chapitre",
+            id: 'ch1',
+            title: 'Premier',
+            description: 'Premier chapitre',
             order: 1,
           },
           {
-            id: "ch2",
-            title: "Deuxième",
-            description: "Deuxième chapitre",
+            id: 'ch2',
+            title: 'Deuxième',
+            description: 'Deuxième chapitre',
             order: 2,
           },
           {
-            id: "ch3",
-            title: "Troisième",
-            description: "Troisième chapitre",
+            id: 'ch3',
+            title: 'Troisième',
+            description: 'Troisième chapitre',
             order: 3,
           },
         ],
-      };
+      }
 
       render(
         <ProgramForm
@@ -667,46 +670,46 @@ describe("program Form Component", () => {
           onCancel={mockOnCancel}
           mode="edit"
         />,
-      );
+      )
 
-      const chaptersList = screen.getByTestId("chapters-list");
+      const chaptersList = screen.getByTestId('chapters-list')
 
-      expect(chaptersList.children[0]).toHaveTextContent("Premier");
-      expect(chaptersList.children[1]).toHaveTextContent("Deuxième");
-      expect(chaptersList.children[2]).toHaveTextContent("Troisième");
+      expect(chaptersList.children[0]).toHaveTextContent('Premier')
+      expect(chaptersList.children[1]).toHaveTextContent('Deuxième')
+      expect(chaptersList.children[2]).toHaveTextContent('Troisième')
 
-      const upBtn = screen.getByTestId("chapter-up-ch2");
-      fireEvent.click(upBtn);
+      const upBtn = screen.getByTestId('chapter-up-ch2')
+      fireEvent.click(upBtn)
 
-      expect(chaptersList.children[0]).toHaveTextContent("Deuxième");
-      expect(chaptersList.children[1]).toHaveTextContent("Premier");
-      expect(chaptersList.children[2]).toHaveTextContent("Troisième");
+      expect(chaptersList.children[0]).toHaveTextContent('Deuxième')
+      expect(chaptersList.children[1]).toHaveTextContent('Premier')
+      expect(chaptersList.children[2]).toHaveTextContent('Troisième')
 
-      const downBtn = screen.getByTestId("chapter-down-ch2");
-      fireEvent.click(downBtn);
+      const downBtn = screen.getByTestId('chapter-down-ch2')
+      fireEvent.click(downBtn)
 
-      expect(chaptersList.children[0]).toHaveTextContent("Premier");
-      expect(chaptersList.children[1]).toHaveTextContent("Deuxième");
-      expect(chaptersList.children[2]).toHaveTextContent("Troisième");
-    });
+      expect(chaptersList.children[0]).toHaveTextContent('Premier')
+      expect(chaptersList.children[1]).toHaveTextContent('Deuxième')
+      expect(chaptersList.children[2]).toHaveTextContent('Troisième')
+    })
 
-    test("should disable reorder buttons at boundaries", () => {
+    test('should disable reorder buttons at boundaries', () => {
       const defaultValues = {
         chapters: [
           {
-            id: "ch1",
-            title: "Premier",
-            description: "Premier chapitre",
+            id: 'ch1',
+            title: 'Premier',
+            description: 'Premier chapitre',
             order: 1,
           },
           {
-            id: "ch2",
-            title: "Deuxième",
-            description: "Deuxième chapitre",
+            id: 'ch2',
+            title: 'Deuxième',
+            description: 'Deuxième chapitre',
             order: 2,
           },
         ],
-      };
+      }
 
       render(
         <ProgramForm
@@ -715,116 +718,116 @@ describe("program Form Component", () => {
           onCancel={mockOnCancel}
           mode="edit"
         />,
-      );
+      )
 
-      const firstUpBtn = screen.getByTestId("chapter-up-ch1");
-      const lastDownBtn = screen.getByTestId("chapter-down-ch2");
+      const firstUpBtn = screen.getByTestId('chapter-up-ch1')
+      const lastDownBtn = screen.getByTestId('chapter-down-ch2')
 
-      expect(firstUpBtn).toBeDisabled();
-      expect(lastDownBtn).toBeDisabled();
-      expect(screen.getByTestId("chapter-down-ch1")).not.toBeDisabled();
-      expect(screen.getByTestId("chapter-up-ch2")).not.toBeDisabled();
-    });
-  });
+      expect(firstUpBtn).toBeDisabled()
+      expect(lastDownBtn).toBeDisabled()
+      expect(screen.getByTestId('chapter-down-ch1')).not.toBeDisabled()
+      expect(screen.getByTestId('chapter-up-ch2')).not.toBeDisabled()
+    })
+  })
 
-  describe("form Submission Tests", () => {
-    test("should submit program without chapters", () => {
+  describe('form Submission Tests', () => {
+    test('should submit program without chapters', () => {
       render(
         <ProgramForm
           onSubmit={mockOnSubmit}
           onCancel={mockOnCancel}
           mode="create"
         />,
-      );
+      )
 
-      fireEvent.change(screen.getByTestId("program-name-input"), {
-        target: { value: "Programme de Physique" },
-      });
-      fireEvent.change(screen.getByTestId("program-code-input"), {
-        target: { value: "PHYSICS_6E" },
-      });
-      fireEvent.change(screen.getByTestId("program-grade-select"), {
-        target: { value: "grade-1" },
-      });
+      fireEvent.change(screen.getByTestId('program-name-input'), {
+        target: { value: 'Programme de Physique' },
+      })
+      fireEvent.change(screen.getByTestId('program-code-input'), {
+        target: { value: 'PHYSICS_6E' },
+      })
+      fireEvent.change(screen.getByTestId('program-grade-select'), {
+        target: { value: 'grade-1' },
+      })
 
-      const submitBtn = screen.getByTestId("submit-button");
-      fireEvent.click(submitBtn);
+      const submitBtn = screen.getByTestId('submit-button')
+      fireEvent.click(submitBtn)
 
       expect(mockOnSubmit).toHaveBeenCalledWith(
         expect.objectContaining({
-          name: "Programme de Physique",
-          code: "PHYSICS_6E",
-          gradeId: "grade-1",
-          status: "draft",
+          name: 'Programme de Physique',
+          code: 'PHYSICS_6E',
+          gradeId: 'grade-1',
+          status: 'draft',
           chapters: [],
         }),
-      );
-    });
+      )
+    })
 
-    test("should submit program with chapters", () => {
+    test('should submit program with chapters', () => {
       render(
         <ProgramForm
           onSubmit={mockOnSubmit}
           onCancel={mockOnCancel}
           mode="create"
         />,
-      );
+      )
 
-      fireEvent.change(screen.getByTestId("program-name-input"), {
-        target: { value: "Programme de Chimie" },
-      });
-      fireEvent.change(screen.getByTestId("program-code-input"), {
-        target: { value: "CHEM_6E" },
-      });
-      fireEvent.change(screen.getByTestId("program-grade-select"), {
-        target: { value: "grade-2" },
-      });
+      fireEvent.change(screen.getByTestId('program-name-input'), {
+        target: { value: 'Programme de Chimie' },
+      })
+      fireEvent.change(screen.getByTestId('program-code-input'), {
+        target: { value: 'CHEM_6E' },
+      })
+      fireEvent.change(screen.getByTestId('program-grade-select'), {
+        target: { value: 'grade-2' },
+      })
 
-      const addChapterBtn = screen.getByTestId("add-chapter-btn");
-      fireEvent.click(addChapterBtn);
+      const addChapterBtn = screen.getByTestId('add-chapter-btn')
+      fireEvent.click(addChapterBtn)
 
-      fireEvent.change(screen.getByTestId("chapter-title-input"), {
-        target: { value: "Introduction à la chimie" },
-      });
-      fireEvent.change(screen.getByTestId("chapter-description-input"), {
-        target: { value: "Bases de la chimie" },
-      });
-      fireEvent.change(screen.getByTestId("chapter-order-input"), {
-        target: { value: "1" },
-      });
+      fireEvent.change(screen.getByTestId('chapter-title-input'), {
+        target: { value: 'Introduction à la chimie' },
+      })
+      fireEvent.change(screen.getByTestId('chapter-description-input'), {
+        target: { value: 'Bases de la chimie' },
+      })
+      fireEvent.change(screen.getByTestId('chapter-order-input'), {
+        target: { value: '1' },
+      })
 
-      const chapterSubmitBtn = screen.getByTestId("chapter-submit-btn");
-      fireEvent.click(chapterSubmitBtn);
+      const chapterSubmitBtn = screen.getByTestId('chapter-submit-btn')
+      fireEvent.click(chapterSubmitBtn)
 
-      const programSubmitBtn = screen.getByTestId("submit-button");
-      fireEvent.click(programSubmitBtn);
+      const programSubmitBtn = screen.getByTestId('submit-button')
+      fireEvent.click(programSubmitBtn)
 
       expect(mockOnSubmit).toHaveBeenCalledWith(
         expect.objectContaining({
-          name: "Programme de Chimie",
-          code: "CHEM_6E",
-          gradeId: "grade-2",
-          status: "draft",
+          name: 'Programme de Chimie',
+          code: 'CHEM_6E',
+          gradeId: 'grade-2',
+          status: 'draft',
           chapters: expect.arrayContaining([
             expect.objectContaining({
-              title: "Introduction à la chimie",
-              description: "Bases de la chimie",
+              title: 'Introduction à la chimie',
+              description: 'Bases de la chimie',
               order: 1,
             }),
           ]),
         }),
-      );
-    });
+      )
+    })
 
-    test("should include all chapters in submission order", () => {
+    test('should include all chapters in submission order', () => {
       const defaultValues = {
         chapters: [
-          { id: "ch1", title: "Chapitre 1", order: 1 },
-          { id: "ch2", title: "Chapitre 2", order: 2 },
+          { id: 'ch1', title: 'Chapitre 1', order: 1 },
+          { id: 'ch2', title: 'Chapitre 2', order: 2 },
         ],
-        name: "Existing Program",
-        gradeId: "grade-1",
-      };
+        name: 'Existing Program',
+        gradeId: 'grade-1',
+      }
 
       render(
         <ProgramForm
@@ -833,43 +836,43 @@ describe("program Form Component", () => {
           onCancel={mockOnCancel}
           mode="edit"
         />,
-      );
+      )
 
-      fireEvent.change(screen.getByTestId("program-name-input"), {
-        target: { value: "Updated Program" },
-      });
+      fireEvent.change(screen.getByTestId('program-name-input'), {
+        target: { value: 'Updated Program' },
+      })
 
-      const form = screen.getByTestId("program-form");
-      fireEvent.submit(form);
+      const form = screen.getByTestId('program-form')
+      fireEvent.submit(form)
 
       expect(mockOnSubmit).toHaveBeenCalledWith(
         expect.objectContaining({
-          name: "Updated Program",
+          name: 'Updated Program',
           chapters: [
-            expect.objectContaining({ title: "Chapitre 1", order: 1 }),
-            expect.objectContaining({ title: "Chapitre 2", order: 2 }),
+            expect.objectContaining({ title: 'Chapitre 1', order: 1 }),
+            expect.objectContaining({ title: 'Chapitre 2', order: 2 }),
           ],
         }),
-      );
-    });
+      )
+    })
 
-    test("should call onCancel when cancel button is clicked", () => {
+    test('should call onCancel when cancel button is clicked', () => {
       render(
         <ProgramForm
           onSubmit={mockOnSubmit}
           onCancel={mockOnCancel}
           mode="create"
         />,
-      );
+      )
 
-      const cancelBtn = screen.getByTestId("cancel-button");
-      fireEvent.click(cancelBtn);
+      const cancelBtn = screen.getByTestId('cancel-button')
+      fireEvent.click(cancelBtn)
 
-      expect(mockOnCancel).toHaveBeenCalled();
-      expect(mockOnSubmit).not.toHaveBeenCalled();
-    });
+      expect(mockOnCancel).toHaveBeenCalled()
+      expect(mockOnSubmit).not.toHaveBeenCalled()
+    })
 
-    test("should show loading state during submission", () => {
+    test('should show loading state during submission', () => {
       render(
         <ProgramForm
           onSubmit={mockOnSubmit}
@@ -877,57 +880,57 @@ describe("program Form Component", () => {
           mode="create"
           isSubmitting={true}
         />,
-      );
+      )
 
-      expect(screen.getByTestId("submit-button")).toBeDisabled();
-      expect(screen.getByTestId("submit-button")).toHaveTextContent(
-        "Enregistrement...",
-      );
-    });
-  });
+      expect(screen.getByTestId('submit-button')).toBeDisabled()
+      expect(screen.getByTestId('submit-button')).toHaveTextContent(
+        'Enregistrement...',
+      )
+    })
+  })
 
-  describe("status Management Tests", () => {
-    test("should handle different status transitions", () => {
+  describe('status Management Tests', () => {
+    test('should handle different status transitions', () => {
       render(
         <ProgramForm
           onSubmit={mockOnSubmit}
           onCancel={mockOnCancel}
           mode="create"
         />,
-      );
+      )
 
-      const statusSelect = screen.getByTestId("program-status-select");
-      expect(statusSelect).toHaveValue("draft");
+      const statusSelect = screen.getByTestId('program-status-select')
+      expect(statusSelect).toHaveValue('draft')
 
-      fireEvent.change(statusSelect, { target: { value: "active" } });
-      expect(statusSelect).toHaveValue("active");
+      fireEvent.change(statusSelect, { target: { value: 'active' } })
+      expect(statusSelect).toHaveValue('active')
 
-      fireEvent.change(screen.getByTestId("program-name-input"), {
-        target: { value: "Active Program" },
-      });
-      fireEvent.change(screen.getByTestId("program-code-input"), {
-        target: { value: "ACTIVE" },
-      });
-      fireEvent.change(screen.getByTestId("program-grade-select"), {
-        target: { value: "grade-1" },
-      });
+      fireEvent.change(screen.getByTestId('program-name-input'), {
+        target: { value: 'Active Program' },
+      })
+      fireEvent.change(screen.getByTestId('program-code-input'), {
+        target: { value: 'ACTIVE' },
+      })
+      fireEvent.change(screen.getByTestId('program-grade-select'), {
+        target: { value: 'grade-1' },
+      })
 
-      fireEvent.click(screen.getByTestId("submit-button"));
+      fireEvent.click(screen.getByTestId('submit-button'))
 
       expect(mockOnSubmit).toHaveBeenCalledWith(
         expect.objectContaining({
-          status: "active",
+          status: 'active',
         }),
-      );
-    });
+      )
+    })
 
-    test("should maintain status in edit mode", () => {
+    test('should maintain status in edit mode', () => {
       const defaultValues = {
-        name: "Existing Program",
-        code: "EXIST",
-        gradeId: "grade-1",
-        status: "archived",
-      };
+        name: 'Existing Program',
+        code: 'EXIST',
+        gradeId: 'grade-1',
+        status: 'archived',
+      }
 
       render(
         <ProgramForm
@@ -936,102 +939,102 @@ describe("program Form Component", () => {
           onCancel={mockOnCancel}
           mode="edit"
         />,
-      );
+      )
 
-      const statusSelect = screen.getByTestId("program-status-select");
-      expect(statusSelect).toHaveValue("archived");
-    });
-  });
+      const statusSelect = screen.getByTestId('program-status-select')
+      expect(statusSelect).toHaveValue('archived')
+    })
+  })
 
-  describe("input Validation Tests", () => {
-    test("should require name and code fields", () => {
+  describe('input Validation Tests', () => {
+    test('should require name and code fields', () => {
       render(
         <ProgramForm
           onSubmit={mockOnSubmit}
           onCancel={mockOnCancel}
           mode="create"
         />,
-      );
+      )
 
-      const submitBtn = screen.getByTestId("submit-button");
-      fireEvent.click(submitBtn);
+      const submitBtn = screen.getByTestId('submit-button')
+      fireEvent.click(submitBtn)
 
-      expect(mockOnSubmit).not.toHaveBeenCalled();
+      expect(mockOnSubmit).not.toHaveBeenCalled()
 
-      fireEvent.change(screen.getByTestId("program-name-input"), {
-        target: { value: "Test Program" },
-      });
-      fireEvent.change(screen.getByTestId("program-code-input"), {
-        target: { value: "TEST" },
-      });
-      fireEvent.change(screen.getByTestId("program-grade-select"), {
-        target: { value: "grade-1" },
-      });
+      fireEvent.change(screen.getByTestId('program-name-input'), {
+        target: { value: 'Test Program' },
+      })
+      fireEvent.change(screen.getByTestId('program-code-input'), {
+        target: { value: 'TEST' },
+      })
+      fireEvent.change(screen.getByTestId('program-grade-select'), {
+        target: { value: 'grade-1' },
+      })
 
-      fireEvent.click(submitBtn);
+      fireEvent.click(submitBtn)
 
-      expect(mockOnSubmit).toHaveBeenCalled();
-    });
+      expect(mockOnSubmit).toHaveBeenCalled()
+    })
 
-    test("should require grade selection", () => {
+    test('should require grade selection', () => {
       render(
         <ProgramForm
           onSubmit={mockOnSubmit}
           onCancel={mockOnCancel}
           mode="create"
         />,
-      );
+      )
 
-      fireEvent.change(screen.getByTestId("program-name-input"), {
-        target: { value: "Test Program" },
-      });
-      fireEvent.change(screen.getByTestId("program-code-input"), {
-        target: { value: "TEST" },
-      });
+      fireEvent.change(screen.getByTestId('program-name-input'), {
+        target: { value: 'Test Program' },
+      })
+      fireEvent.change(screen.getByTestId('program-code-input'), {
+        target: { value: 'TEST' },
+      })
 
-      const submitBtn = screen.getByTestId("submit-button");
-      fireEvent.click(submitBtn);
+      const submitBtn = screen.getByTestId('submit-button')
+      fireEvent.click(submitBtn)
 
-      expect(mockOnSubmit).not.toHaveBeenCalled();
-    });
-  });
+      expect(mockOnSubmit).not.toHaveBeenCalled()
+    })
+  })
 
-  describe("chapter Form Validation Tests", () => {
-    test("should require chapter title and order", () => {
+  describe('chapter Form Validation Tests', () => {
+    test('should require chapter title and order', () => {
       render(
         <ProgramForm
           onSubmit={mockOnSubmit}
           onCancel={mockOnCancel}
           mode="create"
         />,
-      );
+      )
 
-      const addChapterBtn = screen.getByTestId("add-chapter-btn");
-      fireEvent.click(addChapterBtn);
+      const addChapterBtn = screen.getByTestId('add-chapter-btn')
+      fireEvent.click(addChapterBtn)
 
       // Verify chapter form is displayed
-      expect(screen.getByTestId("chapter-form-container")).toBeInTheDocument();
-      expect(screen.getByTestId("chapter-form")).toBeInTheDocument();
+      expect(screen.getByTestId('chapter-form-container')).toBeInTheDocument()
+      expect(screen.getByTestId('chapter-form')).toBeInTheDocument()
 
       // Fill required fields and submit
-      fireEvent.change(screen.getByTestId("chapter-title-input"), {
-        target: { value: "Test Chapter" },
-      });
-      fireEvent.change(screen.getByTestId("chapter-order-input"), {
-        target: { value: "1" },
-      });
+      fireEvent.change(screen.getByTestId('chapter-title-input'), {
+        target: { value: 'Test Chapter' },
+      })
+      fireEvent.change(screen.getByTestId('chapter-order-input'), {
+        target: { value: '1' },
+      })
 
-      const chapterSubmitBtn = screen.getByTestId("chapter-submit-btn");
-      fireEvent.click(chapterSubmitBtn);
+      const chapterSubmitBtn = screen.getByTestId('chapter-submit-btn')
+      fireEvent.click(chapterSubmitBtn)
 
       // Verify chapter was added successfully
-      expect(screen.getByText("Test Chapter")).toBeInTheDocument();
-    });
-  });
+      expect(screen.getByText('Test Chapter')).toBeInTheDocument()
+    })
+  })
 
-  describe("edge Cases and Error Handling", () => {
-    test("should handle empty chapters array gracefully", () => {
-      const defaultValues = { chapters: [] };
+  describe('edge Cases and Error Handling', () => {
+    test('should handle empty chapters array gracefully', () => {
+      const defaultValues = { chapters: [] }
 
       render(
         <ProgramForm
@@ -1040,60 +1043,60 @@ describe("program Form Component", () => {
           onCancel={mockOnCancel}
           mode="edit"
         />,
-      );
+      )
 
-      expect(screen.getByTestId("no-chapters-message")).toBeInTheDocument();
+      expect(screen.getByTestId('no-chapters-message')).toBeInTheDocument()
 
-      fireEvent.change(screen.getByTestId("program-name-input"), {
-        target: { value: "Program without chapters" },
-      });
-      fireEvent.change(screen.getByTestId("program-code-input"), {
-        target: { value: "EMPTY" },
-      });
-      fireEvent.change(screen.getByTestId("program-grade-select"), {
-        target: { value: "grade-1" },
-      });
+      fireEvent.change(screen.getByTestId('program-name-input'), {
+        target: { value: 'Program without chapters' },
+      })
+      fireEvent.change(screen.getByTestId('program-code-input'), {
+        target: { value: 'EMPTY' },
+      })
+      fireEvent.change(screen.getByTestId('program-grade-select'), {
+        target: { value: 'grade-1' },
+      })
 
-      fireEvent.click(screen.getByTestId("submit-button"));
+      fireEvent.click(screen.getByTestId('submit-button'))
 
       expect(mockOnSubmit).toHaveBeenCalledWith(
         expect.objectContaining({
           chapters: [],
         }),
-      );
-    });
+      )
+    })
 
-    test("should handle adding multiple chapters", () => {
+    test('should handle adding multiple chapters', () => {
       render(
         <ProgramForm
           onSubmit={mockOnSubmit}
           onCancel={mockOnCancel}
           mode="create"
         />,
-      );
+      )
 
-      const addChapterBtn = screen.getByTestId("add-chapter-btn");
-      fireEvent.click(addChapterBtn);
+      const addChapterBtn = screen.getByTestId('add-chapter-btn')
+      fireEvent.click(addChapterBtn)
 
-      fireEvent.change(screen.getByTestId("chapter-title-input"), {
-        target: { value: "Chapter 1" },
-      });
-      fireEvent.change(screen.getByTestId("chapter-order-input"), {
-        target: { value: "1" },
-      });
-      fireEvent.click(screen.getByTestId("chapter-submit-btn"));
+      fireEvent.change(screen.getByTestId('chapter-title-input'), {
+        target: { value: 'Chapter 1' },
+      })
+      fireEvent.change(screen.getByTestId('chapter-order-input'), {
+        target: { value: '1' },
+      })
+      fireEvent.click(screen.getByTestId('chapter-submit-btn'))
 
-      fireEvent.click(addChapterBtn);
-      fireEvent.change(screen.getByTestId("chapter-title-input"), {
-        target: { value: "Chapter 2" },
-      });
-      fireEvent.change(screen.getByTestId("chapter-order-input"), {
-        target: { value: "2" },
-      });
-      fireEvent.click(screen.getByTestId("chapter-submit-btn"));
+      fireEvent.click(addChapterBtn)
+      fireEvent.change(screen.getByTestId('chapter-title-input'), {
+        target: { value: 'Chapter 2' },
+      })
+      fireEvent.change(screen.getByTestId('chapter-order-input'), {
+        target: { value: '2' },
+      })
+      fireEvent.click(screen.getByTestId('chapter-submit-btn'))
 
-      expect(screen.getByText("Chapter 1")).toBeInTheDocument();
-      expect(screen.getByText("Chapter 2")).toBeInTheDocument();
-    });
-  });
-});
+      expect(screen.getByText('Chapter 1')).toBeInTheDocument()
+      expect(screen.getByText('Chapter 2')).toBeInTheDocument()
+    })
+  })
+})

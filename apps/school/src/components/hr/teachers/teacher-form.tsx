@@ -175,7 +175,7 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
                     const statusConfig = {
                       active: { color: 'bg-emerald-500', label: t.hr.status.active() },
                       inactive: { color: 'bg-slate-400', label: t.hr.status.inactive() },
-                      on_leave: { color: 'bg-amber-500', label: t.hr.status.on_leave() }
+                      on_leave: { color: 'bg-amber-500', label: t.hr.status.on_leave() },
                     }
                     const config = statusConfig[watch('status') as keyof typeof statusConfig]
                     return (

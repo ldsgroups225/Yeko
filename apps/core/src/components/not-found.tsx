@@ -3,10 +3,10 @@ import {
   IconHelpCircle,
   IconHome,
   IconSearch,
-} from "@tabler/icons-react";
-import { Link } from "@tanstack/react-router";
-import { Button } from "@workspace/ui/components/button";
-import { Card, CardContent } from "@workspace/ui/components/card";
+} from '@tabler/icons-react'
+import { Link } from '@tanstack/react-router'
+import { Button } from '@workspace/ui/components/button'
+import { Card, CardContent } from '@workspace/ui/components/card'
 
 export function NotFound({ children }: { children?: any }) {
   return (
@@ -45,12 +45,12 @@ export function NotFound({ children }: { children?: any }) {
               </Button>
               <Button
                 variant="outline"
-                render={
+                render={(
                   <Link to="/" className="flex items-center gap-2">
                     <IconHome className="h-4 w-4" />
                     Home
                   </Link>
-                }
+                )}
               />
             </div>
 
@@ -67,5 +67,5 @@ export function NotFound({ children }: { children?: any }) {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

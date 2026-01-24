@@ -1,20 +1,20 @@
-import { IconDots, IconUser, IconUsers } from "@tabler/icons-react";
-import { useQuery } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+import { IconDots, IconUser, IconUsers } from '@tabler/icons-react'
+import { useQuery } from '@tanstack/react-query'
+import { Link } from '@tanstack/react-router'
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@workspace/ui/components/avatar";
-import { Badge } from "@workspace/ui/components/badge";
-import { Button } from "@workspace/ui/components/button";
+} from '@workspace/ui/components/avatar'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@workspace/ui/components/dropdown-menu";
-import { Skeleton } from "@workspace/ui/components/skeleton";
+} from '@workspace/ui/components/dropdown-menu'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -22,23 +22,23 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@workspace/ui/components/table";
-import { motion } from "motion/react";
-import { useTranslations } from "@/i18n";
-import { enrollmentsOptions } from "@/lib/queries/enrollments";
-import { generateUUID } from "@/utils/generateUUID";
+} from '@workspace/ui/components/table'
+import { motion } from 'motion/react'
+import { useTranslations } from '@/i18n'
+import { enrollmentsOptions } from '@/lib/queries/enrollments'
+import { generateUUID } from '@/utils/generateUUID'
 
 interface ClassStudentListProps {
-  classId: string;
+  classId: string
 }
 
 export function ClassStudentList({ classId }: ClassStudentListProps) {
-  const t = useTranslations();
+  const t = useTranslations()
 
   const { data, isLoading } = useQuery({
-    ...enrollmentsOptions.list({ classId, status: "confirmed", limit: 100 }),
+    ...enrollmentsOptions.list({ classId, status: 'confirmed', limit: 100 }),
     enabled: !!classId,
-  });
+  })
 
   if (isLoading) {
     return (
@@ -57,10 +57,10 @@ export function ClassStudentList({ classId }: ClassStudentListProps) {
           </div>
         ))}
       </div>
-    );
+    )
   }
 
-  const enrollments = data?.data || [];
+  const enrollments = data?.data || []
 
   if (enrollments.length === 0) {
     return (
@@ -71,7 +71,7 @@ export function ClassStudentList({ classId }: ClassStudentListProps) {
           This class has no confirmed enrollments yet.
         </p>
       </div>
-    );
+    )
   }
 
   return (
@@ -115,7 +115,9 @@ export function ClassStudentList({ classId }: ClassStudentListProps) {
                       params={{ studentId: item.student?.id }}
                       className="font-medium hover:underline text-sm"
                     >
-                      {item.student?.lastName} {item.student?.firstName}
+                      {item.student?.lastName}
+                      {' '}
+                      {item.student?.firstName}
                     </Link>
                     <p className="text-xs text-muted-foreground font-mono">
                       {item.student?.matricule}
@@ -125,7 +127,7 @@ export function ClassStudentList({ classId }: ClassStudentListProps) {
               </TableCell>
               <TableCell>
                 <span className="text-sm font-medium">
-                  {item.enrollment.rollNumber || "-"}
+                  {item.enrollment.rollNumber || '-'}
                 </span>
               </TableCell>
               <TableCell>
@@ -139,18 +141,18 @@ export function ClassStudentList({ classId }: ClassStudentListProps) {
               <TableCell>
                 <DropdownMenu>
                   <DropdownMenuTrigger
-                    render={
+                    render={(
                       <Button variant="ghost" size="icon" className="size-8">
                         <IconDots className="size-4" />
                       </Button>
-                    }
+                    )}
                   />
                   <DropdownMenuContent
                     align="end"
                     className="backdrop-blur-xl bg-popover/90 border border-border/40"
                   >
                     <DropdownMenuItem
-                      render={
+                      render={(
                         <Link
                           to="/students/$studentId"
                           params={{ studentId: item.student?.id }}
@@ -158,7 +160,7 @@ export function ClassStudentList({ classId }: ClassStudentListProps) {
                           <IconUser className="mr-2 size-4" />
                           {t.enrollments.viewStudent()}
                         </Link>
-                      }
+                      )}
                     />
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -168,5 +170,5 @@ export function ClassStudentList({ classId }: ClassStudentListProps) {
         </TableBody>
       </Table>
     </div>
-  );
+  )
 }

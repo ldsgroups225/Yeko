@@ -1,7 +1,7 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { IconLoader2 } from "@tabler/icons-react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button } from "@workspace/ui/components/button";
+import { zodResolver } from '@hookform/resolvers/zod'
+import { IconLoader2 } from '@tabler/icons-react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Button } from '@workspace/ui/components/button'
 import {
   Dialog,
   DialogContent,
@@ -9,7 +9,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@workspace/ui/components/dialog";
+} from '@workspace/ui/components/dialog'
 import {
   Form,
   FormControl,
@@ -18,8 +18,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@workspace/ui/components/form";
-import { Input } from "@workspace/ui/components/input";
+} from '@workspace/ui/components/form'
+import { Input } from '@workspace/ui/components/input'
 
 import {
   Select,
@@ -27,32 +27,32 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@workspace/ui/components/select";
-import { Textarea } from "@workspace/ui/components/textarea";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { z } from "zod";
-import { useTranslations } from "@/i18n";
-import { classesOptions } from "@/lib/queries/classes";
-import { studentsKeys } from "@/lib/queries/students";
-import { transferStudent } from "@/school/functions/enrollments";
+} from '@workspace/ui/components/select'
+import { Textarea } from '@workspace/ui/components/textarea'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
+import { useTranslations } from '@/i18n'
+import { classesOptions } from '@/lib/queries/classes'
+import { studentsKeys } from '@/lib/queries/students'
+import { transferStudent } from '@/school/functions/enrollments'
 
 const transferSchema = z.object({
-  newClassId: z.string().min(1, "New class is required"),
+  newClassId: z.string().min(1, 'New class is required'),
   reason: z.string().max(500).optional(),
-  effectiveDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date"),
-});
+  effectiveDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date'),
+})
 
-type TransferFormData = z.infer<typeof transferSchema>;
+type TransferFormData = z.infer<typeof transferSchema>
 
 interface TransferDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  studentId: string;
-  studentName: string;
-  currentEnrollmentId: string;
-  currentClassName: string;
-  schoolYearId: string;
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  studentId: string
+  studentName: string
+  currentEnrollmentId: string
+  currentClassName: string
+  schoolYearId: string
 }
 
 export function TransferDialog({
@@ -64,22 +64,22 @@ export function TransferDialog({
   currentClassName,
   schoolYearId,
 }: TransferDialogProps) {
-  const t = useTranslations();
-  const queryClient = useQueryClient();
+  const t = useTranslations()
+  const queryClient = useQueryClient()
 
   const { data: classesData, isLoading: classesLoading } = useQuery({
     ...classesOptions.list({ schoolYearId }),
     enabled: open && !!schoolYearId,
-  });
+  })
 
   const form = useForm<TransferFormData>({
     resolver: zodResolver(transferSchema),
     defaultValues: {
-      newClassId: "",
-      reason: "",
-      effectiveDate: new Date().toISOString().split("T")[0],
+      newClassId: '',
+      reason: '',
+      effectiveDate: new Date().toISOString().split('T')[0],
     },
-  });
+  })
 
   const transferMutation = useMutation({
     mutationFn: (data: TransferFormData) =>
@@ -94,36 +94,36 @@ export function TransferDialog({
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: studentsKeys.detail(studentId),
-      });
-      queryClient.invalidateQueries({ queryKey: studentsKeys.all });
-      toast.success(t.students.transferSuccess());
-      onOpenChange(false);
-      form.reset();
+      })
+      queryClient.invalidateQueries({ queryKey: studentsKeys.all })
+      toast.success(t.students.transferSuccess())
+      onOpenChange(false)
+      form.reset()
     },
     onError: (err: Error) => {
-      toast.error(err.message);
+      toast.error(err.message)
     },
-  });
+  })
 
   const onSubmit = (data: TransferFormData) => {
     // Prevent transferring to the same class
     const selectedClass = classesData?.find(
-      (c) => c.class.id === data.newClassId,
-    );
+      c => c.class.id === data.newClassId,
+    )
     const newClassName = selectedClass
-      ? `${selectedClass.grade?.name} ${selectedClass.class.section}${selectedClass.series?.name ? ` (${selectedClass.series.name})` : ""}`
-      : "";
+      ? `${selectedClass.grade?.name} ${selectedClass.class.section}${selectedClass.series?.name ? ` (${selectedClass.series.name})` : ''}`
+      : ''
 
     if (newClassName === currentClassName) {
-      form.setError("newClassId", {
-        type: "manual",
+      form.setError('newClassId', {
+        type: 'manual',
         message: t.students.cannotTransferToSameClass(),
-      });
-      return;
+      })
+      return
     }
 
-    transferMutation.mutate(data);
-  };
+    transferMutation.mutate(data)
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -146,7 +146,8 @@ export function TransferDialog({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    {t.students.newClass()}{" "}
+                    {t.students.newClass()}
+                    {' '}
                     <span className="text-destructive">*</span>
                   </FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
@@ -162,9 +163,11 @@ export function TransferDialog({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {classesData?.map((cls) => (
+                      {classesData?.map(cls => (
                         <SelectItem key={cls.class.id} value={cls.class.id}>
-                          {cls.grade?.name} {cls.class.section}
+                          {cls.grade?.name}
+                          {' '}
+                          {cls.class.section}
                           {cls.series?.name && ` (${cls.series.name})`}
                         </SelectItem>
                       ))}
@@ -181,7 +184,8 @@ export function TransferDialog({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    {t.students.effectiveDate()}{" "}
+                    {t.students.effectiveDate()}
+                    {' '}
                     <span className="text-destructive">*</span>
                   </FormLabel>
                   <FormControl>
@@ -233,5 +237,5 @@ export function TransferDialog({
         </Form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }
