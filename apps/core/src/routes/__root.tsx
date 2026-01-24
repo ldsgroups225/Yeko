@@ -14,6 +14,7 @@ import { useEffect, useMemo } from 'react'
 import { DefaultCatchBoundary } from '@/components/default-catch-boundary'
 import { NotFound } from '@/components/not-found'
 import { ThemeProvider } from '@/components/theme'
+import { getAuthStatus } from '@/core/functions/get-auth-status'
 import { initializeLogger } from '@/lib/logger'
 import appCss from '@/styles.css?url'
 import { seo } from '@/utils/seo'
@@ -22,7 +23,15 @@ import '@/i18n/config'
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
+  auth?: Awaited<ReturnType<typeof getAuthStatus>>
 }>()({
+  beforeLoad: async () => {
+    const auth = await getAuthStatus()
+    return {
+      auth,
+    }
+  },
+
   head: () => ({
     meta: [
       {

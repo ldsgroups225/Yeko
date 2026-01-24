@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UnauthorizedRouteImport } from './routes/unauthorized'
 import { Route as DemoRequestRouteImport } from './routes/demo-request'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as IndexRouteImport } from './routes/index'
@@ -35,6 +36,11 @@ import { Route as AuthAppSchoolsSchoolIdEditRouteImport } from './routes/_auth/a
 import { Route as AuthAppPolarCheckoutSuccessRouteImport } from './routes/_auth/app/polar/checkout.success'
 import { Route as AuthAppCatalogsProgramsProgramIdRouteImport } from './routes/_auth/app/catalogs/programs/$programId'
 
+const UnauthorizedRoute = UnauthorizedRouteImport.update({
+  id: '/unauthorized',
+  path: '/unauthorized',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DemoRequestRoute = DemoRequestRouteImport.update({
   id: '/demo-request',
   path: '/demo-request',
@@ -169,6 +175,7 @@ const AuthAppCatalogsProgramsProgramIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/demo-request': typeof DemoRequestRoute
+  '/unauthorized': typeof UnauthorizedRoute
   '/app': typeof AuthAppRouteRouteWithChildren
   '/app/analytics': typeof AuthAppAnalyticsRouteWithChildren
   '/app/dashboard': typeof AuthAppDashboardRoute
@@ -195,6 +202,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/demo-request': typeof DemoRequestRoute
+  '/unauthorized': typeof UnauthorizedRoute
   '/app/dashboard': typeof AuthAppDashboardRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/app': typeof AuthAppIndexRoute
@@ -221,6 +229,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteRouteWithChildren
   '/demo-request': typeof DemoRequestRoute
+  '/unauthorized': typeof UnauthorizedRoute
   '/_auth/app': typeof AuthAppRouteRouteWithChildren
   '/_auth/app/analytics': typeof AuthAppAnalyticsRouteWithChildren
   '/_auth/app/dashboard': typeof AuthAppDashboardRoute
@@ -249,6 +258,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/demo-request'
+    | '/unauthorized'
     | '/app'
     | '/app/analytics'
     | '/app/dashboard'
@@ -275,6 +285,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/demo-request'
+    | '/unauthorized'
     | '/app/dashboard'
     | '/api/auth/$'
     | '/app'
@@ -300,6 +311,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_auth'
     | '/demo-request'
+    | '/unauthorized'
     | '/_auth/app'
     | '/_auth/app/analytics'
     | '/_auth/app/dashboard'
@@ -328,11 +340,19 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
   DemoRequestRoute: typeof DemoRequestRoute
+  UnauthorizedRoute: typeof UnauthorizedRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/unauthorized': {
+      id: '/unauthorized'
+      path: '/unauthorized'
+      fullPath: '/unauthorized'
+      preLoaderRoute: typeof UnauthorizedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/demo-request': {
       id: '/demo-request'
       path: '/demo-request'
@@ -599,6 +619,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRouteRoute: AuthRouteRouteWithChildren,
   DemoRequestRoute: DemoRequestRoute,
+  UnauthorizedRoute: UnauthorizedRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport
