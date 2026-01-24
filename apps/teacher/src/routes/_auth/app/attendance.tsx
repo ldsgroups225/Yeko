@@ -10,9 +10,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from '@workspace/ui/components/avatar'
-
 import { Badge } from '@workspace/ui/components/badge'
-
 import { Button } from '@workspace/ui/components/button'
 import {
   Card,
@@ -20,6 +18,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@workspace/ui/components/card'
+import { DatePicker } from '@workspace/ui/components/date-picker'
 import { Skeleton } from '@workspace/ui/components/skeleton'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -231,11 +230,10 @@ function AttendancePage() {
               <label className="text-sm font-medium">
                 {t('attendance.date', 'Date')}
               </label>
-              <input
-                type="date"
-                className="w-full mt-1 border rounded-md p-2"
-                value={selectedDate}
-                onChange={e => setSelectedDate(e.target.value)}
+              <DatePicker
+                date={selectedDate ? new Date(selectedDate) : undefined}
+                onSelect={(date: Date | undefined) => setSelectedDate(date ? (date.toISOString().split('T')[0] ?? '') : '')}
+                className="w-full mt-1 border rounded-md p-2 justify-start font-normal"
               />
             </div>
           </div>

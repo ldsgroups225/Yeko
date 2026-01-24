@@ -1,4 +1,4 @@
-import { IconSparkles } from '@tabler/icons-react'
+import { IconCalendar, IconSparkles } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import {
@@ -82,7 +82,23 @@ function SchoolSubjectsPage() {
                   onValueChange={val => setSelectedYearId(val ?? '')}
                 >
                   <SelectTrigger className="h-11 rounded-xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all font-bold shadow-sm hover:bg-card/80">
-                    <SelectValue placeholder={t.schoolYear.select()} />
+                    <SelectValue placeholder={t.schoolYear.select()}>
+                      {selectedYearId && (() => {
+                        const selectedYear = schoolYears?.find(year => year.id === selectedYearId)
+                        return selectedYear
+                          ? (
+                              <div className="flex items-center gap-2">
+                                <IconCalendar className="size-3.5 text-primary/60" />
+                                <span>
+                                  {selectedYear.template.name}
+                                  {' '}
+                                  {selectedYear.isActive && t.schoolYear.activeSuffix()}
+                                </span>
+                              </div>
+                            )
+                          : null
+                      })()}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
                     {schoolYears?.map(

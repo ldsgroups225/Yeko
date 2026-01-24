@@ -41,6 +41,7 @@ import { useTranslations } from '@/i18n'
 import { studentsKeys, studentsOptions } from '@/lib/queries/students'
 
 import { updateStudent } from '@/school/functions/students'
+import { formatDate } from '@/utils/formatDate'
 import { generateUUID } from '@/utils/generateUUID'
 import { EnrollmentDialog } from './enrollment-dialog'
 import { EnrollmentTimeline } from './enrollment-timeline'
@@ -230,7 +231,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
                 <CardContent className="space-y-4">
                   <InfoRow
                     label={t.students.dateOfBirth()}
-                    value={new Date(student.dob).toLocaleDateString()}
+                    value={formatDate(student.dob, 'MEDIUM')}
                   />
                   <InfoRow
                     label={t.students.gender()}
@@ -254,7 +255,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
                     label={t.students.admissionDate()}
                     value={
                       student.admissionDate
-                        ? new Date(student.admissionDate).toLocaleDateString()
+                        ? formatDate(student.admissionDate, 'MEDIUM')
                         : '-'
                     }
                   />
@@ -298,9 +299,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
                             label={t.students.enrollmentDate()}
                             value={
                               currentEnrollment?.enrollmentDate
-                                ? new Date(
-                                    currentEnrollment.enrollmentDate,
-                                  ).toLocaleDateString()
+                                ? formatDate(currentEnrollment.enrollmentDate, 'MEDIUM')
                                 : '-'
                             }
                           />

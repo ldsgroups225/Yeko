@@ -165,9 +165,9 @@ export function TimetableImportDialog({
           setPreview(res.parsed.slice(0, 5))
         }
         else {
-          // @ts-expect-error - dynamic key access
-          const errorMsg = res.errorKey
-            ? t.timetables.errors[res.errorKey.split('.').pop()]
+          const errorKey = res.errorKey?.split('.').pop()
+          const errorMsg = (errorKey === 'missingColumns')
+            ? t.timetables.errors.missingColumns()
             : t.timetables.errors.readError()
           setParseError(String(errorMsg))
         }

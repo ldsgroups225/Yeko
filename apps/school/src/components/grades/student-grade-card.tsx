@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/componen
 import { AnimatePresence, motion } from 'motion/react'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
+import { formatDate } from '@/utils/formatDate'
 import { GradeStatusBadge } from './grade-status-badge'
 
 interface Grade {
@@ -292,9 +293,14 @@ export function StudentGradeCard({
             <div className="mt-8 flex items-center justify-center gap-2 text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40 pt-4">
               <IconCalendar className="size-3" />
               {t.academic.grades.lastUpdated({
-                date: new Date(
-                  Math.max(...grades.map(g => new Date(g.gradeDate).getTime())),
-                ).toLocaleDateString('fr-FR'),
+                date: formatDate(
+                  new Date(
+                    Math.max(
+                      ...grades.map(g => new Date(g.gradeDate).getTime()),
+                    ),
+                  ),
+                  'MEDIUM',
+                ),
               })}
             </div>
           )}

@@ -25,7 +25,6 @@ import {
   TabsList,
   TabsTrigger,
 } from '@workspace/ui/components/tabs'
-import { format } from 'date-fns'
 import { motion } from 'motion/react'
 import { TeacherClasses } from '@/components/hr/teachers/teacher-classes'
 import { TeacherTimetable } from '@/components/hr/teachers/teacher-timetable'
@@ -33,6 +32,7 @@ import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
 import { teacherOptions } from '@/lib/queries/teachers'
 import { cn } from '@/lib/utils'
+import { formatDate } from '@/utils/formatDate'
 
 export const Route = createFileRoute('/_auth/users/teachers/$teacherId/')({
   component: TeacherDetailsPage,
@@ -230,7 +230,7 @@ function TeacherDetailsPage() {
                       <div className="size-8 rounded-lg bg-primary/5 flex items-center justify-center border border-primary/10">
                         <IconCalendar className="size-4 text-primary" />
                       </div>
-                      {format(new Date(teacher.hireDate), 'PPP')}
+                      {formatDate(teacher.hireDate, 'FULL')}
                     </div>
                   </div>
                 )}

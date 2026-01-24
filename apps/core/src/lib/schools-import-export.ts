@@ -1,5 +1,6 @@
 import type { School } from '@repo/data-ops'
 import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
+import { formatDate } from '@/utils/formatDate'
 
 // Export schools to Excel
 export function exportSchoolsToExcel(schools: School[]) {
@@ -15,11 +16,11 @@ export function exportSchoolsToExcel(schools: School[]) {
     .column('Statut', { key: 'status' })
     .column('Date de création', {
       key: 'createdAt',
-      transform: val => new Date(val).toLocaleDateString('fr-FR'),
+      transform: val => formatDate(val, 'MEDIUM', 'fr'),
     })
     .column('Dernière mise à jour', {
       key: 'updatedAt',
-      transform: val => new Date(val).toLocaleDateString('fr-FR'),
+      transform: val => formatDate(val, 'MEDIUM', 'fr'),
     })
     .build()
 

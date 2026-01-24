@@ -72,6 +72,7 @@ import {
   updateStudentStatus,
 } from '@/school/functions/students'
 
+import { formatDate } from '@/utils/formatDate'
 import { generateUUID } from '@/utils/generateUUID'
 import { AutoMatchDialog } from './auto-match-dialog'
 import { BulkReEnrollDialog } from './bulk-reenroll-dialog'
@@ -776,7 +777,7 @@ export function StudentsList() {
                                   {item.student.firstName}
                                 </Link>
                                 <p className="text-xs text-muted-foreground">
-                                  {new Date(item.student.dob).toLocaleDateString()}
+                                  {formatDate(item.student.dob, 'MEDIUM')}
                                 </p>
                               </div>
                             </div>

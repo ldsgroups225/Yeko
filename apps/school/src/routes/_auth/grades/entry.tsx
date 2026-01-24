@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { DatePicker } from '@workspace/ui/components/date-picker'
 import { Input } from '@workspace/ui/components/input'
 import { Label } from '@workspace/ui/components/label'
 import {
@@ -329,11 +330,10 @@ function GradeEntryPage() {
                 <Label htmlFor="date-input" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
                   {t.academic.grades.entry.date()}
                 </Label>
-                <Input
-                  id="date-input"
-                  type="date"
-                  value={gradeDate}
-                  onChange={e => setGradeDate(e.target.value)}
+                <DatePicker
+                  date={gradeDate ? new Date(gradeDate) : undefined}
+                  onSelect={(date: Date | undefined) => setGradeDate(date ? (date.toISOString().split('T')[0] ?? '') : '')}
+                  placeholder={t.academic.grades.entry.date()}
                   className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all font-bold"
                 />
               </div>

@@ -17,6 +17,7 @@ import { SystemHealth } from '@/components/dashboard/system-health'
 import { dashboardStatsQueryOptions, recentActivityQueryOptions, systemHealthQueryOptions } from '@/integrations/tanstack-query/dashboard-options'
 import { authClient } from '@/lib/auth-client'
 import { useLogger } from '@/lib/logger'
+import { formatDate } from '@/utils/formatDate'
 
 export const Route = createFileRoute('/_auth/app/dashboard')({
   component: Dashboard,
@@ -79,7 +80,7 @@ function Dashboard() {
 
   const recentSchools = stats?.recentSchools.map(school => ({
     ...school,
-    joinedDate: new Date(school.createdAt).toLocaleDateString(),
+    joinedDate: formatDate(school.createdAt, 'MEDIUM'),
   })) || []
 
   // Transform health data for component
@@ -127,7 +128,7 @@ function Dashboard() {
       id: activity.id,
       action,
       target,
-      date: new Date(activity.timestamp).toLocaleDateString(),
+      date: formatDate(activity.timestamp, 'MEDIUM'),
       user: activity.user,
       // userAvatar: activity.userAvatar, // Assuming this might be available in future, currently undefined
       type,

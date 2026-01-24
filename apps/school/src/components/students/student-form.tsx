@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
 import { Button } from '@workspace/ui/components/button'
+import { DatePicker } from '@workspace/ui/components/date-picker'
 import {
   Form,
   FormControl,
@@ -305,7 +306,11 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                           *
                         </FormLabel>
                         <FormControl>
-                          <Input type="date" {...field} />
+                          <DatePicker
+                            date={field.value ? new Date(field.value) : undefined}
+                            onSelect={(date: Date | undefined) => field.onChange(date ? (date.toISOString().split('T')[0] ?? '') : '')}
+                            placeholder={t.students.dateOfBirth()}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -427,7 +432,11 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                       <FormItem>
                         <FormLabel>{t.students.admissionDate()}</FormLabel>
                         <FormControl>
-                          <Input type="date" {...field} />
+                          <DatePicker
+                            date={field.value ? new Date(field.value) : undefined}
+                            onSelect={(date: Date | undefined) => field.onChange(date ? (date.toISOString().split('T')[0] ?? '') : '')}
+                            placeholder={t.students.admissionDate()}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

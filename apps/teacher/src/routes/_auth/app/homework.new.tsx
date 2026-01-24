@@ -2,6 +2,7 @@ import { IconArrowLeft, IconCalendar, IconDeviceFloppy, IconSend } from '@tabler
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
+import { DatePicker } from '@workspace/ui/components/date-picker'
 import { Input } from '@workspace/ui/components/input'
 
 import { Label } from '@workspace/ui/components/label'
@@ -172,12 +173,10 @@ function NewHomeworkPage() {
                   <Label>{t('homework.dueDate')}</Label>
                   <div className="relative">
                     <IconCalendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input
-                      type="date"
-                      value={dueDate}
-                      onChange={e => setDueDate(e.target.value)}
-                      className="pl-9"
-                      min={new Date().toISOString().split('T')[0]}
+                    <DatePicker
+                      date={dueDate ? new Date(dueDate) : undefined}
+                      onSelect={(date: Date | undefined) => setDueDate(date ? (date.toISOString().split('T')[0] ?? '') : '')}
+                      className="pl-9 justify-start font-normal"
                     />
                   </div>
                 </div>

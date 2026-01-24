@@ -17,6 +17,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@workspace/ui/components/card'
+import { DatePicker } from '@workspace/ui/components/date-picker'
 import {
   Dialog,
   DialogContent,
@@ -32,7 +33,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu'
-import { Input } from '@workspace/ui/components/input'
 
 import { Label } from '@workspace/ui/components/label'
 import {
@@ -51,8 +51,6 @@ import {
   TableHeader,
   TableRow,
 } from '@workspace/ui/components/table'
-import { format } from 'date-fns'
-import { fr } from 'date-fns/locale'
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { toast } from 'sonner'
@@ -64,6 +62,7 @@ import {
   getSchoolYears,
   setActiveSchoolYear,
 } from '@/school/functions/school-years'
+import { formatDate } from '@/utils/formatDate'
 import { generateUUID } from '@/utils/generateUUID'
 
 export const Route = createFileRoute('/_auth/settings/school-years')({
@@ -202,14 +201,10 @@ function SchoolYearsSettingsPage() {
                                 {year.template?.name || 'N/A'}
                               </TableCell>
                               <TableCell className="font-medium text-muted-foreground">
-                                {format(new Date(year.startDate), 'dd MMM yyyy', {
-                                  locale: fr,
-                                })}
+                                {formatDate(year.startDate, 'MEDIUM')}
                               </TableCell>
                               <TableCell className="font-medium text-muted-foreground">
-                                {format(new Date(year.endDate), 'dd MMM yyyy', {
-                                  locale: fr,
-                                })}
+                                {formatDate(year.endDate, 'MEDIUM')}
                               </TableCell>
                               <TableCell>
                                 {year.isActive
@@ -473,11 +468,9 @@ function CreateSchoolYearDialog({
               >
                 {t.settings.schoolYears.startDate()}
               </Label>
-              <Input
-                id="startDate"
-                type="date"
-                value={startDate}
-                onChange={e => setStartDate(e.target.value)}
+              <DatePicker
+                date={startDate ? new Date(startDate) : undefined}
+                onSelect={(date: Date | undefined) => setStartDate(date ? (date.toISOString().split('T')[0] ?? '') : '')}
                 className={inputClass}
               />
             </div>
@@ -488,11 +481,9 @@ function CreateSchoolYearDialog({
               >
                 {t.settings.schoolYears.endDate()}
               </Label>
-              <Input
-                id="endDate"
-                type="date"
-                value={endDate}
-                onChange={e => setEndDate(e.target.value)}
+              <DatePicker
+                date={endDate ? new Date(endDate) : undefined}
+                onSelect={(date: Date | undefined) => setEndDate(date ? (date.toISOString().split('T')[0] ?? '') : '')}
                 className={inputClass}
               />
             </div>

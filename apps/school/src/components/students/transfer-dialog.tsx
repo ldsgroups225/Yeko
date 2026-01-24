@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { IconLoader2 } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Button } from '@workspace/ui/components/button'
+import { DatePicker } from '@workspace/ui/components/date-picker'
 import {
   Dialog,
   DialogContent,
@@ -19,7 +20,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@workspace/ui/components/form'
-import { Input } from '@workspace/ui/components/input'
 
 import {
   Select,
@@ -189,7 +189,11 @@ export function TransferDialog({
                     <span className="text-destructive">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input type="date" {...field} />
+                    <DatePicker
+                      date={field.value ? new Date(field.value) : undefined}
+                      onSelect={(date: Date | undefined) => field.onChange(date ? (date.toISOString().split('T')[0] ?? '') : '')}
+                      placeholder={t.students.effectiveDate()}
+                    />
                   </FormControl>
                   <FormDescription>
                     {t.students.effectiveDateDescription()}

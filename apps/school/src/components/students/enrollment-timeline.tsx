@@ -10,6 +10,7 @@ import { Badge } from '@workspace/ui/components/badge'
 
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
+import { formatDate } from '@/utils/formatDate'
 
 interface EnrollmentItem {
   enrollment: {
@@ -158,9 +159,7 @@ export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
                       {t.students.enrolled()}
                       :
                       {' '}
-                      {new Date(
-                        item.enrollment.enrollmentDate,
-                      ).toLocaleDateString()}
+                      {formatDate(item.enrollment.enrollmentDate, 'MEDIUM')}
                     </span>
                   </div>
                   {item.enrollment.rollNumber && (
@@ -179,9 +178,7 @@ export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
                         {t.students.confirmedOn()}
                         :
                         {' '}
-                        {new Date(
-                          item.enrollment.confirmedAt,
-                        ).toLocaleDateString()}
+                        {formatDate(item.enrollment.confirmedAt, 'MEDIUM')}
                       </span>
                     </div>
                   )}
@@ -192,9 +189,7 @@ export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
                         {t.students.transferredOn()}
                         :
                         {' '}
-                        {new Date(
-                          item.enrollment.transferredAt,
-                        ).toLocaleDateString()}
+                        {formatDate(item.enrollment.transferredAt, 'MEDIUM')}
                       </span>
                     </div>
                   )}
@@ -205,9 +200,7 @@ export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
                         {t.students.cancelledOn()}
                         :
                         {' '}
-                        {new Date(
-                          item.enrollment.cancelledAt,
-                        ).toLocaleDateString()}
+                        {formatDate(item.enrollment.cancelledAt, 'MEDIUM')}
                       </span>
                     </div>
                   )}

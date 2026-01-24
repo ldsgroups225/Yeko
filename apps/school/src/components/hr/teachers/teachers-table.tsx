@@ -40,7 +40,6 @@ import {
   TableHeader,
   TableRow,
 } from '@workspace/ui/components/table'
-import { format } from 'date-fns'
 import { AnimatePresence, motion } from 'motion/react'
 import { useMemo, useState } from 'react'
 import { EmptyState } from '@/components/hr/empty-state'
@@ -48,6 +47,7 @@ import { TableSkeleton } from '@/components/hr/table-skeleton'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useTranslations } from '@/i18n'
 import { getTeachers } from '@/school/functions/teachers'
+import { formatDate } from '@/utils/formatDate'
 
 interface TeachersTableProps {
   filters: {
@@ -177,7 +177,7 @@ export function TeachersTable({ filters }: TeachersTableProps) {
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <IconCalendar className="h-3.5 w-3.5" />
             {row.original.hireDate
-              ? format(new Date(row.original.hireDate), 'dd MMM yyyy')
+              ? formatDate(row.original.hireDate, 'MEDIUM')
               : '-'}
           </div>
         ),

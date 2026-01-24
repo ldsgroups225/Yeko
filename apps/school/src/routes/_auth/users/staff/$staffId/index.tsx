@@ -18,6 +18,7 @@ import {
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
 import { getStaffMember } from '@/school/functions/staff'
+import { formatDate } from '@/utils/formatDate'
 
 export const Route = createFileRoute('/_auth/users/staff/$staffId/')({
   component: StaffDetailPage,
@@ -127,7 +128,7 @@ function StaffDetailPage() {
                   </p>
                   <p className="text-base">
                     {staff.hireDate
-                      ? new Date(staff.hireDate).toLocaleDateString()
+                      ? formatDate(staff.hireDate, 'LONG')
                       : '-'}
                   </p>
                 </div>

@@ -1,5 +1,6 @@
 import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
 import * as XLSX from 'xlsx'
+import { formatDate } from '@/utils/formatDate'
 
 /**
  * Excel Import/Export for Coefficients
@@ -44,7 +45,7 @@ export function exportCoefficientsToExcel(
     'Classe': coef.grade?.name || 'N/A',
     'Série': coef.series?.name || 'Général',
     'Coefficient': coef.weight,
-    'Date de Création': coef.createdAt.toLocaleDateString('fr-FR'),
+    'Date de Création': formatDate(coef.createdAt, 'MEDIUM', 'fr'),
   }))
 
   // Create schema

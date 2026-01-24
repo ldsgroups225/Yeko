@@ -39,6 +39,7 @@ import {
 import { downloadSubjectsTemplate, exportSubjectsToExcel, importSubjectsFromExcel } from '@/lib/catalog-csv'
 import { useLogger } from '@/lib/logger'
 import { parseServerFnError } from '@/utils/error-handlers'
+import { formatDate } from '@/utils/formatDate'
 import { generateUUID } from '@/utils/generateUUID'
 
 export const Route = createFileRoute('/_auth/app/catalogs/subjects')({
@@ -545,7 +546,7 @@ function SubjectsCatalog() {
                                           <span className="text-xs text-muted-foreground">
                                             Créé le
                                             {' '}
-                                            {new Date(subject.createdAt).toLocaleDateString()}
+                                            {formatDate(subject.createdAt, 'MEDIUM')}
                                           </span>
                                         </div>
                                       </div>

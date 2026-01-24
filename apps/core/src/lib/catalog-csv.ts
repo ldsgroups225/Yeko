@@ -1,5 +1,6 @@
 import type { Grade, Serie, Subject } from '@repo/data-ops'
 import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
+import { formatDate } from '@/utils/formatDate'
 
 // ===== SUBJECTS EXPORT/IMPORT =====
 
@@ -11,7 +12,7 @@ export function exportSubjectsToExcel(subjects: Subject[]) {
     .column('Catégorie', { key: 'category' })
     .column('Date de création', {
       key: 'createdAt',
-      transform: val => new Date(val).toLocaleDateString('fr-FR'),
+      transform: val => formatDate(val, 'MEDIUM', 'fr'),
     })
     .build()
 
@@ -95,7 +96,7 @@ export function exportGradesToExcel(grades: Grade[]) {
     .column('ID Filière', { key: 'trackId' })
     .column('Date de création', {
       key: 'createdAt',
-      transform: val => new Date(val).toLocaleDateString('fr-FR'),
+      transform: val => formatDate(val, 'MEDIUM', 'fr'),
     })
     .build()
 
@@ -131,7 +132,7 @@ export function exportSeriesToExcel(series: Serie[]) {
     .column('ID Filière', { key: 'trackId' })
     .column('Date de création', {
       key: 'createdAt',
-      transform: val => new Date(val).toLocaleDateString('fr-FR'),
+      transform: val => formatDate(val, 'MEDIUM', 'fr'),
     })
     .build()
 
