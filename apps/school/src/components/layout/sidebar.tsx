@@ -19,6 +19,8 @@ import {
   IconUserCheck,
   IconUsers,
   IconUsersGroup,
+  IconHome,
+  IconCalendarEvent,
 } from "@tabler/icons-react";
 import { useLocation, useNavigate } from "@tanstack/react-router";
 import {
@@ -164,6 +166,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               title: t.nav.conduct(),
               href: "/conducts/conduct",
               icon: IconAlertTriangle,
+            },
+          ],
+        },
+        {
+          title: t.nav.spaces(),
+          href: "/spaces",
+          icon: IconHome,
+          children: [
+            {
+              title: t.nav.classrooms(),
+              href: "/spaces/classrooms",
+              icon: IconBuilding,
+            },
+            {
+              title: t.spaces.availability.title(),
+              href: "/spaces/availability",
+              icon: IconCalendarEvent,
             },
           ],
         },
