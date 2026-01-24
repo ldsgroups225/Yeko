@@ -7,6 +7,7 @@ import {
   IconUsers,
 } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
+import { Link } from '@tanstack/react-router'
 import {
   Alert,
   AlertDescription,
@@ -78,10 +79,10 @@ function EmptyState() {
           </div>
           <Button
             render={(
-              <a href="/users/teachers">
+              <Link to="/users/teachers" search={{ page: 1 }}>
                 <IconPlus className="mr-2 h-4 w-4" />
                 {t.teachers.add()}
-              </a>
+              </Link>
             )}
             className="mt-2"
           />

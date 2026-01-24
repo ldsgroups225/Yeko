@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
 import { useTranslations } from '@/i18n'
 import { useI18nContext } from '@/i18n/i18n-react'
@@ -47,16 +48,16 @@ export function NavigationExample() {
   return (
     <nav className="space-y-2">
       {navItems.map(item => (
-        <a
+        <Link
           key={item.key}
-          href={`/${item.key}`}
+          to={`/${item.key}` as any}
           className="flex items-center gap-2 px-4 py-2 rounded hover:bg-accent"
         >
           <span>{item.icon}</span>
           <span>
             {navTranslations[item.key as keyof typeof navTranslations]()}
           </span>
-        </a>
+        </Link>
       ))}
     </nav>
   )

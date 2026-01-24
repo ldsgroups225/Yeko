@@ -1,5 +1,6 @@
 import type { Price, Product, Subscription } from './types'
 import { IconCheck } from '@tabler/icons-react'
+import { Link } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'
 import { Button } from '@workspace/ui/components/button'
 import {
@@ -105,7 +106,7 @@ export function PricingCard({
               className="w-full"
               size="lg"
               variant="outline"
-              render={<a href="/app/polar/portal">Manage Subscription</a>}
+              render={<Link to="/app/polar/portal">Manage Subscription</Link>}
             />
           </div>
         )
@@ -120,7 +121,7 @@ export function PricingCard({
               className="w-full"
               size="lg"
               variant="secondary"
-              render={<a href="/app/polar/portal">Go to Portal</a>}
+              render={<Link to="/app/polar/portal">Go to Portal</Link>}
             />
           </div>
         )

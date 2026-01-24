@@ -6,6 +6,7 @@ import {
   IconX,
 } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Link } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'
 import { Button } from '@workspace/ui/components/button'
 import {
@@ -110,19 +111,19 @@ function EmptyState() {
             <Button
               variant="outline"
               render={(
-                <a href="/classes">
+                <Link to="/classes">
                   <IconPlus className="mr-2 h-4 w-4" />
                   {t.classes.create()}
-                </a>
+                </Link>
               )}
             />
             <Button
               variant="outline"
               render={(
-                <a href="/settings/subjects">
+                <Link to="/programs/subjects">
                   <IconSettings className="mr-2 h-4 w-4" />
                   {t.subjects.configure()}
-                </a>
+                </Link>
               )}
             />
           </div>

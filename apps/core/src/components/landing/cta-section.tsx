@@ -1,4 +1,5 @@
 import { IconArrowRight, IconSparkles } from '@tabler/icons-react'
+import { Link } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
 
 export function CTASection() {
@@ -38,7 +39,7 @@ export function CTASection() {
               variant="outline"
               size="lg"
               className="h-14 px-8 text-lg"
-              render={<a href="/demo">Talk to Sales</a>}
+              render={<Link to="/demo-request">Talk to Sales</Link>}
             />
           </div>
 

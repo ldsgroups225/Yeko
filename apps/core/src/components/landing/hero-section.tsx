@@ -3,6 +3,7 @@ import {
   IconCircleCheck,
   IconPlayerPlay,
 } from '@tabler/icons-react'
+import { Link } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'
 import { Button } from '@workspace/ui/components/button'
 import { useTranslation } from 'react-i18next'
@@ -52,10 +53,10 @@ export function HeroSection() {
               size="lg"
               className="h-14 px-8 text-lg backdrop-blur-sm bg-background/50"
               render={(
-                <a href="/demo">
+                <Link to="/demo-request">
                   <IconPlayerPlay className="mr-2 h-5 w-5" />
                   {t('hero.cta.secondary')}
-                </a>
+                </Link>
               )}
             />
           </div>

@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { z } from 'zod'
 import { ResetPasswordForm } from '@/components/auth/reset-password-form'
 import { useTranslations } from '@/i18n'
@@ -24,9 +24,9 @@ function ResetPasswordPage() {
           <p className="text-muted-foreground">
             {t.auth.resetPassword.invalidLinkDescription()}
           </p>
-          <a href="/dashboard" className="text-primary hover:underline">
+          <Link to="/dashboard" className="text-primary hover:underline">
             {t.auth.forgotPassword.backToLogin()}
-          </a>
+          </Link>
         </div>
       </div>
     )

@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { IconCircleCheck, IconLoader2 } from '@tabler/icons-react'
+import { Link } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
 import { Input } from '@workspace/ui/components/input'
 import { Label } from '@workspace/ui/components/label'
@@ -96,7 +97,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
             <Button
               className="w-full h-12"
               render={
-                <a href="/dashboard">{t.auth.resetPassword.goToLogin()}</a>
+                <Link to="/dashboard">{t.auth.resetPassword.goToLogin()}</Link>
               }
             />
           </motion.div>

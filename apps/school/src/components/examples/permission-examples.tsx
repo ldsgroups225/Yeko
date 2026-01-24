@@ -5,6 +5,7 @@
  * These examples can be used as reference when implementing features.
  */
 
+import { Link } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
 import { MultiPermissionGuard, PermissionGuard } from '@/components/auth/permission-guard'
 import { usePermissions } from '@/hooks/use-permissions'
@@ -167,13 +168,13 @@ export function NavigationExample() {
           return null
 
         return (
-          <a
+          <Link
             key={item.href}
-            href={item.href}
+            to={item.href}
             className="block px-4 py-2 rounded hover:bg-accent"
           >
             {item.label}
-          </a>
+          </Link>
         )
       })}
     </nav>
