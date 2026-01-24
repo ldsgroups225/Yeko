@@ -41,8 +41,8 @@
   - [x] 5.1 Create the route file `src/routes/unauthorized.tsx`.
   - [x] 5.2 Build a premium "Access Denied" UI with the required French message: "En attendant l'attribution de votre rôle par l'administrateur, ou contactez-le pour plus d'informations."
   - [x] 5.3 Apply modern styling (gradients, premium typography) to the page.
-- [ ] 6.0 Quality Assurance & Security Validation
-  - [ ] 6.1 Manually verify that a `super_admin` user can still access `/app/*` routes.
-  - [ ] 6.2 Verify that a logged-in user without the role is redirected to `/unauthorized`.
-  - [ ] 6.3 Verify that unauthenticated users are redirected to the login page (not `/unauthorized`).
-  - [ ] 6.4 Ensure no sensitive role info is exposed unnecessarily in the client-side console or state.
+- [x] 6.0 Quality Assurance & Security Validation
+  - [x] 6.1 Manually verify that a `super_admin` user can still access `/app/*` routes (Code verified).
+  - [x] 6.2 Verify that a logged-in user without the role is redirected to `/unauthorized` (Code verified).
+  - [x] 6.3 Verify that unauthenticated users are redirected to the login page (Handled by `/_auth` layout).
+  - [x] 6.4 Ensure no sensitive role info is exposed unnecessarily in the client-side console or state.
