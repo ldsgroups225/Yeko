@@ -9,7 +9,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: [
-    'list',
+    ['list'],
     ['html', { outputFolder: 'coverage-report' }],
     ['json', { outputFile: 'coverage-results.json' }],
   ],
@@ -56,9 +56,5 @@ export default defineConfig({
       '**/.next/**',
     ],
   },
-})
+} as any)
 
-// Custom hook to collect coverage
-async function globalTeardown() {
-  // Coverage collection is handled automatically by Playwright with v8 provider
-}
