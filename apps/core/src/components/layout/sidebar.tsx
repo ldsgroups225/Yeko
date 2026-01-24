@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react'
 import type { FileRoutesByTo } from '@/routeTree.gen'
+import { Button } from '@repo/ui/src/components/button'
 import {
   IconAward,
   IconBook,
@@ -13,7 +14,7 @@ import {
   IconRoute,
   IconSchool,
 } from '@tabler/icons-react'
-import { useNavigate, useRouterState } from '@tanstack/react-router'
+import { Link, useNavigate, useRouterState } from '@tanstack/react-router'
 import {
   SidebarContent,
   SidebarFooter,
@@ -180,8 +181,8 @@ export function Sidebar({ className }: SidebarProps) {
             )}
           </SidebarMenuButton>
           {hasChildren && !isCollapsed && (
-            <button
-              type="button"
+            <Button
+              variant="link"
               onClick={(e) => {
                 e.stopPropagation()
                 toggleExpanded(item.href)
@@ -195,7 +196,7 @@ export function Sidebar({ className }: SidebarProps) {
               >
                 <IconChevronDown className="h-4 w-4" />
               </motion.div>
-            </button>
+            </Button>
           )}
         </div>
         <AnimatePresence>
@@ -212,8 +213,8 @@ export function Sidebar({ className }: SidebarProps) {
                   const isChildActive = currentPath === child.href
                   return (
                     <SidebarMenuSubItem key={child.href} className="px-1">
-                      <a
-                        href={child.href}
+                      <Link
+                        to={child.href}
                         className={cn(
                           'flex items-center gap-3 py-2 px-3 rounded-md transition-all duration-200 text-sm',
                           'hover:bg-accent/80 hover:translate-x-1',
@@ -231,7 +232,7 @@ export function Sidebar({ className }: SidebarProps) {
                           )}
                         />
                         <span className="truncate">{child.name}</span>
-                      </a>
+                      </Link>
                     </SidebarMenuSubItem>
                   )
                 })}
