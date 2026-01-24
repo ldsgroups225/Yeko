@@ -283,7 +283,11 @@ function ProgramDetails() {
               disabled={publishMutation.isPending || updateProgramMutation.isPending}
             >
               <SelectTrigger className="w-[140px] h-8">
-                <SelectValue />
+                <SelectValue placeholder="Statut">
+                  {program.status === 'draft' && 'Brouillon'}
+                  {program.status === 'published' && 'Publié'}
+                  {program.status === 'archived' && 'Archivé'}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="draft">Brouillon</SelectItem>

@@ -1,5 +1,5 @@
 import type { GradeType } from '@/schemas/grade'
-import { IconClipboardCheck, IconLayoutGrid, IconListCheck, IconRotate, IconSettings, IconSparkles, IconUserCheck } from '@tabler/icons-react'
+import { IconCalendar, IconClipboardCheck, IconLayoutGrid, IconListCheck, IconRotate, IconSettings, IconSparkles, IconUserCheck } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
@@ -281,7 +281,19 @@ function GradeEntryPage() {
                         disabled={!termsData?.length}
                       >
                         <SelectTrigger id="term-select" className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
-                          <SelectValue placeholder={t.academic.grades.entry.selectTerm()} />
+                          <SelectValue placeholder={t.academic.grades.entry.selectTerm()}>
+                            {selectedTermId && (() => {
+                              const selectedItem = termsData?.find(term => term.id === selectedTermId)
+                              return selectedItem
+                                ? (
+                                    <div className="flex items-center gap-2">
+                                      <IconCalendar className="size-3.5 text-primary/60" />
+                                      <span className="font-semibold">{selectedItem.template.name}</span>
+                                    </div>
+                                  )
+                                : null
+                            })()}
+                          </SelectValue>
                         </SelectTrigger>
                         <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
                           {termsData?.map(term => (

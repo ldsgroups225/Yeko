@@ -127,7 +127,13 @@ export function ConductRecordForm({
               form.setValue('type', v as (typeof conductTypes)[number])}
           >
             <SelectTrigger className="h-12 rounded-2xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all">
-              <SelectValue />
+              <SelectValue placeholder={t.conduct.form.type()}>
+                {form.watch('type') && (
+                  <span className="font-bold uppercase tracking-widest text-[10px]">
+                    {t.conduct.type[form.watch('type') as (typeof conductTypes)[number]]()}
+                  </span>
+                )}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40">
               {conductTypes.map(type => (
@@ -158,7 +164,13 @@ export function ConductRecordForm({
               form.setValue('category', v as (typeof conductCategories)[number])}
           >
             <SelectTrigger className="h-12 rounded-2xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all">
-              <SelectValue />
+              <SelectValue placeholder={t.conduct.form.category()}>
+                {form.watch('category') && (
+                  <span className="font-bold uppercase tracking-widest text-[10px]">
+                    {t.conduct.category[form.watch('category') as (typeof conductCategories)[number]]()}
+                  </span>
+                )}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40 overflow-y-auto max-h-[300px]">
               {conductCategories.map(cat => (

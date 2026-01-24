@@ -66,8 +66,12 @@ function ProgramsCatalog() {
   const navigate = useNavigate()
 
   const [isCreatingProgram, setIsCreatingProgram] = useState(false)
+  const [newProgramYear, setNewProgramYear] = useState<string>('')
+  const [newProgramSubject, setNewProgramSubject] = useState<string>('')
+  const [newProgramGrade, setNewProgramGrade] = useState<string>('')
   const [deletingProgram, setDeletingProgram] = useState<{ id: string, name: string } | null>(null)
   const [cloningProgram, setCloningProgram] = useState<{ id: string, name: string } | null>(null)
+  const [cloneProgramYear, setCloneProgramYear] = useState<string>('')
 
   const [search, setSearch] = useState('')
   const [yearFilter, setYearFilter] = useState<string>('all')
@@ -103,6 +107,9 @@ function ProgramsCatalog() {
       queryClient.invalidateQueries({ queryKey: ['program-templates'] })
       queryClient.invalidateQueries({ queryKey: ['program-stats'] })
       setIsCreatingProgram(false)
+      setNewProgramYear('')
+      setNewProgramSubject('')
+      setNewProgramGrade('')
       setPage(1)
       toast.success('Programme créé avec succès')
       logger.info('Program template created')
@@ -136,6 +143,7 @@ function ProgramsCatalog() {
       queryClient.invalidateQueries({ queryKey: ['program-templates'] })
       queryClient.invalidateQueries({ queryKey: ['program-stats'] })
       setCloningProgram(null)
+      setCloneProgramYear('')
       toast.success('Programme cloné avec succès')
       logger.info('Program template cloned')
     },
@@ -286,9 +294,23 @@ function ProgramsCatalog() {
               <div className="grid gap-4 md:grid-cols-3">
                 <div className="space-y-2">
                   <Label htmlFor="program-year">Année Scolaire *</Label>
-                  <Select name="schoolYearTemplateId" required>
+                  <Select name="schoolYearTemplateId" required value={newProgramYear} onValueChange={val => val && setNewProgramYear(val)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner" />
+                      <SelectValue placeholder="Sélectionner l'année">
+                        {newProgramYear
+                          ? (() => {
+                              const year = schoolYears?.find((y: any) => y.id === newProgramYear)
+                              return year
+                                ? (
+                                    <div className="flex items-center gap-2">
+                                      <span>{year.name}</span>
+                                      {year.isActive && <Badge variant="secondary" className="text-[10px] h-4">Active</Badge>}
+                                    </div>
+                                  )
+                                : undefined
+                            })()
+                          : undefined}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {schoolYears?.map((year: any) => (
@@ -302,9 +324,13 @@ function ProgramsCatalog() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="program-subject">Matière *</Label>
-                  <Select name="subjectId" required>
+                  <Select name="subjectId" required value={newProgramSubject} onValueChange={val => val && setNewProgramSubject(val)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner" />
+                      <SelectValue placeholder="Sélectionner la matière">
+                        {newProgramSubject
+                          ? subjects?.subjects.find(s => s.id === newProgramSubject)?.name
+                          : undefined}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {subjects?.subjects.map(subject => (
@@ -317,9 +343,13 @@ function ProgramsCatalog() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="program-grade">Classe *</Label>
-                  <Select name="gradeId" required>
+                  <Select name="gradeId" required value={newProgramGrade} onValueChange={val => val && setNewProgramGrade(val)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner" />
+                      <SelectValue placeholder="Sélectionner la classe">
+                        {newProgramGrade
+                          ? grades?.find(g => g.id === newProgramGrade)?.name
+                          : undefined}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {grades?.map(grade => (
@@ -365,7 +395,21 @@ function ProgramsCatalog() {
             </div>
             <Select value={yearFilter} onValueChange={val => val && setYearFilter(val)}>
               <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Année" />
+                <SelectValue placeholder="Année">
+                  {yearFilter === 'all'
+                    ? 'Toutes les années'
+                    : (() => {
+                        const year = schoolYears?.find((y: any) => y.id === yearFilter)
+                        return year
+                          ? (
+                              <div className="flex items-center gap-2">
+                                <span>{year.name}</span>
+                                {year.isActive && <Badge variant="secondary" className="text-[10px] h-4">Active</Badge>}
+                              </div>
+                            )
+                          : undefined
+                      })()}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Toutes les années</SelectItem>
@@ -378,7 +422,11 @@ function ProgramsCatalog() {
             </Select>
             <Select value={subjectFilter} onValueChange={val => val && setSubjectFilter(val)}>
               <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Matière" />
+                <SelectValue placeholder="Matière">
+                  {subjectFilter === 'all'
+                    ? 'Toutes les matières'
+                    : subjects?.subjects.find(s => s.id === subjectFilter)?.name || undefined}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Toutes les matières</SelectItem>
@@ -391,7 +439,11 @@ function ProgramsCatalog() {
             </Select>
             <Select value={gradeFilter} onValueChange={val => val && setGradeFilter(val)}>
               <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Classe" />
+                <SelectValue placeholder="Classe">
+                  {gradeFilter === 'all'
+                    ? 'Toutes les classes'
+                    : grades?.find(g => g.id === gradeFilter)?.name || undefined}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Toutes les classes</SelectItem>
@@ -404,7 +456,12 @@ function ProgramsCatalog() {
             </Select>
             <Select value={statusFilter} onValueChange={val => val && setStatusFilter(val)}>
               <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Statut" />
+                <SelectValue placeholder="Statut">
+                  {statusFilter === 'all' ? 'Tous les statuts' : undefined}
+                  {statusFilter === 'draft' ? 'Brouillon' : undefined}
+                  {statusFilter === 'published' ? 'Publié' : undefined}
+                  {statusFilter === 'archived' ? 'Archivé' : undefined}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Tous les statuts</SelectItem>
@@ -538,9 +595,23 @@ function ProgramsCatalog() {
               <form onSubmit={handleCloneProgram} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="clone-year">Année Scolaire Cible *</Label>
-                  <Select name="newSchoolYearTemplateId" required>
+                  <Select name="newSchoolYearTemplateId" required value={cloneProgramYear} onValueChange={val => val && setCloneProgramYear(val)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner" />
+                      <SelectValue placeholder="Sélectionner l'année">
+                        {cloneProgramYear
+                          ? (() => {
+                              const year = schoolYears?.find((y: any) => y.id === cloneProgramYear)
+                              return year
+                                ? (
+                                    <div className="flex items-center gap-2">
+                                      <span>{year.name}</span>
+                                      {year.isActive && <Badge variant="secondary" className="text-[10px] h-4">Active</Badge>}
+                                    </div>
+                                  )
+                                : undefined
+                            })()
+                          : undefined}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {schoolYears?.map((year: any) => (

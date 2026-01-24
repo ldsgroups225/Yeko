@@ -295,7 +295,11 @@ export function SchoolForm({
                 onValueChange={(value: 'active' | 'inactive' | 'suspended') => setValue('status', value)}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner le statut" />
+                  <SelectValue placeholder="Sélectionner le statut">
+                    {status === 'active' && 'Active'}
+                    {status === 'inactive' && 'Inactive'}
+                    {status === 'suspended' && 'Suspendue'}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="active">Active</SelectItem>

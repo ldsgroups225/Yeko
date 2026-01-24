@@ -69,7 +69,12 @@ export function StudentStatusDialog({
               onValueChange={val => setStatus(val ?? '')}
             >
               <SelectTrigger>
-                <SelectValue />
+                <SelectValue placeholder={t.students.newStatus()}>
+                  {status === 'active' && t.students.statusActive()}
+                  {status === 'graduated' && t.students.statusGraduated()}
+                  {status === 'transferred' && t.students.statusTransferred()}
+                  {status === 'withdrawn' && t.students.statusWithdrawn()}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="active">

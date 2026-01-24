@@ -53,6 +53,10 @@ function CoefficientsCatalog() {
   const queryClient = useQueryClient()
 
   const [isCreating, setIsCreating] = useState(false)
+  const [newCoefYear, setNewCoefYear] = useState<string>('')
+  const [newCoefSubject, setNewCoefSubject] = useState<string>('')
+  const [newCoefGrade, setNewCoefGrade] = useState<string>('')
+  const [newCoefSeries, setNewCoefSeries] = useState<string>('__none__')
   const [deletingCoefficient, setDeletingCoefficient] = useState<{ id: string, name: string } | null>(null)
   const [yearFilter, setYearFilter] = useState<string>('all')
   const [gradeFilter, setGradeFilter] = useState<string>('all')
@@ -87,6 +91,10 @@ function CoefficientsCatalog() {
       queryClient.invalidateQueries({ queryKey: ['coefficient-templates'] })
       queryClient.invalidateQueries({ queryKey: ['coefficient-stats'] })
       setIsCreating(false)
+      setNewCoefYear('')
+      setNewCoefSubject('')
+      setNewCoefGrade('')
+      setNewCoefSeries('__none__')
       toast.success(COEFFICIENT_MESSAGES.CREATED)
       logger.info('Coefficient template created')
     },
@@ -528,15 +536,36 @@ function CoefficientsCatalog() {
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="coef-year">Année Scolaire *</Label>
-                  <Select name="schoolYearTemplateId" required>
+                  <Select
+                    name="schoolYearTemplateId"
+                    required
+                    value={newCoefYear}
+                    onValueChange={val => val && setNewCoefYear(val)}
+                  >
                     <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner" />
+                      <SelectValue placeholder="Sélectionner">
+                        {newCoefYear
+                          ? (() => {
+                              const year = schoolYears?.find(y => y.id === newCoefYear)
+                              return year
+                                ? (
+                                    <div className="flex items-center gap-2">
+                                      <span>{year.name}</span>
+                                      {year.isActive && <Badge variant="secondary" className="text-[10px] h-4">Active</Badge>}
+                                    </div>
+                                  )
+                                : undefined
+                            })()
+                          : undefined}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
-                      {schoolYears?.map((year: any) => (
+                      {schoolYears?.map(year => (
                         <SelectItem key={year.id} value={year.id}>
-                          {year.name}
-                          {year.isActive && ' (Active)'}
+                          <div className="flex items-center gap-2">
+                            <span>{year.name}</span>
+                            {year.isActive && <Badge variant="secondary" className="text-[10px] h-4">Active</Badge>}
+                          </div>
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -544,9 +573,13 @@ function CoefficientsCatalog() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="coef-subject">Matière *</Label>
-                  <Select name="subjectId" required>
+                  <Select name="subjectId" required value={newCoefSubject} onValueChange={val => val && setNewCoefSubject(val)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner" />
+                      <SelectValue placeholder="Sélectionner la matière">
+                        {newCoefSubject
+                          ? subjects?.subjects.find(s => s.id === newCoefSubject)?.name
+                          : undefined}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {subjects?.subjects.map(subject => (
@@ -559,9 +592,13 @@ function CoefficientsCatalog() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="coef-grade">Classe *</Label>
-                  <Select name="gradeId" required>
+                  <Select name="gradeId" required value={newCoefGrade} onValueChange={val => val && setNewCoefGrade(val)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner" />
+                      <SelectValue placeholder="Sélectionner la classe">
+                        {newCoefGrade
+                          ? grades?.find(g => g.id === newCoefGrade)?.name
+                          : undefined}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {grades?.map(grade => (
@@ -574,9 +611,13 @@ function CoefficientsCatalog() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="coef-series">Série (optionnel)</Label>
-                  <Select name="seriesId" defaultValue="__none__">
+                  <Select name="seriesId" defaultValue="__none__" value={newCoefSeries} onValueChange={val => val && setNewCoefSeries(val)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Aucune" />
+                      <SelectValue placeholder="Aucune">
+                        {newCoefSeries === '__none__'
+                          ? 'Aucune'
+                          : seriesData?.find(s => s.id === newCoefSeries)?.name}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="__none__">Aucune</SelectItem>
@@ -645,7 +686,21 @@ function CoefficientsCatalog() {
           <div className="flex flex-col md:flex-row gap-4">
             <Select value={yearFilter} onValueChange={val => val && setYearFilter(val)}>
               <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Année" />
+                <SelectValue placeholder="Année">
+                  {yearFilter === 'all'
+                    ? 'Toutes les années'
+                    : (() => {
+                        const year = schoolYears?.find((y: any) => y.id === yearFilter)
+                        return year
+                          ? (
+                              <div className="flex items-center gap-2">
+                                <span>{year.name}</span>
+                                {year.isActive && <Badge variant="secondary" className="text-[10px] h-4">Active</Badge>}
+                              </div>
+                            )
+                          : undefined
+                      })()}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Toutes les années</SelectItem>
@@ -658,7 +713,11 @@ function CoefficientsCatalog() {
             </Select>
             <Select value={gradeFilter} onValueChange={val => val && setGradeFilter(val)}>
               <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Classe" />
+                <SelectValue placeholder="Classe">
+                  {gradeFilter === 'all'
+                    ? 'Toutes les classes'
+                    : grades?.find(g => g.id === gradeFilter)?.name || undefined}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Toutes les classes</SelectItem>
@@ -671,7 +730,11 @@ function CoefficientsCatalog() {
             </Select>
             <Select value={seriesFilter} onValueChange={val => val && setSeriesFilter(val)}>
               <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Série" />
+                <SelectValue placeholder="Série">
+                  {seriesFilter === 'all'
+                    ? 'Toutes les séries'
+                    : seriesData?.find(s => s.id === seriesFilter)?.name || undefined}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Toutes les séries</SelectItem>

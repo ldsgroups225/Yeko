@@ -207,7 +207,9 @@ export function AccountFormDialog({
                     >
                       <FormControl>
                         <SelectTrigger className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors">
-                          <SelectValue />
+                          <SelectValue placeholder={t.finance.accounts.type()}>
+                            {field.value && accountTypeLabels[field.value as keyof typeof accountTypeLabels]}
+                          </SelectValue>
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">
@@ -286,7 +288,9 @@ export function AccountFormDialog({
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors">
-                        <SelectValue />
+                        <SelectValue placeholder={t.finance.accounts.normalBalance()}>
+                          {field.value && normalBalanceLabels[field.value as keyof typeof normalBalanceLabels]}
+                        </SelectValue>
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">

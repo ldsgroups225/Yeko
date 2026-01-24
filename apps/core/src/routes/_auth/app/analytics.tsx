@@ -96,7 +96,12 @@ function AnalyticsPage() {
         <div className="flex gap-2">
           <Select value={timeRange} onValueChange={v => setTimeRange(v as typeof timeRange)}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue />
+              <SelectValue placeholder="Période">
+                {timeRange === '7d' && '7 derniers jours'}
+                {timeRange === '30d' && '30 derniers jours'}
+                {timeRange === '90d' && '90 derniers jours'}
+                {timeRange === '1y' && '1 an'}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="7d">7 derniers jours</SelectItem>

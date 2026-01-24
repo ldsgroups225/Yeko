@@ -345,7 +345,12 @@ function Schools() {
 
             <Select value={status} onValueChange={val => val && handleStatusFilter(val)}>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Statut" />
+                <SelectValue placeholder="Statut">
+                  {status === 'all' && 'Tous les statuts'}
+                  {status === 'active' && 'Actives'}
+                  {status === 'inactive' && 'Inactives'}
+                  {status === 'suspended' && 'Suspendues'}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Tous les statuts</SelectItem>
@@ -357,7 +362,11 @@ function Schools() {
 
             <Select value={sortBy} onValueChange={(value: any) => value && handleSort(value)}>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Trier par" />
+                <SelectValue placeholder="Trier par">
+                  {sortBy === 'createdAt' && 'Date de création'}
+                  {sortBy === 'updatedAt' && 'Date de mise à jour'}
+                  {sortBy === 'name' && 'Nom'}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="createdAt">Date de création</SelectItem>

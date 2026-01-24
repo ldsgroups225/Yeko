@@ -177,7 +177,13 @@ function DemoRequest() {
                   <Label htmlFor="schoolType">School Type *</Label>
                   <Select value={formData.schoolType} onValueChange={value => value && handleInputChange('schoolType', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select school type" />
+                      <SelectValue placeholder="Select school type">
+                        {formData.schoolType === 'primary' && 'Primary School'}
+                        {formData.schoolType === 'secondary' && 'Secondary School'}
+                        {formData.schoolType === 'higher-education' && 'Higher Education'}
+                        {formData.schoolType === 'vocational' && 'Vocational Training'}
+                        {formData.schoolType === 'other' && 'Other'}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="primary">Primary School</SelectItem>
@@ -193,7 +199,15 @@ function DemoRequest() {
                   <Label htmlFor="role">Your Role *</Label>
                   <Select value={formData.role} onValueChange={value => value && handleInputChange('role', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select your role" />
+                      <SelectValue placeholder="Select your role">
+                        {formData.role === 'principal' && 'Principal'}
+                        {formData.role === 'vice-principal' && 'Vice Principal'}
+                        {formData.role === 'administrator' && 'Administrator'}
+                        {formData.role === 'teacher' && 'Teacher'}
+                        {formData.role === 'it-director' && 'IT Director'}
+                        {formData.role === 'parent' && 'Parent Association'}
+                        {formData.role === 'other' && 'Other'}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="principal">Principal</SelectItem>
@@ -212,7 +226,9 @@ function DemoRequest() {
                 <Label htmlFor="studentsCount">Number of Students *</Label>
                 <Select value={formData.studentsCount} onValueChange={value => value && handleInputChange('studentsCount', value)}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select student count range" />
+                    <SelectValue placeholder="Select student count range">
+                      {formData.studentsCount}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="0-100">Less than 100</SelectItem>

@@ -20,6 +20,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@work
 import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
 import { Input } from '@workspace/ui/components/input'
 import { Label } from '@workspace/ui/components/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
@@ -55,6 +56,11 @@ function GradesManagement() {
   const [editingGrade, setEditingGrade] = useState<string | null>(null)
   const [editingSerie, setEditingSerie] = useState<string | null>(null)
 
+  const [newGradeTrackId, setNewGradeTrackId] = useState<string>('')
+  const [editGradeTrackId, setEditGradeTrackId] = useState<string>('')
+  const [newSerieTrackId, setNewSerieTrackId] = useState<string>('')
+  const [editSerieTrackId, setEditSerieTrackId] = useState<string>('')
+
   const [deletingGrade, setDeletingGrade] = useState<{ id: string, name: string } | null>(null)
   const [deletingSerie, setDeletingSerie] = useState<{ id: string, name: string } | null>(null)
 
@@ -66,6 +72,7 @@ function GradesManagement() {
     ...createGradeMutationOptions,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['grades'] })
+      setNewGradeTrackId('')
       setIsCreatingGrade(false)
       toast.success('Niveau créée avec succès')
       logger.info('Grade created successfully')
@@ -81,6 +88,7 @@ function GradesManagement() {
     ...updateGradeMutationOptions,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['grades'] })
+      setEditGradeTrackId('')
       setEditingGrade(null)
       toast.success('Niveau mise à jour avec succès')
       logger.info('Grade updated successfully')
@@ -125,6 +133,7 @@ function GradesManagement() {
     ...createSerieMutationOptions,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['series'] })
+      setNewSerieTrackId('')
       setIsCreatingSerie(false)
       toast.success('Série créée avec succès')
       logger.info('Serie created successfully')
@@ -154,6 +163,7 @@ function GradesManagement() {
     ...updateSerieMutationOptions,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['series'] })
+      setEditSerieTrackId('')
       setEditingSerie(null)
       toast.success('Série mise à jour avec succès')
       logger.info('Serie updated successfully')
@@ -194,7 +204,7 @@ function GradesManagement() {
       name: formData.get('name') as string,
       code: formData.get('code') as string,
       order: Number.parseInt(formData.get('order') as string),
-      trackId: formData.get('trackId') as string,
+      trackId: newGradeTrackId,
     }
     createGradeMutation.mutate(data)
   }
@@ -207,7 +217,7 @@ function GradesManagement() {
       name: formData.get('name') as string,
       code: formData.get('code') as string,
       order: Number.parseInt(formData.get('order') as string),
-      trackId: formData.get('trackId') as string,
+      trackId: editGradeTrackId,
     }
     updateGradeMutation.mutate(data)
   }
@@ -224,7 +234,7 @@ function GradesManagement() {
     const data: CreateSerieInput = {
       name: formData.get('name') as string,
       code: formData.get('code') as string,
-      trackId: formData.get('trackId') as string,
+      trackId: newSerieTrackId,
     }
     createSerieMutation.mutate(data)
   }
@@ -236,7 +246,7 @@ function GradesManagement() {
       id: serieId,
       name: formData.get('name') as string,
       code: formData.get('code') as string,
-      trackId: formData.get('trackId') as string,
+      trackId: editSerieTrackId,
     }
     updateSerieMutation.mutate(data)
   }
@@ -432,20 +442,23 @@ function GradesManagement() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="grade-trackId">Filière *</Label>
-                  <select
-                    id="grade-trackId"
-                    name="trackId"
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                    required
+                  <Select
+                    value={newGradeTrackId}
+                    onValueChange={val => val && setNewGradeTrackId(val)}
                   >
-                    <option value="">Sélectionner une filière</option>
-                    {tracks?.map(track => (
-                      <option key={track.id} value={track.id}>
-                        {track.name}
-                      </option>
-                    ))}
-                  </select>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Sélectionner une filière">
+                        {tracks?.find(t => t.id === newGradeTrackId)?.name}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {tracks?.map(track => (
+                        <SelectItem key={track.id} value={track.id}>
+                          {track.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="flex justify-end gap-2">
                   <Button type="button" variant="outline" onClick={() => setIsCreatingGrade(false)}>
@@ -529,20 +542,23 @@ function GradesManagement() {
                                       </div>
                                     </div>
                                     <div className="space-y-2">
-                                      <Label htmlFor={`edit-grade-track-${grade.id}`}>Filière *</Label>
-                                      <select
-                                        id={`edit-grade-track-${grade.id}`}
-                                        name="trackId"
-                                        defaultValue={grade.trackId}
-                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                                        required
+                                      <Select
+                                        value={editGradeTrackId}
+                                        onValueChange={val => val && setEditGradeTrackId(val)}
                                       >
-                                        {tracks?.map(track => (
-                                          <option key={track.id} value={track.id}>
-                                            {track.name}
-                                          </option>
-                                        ))}
-                                      </select>
+                                        <SelectTrigger className="w-full">
+                                          <SelectValue placeholder="Sélectionner une filière">
+                                            {tracks?.find(t => t.id === editGradeTrackId)?.name}
+                                          </SelectValue>
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          {tracks?.map(track => (
+                                            <SelectItem key={track.id} value={track.id}>
+                                              {track.name}
+                                            </SelectItem>
+                                          ))}
+                                        </SelectContent>
+                                      </Select>
                                     </div>
                                     <div className="flex nd gap-2">
                                       <Button
@@ -584,7 +600,10 @@ function GradesManagement() {
                                       <Button
                                         variant="ghost"
                                         size="icon"
-                                        onClick={() => setEditingGrade(grade.id)}
+                                        onClick={() => {
+                                          setEditingGrade(grade.id)
+                                          setEditGradeTrackId(grade.trackId)
+                                        }}
                                       >
                                         <IconEdit className="h-4 w-4" />
                                       </Button>
@@ -674,20 +693,23 @@ function GradesManagement() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="serie-trackId">Filière *</Label>
-                  <select
-                    id="serie-trackId"
-                    name="trackId"
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                    required
+                  <Select
+                    value={newSerieTrackId}
+                    onValueChange={val => val && setNewSerieTrackId(val)}
                   >
-                    <option value="">Sélectionner une filière</option>
-                    {tracks?.map(track => (
-                      <option key={track.id} value={track.id}>
-                        {track.name}
-                      </option>
-                    ))}
-                  </select>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Sélectionner une filière">
+                        {tracks?.find(t => t.id === newSerieTrackId)?.name}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {tracks?.map(track => (
+                        <SelectItem key={track.id} value={track.id}>
+                          {track.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="flex justify-end gap-2">
                   <Button type="button" variant="outline" onClick={() => setIsCreatingSerie(false)}>
@@ -773,20 +795,23 @@ function GradesManagement() {
                                       </div>
                                     </div>
                                     <div className="space-y-2">
-                                      <Label htmlFor={`edit-serie-track-${serie.id}`}>Filière *</Label>
-                                      <select
-                                        id={`edit-serie-track-${serie.id}`}
-                                        name="trackId"
-                                        defaultValue={serie.trackId}
-                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                                        required
+                                      <Select
+                                        value={editSerieTrackId}
+                                        onValueChange={val => val && setEditSerieTrackId(val)}
                                       >
-                                        {tracks?.map(track => (
-                                          <option key={track.id} value={track.id}>
-                                            {track.name}
-                                          </option>
-                                        ))}
-                                      </select>
+                                        <SelectTrigger className="w-full">
+                                          <SelectValue placeholder="Sélectionner une filière">
+                                            {tracks?.find(t => t.id === editSerieTrackId)?.name}
+                                          </SelectValue>
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          {tracks?.map(track => (
+                                            <SelectItem key={track.id} value={track.id}>
+                                              {track.name}
+                                            </SelectItem>
+                                          ))}
+                                        </SelectContent>
+                                      </Select>
                                     </div>
                                     <div className="flex justify-end gap-2">
                                       <Button
@@ -823,7 +848,10 @@ function GradesManagement() {
                                       <Button
                                         variant="ghost"
                                         size="icon"
-                                        onClick={() => setEditingSerie(serie.id)}
+                                        onClick={() => {
+                                          setEditingSerie(serie.id)
+                                          setEditSerieTrackId(serie.trackId)
+                                        }}
                                       >
                                         <IconEdit className="h-4 w-4" />
                                       </Button>

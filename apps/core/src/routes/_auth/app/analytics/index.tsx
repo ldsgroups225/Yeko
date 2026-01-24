@@ -85,7 +85,12 @@ function Analytics() {
           >
             <SelectTrigger className="w-[180px]">
               <IconCalendar className="h-4 w-4 mr-2" />
-              <SelectValue placeholder="Période" />
+              <SelectValue placeholder="Période">
+                {timeRange === '7d' && '7 derniers jours'}
+                {timeRange === '30d' && '30 derniers jours'}
+                {timeRange === '90d' && '90 derniers jours'}
+                {timeRange === '1y' && 'Dernière année'}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="7d">7 derniers jours</SelectItem>

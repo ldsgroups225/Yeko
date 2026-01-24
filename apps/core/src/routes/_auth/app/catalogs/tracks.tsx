@@ -17,6 +17,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@work
 import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
 import { Input } from '@workspace/ui/components/input'
 import { Label } from '@workspace/ui/components/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import {
@@ -40,6 +41,8 @@ function TracksManagement() {
   const [isCreating, setIsCreating] = useState(false)
   const [editingTrack, setEditingTrack] = useState<string | null>(null)
   const [deletingTrack, setDeletingTrack] = useState<{ id: string, name: string } | null>(null)
+  const [newTrackLevelId, setNewTrackLevelId] = useState<string>('')
+  const [editTrackLevelId, setEditTrackLevelId] = useState<string>('')
 
   const { data: educationLevels, isLoading: levelsLoading } = useQuery(educationLevelsQueryOptions())
   const { data: tracks, isLoading: tracksLoading } = useQuery(tracksQueryOptions())
@@ -48,6 +51,7 @@ function TracksManagement() {
     ...createTrackMutationOptions,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tracks'] })
+      setNewTrackLevelId('')
       setIsCreating(false)
       toast.success('Filière créée avec succès')
       logger.info('Track created successfully')
@@ -102,7 +106,7 @@ function TracksManagement() {
     const data: CreateTrackInput = {
       name: formData.get('name') as string,
       code: formData.get('code') as string,
-      educationLevelId: Number.parseInt(formData.get('educationLevelId') as string),
+      educationLevelId: Number.parseInt(newTrackLevelId),
     }
     createMutation.mutate(data)
   }
@@ -114,7 +118,7 @@ function TracksManagement() {
       id: trackId,
       name: formData.get('name') as string,
       code: formData.get('code') as string,
-      educationLevelId: Number.parseInt(formData.get('educationLevelId') as string),
+      educationLevelId: Number.parseInt(editTrackLevelId),
     }
     updateMutation.mutate(data)
   }
@@ -185,20 +189,23 @@ function TracksManagement() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="educationLevelId">Niveau d'Éducation *</Label>
-                <select
-                  id="educationLevelId"
-                  name="educationLevelId"
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                  required
+                <Select
+                  value={newTrackLevelId}
+                  onValueChange={val => val && setNewTrackLevelId(val)}
                 >
-                  <option value="">Sélectionner un niveau</option>
-                  {educationLevels?.map(level => (
-                    <option key={level.id} value={level.id}>
-                      {level.name}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Sélectionner un niveau">
+                      {educationLevels?.find(l => String(l.id) === newTrackLevelId)?.name}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {educationLevels?.map(level => (
+                      <SelectItem key={level.id} value={String(level.id)}>
+                        {level.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="flex justify-end gap-2">
                 <Button type="button" variant="outline" onClick={() => setIsCreating(false)}>
@@ -271,20 +278,23 @@ function TracksManagement() {
                                   </div>
                                 </div>
                                 <div className="space-y-2">
-                                  <Label htmlFor={`edit-level-${track.id}`}>Niveau d'Éducation *</Label>
-                                  <select
-                                    id={`edit-level-${track.id}`}
-                                    name="educationLevelId"
-                                    defaultValue={track.educationLevelId}
-                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                                    required
+                                  <Select
+                                    value={editTrackLevelId}
+                                    onValueChange={val => val && setEditTrackLevelId(val)}
                                   >
-                                    {educationLevels?.map(level => (
-                                      <option key={level.id} value={level.id}>
-                                        {level.name}
-                                      </option>
-                                    ))}
-                                  </select>
+                                    <SelectTrigger className="w-full">
+                                      <SelectValue placeholder="Sélectionner un niveau">
+                                        {educationLevels?.find(l => String(l.id) === editTrackLevelId)?.name}
+                                      </SelectValue>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {educationLevels?.map(level => (
+                                        <SelectItem key={level.id} value={String(level.id)}>
+                                          {level.name}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
                                 </div>
                                 <div className="flex justify-end gap-2">
                                   <Button
@@ -326,7 +336,10 @@ function TracksManagement() {
                                   <Button
                                     variant="ghost"
                                     size="icon"
-                                    onClick={() => setEditingTrack(track.id)}
+                                    onClick={() => {
+                                      setEditingTrack(track.id)
+                                      setEditTrackLevelId(String(track.educationLevelId))
+                                    }}
                                   >
                                     <IconEdit className="h-4 w-4" />
                                   </Button>

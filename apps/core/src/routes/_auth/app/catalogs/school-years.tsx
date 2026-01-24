@@ -71,6 +71,12 @@ function SchoolYearsCatalog() {
   const [editingTerm, setEditingTerm] = useState<TermTemplate | null>(null)
   const [deletingTerm, setDeletingTerm] = useState<{ id: string, name: string } | null>(null)
 
+  // Form states
+  const [createYearIsActive, setCreateYearIsActive] = useState<string>('')
+  const [editYearIsActive, setEditYearIsActive] = useState<string>('')
+  const [createTermType, setCreateTermType] = useState<string>('')
+  const [editTermType, setEditTermType] = useState<string>('')
+
   const { data: schoolYears, isLoading } = useQuery(schoolYearTemplatesWithTermsQueryOptions())
 
   // Mutations
@@ -80,6 +86,7 @@ function SchoolYearsCatalog() {
       queryClient.invalidateQueries({ queryKey: ['school-year-templates-with-terms'] })
       queryClient.invalidateQueries({ queryKey: ['school-year-templates'] })
       setIsCreatingYear(false)
+      setCreateYearIsActive('false')
       toast.success('Année scolaire créée avec succès')
       logger.info('School year template created')
     },
@@ -96,6 +103,7 @@ function SchoolYearsCatalog() {
       queryClient.invalidateQueries({ queryKey: ['school-year-templates-with-terms'] })
       queryClient.invalidateQueries({ queryKey: ['school-year-templates'] })
       setEditingYear(null)
+      setEditYearIsActive('false')
       toast.success('Année scolaire mise à jour')
       logger.info('School year template updated')
     },
@@ -128,6 +136,7 @@ function SchoolYearsCatalog() {
       queryClient.invalidateQueries({ queryKey: ['school-year-templates-with-terms'] })
       queryClient.invalidateQueries({ queryKey: ['term-templates'] })
       setAddingTermToYear(null)
+      setCreateTermType('trimester')
       toast.success('Période créée avec succès')
       logger.info('Term template created')
     },
@@ -144,6 +153,7 @@ function SchoolYearsCatalog() {
       queryClient.invalidateQueries({ queryKey: ['school-year-templates-with-terms'] })
       queryClient.invalidateQueries({ queryKey: ['term-templates'] })
       setEditingTerm(null)
+      setEditTermType('trimester')
       toast.success('Période mise à jour')
       logger.info('Term template updated')
     },
@@ -336,9 +346,15 @@ function SchoolYearsCatalog() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="year-status">Statut</Label>
-                      <Select name="isActive" defaultValue="false">
+                      <Select
+                        name="isActive"
+                        value={createYearIsActive}
+                        onValueChange={val => val && setCreateYearIsActive(val)}
+                      >
                         <SelectTrigger>
-                          <SelectValue />
+                          <SelectValue placeholder="Choisir un statut">
+                            {createYearIsActive === 'true' ? 'Active' : createYearIsActive === 'false' ? 'Inactive' : undefined}
+                          </SelectValue>
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="true">Active</SelectItem>
@@ -427,9 +443,15 @@ function SchoolYearsCatalog() {
                                         defaultValue={year.name}
                                         className="w-32"
                                       />
-                                      <Select name="isActive" defaultValue={year.isActive ? 'true' : 'false'}>
+                                      <Select
+                                        name="isActive"
+                                        value={editYearIsActive}
+                                        onValueChange={val => val && setEditYearIsActive(val)}
+                                      >
                                         <SelectTrigger className="w-28">
-                                          <SelectValue />
+                                          <SelectValue placeholder="Statut">
+                                            {editYearIsActive === 'true' ? 'Active' : editYearIsActive === 'false' ? 'Inactive' : undefined}
+                                          </SelectValue>
                                         </SelectTrigger>
                                         <SelectContent>
                                           <SelectItem value="true">Active</SelectItem>
@@ -470,7 +492,10 @@ function SchoolYearsCatalog() {
                                 <Button
                                   variant="ghost"
                                   size="icon"
-                                  onClick={() => setEditingYear(year.id)}
+                                  onClick={() => {
+                                    setEditingYear(year.id)
+                                    setEditYearIsActive(year.isActive ? 'true' : 'false')
+                                  }}
                                   aria-label="Modifier"
                                 >
                                   <IconEdit className="h-4 w-4" />
@@ -537,9 +562,15 @@ function SchoolYearsCatalog() {
                                             </div>
                                             <div className="space-y-2">
                                               <Label>Type *</Label>
-                                              <Select name="type" defaultValue="trimester">
+                                              <Select
+                                                name="type"
+                                                value={createTermType}
+                                                onValueChange={val => val && setCreateTermType(val)}
+                                              >
                                                 <SelectTrigger>
-                                                  <SelectValue />
+                                                  <SelectValue placeholder="Type">
+                                                    {createTermType === 'trimester' ? 'Trimestre' : createTermType === 'semester' ? 'Semestre' : undefined}
+                                                  </SelectValue>
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                   <SelectItem value="trimester">Trimestre</SelectItem>
@@ -611,9 +642,15 @@ function SchoolYearsCatalog() {
                                                           defaultValue={term.name}
                                                           className="w-40"
                                                         />
-                                                        <Select name="type" defaultValue={term.type}>
+                                                        <Select
+                                                          name="type"
+                                                          value={editTermType}
+                                                          onValueChange={val => val && setEditTermType(val)}
+                                                        >
                                                           <SelectTrigger className="w-32">
-                                                            <SelectValue />
+                                                            <SelectValue placeholder="Type">
+                                                              {editTermType === 'trimester' ? 'Trimestre' : editTermType === 'semester' ? 'Semestre' : undefined}
+                                                            </SelectValue>
                                                           </SelectTrigger>
                                                           <SelectContent>
                                                             <SelectItem value="trimester">Trimestre</SelectItem>
@@ -660,7 +697,10 @@ function SchoolYearsCatalog() {
                                                             variant="ghost"
                                                             size="icon"
                                                             className="h-8 w-8"
-                                                            onClick={() => setEditingTerm(term)}
+                                                            onClick={() => {
+                                                              setEditingTerm(term)
+                                                              setEditTermType(term.type)
+                                                            }}
                                                             aria-label="Modifier"
                                                           >
                                                             <IconEdit className="h-3 w-3" />

@@ -274,7 +274,14 @@ export function ParentLinkDialog({
                         setLinkRelationship((v ?? 'guardian') as Relationship)}
                     >
                       <SelectTrigger>
-                        <SelectValue />
+                        <SelectValue placeholder={t.parents.relationship()}>
+                          {linkRelationship === 'father' && t.parents.relationshipFather()}
+                          {linkRelationship === 'mother' && t.parents.relationshipMother()}
+                          {linkRelationship === 'guardian' && t.parents.relationshipGuardian()}
+                          {linkRelationship === 'grandparent' && t.parents.relationshipGrandparent()}
+                          {linkRelationship === 'sibling' && t.parents.relationshipSibling()}
+                          {linkRelationship === 'other' && t.parents.relationshipOther()}
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="father">
@@ -386,7 +393,14 @@ export function ParentLinkDialog({
                     setNewRelationship((v ?? 'guardian') as Relationship)}
                 >
                   <SelectTrigger>
-                    <SelectValue />
+                    <SelectValue placeholder={t.parents.relationship()}>
+                      {newRelationship === 'father' && t.parents.relationshipFather()}
+                      {newRelationship === 'mother' && t.parents.relationshipMother()}
+                      {newRelationship === 'guardian' && t.parents.relationshipGuardian()}
+                      {newRelationship === 'grandparent' && t.parents.relationshipGrandparent()}
+                      {newRelationship === 'sibling' && t.parents.relationshipSibling()}
+                      {newRelationship === 'other' && t.parents.relationshipOther()}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="father">

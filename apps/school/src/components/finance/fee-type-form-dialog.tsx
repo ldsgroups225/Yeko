@@ -233,7 +233,9 @@ export function FeeTypeFormDialog({
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors">
-                          <SelectValue />
+                          <SelectValue placeholder={t.finance.feeTypes.category()}>
+                            {field.value && feeCategoryLabels[field.value as keyof typeof feeCategoryLabels]}
+                          </SelectValue>
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">

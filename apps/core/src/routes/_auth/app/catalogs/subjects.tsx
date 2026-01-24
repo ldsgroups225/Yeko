@@ -52,7 +52,9 @@ function SubjectsCatalog() {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [isCreating, setIsCreating] = useState(false)
+  const [newSubjectCategory, setNewSubjectCategory] = useState<string>('')
   const [editingSubject, setEditingSubject] = useState<string | null>(null)
+  const [editSubjectCategory, setEditSubjectCategory] = useState<string>('')
   const [deletingSubject, setDeletingSubject] = useState<{ id: string, name: string } | null>(null)
   const [search, setSearch] = useState('')
   const [categoryFilter, setCategoryFilter] = useState<string>('all')
@@ -89,6 +91,7 @@ function SubjectsCatalog() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subjects'] })
       setIsCreating(false)
+      setNewSubjectCategory('')
       setPage(1)
       toast.success('Matière créée avec succès')
       logger.info('Subject created successfully')
@@ -120,6 +123,7 @@ function SubjectsCatalog() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subjects'] })
       setEditingSubject(null)
+      setEditSubjectCategory('')
       toast.success('Matière mise à jour avec succès')
       logger.info('Subject updated successfully')
     },
@@ -354,9 +358,11 @@ function SubjectsCatalog() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="category">Catégorie *</Label>
-                  <Select name="category" required>
+                  <Select name="category" required value={newSubjectCategory} onValueChange={val => val && setNewSubjectCategory(val)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner une catégorie" />
+                      <SelectValue placeholder="Sélectionner une catégorie">
+                        {newSubjectCategory || undefined}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Scientifique">Scientifique</SelectItem>
@@ -414,7 +420,9 @@ function SubjectsCatalog() {
               }}
             >
               <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Catégorie" />
+                <SelectValue placeholder="Catégorie">
+                  {categoryFilter === 'all' ? 'Toutes catégories' : (categoryFilter || undefined)}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Toutes catégories</SelectItem>
@@ -495,9 +503,17 @@ function SubjectsCatalog() {
                                       </div>
                                       <div className="space-y-2">
                                         <Label htmlFor={`edit-category-${subject.id}`}>Catégorie *</Label>
-                                        <Select name="category" defaultValue={subject.category} required>
+                                        <Select
+                                          name="category"
+                                          defaultValue={subject.category}
+                                          required
+                                          value={editSubjectCategory}
+                                          onValueChange={val => val && setEditSubjectCategory(val)}
+                                        >
                                           <SelectTrigger>
-                                            <SelectValue />
+                                            <SelectValue placeholder="Choisir une catégorie">
+                                              {editSubjectCategory || undefined}
+                                            </SelectValue>
                                           </SelectTrigger>
                                           <SelectContent>
                                             <SelectItem value="Scientifique">Scientifique</SelectItem>
@@ -555,7 +571,10 @@ function SubjectsCatalog() {
                                       <Button
                                         variant="ghost"
                                         size="icon"
-                                        onClick={() => setEditingSubject(subject.id)}
+                                        onClick={() => {
+                                          setEditingSubject(subject.id)
+                                          setEditSubjectCategory(subject.category || 'Autre')
+                                        }}
                                       >
                                         <IconEdit className="h-4 w-4" />
                                       </Button>
