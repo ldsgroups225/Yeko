@@ -231,17 +231,16 @@ export async function bulkUpdateCoefficients(
   if (updates.length === 0)
     return
 
-  await db.transaction(async (tx: any) => {
-    for (const update of updates) {
-      await tx
-        .update(coefficientTemplates)
+  await Promise.all(
+    updates.map(update =>
+      db.update(coefficientTemplates)
         .set({
           weight: update.weight,
           updatedAt: new Date(),
         })
-        .where(eq(coefficientTemplates.id, update.id))
-    }
-  })
+        .where(eq(coefficientTemplates.id, update.id)),
+    ),
+  )
 }
 
 // Copy coefficients from one year to another

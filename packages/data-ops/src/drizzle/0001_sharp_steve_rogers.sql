@@ -1,0 +1,1 @@
+ALTER TABLE "grades" ALTER COLUMN "order" SET DATA TYPE integer;

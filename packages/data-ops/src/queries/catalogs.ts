@@ -160,17 +160,17 @@ export async function bulkUpdateGradesOrder(
   if (items.length === 0)
     return
 
-  await db.transaction(async (tx: any) => {
-    for (const item of items) {
-      await tx
+  await Promise.all(
+    items.map(item =>
+      db
         .update(grades)
         .set({
           order: item.order,
           updatedAt: new Date(),
         })
-        .where(eq(grades.id, item.id))
-    }
-  })
+        .where(eq(grades.id, item.id)),
+    ),
+  )
 }
 
 // ===== SERIES =====
