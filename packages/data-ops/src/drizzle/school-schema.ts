@@ -63,7 +63,7 @@ export const userRoles = pgTable('user_roles', {
   id: text('id').primaryKey(),
   userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   roleId: text('role_id').notNull().references(() => roles.id, { onDelete: 'cascade' }),
-  schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
+  schoolId: text('school_id').references(() => schools.id, { onDelete: 'cascade' }), // Nullable for system-scoped roles
   createdAt: timestamp('created_at').defaultNow().notNull(),
 }, table => ({
   compositeIdx: index('idx_user_roles_composite').on(table.userId, table.schoolId, table.roleId),

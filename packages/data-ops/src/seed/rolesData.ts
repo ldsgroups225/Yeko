@@ -2,6 +2,30 @@ import type { RoleData } from '../drizzle/school-schema'
 
 export const defaultRoles: RoleData[] = [
   {
+    name: 'roles.super_admin',
+    slug: 'super_admin',
+    description: 'roles.descriptions.super_admin',
+    scope: 'system',
+    permissions: {
+      schools: ['view', 'create', 'edit', 'delete'],
+      users: ['view', 'create', 'edit', 'delete'],
+      system_monitoring: ['view', 'manage'],
+      global_settings: ['view', 'edit'],
+    },
+  },
+  {
+    name: 'roles.system_admin',
+    slug: 'system_admin',
+    description: 'roles.descriptions.system_admin',
+    scope: 'system',
+    permissions: {
+      schools: ['view', 'create', 'edit'],
+      users: ['view', 'create', 'edit'],
+      system_monitoring: ['view'],
+      global_settings: ['view'],
+    },
+  },
+  {
     name: 'roles.school_administrator',
     slug: 'school_administrator',
     description: 'roles.descriptions.school_administrator',
