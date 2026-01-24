@@ -1,4 +1,3 @@
-/* eslint-disable node/prefer-global/process, unused-imports/no-unused-vars */
 import { defineConfig, devices } from '@playwright/test'
 
 export default defineConfig({
@@ -57,4 +56,3 @@ export default defineConfig({
     ],
   },
 } as any)
-
