@@ -658,3 +658,30 @@ export async function getUserIdFromAuthUserId(authUserId: string): Promise<strin
 
   return user?.id ?? null
 }
+/**
+ * Get system-scoped roles for a user by their auth user ID
+ */
+export async function getUserSystemRolesByAuthUserId(authUserId: string) {
+  if (!authUserId) {
+    return []
+  }
+
+  const db = getDb()
+
+  const systemRoles = await db
+    .select({
+      slug: roles.slug,
+    })
+    .from(userRoles)
+    .innerJoin(roles, eq(userRoles.roleId, roles.id))
+    .innerJoin(users, eq(userRoles.userId, users.id))
+    .where(
+      and(
+        eq(users.authUserId, authUserId),
+        isNull(users.deletedAt),
+        eq(roles.scope, 'system'),
+      ),
+    )
+
+  return systemRoles.map(r => r.slug)
+}
