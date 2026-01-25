@@ -1,11 +1,19 @@
 import type { RoleData } from '../drizzle/school-schema'
 
 export const defaultRoles: RoleData[] = [
+  // --- ROLES SYSTÈME (Pour la plateforme Yeko) ---
   {
-    name: 'roles.super_admin',
+    name: 'Super Administrateur',
     slug: 'super_admin',
-    description: 'roles.descriptions.super_admin',
+    description: 'Accès total à toutes les ressources du système et de toutes les écoles.',
     scope: 'system',
+    isSystemRole: true,
+    extraLanguages: {
+      en: {
+        name: 'Super Administrator',
+        description: 'Full access to all system and school resources.',
+      },
+    },
     permissions: {
       schools: ['view', 'create', 'edit', 'delete'],
       users: ['view', 'create', 'edit', 'delete'],
@@ -14,10 +22,17 @@ export const defaultRoles: RoleData[] = [
     },
   },
   {
-    name: 'roles.system_admin',
+    name: 'Administrateur Système',
     slug: 'system_admin',
-    description: 'roles.descriptions.system_admin',
+    description: 'Gestion de la plateforme et maintenance globale.',
     scope: 'system',
+    isSystemRole: true,
+    extraLanguages: {
+      en: {
+        name: 'System Administrator',
+        description: 'Platform management and global maintenance.',
+      },
+    },
     permissions: {
       schools: ['view', 'create', 'edit'],
       users: ['view', 'create', 'edit'],
@@ -25,69 +40,155 @@ export const defaultRoles: RoleData[] = [
       global_settings: ['view'],
     },
   },
+
+  // --- ROLES ÉCOLE (MVP RECOMMANDÉ) ---
   {
-    name: 'roles.school_administrator',
-    slug: 'school_administrator',
-    description: 'roles.descriptions.school_administrator',
+    name: 'Fondateur / Promoteur',
+    slug: 'school_founder',
+    description: 'Accès global stratégique : effectifs, finances et performances globales.',
     scope: 'school',
+    extraLanguages: {
+      en: {
+        name: 'Founder / Promoter',
+        description: 'Strategic global access: enrollment, finance, and global performance.',
+      },
+    },
     permissions: {
-      users: ['view', 'create', 'edit', 'delete'],
-      teachers: ['view', 'create', 'edit', 'delete', 'assign'],
-      staff: ['view', 'create', 'edit', 'delete'],
-      students: ['view', 'create', 'edit', 'delete', 'enroll'],
-      parents: ['view', 'create', 'edit', 'delete'],
-      classes: ['view', 'create', 'edit', 'delete'],
-      classrooms: ['view', 'create', 'edit', 'delete'],
-      grades: ['view', 'create', 'edit', 'validate', 'delete'],
-      attendance: ['view', 'create', 'edit', 'delete'],
-      conduct: ['view', 'create', 'edit', 'delete'],
-      finance: ['view', 'create', 'edit', 'delete', 'process_payment'],
-      reports: ['view', 'export'],
-      settings: ['view', 'edit'],
-      // Phase 14: Academic Management
-      school_subjects: ['view', 'create', 'edit', 'delete'],
-      coefficients: ['view', 'edit'],
-      teacher_assignments: ['view', 'edit'],
+      users: ['view', 'manage'],
+      teachers: ['view', 'manage'],
+      staff: ['view', 'manage'],
+      students: ['view', 'manage'],
+      parents: ['view', 'manage'],
+      classes: ['view', 'manage'],
+      classrooms: ['view', 'manage'],
+      grades: ['view', 'manage'],
+      attendance: ['view', 'manage'],
+      conduct: ['view', 'manage'],
+      finance: ['view', 'manage'],
+      reports: ['view', 'manage', 'export'],
+      settings: ['view', 'manage'],
+      school_subjects: ['view', 'manage'],
+      coefficients: ['view', 'manage'],
+      teacher_assignments: ['view', 'manage'],
     },
   },
   {
-    name: 'roles.academic_coordinator',
-    slug: 'academic_coordinator',
-    description: 'roles.descriptions.academic_coordinator',
+    name: 'Directeur / Proviseur / Principal',
+    slug: 'school_director',
+    description: 'Chef opérationnel : supervision générale, validation des décisions et discipline.',
     scope: 'school',
+    extraLanguages: {
+      en: {
+        name: 'Principal / Director',
+        description: 'Operational head: general supervision, decision validation, and discipline.',
+      },
+    },
     permissions: {
-      teachers: ['view'],
-      students: ['view'],
-      classes: ['view'],
+      users: ['view', 'create', 'edit'],
+      teachers: ['view', 'create', 'edit'],
+      staff: ['view', 'create', 'edit'],
+      students: ['view', 'create', 'edit'],
+      parents: ['view', 'create', 'edit'],
+      classes: ['view', 'create', 'edit'],
+      classrooms: ['view', 'create', 'edit'],
       grades: ['view', 'validate'],
+      attendance: ['view', 'create'],
+      conduct: ['view', 'create', 'validate'],
+      finance: ['view'],
       reports: ['view', 'export'],
       settings: ['view'],
-      // Phase 14: Academic Management
-      school_subjects: ['view', 'create', 'edit'],
-      coefficients: ['view', 'edit'],
-      teacher_assignments: ['view', 'edit'],
-    },
-  },
-  {
-    name: 'roles.discipline_officer',
-    slug: 'discipline_officer',
-    description: 'roles.descriptions.discipline_officer',
-    scope: 'school',
-    permissions: {
-      students: ['view'],
-      attendance: ['view', 'create', 'edit'],
-      conduct: ['view', 'create', 'edit'],
-      reports: ['view', 'export'],
-      // Phase 14: Academic Management (view only)
       school_subjects: ['view'],
       coefficients: ['view'],
     },
   },
   {
-    name: 'roles.accountant',
-    slug: 'accountant',
-    description: 'roles.descriptions.accountant',
+    name: 'Censeur',
+    slug: 'school_censor',
+    description: 'Gestion de la vie scolaire : absences, retards, discipline et examens internes.',
     scope: 'school',
+    extraLanguages: {
+      en: {
+        name: 'Censor / Dean',
+        description: 'School life management: absences, delays, discipline, and internal exams.',
+      },
+    },
+    permissions: {
+      students: ['view'],
+      classes: ['view'],
+      attendance: ['view', 'create', 'edit', 'delete'],
+      conduct: ['view', 'create', 'edit', 'delete'],
+      grades: ['view'],
+      reports: ['view', 'export'],
+      school_subjects: ['view'],
+      coefficients: ['view'],
+    },
+  },
+  {
+    name: 'Professeur / Enseignant',
+    slug: 'teacher',
+    description: 'Cœur pédagogique : saisie des notes, appréciations et suivi académique.',
+    scope: 'school',
+    extraLanguages: {
+      en: {
+        name: 'Teacher / Professor',
+        description: 'Pedagogical core: entry of grades, evaluations, and academic tracking.',
+      },
+    },
+    permissions: {
+      students: ['view'],
+      classes: ['view'],
+      grades: ['view', 'create', 'edit'],
+      school_subjects: ['view'],
+      attendance: ['view', 'create'],
+    },
+  },
+  {
+    name: 'Éducateur',
+    slug: 'educator',
+    description: 'Encadrement quotidien : surveillance, marquage des absences et rapports d\'incidents.',
+    scope: 'school',
+    extraLanguages: {
+      en: {
+        name: 'Educator / Proctor',
+        description: 'Daily supervision: monitoring, marking absences, and incident reports.',
+      },
+    },
+    permissions: {
+      students: ['view'],
+      attendance: ['view', 'create', 'edit'],
+      conduct: ['view', 'create'],
+    },
+  },
+  {
+    name: 'Secrétaire',
+    slug: 'secretary',
+    description: 'Administration : inscriptions, dossiers élèves, certificats et communication.',
+    scope: 'school',
+    extraLanguages: {
+      en: {
+        name: 'Secretary',
+        description: 'Administration: registrations, student records, certificates, and communication.',
+      },
+    },
+    permissions: {
+      students: ['view', 'create', 'edit', 'enroll'],
+      parents: ['view', 'create', 'edit'],
+      enrollments: ['view', 'create', 'edit'],
+      reports: ['view', 'export'],
+      classes: ['view'],
+    },
+  },
+  {
+    name: 'Comptable',
+    slug: 'accountant',
+    description: 'Gestion financière globale : frais, dépenses, salaires et reporting.',
+    scope: 'school',
+    extraLanguages: {
+      en: {
+        name: 'Accountant',
+        description: 'Global financial management: fees, expenses, salaries, and reporting.',
+      },
+    },
     permissions: {
       students: ['view'],
       finance: ['view', 'create', 'edit'],
@@ -95,28 +196,19 @@ export const defaultRoles: RoleData[] = [
     },
   },
   {
-    name: 'roles.cashier',
+    name: 'Caissier/ère',
     slug: 'cashier',
-    description: 'roles.descriptions.cashier',
+    description: 'Opérations quotidiennes : encaissement des frais et émission de reçus.',
     scope: 'school',
+    extraLanguages: {
+      en: {
+        name: 'Cashier',
+        description: 'Daily operations: fee collection and receipt issuance.',
+      },
+    },
     permissions: {
       students: ['view'],
       finance: ['view', 'process_payment'],
-    },
-  },
-  {
-    name: 'roles.registrar',
-    slug: 'registrar',
-    description: 'roles.descriptions.registrar',
-    scope: 'school',
-    permissions: {
-      students: ['view', 'create', 'edit', 'enroll'],
-      parents: ['view', 'create', 'edit'],
-      enrollments: ['view', 'create', 'edit'],
-      reports: ['view', 'export'],
-      // Phase 14: Academic Management (view only)
-      school_subjects: ['view'],
-      coefficients: ['view'],
     },
   },
 ]

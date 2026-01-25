@@ -1,4 +1,4 @@
-import type { ClassroomInsert } from '../drizzle/school-schema'
+import type { ClassroomInsert, ClassroomStatus, ClassroomType } from '../drizzle/school-schema'
 import { and, eq, ilike, or, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import { grades, series } from '../drizzle/core-schema'
@@ -6,8 +6,8 @@ import { classes, classrooms } from '../drizzle/school-schema'
 
 export interface ClassroomFilters {
   schoolId: string
-  type?: string
-  status?: string
+  type?: ClassroomType
+  status?: ClassroomStatus
   search?: string
 }
 
@@ -16,11 +16,11 @@ export async function getClassrooms(filters: ClassroomFilters) {
   const conditions = [eq(classrooms.schoolId, filters.schoolId)]
 
   if (filters.type) {
-    conditions.push(eq(classrooms.type, filters.type as any))
+    conditions.push(eq(classrooms.type, filters.type))
   }
 
   if (filters.status) {
-    conditions.push(eq(classrooms.status, filters.status as any))
+    conditions.push(eq(classrooms.status, filters.status))
   }
 
   if (filters.search) {

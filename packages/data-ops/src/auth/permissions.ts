@@ -11,7 +11,7 @@ export type SystemResource
 /**
  * Standard actions that can be performed on resources
  */
-export type SystemAction = 'view' | 'create' | 'edit' | 'delete' | 'manage' | 'export'
+export type SystemAction = 'view' | 'create' | 'edit' | 'delete' | 'manage' | 'export' | 'validate' | 'enroll' | 'process_payment'
 
 /**
  * Aggregated permissions mapped by resource

@@ -6,6 +6,9 @@ import { auth_user } from './auth-schema'
 
 // --- Level 0: Independent Entities ---
 
+export const schoolStatuses = ['active', 'inactive', 'suspended'] as const
+export type SchoolStatus = typeof schoolStatuses[number]
+
 export const schools = pgTable('schools', {
   id: text('id').primaryKey(), // UUID or CUID
   name: text('name').notNull(),
@@ -14,7 +17,7 @@ export const schools = pgTable('schools', {
   phone: text('phone'),
   email: text('email'),
   logoUrl: text('logo_url'),
-  status: text('status', { enum: ['active', 'inactive', 'suspended'] }).default('active').notNull(),
+  status: text('status', { enum: schoolStatuses }).default('active').notNull(),
   settings: jsonb('settings').$type<Record<string, unknown>>(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at')
@@ -95,11 +98,14 @@ export const seriesRelations = relations(series, ({ one }) => ({
   }),
 }))
 
+export const subjectCategories = ['Scientifique', 'Littéraire', 'Sportif', 'Autre'] as const
+export type SubjectCategory = typeof subjectCategories[number]
+
 export const subjects = pgTable('subjects', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
   shortName: text('short_name'),
-  category: text('category', { enum: ['Scientifique', 'Littéraire', 'Sportif', 'Autre'] }).default('Autre').notNull(),
+  category: text('category', { enum: subjectCategories }).default('Autre').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at')
     .defaultNow()
@@ -120,10 +126,13 @@ export const schoolYearTemplates = pgTable('school_year_templates', {
     .notNull(),
 })
 
+export const termTypes = ['trimester', 'semester'] as const
+export type TermType = typeof termTypes[number]
+
 export const termTemplates = pgTable('term_templates', {
   id: text('id').primaryKey(),
   name: text('name').notNull(), // e.g., "1er Trimestre"
-  type: text('type', { enum: ['trimester', 'semester'] }).notNull(),
+  type: text('type', { enum: termTypes }).notNull(),
   order: smallint('order').notNull(),
   schoolYearTemplateId: text('school_year_template_id')
     .notNull()
@@ -142,6 +151,9 @@ export const termTemplatesRelations = relations(termTemplates, ({ one }) => ({
   }),
 }))
 
+export const programStatuses = ['draft', 'published', 'archived'] as const
+export type ProgramStatus = typeof programStatuses[number]
+
 export const programTemplates = pgTable('program_templates', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
@@ -159,7 +171,7 @@ export const programTemplates = pgTable('program_templates', {
     .defaultNow()
     .$onUpdate(() => new Date())
     .notNull(),
-  status: text('status', { enum: ['draft', 'published', 'archived'] }).default('draft').notNull(),
+  status: text('status', { enum: programStatuses }).default('draft').notNull(),
 })
 
 export const programTemplateChapters = pgTable('program_template_chapters', {
@@ -376,8 +388,5 @@ export type CoefficientTemplate = typeof coefficientTemplates.$inferSelect
 export type ActivityLog = typeof activityLogs.$inferSelect
 export type ApiMetric = typeof apiMetrics.$inferSelect
 
-// Enum types for type safety
-export type SubjectCategory = 'Scientifique' | 'Littéraire' | 'Sportif' | 'Autre'
-export type TermType = 'trimester' | 'semester'
-export type SchoolStatus = 'active' | 'inactive' | 'suspended'
-export type ProgramStatus = 'draft' | 'published' | 'archived'
+// Enum types for type safety (inherited from constants above)
+// Redundant definitions removed

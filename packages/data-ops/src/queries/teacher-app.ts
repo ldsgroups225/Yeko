@@ -3,9 +3,9 @@
  * Queries specifically for the Yeko Teacher mobile app
  */
 import type { PgTransaction } from 'drizzle-orm/pg-core'
+import type { GradeStatus, GradeType, MessageCategory } from '../drizzle/school-schema'
 import { and, asc, desc, eq, gte, lte, sql } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
-
 import { getDb } from '../database/setup'
 import { grades, subjects } from '../drizzle/core-schema'
 import {
@@ -820,7 +820,7 @@ export async function markMessageAsRead(params: {
  */
 export async function getMessageTemplatesQuery(params: {
   schoolId: string
-  category?: string
+  category?: MessageCategory
 }) {
   const db = getDb()
 
@@ -829,7 +829,7 @@ export async function getMessageTemplatesQuery(params: {
     eq(messageTemplates.isActive, true),
   ]
   if (params.category) {
-    conditions.push(eq(messageTemplates.category, params.category as any))
+    conditions.push(eq(messageTemplates.category, params.category))
   }
 
   return db
@@ -928,12 +928,12 @@ export async function submitStudentGrades(params: {
     studentId: string
     grade: number
   }>
-  status: 'draft' | 'submitted'
-  gradeType?: 'quiz' | 'test' | 'exam' | 'participation' | 'homework' | 'project'
+  status: GradeStatus
+  gradeType?: GradeType
 }) {
   const db = getDb()
 
-  const gradeType = params.gradeType ?? 'test'
+  const gradeType: GradeType = params.gradeType ?? 'test'
   const today = new Date().toISOString().split('T')[0]!
 
   if (params.grades.length === 0) {

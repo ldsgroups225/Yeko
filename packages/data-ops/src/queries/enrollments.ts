@@ -1,4 +1,4 @@
-import type { Enrollment, EnrollmentInsert } from '../drizzle/school-schema'
+import type { Enrollment, EnrollmentInsert, EnrollmentStatus } from '../drizzle/school-schema'
 import crypto from 'node:crypto'
 import { and, desc, eq, inArray, ne, or, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
@@ -11,7 +11,7 @@ export interface EnrollmentFilters {
   schoolId: string
   schoolYearId?: string
   classId?: string
-  status?: string
+  status?: EnrollmentStatus
   search?: string
   page?: number
   limit?: number
@@ -41,7 +41,7 @@ export async function getEnrollments(filters: EnrollmentFilters) {
     conditions.push(eq(enrollments.classId, classId))
   }
   if (status) {
-    conditions.push(eq(enrollments.status, status as any))
+    conditions.push(eq(enrollments.status, status))
   }
   if (search) {
     conditions.push(

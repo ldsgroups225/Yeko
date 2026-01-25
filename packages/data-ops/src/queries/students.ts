@@ -1,4 +1,4 @@
-import type { StudentInsert } from '../drizzle/school-schema'
+import type { BloodType, Gender, StudentInsert, StudentStatus } from '../drizzle/school-schema'
 import crypto from 'node:crypto'
 import { and, asc, desc, eq, ilike, or, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
@@ -22,8 +22,8 @@ export interface StudentFilters {
   classId?: string
   gradeId?: string
   schoolYearId?: string
-  status?: string
-  gender?: string
+  status?: StudentStatus
+  gender?: Gender
   search?: string
   page?: number
   limit?: number
@@ -37,7 +37,7 @@ export interface CreateStudentInput {
   firstName: string
   lastName: string
   dob: string
-  gender?: 'M' | 'F' | 'other'
+  gender?: Gender
   photoUrl?: string
   matricule?: string
   birthPlace?: string
@@ -45,7 +45,7 @@ export interface CreateStudentInput {
   address?: string
   emergencyContact?: string
   emergencyPhone?: string
-  bloodType?: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-'
+  bloodType?: BloodType
   medicalNotes?: string
   previousSchool?: string
   admissionDate?: string
@@ -72,11 +72,11 @@ export async function getStudents(filters: StudentFilters) {
   const conditions = [eq(students.schoolId, schoolId)]
 
   if (status) {
-    conditions.push(eq(students.status, status as any))
+    conditions.push(eq(students.status, status))
   }
 
   if (gender) {
-    conditions.push(eq(students.gender, gender as any))
+    conditions.push(eq(students.gender, gender))
   }
 
   if (search) {
@@ -358,7 +358,7 @@ export async function deleteStudent(id: string) {
 
 export async function updateStudentStatus(
   id: string,
-  status: 'active' | 'graduated' | 'transferred' | 'withdrawn',
+  status: StudentStatus,
   reason?: string,
 ) {
   const db = getDb()

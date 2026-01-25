@@ -726,7 +726,7 @@ export async function getUserSystemPermissionsByAuthUserId(authUserId: string) {
     )
 
   const { mergePermissions } = await import('../../auth/permissions')
-  return mergePermissions(systemRoles.map(r => r.permissions as any))
+  return mergePermissions(systemRoles.map(r => r.permissions))
 }
 /**
  * Get all users in the system (platform-wide) with their system roles

@@ -1,4 +1,4 @@
-import type { ClassInsert } from '../drizzle/school-schema'
+import type { ClassInsert, ClassStatus } from '../drizzle/school-schema'
 import { and, eq, ilike, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import { grades, series } from '../drizzle/core-schema'
@@ -19,7 +19,7 @@ export interface ClassFilters {
   schoolYearId?: string
   gradeId?: string
   seriesId?: string
-  status?: string
+  status?: ClassStatus
   search?: string
 }
 
@@ -40,7 +40,7 @@ export async function getClasses(filters: ClassFilters) {
   }
 
   if (filters.status) {
-    conditions.push(eq(classes.status, filters.status as any))
+    conditions.push(eq(classes.status, filters.status))
   }
 
   if (filters.search) {

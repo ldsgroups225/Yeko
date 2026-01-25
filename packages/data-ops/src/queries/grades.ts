@@ -1,5 +1,6 @@
 import type {
   GradeStatus,
+  GradeType,
   StudentGradeInsert,
 } from '../drizzle/school-schema'
 import {
@@ -188,7 +189,7 @@ export async function deleteDraftGrades(params: {
   classId: string
   subjectId: string
   termId: string
-  type: string
+  type: GradeType
   gradeDate: string
   description?: string
 }) {
@@ -197,7 +198,7 @@ export async function deleteDraftGrades(params: {
     eq(studentGrades.classId, params.classId),
     eq(studentGrades.subjectId, params.subjectId),
     eq(studentGrades.termId, params.termId),
-    eq(studentGrades.type, params.type as any),
+    eq(studentGrades.type, params.type),
     eq(studentGrades.gradeDate, params.gradeDate),
     eq(studentGrades.status, 'draft'),
   ]

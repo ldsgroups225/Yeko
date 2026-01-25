@@ -1,4 +1,4 @@
-import type { Parent, ParentInsert } from '../drizzle/school-schema'
+import type { InvitationStatus, Parent, ParentInsert, Relationship } from '../drizzle/school-schema'
 import crypto from 'node:crypto'
 import { and, eq, ilike, isNull, or, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
@@ -10,7 +10,7 @@ const nanoid = () => crypto.randomUUID()
 
 export interface ParentFilters {
   search?: string
-  invitationStatus?: string
+  invitationStatus?: InvitationStatus
   hasChildren?: boolean
   page?: number
   limit?: number
@@ -30,7 +30,7 @@ export interface CreateParentInput {
 export interface LinkParentInput {
   studentId: string
   parentId: string
-  relationship: 'father' | 'mother' | 'guardian' | 'grandparent' | 'sibling' | 'other'
+  relationship: Relationship
   isPrimary?: boolean
   canPickup?: boolean
   receiveNotifications?: boolean
@@ -57,7 +57,7 @@ export async function getParents(schoolId: string, filters: ParentFilters) {
   }
 
   if (invitationStatus) {
-    conditions.push(eq(parents.invitationStatus, invitationStatus as any))
+    conditions.push(eq(parents.invitationStatus, invitationStatus))
   }
 
   const query = db
@@ -443,7 +443,7 @@ export async function acceptParentInvitation(token: string, userId: string) {
 // ==================== Bulk Operations ====================
 
 export async function bulkImportParents(
-  parentsData: Array<CreateParentInput & { studentMatricule?: string, relationship?: string }>,
+  parentsData: Array<CreateParentInput & { studentMatricule?: string, relationship?: Relationship }>,
 ): Promise<{ success: number, errors: Array<{ row: number, error: string }> }> {
   const db = getDb()
   const results = { success: 0, errors: [] as Array<{ row: number, error: string }> }
@@ -471,7 +471,7 @@ export async function bulkImportParents(
             await linkParentToStudent({
               studentId: student.id,
               parentId: parent.id,
-              relationship: (relationship as any) || 'guardian',
+              relationship: relationship || 'guardian',
             })
           }
           catch {
