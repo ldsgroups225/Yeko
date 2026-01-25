@@ -1,8 +1,7 @@
-import type { Account, AccountInsert, AccountType } from '@/drizzle/school-schema'
+import type { Account, AccountInsert, AccountType } from '../drizzle/school-schema'
 import { and, asc, eq, isNull, sql } from 'drizzle-orm'
-import { nanoid } from 'nanoid'
-import { getDb } from '@/database/setup'
-import { accounts } from '@/drizzle/school-schema'
+import { getDb } from '../database/setup'
+import { accounts } from '../drizzle/school-schema'
 
 // --- Account Queries ---
 
@@ -113,7 +112,7 @@ export async function createAccount(data: CreateAccountData): Promise<Account> {
 
   const [account] = await db
     .insert(accounts)
-    .values({ id: nanoid(), ...data, level })
+    .values({ id: crypto.randomUUID(), ...data, level })
     .returning()
 
   if (!account) {

@@ -1,13 +1,6 @@
-import {
-  createSchool as createSchoolQuery,
-  deleteSchool as deleteSchoolQuery,
-  getSchoolById as getSchoolByIdQuery,
-  getSchools as getSchoolsQuery,
-  updateSchool as updateSchoolQuery,
-} from '@repo/data-ops'
-import { bulkCreateSchools as bulkCreateSchoolsQuery } from '@repo/data-ops/queries/schools'
+import type { School } from '@repo/data-ops'
 import { createServerFn } from '@tanstack/react-start'
-import { exampleMiddlewareWithContext } from '@/core/middleware/example-middleware'
+import { databaseMiddleware } from '@/core/middleware/database'
 import {
   BulkUpdateSchoolsSchema,
   CreateSchoolSchema,
@@ -20,34 +13,36 @@ import {
 // Create a new school
 export const createSchool = createServerFn()
   .middleware([
-    exampleMiddlewareWithContext,
+    databaseMiddleware,
   ])
   .inputValidator(data => CreateSchoolSchema.parse(data))
   .handler(async (ctx) => {
+    const { createSchool: createSchoolQuery } = await import('@repo/data-ops/queries/schools')
     const newSchool = await createSchoolQuery({
       ...ctx.data,
-      settings: (ctx.data.settings as Record<string, any>) || {},
+      settings: (ctx.data.settings as Record<string, object>) || {},
     })
 
     return {
       ...newSchool,
-      settings: (newSchool.settings as Record<string, any>) || {},
+      settings: (newSchool.settings as Record<string, object>) || {},
     }
   })
 
 // Get paginated list of schools with filters
 export const getSchools = createServerFn()
   .middleware([
-    exampleMiddlewareWithContext,
+    databaseMiddleware,
   ])
   .inputValidator(data => GetSchoolsSchema.parse(data))
   .handler(async (ctx) => {
+    const { getSchools: getSchoolsQuery } = await import('@repo/data-ops/queries/schools')
     const result = await getSchoolsQuery(ctx.data)
 
     return {
-      data: result.schools.map((s: any) => ({
+      data: result.schools.map((s: School) => ({
         ...s,
-        settings: (s.settings as Record<string, any>) || {},
+        settings: (s.settings as Record<string, object>) || {},
       })),
       meta: result.pagination,
     }
@@ -56,10 +51,11 @@ export const getSchools = createServerFn()
 // Get a single school by ID
 export const getSchoolById = createServerFn()
   .middleware([
-    exampleMiddlewareWithContext,
+    databaseMiddleware,
   ])
   .inputValidator(data => SchoolIdSchema.parse(data))
   .handler(async (ctx) => {
+    const { getSchoolById: getSchoolByIdQuery } = await import('@repo/data-ops/queries/schools')
     const school = await getSchoolByIdQuery(ctx.data.id)
 
     if (!school) {
@@ -68,24 +64,25 @@ export const getSchoolById = createServerFn()
 
     return {
       ...school,
-      settings: (school.settings as Record<string, any>) || {},
+      settings: (school.settings as Record<string, object>) || {},
     }
   })
 
 // Update a school
 export const updateSchool = createServerFn()
   .middleware([
-    exampleMiddlewareWithContext,
+    databaseMiddleware,
   ])
   .inputValidator(data => UpdateSchoolSchema.parse(data))
   .handler(async (ctx) => {
     const { id, ...updateData } = ctx.data
 
     try {
+      const { updateSchool: updateSchoolQuery } = await import('@repo/data-ops/queries/schools')
       const updatedSchool = await updateSchoolQuery(id, updateData)
       return {
         ...updatedSchool,
-        settings: (updatedSchool.settings as Record<string, any>) || {},
+        settings: (updatedSchool.settings as Record<string, object>) || {},
       }
     }
     catch (error) {
@@ -99,10 +96,11 @@ export const updateSchool = createServerFn()
 // Delete a school
 export const deleteSchool = createServerFn()
   .middleware([
-    exampleMiddlewareWithContext,
+    databaseMiddleware,
   ])
   .inputValidator(data => SchoolIdSchema.parse(data))
   .handler(async (ctx) => {
+    const { deleteSchool: deleteSchoolQuery } = await import('@repo/data-ops/queries/schools')
     await deleteSchoolQuery(ctx.data.id)
     return { success: true, id: ctx.data.id }
   })
@@ -110,7 +108,7 @@ export const deleteSchool = createServerFn()
 // Bulk update schools status
 export const bulkUpdateSchools = createServerFn()
   .middleware([
-    exampleMiddlewareWithContext,
+    databaseMiddleware,
   ])
   .inputValidator(data => BulkUpdateSchoolsSchema.parse(data))
   .handler(async (ctx) => {
@@ -119,6 +117,7 @@ export const bulkUpdateSchools = createServerFn()
     // Update each school individually since we don't have bulk operations in the queries
     for (const id of schoolIds) {
       try {
+        const { updateSchool: updateSchoolQuery } = await import('@repo/data-ops/queries/schools')
         await updateSchoolQuery(id, { status })
       }
       catch {
@@ -133,11 +132,13 @@ export const bulkUpdateSchools = createServerFn()
 // Bulk create schools from import
 export const bulkCreateSchools = createServerFn()
   .middleware([
-    exampleMiddlewareWithContext,
+    databaseMiddleware,
   ])
   .inputValidator(data => ImportSchoolsSchema.parse(data))
   .handler(async (ctx) => {
     const { schools, skipDuplicates } = ctx.data
+
+    const { bulkCreateSchools: bulkCreateSchoolsQuery } = await import('@repo/data-ops/queries/schools')
 
     const result = await bulkCreateSchoolsQuery(
       schools.map(school => ({

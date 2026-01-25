@@ -1,3 +1,4 @@
+import type { CreateSchoolInput } from '@/schemas/school'
 import { IconAlertCircle, IconArrowLeft } from '@tabler/icons-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
@@ -22,10 +23,11 @@ function CreateSchool() {
   // Set up mutation for creating school
   const createSchoolMutation = useMutation({
     ...createSchoolMutationOptions,
-    onSuccess: (data: any) => {
+    onSuccess: (data) => {
+      const schoolData = data as any
       logger.info('School created successfully', {
-        schoolId: (data)?.id,
-        schoolName: (data)?.name,
+        schoolId: schoolData.id,
+        schoolName: schoolData.name,
         action: 'create_school_success',
         timestamp: new Date().toISOString(),
       })
@@ -36,7 +38,7 @@ function CreateSchool() {
       // Navigate back to schools list
       navigate({ to: '/app/schools' })
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       const message = parseServerFnError(error, 'Une erreur est survenue lors de la création de l\'école')
       toast.error(message)
       console.error('School creation failed:', error)
@@ -44,7 +46,7 @@ function CreateSchool() {
   })
 
   // Handle form submission
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: CreateSchoolInput) => {
     try {
       await createSchoolMutation.mutateAsync(data)
     }
@@ -81,11 +83,11 @@ function CreateSchool() {
       </div>
 
       {/* Error Display */}
-      {createSchoolMutation.error && (
+      {!!createSchoolMutation.error && (
         <Alert variant="destructive">
           <IconAlertCircle className="h-4 w-4" />
           <AlertDescription>
-            {createSchoolMutation.error.message || 'Une erreur est survenue lors de la création de l\'école'}
+            {parseServerFnError(createSchoolMutation.error, 'Une erreur est survenue lors de la création de l\'école')}
           </AlertDescription>
         </Alert>
       )}

@@ -23,12 +23,12 @@ export async function collectCoverage(): Promise<void> {
     // Calculate summary
     const totalFiles = coverage.length
     const totalStatements = coverage.reduce(
-      (acc: number, file: any) => acc + (file.statements?.length || 0),
+      (acc: number, file: { statements?: Array<{ count: number }> }) => acc + (file.statements?.length || 0),
       0,
     )
     const coveredStatements = coverage.reduce(
-      (acc: number, file: any) =>
-        acc + (file.statements?.filter((s: any) => s.count > 0).length || 0),
+      (acc: number, file: { statements?: Array<{ count: number }> }) =>
+        acc + (file.statements?.filter(s => s.count > 0).length || 0),
       0,
     )
 

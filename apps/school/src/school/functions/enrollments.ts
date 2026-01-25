@@ -47,7 +47,7 @@ export const getEnrollments = createServerFn()
     if (!context)
       throw new Error('No school context')
     await requirePermission('students', 'view')
-    return await enrollmentQueries.getEnrollments({ ...data, schoolId: context.schoolId })
+    return await enrollmentQueries.getEnrollments({ ...data, schoolId: context.schoolId } as any)
   })
 
 export const getEnrollmentById = createServerFn()

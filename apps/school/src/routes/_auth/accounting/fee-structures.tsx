@@ -1,3 +1,6 @@
+import type {
+  FeeStructure,
+} from '@/components/finance'
 import { IconPlus, IconStack2 } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
@@ -29,7 +32,7 @@ function FeeStructuresPage() {
   const t = useTranslations()
   const queryClient = useQueryClient()
   const [isCreateOpen, setIsCreateOpen] = useState(false)
-  const [editingStructure, setEditingStructure] = useState<any>(null)
+  const [editingStructure, setEditingStructure] = useState<FeeStructure | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
   const { data: feeStructures, isLoading } = useQuery(
@@ -43,15 +46,16 @@ function FeeStructuresPage() {
       toast.success('Structure de frais supprimée')
       setDeletingId(null)
     },
-    onError: (err: any) => {
-      toast.error(err.message || 'Erreur lors de la suppression')
+    onError: (err: unknown) => {
+      const message = err instanceof Error ? err.message : 'Erreur lors de la suppression'
+      toast.error(message)
     },
   })
 
   const handleEdit = (id: string) => {
     const structure = feeStructures?.find(fs => fs.id === id)
     if (structure) {
-      setEditingStructure(structure)
+      setEditingStructure(structure as unknown as FeeStructure)
       setIsCreateOpen(true)
     }
   }
@@ -65,7 +69,7 @@ function FeeStructuresPage() {
     feeTypeName: fs.feeTypeName ?? '',
     feeTypeCode: fs.feeTypeCode ?? '',
     gradeName: (fs as { gradeName?: string | null }).gradeName ?? '',
-    seriesName: (fs as any).seriesName ?? undefined,
+    seriesName: (fs as { seriesName?: string | null }).seriesName ?? undefined,
     amount: Number(fs.amount ?? 0),
     newStudentAmount: fs.newStudentAmount
       ? Number(fs.newStudentAmount)
@@ -144,7 +148,7 @@ function FeeStructuresPage() {
           if (!open)
             setEditingStructure(null)
         }}
-        initialData={editingStructure}
+        initialData={editingStructure || undefined}
       />
 
       <DeleteConfirmationDialog

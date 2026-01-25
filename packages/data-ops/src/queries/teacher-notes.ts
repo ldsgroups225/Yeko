@@ -1,5 +1,5 @@
+import type { ConductCategory, SeverityLevel } from '../drizzle/school-schema'
 import { and, desc, eq, gte, sql } from 'drizzle-orm'
-import { nanoid } from 'nanoid'
 import { getDb } from '../database/setup'
 import { classes, conductRecords } from '../drizzle/school-schema'
 
@@ -12,8 +12,8 @@ export async function createStudentNote(params: {
   teacherId: string
   title: string
   content: string
-  type: 'behavior' | 'academic' | 'attendance' | 'general'
-  priority: 'low' | 'medium' | 'high' | 'urgent'
+  type: ConductCategory
+  priority: SeverityLevel
   isPrivate?: boolean
 }) {
   const db = getDb()
@@ -37,7 +37,7 @@ export async function createStudentNote(params: {
   const [result] = await db
     .insert(conductRecords)
     .values({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       schoolId: classData[0].schoolId,
       schoolYearId: classData[0].schoolYearId,
       studentId: params.studentId,
@@ -45,9 +45,9 @@ export async function createStudentNote(params: {
       recordedBy: params.teacherId,
       title: params.title,
       description: params.content,
-      type: conductType as any,
-      category: params.type as any,
-      severity: params.priority as any,
+      type: conductType,
+      category: params.type,
+      severity: params.priority,
       incidentDate: new Date().toISOString().split('T')[0]!,
       status: 'open',
     })
@@ -72,7 +72,7 @@ export async function createStudentNote(params: {
 export async function getStudentNotes(params: {
   studentId: string
   classId?: string
-  type?: string
+  type?: ConductCategory
   startDate?: string
   endDate?: string
   limit?: number
@@ -84,7 +84,7 @@ export async function getStudentNotes(params: {
   if (params.classId)
     conditions.push(eq(conductRecords.classId, params.classId))
   if (params.type)
-    conditions.push(eq(conductRecords.category, params.type as any))
+    conditions.push(eq(conductRecords.category, params.type))
 
   const results = await db
     .select({
@@ -126,7 +126,7 @@ export async function updateStudentNote(params: {
   teacherId: string
   title?: string
   content?: string
-  priority?: 'low' | 'medium' | 'high' | 'urgent'
+  priority?: SeverityLevel
 }) {
   const db = getDb()
   const [result] = await db
@@ -134,7 +134,7 @@ export async function updateStudentNote(params: {
     .set({
       title: params.title,
       description: params.content,
-      severity: params.priority as any,
+      severity: params.priority,
       updatedAt: new Date(),
     })
     .where(eq(conductRecords.id, params.noteId))

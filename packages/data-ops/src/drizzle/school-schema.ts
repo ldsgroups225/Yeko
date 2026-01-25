@@ -1,11 +1,15 @@
+import type { SystemPermissions } from '../auth/permissions'
 import { relations } from 'drizzle-orm'
-import { boolean, date, decimal, index, integer, jsonb, pgTable, smallint, text, timestamp, unique } from 'drizzle-orm/pg-core'
 
+import { boolean, date, decimal, index, integer, jsonb, pgTable, smallint, text, timestamp, unique } from 'drizzle-orm/pg-core'
 // Import from core and auth schemas
 import { auth_user } from './auth-schema'
 import { coefficientTemplates, grades, programTemplateChapters, programTemplates, schools, schoolYearTemplates, series, subjects, termTemplates } from './core-schema'
 
 // --- Level 0: Identity & Access (Foundation) ---
+
+export const userStatuses = ['active', 'inactive', 'suspended'] as const
+export type UserStatus = typeof userStatuses[number]
 
 export const users = pgTable('users', {
   id: text('id').primaryKey(), // UUID or CUID
@@ -14,7 +18,7 @@ export const users = pgTable('users', {
   name: text('name').notNull(),
   phone: text('phone'),
   avatarUrl: text('avatar_url'),
-  status: text('status', { enum: ['active', 'inactive', 'suspended'] }).default('active').notNull(),
+  status: text('status', { enum: userStatuses }).default('active').notNull(),
   lastLoginAt: timestamp('last_login_at'), // Phase 11: Activity tracking
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at')
@@ -41,14 +45,18 @@ export const userSchools = pgTable('user_schools', {
   uniqueUserSchool: unique('unique_user_school').on(table.userId, table.schoolId),
 }))
 
+export const roleScopes = ['school', 'system'] as const
+export type RoleScope = typeof roleScopes[number]
+
 export const roles = pgTable('roles', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
   slug: text('slug').notNull().unique(),
   description: text('description'), // For UI display
-  permissions: jsonb('permissions').$type<Record<string, string[]>>().notNull().default({}),
-  scope: text('scope', { enum: ['school', 'system'] }).notNull(),
+  permissions: jsonb('permissions').$type<SystemPermissions>().notNull().default({}),
+  scope: text('scope', { enum: roleScopes }).notNull(),
   isSystemRole: boolean('is_system_role').default(false).notNull(), // Phase 11: Prevent deletion of system roles
+  extraLanguages: jsonb('extra_languages').$type<Record<string, { name: string, description?: string }>>(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at')
     .defaultNow()
@@ -63,7 +71,7 @@ export const userRoles = pgTable('user_roles', {
   id: text('id').primaryKey(),
   userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   roleId: text('role_id').notNull().references(() => roles.id, { onDelete: 'cascade' }),
-  schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
+  schoolId: text('school_id').references(() => schools.id, { onDelete: 'cascade' }), // Nullable for system-scoped roles
   createdAt: timestamp('created_at').defaultNow().notNull(),
 }, table => ({
   compositeIdx: index('idx_user_roles_composite').on(table.userId, table.schoolId, table.roleId),
@@ -73,13 +81,16 @@ export const userRoles = pgTable('user_roles', {
 
 // --- Level 1: Organization Structure ---
 
+export const teacherStatuses = ['active', 'inactive', 'on_leave'] as const
+export type TeacherStatus = typeof teacherStatuses[number]
+
 export const teachers = pgTable('teachers', {
   id: text('id').primaryKey(),
   userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
   specialization: text('specialization'),
   hireDate: date('hire_date'),
-  status: text('status', { enum: ['active', 'inactive', 'on_leave'] }).default('active').notNull(),
+  status: text('status', { enum: teacherStatuses }).default('active').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at')
     .defaultNow()
@@ -101,6 +112,9 @@ export const teacherSubjects = pgTable('teacher_subjects', {
   uniqueTeacherSubject: unique('unique_teacher_subject').on(table.teacherId, table.subjectId),
 }))
 
+export const staffStatuses = ['active', 'inactive', 'on_leave'] as const
+export type StaffStatus = typeof staffStatuses[number]
+
 export const staff = pgTable('staff', {
   id: text('id').primaryKey(),
   userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
@@ -108,7 +122,7 @@ export const staff = pgTable('staff', {
   position: text('position').notNull(), // Academic Coordinator, Discipline Officer, etc.
   department: text('department'),
   hireDate: date('hire_date'),
-  status: text('status', { enum: ['active', 'inactive', 'on_leave'] }).default('active').notNull(),
+  status: text('status', { enum: staffStatuses }).default('active').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at')
     .defaultNow()
@@ -120,12 +134,18 @@ export const staff = pgTable('staff', {
   positionIdx: index('idx_staff_position').on(table.position),
 }))
 
+export const classroomTypes = ['regular', 'lab', 'gym', 'library', 'auditorium'] as const
+export type ClassroomType = typeof classroomTypes[number]
+
+export const classroomStatuses = ['active', 'maintenance', 'inactive'] as const
+export type ClassroomStatus = typeof classroomStatuses[number]
+
 export const classrooms = pgTable('classrooms', {
   id: text('id').primaryKey(),
   schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
   name: text('name').notNull(),
   code: text('code').notNull(),
-  type: text('type', { enum: ['regular', 'lab', 'gym', 'library', 'auditorium'] }).default('regular').notNull(),
+  type: text('type', { enum: classroomTypes }).default('regular').notNull(),
   capacity: integer('capacity').notNull().default(30),
   floor: text('floor'),
   building: text('building'),
@@ -137,7 +157,7 @@ export const classrooms = pgTable('classrooms', {
     ac?: boolean
     other?: string[]
   }>(),
-  status: text('status', { enum: ['active', 'maintenance', 'inactive'] }).default('active').notNull(),
+  status: text('status', { enum: classroomStatuses }).default('active').notNull(),
   notes: text('notes'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at')
@@ -187,6 +207,9 @@ export const terms = pgTable('terms', {
   schoolYearIdx: index('idx_terms_school_year').on(table.schoolYearId),
 }))
 
+export const classStatuses = ['active', 'archived'] as const
+export type ClassStatus = typeof classStatuses[number]
+
 export const classes = pgTable('classes', {
   id: text('id').primaryKey(),
   schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
@@ -197,7 +220,7 @@ export const classes = pgTable('classes', {
   classroomId: text('classroom_id').references(() => classrooms.id, { onDelete: 'set null' }),
   homeroomTeacherId: text('homeroom_teacher_id').references(() => teachers.id, { onDelete: 'set null' }),
   maxStudents: integer('max_students').notNull().default(40),
-  status: text('status', { enum: ['active', 'archived'] }).default('active').notNull(),
+  status: text('status', { enum: classStatuses }).default('active').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at')
     .defaultNow()
@@ -212,6 +235,9 @@ export const classes = pgTable('classes', {
   gradeSeriesIdx: index('idx_classes_grade_series').on(table.gradeId, table.seriesId),
 }))
 
+export const classSubjectStatuses = ['active', 'inactive'] as const
+export type ClassSubjectStatus = typeof classSubjectStatuses[number]
+
 export const classSubjects = pgTable('class_subjects', {
   id: text('id').primaryKey(),
   classId: text('class_id').notNull().references(() => classes.id, { onDelete: 'cascade' }),
@@ -219,7 +245,7 @@ export const classSubjects = pgTable('class_subjects', {
   teacherId: text('teacher_id').references(() => teachers.id, { onDelete: 'set null' }),
   coefficient: integer('coefficient').notNull().default(1),
   hoursPerWeek: integer('hours_per_week').notNull().default(2),
-  status: text('status', { enum: ['active', 'inactive'] }).default('active').notNull(),
+  status: text('status', { enum: classSubjectStatuses }).default('active').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at')
     .defaultNow()
@@ -234,23 +260,32 @@ export const classSubjects = pgTable('class_subjects', {
 
 // --- Level 3: Student Management ---
 
+export const genders = ['M', 'F', 'other'] as const
+export type Gender = typeof genders[number]
+
+export const studentStatuses = ['active', 'graduated', 'transferred', 'withdrawn'] as const
+export type StudentStatus = typeof studentStatuses[number]
+
+export const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] as const
+export type BloodType = typeof bloodTypes[number]
+
 export const students = pgTable('students', {
   id: text('id').primaryKey(),
   schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
   firstName: text('first_name').notNull(),
   lastName: text('last_name').notNull(),
   dob: date('dob').notNull(),
-  gender: text('gender', { enum: ['M', 'F', 'other'] }),
+  gender: text('gender', { enum: genders }),
   photoUrl: text('photo_url'),
   matricule: text('matricule').notNull(), // Format: AB2024C001
-  status: text('status', { enum: ['active', 'graduated', 'transferred', 'withdrawn'] }).default('active').notNull(),
+  status: text('status', { enum: studentStatuses }).default('active').notNull(),
   // Phase 13: Enhanced fields
   birthPlace: text('birth_place'),
   nationality: text('nationality').default('Ivoirien'),
   address: text('address'),
   emergencyContact: text('emergency_contact'),
   emergencyPhone: text('emergency_phone'),
-  bloodType: text('blood_type', { enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] }),
+  bloodType: text('blood_type', { enum: bloodTypes }),
   medicalNotes: text('medical_notes'),
   previousSchool: text('previous_school'),
   admissionDate: date('admission_date'),
@@ -276,6 +311,9 @@ export const students = pgTable('students', {
   admissionIdx: index('idx_students_admission').on(table.schoolId, table.admissionDate),
 }))
 
+export const invitationStatuses = ['pending', 'sent', 'accepted', 'expired'] as const
+export type InvitationStatus = typeof invitationStatuses[number]
+
 export const parents = pgTable('parents', {
   id: text('id').primaryKey(),
   userId: text('user_id').references(() => users.id, { onDelete: 'set null' }), // Made nullable for unregistered parents
@@ -288,7 +326,7 @@ export const parents = pgTable('parents', {
   address: text('address'),
   occupation: text('occupation'),
   workplace: text('workplace'),
-  invitationStatus: text('invitation_status', { enum: ['pending', 'sent', 'accepted', 'expired'] }).default('pending'),
+  invitationStatus: text('invitation_status', { enum: invitationStatuses }).default('pending'),
   invitationSentAt: timestamp('invitation_sent_at'),
   invitationToken: text('invitation_token'),
   invitationExpiresAt: timestamp('invitation_expires_at'),
@@ -307,11 +345,14 @@ export const parents = pgTable('parents', {
   nameIdx: index('idx_parents_name').on(table.lastName, table.firstName),
 }))
 
+export const relationshipTypes = ['father', 'mother', 'guardian', 'grandparent', 'sibling', 'other'] as const
+export type Relationship = typeof relationshipTypes[number]
+
 export const studentParents = pgTable('student_parents', {
   id: text('id').primaryKey(),
   studentId: text('student_id').notNull().references(() => students.id, { onDelete: 'cascade' }),
   parentId: text('parent_id').notNull().references(() => parents.id, { onDelete: 'cascade' }),
-  relationship: text('relationship', { enum: ['father', 'mother', 'guardian', 'grandparent', 'sibling', 'other'] }).notNull(),
+  relationship: text('relationship', { enum: relationshipTypes }).notNull(),
   isPrimary: boolean('is_primary').default(false).notNull(),
   // Phase 13: Enhanced fields
   canPickup: boolean('can_pickup').default(true).notNull(), // Authorized to pick up student
@@ -326,12 +367,15 @@ export const studentParents = pgTable('student_parents', {
   primaryIdx: index('idx_student_parents_primary').on(table.studentId, table.isPrimary),
 }))
 
+export const enrollmentStatuses = ['pending', 'confirmed', 'cancelled', 'transferred'] as const
+export type EnrollmentStatus = typeof enrollmentStatuses[number]
+
 export const enrollments = pgTable('enrollments', {
   id: text('id').primaryKey(),
   studentId: text('student_id').notNull().references(() => students.id, { onDelete: 'cascade' }),
   classId: text('class_id').notNull().references(() => classes.id, { onDelete: 'cascade' }),
   schoolYearId: text('school_year_id').notNull().references(() => schoolYears.id, { onDelete: 'cascade' }),
-  status: text('status', { enum: ['pending', 'confirmed', 'cancelled', 'transferred'] }).default('pending').notNull(),
+  status: text('status', { enum: enrollmentStatuses }).default('pending').notNull(),
   enrollmentDate: date('enrollment_date').notNull(),
   // Phase 13: Enhanced fields
   confirmedAt: timestamp('confirmed_at'),
@@ -387,11 +431,14 @@ export const matriculeSequences = pgTable('matricule_sequences', {
 
 // --- Level 4: Audit & Security ---
 
+export const auditActions = ['create', 'update', 'delete', 'view'] as const
+export type AuditAction = typeof auditActions[number]
+
 export const auditLogs = pgTable('audit_logs', {
   id: text('id').primaryKey(),
   schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
   userId: text('user_id').notNull().references(() => users.id, { onDelete: 'set null' }),
-  action: text('action', { enum: ['create', 'update', 'delete', 'view'] }).notNull(),
+  action: text('action', { enum: auditActions }).notNull(),
   tableName: text('table_name').notNull(),
   recordId: text('record_id').notNull(),
   oldValues: jsonb('old_values').$type<Record<string, any>>(),
@@ -1215,12 +1262,13 @@ export const conductCategories = [
   'cheating',
   'achievement',
   'improvement',
+  'general',
   'other',
 ] as const
 export type ConductCategory = (typeof conductCategories)[number]
 
 // Severity Levels
-export const severityLevels = ['low', 'medium', 'high', 'critical'] as const
+export const severityLevels = ['low', 'medium', 'high', 'critical', 'urgent'] as const
 export type SeverityLevel = (typeof severityLevels)[number]
 
 // Sanction Types
@@ -2245,23 +2293,6 @@ export type Transaction = typeof transactions.$inferSelect
 export type TransactionLine = typeof transactionLines.$inferSelect
 export type Receipt = typeof receipts.$inferSelect
 export type Refund = typeof refunds.$inferSelect
-
-// Enum types
-export type UserStatus = 'active' | 'inactive' | 'suspended'
-export type TeacherStatus = 'active' | 'inactive' | 'on_leave'
-export type StaffStatus = 'active' | 'inactive' | 'on_leave'
-export type ClassroomType = 'regular' | 'lab' | 'gym' | 'library' | 'auditorium'
-export type ClassroomStatus = 'active' | 'maintenance' | 'inactive'
-export type ClassStatus = 'active' | 'archived'
-export type ClassSubjectStatus = 'active' | 'inactive'
-export type StudentStatus = 'active' | 'graduated' | 'transferred' | 'withdrawn'
-export type Gender = 'M' | 'F' | 'other'
-export type Relationship = 'father' | 'mother' | 'guardian' | 'grandparent' | 'sibling' | 'other'
-export type EnrollmentStatus = 'pending' | 'confirmed' | 'cancelled' | 'transferred'
-export type BloodType = 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-'
-export type InvitationStatus = 'pending' | 'sent' | 'accepted' | 'expired'
-export type AuditAction = 'create' | 'update' | 'delete' | 'view'
-export type RoleScope = 'school' | 'system'
 
 // --- Phase 19: Teacher App Tables ---
 

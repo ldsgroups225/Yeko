@@ -1,7 +1,7 @@
 import { and, count, desc, eq, notInArray, sql } from 'drizzle-orm'
-import { getDb } from '@/database/setup'
-import { subjects } from '@/drizzle/core-schema'
-import { classes, classSubjects, schoolSubjects, schoolYears } from '@/drizzle/school-schema'
+import { getDb } from '../database/setup'
+import { subjects } from '../drizzle/core-schema'
+import { classes, classSubjects, schoolSubjects, schoolYears } from '../drizzle/school-schema'
 
 // ===== SCHOOL SUBJECTS =====
 

@@ -1,19 +1,17 @@
+import { getDb } from '@repo/data-ops/database/setup'
 /**
  * Data Integrity Testing: Section 7
  * Constraint Validation and Referential Integrity Tests
  * Using vitest with node environment
  */
 
-import { eq } from 'drizzle-orm'
-import { afterAll, beforeAll, describe, expect, test } from 'vitest'
-import { getDb } from '@/database/setup'
 import {
   educationLevels,
   programTemplateChapters,
   schoolYearTemplates,
   subjects,
   tracks,
-} from '@/drizzle/core-schema'
+} from '@repo/data-ops/drizzle/core-schema'
 import {
   createGrade,
   createSerie,
@@ -21,19 +19,22 @@ import {
   deleteSerie,
   getGrades,
   getSeries,
-} from '@/queries/catalogs'
+} from '@repo/data-ops/queries/catalogs'
 import {
   createCoefficientTemplate,
   getCoefficientTemplates,
-} from '@/queries/coefficients'
+} from '@repo/data-ops/queries/coefficients'
 import {
   createProgramTemplate,
   deleteProgramTemplate,
-} from '@/queries/programs'
+} from '@repo/data-ops/queries/programs'
 import {
   createSchool,
   deleteSchool,
-} from '@/queries/schools'
+} from '@repo/data-ops/queries/schools'
+import { eq } from 'drizzle-orm'
+import { nanoid } from 'nanoid'
+import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 
 // ============================================================================
 // 7.1 CONSTRAINT VALIDATION
@@ -69,7 +70,7 @@ describe('7.1 Constraint Validation', () => {
       const [newTrack] = await db
         .insert(tracks)
         .values({
-          id: crypto.randomUUID(),
+          id: nanoid(),
           name: 'Test Track',
           code: 'TT001',
           educationLevelId: eduLevel.id,
@@ -89,7 +90,7 @@ describe('7.1 Constraint Validation', () => {
       const [newYear] = await db
         .insert(schoolYearTemplates)
         .values({
-          id: crypto.randomUUID(),
+          id: nanoid(),
           name: 'Test Year',
           isActive: true,
           createdAt: new Date(),
@@ -108,7 +109,7 @@ describe('7.1 Constraint Validation', () => {
       const [newSubject] = await db
         .insert(subjects)
         .values({
-          id: crypto.randomUUID(),
+          id: nanoid(),
           name: 'Test Subject',
           shortName: 'TS',
           category: 'Scientifique',
@@ -211,7 +212,7 @@ describe('7.1 Constraint Validation', () => {
       const track1 = await db
         .insert(tracks)
         .values({
-          id: crypto.randomUUID(),
+          id: nanoid(),
           name: 'Track 1',
           code: 'DUPTRACK001',
           educationLevelId: eduLevel.id,
@@ -224,7 +225,7 @@ describe('7.1 Constraint Validation', () => {
         await db
           .insert(tracks)
           .values({
-            id: crypto.randomUUID(),
+            id: nanoid(),
             name: 'Track 2',
             code: 'DUPTRACK001', // Duplicate code
             educationLevelId: eduLevel.id,
@@ -449,7 +450,7 @@ describe('7.1 Constraint Validation', () => {
         await db
           .insert(subjects)
           .values({
-            id: crypto.randomUUID(),
+            id: nanoid(),
             name: '',
             shortName: 'NS',
             category: 'Scientifique',
@@ -480,7 +481,7 @@ describe('7.1 Constraint Validation', () => {
       const [newTrack] = await db
         .insert(tracks)
         .values({
-          id: crypto.randomUUID(),
+          id: nanoid(),
           name: 'Cascade Test Track',
           code: 'CTT001',
           educationLevelId: eduLevel.id,
@@ -520,7 +521,7 @@ describe('7.1 Constraint Validation', () => {
       const [newTrack] = await db
         .insert(tracks)
         .values({
-          id: crypto.randomUUID(),
+          id: nanoid(),
           name: 'Cascade Series Track',
           code: 'CST001',
           educationLevelId: eduLevel.id,
@@ -563,7 +564,7 @@ describe('7.1 Constraint Validation', () => {
       await db
         .insert(programTemplateChapters)
         .values({
-          id: crypto.randomUUID(),
+          id: nanoid(),
           programTemplateId: program.id,
           title: 'Chapter 1',
           order: 1,
@@ -599,7 +600,7 @@ describe('7.1 Constraint Validation', () => {
       const [newSubject] = await db
         .insert(subjects)
         .values({
-          id: crypto.randomUUID(),
+          id: nanoid(),
           name: 'Cascade Subject',
           shortName: 'CS',
           category: 'Scientifique',

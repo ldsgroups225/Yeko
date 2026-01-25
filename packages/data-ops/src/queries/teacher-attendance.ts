@@ -1,6 +1,5 @@
 import type { TeacherAttendance, TeacherAttendanceInsert, TeacherAttendanceStatus } from '../drizzle/school-schema'
 import { and, count, desc, eq, gte, lte, sql } from 'drizzle-orm'
-import { nanoid } from 'nanoid'
 
 import { getDb } from '../database/setup'
 import {
@@ -114,7 +113,7 @@ export async function upsertTeacherAttendance(data: {
   }
 
   const insertData: TeacherAttendanceInsert = {
-    id: nanoid(),
+    id: crypto.randomUUID(),
     teacherId: data.teacherId,
     schoolId: data.schoolId,
     date: data.date,
@@ -164,47 +163,45 @@ export async function bulkUpsertTeacherAttendance(params: {
   const db = getDb()
   const results: TeacherAttendance[] = []
 
-  await db.transaction(async (tx: any) => {
-    for (const entry of params.entries) {
-      let lateMinutes: number | null = null
-      if (entry.status === 'late' && entry.arrivalTime && params.expectedArrival) {
-        const [expHour, expMin] = params.expectedArrival.split(':').map(Number)
-        const [arrHour, arrMin] = entry.arrivalTime.split(':').map(Number)
-        const expectedMinutes = (expHour ?? 0) * 60 + (expMin ?? 0)
-        const arrivalMinutes = (arrHour ?? 0) * 60 + (arrMin ?? 0)
-        lateMinutes = Math.max(0, arrivalMinutes - expectedMinutes)
-      }
+  for (const entry of params.entries) {
+    let lateMinutes: number | null = null
+    if (entry.status === 'late' && entry.arrivalTime && params.expectedArrival) {
+      const [expHour, expMin] = params.expectedArrival.split(':').map(Number)
+      const [arrHour, arrMin] = entry.arrivalTime.split(':').map(Number)
+      const expectedMinutes = (expHour ?? 0) * 60 + (expMin ?? 0)
+      const arrivalMinutes = (arrHour ?? 0) * 60 + (arrMin ?? 0)
+      lateMinutes = Math.max(0, arrivalMinutes - expectedMinutes)
+    }
 
-      const [result] = await tx
-        .insert(teacherAttendance)
-        .values({
-          id: nanoid(),
-          teacherId: entry.teacherId,
-          schoolId: params.schoolId,
-          date: params.date,
+    const [result] = await db
+      .insert(teacherAttendance)
+      .values({
+        id: crypto.randomUUID(),
+        teacherId: entry.teacherId,
+        schoolId: params.schoolId,
+        date: params.date,
+        status: entry.status,
+        arrivalTime: entry.arrivalTime,
+        lateMinutes,
+        reason: entry.reason,
+        recordedBy: params.recordedBy,
+      })
+      .onConflictDoUpdate({
+        target: [teacherAttendance.teacherId, teacherAttendance.date],
+        set: {
           status: entry.status,
           arrivalTime: entry.arrivalTime,
           lateMinutes,
           reason: entry.reason,
           recordedBy: params.recordedBy,
-        })
-        .onConflictDoUpdate({
-          target: [teacherAttendance.teacherId, teacherAttendance.date],
-          set: {
-            status: entry.status,
-            arrivalTime: entry.arrivalTime,
-            lateMinutes,
-            reason: entry.reason,
-            recordedBy: params.recordedBy,
-            updatedAt: new Date(),
-          },
-        })
-        .returning()
+          updatedAt: new Date(),
+        },
+      })
+      .returning()
 
-      if (result)
-        results.push(result)
-    }
-  })
+    if (result)
+      results.push(result)
+  }
 
   return results
 }

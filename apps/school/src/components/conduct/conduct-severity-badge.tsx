@@ -3,7 +3,7 @@ import { motion } from 'motion/react'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
-type ConductSeverity = 'low' | 'medium' | 'high' | 'critical'
+type ConductSeverity = 'low' | 'medium' | 'high' | 'critical' | 'urgent'
 
 interface ConductSeverityBadgeProps {
   severity: ConductSeverity
@@ -30,6 +30,10 @@ const severityConfig: Record<ConductSeverity, {
   critical: {
     colorClass: 'bg-red-500/10 text-red-600 border-red-500/20',
     dotClass: 'bg-red-600',
+  },
+  urgent: {
+    colorClass: 'bg-rose-600 text-white border-rose-700 shadow-lg shadow-rose-500/20',
+    dotClass: 'bg-white',
   },
 }
 
@@ -62,7 +66,7 @@ export function ConductSeverityBadge({
             className={cn('mr-1.5 h-1.5 w-1.5 rounded-full', config.dotClass)}
           />
         )}
-        {t.conduct.severity[severity]()}
+        {(t.conduct.severity as any)[severity]()}
       </Badge>
     </motion.div>
   )

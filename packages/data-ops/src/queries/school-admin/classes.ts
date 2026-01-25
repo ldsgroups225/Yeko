@@ -1,7 +1,7 @@
 import { and, desc, eq } from 'drizzle-orm'
-import { getDb } from '@/database/setup'
-import { grades, series } from '@/drizzle/core-schema'
-import { classes, classrooms, teachers } from '@/drizzle/school-schema'
+import { getDb } from '../../database/setup'
+import { grades, series } from '../../drizzle/core-schema'
+import { classes, classrooms, teachers } from '../../drizzle/school-schema'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
 
 export async function getClassesBySchoolYear(schoolYearId: string, schoolId: string, options?: {

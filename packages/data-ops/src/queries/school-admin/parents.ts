@@ -1,6 +1,6 @@
 import { and, desc, eq, ilike, or } from 'drizzle-orm'
-import { getDb } from '@/database/setup'
-import { parents, studentParents, students, users } from '@/drizzle/school-schema'
+import { getDb } from '../../database/setup'
+import { parents, studentParents, students, users } from '../../drizzle/school-schema'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
 
 export async function getParentsBySchool(
@@ -171,37 +171,35 @@ export async function linkParentToStudent(data: {
 
   const db = getDb()
 
-  return db.transaction(async (tx: any) => {
-    // Verify student belongs to school
-    const student = await tx.query.students.findFirst({
-      where: and(eq(students.id, data.studentId), eq(students.schoolId, data.schoolId)),
-    })
-    if (!student) {
-      throw new Error(SCHOOL_ERRORS.STUDENT_NOT_FOUND)
-    }
-
-    // Verify parent exists
-    const parent = await tx.query.parents.findFirst({
-      where: eq(parents.id, data.parentId),
-    })
-    if (!parent) {
-      throw new Error(SCHOOL_ERRORS.PARENT_NOT_FOUND)
-    }
-
-    // Create link
-    const [link] = await tx
-      .insert(studentParents)
-      .values({
-        id: crypto.randomUUID(),
-        studentId: data.studentId,
-        parentId: data.parentId,
-        relationship: data.relationship,
-        isPrimary: data.isPrimary || false,
-      })
-      .returning()
-
-    return link
+  // Verify student belongs to school
+  const student = await db.query.students.findFirst({
+    where: and(eq(students.id, data.studentId), eq(students.schoolId, data.schoolId)),
   })
+  if (!student) {
+    throw new Error(SCHOOL_ERRORS.STUDENT_NOT_FOUND)
+  }
+
+  // Verify parent exists
+  const parent = await db.query.parents.findFirst({
+    where: eq(parents.id, data.parentId),
+  })
+  if (!parent) {
+    throw new Error(SCHOOL_ERRORS.PARENT_NOT_FOUND)
+  }
+
+  // Create link
+  const [link] = await db
+    .insert(studentParents)
+    .values({
+      id: crypto.randomUUID(),
+      studentId: data.studentId,
+      parentId: data.parentId,
+      relationship: data.relationship,
+      isPrimary: data.isPrimary || false,
+    })
+    .returning()
+
+  return link
 }
 
 export async function unlinkParentFromStudent(studentId: string, parentId: string, schoolId: string) {

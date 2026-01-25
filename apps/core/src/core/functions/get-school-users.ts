@@ -1,8 +1,10 @@
 import type { z } from 'zod'
-import { countUsersBySchool, getUsersBySchool } from '@repo/data-ops/queries/school-admin/users'
 import { createServerFn } from '@tanstack/react-start'
 import { protectedFunctionMiddleware } from '@/core/middleware/auth'
 import { getSchoolUsersSchema } from '@/schemas/user'
+
+// Helper to load queries dynamically
+const loadUserQueries = () => import('@repo/data-ops/queries/school-admin/users')
 
 /**
  * Get users for a specific school
@@ -17,6 +19,7 @@ export const getSchoolUsers = createServerFn()
 
     try {
       // Get users and total count
+      const { getUsersBySchool, countUsersBySchool } = await loadUserQueries()
       const [users, total] = await Promise.all([
         getUsersBySchool(schoolId, options),
         countUsersBySchool(schoolId, options),
@@ -32,8 +35,9 @@ export const getSchoolUsers = createServerFn()
         },
       }
     }
-    catch (error: any) {
+    catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error)
       console.error('Error fetching school users:', error)
-      throw new Error(error.message || 'Erreur lors de la récupération des utilisateurs')
+      throw new Error(message || 'Erreur lors de la récupération des utilisateurs')
     }
   })

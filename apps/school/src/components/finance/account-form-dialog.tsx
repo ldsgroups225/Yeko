@@ -59,10 +59,14 @@ const accountFormSchema = z.object({
 
 type AccountFormData = z.infer<typeof accountFormSchema>
 
+export interface Account extends AccountFormData {
+  id: string
+}
+
 interface AccountFormDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  initialData?: any
+  initialData?: Partial<Account>
 }
 
 export function AccountFormDialog({
@@ -111,7 +115,7 @@ export function AccountFormDialog({
       if (isEditing) {
         return updateExistingAccount({
           data: {
-            id: initialData.id,
+            id: initialData.id!,
             ...data,
           },
         })

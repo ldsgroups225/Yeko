@@ -1,20 +1,3 @@
-import {
-  createCrmActivity,
-  createCrmContact,
-  createCrmTask,
-  createTicket,
-  getCrmActivities,
-  getCrmContacts,
-  getCrmTasks,
-  getKnowledgeBaseArticles,
-  getRecentTickets,
-  getTicketById,
-  getTickets,
-  getTicketStats,
-  updateCrmContact,
-  updateCrmTask,
-  updateTicket,
-} from '@repo/data-ops/queries/support'
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 import { protectedFunctionMiddleware } from '@/core/middleware/auth'
@@ -28,6 +11,9 @@ import {
   UpdateTaskSchema,
   UpdateTicketSchema,
 } from '@/schemas/support'
+
+// Helper to load queries dynamically
+const loadSupportQueries = () => import('@repo/data-ops/queries/support')
 
 // ===== TICKET FUNCTIONS =====
 
@@ -44,6 +30,7 @@ export const ticketsQuery = createServerFn()
   .middleware([protectedFunctionMiddleware])
   .inputValidator(data => TicketFiltersSchema.parse(data))
   .handler(async (ctx) => {
+    const { getTickets } = await loadSupportQueries()
     const filters = ctx.data as z.infer<typeof TicketFiltersSchema>
     return await getTickets(filters, filters.limit ?? 50, filters.offset ?? 0)
   })
@@ -52,6 +39,7 @@ export const ticketByIdQuery = createServerFn()
   .middleware([protectedFunctionMiddleware])
   .inputValidator(data => TicketIdInputSchema.parse(data))
   .handler(async (ctx) => {
+    const { getTicketById } = await loadSupportQueries()
     const { id } = ctx.data as TicketIdInput
     return await getTicketById(id)
   })
@@ -60,6 +48,7 @@ export const ticketStatsQuery = createServerFn()
   .middleware([protectedFunctionMiddleware])
   .inputValidator(data => SchoolIdInputSchema.parse(data))
   .handler(async (ctx) => {
+    const { getTicketStats } = await loadSupportQueries()
     const { schoolId } = ctx.data as SchoolIdInput
     return await getTicketStats(schoolId)
   })
@@ -68,6 +57,7 @@ export const recentTicketsQuery = createServerFn()
   .middleware([protectedFunctionMiddleware])
   .inputValidator(data => LimitInputSchema.parse(data))
   .handler(async (ctx) => {
+    const { getRecentTickets } = await loadSupportQueries()
     const { limit } = ctx.data as LimitInput
     return await getRecentTickets(limit ?? 5)
   })
@@ -76,6 +66,7 @@ export const createTicketMutation = createServerFn()
   .middleware([protectedFunctionMiddleware])
   .inputValidator(data => CreateTicketSchema.parse(data))
   .handler(async (ctx) => {
+    const { createTicket } = await loadSupportQueries()
     return await createTicket(ctx.data)
   })
 
@@ -83,6 +74,7 @@ export const updateTicketMutation = createServerFn()
   .middleware([protectedFunctionMiddleware])
   .inputValidator(data => UpdateTicketSchema.parse(data))
   .handler(async (ctx) => {
+    const { updateTicket } = await loadSupportQueries()
     const { id, ...updateData } = ctx.data
     return await updateTicket(id, updateData)
   })
@@ -92,6 +84,7 @@ export const updateTicketMutation = createServerFn()
 export const knowledgeBaseQuery = createServerFn()
   .middleware([protectedFunctionMiddleware])
   .handler(async () => {
+    const { getKnowledgeBaseArticles } = await loadSupportQueries()
     return await getKnowledgeBaseArticles({}, 20, 0)
   })
 
@@ -103,6 +96,7 @@ export const contactsQuery = createServerFn()
   .middleware([protectedFunctionMiddleware])
   .inputValidator(data => ContactFiltersInputSchema.parse(data))
   .handler(async (ctx) => {
+    const { getCrmContacts } = await loadSupportQueries()
     return await getCrmContacts(ctx.data, 50, 0)
   })
 
@@ -113,6 +107,7 @@ export const contactByIdQuery = createServerFn()
   .middleware([protectedFunctionMiddleware])
   .inputValidator(data => ContactIdInputSchema.parse(data))
   .handler(async (ctx) => {
+    const { getCrmContacts } = await loadSupportQueries()
     const { id } = ctx.data as ContactIdInput
     const { contacts } = await getCrmContacts({ search: '' }, 1, 0)
     const contact = contacts.find(
@@ -125,6 +120,7 @@ export const createContactMutation = createServerFn()
   .middleware([protectedFunctionMiddleware])
   .inputValidator(data => CreateContactSchema.parse(data))
   .handler(async (ctx) => {
+    const { createCrmContact } = await loadSupportQueries()
     return await createCrmContact(ctx.data)
   })
 
@@ -132,6 +128,7 @@ export const updateContactMutation = createServerFn()
   .middleware([protectedFunctionMiddleware])
   .inputValidator(data => UpdateContactSchema.parse(data))
   .handler(async (ctx) => {
+    const { updateCrmContact } = await loadSupportQueries()
     const { id, ...updateData } = ctx.data
     return await updateCrmContact(id, updateData)
   })
@@ -148,6 +145,7 @@ export const activitiesQuery = createServerFn()
   .middleware([protectedFunctionMiddleware])
   .inputValidator(data => ActivityFiltersInputSchema.parse(data))
   .handler(async (ctx) => {
+    const { getCrmActivities } = await loadSupportQueries()
     const { contactId, schoolId } = ctx.data as ActivityFiltersInput
     return await getCrmActivities(contactId, schoolId, 20)
   })
@@ -156,6 +154,7 @@ export const createActivityMutation = createServerFn()
   .middleware([protectedFunctionMiddleware])
   .inputValidator(data => CreateActivitySchema.parse(data))
   .handler(async (ctx) => {
+    const { createCrmActivity } = await loadSupportQueries()
     return await createCrmActivity(ctx.data)
   })
 
@@ -164,6 +163,7 @@ export const createActivityMutation = createServerFn()
 export const tasksQuery = createServerFn()
   .middleware([protectedFunctionMiddleware])
   .handler(async (ctx) => {
+    const { getCrmTasks } = await loadSupportQueries()
     const filters = ctx.data ?? {}
     return await getCrmTasks(filters as Record<string, unknown>, 50, 0)
   })
@@ -172,6 +172,7 @@ export const createTaskMutation = createServerFn()
   .middleware([protectedFunctionMiddleware])
   .inputValidator(data => CreateTaskSchema.parse(data))
   .handler(async (ctx) => {
+    const { createCrmTask } = await loadSupportQueries()
     return await createCrmTask(ctx.data)
   })
 
@@ -179,6 +180,7 @@ export const updateTaskMutation = createServerFn()
   .middleware([protectedFunctionMiddleware])
   .inputValidator(data => UpdateTaskSchema.parse(data))
   .handler(async (ctx) => {
+    const { updateCrmTask } = await loadSupportQueries()
     const { id, ...updateData } = ctx.data
     return await updateCrmTask(id, updateData)
   })
@@ -190,6 +192,7 @@ export const completeTaskMutation = createServerFn()
   .middleware([protectedFunctionMiddleware])
   .inputValidator(data => TaskIdInputSchema.parse(data))
   .handler(async (ctx) => {
+    const { updateCrmTask } = await loadSupportQueries()
     const { id } = ctx.data as TaskIdInput
     return await updateCrmTask(id, { status: 'completed' })
   })

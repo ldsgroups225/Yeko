@@ -318,7 +318,7 @@ function TeacherDetailsPage() {
               <div className="flex flex-wrap gap-3">
                 {teacher.subjects && teacher.subjects.length > 0
                   ? (
-                      teacher.subjects.map((sub: any) => (
+                      teacher.subjects.map(sub => (
                         <Badge
                           key={sub.subjectId}
                           className="bg-primary/5 text-primary border-primary/20 px-4 py-2 text-sm font-semibold rounded-xl hover:bg-primary/10 transition-colors cursor-default"

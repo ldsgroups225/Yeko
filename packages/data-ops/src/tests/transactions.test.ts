@@ -1,12 +1,10 @@
+import { getDb } from '@repo/data-ops/database/setup'
 /**
  * Transaction Testing: Section 7.2
  * Bulk Operations, Cascade Operations, and Concurrent Operations Tests
  * Using vitest with node environment
  */
 
-import { eq } from 'drizzle-orm'
-import { afterAll, beforeAll, describe, expect, test } from 'vitest'
-import { getDb } from '@/database/setup'
 import {
   coefficientTemplates,
   educationLevels,
@@ -15,7 +13,7 @@ import {
   schoolYearTemplates,
   subjects,
   tracks,
-} from '@/drizzle/core-schema'
+} from '@repo/data-ops/drizzle/core-schema'
 import {
   createGrade,
   createSerie,
@@ -23,20 +21,23 @@ import {
   deleteSerie,
   getGrades,
   getSeries,
-} from '@/queries/catalogs'
+} from '@repo/data-ops/queries/catalogs'
 import {
   bulkUpdateCoefficients,
   createCoefficientTemplate,
   getCoefficientTemplates,
-} from '@/queries/coefficients'
+} from '@repo/data-ops/queries/coefficients'
 import {
   createProgramTemplate,
   deleteProgramTemplate,
-} from '@/queries/programs'
+} from '@repo/data-ops/queries/programs'
 import {
   createSchool,
   deleteSchool,
-} from '@/queries/schools'
+} from '@repo/data-ops/queries/schools'
+import { eq } from 'drizzle-orm'
+import { nanoid } from 'nanoid'
+import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 
 // ============================================================================
 // 7.2 TRANSACTION TESTING
@@ -72,7 +73,7 @@ describe('7.2 Transaction Testing', () => {
       const [newTrack] = await db
         .insert(tracks)
         .values({
-          id: crypto.randomUUID(),
+          id: nanoid(),
           name: 'Transaction Track',
           code: 'TT001',
           educationLevelId: eduLevel!.id,
@@ -92,7 +93,7 @@ describe('7.2 Transaction Testing', () => {
       const [newYear] = await db
         .insert(schoolYearTemplates)
         .values({
-          id: crypto.randomUUID(),
+          id: nanoid(),
           name: 'Transaction Year',
           isActive: true,
           createdAt: new Date(),
@@ -111,7 +112,7 @@ describe('7.2 Transaction Testing', () => {
       const [newSubject] = await db
         .insert(subjects)
         .values({
-          id: crypto.randomUUID(),
+          id: nanoid(),
           name: 'Transaction Subject',
           shortName: 'TS',
           category: 'Scientifique',
@@ -330,7 +331,7 @@ describe('7.2 Transaction Testing', () => {
         const [chapter] = await db
           .insert(programTemplateChapters)
           .values({
-            id: crypto.randomUUID(),
+            id: nanoid(),
             programTemplateId: program.id,
             title: `Chapter ${i}`,
             order: i,
@@ -369,7 +370,7 @@ describe('7.2 Transaction Testing', () => {
       const [newTrack] = await db
         .insert(tracks)
         .values({
-          id: crypto.randomUUID(),
+          id: nanoid(),
           name: 'Atomic Cascade Track',
           code: `ACT${Date.now()}`,
           educationLevelId: eduLevel!.id,

@@ -1,8 +1,7 @@
-import type { PaymentPlanTemplate, PaymentPlanTemplateInsert } from '@/drizzle/school-schema'
+import type { PaymentPlanTemplate, PaymentPlanTemplateInsert } from '../drizzle/school-schema'
 import { and, eq } from 'drizzle-orm'
-import { nanoid } from 'nanoid'
-import { getDb } from '@/database/setup'
-import { paymentPlanTemplates } from '@/drizzle/school-schema'
+import { getDb } from '../database/setup'
+import { paymentPlanTemplates } from '../drizzle/school-schema'
 
 export interface GetPaymentPlanTemplatesParams {
   schoolId: string
@@ -45,7 +44,7 @@ export type CreatePaymentPlanTemplateData = Omit<PaymentPlanTemplateInsert, 'id'
 
 export async function createPaymentPlanTemplate(data: CreatePaymentPlanTemplateData): Promise<PaymentPlanTemplate> {
   const db = getDb()
-  const [template] = await db.insert(paymentPlanTemplates).values({ id: nanoid(), ...data }).returning()
+  const [template] = await db.insert(paymentPlanTemplates).values({ id: crypto.randomUUID(), ...data }).returning()
   if (!template) {
     throw new Error('Failed to create payment plan template')
   }
@@ -78,17 +77,15 @@ export async function setDefaultPaymentPlanTemplate(
   templateId: string,
 ): Promise<void> {
   const db = getDb()
-  await db.transaction(async (tx: any) => {
-    // Remove default from all templates for this school/year
-    await tx
-      .update(paymentPlanTemplates)
-      .set({ isDefault: false, updatedAt: new Date() })
-      .where(and(eq(paymentPlanTemplates.schoolId, schoolId), eq(paymentPlanTemplates.schoolYearId, schoolYearId)))
+  // Remove default from all templates for this school/year
+  await db
+    .update(paymentPlanTemplates)
+    .set({ isDefault: false, updatedAt: new Date() })
+    .where(and(eq(paymentPlanTemplates.schoolId, schoolId), eq(paymentPlanTemplates.schoolYearId, schoolYearId)))
 
-    // Set the new default
-    await tx
-      .update(paymentPlanTemplates)
-      .set({ isDefault: true, updatedAt: new Date() })
-      .where(eq(paymentPlanTemplates.id, templateId))
-  })
+  // Set the new default
+  await db
+    .update(paymentPlanTemplates)
+    .set({ isDefault: true, updatedAt: new Date() })
+    .where(eq(paymentPlanTemplates.id, templateId))
 }

@@ -80,7 +80,7 @@ function MessagesPage() {
             : data?.messages && data.messages.length > 0
               ? (
                   <div className="space-y-2">
-                    {data.messages.map((message: any) => (
+                    {data.messages.map(message => (
                       <MessageItem
                         key={message.id}
                         message={message}

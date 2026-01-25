@@ -1,6 +1,6 @@
 import { and, desc, eq, ilike } from 'drizzle-orm'
-import { getDb } from '@/database/setup'
-import { classrooms } from '@/drizzle/school-schema'
+import { getDb } from '../../database/setup'
+import { classrooms } from '../../drizzle/school-schema'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
 
 export async function getClassroomsBySchool(

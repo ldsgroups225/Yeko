@@ -1,3 +1,4 @@
+import type { TimetableSessionData } from '@/components/timetables/timetable-session-card'
 import { IconCalendar } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { TimetableGrid } from '@/components/timetables/timetable-grid'
@@ -18,12 +19,18 @@ export function TeacherTimetable({ teacherId }: TeacherTimetableProps) {
     enabled: !!teacherId && !!schoolYearId,
   })
 
-  const formattedSessions = sessions?.map(session => ({
-    ...session,
-    title: `${session.subject?.shortName} - ${session.class?.grade?.code} ${session.class?.section}`,
-    subtitle: session.classroom?.name,
+  const formattedSessions: TimetableSessionData[] = (sessions || []).map(session => ({
+    id: session.id,
+    subjectId: session.subjectId,
+    subjectName: session.subject?.name || '',
+    teacherId: session.teacherId,
+    teacherName: '', // Not needed for teacher-view
+    dayOfWeek: session.dayOfWeek,
+    startTime: session.startTime,
+    endTime: session.endTime,
+    classroomName: session.classroom?.name || undefined,
     color: 'primary',
-  })) || []
+  }))
 
   if (isLoading) {
     return (
@@ -47,7 +54,7 @@ export function TeacherTimetable({ teacherId }: TeacherTimetableProps) {
   return (
     <div className="rounded-2xl border border-border/40 bg-card/20 p-4 shadow-sm backdrop-blur-sm">
       <TimetableGrid
-        sessions={formattedSessions as any}
+        sessions={formattedSessions}
         readOnly
       />
     </div>

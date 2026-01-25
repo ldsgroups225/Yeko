@@ -193,7 +193,7 @@ function ProgramsCatalog() {
     })
   }
 
-  const activeYear = schoolYears?.find((y: any) => y.isActive)
+  const activeYear = schoolYears?.find(y => y.isActive)
 
   if (yearsLoading || statsLoading) {
     return (
@@ -299,7 +299,7 @@ function ProgramsCatalog() {
                       <SelectValue placeholder="Sélectionner l'année">
                         {newProgramYear
                           ? (() => {
-                              const year = schoolYears?.find((y: any) => y.id === newProgramYear)
+                              const year = schoolYears?.find(y => y.id === newProgramYear)
                               return year
                                 ? (
                                     <div className="flex items-center gap-2">
@@ -313,7 +313,7 @@ function ProgramsCatalog() {
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
-                      {schoolYears?.map((year: any) => (
+                      {schoolYears?.map(year => (
                         <SelectItem key={year.id} value={year.id}>
                           {year.name}
                           {year.isActive && ' (Active)'}
@@ -399,7 +399,7 @@ function ProgramsCatalog() {
                   {yearFilter === 'all'
                     ? 'Toutes les années'
                     : (() => {
-                        const year = schoolYears?.find((y: any) => y.id === yearFilter)
+                        const year = schoolYears?.find(y => y.id === yearFilter)
                         return year
                           ? (
                               <div className="flex items-center gap-2">
@@ -413,7 +413,7 @@ function ProgramsCatalog() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Toutes les années</SelectItem>
-                {schoolYears?.map((year: any) => (
+                {schoolYears?.map(year => (
                   <SelectItem key={year.id} value={year.id}>
                     {year.name}
                   </SelectItem>
@@ -504,7 +504,7 @@ function ProgramsCatalog() {
                 : (
                     <div className="space-y-4">
                       <AnimatePresence mode="popLayout">
-                        {programsData.programs.map((program: any) => (
+                        {programsData.programs.map(program => (
                           <motion.div
                             key={program.id}
                             layout
@@ -600,7 +600,7 @@ function ProgramsCatalog() {
                       <SelectValue placeholder="Sélectionner l'année">
                         {cloneProgramYear
                           ? (() => {
-                              const year = schoolYears?.find((y: any) => y.id === cloneProgramYear)
+                              const year = schoolYears?.find(y => y.id === cloneProgramYear)
                               return year
                                 ? (
                                     <div className="flex items-center gap-2">
@@ -614,7 +614,7 @@ function ProgramsCatalog() {
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
-                      {schoolYears?.map((year: any) => (
+                      {schoolYears?.map(year => (
                         <SelectItem key={year.id} value={year.id}>
                           {year.name}
                         </SelectItem>

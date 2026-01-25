@@ -1,5 +1,4 @@
 import { and, eq, sql } from 'drizzle-orm'
-import { nanoid } from 'nanoid'
 import { getDb } from '../database/setup'
 import { grades, subjects } from '../drizzle/core-schema'
 import {
@@ -117,7 +116,7 @@ export async function assignTeacherToClassSubject(classId: string, subjectId: st
   }
   else {
     // Create new assignment
-    const [created] = await db.insert(classSubjects).values({ id: nanoid(), classId, subjectId, teacherId }).returning()
+    const [created] = await db.insert(classSubjects).values({ id: crypto.randomUUID(), classId, subjectId, teacherId }).returning()
     return created
   }
 }
@@ -126,44 +125,42 @@ export async function bulkAssignTeacher(
   assignments: Array<{ classId: string, subjectId: string, teacherId: string }>,
 ) {
   const db = getDb()
-  return await db.transaction(async (tx: any) => {
-    const results = []
+  const results = []
 
-    for (const assignment of assignments) {
-      // Validate teacher qualification
-      const [teacherSubject] = await tx
-        .select()
-        .from(teacherSubjects)
-        .where(and(eq(teacherSubjects.teacherId, assignment.teacherId), eq(teacherSubjects.subjectId, assignment.subjectId)))
-        .limit(1)
+  for (const assignment of assignments) {
+    // Validate teacher qualification
+    const [teacherSubject] = await db
+      .select()
+      .from(teacherSubjects)
+      .where(and(eq(teacherSubjects.teacherId, assignment.teacherId), eq(teacherSubjects.subjectId, assignment.subjectId)))
+      .limit(1)
 
-      if (!teacherSubject) {
-        throw new Error(`Teacher not qualified for subject ${assignment.subjectId}`)
-      }
-
-      // Upsert assignment
-      const [existing] = await tx
-        .select()
-        .from(classSubjects)
-        .where(and(eq(classSubjects.classId, assignment.classId), eq(classSubjects.subjectId, assignment.subjectId)))
-        .limit(1)
-
-      if (existing) {
-        const [updated] = await tx
-          .update(classSubjects)
-          .set({ teacherId: assignment.teacherId, updatedAt: new Date() })
-          .where(eq(classSubjects.id, existing.id))
-          .returning()
-        results.push(updated)
-      }
-      else {
-        const [created] = await tx.insert(classSubjects).values({ id: nanoid(), ...assignment }).returning()
-        results.push(created)
-      }
+    if (!teacherSubject) {
+      throw new Error(`Teacher not qualified for subject ${assignment.subjectId}`)
     }
 
-    return results
-  })
+    // Upsert assignment
+    const [existing] = await db
+      .select()
+      .from(classSubjects)
+      .where(and(eq(classSubjects.classId, assignment.classId), eq(classSubjects.subjectId, assignment.subjectId)))
+      .limit(1)
+
+    if (existing) {
+      const [updated] = await db
+        .update(classSubjects)
+        .set({ teacherId: assignment.teacherId, updatedAt: new Date() })
+        .where(eq(classSubjects.id, existing.id))
+        .returning()
+      results.push(updated)
+    }
+    else {
+      const [created] = await db.insert(classSubjects).values({ id: crypto.randomUUID(), ...assignment }).returning()
+      results.push(created)
+    }
+  }
+
+  return results
 }
 
 export async function removeTeacherFromClassSubject(classId: string, subjectId: string) {
@@ -278,65 +275,58 @@ export async function copyClassSubjects(
 ) {
   const db = getDb()
 
-  return await db.transaction(async (tx: any) => {
-    // 1. Get source subjects
-    const sourceSubjects = await tx
+  // 1. Get source subjects
+  const sourceSubjects = await db
+    .select()
+    .from(classSubjects)
+    .where(eq(classSubjects.classId, sourceClassId))
+
+  if (sourceSubjects.length === 0) {
+    return []
+  }
+
+  const results = []
+
+  // 2. Process each subject
+  for (const subject of sourceSubjects) {
+    // Check if target already has this subject
+    const [existing] = await db
       .select()
       .from(classSubjects)
-      .where(eq(classSubjects.classId, sourceClassId))
+      .where(and(eq(classSubjects.classId, targetClassId), eq(classSubjects.subjectId, subject.subjectId)))
+      .limit(1)
 
-    if (sourceSubjects.length === 0) {
-      return []
-    }
-
-    const results = []
-
-    // 2. Process each subject
-    for (const subject of sourceSubjects) {
-      // Check if target already has this subject
-      const [existing] = await tx
-        .select()
-        .from(classSubjects)
-        .where(and(eq(classSubjects.classId, targetClassId), eq(classSubjects.subjectId, subject.subjectId)))
-        .limit(1)
-
-      if (existing) {
-        if (options.overwrite) {
-          // Update existing with source configuration (coefficient, hours)
-          // Keep the existing teacher assignment unless we decide to copy that too (usually not for new year/class)
-          // For now, let's keep teacherId null or existing to avoid conflicts.
-          // Let's copy coefficient and hours only.
-          const [updated] = await tx
-            .update(classSubjects)
-            .set({
-              coefficient: subject.coefficient,
-              hoursPerWeek: subject.hoursPerWeek,
-              updatedAt: new Date(),
-            })
-            .where(eq(classSubjects.id, existing.id))
-            .returning()
-          results.push(updated)
-        }
-        // If not overwrite, skip
-      }
-      else {
-        // Create new assignment
-        const [created] = await tx
-          .insert(classSubjects)
-          .values({
-            id: crypto.randomUUID(),
-            classId: targetClassId,
-            subjectId: subject.subjectId,
-            teacherId: null, // Don't copy teacher assignment by default
+    if (existing) {
+      if (options.overwrite) {
+        const [updated] = await db
+          .update(classSubjects)
+          .set({
             coefficient: subject.coefficient,
             hoursPerWeek: subject.hoursPerWeek,
-            status: subject.status,
+            updatedAt: new Date(),
           })
+          .where(eq(classSubjects.id, existing.id))
           .returning()
-        results.push(created)
+        results.push(updated)
       }
     }
+    else {
+      // Create new assignment
+      const [created] = await db
+        .insert(classSubjects)
+        .values({
+          id: crypto.randomUUID(),
+          classId: targetClassId,
+          subjectId: subject.subjectId,
+          teacherId: null, // Don't copy teacher assignment by default
+          coefficient: subject.coefficient,
+          hoursPerWeek: subject.hoursPerWeek,
+          status: subject.status,
+        })
+        .returning()
+      results.push(created)
+    }
+  }
 
-    return results
-  })
+  return results
 }

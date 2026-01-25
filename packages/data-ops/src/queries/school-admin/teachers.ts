@@ -1,6 +1,6 @@
 import { and, count, desc, eq, ilike, or, sql } from 'drizzle-orm'
-import { getDb } from '@/database/setup'
-import { grades, series, subjects } from '@/drizzle/core-schema'
+import { getDb } from '../../database/setup'
+import { grades, series, subjects } from '../../drizzle/core-schema'
 import {
   classes,
   classrooms,
@@ -8,7 +8,7 @@ import {
   teachers,
   teacherSubjects,
   users,
-} from '@/drizzle/school-schema'
+} from '../../drizzle/school-schema'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
 
 export async function getTeachersBySchool(

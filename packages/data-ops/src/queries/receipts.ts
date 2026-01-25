@@ -1,8 +1,7 @@
-import type { Receipt, ReceiptInsert } from '@/drizzle/school-schema'
+import type { Receipt, ReceiptInsert } from '../drizzle/school-schema'
 import { and, desc, eq, gte, lte } from 'drizzle-orm'
-import { nanoid } from 'nanoid'
-import { getDb } from '@/database/setup'
-import { receipts } from '@/drizzle/school-schema'
+import { getDb } from '../database/setup'
+import { receipts } from '../drizzle/school-schema'
 
 export interface GetReceiptsParams {
   paymentId?: string
@@ -54,7 +53,7 @@ export type CreateReceiptData = Omit<ReceiptInsert, 'id' | 'createdAt'>
 
 export async function createReceipt(data: CreateReceiptData): Promise<Receipt> {
   const db = getDb()
-  const [receipt] = await db.insert(receipts).values({ id: nanoid(), ...data }).returning()
+  const [receipt] = await db.insert(receipts).values({ id: crypto.randomUUID(), ...data }).returning()
   if (!receipt) {
     throw new Error('Failed to create receipt')
   }

@@ -1,7 +1,7 @@
 import { and, count, desc, eq, ilike, inArray, isNull, or, sql } from 'drizzle-orm'
-import { getDb } from '@/database/setup'
-import { schools } from '@/drizzle/core-schema'
-import { auditLogs, roles, userRoles, users, userSchools } from '@/drizzle/school-schema'
+import { getDb } from '../../database/setup'
+import { schools } from '../../drizzle/core-schema'
+import { auditLogs, roles, userRoles, users, userSchools } from '../../drizzle/school-schema'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
 
 // Re-export audit functions for convenience
@@ -304,27 +304,25 @@ export async function assignRolesToUser(userId: string, schoolId: string, roleId
 
   const db = getDb()
 
-  return db.transaction(async (tx: any) => {
-    // Remove existing roles for this school
-    await tx.delete(userRoles).where(and(
-      eq(userRoles.userId, userId),
-      eq(userRoles.schoolId, schoolId),
-    ))
+  // Remove existing roles for this school
+  await db.delete(userRoles).where(and(
+    eq(userRoles.userId, userId),
+    eq(userRoles.schoolId, schoolId),
+  ))
 
-    // Add new roles
-    if (roleIds.length > 0) {
-      await tx.insert(userRoles).values(
-        roleIds.map(roleId => ({
-          id: crypto.randomUUID(),
-          userId,
-          roleId,
-          schoolId,
-        })),
-      )
-    }
+  // Add new roles
+  if (roleIds.length > 0) {
+    await db.insert(userRoles).values(
+      roleIds.map(roleId => ({
+        id: crypto.randomUUID(),
+        userId,
+        roleId,
+        schoolId,
+      })),
+    )
+  }
 
-    return getUserWithRoles(userId, schoolId)
-  })
+  return getUserWithRoles(userId, schoolId)
 }
 
 export async function getUserSchoolsByUserId(userId: string) {
@@ -452,34 +450,34 @@ export async function bulkUpdateUsersStatus(
 
   const db = getDb()
 
-  return db.transaction(async (tx: any) => {
-    // Update users
-    const updated = await tx
-      .update(users)
-      .set({
-        status,
-        updatedAt: new Date(),
-      })
-      .where(inArray(users.id, userIds))
-      .returning()
+  // Update users
+  const updated = await db
+    .update(users)
+    .set({
+      status,
+      updatedAt: new Date(),
+    })
+    .where(inArray(users.id, userIds))
+    .returning()
 
-    // Log audit for each user
-    for (const user of updated) {
-      await tx.insert(auditLogs).values({
+  // Log audit for each user
+  if (updated.length > 0) {
+    await db.insert(auditLogs).values(
+      updated.map(user => ({
         id: crypto.randomUUID(),
         schoolId,
         userId: performedBy,
-        action: 'update',
+        action: 'update' as const,
         tableName: 'users',
         recordId: user.id,
         oldValues: { status: user.status },
         newValues: { status },
         createdAt: new Date(),
-      })
-    }
+      })),
+    )
+  }
 
-    return { success: updated.length, failed: userIds.length - updated.length }
-  })
+  return { success: updated.length, failed: userIds.length - updated.length }
 }
 
 // Phase 11: Bulk delete users (soft delete)
@@ -494,34 +492,34 @@ export async function bulkDeleteUsers(userIds: string[], schoolId: string, perfo
 
   const db = getDb()
 
-  return db.transaction(async (tx: any) => {
-    // Soft delete users
-    const deleted = await tx
-      .update(users)
-      .set({
-        deletedAt: new Date(),
-        updatedAt: new Date(),
-      })
-      .where(inArray(users.id, userIds))
-      .returning()
+  // Soft delete users
+  const deleted = await db
+    .update(users)
+    .set({
+      deletedAt: new Date(),
+      updatedAt: new Date(),
+    })
+    .where(inArray(users.id, userIds))
+    .returning()
 
-    // Log audit for each user
-    for (const user of deleted) {
-      await tx.insert(auditLogs).values({
+  // Log audit for each user
+  if (deleted.length > 0) {
+    await db.insert(auditLogs).values(
+      deleted.map(user => ({
         id: crypto.randomUUID(),
         schoolId,
         userId: performedBy,
-        action: 'delete',
+        action: 'delete' as const,
         tableName: 'users',
         recordId: user.id,
         oldValues: { deletedAt: null },
         newValues: { deletedAt: new Date() },
         createdAt: new Date(),
-      })
-    }
+      })),
+    )
+  }
 
-    return { success: deleted.length, failed: userIds.length - deleted.length }
-  })
+  return { success: deleted.length, failed: userIds.length - deleted.length }
 }
 
 // Phase 11: Check email uniqueness within school
@@ -607,7 +605,8 @@ export async function updateLastLogin(userId: string) {
 }
 
 // Sync user auth data - updates authUserId and lastLoginAt when user logs in
-export async function syncUserAuthOnLogin(authUserId: string, email: string) {
+// Auto-creates user account if they don't exist (registration flow)
+export async function syncUserAuthOnLogin(authUserId: string, email: string, name?: string) {
   const db = getDb()
 
   // Find user by email
@@ -617,11 +616,24 @@ export async function syncUserAuthOnLogin(authUserId: string, email: string) {
     .where(and(eq(users.email, email), isNull(users.deletedAt)))
     .limit(1)
 
+  // If user doesn't exist, create a new account (registration flow)
   if (!existingUser) {
-    return null // User doesn't exist in school system
+    const [newUser] = await db
+      .insert(users)
+      .values({
+        id: crypto.randomUUID(),
+        email,
+        name: name || email.split('@')[0] || 'User', // Use name from Google or derive from email
+        authUserId,
+        status: 'active',
+        lastLoginAt: new Date(),
+      })
+      .returning()
+
+    return newUser?.id || null
   }
 
-  // Update authUserId if different and update lastLoginAt
+  // Update authUserId if different and update lastLoginAt (login flow)
   const updates: { authUserId?: string, lastLoginAt: Date, updatedAt: Date } = {
     lastLoginAt: new Date(),
     updatedAt: new Date(),
@@ -657,4 +669,209 @@ export async function getUserIdFromAuthUserId(authUserId: string): Promise<strin
     .limit(1)
 
   return user?.id ?? null
+}
+/**
+ * Get system-scoped roles for a user by their auth user ID
+ */
+export async function getUserSystemRolesByAuthUserId(authUserId: string) {
+  if (!authUserId) {
+    return []
+  }
+
+  const db = getDb()
+
+  const systemRoles = await db
+    .select({
+      slug: roles.slug,
+    })
+    .from(userRoles)
+    .innerJoin(roles, eq(userRoles.roleId, roles.id))
+    .innerJoin(users, eq(userRoles.userId, users.id))
+    .where(
+      and(
+        eq(users.authUserId, authUserId),
+        isNull(users.deletedAt),
+        eq(roles.scope, 'system'),
+      ),
+    )
+
+  return systemRoles.map(r => r.slug)
+}
+
+/**
+ * Get aggregated system-scoped permissions for a user
+ */
+export async function getUserSystemPermissionsByAuthUserId(authUserId: string) {
+  if (!authUserId) {
+    return {}
+  }
+
+  const db = getDb()
+
+  const systemRoles = await db
+    .select({
+      permissions: roles.permissions,
+    })
+    .from(userRoles)
+    .innerJoin(roles, eq(userRoles.roleId, roles.id))
+    .innerJoin(users, eq(userRoles.userId, users.id))
+    .where(
+      and(
+        eq(users.authUserId, authUserId),
+        isNull(users.deletedAt),
+        eq(roles.scope, 'system'),
+      ),
+    )
+
+  const { mergePermissions } = await import('../../auth/permissions')
+  return mergePermissions(systemRoles.map(r => r.permissions))
+}
+/**
+ * Get all users in the system (platform-wide) with their system roles
+ */
+export async function getSystemUsers(options?: {
+  search?: string
+  status?: 'active' | 'inactive' | 'suspended'
+  limit?: number
+  offset?: number
+}) {
+  const limit = Math.min(options?.limit || PAGINATION.DEFAULT_LIMIT, PAGINATION.MAX_LIMIT)
+  const offset = options?.offset || 0
+
+  const conditions = [isNull(users.deletedAt)]
+
+  if (options?.status) {
+    conditions.push(eq(users.status, options.status))
+  }
+
+  if (options?.search) {
+    conditions.push(
+      or(
+        ilike(users.name, `%${options.search}%`),
+        ilike(users.email, `%${options.search}%`),
+        ilike(users.phone, `%${options.search}%`),
+      )!,
+    )
+  }
+
+  const db = getDb()
+
+  const query = db
+    .select({
+      id: users.id,
+      email: users.email,
+      name: users.name,
+      phone: users.phone,
+      avatarUrl: users.avatarUrl,
+      status: users.status,
+      lastLoginAt: users.lastLoginAt,
+      createdAt: users.createdAt,
+      updatedAt: users.updatedAt,
+      // Aggregated system roles only
+      systemRoles: sql<string[]>`COALESCE(array_agg(DISTINCT ${roles.slug}) FILTER (WHERE ${roles.scope} = 'system'), ARRAY[]::text[])`,
+    })
+    .from(users)
+    .leftJoin(userRoles, eq(userRoles.userId, users.id))
+    .leftJoin(roles, eq(roles.id, userRoles.roleId))
+    .where(and(...conditions))
+    .groupBy(users.id)
+    .orderBy(desc(users.createdAt))
+    .limit(limit)
+    .offset(offset)
+
+  return query
+}
+
+/**
+ * Count total users in the system for pagination
+ */
+export async function countSystemUsers(options?: {
+  search?: string
+  status?: 'active' | 'inactive' | 'suspended'
+}) {
+  const conditions = [isNull(users.deletedAt)]
+
+  if (options?.status) {
+    conditions.push(eq(users.status, options.status))
+  }
+
+  if (options?.search) {
+    conditions.push(
+      or(
+        ilike(users.name, `%${options.search}%`),
+        ilike(users.email, `%${options.search}%`),
+        ilike(users.phone, `%${options.search}%`),
+      )!,
+    )
+  }
+
+  const db = getDb()
+
+  const [result] = await db
+    .select({ count: count() })
+    .from(users)
+    .where(and(...conditions))
+
+  return result?.count || 0
+}
+
+/**
+ * Assign system-scoped roles to a user (no school context)
+ */
+export async function assignSystemRolesToUser(userId: string, roleIds: string[]) {
+  const db = getDb()
+
+  // Remove existing SYSTEM roles for this user (where schoolId is NULL)
+  // First, find IDs of current system roles for this user to avoid deleting school-specific roles
+  const existingSystemRoleMappings = await db
+    .select({ id: userRoles.id })
+    .from(userRoles)
+    .innerJoin(roles, eq(userRoles.roleId, roles.id))
+    .where(and(
+      eq(userRoles.userId, userId),
+      eq(roles.scope, 'system'),
+      isNull(userRoles.schoolId),
+    ))
+
+  if (existingSystemRoleMappings.length > 0) {
+    await db.delete(userRoles).where(
+      inArray(userRoles.id, existingSystemRoleMappings.map((m: any) => m.id)),
+    )
+  }
+
+  // Add new system roles
+  if (roleIds.length > 0) {
+    await db.insert(userRoles).values(
+      roleIds.map(roleId => ({
+        id: crypto.randomUUID(),
+        userId,
+        roleId,
+        schoolId: null, // System scope
+      })),
+    )
+  }
+  return { success: true }
+}
+
+/**
+ * Update a user's base information without school context
+ */
+export async function updateSystemUser(userId: string, data: {
+  name?: string
+  phone?: string
+  avatarUrl?: string
+  status?: 'active' | 'inactive' | 'suspended'
+}) {
+  const db = getDb()
+
+  const [updated] = await db
+    .update(users)
+    .set({
+      ...data,
+      updatedAt: new Date(),
+    })
+    .where(eq(users.id, userId))
+    .returning()
+
+  return updated
 }

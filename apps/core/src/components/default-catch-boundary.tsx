@@ -110,19 +110,21 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
           {/* Error Details (Collapsible) */}
           {hasStack && (
             <Collapsible open={showDetails} onOpenChange={setShowDetails}>
-              <CollapsibleTrigger>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
-                >
-                  <IconBug className="h-4 w-4" />
-                  Technical Details
-                  <IconChevronDown
-                    className={`h-4 w-4 transition-transform duration-200 ${showDetails ? 'rotate-180' : ''}`}
-                  />
-                </Button>
-              </CollapsibleTrigger>
+              <CollapsibleTrigger
+                render={triggerProps => (
+                  <button
+                    {...triggerProps}
+                    type="button"
+                    className="flex items-center gap-2 text-muted-foreground hover:text-foreground text-sm font-medium px-3 py-2 rounded-md hover:bg-accent transition-colors"
+                  >
+                    <IconBug className="h-4 w-4" />
+                    Technical Details
+                    <IconChevronDown
+                      className={`h-4 w-4 transition-transform duration-200 ${showDetails ? 'rotate-180' : ''}`}
+                    />
+                  </button>
+                )}
+              />
               <CollapsibleContent className="space-y-2">
                 <div className="rounded-lg bg-muted p-4">
                   <h4 className="text-sm font-medium mb-2">

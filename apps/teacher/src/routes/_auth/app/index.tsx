@@ -78,7 +78,7 @@ function DashboardPage() {
           {data?.todaySchedule && data.todaySchedule.length > 0
             ? (
                 <div className="space-y-2">
-                  {data.todaySchedule.map((session: any) => (
+                  {data.todaySchedule.map(session => (
                     <ScheduleItem key={session.id} session={session} />
                   ))}
                 </div>
@@ -152,7 +152,7 @@ function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              {data.upcomingClasses.map((cls: any) => (
+              {data.upcomingClasses.map(cls => (
                 <div
                   key={cls.id}
                   className="flex items-center justify-between rounded-lg bg-muted/50 p-2"

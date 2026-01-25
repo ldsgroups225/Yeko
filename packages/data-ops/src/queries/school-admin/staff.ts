@@ -1,6 +1,6 @@
 import { and, count, desc, eq, ilike, or } from 'drizzle-orm'
-import { getDb } from '@/database/setup'
-import { staff, users } from '@/drizzle/school-schema'
+import { getDb } from '../../database/setup'
+import { staff, users } from '../../drizzle/school-schema'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
 
 export async function getStaffBySchool(

@@ -1,3 +1,5 @@
+import type { TablerIcon } from '@tabler/icons-react'
+import type { TranslationFunctions } from '@/i18n'
 import { IconCircleCheck, IconClock, IconDeviceFloppy, IconSearch, IconUserCheck, IconUserMinus, IconUserX } from '@tabler/icons-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
 import { Button } from '@workspace/ui/components/button'
@@ -41,8 +43,8 @@ interface StudentAttendanceGridProps {
 }
 
 const statusConfig: Record<StudentAttendanceStatus, {
-  label: (t: any) => string
-  icon: any
+  label: (t: TranslationFunctions) => string
+  icon: TablerIcon
   color: string
   bgColor: string
   borderColor: string
@@ -305,7 +307,7 @@ export function StudentAttendanceGrid({
   )
 }
 
-function SummaryCard({ label, count, config }: { label: string, count: number, config: any }) {
+function SummaryCard({ label, count, config }: { label: string, count: number, config: typeof statusConfig[StudentAttendanceStatus] }) {
   const Icon = config.icon
   return (
     <div className={cn(
@@ -325,7 +327,7 @@ function SummaryCard({ label, count, config }: { label: string, count: number, c
   )
 }
 
-function StatusButton({ active, onClick, config }: { active: boolean, onClick: () => void, config: any }) {
+function StatusButton({ active, onClick, config }: { active: boolean, onClick: () => void, config: typeof statusConfig[StudentAttendanceStatus] }) {
   const Icon = config.icon
   return (
     <Button

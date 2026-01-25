@@ -1,17 +1,16 @@
-import type { Enrollment, EnrollmentInsert } from '../drizzle/school-schema'
+import type { Enrollment, EnrollmentInsert, EnrollmentStatus } from '../drizzle/school-schema'
 import crypto from 'node:crypto'
 import { and, desc, eq, inArray, ne, or, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import { grades, series } from '../drizzle/core-schema'
 import { classes, enrollments, schoolYears, students, users } from '../drizzle/school-schema'
 
-const nanoid = () => crypto.randomUUID()
 // ==================== Types ====================
 export interface EnrollmentFilters {
   schoolId: string
   schoolYearId?: string
   classId?: string
-  status?: string
+  status?: EnrollmentStatus
   search?: string
   page?: number
   limit?: number
@@ -41,7 +40,7 @@ export async function getEnrollments(filters: EnrollmentFilters) {
     conditions.push(eq(enrollments.classId, classId))
   }
   if (status) {
-    conditions.push(eq(enrollments.status, status as any))
+    conditions.push(eq(enrollments.status, status))
   }
   if (search) {
     conditions.push(
@@ -165,7 +164,7 @@ export async function createEnrollment(data: CreateEnrollmentInput): Promise<Enr
   const [enrollment] = await db
     .insert(enrollments)
     .values({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       ...data,
       enrollmentDate: data.enrollmentDate || new Date().toISOString().split('T')[0],
       rollNumber,
@@ -266,7 +265,7 @@ export async function transferStudent(data: TransferInput, userId: string): Prom
   const [newEnrollment] = await db
     .insert(enrollments)
     .values({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       studentId: currentEnrollment.studentId,
       classId: newClassId,
       schoolYearId: currentEnrollment.schoolYearId,
@@ -389,7 +388,7 @@ export async function bulkReEnroll(
     rollMap.set(targetClass.id, nextRoll)
 
     toInsert.push({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       studentId: student.id,
       classId: targetClass.id,
       schoolYearId: toYearId,

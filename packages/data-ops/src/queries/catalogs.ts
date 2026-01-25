@@ -5,16 +5,16 @@ import type {
   Subject,
   SubjectCategory,
   Track,
-} from '@/drizzle/core-schema'
+} from '../drizzle/core-schema'
 import { and, asc, count, eq, ilike, or } from 'drizzle-orm'
-import { getDb } from '@/database/setup'
+import { getDb } from '../database/setup'
 import {
   educationLevels,
   grades,
   series,
   subjects,
   tracks,
-} from '@/drizzle/core-schema'
+} from '../drizzle/core-schema'
 
 // ===== EDUCATION LEVELS =====
 

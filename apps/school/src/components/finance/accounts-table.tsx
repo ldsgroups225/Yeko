@@ -28,7 +28,7 @@ import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { generateUUID } from '@/utils/generateUUID'
 
-interface Account {
+export interface AccountsTableItem {
   id: string
   code: string
   name: string
@@ -40,10 +40,10 @@ interface Account {
 }
 
 interface AccountsTableProps {
-  accounts: Account[]
+  accounts: AccountsTableItem[]
   isLoading?: boolean
-  onEdit?: (account: Account) => void
-  onDelete?: (account: Account) => void
+  onEdit?: (account: AccountsTableItem) => void
+  onDelete?: (account: AccountsTableItem) => void
 }
 
 export function AccountsTable({

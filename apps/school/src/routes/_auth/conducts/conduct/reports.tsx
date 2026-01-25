@@ -396,7 +396,7 @@ function ConductReportsPage() {
                                 </div>
                               </TableCell>
                               <TableCell>
-                                <ConductTypeBadge type={record.type as any} />
+                                <ConductTypeBadge type={record.type as 'incident' | 'sanction' | 'reward' | 'note'} />
                               </TableCell>
                               <TableCell className="max-w-[200px] truncate font-medium text-muted-foreground italic">
                                 {record.title}
@@ -404,7 +404,7 @@ function ConductReportsPage() {
                               <TableCell className="px-6 text-right">
                                 {record.severity
                                   ? (
-                                      <ConductSeverityBadge severity={record.severity as any} />
+                                      <ConductSeverityBadge severity={record.severity as 'low' | 'medium' | 'high' | 'critical' | 'urgent'} />
                                     )
                                   : (
                                       <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/30">—</span>

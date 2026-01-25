@@ -45,7 +45,7 @@ const sessionFormSchema = z.object({
   { message: 'L\'heure de fin doit être après l\'heure de début', path: ['endTime'] },
 )
 
-type SessionFormInput = z.infer<typeof sessionFormSchema>
+export type SessionFormInput = z.infer<typeof sessionFormSchema>
 
 interface Subject {
   id: string

@@ -1,3 +1,4 @@
+import type { Discount as CRUDDiscount, DiscountsTableItem } from '@/components/finance'
 import { IconPlus, IconTag } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
@@ -26,7 +27,7 @@ function DiscountsPage() {
   const t = useTranslations()
   const queryClient = useQueryClient()
   const [isCreateOpen, setIsCreateOpen] = useState(false)
-  const [editingDiscount, setEditingDiscount] = useState<any>(null)
+  const [editingDiscount, setEditingDiscount] = useState<CRUDDiscount | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
   const { data: discounts, isLoading } = useQuery(discountsOptions.list())
@@ -38,21 +39,22 @@ function DiscountsPage() {
       toast.success('Réduction supprimée')
       setDeletingId(null)
     },
-    onError: (err: any) => {
-      toast.error(err.message || 'Erreur lors de la suppression')
+    onError: (err: unknown) => {
+      const message = err instanceof Error ? err.message : 'Erreur lors de la suppression'
+      toast.error(message)
     },
   })
 
-  const handleEdit = (discount: any) => {
-    setEditingDiscount(discount)
+  const handleEdit = (discount: DiscountsTableItem) => {
+    setEditingDiscount(discount as unknown as CRUDDiscount)
     setIsCreateOpen(true)
   }
 
-  const handleDelete = (discount: any) => {
+  const handleDelete = (discount: DiscountsTableItem) => {
     setDeletingId(discount.id)
   }
 
-  const discountsList
+  const discountsList: DiscountsTableItem[]
     = discounts?.map(d => ({
       id: d.id,
       code: d.code,
@@ -136,7 +138,7 @@ function DiscountsPage() {
           if (!open)
             setEditingDiscount(null)
         }}
-        initialData={editingDiscount}
+        initialData={editingDiscount || undefined}
       />
 
       <DeleteConfirmationDialog

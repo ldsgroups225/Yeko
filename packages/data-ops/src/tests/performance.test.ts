@@ -1,12 +1,10 @@
+import { getDb } from '@repo/data-ops/database/setup'
 /**
  * Performance Testing: Section 5.1
  * Database Query Optimization Tests
  * Tests query performance against large datasets
  */
 
-import { and, eq } from 'drizzle-orm'
-import { afterAll, beforeAll, describe, expect, test } from 'vitest'
-import { getDb } from '@/database/setup'
 import {
   coefficientTemplates,
   grades,
@@ -16,26 +14,29 @@ import {
   schoolYearTemplates,
   series,
   subjects,
-} from '@/drizzle/core-schema'
+} from '@repo/data-ops/drizzle/core-schema'
 import {
   getGrades,
   getSeries,
   getSubjects,
-} from '@/queries/catalogs'
+} from '@repo/data-ops/queries/catalogs'
 import {
   bulkUpdateCoefficients,
   getCoefficientTemplates,
-} from '@/queries/coefficients'
+} from '@repo/data-ops/queries/coefficients'
 import {
   getProgramTemplateById,
   getProgramTemplates,
-} from '@/queries/programs'
+} from '@repo/data-ops/queries/programs'
 import {
   createSchool,
   getSchools,
   getSchoolsByStatus,
   searchSchools,
-} from '@/queries/schools'
+} from '@repo/data-ops/queries/schools'
+import { and, eq } from 'drizzle-orm'
+import { nanoid } from 'nanoid'
+import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 
 // Performance threshold constants (in milliseconds)
 const THRESHOLDS = {
@@ -112,7 +113,7 @@ describe('query performance', () => {
       const [newYear] = await db
         .insert(schoolYearTemplates)
         .values({
-          id: crypto.randomUUID(),
+          id: nanoid(),
           name: 'Test Year',
           isActive: true,
           createdAt: new Date(),
@@ -128,7 +129,7 @@ describe('query performance', () => {
     const [newProgram] = await db
       .insert(programTemplates)
       .values({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         name: 'Performance Test Program',
         schoolYearTemplateId: testSchoolYearId,
         subjectId: testSubjectId || '',

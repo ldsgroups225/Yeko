@@ -1,6 +1,7 @@
+import type { SystemPermissions } from '@repo/data-ops/auth/permissions'
 import { and, count, desc, eq, ilike } from 'drizzle-orm'
-import { getDb } from '@/database/setup'
-import { roles, userRoles } from '@/drizzle/school-schema'
+import { getDb } from '../../database/setup'
+import { roles, userRoles } from '../../drizzle/school-schema'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
 
 export async function getAllRoles(options?: {
@@ -53,7 +54,7 @@ export async function createRole(data: {
   name: string
   slug: string
   description?: string
-  permissions: Record<string, string[]>
+  permissions: SystemPermissions
   scope: 'school' | 'system'
 }) {
   const db = getDb()
@@ -78,7 +79,7 @@ export async function updateRole(
   data: {
     name?: string
     description?: string
-    permissions?: Record<string, string[]>
+    permissions?: SystemPermissions
   },
 ) {
   const db = getDb()
@@ -128,8 +129,8 @@ export async function checkPermission(roleId: string, action: string, resource: 
     return false
   }
 
-  const permissions = role.permissions as Record<string, string[]>
-  return permissions[resource]?.includes(action) ?? false
+  const permissions = role.permissions as SystemPermissions
+  return permissions[resource]?.includes(action as any) ?? false
 }
 
 // Phase 11: Count roles

@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid'
 import { beforeEach, describe, expect, test } from 'vitest'
 import {
   createClass,
@@ -41,7 +42,7 @@ describe('classes queries', () => {
 
     // Create test classroom
     const classroom = await createClassroom({
-      id: crypto.randomUUID(),
+      id: nanoid(),
       schoolId: testSchoolId,
       name: 'Test Classroom',
       code: `TC-${Date.now()}`,
@@ -66,7 +67,7 @@ describe('classes queries', () => {
     test('should return classes for a school', async () => {
       // Create test class
       const testClass = await createClass({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         schoolId: testSchoolId,
         schoolYearId: testSchoolYearId,
         gradeId: testGradeId,
@@ -86,7 +87,7 @@ describe('classes queries', () => {
 
     test('should filter by school year', async () => {
       const testClass = await createClass({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         schoolId: testSchoolId,
         schoolYearId: testSchoolYearId,
         gradeId: testGradeId,
@@ -108,7 +109,7 @@ describe('classes queries', () => {
 
     test('should filter by grade', async () => {
       const testClass = await createClass({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         schoolId: testSchoolId,
         schoolYearId: testSchoolYearId,
         gradeId: testGradeId,
@@ -130,7 +131,7 @@ describe('classes queries', () => {
 
     test('should filter by series', async () => {
       const testClass = await createClass({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         schoolId: testSchoolId,
         schoolYearId: testSchoolYearId,
         gradeId: testGradeId,
@@ -153,7 +154,7 @@ describe('classes queries', () => {
 
     test('should include student and subject counts', async () => {
       const testClass = await createClass({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         schoolId: testSchoolId,
         schoolYearId: testSchoolYearId,
         gradeId: testGradeId,
@@ -179,7 +180,7 @@ describe('classes queries', () => {
   describe('getClassById', () => {
     test('should return class with details', async () => {
       const testClass = await createClass({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         schoolId: testSchoolId,
         schoolYearId: testSchoolYearId,
         gradeId: testGradeId,
@@ -206,7 +207,7 @@ describe('classes queries', () => {
 
     test('should include gender counts', async () => {
       const testClass = await createClass({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         schoolId: testSchoolId,
         schoolYearId: testSchoolYearId,
         gradeId: testGradeId,
@@ -228,7 +229,7 @@ describe('classes queries', () => {
   describe('createClass', () => {
     test('should create a class with valid data', async () => {
       const classData = {
-        id: crypto.randomUUID(),
+        id: nanoid(),
         schoolId: testSchoolId,
         schoolYearId: testSchoolYearId,
         gradeId: testGradeId,
@@ -250,7 +251,7 @@ describe('classes queries', () => {
       const section = `DUP-${Date.now()}`
 
       const class1 = await createClass({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         schoolId: testSchoolId,
         schoolYearId: testSchoolYearId,
         gradeId: testGradeId,
@@ -264,7 +265,7 @@ describe('classes queries', () => {
 
       await expect(
         createClass({
-          id: crypto.randomUUID(),
+          id: nanoid(),
           schoolId: testSchoolId,
           schoolYearId: testSchoolYearId,
           gradeId: testGradeId,
@@ -277,7 +278,7 @@ describe('classes queries', () => {
     test('should validate classroom availability', async () => {
       // Create first class with classroom
       const class1 = await createClass({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         schoolId: testSchoolId,
         schoolYearId: testSchoolYearId,
         gradeId: testGradeId,
@@ -293,7 +294,7 @@ describe('classes queries', () => {
       // Try to create second class with same classroom
       await expect(
         createClass({
-          id: crypto.randomUUID(),
+          id: nanoid(),
           schoolId: testSchoolId,
           schoolYearId: testSchoolYearId,
           gradeId: testGradeId,
@@ -306,7 +307,7 @@ describe('classes queries', () => {
 
     test('should allow class without classroom', async () => {
       const newClass = await createClass({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         schoolId: testSchoolId,
         schoolYearId: testSchoolYearId,
         gradeId: testGradeId,
@@ -325,7 +326,7 @@ describe('classes queries', () => {
   describe('updateClass', () => {
     test('should update class fields', async () => {
       const testClass = await createClass({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         schoolId: testSchoolId,
         schoolYearId: testSchoolYearId,
         gradeId: testGradeId,
@@ -350,7 +351,7 @@ describe('classes queries', () => {
 
     test('should update classroom assignment', async () => {
       const testClass = await createClass({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         schoolId: testSchoolId,
         schoolYearId: testSchoolYearId,
         gradeId: testGradeId,
@@ -375,7 +376,7 @@ describe('classes queries', () => {
   describe('deleteClass', () => {
     test('should delete class without enrollments', async () => {
       const testClass = await createClass({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         schoolId: testSchoolId,
         schoolYearId: testSchoolYearId,
         gradeId: testGradeId,

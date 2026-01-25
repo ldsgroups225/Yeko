@@ -1,6 +1,5 @@
 import type { AttendanceSettingsInsert } from '../drizzle/school-schema'
 import { eq } from 'drizzle-orm'
-import { nanoid } from 'nanoid'
 
 import { getDb } from '../database/setup'
 import { attendanceSettings } from '../drizzle/school-schema'
@@ -40,7 +39,7 @@ export async function upsertAttendanceSettings(data: Omit<AttendanceSettingsInse
   const [result] = await db
     .insert(attendanceSettings)
     .values({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       ...data,
     })
     .onConflictDoUpdate({

@@ -1,11 +1,10 @@
 import type { z } from 'zod'
-import {
-  deleteUser,
-  updateUser,
-} from '@repo/data-ops/queries/school-admin/users'
 import { createServerFn } from '@tanstack/react-start'
 import { protectedFunctionMiddleware } from '@/core/middleware/auth'
 import { removeUserSchema, suspendUserSchema } from '@/schemas/user'
+
+// Helper to load queries dynamically
+const loadUserQueries = () => import('@repo/data-ops/queries/school-admin/users')
 
 /**
  * Suspend a user (update status to suspended)
@@ -17,6 +16,7 @@ export const suspendUser = createServerFn()
   })
   .handler(async ({ data }) => {
     try {
+      const { updateUser } = await loadUserQueries()
       await updateUser(data.userId, data.schoolId, { status: 'suspended' })
 
       return {
@@ -24,11 +24,10 @@ export const suspendUser = createServerFn()
         message: 'Utilisateur suspendu avec succès',
       }
     }
-    catch (error: any) {
+    catch (error: unknown) {
       console.error('Error suspending user:', error)
-      throw new Error(
-        error.message || 'Erreur lors de la suspension de l\'utilisateur',
-      )
+      const message = error instanceof Error ? error.message : 'Erreur lors de la suspension de l\'utilisateur'
+      throw new Error(message)
     }
   })
 
@@ -42,6 +41,7 @@ export const removeUser = createServerFn()
   })
   .handler(async ({ data }) => {
     try {
+      const { deleteUser } = await loadUserQueries()
       await deleteUser(data.userId, data.schoolId)
 
       return {
@@ -49,10 +49,9 @@ export const removeUser = createServerFn()
         message: 'Utilisateur supprimé avec succès',
       }
     }
-    catch (error: any) {
+    catch (error: unknown) {
       console.error('Error removing user:', error)
-      throw new Error(
-        error.message || 'Erreur lors de la suppression de l\'utilisateur',
-      )
+      const message = error instanceof Error ? error.message : 'Erreur lors de la suppression de l\'utilisateur'
+      throw new Error(message)
     }
   })

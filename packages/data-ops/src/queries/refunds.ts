@@ -1,8 +1,7 @@
-import type { Refund, RefundInsert, RefundStatus } from '@/drizzle/school-schema'
+import type { Refund, RefundInsert, RefundStatus } from '../drizzle/school-schema'
 import { and, desc, eq, gte, lte, sql } from 'drizzle-orm'
-import { nanoid } from 'nanoid'
-import { getDb } from '@/database/setup'
-import { payments, refunds } from '@/drizzle/school-schema'
+import { getDb } from '../database/setup'
+import { payments, refunds } from '../drizzle/school-schema'
 
 export interface GetRefundsParams {
   schoolId: string
@@ -75,7 +74,7 @@ export type CreateRefundData = Omit<RefundInsert, 'id' | 'refundNumber' | 'creat
 export async function createRefund(data: CreateRefundData): Promise<Refund> {
   const db = getDb()
   const refundNumber = await generateRefundNumber(data.schoolId)
-  const [refund] = await db.insert(refunds).values({ id: nanoid(), refundNumber, ...data }).returning()
+  const [refund] = await db.insert(refunds).values({ id: crypto.randomUUID(), refundNumber, ...data }).returning()
   if (!refund) {
     throw new Error('Failed to create refund')
   }
@@ -108,33 +107,33 @@ export async function processRefund(
   reference?: string,
 ): Promise<Refund | undefined> {
   const db = getDb()
-  return db.transaction(async (tx: any) => {
-    const refund = await getRefundById(refundId)
-    if (!refund)
-      throw new Error('Refund not found')
-    if (refund.status !== 'approved')
-      throw new Error('Refund must be approved before processing')
+  const refund = await getRefundById(refundId)
+  if (!refund)
+    throw new Error('Refund not found')
+  if (refund.status !== 'approved')
+    throw new Error('Refund must be approved before processing')
 
-    // Update payment status
-    await tx
-      .update(payments)
-      .set({
-        status: sql`CASE WHEN ${payments.amount} = ${refund.amount} THEN 'refunded' ELSE 'partial_refund' END`,
-        updatedAt: new Date(),
-      })
-      .where(eq(payments.id, refund.paymentId))
+  // Update payment status
+  await db
+    .update(payments)
+    .set({
+      status: sql`CASE WHEN ${payments.amount} = ${refund.amount} THEN 'refunded' ELSE 'partial_refund' END`,
+      updatedAt: new Date(),
+    })
+    .where(eq(payments.id, refund.paymentId))
 
-    // Update refund status
-    const [processedRefund] = await tx
-      .update(refunds)
-      .set({ status: 'processed', processedBy, processedAt: new Date(), reference, updatedAt: new Date() })
-      .where(eq(refunds.id, refundId))
-      .returning()
-    if (!processedRefund) {
-      throw new Error('Failed to process refund')
-    }
-    return processedRefund
-  })
+  // Update refund status
+  const [processedRefund] = await db
+    .update(refunds)
+    .set({ status: 'processed', processedBy, processedAt: new Date(), reference, updatedAt: new Date() })
+    .where(eq(refunds.id, refundId))
+    .returning()
+
+  if (!processedRefund) {
+    throw new Error('Failed to process refund')
+  }
+
+  return processedRefund
 }
 
 export async function cancelRefund(refundId: string): Promise<Refund | undefined> {

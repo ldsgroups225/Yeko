@@ -1,7 +1,7 @@
 import { and, count, eq, isNull } from 'drizzle-orm'
-import { getDb } from '@/database/setup'
-import { coefficientTemplates, grades, series, subjects } from '@/drizzle/core-schema'
-import { schoolSubjectCoefficients } from '@/drizzle/school-schema'
+import { getDb } from '../database/setup'
+import { coefficientTemplates, grades, series, subjects } from '../drizzle/core-schema'
+import { schoolSubjectCoefficients } from '../drizzle/school-schema'
 
 // ===== SCHOOL COEFFICIENT OVERRIDES =====
 
@@ -293,33 +293,29 @@ export async function bulkUpdateSchoolCoefficients(options: {
     }
   }
 
-  const results = await db.transaction(async (tx: any) => {
-    const insertedOrUpdated = []
-    for (const update of updates) {
-      const [result] = await tx
-        .insert(schoolSubjectCoefficients)
-        .values({
-          id: crypto.randomUUID(),
-          schoolId,
-          coefficientTemplateId: update.coefficientTemplateId,
+  const insertedOrUpdated = []
+  for (const update of updates) {
+    const [result] = await db
+      .insert(schoolSubjectCoefficients)
+      .values({
+        id: crypto.randomUUID(),
+        schoolId,
+        coefficientTemplateId: update.coefficientTemplateId,
+        weightOverride: update.weightOverride,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .onConflictDoUpdate({
+        target: [schoolSubjectCoefficients.schoolId, schoolSubjectCoefficients.coefficientTemplateId],
+        set: {
           weightOverride: update.weightOverride,
-          createdAt: new Date(),
           updatedAt: new Date(),
-        })
-        .onConflictDoUpdate({
-          target: [schoolSubjectCoefficients.schoolId, schoolSubjectCoefficients.coefficientTemplateId],
-          set: {
-            weightOverride: update.weightOverride,
-            updatedAt: new Date(),
-          },
-        })
-        .returning()
-      insertedOrUpdated.push(result)
-    }
-    return insertedOrUpdated
-  })
-
-  return results
+        },
+      })
+      .returning()
+    insertedOrUpdated.push(result)
+  }
+  return insertedOrUpdated
 }
 
 /**
@@ -477,55 +473,50 @@ export async function copySchoolCoefficientsFromYear(options: {
     return []
   }
 
-  // Find matching templates in target year
-  const results = await db.transaction(async (tx: any) => {
-    const inserted = []
+  const inserted = []
 
-    for (const override of sourceOverrides) {
-      // Find matching template in target year
-      const conditions = [
-        eq(coefficientTemplates.schoolYearTemplateId, targetSchoolYearTemplateId),
-        eq(coefficientTemplates.subjectId, override.subjectId),
-        eq(coefficientTemplates.gradeId, override.gradeId),
-      ]
+  for (const override of sourceOverrides) {
+    // Find matching template in target year
+    const conditions = [
+      eq(coefficientTemplates.schoolYearTemplateId, targetSchoolYearTemplateId),
+      eq(coefficientTemplates.subjectId, override.subjectId),
+      eq(coefficientTemplates.gradeId, override.gradeId),
+    ]
 
-      if (override.seriesId) {
-        conditions.push(eq(coefficientTemplates.seriesId, override.seriesId))
-      }
-      else {
-        conditions.push(isNull(coefficientTemplates.seriesId))
-      }
-
-      const [targetTemplate] = await tx
-        .select({ id: coefficientTemplates.id })
-        .from(coefficientTemplates)
-        .where(and(...conditions))
-        .limit(1)
-
-      if (targetTemplate) {
-        const [result] = await tx
-          .insert(schoolSubjectCoefficients)
-          .values({
-            id: crypto.randomUUID(),
-            schoolId,
-            coefficientTemplateId: targetTemplate.id,
-            weightOverride: override.weightOverride,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          })
-          .onConflictDoNothing()
-          .returning()
-
-        if (result) {
-          inserted.push(result)
-        }
-      }
+    if (override.seriesId) {
+      conditions.push(eq(coefficientTemplates.seriesId, override.seriesId))
+    }
+    else {
+      conditions.push(isNull(coefficientTemplates.seriesId))
     }
 
-    return inserted
-  })
+    const [targetTemplate] = await db
+      .select({ id: coefficientTemplates.id })
+      .from(coefficientTemplates)
+      .where(and(...conditions))
+      .limit(1)
 
-  return results
+    if (targetTemplate) {
+      const [result] = await db
+        .insert(schoolSubjectCoefficients)
+        .values({
+          id: crypto.randomUUID(),
+          schoolId,
+          coefficientTemplateId: targetTemplate.id,
+          weightOverride: override.weightOverride,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .onConflictDoNothing()
+        .returning()
+
+      if (result) {
+        inserted.push(result)
+      }
+    }
+  }
+
+  return inserted
 }
 
 /**

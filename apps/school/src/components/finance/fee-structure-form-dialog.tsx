@@ -64,10 +64,25 @@ const feeStructureFormSchema = z.object({
 
 type FeeStructureFormData = z.infer<typeof feeStructureFormSchema>
 
+export interface FeeStructure extends FeeStructureFormData {
+  id: string
+}
+
+interface UpdateFeeStructureData {
+  id: string
+  feeTypeId: string
+  gradeId: string | null
+  seriesId: string | null
+  amount: string
+  currency: string
+  newStudentAmount: string | null
+  effectiveDate: string | null
+}
+
 interface FeeStructureFormDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  initialData?: any
+  initialData?: Partial<FeeStructure>
 }
 
 export function FeeStructureFormDialog({
@@ -152,7 +167,7 @@ export function FeeStructureFormDialog({
       if (isEditing) {
         return updateExistingFeeStructure({
           data: {
-            id: initialData.id,
+            id: initialData.id!,
             feeTypeId: data.feeTypeId,
             gradeId: gradeId?.trim() || null,
             seriesId: seriesId?.trim() || null,
@@ -163,7 +178,7 @@ export function FeeStructureFormDialog({
                 ? data.newStudentAmount.trim()
                 : null,
             effectiveDate: data.effectiveDate || null,
-          } as any,
+          } satisfies UpdateFeeStructureData,
         })
       }
 
@@ -194,13 +209,13 @@ export function FeeStructureFormDialog({
       form.reset()
       onOpenChange(false)
     },
-    onError: (err: any) => {
+    onError: (err: { message?: string, p?: { v?: Array<{ s?: { message?: string | { s: string } } }> } }) => {
       console.error('Fee creation error:', err)
       let message = err.message || 'Une erreur est survenue'
 
       try {
-        const serverError
-          = err?.p?.v?.[1]?.s?.message?.s || err?.p?.v?.[1]?.s?.message
+        const errorNode = err?.p?.v?.[1]?.s?.message
+        const serverError = typeof errorNode === 'string' ? errorNode : errorNode?.s
         if (serverError && typeof serverError === 'string') {
           message = serverError
         }

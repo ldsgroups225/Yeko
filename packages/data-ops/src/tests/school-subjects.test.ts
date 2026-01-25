@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid'
 import { beforeEach, describe, expect, test } from 'vitest'
 import {
   addSubjectsToSchool,
@@ -12,7 +13,7 @@ describe('school subjects queries', () => {
   beforeEach(async () => {
     // Create test school
     const school = await createSchool({
-      name: `Test School Subjects ${crypto.randomUUID()}`,
+      name: `Test School Subjects ${nanoid()}`,
       code: `TSS-${Date.now()}`,
       status: 'active',
     })

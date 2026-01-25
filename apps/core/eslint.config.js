@@ -3,13 +3,15 @@ import config from '@yeko/eslint-config'
 /** @type {import("eslint").Linter.Config} */
 
 export default config.append({
+  rules: {
+    'node/prefer-global/process': 'off',
+  },
   ignores: [
     'dist/',
     '.wrangler/',
     'public/',
-    '**/*.md',
+    '.claude',
     'scripts/',
-    'src/components/ui/**',
     'src/routeTree.gen.ts',
   ],
 })

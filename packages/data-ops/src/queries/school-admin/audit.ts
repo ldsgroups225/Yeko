@@ -1,7 +1,7 @@
-import type { AuditLogInsert } from '@/drizzle/school-schema'
+import type { AuditLogInsert } from '../../drizzle/school-schema'
 import { and, desc, eq } from 'drizzle-orm'
-import { getDb } from '@/database/setup'
-import { auditLogs } from '@/drizzle/school-schema'
+import { getDb } from '../../database/setup'
+import { auditLogs } from '../../drizzle/school-schema'
 
 export type AuditAction = 'create' | 'update' | 'delete' | 'view'
 

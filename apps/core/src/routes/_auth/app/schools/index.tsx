@@ -16,7 +16,7 @@ import {
   IconUpload,
 } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, redirect } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'
 import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
@@ -25,12 +25,22 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Skeleton } from '@workspace/ui/components/skeleton'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
+import { Can } from '@/components/auth/can'
 import { useDebounce } from '@/hooks/use-debounce'
 import { bulkCreateSchoolsMutationOptions, schoolsQueryOptions } from '@/integrations/tanstack-query/schools-options'
 import { useLogger } from '@/lib/logger'
 import { exportSchoolsToExcel, importSchoolsFromExcel } from '@/lib/schools-import-export'
 
 export const Route = createFileRoute('/_auth/app/schools/')({
+  beforeLoad: ({ context }) => {
+    // Basic guard: if authenticated but doesn't have system access, redirect to unauthorized
+    // Note: This is redundant if parent route already checks this, but good for defense-in-depth
+    if (context.auth?.isAuthenticated && !context.auth.hasSystemAccess) {
+      throw redirect({
+        to: '/unauthorized',
+      })
+    }
+  },
   component: Schools,
 })
 
@@ -179,84 +189,92 @@ function Schools() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            className="gap-2"
-            onClick={() => exportSchoolsToExcel(allSchools)}
-            disabled={allSchools.length === 0}
-          >
-            <IconDownload className="h-4 w-4" />
-            Exporter
-          </Button>
-          <Button
-            variant="outline"
-            className="gap-2"
-            disabled={bulkCreateMutation.isPending}
-            onClick={() => {
-              const input = document.createElement('input')
-              input.type = 'file'
-              input.accept = '.xlsx,.xls'
-              input.onchange = async (e) => {
-                const file = (e.target as HTMLInputElement).files?.[0]
-                if (file) {
-                  try {
-                    const importedSchools = await importSchoolsFromExcel(file)
+          <Can I="schools" a="export">
+            <Button
+              variant="outline"
+              className="gap-2"
+              onClick={() => exportSchoolsToExcel(allSchools)}
+              disabled={allSchools.length === 0}
+            >
+              <IconDownload className="h-4 w-4" />
+              Exporter
+            </Button>
+          </Can>
 
-                    if (importedSchools.length === 0) {
-                      toast.error('Aucune école trouvée dans le fichier')
-                      return
+          <Can I="schools" a="create">
+            <Button
+              variant="outline"
+              className="gap-2"
+              disabled={bulkCreateMutation.isPending}
+              onClick={() => {
+                const input = document.createElement('input')
+                input.type = 'file'
+                input.accept = '.xlsx,.xls'
+                input.onchange = async (e) => {
+                  const file = (e.target as HTMLInputElement).files?.[0]
+                  if (file) {
+                    try {
+                      const importedSchools = await importSchoolsFromExcel(file)
+
+                      if (importedSchools.length === 0) {
+                        toast.error('Aucune école trouvée dans le fichier')
+                        return
+                      }
+
+                      // Filter valid schools with required fields
+                      const validSchools = importedSchools
+                        .filter((school): school is typeof school & { name: string, code: string } =>
+                          Boolean(school.name && school.code),
+                        )
+                        .map(school => ({
+                          name: school.name,
+                          code: school.code,
+                          address: school.address ?? undefined,
+                          phone: school.phone ?? undefined,
+                          email: school.email ?? undefined,
+                        }))
+
+                      if (validSchools.length === 0) {
+                        toast.error('Aucune école valide trouvée (nom et code requis)')
+                        return
+                      }
+
+                      if (validSchools.length < importedSchools.length) {
+                        toast.warning(`${importedSchools.length - validSchools.length} écoles ignorées (données invalides)`)
+                      }
+
+                      // Execute bulk create
+                      toast.info(`Import de ${validSchools.length} écoles en cours...`)
+                      bulkCreateMutation.mutate({
+                        schools: validSchools,
+                        skipDuplicates: true,
+                        generateCodes: false,
+                      })
                     }
-
-                    // Filter valid schools with required fields
-                    const validSchools = importedSchools
-                      .filter((school): school is typeof school & { name: string, code: string } =>
-                        Boolean(school.name && school.code),
-                      )
-                      .map(school => ({
-                        name: school.name,
-                        code: school.code,
-                        address: school.address ?? undefined,
-                        phone: school.phone ?? undefined,
-                        email: school.email ?? undefined,
-                      }))
-
-                    if (validSchools.length === 0) {
-                      toast.error('Aucune école valide trouvée (nom et code requis)')
-                      return
+                    catch (error) {
+                      toast.error('Erreur lors de la lecture du fichier')
+                      logger.error('Import file read error', error instanceof Error ? error : new Error(String(error)))
                     }
-
-                    if (validSchools.length < importedSchools.length) {
-                      toast.warning(`${importedSchools.length - validSchools.length} écoles ignorées (données invalides)`)
-                    }
-
-                    // Execute bulk create
-                    toast.info(`Import de ${validSchools.length} écoles en cours...`)
-                    bulkCreateMutation.mutate({
-                      schools: validSchools,
-                      skipDuplicates: true,
-                      generateCodes: false,
-                    })
-                  }
-                  catch (error) {
-                    toast.error('Erreur lors de la lecture du fichier')
-                    logger.error('Import file read error', error instanceof Error ? error : new Error(String(error)))
                   }
                 }
-              }
-              input.click()
-            }}
-          >
-            {bulkCreateMutation.isPending
-              ? <IconLoader2 className="h-4 w-4 animate-spin" />
-              : <IconUpload className="h-4 w-4" />}
-            Importer
-          </Button>
-          <Link to="/app/schools/create">
-            <Button className="gap-2">
-              <IconPlus className="h-4 w-4" />
-              Ajouter une école
+                input.click()
+              }}
+            >
+              {bulkCreateMutation.isPending
+                ? <IconLoader2 className="h-4 w-4 animate-spin" />
+                : <IconUpload className="h-4 w-4" />}
+              Importer
             </Button>
-          </Link>
+          </Can>
+
+          <Can I="schools" a="create">
+            <Link to="/app/schools/create">
+              <Button className="gap-2">
+                <IconPlus className="h-4 w-4" />
+                Ajouter une école
+              </Button>
+            </Link>
+          </Can>
         </div>
       </div>
 
@@ -360,7 +378,7 @@ function Schools() {
               </SelectContent>
             </Select>
 
-            <Select value={sortBy} onValueChange={(value: any) => value && handleSort(value)}>
+            <Select value={sortBy} onValueChange={value => value && handleSort(value as 'name' | 'createdAt' | 'updatedAt')}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Trier par">
                   {sortBy === 'createdAt' && 'Date de création'}
@@ -444,7 +462,7 @@ function Schools() {
                         : (
                             <>
                               <div className="space-y-4">
-                                {schools.map((school: any) => (
+                                {schools.map(school => (
                                   <Link
                                     key={school.id}
                                     to="/app/schools/$schoolId"

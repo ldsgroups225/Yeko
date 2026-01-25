@@ -8,6 +8,7 @@ import {
   getGradesByClassSchema,
   getGradeStatisticsSchema,
   getPendingValidationsSchema,
+  gradeTypes,
   rejectGradesSchema,
   submitGradesSchema,
   updateGradeSchema,
@@ -110,7 +111,7 @@ export const deleteDraftGrades = createServerFn()
     classId: z.string(),
     subjectId: z.string(),
     termId: z.string(),
-    type: z.string(),
+    type: z.enum(gradeTypes),
     gradeDate: z.string(),
     description: z.string().optional(),
   }))

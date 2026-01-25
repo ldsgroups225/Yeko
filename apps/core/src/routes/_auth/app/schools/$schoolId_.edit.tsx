@@ -1,3 +1,4 @@
+import type { CreateSchoolInput } from '@/schemas/school'
 import { IconAlertCircle, IconArrowLeft } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
@@ -42,7 +43,7 @@ function EditSchool() {
       // Navigate back to school details
       navigate({ to: '/app/schools/$schoolId', params: { schoolId } })
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       const message = parseServerFnError(error, 'Une erreur est survenue lors de la mise à jour')
       toast.error(message)
       console.error('School update failed:', error)
@@ -50,7 +51,7 @@ function EditSchool() {
   })
 
   // Handle form submission
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: CreateSchoolInput) => {
     try {
       await updateSchoolMutation.mutateAsync({ id: schoolId, ...data })
     }
@@ -64,7 +65,7 @@ function EditSchool() {
       page: 'schools-edit',
       schoolId,
       timestamp: new Date().toISOString(),
-    })
+    } as const)
   }, [logger, schoolId])
 
   if (isLoading) {
@@ -82,7 +83,7 @@ function EditSchool() {
         <Alert variant="destructive">
           <IconAlertCircle className="h-4 w-4" />
           <AlertDescription>
-            {error?.message || 'École non trouvée'}
+            {parseServerFnError(error, 'École non trouvée')}
           </AlertDescription>
         </Alert>
         <Button onClick={() => navigate({ to: '/app/schools' })}>
@@ -91,6 +92,8 @@ function EditSchool() {
       </div>
     )
   }
+
+  const schoolData = school as any
 
   return (
     <div className="space-y-6">
@@ -109,23 +112,32 @@ function EditSchool() {
           <p className="text-muted-foreground">
             Mettre à jour les informations de
             {' '}
-            {school.name}
+            {schoolData.name}
           </p>
         </div>
       </div>
 
       {/* Error Display */}
-      {updateSchoolMutation.error && (
+      {!!updateSchoolMutation.error && (
         <Alert variant="destructive">
           <IconAlertCircle className="h-4 w-4" />
           <AlertDescription>
-            {updateSchoolMutation.error.message || 'Une erreur est survenue lors de la mise à jour'}
+            {parseServerFnError(updateSchoolMutation.error, 'Une erreur est survenue lors de la mise à jour')}
           </AlertDescription>
         </Alert>
       )}
 
       <SchoolForm
-        defaultValues={school}
+        defaultValues={{
+          name: schoolData.name,
+          code: schoolData.code,
+          address: schoolData.address || '',
+          phone: schoolData.phone || '',
+          email: schoolData.email || '',
+          logoUrl: schoolData.logoUrl || '',
+          status: schoolData.status,
+          settings: schoolData.settings as Record<string, unknown>,
+        }}
         onSubmit={onSubmit}
         isSubmitting={updateSchoolMutation.isPending}
         mode="edit"

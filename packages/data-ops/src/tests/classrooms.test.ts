@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid'
 import { beforeEach, describe, expect, test } from 'vitest'
 import {
   checkClassroomAvailability,
@@ -37,7 +38,7 @@ describe('classrooms queries', () => {
 
     // Create test classrooms
     const classroom1 = await createClassroom({
-      id: crypto.randomUUID(),
+      id: nanoid(),
       schoolId: testSchoolId,
       name: 'Room 101',
       code: 'R101',
@@ -57,7 +58,7 @@ describe('classrooms queries', () => {
     testClassroomIds.push(classroom1.id)
 
     const classroom2 = await createClassroom({
-      id: crypto.randomUUID(),
+      id: nanoid(),
       schoolId: testSchoolId,
       name: 'Science Lab',
       code: 'LAB01',
@@ -77,7 +78,7 @@ describe('classrooms queries', () => {
     testClassroomIds.push(classroom2.id)
 
     const classroom3 = await createClassroom({
-      id: crypto.randomUUID(),
+      id: nanoid(),
       schoolId: testSchoolId,
       name: 'Gymnasium',
       code: 'GYM01',
@@ -158,7 +159,7 @@ describe('classrooms queries', () => {
   describe('createClassroom', () => {
     test('should create a classroom with valid data', async () => {
       const classroomData = {
-        id: crypto.randomUUID(),
+        id: nanoid(),
         schoolId: testSchoolId,
         name: 'New Classroom',
         code: `NC-${Date.now()}`,
@@ -184,7 +185,7 @@ describe('classrooms queries', () => {
       const duplicateCode = `DUP-${Date.now()}`
 
       await createClassroom({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         schoolId: testSchoolId,
         name: 'First Classroom',
         code: duplicateCode,
@@ -195,7 +196,7 @@ describe('classrooms queries', () => {
 
       await expect(
         createClassroom({
-          id: crypto.randomUUID(),
+          id: nanoid(),
           schoolId: testSchoolId,
           name: 'Second Classroom',
           code: duplicateCode,
@@ -217,7 +218,7 @@ describe('classrooms queries', () => {
       })
 
       const classroom1 = await createClassroom({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         schoolId: testSchoolId,
         name: 'Classroom in School 1',
         code: sharedCode,
@@ -230,7 +231,7 @@ describe('classrooms queries', () => {
       testClassroomIds.push(classroom1.id)
 
       const classroom2 = await createClassroom({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         schoolId: school2.id,
         name: 'Classroom in School 2',
         code: sharedCode,
@@ -287,7 +288,7 @@ describe('classrooms queries', () => {
   describe('deleteClassroom', () => {
     test('should delete unassigned classroom', async () => {
       const classroom = await createClassroom({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         schoolId: testSchoolId,
         name: 'Classroom to Delete',
         code: `DEL-${Date.now()}`,

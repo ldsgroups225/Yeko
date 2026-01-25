@@ -60,7 +60,7 @@ export const getParents = createServerFn()
     if (!context)
       throw new Error('No school context')
     await requirePermission('students', 'view') // Parents access tied to students
-    return await parentQueries.getParents(context.schoolId, data)
+    return await parentQueries.getParents(context.schoolId, data as any)
   })
 
 export const getParentById = createServerFn()

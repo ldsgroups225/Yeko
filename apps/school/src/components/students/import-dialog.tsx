@@ -1,4 +1,6 @@
 import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
+
+// Utility functions for Excel data normalization
 import {
   IconAlertCircle,
   IconCircleCheck,
@@ -31,6 +33,8 @@ import { useTranslations } from '@/i18n'
 import { studentsKeys } from '@/lib/queries/students'
 import { bulkImportStudents } from '@/school/functions/students'
 import { generateUUID } from '@/utils/generateUUID'
+
+// Types for Excel data
 
 interface ImportDialogProps {
   open: boolean
@@ -127,7 +131,7 @@ function findColumnMapping(header: string): string | null {
   return null
 }
 
-function normalizeDate(value: any): string {
+function normalizeDate(value: unknown): string {
   if (!value)
     return ''
 
@@ -168,7 +172,7 @@ function normalizeDate(value: any): string {
   return str
 }
 
-function normalizeGender(value: any): 'M' | 'F' | 'other' | undefined {
+function normalizeGender(value: unknown): 'M' | 'F' | 'other' | undefined {
   if (!value)
     return undefined
   const str = String(value).toUpperCase().trim()

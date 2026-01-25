@@ -131,7 +131,7 @@ function GradeEntryPage() {
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-2">
-                    {data.students.map((student: any) => (
+                    {data.students.map(student => (
                       <StudentGradeRow
                         key={student.id}
                         student={student}

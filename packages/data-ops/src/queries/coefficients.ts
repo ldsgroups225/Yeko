@@ -1,12 +1,12 @@
 import { and, asc, count, eq } from 'drizzle-orm'
-import { getDb } from '@/database/setup'
+import { getDb } from '../database/setup'
 import {
   coefficientTemplates,
   grades,
   schoolYearTemplates,
   series,
   subjects,
-} from '@/drizzle/core-schema'
+} from '../drizzle/core-schema'
 
 // ===== COEFFICIENT TEMPLATES =====
 

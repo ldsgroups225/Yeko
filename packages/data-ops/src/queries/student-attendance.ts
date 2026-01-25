@@ -3,7 +3,6 @@
  * Core attendance functions for student tracking
  */
 import { and, asc, count, desc, eq, gte, lte, sql } from 'drizzle-orm'
-import { nanoid } from 'nanoid'
 
 import { getDb } from '../database/setup'
 import { grades } from '../drizzle/core-schema'
@@ -63,7 +62,7 @@ export async function upsertStudentAttendance(params: {
   const db = getDb()
 
   const record = {
-    id: params.id ?? nanoid(),
+    id: params.id ?? crypto.randomUUID(),
     schoolId: params.schoolId,
     studentId: params.studentId,
     classId: params.classId,
@@ -113,7 +112,7 @@ export async function bulkUpsertClassAttendance(params: {
   const db = getDb()
 
   const records = params.entries.map(entry => ({
-    id: nanoid(),
+    id: crypto.randomUUID(),
     schoolId: params.schoolId,
     studentId: entry.studentId,
     classId: params.classId,
@@ -124,27 +123,24 @@ export async function bulkUpsertClassAttendance(params: {
     recordedBy: params.recordedBy,
   }))
 
-  // Use transaction for bulk insert
-  await db.transaction(async (tx) => {
-    for (const record of records) {
-      await tx
-        .insert(studentAttendance)
-        .values(record)
-        .onConflictDoUpdate({
-          target: [
-            studentAttendance.studentId,
-            studentAttendance.date,
-            studentAttendance.classId,
-            studentAttendance.classSessionId,
-          ],
-          set: {
-            status: sql`excluded.status`,
-            reason: sql`excluded.reason`,
-            updatedAt: new Date(),
-          },
-        })
-    }
-  })
+  for (const record of records) {
+    await db
+      .insert(studentAttendance)
+      .values(record)
+      .onConflictDoUpdate({
+        target: [
+          studentAttendance.studentId,
+          studentAttendance.date,
+          studentAttendance.classId,
+          studentAttendance.classSessionId,
+        ],
+        set: {
+          status: sql`excluded.status`,
+          reason: sql`excluded.reason`,
+          updatedAt: new Date(),
+        },
+      })
+  }
 
   return params.entries.length
 }

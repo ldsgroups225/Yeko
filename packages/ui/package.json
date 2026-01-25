@@ -23,6 +23,8 @@
   "dependencies": {
     "@base-ui/react": "catalog:",
     "@tabler/icons-react": "catalog:",
+    "@tanstack/react-form": "catalog:",
+    "@tanstack/zod-form-adapter": "catalog:",
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
     "cmdk": "catalog:",

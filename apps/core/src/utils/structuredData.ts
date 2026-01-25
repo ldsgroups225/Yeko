@@ -111,7 +111,9 @@ export function faqSchema(faqs: Array<{ question: string, answer: string }>) {
   }
 }
 
-export function generateStructuredData(type: string, data?: any) {
+export type StructuredDataType = 'organization' | 'software' | 'educational' | 'website' | 'breadcrumb' | 'faq'
+
+export function generateStructuredData(type: StructuredDataType, data?: unknown) {
   switch (type) {
     case 'organization':
       return organizationSchema
@@ -122,9 +124,9 @@ export function generateStructuredData(type: string, data?: any) {
     case 'website':
       return webSiteSchema
     case 'breadcrumb':
-      return breadcrumbSchema(data || [])
+      return breadcrumbSchema(data as Array<{ name: string, url: string }> || [])
     case 'faq':
-      return faqSchema(data || [])
+      return faqSchema(data as Array<{ question: string, answer: string }> || [])
     default:
       return organizationSchema
   }

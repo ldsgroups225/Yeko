@@ -122,7 +122,7 @@ function SchoolDetails() {
       // Navigate to schools list
       navigate({ to: '/app/schools' })
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       const message = parseServerFnError(
         error,
         'Une erreur est survenue lors de la suppression de l\'école',
@@ -151,7 +151,7 @@ function SchoolDetails() {
       setSuspendDialogOpen(false)
       setSelectedUserForSuspend(null)
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       const message = parseServerFnError(
         error,
         'Une erreur est survenue lors de la suspension de l\'utilisateur',
@@ -185,7 +185,7 @@ function SchoolDetails() {
       setRemoveDialogOpen(false)
       setSelectedUserForRemove(null)
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       const message = parseServerFnError(
         error,
         'Une erreur est survenue lors de la suppression de l\'utilisateur',

@@ -23,33 +23,33 @@ src/i18n/
 ### In Components
 
 ```tsx
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next'
 
 function MyComponent() {
-  const { t } = useTranslation();
-  
+  const { t } = useTranslation()
+
   return (
     <div>
       <h1>{t('hero.title')}</h1>
       <p>{t('hero.description')}</p>
     </div>
-  );
+  )
 }
 ```
 
 ### Change Language Programmatically
 
 ```tsx
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next'
 
 function LanguageButton() {
-  const { i18n } = useTranslation();
-  
+  const { i18n } = useTranslation()
+
   const changeToEnglish = () => {
-    i18n.changeLanguage('en');
-  };
-  
-  return <button onClick={changeToEnglish}>Switch to English</button>;
+    i18n.changeLanguage('en')
+  }
+
+  return <button onClick={changeToEnglish}>Switch to English</button>
 }
 ```
 
@@ -140,7 +140,7 @@ To add a new language (e.g., Spanish):
 1. Create `src/i18n/locales/es.ts` with all translation keys
 2. Import it in `src/i18n/config.ts`:
    ```typescript
-   import { es } from './locales/es';
+   import { es } from './locales/es'
    ```
 3. Add it to the resources:
    ```typescript
@@ -160,5 +160,5 @@ To add a new language (e.g., Spanish):
      { code: 'fr', name: 'Français', flag: '🇫🇷' },
      { code: 'en', name: 'English', flag: '🇬🇧' },
      { code: 'es', name: 'Español', flag: '🇪🇸' },
-   ];
+   ]
    ```

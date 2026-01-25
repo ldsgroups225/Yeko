@@ -1,8 +1,7 @@
-import type { Installment, InstallmentInsert, InstallmentStatus } from '@/drizzle/school-schema'
+import type { Installment, InstallmentInsert, InstallmentStatus } from '../drizzle/school-schema'
 import { and, eq, lt, sql } from 'drizzle-orm'
-import { nanoid } from 'nanoid'
-import { getDb } from '@/database/setup'
-import { installments, paymentPlans, students } from '@/drizzle/school-schema'
+import { getDb } from '../database/setup'
+import { installments, paymentPlans, students } from '../drizzle/school-schema'
 
 export interface GetInstallmentsParams {
   paymentPlanId?: string
@@ -38,7 +37,7 @@ export type CreateInstallmentData = Omit<InstallmentInsert, 'id' | 'createdAt' |
 
 export async function createInstallment(data: CreateInstallmentData): Promise<Installment> {
   const db = getDb()
-  const [installment] = await db.insert(installments).values({ id: nanoid(), ...data }).returning()
+  const [installment] = await db.insert(installments).values({ id: crypto.randomUUID(), ...data }).returning()
   if (!installment) {
     throw new Error('Failed to create installment')
   }
@@ -49,7 +48,7 @@ export async function createInstallmentsBulk(dataList: CreateInstallmentData[]):
   const db = getDb()
   if (dataList.length === 0)
     return []
-  const values = dataList.map(data => ({ id: nanoid(), ...data }))
+  const values = dataList.map(data => ({ id: crypto.randomUUID(), ...data }))
   return db.insert(installments).values(values).returning()
 }
 

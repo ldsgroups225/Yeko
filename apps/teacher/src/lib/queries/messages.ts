@@ -65,7 +65,7 @@ export function parentSearchQueryOptions(params: ParentSearchParams) {
 
 interface TemplatesParams {
   schoolId: string
-  category?: string
+  category?: 'attendance' | 'grades' | 'behavior' | 'general' | 'reminder' | 'congratulations'
 }
 
 export function messageTemplatesQueryOptions(params: TemplatesParams) {

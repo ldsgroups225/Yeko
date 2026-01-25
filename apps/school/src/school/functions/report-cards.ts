@@ -177,7 +177,7 @@ export const bulkGenerateReportCards = createServerFn()
 
       // 2. Separate into updates and inserts
       const toUpdateIds: string[] = []
-      const toInsert: any[] = []
+      const toInsert: Parameters<typeof reportCardQueries.bulkCreateReportCards>[0] = []
 
       for (const studentId of studentIds) {
         const existingId = existingMap.get(studentId)

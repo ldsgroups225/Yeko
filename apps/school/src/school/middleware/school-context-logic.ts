@@ -31,7 +31,8 @@ export async function retrieveSchoolContext() {
 
     // Sync user auth data and update last login (non-blocking via waitUntil)
     // This also returns the internal user ID
-    const internalUserId = await syncUserAuthOnLogin(authContext.userId, authContext.email)
+    // Auto-creates user account if they don't exist (registration flow)
+    const internalUserId = await syncUserAuthOnLogin(authContext.userId, authContext.email, authContext.name)
 
     if (!internalUserId) {
       console.error('IconUser not found in database for email:', authContext.email)

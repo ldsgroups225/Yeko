@@ -8,6 +8,11 @@
   "license": "ISC",
   "keywords": [],
   "exports": {
+    ".": {
+      "browser": "./dist/src/index.browser.js",
+      "types": "./dist/src/index.d.ts",
+      "default": "./dist/src/index.js"
+    },
     "./auth/server": {
       "types": "./dist/src/auth/server.d.ts",
       "default": "./dist/src/auth/server.js"
@@ -36,9 +41,9 @@
       "types": "./dist/src/services/*.d.ts",
       "default": "./dist/src/services/*.js"
     },
-    ".": {
-      "types": "./dist/src/index.d.ts",
-      "default": "./dist/src/index.js"
+    "./drizzle/*": {
+      "types": "./dist/src/drizzle/*.d.ts",
+      "default": "./dist/src/drizzle/*.js"
     }
   },
   "scripts": {
@@ -70,7 +75,6 @@
     "better-auth": "catalog:",
     "better-sqlite3": "catalog:",
     "drizzle-orm": "catalog:",
-    "nanoid": "catalog:",
     "pg": "catalog:",
     "resend": "catalog:",
     "zod": "catalog:"

@@ -133,9 +133,9 @@ function TracksManagement() {
     if (!tracks || !educationLevels)
       return []
 
-    return educationLevels.map((level: any) => ({
+    return educationLevels.map(level => ({
       level,
-      tracks: tracks.filter((t: any) => t.educationLevelId === level.id),
+      tracks: tracks.filter(t => t.educationLevelId === level.id),
     }))
   }, [tracks, educationLevels])
 

@@ -47,7 +47,7 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
         }
       : {
           userId: '',
-          position: '' as any,
+          position: '' as StaffFormData['position'],
           department: '',
           status: 'active',
           hireDate: undefined,
@@ -100,7 +100,7 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
             </Label>
             <Select
               value={watch('position')}
-              onValueChange={value => setValue('position', value as any)}
+              onValueChange={value => setValue('position', value as StaffFormData['position'])}
             >
               <SelectTrigger className="rounded-xl h-11 border-border/40 bg-background/50 focus:bg-background transition-all">
                 <SelectValue placeholder={t.hr.staff.selectPosition()}>

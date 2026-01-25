@@ -6,7 +6,7 @@ import type {
   SupportTicketPriority,
   SupportTicketStatus,
   TaskStatus,
-} from '@/drizzle/support-schema'
+} from '../drizzle/support-schema'
 import {
   and,
   asc,
@@ -18,9 +18,9 @@ import {
   lte,
   sql,
 } from 'drizzle-orm'
-import { getDb } from '@/database/setup'
-import { schools } from '@/drizzle/core-schema'
-import { users } from '@/drizzle/school-schema'
+import { getDb } from '../database/setup'
+import { schools } from '../drizzle/core-schema'
+import { users } from '../drizzle/school-schema'
 import {
   crmActivities,
   crmContacts,
@@ -28,7 +28,7 @@ import {
   knowledgeBaseArticles,
   supportTickets,
   ticketComments,
-} from '@/drizzle/support-schema'
+} from '../drizzle/support-schema'
 
 // Type aliases using Drizzle's InferSelectModel
 export type SupportTicket = InferSelectModel<typeof supportTickets>

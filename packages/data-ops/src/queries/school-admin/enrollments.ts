@@ -1,6 +1,6 @@
 import { and, desc, eq, ne } from 'drizzle-orm'
-import { getDb } from '@/database/setup'
-import { classes, enrollments, students } from '@/drizzle/school-schema'
+import { getDb } from '../../database/setup'
+import { classes, enrollments, students } from '../../drizzle/school-schema'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
 
 export async function getEnrollmentsBySchoolYear(schoolYearId: string, schoolId: string, options?: {
@@ -81,53 +81,51 @@ export async function enrollStudent(data: {
 
   const db = getDb()
 
-  return db.transaction(async (tx: any) => {
-    // 1. Verify student exists and belongs to school
-    const student = await tx.query.students.findFirst({
-      where: and(
-        eq(students.id, data.studentId),
-        eq(students.schoolId, data.schoolId),
-      ),
-    })
-    if (!student) {
-      throw new Error(SCHOOL_ERRORS.STUDENT_NOT_FOUND)
-    }
-
-    // 2. Verify class exists and belongs to school
-    const classInfo = await tx.query.classes.findFirst({
-      where: and(
-        eq(classes.id, data.classId),
-        eq(classes.schoolId, data.schoolId),
-      ),
-    })
-    if (!classInfo) {
-      throw new Error(SCHOOL_ERRORS.CLASS_NOT_FOUND)
-    }
-
-    // 3. Check for duplicate enrollment
-    const existing = await tx.query.enrollments.findFirst({
-      where: and(
-        eq(enrollments.studentId, data.studentId),
-        eq(enrollments.schoolYearId, data.schoolYearId),
-        ne(enrollments.status, 'cancelled'),
-      ),
-    })
-    if (existing) {
-      throw new Error(SCHOOL_ERRORS.ALREADY_ENROLLED)
-    }
-
-    // 4. Create enrollment
-    const [enrollment] = await tx.insert(enrollments).values({
-      id: crypto.randomUUID(),
-      studentId: data.studentId,
-      classId: data.classId,
-      schoolYearId: data.schoolYearId,
-      enrollmentDate: data.enrollmentDate,
-      status: 'pending',
-    }).returning()
-
-    return enrollment
+  // 1. Verify student exists and belongs to school
+  const student = await db.query.students.findFirst({
+    where: and(
+      eq(students.id, data.studentId),
+      eq(students.schoolId, data.schoolId),
+    ),
   })
+  if (!student) {
+    throw new Error(SCHOOL_ERRORS.STUDENT_NOT_FOUND)
+  }
+
+  // 2. Verify class exists and belongs to school
+  const classInfo = await db.query.classes.findFirst({
+    where: and(
+      eq(classes.id, data.classId),
+      eq(classes.schoolId, data.schoolId),
+    ),
+  })
+  if (!classInfo) {
+    throw new Error(SCHOOL_ERRORS.CLASS_NOT_FOUND)
+  }
+
+  // 3. Check for duplicate enrollment
+  const existing = await db.query.enrollments.findFirst({
+    where: and(
+      eq(enrollments.studentId, data.studentId),
+      eq(enrollments.schoolYearId, data.schoolYearId),
+      ne(enrollments.status, 'cancelled'),
+    ),
+  })
+  if (existing) {
+    throw new Error(SCHOOL_ERRORS.ALREADY_ENROLLED)
+  }
+
+  // 4. Create enrollment
+  const [enrollment] = await db.insert(enrollments).values({
+    id: crypto.randomUUID(),
+    studentId: data.studentId,
+    classId: data.classId,
+    schoolYearId: data.schoolYearId,
+    enrollmentDate: data.enrollmentDate.toISOString().split('T')[0]!,
+    status: 'pending',
+  }).returning()
+
+  return enrollment
 }
 
 export async function updateEnrollmentStatus(
@@ -177,40 +175,38 @@ export async function transferStudent(data: {
 
   const db = getDb()
 
-  return db.transaction(async (tx: any) => {
-    // 1. Get current enrollment
-    const enrollment = await tx.query.enrollments.findFirst({
-      where: eq(enrollments.id, data.enrollmentId),
-      with: {
-        student: true,
-      },
-    })
-
-    if (!enrollment || enrollment.student.schoolId !== data.schoolId) {
-      throw new Error(SCHOOL_ERRORS.STUDENT_NOT_FOUND)
-    }
-
-    // 2. Verify new class exists
-    const newClass = await tx.query.classes.findFirst({
-      where: and(
-        eq(classes.id, data.newClassId),
-        eq(classes.schoolId, data.schoolId),
-      ),
-    })
-    if (!newClass) {
-      throw new Error(SCHOOL_ERRORS.CLASS_NOT_FOUND)
-    }
-
-    // 3. Update enrollment
-    const [updated] = await tx
-      .update(enrollments)
-      .set({
-        classId: data.newClassId,
-        updatedAt: new Date(),
-      })
-      .where(eq(enrollments.id, data.enrollmentId))
-      .returning()
-
-    return updated
+  // 1. Get current enrollment
+  const enrollment = await db.query.enrollments.findFirst({
+    where: eq(enrollments.id, data.enrollmentId),
+    with: {
+      student: true,
+    },
   })
+
+  if (!enrollment || enrollment.student.schoolId !== data.schoolId) {
+    throw new Error(SCHOOL_ERRORS.STUDENT_NOT_FOUND)
+  }
+
+  // 2. Verify new class exists
+  const newClass = await db.query.classes.findFirst({
+    where: and(
+      eq(classes.id, data.newClassId),
+      eq(classes.schoolId, data.schoolId),
+    ),
+  })
+  if (!newClass) {
+    throw new Error(SCHOOL_ERRORS.CLASS_NOT_FOUND)
+  }
+
+  // 3. Update enrollment
+  const [updated] = await db
+    .update(enrollments)
+    .set({
+      classId: data.newClassId,
+      updatedAt: new Date(),
+    })
+    .where(eq(enrollments.id, data.enrollmentId))
+    .returning()
+
+  return updated
 }

@@ -1,4 +1,4 @@
-import type { School } from '@repo/data-ops'
+import type { School, SchoolStatus } from '@repo/data-ops'
 import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
 import { formatDate } from '@/utils/formatDate'
 
@@ -80,14 +80,14 @@ export async function importSchoolsFromExcel(file: File): Promise<Partial<School
         const jsonData = XLSX.utils.sheet_to_json(firstSheet)
 
         // Map Excel data to School format
-        const schools: Partial<School>[] = jsonData.map((row: any) => ({
-          name: row.Nom || row.name,
-          code: row.Code || row.code,
-          address: row.Adresse || row.address || null,
-          phone: row.Téléphone || row.phone || null,
-          email: row.Email || row.email || null,
-          logoUrl: row['Logo URL'] || row.logoUrl || null,
-          status: (row.Statut || row.status || 'active') as 'active' | 'inactive' | 'suspended',
+        const schools: Partial<School>[] = (jsonData as Record<string, unknown>[]).map(row => ({
+          name: (row.Nom || row.name) as string,
+          code: (row.Code || row.code) as string,
+          address: (row.Adresse || row.address || null) as string | null,
+          phone: (row.Téléphone || row.phone || null) as string | null,
+          email: (row.Email || row.email || null) as string | null,
+          logoUrl: (row['Logo URL'] || row.logoUrl || null) as string | null,
+          status: (row.Statut || row.status || 'active') as SchoolStatus,
           settings: {},
         }))
 
