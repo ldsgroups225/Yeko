@@ -3,11 +3,26 @@ import {
   IconMail,
   IconShieldLock,
 } from '@tabler/icons-react'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, redirect } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
 import { AnimatePresence, motion } from 'motion/react'
 
 export const Route = createFileRoute('/unauthorized')({
+  beforeLoad: ({ context }) => {
+    // If not authenticated, go home (to login)
+    if (!context.auth?.isAuthenticated) {
+      throw redirect({
+        to: '/',
+      })
+    }
+
+    // If the user has a super_admin role, they shouldn't be here
+    if (context.auth.isSuperAdmin) {
+      throw redirect({
+        to: '/app',
+      })
+    }
+  },
   component: UnauthorizedPage,
 })
 
