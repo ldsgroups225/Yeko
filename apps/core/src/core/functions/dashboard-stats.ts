@@ -1,8 +1,6 @@
-import { databaseMiddleware } from '@/core/middleware/database'
 import { createServerFn } from '@tanstack/react-start'
+import { databaseMiddleware } from '@/core/middleware/database'
 import { DashboardStatsSchema, RecentActivitySchema } from '@/schemas/dashboard'
-// Helper to load queries dynamically
-const loadDataOps = () => import('@repo/data-ops')
 
 // Fetch dashboard statistics
 export const dashboardStats = createServerFn()
@@ -12,7 +10,7 @@ export const dashboardStats = createServerFn()
   .inputValidator(data => DashboardStatsSchema.parse(data))
   .handler(async (ctx) => {
     const { daysBack } = ctx.data
-    const { getDashboardStats } = await loadDataOps()
+    const { getDashboardStats } = await import('@repo/data-ops/queries/dashboard-stats')
     const stats = await getDashboardStats(daysBack)
     return {
       ...stats,
@@ -29,7 +27,7 @@ export const systemHealth = createServerFn()
     databaseMiddleware,
   ])
   .handler(async () => {
-    const { getSystemHealth } = await loadDataOps()
+    const { getSystemHealth } = await import('@repo/data-ops/queries/dashboard-stats')
     return await getSystemHealth()
   })
 
@@ -41,6 +39,6 @@ export const recentActivity = createServerFn()
   .inputValidator(data => RecentActivitySchema.parse(data))
   .handler(async (ctx) => {
     const { limit } = ctx.data
-    const { getRecentActivity } = await loadDataOps()
+    const { getRecentActivity } = await import('@repo/data-ops/queries/dashboard-stats')
     return await getRecentActivity(limit)
   })

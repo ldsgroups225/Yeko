@@ -1,8 +1,6 @@
 import type { School } from '@repo/data-ops'
-import { databaseMiddleware } from '@/core/middleware/database'
 import { createServerFn } from '@tanstack/react-start'
-// Helper to load queries dynamically
-const loadDataOps = () => import('@repo/data-ops')
+import { databaseMiddleware } from '@/core/middleware/database'
 import {
   BulkUpdateSchoolsSchema,
   CreateSchoolSchema,
@@ -19,7 +17,7 @@ export const createSchool = createServerFn()
   ])
   .inputValidator(data => CreateSchoolSchema.parse(data))
   .handler(async (ctx) => {
-    const { createSchool: createSchoolQuery } = await loadDataOps()
+    const { createSchool: createSchoolQuery } = await import('@repo/data-ops/queries/schools')
     const newSchool = await createSchoolQuery({
       ...ctx.data,
       settings: (ctx.data.settings as Record<string, object>) || {},
@@ -38,7 +36,7 @@ export const getSchools = createServerFn()
   ])
   .inputValidator(data => GetSchoolsSchema.parse(data))
   .handler(async (ctx) => {
-    const { getSchools: getSchoolsQuery } = await loadDataOps()
+    const { getSchools: getSchoolsQuery } = await import('@repo/data-ops/queries/schools')
     const result = await getSchoolsQuery(ctx.data)
 
     return {
@@ -57,7 +55,7 @@ export const getSchoolById = createServerFn()
   ])
   .inputValidator(data => SchoolIdSchema.parse(data))
   .handler(async (ctx) => {
-    const { getSchoolById: getSchoolByIdQuery } = await loadDataOps()
+    const { getSchoolById: getSchoolByIdQuery } = await import('@repo/data-ops/queries/schools')
     const school = await getSchoolByIdQuery(ctx.data.id)
 
     if (!school) {
@@ -80,7 +78,7 @@ export const updateSchool = createServerFn()
     const { id, ...updateData } = ctx.data
 
     try {
-      const { updateSchool: updateSchoolQuery } = await loadDataOps()
+      const { updateSchool: updateSchoolQuery } = await import('@repo/data-ops/queries/schools')
       const updatedSchool = await updateSchoolQuery(id, updateData)
       return {
         ...updatedSchool,
@@ -102,7 +100,7 @@ export const deleteSchool = createServerFn()
   ])
   .inputValidator(data => SchoolIdSchema.parse(data))
   .handler(async (ctx) => {
-    const { deleteSchool: deleteSchoolQuery } = await loadDataOps()
+    const { deleteSchool: deleteSchoolQuery } = await import('@repo/data-ops/queries/schools')
     await deleteSchoolQuery(ctx.data.id)
     return { success: true, id: ctx.data.id }
   })
@@ -119,7 +117,7 @@ export const bulkUpdateSchools = createServerFn()
     // Update each school individually since we don't have bulk operations in the queries
     for (const id of schoolIds) {
       try {
-        const { updateSchool: updateSchoolQuery } = await loadDataOps()
+        const { updateSchool: updateSchoolQuery } = await import('@repo/data-ops/queries/schools')
         await updateSchoolQuery(id, { status })
       }
       catch {
@@ -140,7 +138,7 @@ export const bulkCreateSchools = createServerFn()
   .handler(async (ctx) => {
     const { schools, skipDuplicates } = ctx.data
 
-    const { bulkCreateSchools: bulkCreateSchoolsQuery } = await loadDataOps()
+    const { bulkCreateSchools: bulkCreateSchoolsQuery } = await import('@repo/data-ops/queries/schools')
 
     const result = await bulkCreateSchoolsQuery(
       schools.map(school => ({

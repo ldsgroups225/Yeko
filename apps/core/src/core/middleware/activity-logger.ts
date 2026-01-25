@@ -1,10 +1,6 @@
 import { createMiddleware } from '@tanstack/react-start'
 import { getRequest } from '@tanstack/react-start/server'
 
-// Helper to load ops dynamically
-const loadDataOps = () => import('@repo/data-ops')
-const loadAuth = () => import('@repo/data-ops/auth/server')
-
 /**
  *
  * Middleware to log user activities
@@ -39,7 +35,7 @@ async function flushActivityQueue() {
   // Insert logs in batch (fire and forget)
   for (const log of logsToInsert) {
     try {
-      const { logActivity } = await loadDataOps()
+      const { logActivity } = await import('@repo/data-ops/queries/activity-tracking')
       await logActivity(log)
     }
     catch (error) {
@@ -151,7 +147,7 @@ export const activityLoggerMiddleware = createMiddleware({
   // Try to get session
   if (request) {
     try {
-      const { getAuth } = await loadAuth()
+      const { getAuth } = await import('@repo/data-ops/auth/server')
       const auth = getAuth()
       session = await auth.api.getSession({ headers: request.headers })
     }
@@ -211,7 +207,7 @@ export async function logUserActivity(params: {
   metadata?: Record<string, unknown>
 }) {
   try {
-    const { logActivity } = await loadDataOps()
+    const { logActivity } = await import('@repo/data-ops/queries/activity-tracking')
     await logActivity({
       userId: params.userId,
       schoolId: params.schoolId || null,

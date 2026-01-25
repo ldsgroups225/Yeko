@@ -36,6 +36,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { getPlatformRoles } from '@/core/functions/roles'
 import { assignUserSystemRoles, getPlatformUsers } from '@/core/functions/users'
+import { formatDate } from '@/utils/formatDate'
 
 export const Route = createFileRoute('/_auth/app/users/')({
   beforeLoad: ({ context }) => {
@@ -197,9 +198,9 @@ function UserManagement() {
                       <TableCell className="text-sm text-muted-foreground">
                         {user.lastLoginAt
                           ? (
-                              <div className="flex items-center gap-1.5">
+                              <div className="flex items-center gap-1.5 capitalize">
                                 <IconClock size={14} />
-                                {new Date(user.lastLoginAt).toLocaleDateString()}
+                                {formatDate(user.lastLoginAt, 'MEDIUM')}
                               </div>
                             )
                           : 'Jamais'}

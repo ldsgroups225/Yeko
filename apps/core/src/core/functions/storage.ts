@@ -1,10 +1,5 @@
-// import process from 'node:process' // Removed incompatible import
-
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
-
-// Helper to load ops dynamically
-const loadDataOps = () => import('@repo/data-ops')
 
 // Helper function to safely get env vars (process.env or import.meta.env)
 function getEnv(key: string): string | undefined {
@@ -17,7 +12,7 @@ function getEnv(key: string): string | undefined {
 
 // Auto-initialize R2 from environment variables if available
 async function ensureR2Initialized() {
-  const { isR2Configured, initR2 } = await loadDataOps()
+  const { isR2Configured, initR2 } = await import('@repo/data-ops/storage')
   if (isR2Configured())
     return true
 
@@ -52,7 +47,7 @@ export const getPresignedUploadUrl = createServerFn()
   .inputValidator(data => GetPresignedUrlSchema.parse(data))
   .handler(async (ctx) => {
     const { filename, contentType, fileSize, folder } = ctx.data
-    const { isR2Configured, isValidImageType, isValidFileSize, generatePresignedUploadUrl } = await loadDataOps()
+    const { isR2Configured, isValidImageType, isValidFileSize, generatePresignedUploadUrl } = await import('@repo/data-ops/storage')
 
     // Try to initialize R2 from environment variables
     await ensureR2Initialized()
@@ -113,7 +108,7 @@ export const getPresignedUploadUrl = createServerFn()
 
 export const checkStorageConfigured = createServerFn()
   .handler(async () => {
-    const { isR2Configured } = await loadDataOps()
+    const { isR2Configured } = await import('@repo/data-ops/storage')
     // Try to initialize R2 from environment variables
     await ensureR2Initialized()
 
