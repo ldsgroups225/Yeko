@@ -728,3 +728,154 @@ export async function getUserSystemPermissionsByAuthUserId(authUserId: string) {
   const { mergePermissions } = await import('../../auth/permissions')
   return mergePermissions(systemRoles.map(r => r.permissions as any))
 }
+/**
+ * Get all users in the system (platform-wide) with their system roles
+ */
+export async function getSystemUsers(options?: {
+  search?: string
+  status?: 'active' | 'inactive' | 'suspended'
+  limit?: number
+  offset?: number
+}) {
+  const limit = Math.min(options?.limit || PAGINATION.DEFAULT_LIMIT, PAGINATION.MAX_LIMIT)
+  const offset = options?.offset || 0
+
+  const conditions = [isNull(users.deletedAt)]
+
+  if (options?.status) {
+    conditions.push(eq(users.status, options.status))
+  }
+
+  if (options?.search) {
+    conditions.push(
+      or(
+        ilike(users.name, `%${options.search}%`),
+        ilike(users.email, `%${options.search}%`),
+        ilike(users.phone, `%${options.search}%`),
+      )!,
+    )
+  }
+
+  const db = getDb()
+
+  const query = db
+    .select({
+      id: users.id,
+      email: users.email,
+      name: users.name,
+      phone: users.phone,
+      avatarUrl: users.avatarUrl,
+      status: users.status,
+      lastLoginAt: users.lastLoginAt,
+      createdAt: users.createdAt,
+      updatedAt: users.updatedAt,
+      // Aggregated system roles only
+      systemRoles: sql<string[]>`COALESCE(array_agg(DISTINCT ${roles.slug}) FILTER (WHERE ${roles.scope} = 'system'), ARRAY[]::text[])`,
+    })
+    .from(users)
+    .leftJoin(userRoles, eq(userRoles.userId, users.id))
+    .leftJoin(roles, eq(roles.id, userRoles.roleId))
+    .where(and(...conditions))
+    .groupBy(users.id)
+    .orderBy(desc(users.createdAt))
+    .limit(limit)
+    .offset(offset)
+
+  return query
+}
+
+/**
+ * Count total users in the system for pagination
+ */
+export async function countSystemUsers(options?: {
+  search?: string
+  status?: 'active' | 'inactive' | 'suspended'
+}) {
+  const conditions = [isNull(users.deletedAt)]
+
+  if (options?.status) {
+    conditions.push(eq(users.status, options.status))
+  }
+
+  if (options?.search) {
+    conditions.push(
+      or(
+        ilike(users.name, `%${options.search}%`),
+        ilike(users.email, `%${options.search}%`),
+        ilike(users.phone, `%${options.search}%`),
+      )!,
+    )
+  }
+
+  const db = getDb()
+
+  const [result] = await db
+    .select({ count: count() })
+    .from(users)
+    .where(and(...conditions))
+
+  return result?.count || 0
+}
+
+/**
+ * Assign system-scoped roles to a user (no school context)
+ */
+export async function assignSystemRolesToUser(userId: string, roleIds: string[]) {
+  const db = getDb()
+
+  return db.transaction(async (tx: any) => {
+    // Remove existing SYSTEM roles for this user (where schoolId is NULL)
+    // First, find IDs of current system roles for this user to avoid deleting school-specific roles
+    const existingSystemRoleMappings = await tx
+      .select({ id: userRoles.id })
+      .from(userRoles)
+      .innerJoin(roles, eq(userRoles.roleId, roles.id))
+      .where(and(
+        eq(userRoles.userId, userId),
+        eq(roles.scope, 'system'),
+        isNull(userRoles.schoolId),
+      ))
+
+    if (existingSystemRoleMappings.length > 0) {
+      await tx.delete(userRoles).where(
+        inArray(userRoles.id, existingSystemRoleMappings.map((m: any) => m.id)),
+      )
+    }
+
+    // Add new system roles
+    if (roleIds.length > 0) {
+      await tx.insert(userRoles).values(
+        roleIds.map(roleId => ({
+          id: crypto.randomUUID(),
+          userId,
+          roleId,
+          schoolId: null, // System scope
+        })),
+      )
+    }
+    return { success: true }
+  })
+}
+
+/**
+ * Update a user's base information without school context
+ */
+export async function updateSystemUser(userId: string, data: {
+  name?: string
+  phone?: string
+  avatarUrl?: string
+  status?: 'active' | 'inactive' | 'suspended'
+}) {
+  const db = getDb()
+
+  const [updated] = await db
+    .update(users)
+    .set({
+      ...data,
+      updatedAt: new Date(),
+    })
+    .where(eq(users.id, userId))
+    .returning()
+
+  return updated
+}

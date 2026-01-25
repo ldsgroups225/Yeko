@@ -1,4 +1,4 @@
-import type { SystemAction } from '@repo/data-ops'
+import type { SystemAction } from '@repo/data-ops/auth/permissions'
 import type { ComponentType } from 'react'
 import type { FileRoutesByTo } from '@/routeTree.gen'
 import { Button } from '@repo/ui/src/components/button'
@@ -14,6 +14,9 @@ import {
   IconHome,
   IconRoute,
   IconSchool,
+  IconSettings,
+  IconShield,
+  IconUser,
 } from '@tabler/icons-react'
 import { Link, useNavigate, useRouterState } from '@tanstack/react-router'
 import {
@@ -110,6 +113,28 @@ const navigationItems: NavigationItem[] = [
     href: '/app/analytics',
     description: 'Analytiques du système',
     permission: { resource: 'system_monitoring', action: 'view' },
+  },
+  {
+    name: 'Administration',
+    icon: IconSettings,
+    href: '/app/users',
+    description: 'Gestion plateforme',
+    children: [
+      {
+        name: 'Utilisateurs',
+        icon: IconUser,
+        href: '/app/users',
+        description: 'Équipes plateforme',
+        permission: { resource: 'users', action: 'view' },
+      },
+      {
+        name: 'Rôles & Accès',
+        icon: IconShield,
+        href: '/app/roles',
+        description: 'Sécurité et permissions',
+        permission: { resource: 'global_settings', action: 'view' },
+      },
+    ],
   },
   {
     name: 'Support',
