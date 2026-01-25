@@ -24,6 +24,7 @@ export const getAuthStatus = createServerFn({ method: 'GET' })
         user: null,
         roles: [],
         isSuperAdmin: false,
+        hasSystemAccess: false,
       }
     }
 
@@ -33,6 +34,7 @@ export const getAuthStatus = createServerFn({ method: 'GET' })
     // Fetch system-scoped roles for the user (using Better Auth user ID)
     const roles = await getUserSystemRolesByAuthUserId(session.user.id)
     const isSuperAdmin = roles.includes('super_admin')
+    const hasSystemAccess = roles.length > 0
 
     return {
       isAuthenticated: true,
@@ -44,5 +46,6 @@ export const getAuthStatus = createServerFn({ method: 'GET' })
       },
       roles,
       isSuperAdmin,
+      hasSystemAccess,
     }
   })

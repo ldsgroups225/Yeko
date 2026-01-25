@@ -16,8 +16,8 @@ export const Route = createFileRoute('/unauthorized')({
       })
     }
 
-    // If the user has a super_admin role, they shouldn't be here
-    if (context.auth.isSuperAdmin) {
+    // If the user has any system-scoped role, they shouldn't be here
+    if (context.auth.hasSystemAccess) {
       throw redirect({
         to: '/app',
       })
