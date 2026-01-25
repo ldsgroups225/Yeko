@@ -1,3 +1,5 @@
+import type { TablerIcon } from '@tabler/icons-react'
+import type { TranslationFunctions } from '@/i18n'
 import {
   IconCalendar,
   IconChevronLeft,
@@ -5,6 +7,7 @@ import {
   IconClock,
   IconInfoCircle,
   IconUserX,
+
 } from '@tabler/icons-react'
 import {
   Avatar,
@@ -52,8 +55,8 @@ const statusConfig: Record<
     bgColor: string
     borderColor: string
     textColor: string
-    label: (t: any) => string
-    icon: any
+    label: (t: TranslationFunctions) => string
+    icon: TablerIcon
   }
 > = {
   present: {
@@ -322,7 +325,7 @@ export function AttendanceCalendar({
                   {config.label(t)}
                 </span>
                 <span className="text-2xl font-black italic tabular-nums">
-                  {(summary as any)[status]}
+                  {summary[status]}
                 </span>
               </div>
             </motion.div>

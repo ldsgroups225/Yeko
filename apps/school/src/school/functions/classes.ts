@@ -33,10 +33,11 @@ export const getClasses = createServerFn()
     await requirePermission('classes', 'view')
 
     // IconFilter out null values to match ClassFilters type
-    const filters = {
+    const filters: classQueries.ClassFilters = {
       ...data,
       schoolId: context.schoolId,
       schoolYearId: data.schoolYearId ?? undefined,
+      status: data.status as any,
     }
 
     return await classQueries.getClasses(filters)

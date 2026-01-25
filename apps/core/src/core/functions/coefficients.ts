@@ -1,24 +1,13 @@
-import {
-  bulkCreateCoefficients,
-  bulkUpdateCoefficients,
-  copyCoefficientTemplates,
-  createCoefficientTemplate,
-  deleteCoefficientTemplate,
-  getCoefficientStats,
-  getCoefficientTemplateById,
-  getCoefficientTemplates,
-  getDb,
-  grades,
-  schoolYearTemplates,
-  series,
-  subjects,
-  updateCoefficientTemplate,
-} from '@repo/data-ops'
+import { databaseMiddleware } from '@/core/middleware/database'
 import { createServerFn } from '@tanstack/react-start'
+// Helper to load queries dynamically
+const loadDataOps = () => import('@repo/data-ops')
+const loadDatabaseSetup = () => import('@repo/data-ops/database/setup')
+const loadDrizzleOrm = () => import('drizzle-orm')
 import { inArray } from 'drizzle-orm'
 import { z } from 'zod'
 import { COEFFICIENT_LIMITS } from '@/constants/coefficients'
-import { exampleMiddlewareWithContext } from '@/core/middleware/example-middleware'
+
 import {
   BulkCreateCoefficientsSchema,
   BulkUpdateCoefficientsSchema,
@@ -32,67 +21,76 @@ import {
 // ===== COEFFICIENT TEMPLATES =====
 
 export const coefficientTemplatesQuery = createServerFn()
-  .middleware([exampleMiddlewareWithContext])
+  .middleware([databaseMiddleware])
   .inputValidator(data => GetCoefficientTemplatesSchema.parse(data))
   .handler(async (ctx) => {
+    const { getCoefficientTemplates } = await loadDataOps()
     return await getCoefficientTemplates(ctx.data)
   })
 
 export const coefficientTemplateByIdQuery = createServerFn()
-  .middleware([exampleMiddlewareWithContext])
+  .middleware([databaseMiddleware])
   .inputValidator(data => CoefficientTemplateIdSchema.parse(data))
   .handler(async (ctx) => {
+    const { getCoefficientTemplateById } = await loadDataOps()
     return await getCoefficientTemplateById(ctx.data.id)
   })
 
 export const createCoefficientTemplateMutation = createServerFn()
-  .middleware([exampleMiddlewareWithContext])
+  .middleware([databaseMiddleware])
   .inputValidator(data => CreateCoefficientTemplateSchema.parse(data))
   .handler(async (ctx) => {
+    const { createCoefficientTemplate } = await loadDataOps()
     return await createCoefficientTemplate(ctx.data)
   })
 
 export const updateCoefficientTemplateMutation = createServerFn()
-  .middleware([exampleMiddlewareWithContext])
+  .middleware([databaseMiddleware])
   .inputValidator(data => UpdateCoefficientTemplateSchema.parse(data))
   .handler(async (ctx) => {
+    const { updateCoefficientTemplate } = await loadDataOps()
     const { id, ...updateData } = ctx.data
     return await updateCoefficientTemplate(id, updateData)
   })
 
 export const deleteCoefficientTemplateMutation = createServerFn()
-  .middleware([exampleMiddlewareWithContext])
+  .middleware([databaseMiddleware])
   .inputValidator(data => CoefficientTemplateIdSchema.parse(data))
   .handler(async (ctx) => {
+    const { deleteCoefficientTemplate } = await loadDataOps()
     await deleteCoefficientTemplate(ctx.data.id)
     return { success: true, id: ctx.data.id }
   })
 
 export const bulkCreateCoefficientsMutation = createServerFn()
-  .middleware([exampleMiddlewareWithContext])
+  .middleware([databaseMiddleware])
   .inputValidator(data => BulkCreateCoefficientsSchema.parse(data))
   .handler(async (ctx) => {
+    const { bulkCreateCoefficients } = await loadDataOps()
     return await bulkCreateCoefficients(ctx.data.coefficients)
   })
 
 export const bulkUpdateCoefficientsMutation = createServerFn()
-  .middleware([exampleMiddlewareWithContext])
+  .middleware([databaseMiddleware])
   .inputValidator(data => BulkUpdateCoefficientsSchema.parse(data))
   .handler(async (ctx) => {
+    const { bulkUpdateCoefficients } = await loadDataOps()
     await bulkUpdateCoefficients(ctx.data)
     return { success: true }
   })
 
 export const copyCoefficientsMutation = createServerFn()
-  .middleware([exampleMiddlewareWithContext])
+  .middleware([databaseMiddleware])
   .inputValidator(data => CopyCoefficientsSchema.parse(data))
   .handler(async (ctx) => {
+    const { copyCoefficientTemplates } = await loadDataOps()
     return await copyCoefficientTemplates(ctx.data.sourceYearId, ctx.data.targetYearId)
   })
 
 export const coefficientStatsQuery = createServerFn()
-  .middleware([exampleMiddlewareWithContext])
+  .middleware([databaseMiddleware])
   .handler(async () => {
+    const { getCoefficientStats } = await loadDataOps()
     return await getCoefficientStats()
   })
 
@@ -114,7 +112,7 @@ export interface CoefficientValidationError {
 }
 
 export const validateCoefficientImportMutation = createServerFn()
-  .middleware([exampleMiddlewareWithContext])
+  .middleware([databaseMiddleware])
   .inputValidator(data => CoefficientImportValidationSchema.parse(data))
   .handler(async (ctx) => {
     const { data } = ctx.data
@@ -124,6 +122,9 @@ export const validateCoefficientImportMutation = createServerFn()
       return { valid: false, errors: [{ row: 0, field: 'data', message: 'Aucune donnée à valider' }] }
     }
 
+    const { getDb } = await loadDatabaseSetup()
+    const { inArray } = await loadDrizzleOrm()
+    const { schoolYearTemplates, subjects, grades, series } = await loadDataOps()
     const db = getDb()
 
     // Extract unique IDs for batch validation

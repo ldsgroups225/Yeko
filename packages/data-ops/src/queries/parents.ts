@@ -1,10 +1,11 @@
+import { nanoid as generateId } from "nanoid"
 import type { InvitationStatus, Parent, ParentInsert, Relationship } from '../drizzle/school-schema'
 import crypto from 'node:crypto'
 import { and, eq, ilike, isNull, or, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import { parents, studentParents, students, users } from '../drizzle/school-schema'
 
-const nanoid = () => crypto.randomUUID()
+const nanoid = () => generateId()
 
 // ==================== Types ====================
 

@@ -46,7 +46,7 @@ function SessionsPage() {
       {sessions.length > 0
         ? (
             <div className="space-y-2">
-              {sessions.map((session: any) => (
+              {sessions.map(session => (
                 <SessionHistoryCard
                   key={session.id}
                   session={session}

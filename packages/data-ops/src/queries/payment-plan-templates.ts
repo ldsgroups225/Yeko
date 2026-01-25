@@ -1,8 +1,8 @@
-import type { PaymentPlanTemplate, PaymentPlanTemplateInsert } from '@/drizzle/school-schema'
+import type { PaymentPlanTemplate, PaymentPlanTemplateInsert } from '../drizzle/school-schema'
+import { getDb } from '../database/setup'
+import { paymentPlanTemplates } from '../drizzle/school-schema'
 import { and, eq } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
-import { getDb } from '@/database/setup'
-import { paymentPlanTemplates } from '@/drizzle/school-schema'
 
 export interface GetPaymentPlanTemplatesParams {
   schoolId: string

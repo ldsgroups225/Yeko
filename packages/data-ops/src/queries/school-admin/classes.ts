@@ -1,7 +1,8 @@
+import { nanoid } from "nanoid"
+import { getDb } from '../../database/setup'
+import { grades, series } from '../../drizzle/core-schema'
+import { classes, classrooms, teachers } from '../../drizzle/school-schema'
 import { and, desc, eq } from 'drizzle-orm'
-import { getDb } from '@/database/setup'
-import { grades, series } from '@/drizzle/core-schema'
-import { classes, classrooms, teachers } from '@/drizzle/school-schema'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
 
 export async function getClassesBySchoolYear(schoolYearId: string, schoolId: string, options?: {
@@ -109,7 +110,7 @@ export async function createClass(data: {
   const db = getDb()
 
   const [newClass] = await db.insert(classes).values({
-    id: crypto.randomUUID(),
+    id: nanoid(),
     schoolId: data.schoolId,
     schoolYearId: data.schoolYearId,
     gradeId: data.gradeId,

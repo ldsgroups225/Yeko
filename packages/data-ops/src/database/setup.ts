@@ -3,15 +3,16 @@
 import type { NeonHttpDatabase } from 'drizzle-orm/neon-http'
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres'
 import { neon } from '@neondatabase/serverless'
+import * as authSchema from '../drizzle/auth-schema'
+import * as coreSchema from '../drizzle/core-schema'
+import * as schoolSchema from '../drizzle/school-schema'
+import * as supportSchema from '../drizzle/support-schema'
 import { drizzle as drizzleNeonHttp } from 'drizzle-orm/neon-http'
 import { drizzle as drizzlePg } from 'drizzle-orm/node-postgres'
 import { Pool } from 'pg'
-import * as authSchema from '@/drizzle/auth-schema'
-import * as coreSchema from '@/drizzle/core-schema'
-import * as schoolSchema from '@/drizzle/school-schema'
 
 // Combined schema type
-const schema = { ...authSchema, ...coreSchema, ...schoolSchema }
+const schema = { ...authSchema, ...coreSchema, ...schoolSchema, ...supportSchema }
 type Schema = typeof schema
 
 // Database types for each driver

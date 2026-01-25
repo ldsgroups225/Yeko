@@ -1,6 +1,7 @@
+import { nanoid } from "nanoid"
+import { getDb } from '../../database/setup'
+import { parents, studentParents, students, users } from '../../drizzle/school-schema'
 import { and, desc, eq, ilike, or } from 'drizzle-orm'
-import { getDb } from '@/database/setup'
-import { parents, studentParents, students, users } from '@/drizzle/school-schema'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
 
 export async function getParentsBySchool(
@@ -102,7 +103,7 @@ export async function createParent(data: { userId: string, phone: string, addres
   const [parent] = await db
     .insert(parents)
     .values({
-      id: crypto.randomUUID(),
+      id: nanoid(),
       userId: data.userId,
       phone: data.phone,
       address: data.address,
@@ -192,7 +193,7 @@ export async function linkParentToStudent(data: {
     const [link] = await tx
       .insert(studentParents)
       .values({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         studentId: data.studentId,
         parentId: data.parentId,
         relationship: data.relationship,

@@ -1,8 +1,8 @@
-import type { Installment, InstallmentInsert, InstallmentStatus } from '@/drizzle/school-schema'
+import type { Installment, InstallmentInsert, InstallmentStatus } from '../drizzle/school-schema'
+import { getDb } from '../database/setup'
+import { installments, paymentPlans, students } from '../drizzle/school-schema'
 import { and, eq, lt, sql } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
-import { getDb } from '@/database/setup'
-import { installments, paymentPlans, students } from '@/drizzle/school-schema'
 
 export interface GetInstallmentsParams {
   paymentPlanId?: string

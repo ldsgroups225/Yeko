@@ -1,3 +1,5 @@
+import type { TablerIcon } from '@tabler/icons-react'
+import type { TranslationFunctions } from '@/i18n'
 import { IconCircleCheck, IconClock, IconDeviceFloppy, IconSearch, IconUserCheck, IconUserMinus, IconUserX } from '@tabler/icons-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
 import { Button } from '@workspace/ui/components/button'
@@ -41,8 +43,8 @@ interface TeacherAttendanceGridProps {
 }
 
 const statusConfig: Record<TeacherAttendanceStatus, {
-  label: (t: any) => string
-  icon: any
+  label: (t: TranslationFunctions) => string
+  icon: TablerIcon
   color: string
   bgColor: string
   borderColor: string
@@ -65,7 +67,7 @@ const statusConfig: Record<TeacherAttendanceStatus, {
     indicatorColor: 'bg-amber-500',
   },
   on_leave: {
-    label: (t: any) => t.attendance.status.on_leave(),
+    label: t => t.attendance.status.on_leave(),
     icon: IconUserMinus,
     color: 'text-blue-600 dark:text-blue-400',
     bgColor: 'bg-blue-50/50 dark:bg-blue-900/20',
@@ -113,7 +115,7 @@ export function TeacherAttendanceGrid({
   }
 
   const handleMarkAllPresent = () => {
-    setEntries(prev => prev.map(e => ({ ...e, status: 'present' })))
+    setEntries(prev => prev.map(e => ({ ...e, status: 'present' as const })))
     setHasChanges(true)
   }
 
@@ -326,7 +328,7 @@ export function TeacherAttendanceGrid({
   )
 }
 
-function SummaryCard({ label, count, config }: { label: string, count: number, config: any }) {
+function SummaryCard({ label, count, config }: { label: string, count: number, config: typeof statusConfig[TeacherAttendanceStatus] }) {
   const Icon = config.icon
   return (
     <div className={cn(
@@ -346,7 +348,7 @@ function SummaryCard({ label, count, config }: { label: string, count: number, c
   )
 }
 
-function StatusButton({ active, onClick, config }: { active: boolean, onClick: () => void, config: any }) {
+function StatusButton({ active, onClick, config }: { active: boolean, onClick: () => void, config: typeof statusConfig[TeacherAttendanceStatus] }) {
   const Icon = config.icon
   return (
     <Button

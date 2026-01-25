@@ -1,4 +1,4 @@
-import type { SystemAction } from '@repo/data-ops/auth/permissions'
+import type { SystemAction } from '@repo/data-ops'
 import type { ComponentType } from 'react'
 import type { FileRoutesByTo } from '@/routeTree.gen'
 import { Button } from '@repo/ui/src/components/button'

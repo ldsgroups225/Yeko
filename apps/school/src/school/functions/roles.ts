@@ -115,7 +115,7 @@ export const createNewRole = createServerFn()
       name: data.name,
       slug: data.slug,
       description: data.description || undefined,
-      permissions: data.permissions,
+      permissions: data.permissions as any,
       scope: data.scope,
     })
   })
@@ -138,7 +138,7 @@ export const updateExistingRole = createServerFn()
     return await updateRole(roleId, {
       name: data.name,
       description: data.description || undefined,
-      permissions: data.permissions,
+      permissions: data.permissions as any,
     })
   })
 

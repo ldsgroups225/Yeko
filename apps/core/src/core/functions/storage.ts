@@ -1,25 +1,31 @@
-import process from 'node:process'
+// import process from 'node:process' // Removed incompatible import
 
-import {
-  generatePresignedUploadUrl,
-  initR2,
-  isR2Configured,
-  isValidFileSize,
-  isValidImageType,
-} from '@repo/data-ops'
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 
+// Helper to load ops dynamically
+const loadDataOps = () => import('@repo/data-ops')
+
+// Helper function to safely get env vars (process.env or import.meta.env)
+function getEnv(key: string): string | undefined {
+  if (typeof process !== 'undefined' && process.env)
+    return process.env[key]
+  if (typeof import.meta !== 'undefined' && import.meta.env)
+    return import.meta.env[key]
+  return undefined
+}
+
 // Auto-initialize R2 from environment variables if available
-function ensureR2Initialized() {
+async function ensureR2Initialized() {
+  const { isR2Configured, initR2 } = await loadDataOps()
   if (isR2Configured())
     return true
 
-  const accountId = process.env.R2_ACCOUNT_ID
-  const accessKeyId = process.env.R2_ACCESS_KEY_ID
-  const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY
-  const bucketName = process.env.R2_BUCKET_NAME
-  const publicUrl = process.env.R2_PUBLIC_URL
+  const accountId = getEnv('R2_ACCOUNT_ID')
+  const accessKeyId = getEnv('R2_ACCESS_KEY_ID')
+  const secretAccessKey = getEnv('R2_SECRET_ACCESS_KEY')
+  const bucketName = getEnv('R2_BUCKET_NAME')
+  const publicUrl = getEnv('R2_PUBLIC_URL')
 
   if (accountId && accessKeyId && secretAccessKey && bucketName) {
     initR2({
@@ -46,9 +52,10 @@ export const getPresignedUploadUrl = createServerFn()
   .inputValidator(data => GetPresignedUrlSchema.parse(data))
   .handler(async (ctx) => {
     const { filename, contentType, fileSize, folder } = ctx.data
+    const { isR2Configured, isValidImageType, isValidFileSize, generatePresignedUploadUrl } = await loadDataOps()
 
     // Try to initialize R2 from environment variables
-    ensureR2Initialized()
+    await ensureR2Initialized()
 
     // Check if R2 is configured
     if (!isR2Configured()) {
@@ -91,6 +98,7 @@ export const getPresignedUploadUrl = createServerFn()
         publicUrl: result.publicUrl,
         key: result.key,
         configured: true,
+        isR2: true,
       }
     }
     catch (error) {
@@ -105,8 +113,9 @@ export const getPresignedUploadUrl = createServerFn()
 
 export const checkStorageConfigured = createServerFn()
   .handler(async () => {
+    const { isR2Configured } = await loadDataOps()
     // Try to initialize R2 from environment variables
-    ensureR2Initialized()
+    await ensureR2Initialized()
 
     return {
       configured: isR2Configured(),

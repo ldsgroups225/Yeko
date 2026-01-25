@@ -68,10 +68,14 @@ const discountFormSchema = z
 
 type DiscountFormData = z.infer<typeof discountFormSchema>
 
+export interface Discount extends DiscountFormData {
+  id: string
+}
+
 interface DiscountFormDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  initialData?: any
+  initialData?: Partial<Discount>
 }
 
 export function DiscountFormDialog({
@@ -123,7 +127,7 @@ export function DiscountFormDialog({
       if (isEditing) {
         return updateExistingDiscount({
           data: {
-            id: initialData.id,
+            id: initialData.id!,
             ...data,
           },
         })

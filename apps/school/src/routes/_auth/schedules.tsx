@@ -1,12 +1,14 @@
 import type { TimetableViewMode } from '@/components/timetables'
 import type { TimetableSessionData } from '@/components/timetables/timetable-session-card'
+import type { SessionFormInput } from '@/components/timetables/timetable-session-dialog'
+import type { CreateTimetableSessionInput, UpdateTimetableSessionInput } from '@/schemas/timetable'
 import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
 import { IconCalendar, IconCalendarSearch, IconDownload, IconSparkles, IconUpload } from '@tabler/icons-react'
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+
 import { createFileRoute } from '@tanstack/react-router'
-
 import { Button } from '@workspace/ui/components/button'
-
 import {
   Select,
   SelectContent,
@@ -29,7 +31,11 @@ import { useSchoolContext } from '@/hooks/use-school-context'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { timetablesOptions } from '@/lib/queries/timetables'
-import { dayOfWeekLabels } from '@/schemas/timetable'
+import {
+
+  dayOfWeekLabels,
+
+} from '@/schemas/timetable'
 import { getClassSubjects } from '@/school/functions/class-subjects'
 import { getClasses } from '@/school/functions/classes'
 import { getClassrooms } from '@/school/functions/classrooms'
@@ -44,6 +50,23 @@ import {
 export const Route = createFileRoute('/_auth/schedules')({
   component: TimetablesPage,
 })
+
+interface SchoolYear {
+  id: string
+  isActive: boolean
+  template: {
+    name: string
+  }
+}
+
+interface ExportData {
+  day: string
+  startTime: string
+  endTime: string
+  subject: string
+  teacher: string
+  classroom: string
+}
 
 function TimetablesPage() {
   const t = useTranslations()
@@ -70,7 +93,7 @@ function TimetablesPage() {
   })
 
   // Determine effective year ID
-  const activeYear = schoolYears?.find((y: { isActive: boolean }) => y.isActive)
+  const activeYear = schoolYears?.find((y: SchoolYear) => y.isActive)
   const effectiveYearId = contextSchoolYearId || localYearId || activeYear?.id || ''
 
   // Fetch classes for selected year
@@ -95,7 +118,15 @@ function TimetablesPage() {
     queryFn: () => getClassrooms({ data: {} }),
     staleTime: 5 * 60 * 1000,
   })
-  const classrooms = useMemo(() => (Array.isArray(classroomsData) ? classroomsData : (classroomsData as any)?.classrooms) ?? [], [classroomsData])
+
+  // We handle both array and object result structures gracefully with specific types
+  const classrooms = useMemo(() => {
+    if (Array.isArray(classroomsData))
+      return classroomsData
+    if (classroomsData && typeof classroomsData === 'object' && 'classrooms' in (classroomsData as object))
+      return (classroomsData as unknown as { classrooms: Awaited<ReturnType<typeof getClassrooms>> }).classrooms
+    return []
+  }, [classroomsData])
 
   // Fetch subjects for class
   const { data: classSubjectsData } = useQuery({
@@ -103,7 +134,14 @@ function TimetablesPage() {
     queryFn: () => getClassSubjects({ data: { classId: selectedClassId, schoolYearId: effectiveYearId } }),
     enabled: !!selectedClassId,
   })
-  const classSubjects = useMemo(() => (Array.isArray(classSubjectsData) ? classSubjectsData : (classSubjectsData as any)?.data) ?? [], [classSubjectsData])
+
+  const classSubjects = useMemo(() => {
+    if (Array.isArray(classSubjectsData))
+      return classSubjectsData
+    if (classSubjectsData && typeof classSubjectsData === 'object' && 'data' in (classSubjectsData as object))
+      return (classSubjectsData as unknown as { data: Awaited<ReturnType<typeof getClassSubjects>> }).data
+    return []
+  }, [classSubjectsData])
 
   // Fetch timetable for class view
   const { data: classTimetable, isLoading: classTimetableLoading } = useQuery({
@@ -147,7 +185,7 @@ function TimetablesPage() {
 
   // Mutations
   const createMutation = useMutation({
-    mutationFn: (data: any) => createTimetableSession({ data }),
+    mutationFn: (data: CreateTimetableSessionInput) => createTimetableSession({ data }),
     onSuccess: (res) => {
       if (res.success) {
         toast.success(t.common.success())
@@ -161,7 +199,7 @@ function TimetablesPage() {
   })
 
   const updateMutation = useMutation({
-    mutationFn: (data: any) => updateTimetableSession({ data }),
+    mutationFn: (data: UpdateTimetableSessionInput) => updateTimetableSession({ data }),
     onSuccess: (res) => {
       if (res.success) {
         toast.success(t.common.success())
@@ -207,20 +245,27 @@ function TimetablesPage() {
     setIsDialogOpen(true)
   }
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: SessionFormInput & { id?: string }) => {
     if (dialogMode === 'create') {
       await createMutation.mutateAsync({
         ...data,
-        schoolId,
+        schoolId: schoolId || '',
         schoolYearId: effectiveYearId,
         classId: selectedClassId,
       })
     }
     else if (selectedSession) {
-      await updateMutation.mutateAsync({
-        ...data,
+      const updatePayload: UpdateTimetableSessionInput = {
         id: selectedSession.id,
-      })
+        subjectId: data.subjectId,
+        teacherId: data.teacherId,
+        classroomId: data.classroomId,
+        dayOfWeek: data.dayOfWeek,
+        startTime: data.startTime,
+        endTime: data.endTime,
+        color: data.color,
+      }
+      await updateMutation.mutateAsync(updatePayload)
     }
   }
 
@@ -234,17 +279,17 @@ function TimetablesPage() {
       return
     }
 
-    const schema = ExcelSchemaBuilder.create<any>()
-      .column('day', { key: 'Jour' })
-      .column('startTime', { key: 'Début' })
-      .column('endTime', { key: 'Fin' })
-      .column('subject', { key: 'Matière' })
-      .column('teacher', { key: 'Enseignant' })
-      .column('classroom', { key: 'Salle' })
+    const schema = ExcelSchemaBuilder.create<ExportData>()
+      .column('Jour', { key: 'day' })
+      .column('Début', { key: 'startTime' })
+      .column('Fin', { key: 'endTime' })
+      .column('Matière', { key: 'subject' })
+      .column('Enseignant', { key: 'teacher' })
+      .column('Salle', { key: 'classroom' })
       .build()
 
     const data = transformedTimetable.map(s => ({
-      day: dayOfWeekLabels[s.dayOfWeek],
+      day: dayOfWeekLabels[s.dayOfWeek] || '',
       startTime: s.startTime,
       endTime: s.endTime,
       subject: s.subjectName,
@@ -273,20 +318,24 @@ function TimetablesPage() {
         || (viewMode === 'teacher' && selectedTeacherId))
 
   // Formatting for dialog
-  const formattedSubjects = useMemo(() => classSubjects.map((cs: any) => ({
-    id: cs.subject?.id || cs.id,
-    name: cs.subject?.name || cs.name || 'Unknown',
-  })), [classSubjects])
+  const formattedSubjects = useMemo(() => classSubjects.map((cs) => {
+    return {
+      id: cs.subject?.id || 'unknown',
+      name: cs.subject?.name || 'Unknown',
+    }
+  }), [classSubjects])
 
-  const formattedTeachers = useMemo(() => teachers.map((t: any) => ({
+  const formattedTeachers = useMemo(() => teachers.map(t => ({
     id: t.id,
-    name: t.user?.name || t.name || 'Unknown',
+    name: t.user?.name || 'Unknown',
   })), [teachers])
 
-  const formattedClassrooms = useMemo(() => classrooms.map((c: any) => ({
-    id: c.classroom?.id || c.id,
-    name: c.classroom?.name || c.name || 'Unknown',
-  })), [classrooms])
+  const formattedClassrooms = useMemo(() => classrooms.map((c) => {
+    return {
+      id: c.classroom?.id || 'unknown',
+      name: c.classroom?.name || 'Unknown',
+    }
+  }), [classrooms])
 
   return (
     <div className="space-y-8 p-1">
@@ -467,7 +516,7 @@ function TimetablesPage() {
                                     ? (
                                         <div className="flex items-center gap-2">
                                           <div className="size-2 rounded-full bg-emerald-500" />
-                                          <span>{teacher.user.name}</span>
+                                          <span>{teacher.user?.name}</span>
                                         </div>
                                       )
                                     : undefined
@@ -478,7 +527,7 @@ function TimetablesPage() {
                         <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
                           {teachers?.map(teacher => (
                             <SelectItem key={teacher.id} value={teacher.id} className="rounded-lg focus:bg-primary/10 font-medium">
-                              {teacher.user.name}
+                              {teacher.user?.name}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -542,7 +591,7 @@ function TimetablesPage() {
                 id: selectedSession.id,
                 subjectId: selectedSession.subjectId,
                 teacherId: selectedSession.teacherId ?? '',
-                classroomId: (selectedSession.classroomId ?? '') as string,
+                classroomId: selectedSession.classroomId ?? '',
                 dayOfWeek: selectedSession.dayOfWeek,
                 startTime: selectedSession.startTime,
                 endTime: selectedSession.endTime,

@@ -4,17 +4,17 @@ import type {
   PaymentInsert,
   PaymentMethod,
   PaymentStatus,
-} from '@/drizzle/school-schema'
-import { and, desc, eq, gte, lte, sql } from 'drizzle-orm'
-import { nanoid } from 'nanoid'
-import { getDb } from '@/database/setup'
+} from '../drizzle/school-schema'
+import { getDb } from '../database/setup'
 import {
   installments,
   paymentAllocations,
   paymentPlans,
   payments,
   studentFees,
-} from '@/drizzle/school-schema'
+} from '../drizzle/school-schema'
+import { and, desc, eq, gte, lte, sql } from 'drizzle-orm'
+import { nanoid } from 'nanoid'
 
 export interface GetPaymentsParams {
   schoolId: string

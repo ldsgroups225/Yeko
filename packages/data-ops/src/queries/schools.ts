@@ -1,7 +1,8 @@
-import type { School, SchoolInsert, SchoolStatus } from '@/drizzle/core-schema'
+import { nanoid } from "nanoid"
+import type { School, SchoolInsert, SchoolStatus } from '../drizzle/core-schema'
+import { getDb } from '../database/setup'
+import { schools } from '../drizzle/core-schema'
 import { and, asc, count, desc, eq, ilike, inArray, or } from 'drizzle-orm'
-import { getDb } from '@/database/setup'
-import { schools } from '@/drizzle/core-schema'
 
 // Get all schools with pagination and filtering
 export async function getSchools(options: {
@@ -97,7 +98,7 @@ export async function createSchool(
   const newSchools = await db
     .insert(schools)
     .values({
-      id: crypto.randomUUID(), // Generate UUID
+      id: nanoid(), // Generate UUID
       ...data,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -323,7 +324,7 @@ export async function bulkCreateSchools(
           const [newSchool] = await tx
             .insert(schools)
             .values({
-              id: crypto.randomUUID(),
+              id: nanoid(),
               ...data,
               createdAt: new Date(),
               updatedAt: new Date(),

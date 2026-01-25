@@ -83,9 +83,9 @@ export const getTeacherDashboard = createServerFn()
     const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`
 
     const upcomingClasses = formattedSchedule
-      .filter((s: any) => s.startTime > currentTime)
+      .filter(s => s.startTime > currentTime)
       .slice(0, 3)
-      .map((s: any) => ({
+      .map(s => ({
         id: s.id,
         startTime: s.startTime,
         endTime: s.endTime,
@@ -95,7 +95,7 @@ export const getTeacherDashboard = createServerFn()
       }))
 
     // Format messages
-    const formattedMessages = recentMessages.map((msg: any) => ({
+    const formattedMessages = recentMessages.map(msg => ({
       id: msg.id,
       senderName: msg.senderType === 'parent' ? 'Parent' : 'Enseignant',
       subject: msg.subject,
@@ -105,7 +105,7 @@ export const getTeacherDashboard = createServerFn()
     }))
 
     // Format notifications
-    const formattedNotifications = notifications.map((n: any) => ({
+    const formattedNotifications = notifications.map(n => ({
       id: n.id,
       type: n.type,
       title: n.title,
@@ -164,7 +164,7 @@ export const getTeacherSchedule = createServerFn()
     })
 
     // Format sessions with class names
-    const sessions = schedule.map((session: any) => ({
+    const sessions = schedule.map(session => ({
       id: session.id,
       dayOfWeek: session.dayOfWeek,
       startTime: session.startTime,

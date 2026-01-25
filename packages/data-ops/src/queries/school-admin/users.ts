@@ -1,7 +1,8 @@
+import { nanoid } from "nanoid"
 import { and, count, desc, eq, ilike, inArray, isNull, or, sql } from 'drizzle-orm'
-import { getDb } from '@/database/setup'
-import { schools } from '@/drizzle/core-schema'
-import { auditLogs, roles, userRoles, users, userSchools } from '@/drizzle/school-schema'
+import { getDb } from '../../database/setup'
+import { schools } from '../../drizzle/core-schema'
+import { auditLogs, roles, userRoles, users, userSchools } from '../../drizzle/school-schema'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
 
 // Re-export audit functions for convenience
@@ -191,7 +192,7 @@ export async function createUserWithSchool(data: {
 
   // Create user
   const insertedUsers = await db.insert(users).values({
-    id: crypto.randomUUID(),
+    id: nanoid(),
     email: data.email,
     name: data.name,
     authUserId: data.authUserId,
@@ -210,7 +211,7 @@ export async function createUserWithSchool(data: {
   try {
     // Link to school
     await db.insert(userSchools).values({
-      id: crypto.randomUUID(),
+      id: nanoid(),
       userId: user.id,
       schoolId: data.schoolId,
     })
@@ -219,7 +220,7 @@ export async function createUserWithSchool(data: {
     if (data.roleIds.length > 0) {
       await db.insert(userRoles).values(
         data.roleIds.map(roleId => ({
-          id: crypto.randomUUID(),
+          id: nanoid(),
           userId: user.id,
           roleId,
           schoolId: data.schoolId,
@@ -315,7 +316,7 @@ export async function assignRolesToUser(userId: string, schoolId: string, roleId
     if (roleIds.length > 0) {
       await tx.insert(userRoles).values(
         roleIds.map(roleId => ({
-          id: crypto.randomUUID(),
+          id: nanoid(),
           userId,
           roleId,
           schoolId,
@@ -466,7 +467,7 @@ export async function bulkUpdateUsersStatus(
     // Log audit for each user
     for (const user of updated) {
       await tx.insert(auditLogs).values({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         schoolId,
         userId: performedBy,
         action: 'update',
@@ -508,7 +509,7 @@ export async function bulkDeleteUsers(userIds: string[], schoolId: string, perfo
     // Log audit for each user
     for (const user of deleted) {
       await tx.insert(auditLogs).values({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         schoolId,
         userId: performedBy,
         action: 'delete',
@@ -623,7 +624,7 @@ export async function syncUserAuthOnLogin(authUserId: string, email: string, nam
     const [newUser] = await db
       .insert(users)
       .values({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         email,
         name: name || email.split('@')[0] || 'User', // Use name from Google or derive from email
         authUserId,
@@ -846,7 +847,7 @@ export async function assignSystemRolesToUser(userId: string, roleIds: string[])
     if (roleIds.length > 0) {
       await tx.insert(userRoles).values(
         roleIds.map(roleId => ({
-          id: crypto.randomUUID(),
+          id: nanoid(),
           userId,
           roleId,
           schoolId: null, // System scope

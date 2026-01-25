@@ -133,11 +133,11 @@ function ConductRecordDetailPage() {
               <CardHeader className="relative pb-0">
                 <div className="space-y-4">
                   <div className="flex flex-wrap gap-2">
-                    <ConductTypeBadge type={record.type as any} />
+                    <ConductTypeBadge type={record.type as 'incident' | 'sanction' | 'reward' | 'note'} />
                     {record.severity && (
-                      <ConductSeverityBadge severity={record.severity as any} />
+                      <ConductSeverityBadge severity={record.severity as 'low' | 'medium' | 'high' | 'critical' | 'urgent'} />
                     )}
-                    <ConductStatusBadge status={record.status as any} />
+                    <ConductStatusBadge status={record.status as 'open' | 'investigating' | 'pending_decision' | 'resolved' | 'closed' | 'appealed'} />
                   </div>
                   <CardTitle className="text-4xl font-black tracking-tight uppercase leading-tight">{record.title}</CardTitle>
                 </div>

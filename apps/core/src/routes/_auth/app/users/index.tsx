@@ -1,3 +1,4 @@
+import type { Role, User } from '@repo/data-ops'
 import { hasPermission } from '@repo/data-ops/auth/permissions'
 import {
   IconClock,
@@ -38,7 +39,7 @@ import { assignUserSystemRoles, getPlatformUsers } from '@/core/functions/users'
 
 export const Route = createFileRoute('/_auth/app/users/')({
   beforeLoad: ({ context }) => {
-    const permissions = context.auth?.permissions as any
+    const permissions = context.auth?.permissions
     if (!context.auth?.isAuthenticated || (!context.auth?.isSuperAdmin && !hasPermission(permissions, 'users', 'view'))) {
       throw redirect({
         to: '/unauthorized',
@@ -52,7 +53,7 @@ function UserManagement() {
   const queryClient = useQueryClient()
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
-  const [selectedUser, setSelectedUser] = useState<any>(null)
+  const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [isRolesDialogOpen, setIsRolesDialogOpen] = useState(false)
 
   // Roles form state
@@ -78,12 +79,12 @@ function UserManagement() {
     onError: () => toast.error('Erreur lors de la mise à jour des rôles'),
   })
 
-  const handleManageRoles = (user: any) => {
-    setSelectedUser(user)
+  const handleManageRoles = (user: User & { systemRoles?: string[] }) => {
+    setSelectedUser(user as User)
     // Find matching role IDs from systemRoles slugs
     const currentRoleIds = allRoles
-      .filter((r: any) => user.systemRoles?.includes(r.slug))
-      .map((r: any) => r.id)
+      .filter((r: Role) => user.systemRoles?.includes(r.slug))
+      .map((r: Role) => r.id)
 
     setSelectedRoleIds(currentRoleIds)
     setIsRolesDialogOpen(true)
@@ -154,12 +155,12 @@ function UserManagement() {
                       </TableCell>
                     </TableRow>
                   )
-                : users.map((user: any) => (
+                : (users as (User & { systemRoles?: string[] })[]).map(user => (
                     <TableRow key={user.id} className="group hover:bg-primary/5 transition-colors">
                       <TableCell>
                         <div className="flex items-center gap-3">
                           <Avatar className="h-10 w-10 ring-2 ring-primary/5 group-hover:ring-primary/20 transition-all">
-                            <AvatarImage src={user.avatarUrl} />
+                            <AvatarImage src={user.avatarUrl || undefined} />
                             <AvatarFallback className="bg-primary/10 text-primary font-bold">
                               {user.name?.charAt(0) || 'U'}
                             </AvatarFallback>
@@ -180,7 +181,7 @@ function UserManagement() {
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-wrap gap-1.5">
-                          {user.systemRoles?.length > 0
+                          {user.systemRoles && user.systemRoles.length > 0
                             ? (
                                 user.systemRoles.map((role: string) => (
                                   <Badge key={role} variant="outline" className="bg-primary/5 border-primary/20 text-primary text-[10px] px-1.5 py-0">
@@ -258,7 +259,7 @@ function UserManagement() {
 
           <div className="space-y-4 py-4">
             <div className="space-y-3">
-              {allRoles.map((role: any) => (
+              {allRoles.map((role: Role) => (
                 <div
                   key={role.id}
                   className="flex items-start gap-4 p-3 rounded-lg border border-border/50 hover:bg-primary/5 transition-all cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary"
@@ -283,7 +284,7 @@ function UserManagement() {
 
           <DialogFooter>
             <Button variant="ghost" onClick={() => setIsRolesDialogOpen(false)}>Annuler</Button>
-            <Button onClick={() => assignRolesMutation.mutate({ userId: selectedUser.id, roleIds: selectedRoleIds })} disabled={assignRolesMutation.isPending}>
+            <Button onClick={() => selectedUser && assignRolesMutation.mutate({ userId: selectedUser.id, roleIds: selectedRoleIds })} disabled={assignRolesMutation.isPending}>
               {assignRolesMutation.isPending ? <IconLoader2 className="h-4 w-4 animate-spin mr-2" /> : null}
               Enregistrer
             </Button>

@@ -1,6 +1,6 @@
-import { and, count, desc, eq, ilike, or, sql } from 'drizzle-orm'
-import { getDb } from '@/database/setup'
-import { grades, series, subjects } from '@/drizzle/core-schema'
+import { nanoid } from "nanoid"
+import { getDb } from '../../database/setup'
+import { grades, series, subjects } from '../../drizzle/core-schema'
 import {
   classes,
   classrooms,
@@ -8,7 +8,8 @@ import {
   teachers,
   teacherSubjects,
   users,
-} from '@/drizzle/school-schema'
+} from '../../drizzle/school-schema'
+import { and, count, desc, eq, ilike, or, sql } from 'drizzle-orm'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
 
 export async function getTeachersBySchool(
@@ -163,7 +164,7 @@ export async function createTeacher(data: {
   const [teacher] = await db
     .insert(teachers)
     .values({
-      id: crypto.randomUUID(),
+      id: nanoid(),
       userId: data.userId,
       schoolId: data.schoolId,
       specialization: data.specialization,
@@ -180,7 +181,7 @@ export async function createTeacher(data: {
   if (data.subjectIds && data.subjectIds.length > 0) {
     await db.insert(teacherSubjects).values(
       data.subjectIds.map(subjectId => ({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         teacherId: teacher.id,
         subjectId,
       })),
@@ -263,7 +264,7 @@ export async function assignSubjectsToTeacher(teacherId: string, schoolId: strin
   if (subjectIds.length > 0) {
     await db.insert(teacherSubjects).values(
       subjectIds.map(subjectId => ({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         teacherId,
         subjectId,
       })),

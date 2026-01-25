@@ -4,10 +4,10 @@ import {
   enrollments,
   feeStructures,
   feeTypes,
-  getDb,
   studentDiscounts,
   studentFees,
 } from '@repo/data-ops'
+import { getDb } from '@repo/data-ops/database/setup'
 import { createServerFn } from '@tanstack/react-start'
 import { and, eq, inArray, isNull, sql } from 'drizzle-orm'
 import { z } from 'zod'
@@ -290,7 +290,7 @@ export async function executeBulkFeeAssignment(params: {
 
   // 3. Get all applicable fee structures
   // Note: We might have students from different grades if called from bulkAssignFees
-  const gradeIds = Array.from(new Set(currentEnrollments.map(e => e.gradeId)))
+  const gradeIds = Array.from(new Set(currentEnrollments.map((e: { gradeId: string }) => e.gradeId)))
 
   const applicableFees = await db
     .select()
@@ -299,7 +299,7 @@ export async function executeBulkFeeAssignment(params: {
     .where(and(
       eq(feeStructures.schoolId, params.schoolId),
       eq(feeStructures.schoolYearId, params.schoolYearId),
-      inArray(feeStructures.gradeId, gradeIds),
+      inArray(feeStructures.gradeId, gradeIds.filter((id): id is string => typeof id === 'string') as string[]),
       eq(feeTypes.status, 'active'),
     ))
 
@@ -327,23 +327,33 @@ export async function executeBulkFeeAssignment(params: {
   }
 
   // 5. IconCheck existing student fees to avoid duplicates
-  const enrollmentIds = currentEnrollments.map(e => e.id)
+  const enrollmentIds = currentEnrollments.map((e: { id: string }) => e.id)
   const existingStudentFees = await db
     .select({ studentId: studentFees.studentId, feeStructureId: studentFees.feeStructureId })
     .from(studentFees)
     .where(inArray(studentFees.enrollmentId, enrollmentIds))
 
-  const existingFeesSet = new Set(existingStudentFees.map(f => `${f.studentId}-${f.feeStructureId}`))
+  const existingFeesSet = new Set(existingStudentFees.map((f: { studentId: string, feeStructureId: string }) => `${f.studentId}-${f.feeStructureId}`))
 
   // 6. Calculate and prepare batch insert
-  const toInsert: any[] = []
+  const toInsert: {
+    id: string
+    studentId: string
+    enrollmentId: string
+    feeStructureId: string
+    originalAmount: string
+    discountAmount: string
+    finalAmount: string
+    balance: string
+    status: 'pending' | 'paid' | 'partial' | 'overdue'
+  }[] = []
 
   for (const enrollment of currentEnrollments) {
     const isNewStudent = (enrollmentCounts.get(enrollment.studentId) || 0) <= 1
     const studentDiscountsList = discountMap.get(enrollment.studentId) || []
 
     // IconFilter applicable fees for this specific enrollment
-    const studentApplicableFees = applicableFees.filter(f =>
+    const studentApplicableFees = applicableFees.filter((f: { fee_structures: { gradeId: string | null, seriesId: string | null } }) =>
       f.fee_structures.gradeId === enrollment.gradeId
       && (enrollment.seriesId
         ? f.fee_structures.seriesId === enrollment.seriesId
@@ -372,7 +382,7 @@ export async function executeBulkFeeAssignment(params: {
         }
       }
 
-      const maxDiscountCap = studentDiscountsList.reduce((max: number, sd) => {
+      const maxDiscountCap = studentDiscountsList.reduce((max: number, sd: { discount: { maxDiscountAmount: string | number | null } }) => {
         if (sd.discount.maxDiscountAmount) {
           return Math.min(max, Number(sd.discount.maxDiscountAmount))
         }
@@ -401,7 +411,7 @@ export async function executeBulkFeeAssignment(params: {
       // Chunk inserts for large datasets
       const chunkSize = 100
       for (let i = 0; i < toInsert.length; i += chunkSize) {
-        await db.insert(studentFees).values(toInsert.slice(i, i + chunkSize))
+        await db.insert(studentFees).values(toInsert.slice(i, i + chunkSize) as any[])
       }
       results.succeeded = params.studentIds.length
     }
@@ -451,7 +461,7 @@ export const bulkAssignFeesByGrade = createServerFn()
         eq(enrollments.status, 'confirmed'),
       ))
 
-    const studentIds = enrolledStudentsData.map(s => s.studentId)
+    const studentIds = enrolledStudentsData.map((s: { studentId: string }) => s.studentId)
     const results = await executeBulkFeeAssignment({
       studentIds,
       schoolId: context.schoolId,
@@ -572,7 +582,7 @@ export const applySiblingDiscount = createServerFn()
       return { success: false as const, error: 'No parents linked to student' }
     }
 
-    const parentIds = studentParentLinks.rows.map(r => r.parent_id)
+    const parentIds = (studentParentLinks.rows as Array<{ parent_id: string }>).map(r => r.parent_id)
 
     // Count siblings enrolled this year
     const siblingsCount = await db.execute(sql`

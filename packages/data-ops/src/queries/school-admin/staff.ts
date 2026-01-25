@@ -1,6 +1,7 @@
+import { nanoid } from "nanoid"
+import { getDb } from '../../database/setup'
+import { staff, users } from '../../drizzle/school-schema'
 import { and, count, desc, eq, ilike, or } from 'drizzle-orm'
-import { getDb } from '@/database/setup'
-import { staff, users } from '@/drizzle/school-schema'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
 
 export async function getStaffBySchool(
@@ -89,7 +90,7 @@ export async function createStaff(data: {
   const [newStaff] = await db
     .insert(staff)
     .values({
-      id: crypto.randomUUID(),
+      id: nanoid(),
       userId: data.userId,
       schoolId: data.schoolId,
       position: data.position,

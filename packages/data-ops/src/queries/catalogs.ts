@@ -1,3 +1,4 @@
+import { nanoid } from "nanoid"
 import type {
   EducationLevel,
   Grade,
@@ -5,16 +6,16 @@ import type {
   Subject,
   SubjectCategory,
   Track,
-} from '@/drizzle/core-schema'
-import { and, asc, count, eq, ilike, or } from 'drizzle-orm'
-import { getDb } from '@/database/setup'
+} from '../drizzle/core-schema'
+import { getDb } from '../database/setup'
 import {
   educationLevels,
   grades,
   series,
   subjects,
   tracks,
-} from '@/drizzle/core-schema'
+} from '../drizzle/core-schema'
+import { and, asc, count, eq, ilike, or } from 'drizzle-orm'
 
 // ===== EDUCATION LEVELS =====
 
@@ -51,7 +52,7 @@ export async function createTrack(
   const [newTrack] = await db
     .insert(tracks)
     .values({
-      id: crypto.randomUUID(),
+      id: nanoid(),
       ...data,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -116,7 +117,7 @@ export async function createGrade(
   const [newGrade] = await db
     .insert(grades)
     .values({
-      id: crypto.randomUUID(),
+      id: nanoid(),
       ...data,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -201,7 +202,7 @@ export async function createSerie(
   const [newSerie] = await db
     .insert(series)
     .values({
-      id: crypto.randomUUID(),
+      id: nanoid(),
       ...data,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -246,7 +247,7 @@ export async function bulkCreateSeries(
     return []
 
   const values = data.map(item => ({
-    id: crypto.randomUUID(),
+    id: nanoid(),
     ...item,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -336,7 +337,7 @@ export async function createSubject(
   const [newSubject] = await db
     .insert(subjects)
     .values({
-      id: crypto.randomUUID(),
+      id: nanoid(),
       ...data,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -381,7 +382,7 @@ export async function bulkCreateSubjects(
     return []
 
   const values = data.map(item => ({
-    id: crypto.randomUUID(),
+    id: nanoid(),
     ...item,
     createdAt: new Date(),
     updatedAt: new Date(),

@@ -1,8 +1,8 @@
-import type { Receipt, ReceiptInsert } from '@/drizzle/school-schema'
+import type { Receipt, ReceiptInsert } from '../drizzle/school-schema'
+import { getDb } from '../database/setup'
+import { receipts } from '../drizzle/school-schema'
 import { and, desc, eq, gte, lte } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
-import { getDb } from '@/database/setup'
-import { receipts } from '@/drizzle/school-schema'
 
 export interface GetReceiptsParams {
   paymentId?: string

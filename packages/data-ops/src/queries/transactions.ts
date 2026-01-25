@@ -1,8 +1,8 @@
-import type { Transaction, TransactionInsert, TransactionLine, TransactionLineInsert, TransactionStatus, TransactionType } from '@/drizzle/school-schema'
+import type { Transaction, TransactionInsert, TransactionLine, TransactionLineInsert, TransactionStatus, TransactionType } from '../drizzle/school-schema'
+import { getDb } from '../database/setup'
+import { accounts, transactionLines, transactions } from '../drizzle/school-schema'
 import { and, desc, eq, gte, lte, sql } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
-import { getDb } from '@/database/setup'
-import { accounts, transactionLines, transactions } from '@/drizzle/school-schema'
 
 export interface GetTransactionsParams {
   schoolId: string

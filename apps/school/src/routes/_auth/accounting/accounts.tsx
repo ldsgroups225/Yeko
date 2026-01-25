@@ -1,3 +1,4 @@
+import type { AccountsTableItem, Account as CRUDAccount } from '@/components/finance'
 import { IconBookmark, IconPlus } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
@@ -49,7 +50,7 @@ function AccountsPage() {
   const t = useTranslations()
   const queryClient = useQueryClient()
   const [isCreateOpen, setIsCreateOpen] = useState(false)
-  const [editingAccount, setEditingAccount] = useState<any>(null)
+  const [editingAccount, setEditingAccount] = useState<CRUDAccount | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
   const { data: accountsTree, isLoading } = useQuery(accountsOptions.tree())
@@ -61,21 +62,23 @@ function AccountsPage() {
       toast.success('Compte supprimé')
       setDeletingId(null)
     },
-    onError: (err: any) => {
-      toast.error(err.message || 'Erreur lors de la suppression')
+    onError: (err: unknown) => {
+      const message = err instanceof Error ? err.message : 'Erreur lors de la suppression'
+      toast.error(message)
     },
   })
 
-  const handleEdit = (account: any) => {
-    setEditingAccount(account)
+  const handleEdit = (account: AccountsTableItem) => {
+    // We need the full account data for editing, but for now we'll cast or fetch
+    setEditingAccount(account as unknown as CRUDAccount)
     setIsCreateOpen(true)
   }
 
-  const handleDelete = (account: any) => {
+  const handleDelete = (account: AccountsTableItem) => {
     setDeletingId(account.id)
   }
 
-  const accountsList = accountsTree
+  const accountsList: AccountsTableItem[] = accountsTree
     ? flattenAccounts(accountsTree as AccountNode[]).map(acc => ({
         id: acc.id,
         code: acc.code,
@@ -159,7 +162,7 @@ function AccountsPage() {
           if (!open)
             setEditingAccount(null)
         }}
-        initialData={editingAccount}
+        initialData={editingAccount || undefined}
       />
 
       <DeleteConfirmationDialog

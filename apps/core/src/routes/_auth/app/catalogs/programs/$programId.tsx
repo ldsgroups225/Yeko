@@ -222,7 +222,7 @@ function ProgramDetails() {
     })
   }
 
-  const totalDuration = chapters?.reduce((sum: any, ch: any) => sum + (ch.durationHours || 0), 0) || 0
+  const totalDuration = chapters?.reduce((sum: number, ch) => sum + (ch.durationHours || 0), 0) || 0
 
   if (programLoading || chaptersLoading) {
     return (
@@ -452,7 +452,7 @@ function ProgramDetails() {
             : (
                 <div className="space-y-4">
                   <AnimatePresence mode="popLayout">
-                    {chapters.map((chapter: any) => (
+                    {chapters.map(chapter => (
                       <motion.div
                         key={chapter.id}
                         layout
@@ -588,7 +588,7 @@ function ProgramDetails() {
               </Button>
             </CardHeader>
             <CardContent>
-              {!versions || (versions as any[]).length === 0
+              {!versions || versions.length === 0
                 ? (
                     <div className="text-center py-8 text-muted-foreground">
                       Aucune version disponible. Publiez le programme pour créer une version.
@@ -596,7 +596,7 @@ function ProgramDetails() {
                   )
                 : (
                     <div className="space-y-4">
-                      {(versions as any[]).map((version: any) => (
+                      {versions.map(version => (
                         <div key={version.id} className="flex items-center justify-between p-4 border rounded-lg">
                           <div>
                             <div className="font-semibold">
@@ -607,7 +607,7 @@ function ProgramDetails() {
                               {new Date(version.createdAt).toLocaleString()}
                             </div>
                             <div className="text-xs text-muted-foreground mt-1">
-                              {((version.snapshotData as any).chapters?.length as number) || 0}
+                              {version.snapshotData.chapters?.length || 0}
                               {' '}
                               chapitres
                             </div>

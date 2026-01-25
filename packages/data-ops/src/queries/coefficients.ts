@@ -1,12 +1,13 @@
-import { and, asc, count, eq } from 'drizzle-orm'
-import { getDb } from '@/database/setup'
+import { nanoid } from "nanoid"
+import { getDb } from '../database/setup'
 import {
   coefficientTemplates,
   grades,
   schoolYearTemplates,
   series,
   subjects,
-} from '@/drizzle/core-schema'
+} from '../drizzle/core-schema'
+import { and, asc, count, eq } from 'drizzle-orm'
 
 // ===== COEFFICIENT TEMPLATES =====
 
@@ -161,7 +162,7 @@ export async function createCoefficientTemplate(
   const [newCoefficient] = await db
     .insert(coefficientTemplates)
     .values({
-      id: crypto.randomUUID(),
+      id: nanoid(),
       ...data,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -210,7 +211,7 @@ export async function bulkCreateCoefficients(
     return []
 
   const values = coefficients.map(coef => ({
-    id: crypto.randomUUID(),
+    id: nanoid(),
     ...coef,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -262,7 +263,7 @@ export async function copyCoefficientTemplates(
 
   // Create new coefficients for target year
   const newCoefficients = sourceCoefficients.map((coef: any) => ({
-    id: crypto.randomUUID(),
+    id: nanoid(),
     weight: coef.weight,
     schoolYearTemplateId: targetYearId,
     subjectId: coef.subjectId,

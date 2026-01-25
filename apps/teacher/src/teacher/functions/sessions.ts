@@ -182,7 +182,7 @@ export const getSessionHistory = createServerFn()
     })
 
     return {
-      sessions: result.sessions.map((s: any) => ({
+      sessions: result.sessions.map(s => ({
         id: s.id,
         className: s.className,
         subjectName: s.subjectName,

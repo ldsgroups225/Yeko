@@ -56,7 +56,7 @@ function SchedulePage() {
 
   // Filter sessions for selected day
   const daySchedule
-    = data?.sessions.filter((s: any) => s.dayOfWeek === selectedDay) ?? []
+    = data?.sessions.filter(s => s.dayOfWeek === selectedDay) ?? []
 
   // Get dates for each day of the week
   const weekDates = DAYS_OF_WEEK.map((day, index) => ({
@@ -137,7 +137,7 @@ function SchedulePage() {
         {daySchedule.length > 0
           ? (
               <div className="space-y-2">
-                {daySchedule.map((session: any) => (
+                {daySchedule.map(session => (
                   <ScheduleCard key={session.id} session={session} />
                 ))}
               </div>

@@ -1,8 +1,8 @@
-import type { ActivityItem, DashboardStats, SystemHealth } from '@/schemas/dashboard'
+import type { ActivityItem, DashboardStats, SystemHealth } from '@repo/data-ops/schemas/dashboard'
+import { getDb } from '../database/setup'
+import { auth_user } from '../drizzle/auth-schema'
+import { activityLogs, schools } from '../drizzle/core-schema'
 import { and, count, desc, eq, gte, sql } from 'drizzle-orm'
-import { getDb } from '@/database/setup'
-import { auth_user } from '@/drizzle/auth-schema'
-import { activityLogs, schools } from '@/drizzle/core-schema'
 
 // Fetch dashboard statistics
 export async function getDashboardStats(daysBack: number = 30): Promise<DashboardStats> {

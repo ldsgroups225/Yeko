@@ -1671,6 +1671,7 @@ export const fr: TypedLocale = {
       medium: 'Moyen',
       high: 'Élevé',
       critical: 'Critique',
+      urgent: 'Urgent',
     },
     status: {
       open: 'Ouvert',

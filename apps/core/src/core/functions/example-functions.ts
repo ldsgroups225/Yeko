@@ -1,10 +1,10 @@
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
-import { exampleMiddlewareWithContext } from '@/core/middleware/example-middleware'
+import { databaseMiddleware } from '@/core/middleware/database'
 // import { env } from "cloudflare:workers";
 
 const baseFunction = createServerFn().middleware([
-  exampleMiddlewareWithContext,
+  databaseMiddleware,
 ])
 
 const ExampleInputSchema = z.object({

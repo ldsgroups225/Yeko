@@ -38,10 +38,10 @@ export const createHomework = createServerFn()
         homeworkId: homework?.id,
       }
     }
-    catch (error: any) {
+    catch (error: unknown) {
       return {
         success: false,
-        error: error.message || 'Failed to create homework',
+        error: error instanceof Error ? error.message : 'Failed to create homework',
       }
     }
   })
@@ -69,7 +69,7 @@ export const getHomework = createServerFn()
     })
 
     return {
-      homework: result.homework.map((h: any) => ({
+      homework: result.homework.map(h => ({
         id: h.id,
         title: h.title,
         className: h.className,
@@ -147,10 +147,10 @@ export const updateHomework = createServerFn()
         success: !!updated,
       }
     }
-    catch (error: any) {
+    catch (error: unknown) {
       return {
         success: false,
-        error: error.message || 'Failed to update homework',
+        error: error instanceof Error ? error.message : 'Failed to update homework',
       }
     }
   })
@@ -174,10 +174,10 @@ export const deleteHomework = createServerFn()
         success: !!result,
       }
     }
-    catch (error: any) {
+    catch (error: unknown) {
       return {
         success: false,
-        error: error.message || 'Failed to delete homework',
+        error: error instanceof Error ? error.message : 'Failed to delete homework',
       }
     }
   })

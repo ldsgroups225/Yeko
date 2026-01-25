@@ -76,7 +76,7 @@ function HomeworkPage() {
             : data?.homework && data.homework.length > 0
               ? (
                   <div className="space-y-2">
-                    {data.homework.map((hw: any) => (
+                    {data.homework.map(hw => (
                       <HomeworkCard key={hw.id} homework={hw} locale={locale} />
                     ))}
                   </div>

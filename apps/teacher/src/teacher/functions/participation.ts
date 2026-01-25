@@ -42,7 +42,7 @@ export const getParticipationGrades = createServerFn()
     const grades = await getSessionParticipationGrades(data.classSessionId)
 
     return {
-      grades: grades.map((g: any) => ({
+      grades: grades.map(g => ({
         studentId: g.studentId,
         grade: g.grade,
         comment: g.comment,

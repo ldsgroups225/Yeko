@@ -1,4 +1,4 @@
-import type { Grade, Serie, Subject } from '@repo/data-ops'
+import type { Grade, Serie, Subject, SubjectCategory } from '@repo/data-ops'
 import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
 import { formatDate } from '@/utils/formatDate'
 
@@ -67,10 +67,10 @@ export async function importSubjectsFromExcel(file: File): Promise<Partial<Subje
 
         const jsonData = XLSX.utils.sheet_to_json(firstSheet)
 
-        const subjects: Partial<Subject>[] = jsonData.map((row: any) => ({
-          name: row.Nom || row.name,
-          shortName: row['Nom Court'] || row.shortName || null,
-          category: (row.Catégorie || row.category || 'Autre') as 'Scientifique' | 'Littéraire' | 'Sportif' | 'Autre',
+        const subjects: Partial<Subject>[] = (jsonData as Record<string, unknown>[]).map(row => ({
+          name: (row.Nom || row.name) as string,
+          shortName: (row['Nom Court'] || row.shortName || null) as string | null,
+          category: (row.Catégorie || row.category || 'Autre') as SubjectCategory,
         }))
 
         resolve(subjects)
@@ -187,10 +187,10 @@ export async function importSeriesFromExcel(file: File): Promise<Partial<Serie>[
 
         const jsonData = XLSX.utils.sheet_to_json(firstSheet)
 
-        const series: Partial<Serie>[] = jsonData.map((row: any) => ({
-          name: row.Nom || row.name,
-          code: row.Code || row.code,
-          trackId: row['ID Filière'] || row.trackId,
+        const series: Partial<Serie>[] = (jsonData as Record<string, unknown>[]).map(row => ({
+          name: (row.Nom || row.name) as string,
+          code: (row.Code || row.code) as string,
+          trackId: (row['ID Filière'] || row.trackId) as string,
         }))
 
         resolve(series)

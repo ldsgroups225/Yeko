@@ -387,6 +387,3 @@ export type ProgramTemplateVersion = typeof programTemplateVersions.$inferSelect
 export type CoefficientTemplate = typeof coefficientTemplates.$inferSelect
 export type ActivityLog = typeof activityLogs.$inferSelect
 export type ApiMetric = typeof apiMetrics.$inferSelect
-
-// Enum types for type safety (inherited from constants above)
-// Redundant definitions removed

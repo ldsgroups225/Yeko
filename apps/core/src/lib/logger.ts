@@ -83,7 +83,7 @@ export function updateUserContext(userId: string, userRole: UserRole) {
 /**
  * Convenience function for logging user actions
  */
-export function logUserAction(action: string, element?: string, context?: any) {
+export function logUserAction(action: string, element?: string, context?: Record<string, unknown>) {
   if (!isInitialized)
     return
 

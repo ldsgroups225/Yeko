@@ -1,6 +1,7 @@
+import { nanoid } from "nanoid"
+import { getDb } from '../../database/setup'
+import { classes, enrollments, students } from '../../drizzle/school-schema'
 import { and, desc, eq, ne } from 'drizzle-orm'
-import { getDb } from '@/database/setup'
-import { classes, enrollments, students } from '@/drizzle/school-schema'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
 
 export async function getEnrollmentsBySchoolYear(schoolYearId: string, schoolId: string, options?: {
@@ -118,7 +119,7 @@ export async function enrollStudent(data: {
 
     // 4. Create enrollment
     const [enrollment] = await tx.insert(enrollments).values({
-      id: crypto.randomUUID(),
+      id: nanoid(),
       studentId: data.studentId,
       classId: data.classId,
       schoolYearId: data.schoolYearId,

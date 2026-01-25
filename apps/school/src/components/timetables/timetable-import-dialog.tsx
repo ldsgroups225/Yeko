@@ -1,3 +1,4 @@
+import type { TimetableConflict } from '@repo/data-ops/queries/timetables'
 import type { ParsedSession } from '@/lib/excel-parser'
 import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
 import {
@@ -48,10 +49,15 @@ interface TimetableImportDialogProps {
   schoolId: string
 }
 
+interface ConflictEntry {
+  index: number
+  conflicts: TimetableConflict[]
+}
+
 interface ImportResult {
   success: number
   failed: number
-  conflicts: any[]
+  conflicts: ConflictEntry[]
 }
 
 export function TimetableImportDialog({
@@ -150,12 +156,12 @@ export function TimetableImportDialog({
       // Prepare context
       const context = {
         classes: classesData || [],
-        subjects: subjectsData?.subjects || [],
+        subjects: (subjectsData?.subjects || []).map(s => ({ subject: s })),
         teachers: teachersData?.teachers || [],
         classrooms:
           (Array.isArray(classroomsData)
             ? classroomsData
-            : (classroomsData as any)?.classrooms) || [],
+            : (classroomsData as unknown as { classrooms: Awaited<ReturnType<typeof getClassrooms>> })?.classrooms) || [],
       }
 
       // Call parser

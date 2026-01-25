@@ -92,7 +92,7 @@ function StudentAttendancePage() {
     studentId: record.studentId,
     studentName: record.studentName,
     studentPhoto: record.photoUrl,
-    status: (record.attendance?.status as any) || 'present',
+    status: (record.attendance?.status as StudentAttendanceEntry['status']) || 'present',
     arrivalTime: record.attendance?.arrivalTime ?? undefined,
     notes: record.attendance?.notes ?? undefined,
   })) ?? []

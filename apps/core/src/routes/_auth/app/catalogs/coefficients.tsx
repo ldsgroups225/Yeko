@@ -98,11 +98,10 @@ function CoefficientsCatalog() {
       toast.success(COEFFICIENT_MESSAGES.CREATED)
       logger.info('Coefficient template created')
     },
-    onError: (error: any) => {
-      const isDuplicate = error?.message?.includes('unique') || error?.message?.includes('duplicate')
-      const message = parseServerFnError(error, isDuplicate ? COEFFICIENT_MESSAGES.ERROR_DUPLICATE : COEFFICIENT_MESSAGES.ERROR_CREATE)
+    onError: (error) => {
+      const message = parseServerFnError(error, COEFFICIENT_MESSAGES.ERROR_CREATE)
       toast.error(message)
-      logger.error('Failed to create coefficient template', error)
+      logger.error('Failed to create coefficient template', error instanceof Error ? error : new Error(String(error)))
     },
   })
 
@@ -118,7 +117,7 @@ function CoefficientsCatalog() {
     onError: (error) => {
       const message = parseServerFnError(error, COEFFICIENT_MESSAGES.ERROR_DELETE)
       toast.error(message)
-      logger.error('Failed to delete coefficient template', error)
+      logger.error('Failed to delete coefficient template', error instanceof Error ? error : new Error(String(error)))
     },
   })
 
@@ -133,7 +132,7 @@ function CoefficientsCatalog() {
     onError: (error) => {
       const message = parseServerFnError(error, COEFFICIENT_MESSAGES.ERROR_BULK_UPDATE)
       toast.error(message)
-      logger.error('Failed to bulk update coefficients', error)
+      logger.error('Failed to bulk update coefficients', error instanceof Error ? error : new Error(String(error)))
     },
   })
 
@@ -142,7 +141,7 @@ function CoefficientsCatalog() {
     onError: (error) => {
       const message = parseServerFnError(error, 'Erreur lors de l\'import des coefficients')
       toast.error(message)
-      logger.error('Failed to bulk create coefficients', error)
+      logger.error('Failed to bulk create coefficients', error instanceof Error ? error : new Error(String(error)))
     },
   })
 
@@ -151,7 +150,7 @@ function CoefficientsCatalog() {
     onError: (error) => {
       const message = parseServerFnError(error, 'Erreur lors de la validation')
       toast.error(message)
-      logger.error('Failed to validate coefficient import', error)
+      logger.error('Failed to validate coefficient import', error instanceof Error ? error : new Error(String(error)))
     },
   })
 
@@ -214,8 +213,8 @@ function CoefficientsCatalog() {
       return
     }
 
-    const activeYear = schoolYears.find((y: any) => y.isActive)
-    const previousYear = schoolYears.find((y: any) => !y.isActive)
+    const activeYear = schoolYears.find(y => y.isActive)
+    const previousYear = schoolYears.find(y => !y.isActive)
 
     if (!activeYear || !previousYear) {
       toast.error('Impossible de trouver les années scolaires')
@@ -390,12 +389,14 @@ function CoefficientsCatalog() {
     const columnKeys = new Set<string>()
     const columnInfo: Record<string, { gradeId: string, gradeName: string, seriesId?: string, seriesName?: string }> = {}
 
-    coefficientsData.coefficients.forEach((coef: any) => {
+    coefficientsData.coefficients.forEach((coef) => {
+      if (!coef.grade?.id)
+        return
       const gradeName = coef.grade?.name || 'Unknown'
-      const key = coef.series ? `${coef.grade?.id}__${coef.series.id}` : coef.grade?.id
+      const key = coef.series?.id ? `${coef.grade.id}__${coef.series.id}` : coef.grade.id
       columnKeys.add(key)
       columnInfo[key] = {
-        gradeId: coef.grade?.id,
+        gradeId: coef.grade.id,
         gradeName,
         seriesId: coef.series?.id,
         seriesName: coef.series?.name,
@@ -417,9 +418,11 @@ function CoefficientsCatalog() {
     // Build matrix: subject -> columnKey -> coefficient
     const matrix: Record<string, Record<string, { id: string, weight: number }>> = {}
 
-    coefficientsData.coefficients.forEach((coef: any) => {
-      const subjectName = coef.subject?.name || 'Unknown'
-      const columnKey = coef.series ? `${coef.grade?.id}__${coef.series.id}` : coef.grade?.id
+    coefficientsData.coefficients.forEach((coef) => {
+      if (!coef.grade?.id || !coef.subject?.name)
+        return
+      const subjectName = coef.subject.name
+      const columnKey = coef.series?.id ? `${coef.grade.id}__${coef.series.id}` : coef.grade.id
 
       const subjectMatrix = matrix[subjectName] || {}
       subjectMatrix[columnKey] = {
@@ -432,7 +435,7 @@ function CoefficientsCatalog() {
     return { matrix, columns: sortedColumns, columnInfo }
   }, [coefficientsData, subjects, grades, editingCells])
 
-  const activeYear = schoolYears?.find((y: any) => y.isActive)
+  const activeYear = schoolYears?.find(y => y.isActive)
 
   if (yearsLoading || statsLoading) {
     return (
@@ -690,7 +693,7 @@ function CoefficientsCatalog() {
                   {yearFilter === 'all'
                     ? 'Toutes les années'
                     : (() => {
-                        const year = schoolYears?.find((y: any) => y.id === yearFilter)
+                        const year = schoolYears?.find(y => y.id === yearFilter)
                         return year
                           ? (
                               <div className="flex items-center gap-2">
@@ -704,7 +707,7 @@ function CoefficientsCatalog() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Toutes les années</SelectItem>
-                {schoolYears?.map((year: any) => (
+                {schoolYears?.map(year => (
                   <SelectItem key={year.id} value={year.id}>
                     {year.name}
                   </SelectItem>
@@ -872,7 +875,7 @@ function CoefficientsCatalog() {
                   : (
                       <div className="space-y-4">
                         <AnimatePresence mode="popLayout">
-                          {coefficientsData.coefficients.map((coef: any) => (
+                          {coefficientsData.coefficients.map(coef => (
                             <motion.div
                               key={coef.id}
                               layout

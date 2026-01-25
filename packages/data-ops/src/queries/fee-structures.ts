@@ -1,9 +1,9 @@
-import type { FeeStructure, FeeStructureInsert } from '@/drizzle/school-schema'
+import type { FeeStructure, FeeStructureInsert } from '../drizzle/school-schema'
+import { getDb } from '../database/setup'
+import { grades, series } from '../drizzle/core-schema'
+import { feeStructures, feeTypes } from '../drizzle/school-schema'
 import { and, eq } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
-import { getDb } from '@/database/setup'
-import { grades, series } from '@/drizzle/core-schema'
-import { feeStructures, feeTypes } from '@/drizzle/school-schema'
 
 export interface GetFeeStructuresParams {
   schoolId: string

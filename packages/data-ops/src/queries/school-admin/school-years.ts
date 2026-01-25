@@ -1,8 +1,9 @@
-import type { SchoolYearInsert, TermInsert } from '@/drizzle/school-schema'
+import { nanoid } from "nanoid"
+import type { SchoolYearInsert, TermInsert } from '../../drizzle/school-schema'
+import { getDb } from '../../database/setup'
+import { schoolYearTemplates, termTemplates } from '../../drizzle/core-schema'
+import { schoolYears, terms } from '../../drizzle/school-schema'
 import { and, desc, eq } from 'drizzle-orm'
-import { getDb } from '@/database/setup'
-import { schoolYearTemplates, termTemplates } from '@/drizzle/core-schema'
-import { schoolYears, terms } from '@/drizzle/school-schema'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
 
 export async function getSchoolYearsBySchool(
@@ -118,7 +119,7 @@ export async function createSchoolYear(data: {
 
   // Create school year
   const insertData: SchoolYearInsert = {
-    id: crypto.randomUUID(),
+    id: nanoid(),
     schoolId: data.schoolId,
     schoolYearTemplateId: data.schoolYearTemplateId,
     startDate: data.startDate.toISOString().split('T', 1)[0]!,
@@ -161,7 +162,7 @@ export async function createSchoolYear(data: {
       }
 
       termsToInsert.push({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         schoolYearId: schoolYear!.id,
         termTemplateId: template!.id,
         startDate: termStartDate.toISOString().split('T', 1)[0]!,

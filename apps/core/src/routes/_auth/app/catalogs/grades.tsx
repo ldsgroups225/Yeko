@@ -147,7 +147,7 @@ function GradesManagement() {
 
   const bulkCreateSeriesMutation = useMutation({
     ...bulkCreateSeriesMutationOptions,
-    onSuccess: (data: any[]) => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['series'] })
       toast.success(`${data.length} séries importées avec succès`)
       logger.info('Series imported successfully')

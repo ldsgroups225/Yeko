@@ -51,7 +51,7 @@ function NewHomeworkPage() {
   const [dueTime, setDueTime] = useState('')
 
   const selectedClass = classesData?.classes?.find(
-    (c: any) => c.id === selectedClassId,
+    c => c.id === selectedClassId,
   )
 
   const createMutation = useMutation({
@@ -114,10 +114,10 @@ function NewHomeworkPage() {
                   }}
                 >
                   <SelectTrigger>
-                    <SelectValue>{selectedClassId ? classesData?.classes?.find((c: any) => c.id === selectedClassId)?.name : t('grades.selectClass')}</SelectValue>
+                    <SelectValue>{selectedClassId ? classesData?.classes?.find(c => c.id === selectedClassId)?.name : t('grades.selectClass')}</SelectValue>
                   </SelectTrigger>
                   <SelectContent>
-                    {classesData?.classes?.map((cls: any) => (
+                    {classesData?.classes?.map(cls => (
                       <SelectItem key={cls.id} value={cls.id}>
                         {cls.name}
                       </SelectItem>
@@ -132,10 +132,10 @@ function NewHomeworkPage() {
                   <Label>{t('grades.selectSubject')}</Label>
                   <Select value={selectedSubjectId || null} onValueChange={v => setSelectedSubjectId(v ?? '')}>
                     <SelectTrigger>
-                      <SelectValue>{selectedSubjectId ? selectedClass.subjects?.find((s: any) => s.id === selectedSubjectId)?.name : t('grades.selectSubject')}</SelectValue>
+                      <SelectValue>{selectedSubjectId ? selectedClass.subjects?.find(s => s.id === selectedSubjectId)?.name : t('grades.selectSubject')}</SelectValue>
                     </SelectTrigger>
                     <SelectContent>
-                      {selectedClass.subjects?.map((subject: any) => (
+                      {selectedClass.subjects?.map(subject => (
                         <SelectItem key={subject.id} value={subject.id}>
                           {subject.name}
                         </SelectItem>

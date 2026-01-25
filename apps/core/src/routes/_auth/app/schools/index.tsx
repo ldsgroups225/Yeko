@@ -378,7 +378,7 @@ function Schools() {
               </SelectContent>
             </Select>
 
-            <Select value={sortBy} onValueChange={(value: any) => value && handleSort(value)}>
+            <Select value={sortBy} onValueChange={value => value && handleSort(value as 'name' | 'createdAt' | 'updatedAt')}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Trier par">
                   {sortBy === 'createdAt' && 'Date de création'}
@@ -462,7 +462,7 @@ function Schools() {
                         : (
                             <>
                               <div className="space-y-4">
-                                {schools.map((school: any) => (
+                                {schools.map(school => (
                                   <Link
                                     key={school.id}
                                     to="/app/schools/$schoolId"

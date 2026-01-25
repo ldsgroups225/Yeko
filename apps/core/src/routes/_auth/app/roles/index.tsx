@@ -1,4 +1,4 @@
-import type { SystemAction } from '@repo/data-ops/auth/permissions'
+import type { Role, RoleScope as SchoolScope, SystemAction, SystemPermissions } from '@repo/data-ops'
 import { hasPermission } from '@repo/data-ops/auth/permissions'
 import {
   IconDots,
@@ -32,6 +32,13 @@ import {
 import { Input } from '@workspace/ui/components/input'
 import { Label } from '@workspace/ui/components/label'
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@workspace/ui/components/select'
+import {
   Table,
   TableBody,
   TableCell,
@@ -39,6 +46,7 @@ import {
   TableHeader,
   TableRow,
 } from '@workspace/ui/components/table'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
 import { motion } from 'motion/react'
 import { useState } from 'react'
 import { toast } from 'sonner'
@@ -48,7 +56,7 @@ import { useAuthorization } from '@/hooks/use-authorization'
 export const Route = createFileRoute('/_auth/app/roles/')({
   beforeLoad: ({ context }) => {
     // Aggressively protect this route at the framework level
-    const permissions = context.auth?.permissions as any
+    const permissions = context.auth?.permissions
     if (!context.auth?.isAuthenticated || (!context.auth?.isSuperAdmin && !hasPermission(permissions, 'global_settings', 'view'))) {
       throw redirect({
         to: '/unauthorized',
@@ -59,11 +67,26 @@ export const Route = createFileRoute('/_auth/app/roles/')({
 })
 
 const RESOURCES = [
-  { id: 'schools', name: 'Écoles' },
-  { id: 'users', name: 'Utilisateurs System' },
-  { id: 'academic_catalogs', name: 'Catalogues Académiques' },
-  { id: 'system_monitoring', name: 'Monitoring Système' },
-  { id: 'global_settings', name: 'Paramètres Globaux' },
+  // École (Nouveau MVP)
+  { id: 'teachers', name: 'Enseignants', category: 'École' },
+  { id: 'students', name: 'Élèves', category: 'École' },
+  { id: 'parents', name: 'Parents', category: 'École' },
+  { id: 'classes', name: 'Classes', category: 'École' },
+  { id: 'classrooms', name: 'Salles', category: 'École' },
+  { id: 'grades', name: 'Notes', category: 'École' },
+  { id: 'attendance', name: 'Assiduité', category: 'École' },
+  { id: 'conduct', name: 'Discipline', category: 'École' },
+  { id: 'finance', name: 'Finances', category: 'École' },
+  { id: 'reports', name: 'Rapports', category: 'École' },
+  { id: 'settings', name: 'Configuration', category: 'École' },
+  { id: 'school_subjects', name: 'Matières', category: 'École' },
+  { id: 'coefficients', name: 'Coefficients', category: 'École' },
+  { id: 'teacher_assignments', name: 'Attributions', category: 'École' },
+  // Système
+  { id: 'schools', name: 'Plateforme : Écoles', category: 'Système' },
+  { id: 'users', name: 'Plateforme : Users', category: 'Système' },
+  { id: 'system_monitoring', name: 'Plateforme : Monitoring', category: 'Système' },
+  { id: 'global_settings', name: 'Plateforme : Config', category: 'Système' },
 ]
 
 const ACTIONS: { id: SystemAction, name: string }[] = [
@@ -78,19 +101,22 @@ function RoleManagement() {
   const queryClient = useQueryClient()
   const { can } = useAuthorization()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [editingRole, setEditingRole] = useState<any>(null)
+  const [editingRole, setEditingRole] = useState<Role | null>(null)
 
   // Delete dialog state
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
-  const [roleToDelete, setRoleToDelete] = useState<any>(null)
+  const [roleToDelete, setRoleToDelete] = useState<Role | null>(null)
+
+  // Scope filter state
+  const [activeScope, setActiveScope] = useState<SchoolScope>('school')
 
   // Form State
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
     description: '',
-    scope: 'system' as 'system' | 'school',
-    permissions: {} as Record<string, string[]>,
+    scope: 'system' as SchoolScope,
+    permissions: {} as SystemPermissions,
   })
 
   const resetForm = () => {
@@ -105,8 +131,8 @@ function RoleManagement() {
   }
 
   const { data: roles = [], isLoading } = useQuery({
-    queryKey: ['platform-roles'],
-    queryFn: () => getPlatformRoles({ data: { scope: 'system' } }),
+    queryKey: ['platform-roles', activeScope],
+    queryFn: () => getPlatformRoles({ data: { scope: activeScope } }),
   })
 
   const createMutation = useMutation({
@@ -121,7 +147,7 @@ function RoleManagement() {
   })
 
   const updateMutation = useMutation({
-    mutationFn: (data: any) => updatePlatformRole({ data }),
+    mutationFn: (data: Partial<Role> & { id: string }) => updatePlatformRole({ data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['platform-roles'] })
       toast.success('Rôle mis à jour')
@@ -143,7 +169,7 @@ function RoleManagement() {
     },
   })
 
-  const handleEdit = (role: any) => {
+  const handleEdit = (role: Role) => {
     setEditingRole(role)
     setFormData({
       name: role.name,
@@ -157,7 +183,7 @@ function RoleManagement() {
 
   const togglePermission = (resourceId: string, actionId: string) => {
     setFormData((prev) => {
-      const currentResourcePerms = prev.permissions[resourceId] || []
+      const currentResourcePerms = (prev.permissions[resourceId] || []) as string[]
       const newResourcePerms = currentResourcePerms.includes(actionId)
         ? currentResourcePerms.filter(a => a !== actionId)
         : [...currentResourcePerms, actionId]
@@ -166,7 +192,7 @@ function RoleManagement() {
         ...prev,
         permissions: {
           ...prev.permissions,
-          [resourceId]: newResourcePerms,
+          [resourceId]: newResourcePerms as SystemAction[],
         },
       }
     })
@@ -216,16 +242,16 @@ function RoleManagement() {
                 </Button>
               )}
             />
-            <DialogContent className="max-w-3xl glass max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
+            <DialogContent className="max-w-4xl glass max-h-[90vh] overflow-y-auto w-[98vw] sm:w-full p-2 sm:p-6">
+              <DialogHeader className="p-4 sm:p-0">
                 <DialogTitle>{editingRole ? 'Modifier le Rôle' : 'Créer un Nouveau Rôle'}</DialogTitle>
                 <DialogDescription>
-                  Configurez les permissions granulaires pour ce rôle système.
+                  Configurez les permissions granulaires pour ce rôle.
                 </DialogDescription>
               </DialogHeader>
 
-              <form onSubmit={handleSubmit} className="space-y-6 py-4">
-                <div className="grid grid-cols-2 gap-4">
+              <form onSubmit={handleSubmit} className="space-y-6 py-4 px-2 sm:px-0">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="name">Nom du rôle</Label>
                     <Input
@@ -247,43 +273,61 @@ function RoleManagement() {
                       required
                     />
                   </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="scope">Portée (Scope)</Label>
+                    <Select
+                      value={formData.scope}
+                      onValueChange={val => setFormData({ ...formData, scope: val as SchoolScope })}
+                      disabled={!!editingRole}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="system">Plateforme (Système)</SelectItem>
+                        <SelectItem value="school">École</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="description">Description</Label>
                   <Input
                     id="description"
-                    placeholder="Brêve description des responsabilités"
+                    placeholder="Brève description des responsabilités"
                     value={formData.description}
                     onChange={e => setFormData({ ...formData, description: e.target.value })}
                   />
                 </div>
 
                 <div className="space-y-4">
-                  <Label className="text-base font-bold underline decoration-primary/30">Matrice des Permissions</Label>
-                  <div className="rounded-xl border border-border bg-background/50 overflow-hidden shadow-inner">
-                    <Table>
+                  <Label className="text-base font-bold underline decoration-primary/30 px-2 sm:px-0">Matrice des Permissions</Label>
+                  <div className="rounded-xl border border-border bg-background/50 overflow-x-auto shadow-inner">
+                    <Table className="min-w-[600px]">
                       <TableHeader className="bg-muted/50">
                         <TableRow>
-                          <TableHead className="w-[200px]">Ressource</TableHead>
+                          <TableHead className="w-[180px] text-xs font-bold px-4">Ressource</TableHead>
                           {ACTIONS.map(action => (
-                            <TableHead key={action.id} className="text-center text-xs font-semibold uppercase tracking-wider">
+                            <TableHead key={action.id} className="text-center text-[10px] font-semibold uppercase tracking-wider px-1">
                               {action.name}
                             </TableHead>
                           ))}
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {RESOURCES.map(resource => (
-                          <TableRow key={resource.id} className="hover:bg-primary/5 transition-colors">
-                            <TableCell className="font-medium text-sm">{resource.name}</TableCell>
+                        {RESOURCES.filter(r => (formData.scope === 'system' ? r.category === 'Système' : r.category === 'École')).map(resource => (
+                          <TableRow key={resource.id} className="hover:bg-primary/5 transition-colors border-b">
+                            <TableCell className="font-medium text-xs px-4 truncate max-w-[150px]">{resource.name}</TableCell>
                             {ACTIONS.map(action => (
-                              <TableCell key={action.id} className="text-center">
-                                <Checkbox
-                                  checked={formData.permissions[resource.id]?.includes(action.id)}
-                                  onCheckedChange={() => togglePermission(resource.id, action.id)}
-                                  className="transition-transform hover:scale-110"
-                                />
+                              <TableCell key={action.id} className="text-center px-1">
+                                <div className="flex justify-center">
+                                  <Checkbox
+                                    checked={formData.permissions[resource.id]?.includes(action.id)}
+                                    onCheckedChange={() => togglePermission(resource.id, action.id)}
+                                    className="h-4 w-4 transition-transform hover:scale-110"
+                                  />
+                                </div>
                               </TableCell>
                             ))}
                           </TableRow>
@@ -305,106 +349,170 @@ function RoleManagement() {
         )}
       </div>
 
-      <div className="grid gap-6">
-        {isLoading
-          ? (
-              <div className="flex justify-center py-20">
-                <IconShield className="animate-spin h-10 w-10 text-primary/40" />
-              </div>
-            )
-          : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {roles.map((role: any) => (
-                  <motion.div
-                    key={role.id}
-                    layout
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    whileHover={{ y: -5 }}
-                    className="group h-full"
-                  >
-                    <Card className="h-full border-border/50 bg-background/40 backdrop-blur-md shadow-xl hover:shadow-primary/5 hover:border-primary/20 transition-all overflow-hidden relative">
-                      {role.isSystemRole && (
-                        <div className="absolute top-0 right-0 p-3">
-                          <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 gap-1.5 flex items-center">
-                            <IconLock size={12} />
-                            Système
-                          </Badge>
-                        </div>
-                      )}
+      <Tabs value={activeScope} onValueChange={val => setActiveScope(val as SchoolScope)} className="w-full">
+        <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-8">
+          <TabsTrigger value="school">Rôles École</TabsTrigger>
+          <TabsTrigger value="system">Rôles Plateforme</TabsTrigger>
+        </TabsList>
 
-                      <CardHeader>
-                        <div className="flex items-center gap-3">
-                          <div className="p-2.5 rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20">
-                            <IconShield size={24} />
-                          </div>
-                          <div>
-                            <CardTitle className="text-xl">{role.name}</CardTitle>
-                            <CardDescription className="font-mono text-xs mt-0.5">{role.slug}</CardDescription>
-                          </div>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <p className="text-sm text-muted-foreground line-clamp-2 min-h-[40px]">
-                          {role.description || 'Aucune description fournie.'}
-                        </p>
+        <TabsContent value="school" className="mt-0">
+          <div className="grid gap-6">
+            {isLoading
+              ? (
+                  <div className="flex justify-center py-20">
+                    <IconShield className="animate-spin h-10 w-10 text-primary/40" />
+                  </div>
+                )
+              : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {roles.length === 0 && (
+                      <div className="col-span-full py-20 text-center text-muted-foreground">
+                        Aucun rôle d'école défini.
+                      </div>
+                    )}
+                    {roles.map((role: Role) => (
+                      <RoleCard
+                        key={role.id}
+                        role={role}
+                        onEdit={handleEdit}
+                        onDelete={(r) => {
+                          setRoleToDelete(r)
+                          setIsDeleteOpen(true)
+                        }}
+                        can={can}
+                      />
+                    ))}
+                  </div>
+                )}
+          </div>
+        </TabsContent>
 
-                        <div className="space-y-2">
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Permissions Clés</p>
-                          <div className="flex flex-wrap gap-1.5">
-                            {Object.entries(role.permissions as Record<string, string[]>).slice(0, 5).map(([res, acts]) => (
-                              <Badge key={res} variant="secondary" className="px-2 py-0 h-5 text-[10px]">
-                                {res}
-                                :
-                                {' '}
-                                {acts.length}
-                              </Badge>
-                            ))}
-                            {Object.keys(role.permissions).length > 5 && (
-                              <span className="text-[10px] text-muted-foreground">
-                                +
-                                {Object.keys(role.permissions).length - 5}
-                                {' '}
-                                de plus
-                              </span>
-                            )}
-                          </div>
-                        </div>
-
-                        <div className="pt-4 flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => handleEdit(role)}>
-                            <IconDots size={16} />
-                          </Button>
-                          {!role.isSystemRole && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
-                              onClick={() => {
-                                setRoleToDelete(role)
-                                setIsDeleteOpen(true)
-                              }}
-                            >
-                              <IconTrash size={16} />
-                            </Button>
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
-            )}
-      </div>
+        <TabsContent value="system" className="mt-0">
+          <div className="grid gap-6">
+            {isLoading
+              ? (
+                  <div className="flex justify-center py-20">
+                    <IconShield className="animate-spin h-10 w-10 text-primary/40" />
+                  </div>
+                )
+              : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {roles.map((role: Role) => (
+                      <RoleCard
+                        key={role.id}
+                        role={role}
+                        onEdit={handleEdit}
+                        onDelete={(r) => {
+                          setRoleToDelete(r)
+                          setIsDeleteOpen(true)
+                        }}
+                        can={can}
+                      />
+                    ))}
+                  </div>
+                )}
+          </div>
+        </TabsContent>
+      </Tabs>
 
       <DeleteConfirmationDialog
         open={isDeleteOpen}
         onOpenChange={setIsDeleteOpen}
         title={`Supprimer le rôle ${roleToDelete?.name}`}
         description="Cette action supprimera le rôle de manière permanente. Les utilisateurs ayant ce rôle perdront les permissions associées."
-        onConfirm={() => deleteMutation.mutate(roleToDelete?.id)}
+        onConfirm={() => {
+          if (roleToDelete?.id)
+            deleteMutation.mutate(roleToDelete.id)
+        }}
         isLoading={deleteMutation.isPending}
       />
     </div>
+  )
+}
+
+interface RoleCardProps {
+  role: Role
+  onEdit: (role: Role) => void
+  onDelete: (role: Role) => void
+  can: (resource: string, action: SystemAction) => boolean
+}
+
+function RoleCard({ role, onEdit, onDelete, can }: RoleCardProps) {
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -5 }}
+      className="group h-full"
+    >
+      <Card className="h-full border-border/50 bg-background/40 backdrop-blur-md shadow-xl hover:shadow-primary/5 hover:border-primary/20 transition-all overflow-hidden relative">
+        {role.scope === 'system' && (
+          <div className="absolute top-0 right-0 p-3">
+            <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 gap-1.5 flex items-center">
+              <IconLock size={12} />
+              Système
+            </Badge>
+          </div>
+        )}
+
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20">
+              <IconShield size={24} />
+            </div>
+            <div>
+              <CardTitle className="text-xl">{role.name}</CardTitle>
+              <CardDescription className="font-mono text-xs mt-0.5">{role.slug}</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-sm text-muted-foreground line-clamp-2 min-h-[40px]">
+            {role.description || 'Aucune description fournie.'}
+          </p>
+
+          <div className="space-y-2">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Permissions Clés</p>
+            <div className="flex flex-wrap gap-1.5">
+              {Object.entries(role.permissions as Record<string, string[]>).slice(0, 5).map(([res, acts]) => (
+                <Badge key={res} variant="secondary" className="px-2 py-0 h-5 text-[10px]">
+                  {res}
+                  :
+                  {' '}
+                  {acts.length}
+                </Badge>
+              ))}
+              {Object.keys(role.permissions).length > 5 && (
+                <span className="text-[10px] text-muted-foreground">
+                  +
+                  {Object.keys(role.permissions).length - 5}
+                  {' '}
+                  de plus
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div className="pt-4 flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            {can('global_settings', 'manage') && (
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => onEdit(role)}>
+                <IconDots size={16} />
+              </Button>
+            )}
+            {!role.isSystemRole && can('global_settings', 'manage') && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+                onClick={() => onDelete(role)}
+              >
+                <IconTrash size={16} />
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
   )
 }

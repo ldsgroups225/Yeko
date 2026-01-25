@@ -1,3 +1,4 @@
+import { nanoid } from "nanoid"
 import type { SubjectCategory, TermType } from '../drizzle/core-schema.js'
 import fs from 'node:fs'
 import { eq } from 'drizzle-orm'
@@ -83,7 +84,7 @@ async function main() {
   console.log('Seeding Roles...')
   for (const role of defaultRoles) {
     const insertQuery = db.insert(schoolSchema.roles).values({
-      id: crypto.randomUUID(),
+      id: nanoid(),
       ...role,
     })
 
@@ -99,7 +100,7 @@ async function main() {
 
   for (const track of tracksData) {
     const insertQuery = db.insert(coreSchema.tracks).values({
-      id: crypto.randomUUID(),
+      id: nanoid(),
       ...track,
     })
 
@@ -125,7 +126,7 @@ async function main() {
   for (const grade of gradesData(generalTrack.id)) {
     if (isFresh) {
       await db.insert(coreSchema.grades).values({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         ...grade,
       })
     }
@@ -137,7 +138,7 @@ async function main() {
 
       if (!existing) {
         await db.insert(coreSchema.grades).values({
-          id: crypto.randomUUID(),
+          id: nanoid(),
           ...grade,
         })
       }
@@ -148,7 +149,7 @@ async function main() {
 
   for (const s of seriesData(generalTrack.id)) {
     const insertQuery = db.insert(coreSchema.series).values({
-      id: crypto.randomUUID(),
+      id: nanoid(),
       ...s,
     })
 
@@ -165,7 +166,7 @@ async function main() {
   for (const subject of subjectsData) {
     if (isFresh) {
       await db.insert(coreSchema.subjects).values({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         ...subject,
         category: subject.category as SubjectCategory,
       })
@@ -175,7 +176,7 @@ async function main() {
       const existing = await db.query.subjects.findFirst({ where: eq(coreSchema.subjects.name, subject.name) })
       if (!existing) {
         await db.insert(coreSchema.subjects).values({
-          id: crypto.randomUUID(),
+          id: nanoid(),
           ...subject,
           category: subject.category as SubjectCategory,
         })
@@ -194,7 +195,7 @@ async function main() {
     if (isFresh) {
       // Always create the school year template in fresh mode
       const res = await db.insert(coreSchema.schoolYearTemplates).values({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         name: yearName,
         isActive: true,
       }).returning()
@@ -203,7 +204,7 @@ async function main() {
     else {
       // Create only if not exists in normal mode
       const res = await db.insert(coreSchema.schoolYearTemplates).values({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         name: yearName,
         isActive: true,
       }).onConflictDoNothing().returning()
@@ -214,7 +215,7 @@ async function main() {
   for (const term of termsData) {
     if (isFresh) {
       await db.insert(coreSchema.termTemplates).values({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         ...term,
         type: term.type as TermType,
         schoolYearTemplateId: yearTemplate!.id,
@@ -226,7 +227,7 @@ async function main() {
       })
       if (!existing) {
         await db.insert(coreSchema.termTemplates).values({
-          id: crypto.randomUUID(),
+          id: nanoid(),
           ...term,
           type: term.type as TermType,
           schoolYearTemplateId: yearTemplate!.id,

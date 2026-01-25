@@ -1,3 +1,4 @@
+import type { CreateSchoolInput, SchoolStatus } from '@/schemas/school'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { IconDeviceFloppy, IconLoader2, IconSchool } from '@tabler/icons-react'
 import { Button } from '@workspace/ui/components/button'
@@ -11,8 +12,8 @@ import { checkStorageConfigured, getPresignedUploadUrl } from '@/core/functions/
 import { CreateSchoolSchema } from '@/schemas/school'
 
 interface SchoolFormProps {
-  defaultValues?: any
-  onSubmit: (data: any) => Promise<void>
+  defaultValues?: Partial<CreateSchoolInput>
+  onSubmit: (data: CreateSchoolInput) => Promise<void>
   isSubmitting?: boolean
   mode?: 'create' | 'edit'
   onCancel: () => void
@@ -34,9 +35,15 @@ export function SchoolForm({
 
   const form = useForm({
     resolver: zodResolver(CreateSchoolSchema),
-    defaultValues: defaultValues || {
-      status: 'active',
-      settings: {},
+    defaultValues: {
+      name: defaultValues?.name || '',
+      code: defaultValues?.code || '',
+      address: defaultValues?.address || '',
+      phone: defaultValues?.phone || '',
+      email: defaultValues?.email || '',
+      logoUrl: defaultValues?.logoUrl || '',
+      status: defaultValues?.status || 'active',
+      settings: defaultValues?.settings || {},
     },
   })
 
@@ -292,7 +299,10 @@ export function SchoolForm({
               <Label htmlFor="status">Statut</Label>
               <Select
                 value={status}
-                onValueChange={(value: 'active' | 'inactive' | 'suspended') => setValue('status', value)}
+                onValueChange={(value) => {
+                  if (value)
+                    setValue('status', value as SchoolStatus)
+                }}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Sélectionner le statut">

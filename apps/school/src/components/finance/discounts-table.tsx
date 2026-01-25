@@ -21,7 +21,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useTranslations } from '@/i18n'
 import { generateUUID } from '@/utils/generateUUID'
 
-interface Discount {
+export interface DiscountsTableItem {
   id: string
   code: string
   name: string
@@ -34,10 +34,10 @@ interface Discount {
 }
 
 interface DiscountsTableProps {
-  discounts: Discount[]
+  discounts: DiscountsTableItem[]
   isLoading?: boolean
-  onEdit?: (discount: Discount) => void
-  onDelete?: (discount: Discount) => void
+  onEdit?: (discount: DiscountsTableItem) => void
+  onDelete?: (discount: DiscountsTableItem) => void
 }
 
 export function DiscountsTable({
@@ -60,7 +60,7 @@ export function DiscountsTable({
     return typeTranslations[type as keyof typeof typeTranslations]?.() || type
   }
 
-  const formatValue = (discount: Discount) => {
+  const formatValue = (discount: DiscountsTableItem) => {
     if (discount.calculationType === 'percentage') {
       return `${discount.value}%`
     }

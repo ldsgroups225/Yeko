@@ -1,7 +1,8 @@
+import { nanoid } from "nanoid"
+import { getDb } from '../database/setup'
+import { coefficientTemplates, grades, series, subjects } from '../drizzle/core-schema'
+import { schoolSubjectCoefficients } from '../drizzle/school-schema'
 import { and, count, eq, isNull } from 'drizzle-orm'
-import { getDb } from '@/database/setup'
-import { coefficientTemplates, grades, series, subjects } from '@/drizzle/core-schema'
-import { schoolSubjectCoefficients } from '@/drizzle/school-schema'
 
 // ===== SCHOOL COEFFICIENT OVERRIDES =====
 
@@ -179,7 +180,7 @@ export async function createCoefficientOverride(options: {
   const [inserted] = await db
     .insert(schoolSubjectCoefficients)
     .values({
-      id: crypto.randomUUID(),
+      id: nanoid(),
       schoolId,
       coefficientTemplateId,
       weightOverride,
@@ -248,7 +249,7 @@ export async function upsertCoefficientOverride(options: {
   const [result] = await db
     .insert(schoolSubjectCoefficients)
     .values({
-      id: crypto.randomUUID(),
+      id: nanoid(),
       schoolId,
       coefficientTemplateId,
       weightOverride,
@@ -299,7 +300,7 @@ export async function bulkUpdateSchoolCoefficients(options: {
       const [result] = await tx
         .insert(schoolSubjectCoefficients)
         .values({
-          id: crypto.randomUUID(),
+          id: nanoid(),
           schoolId,
           coefficientTemplateId: update.coefficientTemplateId,
           weightOverride: update.weightOverride,
@@ -506,7 +507,7 @@ export async function copySchoolCoefficientsFromYear(options: {
         const [result] = await tx
           .insert(schoolSubjectCoefficients)
           .values({
-            id: crypto.randomUUID(),
+            id: nanoid(),
             schoolId,
             coefficientTemplateId: targetTemplate.id,
             weightOverride: override.weightOverride,

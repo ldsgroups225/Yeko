@@ -1,8 +1,14 @@
-export function parseServerFnError(error: any, fallback: string = 'Une erreur est survenue'): string {
+export function parseServerFnError(error: unknown, fallback: string = 'Une erreur est survenue'): string {
   if (!error)
     return fallback
 
-  const errorMessage = typeof error === 'string' ? error : error.message || ''
+  const errorMessage = typeof error === 'string'
+    ? error
+    : error instanceof Error
+      ? error.message
+      : typeof error === 'object' && error !== null && 'message' in error
+        ? String((error as { message: unknown }).message)
+        : ''
 
   // Handle network/connection errors
   if (errorMessage.includes('Network connection lost')
@@ -48,8 +54,10 @@ export function parseServerFnError(error: any, fallback: string = 'Une erreur es
         if (Array.isArray(issues) && issues.length > 0) {
           // Check if it looks like a Zod error array (objects with message property)
           const messages = issues
-            .filter((i: any) => i && typeof i.message === 'string')
-            .map((i: any) => i.message)
+            .filter((i: unknown): i is { message: string } =>
+              !!i && typeof i === 'object' && 'message' in i && typeof (i as { message: unknown }).message === 'string',
+            )
+            .map(i => i.message)
 
           if (messages.length > 0) {
             return messages.join(', ')

@@ -1,8 +1,8 @@
-import type { Discount, DiscountInsert, DiscountType } from '@/drizzle/school-schema'
+import type { Discount, DiscountInsert, DiscountType } from '../drizzle/school-schema'
+import { getDb } from '../database/setup'
+import { discounts } from '../drizzle/school-schema'
 import { and, asc, eq } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
-import { getDb } from '@/database/setup'
-import { discounts } from '@/drizzle/school-schema'
 
 export interface GetDiscountsParams {
   schoolId: string

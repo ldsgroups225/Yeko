@@ -1,8 +1,8 @@
-import type { FiscalYear, FiscalYearInsert, FiscalYearStatus } from '@/drizzle/school-schema'
+import type { FiscalYear, FiscalYearInsert, FiscalYearStatus } from '../drizzle/school-schema'
+import { getDb } from '../database/setup'
+import { fiscalYears } from '../drizzle/school-schema'
 import { and, desc, eq, gte, lte } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
-import { getDb } from '@/database/setup'
-import { fiscalYears } from '@/drizzle/school-schema'
 
 export interface GetFiscalYearsParams {
   schoolId: string

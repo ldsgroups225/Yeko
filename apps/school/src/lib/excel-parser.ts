@@ -16,11 +16,21 @@ export interface ParsedSession {
   classroomId?: string
 }
 
+interface RawSessionData {
+  className?: string | number | null
+  subjectName?: string | number | null
+  teacherName?: string | number | null
+  classroomName?: string | number | null
+  day?: string | number | null
+  startTime?: string | number | null
+  endTime?: string | number | null
+}
+
 export interface TimetableImportContext {
   classes: Array<{ class: { id: string, section: string }, grade: { name: string } }>
-  subjects: Array<{ id: string, name: string }>
+  subjects: Array<{ subject: { id: string, name: string } }>
   teachers: Array<{ id: string, user: { name: string } }>
-  classrooms: Array<{ id: string, name: string, classroom: { id: string, name: string } }>
+  classrooms: Array<{ classroom: { id: string, name: string } }>
 }
 
 const COLUMN_MAPPINGS: Record<string, string[]> = {
@@ -47,7 +57,7 @@ function findColumnMapping(header: string): string | null {
   return null
 }
 
-function parseDay(value: any): number {
+function parseDay(value: string | number | null | undefined): number {
   if (typeof value === 'number')
     return value
   const str = String(value).toLowerCase().trim()
@@ -68,7 +78,7 @@ function parseDay(value: any): number {
   return 0
 }
 
-function parseTime(value: any): string {
+function parseTime(value: string | number | null | undefined): string {
   if (!value)
     return ''
 
@@ -124,27 +134,31 @@ export async function parseTimetableExcel(
         }
 
         // Prepare Lookups
-        const classByNameMap = new Map<string, any>()
+        const classByNameMap = new Map<string, { id: string, section: string }>()
         context.classes.forEach((c) => {
           classByNameMap.set(`${c.grade.name} ${c.class.section}`.toLowerCase(), c.class)
           classByNameMap.set(`${c.grade.name}${c.class.section}`.toLowerCase().replace(/\s/g, ''), c.class)
         })
 
-        const subjectMap = new Map(context.subjects.map(s => [s.name.toLowerCase(), s]))
-        const teacherMap = new Map(context.teachers.map(t => [t.user.name.toLowerCase(), t]))
-        const classroomMap = new Map<string, any>(
+        const subjectMap = new Map<string, { id: string, name: string }>(
+          context.subjects.map(s => [s.subject.name.toLowerCase(), s.subject]),
+        )
+        const teacherMap = new Map<string, { id: string, user: { name: string } }>(
+          context.teachers.map(t => [t.user.name.toLowerCase(), t]),
+        )
+        const classroomMap = new Map<string, { id: string, name: string }>(
           context.classrooms.map((c) => {
-            const name = c.classroom?.name || c.name
-            return [name.toLowerCase(), c.classroom || c]
+            const name = c.classroom.name
+            return [name.toLowerCase(), c.classroom]
           }),
         )
 
         const parsed: ParsedSession[] = jsonData.map((row) => {
-          const data: any = {}
+          const data: Partial<RawSessionData> = {}
           for (const [header, val] of Object.entries(row)) {
             const field = headerMapping[header]
             if (field)
-              data[field] = val
+              data[field as keyof RawSessionData] = val
           }
 
           // Basic Schema check (optional, but good for structure)

@@ -1,3 +1,4 @@
+import { nanoid as generateId } from "nanoid"
 import type { BloodType, Gender, StudentInsert, StudentStatus } from '../drizzle/school-schema'
 import crypto from 'node:crypto'
 import { and, asc, desc, eq, ilike, or, sql } from 'drizzle-orm'
@@ -13,7 +14,7 @@ import {
   students,
 } from '../drizzle/school-schema'
 
-const nanoid = () => crypto.randomUUID()
+const nanoid = () => generateId()
 
 // ==================== Types ====================
 

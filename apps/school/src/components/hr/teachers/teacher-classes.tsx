@@ -4,8 +4,18 @@ import { Badge } from '@workspace/ui/components/badge'
 import { motion } from 'motion/react'
 import { useTranslations } from '@/i18n'
 
+export interface TeacherClass {
+  id: string
+  gradeName: string
+  section: string
+  seriesName?: string | null
+  classroomName?: string | null
+  isHomeroom: boolean
+  subjects?: string[]
+}
+
 interface TeacherClassesProps {
-  classes: any[]
+  classes: TeacherClass[]
   isLoading?: boolean
 }
 

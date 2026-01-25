@@ -1,5 +1,5 @@
-// import { getDb } from "@/database/setup";
-// import { subscriptions } from "@/drizzle/schema";
+// import { getDb } from "@repo/data-ops/database/setup";
+// import { subscriptions } from "@repo/data-ops/drizzle/schema";
 // import { eq } from "drizzle-orm";
 
 // export async function updateSubscription(data: {

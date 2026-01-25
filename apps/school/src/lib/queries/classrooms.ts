@@ -13,8 +13,8 @@ export const classroomsKeys = {
 }
 
 export interface ClassroomFilters {
-  type?: string
-  status?: string
+  type?: 'regular' | 'lab' | 'gym' | 'library' | 'auditorium'
+  status?: 'active' | 'inactive' | 'maintenance'
   search?: string
 }
 

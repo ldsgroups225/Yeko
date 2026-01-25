@@ -1,14 +1,18 @@
-import { getAuth } from '@repo/data-ops/auth/server'
-import { getUserSystemPermissionsByAuthUserId, getUserSystemRolesByAuthUserId, syncUserAuthOnLogin } from '@repo/data-ops/queries/school-admin/users'
 import { createServerFn } from '@tanstack/react-start'
 import { getRequest } from '@tanstack/react-start/server'
+
+import { databaseMiddleware } from '../middleware/database'
 
 /**
  * Consolidates authentication session and system-scoped roles
  * Used to populate the global router context and enforce RBAC
  */
 export const getAuthStatus = createServerFn({ method: 'GET' })
+  .middleware([databaseMiddleware])
   .handler(async () => {
+    const { getAuth } = await import('@repo/data-ops/auth/server')
+    const { getUserSystemPermissionsByAuthUserId, getUserSystemRolesByAuthUserId, syncUserAuthOnLogin } = await import('@repo/data-ops/queries/school-admin/users')
+
     const auth = getAuth()
     const req = getRequest()
 

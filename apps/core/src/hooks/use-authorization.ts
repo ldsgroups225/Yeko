@@ -19,7 +19,7 @@ export function useAuthorization() {
     if (auth.isSuperAdmin)
       return true
 
-    return hasPermission(auth.permissions as any, resource, action)
+    return hasPermission(auth.permissions, resource, action)
   }
 
   /**

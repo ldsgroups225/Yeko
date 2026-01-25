@@ -1,13 +1,13 @@
 import {
   classes,
   enrollments,
-  getDb,
   grades,
   parents,
   series,
   studentParents,
   students,
 } from '@repo/data-ops'
+import { getDb } from '@repo/data-ops/database/setup'
 import { createServerFn } from '@tanstack/react-start'
 import { and, eq, inArray } from 'drizzle-orm'
 import { z } from 'zod'
@@ -177,7 +177,15 @@ export const bulkReEnrollFromPreviousYear = createServerFn()
     const alreadyEnrolled = new Set(existingEnrollmentsTarget.map((e: { studentId: string }) => e.studentId))
     const today = new Date().toISOString().split('T')[0] ?? new Date().toISOString().slice(0, 10)
 
-    const toInsert: any[] = []
+    const toInsert: {
+      id: string
+      studentId: string
+      classId: string
+      schoolYearId: string
+      status: 'confirmed' | 'pending' | 'cancelled' | 'transferred'
+      enrollmentDate: string
+      confirmedAt: Date | null
+    }[] = []
 
     for (const enrollment of sourceEnrollments) {
       if (alreadyEnrolled.has(enrollment.studentId)) {
@@ -523,10 +531,10 @@ export const importStudents = createServerFn()
 
     try {
       await db.transaction(async (tx) => {
-        const studentRecords: any[] = []
-        const parentRecords: any[] = []
-        const studentParentLinks: any[] = []
-        const enrollmentRecords: any[] = []
+        const studentRecords: (typeof students.$inferInsert)[] = []
+        const parentRecords: (typeof parents.$inferInsert)[] = []
+        const studentParentLinks: (typeof studentParents.$inferInsert)[] = []
+        const enrollmentRecords: (typeof enrollments.$inferInsert)[] = []
         const parentsByPhone = new Map<string, string>()
 
         for (const row of data.rows) {

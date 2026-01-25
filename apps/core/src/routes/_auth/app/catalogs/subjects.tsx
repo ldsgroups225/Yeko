@@ -1,4 +1,3 @@
-import type { Subject } from '@repo/data-ops'
 import type { FormEvent } from 'react'
 import type { CreateSubjectInput, UpdateSubjectInput } from '@/schemas/catalog'
 import {
@@ -99,13 +98,13 @@ function SubjectsCatalog() {
     onError: (error) => {
       const message = parseServerFnError(error, 'Erreur lors de la création de la matière')
       toast.error(message)
-      logger.error('Failed to create subject', error)
+      logger.error('Failed to create subject', error instanceof Error ? error : new Error(String(error)))
     },
   })
 
   const bulkCreateMutation = useMutation({
     ...bulkCreateSubjectsMutationOptions,
-    onSuccess: (data: Subject[]) => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['subjects'] })
       setPage(1)
       toast.success(`${data.length} matières importées avec succès`)
@@ -114,7 +113,7 @@ function SubjectsCatalog() {
     onError: (error) => {
       const message = parseServerFnError(error, 'Erreur lors de l\'import des matières')
       toast.error(message)
-      logger.error('Failed to import subjects', error)
+      logger.error('Failed to import subjects', error instanceof Error ? error : new Error(String(error)))
     },
   })
 
@@ -130,7 +129,7 @@ function SubjectsCatalog() {
     onError: (error) => {
       const message = parseServerFnError(error, 'Erreur lors de la mise à jour de la matière')
       toast.error(message)
-      logger.error('Failed to update subject', error)
+      logger.error('Failed to update subject', error instanceof Error ? error : new Error(String(error)))
     },
   })
 
@@ -145,7 +144,7 @@ function SubjectsCatalog() {
     onError: (error) => {
       const message = parseServerFnError(error, 'Erreur lors de la suppression de la matière')
       toast.error(message)
-      logger.error('Failed to delete subject', error)
+      logger.error('Failed to delete subject', error instanceof Error ? error : new Error(String(error)))
     },
   })
 

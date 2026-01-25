@@ -1,3 +1,4 @@
+import { nanoid as generateId } from "nanoid"
 import type { Enrollment, EnrollmentInsert, EnrollmentStatus } from '../drizzle/school-schema'
 import crypto from 'node:crypto'
 import { and, desc, eq, inArray, ne, or, sql } from 'drizzle-orm'
@@ -5,7 +6,7 @@ import { getDb } from '../database/setup'
 import { grades, series } from '../drizzle/core-schema'
 import { classes, enrollments, schoolYears, students, users } from '../drizzle/school-schema'
 
-const nanoid = () => crypto.randomUUID()
+const nanoid = () => generateId()
 // ==================== Types ====================
 export interface EnrollmentFilters {
   schoolId: string

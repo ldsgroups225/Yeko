@@ -14,7 +14,19 @@ import {
 export function studentNotesQueryOptions(params: {
   studentId: string
   classId?: string
-  type?: string
+  type?:
+    | 'behavior'
+    | 'academic'
+    | 'attendance'
+    | 'uniform'
+    | 'property'
+    | 'violence'
+    | 'bullying'
+    | 'cheating'
+    | 'achievement'
+    | 'improvement'
+    | 'general'
+    | 'other'
   startDate?: string
   endDate?: string
   limit?: number

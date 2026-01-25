@@ -29,8 +29,8 @@ const classroomSchema = z.object({
 export const getClassrooms = createServerFn()
   .inputValidator(
     z.object({
-      type: z.string().optional(),
-      status: z.string().optional(),
+      type: classroomSchema.shape.type.optional(),
+      status: classroomSchema.shape.status.optional(),
       search: z.string().optional(),
     }),
   )

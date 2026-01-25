@@ -155,7 +155,7 @@ function ComposeMessagePage() {
                                 : searchResults && searchResults.length > 0
                                   ? (
                                       <div className="max-h-48 space-y-1 overflow-y-auto">
-                                        {searchResults.map((parent: any) => (
+                                        {searchResults.map(parent => (
                                           <button
                                             type="button"
                                             key={parent.id}

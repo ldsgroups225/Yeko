@@ -1,4 +1,3 @@
-import { assignSystemRolesToUser, countSystemUsers, getSystemUsers, updateSystemUser } from '@repo/data-ops/queries/school-admin/users'
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 
@@ -7,7 +6,7 @@ import { z } from 'zod'
  */
 export const getPlatformUsers = createServerFn({ method: 'GET' })
   .inputValidator(
-    (data: any) => z.object({
+    (data: unknown) => z.object({
       search: z.string().optional(),
       status: z.enum(['active', 'inactive', 'suspended']).optional(),
       page: z.number().default(1),
@@ -15,6 +14,7 @@ export const getPlatformUsers = createServerFn({ method: 'GET' })
     }).parse(data),
   )
   .handler(async ({ data }) => {
+    const { countSystemUsers, getSystemUsers } = await import('@repo/data-ops/queries/school-admin/users')
     const offset = (data.page - 1) * data.limit
 
     const [users, total] = await Promise.all([
@@ -48,7 +48,7 @@ export const getPlatformUsers = createServerFn({ method: 'GET' })
  */
 export const updatePlatformUser = createServerFn({ method: 'POST' })
   .inputValidator(
-    (data: any) => z.object({
+    (data: unknown) => z.object({
       id: z.string(),
       name: z.string().optional(),
       phone: z.string().optional(),
@@ -56,6 +56,7 @@ export const updatePlatformUser = createServerFn({ method: 'POST' })
     }).parse(data),
   )
   .handler(async ({ data }) => {
+    const { updateSystemUser } = await import('@repo/data-ops/queries/school-admin/users')
     const { id, ...updates } = data
     return updateSystemUser(id, updates)
   })
@@ -65,11 +66,12 @@ export const updatePlatformUser = createServerFn({ method: 'POST' })
  */
 export const assignUserSystemRoles = createServerFn({ method: 'POST' })
   .inputValidator(
-    (data: any) => z.object({
+    (data: unknown) => z.object({
       userId: z.string(),
       roleIds: z.array(z.string()),
     }).parse(data),
   )
   .handler(async ({ data }) => {
+    const { assignSystemRolesToUser } = await import('@repo/data-ops/queries/school-admin/users')
     return assignSystemRolesToUser(data.userId, data.roleIds)
   })

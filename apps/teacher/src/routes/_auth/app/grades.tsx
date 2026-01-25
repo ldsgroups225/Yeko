@@ -42,7 +42,7 @@ function GradesPage() {
         : data?.classes && data.classes.length > 0
           ? (
               <div className="space-y-3">
-                {data.classes.map((cls: any) => (
+                {data.classes.map(cls => (
                   <ClassCard key={cls.id} classData={cls} />
                 ))}
               </div>

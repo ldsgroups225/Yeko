@@ -1,8 +1,8 @@
-import type { FeeStatus, StudentFee, StudentFeeInsert } from '@/drizzle/school-schema'
+import type { FeeStatus, StudentFee, StudentFeeInsert } from '../drizzle/school-schema'
+import { getDb } from '../database/setup'
+import { enrollments, feeStructures, feeTypes, studentFees } from '../drizzle/school-schema'
 import { and, eq, gt, sql } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
-import { getDb } from '@/database/setup'
-import { enrollments, feeStructures, feeTypes, studentFees } from '@/drizzle/school-schema'
 
 export interface GetStudentFeesParams {
   studentId?: string

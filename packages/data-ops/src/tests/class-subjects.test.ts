@@ -1,3 +1,4 @@
+import { nanoid } from "nanoid"
 import { beforeEach, describe, expect, test } from 'vitest'
 import {
   assignTeacherToClassSubject,
@@ -51,7 +52,7 @@ describe('class subjects queries', () => {
 
     // Create test class
     const testClass = await createClass({
-      id: crypto.randomUUID(),
+      id: nanoid(),
       schoolId: testSchoolId,
       schoolYearId: testSchoolYearId,
       gradeId: testGradeId,
@@ -224,7 +225,7 @@ describe('class subjects queries', () => {
     beforeEach(async () => {
       // Create a source class
       const sourceClass = await createClass({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         schoolId: testSchoolId,
         schoolYearId: testSchoolYearId,
         gradeId: testGradeId,

@@ -25,7 +25,7 @@ export const getTeacherMessages = createServerFn()
     })
 
     return {
-      messages: result.messages.map((m: any) => ({
+      messages: result.messages.map(m => ({
         id: m.id,
         senderType: m.senderType as 'teacher' | 'parent',
         senderName: m.senderType === 'teacher' ? 'You' : 'Parent', // TODO: Get actual name
@@ -70,10 +70,10 @@ export const sendMessage = createServerFn()
         messageId: message?.id,
       }
     }
-    catch (error: any) {
+    catch (error: unknown) {
       return {
         success: false,
-        error: error.message || 'Failed to send message',
+        error: error instanceof Error ? error.message : 'Failed to send message',
       }
     }
   })
@@ -116,7 +116,7 @@ export const getMessageDetails = createServerFn()
         readAt: message.readAt?.toISOString() ?? null,
         createdAt: message.createdAt.toISOString(),
         threadId: message.threadId,
-        thread: message.thread.map((t: any) => ({
+        thread: message.thread.map(t => ({
           id: t.id,
           senderType: t.senderType as 'teacher' | 'parent',
           senderName: t.senderType === 'teacher' ? 'You' : 'Parent',
@@ -144,10 +144,10 @@ export const markMessageRead = createServerFn()
 
       return { success: true }
     }
-    catch (error: any) {
+    catch (error: unknown) {
       return {
         success: false,
-        error: error.message || 'Failed to mark message as read',
+        error: error instanceof Error ? error.message : 'Failed to mark message as read',
       }
     }
   })
@@ -157,7 +157,7 @@ export const getMessageTemplates = createServerFn()
   .inputValidator(
     z.object({
       schoolId: z.string(),
-      category: z.string().optional(),
+      category: z.enum(['attendance', 'grades', 'behavior', 'general', 'reminder', 'congratulations']).optional(),
     }),
   )
   .handler(async ({ data }) => {
@@ -167,7 +167,7 @@ export const getMessageTemplates = createServerFn()
     })
 
     return {
-      templates: templates.map((t: any) => ({
+      templates: templates.map(t => ({
         id: t.id,
         name: t.name,
         category: t.category,
@@ -198,7 +198,7 @@ export const searchParents = createServerFn()
       classId: data.classId,
     })
 
-    return parents.map((p: any) => ({
+    return parents.map(p => ({
       id: p.id,
       name: p.name,
       phone: p.phone,

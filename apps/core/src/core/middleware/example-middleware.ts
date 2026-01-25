@@ -1,10 +1,10 @@
-import process from 'node:process'
-import { initDatabase } from '@repo/data-ops/database/setup'
 import { createMiddleware } from '@tanstack/react-start'
 
 export const exampleMiddlewareWithContext = createMiddleware({
   type: 'function',
 }).server(async ({ next }) => {
+  const { initDatabase } = await import('@repo/data-ops/database/setup')
+
   // Initialize database connection
   initDatabase({
     host: process.env.DATABASE_HOST || '',

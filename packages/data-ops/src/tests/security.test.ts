@@ -4,26 +4,26 @@
  * Using vitest with node environment
  */
 
-import { eq } from 'drizzle-orm'
-import { afterAll, beforeAll, describe, expect, test } from 'vitest'
-import { getDb } from '@/database/setup'
+import { getDb } from '@repo/data-ops/database/setup'
 import {
   coefficientTemplates,
   grades,
   programTemplates,
   schools,
   schoolYearTemplates,
-} from '@/drizzle/core-schema'
+} from '@repo/data-ops/drizzle/core-schema'
 import {
   createGrade,
   deleteGrade,
-} from '@/queries/catalogs'
+} from '@repo/data-ops/queries/catalogs'
 import {
   createSchool,
   deleteSchool,
   getSchools,
   updateSchool,
-} from '@/queries/schools'
+} from '@repo/data-ops/queries/schools'
+import { eq } from 'drizzle-orm'
+import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 
 // ============================================================================
 // 6.1 AUTHORIZATION & ACCESS CONTROL

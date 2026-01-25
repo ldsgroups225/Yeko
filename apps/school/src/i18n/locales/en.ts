@@ -1632,6 +1632,7 @@ export const en = {
       medium: 'Medium',
       high: 'High',
       critical: 'Critical',
+      urgent: 'Urgent',
     },
     status: {
       open: 'Open',

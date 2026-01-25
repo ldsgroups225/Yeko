@@ -1,17 +1,6 @@
-import { getAuth } from '@repo/data-ops/auth/server'
-import { getRoleBySlug } from '@repo/data-ops/queries/school-admin/roles'
-import { createUserWithSchool } from '@repo/data-ops/queries/school-admin/users'
-import { getSchoolById } from '@repo/data-ops/queries/schools'
-import { sendWelcomeEmail } from '@repo/data-ops/services/email'
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 import { protectedFunctionMiddleware } from '@/core/middleware/auth'
-
-const createSchoolAdminSchema = z.object({
-  schoolId: z.uuid(),
-  email: z.email(),
-  name: z.string().min(2),
-})
 
 /**
  * Generate a random password
@@ -31,13 +20,24 @@ function generateRandomPassword(length: number = 12): string {
  * Create a school administrator account
  * Creates auth user with email/password and links to school with admin role
  */
-export const createSchoolAdmin = createServerFn()
+export const createSchoolAdmin = createServerFn({ method: 'POST' })
   .middleware([protectedFunctionMiddleware])
-  .inputValidator((data: z.infer<typeof createSchoolAdminSchema>) => {
-    return createSchoolAdminSchema.parse(data)
-  })
+  .inputValidator(
+    (data: unknown) => z.object({
+      schoolId: z.string(),
+      email: z.email(),
+      name: z.string().min(2),
+      message: z.string().optional(),
+    }).parse(data),
+  )
   .handler(async ({ data }) => {
-    const { schoolId, email, name } = data
+    const { email, name, schoolId } = data
+    const { getAuth } = await import('@repo/data-ops/auth/server')
+    const { getRoleBySlug } = await import('@repo/data-ops/queries/school-admin/roles')
+    const { createUserWithSchool } = await import('@repo/data-ops/queries/school-admin/users')
+    const { getSchoolById } = await import('@repo/data-ops/queries/schools')
+    const { sendWelcomeEmail } = await import('@repo/data-ops/services/email')
+
     const auth = getAuth()
 
     try {
@@ -117,14 +117,15 @@ export const createSchoolAdmin = createServerFn()
         ...(isDevelopment && { password }),
       }
     }
-    catch (error: any) {
+    catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error)
       console.error('Error creating school admin:', error)
 
       // Handle duplicate email error
-      if (error.message?.includes('duplicate') || error.message?.includes('unique')) {
+      if (message.includes('duplicate') || message.includes('unique')) {
         throw new Error('Un utilisateur avec cet email existe déjà')
       }
 
-      throw new Error(error.message || 'Erreur lors de la création du compte administrateur')
+      throw new Error(message || 'Erreur lors de la création du compte administrateur')
     }
   })

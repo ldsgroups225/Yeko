@@ -231,7 +231,7 @@ export async function addSubjectToClass(data: {
   const [created] = await db
     .insert(classSubjects)
     .values({
-      id: crypto.randomUUID(),
+      id: nanoid(),
       classId: data.classId,
       subjectId: data.subjectId,
       teacherId: data.teacherId || null,
@@ -324,7 +324,7 @@ export async function copyClassSubjects(
         const [created] = await tx
           .insert(classSubjects)
           .values({
-            id: crypto.randomUUID(),
+            id: nanoid(),
             classId: targetClassId,
             subjectId: subject.subjectId,
             teacherId: null, // Don't copy teacher assignment by default
