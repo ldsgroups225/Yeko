@@ -247,18 +247,18 @@ function UserManagement() {
       </Card>
 
       <Dialog open={isRolesDialogOpen} onOpenChange={setIsRolesDialogOpen}>
-        <DialogContent className="sm:max-w-md glass">
-          <DialogHeader>
-            <DialogTitle>Assigner des Rôles Système</DialogTitle>
-            <DialogDescription>
-              Assignez des privilèges de plateforme à
+        <DialogContent className="w-[calc(100vw-1.5rem)] sm:max-w-md glass border-border/40 shadow-2xl rounded-4xl p-0 overflow-hidden">
+          <DialogHeader className="p-6 sm:p-8 bg-linear-to-b from-primary/5 to-transparent border-b border-border/20">
+            <DialogTitle className="text-2xl font-bold tracking-tight">Assigner des Rôles</DialogTitle>
+            <DialogDescription className="text-base">
+              Modifiez les privilèges de plateforme pour
               {' '}
-              <span className="font-bold text-foreground">{selectedUser?.name}</span>
+              <span className="font-bold text-foreground underline decoration-primary/30">{selectedUser?.name}</span>
               .
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-4 py-4">
+          <div className="space-y-4 p-6 sm:p-8 max-h-[60vh] overflow-y-auto scrollbar-none">
             <div className="space-y-3">
               {allRoles.map((role: Role) => (
                 <div

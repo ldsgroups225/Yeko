@@ -8,17 +8,25 @@ import {
   IconTrash,
 } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useForm } from '@tanstack/react-form'
+import { zodValidator } from '@tanstack/zod-form-adapter'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'
 import { Button } from '@workspace/ui/components/button'
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from '@workspace/ui/components/card'
 import { Checkbox } from '@workspace/ui/components/checkbox'
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@workspace/ui/components/form'
 import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
 import {
   Dialog,
@@ -38,18 +46,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@workspace/ui/components/select'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@workspace/ui/components/table'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
 import { motion } from 'motion/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import { z } from 'zod'
 import { createPlatformRole, deletePlatformRole, getPlatformRoles, updatePlatformRole } from '@/core/functions/roles'
 import { useAuthorization } from '@/hooks/use-authorization'
 
@@ -68,26 +69,28 @@ export const Route = createFileRoute('/_auth/app/roles/')({
 
 const RESOURCES = [
   // École (Nouveau MVP)
-  { id: 'teachers', name: 'Enseignants', category: 'École' },
-  { id: 'students', name: 'Élèves', category: 'École' },
-  { id: 'parents', name: 'Parents', category: 'École' },
-  { id: 'classes', name: 'Classes', category: 'École' },
-  { id: 'classrooms', name: 'Salles', category: 'École' },
-  { id: 'grades', name: 'Notes', category: 'École' },
-  { id: 'attendance', name: 'Assiduité', category: 'École' },
-  { id: 'conduct', name: 'Discipline', category: 'École' },
-  { id: 'finance', name: 'Finances', category: 'École' },
-  { id: 'reports', name: 'Rapports', category: 'École' },
-  { id: 'settings', name: 'Configuration', category: 'École' },
-  { id: 'school_subjects', name: 'Matières', category: 'École' },
-  { id: 'coefficients', name: 'Coefficients', category: 'École' },
-  { id: 'teacher_assignments', name: 'Attributions', category: 'École' },
+  { id: 'teachers', name: 'Personnel Enseignant', category: 'École' },
+  { id: 'students', name: 'Élèves & Étudiants', category: 'École' },
+  { id: 'parents', name: 'Parents d\'Élèves', category: 'École' },
+  { id: 'classes', name: 'Classes & Groupes', category: 'École' },
+  { id: 'classrooms', name: 'Salles & Infrastructure', category: 'École' },
+  { id: 'grades', name: 'Notes & Évaluations', category: 'École' },
+  { id: 'attendance', name: 'Suivi des Présences', category: 'École' },
+  { id: 'conduct', name: 'Vie Scolaire & Discipline', category: 'École' },
+  { id: 'finance', name: 'Finances & Inscriptions', category: 'École' },
+  { id: 'reports', name: 'Bulletins & Rapports', category: 'École' },
+  { id: 'settings', name: 'Paramètres École', category: 'École' },
+  { id: 'school_subjects', name: 'Matières & Programmes', category: 'École' },
+  { id: 'coefficients', name: 'Coefficients & Pondération', category: 'École' },
+  { id: 'teacher_assignments', name: 'Attributions de Cours', category: 'École' },
   // Système
-  { id: 'schools', name: 'Plateforme : Écoles', category: 'Système' },
-  { id: 'users', name: 'Plateforme : Users', category: 'Système' },
-  { id: 'system_monitoring', name: 'Plateforme : Monitoring', category: 'Système' },
-  { id: 'global_settings', name: 'Plateforme : Config', category: 'Système' },
+  { id: 'schools', name: 'Gestion des Établissements', category: 'Système' },
+  { id: 'users', name: 'Comptes Utilisateurs', category: 'Système' },
+  { id: 'system_monitoring', name: 'Supervison Système', category: 'Système' },
+  { id: 'global_settings', name: 'Configuration Globale', category: 'Système' },
 ]
+
+const RESOURCE_MAP = Object.fromEntries(RESOURCES.map(r => [r.id, r.name]))
 
 const ACTIONS: { id: SystemAction, name: string }[] = [
   { id: 'view', name: 'Voir' },
@@ -96,6 +99,16 @@ const ACTIONS: { id: SystemAction, name: string }[] = [
   { id: 'delete', name: 'Supprimer' },
   { id: 'manage', name: 'Gérer (Tout)' },
 ]
+
+const roleSchema = z.object({
+  name: z.string().min(3, 'Le nom doit contenir au moins 3 caractères').max(50),
+  slug: z.string().min(3, 'Le slug est requis').regex(/^[a-z0-9_]+$/, 'Format invalide (minuscules, chiffres et underscores uniquement)'),
+  description: z.string().max(200).optional(),
+  scope: z.enum(['system', 'school']),
+  permissions: z.record(z.string(), z.array(z.string())),
+})
+
+type RoleFormData = z.infer<typeof roleSchema>
 
 function RoleManagement() {
   const queryClient = useQueryClient()
@@ -110,25 +123,40 @@ function RoleManagement() {
   // Scope filter state
   const [activeScope, setActiveScope] = useState<SchoolScope>('school')
 
-  // Form State
-  const [formData, setFormData] = useState({
-    name: '',
-    slug: '',
-    description: '',
-    scope: 'system' as SchoolScope,
-    permissions: {} as SystemPermissions,
-  })
-
-  const resetForm = () => {
-    setFormData({
+  const form = useForm({
+    defaultValues: {
       name: '',
       slug: '',
       description: '',
-      scope: 'system',
-      permissions: {},
-    })
-    setEditingRole(null)
-  }
+      scope: 'school' as SchoolScope,
+      permissions: {} as SystemPermissions,
+    },
+    validatorAdapter: zodValidator(),
+    validators: {
+      onChange: roleSchema,
+    },
+    onSubmit: async ({ value }) => {
+      if (editingRole) {
+        updateMutation.mutate({ id: editingRole.id, updates: value as any })
+      }
+      else {
+        createMutation.mutate(value as any)
+      }
+    },
+  })
+
+  // Sync form when editing
+  useEffect(() => {
+    if (editingRole) {
+      form.setFieldValue('name', editingRole.name)
+      form.setFieldValue('slug', editingRole.slug)
+      form.setFieldValue('description', editingRole.description || '')
+      form.setFieldValue('scope', editingRole.scope as any)
+      form.setFieldValue('permissions', editingRole.permissions as any)
+    } else {
+      form.reset()
+    }
+  }, [editingRole, isDialogOpen])
 
   const { data: roles = [], isLoading } = useQuery({
     queryKey: ['platform-roles', activeScope],
@@ -136,24 +164,27 @@ function RoleManagement() {
   })
 
   const createMutation = useMutation({
-    mutationFn: (data: typeof formData) => createPlatformRole({ data }),
+    mutationFn: (data: RoleFormData) => createPlatformRole({ data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['platform-roles'] })
       toast.success('Rôle créé avec succès')
       setIsDialogOpen(false)
-      resetForm()
+      form.reset()
     },
-    onError: () => toast.error('Erreur lors de la création du rôle'),
+    onError: (error: any) => toast.error(error.message || 'Erreur lors de la création'),
   })
 
   const updateMutation = useMutation({
-    mutationFn: (data: Partial<Role> & { id: string }) => updatePlatformRole({ data }),
+    mutationFn: ({ id, updates }: { id: string, updates: Partial<Role> }) =>
+      updatePlatformRole({ data: { id, updates } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['platform-roles'] })
-      toast.success('Rôle mis à jour')
+      toast.success('Rôle mis à jour avec succès')
       setIsDialogOpen(false)
       setEditingRole(null)
+      form.reset()
     },
+    onError: (error: any) => toast.error(error.message || 'Erreur lors de la mise à jour'),
   })
 
   const deleteMutation = useMutation({
@@ -171,45 +202,14 @@ function RoleManagement() {
 
   const handleEdit = (role: Role) => {
     setEditingRole(role)
-    setFormData({
-      name: role.name,
-      slug: role.slug,
-      description: role.description || '',
-      scope: role.scope,
-      permissions: role.permissions || {},
-    })
     setIsDialogOpen(true)
   }
 
-  const togglePermission = (resourceId: string, actionId: string) => {
-    setFormData((prev) => {
-      const currentResourcePerms = (prev.permissions[resourceId] || []) as string[]
-      const newResourcePerms = currentResourcePerms.includes(actionId)
-        ? currentResourcePerms.filter(a => a !== actionId)
-        : [...currentResourcePerms, actionId]
-
-      return {
-        ...prev,
-        permissions: {
-          ...prev.permissions,
-          [resourceId]: newResourcePerms as SystemAction[],
-        },
-      }
-    })
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (editingRole) {
-      updateMutation.mutate({
-        id: editingRole.id,
-        name: formData.name,
-        description: formData.description,
-        permissions: formData.permissions,
-      })
-    }
-    else {
-      createMutation.mutate(formData)
+  const handleOpenChange = (open: boolean) => {
+    setIsDialogOpen(open)
+    if (!open) {
+      setEditingRole(null)
+      form.reset()
     }
   }
 
@@ -217,22 +217,18 @@ function RoleManagement() {
     <div className="space-y-8 animate-in fade-in duration-700">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight bg-linear-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-5xl font-black tracking-tighter bg-linear-to-br from-foreground via-foreground to-foreground/40 bg-clip-text text-transparent">
             Gestion des Rôles
           </h1>
-          <p className="text-muted-foreground mt-1">
-            Définissez les permissions système et la hiérarchie des accès.
+          <p className="text-muted-foreground/80 mt-2 text-lg font-medium max-w-2xl">
+            Configurez les permissions granulaires et la hiérarchie d'accès pour assurer la sécurité et l'organisation de votre plateforme.
           </p>
         </div>
 
         {can('global_settings', 'manage') && (
           <Dialog
             open={isDialogOpen}
-            onOpenChange={(open) => {
-              setIsDialogOpen(open)
-              if (!open)
-                resetForm()
-            }}
+            onOpenChange={handleOpenChange}
           >
             <DialogTrigger
               render={triggerProps => (
@@ -242,106 +238,216 @@ function RoleManagement() {
                 </Button>
               )}
             />
-            <DialogContent className="max-w-4xl glass max-h-[90vh] overflow-y-auto w-[98vw] sm:w-full p-2 sm:p-6">
-              <DialogHeader className="p-4 sm:p-0">
-                <DialogTitle>{editingRole ? 'Modifier le Rôle' : 'Créer un Nouveau Rôle'}</DialogTitle>
-                <DialogDescription>
-                  Configurez les permissions granulaires pour ce rôle.
-                </DialogDescription>
-              </DialogHeader>
-
-              <form onSubmit={handleSubmit} className="space-y-6 py-4 px-2 sm:px-0">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Nom du rôle</Label>
-                    <Input
-                      id="name"
-                      placeholder="ex: Auditeur Technique"
-                      value={formData.name}
-                      onChange={e => setFormData({ ...formData, name: e.target.value })}
-                      required
-                    />
+            <DialogContent className="max-w-lg sm:max-w-3xl max-h-[90vh] p-0 gap-0 overflow-hidden backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl">
+              <DialogHeader className="p-5 sm:p-8 bg-linear-to-b from-primary/5 to-transparent border-b border-border/20 sticky top-0 bg-background/80 backdrop-blur-md z-10">
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className="p-2.5 sm:p-3 rounded-2xl bg-primary/10 text-primary shrink-0">
+                    <IconPlus className="w-5 h-5 sm:w-6 sm:h-6" />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="slug">Identifiant (Slug)</Label>
-                    <Input
-                      id="slug"
-                      placeholder="auditeur_technique"
-                      disabled={!!editingRole}
-                      value={formData.slug}
-                      onChange={e => setFormData({ ...formData, slug: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="scope">Portée (Scope)</Label>
-                    <Select
-                      value={formData.scope}
-                      onValueChange={val => setFormData({ ...formData, scope: val as SchoolScope })}
-                      disabled={!!editingRole}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="system">Plateforme (Système)</SelectItem>
-                        <SelectItem value="school">École</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  <div>
+                    <DialogTitle className="text-xl sm:text-2xl font-bold tracking-tight">
+                      {editingRole ? 'Modifier le Rôle' : 'Nouveau Rôle Stratégique'}
+                    </DialogTitle>
+                    <DialogDescription className="text-sm sm:text-base line-clamp-1">
+                      Définissez précisément les responsabilités et les accès.
+                    </DialogDescription>
                   </div>
                 </div>
+              </DialogHeader>
 
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Input
-                    id="description"
-                    placeholder="Brève description des responsabilités"
-                    value={formData.description}
-                    onChange={e => setFormData({ ...formData, description: e.target.value })}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  form.handleSubmit()
+                }}
+                className="p-5 sm:p-8 space-y-8 overflow-y-auto max-h-[calc(90vh-120px)] scrollbar-none"
+              >
+                <FieldGroup className="grid-cols-1 sm:grid-cols-2">
+                  {/* Name */}
+                  <form.Field
+                    name="name"
+                    children={field => (
+                      <Field>
+                        <FieldLabel htmlFor={field.name}>Nom du rôle</FieldLabel>
+                        <Input
+                          id={field.name}
+                          placeholder="ex: Superviseur Pédagogique"
+                          className="h-11 sm:h-12! rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold"
+                          value={field.state.value}
+                          onBlur={field.handleBlur}
+                          onChange={e => field.handleChange(e.target.value)}
+                        />
+                        <FieldError errors={field.state.meta.errors} />
+                      </Field>
+                    )}
+                  />
+
+                  {/* Scope */}
+                  <form.Field
+                    name="scope"
+                    children={field => (
+                      <Field>
+                        <FieldLabel htmlFor={field.name}>Périmètre (Scope)</FieldLabel>
+                        <Select
+                          value={field.state.value}
+                          onValueChange={val => field.handleChange(val as SchoolScope)}
+                          disabled={!!editingRole}
+                        >
+                          <SelectTrigger id={field.name} className="w-full h-11! sm:h-12! rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
+                            <SelectValue placeholder="Choisir le périmètre">
+                              {field.state.value === 'system' ? 'Yeko Core' : 'Yeko School'}
+                            </SelectValue>
+                          </SelectTrigger>
+                          <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
+                            <SelectItem value="system" className="rounded-lg focus:bg-primary/10 focus:text-primary font-medium">Yeko Core</SelectItem>
+                            <SelectItem value="school" className="rounded-lg focus:bg-primary/10 focus:text-primary font-medium">Yeko School</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FieldError errors={field.state.meta.errors} />
+                      </Field>
+                    )}
+                  />
+
+                  {/* Slug */}
+                  <form.Field
+                    name="slug"
+                    children={field => (
+                      <Field>
+                        <FieldLabel htmlFor={field.name}>Identifiant (Slug)</FieldLabel>
+                        <Input
+                          id={field.name}
+                          placeholder="superviseur_pedagogique"
+                          disabled={!!editingRole}
+                          className="h-11 sm:h-12! rounded-xl bg-muted/30 font-mono text-xs border-border/40 opacity-70"
+                          value={field.state.value}
+                          onBlur={field.handleBlur}
+                          onChange={e => field.handleChange(e.target.value)}
+                        />
+                        <FieldError errors={field.state.meta.errors} />
+                      </Field>
+                    )}
+                  />
+
+                  {/* Description */}
+                  <form.Field
+                    name="description"
+                    children={field => (
+                      <Field>
+                        <FieldLabel htmlFor={field.name}>Description & Mission</FieldLabel>
+                        <Input
+                          id={field.name}
+                          placeholder="Objectif principal de ce rôle..."
+                          className="h-11 sm:h-12! rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-medium"
+                          value={field.state.value}
+                          onBlur={field.handleBlur}
+                          onChange={e => field.handleChange(e.target.value)}
+                        />
+                        <FieldError errors={field.state.meta.errors} />
+                      </Field>
+                    )}
+                  />
+                </FieldGroup>
+
+                <div className="space-y-6 pt-4">
+                  <div className="flex items-center justify-between border-b border-border/20 pb-3">
+                    <h3 className="text-lg sm:text-xl font-bold tracking-tight">Matrice des Permissions</h3>
+                    <Badge variant="outline" className="rounded-full bg-primary/5 text-primary border-primary/20 text-xs px-3 py-1">
+                      Configuration Granulaire
+                    </Badge>
+                  </div>
+
+                  <form.Field
+                    name="permissions"
+                    children={field => (
+                      <div className="space-y-4">
+                        <form.Subscribe
+                          selector={state => state.values.scope}
+                          children={(scope) => {
+                            const filteredResources = RESOURCES.filter(r => (scope === 'system' ? r.category === 'Système' : r.category === 'École'))
+                            return (
+                              <div className="grid gap-4">
+                                {filteredResources.map((resource, idx) => (
+                                  <div
+                                    key={resource.id}
+                                    className={`rounded-2xl border border-border/40 p-5 transition-all hover:border-primary/30 ${idx % 2 === 0 ? 'bg-muted/5' : 'bg-background/30'}`}
+                                  >
+                                    <div className="space-y-4">
+                                      <div className="flex items-center justify-between">
+                                        <div>
+                                          <p className="font-bold text-sm">{resource.name}</p>
+                                          <code className="text-[10px] text-muted-foreground/50 font-mono uppercase">{resource.category}</code>
+                                        </div>
+                                      </div>
+
+                                      <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-5 gap-3">
+                                        {ACTIONS.map((action) => {
+                                          const currentPerms = field.state.value[resource.id] || []
+                                          const isChecked = currentPerms.includes(action.id)
+
+                                          const toggle = () => {
+                                            const next = isChecked
+                                              ? currentPerms.filter(id => id !== action.id)
+                                              : [...currentPerms, action.id]
+
+                                            field.handleChange({
+                                              ...field.state.value,
+                                              [resource.id]: next,
+                                            })
+                                          }
+
+                                          return (
+                                            <div
+                                              key={action.id}
+                                              role="button"
+                                              tabIndex={0}
+                                              onClick={toggle}
+                                              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') toggle() }}
+                                              className={`flex flex-col items-center justify-center gap-2.5 p-3 rounded-2xl border text-xs font-medium transition-all active:scale-95 cursor-pointer shadow-xs ${
+                                                isChecked
+                                                  ? 'bg-primary/10 border-primary/40 text-primary ring-1 ring-primary/20'
+                                                  : 'bg-background/40 border-border/60 text-muted-foreground hover:bg-primary/5 hover:border-primary/20'
+                                              }`}
+                                            >
+                                              <Checkbox
+                                                checked={!!isChecked}
+                                                onCheckedChange={toggle}
+                                                className="pointer-events-none"
+                                              />
+                                              <span className="text-[10px] font-black uppercase tracking-wider">{action.name}</span>
+                                            </div>
+                                          )
+                                        })}
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )
+                          }}
+                        />
+                      </div>
+                    )}
                   />
                 </div>
 
-                <div className="space-y-4">
-                  <Label className="text-base font-bold underline decoration-primary/30 px-2 sm:px-0">Matrice des Permissions</Label>
-                  <div className="rounded-xl border border-border bg-background/50 overflow-x-auto shadow-inner">
-                    <Table className="min-w-[600px]">
-                      <TableHeader className="bg-muted/50">
-                        <TableRow>
-                          <TableHead className="w-[180px] text-xs font-bold px-4">Ressource</TableHead>
-                          {ACTIONS.map(action => (
-                            <TableHead key={action.id} className="text-center text-[10px] font-semibold uppercase tracking-wider px-1">
-                              {action.name}
-                            </TableHead>
-                          ))}
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {RESOURCES.filter(r => (formData.scope === 'system' ? r.category === 'Système' : r.category === 'École')).map(resource => (
-                          <TableRow key={resource.id} className="hover:bg-primary/5 transition-colors border-b">
-                            <TableCell className="font-medium text-xs px-4 truncate max-w-[150px]">{resource.name}</TableCell>
-                            {ACTIONS.map(action => (
-                              <TableCell key={action.id} className="text-center px-1">
-                                <div className="flex justify-center">
-                                  <Checkbox
-                                    checked={formData.permissions[resource.id]?.includes(action.id)}
-                                    onCheckedChange={() => togglePermission(resource.id, action.id)}
-                                    className="h-4 w-4 transition-transform hover:scale-110"
-                                  />
-                                </div>
-                              </TableCell>
-                            ))}
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                </div>
-
-                <DialogFooter>
-                  <Button type="button" variant="ghost" onClick={() => setIsDialogOpen(false)}>Annuler</Button>
-                  <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
-                    {editingRole ? 'Mettre à jour' : 'Créer le rôle'}
+                <DialogFooter className="pt-8 gap-3 border-t border-border/10">
+                  <Button type="button" variant="ghost" size="lg" className="rounded-xl font-bold px-6" onClick={() => handleOpenChange(false)}>
+                    Annuler
                   </Button>
+                  <form.Subscribe
+                    selector={state => [state.canSubmit, state.isSubmitting]}
+                    children={([canSubmit, isSubmitting]) => (
+                      <Button
+                        type="submit"
+                        size="lg"
+                        className="rounded-xl px-10 font-black uppercase tracking-widest shadow-xl shadow-primary/20 transition-all hover:scale-[1.02]"
+                        disabled={!canSubmit || isSubmitting}
+                      >
+                        {isSubmitting ? 'Envoi...' : editingRole ? 'Enregistrer' : 'Créer le Rôle'}
+                      </Button>
+                    )}
+                  />
                 </DialogFooter>
               </form>
             </DialogContent>
@@ -350,10 +456,16 @@ function RoleManagement() {
       </div>
 
       <Tabs value={activeScope} onValueChange={val => setActiveScope(val as SchoolScope)} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-8">
-          <TabsTrigger value="school">Rôles École</TabsTrigger>
-          <TabsTrigger value="system">Rôles Plateforme</TabsTrigger>
-        </TabsList>
+        <div className="flex flex-col items-center mb-10">
+          <TabsList className="grid w-full grid-cols-2 max-w-md p-1 bg-muted/50 backdrop-blur-sm rounded-2xl border border-border/50">
+            <TabsTrigger value="school" className="rounded-xl data-[state=active]:shadow-lg data-[state=active]:bg-background transition-all py-2.5">
+              Rôles École
+            </TabsTrigger>
+            <TabsTrigger value="system" className="rounded-xl data-[state=active]:shadow-lg data-[state=active]:bg-background transition-all py-2.5">
+              Rôles Plateforme
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="school" className="mt-0">
           <div className="grid gap-6">
@@ -418,8 +530,22 @@ function RoleManagement() {
       <DeleteConfirmationDialog
         open={isDeleteOpen}
         onOpenChange={setIsDeleteOpen}
-        title={`Supprimer le rôle ${roleToDelete?.name}`}
-        description="Cette action supprimera le rôle de manière permanente. Les utilisateurs ayant ce rôle perdront les permissions associées."
+        title="Suppression de Rôle"
+        description={(
+          <div className="space-y-3">
+            <p>
+              Vous êtes sur le point de supprimer le rôle
+              {' '}
+              <span className="font-bold text-foreground">
+                {roleToDelete?.name}
+              </span>
+              .
+            </p>
+            <p className="text-destructive font-medium border-l-2 border-destructive pl-3 py-1 bg-destructive/5 rounded-r-md">
+              Attention : Cette action est irréversible. Tous les utilisateurs rattachés à ce rôle perdront immédiatement l'intégralité de leurs permissions associées.
+            </p>
+          </div>
+        )}
         onConfirm={() => {
           if (roleToDelete?.id)
             deleteMutation.mutate(roleToDelete.id)
@@ -438,78 +564,120 @@ interface RoleCardProps {
 }
 
 function RoleCard({ role, onEdit, onDelete, can }: RoleCardProps) {
+  const permissionsCount = Object.keys(role.permissions || {}).length
+  const isPlatform = role.scope === 'system'
+
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -5 }}
-      className="group h-full"
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      whileHover={{ y: -8 }}
+      className="group"
     >
-      <Card className="h-full border-border/50 bg-background/40 backdrop-blur-md shadow-xl hover:shadow-primary/5 hover:border-primary/20 transition-all overflow-hidden relative">
-        {role.scope === 'system' && (
-          <div className="absolute top-0 right-0 p-3">
-            <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 gap-1.5 flex items-center">
-              <IconLock size={12} />
+      <Card className="h-full border-border/40 bg-background/50 backdrop-blur-xl shadow-xl hover:shadow-2xl hover:shadow-primary/5 hover:border-primary/30 transition-all duration-500 overflow-hidden relative rounded-3xl">
+        {/* Visual flare for roles */}
+        <div className="absolute top-0 right-0 p-4">
+          {isPlatform ? (
+            <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 gap-1.5 flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+              <IconLock size={12} className="stroke-3" />
               Système
             </Badge>
-          </div>
-        )}
+          ) : (
+            <Badge variant="outline" className="bg-emerald-500/5 text-emerald-600 border-emerald-500/20 gap-1.5 flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+              <IconShield size={12} className="stroke-3" />
+              École
+            </Badge>
+          )}
+        </div>
 
-        <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20">
-              <IconShield size={24} />
+        <CardHeader className="pb-4">
+          <div className="flex items-start gap-4">
+            <div className={`p-4 rounded-2xl transition-transform group-hover:scale-110 duration-500 ${isPlatform ? 'bg-primary/10 text-primary ring-1 ring-primary/20' : 'bg-emerald-500/10 text-emerald-500 ring-1 ring-emerald-500/20'}`}>
+              <IconShield className="w-8 h-8 stroke-[1.5]" />
             </div>
-            <div>
-              <CardTitle className="text-xl">{role.name}</CardTitle>
-              <CardDescription className="font-mono text-xs mt-0.5">{role.slug}</CardDescription>
+            <div className="flex-1 space-y-1">
+              <CardTitle className="text-2xl font-bold tracking-tight group-hover:text-primary transition-colors">
+                {role.name}
+              </CardTitle>
+              <code className="text-[10px] px-2 py-0.5 rounded bg-muted/50 text-muted-foreground font-mono">
+                {role.slug}
+              </code>
             </div>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-sm text-muted-foreground line-clamp-2 min-h-[40px]">
-            {role.description || 'Aucune description fournie.'}
+
+        <CardContent className="space-y-6 flex flex-col h-[calc(100%-110px)]">
+          <p className="text-sm text-muted-foreground/90 italic leading-relaxed line-clamp-2 min-h-[40px]">
+            {role.description || 'Aucune description stratégique définie pour ce rôle.'}
           </p>
 
-          <div className="space-y-2">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Permissions Clés</p>
-            <div className="flex flex-wrap gap-1.5">
-              {Object.entries(role.permissions as Record<string, string[]>).slice(0, 5).map(([res, acts]) => (
-                <Badge key={res} variant="secondary" className="px-2 py-0 h-5 text-[10px]">
-                  {res}
-                  :
-                  {' '}
-                  {acts.length}
-                </Badge>
-              ))}
-              {Object.keys(role.permissions).length > 5 && (
-                <span className="text-[10px] text-muted-foreground">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+                Périmètre d'accès
+              </span>
+              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                {permissionsCount}
+                {' '}
+                modules
+              </span>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {Object.entries(role.permissions as Record<string, string[]>).slice(0, 4).map(([resId, acts]) => {
+                const humanName = RESOURCE_MAP[resId] || resId
+                return (
+                  <Badge
+                    key={resId}
+                    variant="secondary"
+                    className="px-2.5 py-1 bg-background/50 border border-border/50 text-foreground/80 hover:bg-primary/5 hover:border-primary/20 transition-all rounded-lg text-[11px] flex items-center gap-1.5"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary/40" />
+                    {humanName}
+                    <span className="text-[8px] opacity-40 font-bold ml-1">
+                      (
+                      {acts.length}
+                      )
+                    </span>
+                  </Badge>
+                )
+              })}
+              {permissionsCount > 4 && (
+                <div className="text-[10px] text-muted-foreground font-semibold px-2 flex items-center">
                   +
-                  {Object.keys(role.permissions).length - 5}
+                  {permissionsCount - 4}
                   {' '}
-                  de plus
-                </span>
+                  autres...
+                </div>
               )}
             </div>
           </div>
 
-          <div className="pt-4 flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            {can('global_settings', 'manage') && (
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => onEdit(role)}>
-                <IconDots size={16} />
-              </Button>
-            )}
-            {!role.isSystemRole && can('global_settings', 'manage') && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
-                onClick={() => onDelete(role)}
-              >
-                <IconTrash size={16} />
-              </Button>
-            )}
+          <div className="pt-6 border-t border-border/30 flex items-center justify-between mt-auto">
+            <div className="flex -space-x-1.5">
+              <div className="w-8 h-8 rounded-full bg-primary/20 border-2 border-background flex items-center justify-center text-[10px] font-bold ring-1 ring-primary/10">A</div>
+              <div className="w-8 h-8 rounded-full bg-emerald-500/20 border-2 border-background flex items-center justify-center text-[10px] font-bold ring-1 ring-emerald-500/10">B</div>
+              <div className="w-8 h-8 rounded-full bg-amber-500/10 border-2 border-background flex items-center justify-center text-[10px] font-black text-muted-foreground ring-1 ring-border shadow-sm">+5</div>
+            </div>
+
+            <div className="flex items-center gap-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+              {can('global_settings', 'manage') && (
+                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-primary/10 hover:text-primary transition-colors" onClick={() => onEdit(role)}>
+                  <IconDots size={20} />
+                </Button>
+              )}
+              {!role.isSystemRole && can('global_settings', 'manage') && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-10 w-10 rounded-xl text-destructive hover:text-destructive hover:bg-destructive/10 transition-colors"
+                  onClick={() => onDelete(role)}
+                >
+                  <IconTrash size={20} />
+                </Button>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>
