@@ -1,5 +1,7 @@
 export * from './auth/permissions'
-export * from './database/setup'
+// NOTE: database/setup is intentionally NOT exported here to prevent Node.js-only
+// dependencies (pg, events, Buffer) from being bundled in client code.
+// Import it explicitly via '@repo/data-ops/database/setup' for server-side code only.
 export * from './drizzle/auth-schema'
 export * from './drizzle/core-schema'
 export * from './drizzle/school-schema'

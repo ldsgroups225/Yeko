@@ -1,4 +1,4 @@
-import { assignSystemRolesToUser, countSystemUsers, getSystemUsers, updateSystemUser } from '@repo/data-ops'
+import { assignSystemRolesToUser, countSystemUsers, getSystemUsers, updateSystemUser } from '@repo/data-ops/queries/school-admin/users'
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 

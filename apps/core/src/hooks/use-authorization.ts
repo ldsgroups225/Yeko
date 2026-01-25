@@ -1,5 +1,5 @@
-import type { SystemAction } from '@repo/data-ops'
-import { hasPermission } from '@repo/data-ops'
+import type { SystemAction } from '@repo/data-ops/auth/permissions'
+import { hasPermission } from '@repo/data-ops/auth/permissions'
 import { Route as RootRoute } from '@/routes/__root'
 
 /**

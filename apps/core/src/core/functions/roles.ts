@@ -1,4 +1,4 @@
-import { createRole, deleteRole, getAllRoles, updateRole } from '@repo/data-ops'
+import { createRole, deleteRole, getAllRoles, updateRole } from '@repo/data-ops/queries/school-admin/roles'
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 

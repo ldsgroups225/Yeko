@@ -1,6 +1,5 @@
 import type { SystemAction } from '@repo/data-ops/auth/permissions'
 import { hasPermission } from '@repo/data-ops/auth/permissions'
-import { DeleteConfirmationDialog } from '@repo/ui/src/components/delete-confirmation-dialog'
 import {
   IconDots,
   IconLock,
@@ -20,6 +19,7 @@ import {
   CardTitle,
 } from '@workspace/ui/components/card'
 import { Checkbox } from '@workspace/ui/components/checkbox'
+import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
 import {
   Dialog,
   DialogContent,
@@ -209,8 +209,8 @@ function RoleManagement() {
             }}
           >
             <DialogTrigger
-              render={(
-                <Button size="lg" className="rounded-full shadow-lg hover:shadow-primary/20 transition-all">
+              render={triggerProps => (
+                <Button {...triggerProps} size="lg" className="rounded-full shadow-lg hover:shadow-primary/20 transition-all">
                   <IconPlus className="mr-2 h-5 w-5" />
                   Nouveau Rôle
                 </Button>
