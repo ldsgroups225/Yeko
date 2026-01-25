@@ -699,3 +699,32 @@ export async function getUserSystemRolesByAuthUserId(authUserId: string) {
 
   return systemRoles.map(r => r.slug)
 }
+
+/**
+ * Get aggregated system-scoped permissions for a user
+ */
+export async function getUserSystemPermissionsByAuthUserId(authUserId: string) {
+  if (!authUserId) {
+    return {}
+  }
+
+  const db = getDb()
+
+  const systemRoles = await db
+    .select({
+      permissions: roles.permissions,
+    })
+    .from(userRoles)
+    .innerJoin(roles, eq(userRoles.roleId, roles.id))
+    .innerJoin(users, eq(userRoles.userId, users.id))
+    .where(
+      and(
+        eq(users.authUserId, authUserId),
+        isNull(users.deletedAt),
+        eq(roles.scope, 'system'),
+      ),
+    )
+
+  const { mergePermissions } = await import('../../auth/permissions')
+  return mergePermissions(systemRoles.map(r => r.permissions as any))
+}

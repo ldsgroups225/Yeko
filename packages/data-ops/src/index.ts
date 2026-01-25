@@ -1,3 +1,4 @@
+export * from './auth/permissions'
 export * from './database/setup'
 export * from './drizzle/auth-schema'
 export * from './drizzle/core-schema'

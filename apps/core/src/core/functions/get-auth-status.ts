@@ -1,5 +1,5 @@
 import { getAuth } from '@repo/data-ops/auth/server'
-import { getUserSystemRolesByAuthUserId, syncUserAuthOnLogin } from '@repo/data-ops/queries/school-admin/users'
+import { getUserSystemPermissionsByAuthUserId, getUserSystemRolesByAuthUserId, syncUserAuthOnLogin } from '@repo/data-ops/queries/school-admin/users'
 import { createServerFn } from '@tanstack/react-start'
 import { getRequest } from '@tanstack/react-start/server'
 
@@ -23,6 +23,7 @@ export const getAuthStatus = createServerFn({ method: 'GET' })
         isAuthenticated: false,
         user: null,
         roles: [],
+        permissions: {},
         isSuperAdmin: false,
         hasSystemAccess: false,
       }
@@ -31,8 +32,12 @@ export const getAuthStatus = createServerFn({ method: 'GET' })
     // Sync user data and auto-create user account if they don't exist (registration flow)
     await syncUserAuthOnLogin(session.user.id, session.user.email, session.user.name)
 
-    // Fetch system-scoped roles for the user (using Better Auth user ID)
-    const roles = await getUserSystemRolesByAuthUserId(session.user.id)
+    // Fetch system-scoped roles and permissions for the user (using Better Auth user ID)
+    const [roles, permissions] = await Promise.all([
+      getUserSystemRolesByAuthUserId(session.user.id),
+      getUserSystemPermissionsByAuthUserId(session.user.id),
+    ])
+
     const isSuperAdmin = roles.includes('super_admin')
     const hasSystemAccess = roles.length > 0
 
@@ -45,6 +50,7 @@ export const getAuthStatus = createServerFn({ method: 'GET' })
         image: session.user.image,
       },
       roles,
+      permissions,
       isSuperAdmin,
       hasSystemAccess,
     }

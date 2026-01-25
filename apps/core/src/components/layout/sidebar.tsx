@@ -1,3 +1,4 @@
+import type { SystemAction } from '@repo/data-ops'
 import type { ComponentType } from 'react'
 import type { FileRoutesByTo } from '@/routeTree.gen'
 import { Button } from '@repo/ui/src/components/button'
@@ -30,7 +31,8 @@ import {
   useSidebar,
 } from '@workspace/ui/components/sidebar'
 import { AnimatePresence, motion } from 'motion/react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
+import { useAuthorization } from '@/hooks/use-authorization'
 import { cn } from '@/lib/utils'
 
 interface NavigationItem {
@@ -39,6 +41,7 @@ interface NavigationItem {
   href: keyof FileRoutesByTo
   badge?: string | number
   description?: string
+  permission?: { resource: string, action?: SystemAction }
   children?: NavigationItem[]
 }
 
@@ -54,12 +57,14 @@ const navigationItems: NavigationItem[] = [
     icon: IconSchool,
     href: '/app/schools',
     description: 'Écoles partenaires',
+    permission: { resource: 'schools', action: 'view' },
   },
   {
     name: 'Catalogues',
     icon: IconBook,
     href: '/app/catalogs',
     description: 'Catalogues globaux',
+    permission: { resource: 'academic_catalogs', action: 'view' },
     children: [
       {
         name: 'Programmes',
@@ -104,6 +109,7 @@ const navigationItems: NavigationItem[] = [
     icon: IconChartBar,
     href: '/app/analytics',
     description: 'Analytiques du système',
+    permission: { resource: 'system_monitoring', action: 'view' },
   },
   {
     name: 'Support',
@@ -120,6 +126,7 @@ interface SidebarProps {
 export function Sidebar({ className }: SidebarProps) {
   const navigate = useNavigate()
   const routerState = useRouterState()
+  const { auth, can } = useAuthorization()
   const currentPath = routerState.location.pathname
   const [expandedItems, setExpandedItems] = useState<Set<string>>(
     () => new Set(),
@@ -137,6 +144,16 @@ export function Sidebar({ className }: SidebarProps) {
     }
     setExpandedItems(newExpanded)
   }
+
+  // Filter items based on permissions
+  const filteredItems = useMemo(() => {
+    return navigationItems.filter((item) => {
+      // If no permission specified, item is public for authorized users
+      if (!item.permission)
+        return true
+      return can(item.permission.resource, item.permission.action || 'view')
+    })
+  }, [can])
 
   const renderNavigationItem = (item: NavigationItem) => {
     const itemPath = item.href
@@ -244,6 +261,8 @@ export function Sidebar({ className }: SidebarProps) {
     )
   }
 
+  const roleName = auth?.isSuperAdmin ? 'Super Administrateur' : 'Administrateur Système'
+
   return (
     <SidebarRoot collapsible="icon" className={cn('hidden lg:flex', className)}>
       <SidebarHeader className="border-b">
@@ -266,7 +285,7 @@ export function Sidebar({ className }: SidebarProps) {
                 Yeko Core
               </h1>
               <p className="text-xs text-muted-foreground">
-                Super Administrateur
+                {roleName}
               </p>
             </motion.div>
           )}
@@ -277,7 +296,7 @@ export function Sidebar({ className }: SidebarProps) {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navigationItems.map(item => renderNavigationItem(item))}
+              {filteredItems.map((item: NavigationItem) => renderNavigationItem(item))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
