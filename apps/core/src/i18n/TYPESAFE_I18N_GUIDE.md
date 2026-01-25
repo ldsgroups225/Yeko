@@ -16,13 +16,15 @@ Yeko now uses **typesafe-i18n** for internationalization, providing full TypeScr
 ## Configuration
 
 ### Base Configuration
+
 - **Base Locale**: French (fr)
 - **Supported Locales**: French (fr), English (en)
 - **Output Path**: `src/i18n`
 - **Config File**: `.typesafe-i18n.json`
 
 ### File Structure
-```
+
+```text
 src/i18n/
 ├── fr/
 │   └── index.ts          # French translations (base)
@@ -44,7 +46,7 @@ import { useTranslations } from '@/i18n'
 
 function MyComponent() {
   const LL = useTranslations()
-  
+
   return (
     <div>
       <h1>{LL.hero.title()}</h1>
@@ -62,7 +64,7 @@ import { useTranslations } from '@/i18n'
 
 function SchoolCard({ school }) {
   const LL = useTranslations()
-  
+
   return (
     <div>
       <h2>{school.name}</h2>
@@ -80,10 +82,10 @@ import { useLocale } from '@/i18n'
 
 function LanguageSwitcher() {
   const { locale, setLocale } = useLocale()
-  
+
   return (
-    <select 
-      value={locale} 
+    <select
+      value={locale}
       onChange={(e) => setLocale(e.target.value as 'fr' | 'en')}
     >
       <option value="fr">Français</option>
@@ -118,7 +120,7 @@ Edit `src/i18n/fr/index.ts`:
 ```typescript
 const fr = {
   // ... existing translations
-  
+
   newFeature: {
     title: 'Nouveau Titre',
     description: 'Description avec {param}',
@@ -144,7 +146,7 @@ Edit `src/i18n/en/index.ts`:
 ```typescript
 const en = {
   // ... existing translations
-  
+
   newFeature: {
     title: 'New Title',
     description: 'Description with {param}',
@@ -158,7 +160,7 @@ const en = {
 ```typescript
 function NewFeature() {
   const LL = useTranslations()
-  
+
   return (
     <div>
       <h1>{LL.newFeature.title()}</h1>
@@ -247,7 +249,7 @@ import { useTranslation } from 'react-i18next'
 
 function Component() {
   const { t } = useTranslation()
-  
+
   return (
     <div>
       <h1>{t('hero.title')}</h1>
@@ -264,7 +266,7 @@ import { useTranslations } from '@/i18n'
 
 function Component() {
   const LL = useTranslations()
-  
+
   return (
     <div>
       <h1>{LL.hero.title()}</h1>
@@ -334,7 +336,7 @@ const fr = {
 
 ```typescript
 // ❌ Bad - String concatenation
-const message = LL.schools.delete() + ' ' + school.name + '?'
+const message = `${LL.schools.delete()} ${school.name}?`
 
 // ✅ Good - Interpolation
 const message = LL.schools.confirmDelete({ name: school.name })
@@ -358,7 +360,7 @@ function renderWithI18n(component: ReactElement, locale?: 'fr' | 'en') {
 
 test('renders French translations', async () => {
   renderWithI18n(<MyComponent />)
-  
+
   await waitFor(() => {
     expect(screen.getByText('Accueil')).toBeInTheDocument()
   })
@@ -366,7 +368,7 @@ test('renders French translations', async () => {
 
 test('renders English translations', async () => {
   renderWithI18n(<MyComponent />, 'en')
-  
+
   await waitFor(() => {
     expect(screen.getByText('Home')).toBeInTheDocument()
   })

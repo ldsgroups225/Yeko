@@ -3,12 +3,13 @@
 ## Quick Start
 
 ### 1. Import and Use
+
 ```typescript
 import { useTranslations } from '@/i18n'
 
 function MyComponent() {
   const LL = useTranslations()
-  
+
   return (
     <div>
       <h1>{LL.hero.title()}</h1>
@@ -20,6 +21,7 @@ function MyComponent() {
 ```
 
 ### 2. With Parameters
+
 ```typescript
 const LL = useTranslations()
 
@@ -31,12 +33,13 @@ const LL = useTranslations()
 ```
 
 ### 3. Language Switching
+
 ```typescript
 import { useLocale } from '@/i18n'
 
 function LanguageSwitcher() {
   const { locale, setLocale } = useLocale()
-  
+
   return (
     <select value={locale} onChange={(e) => setLocale(e.target.value)}>
       <option value="fr">Français</option>
@@ -56,7 +59,7 @@ function LanguageSwitcher() {
 
 ## File Structure
 
-```
+```text
 src/i18n/
 ├── fr/index.ts           # French (base locale)
 ├── en/index.ts           # English
@@ -70,6 +73,7 @@ src/i18n/
 ## Adding New Translations
 
 ### 1. Add to Base Locale (French)
+
 ```typescript
 // src/i18n/fr/index.ts
 const fr = {
@@ -81,11 +85,13 @@ const fr = {
 ```
 
 ### 2. Run Generator
+
 ```bash
 npm run typesafe-i18n
 ```
 
 ### 3. Add to Other Locales
+
 ```typescript
 // src/i18n/en/index.ts
 const en = {
@@ -97,6 +103,7 @@ const en = {
 ```
 
 ### 4. Use in Components
+
 ```typescript
 const LL = useTranslations()
 <h1>{LL.myFeature.title()}</h1>
@@ -106,6 +113,7 @@ const LL = useTranslations()
 ## Custom Formatters
 
 Available formatters:
+
 - `date(value)` - Long date format
 - `dateShort(value)` - Short date format
 - `time(value)` - Time format
@@ -124,6 +132,7 @@ const LL = useTranslations()
 ## Configuration
 
 `.typesafe-i18n.json`:
+
 ```json
 {
   "baseLocale": "fr",
