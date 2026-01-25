@@ -1,8 +1,7 @@
 import type { FeeCategory, FeeType, FeeTypeInsert } from '../drizzle/school-schema'
+import { and, asc, eq } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import { feeTypes } from '../drizzle/school-schema'
-import { and, asc, eq } from 'drizzle-orm'
-import { nanoid } from 'nanoid'
 
 export interface GetFeeTypesParams {
   schoolId: string
@@ -42,7 +41,7 @@ export type CreateFeeTypeData = Omit<FeeTypeInsert, 'id' | 'createdAt' | 'update
 
 export async function createFeeType(data: CreateFeeTypeData): Promise<FeeType> {
   const db = getDb()
-  const [feeType] = await db.insert(feeTypes).values({ id: nanoid(), ...data }).returning()
+  const [feeType] = await db.insert(feeTypes).values({ id: crypto.randomUUID(), ...data }).returning()
   if (!feeType) {
     throw new Error('Failed to create fee type')
   }

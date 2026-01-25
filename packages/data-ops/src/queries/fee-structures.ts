@@ -1,9 +1,8 @@
 import type { FeeStructure, FeeStructureInsert } from '../drizzle/school-schema'
+import { and, eq } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import { grades, series } from '../drizzle/core-schema'
 import { feeStructures, feeTypes } from '../drizzle/school-schema'
-import { and, eq } from 'drizzle-orm'
-import { nanoid } from 'nanoid'
 
 export interface GetFeeStructuresParams {
   schoolId: string
@@ -83,7 +82,7 @@ export async function createFeeStructure(
   const db = getDb()
   const [feeStructure] = await db
     .insert(feeStructures)
-    .values({ id: nanoid(), ...data })
+    .values({ id: crypto.randomUUID(), ...data })
     .returning()
   if (!feeStructure) {
     throw new Error('Failed to create fee structure')
@@ -97,7 +96,7 @@ export async function createFeeStructuresBulk(
   const db = getDb()
   if (dataList.length === 0)
     return []
-  const values = dataList.map(data => ({ id: nanoid(), ...data }))
+  const values = dataList.map(data => ({ id: crypto.randomUUID(), ...data }))
   return db.insert(feeStructures).values(values).returning()
 }
 

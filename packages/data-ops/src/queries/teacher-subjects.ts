@@ -1,4 +1,3 @@
-import { nanoid } from "nanoid"
 import { and, eq, inArray } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import { subjects } from '../drizzle/core-schema'
@@ -28,7 +27,7 @@ export async function assignSubjectsToTeacher(teacherId: string, subjectIds: str
     return []
 
   const values = subjectIds.map(subjectId => ({
-    id: nanoid(),
+    id: crypto.randomUUID(),
     teacherId,
     subjectId,
   }))

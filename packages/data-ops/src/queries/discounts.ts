@@ -1,8 +1,7 @@
 import type { Discount, DiscountInsert, DiscountType } from '../drizzle/school-schema'
+import { and, asc, eq } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import { discounts } from '../drizzle/school-schema'
-import { and, asc, eq } from 'drizzle-orm'
-import { nanoid } from 'nanoid'
 
 export interface GetDiscountsParams {
   schoolId: string
@@ -50,7 +49,7 @@ export type CreateDiscountData = Omit<DiscountInsert, 'id' | 'createdAt' | 'upda
 
 export async function createDiscount(data: CreateDiscountData): Promise<Discount> {
   const db = getDb()
-  const [discount] = await db.insert(discounts).values({ id: nanoid(), ...data }).returning()
+  const [discount] = await db.insert(discounts).values({ id: crypto.randomUUID(), ...data }).returning()
   if (!discount) {
     throw new Error('Failed to create discount')
   }

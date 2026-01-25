@@ -1,8 +1,7 @@
 import type { FiscalYear, FiscalYearInsert, FiscalYearStatus } from '../drizzle/school-schema'
+import { and, desc, eq, gte, lte } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import { fiscalYears } from '../drizzle/school-schema'
-import { and, desc, eq, gte, lte } from 'drizzle-orm'
-import { nanoid } from 'nanoid'
 
 export interface GetFiscalYearsParams {
   schoolId: string
@@ -59,7 +58,7 @@ export type CreateFiscalYearData = Omit<FiscalYearInsert, 'id' | 'createdAt' | '
 
 export async function createFiscalYear(data: CreateFiscalYearData): Promise<FiscalYear> {
   const db = getDb()
-  const [fiscalYear] = await db.insert(fiscalYears).values({ id: nanoid(), ...data }).returning()
+  const [fiscalYear] = await db.insert(fiscalYears).values({ id: crypto.randomUUID(), ...data }).returning()
   if (!fiscalYear) {
     throw new Error('Failed to create fiscal year')
   }

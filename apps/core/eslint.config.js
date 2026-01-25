@@ -4,15 +4,14 @@ import config from '@yeko/eslint-config'
 
 export default config.append({
   rules: {
-    'prefer-global/process': 'off',
+    'node/prefer-global/process': 'off',
   },
   ignores: [
     'dist/',
     '.wrangler/',
     'public/',
-    '**/*.md',
+    '.claude',
     'scripts/',
-    'src/components/ui/**',
     'src/routeTree.gen.ts',
   ],
 })

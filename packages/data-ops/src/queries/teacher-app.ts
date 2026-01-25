@@ -2,10 +2,8 @@
  * Teacher App Queries
  * Queries specifically for the Yeko Teacher mobile app
  */
-import type { PgTransaction } from 'drizzle-orm/pg-core'
 import type { GradeStatus, GradeType, MessageCategory } from '../drizzle/school-schema'
 import { and, asc, desc, eq, gte, lte, sql } from 'drizzle-orm'
-import { nanoid } from 'nanoid'
 import { getDb } from '../database/setup'
 import { grades, subjects } from '../drizzle/core-schema'
 import {
@@ -41,7 +39,7 @@ export async function createTeacherClassSession(params: {
   const [session] = await db
     .insert(classSessions)
     .values({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       classId: params.classId,
       subjectId: params.subjectId,
       teacherId: params.teacherId,
@@ -253,7 +251,7 @@ export async function upsertParticipationGrades(params: {
   await db
     .insert(participationGrades)
     .values(params.grades.map(grade => ({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       studentId: grade.studentId,
       classSessionId: params.classSessionId,
       teacherId: params.teacherId,
@@ -372,7 +370,7 @@ export async function createHomeworkAssignment(params: {
   const [created] = await db
     .insert(homework)
     .values({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       schoolId: params.schoolId,
       classId: params.classId,
       subjectId: params.subjectId,
@@ -765,7 +763,7 @@ export async function sendTeacherMessage(params: {
   const [created] = await db
     .insert(teacherMessages)
     .values({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       schoolId: params.schoolId,
       senderType: 'teacher',
       senderId: params.teacherId,
@@ -940,28 +938,26 @@ export async function submitStudentGrades(params: {
     return { success: true, count: 0 }
   }
 
-  // Use transaction for atomicity and batch insert
-  return db.transaction(async (tx: PgTransaction<any, any, any>) => {
-    const results = await tx
-      .insert(studentGrades)
-      .values(params.grades.map(grade => ({
-        id: nanoid(),
-        studentId: grade.studentId,
-        classId: params.classId,
-        subjectId: params.subjectId,
-        termId: params.termId,
-        teacherId: params.teacherId,
-        value: grade.grade.toFixed(2),
-        type: gradeType,
-        weight: 1,
-        gradeDate: today,
-        status: params.status,
-        submittedAt: params.status === 'submitted' ? new Date() : null,
-      })))
-      .returning()
+  // Perform bulk insert
+  const results = await db
+    .insert(studentGrades)
+    .values(params.grades.map(grade => ({
+      id: crypto.randomUUID(),
+      studentId: grade.studentId,
+      classId: params.classId,
+      subjectId: params.subjectId,
+      termId: params.termId,
+      teacherId: params.teacherId,
+      value: grade.grade.toFixed(2),
+      type: gradeType,
+      weight: 1,
+      gradeDate: today,
+      status: params.status,
+      submittedAt: params.status === 'submitted' ? new Date() : null,
+    })))
+    .returning()
 
-    return { success: true, count: results.length }
-  })
+  return { success: true, count: results.length }
 }
 
 // ============================================

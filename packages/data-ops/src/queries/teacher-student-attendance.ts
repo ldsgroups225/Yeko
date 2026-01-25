@@ -3,7 +3,6 @@
  * Queries for student attendance tracking
  */
 import { and, asc, count, desc, eq, gte, inArray, lte, sql } from 'drizzle-orm'
-import { nanoid } from 'nanoid'
 
 import { getDb } from '../database/setup'
 import { grades } from '../drizzle/core-schema'
@@ -112,7 +111,7 @@ export async function getOrCreateAttendanceSession(params: {
   const [session] = await db
     .insert(classSessions)
     .values({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       classId: params.classId,
       subjectId: params.subjectId,
       teacherId: params.teacherId,
@@ -161,7 +160,7 @@ export async function saveStudentAttendance(params: {
   const [attendance] = await db
     .insert(studentAttendance)
     .values({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       schoolId: enrollment.schoolId,
       studentId: enrollment.studentId,
       classId: enrollment.classId,
@@ -220,71 +219,69 @@ export async function bulkSaveAttendance(params: {
 }) {
   const db = getDb()
 
-  return db.transaction(async (tx) => {
-    // Get all enrollments at once for student IDs
-    const enrollmentIds = params.attendanceRecords.map(r => r.enrollmentId)
-    const enrollmentData = await tx
-      .select({
-        id: enrollments.id,
-        studentId: enrollments.studentId,
-        schoolId: students.schoolId,
+  // Get all enrollments at once for student IDs
+  const enrollmentIds = params.attendanceRecords.map(r => r.enrollmentId)
+  const enrollmentData = await db
+    .select({
+      id: enrollments.id,
+      studentId: enrollments.studentId,
+      schoolId: students.schoolId,
+    })
+    .from(enrollments)
+    .innerJoin(students, eq(enrollments.studentId, students.id))
+    .where(inArray(enrollments.id, enrollmentIds))
+
+  const enrollmentMap = new Map(enrollmentData.map(e => [e.id, e]))
+
+  for (const record of params.attendanceRecords) {
+    const e = enrollmentMap.get(record.enrollmentId)
+    if (!e)
+      continue
+
+    await db
+      .insert(studentAttendance)
+      .values({
+        id: crypto.randomUUID(),
+        schoolId: e.schoolId,
+        studentId: e.studentId,
+        classId: params.classId,
+        classSessionId: params.sessionId,
+        date: params.sessionDate,
+        status: record.status,
+        reason: record.notes ?? null,
+        recordedBy: params.teacherId,
       })
-      .from(enrollments)
-      .innerJoin(students, eq(enrollments.studentId, students.id))
-      .where(inArray(enrollments.id, enrollmentIds))
-
-    const enrollmentMap = new Map(enrollmentData.map(e => [e.id, e]))
-
-    for (const record of params.attendanceRecords) {
-      const e = enrollmentMap.get(record.enrollmentId)
-      if (!e)
-        continue
-
-      await tx
-        .insert(studentAttendance)
-        .values({
-          id: nanoid(),
-          schoolId: e.schoolId,
-          studentId: e.studentId,
-          classId: params.classId,
-          classSessionId: params.sessionId,
-          date: params.sessionDate,
+      .onConflictDoUpdate({
+        target: [
+          studentAttendance.studentId,
+          studentAttendance.date,
+          studentAttendance.classId,
+          studentAttendance.classSessionId,
+        ],
+        set: {
           status: record.status,
           reason: record.notes ?? null,
-          recordedBy: params.teacherId,
-        })
-        .onConflictDoUpdate({
-          target: [
-            studentAttendance.studentId,
-            studentAttendance.date,
-            studentAttendance.classId,
-            studentAttendance.classSessionId,
-          ],
-          set: {
-            status: record.status,
-            reason: record.notes ?? null,
-            updatedAt: new Date(),
-          },
-        })
-    }
-
-    const presentCount = params.attendanceRecords.filter(
-      r => r.status === 'present',
-    ).length
-    const absentCount = params.attendanceRecords.filter(
-      r => r.status === 'absent',
-    ).length
-
-    await tx
-      .update(classSessions)
-      .set({
-        studentsPresent: presentCount,
-        studentsAbsent: absentCount,
+          updatedAt: new Date(),
+        },
       })
-      .where(eq(classSessions.id, params.sessionId))
+  }
 
-    return { success: true, count: params.attendanceRecords.length }
-  })
+  const presentCount = params.attendanceRecords.filter(
+    r => r.status === 'present',
+  ).length
+  const absentCount = params.attendanceRecords.filter(
+    r => r.status === 'absent',
+  ).length
+
+  await db
+    .update(classSessions)
+    .set({
+      studentsPresent: presentCount,
+      studentsAbsent: absentCount,
+    })
+    .where(eq(classSessions.id, params.sessionId))
+
+  return { success: true, count: params.attendanceRecords.length }
 }
 
 /**

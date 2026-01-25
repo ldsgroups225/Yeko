@@ -1,11 +1,10 @@
-import { nanoid } from "nanoid"
+import { getDb } from '@repo/data-ops/database/setup'
 /**
  * Performance Testing: Section 5.1
  * Database Query Optimization Tests
  * Tests query performance against large datasets
  */
 
-import { getDb } from '@repo/data-ops/database/setup'
 import {
   coefficientTemplates,
   grades,
@@ -36,6 +35,7 @@ import {
   searchSchools,
 } from '@repo/data-ops/queries/schools'
 import { and, eq } from 'drizzle-orm'
+import { nanoid } from 'nanoid'
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 
 // Performance threshold constants (in milliseconds)

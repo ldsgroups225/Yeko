@@ -1,4 +1,3 @@
-import { nanoid } from "nanoid"
 import { and, count, desc, eq, ilike, inArray, isNull, or, sql } from 'drizzle-orm'
 import { getDb } from '../../database/setup'
 import { schools } from '../../drizzle/core-schema'
@@ -192,7 +191,7 @@ export async function createUserWithSchool(data: {
 
   // Create user
   const insertedUsers = await db.insert(users).values({
-    id: nanoid(),
+    id: crypto.randomUUID(),
     email: data.email,
     name: data.name,
     authUserId: data.authUserId,
@@ -211,7 +210,7 @@ export async function createUserWithSchool(data: {
   try {
     // Link to school
     await db.insert(userSchools).values({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       userId: user.id,
       schoolId: data.schoolId,
     })
@@ -220,7 +219,7 @@ export async function createUserWithSchool(data: {
     if (data.roleIds.length > 0) {
       await db.insert(userRoles).values(
         data.roleIds.map(roleId => ({
-          id: nanoid(),
+          id: crypto.randomUUID(),
           userId: user.id,
           roleId,
           schoolId: data.schoolId,
@@ -305,27 +304,25 @@ export async function assignRolesToUser(userId: string, schoolId: string, roleId
 
   const db = getDb()
 
-  return db.transaction(async (tx: any) => {
-    // Remove existing roles for this school
-    await tx.delete(userRoles).where(and(
-      eq(userRoles.userId, userId),
-      eq(userRoles.schoolId, schoolId),
-    ))
+  // Remove existing roles for this school
+  await db.delete(userRoles).where(and(
+    eq(userRoles.userId, userId),
+    eq(userRoles.schoolId, schoolId),
+  ))
 
-    // Add new roles
-    if (roleIds.length > 0) {
-      await tx.insert(userRoles).values(
-        roleIds.map(roleId => ({
-          id: nanoid(),
-          userId,
-          roleId,
-          schoolId,
-        })),
-      )
-    }
+  // Add new roles
+  if (roleIds.length > 0) {
+    await db.insert(userRoles).values(
+      roleIds.map(roleId => ({
+        id: crypto.randomUUID(),
+        userId,
+        roleId,
+        schoolId,
+      })),
+    )
+  }
 
-    return getUserWithRoles(userId, schoolId)
-  })
+  return getUserWithRoles(userId, schoolId)
 }
 
 export async function getUserSchoolsByUserId(userId: string) {
@@ -453,34 +450,34 @@ export async function bulkUpdateUsersStatus(
 
   const db = getDb()
 
-  return db.transaction(async (tx: any) => {
-    // Update users
-    const updated = await tx
-      .update(users)
-      .set({
-        status,
-        updatedAt: new Date(),
-      })
-      .where(inArray(users.id, userIds))
-      .returning()
+  // Update users
+  const updated = await db
+    .update(users)
+    .set({
+      status,
+      updatedAt: new Date(),
+    })
+    .where(inArray(users.id, userIds))
+    .returning()
 
-    // Log audit for each user
-    for (const user of updated) {
-      await tx.insert(auditLogs).values({
-        id: nanoid(),
+  // Log audit for each user
+  if (updated.length > 0) {
+    await db.insert(auditLogs).values(
+      updated.map(user => ({
+        id: crypto.randomUUID(),
         schoolId,
         userId: performedBy,
-        action: 'update',
+        action: 'update' as const,
         tableName: 'users',
         recordId: user.id,
         oldValues: { status: user.status },
         newValues: { status },
         createdAt: new Date(),
-      })
-    }
+      })),
+    )
+  }
 
-    return { success: updated.length, failed: userIds.length - updated.length }
-  })
+  return { success: updated.length, failed: userIds.length - updated.length }
 }
 
 // Phase 11: Bulk delete users (soft delete)
@@ -495,34 +492,34 @@ export async function bulkDeleteUsers(userIds: string[], schoolId: string, perfo
 
   const db = getDb()
 
-  return db.transaction(async (tx: any) => {
-    // Soft delete users
-    const deleted = await tx
-      .update(users)
-      .set({
-        deletedAt: new Date(),
-        updatedAt: new Date(),
-      })
-      .where(inArray(users.id, userIds))
-      .returning()
+  // Soft delete users
+  const deleted = await db
+    .update(users)
+    .set({
+      deletedAt: new Date(),
+      updatedAt: new Date(),
+    })
+    .where(inArray(users.id, userIds))
+    .returning()
 
-    // Log audit for each user
-    for (const user of deleted) {
-      await tx.insert(auditLogs).values({
-        id: nanoid(),
+  // Log audit for each user
+  if (deleted.length > 0) {
+    await db.insert(auditLogs).values(
+      deleted.map(user => ({
+        id: crypto.randomUUID(),
         schoolId,
         userId: performedBy,
-        action: 'delete',
+        action: 'delete' as const,
         tableName: 'users',
         recordId: user.id,
         oldValues: { deletedAt: null },
         newValues: { deletedAt: new Date() },
         createdAt: new Date(),
-      })
-    }
+      })),
+    )
+  }
 
-    return { success: deleted.length, failed: userIds.length - deleted.length }
-  })
+  return { success: deleted.length, failed: userIds.length - deleted.length }
 }
 
 // Phase 11: Check email uniqueness within school
@@ -624,7 +621,7 @@ export async function syncUserAuthOnLogin(authUserId: string, email: string, nam
     const [newUser] = await db
       .insert(users)
       .values({
-        id: nanoid(),
+        id: crypto.randomUUID(),
         email,
         name: name || email.split('@')[0] || 'User', // Use name from Google or derive from email
         authUserId,
@@ -824,38 +821,36 @@ export async function countSystemUsers(options?: {
 export async function assignSystemRolesToUser(userId: string, roleIds: string[]) {
   const db = getDb()
 
-  return db.transaction(async (tx: any) => {
-    // Remove existing SYSTEM roles for this user (where schoolId is NULL)
-    // First, find IDs of current system roles for this user to avoid deleting school-specific roles
-    const existingSystemRoleMappings = await tx
-      .select({ id: userRoles.id })
-      .from(userRoles)
-      .innerJoin(roles, eq(userRoles.roleId, roles.id))
-      .where(and(
-        eq(userRoles.userId, userId),
-        eq(roles.scope, 'system'),
-        isNull(userRoles.schoolId),
-      ))
+  // Remove existing SYSTEM roles for this user (where schoolId is NULL)
+  // First, find IDs of current system roles for this user to avoid deleting school-specific roles
+  const existingSystemRoleMappings = await db
+    .select({ id: userRoles.id })
+    .from(userRoles)
+    .innerJoin(roles, eq(userRoles.roleId, roles.id))
+    .where(and(
+      eq(userRoles.userId, userId),
+      eq(roles.scope, 'system'),
+      isNull(userRoles.schoolId),
+    ))
 
-    if (existingSystemRoleMappings.length > 0) {
-      await tx.delete(userRoles).where(
-        inArray(userRoles.id, existingSystemRoleMappings.map((m: any) => m.id)),
-      )
-    }
+  if (existingSystemRoleMappings.length > 0) {
+    await db.delete(userRoles).where(
+      inArray(userRoles.id, existingSystemRoleMappings.map((m: any) => m.id)),
+    )
+  }
 
-    // Add new system roles
-    if (roleIds.length > 0) {
-      await tx.insert(userRoles).values(
-        roleIds.map(roleId => ({
-          id: nanoid(),
-          userId,
-          roleId,
-          schoolId: null, // System scope
-        })),
-      )
-    }
-    return { success: true }
-  })
+  // Add new system roles
+  if (roleIds.length > 0) {
+    await db.insert(userRoles).values(
+      roleIds.map(roleId => ({
+        id: crypto.randomUUID(),
+        userId,
+        roleId,
+        schoolId: null, // System scope
+      })),
+    )
+  }
+  return { success: true }
 }
 
 /**

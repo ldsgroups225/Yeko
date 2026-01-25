@@ -1,11 +1,10 @@
-import { nanoid } from "nanoid"
+import { getDb } from '@repo/data-ops/database/setup'
 /**
  * Transaction Testing: Section 7.2
  * Bulk Operations, Cascade Operations, and Concurrent Operations Tests
  * Using vitest with node environment
  */
 
-import { getDb } from '@repo/data-ops/database/setup'
 import {
   coefficientTemplates,
   educationLevels,
@@ -37,6 +36,7 @@ import {
   deleteSchool,
 } from '@repo/data-ops/queries/schools'
 import { eq } from 'drizzle-orm'
+import { nanoid } from 'nanoid'
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 
 // ============================================================================

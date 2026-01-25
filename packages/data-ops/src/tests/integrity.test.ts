@@ -1,11 +1,10 @@
-import { nanoid } from "nanoid"
+import { getDb } from '@repo/data-ops/database/setup'
 /**
  * Data Integrity Testing: Section 7
  * Constraint Validation and Referential Integrity Tests
  * Using vitest with node environment
  */
 
-import { getDb } from '@repo/data-ops/database/setup'
 import {
   educationLevels,
   programTemplateChapters,
@@ -34,6 +33,7 @@ import {
   deleteSchool,
 } from '@repo/data-ops/queries/schools'
 import { eq } from 'drizzle-orm'
+import { nanoid } from 'nanoid'
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 
 // ============================================================================

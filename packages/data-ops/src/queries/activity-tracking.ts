@@ -1,8 +1,8 @@
 import type { ActivityLogInsert, ApiMetricInsert } from '../drizzle/core-schema'
 import { randomUUID } from 'node:crypto'
+import { and, count, desc, eq, gte, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import { activityLogs, apiMetrics } from '../drizzle/core-schema'
-import { and, count, desc, eq, gte, sql } from 'drizzle-orm'
 
 // ===== ACTIVITY LOGGING =====
 

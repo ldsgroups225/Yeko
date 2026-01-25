@@ -3,7 +3,6 @@
  * Specific queries for teachers to manage their assigned classes
  */
 import { and, asc, count, eq, sql } from 'drizzle-orm'
-import { nanoid } from 'nanoid'
 import { getDb } from '../database/setup'
 import { grades } from '../drizzle/core-schema'
 import {
@@ -137,7 +136,7 @@ export async function addStudentToClass(params: {
   const [result] = await db
     .insert(enrollments)
     .values({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       studentId: params.studentId,
       classId: params.classId,
       schoolYearId: params.schoolYearId,

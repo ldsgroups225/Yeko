@@ -1,8 +1,7 @@
-import { nanoid } from "nanoid"
 import type { SystemPermissions } from '@repo/data-ops/auth/permissions'
+import { and, count, desc, eq, ilike } from 'drizzle-orm'
 import { getDb } from '../../database/setup'
 import { roles, userRoles } from '../../drizzle/school-schema'
-import { and, count, desc, eq, ilike } from 'drizzle-orm'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
 
 export async function getAllRoles(options?: {
@@ -63,7 +62,7 @@ export async function createRole(data: {
   const [role] = await db
     .insert(roles)
     .values({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       name: data.name,
       slug: data.slug,
       description: data.description,

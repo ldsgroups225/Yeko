@@ -1,7 +1,7 @@
+import { and, asc, eq } from 'drizzle-orm'
 import { getDb } from '../../database/setup'
 import { termTemplates } from '../../drizzle/core-schema'
 import { schoolYears, terms } from '../../drizzle/school-schema'
-import { and, asc, eq } from 'drizzle-orm'
 import { SCHOOL_ERRORS } from './constants'
 
 export async function getTermsBySchoolYear(schoolYearId: string, schoolId: string) {

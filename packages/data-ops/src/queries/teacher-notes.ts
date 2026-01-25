@@ -1,6 +1,5 @@
 import type { ConductCategory, SeverityLevel } from '../drizzle/school-schema'
 import { and, desc, eq, gte, sql } from 'drizzle-orm'
-import { nanoid } from 'nanoid'
 import { getDb } from '../database/setup'
 import { classes, conductRecords } from '../drizzle/school-schema'
 
@@ -38,7 +37,7 @@ export async function createStudentNote(params: {
   const [result] = await db
     .insert(conductRecords)
     .values({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       schoolId: classData[0].schoolId,
       schoolYearId: classData[0].schoolYearId,
       studentId: params.studentId,

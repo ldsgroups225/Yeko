@@ -1,7 +1,6 @@
-import { nanoid } from "nanoid"
+import { and, desc, eq, ilike } from 'drizzle-orm'
 import { getDb } from '../../database/setup'
 import { classrooms } from '../../drizzle/school-schema'
-import { and, desc, eq, ilike } from 'drizzle-orm'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
 
 export async function getClassroomsBySchool(
@@ -68,7 +67,7 @@ export async function createClassroom(data: {
   const [classroom] = await db
     .insert(classrooms)
     .values({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       schoolId: data.schoolId,
       name: data.name,
       code: data.code,

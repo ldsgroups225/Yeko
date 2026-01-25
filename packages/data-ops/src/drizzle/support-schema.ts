@@ -9,7 +9,6 @@ import {
   text,
   timestamp,
 } from 'drizzle-orm/pg-core'
-import { nanoid } from 'nanoid'
 
 // Import from core and school schemas
 import { schools } from './core-schema'
@@ -47,7 +46,7 @@ export const supportTickets = pgTable(
   'support_tickets',
   {
     id: text('id')
-      .$defaultFn(() => nanoid())
+      .$defaultFn(() => crypto.randomUUID())
       .primaryKey(),
     schoolId: text('school_id').references(() => schools.id, {
       onDelete: 'set null',
@@ -104,7 +103,7 @@ export const ticketComments = pgTable(
   'ticket_comments',
   {
     id: text('id')
-      .$defaultFn(() => nanoid())
+      .$defaultFn(() => crypto.randomUUID())
       .primaryKey(),
     ticketId: text('ticket_id')
       .notNull()
@@ -131,7 +130,7 @@ export const knowledgeBaseArticles = pgTable(
   'knowledge_base_articles',
   {
     id: text('id')
-      .$defaultFn(() => nanoid())
+      .$defaultFn(() => crypto.randomUUID())
       .primaryKey(),
 
     // Article content
@@ -185,7 +184,7 @@ export const crmContacts = pgTable(
   'crm_contacts',
   {
     id: text('id')
-      .$defaultFn(() => nanoid())
+      .$defaultFn(() => crypto.randomUUID())
       .primaryKey(),
     schoolId: text('school_id').references(() => schools.id, {
       onDelete: 'cascade',
@@ -235,7 +234,7 @@ export const crmActivities = pgTable(
   'crm_activities',
   {
     id: text('id')
-      .$defaultFn(() => nanoid())
+      .$defaultFn(() => crypto.randomUUID())
       .primaryKey(),
     contactId: text('contact_id')
       .notNull()
@@ -276,7 +275,7 @@ export const crmTasks = pgTable(
   'crm_tasks',
   {
     id: text('id')
-      .$defaultFn(() => nanoid())
+      .$defaultFn(() => crypto.randomUUID())
       .primaryKey(),
     contactId: text('contact_id').references(() => crmContacts.id, {
       onDelete: 'cascade',

@@ -1,3 +1,4 @@
+import type { InferSelectModel } from 'drizzle-orm'
 import type {
   ActivityType,
   ContactRole,
@@ -5,18 +6,6 @@ import type {
   SupportTicketPriority,
   SupportTicketStatus,
   TaskStatus,
-} from '../drizzle/support-schema'
-import type { InferSelectModel } from 'drizzle-orm'
-import { getDb } from '../database/setup'
-import { schools } from '../drizzle/core-schema'
-import { users } from '../drizzle/school-schema'
-import {
-  crmActivities,
-  crmContacts,
-  crmTasks,
-  knowledgeBaseArticles,
-  supportTickets,
-  ticketComments,
 } from '../drizzle/support-schema'
 import {
   and,
@@ -29,6 +18,17 @@ import {
   lte,
   sql,
 } from 'drizzle-orm'
+import { getDb } from '../database/setup'
+import { schools } from '../drizzle/core-schema'
+import { users } from '../drizzle/school-schema'
+import {
+  crmActivities,
+  crmContacts,
+  crmTasks,
+  knowledgeBaseArticles,
+  supportTickets,
+  ticketComments,
+} from '../drizzle/support-schema'
 
 // Type aliases using Drizzle's InferSelectModel
 export type SupportTicket = InferSelectModel<typeof supportTickets>

@@ -7,10 +7,10 @@ import {
   IconShield,
   IconTrash,
 } from '@tabler/icons-react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useForm } from '@tanstack/react-form'
-import { zodValidator } from '@tanstack/zod-form-adapter'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, redirect } from '@tanstack/react-router'
+import { zodValidator } from '@tanstack/zod-form-adapter'
 import { Badge } from '@workspace/ui/components/badge'
 import { Button } from '@workspace/ui/components/button'
 import {
@@ -20,13 +20,6 @@ import {
   CardTitle,
 } from '@workspace/ui/components/card'
 import { Checkbox } from '@workspace/ui/components/checkbox'
-import {
-  Field,
-  FieldDescription,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from '@workspace/ui/components/form'
 import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
 import {
   Dialog,
@@ -37,8 +30,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@workspace/ui/components/dialog'
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@workspace/ui/components/form'
 import { Input } from '@workspace/ui/components/input'
-import { Label } from '@workspace/ui/components/label'
 import {
   Select,
   SelectContent,
@@ -153,7 +151,8 @@ function RoleManagement() {
       form.setFieldValue('description', editingRole.description || '')
       form.setFieldValue('scope', editingRole.scope as any)
       form.setFieldValue('permissions', editingRole.permissions as any)
-    } else {
+    }
+    else {
       form.reset()
     }
   }, [editingRole, isDialogOpen])
@@ -402,7 +401,10 @@ function RoleManagement() {
                                               role="button"
                                               tabIndex={0}
                                               onClick={toggle}
-                                              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') toggle() }}
+                                              onKeyDown={(e) => {
+                                                if (e.key === 'Enter' || e.key === ' ')
+                                                  toggle()
+                                              }}
                                               className={`flex flex-col items-center justify-center gap-2.5 p-3 rounded-2xl border text-xs font-medium transition-all active:scale-95 cursor-pointer shadow-xs ${
                                                 isChecked
                                                   ? 'bg-primary/10 border-primary/40 text-primary ring-1 ring-primary/20'
@@ -578,17 +580,19 @@ function RoleCard({ role, onEdit, onDelete, can }: RoleCardProps) {
       <Card className="h-full border-border/40 bg-background/50 backdrop-blur-xl shadow-xl hover:shadow-2xl hover:shadow-primary/5 hover:border-primary/30 transition-all duration-500 overflow-hidden relative rounded-3xl">
         {/* Visual flare for roles */}
         <div className="absolute top-0 right-0 p-4">
-          {isPlatform ? (
-            <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 gap-1.5 flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
-              <IconLock size={12} className="stroke-3" />
-              Système
-            </Badge>
-          ) : (
-            <Badge variant="outline" className="bg-emerald-500/5 text-emerald-600 border-emerald-500/20 gap-1.5 flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
-              <IconShield size={12} className="stroke-3" />
-              École
-            </Badge>
-          )}
+          {isPlatform
+            ? (
+                <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 gap-1.5 flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                  <IconLock size={12} className="stroke-3" />
+                  Système
+                </Badge>
+              )
+            : (
+                <Badge variant="outline" className="bg-emerald-500/5 text-emerald-600 border-emerald-500/20 gap-1.5 flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                  <IconShield size={12} className="stroke-3" />
+                  École
+                </Badge>
+              )}
         </div>
 
         <CardHeader className="pb-4">

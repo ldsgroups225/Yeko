@@ -1,8 +1,7 @@
-import { nanoid } from "nanoid"
 import type { School, SchoolInsert, SchoolStatus } from '../drizzle/core-schema'
+import { and, asc, count, desc, eq, ilike, inArray, or } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import { schools } from '../drizzle/core-schema'
-import { and, asc, count, desc, eq, ilike, inArray, or } from 'drizzle-orm'
 
 // Get all schools with pagination and filtering
 export async function getSchools(options: {
@@ -98,7 +97,7 @@ export async function createSchool(
   const newSchools = await db
     .insert(schools)
     .values({
-      id: nanoid(), // Generate UUID
+      id: crypto.randomUUID(), // Generate UUID
       ...data,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -316,26 +315,22 @@ export async function bulkCreateSchools(
     return { success: false, created: [], errors }
   }
 
-  // Create schools in transaction
+  // Create schools
   if (schoolsToCreate.length > 0) {
     try {
-      await db.transaction(async (tx: any) => {
-        for (const { data } of schoolsToCreate) {
-          const [newSchool] = await tx
-            .insert(schools)
-            .values({
-              id: nanoid(),
-              ...data,
-              createdAt: new Date(),
-              updatedAt: new Date(),
-            })
-            .returning()
+      const inserted = await db
+        .insert(schools)
+        .values(schoolsToCreate.map(({ data }) => ({
+          id: crypto.randomUUID(),
+          ...data,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })))
+        .returning()
 
-          if (newSchool) {
-            created.push(newSchool)
-          }
-        }
-      })
+      if (inserted) {
+        created.push(...inserted)
+      }
     }
     catch (error) {
       return {

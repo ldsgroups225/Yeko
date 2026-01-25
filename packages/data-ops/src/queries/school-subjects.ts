@@ -1,8 +1,7 @@
-import { nanoid } from "nanoid"
+import { and, count, desc, eq, notInArray, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import { subjects } from '../drizzle/core-schema'
 import { classes, classSubjects, schoolSubjects, schoolYears } from '../drizzle/school-schema'
-import { and, count, desc, eq, notInArray, sql } from 'drizzle-orm'
 
 // ===== SCHOOL SUBJECTS =====
 
@@ -212,7 +211,7 @@ export async function addSubjectsToSchool(options: {
   }
 
   const values = subjectIds.map(subjectId => ({
-    id: nanoid(),
+    id: crypto.randomUUID(),
     schoolId,
     subjectId,
     schoolYearId: activeSchoolYearId,

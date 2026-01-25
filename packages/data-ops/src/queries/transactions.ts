@@ -1,8 +1,7 @@
 import type { Transaction, TransactionInsert, TransactionLine, TransactionLineInsert, TransactionStatus, TransactionType } from '../drizzle/school-schema'
+import { and, desc, eq, gte, lte, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import { accounts, transactionLines, transactions } from '../drizzle/school-schema'
-import { and, desc, eq, gte, lte, sql } from 'drizzle-orm'
-import { nanoid } from 'nanoid'
 
 export interface GetTransactionsParams {
   schoolId: string
@@ -106,44 +105,45 @@ export async function createTransactionWithLines(
     throw new Error(`Transaction not balanced: debits (${totalDebits}) != credits (${totalCredits})`)
   }
 
-  return db.transaction(async (tx: any) => {
-    const transactionNumber = await generateTransactionNumber(transactionData.schoolId)
+  const transactionNumber = await generateTransactionNumber(transactionData.schoolId)
 
-    const [transaction] = await tx
-      .insert(transactions)
-      .values({ id: nanoid(), transactionNumber, ...transactionData })
+  const [transaction] = await db
+    .insert(transactions)
+    .values({ id: crypto.randomUUID(), transactionNumber, ...transactionData })
+    .returning()
+
+  if (!transaction) {
+    throw new Error('Failed to create transaction')
+  }
+
+  const createdLines: TransactionLine[] = []
+  for (let i = 0; i < linesData.length; i++) {
+    const lineData = linesData[i]!
+    const [line] = await db
+      .insert(transactionLines)
+      .values({ id: crypto.randomUUID(), transactionId: transaction.id, ...lineData, lineNumber: i + 1 })
       .returning()
-    if (!transaction) {
-      throw new Error('Failed to create transaction')
+
+    if (!line) {
+      throw new Error('Failed to create transaction line')
     }
+    createdLines.push(line)
 
-    const createdLines: TransactionLine[] = []
-    for (let i = 0; i < linesData.length; i++) {
-      const lineData = linesData[i]!
-      const [line] = await tx
-        .insert(transactionLines)
-        .values({ id: nanoid(), transactionId: transaction.id, ...lineData, lineNumber: i + 1 })
-        .returning()
-      if (!line) {
-        throw new Error('Failed to create transaction line')
-      }
-      createdLines.push(line)
+    // Update account balance
+    const debit = Number.parseFloat(lineData.debitAmount ?? '0')
+    const credit = Number.parseFloat(lineData.creditAmount ?? '0')
+    const [account] = await db.select().from(accounts).where(eq(accounts.id, lineData.accountId)).limit(1)
 
-      // Update account balance
-      const debit = Number.parseFloat(lineData.debitAmount ?? '0')
-      const credit = Number.parseFloat(lineData.creditAmount ?? '0')
-      const [account] = await tx.select().from(accounts).where(eq(accounts.id, lineData.accountId)).limit(1)
-      if (account) {
-        const balanceChange = account.normalBalance === 'debit' ? debit - credit : credit - debit
-        await tx
-          .update(accounts)
-          .set({ balance: sql`${accounts.balance} + ${balanceChange}`, updatedAt: new Date() })
-          .where(eq(accounts.id, lineData.accountId))
-      }
+    if (account) {
+      const balanceChange = account.normalBalance === 'debit' ? debit - credit : credit - debit
+      await db
+        .update(accounts)
+        .set({ balance: sql`${accounts.balance} + ${balanceChange}`, updatedAt: new Date() })
+        .where(eq(accounts.id, lineData.accountId))
     }
+  }
 
-    return { transaction, lines: createdLines }
-  })
+  return { transaction, lines: createdLines }
 }
 
 export async function voidTransaction(
@@ -152,37 +152,38 @@ export async function voidTransaction(
   voidReason: string,
 ): Promise<Transaction | undefined> {
   const db = getDb()
-  return db.transaction(async (tx: any) => {
-    const txnWithLines = await getTransactionWithLines(transactionId)
-    if (!txnWithLines)
-      throw new Error('Transaction not found')
-    if (txnWithLines.transaction.status === 'voided')
-      throw new Error('Transaction already voided')
+  const txnWithLines = await getTransactionWithLines(transactionId)
+  if (!txnWithLines)
+    throw new Error('Transaction not found')
+  if (txnWithLines.transaction.status === 'voided')
+    throw new Error('Transaction already voided')
 
-    // Reverse account balances
-    for (const line of txnWithLines.lines) {
-      const debit = Number.parseFloat(line.debitAmount ?? '0')
-      const credit = Number.parseFloat(line.creditAmount ?? '0')
-      const [account] = await tx.select().from(accounts).where(eq(accounts.id, line.accountId)).limit(1)
-      if (account) {
-        const balanceChange = account.normalBalance === 'debit' ? credit - debit : debit - credit
-        await tx
-          .update(accounts)
-          .set({ balance: sql`${accounts.balance} + ${balanceChange}`, updatedAt: new Date() })
-          .where(eq(accounts.id, line.accountId))
-      }
-    }
+  // Reverse account balances
+  for (const line of txnWithLines.lines) {
+    const debit = Number.parseFloat(line.debitAmount ?? '0')
+    const credit = Number.parseFloat(line.creditAmount ?? '0')
+    const [account] = await db.select().from(accounts).where(eq(accounts.id, line.accountId)).limit(1)
 
-    const [voidedTxn] = await tx
-      .update(transactions)
-      .set({ status: 'voided', voidedAt: new Date(), voidedBy, voidReason, updatedAt: new Date() })
-      .where(eq(transactions.id, transactionId))
-      .returning()
-    if (!voidedTxn) {
-      throw new Error('Failed to void transaction')
+    if (account) {
+      const balanceChange = account.normalBalance === 'debit' ? credit - debit : debit - credit
+      await db
+        .update(accounts)
+        .set({ balance: sql`${accounts.balance} + ${balanceChange}`, updatedAt: new Date() })
+        .where(eq(accounts.id, line.accountId))
     }
-    return voidedTxn
-  })
+  }
+
+  const [voidedTxn] = await db
+    .update(transactions)
+    .set({ status: 'voided', voidedAt: new Date(), voidedBy, voidReason, updatedAt: new Date() })
+    .where(eq(transactions.id, transactionId))
+    .returning()
+
+  if (!voidedTxn) {
+    throw new Error('Failed to void transaction')
+  }
+
+  return voidedTxn
 }
 
 export async function getTransactionLinesByAccount(accountId: string, fiscalYearId?: string): Promise<TransactionLine[]> {

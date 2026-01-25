@@ -1,11 +1,8 @@
-import { nanoid as generateId } from "nanoid"
 import type { InvitationStatus, Parent, ParentInsert, Relationship } from '../drizzle/school-schema'
 import crypto from 'node:crypto'
 import { and, eq, ilike, isNull, or, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import { parents, studentParents, students, users } from '../drizzle/school-schema'
-
-const nanoid = () => generateId()
 
 // ==================== Types ====================
 
@@ -217,7 +214,7 @@ export async function createParent(data: CreateParentInput): Promise<Parent> {
   const [parent] = await db
     .insert(parents)
     .values({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       ...data,
       invitationStatus: 'pending',
     } as ParentInsert)
@@ -275,7 +272,7 @@ export async function linkParentToStudent(data: LinkParentInput) {
   const [link] = await db
     .insert(studentParents)
     .values({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       ...data,
     })
     .returning()

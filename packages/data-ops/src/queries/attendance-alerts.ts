@@ -1,6 +1,5 @@
 import type { AlertSeverity, AlertStatus, AlertType, AttendanceAlertInsert } from '../drizzle/school-schema'
 import { and, count, desc, eq, gte, lte } from 'drizzle-orm'
-import { nanoid } from 'nanoid'
 
 import { getDb } from '../database/setup'
 import {
@@ -94,7 +93,7 @@ export async function createAlert(data: Omit<AttendanceAlertInsert, 'id' | 'crea
   const [result] = await db
     .insert(attendanceAlerts)
     .values({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       ...data,
     })
     .returning()

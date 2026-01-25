@@ -1,7 +1,7 @@
+import { and, count, desc, eq, gte, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import { schools } from '../drizzle/core-schema'
 import { students } from '../drizzle/school-schema'
-import { and, count, desc, eq, gte, sql } from 'drizzle-orm'
 import {
   getApiEndpointUsage,
   getAverageResponseTime,

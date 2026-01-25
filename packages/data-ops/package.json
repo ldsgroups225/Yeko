@@ -75,7 +75,6 @@
     "better-auth": "catalog:",
     "better-sqlite3": "catalog:",
     "drizzle-orm": "catalog:",
-    "nanoid": "catalog:",
     "pg": "catalog:",
     "resend": "catalog:",
     "zod": "catalog:"

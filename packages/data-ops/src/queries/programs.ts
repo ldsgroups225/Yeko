@@ -1,4 +1,4 @@
-import { nanoid } from "nanoid"
+import { and, asc, count, desc, eq, inArray, like, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import {
   grades,
@@ -9,7 +9,6 @@ import {
   subjects,
   termTemplates,
 } from '../drizzle/core-schema'
-import { and, asc, count, desc, eq, inArray, like, sql } from 'drizzle-orm'
 
 interface ProgramSnapshot {
   program: {
@@ -52,7 +51,7 @@ export async function createSchoolYearTemplate(
   const [newTemplate] = await db
     .insert(schoolYearTemplates)
     .values({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       ...data,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -229,7 +228,7 @@ export async function createProgramTemplate(
   const [newProgram] = await db
     .insert(programTemplates)
     .values({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       ...data,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -288,7 +287,7 @@ export async function cloneProgramTemplate(id: string, newSchoolYearTemplateId: 
     .orderBy(asc(programTemplateChapters.order))
 
   // Create new program
-  const newProgramId = nanoid()
+  const newProgramId = crypto.randomUUID()
   const [newProgram] = await db
     .insert(programTemplates)
     .values({
@@ -305,7 +304,7 @@ export async function cloneProgramTemplate(id: string, newSchoolYearTemplateId: 
   // Clone chapters
   if (originalChapters.length > 0) {
     const newChapters = originalChapters.map((chapter: any) => ({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       title: chapter.title,
       objectives: chapter.objectives,
       order: chapter.order,
@@ -348,7 +347,7 @@ export async function createProgramTemplateChapter(
   const [newChapter] = await db
     .insert(programTemplateChapters)
     .values({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       ...data,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -417,7 +416,7 @@ export async function bulkCreateChapters(
     return []
 
   const values = chapters.map((chapter, index) => ({
-    id: nanoid(),
+    id: crypto.randomUUID(),
     ...chapter,
     order: chapter.order || index + 1,
     programTemplateId,
@@ -472,23 +471,21 @@ export async function publishProgram(id: string) {
 
   const nextVersion = (lastVersion?.versionNumber || 0) + 1
 
-  // 4. Transaction: Update status + Create version
-  await db.transaction(async (tx: any) => {
-    await tx
-      .update(programTemplates)
-      .set({
-        status: 'published',
-        updatedAt: new Date(),
-      })
-      .where(eq(programTemplates.id, id))
-
-    await tx.insert(programTemplateVersions).values({
-      id: nanoid(),
-      programTemplateId: id,
-      versionNumber: nextVersion,
-      snapshotData: snapshot,
-      createdAt: new Date(),
+  // 4. Update status + Create version (Sequential)
+  await db
+    .update(programTemplates)
+    .set({
+      status: 'published',
+      updatedAt: new Date(),
     })
+    .where(eq(programTemplates.id, id))
+
+  await db.insert(programTemplateVersions).values({
+    id: crypto.randomUUID(),
+    programTemplateId: id,
+    versionNumber: nextVersion,
+    snapshotData: snapshot,
+    createdAt: new Date(),
   })
 
   return { success: true, version: nextVersion }
@@ -519,41 +516,39 @@ export async function restoreProgramVersion(versionId: string) {
   const snapshot = version.snapshotData as unknown as ProgramSnapshot
   const programId = version.programTemplateId
 
-  // 2. Transaction: Restore program + Replace chapters
-  await db.transaction(async (tx: any) => {
-    // Restore program fields
-    await tx
-      .update(programTemplates)
-      .set({
-        name: snapshot.program.name,
-        subjectId: snapshot.program.subjectId,
-        gradeId: snapshot.program.gradeId,
-        schoolYearTemplateId: snapshot.program.schoolYearTemplateId,
-        status: 'draft', // Revert to draft on restore
-        updatedAt: new Date(),
-      })
-      .where(eq(programTemplates.id, programId))
+  // 2. Restore program + Replace chapters (Sequential)
+  // Restore program fields
+  await db
+    .update(programTemplates)
+    .set({
+      name: snapshot.program.name,
+      subjectId: snapshot.program.subjectId,
+      gradeId: snapshot.program.gradeId,
+      schoolYearTemplateId: snapshot.program.schoolYearTemplateId,
+      status: 'draft', // Revert to draft on restore
+      updatedAt: new Date(),
+    })
+    .where(eq(programTemplates.id, programId))
 
-    // Delete existing chapters
-    await tx
-      .delete(programTemplateChapters)
-      .where(eq(programTemplateChapters.programTemplateId, programId))
+  // Delete existing chapters
+  await db
+    .delete(programTemplateChapters)
+    .where(eq(programTemplateChapters.programTemplateId, programId))
 
-    // Insert snapshot chapters
-    if (snapshot.chapters && snapshot.chapters.length > 0) {
-      const newChapters = snapshot.chapters.map((c: any) => ({
-        id: nanoid(),
-        programTemplateId: programId,
-        title: c.title,
-        objectives: c.objectives,
-        order: c.order,
-        durationHours: c.durationHours,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }))
-      await tx.insert(programTemplateChapters).values(newChapters)
-    }
-  })
+  // Insert snapshot chapters
+  if (snapshot.chapters && snapshot.chapters.length > 0) {
+    const newChapters = snapshot.chapters.map((c: any) => ({
+      id: crypto.randomUUID(),
+      programTemplateId: programId,
+      title: c.title,
+      objectives: c.objectives,
+      order: c.order,
+      durationHours: c.durationHours,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }))
+    await db.insert(programTemplateChapters).values(newChapters)
+  }
 
   return { success: true }
 }
@@ -609,7 +604,7 @@ export async function createTermTemplate(
   const [newTemplate] = await db
     .insert(termTemplates)
     .values({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       ...data,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -653,7 +648,7 @@ export async function bulkCreateTermTemplates(
     return []
 
   const values = terms.map(term => ({
-    id: nanoid(),
+    id: crypto.randomUUID(),
     ...term,
     schoolYearTemplateId,
     createdAt: new Date(),

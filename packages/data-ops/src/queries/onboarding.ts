@@ -1,4 +1,3 @@
-import { nanoid } from "nanoid"
 import { and, count, eq } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import { programTemplates } from '../drizzle/core-schema'
@@ -57,7 +56,7 @@ export async function importSmartTemplate(schoolId: string) {
   if (newSubjectIds.length > 0) {
     await db.insert(schoolSubjects).values(
       newSubjectIds.map(subjectId => ({
-        id: nanoid(),
+        id: crypto.randomUUID(),
         schoolId,
         subjectId,
         schoolYearId: activeYear.id,
@@ -85,7 +84,7 @@ export async function importSmartTemplate(schoolId: string) {
   if (newGradeIds.length > 0) {
     await db.insert(classes).values(
       newGradeIds.map(gradeId => ({
-        id: nanoid(),
+        id: crypto.randomUUID(),
         schoolId,
         schoolYearId: activeYear.id,
         gradeId,

@@ -8,7 +8,6 @@ import type {
   SeverityLevel,
 } from '../drizzle/school-schema'
 import { and, count, desc, eq, gte, ilike, lte, or, sql } from 'drizzle-orm'
-import { nanoid } from 'nanoid'
 
 import { getDb } from '../database/setup'
 import {
@@ -165,7 +164,7 @@ export async function createConductRecord(
   const [result] = await db
     .insert(conductRecords)
     .values({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       ...data,
     })
     .returning()
@@ -227,7 +226,7 @@ export async function addConductFollowUp(
   const [result] = await db
     .insert(conductFollowUps)
     .values({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       ...data,
     })
     .returning()

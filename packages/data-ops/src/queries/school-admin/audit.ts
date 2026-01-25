@@ -1,8 +1,7 @@
-import { nanoid } from "nanoid"
 import type { AuditLogInsert } from '../../drizzle/school-schema'
+import { and, desc, eq } from 'drizzle-orm'
 import { getDb } from '../../database/setup'
 import { auditLogs } from '../../drizzle/school-schema'
-import { and, desc, eq } from 'drizzle-orm'
 
 export type AuditAction = 'create' | 'update' | 'delete' | 'view'
 
@@ -25,7 +24,7 @@ export async function createAuditLog(params: CreateAuditLogParams) {
   const db = getDb()
 
   const [log] = await db.insert(auditLogs).values({
-    id: nanoid(),
+    id: crypto.randomUUID(),
     schoolId: params.schoolId,
     userId: params.userId,
     action: params.action,

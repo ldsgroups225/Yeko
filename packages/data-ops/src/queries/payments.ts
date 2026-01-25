@@ -5,6 +5,7 @@ import type {
   PaymentMethod,
   PaymentStatus,
 } from '../drizzle/school-schema'
+import { and, desc, eq, gte, lte, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import {
   installments,
@@ -13,8 +14,6 @@ import {
   payments,
   studentFees,
 } from '../drizzle/school-schema'
-import { and, desc, eq, gte, lte, sql } from 'drizzle-orm'
-import { nanoid } from 'nanoid'
 
 export interface GetPaymentsParams {
   schoolId: string
@@ -118,7 +117,7 @@ export type CreatePaymentData = Omit<PaymentInsert, 'id' | 'receiptNumber' | 'cr
 export async function createPayment(data: CreatePaymentData): Promise<Payment> {
   const db = getDb()
   const receiptNumber = await generateReceiptNumber(data.schoolId)
-  const [payment] = await db.insert(payments).values({ id: nanoid(), receiptNumber, ...data }).returning()
+  const [payment] = await db.insert(payments).values({ id: crypto.randomUUID(), receiptNumber, ...data }).returning()
   if (!payment) {
     throw new Error('Failed to create payment')
   }
@@ -135,65 +134,66 @@ export async function createPaymentWithAllocations(
   const db = getDb()
   const { allocations: allocationData, ...paymentData } = data
 
-  return db.transaction(async (tx: any) => {
-    const receiptNumber = await generateReceiptNumber(paymentData.schoolId)
+  const receiptNumber = await generateReceiptNumber(paymentData.schoolId)
 
-    const [payment] = await tx
-      .insert(payments)
-      .values({ id: nanoid(), receiptNumber, ...paymentData })
+  const [payment] = await db
+    .insert(payments)
+    .values({ id: crypto.randomUUID(), receiptNumber, ...paymentData })
+    .returning()
+
+  if (!payment) {
+    throw new Error('Failed to create payment')
+  }
+
+  const allocations: PaymentAllocation[] = []
+  for (const alloc of allocationData) {
+    const [allocation] = await db
+      .insert(paymentAllocations)
+      .values({ id: crypto.randomUUID(), paymentId: payment.id, ...alloc })
       .returning()
-    if (!payment) {
-      throw new Error('Failed to create payment')
-    }
-    const allocations: PaymentAllocation[] = []
-    for (const alloc of allocationData) {
-      const [allocation] = await tx
-        .insert(paymentAllocations)
-        .values({ id: nanoid(), paymentId: payment.id, ...alloc })
-        .returning()
-      if (!allocation) {
-        throw new Error('Failed to create payment allocation')
-      }
-      allocations.push(allocation)
 
-      await tx
-        .update(studentFees)
+    if (!allocation) {
+      throw new Error('Failed to create payment allocation')
+    }
+    allocations.push(allocation)
+
+    await db
+      .update(studentFees)
+      .set({
+        paidAmount: sql`${studentFees.paidAmount} + ${alloc.amount}::decimal`,
+        balance: sql`${studentFees.balance} - ${alloc.amount}::decimal`,
+        status: sql`CASE WHEN ${studentFees.balance} - ${alloc.amount}::decimal <= 0 THEN 'paid' WHEN ${studentFees.paidAmount} + ${alloc.amount}::decimal > 0 THEN 'partial' ELSE ${studentFees.status} END`,
+        updatedAt: new Date(),
+      })
+      .where(eq(studentFees.id, alloc.studentFeeId))
+
+    if (alloc.installmentId) {
+      await db
+        .update(installments)
         .set({
-          paidAmount: sql`${studentFees.paidAmount} + ${alloc.amount}::decimal`,
-          balance: sql`${studentFees.balance} - ${alloc.amount}::decimal`,
-          status: sql`CASE WHEN ${studentFees.balance} - ${alloc.amount}::decimal <= 0 THEN 'paid' WHEN ${studentFees.paidAmount} + ${alloc.amount}::decimal > 0 THEN 'partial' ELSE ${studentFees.status} END`,
+          paidAmount: sql`${installments.paidAmount} + ${alloc.amount}::decimal`,
+          balance: sql`${installments.balance} - ${alloc.amount}::decimal`,
+          status: sql`CASE WHEN ${installments.balance} - ${alloc.amount}::decimal <= 0 THEN 'paid' WHEN ${installments.paidAmount} + ${alloc.amount}::decimal > 0 THEN 'partial' ELSE ${installments.status} END`,
+          paidAt: sql`CASE WHEN ${installments.balance} - ${alloc.amount}::decimal <= 0 THEN NOW() ELSE ${installments.paidAt} END`,
           updatedAt: new Date(),
         })
-        .where(eq(studentFees.id, alloc.studentFeeId))
-
-      if (alloc.installmentId) {
-        await tx
-          .update(installments)
-          .set({
-            paidAmount: sql`${installments.paidAmount} + ${alloc.amount}::decimal`,
-            balance: sql`${installments.balance} - ${alloc.amount}::decimal`,
-            status: sql`CASE WHEN ${installments.balance} - ${alloc.amount}::decimal <= 0 THEN 'paid' WHEN ${installments.paidAmount} + ${alloc.amount}::decimal > 0 THEN 'partial' ELSE ${installments.status} END`,
-            paidAt: sql`CASE WHEN ${installments.balance} - ${alloc.amount}::decimal <= 0 THEN NOW() ELSE ${installments.paidAt} END`,
-            updatedAt: new Date(),
-          })
-          .where(eq(installments.id, alloc.installmentId))
-      }
+        .where(eq(installments.id, alloc.installmentId))
     }
+  }
 
-    if (payment.paymentPlanId) {
-      await tx
-        .update(paymentPlans)
-        .set({
-          paidAmount: sql`${paymentPlans.paidAmount} + ${payment.amount}::decimal`,
-          balance: sql`${paymentPlans.balance} - ${payment.amount}::decimal`,
-          status: sql`CASE WHEN ${paymentPlans.balance} - ${payment.amount}::decimal <= 0 THEN 'completed' ELSE ${paymentPlans.status} END`,
-          updatedAt: new Date(),
-        })
-        .where(eq(paymentPlans.id, payment.paymentPlanId))
-    }
+  if (payment.paymentPlanId) {
+    await db
+      .update(paymentPlans)
+      .set({
+        paidAmount: sql`${paymentPlans.paidAmount} + ${payment.amount}::decimal`,
+        balance: sql`${paymentPlans.balance} - ${payment.amount}::decimal`,
+        status: sql`CASE WHEN ${paymentPlans.balance} - ${payment.amount}::decimal <= 0 THEN 'completed' ELSE ${paymentPlans.status} END`,
+        updatedAt: new Date(),
+      })
+      .where(eq(paymentPlans.id, payment.paymentPlanId))
+  }
 
-    return { payment, allocations }
-  })
+  return { payment, allocations }
 }
 
 export async function cancelPayment(
@@ -206,57 +206,56 @@ export async function cancelPayment(
   if (!payment)
     throw new Error('Payment not found')
 
-  return db.transaction(async (tx: any) => {
-    const allocs = await tx.select().from(paymentAllocations).where(eq(paymentAllocations.paymentId, paymentId))
+  const allocs = await db.select().from(paymentAllocations).where(eq(paymentAllocations.paymentId, paymentId))
 
-    for (const alloc of allocs) {
-      await tx
-        .update(studentFees)
+  for (const alloc of allocs) {
+    await db
+      .update(studentFees)
+      .set({
+        paidAmount: sql`${studentFees.paidAmount} - ${alloc.amount}::decimal`,
+        balance: sql`${studentFees.balance} + ${alloc.amount}::decimal`,
+        status: sql`CASE WHEN ${studentFees.paidAmount} - ${alloc.amount}::decimal <= 0 THEN 'pending' ELSE 'partial' END`,
+        updatedAt: new Date(),
+      })
+      .where(eq(studentFees.id, alloc.studentFeeId))
+
+    if (alloc.installmentId) {
+      await db
+        .update(installments)
         .set({
-          paidAmount: sql`${studentFees.paidAmount} - ${alloc.amount}::decimal`,
-          balance: sql`${studentFees.balance} + ${alloc.amount}::decimal`,
-          status: sql`CASE WHEN ${studentFees.paidAmount} - ${alloc.amount}::decimal <= 0 THEN 'pending' ELSE 'partial' END`,
+          paidAmount: sql`${installments.paidAmount} - ${alloc.amount}::decimal`,
+          balance: sql`${installments.balance} + ${alloc.amount}::decimal`,
+          status: sql`CASE WHEN ${installments.paidAmount} - ${alloc.amount}::decimal <= 0 THEN 'pending' ELSE 'partial' END`,
+          paidAt: null,
           updatedAt: new Date(),
         })
-        .where(eq(studentFees.id, alloc.studentFeeId))
-
-      if (alloc.installmentId) {
-        await tx
-          .update(installments)
-          .set({
-            paidAmount: sql`${installments.paidAmount} - ${alloc.amount}::decimal`,
-            balance: sql`${installments.balance} + ${alloc.amount}::decimal`,
-            status: sql`CASE WHEN ${installments.paidAmount} - ${alloc.amount}::decimal <= 0 THEN 'pending' ELSE 'partial' END`,
-            paidAt: null,
-            updatedAt: new Date(),
-          })
-          .where(eq(installments.id, alloc.installmentId))
-      }
+        .where(eq(installments.id, alloc.installmentId))
     }
+  }
 
-    if (payment.paymentPlanId) {
-      await tx
-        .update(paymentPlans)
-        .set({
-          paidAmount: sql`${paymentPlans.paidAmount} - ${payment.amount}::decimal`,
-          balance: sql`${paymentPlans.balance} + ${payment.amount}::decimal`,
-          status: 'active',
-          updatedAt: new Date(),
-        })
-        .where(eq(paymentPlans.id, payment.paymentPlanId))
-    }
+  if (payment.paymentPlanId) {
+    await db
+      .update(paymentPlans)
+      .set({
+        paidAmount: sql`${paymentPlans.paidAmount} - ${payment.amount}::decimal`,
+        balance: sql`${paymentPlans.balance} + ${payment.amount}::decimal`,
+        status: 'active',
+        updatedAt: new Date(),
+      })
+      .where(eq(paymentPlans.id, payment.paymentPlanId))
+  }
 
-    const [cancelledPayment] = await tx
-      .update(payments)
-      .set({ status: 'cancelled', cancelledAt: new Date(), cancelledBy, cancellationReason: reason, updatedAt: new Date() })
-      .where(eq(payments.id, paymentId))
-      .returning()
+  const [cancelledPayment] = await db
+    .update(payments)
+    .set({ status: 'cancelled', cancelledAt: new Date(), cancelledBy, cancellationReason: reason, updatedAt: new Date() })
+    .where(eq(payments.id, paymentId))
+    .returning()
 
-    if (!cancelledPayment) {
-      throw new Error('Failed to cancel payment')
-    }
-    return cancelledPayment
-  })
+  if (!cancelledPayment) {
+    throw new Error('Failed to cancel payment')
+  }
+
+  return cancelledPayment
 }
 
 export interface CashierDailySummary {

@@ -1,4 +1,3 @@
-import { nanoid as generateId } from "nanoid"
 import type { BloodType, Gender, StudentInsert, StudentStatus } from '../drizzle/school-schema'
 import crypto from 'node:crypto'
 import { and, asc, desc, eq, ilike, or, sql } from 'drizzle-orm'
@@ -13,8 +12,6 @@ import {
   studentParents,
   students,
 } from '../drizzle/school-schema'
-
-const nanoid = () => generateId()
 
 // ==================== Types ====================
 
@@ -246,7 +243,7 @@ export async function generateMatricule(schoolId: string, schoolYearId: string):
 
     // Create new sequence
     await db.insert(matriculeSequences).values({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       schoolId,
       schoolYearId,
       prefix,
@@ -318,7 +315,7 @@ export async function createStudent(data: CreateStudentInput) {
   const [student] = await db
     .insert(students)
     .values({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       schoolId,
       ...studentData,
       matricule,

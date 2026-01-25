@@ -1,8 +1,7 @@
 import type { Installment, PaymentPlan, PaymentPlanInsert, PaymentPlanStatus } from '../drizzle/school-schema'
+import { and, eq, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import { installments, paymentPlans, paymentPlanTemplates } from '../drizzle/school-schema'
-import { and, eq, sql } from 'drizzle-orm'
-import { nanoid } from 'nanoid'
 
 export interface GetPaymentPlansParams {
   schoolYearId: string
@@ -42,7 +41,7 @@ export type CreatePaymentPlanData = Omit<PaymentPlanInsert, 'id' | 'createdAt' |
 
 export async function createPaymentPlan(data: CreatePaymentPlanData): Promise<PaymentPlan> {
   const db = getDb()
-  const [plan] = await db.insert(paymentPlans).values({ id: nanoid(), ...data }).returning()
+  const [plan] = await db.insert(paymentPlans).values({ id: crypto.randomUUID(), ...data }).returning()
   if (!plan) {
     throw new Error('Failed to create payment plan')
   }
@@ -65,58 +64,57 @@ export async function createPaymentPlanFromTemplate(
   const db = getDb()
   const { studentId, schoolYearId, templateId, totalAmount, createdBy, startDate, notes } = data
 
-  return db.transaction(async (tx: any) => {
-    const [template] = await tx.select().from(paymentPlanTemplates).where(eq(paymentPlanTemplates.id, templateId)).limit(1)
-    if (!template)
-      throw new Error('Payment plan template not found')
+  const [template] = await db.select().from(paymentPlanTemplates).where(eq(paymentPlanTemplates.id, templateId)).limit(1)
+  if (!template)
+    throw new Error('Payment plan template not found')
 
-    const [plan] = await tx
-      .insert(paymentPlans)
-      .values({
-        id: nanoid(),
-        studentId,
-        schoolYearId,
-        templateId,
-        totalAmount,
-        balance: totalAmount,
-        createdBy,
-        notes,
-      })
-      .returning()
+  const [plan] = await db
+    .insert(paymentPlans)
+    .values({
+      id: crypto.randomUUID(),
+      studentId,
+      schoolYearId,
+      templateId,
+      totalAmount,
+      balance: totalAmount,
+      createdBy,
+      notes,
+    })
+    .returning()
 
-    if (!plan) {
-      throw new Error('Failed to create payment plan from template')
+  if (!plan) {
+    throw new Error('Failed to create payment plan from template')
+  }
+
+  const totalAmountNum = Number.parseFloat(totalAmount)
+  const startDateObj = new Date(startDate)
+  const createdInstallments: Installment[] = []
+
+  const installmentValues = template.schedule.map((scheduleItem) => {
+    const installmentAmount = ((scheduleItem.percentage / 100) * totalAmountNum).toFixed(2)
+    const dueDate = new Date(startDateObj)
+    dueDate.setDate(dueDate.getDate() + scheduleItem.dueDaysFromStart)
+
+    return {
+      id: crypto.randomUUID(),
+      paymentPlanId: plan.id,
+      installmentNumber: scheduleItem.number,
+      label: scheduleItem.label,
+      amount: installmentAmount,
+      balance: installmentAmount,
+      dueDate: dueDate.toISOString().split('T')[0]!,
     }
-
-    const totalAmountNum = Number.parseFloat(totalAmount)
-    const startDateObj = new Date(startDate)
-    const createdInstallments: Installment[] = []
-
-    for (const scheduleItem of template.schedule) {
-      const installmentAmount = ((scheduleItem.percentage / 100) * totalAmountNum).toFixed(2)
-      const dueDate = new Date(startDateObj)
-      dueDate.setDate(dueDate.getDate() + scheduleItem.dueDaysFromStart)
-
-      const [installment] = await tx
-        .insert(installments)
-        .values({
-          id: nanoid(),
-          paymentPlanId: plan.id,
-          installmentNumber: scheduleItem.number,
-          label: scheduleItem.label,
-          amount: installmentAmount,
-          balance: installmentAmount,
-          dueDate: dueDate.toISOString().split('T')[0]!,
-        })
-        .returning()
-      if (!installment) {
-        throw new Error('Failed to create installment from template')
-      }
-      createdInstallments.push(installment)
-    }
-
-    return { plan, installments: createdInstallments }
   })
+
+  if (installmentValues.length > 0) {
+    const inserted = await db
+      .insert(installments)
+      .values(installmentValues)
+      .returning()
+    createdInstallments.push(...inserted)
+  }
+
+  return { plan, installments: createdInstallments }
 }
 
 export type UpdatePaymentPlanData = Partial<Pick<PaymentPlanInsert, 'status' | 'notes'>>

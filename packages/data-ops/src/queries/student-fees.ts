@@ -1,8 +1,7 @@
 import type { FeeStatus, StudentFee, StudentFeeInsert } from '../drizzle/school-schema'
+import { and, eq, gt, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import { enrollments, feeStructures, feeTypes, studentFees } from '../drizzle/school-schema'
-import { and, eq, gt, sql } from 'drizzle-orm'
-import { nanoid } from 'nanoid'
 
 export interface GetStudentFeesParams {
   studentId?: string
@@ -83,7 +82,7 @@ export type CreateStudentFeeData = Omit<StudentFeeInsert, 'id' | 'createdAt' | '
 
 export async function createStudentFee(data: CreateStudentFeeData): Promise<StudentFee> {
   const db = getDb()
-  const [studentFee] = await db.insert(studentFees).values({ id: nanoid(), ...data }).returning()
+  const [studentFee] = await db.insert(studentFees).values({ id: crypto.randomUUID(), ...data }).returning()
   if (!studentFee) {
     throw new Error('Failed to create student fee')
   }
@@ -94,7 +93,7 @@ export async function createStudentFeesBulk(dataList: CreateStudentFeeData[]): P
   const db = getDb()
   if (dataList.length === 0)
     return []
-  const values = dataList.map(data => ({ id: nanoid(), ...data }))
+  const values = dataList.map(data => ({ id: crypto.randomUUID(), ...data }))
   return db.insert(studentFees).values(values).returning()
 }
 

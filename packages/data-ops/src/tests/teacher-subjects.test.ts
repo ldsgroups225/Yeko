@@ -1,4 +1,4 @@
-import { nanoid } from "nanoid"
+import { nanoid } from 'nanoid'
 import { beforeEach, describe, expect, test } from 'vitest'
 import { createSchool } from '../queries/schools'
 import {
