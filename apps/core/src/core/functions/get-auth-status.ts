@@ -1,5 +1,5 @@
 import { getAuth } from '@repo/data-ops/auth/server'
-import { getUserSystemRolesByAuthUserId } from '@repo/data-ops/queries/school-admin/users'
+import { getUserSystemRolesByAuthUserId, syncUserAuthOnLogin } from '@repo/data-ops/queries/school-admin/users'
 import { createServerFn } from '@tanstack/react-start'
 import { getRequest } from '@tanstack/react-start/server'
 
@@ -26,6 +26,9 @@ export const getAuthStatus = createServerFn({ method: 'GET' })
         isSuperAdmin: false,
       }
     }
+
+    // Sync user data and auto-create user account if they don't exist (registration flow)
+    await syncUserAuthOnLogin(session.user.id, session.user.email, session.user.name)
 
     // Fetch system-scoped roles for the user (using Better Auth user ID)
     const roles = await getUserSystemRolesByAuthUserId(session.user.id)
