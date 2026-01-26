@@ -65,11 +65,11 @@ export const getTeacherContext = createServerFn().handler(async (): Promise<Teac
     if (!schoolYearId) {
       const openYear = await getOpenFiscalYear(schoolId)
       if (openYear) {
-        schoolYearId = openYear.id
+        schoolYearId = openYear.schoolYearId
       } else {
         const [latestYear] = await getFiscalYears({ schoolId })
         if (latestYear) {
-          schoolYearId = latestYear.id
+          schoolYearId = latestYear.schoolYearId
         }
       }
 
