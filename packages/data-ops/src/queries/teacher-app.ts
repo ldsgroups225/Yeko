@@ -295,9 +295,13 @@ export async function getSessionParticipationGrades(classSessionId: string) {
  */
 export async function getTeacherAssignedClasses(params: {
   teacherId: string
-  schoolYearId: string
+  schoolYearId?: string | null
 }) {
   const db = getDb()
+
+  if (!params.schoolYearId) {
+    return []
+  }
 
   // Get class subjects for this teacher
   // Note: classSubjects doesn't have schoolYearId, so we filter by class's school year

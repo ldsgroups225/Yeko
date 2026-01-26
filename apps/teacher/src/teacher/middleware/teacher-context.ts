@@ -1,4 +1,6 @@
+// ... imports
 import { getTeacherByAuthUserId } from '@repo/data-ops/queries/school-admin/teachers'
+import { getFiscalYears, getOpenFiscalYear } from '@repo/data-ops/queries/fiscal-years'
 import { createServerFn } from '@tanstack/react-start'
 import { getRequest, setResponseHeader } from '@tanstack/react-start/server'
 
@@ -48,14 +50,43 @@ export const getTeacherContext = createServerFn().handler(async (): Promise<Teac
     const req = getRequest()
     const cookies = parseCookies(req.headers.get('cookie'))
     const schoolId = cookies[SCHOOL_CONTEXT_COOKIE] || teacher.schoolId
-    const schoolYearId = cookies[SCHOOL_YEAR_CONTEXT_COOKIE] || null
+    let schoolYearId = cookies[SCHOOL_YEAR_CONTEXT_COOKIE] || null
+
+    const cookiesToSet: string[] = []
 
     // Set school cookie if not set
     if (!cookies[SCHOOL_CONTEXT_COOKIE]) {
-      setResponseHeader(
-        'Set-Cookie',
+      cookiesToSet.push(
         `${SCHOOL_CONTEXT_COOKIE}=${teacher.schoolId}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${60 * 60 * 24 * 30}`,
       )
+    }
+
+    // If no school year context, try to find the open fiscal year
+    if (!schoolYearId) {
+      const openYear = await getOpenFiscalYear(schoolId)
+      if (openYear) {
+        schoolYearId = openYear.id
+      } else {
+        const [latestYear] = await getFiscalYears({ schoolId })
+        if (latestYear) {
+          schoolYearId = latestYear.id
+        }
+      }
+
+      if (schoolYearId) {
+        cookiesToSet.push(
+          `${SCHOOL_YEAR_CONTEXT_COOKIE}=${schoolYearId}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${60 * 60 * 24 * 30}`,
+        )
+      }
+    }
+
+    if (cookiesToSet.length > 0) {
+      if (cookiesToSet.length === 1) {
+        setResponseHeader('Set-Cookie', cookiesToSet[0]!)
+      }
+      else {
+        setResponseHeader('Set-Cookie', cookiesToSet)
+      }
     }
 
     return {
