@@ -33,6 +33,7 @@ function AvatarImage({ className, ...props }: AvatarPrimitive.Image.Props) {
         "rounded-full aspect-square size-full object-cover",
         className,
       )}
+      crossOrigin="anonymous"
       {...props}
     />
   );
