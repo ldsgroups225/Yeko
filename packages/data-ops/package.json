@@ -9,9 +9,15 @@
   "keywords": [],
   "exports": {
     ".": {
-      "browser": "./dist/src/index.browser.js",
       "types": "./dist/src/index.d.ts",
+      "workerd": "./dist/src/index.js",
+      "node": "./dist/src/index.js",
+      "browser": "./dist/src/index.browser.js",
       "default": "./dist/src/index.js"
+    },
+    "./storage": {
+      "types": "./dist/src/storage/index.d.ts",
+      "default": "./dist/src/storage/index.js"
     },
     "./auth/server": {
       "types": "./dist/src/auth/server.d.ts",

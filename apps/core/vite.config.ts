@@ -5,9 +5,11 @@ import viteReact from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import viteTsConfigPaths from 'vite-tsconfig-paths'
 
-const config = defineConfig({
+export default defineConfig({
+  resolve: {
+    dedupe: ['react', 'react-dom'],
+  },
   plugins: [
-    // this is plugin that enables path aliases
     viteTsConfigPaths({
       projects: ['./tsconfig.json'],
     }),
@@ -24,6 +26,33 @@ const config = defineConfig({
       },
     }),
   ],
+  ssr: {
+    noExternal: [
+      '@tanstack/react-router',
+      '@tanstack/react-query',
+      '@tanstack/react-start',
+      'better-auth',
+      '@base-ui/react',
+      'xlsx-js-style',
+      '@chronicstone/typed-xlsx',
+    ],
+  },
+  optimizeDeps: {
+    include: [
+      'react',
+      'react-dom',
+      '@tanstack/react-router',
+      '@tanstack/react-query',
+      'better-auth/react',
+      'recharts',
+      'motion/react',
+      'zod',
+      'sonner',
+      'clsx',
+      'tailwind-merge',
+      'xlsx',
+      'xlsx-js-style',
+    ],
+    exclude: [],
+  },
 })
-
-export default config

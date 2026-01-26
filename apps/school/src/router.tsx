@@ -1,38 +1,32 @@
 import type { ReactNode } from 'react'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { createRouter as createTanStackRouter } from '@tanstack/react-router'
+import { createRouter } from '@tanstack/react-router'
+import { setupRouterSsrQueryIntegration } from '@tanstack/react-router-ssr-query'
 import { DefaultNotFound } from './components/default-not-found'
+import { getContext } from './integrations/tanstack-query/get-context'
+import * as TanstackQuery from './integrations/tanstack-query/root-provider'
 import { routeTree } from './routeTree.gen'
 
 export function getRouter() {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        staleTime: 5 * 60 * 1000, // 5 minutes
-        gcTime: 30 * 60 * 1000, // 30 minutes
-        refetchOnWindowFocus: false,
-        retry: 3,
-        retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
-      },
-    },
-  })
+  const rqContext = getContext()
 
-  const router = createTanStackRouter({
+  const router = createRouter({
     routeTree,
     context: {
-      queryClient,
+      ...rqContext,
     },
     defaultPreload: 'intent',
     defaultPreloadStaleTime: 0,
     defaultNotFoundComponent: DefaultNotFound,
-    Wrap: ({ children }: { children: ReactNode }) => {
+    Wrap: (props: { children: ReactNode }) => {
       return (
-        <QueryClientProvider client={queryClient}>
-          {children}
-        </QueryClientProvider>
+        <TanstackQuery.Provider {...rqContext}>
+          {props.children}
+        </TanstackQuery.Provider>
       )
     },
   })
+
+  setupRouterSsrQueryIntegration({ router, queryClient: rqContext.queryClient })
 
   return router
 }
