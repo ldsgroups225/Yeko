@@ -1,4 +1,4 @@
-import { getTeacherSchools, getTeacherSchoolsCount } from '@repo/data-ops/queries/school-admin/teachers'
+import { getTeacherSchoolsCount } from '@repo/data-ops/queries/school-admin/teachers'
 // Placeholder for real DB queries
 // This will be replaced by actual database calls when integrating with backend
 import { getTeacherAssignedClasses } from '@repo/data-ops/queries/teacher-app'
@@ -34,14 +34,4 @@ export const getTeacherStats = createServerFn()
       schoolsCount,
       classesCount: classes.length,
     }
-  })
-
-export const getTeacherSchoolsList = createServerFn()
-  .handler(async () => {
-    const context = await getTeacherContext()
-    if (!context) {
-      return []
-    }
-
-    return await getTeacherSchools(context.userId)
   })

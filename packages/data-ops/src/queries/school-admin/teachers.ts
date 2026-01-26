@@ -1,7 +1,7 @@
 import { and, count, desc, eq, ilike, or, sql } from 'drizzle-orm'
 import { getDb } from '../../database/setup'
 import { auth_user } from '../../drizzle/auth-schema'
-import { grades, schools, series, subjects } from '../../drizzle/core-schema'
+import { grades, series, subjects } from '../../drizzle/core-schema'
 import {
   classes,
   classrooms,
@@ -478,25 +478,7 @@ export async function getTeacherSchoolsCount(userId: string): Promise<number> {
   const db = getDb()
   const result = await db
     .select({ count: count() })
-    .from(teachers)
-    .where(eq(teachers.userId, userId))
+    .from(userSchools)
+    .where(eq(userSchools.userId, userId))
   return result[0]?.count ?? 0
-}
-
-export async function getTeacherSchools(userId: string) {
-  const db = getDb()
-  return await db
-    .select({
-      id: schools.id,
-      name: schools.name,
-      code: schools.code,
-      address: schools.address,
-      phone: schools.phone,
-      email: schools.email,
-      logoUrl: schools.logoUrl,
-      status: schools.status,
-    })
-    .from(schools)
-    .innerJoin(teachers, eq(schools.id, teachers.schoolId))
-    .where(eq(teachers.userId, userId))
 }
