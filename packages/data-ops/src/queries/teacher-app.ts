@@ -5,7 +5,7 @@
 import type { GradeStatus, GradeType, MessageCategory } from '../drizzle/school-schema'
 import { and, asc, desc, eq, gte, lte, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
-import { grades, subjects } from '../drizzle/core-schema'
+import { grades, schools, subjects } from '../drizzle/core-schema'
 import {
   classes,
   classSessions,
@@ -20,6 +20,7 @@ import {
   studentParents,
   students,
   teacherMessages,
+  userSchools,
 } from '../drizzle/school-schema'
 
 export async function createTeacherClassSession(params: {
@@ -247,7 +248,6 @@ export async function upsertParticipationGrades(params: {
     return { success: true }
   }
 
-  // Use a single batch upsert for all grades
   await db
     .insert(participationGrades)
     .values(params.grades.map(grade => ({
@@ -303,8 +303,6 @@ export async function getTeacherAssignedClasses(params: {
     return []
   }
 
-  // Get class subjects for this teacher
-  // Note: classSubjects doesn't have schoolYearId, so we filter by class's school year
   const result = await db
     .select({
       classId: classSubjects.classId,
@@ -325,7 +323,6 @@ export async function getTeacherAssignedClasses(params: {
     )
     .orderBy(grades.name, classes.section)
 
-  // Group by class
   const classMap = new Map<string, {
     id: string
     name: string
@@ -348,6 +345,29 @@ export async function getTeacherAssignedClasses(params: {
   }
 
   return Array.from(classMap.values())
+}
+
+/**
+ * Get schools that a teacher is linked to via userSchools
+ */
+export async function getTeacherSchools(userId: string) {
+  const db = getDb()
+
+  const result = await db
+    .select({
+      id: schools.id,
+      name: schools.name,
+      code: schools.code,
+      address: schools.address,
+      phone: schools.phone,
+      email: schools.email,
+    })
+    .from(userSchools)
+    .innerJoin(schools, eq(userSchools.schoolId, schools.id))
+    .where(eq(userSchools.userId, userId))
+    .orderBy(asc(schools.name))
+
+  return result
 }
 
 /**
@@ -560,7 +580,6 @@ export async function deleteHomeworkAssignment(params: {
 }) {
   const db = getDb()
 
-  // Check if homework is draft
   const existing = await db
     .select({ status: homework.status })
     .from(homework)
@@ -576,14 +595,12 @@ export async function deleteHomeworkAssignment(params: {
     return null
 
   if (existing[0].status === 'draft') {
-    // Hard delete for drafts
     await db
       .delete(homework)
       .where(eq(homework.id, params.homeworkId))
     return { deleted: true }
   }
   else {
-    // Soft delete for active/closed
     const [updated] = await db
       .update(homework)
       .set({ status: 'cancelled' })
@@ -714,7 +731,6 @@ export async function getMessageDetailsQuery(params: {
   if (!message[0])
     return null
 
-  // Get thread messages if this is part of a thread
   let thread: any[] = []
   const threadId = message[0].threadId ?? message[0].id
   if (threadId) {
@@ -753,7 +769,6 @@ export async function sendTeacherMessage(params: {
 }) {
   const db = getDb()
 
-  // Determine thread ID
   let threadId = null
   if (params.replyToId) {
     const original = await db
@@ -860,7 +875,6 @@ export async function searchParentsForTeacher(params: {
 }) {
   const db = getDb()
 
-  // Find parents of students in classes the teacher teaches using studentParents junction table
   const conditions: any[] = [
     eq(students.schoolId, params.schoolId),
     sql`(${students.firstName} || ' ' || ${students.lastName}) ILIKE ${`%${params.query}%`}`,
@@ -896,7 +910,6 @@ export async function searchParentsForTeacher(params: {
     )
     .limit(50)
 
-  // Dedupe by parent
   const parentMap = new Map<string, any>()
   for (const r of results) {
     if (!parentMap.has(r.parentId)) {
@@ -942,7 +955,6 @@ export async function submitStudentGrades(params: {
     return { success: true, count: 0 }
   }
 
-  // Perform bulk insert
   const results = await db
     .insert(studentGrades)
     .values(params.grades.map(grade => ({
@@ -978,7 +990,6 @@ export async function getTeacherDaySchedule(params: {
 }) {
   const db = getDb()
 
-  // Import timetable sessions table
   const { timetableSessions, classrooms } = await import('../drizzle/school-schema')
 
   const result = await db

@@ -27,7 +27,8 @@ export interface TeacherContext {
   teacherId: string
   schoolId: string
   schoolYearId: string | null
-  userId: string
+  userId: string // Internal user ID (from users table)
+  authUserId: string // Better Auth user ID
 }
 
 /**
@@ -93,7 +94,8 @@ export const getTeacherContext = createServerFn().handler(async (): Promise<Teac
       teacherId: teacher.id,
       schoolId,
       schoolYearId,
-      userId: authContext.userId,
+      userId: teacher.user.id, // This is the internal user ID from users table
+      authUserId: authContext.userId, // This is the auth_user.id
     }
   }
   catch (error) {
