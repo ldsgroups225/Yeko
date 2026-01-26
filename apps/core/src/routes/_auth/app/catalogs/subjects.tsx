@@ -28,6 +28,7 @@ import { toast } from 'sonner'
 import { CatalogListSkeleton, CatalogStatsSkeleton } from '@/components/catalogs/catalog-skeleton'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useInfiniteScroll } from '@/hooks/use-infinite-scroll'
+import { useTranslations } from '@/i18n/hooks'
 import {
   bulkCreateSubjectsMutationOptions,
   createSubjectMutationOptions,
@@ -46,6 +47,7 @@ export const Route = createFileRoute('/_auth/app/catalogs/subjects')({
 })
 
 function SubjectsCatalog() {
+  const t = useTranslations()
   const { logger } = useLogger()
   const queryClient = useQueryClient()
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -262,7 +264,7 @@ function SubjectsCatalog() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Catalogue des Matières</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t.catalogs.subjects.title()}</h1>
           <p className="text-muted-foreground">
             Catalogue global des matières disponibles pour toutes les écoles partenaires
           </p>
@@ -331,7 +333,7 @@ function SubjectsCatalog() {
       {isCreating && (
         <Card>
           <CardHeader>
-            <CardTitle>Créer une Nouvelle Matière</CardTitle>
+            <CardTitle>{t.catalogs.subjects.create()}</CardTitle>
             <CardDescription>Ajouter une nouvelle matière au catalogue</CardDescription>
           </CardHeader>
           <CardContent>
@@ -342,7 +344,7 @@ function SubjectsCatalog() {
                   <Input
                     id="name"
                     name="name"
-                    placeholder="Mathématiques"
+                    placeholder={t.catalogs.subjects.namePlaceholder()}
                     required
                   />
                 </div>
@@ -351,7 +353,7 @@ function SubjectsCatalog() {
                   <Input
                     id="shortName"
                     name="shortName"
-                    placeholder="Maths"
+                    placeholder={t.catalogs.subjects.shortNamePlaceholder()}
                     maxLength={10}
                   />
                 </div>
@@ -359,7 +361,7 @@ function SubjectsCatalog() {
                   <Label htmlFor="category">Catégorie *</Label>
                   <Select name="category" required value={newSubjectCategory} onValueChange={val => val && setNewSubjectCategory(val)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner une catégorie">
+                      <SelectValue placeholder={t.catalogs.subjects.selectCategory()}>
                         {newSubjectCategory || undefined}
                       </SelectValue>
                     </SelectTrigger>
@@ -375,11 +377,11 @@ function SubjectsCatalog() {
               <div className="flex justify-end gap-2">
                 <Button type="button" variant="outline" onClick={() => setIsCreating(false)}>
                   <IconX className="h-4 w-4 mr-2" />
-                  Annuler
+                  {t.common.cancel()}
                 </Button>
                 <Button type="submit" disabled={createMutation.isPending}>
                   <IconDeviceFloppy className="h-4 w-4 mr-2" />
-                  {createMutation.isPending ? 'Création...' : 'Créer'}
+                  {createMutation.isPending ? t.common.loading() : t.common.create()}
                 </Button>
               </div>
             </form>
@@ -400,7 +402,7 @@ function SubjectsCatalog() {
             <div className="relative flex-1 max-w-md">
               <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Rechercher des matières..."
+                placeholder={t.catalogs.subjects.search()}
                 className="pl-9"
                 value={search}
                 onChange={(e) => {
@@ -419,12 +421,12 @@ function SubjectsCatalog() {
               }}
             >
               <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Catégorie">
-                  {categoryFilter === 'all' ? 'Toutes catégories' : (categoryFilter || undefined)}
+                <SelectValue placeholder={t.catalogs.subjects.category()}>
+                  {categoryFilter === 'all' ? t.catalogs.subjects.allCategories() : categoryFilter}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Toutes catégories</SelectItem>
+                <SelectItem value="all">{t.catalogs.subjects.allCategories()}</SelectItem>
                 <SelectItem value="Scientifique">Scientifique</SelectItem>
                 <SelectItem value="Littéraire">Littéraire</SelectItem>
                 <SelectItem value="Sportif">Sportif</SelectItem>
@@ -438,7 +440,7 @@ function SubjectsCatalog() {
       {/* Subjects List */}
       <Card>
         <CardHeader>
-          <CardTitle>Matières</CardTitle>
+          <CardTitle>{t.catalogs.subjects.title()}</CardTitle>
           <CardDescription>
             {pagination?.total || 0}
             {' '}
@@ -510,7 +512,7 @@ function SubjectsCatalog() {
                                           onValueChange={val => val && setEditSubjectCategory(val)}
                                         >
                                           <SelectTrigger>
-                                            <SelectValue placeholder="Choisir une catégorie">
+                                            <SelectValue placeholder={t.catalogs.subjects.selectCategory()}>
                                               {editSubjectCategory || undefined}
                                             </SelectValue>
                                           </SelectTrigger>
@@ -530,11 +532,11 @@ function SubjectsCatalog() {
                                         onClick={() => setEditingSubject(null)}
                                       >
                                         <IconX className="h-4 w-4 mr-2" />
-                                        Annuler
+                                        {t.common.cancel()}
                                       </Button>
                                       <Button type="submit" disabled={updateMutation.isPending}>
                                         <IconDeviceFloppy className="h-4 w-4 mr-2" />
-                                        {updateMutation.isPending ? 'Enregistrement...' : 'Enregistrer'}
+                                        {updateMutation.isPending ? t.common.loading() : t.common.save()}
                                       </Button>
                                     </div>
                                   </form>
@@ -622,7 +624,7 @@ function SubjectsCatalog() {
       <DeleteConfirmationDialog
         open={!!deletingSubject}
         onOpenChange={open => !open && setDeletingSubject(null)}
-        title="Supprimer la matière"
+        title={t.catalogs.subjects.edit()}
         description={`Êtes-vous sûr de vouloir supprimer la matière "${deletingSubject?.name}" ? Cette action est irréversible.`}
         confirmText={deletingSubject?.name}
         onConfirm={handleDelete}

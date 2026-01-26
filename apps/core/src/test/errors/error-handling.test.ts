@@ -7,43 +7,42 @@
 import { getSchools } from '@repo/data-ops'
 import { describe, expect, test, vi } from 'vitest'
 
-// Create mock functions inside factory to avoid hoisting issues
-vi.mock('@repo/data-ops', async () => {
-  const mockCreateSchool = vi.fn(data => Promise.resolve({ id: 'test-id', ...data }))
-  const mockDeleteSchool = vi.fn().mockResolvedValue(undefined)
-  const mockGetSchools = vi.fn().mockResolvedValue({
-    schools: [{ id: '1', name: 'Test School', status: 'active', settings: {} }],
-    pagination: { total: 1, page: 1, limit: 10, totalPages: 1 },
-  })
-  const mockUpdateSchool = vi.fn((id, data) => Promise.resolve({ id, ...data }))
-
-  const mockGetDb = () => ({
-    select: vi.fn().mockReturnThis(),
-    from: vi.fn().mockReturnThis(),
-    where: vi.fn().mockReturnThis(),
-    limit: vi.fn().mockReturnThis(),
-    insert: vi.fn().mockReturnThis(),
-    values: vi.fn().mockReturnThis(),
-    update: vi.fn().mockReturnThis(),
-    set: vi.fn().mockReturnThis(),
-    delete: vi.fn().mockReturnThis(),
-    execute: vi.fn().mockResolvedValue([{ count: 0 }]),
-  })
-
+// Create mock functions outside and use vi.hoisted or just define inside vi.mock
+vi.mock('@repo/data-ops', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@repo/data-ops')>()
   return {
-    getDb: mockGetDb,
-    createSchool: mockCreateSchool,
-    deleteSchool: mockDeleteSchool,
-    getSchools: mockGetSchools,
-    updateSchool: mockUpdateSchool,
-    schools: {
-      id: { type: 'string' },
-      name: { type: 'string' },
-      code: { type: 'string' },
-      status: { type: 'string' },
-    },
+    ...actual,
+    createSchool: vi.fn(data => Promise.resolve({ id: 'test-id', ...data })),
+    deleteSchool: vi.fn().mockResolvedValue(undefined),
+    getSchools: vi.fn().mockResolvedValue({
+      schools: [{ id: '1', name: 'Test School', status: 'active', settings: {} }],
+      pagination: { total: 1, page: 1, limit: 10, totalPages: 1 },
+    }),
+    updateSchool: vi.fn((id, data) => Promise.resolve({ id, ...data })),
+    getDb: () => ({
+      select: vi.fn().mockReturnThis(),
+      from: vi.fn().mockReturnThis(),
+      where: vi.fn().mockReturnThis(),
+      limit: vi.fn().mockReturnThis(),
+      insert: vi.fn().mockReturnThis(),
+      values: vi.fn().mockReturnThis(),
+      update: vi.fn().mockReturnThis(),
+      set: vi.fn().mockReturnThis(),
+      delete: vi.fn().mockReturnThis(),
+      execute: vi.fn().mockResolvedValue([{ count: 0 }]),
+    }),
   }
 })
+
+vi.mock('@repo/data-ops/queries/schools', () => ({
+  createSchool: vi.fn(data => Promise.resolve({ id: 'test-id', ...data })),
+  deleteSchool: vi.fn().mockResolvedValue(undefined),
+  getSchools: vi.fn().mockResolvedValue({
+    schools: [{ id: '1', name: 'Test School', status: 'active', settings: {} }],
+    pagination: { total: 1, page: 1, limit: 10, totalPages: 1 },
+  }),
+  updateSchool: vi.fn((id, data) => Promise.resolve({ id, ...data })),
+}))
 
 // ============================================================================
 // 8.1 DATABASE ERRORS

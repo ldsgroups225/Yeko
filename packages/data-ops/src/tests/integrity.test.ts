@@ -1,17 +1,14 @@
-import { getDb } from '@repo/data-ops/database/setup'
-/**
- * Data Integrity Testing: Section 7
- * Constraint Validation and Referential Integrity Tests
- * Using vitest with node environment
- */
-
+import { eq } from 'drizzle-orm'
+import { nanoid } from 'nanoid'
+import { afterAll, beforeAll, describe, expect, test } from 'vitest'
+import { getDb } from '../database/setup'
 import {
   educationLevels,
   programTemplateChapters,
   schoolYearTemplates,
   subjects,
   tracks,
-} from '@repo/data-ops/drizzle/core-schema'
+} from '../drizzle/core-schema'
 import {
   createGrade,
   createSerie,
@@ -19,22 +16,19 @@ import {
   deleteSerie,
   getGrades,
   getSeries,
-} from '@repo/data-ops/queries/catalogs'
+} from '../queries/catalogs'
 import {
   createCoefficientTemplate,
   getCoefficientTemplates,
-} from '@repo/data-ops/queries/coefficients'
+} from '../queries/coefficients'
 import {
   createProgramTemplate,
   deleteProgramTemplate,
-} from '@repo/data-ops/queries/programs'
+} from '../queries/programs'
 import {
   createSchool,
   deleteSchool,
-} from '@repo/data-ops/queries/schools'
-import { eq } from 'drizzle-orm'
-import { nanoid } from 'nanoid'
-import { afterAll, beforeAll, describe, expect, test } from 'vitest'
+} from '../queries/schools'
 
 // ============================================================================
 // 7.1 CONSTRAINT VALIDATION

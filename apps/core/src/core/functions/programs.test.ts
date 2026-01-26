@@ -30,7 +30,7 @@ import {
   updateSchoolYearTemplateMutation,
 } from './programs'
 
-// Mock the data-ops package
+// Mock the data-ops package and its subpaths
 vi.mock('@repo/data-ops', () => ({
   // School Year Templates
   getSchoolYearTemplates: vi.fn(),
@@ -61,29 +61,29 @@ vi.mock('@repo/data-ops', () => ({
   getProgramStats: vi.fn(),
 }))
 
-// Mock createServerFn to execute the handler directly
-vi.mock('@tanstack/react-start', () => ({
-  createServerFn: () => {
-    const chain = {
-      middleware: () => chain,
-      inputValidator: (validator: any) => {
-        return {
-          handler: (cb: any) => {
-            return async (payload: any) => {
-              const parsedData = validator ? validator(payload?.data || {}) : (payload?.data || {})
-              return cb({ data: parsedData, context: {} })
-            }
-          },
-        }
-      },
-      handler: (cb: any) => {
-        return async (payload: any) => {
-          return cb({ data: payload?.data || {}, context: {} })
-        }
-      },
-    }
-    return chain
-  },
+vi.mock('@repo/data-ops/queries/programs', () => ({
+  getSchoolYearTemplates: vi.fn(),
+  getSchoolYearTemplateById: vi.fn(),
+  createSchoolYearTemplate: vi.fn(),
+  updateSchoolYearTemplate: vi.fn(),
+  deleteSchoolYearTemplate: vi.fn(),
+  getProgramTemplates: vi.fn(),
+  getProgramTemplateById: vi.fn(),
+  createProgramTemplate: vi.fn(),
+  updateProgramTemplate: vi.fn(),
+  deleteProgramTemplate: vi.fn(),
+  cloneProgramTemplate: vi.fn(),
+  getProgramTemplateChapters: vi.fn(),
+  getProgramTemplateChapterById: vi.fn(),
+  createProgramTemplateChapter: vi.fn(),
+  updateProgramTemplateChapter: vi.fn(),
+  deleteProgramTemplateChapter: vi.fn(),
+  bulkUpdateChaptersOrder: vi.fn(),
+  bulkCreateChapters: vi.fn(),
+  publishProgram: vi.fn(),
+  getProgramVersions: vi.fn(),
+  restoreProgramVersion: vi.fn(),
+  getProgramStats: vi.fn(),
 }))
 
 // Mock the middleware

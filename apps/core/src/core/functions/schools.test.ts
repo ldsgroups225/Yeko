@@ -2,7 +2,7 @@ import * as dataOps from '@repo/data-ops'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { bulkUpdateSchools, createSchool, deleteSchool, getSchoolById, getSchools, updateSchool } from './schools'
 
-// Mock the data-ops package
+// Mock the data-ops package and its subpaths
 vi.mock('@repo/data-ops', () => ({
   createSchool: vi.fn(),
   getSchools: vi.fn(),
@@ -12,21 +12,12 @@ vi.mock('@repo/data-ops', () => ({
   initDatabase: vi.fn(),
 }))
 
-// Mock createServerFn to execute the handler directly
-vi.mock('@tanstack/react-start', () => ({
-  createServerFn: () => {
-    const chain = {
-      middleware: () => chain,
-      inputValidator: () => chain,
-      handler: (cb: any) => {
-        return async (payload: any) => {
-          // Mock the context with data from payload
-          return cb({ data: payload?.data || {}, context: {} })
-        }
-      },
-    }
-    return chain
-  },
+vi.mock('@repo/data-ops/queries/schools', () => ({
+  createSchool: vi.fn(),
+  getSchools: vi.fn(),
+  getSchoolById: vi.fn(),
+  updateSchool: vi.fn(),
+  deleteSchool: vi.fn(),
 }))
 
 // Mock the middleware (less important now if createServerFn is mocked, but good to keep)

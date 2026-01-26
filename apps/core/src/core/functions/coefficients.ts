@@ -129,7 +129,7 @@ export const validateCoefficientImportMutation = createServerFn()
     const uniqueSeriesIds = [...new Set(data.map(d => d.seriesId).filter((id): id is string => !!id))]
 
     // Batch query database to check existence
-    const [existingYears, existingSubjects, existingGrades, existingSeries] = await Promise.all([
+    const results = await Promise.all([
       db.select({ id: schoolYearTemplates.id }).from(schoolYearTemplates).where(inArray(schoolYearTemplates.id, uniqueYearIds)),
       db.select({ id: subjects.id }).from(subjects).where(inArray(subjects.id, uniqueSubjectIds)),
       db.select({ id: grades.id }).from(grades).where(inArray(grades.id, uniqueGradeIds)),
@@ -137,6 +137,20 @@ export const validateCoefficientImportMutation = createServerFn()
         ? db.select({ id: series.id }).from(series).where(inArray(series.id, uniqueSeriesIds))
         : Promise.resolve([]),
     ])
+
+    const existingYears = results[0]
+    const existingSubjects = results[1]
+    const existingGrades = results[2]
+    const existingSeries = results[3]
+
+    if (!Array.isArray(existingYears)) {
+      console.error('CRITICAL DIAGNOSTIC: existingYears is NOT an array!')
+      console.error('Type:', typeof existingYears)
+      console.error('Constructor:', existingYears?.constructor?.name)
+      console.error('Is Promise:', existingYears instanceof Promise)
+      console.error('Has then:', typeof (existingYears as any)?.then === 'function')
+      console.error('Value:', JSON.stringify(existingYears))
+    }
 
     // Build lookup sets for fast validation
     const yearIdSet = new Set(existingYears.map((y: { id: string }) => y.id))

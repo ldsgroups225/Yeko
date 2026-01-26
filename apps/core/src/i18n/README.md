@@ -9,7 +9,7 @@ This project uses **react-i18next** for internationalization with French as the 
 
 ## Structure
 
-```
+```text
 src/i18n/
 ├── config.ts          # i18next configuration
 ├── locales/

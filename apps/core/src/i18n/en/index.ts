@@ -204,6 +204,112 @@ const en = {
     notFound: 'School not found',
     duplicate: 'A school with this code already exists',
   },
+
+  // Demo Request
+  demoRequest: {
+    title: 'Request a Demo',
+    subtitle: 'Discover how Yeko can transform your institution',
+    form: {
+      name: 'Full Name',
+      email: 'Email Address',
+      phone: 'Phone Number',
+      schoolName: 'School/Organization Name',
+      schoolType: 'School Type',
+      role: 'Your Role',
+      studentsCount: 'Number of Students',
+      message: 'Additional Information',
+      submit: 'Request Demo',
+      success: 'Demo Request Received!',
+      successDescription: 'Thank you for your interest in Yeko! Our team will contact you within 24 hours to schedule your personalized demo.',
+      confirmationEmail: 'We have sent a confirmation email to {email}.',
+      whatNext: 'What happens next?',
+      whatNextDescription: 'Our team will review your request and contact you within 24 hours to schedule a personalized demo tailored to your institution\'s needs.',
+    },
+    schoolTypes: {
+      primary: 'Primary School',
+      secondary: 'High School / Middle School',
+      higherEducation: 'Higher Education',
+      vocational: 'Vocational Training',
+      other: 'Other',
+    },
+    roles: {
+      principal: 'Principal / Headmaster',
+      vicePrincipal: 'Vice Principal',
+      administrator: 'Administrator',
+      teacher: 'Teacher',
+      itDirector: 'IT Director',
+      parent: 'Parent Association',
+      other: 'Other',
+    },
+    studentsCount: {
+      '0-100': 'Less than 100',
+      '100-500': '100-500',
+      '500-1000': '500-1,000',
+      '1000-2000': '1,000-2,000',
+      '2000-5000': '2,000-5,000',
+      '5000+': 'More than 5,000',
+    },
+  },
+
+  // Catalogs
+  catalogs: {
+    title: 'Catalogs',
+    subjects: {
+      title: 'Subjects',
+      search: 'Search subjects...',
+      category: 'Category',
+      allCategories: 'All Categories',
+      create: 'Create Subject',
+      edit: 'Edit Subject',
+      namePlaceholder: 'Mathematics',
+      shortNamePlaceholder: 'Math',
+      selectCategory: 'Select category',
+    },
+  },
+
+  // Roles management
+  roles: {
+    title: 'Roles Management',
+    subtitle: 'Configure granular permissions and access hierarchy to ensure security and organization of your platform.',
+    create: 'New Role',
+    edit: 'Edit Role',
+    delete: 'Delete Role',
+    name: 'Role Name',
+    slug: 'Identifier (Slug)',
+    description: 'Description & Mission',
+    scope: 'Scope',
+    permissions: 'Permissions Matrix',
+    systemRoles: 'Platform Roles',
+    schoolRoles: 'School Roles',
+    none: 'No roles defined.',
+    confirmDelete: 'Role Deletion',
+    deleteDescription: 'You are about to delete the role {name}.',
+    deleteWarning: 'Warning: This action is irreversible. All users attached to this role will immediately lose all associated permissions.',
+  },
+
+  // Users management
+  users: {
+    title: 'System Users',
+    subtitle: 'Manage administrative accounts and oversee global access privileges to the platform.',
+    search: 'Search by name, email...',
+    table: {
+      user: 'User',
+      status: 'Status',
+      roles: 'System Roles',
+      activity: 'Activity',
+      actions: 'Actions',
+    },
+    none: 'No users found',
+    noneDescription: 'Adjust your search filters to find the account you are looking for.',
+    syncing: 'Syncing data...',
+    neverLoggedIn: 'Never',
+    permissions: 'Authorizations',
+    permissionsTitle: 'System Authorizations',
+    permissionsSubtitle: 'Configure platform roles for {name}',
+    availableRoles: 'Available Roles',
+    updateSuccess: 'Access updated successfully',
+    updateError: 'Error updating access',
+  },
 } satisfies Translation
 
 export default en

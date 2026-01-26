@@ -9,12 +9,14 @@ import { Label } from '@workspace/ui/components/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
 import { Textarea } from '@workspace/ui/components/textarea'
 import { useState } from 'react'
+import { useTranslations } from '@/i18n/hooks'
 
 export const Route = createFileRoute('/demo-request')({
   component: DemoRequest,
 })
 
 function DemoRequest() {
+  const t = useTranslations()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -61,7 +63,7 @@ function DemoRequest() {
             <Link to="/">
               <Button variant="ghost" className="mb-4">
                 <IconArrowLeft className="w-4 h-4 mr-2" />
-                Back to Home
+                {t.common.back()}
               </Button>
             </Link>
           </div>
@@ -69,21 +71,19 @@ function DemoRequest() {
           <Card className="text-center">
             <CardContent className="pt-6">
               <IconCircleCheck className="w-16 h-16 text-primary mx-auto mb-4" />
-              <CardTitle className="mb-2">Demo Request Received!</CardTitle>
+              <CardTitle className="mb-2">{t.demoRequest.form.success()}</CardTitle>
               <CardDescription className="text-lg mb-6">
-                Thank you for your interest in Yeko! Our team will contact you within 24 hours to schedule your personalized demo.
+                {t.demoRequest.form.successDescription()}
               </CardDescription>
               <p className="text-muted-foreground mb-6">
-                We've sent a confirmation email to
-                {' '}
-                {formData.email}
+                {t.demoRequest.form.confirmationEmail({ email: formData.email })}
               </p>
               <div className="flex gap-4 justify-center">
                 <Link to="/">
-                  <Button variant="outline">Return Home</Button>
+                  <Button variant="outline">{t.common.back()}</Button>
                 </Link>
                 <Button onClick={() => window.location.href = 'mailto:demo@yeko.com'}>
-                  Contact Support
+                  {t.common.support()}
                 </Button>
               </div>
             </CardContent>
@@ -100,56 +100,64 @@ function DemoRequest() {
           <Link to="/">
             <Button variant="ghost" className="mb-4">
               <IconArrowLeft className="w-4 h-4 mr-2" />
-              Back to Home
+              {t.common.back()}
             </Button>
           </Link>
 
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold mb-4">Request a Demo</h1>
+            <h1 className="text-4xl font-bold mb-4">{t.demoRequest.title()}</h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              See how Yeko can transform your educational institution. Schedule a personalized demo with our team.
+              {t.demoRequest.subtitle()}
             </p>
           </div>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Demo Request Form</CardTitle>
+            <CardTitle>{t.demoRequest.title()}</CardTitle>
             <CardDescription>
-              Please fill in your information and we'll get back to you within 24 hours.
+              {t.demoRequest.subtitle()}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Full Name *</Label>
+                  <Label htmlFor="name">
+                    {t.demoRequest.form.name()}
+                    {' '}
+                    *
+                  </Label>
                   <Input
                     id="name"
                     type="text"
                     required
                     value={formData.name}
                     onChange={e => handleInputChange('name', e.target.value)}
-                    placeholder="John Doe"
+                    placeholder="Jean Dupont"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email Address *</Label>
+                  <Label htmlFor="email">
+                    {t.demoRequest.form.email()}
+                    {' '}
+                    *
+                  </Label>
                   <Input
                     id="email"
                     type="email"
                     required
                     value={formData.email}
                     onChange={e => handleInputChange('email', e.target.value)}
-                    placeholder="john.doe@school.edu"
+                    placeholder="jean.dupont@ecole.com"
                   />
                 </div>
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number</Label>
+                  <Label htmlFor="phone">{t.demoRequest.form.phone()}</Label>
                   <Input
                     id="phone"
                     type="tel"
@@ -160,7 +168,11 @@ function DemoRequest() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="schoolName">School/Organization Name *</Label>
+                  <Label htmlFor="schoolName">
+                    {t.demoRequest.form.schoolName()}
+                    {' '}
+                    *
+                  </Label>
                   <Input
                     id="schoolName"
                     type="text"
@@ -174,89 +186,106 @@ function DemoRequest() {
 
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="schoolType">School Type *</Label>
+                  <Label htmlFor="schoolType">
+                    {t.demoRequest.form.schoolType()}
+                    {' '}
+                    *
+                  </Label>
                   <Select value={formData.schoolType} onValueChange={value => value && handleInputChange('schoolType', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select school type">
-                        {formData.schoolType === 'primary' && 'Primary School'}
-                        {formData.schoolType === 'secondary' && 'Secondary School'}
-                        {formData.schoolType === 'higher-education' && 'Higher Education'}
-                        {formData.schoolType === 'vocational' && 'Vocational Training'}
-                        {formData.schoolType === 'other' && 'Other'}
+                      <SelectValue placeholder={t.demoRequest.form.schoolType()}>
+                        {formData.schoolType === 'primary' && t.demoRequest.schoolTypes.primary()}
+                        {formData.schoolType === 'secondary' && t.demoRequest.schoolTypes.secondary()}
+                        {formData.schoolType === 'higher-education' && t.demoRequest.schoolTypes.higherEducation()}
+                        {formData.schoolType === 'vocational' && t.demoRequest.schoolTypes.vocational()}
+                        {formData.schoolType === 'other' && t.demoRequest.schoolTypes.other()}
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="primary">Primary School</SelectItem>
-                      <SelectItem value="secondary">Secondary School</SelectItem>
-                      <SelectItem value="higher-education">Higher Education</SelectItem>
-                      <SelectItem value="vocational">Vocational Training</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
+                      <SelectItem value="primary">{t.demoRequest.schoolTypes.primary()}</SelectItem>
+                      <SelectItem value="secondary">{t.demoRequest.schoolTypes.secondary()}</SelectItem>
+                      <SelectItem value="higher-education">{t.demoRequest.schoolTypes.higherEducation()}</SelectItem>
+                      <SelectItem value="vocational">{t.demoRequest.schoolTypes.vocational()}</SelectItem>
+                      <SelectItem value="other">{t.demoRequest.schoolTypes.other()}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="role">Your Role *</Label>
+                  <Label htmlFor="role">
+                    {t.demoRequest.form.role()}
+                    {' '}
+                    *
+                  </Label>
                   <Select value={formData.role} onValueChange={value => value && handleInputChange('role', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select your role">
-                        {formData.role === 'principal' && 'Principal'}
-                        {formData.role === 'vice-principal' && 'Vice Principal'}
-                        {formData.role === 'administrator' && 'Administrator'}
-                        {formData.role === 'teacher' && 'Teacher'}
-                        {formData.role === 'it-director' && 'IT Director'}
-                        {formData.role === 'parent' && 'Parent Association'}
-                        {formData.role === 'other' && 'Other'}
+                      <SelectValue placeholder={t.demoRequest.form.role()}>
+                        {formData.role === 'principal' && t.demoRequest.roles.principal()}
+                        {formData.role === 'vice-principal' && t.demoRequest.roles.vicePrincipal()}
+                        {formData.role === 'administrator' && t.demoRequest.roles.administrator()}
+                        {formData.role === 'teacher' && t.demoRequest.roles.teacher()}
+                        {formData.role === 'it-director' && t.demoRequest.roles.itDirector()}
+                        {formData.role === 'parent' && t.demoRequest.roles.parent()}
+                        {formData.role === 'other' && t.demoRequest.roles.other()}
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="principal">Principal</SelectItem>
-                      <SelectItem value="vice-principal">Vice Principal</SelectItem>
-                      <SelectItem value="administrator">Administrator</SelectItem>
-                      <SelectItem value="teacher">Teacher</SelectItem>
-                      <SelectItem value="it-director">IT Director</SelectItem>
-                      <SelectItem value="parent">Parent Association</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
+                      <SelectItem value="principal">{t.demoRequest.roles.principal()}</SelectItem>
+                      <SelectItem value="vice-principal">{t.demoRequest.roles.vicePrincipal()}</SelectItem>
+                      <SelectItem value="administrator">{t.demoRequest.roles.administrator()}</SelectItem>
+                      <SelectItem value="teacher">{t.demoRequest.roles.teacher()}</SelectItem>
+                      <SelectItem value="it-director">{t.demoRequest.roles.itDirector()}</SelectItem>
+                      <SelectItem value="parent">{t.demoRequest.roles.parent()}</SelectItem>
+                      <SelectItem value="other">{t.demoRequest.roles.other()}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="studentsCount">Number of Students *</Label>
+                <Label htmlFor="studentsCount">
+                  {t.demoRequest.form.studentsCount()}
+                  {' '}
+                  *
+                </Label>
                 <Select value={formData.studentsCount} onValueChange={value => value && handleInputChange('studentsCount', value)}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select student count range">
-                      {formData.studentsCount}
+                    <SelectValue placeholder={t.demoRequest.form.studentsCount()}>
+                      {formData.studentsCount === '0-100' && t.demoRequest.studentsCount['0-100']()}
+                      {formData.studentsCount === '100-500' && t.demoRequest.studentsCount['100-500']()}
+                      {formData.studentsCount === '500-1000' && t.demoRequest.studentsCount['500-1000']()}
+                      {formData.studentsCount === '1000-2000' && t.demoRequest.studentsCount['1000-2000']()}
+                      {formData.studentsCount === '2000-5000' && t.demoRequest.studentsCount['2000-5000']()}
+                      {formData.studentsCount === '5000+' && t.demoRequest.studentsCount['5000+']()}
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="0-100">Less than 100</SelectItem>
-                    <SelectItem value="100-500">100-500</SelectItem>
-                    <SelectItem value="500-1000">500-1,000</SelectItem>
-                    <SelectItem value="1000-2000">1,000-2,000</SelectItem>
-                    <SelectItem value="2000-5000">2,000-5,000</SelectItem>
-                    <SelectItem value="5000+">More than 5,000</SelectItem>
+                    <SelectItem value="0-100">{t.demoRequest.studentsCount['0-100']()}</SelectItem>
+                    <SelectItem value="100-500">{t.demoRequest.studentsCount['100-500']()}</SelectItem>
+                    <SelectItem value="500-1000">{t.demoRequest.studentsCount['500-1000']()}</SelectItem>
+                    <SelectItem value="1000-2000">{t.demoRequest.studentsCount['1000-2000']()}</SelectItem>
+                    <SelectItem value="2000-5000">{t.demoRequest.studentsCount['2000-5000']()}</SelectItem>
+                    <SelectItem value="5000+">{t.demoRequest.studentsCount['5000+']()}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="message">Additional Information</Label>
+                <Label htmlFor="message">{t.demoRequest.form.message()}</Label>
                 <Textarea
                   id="message"
                   rows={4}
                   value={formData.message}
                   onChange={e => handleInputChange('message', e.target.value)}
-                  placeholder="Tell us about your specific needs, current challenges, or what features you're most interested in..."
+                  placeholder="..."
                 />
               </div>
 
               <Alert>
                 <AlertDescription>
-                  <strong>What happens next?</strong>
+                  <strong>{t.demoRequest.form.whatNext()}</strong>
                   {' '}
-                  Our team will review your request and contact you within 24 hours to schedule a personalized demo tailored to your institution's needs.
+                  {t.demoRequest.form.whatNextDescription()}
                 </AlertDescription>
               </Alert>
 
@@ -267,7 +296,7 @@ function DemoRequest() {
                   disabled={isSubmitting}
                   className="min-w-[120px]"
                 >
-                  {isSubmitting ? 'Submitting...' : 'Request Demo'}
+                  {isSubmitting ? t.common.loading() : t.demoRequest.form.submit()}
                 </Button>
               </div>
             </form>

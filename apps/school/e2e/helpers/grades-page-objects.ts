@@ -31,8 +31,8 @@ export class GradesDashboardPage {
   }
 
   async goto() {
-    await this.page.goto('/academic/grades')
-    await this.page.waitForLoadState('networkidle')
+    await this.page.goto('/grades/')
+    await this.page.waitForLoadState('domcontentloaded')
   }
 
   async navigateToGradeEntry() {
@@ -89,8 +89,8 @@ export class GradeEntryPage {
   }
 
   async goto() {
-    await this.page.goto('/academic/grades/entry')
-    await this.page.waitForLoadState('networkidle')
+    await this.page.goto('/grades/entry')
+    await this.page.waitForLoadState('domcontentloaded')
   }
 
   async selectClass(className: string) {
@@ -163,8 +163,8 @@ export class GradeValidationsPage {
   }
 
   async goto() {
-    await this.page.goto('/academic/grades/validations')
-    await this.page.waitForLoadState('networkidle')
+    await this.page.goto('/grades/validations')
+    await this.page.waitForLoadState('domcontentloaded')
   }
 
   async getValidationCard(className: string, subjectName: string): Promise<Locator> {
@@ -228,8 +228,8 @@ export class GradeStatisticsPage {
   }
 
   async goto() {
-    await this.page.goto('/academic/grades/statistics')
-    await this.page.waitForLoadState('networkidle')
+    await this.page.goto('/grades/statistics')
+    await this.page.waitForLoadState('domcontentloaded')
   }
 
   async selectClass(className: string) {

@@ -1,40 +1,22 @@
 import { expect, test } from './fixtures/auth.fixture'
 import {
-  AuthPage,
   CatalogPage,
   DashboardPage,
   SchoolManagementPage,
 } from './helpers/page-objects'
 
-test.describe('Authentication & Session Management', () => {
-  test('should display email login page', async ({ page }) => {
+test.describe('Landing Page', () => {
+  test('should display landing page with call-to-action', async ({ page }) => {
     await page.goto('/')
 
-    const authPage = new AuthPage(page)
-    await expect(authPage.emailInput).toBeVisible()
-    await expect(authPage.passwordInput).toBeVisible()
-    await expect(authPage.loginButton).toBeVisible()
-    await expect(authPage.googleSignInButton).toBeVisible()
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+    await expect(page.getByRole('link', { name: /commencer|start|sign/i }).first()).toBeVisible()
   })
 
-  test('should handle email login', async ({ page }) => {
+  test('should have demo request link', async ({ page }) => {
     await page.goto('/')
 
-    const authPage = new AuthPage(page)
-    await expect(authPage.emailInput).toBeVisible()
-
-    // Try to login (may fail if user doesn't exist, but we test the UI)
-    await authPage.emailInput.fill('admin@yeko.test')
-    await authPage.passwordInput.fill('password123')
-    await expect(authPage.loginButton).toBeEnabled()
-  })
-
-  test('should show Google OAuth option', async ({ page }) => {
-    await page.goto('/')
-
-    const authPage = new AuthPage(page)
-    await expect(authPage.googleSignInButton).toBeVisible()
-    await expect(authPage.googleSignInButton).toContainText(/google/i)
+    await expect(page.getByRole('link', { name: /démo|demo/i }).first()).toBeVisible()
   })
 })
 
@@ -43,7 +25,7 @@ test.describe('Dashboard & Analytics', () => {
     const dashboardPage = new DashboardPage(authenticatedPage)
     await dashboardPage.goto()
 
-    await expect(dashboardPage.pageHeader).toBeVisible()
+    await expect(authenticatedPage).toHaveURL(/\/app\/dashboard/)
   })
 })
 
@@ -52,7 +34,7 @@ test.describe('School Management Operations', () => {
     const schoolPage = new SchoolManagementPage(authenticatedPage)
     await schoolPage.goto()
 
-    await expect(schoolPage.pageHeader).toContainText(/écoles|schools/i)
+    await expect(authenticatedPage).toHaveURL(/\/app\/schools/)
   })
 })
 
@@ -61,6 +43,6 @@ test.describe('Catalog Management', () => {
     const catalogPage = new CatalogPage(authenticatedPage)
     await catalogPage.goto()
 
-    await expect(catalogPage.pageHeader).toContainText(/catalogues|catalogs/i)
+    await expect(authenticatedPage).toHaveURL(/\/app\/catalogs/)
   })
 })

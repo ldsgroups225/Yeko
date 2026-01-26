@@ -1,10 +1,7 @@
-import { getDb } from '@repo/data-ops/database/setup'
-/**
- * Transaction Testing: Section 7.2
- * Bulk Operations, Cascade Operations, and Concurrent Operations Tests
- * Using vitest with node environment
- */
-
+import { eq } from 'drizzle-orm'
+import { nanoid } from 'nanoid'
+import { afterAll, beforeAll, describe, expect, test } from 'vitest'
+import { getDb } from '../database/setup'
 import {
   coefficientTemplates,
   educationLevels,
@@ -13,7 +10,7 @@ import {
   schoolYearTemplates,
   subjects,
   tracks,
-} from '@repo/data-ops/drizzle/core-schema'
+} from '../drizzle/core-schema'
 import {
   createGrade,
   createSerie,
@@ -21,23 +18,20 @@ import {
   deleteSerie,
   getGrades,
   getSeries,
-} from '@repo/data-ops/queries/catalogs'
+} from '../queries/catalogs'
 import {
   bulkUpdateCoefficients,
   createCoefficientTemplate,
   getCoefficientTemplates,
-} from '@repo/data-ops/queries/coefficients'
+} from '../queries/coefficients'
 import {
   createProgramTemplate,
   deleteProgramTemplate,
-} from '@repo/data-ops/queries/programs'
+} from '../queries/programs'
 import {
   createSchool,
   deleteSchool,
-} from '@repo/data-ops/queries/schools'
-import { eq } from 'drizzle-orm'
-import { nanoid } from 'nanoid'
-import { afterAll, beforeAll, describe, expect, test } from 'vitest'
+} from '../queries/schools'
 
 // ============================================================================
 // 7.2 TRANSACTION TESTING

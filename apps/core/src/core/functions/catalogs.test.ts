@@ -71,34 +71,6 @@ vi.mock('@repo/data-ops/queries/catalogs', () => ({
   bulkCreateSubjects: vi.fn(),
 }))
 
-// Mock createServerFn to execute the handler directly
-vi.mock('@tanstack/react-start', () => ({
-  createServerFn: () => {
-    const chain = {
-      middleware: () => chain,
-      inputValidator: (validator: any) => {
-        // Mock the input validator by just returning the data
-        return {
-          handler: (cb: any) => {
-            return async (payload: any) => {
-              // Mock the context with data from payload
-              const parsedData = validator ? validator(payload?.data || {}) : (payload?.data || {})
-              return cb({ data: parsedData, context: {} })
-            }
-          },
-        }
-      },
-      handler: (cb: any) => {
-        return async (payload: any) => {
-          // Mock the context with data from payload
-          return cb({ data: payload?.data || {}, context: {} })
-        }
-      },
-    }
-    return chain
-  },
-}))
-
 // Mock the middleware
 vi.mock('@/core/middleware/example-middleware', () => ({
   exampleMiddlewareWithContext: {},
@@ -335,7 +307,7 @@ describe('catalogs Server Functions', () => {
 
       const result = await subjectsQuery({ data: { page: 1, limit: 10, trackId: '1' } })
 
-      expect(dataOps.getSubjects).toHaveBeenCalledWith({ page: 1, limit: 10 })
+      expect(dataOps.getSubjects).toHaveBeenCalledWith({ page: 1, limit: 10, trackId: '1' })
       expect(result.subjects).toHaveLength(2)
     })
 
@@ -381,7 +353,7 @@ describe('catalogs Server Functions', () => {
 
       const result = await updateSubjectMutation({ data: updateData })
 
-      expect(dataOps.updateSubject).toHaveBeenCalledWith('1', { name: 'Advanced Mathematics', category: 'Autre' })
+      expect(dataOps.updateSubject).toHaveBeenCalledWith('1', { name: 'Advanced Mathematics' })
       expect(result).toStrictEqual(updatedSubject)
     })
 

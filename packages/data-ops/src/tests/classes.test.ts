@@ -1,5 +1,6 @@
 import { nanoid } from 'nanoid'
 import { beforeEach, describe, expect, test } from 'vitest'
+import { createGrade, createSerie, createTrack } from '../queries/catalogs'
 import {
   createClass,
   deleteClass,
@@ -8,6 +9,8 @@ import {
   updateClass,
 } from '../queries/classes'
 import { createClassroom } from '../queries/classrooms'
+import { createSchoolYearTemplate } from '../queries/programs'
+import { createSchoolYear } from '../queries/school-admin/school-years'
 import { createSchool } from '../queries/schools'
 
 describe('classes queries', () => {
@@ -15,21 +18,11 @@ describe('classes queries', () => {
   let testSchoolYearId: string
   let testGradeId: string
   let testSeriesId: string
+  let testTrackId: string
   let testClassroomId: string
-  let testClassIds: string[] = []
+  const testClassIds: string[] = []
 
   beforeEach(async () => {
-    // Clean up existing test classes
-    for (const id of testClassIds) {
-      try {
-        await deleteClass(id)
-      }
-      catch {
-        // Ignore errors during cleanup
-      }
-    }
-    testClassIds = []
-
     // Create test school
     const school = await createSchool({
       name: 'Test School for Classes',
@@ -39,6 +32,48 @@ describe('classes queries', () => {
       status: 'active',
     })
     testSchoolId = school.id
+
+    // Create test track
+    const track = await createTrack({
+      name: 'Test Track',
+      code: `TRK-${Date.now()}`,
+      educationLevelId: 2,
+    })
+    testTrackId = track.id
+
+    const yearTemplate = await createSchoolYearTemplate({
+      name: `Test Year Template ${Date.now()}`,
+      isActive: true,
+    })
+
+    const year = await createSchoolYear({
+      schoolId: testSchoolId,
+      schoolYearTemplateId: yearTemplate.id,
+      startDate: new Date(),
+      endDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+      isActive: true,
+    })
+    if (!year) {
+      throw new Error('Failed to create school year for test')
+    }
+    testSchoolYearId = year.id
+
+    // Create test grade
+    const grade = await createGrade({
+      name: `Test Grade ${Date.now()}`,
+      code: `TG-${Date.now()}`,
+      order: 1,
+      trackId: testTrackId,
+    })
+    testGradeId = grade.id
+
+    // Create test series
+    const serie = await createSerie({
+      name: `Test Series ${Date.now()}`,
+      code: `TS-${Date.now()}`,
+      trackId: testTrackId,
+    })
+    testSeriesId = serie.id
 
     // Create test classroom
     const classroom = await createClassroom({
@@ -54,13 +89,6 @@ describe('classes queries', () => {
       throw new Error('Failed to create classroom for test')
     }
     testClassroomId = classroom.id
-
-    // Note: In a real test environment, we would create or use existing
-    // school year, grade, and series records. For now, we'll use placeholder IDs
-    // that should exist in the test database.
-    testSchoolYearId = 'test-school-year-id'
-    testGradeId = 'test-grade-id'
-    testSeriesId = 'test-series-id'
   })
 
   describe('getClasses', () => {
@@ -171,8 +199,8 @@ describe('classes queries', () => {
       if (result.length > 0) {
         expect(result[0]).toHaveProperty('studentsCount')
         expect(result[0]).toHaveProperty('subjectsCount')
-        expect(typeof result[0]?.studentsCount).toBe('number')
-        expect(typeof result[0]?.subjectsCount).toBe('number')
+        expect(Number(result[0]?.studentsCount)).toBeTypeOf('number')
+        expect(Number(result[0]?.subjectsCount)).toBeTypeOf('number')
       }
     })
   })

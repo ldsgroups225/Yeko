@@ -27,6 +27,7 @@ import { cn } from '@/lib/utils'
 import { getUsers } from '@/school/functions/users'
 
 interface UserComboboxProps {
+  id?: string
   value?: string
   onSelect: (userId: string) => void
   placeholder?: string
@@ -40,6 +41,7 @@ interface User {
 }
 
 export function UserCombobox({
+  id,
   value,
   onSelect,
   placeholder,
@@ -70,6 +72,7 @@ export function UserCombobox({
       <PopoverTrigger
         render={(
           <Button
+            id={id}
             variant="outline"
             role="combobox"
             aria-expanded={open}

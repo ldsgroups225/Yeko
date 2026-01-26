@@ -51,6 +51,7 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import { createPlatformRole, deletePlatformRole, getPlatformRoles, updatePlatformRole } from '@/core/functions/roles'
 import { useAuthorization } from '@/hooks/use-authorization'
+import { useTranslations } from '@/i18n/hooks'
 
 export const Route = createFileRoute('/_auth/app/roles/')({
   beforeLoad: ({ context }) => {
@@ -109,6 +110,7 @@ const roleSchema = z.object({
 type RoleFormData = z.infer<typeof roleSchema>
 
 function RoleManagement() {
+  const t = useTranslations()
   const queryClient = useQueryClient()
   const { can } = useAuthorization()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -120,6 +122,45 @@ function RoleManagement() {
 
   // Scope filter state
   const [activeScope, setActiveScope] = useState<SchoolScope>('school')
+
+  const createMutation = useMutation({
+    mutationFn: (data: RoleFormData) => createPlatformRole({ data }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['platform-roles'] })
+      toast.success('Rôle créé avec succès')
+      setIsDialogOpen(false)
+      // eslint-disable-next-line ts/no-use-before-define
+      form.reset()
+    },
+    onError: (error: any) => toast.error(error.message || 'Erreur lors de la création'),
+  })
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, updates }: { id: string, updates: Partial<Role> }) =>
+      updatePlatformRole({ data: { id, updates } }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['platform-roles'] })
+      toast.success('Rôle mis à jour avec succès')
+      setIsDialogOpen(false)
+      setEditingRole(null)
+      // eslint-disable-next-line ts/no-use-before-define
+      form.reset()
+    },
+    onError: (error: any) => toast.error(error.message || 'Erreur lors de la mise à jour'),
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => deletePlatformRole({ data: { id } }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['platform-roles'] })
+      toast.success('Rôle supprimé')
+      setIsDeleteOpen(false)
+      setRoleToDelete(null)
+    },
+    onError: () => {
+      toast.error('Erreur lors de la suppression')
+    },
+  })
 
   const form = useForm({
     defaultValues: {
@@ -143,6 +184,11 @@ function RoleManagement() {
     },
   })
 
+  const { data: roles = [], isLoading } = useQuery({
+    queryKey: ['platform-roles', activeScope],
+    queryFn: () => getPlatformRoles({ data: { scope: activeScope } }),
+  })
+
   // Sync form when editing
   useEffect(() => {
     if (editingRole) {
@@ -155,49 +201,7 @@ function RoleManagement() {
     else {
       form.reset()
     }
-  }, [editingRole, isDialogOpen])
-
-  const { data: roles = [], isLoading } = useQuery({
-    queryKey: ['platform-roles', activeScope],
-    queryFn: () => getPlatformRoles({ data: { scope: activeScope } }),
-  })
-
-  const createMutation = useMutation({
-    mutationFn: (data: RoleFormData) => createPlatformRole({ data }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['platform-roles'] })
-      toast.success('Rôle créé avec succès')
-      setIsDialogOpen(false)
-      form.reset()
-    },
-    onError: (error: any) => toast.error(error.message || 'Erreur lors de la création'),
-  })
-
-  const updateMutation = useMutation({
-    mutationFn: ({ id, updates }: { id: string, updates: Partial<Role> }) =>
-      updatePlatformRole({ data: { id, updates } }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['platform-roles'] })
-      toast.success('Rôle mis à jour avec succès')
-      setIsDialogOpen(false)
-      setEditingRole(null)
-      form.reset()
-    },
-    onError: (error: any) => toast.error(error.message || 'Erreur lors de la mise à jour'),
-  })
-
-  const deleteMutation = useMutation({
-    mutationFn: (id: string) => deletePlatformRole({ data: { id } }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['platform-roles'] })
-      toast.success('Rôle supprimé')
-      setIsDeleteOpen(false)
-      setRoleToDelete(null)
-    },
-    onError: () => {
-      toast.error('Erreur lors de la suppression')
-    },
-  })
+  }, [editingRole, isDialogOpen, form])
 
   const handleEdit = (role: Role) => {
     setEditingRole(role)
@@ -217,10 +221,10 @@ function RoleManagement() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-4xl md:text-5xl font-black tracking-tighter bg-linear-to-br from-foreground via-foreground to-foreground/40 bg-clip-text text-transparent">
-            Gestion des Rôles
+            {t.roles.title()}
           </h1>
           <p className="text-muted-foreground/80 mt-2 text-lg font-medium max-w-2xl">
-            Configurez les permissions granulaires et la hiérarchie d'accès pour assurer la sécurité et l'organisation de votre plateforme.
+            {t.roles.subtitle()}
           </p>
         </div>
 
@@ -233,7 +237,7 @@ function RoleManagement() {
               render={triggerProps => (
                 <Button {...triggerProps} size="lg" className="rounded-full shadow-lg hover:shadow-primary/20 transition-all">
                   <IconPlus className="mr-2 h-5 w-5" />
-                  Nouveau Rôle
+                  {t.roles.create()}
                 </Button>
               )}
             />
@@ -245,7 +249,7 @@ function RoleManagement() {
                   </div>
                   <div>
                     <DialogTitle className="text-xl sm:text-2xl font-bold tracking-tight">
-                      {editingRole ? 'Modifier le Rôle' : 'Nouveau Rôle Stratégique'}
+                      {editingRole ? t.roles.edit() : t.roles.create()}
                     </DialogTitle>
                     <DialogDescription className="text-sm sm:text-base line-clamp-1">
                       Définissez précisément les responsabilités et les accès.
@@ -268,7 +272,7 @@ function RoleManagement() {
                     name="name"
                     children={field => (
                       <Field>
-                        <FieldLabel htmlFor={field.name}>Nom du rôle</FieldLabel>
+                        <FieldLabel htmlFor={field.name}>{t.roles.name()}</FieldLabel>
                         <Input
                           id={field.name}
                           placeholder="ex: Superviseur Pédagogique"
@@ -287,7 +291,7 @@ function RoleManagement() {
                     name="scope"
                     children={field => (
                       <Field>
-                        <FieldLabel htmlFor={field.name}>Périmètre (Scope)</FieldLabel>
+                        <FieldLabel htmlFor={field.name}>{t.roles.scope()}</FieldLabel>
                         <Select
                           value={field.state.value}
                           onValueChange={val => field.handleChange(val as SchoolScope)}
@@ -313,7 +317,7 @@ function RoleManagement() {
                     name="slug"
                     children={field => (
                       <Field>
-                        <FieldLabel htmlFor={field.name}>Identifiant (Slug)</FieldLabel>
+                        <FieldLabel htmlFor={field.name}>{t.roles.slug()}</FieldLabel>
                         <Input
                           id={field.name}
                           placeholder="superviseur_pedagogique"
@@ -333,7 +337,7 @@ function RoleManagement() {
                     name="description"
                     children={field => (
                       <Field>
-                        <FieldLabel htmlFor={field.name}>Description & Mission</FieldLabel>
+                        <FieldLabel htmlFor={field.name}>{t.roles.description()}</FieldLabel>
                         <Input
                           id={field.name}
                           placeholder="Objectif principal de ce rôle..."
@@ -350,7 +354,7 @@ function RoleManagement() {
 
                 <div className="space-y-6 pt-4">
                   <div className="flex items-center justify-between border-b border-border/20 pb-3">
-                    <h3 className="text-lg sm:text-xl font-bold tracking-tight">Matrice des Permissions</h3>
+                    <h3 className="text-lg sm:text-xl font-bold tracking-tight">{t.roles.permissions()}</h3>
                     <Badge variant="outline" className="rounded-full bg-primary/5 text-primary border-primary/20 text-xs px-3 py-1">
                       Configuration Granulaire
                     </Badge>
@@ -405,11 +409,9 @@ function RoleManagement() {
                                                 if (e.key === 'Enter' || e.key === ' ')
                                                   toggle()
                                               }}
-                                              className={`flex flex-col items-center justify-center gap-2.5 p-3 rounded-2xl border text-xs font-medium transition-all active:scale-95 cursor-pointer shadow-xs ${
-                                                isChecked
-                                                  ? 'bg-primary/10 border-primary/40 text-primary ring-1 ring-primary/20'
-                                                  : 'bg-background/40 border-border/60 text-muted-foreground hover:bg-primary/5 hover:border-primary/20'
-                                              }`}
+                                              className={`flex flex-col items-center justify-center gap-2.5 p-3 rounded-2xl border text-xs font-medium transition-all active:scale-95 cursor-pointer shadow-xs ${isChecked
+                                                ? 'bg-primary/10 border-primary/40 text-primary ring-1 ring-primary/20'
+                                                : 'bg-background/40 border-border/60 text-muted-foreground hover:bg-primary/5 hover:border-primary/20'}`}
                                             >
                                               <Checkbox
                                                 checked={!!isChecked}
@@ -435,7 +437,7 @@ function RoleManagement() {
 
                 <DialogFooter className="pt-8 gap-3 border-t border-border/10">
                   <Button type="button" variant="ghost" size="lg" className="rounded-xl font-bold px-6" onClick={() => handleOpenChange(false)}>
-                    Annuler
+                    {t.common.cancel()}
                   </Button>
                   <form.Subscribe
                     selector={state => [state.canSubmit, state.isSubmitting]}
@@ -446,7 +448,7 @@ function RoleManagement() {
                         className="rounded-xl px-10 font-black uppercase tracking-widest shadow-xl shadow-primary/20 transition-all hover:scale-[1.02]"
                         disabled={!canSubmit || isSubmitting}
                       >
-                        {isSubmitting ? 'Envoi...' : editingRole ? 'Enregistrer' : 'Créer le Rôle'}
+                        {isSubmitting ? t.common.loading() : editingRole ? t.common.save() : t.common.create()}
                       </Button>
                     )}
                   />
@@ -461,10 +463,10 @@ function RoleManagement() {
         <div className="flex flex-col items-center mb-10">
           <TabsList className="grid w-full grid-cols-2 max-w-md p-1 bg-muted/50 backdrop-blur-sm rounded-2xl border border-border/50">
             <TabsTrigger value="school" className="rounded-xl data-[state=active]:shadow-lg data-[state=active]:bg-background transition-all py-2.5">
-              Rôles École
+              {t.roles.schoolRoles()}
             </TabsTrigger>
             <TabsTrigger value="system" className="rounded-xl data-[state=active]:shadow-lg data-[state=active]:bg-background transition-all py-2.5">
-              Rôles Plateforme
+              {t.roles.systemRoles()}
             </TabsTrigger>
           </TabsList>
         </div>
@@ -481,7 +483,7 @@ function RoleManagement() {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {roles.length === 0 && (
                       <div className="col-span-full py-20 text-center text-muted-foreground">
-                        Aucun rôle d'école défini.
+                        {t.roles.none()}
                       </div>
                     )}
                     {roles.map((role: Role) => (
@@ -532,19 +534,14 @@ function RoleManagement() {
       <DeleteConfirmationDialog
         open={isDeleteOpen}
         onOpenChange={setIsDeleteOpen}
-        title="Suppression de Rôle"
+        title={t.roles.confirmDelete()}
         description={(
           <div className="space-y-3">
             <p>
-              Vous êtes sur le point de supprimer le rôle
-              {' '}
-              <span className="font-bold text-foreground">
-                {roleToDelete?.name}
-              </span>
-              .
+              {t.roles.deleteDescription({ name: roleToDelete?.name || '' })}
             </p>
             <p className="text-destructive font-medium border-l-2 border-destructive pl-3 py-1 bg-destructive/5 rounded-r-md">
-              Attention : Cette action est irréversible. Tous les utilisateurs rattachés à ce rôle perdront immédiatement l'intégralité de leurs permissions associées.
+              {t.roles.deleteWarning()}
             </p>
           </div>
         )}

@@ -1,3 +1,4 @@
+import path from 'node:path'
 import viteReact from '@vitejs/plugin-react'
 import viteTsConfigPaths from 'vite-tsconfig-paths'
 import { defineConfig } from 'vitest/config'
@@ -9,6 +10,12 @@ export default defineConfig({
     }),
     viteReact(),
   ],
+  resolve: {
+    alias: {
+      'cloudflare:workers': path.resolve(__dirname, './src/mocks/cloudflare-workers.ts'),
+      '@repo/data-ops/database/setup': path.resolve(__dirname, './src/mocks/db-setup.ts'),
+    },
+  },
   test: {
     globals: true,
     environment: 'jsdom',
@@ -16,7 +23,6 @@ export default defineConfig({
     include: ['src/**/*.{test,spec}.{js,ts,tsx}'],
     exclude: ['**/node_modules/**', '**/dist/**', '**/.wrangler/**', '**/e2e/**'],
 
-    // Enhanced coverage with v8 provider (2025 features)
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'lcov', 'json'],
@@ -48,33 +54,23 @@ export default defineConfig({
         branches: 75,
         statements: 80,
       },
-      // 2025: Enhanced coverage options
       ignoreClassMethods: ['render', 'componentDidMount', 'componentDidUpdate'],
       cleanOnRerun: true,
     },
 
-    // Enhanced performance and parallelism (2025 features)
     isolate: true,
     fileParallelism: true,
     testTimeout: 10000,
     hookTimeout: 10000,
     maxConcurrency: 4,
-
-    // Enhanced watch mode
     watch: false,
-
-    // Better failure reporting
     reporters: ['default', 'verbose'],
-
-    // Environment variables for testing
     env: {
       NODE_ENV: 'test',
       TZ: 'UTC',
     },
-
-    // Mock optimization
     clearMocks: true,
     restoreMocks: true,
-    mockReset: true,
+    mockReset: false,
   },
 })

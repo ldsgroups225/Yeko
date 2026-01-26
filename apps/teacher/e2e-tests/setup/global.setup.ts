@@ -10,12 +10,12 @@ async function globalSetup() {
   await page.waitForURL('http://localhost:3002/login')
   await page.waitForLoadState('networkidle')
 
-  await page.locator('input[id="email"]').fill('enseignant@ecole.com')
-  await page.locator('input[id="password"]').fill('password')
+  await page.getByRole('textbox', { name: 'Email' }).fill('enseignant@ecole.com')
+  await page.getByRole('textbox', { name: 'Mot de passe' }).fill('password')
 
-  await page.locator('button[type="submit"]').click()
+  await page.getByRole('button', { name: 'Se connecter' }).click()
 
-  await expect(page).toHaveURL(/.*app/, { timeout: 10000 })
+  await expect(page).toHaveURL(/.*dashboard/, { timeout: 10000 })
 
   await page.context().storageState({ path: AUTH_FILE })
   await browser.close()

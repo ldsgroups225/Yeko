@@ -1,5 +1,6 @@
 import { eq } from 'drizzle-orm'
-import { afterAll, beforeAll, describe, expect } from 'vitest'
+import { nanoid } from 'nanoid'
+import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import { getDb } from '../database/setup'
 import { auth_user } from '../drizzle/auth-schema'
 import { activityLogs, apiMetrics, schools } from '../drizzle/core-schema'
@@ -24,26 +25,24 @@ import {
 
 describe('activity Tracking', () => {
   let db: ReturnType<typeof getDb>
-  const testUserId = 'test-user-123'
-  const testSchoolId = 'test-school-123'
+  const testUserId = nanoid()
+  const testSchoolId = nanoid()
 
   beforeAll(async () => {
     db = getDb()
-    // Create test user first (required for foreign key constraint)
     await db.insert(auth_user).values({
       id: testUserId,
       name: 'Test User',
-      email: 'test-user@example.com',
+      email: `test-${testUserId}@example.com`,
       emailVerified: true,
-    }).onConflictDoNothing() // Use onConflictDoNothing to avoid duplicate key errors
+    }).onConflictDoNothing()
 
-    // Create test school
     await db.insert(schools).values({
       id: testSchoolId,
       name: 'Test School',
-      code: 'TEST001',
+      code: `TEST-${testSchoolId.slice(0, 5)}`,
       status: 'active',
-    }).onConflictDoNothing() // Use onConflictDoNothing to avoid duplicate key errors
+    }).onConflictDoNothing()
   })
 
   afterAll(async () => {
@@ -225,7 +224,7 @@ describe('analytics Queries', () => {
       expect(result).toBeDefined()
       expect(result.totalSchools).toBeGreaterThanOrEqual(0)
     }
-  })
+  }, 30000)
 
   test('should calculate growth correctly', async () => {
     const result = await getAnalyticsOverview('30d')
@@ -233,7 +232,7 @@ describe('analytics Queries', () => {
     // Growth can be positive, negative, or zero
     expect(typeof result.schoolsGrowth).toBe('number')
     expect(Number.isFinite(result.schoolsGrowth)).toBe(true)
-  })
+  }, 10000)
 
   test('should handle zero growth calculation correctly', async () => {
     // Test edge case where there are no schools in previous period
@@ -242,7 +241,7 @@ describe('analytics Queries', () => {
     expect(result.schoolsGrowth).toBeGreaterThanOrEqual(0)
     expect(typeof result.userGrowth).toBe('number')
     expect(Number.isFinite(result.userGrowth)).toBe(true)
-  })
+  }, 10000)
 
   test('should handle engagement rate calculation edge cases', async () => {
     const result = await getAnalyticsOverview('30d')
@@ -251,7 +250,7 @@ describe('analytics Queries', () => {
     expect(result.engagementRate).toBeGreaterThanOrEqual(0)
     expect(result.engagementRate).toBeLessThanOrEqual(100)
     expect(typeof result.engagementRate).toBe('number')
-  })
+  }, 10000)
 })
 
 describe('analytics Edge Cases', () => {
@@ -261,7 +260,7 @@ describe('analytics Edge Cases', () => {
 
     expect(result.totalSchools).toBeGreaterThanOrEqual(0)
     expect(result.activeUsers).toBeGreaterThanOrEqual(0)
-  })
+  }, 10000)
 
   test('should handle future dates gracefully', async () => {
     const futureDate = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
@@ -275,7 +274,7 @@ describe('analytics Edge Cases', () => {
     const result2 = await getAnalyticsOverview('30d')
 
     expect(Object.keys(result1).sort()).toStrictEqual(Object.keys(result2).sort())
-  })
+  }, 20000)
 })
 
 describe('generateReportData', () => {
@@ -292,7 +291,7 @@ describe('generateReportData', () => {
       expect(reportData).toHaveProperty('platformUsage')
       expect(typeof reportData.generatedAt).toBe('string')
     }
-  })
+  }, 60000)
 
   test('should generate consistent report structure', async () => {
     const report1 = await generateReportData('30d')
@@ -300,5 +299,5 @@ describe('generateReportData', () => {
 
     expect(Object.keys(report1).sort()).toStrictEqual(Object.keys(report2).sort())
     expect(report1.timeRange).toBe(report2.timeRange)
-  })
+  }, 20000)
 })

@@ -31,8 +31,8 @@ export class RoleManagementPage {
   }
 
   async goto() {
-    await this.page.goto('/hr/roles')
-    await this.page.waitForLoadState('networkidle')
+    await this.page.goto('/users/roles/')
+    await this.page.waitForLoadState('domcontentloaded')
   }
 
   async createRole(data: {
@@ -129,8 +129,8 @@ export class UserManagementPage {
   }
 
   async goto() {
-    await this.page.goto('/hr/users')
-    await this.page.waitForLoadState('networkidle')
+    await this.page.goto('/users/users/')
+    await this.page.waitForLoadState('domcontentloaded')
   }
 
   async createUser(data: {
@@ -217,8 +217,8 @@ export class StaffManagementPage {
   }
 
   async goto() {
-    await this.page.goto('/hr/staff')
-    await this.page.waitForLoadState('networkidle')
+    await this.page.goto('/users/staff/')
+    await this.page.waitForLoadState('domcontentloaded')
   }
 
   async createStaff(data: {
@@ -275,8 +275,8 @@ export class TeacherManagementPage {
   }
 
   async goto() {
-    await this.page.goto('/hr/teachers')
-    await this.page.waitForLoadState('networkidle')
+    await this.page.goto('/users/teachers/')
+    await this.page.waitForLoadState('domcontentloaded')
   }
 
   async createTeacher(data: {

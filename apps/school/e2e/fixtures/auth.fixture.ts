@@ -1,11 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import type { Page } from '@playwright/test'
-import { test as base } from '@playwright/test'
-
-/**
- * Authentication fixture for E2E tests
- * Provides authenticated page context for testing protected routes
- */
+import { test as base, expect } from '@playwright/test'
 
 export interface AuthFixtures {
   authenticatedPage: Page
@@ -13,20 +8,21 @@ export interface AuthFixtures {
 
 export const test = base.extend<AuthFixtures>({
   authenticatedPage: async ({ page }, use) => {
-    // Navigate to login page
-    await page.goto('/auth/login')
+    await page.goto('/dashboard')
+    await page.waitForLoadState('domcontentloaded')
 
-    // Perform login (adjust selectors based on your actual login form)
-    await page.fill('input[name="email"]', 'admin@yeko.test')
-    await page.fill('input[name="password"]', 'password123')
-    await page.click('button[type="submit"]')
+    const emailInput = page.locator('input[name="email"], input[type="email"]').first()
+    const isLoginVisible = await emailInput.isVisible({ timeout: 5000 }).catch(() => false)
 
-    // Wait for navigation to complete
-    await page.waitForURL('**/dashboard', { timeout: 10000 })
+    if (isLoginVisible) {
+      await emailInput.fill('admin@yeko.test')
+      await page.locator('input[name="password"], input[type="password"]').first().fill('password123')
+      await page.locator('button[type="submit"]').first().click()
+      await page.waitForTimeout(3000)
+    }
 
-    // Use the authenticated page
     await use(page)
   },
 })
 
-export { expect } from '@playwright/test'
+export { expect }

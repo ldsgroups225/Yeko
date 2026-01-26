@@ -33,8 +33,10 @@ export default defineConfig({
       '@tanstack/react-start',
       'better-auth',
       '@base-ui/react',
+      'xlsx',
       'xlsx-js-style',
       '@chronicstone/typed-xlsx',
+      '@tabler/icons-react',
     ],
   },
   optimizeDeps: {

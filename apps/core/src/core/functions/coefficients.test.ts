@@ -1,4 +1,5 @@
-import * as dataOps from '@repo/data-ops'
+// Import the mocked modules to use in tests
+import * as coefficientsQueries from '@repo/data-ops/queries/coefficients'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import {
   bulkCreateCoefficientsMutation,
@@ -13,47 +14,21 @@ import {
   validateCoefficientImportMutation,
 } from './coefficients'
 
-// Mock createServerFn - must be top level for hoisting
-vi.mock('@tanstack/react-start', async () => {
-  const actual = await vi.importActual('@tanstack/react-start')
-  return {
-    ...actual,
-    createServerFn: () => {
-      const chain = {
-        middleware: () => chain,
-        inputValidator: () => {
-          return {
-            handler: (cb: any) => {
-              return async (payload: any) => {
-                const parsedData
-                  = payload?.data !== undefined ? payload.data : payload
-                return cb({ data: parsedData, context: {} })
-              }
-            },
-          }
-        },
-        handler: (cb: any) => {
-          return async (payload: any) => {
-            return cb({ data: payload?.data || payload || {}, context: {} })
-          }
-        },
-      }
-      return chain
-    },
-  }
-})
+vi.mock('@repo/data-ops/queries/coefficients')
 
-// Mock the data-ops package
-vi.mock('@repo/data-ops', () => ({
-  getCoefficientTemplates: vi.fn(),
-  getCoefficientTemplateById: vi.fn(),
-  createCoefficientTemplate: vi.fn(),
-  updateCoefficientTemplate: vi.fn(),
-  deleteCoefficientTemplate: vi.fn(),
-  bulkCreateCoefficients: vi.fn(),
-  bulkUpdateCoefficients: vi.fn(),
-  copyCoefficientTemplates: vi.fn(),
-  getCoefficientStats: vi.fn(),
+vi.mock('@repo/data-ops/database/setup', () => ({
+  getDb: vi.fn(() => ({
+    select: vi.fn().mockReturnThis(),
+    from: vi.fn().mockReturnThis(),
+    where: vi.fn().mockReturnThis(),
+  })),
+}))
+
+vi.mock('@repo/data-ops/drizzle/core-schema', () => ({
+  schoolYearTemplates: { id: {} },
+  subjects: { id: {} },
+  grades: { id: {} },
+  series: { id: {} },
 }))
 
 // Mock the middleware
@@ -99,7 +74,7 @@ describe('coefficients Server Functions', () => {
         },
       ]
 
-      vi.mocked(dataOps.getCoefficientTemplates).mockResolvedValue({
+      vi.mocked(coefficientsQueries.getCoefficientTemplates).mockResolvedValue({
         coefficients: mockCoefficients,
         pagination: { total: 2, page: 1, limit: 10, totalPages: 1 },
       })
@@ -108,7 +83,7 @@ describe('coefficients Server Functions', () => {
         data: { page: 1, limit: 10, schoolYearTemplateId: '1', gradeId: '1' },
       })
 
-      expect(dataOps.getCoefficientTemplates).toHaveBeenCalledWith({
+      expect(coefficientsQueries.getCoefficientTemplates).toHaveBeenCalledWith({
         page: 1,
         limit: 10,
         schoolYearTemplateId: '1',
@@ -118,7 +93,7 @@ describe('coefficients Server Functions', () => {
     })
 
     test('should handle empty results', async () => {
-      vi.mocked(dataOps.getCoefficientTemplates).mockResolvedValue({
+      vi.mocked(coefficientsQueries.getCoefficientTemplates).mockResolvedValue({
         coefficients: [],
         pagination: { total: 0, page: 1, limit: 10, totalPages: 0 },
       })
@@ -132,7 +107,7 @@ describe('coefficients Server Functions', () => {
     })
 
     test('should pass pagination parameters', async () => {
-      vi.mocked(dataOps.getCoefficientTemplates).mockResolvedValue({
+      vi.mocked(coefficientsQueries.getCoefficientTemplates).mockResolvedValue({
         coefficients: [],
         pagination: { total: 0, page: 2, limit: 5, totalPages: 1 },
       })
@@ -141,7 +116,7 @@ describe('coefficients Server Functions', () => {
         data: { page: 2, limit: 5, schoolYearTemplateId: '1' },
       })
 
-      expect(dataOps.getCoefficientTemplates).toHaveBeenCalledWith(
+      expect(coefficientsQueries.getCoefficientTemplates).toHaveBeenCalledWith(
         expect.objectContaining({
           page: 2,
           limit: 5,
@@ -150,7 +125,7 @@ describe('coefficients Server Functions', () => {
     })
 
     test('should default to page 1 with limit 10', async () => {
-      vi.mocked(dataOps.getCoefficientTemplates).mockResolvedValue({
+      vi.mocked(coefficientsQueries.getCoefficientTemplates).mockResolvedValue({
         coefficients: [],
         pagination: { total: 0, page: 1, limit: 10, totalPages: 0 },
       })
@@ -159,11 +134,11 @@ describe('coefficients Server Functions', () => {
       await coefficientTemplatesQuery({ data: { schoolYearTemplateId: '1' } })
 
       // Verify the mock was called at least once
-      expect(dataOps.getCoefficientTemplates).toHaveBeenCalled()
+      expect(coefficientsQueries.getCoefficientTemplates).toHaveBeenCalled()
     })
 
     test('should filter by subject', async () => {
-      vi.mocked(dataOps.getCoefficientTemplates).mockResolvedValue({
+      vi.mocked(coefficientsQueries.getCoefficientTemplates).mockResolvedValue({
         coefficients: [
           {
             id: '1',
@@ -187,13 +162,13 @@ describe('coefficients Server Functions', () => {
         data: { schoolYearTemplateId: '1', subjectId: 'math' },
       })
 
-      expect(dataOps.getCoefficientTemplates).toHaveBeenCalledWith(
+      expect(coefficientsQueries.getCoefficientTemplates).toHaveBeenCalledWith(
         expect.objectContaining({ subjectId: 'math' }),
       )
     })
 
     test('should combine multiple filters', async () => {
-      vi.mocked(dataOps.getCoefficientTemplates).mockResolvedValue({
+      vi.mocked(coefficientsQueries.getCoefficientTemplates).mockResolvedValue({
         coefficients: [],
         pagination: { total: 0, page: 1, limit: 10, totalPages: 0 },
       })
@@ -208,7 +183,7 @@ describe('coefficients Server Functions', () => {
         },
       })
 
-      expect(dataOps.getCoefficientTemplates).toHaveBeenCalledWith({
+      expect(coefficientsQueries.getCoefficientTemplates).toHaveBeenCalledWith({
         schoolYearTemplateId: '1',
         gradeId: '1',
         subjectId: 'math',
@@ -235,14 +210,14 @@ describe('coefficients Server Functions', () => {
         series: null,
       }
 
-      vi.mocked(dataOps.getCoefficientTemplateById).mockResolvedValue(
+      vi.mocked(coefficientsQueries.getCoefficientTemplateById).mockResolvedValue(
         mockTemplate,
       )
 
       const result = await coefficientTemplateByIdQuery({ data: { id: '1' } })
 
       expect(result).toStrictEqual(mockTemplate)
-      expect(dataOps.getCoefficientTemplateById).toHaveBeenCalledWith('1')
+      expect(coefficientsQueries.getCoefficientTemplateById).toHaveBeenCalledWith('1')
     })
   })
 
@@ -255,7 +230,7 @@ describe('coefficients Server Functions', () => {
         weight: 3,
       }
 
-      vi.mocked(dataOps.createCoefficientTemplate).mockResolvedValue({
+      vi.mocked(coefficientsQueries.createCoefficientTemplate).mockResolvedValue({
         id: 'new-id',
         ...newTemplate,
         seriesId: null,
@@ -269,7 +244,7 @@ describe('coefficients Server Functions', () => {
 
       expect(result.schoolYearTemplateId).toBe('1')
       expect(result.subjectId).toBe('1')
-      expect(dataOps.createCoefficientTemplate).toHaveBeenCalledWith(
+      expect(coefficientsQueries.createCoefficientTemplate).toHaveBeenCalledWith(
         newTemplate,
       )
     })
@@ -277,7 +252,7 @@ describe('coefficients Server Functions', () => {
     test('should throw on invalid data', async () => {
       // The mock will return undefined for invalid data since Zod validation fails silently
       // This test verifies that invalid data doesn't call the mock
-      vi.mocked(dataOps.createCoefficientTemplate).mockResolvedValue({
+      vi.mocked(coefficientsQueries.createCoefficientTemplate).mockResolvedValue({
         id: 'new-id',
         schoolYearTemplateId: '1',
         subjectId: '1',
@@ -310,7 +285,7 @@ describe('coefficients Server Functions', () => {
         weight: 4,
       }
 
-      vi.mocked(dataOps.updateCoefficientTemplate).mockResolvedValue({
+      vi.mocked(coefficientsQueries.updateCoefficientTemplate).mockResolvedValue({
         id: '1',
         weight: 4,
         schoolYearTemplateId: '1',
@@ -332,7 +307,7 @@ describe('coefficients Server Functions', () => {
 
   describe('deleteCoefficientTemplateMutation', () => {
     test('should delete template by ID', async () => {
-      vi.mocked(dataOps.deleteCoefficientTemplate).mockResolvedValue(undefined)
+      vi.mocked(coefficientsQueries.deleteCoefficientTemplate).mockResolvedValue(undefined)
 
       const result = await deleteCoefficientTemplateMutation({
         data: { id: '1' },
@@ -361,20 +336,20 @@ describe('coefficients Server Functions', () => {
         ],
       }
 
-      vi.mocked(dataOps.bulkCreateCoefficients).mockResolvedValue([])
+      vi.mocked(coefficientsQueries.bulkCreateCoefficients).mockResolvedValue([])
 
       const result = await bulkCreateCoefficientsMutation({
         data: newCoefficients,
       })
 
       expect(result).toBeDefined()
-      expect(dataOps.bulkCreateCoefficients).toHaveBeenCalledWith(
+      expect(coefficientsQueries.bulkCreateCoefficients).toHaveBeenCalledWith(
         newCoefficients.coefficients,
       )
     })
 
     test('should handle empty array', async () => {
-      vi.mocked(dataOps.bulkCreateCoefficients).mockResolvedValue([])
+      vi.mocked(coefficientsQueries.bulkCreateCoefficients).mockResolvedValue([])
 
       const result = await bulkCreateCoefficientsMutation({
         data: { coefficients: [] },
@@ -386,14 +361,12 @@ describe('coefficients Server Functions', () => {
 
   describe('bulkUpdateCoefficientsMutation', () => {
     test('should update multiple coefficients', async () => {
-      const updateData = {
-        coefficients: [
-          { id: '1', weight: 4 },
-          { id: '2', weight: 5 },
-        ],
-      }
+      const updateData = [
+        { id: '1', weight: 4 },
+        { id: '2', weight: 5 },
+      ]
 
-      vi.mocked(dataOps.bulkUpdateCoefficients).mockResolvedValue({} as any)
+      vi.mocked(coefficientsQueries.bulkUpdateCoefficients).mockResolvedValue({} as any)
 
       const result = await bulkUpdateCoefficientsMutation({ data: updateData })
 
@@ -403,10 +376,10 @@ describe('coefficients Server Functions', () => {
 
   describe('copyCoefficientsMutation', () => {
     test('should copy coefficients to new school year', async () => {
-      vi.mocked(dataOps.copyCoefficientTemplates).mockResolvedValue([])
+      vi.mocked(coefficientsQueries.copyCoefficientTemplates).mockResolvedValue([])
 
       const result = await copyCoefficientsMutation({
-        data: { fromSchoolYearId: '1', toSchoolYearId: '2' },
+        data: { sourceYearId: '1', targetYearId: '2' },
       })
 
       expect(result).toBeDefined()
@@ -420,7 +393,7 @@ describe('coefficients Server Functions', () => {
         average: 2.5,
       }
 
-      vi.mocked(dataOps.getCoefficientStats).mockResolvedValue(mockStats)
+      vi.mocked(coefficientsQueries.getCoefficientStats).mockResolvedValue(mockStats)
 
       const result = await coefficientStatsQuery()
 
@@ -433,7 +406,7 @@ describe('coefficients Server Functions', () => {
         average: 0,
       }
 
-      vi.mocked(dataOps.getCoefficientStats).mockResolvedValue(emptyStats)
+      vi.mocked(coefficientsQueries.getCoefficientStats).mockResolvedValue(emptyStats)
 
       const result = await coefficientStatsQuery()
 
@@ -445,20 +418,22 @@ describe('coefficients Server Functions', () => {
     test('should return valid result for import data', async () => {
       // This test verifies the handler returns a result structure
       const result = await validateCoefficientImportMutation({
-        data: [
-          {
-            schoolYearTemplateId: '1',
-            subjectId: '1',
-            gradeId: '1',
-            weight: 3,
-          },
-          {
-            schoolYearTemplateId: '1',
-            subjectId: '2',
-            gradeId: '1',
-            weight: 2,
-          },
-        ],
+        data: {
+          data: [
+            {
+              schoolYearTemplateId: '1',
+              subjectId: '1',
+              gradeId: '1',
+              weight: 3,
+            },
+            {
+              schoolYearTemplateId: '1',
+              subjectId: '2',
+              gradeId: '1',
+              weight: 2,
+            },
+          ],
+        },
       })
 
       expect(result).toBeDefined()
@@ -468,9 +443,11 @@ describe('coefficients Server Functions', () => {
 
     test('should return defined result for various inputs', async () => {
       const result = await validateCoefficientImportMutation({
-        data: [
-          { schoolYearTemplateId: '', subjectId: '', gradeId: '', weight: 3 },
-        ],
+        data: {
+          data: [
+            { schoolYearTemplateId: 'valid-year-id', subjectId: 'valid-subject-id', gradeId: 'valid-grade-id', weight: 3 },
+          ],
+        },
       })
 
       expect(result).toBeDefined()
@@ -479,20 +456,22 @@ describe('coefficients Server Functions', () => {
 
     test('should handle duplicate data', async () => {
       const result = await validateCoefficientImportMutation({
-        data: [
-          {
-            schoolYearTemplateId: '1',
-            subjectId: '1',
-            gradeId: '1',
-            weight: 3,
-          },
-          {
-            schoolYearTemplateId: '1',
-            subjectId: '1',
-            gradeId: '1',
-            weight: 3,
-          },
-        ],
+        data: {
+          data: [
+            {
+              schoolYearTemplateId: '1',
+              subjectId: '1',
+              gradeId: '1',
+              weight: 3,
+            },
+            {
+              schoolYearTemplateId: '1',
+              subjectId: '1',
+              gradeId: '1',
+              weight: 3,
+            },
+          ],
+        },
       })
 
       expect(result).toBeDefined()
@@ -502,7 +481,7 @@ describe('coefficients Server Functions', () => {
 
   describe('error Handling', () => {
     test('should handle not found errors gracefully', async () => {
-      vi.mocked(dataOps.getCoefficientTemplateById).mockResolvedValue(null)
+      vi.mocked(coefficientsQueries.getCoefficientTemplateById).mockResolvedValue(null)
 
       const result = await coefficientTemplateByIdQuery({
         data: { id: 'nonexistent' },
@@ -511,7 +490,7 @@ describe('coefficients Server Functions', () => {
     })
 
     test('should handle database connection errors', async () => {
-      vi.mocked(dataOps.createCoefficientTemplate).mockRejectedValue(
+      vi.mocked(coefficientsQueries.createCoefficientTemplate).mockRejectedValue(
         new Error('Database connection failed'),
       )
 

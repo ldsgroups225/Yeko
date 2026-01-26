@@ -67,7 +67,7 @@ export class DashboardPage {
   }
 
   async goto() {
-    await this.page.goto('/dashboard')
+    await this.page.goto('/app/dashboard')
     await this.page.waitForLoadState('networkidle')
   }
 
@@ -107,7 +107,7 @@ export class SchoolManagementPage {
   }
 
   async goto() {
-    await this.page.goto('/schools')
+    await this.page.goto('/app/schools')
     await this.page.waitForLoadState('networkidle')
   }
 
@@ -174,7 +174,7 @@ export class SchoolCreatePage {
   }
 
   async goto() {
-    await this.page.goto('/schools/create')
+    await this.page.goto('/app/schools/create')
     await this.page.waitForLoadState('networkidle')
   }
 
@@ -274,7 +274,7 @@ export class CatalogPage {
   }
 
   async goto() {
-    await this.page.goto('/catalogs')
+    await this.page.goto('/app/catalogs')
     await this.page.waitForLoadState('networkidle')
   }
 
@@ -315,7 +315,7 @@ export class SchoolYearsPage {
   }
 
   async goto() {
-    await this.page.goto('/catalogs/school-years')
+    await this.page.goto('/app/catalogs/school-years')
     await this.page.waitForLoadState('networkidle')
   }
 
@@ -390,7 +390,7 @@ export class GradesPage {
   }
 
   async goto() {
-    await this.page.goto('/catalogs/grades')
+    await this.page.goto('/app/catalogs/grades')
     await this.page.waitForLoadState('networkidle')
   }
 
@@ -434,7 +434,7 @@ export class SubjectsPage {
   }
 
   async goto() {
-    await this.page.goto('/catalogs/subjects')
+    await this.page.goto('/app/catalogs/subjects')
     await this.page.waitForLoadState('networkidle')
   }
 
@@ -476,7 +476,7 @@ export class ProgramsPage {
   }
 
   async goto() {
-    await this.page.goto('/catalogs/programs')
+    await this.page.goto('/app/catalogs/programs')
     await this.page.waitForLoadState('networkidle')
   }
 
@@ -536,7 +536,7 @@ export class CoefficientsPage {
   }
 
   async goto() {
-    await this.page.goto('/catalogs/coefficients')
+    await this.page.goto('/app/catalogs/coefficients')
     await this.page.waitForLoadState('networkidle')
   }
 
@@ -614,7 +614,7 @@ export class AnalyticsPage {
   }
 
   async goto() {
-    await this.page.goto('/analytics')
+    await this.page.goto('/app/analytics')
     await this.page.waitForLoadState('networkidle')
   }
 }
@@ -629,7 +629,7 @@ export class SettingsPage {
   }
 
   async goto() {
-    await this.page.goto('/settings')
+    await this.page.goto('/app/settings')
     await this.page.waitForLoadState('networkidle')
   }
 }

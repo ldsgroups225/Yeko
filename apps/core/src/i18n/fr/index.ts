@@ -204,6 +204,112 @@ const fr = {
     notFound: 'École non trouvée',
     duplicate: 'Une école avec ce code existe déjà',
   },
+
+  // Demo Request
+  demoRequest: {
+    title: 'Demander une démo',
+    subtitle: 'Découvrez comment Yeko peut transformer votre établissement',
+    form: {
+      name: 'Nom complet',
+      email: 'Adresse email',
+      phone: 'Numéro de téléphone',
+      schoolName: 'Nom de l\'école / organisation',
+      schoolType: 'Type d\'établissement',
+      role: 'Votre rôle',
+      studentsCount: 'Nombre d\'élèves',
+      message: 'Informations complémentaires',
+      submit: 'Demander une démo',
+      success: 'Demande de démo reçue !',
+      successDescription: 'Merci de votre intérêt pour Yeko ! Notre équipe vous contactera sous 24 heures pour planifier votre démonstration personnalisée.',
+      confirmationEmail: 'Nous avons envoyé un e-mail de confirmation à {email}.',
+      whatNext: 'Que se passe-t-il ensuite ?',
+      whatNextDescription: 'Notre équipe examinera votre demande et vous contactera dans les 24 heures pour planifier une démonstration personnalisée adaptée aux besoins de votre institution.',
+    },
+    schoolTypes: {
+      primary: 'École Primaire',
+      secondary: 'Lycée / Collège',
+      higherEducation: 'Enseignement Supérieur',
+      vocational: 'Formation Professionnelle',
+      other: 'Autre',
+    },
+    roles: {
+      principal: 'Directeur / Principal',
+      vicePrincipal: 'Directeur Adjoint',
+      administrator: 'Administrateur',
+      teacher: 'Enseignant',
+      itDirector: 'Directeur Informatique',
+      parent: 'Association de Parents',
+      other: 'Autre',
+    },
+    studentsCount: {
+      '0-100': 'Moins de 100',
+      '100-500': '100-500',
+      '500-1000': '500-1 000',
+      '1000-2000': '1 000-2 000',
+      '2000-5000': '2 000-5 000',
+      '5000+': 'Plus de 5 000',
+    },
+  },
+
+  // Catalogs
+  catalogs: {
+    title: 'Catalogues',
+    subjects: {
+      title: 'Matières',
+      search: 'Rechercher des matières...',
+      category: 'Catégorie',
+      allCategories: 'Toutes catégories',
+      create: 'Créer une matière',
+      edit: 'Modifier la matière',
+      namePlaceholder: 'Mathématiques',
+      shortNamePlaceholder: 'Maths',
+      selectCategory: 'Sélectionner une catégorie',
+    },
+  },
+
+  // Roles management
+  roles: {
+    title: 'Gestion des Rôles',
+    subtitle: 'Configurez les permissions granulaires et la hiérarchie d\'accès pour assurer la sécurité et l\'organisation de votre plateforme.',
+    create: 'Nouveau Rôle',
+    edit: 'Modifier le Rôle',
+    delete: 'Supprimer le Rôle',
+    name: 'Nom du rôle',
+    slug: 'Identifiant (Slug)',
+    description: 'Description & Mission',
+    scope: 'Périmètre (Scope)',
+    permissions: 'Matrice des Permissions',
+    systemRoles: 'Rôles Plateforme',
+    schoolRoles: 'Rôles École',
+    none: 'Aucun rôle défini.',
+    confirmDelete: 'Suppression de Rôle',
+    deleteDescription: 'Vous êtes sur le point de supprimer le rôle {name}.',
+    deleteWarning: 'Attention : Cette action est irréversible. Tous les utilisateurs rattachés à ce rôle perdront immédiatement l\'intégralité de leurs permissions associées.',
+  },
+
+  // Users management
+  users: {
+    title: 'Utilisateurs Système',
+    subtitle: 'Gérez les comptes d\'administration et supervisez les privilèges d\'accès globaux à la plateforme.',
+    search: 'Rechercher par nom, email...',
+    table: {
+      user: 'Utilisateur',
+      status: 'Statut',
+      roles: 'Rôles Système',
+      activity: 'Activité',
+      actions: 'Actions',
+    },
+    none: 'Aucun utilisateur trouvé',
+    noneDescription: 'Ajustez vos filtres de recherche pour trouver le compte recherché.',
+    syncing: 'Synchronisation des données...',
+    neverLoggedIn: 'Jamais',
+    permissions: 'Habilitations',
+    permissionsTitle: 'Habilitations Système',
+    permissionsSubtitle: 'Configurez les rôles de plateforme pour {name}',
+    availableRoles: 'Rôles Disponibles',
+    updateSuccess: 'Accès mis à jour avec succès',
+    updateError: 'Erreur lors de la mise à jour des accès',
+  },
 } satisfies BaseTranslation
 
 export default fr

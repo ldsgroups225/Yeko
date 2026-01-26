@@ -1,5 +1,6 @@
 import { eq } from 'drizzle-orm'
-import { afterAll, beforeEach, describe, expect, test } from 'vitest'
+import { nanoid } from 'nanoid'
+import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 import { getDb } from '../database/setup'
 import { coefficientTemplates, grades, schoolYearTemplates, series, subjects, tracks } from '../drizzle/core-schema'
 import { createGrade, createSerie, createSubject, createTrack } from '../queries/catalogs'
@@ -16,49 +17,63 @@ import {
 } from '../queries/coefficients'
 import { createSchoolYearTemplate } from '../queries/programs'
 
-describe('coefficient Templates', () => {
+describe('coefficient queries', () => {
   let testYearId: string
-  let testSubjectId: string
   let testGradeId: string
+  let testSubjectId: string
   let testSeriesId: string
   let testTrackId: string
 
   beforeEach(async () => {
-    // Create test data
     const track = await createTrack({
-      name: 'Test Track',
-      code: `TRK-${Date.now()}`,
-      educationLevelId: 2, // Secondary
+      name: `Test Track ${nanoid()}`,
+      code: `TTC-${nanoid()}`,
+      educationLevelId: 1,
     })
     testTrackId = track.id
 
     const year = await createSchoolYearTemplate({
-      name: `Test Year ${Date.now()}`,
+      name: `Test Year ${nanoid()}`,
       isActive: true,
     })
     testYearId = year.id
 
     const subject = await createSubject({
-      name: `Test Subject ${Date.now()}`,
-      shortName: 'TS',
+      name: `Test Subject ${nanoid()}`,
+      shortName: `TS-${nanoid().slice(0, 5)}`,
       category: 'Scientifique',
     })
     testSubjectId = subject.id
 
     const grade = await createGrade({
-      name: `Test Grade ${Date.now()}`,
-      code: `TG-${Date.now()}`,
+      name: `Test Grade ${nanoid()}`,
+      code: `TGC-${nanoid()}`,
       order: 1,
-      trackId: testTrackId,
+      trackId: track.id,
     })
     testGradeId = grade.id
 
     const serie = await createSerie({
-      name: `Test Series ${Date.now()}`,
-      code: `TS-${Date.now()}`,
-      trackId: testTrackId,
+      name: `Test Series ${nanoid()}`,
+      code: `TS-${nanoid()}`,
+      trackId: track.id,
     })
     testSeriesId = serie.id
+  })
+
+  afterEach(async () => {
+    try {
+      const db = getDb()
+      await db.delete(coefficientTemplates).where(eq(coefficientTemplates.schoolYearTemplateId, testYearId))
+      await db.delete(schoolYearTemplates).where(eq(schoolYearTemplates.id, testYearId))
+      await db.delete(subjects).where(eq(subjects.id, testSubjectId))
+      await db.delete(grades).where(eq(grades.id, testGradeId))
+      await db.delete(series).where(eq(series.id, testSeriesId))
+      await db.delete(tracks).where(eq(tracks.id, testTrackId))
+    }
+    catch {
+      // Required catch for cleanup errors in isolated tests
+    }
   })
 
   describe('cRUD Operations', () => {
@@ -467,28 +482,5 @@ describe('coefficient Templates', () => {
         `Coefficient template with id ${nonExistentId} not found`,
       )
     })
-  })
-
-  afterAll(async () => {
-    // Clean up test data to prevent foreign key constraint issues
-    try {
-      const db = getDb()
-      // Delete coefficient templates first (references other tables)
-      await db.delete(coefficientTemplates).where(eq(coefficientTemplates.schoolYearTemplateId, testYearId))
-      await db.delete(coefficientTemplates).where(eq(coefficientTemplates.subjectId, testSubjectId))
-      await db.delete(coefficientTemplates).where(eq(coefficientTemplates.gradeId, testGradeId))
-      await db.delete(coefficientTemplates).where(eq(coefficientTemplates.seriesId, testSeriesId))
-
-      // Then clean up the referenced tables
-      await db.delete(schoolYearTemplates).where(eq(schoolYearTemplates.id, testYearId))
-      await db.delete(subjects).where(eq(subjects.id, testSubjectId))
-      await db.delete(grades).where(eq(grades.id, testGradeId))
-      await db.delete(series).where(eq(series.id, testSeriesId))
-      await db.delete(tracks).where(eq(tracks.id, testTrackId))
-    }
-    catch (error) {
-      // Ignore cleanup errors
-      console.warn('Coefficients test cleanup warning:', error)
-    }
   })
 })

@@ -44,6 +44,7 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import { getPlatformRoles } from '@/core/functions/roles'
 import { assignUserSystemRoles, getPlatformUsers } from '@/core/functions/users'
+import { useTranslations } from '@/i18n/hooks'
 import { formatDate } from '@/utils/formatDate'
 
 export const Route = createFileRoute('/_auth/app/users/')({
@@ -63,23 +64,12 @@ const userRolesSchema = z.object({
 })
 
 function UserManagement() {
+  const t = useTranslations()
   const queryClient = useQueryClient()
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [isRolesDialogOpen, setIsRolesDialogOpen] = useState(false)
-
-  const form = useForm({
-    defaultValues: {
-      roleIds: [] as string[],
-    },
-    validatorAdapter: zodValidator(),
-    onSubmit: async ({ value }) => {
-      if (!selectedUser)
-        return
-      assignRolesMutation.mutate({ userId: selectedUser.id, roleIds: value.roleIds })
-    },
-  })
 
   const { data: userData, isLoading: isUsersLoading } = useQuery({
     queryKey: ['platform-users', search, page],
@@ -95,10 +85,25 @@ function UserManagement() {
     mutationFn: (data: { userId: string, roleIds: string[] }) => assignUserSystemRoles({ data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['platform-users'] })
-      toast.success('Accès mis à jour avec succès')
+      toast.success(t.users.updateSuccess())
       setIsRolesDialogOpen(false)
     },
-    onError: () => toast.error('Erreur lors de la mise à jour des accès'),
+    onError: () => toast.error(t.users.updateError()),
+  })
+
+  const form = useForm({
+    defaultValues: {
+      roleIds: [] as string[],
+    },
+    validatorAdapter: zodValidator(),
+    validators: {
+      onChange: userRolesSchema,
+    },
+    onSubmit: async ({ value }) => {
+      if (!selectedUser)
+        return
+      assignRolesMutation.mutate({ userId: selectedUser.id, roleIds: value.roleIds })
+    },
   })
 
   const handleManageRoles = (user: User & { systemRoles?: string[] }) => {
@@ -127,17 +132,17 @@ function UserManagement() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-4xl md:text-5xl font-black tracking-tighter bg-linear-to-br from-foreground via-foreground to-foreground/40 bg-clip-text text-transparent">
-            Utilisateurs Système
+            {t.users.title()}
           </h1>
           <p className="text-muted-foreground/80 mt-2 text-lg font-medium max-w-2xl">
-            Gérez les comptes d'administration et supervisez les privilèges d'accès globaux à la plateforme.
+            {t.users.subtitle()}
           </p>
         </div>
 
         <div className="relative w-full md:w-96 group">
           <IconSearch className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground transition-colors group-focus-within:text-primary" />
           <Input
-            placeholder="Rechercher par nom, email..."
+            placeholder={t.users.search()}
             className="pl-12 h-12 rounded-full bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-medium shadow-sm"
             value={search}
             onChange={e => setSearch(e.target.value)}
@@ -149,11 +154,11 @@ function UserManagement() {
         <Table>
           <TableHeader className="bg-muted/30 border-b border-border/20">
             <TableRow className="hover:bg-transparent">
-              <TableHead className="w-[300px] h-14 font-black uppercase tracking-widest text-[10px]">Utilisateur</TableHead>
-              <TableHead className="h-14 font-black uppercase tracking-widest text-[10px]">Statut</TableHead>
-              <TableHead className="h-14 font-black uppercase tracking-widest text-[10px]">Rôles Système</TableHead>
-              <TableHead className="h-14 font-black uppercase tracking-widest text-[10px]">Activité</TableHead>
-              <TableHead className="h-14 font-black uppercase tracking-widest text-[10px] text-right pr-8">Actions</TableHead>
+              <TableHead className="w-[300px] h-14 font-black uppercase tracking-widest text-[10px]">{t.users.table.user()}</TableHead>
+              <TableHead className="h-14 font-black uppercase tracking-widest text-[10px]">{t.users.table.status()}</TableHead>
+              <TableHead className="h-14 font-black uppercase tracking-widest text-[10px]">{t.users.table.roles()}</TableHead>
+              <TableHead className="h-14 font-black uppercase tracking-widest text-[10px]">{t.users.table.activity()}</TableHead>
+              <TableHead className="h-14 font-black uppercase tracking-widest text-[10px] text-right pr-8">{t.users.table.actions()}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -163,7 +168,7 @@ function UserManagement() {
                     <TableCell colSpan={5} className="h-64 text-center">
                       <div className="flex flex-col items-center gap-2">
                         <IconLoader2 className="h-8 w-8 animate-spin text-primary" />
-                        <span className="text-sm font-bold text-muted-foreground">Synchronisation des données...</span>
+                        <span className="text-sm font-bold text-muted-foreground">{t.users.syncing()}</span>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -177,8 +182,8 @@ function UserManagement() {
                             <IconUser className="h-12 w-12 text-muted-foreground/30" />
                           </div>
                           <div className="space-y-1">
-                            <h3 className="font-bold text-xl">Aucun utilisateur trouvé</h3>
-                            <p className="text-muted-foreground text-sm max-w-xs mx-auto">Ajustez vos filtres de recherche pour trouver le compte recherché.</p>
+                            <h3 className="font-bold text-xl">{t.users.none()}</h3>
+                            <p className="text-muted-foreground text-sm max-w-xs mx-auto">{t.users.noneDescription()}</p>
                           </div>
                         </div>
                       </TableCell>
@@ -208,7 +213,7 @@ function UserManagement() {
                           variant={user.status === 'active' ? 'default' : 'secondary'}
                           className={`capitalize rounded-lg px-2.5 py-1 text-[10px] font-bold ${user.status === 'active' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/20' : 'bg-muted text-muted-foreground'}`}
                         >
-                          {user.status}
+                          {user.status === 'active' ? t.status.active() : t.status.inactive()}
                         </Badge>
                       </TableCell>
                       <TableCell>
@@ -234,7 +239,7 @@ function UserManagement() {
                                 {formatDate(user.lastLoginAt, 'MEDIUM')}
                               </div>
                             )
-                          : <span className="opacity-40">Jamais</span>}
+                          : <span className="opacity-40">{t.users.neverLoggedIn()}</span>}
                       </TableCell>
                       <TableCell className="text-right pr-6">
                         <Button
@@ -244,7 +249,7 @@ function UserManagement() {
                           onClick={() => handleManageRoles(user)}
                         >
                           <IconShieldCheck size={18} />
-                          <span>Habilitations</span>
+                          <span>{t.users.permissions()}</span>
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -257,7 +262,10 @@ function UserManagement() {
             <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
               {users.length}
               {' '}
-              modules sur
+              {t.common.details().toLowerCase()}
+              {' '}
+              sur
+              {' '}
               {meta.total}
             </span>
             <div className="flex gap-3">
@@ -268,7 +276,7 @@ function UserManagement() {
                 disabled={!meta.hasPrev}
                 onClick={() => setPage(page - 1)}
               >
-                Précédent
+                {t.common.previous()}
               </Button>
               <Button
                 variant="outline"
@@ -277,7 +285,7 @@ function UserManagement() {
                 disabled={!meta.hasNext}
                 onClick={() => setPage(page + 1)}
               >
-                Suivant
+                {t.common.next()}
               </Button>
             </div>
           </div>
@@ -292,11 +300,9 @@ function UserManagement() {
                 <IconShield className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
               <div>
-                <DialogTitle className="text-xl sm:text-2xl font-bold tracking-tight">Habilitations Système</DialogTitle>
+                <DialogTitle className="text-xl sm:text-2xl font-bold tracking-tight">{t.users.permissionsTitle()}</DialogTitle>
                 <DialogDescription className="text-sm sm:text-base line-clamp-1">
-                  Configurez les rôles de plateforme pour
-                  {' '}
-                  <span className="font-black text-primary">{selectedUser?.name}</span>
+                  {t.users.permissionsSubtitle({ name: selectedUser?.name || '' })}
                 </DialogDescription>
               </div>
             </div>
@@ -314,7 +320,7 @@ function UserManagement() {
               name="roleIds"
               children={field => (
                 <FieldSet>
-                  <FieldLegend>Rôles Disponibles</FieldLegend>
+                  <FieldLegend>{t.users.availableRoles()}</FieldLegend>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {allRoles.map((role: Role) => {
                       const isChecked = field.state.value.includes(role.id)
@@ -369,7 +375,7 @@ function UserManagement() {
 
             <DialogFooter className="pt-8 gap-3 border-t border-border/10">
               <Button type="button" variant="ghost" size="lg" className="rounded-xl font-bold px-6" onClick={() => handleOpenChange(false)}>
-                Annuler
+                {t.common.cancel()}
               </Button>
               <form.Subscribe
                 selector={state => [state.canSubmit, state.isSubmitting]}
@@ -380,7 +386,7 @@ function UserManagement() {
                     className="rounded-xl px-10 font-black uppercase tracking-widest shadow-xl shadow-primary/20 transition-all hover:scale-[1.02]"
                     disabled={!canSubmit || isSubmitting}
                   >
-                    {isSubmitting || assignRolesMutation.isPending ? 'Mise à jour...' : 'Sauvegarder'}
+                    {isSubmitting || assignRolesMutation.isPending ? t.common.loading() : t.common.save()}
                   </Button>
                 )}
               />

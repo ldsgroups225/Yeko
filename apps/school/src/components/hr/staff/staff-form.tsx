@@ -84,6 +84,7 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
                 <span className="text-destructive">*</span>
               </Label>
               <UserCombobox
+                id="userId"
                 value={watch('userId')}
                 onSelect={userId => setValue('userId', userId)}
               />
