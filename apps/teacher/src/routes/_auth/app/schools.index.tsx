@@ -30,76 +30,6 @@ const item = {
   show: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 100 } },
 }
 
-function SchoolsPage() {
-  const { t } = useTranslation()
-  const { context, isLoading: contextLoading } = useRequiredTeacherContext()
-
-  const { data: schools, isLoading: schoolsLoading } = useQuery({
-    queryKey: ['teacher', 'schools', context?.userId],
-    queryFn: () => getTeacherSchoolsQuery({ data: { userId: context?.userId ?? '' } }),
-    enabled: !!context?.userId,
-  })
-
-  const isLoading = contextLoading || schoolsLoading
-
-  if (isLoading) {
-    return <SchoolsPageSkeleton />
-  }
-
-  if (!schools || schools.length === 0) {
-    return <EmptySchoolsState />
-  }
-
-  return (
-    <div className="min-h-screen bg-background/50 flex flex-col items-center">
-      <div className="w-full max-w-4xl px-4 py-10 sm:py-16 flex flex-col gap-10">
-        <header className="space-y-3 px-2 text-center sm:text-left">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight bg-gradient-to-br from-foreground to-foreground/50 bg-clip-text text-transparent">
-              {t('nav.ecole', 'Mes Établissements')}
-            </h1>
-            <p className="mt-3 text-muted-foreground font-medium flex items-center justify-center sm:justify-start gap-2.5">
-              <span className="flex h-2.5 w-2.5 rounded-full bg-primary animate-pulse" />
-              {schools.length === 1 
-                ? 'Un établissement rattaché' 
-                : `${schools.length} établissements rattachés`}
-            </p>
-          </motion.div>
-        </header>
-
-        <motion.div 
-          variants={container}
-          initial="hidden"
-          animate="show"
-          className="grid gap-6 w-full"
-        >
-          {schools.map((school: any) => (
-            <motion.div key={school.id} variants={item} className="w-full">
-              <SchoolCard school={school} />
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
-    </div>
-  )
-}
-
-interface SchoolCardProps {
-  school: {
-    id: string
-    name: string
-    code: string | null
-    address: string | null
-    phone: string | null
-    email: string | null
-    logoUrl: string | null
-  }
-}
-
 const SchoolCard = memo(({ school }: SchoolCardProps) => {
   const initials = school.name
     .split(' ')
@@ -120,8 +50,8 @@ const SchoolCard = memo(({ school }: SchoolCardProps) => {
       <Card className="flex flex-col sm:flex-row min-h-[160px] overflow-hidden border-border/40 bg-card/30 backdrop-blur-xl transition-all hover:border-primary/40 hover:bg-card/50 hover:shadow-2xl active:scale-[0.99] border relative">
         <div className="relative w-full sm:w-56 h-40 sm:h-auto shrink-0 overflow-hidden bg-muted/20">
           <Avatar className="h-full w-full rounded-none">
-            <AvatarImage 
-              src={school.logoUrl ?? undefined} 
+            <AvatarImage
+              src={school.logoUrl ?? undefined}
               alt={school.name}
               className="object-cover h-full w-full transition-transform duration-1000 group-hover:scale-110"
             />
@@ -129,8 +59,8 @@ const SchoolCard = memo(({ school }: SchoolCardProps) => {
               {initials}
             </AvatarFallback>
           </Avatar>
-          
-          <div className="absolute inset-0 bg-gradient-to-t from-card/90 via-transparent to-transparent sm:bg-gradient-to-r sm:from-transparent sm:to-card/90" />
+
+          <div className="absolute inset-0 bg-linear-to-t from-card/90 via-transparent to-transparent sm:bg-linear-to-r sm:from-transparent sm:to-card/90" />
         </div>
 
         <CardContent className="flex-1 p-6 sm:p-8 flex flex-col justify-center min-w-0 relative z-10">
@@ -184,10 +114,80 @@ const SchoolCard = memo(({ school }: SchoolCardProps) => {
 
 SchoolCard.displayName = 'SchoolCard'
 
+function SchoolsPage() {
+  const { t } = useTranslation()
+  const { context, isLoading: contextLoading } = useRequiredTeacherContext()
+
+  const { data: schools, isLoading: schoolsLoading } = useQuery({
+    queryKey: ['teacher', 'schools', context?.userId],
+    queryFn: () => getTeacherSchoolsQuery({ data: { userId: context?.userId ?? '' } }),
+    enabled: !!context?.userId,
+  })
+
+  const isLoading = contextLoading || schoolsLoading
+
+  if (isLoading) {
+    return <SchoolsPageSkeleton />
+  }
+
+  if (!schools || schools.length === 0) {
+    return <EmptySchoolsState />
+  }
+
+  return (
+    <div className="min-h-screen bg-background/50 flex flex-col items-center">
+      <div className="w-full max-w-4xl px-4 py-10 sm:py-16 flex flex-col gap-10">
+        <header className="space-y-3 px-2 text-center sm:text-left">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight bg-linear-to-br from-foreground to-foreground/50 bg-clip-text text-transparent">
+              {t('nav.ecole', 'Mes Établissements')}
+            </h1>
+            <p className="mt-3 text-muted-foreground font-medium flex items-center justify-center sm:justify-start gap-2.5">
+              <span className="flex h-2.5 w-2.5 rounded-full bg-primary animate-pulse" />
+              {schools.length === 1
+                ? 'Un établissement rattaché'
+                : `${schools.length} établissements rattachés`}
+            </p>
+          </motion.div>
+        </header>
+
+        <motion.div
+          variants={container}
+          initial="hidden"
+          animate="show"
+          className="grid gap-6 w-full"
+        >
+          {schools.map((school: any) => (
+            <motion.div key={school.id} variants={item} className="w-full">
+              <SchoolCard school={school} />
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </div>
+  )
+}
+
+interface SchoolCardProps {
+  school: {
+    id: string
+    name: string
+    code: string | null
+    address: string | null
+    phone: string | null
+    email: string | null
+    logoUrl: string | null
+  }
+}
+
 function EmptySchoolsState() {
   return (
     <div className="flex min-h-[75vh] flex-col items-center justify-center gap-8 p-4 text-center">
-      <motion.div 
+      <motion.div
         initial={{ scale: 0.5, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: 'spring', damping: 15 }}

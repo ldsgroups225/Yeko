@@ -476,11 +476,11 @@ export async function linkTeacherByEmail(email: string, schoolId: string) {
 
 export async function getTeacherSchoolsCount(userId: string): Promise<number> {
   const db = getDb()
-  
+
   const result = await db
     .select({ count: count(sql`DISTINCT ${teachers.schoolId}`) })
     .from(teachers)
     .where(eq(teachers.userId, userId))
-  
+
   return result[0]?.count ?? 0
 }

@@ -1,8 +1,8 @@
-import { createServerFn } from '@tanstack/react-start'
 import { getDb } from '@repo/data-ops/database/setup'
 import { schools } from '@repo/data-ops/drizzle/core-schema'
 import { teachers } from '@repo/data-ops/drizzle/school-schema'
-import { eq, asc } from 'drizzle-orm'
+import { createServerFn } from '@tanstack/react-start'
+import { asc, eq } from 'drizzle-orm'
 import { z } from 'zod'
 
 export const getTeacherSchoolsQuery = createServerFn()

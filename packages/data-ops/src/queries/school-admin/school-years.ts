@@ -1,8 +1,8 @@
-import type { SchoolYearInsert, TermInsert, FiscalYearInsert } from '../../drizzle/school-schema'
+import type { FiscalYearInsert, SchoolYearInsert, TermInsert } from '../../drizzle/school-schema'
 import { and, desc, eq } from 'drizzle-orm'
 import { getDb } from '../../database/setup'
 import { schoolYearTemplates, termTemplates } from '../../drizzle/core-schema'
-import { schoolYears, terms, fiscalYears } from '../../drizzle/school-schema'
+import { fiscalYears, schoolYears, terms } from '../../drizzle/school-schema'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
 
 export async function getSchoolYearsBySchool(

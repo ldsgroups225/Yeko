@@ -1,6 +1,5 @@
-// ... imports
-import { getTeacherByAuthUserId } from '@repo/data-ops/queries/school-admin/teachers'
 import { getFiscalYears, getOpenFiscalYear } from '@repo/data-ops/queries/fiscal-years'
+import { getTeacherByAuthUserId } from '@repo/data-ops/queries/school-admin/teachers'
 import { createServerFn } from '@tanstack/react-start'
 import { getRequest, setResponseHeader } from '@tanstack/react-start/server'
 
@@ -67,7 +66,8 @@ export const getTeacherContext = createServerFn().handler(async (): Promise<Teac
       const openYear = await getOpenFiscalYear(schoolId)
       if (openYear) {
         schoolYearId = openYear.schoolYearId
-      } else {
+      }
+      else {
         const [latestYear] = await getFiscalYears({ schoolId })
         if (latestYear) {
           schoolYearId = latestYear.schoolYearId

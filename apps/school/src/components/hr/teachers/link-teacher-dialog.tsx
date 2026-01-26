@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation } from '@tanstack/react-query'
 import { IconLink } from '@tabler/icons-react'
+import { useMutation } from '@tanstack/react-query'
 import { Button } from '@workspace/ui/components/button'
 import {
   Dialog,
@@ -47,7 +47,8 @@ export function LinkTeacherDialog() {
         toast.success('Enseignant lié avec succès')
         setOpen(false)
         form.reset()
-      } else {
+      }
+      else {
         toast.error(result.message || 'Erreur lors de la liaison')
       }
     },
@@ -63,12 +64,12 @@ export function LinkTeacherDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
-        render={
+        render={(
           <Button variant="outline">
             <IconLink className="mr-2 h-4 w-4" />
             Lier par email
           </Button>
-        }
+        )}
       />
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

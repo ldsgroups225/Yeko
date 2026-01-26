@@ -2,8 +2,10 @@ import { IconPlus } from '@tabler/icons-react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
 import { z } from 'zod'
+import { LinkTeacherDialog } from '@/components/hr/teachers/link-teacher-dialog'
 import { TeachersTable } from '@/components/hr/teachers/teachers-table'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+
 import { useTranslations } from '@/i18n'
 
 const teachersSearchSchema = z.object({
@@ -17,8 +19,6 @@ export const Route = createFileRoute('/_auth/users/teachers/')({
   component: TeachersListPage,
   validateSearch: teachersSearchSchema,
 })
-
-import { LinkTeacherDialog } from '@/components/hr/teachers/link-teacher-dialog'
 
 function TeachersListPage() {
   const t = useTranslations()

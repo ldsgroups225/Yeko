@@ -4,11 +4,12 @@
  */
 import { and, asc, count, eq, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
-import { grades } from '../drizzle/core-schema'
+import { grades, schools } from '../drizzle/core-schema'
 import {
   classes,
   classSubjects,
   enrollments,
+  studentAverages,
   students,
 } from '../drizzle/school-schema'
 
@@ -28,19 +29,26 @@ export async function getTeacherClasses(params: {
       id: classes.id,
       name: sql<string>`${grades.name} || ' ' || ${classes.section}`,
       gradeName: grades.name,
+      schoolName: schools.name,
       studentCount: sql<number>`(SELECT count(*) FROM ${enrollments} WHERE ${enrollments.classId} = ${classes.id} AND ${enrollments.status} = 'confirmed')::int`,
+      boysCount: sql<number>`(SELECT count(*) FROM ${enrollments} INNER JOIN ${students} ON ${enrollments.studentId} = ${students.id} WHERE ${enrollments.classId} = ${classes.id} AND ${enrollments.status} = 'confirmed' AND ${students.gender} = 'M')::int`,
+      girlsCount: sql<number>`(SELECT count(*) FROM ${enrollments} INNER JOIN ${students} ON ${enrollments.studentId} = ${students.id} WHERE ${enrollments.classId} = ${classes.id} AND ${enrollments.status} = 'confirmed' AND ${students.gender} = 'F')::int`,
+      isHomeroomTeacher: sql<boolean>`CASE WHEN ${classes.homeroomTeacherId} = ${params.teacherId} THEN TRUE ELSE FALSE END`,
+      classAverage: sql<number | null>`(SELECT AVG(average)::float FROM ${studentAverages} WHERE ${studentAverages.classId} = ${classes.id} AND ${studentAverages.isFinal} = FALSE)`,
       subjectCount: count(classSubjects.id),
     })
     .from(classSubjects)
     .innerJoin(classes, eq(classSubjects.classId, classes.id))
     .innerJoin(grades, eq(classes.gradeId, grades.id))
+    .innerJoin(schools, eq(classes.schoolId, schools.id))
     .where(
       and(
         eq(classSubjects.teacherId, params.teacherId),
         eq(classes.schoolYearId, params.schoolYearId),
+        params.schoolId ? eq(classes.schoolId, params.schoolId) : undefined,
       ),
     )
-    .groupBy(classes.id, grades.name)
+    .groupBy(classes.id, grades.name, schools.name)
     .orderBy(grades.name, classes.section)
 
   return results
