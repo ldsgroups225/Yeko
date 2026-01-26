@@ -1,8 +1,10 @@
+import { getTeacherSchoolsCount } from '@repo/data-ops/queries/school-admin/teachers'
 // Placeholder for real DB queries
 // This will be replaced by actual database calls when integrating with backend
 import { getTeacherAssignedClasses } from '@repo/data-ops/queries/teacher-app'
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
+import { getTeacherContext } from '../middleware/teacher-context'
 
 export const getTeacherStats = createServerFn()
   .inputValidator(
@@ -12,16 +14,24 @@ export const getTeacherStats = createServerFn()
     }),
   )
   .handler(async ({ data }) => {
-    const classes = await getTeacherAssignedClasses({
-      teacherId: data.teacherId,
-      schoolYearId: data.schoolYearId,
-    })
+    const context = await getTeacherContext()
+    if (!context) {
+      return {
+        schoolsCount: 0,
+        classesCount: 0,
+      }
+    }
 
-    // TODO: Implement getTeacherTotalGradesCount or similar query in data-ops
-    // For now returning 0 for grades count as we don't have that query yet
+    const [classes, schoolsCount] = await Promise.all([
+      getTeacherAssignedClasses({
+        teacherId: data.teacherId,
+        schoolYearId: data.schoolYearId,
+      }),
+      getTeacherSchoolsCount(context.userId),
+    ])
 
     return {
+      schoolsCount,
       classesCount: classes.length,
-      gradesCount: 0, // Placeholder until grade query is available
     }
   })

@@ -98,8 +98,8 @@ function ProfilePage() {
   }
 
   const stats = [
-    { label: t('nav.ecole', 'École'), value: statsData?.classesCount ?? '-', icon: IconSchool, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-    { label: t('nav.grades', 'Notes'), value: statsData?.gradesCount ?? '-', icon: IconChartBar, color: 'text-green-500', bg: 'bg-green-500/10' },
+    { label: t('nav.ecole', 'Écoles'), value: statsData?.schoolsCount ?? '-', icon: IconSchool, color: 'text-blue-500', bg: 'bg-blue-500/10' },
+    { label: 'Classes', value: statsData?.classesCount ?? '-', icon: IconChartBar, color: 'text-green-500', bg: 'bg-green-500/10' },
   ]
 
   const user = session?.user

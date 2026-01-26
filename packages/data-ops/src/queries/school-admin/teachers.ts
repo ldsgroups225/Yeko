@@ -1,5 +1,6 @@
 import { and, count, desc, eq, ilike, or, sql } from 'drizzle-orm'
 import { getDb } from '../../database/setup'
+import { auth_user } from '../../drizzle/auth-schema'
 import { grades, series, subjects } from '../../drizzle/core-schema'
 import {
   classes,
@@ -8,8 +9,8 @@ import {
   teachers,
   teacherSubjects,
   users,
+  userSchools,
 } from '../../drizzle/school-schema'
-import { auth_user } from '../../drizzle/auth-schema'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
 
 export async function getTeachersBySchool(
@@ -471,4 +472,13 @@ export async function linkTeacherByEmail(email: string, schoolId: string) {
   }
 
   return { success: true, count: 1 }
+}
+
+export async function getTeacherSchoolsCount(userId: string): Promise<number> {
+  const db = getDb()
+  const result = await db
+    .select({ count: count() })
+    .from(userSchools)
+    .where(eq(userSchools.userId, userId))
+  return result[0]?.count ?? 0
 }

@@ -12,7 +12,7 @@ function SchoolsPage() {
   const { t } = useTranslation()
   const { context } = useRequiredTeacherContext()
 
-  const schools = context?.schoolId ? [{ id: context.schoolId, name: 'Ma École' }] : []
+  const schools = context?.schoolId ? [{ id: context.schoolId, name: 'École' }] : []
 
   return (
     <div className="flex flex-col gap-4 p-4">
