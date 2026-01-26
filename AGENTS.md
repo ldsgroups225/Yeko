@@ -30,6 +30,10 @@ Cascade should emulate the specialized roles defined in `.kiro/subagents/`. If a
 - **Transaction Alternatives:** Use sequential database operations instead of transactions. For batch operations, prepare data in memory first, then execute individual queries.
 - **Driver Detection:** The project automatically uses neon-http for Neon connections (contains `.neon.tech` or `sslmode=`) and standard PostgreSQL for other connections.
 
+## Vite & SSR Protocols
+
+- **Dependency Optimization:** Inclusion of legacy CommonJS modules and core TanStack libs in `ssr.noExternal` and `optimizeDeps.include` is MANDATORY to prevent "No matching export" and duplicate context errors.
+
 ## AI Development Workflow Analysis
 
 ## Overview
