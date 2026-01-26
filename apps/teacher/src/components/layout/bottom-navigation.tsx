@@ -1,14 +1,14 @@
-import { IconBook, IconCalendar, IconHome, IconMessageCircle, IconSchool } from '@tabler/icons-react'
+import { IconBook, IconCalendar, IconMessageCircle, IconSchool, IconUser } from '@tabler/icons-react'
 import { Link, useLocation } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 
 const navItems = [
-  { id: 'home', labelKey: 'nav.home', icon: IconHome, href: '/app' },
-  { id: 'schedule', labelKey: 'nav.schedule', icon: IconCalendar, href: '/app/schedule' },
-  { id: 'grades', labelKey: 'nav.grades', icon: IconSchool, href: '/app/grades' },
-  { id: 'sessions', labelKey: 'nav.sessions', icon: IconBook, href: '/app/sessions' },
-  { id: 'messages', labelKey: 'nav.messages', icon: IconMessageCircle, href: '/app/messages' },
+  { id: 'planning', labelKey: 'nav.planning', icon: IconCalendar, href: '/app/planning' },
+  { id: 'ecole', labelKey: 'nav.ecole', icon: IconSchool, href: '/app/schools' },
+  { id: 'session', labelKey: 'nav.session', icon: IconBook, href: '/app/session' },
+  { id: 'chat', labelKey: 'nav.chat', icon: IconMessageCircle, href: '/app/chat' },
+  { id: 'profile', labelKey: 'nav.profile', icon: IconUser, href: '/app/profile' },
 ] as const
 
 export function BottomNavigation() {
@@ -19,8 +19,7 @@ export function BottomNavigation() {
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="mx-auto flex h-16 max-w-lg items-center justify-around px-2 pb-[env(safe-area-inset-bottom)]">
         {navItems.map((item) => {
-          const isActive = location.pathname === item.href
-            || (item.href !== '/app' && location.pathname.startsWith(item.href))
+          const isActive = location.pathname.startsWith(item.href)
           const Icon = item.icon
 
           return (

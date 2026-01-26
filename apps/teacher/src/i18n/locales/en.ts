@@ -5,6 +5,11 @@ export const en = {
   },
   nav: {
     home: 'Home',
+    planning: 'Planning',
+    ecole: 'School',
+    session: 'Session',
+    chat: 'Chat',
+    profile: 'Profile',
     schedule: 'Schedule',
     grades: 'Grades',
     sessions: 'Sessions',

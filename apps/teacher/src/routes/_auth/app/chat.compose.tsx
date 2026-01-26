@@ -20,7 +20,7 @@ const searchParamsSchema = z.object({
   replyTo: z.string().optional(),
 })
 
-export const Route = createFileRoute('/_auth/app/messages/compose')({
+export const Route = createFileRoute('/_auth/app/chat/compose')({
   validateSearch: searchParamsSchema,
   component: ComposeMessagePage,
 })
@@ -58,7 +58,7 @@ function ComposeMessagePage() {
     onSuccess: () => {
       toast.success(t('messages.sentSuccess'))
       queryClient.invalidateQueries({ queryKey: ['teacher', 'messages'] })
-      navigate({ to: '/app/messages' })
+      navigate({ to: '/app/chat' })
     },
     onError: () => {
       toast.error(t('errors.serverError'))
@@ -86,7 +86,7 @@ function ComposeMessagePage() {
   return (
     <div className="flex flex-col gap-4 p-4 pb-24">
       <div className="flex items-center gap-3">
-        <Link to="/app/messages">
+        <Link to="/app/chat">
           <Button variant="ghost" size="icon">
             <IconArrowLeft className="h-5 w-5" />
           </Button>

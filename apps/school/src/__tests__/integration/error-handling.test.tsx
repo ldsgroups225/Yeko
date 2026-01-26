@@ -30,7 +30,7 @@ describe('error Handling Integration', () => {
         await user.click(submitButton)
       }
       catch (e) {
-        // Required catch to prevent Vitest from reporting an unhandled promise rejection 
+        // Required catch to prevent Vitest from reporting an unhandled promise rejection
         // when the mocked submission explicitly fails as intended for this test case.
       }
 

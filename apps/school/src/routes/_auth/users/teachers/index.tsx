@@ -18,6 +18,8 @@ export const Route = createFileRoute('/_auth/users/teachers/')({
   validateSearch: teachersSearchSchema,
 })
 
+import { LinkTeacherDialog } from '@/components/hr/teachers/link-teacher-dialog'
+
 function TeachersListPage() {
   const t = useTranslations()
   const search = Route.useSearch()
@@ -39,6 +41,7 @@ function TeachersListPage() {
           <p className="text-muted-foreground">{t.hr.teachers.description()}</p>
         </div>
         <div className="flex gap-2">
+          <LinkTeacherDialog />
           <Button
             render={(
               <Link to="/users/teachers/new">

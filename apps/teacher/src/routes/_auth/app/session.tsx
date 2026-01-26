@@ -1,18 +1,20 @@
 import type { Locale } from 'date-fns'
-import { IconBook, IconCalendar, IconCircleCheck, IconCircleX, IconClock } from '@tabler/icons-react'
+import { IconBook, IconCalendar, IconCircleCheck, IconCircleX, IconClock, IconPlayerPlay } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'
-import { Card, CardContent } from '@workspace/ui/components/card'
+import { Button } from '@workspace/ui/components/button'
 
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { Skeleton } from '@workspace/ui/components/skeleton'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { useTranslation } from 'react-i18next'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
+import { teacherDashboardQueryOptions } from '@/lib/queries/dashboard'
 import { sessionHistoryQueryOptions } from '@/lib/queries/sessions'
 
-export const Route = createFileRoute('/_auth/app/sessions')({
+export const Route = createFileRoute('/_auth/app/session')({
   component: SessionsPage,
 })
 
@@ -31,16 +33,56 @@ function SessionsPage() {
     enabled: !!context,
   })
 
-  const isLoading = contextLoading || dataLoading
+  // Check for active session
+  // Check for active session
+  const { data: dashboardData, isLoading: dashboardLoading } = useQuery({
+    ...teacherDashboardQueryOptions({
+      teacherId: context?.teacherId ?? '',
+      schoolId: context?.schoolId ?? '',
+      schoolYearId: context?.schoolYearId ?? '',
+    }),
+    enabled: !!context,
+  })
+
+  const isLoading = contextLoading || dataLoading || dashboardLoading
 
   if (isLoading) {
     return <SessionsSkeleton />
   }
 
   const sessions = data?.sessions ?? []
+  const activeSession = dashboardData?.activeSession
 
   return (
     <div className="flex flex-col gap-4 p-4 pb-20">
+
+      {activeSession && (
+        <Card className="border-primary/50 bg-primary/5">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <IconClock className="w-5 h-5 text-primary animate-pulse" />
+              {t('session.active', 'Session en cours')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col gap-2">
+              <h3 className="font-semibold text-lg">{activeSession.subjectName}</h3>
+              <p className="text-muted-foreground">{activeSession.className}</p>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <IconCalendar className="w-4 h-4" />
+                {format(new Date(activeSession.startTime), 'HH:mm')}
+              </div>
+              <Link to="/app/sessions/$sessionId" params={{ sessionId: activeSession.id }} className="mt-2">
+                <Button className="w-full">
+                  <IconPlayerPlay className="w-4 h-4 mr-2" />
+                  {t('common.resume', 'Reprendre')}
+                </Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <h1 className="text-xl font-semibold">{t('session.history')}</h1>
 
       {sessions.length > 0

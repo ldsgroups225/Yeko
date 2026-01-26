@@ -7,6 +7,7 @@ import {
   getTeacherClasses,
   getTeachersBySchool,
   getTeacherWithSubjects,
+  linkTeacherByEmail,
   updateTeacher,
 } from '@repo/data-ops/queries/school-admin/teachers'
 import { getTimetableByTeacher } from '@repo/data-ops/queries/timetables'
@@ -201,8 +202,27 @@ export const getTeacherClassesList = createServerFn()
   })
 
 /**
- * Get teacher schedules
+ * Link teacher by email
  */
+export const linkTeacherByEmailFn = createServerFn()
+  .inputValidator(z.object({ email: z.string().email() }))
+  .handler(async ({ data }) => {
+    const context = await getSchoolContext()
+    if (!context)
+      throw new Error('No school context')
+    const { schoolId } = context
+
+    try {
+      return await linkTeacherByEmail(data.email, schoolId)
+    }
+    catch (error) {
+      if (error instanceof Error && (error.message === 'User not found' || error.message === 'Auth user not found')) {
+        return { success: false, message: error.message, code: 'USER_NOT_FOUND' }
+      }
+      throw error
+    }
+  })
+
 export const getTeacherSchedulesList = createServerFn()
   .inputValidator(z.object({ teacherId: z.string(), schoolYearId: z.string() }))
   .handler(async ({ data: { teacherId, schoolYearId } }) => {

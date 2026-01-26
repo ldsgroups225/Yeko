@@ -5,6 +5,11 @@ export const fr = {
   },
   nav: {
     home: 'Accueil',
+    planning: 'Planning',
+    ecole: 'École',
+    session: 'Session',
+    chat: 'Chat',
+    profile: 'Profil',
     schedule: 'Emploi du temps',
     grades: 'Notes',
     sessions: 'Sessions',

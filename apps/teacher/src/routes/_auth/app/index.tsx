@@ -100,12 +100,12 @@ function DashboardPage() {
           <QuickActionButton
             icon={<IconClipboardList className="h-5 w-5" />}
             label={t('session.notes')}
-            href="/app/sessions"
+            href="/app/session"
           />
           <QuickActionButton
             icon={<IconBook className="h-5 w-5" />}
             label={t('homework.title')}
-            href="/app/sessions"
+            href="/app/session"
           />
           <QuickActionButton
             icon={<IconSchool className="h-5 w-5" />}
@@ -115,7 +115,7 @@ function DashboardPage() {
           <QuickActionButton
             icon={<IconMessageCircle className="h-5 w-5" />}
             label={t('messages.title')}
-            href="/app/messages"
+            href="/app/chat"
           />
         </div>
       </div>

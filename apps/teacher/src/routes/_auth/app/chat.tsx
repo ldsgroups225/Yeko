@@ -23,7 +23,7 @@ import { useTranslation } from 'react-i18next'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { teacherMessagesQueryOptions } from '@/lib/queries/messages'
 
-export const Route = createFileRoute('/_auth/app/messages')({
+export const Route = createFileRoute('/_auth/app/chat')({
   component: MessagesPage,
 })
 
@@ -48,7 +48,7 @@ function MessagesPage() {
     <div className="flex flex-col gap-4 p-4 pb-20">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">{t('messages.title')}</h1>
-        <Link to="/app/messages/compose">
+        <Link to="/app/chat/compose">
           <Button size="sm">
             <IconPencil className="mr-2 h-4 w-4" />
             {t('messages.compose')}
@@ -119,7 +119,7 @@ function MessageItem({ message, locale }: MessageItemProps) {
   const isToday = new Date().toDateString() === date.toDateString()
 
   return (
-    <Link to="/app/messages/$messageId" params={{ messageId: message.id }}>
+    <Link to="/app/chat/$messageId" params={{ messageId: message.id }}>
       <Card
         className={`transition-colors hover:bg-muted/50 ${!message.isRead ? 'border-primary/50 bg-primary/5' : ''}`}
       >
@@ -183,7 +183,7 @@ function EmptyMessages({ folder }: { folder: string }) {
           {t('messages.noMessages')}
         </p>
         {folder === 'inbox' && (
-          <Link to="/app/messages/compose">
+          <Link to="/app/chat/compose">
             <Button variant="outline" className="mt-4">
               <IconPencil className="mr-2 h-4 w-4" />
               {t('messages.compose')}

@@ -1,3 +1,4 @@
+import { getTeacherNotificationsQuery } from '@repo/data-ops/queries/teacher-app'
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 
@@ -10,28 +11,46 @@ export const getTeacherNotifications = createServerFn()
       limit: z.number().int().min(1).max(50).default(20),
     }),
   )
-  .handler(async ({ data: _data }) => {
-    // TODO: Implement with actual database queries
+  .handler(async ({ data }) => {
+    const notifications = await getTeacherNotificationsQuery({
+      teacherId: data.teacherId,
+      unreadOnly: data.isRead === false,
+      limit: data.limit,
+    })
+
+    const unreadCount = notifications.filter(n => !n.isRead).length // Approximate if not paginated fully
+
     return {
-      notifications: [] as Array<{
-        id: string
-        type:
-          | 'message'
-          | 'grade_validation'
-          | 'schedule_change'
-          | 'attendance_alert'
-          | 'system'
-          | 'reminder'
-        title: string
-        body: string | null
-        actionType: string | null
-        actionData: { route?: string, params?: Record<string, string> } | null
-        relatedType: string | null
-        relatedId: string | null
-        isRead: boolean
-        createdAt: string
-      }>,
-      unreadCount: 0,
+      notifications: notifications.map((n) => {
+        // Safe casting with interface instead of any
+        interface NotificationRow {
+          id: string
+          type: string
+          title: string
+          body: string | null
+          actionType: string | null
+          actionData: unknown
+          relatedType: string | null
+          relatedId: string | null
+          isRead: boolean
+          createdAt: Date
+        }
+        const notification = n as unknown as NotificationRow
+
+        return {
+          id: notification.id,
+          type: notification.type as any, // Keep cast for UI enum compatibility if needed, but strictly typed upstream
+          title: notification.title,
+          body: notification.body,
+          actionType: notification.actionType,
+          actionData: notification.actionData as any,
+          relatedType: notification.relatedType,
+          relatedId: notification.relatedId,
+          isRead: notification.isRead,
+          createdAt: notification.createdAt.toISOString(),
+        }
+      }),
+      unreadCount, // For now returning count from fetched batch
     }
   })
 

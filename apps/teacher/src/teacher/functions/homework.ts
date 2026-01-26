@@ -78,7 +78,7 @@ export const getHomework = createServerFn()
         dueTime: h.dueTime,
         status: h.status as 'draft' | 'active' | 'closed' | 'cancelled',
         submissionCount: h.submissionCount,
-        totalStudents: 0, // TODO: Get from enrollment count
+        totalStudents: 0, // Not available in current query
       })),
       total: result.total,
       page: result.page,

@@ -9,6 +9,7 @@ import {
   teacherSubjects,
   users,
 } from '../../drizzle/school-schema'
+import { auth_user } from '../../drizzle/auth-schema'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
 
 export async function getTeachersBySchool(
@@ -393,4 +394,81 @@ export async function getTeacherClasses(teacherId: string, schoolId: string) {
     .orderBy(grades.order, classes.section)
 
   return result
+}
+
+export async function linkTeacherByEmail(email: string, schoolId: string) {
+  if (!schoolId) {
+    throw new Error(SCHOOL_ERRORS.NO_SCHOOL_CONTEXT)
+  }
+
+  const db = getDb()
+
+  // Find user by email
+  const [user] = await db
+    .select({
+      id: users.id,
+      email: users.email,
+      authUserId: users.authUserId,
+    })
+    .from(users)
+    .where(eq(users.email, email))
+    .limit(1)
+
+  if (!user) {
+    throw new Error('User not found')
+  }
+
+  if (user.authUserId) {
+    // If user is already linked, just check if they are a teacher in this school
+    const [existingTeacher] = await db
+      .select({ id: teachers.id })
+      .from(teachers)
+      .where(and(eq(teachers.userId, user.id), eq(teachers.schoolId, schoolId)))
+      .limit(1)
+
+    if (existingTeacher) {
+      return { success: false, message: 'User is already a teacher in this school' }
+    }
+
+    // Create teacher record
+    await createTeacher({
+      userId: user.id,
+      schoolId,
+    })
+
+    return { success: true, count: 1 }
+  }
+
+  // Find auth user with same email
+  const [authUser] = await db
+    .select({ id: auth_user.id })
+    .from(auth_user)
+    .where(eq(auth_user.email, email))
+    .limit(1)
+
+  if (!authUser) {
+    throw new Error('Auth user not found')
+  }
+
+  // Link them
+  await db
+    .update(users)
+    .set({ authUserId: authUser.id })
+    .where(eq(users.id, user.id))
+
+  // Create teacher record if not exists
+  const [existingTeacher] = await db
+    .select({ id: teachers.id })
+    .from(teachers)
+    .where(and(eq(teachers.userId, user.id), eq(teachers.schoolId, schoolId)))
+    .limit(1)
+
+  if (!existingTeacher) {
+    await createTeacher({
+      userId: user.id,
+      schoolId,
+    })
+  }
+
+  return { success: true, count: 1 }
 }

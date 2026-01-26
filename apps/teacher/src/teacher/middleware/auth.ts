@@ -1,4 +1,5 @@
 import { getAuth } from '@repo/data-ops/auth/server'
+import { syncUserAuthOnLogin } from '@repo/data-ops/queries/school-admin/users'
 import { createMiddleware } from '@tanstack/react-start'
 import { getRequest } from '@tanstack/react-start/server'
 
@@ -13,6 +14,9 @@ export async function getAuthContext() {
   if (!session) {
     return null
   }
+
+  // Ensure user exists in local database and is synced with auth provider
+  await syncUserAuthOnLogin(session.user.id, session.user.email, session.user.name)
 
   return {
     auth,

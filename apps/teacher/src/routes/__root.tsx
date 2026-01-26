@@ -13,6 +13,7 @@ import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { Button } from '@workspace/ui/components/button'
 import { useTranslation } from 'react-i18next'
 import { Toaster } from 'sonner'
+import { ThemeProvider } from '@/components/theme/theme-provider'
 import appCss from '@/styles.css?url'
 import '@/i18n/config'
 
@@ -62,7 +63,9 @@ export const Route = createRootRouteWithContext<{
 function RootComponent() {
   return (
     <RootDocument>
-      <Outlet />
+      <ThemeProvider>
+        <Outlet />
+      </ThemeProvider>
     </RootDocument>
   )
 }

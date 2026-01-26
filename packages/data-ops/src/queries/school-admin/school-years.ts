@@ -1,8 +1,8 @@
-import type { SchoolYearInsert, TermInsert } from '../../drizzle/school-schema'
+import type { SchoolYearInsert, TermInsert, FiscalYearInsert } from '../../drizzle/school-schema'
 import { and, desc, eq } from 'drizzle-orm'
 import { getDb } from '../../database/setup'
 import { schoolYearTemplates, termTemplates } from '../../drizzle/core-schema'
-import { schoolYears, terms } from '../../drizzle/school-schema'
+import { schoolYears, terms, fiscalYears } from '../../drizzle/school-schema'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
 
 export async function getSchoolYearsBySchool(
@@ -130,6 +130,18 @@ export async function createSchoolYear(data: {
     .insert(schoolYears)
     .values(insertData)
     .returning()
+
+  const fiscalYearData: FiscalYearInsert = {
+    id: crypto.randomUUID(),
+    schoolId: data.schoolId,
+    schoolYearId: schoolYear!.id,
+    name: `FY ${data.startDate.getFullYear()}-${data.endDate.getFullYear()}`,
+    startDate: data.startDate.toISOString().split('T', 1)[0]!,
+    endDate: data.endDate.toISOString().split('T', 1)[0]!,
+    status: 'open',
+  }
+
+  await db.insert(fiscalYears).values(fiscalYearData)
 
   // Get term templates
   const termTemplatesList = await db

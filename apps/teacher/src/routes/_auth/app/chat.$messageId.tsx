@@ -14,7 +14,7 @@ import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { messageDetailQueryOptions } from '@/lib/queries/messages'
 import { markMessageRead } from '@/teacher/functions/messages'
 
-export const Route = createFileRoute('/_auth/app/messages/$messageId')({
+export const Route = createFileRoute('/_auth/app/chat/$messageId')({
   component: MessageDetailPage,
 })
 
@@ -59,7 +59,7 @@ function MessageDetailPage() {
   return (
     <div className="flex flex-col gap-4 p-4 pb-20">
       <div className="flex items-center gap-3">
-        <Link to="/app/messages">
+        <Link to="/app/chat">
           <Button variant="ghost" size="icon">
             <IconArrowLeft className="h-5 w-5" />
           </Button>
@@ -188,7 +188,7 @@ function MessageContent({ message, locale }: MessageContentProps) {
       {/* Reply button */}
       <div className="fixed inset-x-0 bottom-16 border-t bg-background p-4">
         <Link
-          to="/app/messages/compose"
+          to="/app/chat/compose"
           search={{ replyTo: message.id }}
           className="w-full"
         >

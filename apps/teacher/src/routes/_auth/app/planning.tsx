@@ -1,4 +1,4 @@
-import { IconCalendar, IconChevronLeft, IconChevronRight } from '@tabler/icons-react'
+import { IconCalendar, IconChevronLeft, IconChevronRight, IconClipboardCheck } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
@@ -10,9 +10,10 @@ import { fr } from 'date-fns/locale'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
+import { teacherDashboardQueryOptions } from '@/lib/queries/dashboard'
 import { detailedScheduleQueryOptions } from '@/lib/queries/schedule'
 
-export const Route = createFileRoute('/_auth/app/schedule')({
+export const Route = createFileRoute('/_auth/app/planning')({
   component: SchedulePage,
 })
 
@@ -52,13 +53,21 @@ function SchedulePage() {
     enabled: !!context,
   })
 
-  const isLoading = contextLoading || dataLoading
+  const { data: dashboardData, isLoading: dashboardLoading } = useQuery({
+    ...teacherDashboardQueryOptions({
+      teacherId: context?.teacherId ?? '',
+      schoolId: context?.schoolId ?? '',
+      schoolYearId: context?.schoolYearId ?? '',
+      date: format(today, 'yyyy-MM-dd'),
+    }),
+    enabled: !!context,
+  })
 
-  // Filter sessions for selected day
+  const isLoading = contextLoading || dataLoading || dashboardLoading
+
   const daySchedule
     = data?.sessions.filter(s => s.dayOfWeek === selectedDay) ?? []
 
-  // Get dates for each day of the week
   const weekDates = DAYS_OF_WEEK.map((day, index) => ({
     ...day,
     date: addDays(weekStart, index),
@@ -75,7 +84,20 @@ function SchedulePage() {
     <div className="flex flex-col gap-4 p-4 pb-20">
       <h1 className="text-xl font-semibold">{t('schedule.title')}</h1>
 
-      {/* Week Navigation */}
+      <Card>
+        <CardContent className="p-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-primary/10 rounded-full">
+              <IconClipboardCheck className="w-6 h-6 text-primary" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">{t('dashboard.pendingGrades')}</p>
+              <p className="text-2xl font-bold">{dashboardData?.pendingGrades ?? 0}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       <div className="flex items-center justify-between">
         <Button
           variant="ghost"
