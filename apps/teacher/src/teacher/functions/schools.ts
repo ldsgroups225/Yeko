@@ -18,6 +18,7 @@ export const getTeacherSchoolsQuery = createServerFn()
         address: schools.address,
         phone: schools.phone,
         email: schools.email,
+        logoUrl: schools.logoUrl,
       })
       .from(teachers)
       .innerJoin(schools, eq(teachers.schoolId, schools.id))
