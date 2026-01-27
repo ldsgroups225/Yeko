@@ -1,3 +1,5 @@
+import type { TranslationFunctions } from '@/i18n/i18n-types'
+import type { NoteWithDetails } from '@/lib/db/local-notes'
 import { IconAlertCircle, IconArrowLeft, IconBook, IconChartBar, IconChevronDown, IconChevronUp, IconDeviceFloppy, IconEdit, IconHistory, IconMinus, IconPlayerPlay, IconPlus, IconSchool, IconSearch, IconTrendingDown, IconTrendingUp, IconUsers } from '@tabler/icons-react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
@@ -45,9 +47,9 @@ import {
 import { cn } from '@workspace/ui/lib/utils'
 import { AnimatePresence, motion } from 'motion/react'
 import { useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
+import { useI18nContext } from '@/i18n/i18n-react'
 import { localNotesService } from '@/lib/db/local-notes'
 import { classDetailsQueryOptions, classStudentsQueryOptions } from '@/lib/queries/classes'
 import { teacherClassesQueryOptions } from '@/lib/queries/dashboard'
@@ -123,7 +125,7 @@ interface SortConfig {
 }
 
 function ClassDetailPage() {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
   const queryClient = useQueryClient()
 
   const { schoolId, classId } = Route.useParams()
@@ -141,7 +143,7 @@ function ClassDetailPage() {
   const [noteType, setNoteType] = useState<'quizzes' | 'tests' | 'level_tests'>('tests')
   const [weight, setWeight] = useState(1)
   const [gradeOutOf, setGradeOutOf] = useState(20)
-  const [gradesMap, setGradesMap] = useState<Map<string, string>>(new Map())
+  const [gradesMap, setGradesMap] = useState<Map<string, string>>(() => new Map())
   const [isSaving, setIsSaving] = useState(false)
   const [isUnpublishedSheetOpen, setIsUnpublishedSheetOpen] = useState(false)
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false)
@@ -219,7 +221,7 @@ function ClassDetailPage() {
   const isLoading = contextLoading || classLoading || studentsLoading
 
   const classInfo = classData?.class
-  const students = studentsData?.students ?? []
+  const students = useMemo(() => studentsData?.students ?? [], [studentsData?.students])
 
   // --------------------------------------------------------------------------
   // Grade Entry Handlers
@@ -227,7 +229,7 @@ function ClassDetailPage() {
 
   const handleStartEntry = () => {
     if (teacherSubjects.length === 0) {
-      toast.error(t('grades.noSubjects', 'Aucune matière assignée pour cette classe'))
+      toast.error(LL.grades.noSubjects())
       return
     }
 
@@ -253,17 +255,17 @@ function ClassDetailPage() {
 
   const handleSaveEntry = async () => {
     if (!noteTitle.trim()) {
-      toast.error(t('grades.titleRequired', 'Le titre de la note est requis'))
+      toast.error(LL.grades.titleRequired())
       return
     }
 
     if (!selectedSubjectId) {
-      toast.error(t('grades.subjectRequired', 'Veuillez sélectionner une matière'))
+      toast.error(LL.grades.subjectRequired())
       return
     }
 
     if (!currentTerm) {
-      toast.error(t('grades.noCurrentTerm', 'Période scolaire non identifiée'))
+      toast.error(LL.grades.noCurrentTerm())
       return
     }
 
@@ -311,7 +313,7 @@ function ClassDetailPage() {
         await localNotesService.saveNoteLocally(newNote, details)
       }
 
-      toast.success(t('grades.savedLocally', 'Note enregistrée localement'))
+      toast.success(LL.grades.savedLocally())
       setIsEntryMode(false)
       setGradesMap(new Map())
       setNoteTitle('')
@@ -320,26 +322,10 @@ function ClassDetailPage() {
     }
     catch (error) {
       console.error('Failed to save grades locally:', error)
-      toast.error(t('errors.databaseSaveFailed', 'Échec de l\'enregistrement local'))
+      toast.error(LL.errors.databaseSaveFailed())
     }
     finally {
       setIsSaving(false)
-    }
-  }
-
-  const handlePublish = async () => {
-    if (!unpublishedNote)
-      return
-
-    const missingStudentIds = students
-      .map(s => s.id)
-      .filter(id => !unpublishedNote.details.find(d => d.studentId === id))
-
-    if (missingStudentIds.length > 0) {
-      setIsConfirmDialogOpen(true)
-    }
-    else {
-      executePublish()
     }
   }
 
@@ -372,7 +358,7 @@ function ClassDetailPage() {
       // Mark as published locally
       await localNotesService.publishNote(unpublishedNote.id)
 
-      toast.success(t('grades.publishedSuccess', 'Note publiée avec succès !'))
+      toast.success(LL.grades.publishedSuccess())
       setIsUnpublishedSheetOpen(false)
       setIsConfirmDialogOpen(false)
       refetchUnpublished()
@@ -381,10 +367,26 @@ function ClassDetailPage() {
     }
     catch (error) {
       console.error('Publish failed:', error)
-      toast.error(t('errors.publishFailed', 'Échec de la publication'))
+      toast.error(LL.errors.publishFailed())
     }
     finally {
       setIsSaving(false)
+    }
+  }
+
+  const handlePublish = async () => {
+    if (!unpublishedNote)
+      return
+
+    const missingStudentIds = students
+      .map(s => s.id)
+      .filter(id => !unpublishedNote.details.find(d => d.studentId === id))
+
+    if (missingStudentIds.length > 0) {
+      setIsConfirmDialogOpen(true)
+    }
+    else {
+      executePublish()
     }
   }
 
@@ -482,7 +484,7 @@ function ClassDetailPage() {
             </h1>
             <div className="flex items-center gap-2 mt-1">
               <Badge variant="outline" className="text-[10px] uppercase tracking-widest font-black">
-                {currentSchool?.name ?? t('classes.defaultSchool', 'Établissement')}
+                {currentSchool?.name ?? LL.classes.defaultSchool()}
               </Badge>
             </div>
           </div>
@@ -498,7 +500,7 @@ function ClassDetailPage() {
             <IconUsers className="w-5 h-5 text-primary mb-1" />
             <span className="text-xl font-black text-foreground">{students.length}</span>
             <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
-              Élèves
+              {LL.common.students()}
             </span>
           </motion.div>
 
@@ -513,7 +515,7 @@ function ClassDetailPage() {
               {classStats.average?.toFixed(2) ?? '--.--'}
             </span>
             <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
-              Moyenne
+              {LL.common.average()}
             </span>
           </motion.div>
 
@@ -526,7 +528,7 @@ function ClassDetailPage() {
             <IconBook className="w-5 h-5 text-muted-foreground mb-1" />
             <span className="text-xl font-black text-foreground">--</span>
             <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
-              Notes
+              {LL.grades.title()}
             </span>
           </motion.div>
         </div>
@@ -541,7 +543,7 @@ function ClassDetailPage() {
                       className="w-full h-11 sm:h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-lg sm:shadow-xl rounded-lg sm:rounded-xl transition-all active:scale-[0.98]"
                     >
                       <IconPlayerPlay className="w-5 h-5 mr-2" />
-                      {t('session.start', 'Démarrer')}
+                      {LL.session.start()}
                     </Button>
                   </Link>
 
@@ -551,7 +553,7 @@ function ClassDetailPage() {
                     onClick={handleStartEntry}
                   >
                     <IconPlus className="w-5 h-5 mr-2" />
-                    {t('grades.addNote', 'Ajouter une note')}
+                    {LL.grades.addNote()}
                   </Button>
 
                   {unpublishedNote && (
@@ -562,7 +564,7 @@ function ClassDetailPage() {
                       onClick={() => setIsUnpublishedSheetOpen(true)}
                     >
                       <IconHistory className="w-5 h-5 mr-3 group-hover:rotate-[-10deg] transition-transform" />
-                      {t('grades.unpublishedNoteShort', 'Note non publiée')}
+                      {LL.grades.unpublishedNoteShort()}
                       <Badge className="ml-2 bg-amber-500 text-white border-none h-5 px-1.5 min-w-5 justify-center">
                         {unpublishedCount}
                       </Badge>
@@ -577,7 +579,7 @@ function ClassDetailPage() {
                     className="flex-1 min-w-[120px] h-11 sm:h-12 font-bold rounded-lg sm:rounded-xl"
                     onClick={handleCancelEntry}
                   >
-                    {t('common.cancel', 'Annuler')}
+                    {LL.common.cancel()}
                   </Button>
                   <Button
                     className="flex-1 min-w-[120px] h-11 sm:h-12 font-bold rounded-lg sm:rounded-xl shadow-xl"
@@ -585,7 +587,7 @@ function ClassDetailPage() {
                     disabled={isSaving}
                   >
                     <IconDeviceFloppy className="w-5 h-5 mr-2" />
-                    {t('common.save', 'Enregistrer')}
+                    {LL.common.save()}
                   </Button>
                 </>
               )}
@@ -622,10 +624,10 @@ function ClassDetailPage() {
                         </span>
                         <div className="flex items-center gap-2">
                           <Badge variant="outline" className="h-5 text-[10px] font-bold uppercase bg-primary/5 border-primary/20 text-primary">
-                            {t(`grades.${noteType}`, noteType === 'quizzes' ? 'Interro' : noteType === 'tests' ? 'Devoir' : 'Compo')}
+                            {LL.grades[noteType]()}
                           </Badge>
                           <span className="text-sm font-black text-foreground">
-                            {noteTitle || t('grades.noDescription', '(Sans description)')}
+                            {noteTitle || LL.grades.noDescription()}
                           </span>
                           <div className="w-1 h-1 rounded-full bg-muted-foreground/30" />
                           <span className="text-xs font-bold text-muted-foreground uppercase">
@@ -655,25 +657,25 @@ function ClassDetailPage() {
                       {/* Evaluation Type */}
                       <div className="flex-1 min-w-0 space-y-1.5">
                         <label className="text-[10px] uppercase tracking-widest font-black text-muted-foreground ml-1 truncate block">
-                          {t('grades.nature', 'Nature')}
+                          {LL.grades.nature()}
                         </label>
                         <Select
                           value={noteType}
-                          onValueChange={val => setNoteType(val as any)}
+                          onValueChange={val => setNoteType(val as 'quizzes' | 'tests' | 'level_tests')}
                         >
                           <SelectTrigger className="w-full h-11! rounded-xl bg-background border-border/50 font-semibold px-3 overflow-hidden">
-                            <SelectValue placeholder={t('grades.selectType', 'Type')}>
+                            <SelectValue placeholder={LL.grades.selectType()}>
                               {noteType === 'quizzes'
-                                ? t('grades.quizzes', 'Interro')
+                                ? LL.grades.quizzes()
                                 : noteType === 'tests'
-                                  ? t('grades.tests', 'Devoir')
-                                  : noteType === 'level_tests' ? t('grades.level_tests', 'Compo') : undefined}
+                                  ? LL.grades.tests()
+                                  : noteType === 'level_tests' ? LL.grades.level_tests() : undefined}
                             </SelectValue>
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="quizzes">{t('grades.quizzes', 'Interro')}</SelectItem>
-                            <SelectItem value="tests">{t('grades.tests', 'Devoir')}</SelectItem>
-                            <SelectItem value="level_tests">{t('grades.level_tests', 'Compo')}</SelectItem>
+                            <SelectItem value="quizzes">{LL.grades.quizzes()}</SelectItem>
+                            <SelectItem value="tests">{LL.grades.tests()}</SelectItem>
+                            <SelectItem value="level_tests">{LL.grades.level_tests()}</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -696,7 +698,7 @@ function ClassDetailPage() {
                           >
                             <NumberFieldGroup className="h-11! rounded-xl bg-background border border-border/50 overflow-hidden">
                               <NumberFieldDecrement className="border-none h-full w-8 bg-transparent hover:bg-muted/50 rounded-none" />
-                              <NumberFieldInput className="border-none h-full bg-transparent font-bold ring-0! shadow-none! text-center p-0" title="Coefficient" />
+                              <NumberFieldInput className="border-none h-full bg-transparent font-bold ring-0! shadow-none! text-center p-0" title={LL.grades.coeff()} />
                               <NumberFieldIncrement className="border-none h-full w-8 bg-transparent hover:bg-muted/50 rounded-none" />
                             </NumberFieldGroup>
                           </NumberField>
@@ -707,7 +709,7 @@ function ClassDetailPage() {
                             htmlFor="note-outof-input"
                             className="text-[10px] uppercase tracking-widest font-black text-muted-foreground ml-1"
                           >
-                            Barème
+                            {LL.grades.grading()}
                           </label>
                           <NumberField
                             id="note-outof-input"
@@ -718,7 +720,7 @@ function ClassDetailPage() {
                           >
                             <NumberFieldGroup className="h-11! rounded-xl bg-background border border-border/50 overflow-hidden">
                               <NumberFieldDecrement className="border-none h-full w-8 bg-transparent hover:bg-muted/50 rounded-none" />
-                              <NumberFieldInput className="border-none h-full bg-transparent font-bold ring-0! shadow-none! text-center p-0" title="Barème" />
+                              <NumberFieldInput className="border-none h-full bg-transparent font-bold ring-0! shadow-none! text-center p-0" title={LL.grades.grading()} />
                               <NumberFieldIncrement className="border-none h-full w-8 bg-transparent hover:bg-muted/50 rounded-none" />
                             </NumberFieldGroup>
                           </NumberField>
@@ -727,14 +729,14 @@ function ClassDetailPage() {
                         {teacherSubjects.length > 1 && (
                           <div className="flex-1 min-w-0 space-y-1.5">
                             <label className="text-[10px] uppercase tracking-widest font-black text-muted-foreground ml-1 truncate block">
-                              {t('grades.subject', 'Matière')}
+                              {LL.grades.subject()}
                             </label>
                             <Select
                               value={selectedSubjectId || ''}
                               onValueChange={val => setSelectedSubjectId(val)}
                             >
                               <SelectTrigger className="w-full h-11! rounded-xl bg-background border-border/50 font-semibold px-3 overflow-hidden">
-                                <SelectValue placeholder={t('grades.selectSubject', 'Sujet')}>
+                                <SelectValue placeholder={LL.grades.selectSubject()}>
                                   {selectedSubjectId ? teacherSubjects.find(s => s.id === selectedSubjectId)?.name : undefined}
                                 </SelectValue>
                               </SelectTrigger>
@@ -756,13 +758,13 @@ function ClassDetailPage() {
                         htmlFor="note-description-input"
                         className="text-[10px] uppercase tracking-widest font-black text-muted-foreground ml-1"
                       >
-                        {t('grades.description', 'Description / Titre (Optionnel)')}
+                        {LL.grades.description()}
                       </label>
                       <Input
                         id="note-description-input"
                         value={noteTitle}
                         onChange={e => setNoteTitle(e.target.value)}
-                        placeholder={t('grades.egInterro1', 'Ex: Chapitre 1, Géographie...')}
+                        placeholder={LL.grades.egInterro1()}
                         className="h-11 rounded-xl bg-background border-border/50 text-sm"
                       />
                     </div>
@@ -780,7 +782,7 @@ function ClassDetailPage() {
           <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             type="text"
-            placeholder={t('search.students', 'Rechercher un élève...')}
+            placeholder={LL.search.students()}
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             className="pl-10 h-11 rounded-xl"
@@ -828,7 +830,7 @@ function ClassDetailPage() {
                           onClick={() => handleSort('name')}
                         >
                           <div className="flex items-center gap-2">
-                            Élève
+                            {LL.common.student()}
                             {sortConfig?.key === 'name' && (
                               <span className="text-xs">
                                 {sortConfig.direction === 'asc' ? '↑' : '↓'}
@@ -839,16 +841,16 @@ function ClassDetailPage() {
                         {!isEntryMode
                           ? (
                               <>
-                                <TableHead className="text-center min-w-[100px]">Participation</TableHead>
-                                <TableHead className="text-center min-w-[80px]">Interro</TableHead>
-                                <TableHead className="text-center min-w-[80px]">Devoir</TableHead>
-                                <TableHead className="text-center min-w-[80px]">DN</TableHead>
+                                <TableHead className="text-center min-w-[100px]">{LL.common.participation()}</TableHead>
+                                <TableHead className="text-center min-w-[80px]">{LL.grades.quizzes()}</TableHead>
+                                <TableHead className="text-center min-w-[80px]">{LL.grades.tests()}</TableHead>
+                                <TableHead className="text-center min-w-[80px]">{LL.grades.level_tests()}</TableHead>
                                 <TableHead
                                   className="sticky right-0 z-20 min-w-[120px] bg-muted/50 text-center font-semibold cursor-pointer hover:bg-muted"
                                   onClick={() => handleSort('average')}
                                 >
                                   <div className="flex items-center justify-center gap-2">
-                                    Moyenne
+                                    {LL.common.average()}
                                     {sortConfig?.key === 'average' && (
                                       <span className="text-xs">
                                         {sortConfig.direction === 'asc' ? '↑' : '↓'}
@@ -861,7 +863,13 @@ function ClassDetailPage() {
                             )
                           : (
                               <TableHead className="text-center min-w-[150px] font-black text-primary italic">
-                                Nouvelle Note (/20)
+                                {LL.grades.newNoteTitle()}
+                                {' '}
+                                (
+                                {LL.grades.outOf()}
+                                {' '}
+                                {gradeOutOf}
+                                )
                               </TableHead>
                             )}
                       </TableRow>
@@ -959,7 +967,7 @@ function ClassDetailPage() {
           onResume={() => {
             // Restore state from unpublished note
             setNoteTitle(unpublishedNote.title)
-            setNoteType(unpublishedNote.type as any)
+            setNoteType(unpublishedNote.type as 'quizzes' | 'tests' | 'level_tests')
             setWeight(unpublishedNote.weight ?? 1)
             setGradeOutOf(unpublishedNote.totalPoints || 20)
             setSelectedSubjectId(unpublishedNote.subjectId)
@@ -980,14 +988,10 @@ function ClassDetailPage() {
           onOpenChange={setIsConfirmDialogOpen}
           onConfirm={executePublish}
           isLoading={isSaving}
-          title={t('grades.confirmPublishTitle', 'Confirmer la publication')}
-          description={t(
-            'grades.confirmPublishDescription',
-            'Il y a {{count}} élève(s) sans note. Ils recevront automatiquement la note de 0. Voulez-vous continuer ?',
-            { count: students.length - unpublishedNote.details.length },
-          )}
-          confirmText={t('grades.confirmPublish', 'Publier quand même')}
-          cancelText={t('common.cancel', 'Annuler')}
+          title={LL.grades.confirmPublishTitle()}
+          description={LL.grades.confirmPublishDescription({ count: students.length - unpublishedNote.details.length })}
+          confirmText={LL.grades.confirmPublish()}
+          cancelText={LL.common.cancel()}
         />
       )}
     </div>
@@ -1021,6 +1025,7 @@ function StudentCard({
   onGradeChange,
   gradeOutOf = 20,
 }: StudentCardProps) {
+  const { LL } = useI18nContext()
   // Mock data - would be replaced with actual grade data
   // Using as const assertion to keep the type as number | null
   const studentAverage = null as number | null
@@ -1086,7 +1091,7 @@ function StudentCard({
                 className="flex items-center gap-2"
               >
                 <div className="text-right">
-                  <div className="text-muted-foreground text-[10px] uppercase font-bold tracking-tighter">Moyenne</div>
+                  <div className="text-muted-foreground text-[10px] uppercase font-bold tracking-tighter">{LL.common.average()}</div>
                   <div
                     className={cn(
                       'flex items-center gap-1 rounded-md px-2.5 py-1 font-bold text-base',
@@ -1123,15 +1128,15 @@ function StudentCard({
               {/* Grade Details */}
               <div className="grid grid-cols-3 gap-3 text-xs">
                 <div className="flex flex-col rounded-md bg-background p-2">
-                  <span className="mb-1.5 font-medium text-muted-foreground">Interro</span>
+                  <span className="mb-1.5 font-medium text-muted-foreground">{LL.grades.quizzes()}</span>
                   <span className="font-semibold text-base text-muted-foreground">--</span>
                 </div>
                 <div className="flex flex-col rounded-md bg-background p-2">
-                  <span className="mb-1.5 font-medium text-muted-foreground">Devoir</span>
+                  <span className="mb-1.5 font-medium text-muted-foreground">{LL.grades.tests()}</span>
                   <span className="font-semibold text-base text-muted-foreground">--</span>
                 </div>
                 <div className="flex flex-col rounded-md bg-background p-2">
-                  <span className="mb-1.5 font-medium text-muted-foreground">DN</span>
+                  <span className="mb-1.5 font-medium text-muted-foreground">{LL.grades.level_tests()}</span>
                   <span className="font-semibold text-base text-muted-foreground">--</span>
                 </div>
               </div>
@@ -1141,7 +1146,7 @@ function StudentCard({
                 <Link to="/app/students/$studentId/notes" params={{ studentId: student.id }} className="flex-1">
                   <Button variant="outline" className="w-full h-10 font-bold border-border/60 hover:bg-muted/50">
                     <IconEdit className="w-4 h-4 mr-2" />
-                    Gérer les notes
+                    {LL.notes.manage()}
                   </Button>
                 </Link>
               </div>
@@ -1154,7 +1159,7 @@ function StudentCard({
 }
 
 function EmptyStudents() {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
 
   return (
     <motion.div
@@ -1165,17 +1170,17 @@ function EmptyStudents() {
     >
       <IconUsers className="mb-4 size-12 text-muted-foreground/50" />
       <h3 className="mb-2 font-medium text-foreground text-lg">
-        Aucun élève
+        {LL.classes.noStudents()}
       </h3>
       <p className="text-muted-foreground text-sm">
-        {t('classes.noStudents', 'Aucun élève n\'est inscrit dans cette classe pour le moment.')}
+        {LL.classes.noStudents()}
       </p>
     </motion.div>
   )
 }
 
 function ClassNotFound({ schoolId }: { schoolId: string }) {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[70vh] p-4 gap-6">
@@ -1191,14 +1196,14 @@ function ClassNotFound({ schoolId }: { schoolId: string }) {
         </div>
       </motion.div>
       <div className="space-y-4 max-w-sm text-center">
-        <h2 className="text-3xl font-black tracking-tight">Classe introuvable</h2>
+        <h2 className="text-3xl font-black tracking-tight">{LL.classes.notFound()}</h2>
         <p className="text-muted-foreground leading-relaxed font-medium">
-          {t('classes.notFound', 'Cette classe n\'existe pas ou vous n\'y avez pas accès.')}
+          {LL.classes.notFound()}
         </p>
         <Link to="/app/schools/$schoolId/classes" params={{ schoolId }}>
           <Button>
             <IconArrowLeft className="w-4 h-4 mr-2" />
-            Retour aux classes
+            {LL.classes.backToClasses()}
           </Button>
         </Link>
       </div>
@@ -1242,7 +1247,7 @@ function ClassDetailSkeleton() {
 interface UnpublishedNoteSheetProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  note: any // NoteWithDetails
+  note: NoteWithDetails
   totalStudents: number
   onPublish: () => void
   onResume: () => void
@@ -1258,7 +1263,7 @@ function UnpublishedNoteSheet({
   onResume,
   isPublishing,
 }: UnpublishedNoteSheetProps) {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
   const participatedCount = note.details.length
   const missingCount = totalStudents - participatedCount
   const isComplete = missingCount === 0
@@ -1269,14 +1274,14 @@ function UnpublishedNoteSheet({
         <SheetHeader className="p-6 pb-4 flex flex-row items-center justify-between border-b border-border/40">
           <div className="space-y-1">
             <SheetTitle className="text-xl font-black">
-              {t('grades.draftTitle', 'Brouillon en cours')}
+              {LL.grades.draftTitle()}
             </SheetTitle>
             <SheetDescription>
-              {t('grades.draftSubtitle', 'Une note est enregistrée localement pour cette classe.')}
+              {LL.grades.draftSubtitle()}
             </SheetDescription>
           </div>
           <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/20 font-bold uppercase tracking-widest text-[10px] px-3 py-1">
-            En attente
+            {LL.grades.pendingBadge()}
           </Badge>
         </SheetHeader>
 
@@ -1291,17 +1296,18 @@ function UnpublishedNoteSheet({
                 <div>
                   <h4 className="font-black text-foreground">{note.title}</h4>
                   <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                    {String(t(`grades.${note.type}`, { defaultValue: note.type }))}
+                    {String((LL.grades[note.type as keyof TranslationFunctions['grades']] as () => string)?.() || note.type)}
                   </p>
                 </div>
               </div>
               <div className="text-right">
                 <span className="block text-lg font-black text-foreground">
-                  Coef.
+                  {LL.grades.coeff()}
+                  {' '}
                   {note.weight}
                 </span>
                 <span className="text-xs font-bold text-muted-foreground uppercase">
-                  sur
+                  {LL.grades.outOf()}
                   {' '}
                   {note.totalPoints || 20}
                 </span>
@@ -1310,7 +1316,7 @@ function UnpublishedNoteSheet({
 
             <div className="grid grid-cols-2 gap-3 pt-4 border-t border-border/40">
               <div className="space-y-1">
-                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Participations</span>
+                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{LL.grades.participations()}</span>
                 <div className="flex items-center gap-2">
                   <span className="text-xl font-black text-foreground">{participatedCount}</span>
                   <span className="text-sm font-bold text-muted-foreground">
@@ -1320,7 +1326,7 @@ function UnpublishedNoteSheet({
                 </div>
               </div>
               <div className="space-y-1 text-right">
-                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Manquants</span>
+                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{LL.grades.missing()}</span>
                 <div className="flex items-center justify-end gap-2">
                   <span className={cn(
                     'text-xl font-black',
@@ -1340,7 +1346,7 @@ function UnpublishedNoteSheet({
               onClick={onResume}
             >
               <IconEdit className="w-5 h-5 mr-3" />
-              {t('grades.resumeEntry', 'Reprendre la saisie')}
+              {LL.grades.resumeEntry()}
             </Button>
 
             <Button
@@ -1355,14 +1361,14 @@ function UnpublishedNoteSheet({
               disabled={isPublishing}
             >
               <IconPlayerPlay className="w-5 h-5 mr-3" />
-              {isPublishing ? t('grades.publishing', 'Publication...') : t('grades.publishDraft', 'Publier la note')}
+              {isPublishing ? LL.grades.publishing() : LL.grades.publishDraft()}
             </Button>
 
             {!isComplete && (
               <div className="p-4 rounded-xl bg-amber-500/5 border border-amber-500/10 flex items-start gap-3">
                 <IconAlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
                 <p className="text-xs font-medium text-amber-700/80 leading-relaxed">
-                  {t('grades.missingStudentsWarningPublish', '{{count}} élève(s) n\'ont pas de note. Ils recevront 0 si vous publiez maintenant.', { count: missingCount })}
+                  {LL.grades.missingStudentsWarningPublish({ count: missingCount })}
                 </p>
               </div>
             )}

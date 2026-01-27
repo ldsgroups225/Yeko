@@ -17,9 +17,9 @@ import {
 import { Skeleton } from '@workspace/ui/components/skeleton'
 import { Textarea } from '@workspace/ui/components/textarea'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
+import { useI18nContext } from '@/i18n/i18n-react'
 import { teacherClassesQueryOptions } from '@/lib/queries/dashboard'
 import { createHomework } from '@/teacher/functions/homework'
 
@@ -28,7 +28,7 @@ export const Route = createFileRoute('/_auth/app/homework/new')({
 })
 
 function NewHomeworkPage() {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
@@ -57,12 +57,12 @@ function NewHomeworkPage() {
   const createMutation = useMutation({
     mutationFn: createHomework,
     onSuccess: () => {
-      toast.success(t('homework.created', 'Devoir créé'))
+      toast.success(LL.homework.created())
       queryClient.invalidateQueries({ queryKey: ['teacher', 'homework'] })
       navigate({ to: '/app/homework' })
     },
     onError: () => {
-      toast.error(t('errors.serverError'))
+      toast.error(LL.errors.serverError())
     },
   })
 
@@ -96,7 +96,7 @@ function NewHomeworkPage() {
             <IconArrowLeft className="h-5 w-5" />
           </Button>
         </Link>
-        <h1 className="text-lg font-semibold">{t('homework.new')}</h1>
+        <h1 className="text-lg font-semibold">{LL.homework.new()}</h1>
       </div>
 
       {isLoading
@@ -105,7 +105,7 @@ function NewHomeworkPage() {
             <div className="space-y-4">
               {/* Class selection */}
               <div className="space-y-2">
-                <Label>{t('grades.selectClass')}</Label>
+                <Label>{LL.grades.selectClass()}</Label>
                 <Select
                   value={selectedClassId || null}
                   onValueChange={(v) => {
@@ -114,7 +114,7 @@ function NewHomeworkPage() {
                   }}
                 >
                   <SelectTrigger>
-                    <SelectValue>{selectedClassId ? classesData?.classes?.find(c => c.id === selectedClassId)?.name : t('grades.selectClass')}</SelectValue>
+                    <SelectValue>{selectedClassId ? classesData?.classes?.find(c => c.id === selectedClassId)?.name : LL.grades.selectClass()}</SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     {classesData?.classes?.map(cls => (
@@ -129,10 +129,10 @@ function NewHomeworkPage() {
               {/* Subject selection */}
               {selectedClass && (
                 <div className="space-y-2">
-                  <Label>{t('grades.selectSubject')}</Label>
+                  <Label>{LL.grades.selectSubject()}</Label>
                   <Select value={selectedSubjectId || null} onValueChange={v => setSelectedSubjectId(v ?? '')}>
                     <SelectTrigger>
-                      <SelectValue>{selectedSubjectId ? selectedClass.subjects?.find(s => s.id === selectedSubjectId)?.name : t('grades.selectSubject')}</SelectValue>
+                      <SelectValue>{selectedSubjectId ? selectedClass.subjects?.find(s => s.id === selectedSubjectId)?.name : LL.grades.selectSubject()}</SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {selectedClass.subjects?.map(subject => (
@@ -147,9 +147,9 @@ function NewHomeworkPage() {
 
               {/* Title */}
               <div className="space-y-2">
-                <Label>{t('homework.titleField')}</Label>
+                <Label>{LL.homework.titleField()}</Label>
                 <Input
-                  placeholder={t('homework.titleField')}
+                  placeholder={LL.homework.titleField()}
                   value={title}
                   onChange={e => setTitle(e.target.value)}
                 />
@@ -157,9 +157,9 @@ function NewHomeworkPage() {
 
               {/* Description */}
               <div className="space-y-2">
-                <Label>{t('homework.description')}</Label>
+                <Label>{LL.homework.description()}</Label>
                 <Textarea
-                  placeholder={t('homework.description')}
+                  placeholder={LL.homework.description()}
                   value={description}
                   onChange={e => setDescription(e.target.value)}
                   rows={4}
@@ -170,7 +170,7 @@ function NewHomeworkPage() {
               {/* Due date */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
-                  <Label>{t('homework.dueDate')}</Label>
+                  <Label>{LL.homework.dueDate()}</Label>
                   <div className="relative">
                     <IconCalendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <DatePicker
@@ -181,7 +181,7 @@ function NewHomeworkPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label>{t('homework.dueTime')}</Label>
+                  <Label>{LL.homework.dueTime()}</Label>
                   <Input
                     type="time"
                     value={dueTime}
@@ -202,7 +202,7 @@ function NewHomeworkPage() {
             disabled={!canSubmit || createMutation.isPending}
           >
             <IconDeviceFloppy className="mr-2 h-4 w-4" />
-            {t('homework.status.draft')}
+            {LL.homework.status.draft()}
           </Button>
           <Button
             className="flex-1"
@@ -210,7 +210,7 @@ function NewHomeworkPage() {
             disabled={!canSubmit || createMutation.isPending}
           >
             <IconSend className="mr-2 h-4 w-4" />
-            {t('homework.create')}
+            {LL.homework.create()}
           </Button>
         </div>
       </div>

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { IconLoader2 } from '@tabler/icons-react'
 import { useCallback, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useI18nContext } from '@/i18n/i18n-react'
 
 import { cn } from '@/lib/utils'
 
@@ -18,7 +18,7 @@ export function PullToRefresh({
   className,
   threshold = 80,
 }: PullToRefreshProps) {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
   const [pullDistance, setPullDistance] = useState(0)
   const [isRefreshing, setIsRefreshing] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -105,8 +105,8 @@ export function PullToRefresh({
           />
           <span className="text-xs text-muted-foreground">
             {isRefreshing
-              ? t('common.refreshing')
-              : t('common.pullToRefresh')}
+              ? LL.common.refreshing()
+              : LL.common.pullToRefresh()}
           </span>
         </div>
       </div>

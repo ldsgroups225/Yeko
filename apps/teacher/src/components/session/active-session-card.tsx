@@ -4,7 +4,7 @@ import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent } from '@workspace/ui/components/card'
 
 import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useI18nContext } from '@/i18n/i18n-react'
 
 interface ActiveSessionCardProps {
   session: {
@@ -22,7 +22,7 @@ export function ActiveSessionCard({
   session,
   onComplete,
 }: ActiveSessionCardProps) {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
   const [elapsed, setElapsed] = useState(0)
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export function ActiveSessionCard({
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
               </span>
               <span className="text-xs font-medium text-primary">
-                {t('session.active')}
+                {LL.session.active()}
               </span>
             </div>
             <h3 className="font-semibold">{session.className}</h3>
@@ -65,7 +65,7 @@ export function ActiveSessionCard({
           <div className="text-right">
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
               <IconClock className="h-3.5 w-3.5" />
-              <span>{t('session.timer')}</span>
+              <span>{LL.session.timer()}</span>
             </div>
             <p className="font-mono text-lg font-semibold tabular-nums">
               {formatElapsed(elapsed)}
@@ -84,13 +84,13 @@ export function ActiveSessionCard({
                 params={{ sessionId: session.id }}
               >
                 <IconUsers className="mr-1.5 h-4 w-4" />
-                {t('session.participation')}
+                {LL.session.participation()}
               </Link>
             )}
           />
           <Button size="sm" className="flex-1" onClick={onComplete}>
             <IconPlayerPlay className="mr-1.5 h-4 w-4" />
-            {t('session.complete')}
+            {LL.session.complete()}
           </Button>
         </div>
       </CardContent>

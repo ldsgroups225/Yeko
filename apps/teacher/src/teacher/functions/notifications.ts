@@ -39,11 +39,11 @@ export const getTeacherNotifications = createServerFn()
 
         return {
           id: notification.id,
-          type: notification.type as any, // Keep cast for UI enum compatibility if needed, but strictly typed upstream
+          type: notification.type as string,
           title: notification.title,
           body: notification.body,
           actionType: notification.actionType,
-          actionData: notification.actionData as any,
+          actionData: notification.actionData as Record<string, object> | null,
           relatedType: notification.relatedType,
           relatedId: notification.relatedId,
           isRead: notification.isRead,

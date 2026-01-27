@@ -5,7 +5,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { Skeleton } from '@workspace/ui/components/skeleton'
-import { useTranslation } from 'react-i18next'
+import { useI18nContext } from '@/i18n/i18n-react'
 
 export const Route = createFileRoute('/_auth/app/students/$studentId/parents')({
   component: StudentParentsPage,
@@ -13,7 +13,7 @@ export const Route = createFileRoute('/_auth/app/students/$studentId/parents')({
 
 function StudentParentsPage() {
   const { studentId } = Route.useParams()
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
 
   const { data, isLoading } = useQuery({
     queryKey: ['student-parents', studentId],
@@ -27,7 +27,7 @@ function StudentParentsPage() {
 
   return (
     <div className="flex flex-col gap-4 p-4 pb-20">
-      <h1 className="text-xl font-semibold">{t('parents.title')}</h1>
+      <h1 className="text-xl font-semibold">{LL.parents.title()}</h1>
 
       {data && data.length > 0
         ? (
@@ -42,7 +42,7 @@ function StudentParentsPage() {
               <CardContent className="flex flex-col items-center justify-center py-12">
                 <IconUser className="h-12 w-12 text-muted-foreground/50" />
                 <p className="mt-4 text-sm text-muted-foreground">
-                  {t('parents.noParents')}
+                  {LL.parents.noParents()}
                 </p>
               </CardContent>
             </Card>
@@ -64,14 +64,14 @@ interface Parent {
 }
 
 function ParentCard({ parent }: { parent: Parent }) {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
 
   const getRelationshipLabel = (rel: string) => {
     const labels: Record<string, string> = {
-      father: t('parents.father'),
-      mother: t('parents.mother'),
-      guardian: t('parents.guardian'),
-      other: t('parents.other'),
+      father: LL.parents.father(),
+      mother: LL.parents.mother(),
+      guardian: LL.parents.guardian(),
+      other: LL.parents.other(),
     }
     return labels[rel] || rel
   }
@@ -80,8 +80,8 @@ function ParentCard({ parent }: { parent: Parent }) {
     if (!pref)
       return null
     const labels: Record<string, string> = {
-      phone: t('parents.contactPhone'),
-      email: t('parents.contactEmail'),
+      phone: LL.parents.contactPhone(),
+      email: LL.parents.contactEmail(),
     }
     return labels[pref] || pref
   }
@@ -98,12 +98,12 @@ function ParentCard({ parent }: { parent: Parent }) {
           <div className="flex gap-2">
             {parent.isPrimary && (
               <span className="rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
-                {t('parents.primary')}
+                {LL.parents.primary()}
               </span>
             )}
             {parent.isVerified && (
               <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700">
-                {t('parents.verified')}
+                {LL.parents.verified()}
               </span>
             )}
           </div>
@@ -131,7 +131,7 @@ function ParentCard({ parent }: { parent: Parent }) {
         )}
         {parent.preferredContact && (
           <p className="text-xs text-muted-foreground">
-            {t('parents.prefers')}
+            {LL.parents.prefers()}
             :
             {getPreferredContactLabel(parent.preferredContact)}
           </p>
@@ -139,7 +139,7 @@ function ParentCard({ parent }: { parent: Parent }) {
         <div className="flex gap-2 pt-2">
           <Button size="sm" variant="outline">
             <IconMessage className="mr-2 h-4 w-4" />
-            {t('parents.sendMessage')}
+            {LL.parents.sendMessage()}
           </Button>
         </div>
       </CardContent>

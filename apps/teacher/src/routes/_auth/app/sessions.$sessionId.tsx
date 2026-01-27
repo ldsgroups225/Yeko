@@ -9,11 +9,11 @@ import { Checkbox } from '@workspace/ui/components/checkbox'
 import { Label } from '@workspace/ui/components/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { SessionTimer } from '@/components/session/session-timer'
 import { StudentAttendanceList } from '@/components/session/student-attendance-list'
 import { StudentParticipationList } from '@/components/session/student-participation-list'
+import { useI18nContext } from '@/i18n/i18n-react'
 import {
   participationGradesQueryOptions,
   sessionDetailsQueryOptions,
@@ -28,7 +28,7 @@ export const Route = createFileRoute('/_auth/app/sessions/$sessionId')({
 
 function SessionDetailPage() {
   const { sessionId } = Route.useParams()
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
@@ -106,13 +106,13 @@ function SessionDetailPage() {
       })
     },
     onSuccess: () => {
-      toast.success(t('participation.saved'))
+      toast.success(LL.participation.saved())
       queryClient.invalidateQueries({
         queryKey: ['teacher', 'participation', sessionId],
       })
     },
     onError: () => {
-      toast.error(t('common.error'))
+      toast.error(LL.common.error())
     },
   })
 
@@ -131,10 +131,10 @@ function SessionDetailPage() {
       })
     },
     onSuccess: () => {
-      toast.success(t('common.saved', 'Enregistré'))
+      toast.success(LL.common.saved())
     },
     onError: () => {
-      toast.error(t('common.error'))
+      toast.error(LL.common.error())
     },
   })
 
@@ -155,11 +155,11 @@ function SessionDetailPage() {
       })
     },
     onSuccess: () => {
-      toast.success(t('session.completed'))
+      toast.success(LL.session.completed())
       navigate({ to: '/app' })
     },
     onError: () => {
-      toast.error(t('common.error'))
+      toast.error(LL.common.error())
     },
   })
 
@@ -207,12 +207,12 @@ function SessionDetailPage() {
           variant="ghost"
           size="icon"
           onClick={() => navigate({ to: '/app' })}
-          aria-label={t('common.back')}
+          aria-label={LL.common.back()}
         >
           <IconArrowLeft className="h-5 w-5" />
         </Button>
         <div className="flex-1">
-          <h1 className="font-semibold">{session?.className ?? t('session.title')}</h1>
+          <h1 className="font-semibold">{session?.className ?? LL.session.title()}</h1>
           <p className="text-sm text-muted-foreground">
             {session?.subjectName ?? ''}
           </p>
@@ -227,19 +227,19 @@ function SessionDetailPage() {
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="attendance" className="gap-1.5 p-1">
             <IconClipboardList className="h-4 w-4" />
-            <span className="hidden sm:inline">{t('session.attendance', 'Appel')}</span>
+            <span className="hidden sm:inline">{LL.session.attendance()}</span>
           </TabsTrigger>
           <TabsTrigger value="participation" className="gap-1.5 p-1">
             <IconUsers className="h-4 w-4" />
-            <span className="hidden sm:inline">{t('session.participation')}</span>
+            <span className="hidden sm:inline">{LL.session.participation()}</span>
           </TabsTrigger>
           <TabsTrigger value="homework" className="gap-1.5 p-1">
             <IconBook className="h-4 w-4" />
-            <span className="hidden sm:inline">{t('session.homework', 'Devoirs')}</span>
+            <span className="hidden sm:inline">{LL.session.homework()}</span>
           </TabsTrigger>
           <TabsTrigger value="details" className="gap-1.5 p-1">
             <IconPencil className="h-4 w-4" />
-            <span className="hidden sm:inline">{t('session.notes')}</span>
+            <span className="hidden sm:inline">{LL.session.notes()}</span>
           </TabsTrigger>
         </TabsList>
 
@@ -267,7 +267,7 @@ function SessionDetailPage() {
         <TabsContent value="homework" className="mt-4">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">{t('session.homework', 'Devoirs')}</CardTitle>
+              <CardTitle className="text-base">{LL.session.homework()}</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">
@@ -280,11 +280,11 @@ function SessionDetailPage() {
         <TabsContent value="details" className="mt-4">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">{t('session.notes')}</CardTitle>
+              <CardTitle className="text-base">{LL.session.notes()}</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">
-                {t('session.addNotes')}
+                {LL.session.addNotes()}
               </p>
             </CardContent>
           </Card>
@@ -312,7 +312,7 @@ function SessionDetailPage() {
           disabled={completeMutation.isPending}
         >
           <IconCircleCheck className="mr-2 h-5 w-5" />
-          {completeMutation.isPending ? t('common.loading') : t('session.complete')}
+          {completeMutation.isPending ? LL.common.loading() : LL.session.complete()}
         </Button>
       </div>
     </div>

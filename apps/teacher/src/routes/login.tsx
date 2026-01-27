@@ -4,8 +4,8 @@ import { Button } from '@workspace/ui/components/button'
 import { Input } from '@workspace/ui/components/input'
 import { Label } from '@workspace/ui/components/label'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+import { useI18nContext } from '@/i18n/i18n-react'
 import { signIn } from '@/lib/auth-client'
 import { cn } from '@/lib/utils'
 
@@ -16,7 +16,7 @@ export const Route = createFileRoute('/login')({
 })
 
 function LoginPage() {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -33,14 +33,14 @@ function LoginPage() {
       })
 
       if (result.error) {
-        toast.error(t('auth.invalidCredentials'))
+        toast.error(LL.auth.invalidCredentials())
         return
       }
 
       navigate({ to: '/app' })
     }
     catch {
-      toast.error(t('errors.serverError'))
+      toast.error(LL.errors.serverError())
     }
     finally {
       setIsLoading(false)
@@ -56,7 +56,7 @@ function LoginPage() {
       })
     }
     catch {
-      toast.error(t('errors.serverError'))
+      toast.error(LL.errors.serverError())
       setIsLoading(false)
     }
   }
@@ -69,19 +69,19 @@ function LoginPage() {
           <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary">
             <IconSchool className="h-8 w-8 text-primary-foreground" />
           </div>
-          <h1 className="text-2xl font-bold">{t('app.name')}</h1>
+          <h1 className="text-2xl font-bold">{LL.app.name()}</h1>
         </div>
 
         {/* Login Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">{t('auth.email')}</Label>
+            <Label htmlFor="email">{LL.auth.email()}</Label>
             <Input
               id="email"
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              placeholder="enseignant@ecole.com"
+              placeholder={LL.auth.emailPlaceholder()}
               required
               autoComplete="email"
               className="h-12"
@@ -89,7 +89,7 @@ function LoginPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">{t('auth.password')}</Label>
+            <Label htmlFor="password">{LL.auth.password()}</Label>
             <Input
               id="password"
               type="password"
@@ -111,7 +111,7 @@ function LoginPage() {
                   <IconLoader2 className="h-4 w-4 animate-spin" />
                 )
               : (
-                  t('auth.loginButton')
+                  LL.auth.loginButton()
                 )}
           </Button>
         </form>
@@ -122,7 +122,7 @@ function LoginPage() {
             <span className="w-full border-t" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">ou</span>
+            <span className="bg-background px-2 text-muted-foreground">{LL.auth.or()}</span>
           </div>
         </div>
 
@@ -152,7 +152,7 @@ function LoginPage() {
               d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
             />
           </svg>
-          {t('auth.loginWithGoogle')}
+          {LL.auth.loginWithGoogle()}
         </Button>
 
         {/* Forgot Password */}
@@ -161,7 +161,7 @@ function LoginPage() {
             type="button"
             className="text-sm text-muted-foreground hover:text-primary"
           >
-            {t('auth.forgotPassword')}
+            {LL.auth.forgotPassword()}
           </button>
         </div>
       </div>

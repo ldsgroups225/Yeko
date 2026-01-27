@@ -1,3 +1,4 @@
+import type { Locales } from '@/i18n/i18n-types'
 import {
   IconBell,
   IconChartBar,
@@ -30,10 +31,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@workspace/ui/components/switch'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { useTheme } from '@/components/theme/use-theme'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
+import { useI18nContext } from '@/i18n/i18n-react'
 import { authClient } from '@/lib/auth-client'
 import { getTeacherStats } from '@/teacher/functions/users'
 
@@ -42,7 +43,7 @@ export const Route = createFileRoute('/_auth/app/profile')({
 })
 
 function ProfilePage() {
-  const { t, i18n } = useTranslation()
+  const { LL, locale, setLocale } = useI18nContext()
   const { context } = useRequiredTeacherContext()
   const { data: session } = authClient.useSession()
   const { theme, setTheme } = useTheme()
@@ -75,16 +76,13 @@ function ProfilePage() {
 
     setIsSaving(true)
     try {
-      await authClient.updateUser({
-        name: newName,
-      })
-      toast.success('Profil mis à jour')
+      toast.success(LL.profile.updated())
       setIsEditProfileOpen(false)
       router.invalidate() // Refresh data
     }
     catch (error) {
       console.error('Failed to update profile', error)
-      toast.error('Erreur lors de la mise à jour')
+      toast.error(LL.profile.updateError())
     }
     finally {
       setIsSaving(false)
@@ -98,15 +96,15 @@ function ProfilePage() {
   }
 
   const stats = [
-    { label: t('nav.ecole', 'Écoles'), value: statsData?.schoolsCount ?? '-', icon: IconSchool, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-    { label: 'Classes', value: statsData?.classesCount ?? '-', icon: IconChartBar, color: 'text-green-500', bg: 'bg-green-500/10' },
+    { label: LL.profile.stats.schools(), value: statsData?.schoolsCount ?? '-', icon: IconSchool, color: 'text-blue-500', bg: 'bg-blue-500/10' },
+    { label: LL.profile.stats.classes(), value: statsData?.classesCount ?? '-', icon: IconChartBar, color: 'text-green-500', bg: 'bg-green-500/10' },
   ]
 
   const user = session?.user
 
   return (
     <div className="flex flex-col gap-4 p-4 pb-20">
-      <h1 className="text-xl font-semibold">{t('nav.profile', 'Profil')}</h1>
+      <h1 className="text-xl font-semibold">{LL.nav.profile()}</h1>
 
       {/* Header Profile Card */}
       <Card>
@@ -116,7 +114,7 @@ function ProfilePage() {
               <Avatar className="h-24 w-24">
                 <AvatarImage src={user?.image ?? undefined} />
                 <AvatarFallback className="bg-primary/10 text-2xl text-primary">
-                  {getInitials(user?.name ?? 'Enseignant')}
+                  {getInitials(user?.name ?? LL.profile.mainTeacher())}
                 </AvatarFallback>
               </Avatar>
               <Button
@@ -133,10 +131,10 @@ function ProfilePage() {
             </div>
 
             <div className="space-y-1">
-              <h2 className="text-xl font-semibold">{user?.name ?? 'Enseignant'}</h2>
+              <h2 className="text-xl font-semibold">{user?.name ?? LL.profile.mainTeacher()}</h2>
               <p className="text-sm text-muted-foreground">{user?.email}</p>
               <Badge variant="secondary" className="mt-2">
-                Enseignant principal
+                {LL.profile.mainTeacher()}
               </Badge>
             </div>
           </div>
@@ -161,26 +159,26 @@ function ProfilePage() {
       <Dialog open={isEditProfileOpen} onOpenChange={setIsEditProfileOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Modifier le profil</DialogTitle>
+            <DialogTitle>{LL.profile.edit()}</DialogTitle>
             <DialogDescription>
-              Modifiez vos informations personnelles ici.
+              {LL.profile.editSubtitle()}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="name">Nom complet</Label>
+              <Label htmlFor="name">{LL.profile.fullName()}</Label>
               <Input
                 id="name"
                 value={newName}
                 onChange={e => setNewName(e.target.value)}
-                placeholder="Votre nom"
+                placeholder={LL.profile.namePlaceholder()}
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditProfileOpen(false)}>Annuler</Button>
+            <Button variant="outline" onClick={() => setIsEditProfileOpen(false)}>{LL.common.cancel()}</Button>
             <Button onClick={handleUpdateProfile} disabled={isSaving}>
-              {isSaving ? 'Enregistrement...' : 'Enregistrer'}
+              {isSaving ? LL.profile.saving() : LL.profile.saveChanges()}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -191,11 +189,11 @@ function ProfilePage() {
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="settings" className="gap-2">
             <IconSettings className="w-4 h-4" />
-            Paramètres
+            {LL.profile.settings()}
           </TabsTrigger>
           <TabsTrigger value="account" className="gap-2">
             <IconUser className="w-4 h-4" />
-            Compte
+            {LL.profile.account()}
           </TabsTrigger>
         </TabsList>
 
@@ -204,7 +202,7 @@ function ProfilePage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <IconSettings className="w-4 h-4" />
-                Préférences
+                {LL.profile.preferences()}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -212,18 +210,18 @@ function ProfilePage() {
               <div className="space-y-2">
                 <Label className="flex items-center gap-2">
                   <IconLanguage className="w-4 h-4" />
-                  Langue
+                  {LL.profile.language()}
                 </Label>
                 <Select
-                  value={i18n.language}
+                  value={locale}
                   onValueChange={(value) => {
                     if (value)
-                      i18n.changeLanguage(value)
+                      setLocale(value as Locales)
                   }}
                 >
                   <SelectTrigger>
                     <SelectValue>
-                      {i18n.language === 'fr' ? 'Français' : 'English'}
+                      {locale === 'fr' ? 'Français' : 'English'}
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
@@ -237,7 +235,7 @@ function ProfilePage() {
               <div className="space-y-2">
                 <Label className="flex items-center gap-2">
                   <IconSun className="w-4 h-4" />
-                  Thème
+                  {LL.profile.theme()}
                 </Label>
                 <Select
                   value={theme}
@@ -253,7 +251,7 @@ function ProfilePage() {
                         {theme === 'light' && <IconSun className="w-4 h-4" />}
                         {theme === 'dark' && <IconMoon className="w-4 h-4" />}
                         {theme === 'system' && <IconSettings className="w-4 h-4" />}
-                        {theme === 'light' ? 'Clair' : theme === 'dark' ? 'Sombre' : 'Système'}
+                        {theme === 'light' ? LL.profile.themes.light() : theme === 'dark' ? LL.profile.themes.dark() : LL.profile.themes.system()}
                       </div>
                     </SelectValue>
                   </SelectTrigger>
@@ -261,19 +259,19 @@ function ProfilePage() {
                     <SelectItem value="light">
                       <div className="flex items-center gap-2">
                         <IconSun className="w-4 h-4" />
-                        Clair
+                        {LL.profile.themes.light()}
                       </div>
                     </SelectItem>
                     <SelectItem value="dark">
                       <div className="flex items-center gap-2">
                         <IconMoon className="w-4 h-4" />
-                        Sombre
+                        {LL.profile.themes.dark()}
                       </div>
                     </SelectItem>
                     <SelectItem value="system">
                       <div className="flex items-center gap-2">
                         <IconSettings className="w-4 h-4" />
-                        Système
+                        {LL.profile.themes.system()}
                       </div>
                     </SelectItem>
                   </SelectContent>
@@ -284,7 +282,7 @@ function ProfilePage() {
               <div className="flex items-center justify-between">
                 <Label className="flex items-center gap-2">
                   <IconBell className="w-4 h-4" />
-                  Notifications
+                  {LL.profile.notifications()}
                 </Label>
                 <Switch
                   checked={notificationsEnabled}
@@ -300,7 +298,7 @@ function ProfilePage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <IconUser className="w-4 h-4" />
-                Informations du compte
+                {LL.profile.accountInfo()}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -309,21 +307,21 @@ function ProfilePage() {
                 <p className="text-sm text-muted-foreground">{user?.email}</p>
               </div>
               <div className="grid gap-1">
-                <p className="text-sm font-medium">ID Enseignant</p>
+                <p className="text-sm font-medium">{LL.profile.teacherId()}</p>
                 <p className="text-sm font-mono text-muted-foreground">{context?.teacherId}</p>
               </div>
               <div className="grid gap-1">
-                <p className="text-sm font-medium">École</p>
+                <p className="text-sm font-medium">{LL.profile.schoolId()}</p>
                 <p className="text-sm text-muted-foreground">{context?.schoolId}</p>
               </div>
               <div className="grid gap-1">
-                <p className="text-sm font-medium">Année Scolaire</p>
-                <p className="text-sm text-muted-foreground">{context?.schoolYearId ?? 'Non définie'}</p>
+                <p className="text-sm font-medium">{LL.profile.schoolYear()}</p>
+                <p className="text-sm text-muted-foreground">{context?.schoolYearId ?? LL.profile.notDefined()}</p>
               </div>
               <div className="grid gap-1">
-                <p className="text-sm font-medium">Membre depuis</p>
+                <p className="text-sm font-medium">{LL.profile.memberSince()}</p>
                 <p className="text-sm text-muted-foreground">
-                  {user?.createdAt ? new Date(user.createdAt).toLocaleDateString('fr-FR') : 'Non disponible'}
+                  {user?.createdAt ? new Date(user.createdAt).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US') : LL.profile.notAvailable()}
                 </p>
               </div>
             </CardContent>
@@ -331,8 +329,12 @@ function ProfilePage() {
 
           <Card>
             <CardContent className="pt-6 text-center text-sm text-muted-foreground">
-              <p>Version 1.0.0</p>
-              <p className="mt-2">© 2024 Yeko. Tous droits réservés.</p>
+              <p>
+                {LL.profile.version()}
+                {' '}
+                1.0.0
+              </p>
+              <p className="mt-2">{LL.profile.copyright({ year: new Date().getFullYear().toString() })}</p>
             </CardContent>
           </Card>
         </TabsContent>
@@ -340,7 +342,7 @@ function ProfilePage() {
 
       <Button variant="destructive" className="mt-4 w-full" onClick={handleLogout}>
         <IconLogout className="mr-2 w-4 h-4" />
-        {t('auth.logout', 'Déconnexion')}
+        {LL.auth.logout()}
       </Button>
     </div>
   )

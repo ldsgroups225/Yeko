@@ -19,8 +19,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/componen
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
+import { useI18nContext } from '@/i18n/i18n-react'
 import { teacherMessagesQueryOptions } from '@/lib/queries/messages'
 
 export const Route = createFileRoute('/_auth/app/chat')({
@@ -28,8 +28,8 @@ export const Route = createFileRoute('/_auth/app/chat')({
 })
 
 function MessagesPage() {
-  const { t, i18n } = useTranslation()
-  const locale = i18n.language === 'fr' ? fr : undefined
+  const { LL, locale: currentLocale } = useI18nContext()
+  const locale = currentLocale === 'fr' ? fr : undefined
   const [folder, setFolder] = useState<'inbox' | 'sent' | 'archived'>('inbox')
 
   const { context, isLoading: contextLoading } = useRequiredTeacherContext()
@@ -47,11 +47,11 @@ function MessagesPage() {
   return (
     <div className="flex flex-col gap-4 p-4 pb-20">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">{t('messages.title')}</h1>
+        <h1 className="text-xl font-semibold">{LL.messages.title()}</h1>
         <Link to="/app/chat/compose">
           <Button size="sm">
             <IconPencil className="mr-2 h-4 w-4" />
-            {t('messages.compose')}
+            {LL.messages.compose()}
           </Button>
         </Link>
       </div>
@@ -60,15 +60,15 @@ function MessagesPage() {
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="inbox" className="gap-1.5">
             <IconInbox className="h-4 w-4" />
-            <span className="hidden sm:inline">{t('messages.inbox')}</span>
+            <span className="hidden sm:inline">{LL.messages.inbox()}</span>
           </TabsTrigger>
           <TabsTrigger value="sent" className="gap-1.5">
             <IconSend className="h-4 w-4" />
-            <span className="hidden sm:inline">{t('messages.sent')}</span>
+            <span className="hidden sm:inline">{LL.messages.sent()}</span>
           </TabsTrigger>
           <TabsTrigger value="archived" className="gap-1.5">
             <IconArchive className="h-4 w-4" />
-            <span className="hidden sm:inline">{t('messages.archived')}</span>
+            <span className="hidden sm:inline">{LL.messages.archived()}</span>
           </TabsTrigger>
         </TabsList>
 
@@ -173,20 +173,20 @@ function MessageItem({ message, locale }: MessageItemProps) {
 }
 
 function EmptyMessages({ folder }: { folder: string }) {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
 
   return (
     <Card>
       <CardContent className="flex flex-col items-center justify-center py-12">
         <IconMessageCircle className="h-12 w-12 text-muted-foreground/50" />
         <p className="mt-4 text-sm text-muted-foreground">
-          {t('messages.noMessages')}
+          {LL.messages.noMessages()}
         </p>
         {folder === 'inbox' && (
           <Link to="/app/chat/compose">
             <Button variant="outline" className="mt-4">
               <IconPencil className="mr-2 h-4 w-4" />
-              {t('messages.compose')}
+              {LL.messages.compose()}
             </Button>
           </Link>
         )}

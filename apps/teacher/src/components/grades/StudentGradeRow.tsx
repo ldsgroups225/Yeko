@@ -1,8 +1,7 @@
-'use client'
-
 import { Input } from '@workspace/ui/components/input'
 import { cn } from '@workspace/ui/lib/utils'
 import { useCallback, useState } from 'react'
+import { useI18nContext } from '@/i18n/i18n-react'
 
 // ============================================================================
 // Types
@@ -162,12 +161,13 @@ export function StudentGradeList({
   totalPoints,
   onGradeChange,
   disabled = false,
-  emptyMessage = 'Aucun élève trouvé',
+  emptyMessage,
 }: StudentGradeListProps) {
+  const { LL } = useI18nContext()
   if (students.length === 0) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className="text-muted-foreground">{emptyMessage}</p>
+        <p className="text-muted-foreground">{emptyMessage || LL.grades.noStudents()}</p>
       </div>
     )
   }

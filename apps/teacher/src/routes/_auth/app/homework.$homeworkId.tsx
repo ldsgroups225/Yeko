@@ -38,9 +38,9 @@ import { Textarea } from '@workspace/ui/components/textarea'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
+import { useI18nContext } from '@/i18n/i18n-react'
 import { homeworkDetailsQueryOptions } from '@/lib/queries/homework'
 import { deleteHomework, updateHomework } from '@/teacher/functions/homework'
 
@@ -49,11 +49,11 @@ export const Route = createFileRoute('/_auth/app/homework/$homeworkId')({
 })
 
 function HomeworkDetailPage() {
-  const { t, i18n } = useTranslation()
+  const { LL, locale: currentLocale } = useI18nContext()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const { homeworkId } = Route.useParams()
-  const locale = i18n.language === 'fr' ? fr : undefined
+  const locale = currentLocale === 'fr' ? fr : undefined
 
   const { context, isLoading: contextLoading } = useRequiredTeacherContext()
 
@@ -85,16 +85,16 @@ function HomeworkDetailPage() {
     mutationFn: updateHomework,
     onSuccess: (result) => {
       if (result.success) {
-        toast.success(t('homework.updated', 'Devoir mis à jour'))
+        toast.success(LL.homework.updated())
         queryClient.invalidateQueries({ queryKey: ['teacher', 'homework'] })
         setIsEditing(false)
       }
       else {
-        toast.error(t('errors.serverError'))
+        toast.error(LL.errors.serverError())
       }
     },
     onError: () => {
-      toast.error(t('errors.serverError'))
+      toast.error(LL.errors.serverError())
     },
   })
 
@@ -102,16 +102,16 @@ function HomeworkDetailPage() {
     mutationFn: deleteHomework,
     onSuccess: (result) => {
       if (result.success) {
-        toast.success(t('homework.deleted', 'Devoir supprimé'))
+        toast.success(LL.homework.deleted())
         queryClient.invalidateQueries({ queryKey: ['teacher', 'homework'] })
         navigate({ to: '/app/homework' })
       }
       else {
-        toast.error(t('errors.serverError'))
+        toast.error(LL.errors.serverError())
       }
     },
     onError: () => {
-      toast.error(t('errors.serverError'))
+      toast.error(LL.errors.serverError())
     },
   })
 
@@ -153,11 +153,11 @@ function HomeworkDetailPage() {
     return (
       <div className="flex flex-col items-center justify-center p-8">
         <p className="text-muted-foreground">
-          {t('homework.notFound', 'Devoir non trouvé')}
+          {LL.homework.notFound()}
         </p>
         <Link to="/app/homework">
           <Button variant="outline" className="mt-4">
-            {t('common.back')}
+            {LL.common.back()}
           </Button>
         </Link>
       </div>
@@ -187,8 +187,8 @@ function HomeworkDetailPage() {
         <div className="flex-1">
           <h1 className="text-lg font-semibold">
             {isEditing
-              ? t('homework.edit', 'Modifier le devoir')
-              : t('homework.details', 'Détails du devoir')}
+              ? LL.homework.edit()
+              : LL.homework.details()}
           </h1>
         </div>
         {!isEditing && homework.status !== 'cancelled' && (
@@ -203,20 +203,20 @@ function HomeworkDetailPage() {
       /* Edit Form */
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label>{t('homework.titleField')}</Label>
+                <Label>{LL.homework.titleField()}</Label>
                 <Input
                   value={title}
                   onChange={e => setTitle(e.target.value)}
-                  placeholder={t('homework.titleField')}
+                  placeholder={LL.homework.titleField()}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label>{t('homework.description')}</Label>
+                <Label>{LL.homework.description()}</Label>
                 <Textarea
                   value={description}
                   onChange={e => setDescription(e.target.value)}
-                  placeholder={t('homework.description')}
+                  placeholder={LL.homework.description()}
                   rows={4}
                   className="resize-none"
                 />
@@ -224,7 +224,7 @@ function HomeworkDetailPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
-                  <Label>{t('homework.dueDate')}</Label>
+                  <Label>{LL.homework.dueDate()}</Label>
                   <div className="relative">
                     <IconCalendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <DatePicker
@@ -235,7 +235,7 @@ function HomeworkDetailPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label>{t('homework.dueTime')}</Label>
+                  <Label>{LL.homework.dueTime()}</Label>
                   <Input
                     type="time"
                     value={dueTime}
@@ -253,7 +253,7 @@ function HomeworkDetailPage() {
                     onClick={() => setIsEditing(false)}
                   >
                     <IconX className="mr-2 h-4 w-4" />
-                    {t('common.cancel')}
+                    {LL.common.cancel()}
                   </Button>
                   <Button
                     className="flex-1"
@@ -261,7 +261,7 @@ function HomeworkDetailPage() {
                     disabled={!title.trim() || !dueDate || updateMutation.isPending}
                   >
                     <IconDeviceFloppy className="mr-2 h-4 w-4" />
-                    {t('common.save')}
+                    {LL.common.save()}
                   </Button>
                 </div>
               </div>
@@ -275,7 +275,7 @@ function HomeworkDetailPage() {
                   <div className="flex items-start justify-between">
                     <CardTitle className="text-lg">{homework.title}</CardTitle>
                     <Badge variant={statusColors[homework.status] ?? 'default'}>
-                      {t(`homework.status.${homework.status}`)}
+                      {LL.homework.status[homework.status]()}
                     </Badge>
                   </div>
                   <p className="text-sm text-muted-foreground">
@@ -289,7 +289,7 @@ function HomeworkDetailPage() {
                   {homework.description && (
                     <div>
                       <Label className="text-xs text-muted-foreground">
-                        {t('homework.description')}
+                        {LL.homework.description()}
                       </Label>
                       <p className="mt-1 whitespace-pre-wrap text-sm">
                         {homework.description}
@@ -313,7 +313,7 @@ function HomeworkDetailPage() {
                   {homework.instructions && (
                     <div>
                       <Label className="text-xs text-muted-foreground">
-                        {t('homework.instructions', 'Instructions')}
+                        {LL.homework.instructions()}
                       </Label>
                       <p className="mt-1 whitespace-pre-wrap text-sm">
                         {homework.instructions}
@@ -342,21 +342,18 @@ function HomeworkDetailPage() {
                       <AlertDialogContent>
                         <AlertDialogHeader>
                           <AlertDialogTitle>
-                            {t('homework.deleteConfirm', 'Supprimer ce devoir ?')}
+                            {LL.homework.deleteConfirm()}
                           </AlertDialogTitle>
                           <AlertDialogDescription>
-                            {t(
-                              'homework.deleteWarning',
-                              'Cette action est irréversible.',
-                            )}
+                            {LL.homework.deleteWarning()}
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>
-                            {t('common.cancel')}
+                            {LL.common.cancel()}
                           </AlertDialogCancel>
                           <AlertDialogAction onClick={handleDelete}>
-                            {t('common.delete')}
+                            {LL.common.delete()}
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
@@ -369,7 +366,7 @@ function HomeworkDetailPage() {
                         disabled={updateMutation.isPending}
                       >
                         <IconSend className="mr-2 h-4 w-4" />
-                        {t('homework.publish', 'Publier')}
+                        {LL.homework.publish()}
                       </Button>
                     )}
 
@@ -380,7 +377,7 @@ function HomeworkDetailPage() {
                         onClick={() => handleSave('closed')}
                         disabled={updateMutation.isPending}
                       >
-                        {t('homework.close', 'Clôturer')}
+                        {LL.homework.close()}
                       </Button>
                     )}
                   </div>

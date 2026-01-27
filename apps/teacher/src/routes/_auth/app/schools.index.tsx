@@ -7,8 +7,8 @@ import { Card, CardContent } from '@workspace/ui/components/card'
 import { Skeleton } from '@workspace/ui/components/skeleton'
 import { motion } from 'motion/react'
 import { memo } from 'react'
-import { useTranslation } from 'react-i18next'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
+import { useI18nContext } from '@/i18n/i18n-react'
 import { getTeacherSchoolsQuery } from '@/teacher/functions/schools'
 
 export const Route = createFileRoute('/_auth/app/schools/')({
@@ -31,6 +31,7 @@ const item = {
 }
 
 const SchoolCard = memo(({ school }: SchoolCardProps) => {
+  const { LL } = useI18nContext()
   const initials = school.name
     .split(' ')
     .filter(Boolean)
@@ -76,7 +77,7 @@ const SchoolCard = memo(({ school }: SchoolCardProps) => {
                   </Badge>
                 )}
                 <span className="text-[10px] text-muted-foreground uppercase tracking-[0.15em] font-black opacity-60">
-                  Enseignant
+                  {LL.common.teacher()}
                 </span>
               </div>
             </div>
@@ -115,9 +116,8 @@ const SchoolCard = memo(({ school }: SchoolCardProps) => {
 SchoolCard.displayName = 'SchoolCard'
 
 function SchoolsPage() {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
   const { context, isLoading: contextLoading } = useRequiredTeacherContext()
-
   const { data: schools, isLoading: schoolsLoading } = useQuery({
     queryKey: ['teacher', 'schools', context?.userId],
     queryFn: () => getTeacherSchoolsQuery({ data: { userId: context?.userId ?? '' } }),
@@ -139,18 +139,17 @@ function SchoolsPage() {
       <div className="w-full max-w-4xl px-4 py-10 sm:py-16 flex flex-col gap-10">
         <header className="space-y-3 px-2 text-center sm:text-left">
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
           >
-            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight bg-linear-to-br from-foreground to-foreground/50 bg-clip-text text-transparent">
-              {t('nav.ecole', 'Mes Établissements')}
+            <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-foreground">
+              {LL.schools.title()}
             </h1>
             <p className="mt-3 text-muted-foreground font-medium flex items-center justify-center sm:justify-start gap-2.5">
               <span className="flex h-2.5 w-2.5 rounded-full bg-primary animate-pulse" />
               {schools.length === 1
-                ? 'Un établissement rattaché'
-                : `${schools.length} établissements rattachés`}
+                ? LL.schools.attachedSchool()
+                : LL.schools.attachedSchools({ count: schools.length })}
             </p>
           </motion.div>
         </header>
@@ -161,7 +160,7 @@ function SchoolsPage() {
           animate="show"
           className="grid gap-6 w-full"
         >
-          {schools.map((school: any) => (
+          {schools.map((school: SchoolCardProps['school']) => (
             <motion.div key={school.id} variants={item} className="w-full">
               <SchoolCard school={school} />
             </motion.div>
@@ -185,6 +184,7 @@ interface SchoolCardProps {
 }
 
 function EmptySchoolsState() {
+  const { LL } = useI18nContext()
   return (
     <div className="flex min-h-[75vh] flex-col items-center justify-center gap-8 p-4 text-center">
       <motion.div
@@ -198,10 +198,10 @@ function EmptySchoolsState() {
           <IconBuilding className="h-20 w-20 text-primary" />
         </div>
       </motion.div>
-      <div className="space-y-3 max-w-sm">
-        <h2 className="text-3xl font-black tracking-tight">Aucun établissement</h2>
+      <div className="space-y-3 max-w-sm text-center">
+        <h2 className="text-3xl font-black tracking-tight">{LL.schools.emptyTitle()}</h2>
         <p className="text-muted-foreground leading-relaxed font-medium">
-          Vous n'êtes actuellement rattaché à aucun établissement scolaire sur Yeko. Contactez votre administrateur pour plus d'informations.
+          {LL.schools.emptyDescription()}
         </p>
       </div>
     </div>

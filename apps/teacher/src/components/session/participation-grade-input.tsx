@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next'
+import { useI18nContext } from '@/i18n/i18n-react'
 import { cn } from '@/lib/utils'
 
 interface ParticipationGradeInputProps {
@@ -14,14 +14,14 @@ export function ParticipationGradeInput({
   onChange,
   disabled,
 }: ParticipationGradeInputProps) {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
 
   const gradeLabels: Record<number, string> = {
-    1: t('participation.grade1'),
-    2: t('participation.grade2'),
-    3: t('participation.grade3'),
-    4: t('participation.grade4'),
-    5: t('participation.grade5'),
+    1: LL.participation.grade1(),
+    2: LL.participation.grade2(),
+    3: LL.participation.grade3(),
+    4: LL.participation.grade4(),
+    5: LL.participation.grade5(),
   }
 
   const gradeColors: Record<number, string> = {

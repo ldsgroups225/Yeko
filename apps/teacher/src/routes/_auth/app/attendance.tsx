@@ -21,9 +21,9 @@ import {
 import { DatePicker } from '@workspace/ui/components/date-picker'
 import { Skeleton } from '@workspace/ui/components/skeleton'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
+
+import { useI18nContext } from '@/i18n/i18n-react'
 import { teacherClassesQueryOptions } from '@/lib/queries/classes'
 import {
   saveAttendance,
@@ -64,7 +64,7 @@ interface CountsResponse {
 }
 
 function AttendancePage() {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
   const { context } = useRequiredTeacherContext()
   const queryClient = useQueryClient()
 
@@ -195,21 +195,21 @@ function AttendancePage() {
   return (
     <div className="flex flex-col gap-4 p-4 pb-20">
       <h1 className="text-xl font-semibold">
-        {t('attendance.title', 'Présence')}
+        {LL.attendance.title()}
       </h1>
 
       {/* Class and Date Selection */}
       <Card>
         <CardHeader>
           <CardTitle>
-            {t('attendance.selectClass', 'Sélectionner la classe')}
+            {LL.attendance.selectClass()}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium">
-                {t('attendance.class', 'Classe')}
+                {LL.attendance.class()}
               </label>
               <select
                 className="w-full mt-1 border rounded-md p-2"
@@ -217,7 +217,7 @@ function AttendancePage() {
                 onChange={e => setSelectedClassId(e.target.value)}
               >
                 <option value="">
-                  {t('attendance.selectClass', 'Sélectionner une classe')}
+                  {LL.attendance.selectClass()}
                 </option>
                 {classesData?.classes?.map(cls => (
                   <option key={cls.id} value={cls.id}>
@@ -228,7 +228,7 @@ function AttendancePage() {
             </div>
             <div>
               <label className="text-sm font-medium">
-                {t('attendance.date', 'Date')}
+                {LL.attendance.date()}
               </label>
               <DatePicker
                 date={selectedDate ? new Date(selectedDate) : undefined}
@@ -241,22 +241,22 @@ function AttendancePage() {
           {counts && (
             <div className="flex gap-2 flex-wrap">
               <Badge variant="secondary">
-                {t('attendance.total', 'Total')}
+                {LL.attendance.total()}
                 :
                 {counts.total}
               </Badge>
               <Badge className="bg-green-100 text-green-800">
-                {t('attendance.present', 'Présents')}
+                {LL.attendance.present()}
                 :
                 {counts.present}
               </Badge>
               <Badge className="bg-red-100 text-red-800">
-                {t('attendance.absent', 'Absents')}
+                {LL.attendance.absent()}
                 :
                 {counts.absent}
               </Badge>
               <Badge className="bg-yellow-100 text-yellow-800">
-                {t('attendance.late', 'Retards')}
+                {LL.attendance.late()}
                 :
                 {counts.late}
               </Badge>
@@ -270,11 +270,11 @@ function AttendancePage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>
-              {t('attendance.studentList', 'Liste des élèves')}
+              {LL.attendance.studentList()}
             </CardTitle>
             <Button variant="outline" size="sm" onClick={handleMarkAllPresent}>
               <IconCheck className="w-4 h-4 mr-2" />
-              {t('attendance.markAllPresent', 'Tout marquer présent')}
+              {LL.attendance.markAllPresent()}
             </Button>
           </CardHeader>
           <CardContent>
@@ -289,7 +289,7 @@ function AttendancePage() {
               : rosterData?.roster?.length === 0
                 ? (
                     <p className="text-center text-muted-foreground py-8">
-                      {t('attendance.noStudents', 'Aucun élève dans cette classe')}
+                      {LL.attendance.noStudents()}
                     </p>
                   )
                 : (
@@ -321,7 +321,7 @@ function StudentRow({
   onStatusChange: (status: 'present' | 'absent' | 'late' | 'excused') => void
   isLoading: boolean
 }) {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
 
   const currentStatus = student.attendance?.status
 
@@ -356,7 +356,7 @@ function StudentRow({
           disabled={isLoading}
         >
           <IconCheck className="w-4 h-4 mr-1" />
-          {t('attendance.status.present', 'Présent')}
+          {LL.attendance.status.present()}
         </Button>
         <Button
           variant={currentStatus === 'absent' ? 'destructive' : 'outline'}
@@ -366,7 +366,7 @@ function StudentRow({
           disabled={isLoading}
         >
           <IconX className="w-4 h-4 mr-1" />
-          {t('attendance.status.absent', 'Absent')}
+          {LL.attendance.status.absent()}
         </Button>
         <Button
           variant={currentStatus === 'late' ? 'secondary' : 'outline'}
@@ -376,7 +376,7 @@ function StudentRow({
           disabled={isLoading}
         >
           <IconClock className="w-4 h-4 mr-1" />
-          {t('attendance.status.late', 'Retard')}
+          {LL.attendance.status.late()}
         </Button>
         <Button
           variant={currentStatus === 'excused' ? 'outline' : 'outline'}
@@ -386,7 +386,7 @@ function StudentRow({
           disabled={isLoading}
         >
           <IconUser className="w-4 h-4 mr-1" />
-          {t('attendance.status.excused', 'Excusé')}
+          {LL.attendance.status.excused()}
         </Button>
       </div>
     </div>

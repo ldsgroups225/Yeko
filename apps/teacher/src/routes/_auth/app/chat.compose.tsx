@@ -9,10 +9,10 @@ import { Label } from '@workspace/ui/components/label'
 import { Skeleton } from '@workspace/ui/components/skeleton'
 import { Textarea } from '@workspace/ui/components/textarea'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
+import { useI18nContext } from '@/i18n/i18n-react'
 import { parentSearchQueryOptions } from '@/lib/queries/messages'
 import { sendMessage } from '@/teacher/functions/messages'
 
@@ -26,7 +26,7 @@ export const Route = createFileRoute('/_auth/app/chat/compose')({
 })
 
 function ComposeMessagePage() {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const { replyTo } = Route.useSearch()
@@ -56,12 +56,12 @@ function ComposeMessagePage() {
   const sendMutation = useMutation({
     mutationFn: sendMessage,
     onSuccess: () => {
-      toast.success(t('messages.sentSuccess'))
+      toast.success(LL.messages.sentSuccess())
       queryClient.invalidateQueries({ queryKey: ['teacher', 'messages'] })
       navigate({ to: '/app/chat' })
     },
     onError: () => {
-      toast.error(t('errors.serverError'))
+      toast.error(LL.errors.serverError())
     },
   })
 
@@ -91,7 +91,7 @@ function ComposeMessagePage() {
             <IconArrowLeft className="h-5 w-5" />
           </Button>
         </Link>
-        <h1 className="text-lg font-semibold">{t('messages.compose')}</h1>
+        <h1 className="text-lg font-semibold">{LL.messages.compose()}</h1>
       </div>
 
       {isLoading
@@ -100,7 +100,7 @@ function ComposeMessagePage() {
             <div className="space-y-4">
               {/* Recipient selection */}
               <div className="space-y-2">
-                <Label>{t('messages.to')}</Label>
+                <Label>{LL.messages.to()}</Label>
                 {selectedParent
                   ? (
                       <Card>
@@ -126,7 +126,7 @@ function ComposeMessagePage() {
                             size="sm"
                             onClick={() => setSelectedParent(null)}
                           >
-                            {t('common.edit')}
+                            {LL.common.edit()}
                           </Button>
                         </CardContent>
                       </Card>
@@ -136,7 +136,7 @@ function ComposeMessagePage() {
                         <div className="relative">
                           <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                           <Input
-                            placeholder={t('messages.searchParent')}
+                            placeholder={LL.messages.searchParent()}
                             value={searchQuery}
                             onChange={e => setSearchQuery(e.target.value)}
                             className="pl-9"
@@ -191,7 +191,7 @@ function ComposeMessagePage() {
                                     )
                                   : (
                                       <p className="p-2 text-center text-sm text-muted-foreground">
-                                        {t('common.noResults')}
+                                        {LL.common.noResults()}
                                       </p>
                                     )}
                             </CardContent>
@@ -203,9 +203,9 @@ function ComposeMessagePage() {
 
               {/* Subject */}
               <div className="space-y-2">
-                <Label>{t('messages.subject')}</Label>
+                <Label>{LL.messages.subject()}</Label>
                 <Input
-                  placeholder={t('messages.subject')}
+                  placeholder={LL.messages.subject()}
                   value={subject}
                   onChange={e => setSubject(e.target.value)}
                 />
@@ -213,9 +213,9 @@ function ComposeMessagePage() {
 
               {/* Content */}
               <div className="space-y-2">
-                <Label>{t('messages.content')}</Label>
+                <Label>{LL.messages.content()}</Label>
                 <Textarea
-                  placeholder={t('messages.content')}
+                  placeholder={LL.messages.content()}
                   value={content}
                   onChange={e => setContent(e.target.value)}
                   rows={6}
@@ -233,7 +233,7 @@ function ComposeMessagePage() {
           disabled={!selectedParent || !content.trim() || sendMutation.isPending}
         >
           <IconSend className="mr-2 h-4 w-4" />
-          {t('messages.send')}
+          {LL.messages.send()}
         </Button>
       </div>
     </div>

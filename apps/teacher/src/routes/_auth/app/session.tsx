@@ -9,8 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/componen
 import { Skeleton } from '@workspace/ui/components/skeleton'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
-import { useTranslation } from 'react-i18next'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
+import { useI18nContext } from '@/i18n/i18n-react'
 import { teacherDashboardQueryOptions } from '@/lib/queries/dashboard'
 import { sessionHistoryQueryOptions } from '@/lib/queries/sessions'
 
@@ -19,8 +19,8 @@ export const Route = createFileRoute('/_auth/app/session')({
 })
 
 function SessionsPage() {
-  const { t, i18n } = useTranslation()
-  const locale = i18n.language === 'fr' ? fr : undefined
+  const { LL, locale: currentLocale } = useI18nContext()
+  const locale = currentLocale === 'fr' ? fr : undefined
 
   const { context, isLoading: contextLoading } = useRequiredTeacherContext()
 
@@ -61,7 +61,7 @@ function SessionsPage() {
           <CardHeader className="pb-2">
             <CardTitle className="text-lg flex items-center gap-2">
               <IconClock className="w-5 h-5 text-primary animate-pulse" />
-              {t('session.active', 'Session en cours')}
+              {LL.session.active()}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -75,7 +75,7 @@ function SessionsPage() {
               <Link to="/app/sessions/$sessionId" params={{ sessionId: activeSession.id }} className="mt-2">
                 <Button className="w-full">
                   <IconPlayerPlay className="w-4 h-4 mr-2" />
-                  {t('common.resume', 'Reprendre')}
+                  {LL.common.resume()}
                 </Button>
               </Link>
             </div>
@@ -83,7 +83,7 @@ function SessionsPage() {
         </Card>
       )}
 
-      <h1 className="text-xl font-semibold">{t('session.history')}</h1>
+      <h1 className="text-xl font-semibold">{LL.session.history()}</h1>
 
       {sessions.length > 0
         ? (
@@ -102,7 +102,7 @@ function SessionsPage() {
               <CardContent className="flex flex-col items-center justify-center py-12">
                 <IconBook className="h-12 w-12 text-muted-foreground/50" />
                 <p className="mt-4 text-sm text-muted-foreground">
-                  {t('session.noHistory')}
+                  {LL.session.noHistory()}
                 </p>
               </CardContent>
             </Card>
@@ -127,22 +127,22 @@ interface SessionHistoryCardProps {
 }
 
 function SessionHistoryCard({ session, locale }: SessionHistoryCardProps) {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
 
   const statusConfig = {
     scheduled: {
       icon: IconClock,
-      label: t('session.active'),
+      label: LL.session.active(),
       variant: 'default' as const,
     },
     completed: {
       icon: IconCircleCheck,
-      label: t('session.completed'),
+      label: LL.session.completed(),
       variant: 'secondary' as const,
     },
     cancelled: {
       icon: IconCircleX,
-      label: t('session.cancelled'),
+      label: LL.session.cancelled(),
       variant: 'destructive' as const,
     },
   }

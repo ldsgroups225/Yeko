@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks-extra/no-direct-set-state-in-use-effect */
 import { IconClock } from '@tabler/icons-react'
 import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useI18nContext } from '@/i18n/i18n-react'
 
 interface SessionTimerProps {
   startedAt: string
@@ -9,7 +9,7 @@ interface SessionTimerProps {
 }
 
 export function SessionTimer({ startedAt, className }: SessionTimerProps) {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
   const [elapsed, setElapsed] = useState(0)
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export function SessionTimer({ startedAt, className }: SessionTimerProps) {
     <div className={className}>
       <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
         <IconClock className="h-4 w-4" />
-        <span>{t('session.timer')}</span>
+        <span>{LL.session.timer()}</span>
       </div>
       <p className="font-mono text-2xl font-bold tabular-nums">
         {formatElapsed(elapsed)}

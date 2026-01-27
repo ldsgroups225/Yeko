@@ -20,8 +20,8 @@ import { Tabs, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
 import { cn } from '@workspace/ui/lib/utils'
 import { AnimatePresence, motion } from 'motion/react'
 import { useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
+import { useI18nContext } from '@/i18n/i18n-react'
 import { teacherClassesQueryOptions } from '@/lib/queries/classes'
 import { getTeacherSchoolsQuery } from '@/teacher/functions/schools'
 
@@ -45,7 +45,7 @@ const item = {
 }
 
 function SchoolClassesPage() {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
   const { schoolId } = Route.useParams()
   const { context, isLoading: contextLoading } = useRequiredTeacherContext()
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
@@ -66,11 +66,11 @@ function SchoolClassesPage() {
   })
 
   const isLoading = contextLoading || classesLoading
-  const classes = (data as any)?.classes || []
+  const classes = data?.classes || []
 
   // Find current school from the schools list
-  const currentSchool = schools?.find((s: any) => s.id === schoolId)
-  const schoolName = currentSchool?.name || (classes[0] as any)?.schoolName || t('classes.defaultSchool', 'Établissement')
+  const currentSchool = schools?.find(s => s.id === schoolId)
+  const schoolName = currentSchool?.name || (classes[0] as { schoolName?: string })?.schoolName || LL.classes.defaultSchool()
   const schoolLogo = currentSchool?.logoUrl
 
   if (isLoading) {
@@ -99,10 +99,10 @@ function SchoolClassesPage() {
               <div className="flex items-center justify-center sm:justify-start gap-3">
                 <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wide">
                   <IconBook className="w-3.5 h-3.5" />
-                  {t('classes.title', 'Mes Classes')}
+                  {LL.classes.title()}
                 </div>
                 <span className="text-xs font-bold text-muted-foreground/60 uppercase tracking-widest">
-                  Année Scolaire
+                  {LL.profile.schoolYear()}
                 </span>
               </div>
             </div>
@@ -110,15 +110,15 @@ function SchoolClassesPage() {
         </div>
 
         <div className="flex justify-center">
-          <Tabs value={viewMode} onValueChange={v => setViewMode(v as any)} className="w-fit">
+          <Tabs value={viewMode} onValueChange={v => setViewMode(v as 'grid' | 'list')} className="w-fit">
             <TabsList className="grid w-full grid-cols-2 bg-muted/50 p-1">
               <TabsTrigger value="grid" className="gap-2 px-4">
                 <IconGridDots className="w-4 h-4" />
-                <span className="hidden sm:inline">Grille</span>
+                <span className="hidden sm:inline">{LL.classes.grid()}</span>
               </TabsTrigger>
               <TabsTrigger value="list" className="gap-2 px-4">
                 <IconLayoutList className="w-4 h-4" />
-                <span className="hidden sm:inline">Liste</span>
+                <span className="hidden sm:inline">{LL.classes.list()}</span>
               </TabsTrigger>
             </TabsList>
           </Tabs>
@@ -138,7 +138,7 @@ function SchoolClassesPage() {
               : 'flex flex-col gap-4',
           )}
         >
-          {classes.map((cls: any) => (
+          {classes.map((cls: ClassCardProps['classData'] & { id: string }) => (
             <motion.div key={cls.id} variants={item}>
               <ClassCard classData={cls} viewMode={viewMode} schoolId={schoolId} />
             </motion.div>
@@ -166,6 +166,7 @@ interface ClassCardProps {
 }
 
 function ClassCard({ classData, viewMode, schoolId }: ClassCardProps) {
+  const { LL } = useI18nContext()
   const averageColor = useMemo(() => {
     if (!classData.classAverage)
       return 'text-muted-foreground'
@@ -198,7 +199,7 @@ function ClassCard({ classData, viewMode, schoolId }: ClassCardProps) {
               {classData.isHomeroomTeacher && (
                 <Badge className="bg-primary/20 text-primary border-none text-[9px] uppercase tracking-tighter font-black h-5 px-1.5">
                   <IconStar className="w-2.5 h-2.5 mr-1 fill-current" />
-                  Titulaire
+                  {LL.classes.homeroom()}
                 </Badge>
               )}
             </div>
@@ -220,7 +221,7 @@ function ClassCard({ classData, viewMode, schoolId }: ClassCardProps) {
               <div className="flex flex-row items-center justify-between w-full gap-2">
                 <div className="flex flex-col">
                   <span className="text-sm font-black leading-none">{classData.studentCount}</span>
-                  <span className="text-[9px] font-bold text-muted-foreground uppercase">Élèves</span>
+                  <span className="text-[9px] font-bold text-muted-foreground uppercase">{LL.classes.students()}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="flex items-center gap-1 bg-blue-500/10 px-1.5 py-1 rounded-md text-[10px] font-bold text-blue-600 dark:text-blue-400">
@@ -247,7 +248,7 @@ function ClassCard({ classData, viewMode, schoolId }: ClassCardProps) {
                   {classData.classAverage ? classData.classAverage.toFixed(2) : '--.--'}
                 </span>
                 <span className="text-[8px] font-bold text-muted-foreground uppercase mt-0.5">
-                  Moyenne
+                  {LL.classes.average()}
                 </span>
               </div>
             </div>
@@ -262,7 +263,7 @@ function ClassCard({ classData, viewMode, schoolId }: ClassCardProps) {
               <div className="flex flex-col">
                 <span className="text-sm font-black leading-none">{classData.subjectCount}</span>
                 <span className="text-[8px] font-bold text-muted-foreground uppercase mt-0.5">
-                  Matières
+                  {LL.classes.subjects()}
                 </span>
               </div>
             </div>
@@ -293,7 +294,7 @@ function ClassCard({ classData, viewMode, schoolId }: ClassCardProps) {
   )
 }
 function EmptyClassesState({ schoolName }: { schoolName: string }) {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
   return (
     <div className="flex min-h-[70vh] flex-col items-center justify-center gap-8 p-4 text-center">
       <motion.div
@@ -312,10 +313,10 @@ function EmptyClassesState({ schoolName }: { schoolName: string }) {
           <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 text-[10px] font-black uppercase tracking-widest px-3">
             {schoolName}
           </Badge>
-          <h2 className="text-3xl font-black tracking-tight">Aucune classe</h2>
+          <h2 className="text-3xl font-black tracking-tight">{LL.classes.noClasses()}</h2>
         </div>
         <p className="text-muted-foreground leading-relaxed font-medium">
-          {t('classes.emptyDescription', 'Vous n\'avez pas encore été assigné à des classes pour cet établissement.')}
+          {LL.classes.emptyDescription()}
         </p>
       </div>
     </div>

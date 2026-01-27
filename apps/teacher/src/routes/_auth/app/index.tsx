@@ -8,8 +8,8 @@ import { addDays, format, startOfWeek } from 'date-fns'
 
 import { fr } from 'date-fns/locale'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
+import { useI18nContext } from '@/i18n/i18n-react'
 import { teacherDashboardQueryOptions } from '@/lib/queries/dashboard'
 import { detailedScheduleQueryOptions } from '@/lib/queries/schedule'
 
@@ -17,18 +17,9 @@ export const Route = createFileRoute('/_auth/app/')({
   component: SchedulePage,
 })
 
-const DAYS_OF_WEEK = [
-  { key: 1, label: 'Lun' },
-  { key: 2, label: 'Mar' },
-  { key: 3, label: 'Mer' },
-  { key: 4, label: 'Jeu' },
-  { key: 5, label: 'Ven' },
-  { key: 6, label: 'Sam' },
-]
-
 function SchedulePage() {
-  const { t, i18n } = useTranslation()
-  const locale = i18n.language === 'fr' ? fr : undefined
+  const { LL, locale: currentLocale } = useI18nContext()
+  const locale = currentLocale === 'fr' ? fr : undefined
 
   const [weekOffset, setWeekOffset] = useState(0)
   const [selectedDay, setSelectedDay] = useState(new Date().getDay() || 1) // Default to Monday if Sunday
@@ -69,11 +60,17 @@ function SchedulePage() {
   const daySchedule
     = data?.sessions.filter(s => s.dayOfWeek === selectedDay) ?? []
 
-  const weekDates = DAYS_OF_WEEK.map((day, index) => ({
+  const weekDates = [
+    { key: 1, label: LL.schedule.days.mon(), date: weekStart },
+    { key: 2, label: LL.schedule.days.tue(), date: addDays(weekStart, 1) },
+    { key: 3, label: LL.schedule.days.wed(), date: addDays(weekStart, 2) },
+    { key: 4, label: LL.schedule.days.thu(), date: addDays(weekStart, 3) },
+    { key: 5, label: LL.schedule.days.fri(), date: addDays(weekStart, 4) },
+    { key: 6, label: LL.schedule.days.sat(), date: addDays(weekStart, 5) },
+  ].map(day => ({
     ...day,
-    date: addDays(weekStart, index),
     isToday:
-      format(addDays(weekStart, index), 'yyyy-MM-dd')
+      format(day.date, 'yyyy-MM-dd')
       === format(today, 'yyyy-MM-dd'),
   }))
 
@@ -83,7 +80,7 @@ function SchedulePage() {
 
   return (
     <div className="flex flex-col gap-4 p-4 pb-20">
-      <h1 className="text-xl font-semibold">{t('schedule.title')}</h1>
+      <h1 className="text-xl font-semibold">{LL.schedule.title()}</h1>
 
       <Card>
         <CardContent className="p-4 flex items-center justify-between">
@@ -92,7 +89,7 @@ function SchedulePage() {
               <IconClipboardCheck className="w-6 h-6 text-primary" />
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">{t('dashboard.pendingGrades')}</p>
+              <p className="text-sm font-medium text-muted-foreground">{LL.dashboard.pendingGrades()}</p>
               <p className="text-2xl font-bold">{dashboardData?.pendingGrades ?? 0}</p>
             </div>
           </div>
@@ -104,12 +101,12 @@ function SchedulePage() {
           variant="ghost"
           size="icon"
           onClick={() => setWeekOffset(prev => prev - 1)}
-          aria-label="Semaine précédente"
+          aria-label={LL.schedule.previousWeek()}
         >
           <IconChevronLeft className="h-5 w-5" />
         </Button>
         <span className="text-sm font-medium">
-          {t('schedule.weekOf', {
+          {LL.schedule.weekOf({
             date: format(weekStart, 'd MMM', { locale }),
           })}
           {' '}
@@ -121,7 +118,7 @@ function SchedulePage() {
           variant="ghost"
           size="icon"
           onClick={() => setWeekOffset(prev => prev + 1)}
-          aria-label="Semaine suivante"
+          aria-label={LL.schedule.nextWeek()}
         >
           <IconChevronRight className="h-5 w-5" />
         </Button>
@@ -170,7 +167,7 @@ function SchedulePage() {
                 <CardContent className="flex flex-col items-center justify-center py-12">
                   <IconCalendar className="h-12 w-12 text-muted-foreground/50" />
                   <p className="mt-4 text-sm text-muted-foreground">
-                    {t('schedule.noSessions')}
+                    {LL.schedule.noSessions()}
                   </p>
                 </CardContent>
               </Card>
@@ -192,7 +189,7 @@ interface ScheduleCardProps {
 }
 
 function ScheduleCard({ session }: ScheduleCardProps) {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
 
   return (
     <Card>
@@ -213,7 +210,7 @@ function ScheduleCard({ session }: ScheduleCardProps) {
               {session.classroom && ` • ${session.classroom.name}`}
             </p>
           </div>
-          <Button size="sm">{t('schedule.startSession')}</Button>
+          <Button size="sm">{LL.schedule.startSession()}</Button>
         </div>
       </CardContent>
     </Card>

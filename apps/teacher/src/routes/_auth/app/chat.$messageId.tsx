@@ -9,8 +9,8 @@ import { format } from 'date-fns'
 
 import { fr } from 'date-fns/locale'
 import { useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
+import { useI18nContext } from '@/i18n/i18n-react'
 import { messageDetailQueryOptions } from '@/lib/queries/messages'
 import { markMessageRead } from '@/teacher/functions/messages'
 
@@ -19,8 +19,8 @@ export const Route = createFileRoute('/_auth/app/chat/$messageId')({
 })
 
 function MessageDetailPage() {
-  const { t, i18n } = useTranslation()
-  const locale = i18n.language === 'fr' ? fr : undefined
+  const { LL, locale: currentLocale } = useI18nContext()
+  const locale = currentLocale === 'fr' ? fr : undefined
   const { messageId } = Route.useParams()
   const queryClient = useQueryClient()
 
@@ -64,7 +64,7 @@ function MessageDetailPage() {
             <IconArrowLeft className="h-5 w-5" />
           </Button>
         </Link>
-        <h1 className="text-lg font-semibold">{t('messages.title')}</h1>
+        <h1 className="text-lg font-semibold">{LL.messages.title()}</h1>
       </div>
 
       {isLoading
@@ -80,7 +80,7 @@ function MessageDetailPage() {
                 <CardContent className="py-12 text-center">
                   <IconMail className="mx-auto h-12 w-12 text-muted-foreground/50" />
                   <p className="mt-4 text-sm text-muted-foreground">
-                    {t('errors.notFound')}
+                    {LL.errors.notFound()}
                   </p>
                 </CardContent>
               </Card>
@@ -113,7 +113,7 @@ interface MessageContentProps {
 }
 
 function MessageContent({ message, locale }: MessageContentProps) {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
   const date = new Date(message.createdAt)
 
   return (
@@ -128,8 +128,8 @@ function MessageContent({ message, locale }: MessageContentProps) {
               <div>
                 <p className="font-semibold">
                   {message.senderType === 'parent'
-                    ? message.senderName ?? t('messages.parent')
-                    : t('messages.you')}
+                    ? message.senderName ?? LL.messages.parent()
+                    : LL.messages.you()}
                 </p>
                 {message.studentName && (
                   <p className="text-xs text-muted-foreground">
@@ -161,7 +161,7 @@ function MessageContent({ message, locale }: MessageContentProps) {
       {message.thread && message.thread.length > 0 && (
         <div className="space-y-3">
           <h3 className="text-sm font-medium text-muted-foreground">
-            {t('messages.thread', 'Conversation')}
+            {LL.messages.thread()}
           </h3>
           {message.thread.map(reply => (
             <Card key={reply.id} className="bg-muted/30">
@@ -169,8 +169,8 @@ function MessageContent({ message, locale }: MessageContentProps) {
                 <div className="mb-2 flex items-center justify-between">
                   <span className="text-xs font-medium">
                     {reply.senderType === 'parent'
-                      ? t('messages.parent')
-                      : t('messages.you')}
+                      ? LL.messages.parent()
+                      : LL.messages.you()}
                   </span>
                   <span className="text-xs text-muted-foreground">
                     {format(new Date(reply.createdAt), 'd MMM, HH:mm', {
@@ -194,7 +194,7 @@ function MessageContent({ message, locale }: MessageContentProps) {
         >
           <Button className="w-full">
             <IconArrowBackUp className="mr-2 h-4 w-4" />
-            {t('messages.reply')}
+            {LL.messages.reply()}
           </Button>
         </Link>
       </div>

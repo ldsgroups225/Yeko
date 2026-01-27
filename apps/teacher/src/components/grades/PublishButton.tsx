@@ -219,8 +219,8 @@ export function PublishResult({ result, onDismiss }: PublishResultProps) {
             )}
             {result.errors.length > 0 && (
               <div className="mt-2 space-y-1">
-                {result.errors.slice(0, 3).map((error, i) => (
-                  <p key={i} className="text-muted-foreground text-xs">
+                {result.errors.slice(0, 3).map(error => (
+                  <p key={error.noteId + crypto.randomUUID()} className="text-muted-foreground text-xs">
                     {error.error}
                   </p>
                 ))}

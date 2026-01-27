@@ -3,7 +3,7 @@ import { Button } from '@workspace/ui/components/button'
 
 import { Input } from '@workspace/ui/components/input'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useI18nContext } from '@/i18n/i18n-react'
 
 import { ParticipationGradeInput } from './participation-grade-input'
 
@@ -38,7 +38,7 @@ export function StudentParticipationList({
   onSave,
   isSaving,
 }: StudentParticipationListProps) {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
   const [expandedStudent, setExpandedStudent] = useState<string | null>(null)
 
   const getGrade = (studentId: string) => {
@@ -63,10 +63,10 @@ export function StudentParticipationList({
           /
           {students.length}
           {' '}
-          {t('session.participation').toLowerCase()}
+          {LL.session.participation().toLowerCase()}
         </p>
         <Button onClick={onSave} disabled={isSaving || gradedCount === 0} size="sm">
-          {isSaving ? t('common.loading') : t('participation.save')}
+          {isSaving ? LL.common.loading() : LL.participation.save()}
         </Button>
       </div>
 
@@ -102,7 +102,7 @@ export function StudentParticipationList({
             {expandedStudent === student.id && (
               <div className="mt-3 pt-3 border-t">
                 <Input
-                  placeholder={t('participation.comment')}
+                  placeholder={LL.participation.comment()}
                   value={getComment(student.id)}
                   onChange={e => onCommentChange(student.id, e.target.value)}
                   className="text-sm"
@@ -119,8 +119,8 @@ export function StudentParticipationList({
               className="mt-2 w-full text-center text-xs text-muted-foreground hover:text-foreground"
             >
               {expandedStudent === student.id
-                ? t('common.cancel')
-                : t('participation.comment')}
+                ? LL.common.cancel()
+                : LL.participation.comment()}
             </button>
           </div>
         ))}

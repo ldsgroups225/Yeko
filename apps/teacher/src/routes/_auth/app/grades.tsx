@@ -4,9 +4,9 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'
 import { Card, CardContent } from '@workspace/ui/components/card'
 import { Skeleton } from '@workspace/ui/components/skeleton'
-import { useTranslation } from 'react-i18next'
 import { SyncStatusContainer } from '@/components/grades/SyncStatusContainer'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
+import { useI18nContext } from '@/i18n/i18n-react'
 import { teacherClassesQueryOptions } from '@/lib/queries/dashboard'
 
 export const Route = createFileRoute('/_auth/app/grades')({
@@ -14,7 +14,7 @@ export const Route = createFileRoute('/_auth/app/grades')({
 })
 
 function GradesPage() {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
 
   const { context, isLoading: contextLoading } = useRequiredTeacherContext()
 
@@ -32,11 +32,11 @@ function GradesPage() {
   return (
     <div className="flex flex-col gap-4 p-4 pb-20">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">{t('grades.title')}</h1>
+        <h1 className="text-xl font-semibold">{LL.grades.title()}</h1>
         <SyncStatusContainer />
       </div>
 
-      <p className="text-sm text-muted-foreground">{t('grades.selectClass')}</p>
+      <p className="text-sm text-muted-foreground">{LL.grades.selectClass()}</p>
 
       {isLoading
         ? (
@@ -71,7 +71,7 @@ interface ClassCardProps {
 }
 
 function ClassCard({ classData }: ClassCardProps) {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
 
   return (
     <Card>
@@ -82,13 +82,13 @@ function ClassCard({ classData }: ClassCardProps) {
             <p className="text-xs text-muted-foreground">
               {classData.studentCount}
               {' '}
-              {t('common.students')}
+              {LL.common.students()}
             </p>
           </div>
           <Badge variant="secondary">
             {classData.subjects.length}
             {' '}
-            {t('grades.subjects', 'matières')}
+            {LL.grades.subjects()}
           </Badge>
         </div>
 
@@ -118,14 +118,14 @@ function ClassCard({ classData }: ClassCardProps) {
 }
 
 function EmptyClasses() {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
 
   return (
     <Card>
       <CardContent className="flex flex-col items-center justify-center py-12">
         <IconSchool className="h-12 w-12 text-muted-foreground/50" />
         <p className="mt-4 text-sm text-muted-foreground">
-          {t('grades.noClasses')}
+          {LL.grades.noClasses()}
         </p>
       </CardContent>
     </Card>

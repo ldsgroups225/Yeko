@@ -11,12 +11,14 @@ import {
 } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { Button } from '@workspace/ui/components/button'
-import { useTranslation } from 'react-i18next'
 import { Toaster } from 'sonner'
 import { ThemeProvider } from '@/components/theme/theme-provider'
 import { useSyncInitializer } from '@/hooks'
+import TypesafeI18n, { useI18nContext } from '@/i18n/i18n-react'
+import { loadAllLocales } from '@/i18n/i18n-util.sync'
 import appCss from '@/styles.css?url'
-import '@/i18n/config'
+
+loadAllLocales()
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
@@ -65,27 +67,29 @@ function RootComponent() {
   useSyncInitializer()
 
   return (
-    <RootDocument>
-      <ThemeProvider>
-        <Outlet />
-      </ThemeProvider>
-    </RootDocument>
+    <TypesafeI18n locale="fr">
+      <RootDocument>
+        <ThemeProvider>
+          <Outlet />
+        </ThemeProvider>
+      </RootDocument>
+    </TypesafeI18n>
   )
 }
 
 function NotFoundComponent() {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4">
       <div className="text-center space-y-4">
         <h1 className="text-6xl font-bold text-muted-foreground">404</h1>
-        <p className="text-xl text-muted-foreground">{t('errors.notFound')}</p>
+        <p className="text-xl text-muted-foreground">{LL.errors.notFound()}</p>
         <Button
           render={(
             <Link to="/login">
               <IconHome className="mr-2 h-4 w-4" />
-              {t('nav.home')}
+              {LL.nav.home()}
             </Link>
           )}
         />
@@ -116,6 +120,7 @@ function RootDocument({ children }: { children: ReactNode }) {
     <html lang="fr" suppressHydrationWarning>
       <head>
         <script
+          // eslint-disable-next-line react-dom/no-dangerously-set-innerhtml
           dangerouslySetInnerHTML={{ __html: themeScript }}
         />
         <HeadContent />

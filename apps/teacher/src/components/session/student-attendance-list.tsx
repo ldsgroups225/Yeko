@@ -2,7 +2,7 @@ import { IconCheck, IconClock, IconX } from '@tabler/icons-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
 import { Badge } from '@workspace/ui/components/badge'
 import { Button } from '@workspace/ui/components/button'
-import { useTranslation } from 'react-i18next'
+import { useI18nContext } from '@/i18n/i18n-react'
 
 interface Student {
   id: string
@@ -29,7 +29,7 @@ export function StudentAttendanceList({
   onSave,
   isSaving,
 }: StudentAttendanceListProps) {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
 
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
@@ -62,7 +62,7 @@ export function StudentAttendanceList({
           </Badge>
         </div>
         <Button onClick={onSave} disabled={isSaving} size="sm">
-          {isSaving ? t('common.loading') : t('attendance.save', 'Enregistrer')}
+          {isSaving ? LL.common.loading() : LL.attendance.save()}
         </Button>
       </div>
 
@@ -98,7 +98,7 @@ export function StudentAttendanceList({
                     variant={status === 'present' ? 'default' : 'outline'}
                     className={`h-8 w-8 ${status === 'present' ? 'bg-green-600 hover:bg-green-700' : ''}`}
                     onClick={() => onStatusChange(student.id, 'present')}
-                    title={t('attendance.present')}
+                    title={LL.attendance.present()}
                   >
                     <IconCheck className="w-4 h-4" />
                   </Button>
@@ -107,7 +107,7 @@ export function StudentAttendanceList({
                     variant={status === 'absent' ? 'destructive' : 'outline'}
                     className="h-8 w-8"
                     onClick={() => onStatusChange(student.id, 'absent')}
-                    title={t('attendance.absent')}
+                    title={LL.attendance.absent()}
                   >
                     <IconX className="w-4 h-4" />
                   </Button>
@@ -116,7 +116,7 @@ export function StudentAttendanceList({
                     variant={status === 'late' ? 'secondary' : 'outline'}
                     className={`h-8 w-8 ${status === 'late' ? 'bg-orange-100 text-orange-700 hover:bg-orange-200' : ''}`}
                     onClick={() => onStatusChange(student.id, 'late')}
-                    title={t('attendance.late')}
+                    title={LL.attendance.late()}
                   >
                     <IconClock className="w-4 h-4" />
                   </Button>

@@ -11,9 +11,9 @@ import { Badge } from '@workspace/ui/components/badge'
 import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { Skeleton } from '@workspace/ui/components/skeleton'
-import { useTranslation } from 'react-i18next'
-
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
+
+import { useI18nContext } from '@/i18n/i18n-react'
 import { teacherClassesQueryOptions } from '@/lib/queries/classes'
 
 export const Route = createFileRoute('/_auth/app/classes')({
@@ -21,7 +21,7 @@ export const Route = createFileRoute('/_auth/app/classes')({
 })
 
 function ClassesPage() {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
   const { context } = useRequiredTeacherContext()
 
   const { data, isLoading } = useQuery({
@@ -35,10 +35,10 @@ function ClassesPage() {
   return (
     <div className="flex flex-col gap-4 p-4 pb-20">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">{t('classes.title', 'Mes Classes')}</h1>
+        <h1 className="text-xl font-semibold">{LL.classes.title()}</h1>
         <Button size="sm">
           <IconPlus className="w-4 h-4 mr-2" />
-          {t('classes.create', 'Créer une classe')}
+          {LL.classes.create()}
         </Button>
       </div>
 
@@ -56,11 +56,11 @@ function ClassesPage() {
                 <CardContent className="flex flex-col items-center justify-center py-12">
                   <IconBook className="w-12 h-12 text-muted-foreground mb-4" />
                   <p className="text-muted-foreground">
-                    {t('classes.noClasses', 'Aucune classe trouvée')}
+                    {LL.classes.noClasses()}
                   </p>
                   <Button className="mt-4">
                     <IconPlus className="w-4 h-4 mr-2" />
-                    {t('classes.createFirst', 'Créer votre première classe')}
+                    {LL.classes.createFirst()}
                   </Button>
                 </CardContent>
               </Card>
@@ -82,7 +82,7 @@ function ClassesPage() {
                           <span>
                             {cls.studentCount}
                             {' '}
-                            {t('classes.students', 'élèves')}
+                            {LL.classes.students()}
                           </span>
                         </div>
                         <div className="flex items-center gap-1">
@@ -90,7 +90,7 @@ function ClassesPage() {
                           <span>
                             {cls.subjectCount}
                             {' '}
-                            {t('classes.subjects', 'matières')}
+                            {LL.classes.subjects()}
                           </span>
                         </div>
                       </div>

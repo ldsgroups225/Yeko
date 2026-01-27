@@ -7,12 +7,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/componen
 import { Input } from '@workspace/ui/components/input'
 import { Skeleton } from '@workspace/ui/components/skeleton'
 import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { SyncStatusContainer } from '@/components/grades/SyncStatusContainer'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { useNoteGrades } from '@/hooks/useLocalNotes'
 import { useSync } from '@/hooks/useSync'
+import { useI18nContext } from '@/i18n/i18n-react'
 import { localNotesService } from '@/lib/db/local-notes'
 import { classStudentsQueryOptions } from '@/lib/queries/sessions'
 import { getCurrentTermFn } from '@/teacher/functions/schools'
@@ -22,7 +22,7 @@ export const Route = createFileRoute('/_auth/app/grades/$classId/$subjectId')({
 })
 
 function GradeEntryPage() {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
   const { classId, subjectId } = Route.useParams()
   const queryClient = useQueryClient()
 
@@ -64,7 +64,10 @@ function GradeEntryPage() {
             const id = crypto.randomUUID()
             await localNotesService.saveNoteLocally({
               id,
-              title: `Grades ${data.className} - ${data.subjectName}`,
+              title: LL.grades.entryTitle({
+                className: data.className,
+                subjectName: data.subjectName,
+              }),
               type: 'CLASS_TEST',
               classId,
               subjectId,
@@ -86,7 +89,7 @@ function GradeEntryPage() {
       }
       initLocalNote()
     }
-  }, [context, currentTerm, classId, subjectId, data])
+  }, [context, currentTerm, classId, subjectId, data, LL])
 
   // 4. Hook into local grades
   const { grades: localGradesMap, updateGrade, isLoading: gradesLoading } = useNoteGrades({
@@ -97,7 +100,7 @@ function GradeEntryPage() {
   const { publishNotes, isPublishing } = useSync()
 
   const handleSaveDraft = () => {
-    toast.success(t('grades.draftSaved', 'Brouillon enregistré localement'))
+    toast.success(LL.grades.draftSaved())
   }
 
   const handlePublish = async () => {
@@ -109,15 +112,15 @@ function GradeEntryPage() {
       const result = await publishNotes({ noteIds: [localNoteId] })
 
       if (result.success) {
-        toast.success(t('grades.published', 'Notes publiées avec succès'))
+        toast.success(LL.grades.published())
         queryClient.invalidateQueries({ queryKey: ['teacher', 'grades'] })
       }
       else {
-        toast.error(t('grades.publishFailed', 'Échec de la publication, réessayez plus tard'))
+        toast.error(LL.grades.publishFailed())
       }
     }
     catch {
-      toast.error(t('errors.serverError'))
+      toast.error(LL.errors.serverError())
     }
   }
 
@@ -143,7 +146,7 @@ function GradeEntryPage() {
             </Button>
           </Link>
           <div>
-            <h1 className="text-lg font-semibold">{t('grades.enterGrades')}</h1>
+            <h1 className="text-lg font-semibold">{LL.grades.enterGrades()}</h1>
             <p className="text-xs text-muted-foreground">
               {data?.className}
               {' '}
@@ -165,12 +168,12 @@ function GradeEntryPage() {
                     <div className="flex items-center justify-between">
                       <CardTitle className="flex items-center gap-2 text-base">
                         <IconUsers className="h-4 w-4" />
-                        {t('common.students')}
+                        {LL.common.students()}
                       </CardTitle>
                       <Badge variant="secondary">
                         {data.students.length}
                         {' '}
-                        {t('common.students')}
+                        {LL.common.students()}
                       </Badge>
                     </div>
                   </CardHeader>
@@ -194,7 +197,7 @@ function GradeEntryPage() {
                     onClick={handleSaveDraft}
                   >
                     <IconDeviceFloppy className="mr-2 h-4 w-4" />
-                    {t('grades.saveDraft', 'Brouillon')}
+                    {LL.grades.saveDraft()}
                   </Button>
                   <Button
                     className="flex-1"
@@ -202,7 +205,7 @@ function GradeEntryPage() {
                     disabled={isPublishing}
                   >
                     <IconCloudUpload className="mr-2 h-4 w-4" />
-                    {t('grades.publish', 'Publier')}
+                    {LL.grades.publish()}
                   </Button>
                 </div>
               </>
@@ -224,6 +227,7 @@ interface StudentGradeRowProps {
 }
 
 function StudentGradeRow({ student, value, onChange }: StudentGradeRowProps) {
+  const { LL } = useI18nContext()
   return (
     <div className="flex items-center justify-between gap-3 rounded-lg bg-muted/30 p-3">
       <div className="min-w-0 flex-1">
@@ -243,21 +247,25 @@ function StudentGradeRow({ student, value, onChange }: StudentGradeRowProps) {
           onChange={e => onChange(e.target.value)}
           className="h-10 w-16 text-center text-lg font-semibold"
         />
-        <span className="text-sm text-muted-foreground">/20</span>
+        <span className="text-sm text-muted-foreground">
+          {LL.grades.outOf()}
+          {' '}
+          20
+        </span>
       </div>
     </div>
   )
 }
 
 function EmptyStudents() {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
 
   return (
     <Card>
       <CardContent className="flex flex-col items-center justify-center py-12">
         <IconUsers className="h-12 w-12 text-muted-foreground/50" />
         <p className="mt-4 text-sm text-muted-foreground">
-          {t('grades.noStudents')}
+          {LL.grades.noStudents()}
         </p>
       </CardContent>
     </Card>

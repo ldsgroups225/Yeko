@@ -1,18 +1,19 @@
+import type { TranslationFunctions } from '@/i18n/i18n-types'
 import { IconBook, IconCalendar, IconMessageCircle, IconSchool, IconUser } from '@tabler/icons-react'
 import { Link, useLocation } from '@tanstack/react-router'
-import { useTranslation } from 'react-i18next'
+import { useI18nContext } from '@/i18n/i18n-react'
 import { cn } from '@/lib/utils'
 
-const navItems = [
-  { id: 'planning', labelKey: 'nav.planning', icon: IconCalendar, href: '/app' },
-  { id: 'ecole', labelKey: 'nav.ecole', icon: IconSchool, href: '/app/schools' },
-  { id: 'session', labelKey: 'nav.session', icon: IconBook, href: '/app/session' },
-  { id: 'chat', labelKey: 'nav.chat', icon: IconMessageCircle, href: '/app/chat' },
-  { id: 'profile', labelKey: 'nav.profile', icon: IconUser, href: '/app/profile' },
-] as const
+const navItems: Array<{ id: keyof TranslationFunctions['nav'], icon: typeof IconCalendar, href: string }> = [
+  { id: 'planning', icon: IconCalendar, href: '/app' },
+  { id: 'ecole', icon: IconSchool, href: '/app/schools' },
+  { id: 'session', icon: IconBook, href: '/app/session' },
+  { id: 'chat', icon: IconMessageCircle, href: '/app/chat' },
+  { id: 'profile', icon: IconUser, href: '/app/profile' },
+]
 
 export function BottomNavigation() {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
   const location = useLocation()
 
   return (
@@ -21,6 +22,7 @@ export function BottomNavigation() {
         {navItems.map((item) => {
           const isActive = location.pathname.startsWith(item.href)
           const Icon = item.icon
+          const label = LL.nav[item.id]()
 
           return (
             <Link
@@ -32,11 +34,11 @@ export function BottomNavigation() {
                   ? 'text-primary'
                   : 'text-muted-foreground hover:text-foreground',
               )}
-              aria-label={t(item.labelKey)}
+              aria-label={label}
               data-nav={item.id}
             >
               <Icon className={cn('h-5 w-5', isActive && 'text-primary')} />
-              <span className="truncate">{t(item.labelKey)}</span>
+              <span className="truncate">{label}</span>
             </Link>
           )
         })}

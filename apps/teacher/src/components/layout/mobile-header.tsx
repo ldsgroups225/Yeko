@@ -2,7 +2,7 @@ import { IconArrowLeft, IconBell, IconMenu2 } from '@tabler/icons-react'
 import { Link, useRouter } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
 
-import { useTranslation } from 'react-i18next'
+import { useI18nContext } from '@/i18n/i18n-react'
 import { cn } from '@/lib/utils'
 
 interface MobileHeaderProps {
@@ -24,7 +24,7 @@ export function MobileHeader({
   className,
   rightAction,
 }: MobileHeaderProps) {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
   const router = useRouter()
 
   const handleBack = () => {
@@ -34,7 +34,7 @@ export function MobileHeader({
   return (
     <header
       className={cn(
-        'sticky top-0 z-40 flex h-14 items-center justify-between border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60',
+        'sticky top-0 z-40 flex h-14 items-center justify-between border-b bg-background/95 px-4 backdrop-blur supports-backdrop-filter:bg-background/60',
         className,
       )}
     >
@@ -45,7 +45,7 @@ export function MobileHeader({
             size="icon"
             className="touch-target"
             onClick={handleBack}
-            aria-label={t('common.back')}
+            aria-label={LL.common.back()}
           >
             <IconArrowLeft className="h-5 w-5" />
           </Button>
@@ -55,7 +55,7 @@ export function MobileHeader({
             variant="ghost"
             size="icon"
             className="touch-target"
-            aria-label="Menu"
+            aria-label={LL.nav.menu()}
           >
             <IconMenu2 className="h-5 w-5" />
           </Button>
@@ -73,7 +73,7 @@ export function MobileHeader({
               variant="ghost"
               size="icon"
               className="relative touch-target"
-              aria-label={t('notifications.title')}
+              aria-label={LL.notifications.title()}
             >
               <IconBell className="h-5 w-5" />
               {notificationCount > 0 && (

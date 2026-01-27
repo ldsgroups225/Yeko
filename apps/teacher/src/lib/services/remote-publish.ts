@@ -39,7 +39,7 @@ export const remotePublishHandler: RemotePublishHandler = async (note: NoteWithD
         return { success: true }
       }
       else {
-        return { success: false, error: (result as any).error || 'Failed to submit grades' }
+        return { success: false, error: (result as { error?: string }).error || 'Failed to submit grades' }
       }
     }
     // If it's a behavioral or student-specific note
@@ -65,7 +65,7 @@ export const remotePublishHandler: RemotePublishHandler = async (note: NoteWithD
             teacherId: note.teacherId,
             title: note.title,
             content: note.description || 'N/A',
-            type: note.type as any, // behavioral types
+            type: note.type as 'behavior' | 'general' | 'other',
             priority: 'medium',
             isPrivate: false,
           },
@@ -94,8 +94,8 @@ export const remotePublishHandler: RemotePublishHandler = async (note: NoteWithD
 /**
  * Helper to map local note types to remote grade types
  */
-function mapNoteTypeToGradeType(type: string): any {
-  const mapping: Record<string, string> = {
+function mapNoteTypeToGradeType(type: string): 'quiz' | 'test' | 'exam' | 'participation' | 'homework' | 'project' {
+  const mapping: Record<string, 'quiz' | 'test' | 'exam' | 'participation' | 'homework' | 'project'> = {
     CLASS_TEST: 'test',
     WRITING_QUESTION: 'quiz',
     EXAM: 'exam',
