@@ -13,7 +13,6 @@ import {
 } from '@workspace/ui/components/alert-dialog'
 
 import { cn } from '@workspace/ui/lib/utils'
-import * as React from 'react'
 
 interface ConfirmationDialogProps {
   open: boolean

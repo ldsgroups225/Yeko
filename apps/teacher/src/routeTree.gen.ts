@@ -17,7 +17,6 @@ import { Route as AuthAppIndexRouteImport } from './routes/_auth/app/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as AuthAppSessionRouteImport } from './routes/_auth/app/session'
 import { Route as AuthAppProfileRouteImport } from './routes/_auth/app/profile'
-import { Route as AuthAppPlanningRouteImport } from './routes/_auth/app/planning'
 import { Route as AuthAppNotificationsRouteImport } from './routes/_auth/app/notifications'
 import { Route as AuthAppHomeworkRouteImport } from './routes/_auth/app/homework'
 import { Route as AuthAppGradesRouteImport } from './routes/_auth/app/grades'
@@ -73,11 +72,6 @@ const AuthAppSessionRoute = AuthAppSessionRouteImport.update({
 const AuthAppProfileRoute = AuthAppProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
-  getParentRoute: () => AuthAppRoute,
-} as any)
-const AuthAppPlanningRoute = AuthAppPlanningRouteImport.update({
-  id: '/planning',
-  path: '/planning',
   getParentRoute: () => AuthAppRoute,
 } as any)
 const AuthAppNotificationsRoute = AuthAppNotificationsRouteImport.update({
@@ -183,7 +177,6 @@ export interface FileRoutesByFullPath {
   '/app/grades': typeof AuthAppGradesRouteWithChildren
   '/app/homework': typeof AuthAppHomeworkRouteWithChildren
   '/app/notifications': typeof AuthAppNotificationsRoute
-  '/app/planning': typeof AuthAppPlanningRoute
   '/app/profile': typeof AuthAppProfileRoute
   '/app/session': typeof AuthAppSessionRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -209,7 +202,6 @@ export interface FileRoutesByTo {
   '/app/grades': typeof AuthAppGradesRouteWithChildren
   '/app/homework': typeof AuthAppHomeworkRouteWithChildren
   '/app/notifications': typeof AuthAppNotificationsRoute
-  '/app/planning': typeof AuthAppPlanningRoute
   '/app/profile': typeof AuthAppProfileRoute
   '/app/session': typeof AuthAppSessionRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -238,7 +230,6 @@ export interface FileRoutesById {
   '/_auth/app/grades': typeof AuthAppGradesRouteWithChildren
   '/_auth/app/homework': typeof AuthAppHomeworkRouteWithChildren
   '/_auth/app/notifications': typeof AuthAppNotificationsRoute
-  '/_auth/app/planning': typeof AuthAppPlanningRoute
   '/_auth/app/profile': typeof AuthAppProfileRoute
   '/_auth/app/session': typeof AuthAppSessionRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -267,7 +258,6 @@ export interface FileRouteTypes {
     | '/app/grades'
     | '/app/homework'
     | '/app/notifications'
-    | '/app/planning'
     | '/app/profile'
     | '/app/session'
     | '/api/auth/$'
@@ -293,7 +283,6 @@ export interface FileRouteTypes {
     | '/app/grades'
     | '/app/homework'
     | '/app/notifications'
-    | '/app/planning'
     | '/app/profile'
     | '/app/session'
     | '/api/auth/$'
@@ -321,7 +310,6 @@ export interface FileRouteTypes {
     | '/_auth/app/grades'
     | '/_auth/app/homework'
     | '/_auth/app/notifications'
-    | '/_auth/app/planning'
     | '/_auth/app/profile'
     | '/_auth/app/session'
     | '/api/auth/$'
@@ -402,13 +390,6 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/app/profile'
       preLoaderRoute: typeof AuthAppProfileRouteImport
-      parentRoute: typeof AuthAppRoute
-    }
-    '/_auth/app/planning': {
-      id: '/_auth/app/planning'
-      path: '/planning'
-      fullPath: '/app/planning'
-      preLoaderRoute: typeof AuthAppPlanningRouteImport
       parentRoute: typeof AuthAppRoute
     }
     '/_auth/app/notifications': {
@@ -580,7 +561,6 @@ interface AuthAppRouteChildren {
   AuthAppGradesRoute: typeof AuthAppGradesRouteWithChildren
   AuthAppHomeworkRoute: typeof AuthAppHomeworkRouteWithChildren
   AuthAppNotificationsRoute: typeof AuthAppNotificationsRoute
-  AuthAppPlanningRoute: typeof AuthAppPlanningRoute
   AuthAppProfileRoute: typeof AuthAppProfileRoute
   AuthAppSessionRoute: typeof AuthAppSessionRoute
   AuthAppIndexRoute: typeof AuthAppIndexRoute
@@ -599,7 +579,6 @@ const AuthAppRouteChildren: AuthAppRouteChildren = {
   AuthAppGradesRoute: AuthAppGradesRouteWithChildren,
   AuthAppHomeworkRoute: AuthAppHomeworkRouteWithChildren,
   AuthAppNotificationsRoute: AuthAppNotificationsRoute,
-  AuthAppPlanningRoute: AuthAppPlanningRoute,
   AuthAppProfileRoute: AuthAppProfileRoute,
   AuthAppSessionRoute: AuthAppSessionRoute,
   AuthAppIndexRoute: AuthAppIndexRoute,

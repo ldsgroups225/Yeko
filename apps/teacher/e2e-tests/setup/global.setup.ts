@@ -15,7 +15,7 @@ async function globalSetup() {
 
   await page.getByRole('button', { name: 'Se connecter' }).click()
 
-  await expect(page).toHaveURL(/.*dashboard/, { timeout: 10000 })
+  await expect(page).toHaveURL(/.*\/app/, { timeout: 30000 })
 
   await page.context().storageState({ path: AUTH_FILE })
   await browser.close()

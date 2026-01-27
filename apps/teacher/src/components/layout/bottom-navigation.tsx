@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 
 const navItems = [
-  { id: 'planning', labelKey: 'nav.planning', icon: IconCalendar, href: '/app/planning' },
+  { id: 'planning', labelKey: 'nav.planning', icon: IconCalendar, href: '/app' },
   { id: 'ecole', labelKey: 'nav.ecole', icon: IconSchool, href: '/app/schools' },
   { id: 'session', labelKey: 'nav.session', icon: IconBook, href: '/app/session' },
   { id: 'chat', labelKey: 'nav.chat', icon: IconMessageCircle, href: '/app/chat' },

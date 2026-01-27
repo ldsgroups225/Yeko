@@ -21,7 +21,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'pnpm run dev:yeko-teacher',
+    command: 'pnpm run dev',
     url: 'http://localhost:3002',
     reuseExistingServer: !process.env.CI,
   },
