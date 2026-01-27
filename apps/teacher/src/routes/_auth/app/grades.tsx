@@ -2,10 +2,10 @@ import { IconChevronRight, IconSchool } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'
-
 import { Card, CardContent } from '@workspace/ui/components/card'
 import { Skeleton } from '@workspace/ui/components/skeleton'
 import { useTranslation } from 'react-i18next'
+import { SyncStatusContainer } from '@/components/grades/SyncStatusContainer'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { teacherClassesQueryOptions } from '@/lib/queries/dashboard'
 
@@ -31,7 +31,10 @@ function GradesPage() {
 
   return (
     <div className="flex flex-col gap-4 p-4 pb-20">
-      <h1 className="text-xl font-semibold">{t('grades.title')}</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-semibold">{t('grades.title')}</h1>
+        <SyncStatusContainer />
+      </div>
 
       <p className="text-sm text-muted-foreground">{t('grades.selectClass')}</p>
 

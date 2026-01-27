@@ -11,7 +11,7 @@ import {
   IconVenus,
 } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
 import { Badge } from '@workspace/ui/components/badge'
 import { Card, CardContent } from '@workspace/ui/components/card'
@@ -140,7 +140,7 @@ function SchoolClassesPage() {
         >
           {classes.map((cls: any) => (
             <motion.div key={cls.id} variants={item}>
-              <ClassCard classData={cls} viewMode={viewMode} />
+              <ClassCard classData={cls} viewMode={viewMode} schoolId={schoolId} />
             </motion.div>
           ))}
         </motion.div>
@@ -162,9 +162,10 @@ interface ClassCardProps {
     subjectCount: number
   }
   viewMode: 'grid' | 'list'
+  schoolId: string
 }
 
-function ClassCard({ classData, viewMode }: ClassCardProps) {
+function ClassCard({ classData, viewMode, schoolId }: ClassCardProps) {
   const averageColor = useMemo(() => {
     if (!classData.classAverage)
       return 'text-muted-foreground'
@@ -177,7 +178,7 @@ function ClassCard({ classData, viewMode }: ClassCardProps) {
 
   const content = (
     <Card className={cn(
-      'group relative overflow-hidden border-border/40 bg-card/40 backdrop-blur-xl transition-all hover:border-primary/40 hover:bg-card/60 hover:shadow-2xl active:scale-[0.99] border',
+      'group relative overflow-hidden border-border/40 bg-card/40 backdrop-blur-xl transition-all hover:border-primary/40 hover:bg-card/60 hover:shadow-2xl active:scale-[0.99] border cursor-pointer',
       viewMode === 'list' && 'flex items-center min-h-20',
     )}
     >
@@ -284,9 +285,11 @@ function ClassCard({ classData, viewMode }: ClassCardProps) {
   )
 
   return (
-    <motion.div whileHover={{ y: -4 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }}>
-      {content}
-    </motion.div>
+    <Link to="/app/schools/$schoolId/class/$classId" params={{ schoolId, classId: classData.id }}>
+      <motion.div whileHover={{ y: -4 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }}>
+        {content}
+      </motion.div>
+    </Link>
   )
 }
 function EmptyClassesState({ schoolName }: { schoolName: string }) {

@@ -1,8 +1,7 @@
-import { getDb } from '@repo/data-ops/database/setup'
+import { asc, eq, getDb } from '@repo/data-ops/database/setup'
 import { schools } from '@repo/data-ops/drizzle/core-schema'
 import { teachers } from '@repo/data-ops/drizzle/school-schema'
 import { createServerFn } from '@tanstack/react-start'
-import { asc, eq } from 'drizzle-orm'
 import { z } from 'zod'
 
 export const getTeacherSchoolsQuery = createServerFn()
@@ -26,4 +25,11 @@ export const getTeacherSchoolsQuery = createServerFn()
       .orderBy(asc(schools.name))
 
     return result
+  })
+
+export const getCurrentTermFn = createServerFn()
+  .inputValidator(z.object({ schoolYearId: z.string() }))
+  .handler(async ({ data }) => {
+    const { getCurrentTermForSchoolYear } = await import('@repo/data-ops/queries/teacher-app')
+    return getCurrentTermForSchoolYear(data.schoolYearId)
   })

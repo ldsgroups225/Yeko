@@ -15,6 +15,7 @@
     "test:coverage": "vitest --run --coverage"
   },
   "dependencies": {
+    "@electric-sql/pglite": "catalog:",
     "@hookform/resolvers": "catalog:",
     "@repo/data-ops": "workspace:^",
     "@repo/logger": "workspace:^",
@@ -33,6 +34,7 @@
     "clsx": "catalog:",
     "cmdk": "catalog:",
     "date-fns": "catalog:",
+    "drizzle-orm": "catalog:",
     "embla-carousel-react": "catalog:",
     "i18next": "catalog:",
     "i18next-browser-languagedetector": "catalog:",

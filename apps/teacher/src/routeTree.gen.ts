@@ -34,6 +34,7 @@ import { Route as AuthAppStudentsStudentIdParentsRouteImport } from './routes/_a
 import { Route as AuthAppStudentsStudentIdNotesRouteImport } from './routes/_auth/app/students.$studentId.notes'
 import { Route as AuthAppSchoolsSchoolIdClassesRouteImport } from './routes/_auth/app/schools.$schoolId.classes'
 import { Route as AuthAppGradesClassIdSubjectIdRouteImport } from './routes/_auth/app/grades.$classId.$subjectId'
+import { Route as AuthAppSchoolsSchoolIdClassClassIdRouteImport } from './routes/_auth/app/schools.$schoolId.class.$classId'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -165,6 +166,12 @@ const AuthAppGradesClassIdSubjectIdRoute =
     path: '/$classId/$subjectId',
     getParentRoute: () => AuthAppGradesRoute,
   } as any)
+const AuthAppSchoolsSchoolIdClassClassIdRoute =
+  AuthAppSchoolsSchoolIdClassClassIdRouteImport.update({
+    id: '/schools/$schoolId/class/$classId',
+    path: '/schools/$schoolId/class/$classId',
+    getParentRoute: () => AuthAppRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -191,6 +198,7 @@ export interface FileRoutesByFullPath {
   '/app/schools/$schoolId/classes': typeof AuthAppSchoolsSchoolIdClassesRoute
   '/app/students/$studentId/notes': typeof AuthAppStudentsStudentIdNotesRoute
   '/app/students/$studentId/parents': typeof AuthAppStudentsStudentIdParentsRoute
+  '/app/schools/$schoolId/class/$classId': typeof AuthAppSchoolsSchoolIdClassClassIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -216,6 +224,7 @@ export interface FileRoutesByTo {
   '/app/schools/$schoolId/classes': typeof AuthAppSchoolsSchoolIdClassesRoute
   '/app/students/$studentId/notes': typeof AuthAppStudentsStudentIdNotesRoute
   '/app/students/$studentId/parents': typeof AuthAppStudentsStudentIdParentsRoute
+  '/app/schools/$schoolId/class/$classId': typeof AuthAppSchoolsSchoolIdClassClassIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -244,6 +253,7 @@ export interface FileRoutesById {
   '/_auth/app/schools/$schoolId/classes': typeof AuthAppSchoolsSchoolIdClassesRoute
   '/_auth/app/students/$studentId/notes': typeof AuthAppStudentsStudentIdNotesRoute
   '/_auth/app/students/$studentId/parents': typeof AuthAppStudentsStudentIdParentsRoute
+  '/_auth/app/schools/$schoolId/class/$classId': typeof AuthAppSchoolsSchoolIdClassClassIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -272,6 +282,7 @@ export interface FileRouteTypes {
     | '/app/schools/$schoolId/classes'
     | '/app/students/$studentId/notes'
     | '/app/students/$studentId/parents'
+    | '/app/schools/$schoolId/class/$classId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -297,6 +308,7 @@ export interface FileRouteTypes {
     | '/app/schools/$schoolId/classes'
     | '/app/students/$studentId/notes'
     | '/app/students/$studentId/parents'
+    | '/app/schools/$schoolId/class/$classId'
   id:
     | '__root__'
     | '/'
@@ -324,6 +336,7 @@ export interface FileRouteTypes {
     | '/_auth/app/schools/$schoolId/classes'
     | '/_auth/app/students/$studentId/notes'
     | '/_auth/app/students/$studentId/parents'
+    | '/_auth/app/schools/$schoolId/class/$classId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -510,6 +523,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAppGradesClassIdSubjectIdRouteImport
       parentRoute: typeof AuthAppGradesRoute
     }
+    '/_auth/app/schools/$schoolId/class/$classId': {
+      id: '/_auth/app/schools/$schoolId/class/$classId'
+      path: '/schools/$schoolId/class/$classId'
+      fullPath: '/app/schools/$schoolId/class/$classId'
+      preLoaderRoute: typeof AuthAppSchoolsSchoolIdClassClassIdRouteImport
+      parentRoute: typeof AuthAppRoute
+    }
   }
 }
 
@@ -569,6 +589,7 @@ interface AuthAppRouteChildren {
   AuthAppSchoolsSchoolIdClassesRoute: typeof AuthAppSchoolsSchoolIdClassesRoute
   AuthAppStudentsStudentIdNotesRoute: typeof AuthAppStudentsStudentIdNotesRoute
   AuthAppStudentsStudentIdParentsRoute: typeof AuthAppStudentsStudentIdParentsRoute
+  AuthAppSchoolsSchoolIdClassClassIdRoute: typeof AuthAppSchoolsSchoolIdClassClassIdRoute
 }
 
 const AuthAppRouteChildren: AuthAppRouteChildren = {
@@ -587,6 +608,8 @@ const AuthAppRouteChildren: AuthAppRouteChildren = {
   AuthAppSchoolsSchoolIdClassesRoute: AuthAppSchoolsSchoolIdClassesRoute,
   AuthAppStudentsStudentIdNotesRoute: AuthAppStudentsStudentIdNotesRoute,
   AuthAppStudentsStudentIdParentsRoute: AuthAppStudentsStudentIdParentsRoute,
+  AuthAppSchoolsSchoolIdClassClassIdRoute:
+    AuthAppSchoolsSchoolIdClassClassIdRoute,
 }
 
 const AuthAppRouteWithChildren =

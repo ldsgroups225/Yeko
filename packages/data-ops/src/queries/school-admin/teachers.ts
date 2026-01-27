@@ -9,7 +9,6 @@ import {
   teachers,
   teacherSubjects,
   users,
-  userSchools,
 } from '../../drizzle/school-schema'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
 

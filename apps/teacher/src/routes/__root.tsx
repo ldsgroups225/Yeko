@@ -14,6 +14,7 @@ import { Button } from '@workspace/ui/components/button'
 import { useTranslation } from 'react-i18next'
 import { Toaster } from 'sonner'
 import { ThemeProvider } from '@/components/theme/theme-provider'
+import { useSyncInitializer } from '@/hooks'
 import appCss from '@/styles.css?url'
 import '@/i18n/config'
 
@@ -61,6 +62,8 @@ export const Route = createRootRouteWithContext<{
 })
 
 function RootComponent() {
+  useSyncInitializer()
+
   return (
     <RootDocument>
       <ThemeProvider>
@@ -91,10 +94,30 @@ function NotFoundComponent() {
   )
 }
 
+// Inline script to prevent theme flash (FOUC) - runs before paint
+const themeScript = `
+(function() {
+  var storageKey = 'yeko-teacher-theme';
+  var theme;
+  try {
+    theme = localStorage.getItem(storageKey);
+  } catch (e) {}
+  
+  if (!theme || theme === 'system') {
+    theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  
+  document.documentElement.classList.add(theme);
+})();
+`
+
 function RootDocument({ children }: { children: ReactNode }) {
   return (
     <html lang="fr" suppressHydrationWarning>
       <head>
+        <script
+          dangerouslySetInnerHTML={{ __html: themeScript }}
+        />
         <HeadContent />
       </head>
       <body className="min-h-screen bg-background font-sans antialiased">

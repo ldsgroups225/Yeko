@@ -1,18 +1,21 @@
-import { IconArrowLeft, IconCheck, IconDeviceFloppy, IconUsers } from '@tabler/icons-react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { IconArrowLeft, IconCloudUpload, IconDeviceFloppy, IconUsers } from '@tabler/icons-react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'
 import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
-
 import { Input } from '@workspace/ui/components/input'
 import { Skeleton } from '@workspace/ui/components/skeleton'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+import { SyncStatusContainer } from '@/components/grades/SyncStatusContainer'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
+import { useNoteGrades } from '@/hooks/useLocalNotes'
+import { useSync } from '@/hooks/useSync'
+import { localNotesService } from '@/lib/db/local-notes'
 import { classStudentsQueryOptions } from '@/lib/queries/sessions'
-import { submitGrades } from '@/teacher/functions/grades'
+import { getCurrentTermFn } from '@/teacher/functions/schools'
 
 export const Route = createFileRoute('/_auth/app/grades/$classId/$subjectId')({
   component: GradeEntryPage,
@@ -25,6 +28,7 @@ function GradeEntryPage() {
 
   const { context, isLoading: contextLoading } = useRequiredTeacherContext()
 
+  // 1. Fetch class students
   const { data, isLoading: dataLoading } = useQuery({
     ...classStudentsQueryOptions({
       classId,
@@ -34,81 +38,121 @@ function GradeEntryPage() {
     enabled: !!context,
   })
 
-  // Local state for grades
-  const [grades, setGrades] = useState<Record<string, string>>({})
-  const [isDirty, setIsDirty] = useState(false)
-
-  const submitMutation = useMutation({
-    mutationFn: submitGrades,
-    onSuccess: () => {
-      toast.success(t('grades.saved'))
-      setIsDirty(false)
-      queryClient.invalidateQueries({ queryKey: ['teacher', 'grades'] })
-    },
-    onError: () => {
-      toast.error(t('errors.serverError'))
-    },
+  // 2. Fetch current term
+  const { data: currentTerm } = useQuery({
+    queryKey: ['schools', 'current-term', context?.schoolYearId],
+    queryFn: () => getCurrentTermFn({ data: { schoolYearId: context?.schoolYearId ?? '' } }),
+    enabled: !!context?.schoolYearId,
   })
+
+  // 3. Manage local note state
+  const [localNoteId, setLocalNoteId] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (context && currentTerm && classId && subjectId && data?.className) {
+      const initLocalNote = async () => {
+        try {
+          const note = await localNotesService.findNote({
+            classId,
+            subjectId,
+            termId: currentTerm.id,
+            type: 'CLASS_TEST',
+            teacherId: context.teacherId,
+          })
+
+          if (!note) {
+            const id = crypto.randomUUID()
+            await localNotesService.saveNoteLocally({
+              id,
+              title: `Grades ${data.className} - ${data.subjectName}`,
+              type: 'CLASS_TEST',
+              classId,
+              subjectId,
+              termId: currentTerm.id,
+              teacherId: context.teacherId,
+              schoolId: context.schoolId,
+              schoolYearId: context.schoolYearId,
+              isPublished: false,
+            })
+            setLocalNoteId(id)
+          }
+          else {
+            setLocalNoteId(note.id)
+          }
+        }
+        catch (err) {
+          console.error('Failed to initialize local note:', err)
+        }
+      }
+      initLocalNote()
+    }
+  }, [context, currentTerm, classId, subjectId, data])
+
+  // 4. Hook into local grades
+  const { grades: localGradesMap, updateGrade, isLoading: gradesLoading } = useNoteGrades({
+    noteId: localNoteId ?? '',
+  })
+
+  // 5. Syncing hook
+  const { publishNotes, isPublishing } = useSync()
+
+  const handleSaveDraft = () => {
+    toast.success(t('grades.draftSaved', 'Brouillon enregistré localement'))
+  }
+
+  const handlePublish = async () => {
+    if (!localNoteId)
+      return
+
+    try {
+      await localNotesService.publishNote(localNoteId)
+      const result = await publishNotes({ noteIds: [localNoteId] })
+
+      if (result.success) {
+        toast.success(t('grades.published', 'Notes publiées avec succès'))
+        queryClient.invalidateQueries({ queryKey: ['teacher', 'grades'] })
+      }
+      else {
+        toast.error(t('grades.publishFailed', 'Échec de la publication, réessayez plus tard'))
+      }
+    }
+    catch {
+      toast.error(t('errors.serverError'))
+    }
+  }
 
   const handleGradeChange = (studentId: string, value: string) => {
     // Allow empty, or numbers 0-20 with optional decimal
     if (value === '' || /^\d{0,2}(?:\.\d{0,2})?$/.test(value)) {
       const numValue = Number.parseFloat(value)
       if (value === '' || (numValue >= 0 && numValue <= 20)) {
-        setGrades(prev => ({ ...prev, [studentId]: value }))
-        setIsDirty(true)
+        updateGrade(studentId, value)
       }
     }
   }
 
-  const handleSave = (status: 'draft' | 'submitted') => {
-    if (!context || !context.schoolYearId)
-      return
-
-    const gradeEntries = Object.entries(grades)
-      .filter(([_, value]) => value !== '')
-      .map(([studentId, value]) => ({
-        studentId,
-        grade: Number.parseFloat(value),
-      }))
-
-    if (gradeEntries.length === 0) {
-      toast.error(t('grades.noGrades'))
-      return
-    }
-
-    submitMutation.mutate({
-      data: {
-        teacherId: context.teacherId,
-        schoolId: context.schoolId,
-        schoolYearId: context.schoolYearId,
-        classId,
-        subjectId,
-        grades: gradeEntries,
-        status,
-      },
-    })
-  }
-
-  const isLoading = contextLoading || dataLoading
+  const isLoading = contextLoading || dataLoading || gradesLoading
 
   return (
-    <div className="flex flex-col gap-4 p-4 pb-24">
-      <div className="flex items-center gap-3">
-        <Link to="/app/grades">
-          <Button variant="ghost" size="icon">
-            <IconArrowLeft className="h-5 w-5" />
-          </Button>
-        </Link>
-        <div>
-          <h1 className="text-lg font-semibold">{t('grades.enterGrades')}</h1>
-          <p className="text-xs text-muted-foreground">
-            {data?.className}
-            {' '}
-            •
-            {data?.subjectName}
-          </p>
+    <div className="flex flex-col gap-4 p-4 pb-32">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Link to="/app/grades">
+            <Button variant="ghost" size="icon">
+              <IconArrowLeft className="h-5 w-5" />
+            </Button>
+          </Link>
+          <div>
+            <h1 className="text-lg font-semibold">{t('grades.enterGrades')}</h1>
+            <p className="text-xs text-muted-foreground">
+              {data?.className}
+              {' '}
+              •
+              {data?.subjectName}
+            </p>
+          </div>
         </div>
+        <SyncStatusContainer />
       </div>
 
       {isLoading
@@ -135,7 +179,7 @@ function GradeEntryPage() {
                       <StudentGradeRow
                         key={student.id}
                         student={student}
-                        value={grades[student.id] ?? ''}
+                        value={localGradesMap.get(student.id) ?? ''}
                         onChange={value => handleGradeChange(student.id, value)}
                       />
                     ))}
@@ -143,26 +187,23 @@ function GradeEntryPage() {
                 </Card>
 
                 {/* Fixed bottom action bar */}
-                <div className="fixed inset-x-0 bottom-16 border-t bg-background p-4">
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      className="flex-1"
-                      onClick={() => handleSave('draft')}
-                      disabled={!isDirty || submitMutation.isPending}
-                    >
-                      <IconDeviceFloppy className="mr-2 h-4 w-4" />
-                      {t('grades.saveDraft')}
-                    </Button>
-                    <Button
-                      className="flex-1"
-                      onClick={() => handleSave('submitted')}
-                      disabled={!isDirty || submitMutation.isPending}
-                    >
-                      <IconCheck className="mr-2 h-4 w-4" />
-                      {t('grades.submit')}
-                    </Button>
-                  </div>
+                <div className="fixed inset-x-0 bottom-16 border-t bg-background p-4 flex gap-2">
+                  <Button
+                    variant="outline"
+                    className="flex-1"
+                    onClick={handleSaveDraft}
+                  >
+                    <IconDeviceFloppy className="mr-2 h-4 w-4" />
+                    {t('grades.saveDraft', 'Brouillon')}
+                  </Button>
+                  <Button
+                    className="flex-1"
+                    onClick={handlePublish}
+                    disabled={isPublishing}
+                  >
+                    <IconCloudUpload className="mr-2 h-4 w-4" />
+                    {t('grades.publish', 'Publier')}
+                  </Button>
                 </div>
               </>
             )

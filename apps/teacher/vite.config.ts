@@ -23,6 +23,19 @@ const config = defineConfig({
       },
     }),
   ],
+  assetsInclude: ['**/*.wasm', '**/*.data', '**/*.tar.gz'],
+  optimizeDeps: {
+    exclude: ['@electric-sql/pglite', 'drizzle-orm'],
+  },
+  server: {
+    headers: {
+      'Cross-Origin-Embedder-Policy': 'require-corp',
+      'Cross-Origin-Opener-Policy': 'same-origin',
+    },
+  },
+  worker: {
+    format: 'es',
+  },
 })
 
 export default config

@@ -63,3 +63,6 @@ export function resetDbForTesting() {
 
 // Export the Database type for use in other modules
 export type { Database, NeonDatabase, NodeDatabase, Schema }
+
+// Re-export drizzle-orm operators for consistent type usage across the monorepo
+export { and, asc, desc, eq, ilike, inArray, isNotNull, isNull, like, notInArray, or, sql } from 'drizzle-orm'

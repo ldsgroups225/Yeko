@@ -1,0 +1,1374 @@
+import { IconAlertCircle, IconArrowLeft, IconBook, IconChartBar, IconChevronDown, IconChevronUp, IconDeviceFloppy, IconEdit, IconHistory, IconMinus, IconPlayerPlay, IconPlus, IconSchool, IconSearch, IconTrendingDown, IconTrendingUp, IconUsers } from '@tabler/icons-react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
+import { Badge } from '@workspace/ui/components/badge'
+import { Button } from '@workspace/ui/components/button'
+import { Card } from '@workspace/ui/components/card'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@workspace/ui/components/collapsible'
+import { ConfirmationDialog } from '@workspace/ui/components/confirmation-dialog'
+import { Input } from '@workspace/ui/components/input'
+import {
+  NumberField,
+  NumberFieldDecrement,
+  NumberFieldGroup,
+  NumberFieldIncrement,
+  NumberFieldInput,
+} from '@workspace/ui/components/number-field'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@workspace/ui/components/select'
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from '@workspace/ui/components/sheet'
+import { Skeleton } from '@workspace/ui/components/skeleton'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@workspace/ui/components/table'
+import { cn } from '@workspace/ui/lib/utils'
+import { AnimatePresence, motion } from 'motion/react'
+import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
+import { localNotesService } from '@/lib/db/local-notes'
+import { classDetailsQueryOptions, classStudentsQueryOptions } from '@/lib/queries/classes'
+import { teacherClassesQueryOptions } from '@/lib/queries/dashboard'
+import { getCurrentTermFn, getTeacherSchoolsQuery } from '@/teacher/functions/schools'
+
+export const Route = createFileRoute('/_auth/app/schools/$schoolId/class/$classId')({
+  component: ClassDetailPage,
+})
+
+// Performance thresholds
+const PERFORMANCE_THRESHOLDS = {
+  EXCELLENT: 14,
+  GOOD: 12,
+  PASSING: 10,
+} as const
+
+// Utility functions
+function getPerformanceColor(average: number | null): string {
+  if (average === null)
+    return 'text-muted-foreground'
+  if (average >= PERFORMANCE_THRESHOLDS.EXCELLENT)
+    return 'text-emerald-500'
+  if (average >= PERFORMANCE_THRESHOLDS.GOOD)
+    return 'text-amber-500'
+  if (average >= PERFORMANCE_THRESHOLDS.PASSING)
+    return 'text-orange-500'
+  return 'text-red-500'
+}
+
+function getPerformanceBgColor(average: number | null): string {
+  if (average === null)
+    return 'bg-muted/30'
+  if (average >= PERFORMANCE_THRESHOLDS.EXCELLENT)
+    return 'bg-emerald-500/10'
+  if (average >= PERFORMANCE_THRESHOLDS.GOOD)
+    return 'bg-amber-500/10'
+  if (average >= PERFORMANCE_THRESHOLDS.PASSING)
+    return 'bg-orange-500/10'
+  return 'bg-red-500/10'
+}
+
+function getPerformanceIcon(average: number | null, classAvg: number | null) {
+  if (average === null || classAvg === null)
+    return <IconMinus className="w-3 h-3" />
+  const diff = average - classAvg
+  if (diff > 1)
+    return <IconTrendingUp className="w-3 h-3 text-emerald-500" />
+  if (diff < -1)
+    return <IconTrendingDown className="w-3 h-3 text-red-500" />
+  return <IconMinus className="w-3 h-3 text-muted-foreground" />
+}
+
+// Animation variants
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 },
+  },
+}
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 },
+}
+
+type SortKey = 'name' | 'average' | 'participation' | 'quizzes' | 'tests'
+type SortDirection = 'asc' | 'desc'
+
+interface SortConfig {
+  key: SortKey
+  direction: SortDirection
+}
+
+function ClassDetailPage() {
+  const { t } = useTranslation()
+  const queryClient = useQueryClient()
+
+  const { schoolId, classId } = Route.useParams()
+  const { context, isLoading: contextLoading } = useRequiredTeacherContext()
+
+  const [searchQuery, setSearchQuery] = useState('')
+  const [sortConfig, setSortConfig] = useState<SortConfig | null>(null)
+  const [expandedStudent, setExpandedStudent] = useState<string | null>(null)
+
+  // Grade Entry Mode states
+  const [isEntryMode, setIsEntryMode] = useState(false)
+  const [isMetaExpanded, setIsMetaExpanded] = useState(true)
+  const [selectedSubjectId, setSelectedSubjectId] = useState<string | null>(null)
+  const [noteTitle, setNoteTitle] = useState('')
+  const [noteType, setNoteType] = useState<'quizzes' | 'tests' | 'level_tests'>('tests')
+  const [weight, setWeight] = useState(1)
+  const [gradeOutOf, setGradeOutOf] = useState(20)
+  const [gradesMap, setGradesMap] = useState<Map<string, string>>(new Map())
+  const [isSaving, setIsSaving] = useState(false)
+  const [isUnpublishedSheetOpen, setIsUnpublishedSheetOpen] = useState(false)
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false)
+
+  // Fetch class details
+  const { data: classData, isLoading: classLoading } = useQuery({
+    ...classDetailsQueryOptions({
+      classId,
+      schoolYearId: context?.schoolYearId ?? '',
+    }),
+    enabled: !!context?.schoolYearId,
+  })
+
+  // Fetch students
+  const { data: studentsData, isLoading: studentsLoading } = useQuery({
+    ...classStudentsQueryOptions({
+      classId,
+      schoolYearId: context?.schoolYearId ?? '',
+      searchQuery: searchQuery || undefined,
+    }),
+    enabled: !!context?.schoolYearId,
+  })
+
+  // Fetch all teacher classes to get subjects
+  const { data: teacherClassesData } = useQuery({
+    ...teacherClassesQueryOptions({
+      teacherId: context?.teacherId ?? '',
+      schoolId: context?.schoolId ?? '',
+      schoolYearId: context?.schoolYearId ?? '',
+    }),
+    enabled: !!context,
+  })
+
+  // Find current class in teacher classes to get its subjects
+  const teacherClassInfo = teacherClassesData?.classes.find(c => c.id === classId)
+  const teacherSubjects = teacherClassInfo?.subjects ?? []
+
+  // Fetch current term
+  const { data: currentTerm } = useQuery({
+    queryKey: ['schools', 'current-term', context?.schoolYearId],
+    queryFn: () => getCurrentTermFn({ data: { schoolYearId: context?.schoolYearId ?? '' } }),
+    enabled: !!context?.schoolYearId,
+  })
+
+  // Fetch school info
+  const { data: schools } = useQuery({
+    queryKey: ['teacher', 'schools', context?.userId],
+    queryFn: () => getTeacherSchoolsQuery({ data: { userId: context?.userId ?? '' } }),
+    enabled: !!context?.userId,
+  })
+
+  const currentSchool = schools?.find((s: { id: string }) => s.id === schoolId)
+
+  // Fetch unpublished note for this context
+  const { data: unpublishedNote, refetch: refetchUnpublished } = useQuery({
+    queryKey: ['local-notes', 'unpublished', schoolId, classId, context?.teacherId],
+    queryFn: () => localNotesService.findUnpublishedNote({
+      classId,
+      schoolId,
+      teacherId: context!.teacherId,
+    }),
+    enabled: !!context?.teacherId && !!classId,
+  })
+  // Fetch count of unpublished notes
+  const { data: unpublishedCount = 0, refetch: refetchUnpublishedCount } = useQuery({
+    queryKey: ['local-notes', 'unpublished-count', schoolId, classId, context?.teacherId],
+    queryFn: () => localNotesService.countUnpublishedNotes({
+      classId,
+      schoolId,
+      teacherId: context!.teacherId,
+    }),
+    enabled: !!context?.teacherId && !!classId,
+  })
+
+  const isLoading = contextLoading || classLoading || studentsLoading
+
+  const classInfo = classData?.class
+  const students = studentsData?.students ?? []
+
+  // --------------------------------------------------------------------------
+  // Grade Entry Handlers
+  // --------------------------------------------------------------------------
+
+  const handleStartEntry = () => {
+    if (teacherSubjects.length === 0) {
+      toast.error(t('grades.noSubjects', 'Aucune matière assignée pour cette classe'))
+      return
+    }
+
+    // Default to the first subject if not set
+    if (!selectedSubjectId) {
+      setSelectedSubjectId(teacherSubjects[0]!.id)
+    }
+
+    setIsEntryMode(true)
+    setIsMetaExpanded(true)
+    setGradesMap(new Map())
+    setNoteTitle('')
+    setNoteType('tests')
+    setWeight(1)
+    setGradeOutOf(20)
+  }
+
+  const handleCancelEntry = () => {
+    setIsEntryMode(false)
+    setGradesMap(new Map())
+    setNoteTitle('')
+  }
+
+  const handleSaveEntry = async () => {
+    if (!noteTitle.trim()) {
+      toast.error(t('grades.titleRequired', 'Le titre de la note est requis'))
+      return
+    }
+
+    if (!selectedSubjectId) {
+      toast.error(t('grades.subjectRequired', 'Veuillez sélectionner une matière'))
+      return
+    }
+
+    if (!currentTerm) {
+      toast.error(t('grades.noCurrentTerm', 'Période scolaire non identifiée'))
+      return
+    }
+
+    try {
+      setIsSaving(true)
+      const now = new Date()
+      // Use existing ID if we are editing an unpublished note
+      const noteId = unpublishedNote?.id || crypto.randomUUID()
+
+      // 1. Prepare Note Data
+      const newNote = {
+        id: noteId,
+        title: noteTitle,
+        type: noteType,
+        weight,
+        totalPoints: gradeOutOf || 20,
+        classId,
+        subjectId: selectedSubjectId,
+        teacherId: context!.teacherId,
+        schoolId: context!.schoolId,
+        schoolYearId: context!.schoolYearId,
+        termId: currentTerm.id,
+        isPublished: false,
+        isActive: true,
+        createdAt: unpublishedNote?.createdAt || now,
+        updatedAt: now,
+      }
+
+      // 2. Prepare Details (Grades)
+      const details = Array.from(gradesMap.entries())
+        .filter(([_, value]) => value !== '')
+        .map(([studentId, value]) => ({
+          id: `${noteId}-${studentId}`,
+          noteId,
+          studentId,
+          value,
+          gradedAt: now,
+        }))
+
+      // 3. Save or Update to PGlite
+      if (unpublishedNote) {
+        await localNotesService.updateNoteLocally(noteId, newNote, details)
+      }
+      else {
+        await localNotesService.saveNoteLocally(newNote, details)
+      }
+
+      toast.success(t('grades.savedLocally', 'Note enregistrée localement'))
+      setIsEntryMode(false)
+      setGradesMap(new Map())
+      setNoteTitle('')
+      refetchUnpublished()
+      refetchUnpublishedCount()
+    }
+    catch (error) {
+      console.error('Failed to save grades locally:', error)
+      toast.error(t('errors.databaseSaveFailed', 'Échec de l\'enregistrement local'))
+    }
+    finally {
+      setIsSaving(false)
+    }
+  }
+
+  const handlePublish = async () => {
+    if (!unpublishedNote)
+      return
+
+    const missingStudentIds = students
+      .map(s => s.id)
+      .filter(id => !unpublishedNote.details.find(d => d.studentId === id))
+
+    if (missingStudentIds.length > 0) {
+      setIsConfirmDialogOpen(true)
+    }
+    else {
+      executePublish()
+    }
+  }
+
+  const executePublish = async () => {
+    if (!unpublishedNote)
+      return
+
+    try {
+      setIsSaving(true)
+
+      // Ensure all students have a grade (auto-fill 0 for missing ones as requested)
+      const missingStudentIds = students
+        .map(s => s.id)
+        .filter(id => !unpublishedNote.details.find(d => d.studentId === id))
+
+      if (missingStudentIds.length > 0) {
+        // Update local note with 0s for missing students
+        const missingDetails = missingStudentIds.map(studentId => ({
+          id: `${unpublishedNote.id}-${studentId}`,
+          studentId,
+          value: '0',
+          noteId: unpublishedNote.id,
+          gradedAt: new Date(),
+        }))
+
+        // We use updateNoteLocally to append or update
+        await localNotesService.updateNoteLocally(unpublishedNote.id, {}, missingDetails)
+      }
+
+      // Mark as published locally
+      await localNotesService.publishNote(unpublishedNote.id)
+
+      toast.success(t('grades.publishedSuccess', 'Note publiée avec succès !'))
+      setIsUnpublishedSheetOpen(false)
+      setIsConfirmDialogOpen(false)
+      refetchUnpublished()
+      refetchUnpublishedCount()
+      queryClient.invalidateQueries({ queryKey: ['teacher', 'grades'] })
+    }
+    catch (error) {
+      console.error('Publish failed:', error)
+      toast.error(t('errors.publishFailed', 'Échec de la publication'))
+    }
+    finally {
+      setIsSaving(false)
+    }
+  }
+
+  const handleGradeChange = (studentId: string, value: string) => {
+    // Basic validation: 0-gradeOutOf, allow decimal
+    if (value === '' || /^\d{0,3}(?:\.\d{0,2})?$/.test(value)) {
+      const numValue = Number.parseFloat(value)
+      if (value === '' || (numValue >= 0 && numValue <= gradeOutOf)) {
+        setGradesMap((prev) => {
+          const newMap = new Map(prev)
+          newMap.set(studentId, value)
+          return newMap
+        })
+      }
+    }
+  }
+
+  // Calculate class statistics
+  const classStats = useMemo(() => {
+    if (!students.length)
+      return { average: null, maxAverage: null, minAverage: null }
+    // For now, since we don't have grade data in the query, we'll use mock data
+    // This would be replaced with actual grade calculations
+    return {
+      average: null as number | null,
+      maxAverage: null as number | null,
+      minAverage: null as number | null,
+    }
+  }, [students])
+
+  // Sort and filter students
+  const processedStudents = useMemo(() => {
+    const result = [...students]
+
+    if (sortConfig) {
+      result.sort((a, b) => {
+        let aValue: string | number
+        let bValue: string | number
+
+        switch (sortConfig.key) {
+          case 'name':
+            aValue = `${a.lastName} ${a.firstName}`
+            bValue = `${b.lastName} ${b.firstName}`
+            break
+          default:
+            aValue = `${a.lastName} ${a.firstName}`
+            bValue = `${b.lastName} ${b.firstName}`
+        }
+
+        if (aValue < bValue)
+          return sortConfig.direction === 'asc' ? -1 : 1
+        if (aValue > bValue)
+          return sortConfig.direction === 'asc' ? 1 : -1
+        return 0
+      })
+    }
+
+    return result
+  }, [students, sortConfig])
+
+  const handleSort = (key: SortKey) => {
+    setSortConfig((current) => {
+      if (current?.key === key) {
+        return { key, direction: current.direction === 'asc' ? 'desc' : 'asc' }
+      }
+      return { key, direction: 'asc' }
+    })
+  }
+
+  const toggleStudentExpansion = (studentId: string) => {
+    setExpandedStudent(prev => (prev === studentId ? null : studentId))
+  }
+
+  if (isLoading) {
+    return <ClassDetailSkeleton />
+  }
+
+  if (!classInfo) {
+    return <ClassNotFound schoolId={schoolId} />
+  }
+
+  return (
+    <div className="flex flex-col gap-6 p-4 pb-24 max-w-5xl mx-auto w-full">
+      {/* Header */}
+      <header className="flex flex-col gap-4">
+        <div className="flex items-start gap-3">
+          <Link to="/app/schools/$schoolId/classes" params={{ schoolId }}>
+            <Button variant="ghost" size="icon" className="shrink-0">
+              <IconArrowLeft className="h-5 w-5" />
+            </Button>
+          </Link>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
+              {classInfo.name}
+            </h1>
+            <div className="flex items-center gap-2 mt-1">
+              <Badge variant="outline" className="text-[10px] uppercase tracking-widest font-black">
+                {currentSchool?.name ?? t('classes.defaultSchool', 'Établissement')}
+              </Badge>
+            </div>
+          </div>
+        </div>
+
+        {/* Class Stats Summary */}
+        <div className="grid grid-cols-3 gap-3">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col items-center justify-center p-3 rounded-xl bg-linear-to-br from-primary/10 to-primary/5 border border-primary/20"
+          >
+            <IconUsers className="w-5 h-5 text-primary mb-1" />
+            <span className="text-xl font-black text-foreground">{students.length}</span>
+            <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
+              Élèves
+            </span>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05 }}
+            className="flex flex-col items-center justify-center p-3 rounded-xl bg-linear-to-br from-muted/50 to-muted/30 border border-border/40"
+          >
+            <IconChartBar className="w-5 h-5 text-muted-foreground mb-1" />
+            <span className={cn('text-xl font-black', getPerformanceColor(classStats.average))}>
+              {classStats.average?.toFixed(2) ?? '--.--'}
+            </span>
+            <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
+              Moyenne
+            </span>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="flex flex-col items-center justify-center p-3 rounded-xl bg-linear-to-br from-muted/50 to-muted/30 border border-border/40"
+          >
+            <IconBook className="w-5 h-5 text-muted-foreground mb-1" />
+            <span className="text-xl font-black text-foreground">--</span>
+            <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
+              Notes
+            </span>
+          </motion.div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex flex-row flex-wrap gap-3 mt-2">
+          {!isEntryMode
+            ? (
+                <>
+                  <Link to="/app/session" className="flex-1 min-w-[140px]">
+                    <Button
+                      className="w-full h-11 sm:h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-lg sm:shadow-xl rounded-lg sm:rounded-xl transition-all active:scale-[0.98]"
+                    >
+                      <IconPlayerPlay className="w-5 h-5 mr-2" />
+                      {t('session.start', 'Démarrer')}
+                    </Button>
+                  </Link>
+
+                  <Button
+                    variant="outline"
+                    className="flex-1 min-w-[140px] h-11 sm:h-12 font-bold rounded-lg sm:rounded-xl border-primary/20 bg-primary/5 text-primary hover:bg-primary/10 transition-all active:scale-[0.98]"
+                    onClick={handleStartEntry}
+                  >
+                    <IconPlus className="w-5 h-5 mr-2" />
+                    {t('grades.addNote', 'Ajouter une note')}
+                  </Button>
+
+                  {unpublishedNote && (
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="h-12 sm:h-14 px-6 rounded-2xl bg-amber-500/10 border-amber-500/20 text-amber-500 hover:bg-amber-500/20 font-black shadow-lg shadow-amber-500/5 group"
+                      onClick={() => setIsUnpublishedSheetOpen(true)}
+                    >
+                      <IconHistory className="w-5 h-5 mr-3 group-hover:rotate-[-10deg] transition-transform" />
+                      {t('grades.unpublishedNoteShort', 'Note non publiée')}
+                      <Badge className="ml-2 bg-amber-500 text-white border-none h-5 px-1.5 min-w-5 justify-center">
+                        {unpublishedCount}
+                      </Badge>
+                    </Button>
+                  )}
+                </>
+              )
+            : (
+                <>
+                  <Button
+                    variant="outline"
+                    className="flex-1 min-w-[120px] h-11 sm:h-12 font-bold rounded-lg sm:rounded-xl"
+                    onClick={handleCancelEntry}
+                  >
+                    {t('common.cancel', 'Annuler')}
+                  </Button>
+                  <Button
+                    className="flex-1 min-w-[120px] h-11 sm:h-12 font-bold rounded-lg sm:rounded-xl shadow-xl"
+                    onClick={handleSaveEntry}
+                    disabled={isSaving}
+                  >
+                    <IconDeviceFloppy className="w-5 h-5 mr-2" />
+                    {t('common.save', 'Enregistrer')}
+                  </Button>
+                </>
+              )}
+        </div>
+      </header>
+
+      {/* Entry Mode Controls - Evaluation Metadata */}
+      <AnimatePresence>
+        {isEntryMode && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="mb-4"
+          >
+            <Collapsible open={isMetaExpanded} onOpenChange={setIsMetaExpanded}>
+              <div className="rounded-2xl bg-muted/20 border border-border/50 overflow-hidden shadow-sm">
+                <CollapsibleTrigger
+                  render={(
+                    <Button
+                      variant="ghost"
+                      className="w-full flex items-center justify-between p-4 h-auto hover:bg-muted/30 transition-colors group"
+                    >
+                      <div className="flex flex-col items-start gap-1">
+                        <span className="text-[10px] uppercase tracking-widest font-black text-muted-foreground">
+                          {teacherSubjects.length > 0 && selectedSubjectId && (
+                            <>
+                              <div className="w-1 h-1 rounded-full bg-muted-foreground/30" />
+                              <span className="text-xs font-bold text-muted-foreground">
+                                {teacherSubjects.find(s => s.id === selectedSubjectId)?.name}
+                              </span>
+                            </>
+                          )}
+                        </span>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="h-5 text-[10px] font-bold uppercase bg-primary/5 border-primary/20 text-primary">
+                            {t(`grades.${noteType}`, noteType === 'quizzes' ? 'Interro' : noteType === 'tests' ? 'Devoir' : 'Compo')}
+                          </Badge>
+                          <span className="text-sm font-black text-foreground">
+                            {noteTitle || t('grades.noDescription', '(Sans description)')}
+                          </span>
+                          <div className="w-1 h-1 rounded-full bg-muted-foreground/30" />
+                          <span className="text-xs font-bold text-muted-foreground uppercase">
+                            C.
+                            {weight}
+                          </span>
+                          <div className="w-1 h-1 rounded-full bg-muted-foreground/30" />
+                          <span className="text-xs font-bold text-muted-foreground uppercase">
+                            /
+                            {gradeOutOf}
+                          </span>
+                        </div>
+                      </div>
+                      <IconChevronDown
+                        className={cn(
+                          'w-5 h-5 text-muted-foreground transition-transform duration-300',
+                          isMetaExpanded && 'rotate-180',
+                        )}
+                      />
+                    </Button>
+                  )}
+                />
+
+                <CollapsibleContent>
+                  <div className="p-4 pt-0 space-y-4 border-t border-border/40 bg-muted/10">
+                    <div className="flex flex-row items-end gap-3 mt-4">
+                      {/* Evaluation Type */}
+                      <div className="flex-1 min-w-0 space-y-1.5">
+                        <label className="text-[10px] uppercase tracking-widest font-black text-muted-foreground ml-1 truncate block">
+                          {t('grades.nature', 'Nature')}
+                        </label>
+                        <Select
+                          value={noteType}
+                          onValueChange={val => setNoteType(val as any)}
+                        >
+                          <SelectTrigger className="w-full h-11! rounded-xl bg-background border-border/50 font-semibold px-3 overflow-hidden">
+                            <SelectValue placeholder={t('grades.selectType', 'Type')}>
+                              {noteType === 'quizzes'
+                                ? t('grades.quizzes', 'Interro')
+                                : noteType === 'tests'
+                                  ? t('grades.tests', 'Devoir')
+                                  : noteType === 'level_tests' ? t('grades.level_tests', 'Compo') : undefined}
+                            </SelectValue>
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="quizzes">{t('grades.quizzes', 'Interro')}</SelectItem>
+                            <SelectItem value="tests">{t('grades.tests', 'Devoir')}</SelectItem>
+                            <SelectItem value="level_tests">{t('grades.level_tests', 'Compo')}</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      {/* Weight, Barème & Subject Group */}
+                      <div className="flex-2 flex flex-row items-end gap-2">
+                        <div className="w-20 shrink-0 space-y-1.5">
+                          <label
+                            htmlFor="note-weight-input"
+                            className="text-[10px] uppercase tracking-widest font-black text-muted-foreground ml-1"
+                          >
+                            Coef.
+                          </label>
+                          <NumberField
+                            id="note-weight-input"
+                            min={1}
+                            max={10}
+                            value={weight}
+                            onValueChange={val => setWeight(val || 1)}
+                          >
+                            <NumberFieldGroup className="h-11! rounded-xl bg-background border border-border/50 overflow-hidden">
+                              <NumberFieldDecrement className="border-none h-full w-8 bg-transparent hover:bg-muted/50 rounded-none" />
+                              <NumberFieldInput className="border-none h-full bg-transparent font-bold ring-0! shadow-none! text-center p-0" title="Coefficient" />
+                              <NumberFieldIncrement className="border-none h-full w-8 bg-transparent hover:bg-muted/50 rounded-none" />
+                            </NumberFieldGroup>
+                          </NumberField>
+                        </div>
+
+                        <div className="w-20 shrink-0 space-y-1.5">
+                          <label
+                            htmlFor="note-outof-input"
+                            className="text-[10px] uppercase tracking-widest font-black text-muted-foreground ml-1"
+                          >
+                            Barème
+                          </label>
+                          <NumberField
+                            id="note-outof-input"
+                            min={1}
+                            max={100}
+                            value={gradeOutOf}
+                            onValueChange={val => setGradeOutOf(val || 20)}
+                          >
+                            <NumberFieldGroup className="h-11! rounded-xl bg-background border border-border/50 overflow-hidden">
+                              <NumberFieldDecrement className="border-none h-full w-8 bg-transparent hover:bg-muted/50 rounded-none" />
+                              <NumberFieldInput className="border-none h-full bg-transparent font-bold ring-0! shadow-none! text-center p-0" title="Barème" />
+                              <NumberFieldIncrement className="border-none h-full w-8 bg-transparent hover:bg-muted/50 rounded-none" />
+                            </NumberFieldGroup>
+                          </NumberField>
+                        </div>
+
+                        {teacherSubjects.length > 1 && (
+                          <div className="flex-1 min-w-0 space-y-1.5">
+                            <label className="text-[10px] uppercase tracking-widest font-black text-muted-foreground ml-1 truncate block">
+                              {t('grades.subject', 'Matière')}
+                            </label>
+                            <Select
+                              value={selectedSubjectId || ''}
+                              onValueChange={val => setSelectedSubjectId(val)}
+                            >
+                              <SelectTrigger className="w-full h-11! rounded-xl bg-background border-border/50 font-semibold px-3 overflow-hidden">
+                                <SelectValue placeholder={t('grades.selectSubject', 'Sujet')}>
+                                  {selectedSubjectId ? teacherSubjects.find(s => s.id === selectedSubjectId)?.name : undefined}
+                                </SelectValue>
+                              </SelectTrigger>
+                              <SelectContent>
+                                {teacherSubjects.map(subject => (
+                                  <SelectItem key={subject.id} value={subject.id}>
+                                    {subject.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label
+                        htmlFor="note-description-input"
+                        className="text-[10px] uppercase tracking-widest font-black text-muted-foreground ml-1"
+                      >
+                        {t('grades.description', 'Description / Titre (Optionnel)')}
+                      </label>
+                      <Input
+                        id="note-description-input"
+                        value={noteTitle}
+                        onChange={e => setNoteTitle(e.target.value)}
+                        placeholder={t('grades.egInterro1', 'Ex: Chapitre 1, Géographie...')}
+                        className="h-11 rounded-xl bg-background border-border/50 text-sm"
+                      />
+                    </div>
+                  </div>
+                </CollapsibleContent>
+              </div>
+            </Collapsible>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Search Bar - Hidden in Entry Mode */}
+      {!isEntryMode && (
+        <div className="relative">
+          <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input
+            type="text"
+            placeholder={t('search.students', 'Rechercher un élève...')}
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            className="pl-10 h-11 rounded-xl"
+          />
+        </div>
+      )}
+
+      {/* Students List */}
+      {processedStudents.length > 0
+        ? (
+            <>
+              {/* Mobile Card View */}
+              <div className="block lg:hidden">
+                <motion.div
+                  variants={container}
+                  initial="hidden"
+                  animate="show"
+                  className="flex flex-col gap-3"
+                >
+                  {processedStudents.map(student => (
+                    <motion.div key={student.id} variants={item}>
+                      <StudentCard
+                        student={student}
+                        isExpanded={expandedStudent === student.id}
+                        classAverage={classStats.average}
+                        onToggle={() => toggleStudentExpansion(student.id)}
+                        isEntryMode={isEntryMode}
+                        gradeValue={gradesMap.get(student.id)}
+                        onGradeChange={val => handleGradeChange(student.id, val)}
+                        gradeOutOf={gradeOutOf}
+                      />
+                    </motion.div>
+                  ))}
+                </motion.div>
+              </div>
+
+              {/* Desktop Table View */}
+              <div className="hidden lg:block">
+                <Card className="overflow-hidden border-border/50 bg-card/80 backdrop-blur-sm shadow-lg">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-muted/50 hover:bg-muted/50">
+                        <TableHead
+                          className="sticky left-0 z-20 min-w-[200px] cursor-pointer bg-muted/50 font-semibold transition-colors hover:bg-muted"
+                          onClick={() => handleSort('name')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Élève
+                            {sortConfig?.key === 'name' && (
+                              <span className="text-xs">
+                                {sortConfig.direction === 'asc' ? '↑' : '↓'}
+                              </span>
+                            )}
+                          </div>
+                        </TableHead>
+                        {!isEntryMode
+                          ? (
+                              <>
+                                <TableHead className="text-center min-w-[100px]">Participation</TableHead>
+                                <TableHead className="text-center min-w-[80px]">Interro</TableHead>
+                                <TableHead className="text-center min-w-[80px]">Devoir</TableHead>
+                                <TableHead className="text-center min-w-[80px]">DN</TableHead>
+                                <TableHead
+                                  className="sticky right-0 z-20 min-w-[120px] bg-muted/50 text-center font-semibold cursor-pointer hover:bg-muted"
+                                  onClick={() => handleSort('average')}
+                                >
+                                  <div className="flex items-center justify-center gap-2">
+                                    Moyenne
+                                    {sortConfig?.key === 'average' && (
+                                      <span className="text-xs">
+                                        {sortConfig.direction === 'asc' ? '↑' : '↓'}
+                                      </span>
+                                    )}
+                                  </div>
+                                </TableHead>
+                                <TableHead className="text-center min-w-[80px]">Actions</TableHead>
+                              </>
+                            )
+                          : (
+                              <TableHead className="text-center min-w-[150px] font-black text-primary italic">
+                                Nouvelle Note (/20)
+                              </TableHead>
+                            )}
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {processedStudents.map((student, idx) => (
+                        <TableRow
+                          key={student.id}
+                          className={cn(
+                            'transition-colors hover:bg-muted/50',
+                            idx % 2 === 0 ? 'bg-background' : 'bg-muted/20',
+                          )}
+                        >
+                          <TableCell className="sticky left-0 z-10 bg-inherit min-w-[200px]">
+                            <div className="flex items-center gap-3">
+                              <Avatar className="h-8 w-8 border border-border/50 shrink-0">
+                                <AvatarImage src={student.photoUrl ?? undefined} alt={student.firstName} />
+                                <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-bold">
+                                  {student.firstName[0]}
+                                  {student.lastName[0]}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="min-w-0">
+                                <p className="font-semibold text-sm truncate">
+                                  {student.lastName}
+                                  {' '}
+                                  {student.firstName}
+                                </p>
+                                <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">{student.matricule}</p>
+                              </div>
+                            </div>
+                          </TableCell>
+                          {!isEntryMode
+                            ? (
+                                <>
+                                  <TableCell className="text-center">
+                                    <Badge variant="secondary" className="font-medium">
+                                      --
+                                    </Badge>
+                                  </TableCell>
+                                  <TableCell className="text-center text-muted-foreground text-xs">--</TableCell>
+                                  <TableCell className="text-center text-muted-foreground text-xs">--</TableCell>
+                                  <TableCell className="text-center text-muted-foreground text-xs">--</TableCell>
+                                  <TableCell className="sticky right-0 z-10 bg-inherit text-center font-bold text-lg text-muted-foreground border-l">
+                                    --.--
+                                  </TableCell>
+                                  <TableCell className="text-center">
+                                    <Link to="/app/students/$studentId/notes" params={{ studentId: student.id }}>
+                                      <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-primary/10 hover:text-primary">
+                                        <IconEdit className="w-4 h-4" />
+                                      </Button>
+                                    </Link>
+                                  </TableCell>
+                                </>
+                              )
+                            : (
+                                <TableCell className="text-center bg-primary/5">
+                                  <div className="flex items-center justify-center gap-2 max-w-[120px] mx-auto">
+                                    <Input
+                                      type="text"
+                                      inputMode="decimal"
+                                      placeholder="--"
+                                      value={gradesMap.get(student.id) || ''}
+                                      onChange={e => handleGradeChange(student.id, e.target.value)}
+                                      className="h-10 text-center text-lg font-black bg-background border-primary/30 rounded-lg focus:ring-2 focus:ring-primary/40"
+                                    />
+                                    <span className="text-xs font-bold text-muted-foreground">
+                                      /
+                                      {gradeOutOf}
+                                    </span>
+                                  </div>
+                                </TableCell>
+                              )}
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </Card>
+              </div>
+            </>
+          )
+        : (
+            <EmptyStudents />
+          )}
+
+      {/* Unpublished Note Sheet */}
+      {unpublishedNote && (
+        <UnpublishedNoteSheet
+          open={isUnpublishedSheetOpen}
+          onOpenChange={setIsUnpublishedSheetOpen}
+          note={unpublishedNote}
+          totalStudents={students.length}
+          onPublish={handlePublish}
+          isPublishing={isSaving}
+          onResume={() => {
+            // Restore state from unpublished note
+            setNoteTitle(unpublishedNote.title)
+            setNoteType(unpublishedNote.type as any)
+            setWeight(unpublishedNote.weight ?? 1)
+            setGradeOutOf(unpublishedNote.totalPoints || 20)
+            setSelectedSubjectId(unpublishedNote.subjectId)
+            const map = new Map()
+            unpublishedNote.details.forEach(d => map.set(d.studentId, d.value))
+            setGradesMap(map)
+            setIsEntryMode(true)
+            setIsUnpublishedSheetOpen(false)
+            setIsMetaExpanded(false)
+          }}
+        />
+      )}
+
+      {/* Publish Confirmation Dialog */}
+      {unpublishedNote && (
+        <ConfirmationDialog
+          open={isConfirmDialogOpen}
+          onOpenChange={setIsConfirmDialogOpen}
+          onConfirm={executePublish}
+          isLoading={isSaving}
+          title={t('grades.confirmPublishTitle', 'Confirmer la publication')}
+          description={t(
+            'grades.confirmPublishDescription',
+            'Il y a {{count}} élève(s) sans note. Ils recevront automatiquement la note de 0. Voulez-vous continuer ?',
+            { count: students.length - unpublishedNote.details.length },
+          )}
+          confirmText={t('grades.confirmPublish', 'Publier quand même')}
+          cancelText={t('common.cancel', 'Annuler')}
+        />
+      )}
+    </div>
+  )
+}
+
+interface StudentCardProps {
+  student: {
+    id: string
+    firstName: string
+    lastName: string
+    matricule: string
+    photoUrl: string | null
+  }
+  isExpanded: boolean
+  classAverage: number | null
+  onToggle: () => void
+  onGradeChange?: (val: string) => void
+  isEntryMode: boolean
+  gradeValue: string | undefined
+  gradeOutOf?: number
+}
+
+function StudentCard({
+  student,
+  isExpanded,
+  classAverage,
+  onToggle,
+  isEntryMode,
+  gradeValue,
+  onGradeChange,
+  gradeOutOf = 20,
+}: StudentCardProps) {
+  // Mock data - would be replaced with actual grade data
+  // Using as const assertion to keep the type as number | null
+  const studentAverage = null as number | null
+  const participationCount = 0
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2 }}
+      className={cn(
+        'overflow-hidden rounded-xl border border-border/50 bg-card/80 shadow-sm backdrop-blur-sm transition-all',
+        !isEntryMode ? 'hover:shadow-lg hover:scale-[1.01]' : '',
+      )}
+    >
+      <div className="w-full p-4 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0 flex-1">
+          <Avatar className="h-10 w-10 border border-border/50 shrink-0">
+            <AvatarImage src={student.photoUrl ?? undefined} alt={`${student.firstName} ${student.lastName}`} />
+            <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
+              {student.firstName[0]}
+              {student.lastName[0]}
+            </AvatarFallback>
+          </Avatar>
+          <div className="min-w-0">
+            <h3 className="truncate font-semibold text-foreground text-sm">
+              {student.firstName}
+              {' '}
+              {student.lastName}
+            </h3>
+            {!isEntryMode && (
+              <div className="mt-1 flex items-center gap-2">
+                <Badge variant="outline" className="h-5 font-normal text-xs">
+                  <span className="text-muted-foreground">Participation:</span>
+                  <span className="ml-1 font-semibold">{participationCount}</span>
+                </Badge>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {isEntryMode
+          ? (
+              <div className="flex items-center gap-2">
+                <Input
+                  type="text"
+                  inputMode="decimal"
+                  placeholder="--"
+                  value={gradeValue || ''}
+                  onChange={e => onGradeChange?.(e.target.value)}
+                  className="h-12 w-20 text-center text-xl font-black bg-muted/40 border-primary/20 rounded-xl focus:ring-2 focus:ring-primary/30"
+                />
+                <span className="text-sm font-black text-muted-foreground">
+                  /
+                  {gradeOutOf}
+                </span>
+              </div>
+            )
+          : (
+              <button
+                type="button"
+                onClick={onToggle}
+                className="flex items-center gap-2"
+              >
+                <div className="text-right">
+                  <div className="text-muted-foreground text-[10px] uppercase font-bold tracking-tighter">Moyenne</div>
+                  <div
+                    className={cn(
+                      'flex items-center gap-1 rounded-md px-2.5 py-1 font-bold text-base',
+                      getPerformanceBgColor(studentAverage),
+                    )}
+                  >
+                    {getPerformanceIcon(studentAverage, classAverage)}
+                    <span className={getPerformanceColor(studentAverage)}>
+                      {studentAverage !== null ? studentAverage.toFixed(2) : '--.--'}
+                    </span>
+                  </div>
+                </div>
+                {isExpanded
+                  ? (
+                      <IconChevronUp className="h-5 w-5 text-muted-foreground" />
+                    )
+                  : (
+                      <IconChevronDown className="h-5 w-5 text-muted-foreground" />
+                    )}
+              </button>
+            )}
+      </div>
+
+      <AnimatePresence>
+        {isExpanded && !isEntryMode && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden border-t bg-linear-to-br from-muted/30 to-muted/10"
+          >
+            <div className="p-4 space-y-4">
+              {/* Grade Details */}
+              <div className="grid grid-cols-3 gap-3 text-xs">
+                <div className="flex flex-col rounded-md bg-background p-2">
+                  <span className="mb-1.5 font-medium text-muted-foreground">Interro</span>
+                  <span className="font-semibold text-base text-muted-foreground">--</span>
+                </div>
+                <div className="flex flex-col rounded-md bg-background p-2">
+                  <span className="mb-1.5 font-medium text-muted-foreground">Devoir</span>
+                  <span className="font-semibold text-base text-muted-foreground">--</span>
+                </div>
+                <div className="flex flex-col rounded-md bg-background p-2">
+                  <span className="mb-1.5 font-medium text-muted-foreground">DN</span>
+                  <span className="font-semibold text-base text-muted-foreground">--</span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-2">
+                <Link to="/app/students/$studentId/notes" params={{ studentId: student.id }} className="flex-1">
+                  <Button variant="outline" className="w-full h-10 font-bold border-border/60 hover:bg-muted/50">
+                    <IconEdit className="w-4 h-4 mr-2" />
+                    Gérer les notes
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  )
+}
+
+function EmptyStudents() {
+  const { t } = useTranslation()
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay: 0.2 }}
+      className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed bg-muted/20 p-8 text-center backdrop-blur-sm sm:p-12"
+    >
+      <IconUsers className="mb-4 size-12 text-muted-foreground/50" />
+      <h3 className="mb-2 font-medium text-foreground text-lg">
+        Aucun élève
+      </h3>
+      <p className="text-muted-foreground text-sm">
+        {t('classes.noStudents', 'Aucun élève n\'est inscrit dans cette classe pour le moment.')}
+      </p>
+    </motion.div>
+  )
+}
+
+function ClassNotFound({ schoolId }: { schoolId: string }) {
+  const { t } = useTranslation()
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[70vh] p-4 gap-6">
+      <motion.div
+        initial={{ scale: 0.5, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ type: 'spring', damping: 15 }}
+        className="relative"
+      >
+        <div className="absolute inset-0 rounded-full bg-destructive/20 blur-[100px]" />
+        <div className="relative rounded-[2.5rem] bg-card/50 border border-border/50 p-12 shadow-2xl backdrop-blur-2xl">
+          <IconSchool className="h-20 w-20 text-destructive opacity-40" />
+        </div>
+      </motion.div>
+      <div className="space-y-4 max-w-sm text-center">
+        <h2 className="text-3xl font-black tracking-tight">Classe introuvable</h2>
+        <p className="text-muted-foreground leading-relaxed font-medium">
+          {t('classes.notFound', 'Cette classe n\'existe pas ou vous n\'y avez pas accès.')}
+        </p>
+        <Link to="/app/schools/$schoolId/classes" params={{ schoolId }}>
+          <Button>
+            <IconArrowLeft className="w-4 h-4 mr-2" />
+            Retour aux classes
+          </Button>
+        </Link>
+      </div>
+    </div>
+  )
+}
+
+function ClassDetailSkeleton() {
+  return (
+    <div className="flex flex-col gap-6 p-4 pb-24 max-w-5xl mx-auto w-full">
+      <div className="flex items-start gap-3">
+        <Skeleton className="h-10 w-10 rounded-lg" />
+        <div className="space-y-2 flex-1">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-5 w-32" />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-3 gap-3">
+        {[1, 2, 3].map(i => (
+          <Skeleton key={i} className="h-24 rounded-xl" />
+        ))}
+      </div>
+
+      <div className="flex gap-2">
+        <Skeleton className="h-11 flex-1 rounded-lg" />
+        <Skeleton className="h-11 flex-1 rounded-lg" />
+      </div>
+
+      <Skeleton className="h-10 w-full rounded-lg" />
+
+      <div className="space-y-3">
+        {[1, 2, 3, 4, 5].map(i => (
+          <Skeleton key={i} className="h-20 w-full rounded-xl" />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+interface UnpublishedNoteSheetProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  note: any // NoteWithDetails
+  totalStudents: number
+  onPublish: () => void
+  onResume: () => void
+  isPublishing: boolean
+}
+
+function UnpublishedNoteSheet({
+  open,
+  onOpenChange,
+  note,
+  totalStudents,
+  onPublish,
+  onResume,
+  isPublishing,
+}: UnpublishedNoteSheetProps) {
+  const { t } = useTranslation()
+  const participatedCount = note.details.length
+  const missingCount = totalStudents - participatedCount
+  const isComplete = missingCount === 0
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent side="bottom" className="rounded-t-[2.5rem] p-0 overflow-hidden border-t-0 bg-background max-w-2xl mx-auto">
+        <SheetHeader className="p-6 pb-4 flex flex-row items-center justify-between border-b border-border/40">
+          <div className="space-y-1">
+            <SheetTitle className="text-xl font-black">
+              {t('grades.draftTitle', 'Brouillon en cours')}
+            </SheetTitle>
+            <SheetDescription>
+              {t('grades.draftSubtitle', 'Une note est enregistrée localement pour cette classe.')}
+            </SheetDescription>
+          </div>
+          <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/20 font-bold uppercase tracking-widest text-[10px] px-3 py-1">
+            En attente
+          </Badge>
+        </SheetHeader>
+
+        <div className="p-6 space-y-6">
+          {/* Note Metadata Card */}
+          <div className="rounded-2xl bg-muted/30 border border-border/50 p-4 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                  <IconBook className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="font-black text-foreground">{note.title}</h4>
+                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                    {String(t(`grades.${note.type}`, { defaultValue: note.type }))}
+                  </p>
+                </div>
+              </div>
+              <div className="text-right">
+                <span className="block text-lg font-black text-foreground">
+                  Coef.
+                  {note.weight}
+                </span>
+                <span className="text-xs font-bold text-muted-foreground uppercase">
+                  sur
+                  {' '}
+                  {note.totalPoints || 20}
+                </span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 pt-4 border-t border-border/40">
+              <div className="space-y-1">
+                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Participations</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xl font-black text-foreground">{participatedCount}</span>
+                  <span className="text-sm font-bold text-muted-foreground">
+                    /
+                    {totalStudents}
+                  </span>
+                </div>
+              </div>
+              <div className="space-y-1 text-right">
+                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Manquants</span>
+                <div className="flex items-center justify-end gap-2">
+                  <span className={cn(
+                    'text-xl font-black',
+                    missingCount > 0 ? 'text-amber-500' : 'text-emerald-500',
+                  )}
+                  >
+                    {missingCount}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <Button
+              className="w-full h-14 rounded-2xl font-black text-lg shadow-xl shadow-primary/20"
+              onClick={onResume}
+            >
+              <IconEdit className="w-5 h-5 mr-3" />
+              {t('grades.resumeEntry', 'Reprendre la saisie')}
+            </Button>
+
+            <Button
+              variant="outline"
+              className={cn(
+                'w-full h-14 rounded-2xl font-black text-lg',
+                isComplete
+                  ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20'
+                  : 'border-amber-500/30 bg-amber-500/10 text-amber-600 hover:bg-amber-500/20',
+              )}
+              onClick={onPublish}
+              disabled={isPublishing}
+            >
+              <IconPlayerPlay className="w-5 h-5 mr-3" />
+              {isPublishing ? t('grades.publishing', 'Publication...') : t('grades.publishDraft', 'Publier la note')}
+            </Button>
+
+            {!isComplete && (
+              <div className="p-4 rounded-xl bg-amber-500/5 border border-amber-500/10 flex items-start gap-3">
+                <IconAlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+                <p className="text-xs font-medium text-amber-700/80 leading-relaxed">
+                  {t('grades.missingStudentsWarningPublish', '{{count}} élève(s) n\'ont pas de note. Ils recevront 0 si vous publiez maintenant.', { count: missingCount })}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </SheetContent>
+    </Sheet>
+  )
+}
