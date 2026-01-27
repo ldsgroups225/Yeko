@@ -15,11 +15,12 @@ import { DefaultCatchBoundary } from '@/components/default-catch-boundary'
 import { NotFound } from '@/components/not-found'
 import { ThemeProvider } from '@/components/theme'
 import { getAuthStatus } from '@/core/functions/get-auth-status'
+import { I18nProvider } from '@/i18n/i18n-react'
 import { initializeLogger } from '@/lib/logger'
 import appCss from '@/styles.css?url'
 import { seo } from '@/utils/seo'
 import { generateStructuredData } from '@/utils/structuredData'
-import '@/i18n/config'
+// import '@/i18n/config'
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
@@ -92,14 +93,16 @@ function RootComponent() {
 
   return (
     <RootDocument>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange={false}
-      >
-        <Outlet />
-      </ThemeProvider>
+      <I18nProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange={false}
+        >
+          <Outlet />
+        </ThemeProvider>
+      </I18nProvider>
     </RootDocument>
   )
 }

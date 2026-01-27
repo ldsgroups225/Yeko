@@ -1,5 +1,5 @@
+import { inArray } from '@repo/data-ops'
 import { createServerFn } from '@tanstack/react-start'
-import { inArray } from 'drizzle-orm'
 import { z } from 'zod'
 import { COEFFICIENT_LIMITS } from '@/constants/coefficients'
 import { databaseMiddleware } from '@/core/middleware/database'
@@ -142,15 +142,6 @@ export const validateCoefficientImportMutation = createServerFn()
     const existingSubjects = results[1]
     const existingGrades = results[2]
     const existingSeries = results[3]
-
-    if (!Array.isArray(existingYears)) {
-      console.error('CRITICAL DIAGNOSTIC: existingYears is NOT an array!')
-      console.error('Type:', typeof existingYears)
-      console.error('Constructor:', existingYears?.constructor?.name)
-      console.error('Is Promise:', existingYears instanceof Promise)
-      console.error('Has then:', typeof (existingYears as any)?.then === 'function')
-      console.error('Value:', JSON.stringify(existingYears))
-    }
 
     // Build lookup sets for fast validation
     const yearIdSet = new Set(existingYears.map((y: { id: string }) => y.id))

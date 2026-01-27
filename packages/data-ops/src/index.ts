@@ -90,8 +90,8 @@ export {
 } from './queries/teacher-classes'
 
 export * from './queries/teacher-notes'
-export * from './queries/teacher-schedule'
 
+export * from './queries/teacher-schedule'
 export {
   bulkSaveAttendance,
   getClassRosterForAttendance,
@@ -104,7 +104,33 @@ export {
 } from './queries/teacher-student-attendance'
 
 export * from './queries/teacher-subjects'
+
 export * from './queries/timetables'
 export * from './queries/transactions'
 export * from './schemas/dashboard'
 export * from './storage'
+export {
+  and,
+  asc,
+  between,
+  count,
+  desc,
+  eq,
+  exists,
+  gt,
+  gte,
+  ilike,
+  inArray,
+  isNotNull,
+  isNull,
+  like,
+  lt,
+  lte,
+  ne,
+  not,
+  notBetween,
+  notExists,
+  notInArray,
+  or,
+  sql,
+} from 'drizzle-orm'

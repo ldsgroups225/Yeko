@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import type { Locales, TranslationFunctions, Translations } from './i18n-types'
 import { createContext, useEffect, useMemo, useState } from 'react'
 import { initFormatters as initBaseFormatters } from './formatters.js'
-import baseTranslations from './fr/index.js'
+import baseTranslations from './fr/index'
 import { baseLocale, i18nObject, isLocale, loadedFormatters, loadedLocales } from './i18n-util'
 
 // Helper function to ensure locale is initialized and create i18n object
@@ -18,7 +18,7 @@ function getI18nObject(locale: Locales): TranslationFunctions {
         loadedLocales[baseLocale] = baseTranslations as Translations
       }
       console.warn(`Translations for '${locale}' not loaded, using '${baseLocale}'`)
-      locale = baseLocale
+      return i18nObject(baseLocale)
     }
   }
 
@@ -27,7 +27,38 @@ function getI18nObject(locale: Locales): TranslationFunctions {
     loadedFormatters[locale] = initBaseFormatters(locale)
   }
 
-  return i18nObject(locale)
+  let obj = i18nObject(locale)
+  
+  // Polyfill missing keys (especially catalogs) if typesafe-i18n fails
+  // This recursively converts string values in baseTranslations to functions () => string
+  const recursivePolyfill = (source: any, target: any): any => {
+    if (typeof source === 'string') {
+        return () => source;
+    }
+    if (typeof source === 'object' && source !== null) {
+        const res: any = target || {};
+        for (const key in source) {
+            // Only polyfill if missing in target
+            if (!(key in res)) {
+                res[key] = recursivePolyfill(source[key], undefined);
+            } else if (typeof source[key] === 'object') {
+                // Determine if target[key] is a function (leaf) or object (namespace)
+                // In typesafe-i18n, namespaces are objects.
+                res[key] = recursivePolyfill(source[key], res[key]);
+            }
+        }
+        return res;
+    }
+    return target;
+  };
+
+  // Check critical keys
+  if (!('catalogs' in obj)) {
+      console.warn('CRITICAL: i18nObject missing catalogs. Polyfilling from baseTranslations.');
+      obj = recursivePolyfill(baseTranslations, obj);
+  }
+
+  return obj
 }
 
 // Initialize base locale immediately (synchronously)
@@ -38,11 +69,11 @@ loadedFormatters[baseLocale] = initBaseFormatters(baseLocale)
 async function loadLocale(locale: Locales): Promise<Translations> {
   switch (locale) {
     case 'fr':
-      return (await import('./fr/index.js')).default as Translations
+      return (await import('./fr/index')).default as Translations
     case 'en':
-      return (await import('./en/index.js')).default as Translations
+      return (await import('./en/index')).default as Translations
     default:
-      return (await import('./fr/index.js')).default as Translations
+      return (await import('./fr/index')).default as Translations
   }
 }
 
@@ -69,15 +100,13 @@ function detectBrowserLocale(): Locales {
   return baseLocale
 }
 
-interface I18nContextValue {
+export interface I18nContextValue {
   locale: Locales
   t: TranslationFunctions
   setLocale: (locale: Locales) => Promise<void>
 }
 
-const I18nContext = createContext<I18nContextValue | null>(null)
-
-export { I18nContext, type I18nContextValue }
+export const I18nContext = createContext<I18nContextValue | null>(null)
 
 interface I18nProviderProps {
   children: ReactNode
@@ -86,6 +115,7 @@ interface I18nProviderProps {
 
 export function I18nProvider({ children, locale: initialLocale }: I18nProviderProps) {
   // Always use baseLocale for initial render to ensure hydration consistency
+  // Use function initializer to be safe
   const [locale, setLocaleState] = useState<Locales>(baseLocale)
   const [t, setT] = useState<TranslationFunctions>(() => getI18nObject(baseLocale))
 
@@ -110,7 +140,9 @@ export function I18nProvider({ children, locale: initialLocale }: I18nProviderPr
 
       // Update state with the new translation object
       setLocaleState(newLocale)
-      setT(getI18nObject(newLocale))
+      const newT = getI18nObject(newLocale)
+      // Use functional update to ensure object is set correctly/not executed
+      setT(() => newT)
 
       // Persist to localStorage
       if (typeof window !== 'undefined') {
@@ -137,8 +169,8 @@ export function I18nProvider({ children, locale: initialLocale }: I18nProviderPr
   }), [locale, t])
 
   return (
-    <I18nContext value={contextValue}>
+    <I18nContext.Provider value={contextValue}>
       {children}
-    </I18nContext>
+    </I18nContext.Provider>
   )
 }

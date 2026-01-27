@@ -1,7 +1,8 @@
 import type { Locale as DateFnsLocale } from 'date-fns/locale'
 import { format as dateFnsFormat } from 'date-fns'
 import { enUS, fr } from 'date-fns/locale'
-import i18n from '@/i18n/config'
+
+// Removed i18n import to avoid stream errors
 
 /**
  * Supported locales for date formatting.
@@ -43,25 +44,35 @@ const formatMap: Record<DateFormatStyle, Record<DateLocale, string>> = {
 }
 
 /**
- * Gets the current locale from i18next.
+ * Gets the current locale from localStorage or browser settings.
+ * Fallback to 'fr'.
  */
 function getCurrentLocale(): DateLocale {
-  const lang = i18n.language?.substring(0, 2) as DateLocale
-  return lang in localeMap ? lang : 'fr'
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('yeko_core_language')
+    if (stored === 'en' || stored === 'fr')
+      return stored
+
+    // Browser detection fallback
+    const browserLang = navigator.language.split('-')[0]
+    if (browserLang === 'en' || browserLang === 'fr')
+      return browserLang
+  }
+  return 'fr'
 }
 
 /**
  * Formats a date according to the specified format style.
- * Locale is auto-detected from i18next.
+ * Locale is auto-detected from localStorage if not provided.
  *
  * @param date - The date object or ISO string to format.
  * @param style - The desired format style. Defaults to 'SHORT'.
- * @param locale - Optional locale override. Auto-detected from i18next if not provided.
+ * @param locale - Optional locale override. Auto-detected if not provided.
  * @returns The formatted date string.
  *
  * @example
  * formatDate(new Date(2025, 11, 18), 'MEDIUM')
- * // => '18 Déc 2025' (if i18n locale is 'fr')
+ * // => '18 Déc 2025' (if locale is 'fr')
  */
 export function formatDate(
   date: Date | string,
