@@ -1,5 +1,5 @@
 import type { TranslationFunctions } from '@/i18n/i18n-types'
-import { IconBook, IconCalendar, IconMessageCircle, IconSchool, IconUser } from '@tabler/icons-react'
+import { IconCalendar, IconMessageCircle, IconSchool, IconUser } from '@tabler/icons-react'
 import { Link, useLocation } from '@tanstack/react-router'
 import { useI18nContext } from '@/i18n/i18n-react'
 import { cn } from '@/lib/utils'
@@ -7,7 +7,6 @@ import { cn } from '@/lib/utils'
 const navItems: Array<{ id: keyof TranslationFunctions['nav'], icon: typeof IconCalendar, href: string }> = [
   { id: 'planning', icon: IconCalendar, href: '/app' },
   { id: 'ecole', icon: IconSchool, href: '/app/schools' },
-  { id: 'session', icon: IconBook, href: '/app/session' },
   { id: 'chat', icon: IconMessageCircle, href: '/app/chat' },
   { id: 'profile', icon: IconUser, href: '/app/profile' },
 ]
@@ -20,7 +19,9 @@ export function BottomNavigation() {
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="mx-auto flex h-16 max-w-lg items-center justify-around px-2 pb-[env(safe-area-inset-bottom)]">
         {navItems.map((item) => {
-          const isActive = location.pathname.startsWith(item.href)
+          const isActive = item.href === '/app'
+            ? location.pathname === '/app' || location.pathname === '/app/'
+            : location.pathname.startsWith(item.href)
           const Icon = item.icon
           const label = LL.nav[item.id]()
 

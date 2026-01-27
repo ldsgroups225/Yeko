@@ -158,7 +158,11 @@ function SchedulePage() {
           ? (
               <div className="space-y-2">
                 {daySchedule.map(session => (
-                  <ScheduleCard key={session.id} session={session} />
+                  <ScheduleCard
+                    key={session.id}
+                    session={session}
+                    schoolId={context?.schoolId ?? ''}
+                  />
                 ))}
               </div>
             )
@@ -178,6 +182,7 @@ function SchedulePage() {
 }
 
 interface ScheduleCardProps {
+  schoolId: string
   session: {
     id: string
     startTime: string
@@ -188,8 +193,9 @@ interface ScheduleCardProps {
   }
 }
 
-function ScheduleCard({ session }: ScheduleCardProps) {
+function ScheduleCard({ session, schoolId }: ScheduleCardProps) {
   const { LL } = useI18nContext()
+  const { Link } = createFileRoute('/_auth/app/')({})
 
   return (
     <Card>
@@ -210,7 +216,17 @@ function ScheduleCard({ session }: ScheduleCardProps) {
               {session.classroom && ` • ${session.classroom.name}`}
             </p>
           </div>
-          <Button size="sm">{LL.schedule.startSession()}</Button>
+          <Link
+            to="/app/schools/$schoolId/class/$classId"
+            params={{
+              schoolId,
+              classId: session.class.id,
+            }}
+          >
+            <Button size="sm">
+              {LL.session.startClass()}
+            </Button>
+          </Link>
         </div>
       </CardContent>
     </Card>

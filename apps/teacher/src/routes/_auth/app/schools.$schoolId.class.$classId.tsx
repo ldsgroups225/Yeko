@@ -13,6 +13,14 @@ import {
   CollapsibleTrigger,
 } from '@workspace/ui/components/collapsible'
 import { ConfirmationDialog } from '@workspace/ui/components/confirmation-dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@workspace/ui/components/dialog'
 import { Input } from '@workspace/ui/components/input'
 import {
   NumberField,
@@ -44,10 +52,19 @@ import {
   TableHeader,
   TableRow,
 } from '@workspace/ui/components/table'
+import { Textarea } from '@workspace/ui/components/textarea'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@workspace/ui/components/tooltip'
 import { cn } from '@workspace/ui/lib/utils'
 import { AnimatePresence, motion } from 'motion/react'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
+import { AttendanceStudentCard, ParticipationStudentCard, SessionFinalizationSheet, SessionStatsPanel } from '@/components/session'
+import { useAttendanceRecords } from '@/hooks/use-attendance-records'
+import { useParticipationManagement } from '@/hooks/use-participation-management'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { useI18nContext } from '@/i18n/i18n-react'
 import { localNotesService } from '@/lib/db/local-notes'
@@ -148,6 +165,10 @@ function ClassDetailPage() {
   const [isUnpublishedSheetOpen, setIsUnpublishedSheetOpen] = useState(false)
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false)
 
+  // Session Mode states (for "Commencer le cours" flow)
+  type SessionMode = 'view' | 'attendance_initial' | 'attendance_late' | 'participation' | 'finalization'
+  const [sessionMode, setSessionMode] = useState<SessionMode>('view')
+
   // Fetch class details
   const { data: classData, isLoading: classLoading } = useQuery({
     ...classDetailsQueryOptions({
@@ -222,6 +243,104 @@ function ClassDetailPage() {
 
   const classInfo = classData?.class
   const students = useMemo(() => studentsData?.students ?? [], [studentsData?.students])
+
+  // Session mode helpers
+  const isSessionActive = sessionMode !== 'view'
+  const isAttendanceMode = sessionMode === 'attendance_initial' || sessionMode === 'attendance_late'
+
+  // Use attendance records hook
+  const {
+    attendanceRecords,
+    attendanceStats,
+    updateAttendanceStatus,
+    getRecordForStudent,
+    setIsFirstAttendanceFinished,
+    resetAttendance,
+  } = useAttendanceRecords({
+    students: isSessionActive ? students : [],
+  })
+
+  // Use participation management hook
+  const {
+    participations,
+    participationStats,
+    toggleParticipation,
+    hasStudentParticipated,
+    getCommentForStudent,
+    setComment,
+    comment,
+    openCommentModal,
+    saveComment,
+    closeCommentModal,
+    selectedStudentId,
+    resetParticipations,
+  } = useParticipationManagement({
+    students: isSessionActive ? students : [],
+    attendanceRecords,
+  })
+
+  // --------------------------------------------------------------------------
+  // Session Handlers
+  // --------------------------------------------------------------------------
+
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSessionCancelDialogOpen, setIsSessionCancelDialogOpen] = useState(false)
+
+  const handleStartSession = () => {
+    setSessionMode('attendance_initial')
+  }
+
+  const handleFinishInitialAttendance = () => {
+    setIsFirstAttendanceFinished(true)
+    // If no one is absent, skip late attendance
+    if (attendanceStats && attendanceStats.absent === 0) {
+      setSessionMode('participation')
+    }
+    else {
+      setSessionMode('attendance_late')
+    }
+  }
+
+  const handleGoToParticipation = () => {
+    setSessionMode('participation')
+  }
+
+  const handleCancelSession = () => {
+    setIsSessionCancelDialogOpen(true)
+  }
+
+  const handleSubmitSession = async (data: {
+    homework: any
+    lessonCompleted: boolean
+  }) => {
+    setIsSubmitting(true)
+    try {
+      // Mock submission - TODO: Implement actual API call
+      console.warn('Submitting Session:', {
+        classId,
+        date: new Date().toISOString(),
+        attendance: attendanceRecords,
+        participations,
+        ...data,
+      })
+
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 1000))
+
+      toast.success(LL.session.saved())
+
+      resetAttendance()
+      resetParticipations()
+      setSessionMode('view')
+    }
+    catch (error) {
+      console.error('Failed to save session:', error)
+      toast.error(LL.common.error())
+    }
+    finally {
+      setIsSubmitting(false)
+    }
+  }
 
   // --------------------------------------------------------------------------
   // Grade Entry Handlers
@@ -488,6 +607,29 @@ function ClassDetailPage() {
               </Badge>
             </div>
           </div>
+
+          {unpublishedNote && !isEntryMode && (
+            <Tooltip>
+              <TooltipTrigger
+                render={(
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-10 w-10 shrink-0 rounded-full bg-amber-500/10 border-amber-500/20 text-amber-600 hover:bg-amber-500/20 hover:text-amber-700 shadow-lg shadow-amber-500/5 relative ml-auto"
+                    onClick={() => setIsUnpublishedSheetOpen(true)}
+                  >
+                    <IconHistory className="w-5 h-5" />
+                    <Badge className="absolute -top-1 -right-1 h-4 w-4 p-0 flex items-center justify-center bg-amber-500 text-white text-[9px] border-2 border-background rounded-full pointer-events-none">
+                      {unpublishedCount}
+                    </Badge>
+                  </Button>
+                )}
+              />
+              <TooltipContent>
+                <p>{LL.grades.unpublishedNoteShort()}</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
         </div>
 
         {/* Class Stats Summary */}
@@ -538,14 +680,13 @@ function ClassDetailPage() {
           {!isEntryMode
             ? (
                 <>
-                  <Link to="/app/session" className="flex-1 min-w-[140px]">
-                    <Button
-                      className="w-full h-11 sm:h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-lg sm:shadow-xl rounded-lg sm:rounded-xl transition-all active:scale-[0.98]"
-                    >
-                      <IconPlayerPlay className="w-5 h-5 mr-2" />
-                      {LL.session.start()}
-                    </Button>
-                  </Link>
+                  <Button
+                    className="flex-1 min-w-[140px] h-11 sm:h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-lg sm:shadow-xl rounded-lg sm:rounded-xl transition-all active:scale-[0.98]"
+                    onClick={handleStartSession}
+                  >
+                    <IconPlayerPlay className="w-5 h-5 mr-2" />
+                    {LL.session.startClass()}
+                  </Button>
 
                   <Button
                     variant="outline"
@@ -555,21 +696,6 @@ function ClassDetailPage() {
                     <IconPlus className="w-5 h-5 mr-2" />
                     {LL.grades.addNote()}
                   </Button>
-
-                  {unpublishedNote && (
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      className="h-12 sm:h-14 px-6 rounded-2xl bg-amber-500/10 border-amber-500/20 text-amber-500 hover:bg-amber-500/20 font-black shadow-lg shadow-amber-500/5 group"
-                      onClick={() => setIsUnpublishedSheetOpen(true)}
-                    >
-                      <IconHistory className="w-5 h-5 mr-3 group-hover:rotate-[-10deg] transition-transform" />
-                      {LL.grades.unpublishedNoteShort()}
-                      <Badge className="ml-2 bg-amber-500 text-white border-none h-5 px-1.5 min-w-5 justify-center">
-                        {unpublishedCount}
-                      </Badge>
-                    </Button>
-                  )}
                 </>
               )
             : (
@@ -794,162 +920,305 @@ function ClassDetailPage() {
       {processedStudents.length > 0
         ? (
             <>
-              {/* Mobile Card View */}
-              <div className="block lg:hidden">
-                <motion.div
-                  variants={container}
-                  initial="hidden"
-                  animate="show"
-                  className="flex flex-col gap-3"
-                >
-                  {processedStudents.map(student => (
-                    <motion.div key={student.id} variants={item}>
-                      <StudentCard
-                        student={student}
-                        isExpanded={expandedStudent === student.id}
-                        classAverage={classStats.average}
-                        onToggle={() => toggleStudentExpansion(student.id)}
-                        isEntryMode={isEntryMode}
-                        gradeValue={gradesMap.get(student.id)}
-                        onGradeChange={val => handleGradeChange(student.id, val)}
-                        gradeOutOf={gradeOutOf}
-                      />
-                    </motion.div>
-                  ))}
-                </motion.div>
-              </div>
+              {/* Session Mode View */}
+              {isSessionActive && (
+                <div className="flex flex-col gap-4 animate-in fade-in duration-300">
+                  {/* Session Stats Panel */}
+                  <div className="sticky top-0 z-30 -mx-4 px-4 pb-2 bg-background/95 backdrop-blur-md border-b border-border/50 lg:static lg:mx-0 lg:px-0 lg:pb-0 lg:bg-transparent lg:border-none">
+                    <SessionStatsPanel
+                      mode={
+                        sessionMode === 'attendance_initial'
+                          ? 'attendance_initial'
+                          : sessionMode === 'attendance_late'
+                            ? 'attendance_late'
+                            : sessionMode === 'participation'
+                              ? 'participation'
+                              : 'attendance_initial'
+                      }
+                      totalStudents={students.length}
+                      attendanceStats={attendanceStats}
+                      participationStats={participationStats}
+                      actionLabel={
+                        sessionMode === 'attendance_initial'
+                          ? LL.session.finishRollCall()
+                          : sessionMode === 'attendance_late'
+                            ? LL.session.goToParticipation()
+                            : sessionMode === 'participation'
+                              ? LL.session.finalize()
+                              : ''
+                      }
+                      onAction={
+                        sessionMode === 'attendance_initial'
+                          ? handleFinishInitialAttendance
+                          : sessionMode === 'attendance_late'
+                            ? handleGoToParticipation
+                            : sessionMode === 'participation'
+                              ? () => setSessionMode('finalization')
+                              : () => {}
+                      }
+                      secondaryActionLabel={LL.common.cancel()}
+                      onSecondaryAction={handleCancelSession}
+                    />
+                  </div>
 
-              {/* Desktop Table View */}
-              <div className="hidden lg:block">
-                <Card className="overflow-hidden border-border/50 bg-card/80 backdrop-blur-sm shadow-lg">
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="bg-muted/50 hover:bg-muted/50">
-                        <TableHead
-                          className="sticky left-0 z-20 min-w-[200px] cursor-pointer bg-muted/50 font-semibold transition-colors hover:bg-muted"
-                          onClick={() => handleSort('name')}
-                        >
-                          <div className="flex items-center gap-2">
-                            {LL.common.student()}
-                            {sortConfig?.key === 'name' && (
-                              <span className="text-xs">
-                                {sortConfig.direction === 'asc' ? '↑' : '↓'}
-                              </span>
-                            )}
-                          </div>
-                        </TableHead>
-                        {!isEntryMode
-                          ? (
-                              <>
-                                <TableHead className="text-center min-w-[100px]">{LL.common.participation()}</TableHead>
-                                <TableHead className="text-center min-w-[80px]">{LL.grades.quizzes()}</TableHead>
-                                <TableHead className="text-center min-w-[80px]">{LL.grades.tests()}</TableHead>
-                                <TableHead className="text-center min-w-[80px]">{LL.grades.level_tests()}</TableHead>
-                                <TableHead
-                                  className="sticky right-0 z-20 min-w-[120px] bg-muted/50 text-center font-semibold cursor-pointer hover:bg-muted"
-                                  onClick={() => handleSort('average')}
-                                >
-                                  <div className="flex items-center justify-center gap-2">
-                                    {LL.common.average()}
-                                    {sortConfig?.key === 'average' && (
-                                      <span className="text-xs">
-                                        {sortConfig.direction === 'asc' ? '↑' : '↓'}
-                                      </span>
-                                    )}
-                                  </div>
-                                </TableHead>
-                                <TableHead className="text-center min-w-[80px]">Actions</TableHead>
-                              </>
-                            )
-                          : (
-                              <TableHead className="text-center min-w-[150px] font-black text-primary italic">
-                                {LL.grades.newNoteTitle()}
-                                {' '}
-                                (
-                                {LL.grades.outOf()}
-                                {' '}
-                                {gradeOutOf}
-                                )
-                              </TableHead>
-                            )}
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {processedStudents.map((student, idx) => (
-                        <TableRow
-                          key={student.id}
-                          className={cn(
-                            'transition-colors hover:bg-muted/50',
-                            idx % 2 === 0 ? 'bg-background' : 'bg-muted/20',
-                          )}
-                        >
-                          <TableCell className="sticky left-0 z-10 bg-inherit min-w-[200px]">
-                            <div className="flex items-center gap-3">
-                              <Avatar className="h-8 w-8 border border-border/50 shrink-0">
-                                <AvatarImage src={student.photoUrl ?? undefined} alt={student.firstName} />
-                                <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-bold">
-                                  {student.firstName[0]}
-                                  {student.lastName[0]}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div className="min-w-0">
-                                <p className="font-semibold text-sm truncate">
-                                  {student.lastName}
-                                  {' '}
-                                  {student.firstName}
-                                </p>
-                                <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">{student.matricule}</p>
-                              </div>
-                            </div>
-                          </TableCell>
-                          {!isEntryMode
-                            ? (
-                                <>
-                                  <TableCell className="text-center">
-                                    <Badge variant="secondary" className="font-medium">
-                                      --
-                                    </Badge>
-                                  </TableCell>
-                                  <TableCell className="text-center text-muted-foreground text-xs">--</TableCell>
-                                  <TableCell className="text-center text-muted-foreground text-xs">--</TableCell>
-                                  <TableCell className="text-center text-muted-foreground text-xs">--</TableCell>
-                                  <TableCell className="sticky right-0 z-10 bg-inherit text-center font-bold text-lg text-muted-foreground border-l">
-                                    --.--
-                                  </TableCell>
-                                  <TableCell className="text-center">
-                                    <Link to="/app/students/$studentId/notes" params={{ studentId: student.id }}>
-                                      <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-primary/10 hover:text-primary">
-                                        <IconEdit className="w-4 h-4" />
-                                      </Button>
-                                    </Link>
-                                  </TableCell>
-                                </>
-                              )
-                            : (
-                                <TableCell className="text-center bg-primary/5">
-                                  <div className="flex items-center justify-center gap-2 max-w-[120px] mx-auto">
-                                    <Input
-                                      type="text"
-                                      inputMode="decimal"
-                                      placeholder="--"
-                                      value={gradesMap.get(student.id) || ''}
-                                      onChange={e => handleGradeChange(student.id, e.target.value)}
-                                      className="h-10 text-center text-lg font-black bg-background border-primary/30 rounded-lg focus:ring-2 focus:ring-primary/40"
-                                    />
-                                    <span className="text-xs font-bold text-muted-foreground">
-                                      /
-                                      {gradeOutOf}
-                                    </span>
-                                  </div>
-                                </TableCell>
-                              )}
-                        </TableRow>
+                  {/* Session List View */}
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    {processedStudents.map((student) => {
+                      // Attendance Mode Card
+                      if (isAttendanceMode) {
+                        return (
+                          <motion.div key={student.id} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
+                            <AttendanceStudentCard
+                              student={student}
+                              status={getRecordForStudent(student.id)?.status || 'present'}
+                              onUpdateStatus={updateAttendanceStatus}
+                              isLateMode={sessionMode === 'attendance_late'}
+                            />
+                          </motion.div>
+                        )
+                      }
+
+                      // Participation Mode Card
+                      if (sessionMode === 'participation') {
+                        // Filter out absent students
+                        const isAbsent = getRecordForStudent(student.id)?.status === 'absent'
+                        if (isAbsent)
+                          return null
+
+                        return (
+                          <motion.div key={student.id} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
+                            <ParticipationStudentCard
+                              student={student}
+                              hasParticipated={hasStudentParticipated(student.id)}
+                              comment={getCommentForStudent(student.id)}
+                              onToggleParticipation={() => toggleParticipation(student.id)}
+                              onComment={() => openCommentModal(student.id)}
+                            />
+                          </motion.div>
+                        )
+                      }
+
+                      return null
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Participation Comment Dialog */}
+              <Dialog open={!!selectedStudentId} onOpenChange={open => !open && closeCommentModal()}>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>{LL.participation.comment()}</DialogTitle>
+                    <DialogDescription>
+                      {LL.session.addCommentDescription()}
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="py-4">
+                    <Textarea
+                      value={comment}
+                      onChange={e => setComment(e.target.value)}
+                      placeholder={LL.session.commentPlaceholder()}
+                      className="min-h-[100px]"
+                    />
+                  </div>
+                  <DialogFooter>
+                    <Button variant="outline" onClick={closeCommentModal}>
+                      {LL.common.cancel()}
+                    </Button>
+                    <Button onClick={saveComment}>
+                      {LL.common.save()}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+
+              {/* Session Finalization Sheet */}
+              <SessionFinalizationSheet
+                open={sessionMode === 'finalization'}
+                onOpenChange={open => !open && setSessionMode('participation')}
+                attendanceStats={attendanceStats}
+                participationStats={participationStats}
+                onFinalize={handleSubmitSession}
+                isSubmitting={isSubmitting}
+              />
+
+              {/* Session Cancel Confirmation Dialog */}
+              <ConfirmationDialog
+                open={isSessionCancelDialogOpen}
+                onOpenChange={setIsSessionCancelDialogOpen}
+                onConfirm={() => {
+                  resetAttendance()
+                  resetParticipations()
+                  setSessionMode('view')
+                }}
+                title={LL.common.cancel()}
+                description={LL.common.cancelConfirmation()}
+                confirmText={LL.common.cancel()}
+                variant="destructive"
+              />
+
+              {/* Standard View (Hidden in Session Mode) */}
+              {!isSessionActive && (
+                <>
+                  {/* Mobile Card View */}
+                  <div className="block lg:hidden">
+                    <motion.div
+                      variants={container}
+                      initial="hidden"
+                      animate="show"
+                      className="flex flex-col gap-3"
+                    >
+                      {processedStudents.map(student => (
+                        <motion.div key={student.id} variants={item}>
+                          <StudentCard
+                            student={student}
+                            isExpanded={expandedStudent === student.id}
+                            classAverage={classStats.average}
+                            onToggle={() => toggleStudentExpansion(student.id)}
+                            isEntryMode={isEntryMode}
+                            gradeValue={gradesMap.get(student.id)}
+                            onGradeChange={val => handleGradeChange(student.id, val)}
+                            gradeOutOf={gradeOutOf}
+                          />
+                        </motion.div>
                       ))}
-                    </TableBody>
-                  </Table>
-                </Card>
-              </div>
+                    </motion.div>
+                  </div>
+
+                  {/* Desktop Table View */}
+                  <div className="hidden lg:block">
+                    <Card className="overflow-hidden border-border/50 bg-card/80 backdrop-blur-sm shadow-lg">
+                      <Table>
+                        <TableHeader>
+                          <TableRow className="bg-muted/50 hover:bg-muted/50">
+                            <TableHead
+                              className="sticky left-0 z-20 min-w-[200px] cursor-pointer bg-muted/50 font-semibold transition-colors hover:bg-muted"
+                              onClick={() => handleSort('name')}
+                            >
+                              <div className="flex items-center gap-2">
+                                {LL.common.student()}
+                                {sortConfig?.key === 'name' && (
+                                  <span className="text-xs">
+                                    {sortConfig.direction === 'asc' ? '↑' : '↓'}
+                                  </span>
+                                )}
+                              </div>
+                            </TableHead>
+                            {!isEntryMode
+                              ? (
+                                  <>
+                                    <TableHead className="text-center min-w-[100px]">{LL.common.participation()}</TableHead>
+                                    <TableHead className="text-center min-w-[80px]">{LL.grades.quizzes()}</TableHead>
+                                    <TableHead className="text-center min-w-[80px]">{LL.grades.tests()}</TableHead>
+                                    <TableHead className="text-center min-w-[80px]">{LL.grades.level_tests()}</TableHead>
+                                    <TableHead
+                                      className="sticky right-0 z-20 min-w-[120px] bg-muted/50 text-center font-semibold cursor-pointer hover:bg-muted"
+                                      onClick={() => handleSort('average')}
+                                    >
+                                      <div className="flex items-center justify-center gap-2">
+                                        {LL.common.average()}
+                                        {sortConfig?.key === 'average' && (
+                                          <span className="text-xs">
+                                            {sortConfig.direction === 'asc' ? '↑' : '↓'}
+                                          </span>
+                                        )}
+                                      </div>
+                                    </TableHead>
+                                    <TableHead className="text-center min-w-[80px]">Actions</TableHead>
+                                  </>
+                                )
+                              : (
+                                  <TableHead className="text-center min-w-[150px] font-black text-primary italic">
+                                    {LL.grades.newNoteTitle()}
+                                    {' '}
+                                    (
+                                    {LL.grades.outOf()}
+                                    {' '}
+                                    {gradeOutOf}
+                                    )
+                                  </TableHead>
+                                )}
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {processedStudents.map((student, idx) => (
+                            <TableRow
+                              key={student.id}
+                              className={cn(
+                                'transition-colors hover:bg-muted/50',
+                                idx % 2 === 0 ? 'bg-background' : 'bg-muted/20',
+                              )}
+                            >
+                              <TableCell className="sticky left-0 z-10 bg-inherit min-w-[200px]">
+                                <div className="flex items-center gap-3">
+                                  <Avatar className="h-8 w-8 border border-border/50 shrink-0">
+                                    <AvatarImage src={student.photoUrl ?? undefined} alt={student.firstName} />
+                                    <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-bold">
+                                      {student.firstName[0]}
+                                      {student.lastName[0]}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <div className="min-w-0">
+                                    <p className="font-semibold text-sm truncate">
+                                      {student.lastName}
+                                      {' '}
+                                      {student.firstName}
+                                    </p>
+                                    <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">{student.matricule}</p>
+                                  </div>
+                                </div>
+                              </TableCell>
+                              {!isEntryMode
+                                ? (
+                                    <>
+                                      <TableCell className="text-center">
+                                        <Badge variant="secondary" className="font-medium">
+                                          --
+                                        </Badge>
+                                      </TableCell>
+                                      <TableCell className="text-center text-muted-foreground text-xs">--</TableCell>
+                                      <TableCell className="text-center text-muted-foreground text-xs">--</TableCell>
+                                      <TableCell className="text-center text-muted-foreground text-xs">--</TableCell>
+                                      <TableCell className="sticky right-0 z-10 bg-inherit text-center font-bold text-lg text-muted-foreground border-l">
+                                        --.--
+                                      </TableCell>
+                                      <TableCell className="text-center">
+                                        <Link to="/app/students/$studentId/notes" params={{ studentId: student.id }}>
+                                          <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-primary/10 hover:text-primary">
+                                            <IconEdit className="w-4 h-4" />
+                                          </Button>
+                                        </Link>
+                                      </TableCell>
+                                    </>
+                                  )
+                                : (
+                                    <TableCell className="text-center bg-primary/5">
+                                      <div className="flex items-center justify-center gap-2 max-w-[120px] mx-auto">
+                                        <Input
+                                          type="text"
+                                          inputMode="decimal"
+                                          placeholder="--"
+                                          value={gradesMap.get(student.id) || ''}
+                                          onChange={e => handleGradeChange(student.id, e.target.value)}
+                                          className="h-10 text-center text-lg font-black bg-background border-primary/30 rounded-lg focus:ring-2 focus:ring-primary/40"
+                                        />
+                                        <span className="text-xs font-bold text-muted-foreground">
+                                          /
+                                          {gradeOutOf}
+                                        </span>
+                                      </div>
+                                    </TableCell>
+                                  )}
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </Card>
+                  </div>
+                </>
+              )}
             </>
+
           )
         : (
             <EmptyStudents />

@@ -497,6 +497,10 @@ type RootTranslation = {
 		 */
 		start: string
 		/**
+		 * D​e​b​u​t​ ​d​u​ ​c​o​u​r​s
+		 */
+		startClass: string
+		/**
 		 * T​e​r​m​i​n​e​r​ ​l​a​ ​s​e​s​s​i​o​n
 		 */
 		complete: string
@@ -524,6 +528,10 @@ type RootTranslation = {
 		 * A​b​s​e​n​t​s
 		 */
 		absent: string
+		/**
+		 * E​n​ ​r​e​t​a​r​d
+		 */
+		late: string
 		/**
 		 * N​o​t​e​s​ ​d​e​ ​c​o​u​r​s
 		 */
@@ -576,6 +584,114 @@ type RootTranslation = {
 		 * à
 		 */
 		at: string
+		/**
+		 * F​a​i​t​e​s​ ​l​'​a​p​p​e​l
+		 */
+		rollCall: string
+		/**
+		 * R​e​t​a​r​d​a​t​a​i​r​e​s
+		 */
+		lateArrivals: string
+		/**
+		 * T​e​r​m​i​n​e​r​ ​l​'​a​p​p​e​l
+		 */
+		finishRollCall: string
+		/**
+		 * P​a​s​s​e​r​ ​a​u​x​ ​r​e​t​a​r​d​s
+		 */
+		goToLateArrivals: string
+		/**
+		 * P​a​s​s​e​r​ ​à​ ​l​a​ ​p​a​r​t​i​c​i​p​a​t​i​o​n
+		 */
+		goToParticipation: string
+		/**
+		 * A​t​t​r​i​b​u​e​r​ ​d​e​s​ ​p​a​r​t​i​c​i​p​a​t​i​o​n​s​ ​(​1​-​5​)
+		 */
+		assignParticipation: string
+		/**
+		 * C​o​n​t​i​n​u​e​r
+		 */
+		continueSession: string
+		/**
+		 * F​i​n​a​l​i​s​e​r​ ​l​a​ ​s​e​s​s​i​o​n
+		 */
+		finalize: string
+		/**
+		 * A​v​e​z​-​v​o​u​s​ ​a​s​s​i​g​n​é​ ​u​n​ ​e​x​e​r​c​i​c​e​ ​d​e​ ​m​a​i​s​o​n​ ​?
+		 */
+		homeworkQuestion: string
+		/**
+		 * S​é​a​n​c​e​ ​t​e​r​m​i​n​é​e​ ​?
+		 */
+		lessonCompleted: string
+		/**
+		 * O​u​i​,​ ​s​é​a​n​c​e​ ​t​e​r​m​i​n​é​e
+		 */
+		lessonCompletedYes: string
+		/**
+		 * N​o​n​,​ ​s​é​a​n​c​e​ ​n​o​n​ ​t​e​r​m​i​n​é​e
+		 */
+		lessonCompletedNo: string
+		/**
+		 * P​r​o​g​r​e​s​s​i​o​n​ ​d​e​ ​l​a​ ​l​e​ç​o​n
+		 */
+		lessonProgress: string
+		/**
+		 * C​o​n​f​i​r​m​e​z​ ​s​i​ ​l​a​ ​s​é​a​n​c​e​ ​d​u​ ​j​o​u​r​ ​a​ ​é​t​é​ ​a​c​h​e​v​é​e​ ​p​o​u​r​ ​m​e​t​t​r​e​ ​à​ ​j​o​u​r​ ​l​e​ ​s​u​i​v​i​.
+		 */
+		confirmLessonProgress: string
+		/**
+		 * S​e​s​s​i​o​n​ ​t​e​r​m​i​n​é​e​ ​a​v​e​c​ ​s​u​c​c​è​s​ ​!
+		 */
+		sessionSuccess: string
+		/**
+		 * E​r​r​e​u​r​ ​l​o​r​s​ ​d​e​ ​l​a​ ​f​i​n​a​l​i​s​a​t​i​o​n
+		 */
+		sessionError: string
+		/**
+		 * T​o​t​a​l
+		 */
+		statsTotal: string
+		/**
+		 * P​r​é​s​e​n​t​s
+		 */
+		statsPresent: string
+		/**
+		 * A​b​s​e​n​t​s
+		 */
+		statsAbsent: string
+		/**
+		 * R​e​t​a​r​d​s
+		 */
+		statsLate: string
+		/**
+		 * P​a​r​t​i​c​i​p​é​s
+		 */
+		statsParticipated: string
+		/**
+		 * T​a​u​x
+		 */
+		statsRate: string
+		/**
+		 * V​e​u​i​l​l​e​z​ ​s​é​l​e​c​t​i​o​n​n​e​r​ ​e​n​t​r​e​ ​1​ ​e​t​ ​5​ ​é​l​è​v​e​s​ ​a​y​a​n​t​ ​p​a​r​t​i​c​i​p​é​.
+		 */
+		participationLimit: string
+		/**
+		 * T​o​u​s​ ​l​e​s​ ​é​l​è​v​e​s​ ​s​o​n​t​ ​a​b​s​e​n​t​s​ ​o​u​ ​a​u​c​u​n​ ​e​n​r​e​g​i​s​t​r​e​m​e​n​t​ ​d​'​a​p​p​e​l​ ​n​'​a​ ​é​t​é​ ​t​r​o​u​v​é​.
+		 */
+		allStudentsAbsent: string
+		/**
+		 * V​e​u​i​l​l​e​z​ ​d​'​a​b​o​r​d​ ​c​o​m​p​l​é​t​e​r​ ​l​'​a​p​p​e​l​.
+		 */
+		completeAttendanceFirst: string
+		/**
+		 * E​n​t​r​e​z​ ​v​o​t​r​e​ ​c​o​m​m​e​n​t​a​i​r​e​ ​i​c​i​.​.​.
+		 */
+		commentPlaceholder: string
+		/**
+		 * A​j​o​u​t​e​z​ ​u​n​e​ ​n​o​t​e​ ​o​u​ ​u​n​ ​c​o​m​m​e​n​t​a​i​r​e​ ​p​o​u​r​ ​l​a​ ​p​a​r​t​i​c​i​p​a​t​i​o​n​ ​d​e​ ​c​e​t​ ​é​l​è​v​e​.
+		 */
+		addCommentDescription: string
 	}
 	participation: {
 		/**
@@ -801,7 +917,7 @@ type RootTranslation = {
 		 */
 		tests: string
 		/**
-		 * D​e​v​o​i​r​ ​N​v
+		 * D​e​v​o​i​r​ ​N​i​v
 		 */
 		level_tests: string
 		/**
@@ -902,7 +1018,7 @@ type RootTranslation = {
 		 */
 		publishedSuccess: string
 		/**
-		 * A​j​o​u​t​e​r​ ​u​n​e​ ​n​o​t​e
+		 * N​v​l​l​e​ ​N​o​t​e​s
 		 */
 		addNote: string
 		/**
@@ -1102,6 +1218,10 @@ type RootTranslation = {
 		 * A​n​n​u​l​e​r
 		 */
 		cancel: string
+		/**
+		 * Ê​t​e​s​-​v​o​u​s​ ​s​û​r​ ​d​e​ ​v​o​u​l​o​i​r​ ​a​n​n​u​l​e​r​ ​l​a​ ​s​e​s​s​i​o​n​?​ ​T​o​u​t​e​s​ ​l​e​s​ ​d​o​n​n​é​e​s​ ​s​e​r​o​n​t​ ​p​e​r​d​u​e​s​.
+		 */
+		cancelConfirmation: string
 		/**
 		 * S​u​p​p​r​i​m​e​r
 		 */
@@ -2186,6 +2306,10 @@ export type TranslationFunctions = {
 		 */
 		start: () => LocalizedString
 		/**
+		 * Debut du cours
+		 */
+		startClass: () => LocalizedString
+		/**
 		 * Terminer la session
 		 */
 		complete: () => LocalizedString
@@ -2213,6 +2337,10 @@ export type TranslationFunctions = {
 		 * Absents
 		 */
 		absent: () => LocalizedString
+		/**
+		 * En retard
+		 */
+		late: () => LocalizedString
 		/**
 		 * Notes de cours
 		 */
@@ -2265,6 +2393,114 @@ export type TranslationFunctions = {
 		 * à
 		 */
 		at: () => LocalizedString
+		/**
+		 * Faites l'appel
+		 */
+		rollCall: () => LocalizedString
+		/**
+		 * Retardataires
+		 */
+		lateArrivals: () => LocalizedString
+		/**
+		 * Terminer l'appel
+		 */
+		finishRollCall: () => LocalizedString
+		/**
+		 * Passer aux retards
+		 */
+		goToLateArrivals: () => LocalizedString
+		/**
+		 * Passer à la participation
+		 */
+		goToParticipation: () => LocalizedString
+		/**
+		 * Attribuer des participations (1-5)
+		 */
+		assignParticipation: () => LocalizedString
+		/**
+		 * Continuer
+		 */
+		continueSession: () => LocalizedString
+		/**
+		 * Finaliser la session
+		 */
+		finalize: () => LocalizedString
+		/**
+		 * Avez-vous assigné un exercice de maison ?
+		 */
+		homeworkQuestion: () => LocalizedString
+		/**
+		 * Séance terminée ?
+		 */
+		lessonCompleted: () => LocalizedString
+		/**
+		 * Oui, séance terminée
+		 */
+		lessonCompletedYes: () => LocalizedString
+		/**
+		 * Non, séance non terminée
+		 */
+		lessonCompletedNo: () => LocalizedString
+		/**
+		 * Progression de la leçon
+		 */
+		lessonProgress: () => LocalizedString
+		/**
+		 * Confirmez si la séance du jour a été achevée pour mettre à jour le suivi.
+		 */
+		confirmLessonProgress: () => LocalizedString
+		/**
+		 * Session terminée avec succès !
+		 */
+		sessionSuccess: () => LocalizedString
+		/**
+		 * Erreur lors de la finalisation
+		 */
+		sessionError: () => LocalizedString
+		/**
+		 * Total
+		 */
+		statsTotal: () => LocalizedString
+		/**
+		 * Présents
+		 */
+		statsPresent: () => LocalizedString
+		/**
+		 * Absents
+		 */
+		statsAbsent: () => LocalizedString
+		/**
+		 * Retards
+		 */
+		statsLate: () => LocalizedString
+		/**
+		 * Participés
+		 */
+		statsParticipated: () => LocalizedString
+		/**
+		 * Taux
+		 */
+		statsRate: () => LocalizedString
+		/**
+		 * Veuillez sélectionner entre 1 et 5 élèves ayant participé.
+		 */
+		participationLimit: () => LocalizedString
+		/**
+		 * Tous les élèves sont absents ou aucun enregistrement d'appel n'a été trouvé.
+		 */
+		allStudentsAbsent: () => LocalizedString
+		/**
+		 * Veuillez d'abord compléter l'appel.
+		 */
+		completeAttendanceFirst: () => LocalizedString
+		/**
+		 * Entrez votre commentaire ici...
+		 */
+		commentPlaceholder: () => LocalizedString
+		/**
+		 * Ajoutez une note ou un commentaire pour la participation de cet élève.
+		 */
+		addCommentDescription: () => LocalizedString
 	}
 	participation: {
 		/**
@@ -2490,7 +2726,7 @@ export type TranslationFunctions = {
 		 */
 		tests: () => LocalizedString
 		/**
-		 * Devoir Nv
+		 * Devoir Niv
 		 */
 		level_tests: () => LocalizedString
 		/**
@@ -2590,7 +2826,7 @@ export type TranslationFunctions = {
 		 */
 		publishedSuccess: () => LocalizedString
 		/**
-		 * Ajouter une note
+		 * Nvlle Notes
 		 */
 		addNote: () => LocalizedString
 		/**
@@ -2787,6 +3023,10 @@ export type TranslationFunctions = {
 		 * Annuler
 		 */
 		cancel: () => LocalizedString
+		/**
+		 * Êtes-vous sûr de vouloir annuler la session? Toutes les données seront perdues.
+		 */
+		cancelConfirmation: () => LocalizedString
 		/**
 		 * Supprimer
 		 */
