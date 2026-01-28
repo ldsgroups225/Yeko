@@ -27,7 +27,12 @@ export const refundsOptions = {
   list: (filters: RefundFilters = {}) =>
     queryOptions({
       queryKey: refundsKeys.list(filters),
-      queryFn: () => getRefundsList({ data: filters }),
+      queryFn: async () => {
+        const res = await getRefundsList({ data: filters })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 2 * 60 * 1000,
       gcTime: 10 * 60 * 1000,
     }),
@@ -35,7 +40,12 @@ export const refundsOptions = {
   detail: (id: string) =>
     queryOptions({
       queryKey: refundsKeys.detail(id),
-      queryFn: () => getRefund({ data: id }),
+      queryFn: async () => {
+        const res = await getRefund({ data: id })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 2 * 60 * 1000,
       gcTime: 10 * 60 * 1000,
       enabled: !!id,
@@ -44,8 +54,13 @@ export const refundsOptions = {
   pendingCount: () =>
     queryOptions({
       queryKey: refundsKeys.pendingCount(),
-      queryFn: () => getPendingRefunds(),
-      staleTime: 1 * 60 * 1000, // 1 minute - pending count should be fresh
+      queryFn: async () => {
+        const res = await getPendingRefunds()
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
+      staleTime: 1 * 60 * 1000,
       gcTime: 5 * 60 * 1000,
     }),
 }

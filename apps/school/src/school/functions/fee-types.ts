@@ -1,3 +1,4 @@
+import type { ServerContext } from '../lib/server-fn'
 import {
   createFeeType,
   deleteFeeType,
@@ -5,10 +6,10 @@ import {
   getFeeTypes,
   updateFeeType,
 } from '@repo/data-ops'
-import { createServerFn } from '@tanstack/react-start'
+import { DatabaseError } from '@repo/data-ops/errors'
 import { z } from 'zod'
 import { createFeeTypeSchema, updateFeeTypeSchema } from '@/schemas/fee-type'
-import { getSchoolContext } from '../middleware/school-context'
+import { createAuthenticatedServerFn } from '../lib/server-fn'
 
 /**
  * Filters for fee types queries
@@ -21,72 +22,84 @@ const feeTypeFiltersSchema = z.object({
 /**
  * Get fee types list
  */
-export const getFeeTypesList = createServerFn()
+export const getFeeTypesList = createAuthenticatedServerFn()
   .inputValidator(feeTypeFiltersSchema.optional())
-  .handler(async ({ data: filters }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data: filters, context }) => {
+    const { school } = context as unknown as ServerContext
+    if (!school)
+      throw new DatabaseError('UNAUTHORIZED', 'No school context')
 
-    return await getFeeTypes({
-      schoolId: context.schoolId,
+    const result = await getFeeTypes({
+      schoolId: school.schoolId,
       ...filters,
     })
+
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Get single fee type
  */
-export const getFeeType = createServerFn()
+export const getFeeType = createAuthenticatedServerFn()
   .inputValidator(z.string())
   .handler(async ({ data: feeTypeId }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+    const result = await getFeeTypeById(feeTypeId)
 
-    return await getFeeTypeById(feeTypeId)
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Create new fee type
  */
-export const createNewFeeType = createServerFn()
+export const createNewFeeType = createAuthenticatedServerFn()
   .inputValidator(createFeeTypeSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    const { school } = context as unknown as ServerContext
+    if (!school)
+      throw new DatabaseError('UNAUTHORIZED', 'No school context')
 
-    return await createFeeType({
-      schoolId: context.schoolId,
+    const result = await createFeeType({
+      schoolId: school.schoolId,
       ...data,
     })
+
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Update fee type
  */
-export const updateExistingFeeType = createServerFn()
+export const updateExistingFeeType = createAuthenticatedServerFn()
   .inputValidator(updateFeeTypeSchema)
   .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
-
     const { id, ...updateData } = data
-    return await updateFeeType(id, updateData)
+    const result = await updateFeeType(id, updateData)
+
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Delete fee type
  */
-export const deleteExistingFeeType = createServerFn()
+export const deleteExistingFeeType = createAuthenticatedServerFn()
   .inputValidator(z.string())
   .handler(async ({ data: feeTypeId }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+    const result = await deleteFeeType(feeTypeId)
 
-    await deleteFeeType(feeTypeId)
-    return { success: true }
+    return result.match(
+      () => ({ success: true as const }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })

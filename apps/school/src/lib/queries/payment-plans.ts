@@ -39,7 +39,12 @@ export const paymentPlansOptions = {
   list: (filters: PaymentPlanFilters = {}) =>
     queryOptions({
       queryKey: paymentPlansKeys.list(filters),
-      queryFn: () => getPaymentPlansList({ data: filters }),
+      queryFn: async () => {
+        const res = await getPaymentPlansList({ data: filters })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
     }),
@@ -47,7 +52,12 @@ export const paymentPlansOptions = {
   detail: (id: string) =>
     queryOptions({
       queryKey: paymentPlansKeys.withInstallments(id),
-      queryFn: () => getPaymentPlanWithInstallments({ data: id }),
+      queryFn: async () => {
+        const res = await getPaymentPlanWithInstallments({ data: id })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 2 * 60 * 1000,
       gcTime: 10 * 60 * 1000,
       enabled: !!id,
@@ -56,7 +66,12 @@ export const paymentPlansOptions = {
   student: (studentId: string, schoolYearId?: string) =>
     queryOptions({
       queryKey: paymentPlansKeys.student(studentId, schoolYearId),
-      queryFn: () => getStudentPaymentPlan({ data: { studentId, schoolYearId } }),
+      queryFn: async () => {
+        const res = await getStudentPaymentPlan({ data: { studentId, schoolYearId } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 2 * 60 * 1000,
       gcTime: 10 * 60 * 1000,
       enabled: !!studentId,
@@ -65,7 +80,12 @@ export const paymentPlansOptions = {
   summary: (schoolYearId?: string) =>
     queryOptions({
       queryKey: paymentPlansKeys.summary(schoolYearId),
-      queryFn: () => getPaymentPlansSummaryData({ data: { schoolYearId } }),
+      queryFn: async () => {
+        const res = await getPaymentPlansSummaryData({ data: { schoolYearId } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
     }),
@@ -73,7 +93,12 @@ export const paymentPlansOptions = {
   templateList: (filters: TemplateFilters = {}) =>
     queryOptions({
       queryKey: paymentPlansKeys.templateList(filters),
-      queryFn: () => getPaymentPlanTemplatesList({ data: filters }),
+      queryFn: async () => {
+        const res = await getPaymentPlanTemplatesList({ data: filters })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
     }),
@@ -81,7 +106,12 @@ export const paymentPlansOptions = {
   templateDetail: (id: string) =>
     queryOptions({
       queryKey: paymentPlansKeys.templateDetail(id),
-      queryFn: () => getPaymentPlanTemplate({ data: id }),
+      queryFn: async () => {
+        const res = await getPaymentPlanTemplate({ data: id })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
       enabled: !!id,
@@ -90,7 +120,12 @@ export const paymentPlansOptions = {
   defaultTemplate: (schoolYearId?: string) =>
     queryOptions({
       queryKey: paymentPlansKeys.defaultTemplate(schoolYearId),
-      queryFn: () => getDefaultTemplate({ data: { schoolYearId } }),
+      queryFn: async () => {
+        const res = await getDefaultTemplate({ data: { schoolYearId } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
     }),

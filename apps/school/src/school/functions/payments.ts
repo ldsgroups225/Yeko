@@ -1,3 +1,4 @@
+import type { ServerContext } from '../lib/server-fn'
 import {
   cancelPayment,
   createPaymentWithAllocations,
@@ -6,10 +7,10 @@ import {
   getPaymentByReceiptNumber,
   getPayments,
 } from '@repo/data-ops'
-import { createServerFn } from '@tanstack/react-start'
+import { DatabaseError } from '@repo/data-ops/errors'
 import { z } from 'zod'
 import { cancelPaymentSchema, createPaymentSchema } from '@/schemas/payment'
-import { getSchoolContext } from '../middleware/school-context'
+import { createAuthenticatedServerFn } from '../lib/server-fn'
 
 /**
  * Filters for payments queries
@@ -28,88 +29,114 @@ const paymentFiltersSchema = z.object({
 /**
  * Get payments list with pagination
  */
-export const getPaymentsList = createServerFn()
+export const getPaymentsList = createAuthenticatedServerFn()
   .inputValidator(paymentFiltersSchema.optional())
-  .handler(async ({ data: filters }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data: filters, context }) => {
+    const { school } = context as unknown as ServerContext
+    if (!school)
+      throw new DatabaseError('UNAUTHORIZED', 'No school context')
 
-    return await getPayments({
-      schoolId: context.schoolId,
+    const result = await getPayments({
+      schoolId: school.schoolId,
       ...filters,
     })
+
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Get single payment
  */
-export const getPayment = createServerFn()
+export const getPayment = createAuthenticatedServerFn()
   .inputValidator(z.string())
-  .handler(async ({ data: paymentId }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data: paymentId, context }) => {
+    const { school } = context as unknown as ServerContext
+    if (!school)
+      throw new DatabaseError('UNAUTHORIZED', 'No school context')
 
-    return await getPaymentById(paymentId)
+    const result = await getPaymentById(paymentId)
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Get payment by receipt number
  */
-export const getPaymentByReceipt = createServerFn()
+export const getPaymentByReceipt = createAuthenticatedServerFn()
   .inputValidator(z.string())
-  .handler(async ({ data: receiptNumber }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data: receiptNumber, context }) => {
+    const { school } = context as unknown as ServerContext
+    if (!school)
+      throw new DatabaseError('UNAUTHORIZED', 'No school context')
 
-    return await getPaymentByReceiptNumber(context.schoolId, receiptNumber)
+    const result = await getPaymentByReceiptNumber(school.schoolId, receiptNumber)
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Record new payment with allocations
  */
-export const recordPayment = createServerFn()
+export const recordPayment = createAuthenticatedServerFn()
   .inputValidator(createPaymentSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    const { school } = context as unknown as ServerContext
+    if (!school)
+      throw new DatabaseError('UNAUTHORIZED', 'No school context')
 
-    return await createPaymentWithAllocations({
-      schoolId: context.schoolId,
-      processedBy: context.userId,
+    const result = await createPaymentWithAllocations({
+      schoolId: school.schoolId,
+      processedBy: school.userId,
       ...data,
     })
+
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Cancel payment
  */
-export const cancelExistingPayment = createServerFn()
+export const cancelExistingPayment = createAuthenticatedServerFn()
   .inputValidator(cancelPaymentSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    const { school } = context as unknown as ServerContext
+    if (!school)
+      throw new DatabaseError('UNAUTHORIZED', 'No school context')
 
-    return await cancelPayment(data.paymentId, context.userId, data.reason)
+    const result = await cancelPayment(data.paymentId, school.userId, data.reason)
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Get cashier daily summary
  */
-export const getCashierSummary = createServerFn()
+export const getCashierSummary = createAuthenticatedServerFn()
   .inputValidator(z.object({
     date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
     cashierId: z.string().optional(),
   }))
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    const { school } = context as unknown as ServerContext
+    if (!school)
+      throw new DatabaseError('UNAUTHORIZED', 'No school context')
 
-    const cashierId = data.cashierId || context.userId
-    return await getCashierDailySummary(context.schoolId, cashierId, data.date)
+    const cashierId = data.cashierId || school.userId
+    const result = await getCashierDailySummary(school.schoolId, cashierId, data.date)
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })

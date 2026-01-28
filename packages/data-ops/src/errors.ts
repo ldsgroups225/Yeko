@@ -8,6 +8,9 @@ export type DatabaseErrorType
     | 'VALIDATION_ERROR'
     | 'INTERNAL_ERROR'
     | 'UNAUTHORIZED'
+    | 'PAYMENT_CONFLICT'
+    | 'INVALID_INSTALLMENT'
+    | 'UNBALANCED_TRANSACTION'
 
 export class DatabaseError extends Error {
   constructor(

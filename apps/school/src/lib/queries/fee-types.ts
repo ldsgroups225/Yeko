@@ -21,7 +21,12 @@ export const feeTypesOptions = {
   list: (filters: FeeTypeFilters = {}) =>
     queryOptions({
       queryKey: feeTypesKeys.list(filters),
-      queryFn: () => getFeeTypesList({ data: filters }),
+      queryFn: async () => {
+        const res = await getFeeTypesList({ data: filters })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
     }),
@@ -29,7 +34,12 @@ export const feeTypesOptions = {
   detail: (id: string) =>
     queryOptions({
       queryKey: feeTypesKeys.detail(id),
-      queryFn: () => getFeeType({ data: id }),
+      queryFn: async () => {
+        const res = await getFeeType({ data: id })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
       enabled: !!id,

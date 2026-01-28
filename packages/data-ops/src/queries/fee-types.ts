@@ -1,7 +1,10 @@
 import type { FeeCategory, FeeType, FeeTypeInsert } from '../drizzle/school-schema'
+import { databaseLogger, tapLogErr } from '@repo/logger'
 import { and, asc, eq } from 'drizzle-orm'
+import { ResultAsync } from 'neverthrow'
 import { getDb } from '../database/setup'
 import { feeTypes } from '../drizzle/school-schema'
+import { DatabaseError, dbError } from '../errors'
 
 export interface GetFeeTypesParams {
   schoolId: string
@@ -9,62 +12,88 @@ export interface GetFeeTypesParams {
   includeInactive?: boolean
 }
 
-export async function getFeeTypes(params: GetFeeTypesParams): Promise<FeeType[]> {
+export function getFeeTypes(params: GetFeeTypesParams): ResultAsync<FeeType[], DatabaseError> {
   const db = getDb()
   const { schoolId, category, includeInactive = false } = params
-  const conditions = [eq(feeTypes.schoolId, schoolId)]
-  if (category)
-    conditions.push(eq(feeTypes.category, category))
-  if (!includeInactive)
-    conditions.push(eq(feeTypes.status, 'active'))
 
-  return db.select().from(feeTypes).where(and(...conditions)).orderBy(asc(feeTypes.displayOrder), asc(feeTypes.name))
+  return ResultAsync.fromPromise(
+    (async () => {
+      const conditions = [eq(feeTypes.schoolId, schoolId)]
+      if (category)
+        conditions.push(eq(feeTypes.category, category))
+      if (!includeInactive)
+        conditions.push(eq(feeTypes.status, 'active'))
+
+      return db.select().from(feeTypes).where(and(...conditions)).orderBy(asc(feeTypes.displayOrder), asc(feeTypes.name))
+    })(),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch fee types'),
+  ).mapErr(tapLogErr(databaseLogger, { schoolId, category }))
 }
 
-export async function getFeeTypeById(feeTypeId: string): Promise<FeeType | null> {
+export function getFeeTypeById(feeTypeId: string): ResultAsync<FeeType | null, DatabaseError> {
   const db = getDb()
-  const [feeType] = await db.select().from(feeTypes).where(eq(feeTypes.id, feeTypeId)).limit(1)
-  return feeType ?? null
+  return ResultAsync.fromPromise(
+    db.select().from(feeTypes).where(eq(feeTypes.id, feeTypeId)).limit(1).then(rows => rows[0] ?? null),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch fee type by ID'),
+  ).mapErr(tapLogErr(databaseLogger, { feeTypeId }))
 }
 
-export async function getFeeTypeByCode(schoolId: string, code: string): Promise<FeeType | null> {
+export function getFeeTypeByCode(schoolId: string, code: string): ResultAsync<FeeType | null, DatabaseError> {
   const db = getDb()
-  const [feeType] = await db
-    .select()
-    .from(feeTypes)
-    .where(and(eq(feeTypes.schoolId, schoolId), eq(feeTypes.code, code)))
-    .limit(1)
-  return feeType ?? null
+  return ResultAsync.fromPromise(
+    db
+      .select()
+      .from(feeTypes)
+      .where(and(eq(feeTypes.schoolId, schoolId), eq(feeTypes.code, code)))
+      .limit(1)
+      .then(rows => rows[0] ?? null),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch fee type by code'),
+  ).mapErr(tapLogErr(databaseLogger, { schoolId, code }))
 }
 
 export type CreateFeeTypeData = Omit<FeeTypeInsert, 'id' | 'createdAt' | 'updatedAt'>
 
-export async function createFeeType(data: CreateFeeTypeData): Promise<FeeType> {
+export function createFeeType(data: CreateFeeTypeData): ResultAsync<FeeType, DatabaseError> {
   const db = getDb()
-  const [feeType] = await db.insert(feeTypes).values({ id: crypto.randomUUID(), ...data }).returning()
-  if (!feeType) {
-    throw new Error('Failed to create fee type')
-  }
-  return feeType
+  return ResultAsync.fromPromise(
+    (async () => {
+      const [feeType] = await db.insert(feeTypes).values({ id: crypto.randomUUID(), ...data }).returning()
+      if (!feeType) {
+        throw dbError('INTERNAL_ERROR', 'Failed to create fee type')
+      }
+      return feeType
+    })(),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create fee type'),
+  ).mapErr(tapLogErr(databaseLogger, { schoolId: data.schoolId, code: data.code }))
 }
 
 export type UpdateFeeTypeData = Partial<Omit<FeeTypeInsert, 'id' | 'schoolId' | 'createdAt' | 'updatedAt'>>
 
-export async function updateFeeType(feeTypeId: string, data: UpdateFeeTypeData): Promise<FeeType | undefined> {
+export function updateFeeType(feeTypeId: string, data: UpdateFeeTypeData): ResultAsync<FeeType | undefined, DatabaseError> {
   const db = getDb()
-  const [feeType] = await db
-    .update(feeTypes)
-    .set({ ...data, updatedAt: new Date() })
-    .where(eq(feeTypes.id, feeTypeId))
-    .returning()
-  return feeType
+  return ResultAsync.fromPromise(
+    (async () => {
+      const [feeType] = await db
+        .update(feeTypes)
+        .set({ ...data, updatedAt: new Date() })
+        .where(eq(feeTypes.id, feeTypeId))
+        .returning()
+      return feeType
+    })(),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to update fee type'),
+  ).mapErr(tapLogErr(databaseLogger, { feeTypeId }))
 }
 
-export async function deleteFeeType(feeTypeId: string): Promise<void> {
+export function deleteFeeType(feeTypeId: string): ResultAsync<void, DatabaseError> {
   const db = getDb()
-  await db.delete(feeTypes).where(eq(feeTypes.id, feeTypeId))
+  return ResultAsync.fromPromise(
+    (async () => {
+      await db.delete(feeTypes).where(eq(feeTypes.id, feeTypeId))
+    })(),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to delete fee type'),
+  ).mapErr(tapLogErr(databaseLogger, { feeTypeId }))
 }
 
-export async function deactivateFeeType(feeTypeId: string): Promise<FeeType | undefined> {
+export function deactivateFeeType(feeTypeId: string): ResultAsync<FeeType | undefined, DatabaseError> {
   return updateFeeType(feeTypeId, { status: 'inactive' })
 }

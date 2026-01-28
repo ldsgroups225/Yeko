@@ -1,7 +1,10 @@
 import type { Discount, DiscountInsert, DiscountType } from '../drizzle/school-schema'
+import { databaseLogger, tapLogErr } from '@repo/logger'
 import { and, asc, eq } from 'drizzle-orm'
+import { ResultAsync } from 'neverthrow'
 import { getDb } from '../database/setup'
 import { discounts } from '../drizzle/school-schema'
+import { DatabaseError, dbError } from '../errors'
 
 export interface GetDiscountsParams {
   schoolId: string
@@ -9,73 +12,102 @@ export interface GetDiscountsParams {
   includeInactive?: boolean
 }
 
-export async function getDiscounts(params: GetDiscountsParams): Promise<Discount[]> {
+export function getDiscounts(params: GetDiscountsParams): ResultAsync<Discount[], DatabaseError> {
   const db = getDb()
   const { schoolId, type, includeInactive = false } = params
-  const conditions = [eq(discounts.schoolId, schoolId)]
-  if (type)
-    conditions.push(eq(discounts.type, type))
-  if (!includeInactive)
-    conditions.push(eq(discounts.status, 'active'))
 
-  return db.select().from(discounts).where(and(...conditions)).orderBy(asc(discounts.name))
+  return ResultAsync.fromPromise(
+    (async () => {
+      const conditions = [eq(discounts.schoolId, schoolId)]
+      if (type)
+        conditions.push(eq(discounts.type, type))
+      if (!includeInactive)
+        conditions.push(eq(discounts.status, 'active'))
+
+      return db.select().from(discounts).where(and(...conditions)).orderBy(asc(discounts.name))
+    })(),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch discounts'),
+  ).mapErr(tapLogErr(databaseLogger, { schoolId, type }))
 }
 
-export async function getDiscountById(discountId: string): Promise<Discount | null> {
+export function getDiscountById(discountId: string): ResultAsync<Discount | null, DatabaseError> {
   const db = getDb()
-  const [discount] = await db.select().from(discounts).where(eq(discounts.id, discountId)).limit(1)
-  return discount ?? null
+  return ResultAsync.fromPromise(
+    db.select().from(discounts).where(eq(discounts.id, discountId)).limit(1).then(rows => rows[0] ?? null),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch discount by ID'),
+  ).mapErr(tapLogErr(databaseLogger, { discountId }))
 }
 
-export async function getDiscountByCode(schoolId: string, code: string): Promise<Discount | null> {
+export function getDiscountByCode(schoolId: string, code: string): ResultAsync<Discount | null, DatabaseError> {
   const db = getDb()
-  const [discount] = await db
-    .select()
-    .from(discounts)
-    .where(and(eq(discounts.schoolId, schoolId), eq(discounts.code, code)))
-    .limit(1)
-  return discount ?? null
+  return ResultAsync.fromPromise(
+    db
+      .select()
+      .from(discounts)
+      .where(and(eq(discounts.schoolId, schoolId), eq(discounts.code, code)))
+      .limit(1)
+      .then(rows => rows[0] ?? null),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch discount by code'),
+  ).mapErr(tapLogErr(databaseLogger, { schoolId, code }))
 }
 
-export async function getAutoApplyDiscounts(schoolId: string): Promise<Discount[]> {
+export function getAutoApplyDiscounts(schoolId: string): ResultAsync<Discount[], DatabaseError> {
   const db = getDb()
-  return db
-    .select()
-    .from(discounts)
-    .where(and(eq(discounts.schoolId, schoolId), eq(discounts.autoApply, true), eq(discounts.status, 'active')))
+  return ResultAsync.fromPromise(
+    db
+      .select()
+      .from(discounts)
+      .where(and(eq(discounts.schoolId, schoolId), eq(discounts.autoApply, true), eq(discounts.status, 'active'))),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch auto-apply discounts'),
+  ).mapErr(tapLogErr(databaseLogger, { schoolId }))
 }
 
 export type CreateDiscountData = Omit<DiscountInsert, 'id' | 'createdAt' | 'updatedAt'>
 
-export async function createDiscount(data: CreateDiscountData): Promise<Discount> {
+export function createDiscount(data: CreateDiscountData): ResultAsync<Discount, DatabaseError> {
   const db = getDb()
-  const [discount] = await db.insert(discounts).values({ id: crypto.randomUUID(), ...data }).returning()
-  if (!discount) {
-    throw new Error('Failed to create discount')
-  }
-  return discount
+  return ResultAsync.fromPromise(
+    (async () => {
+      const [discount] = await db.insert(discounts).values({ id: crypto.randomUUID(), ...data }).returning()
+      if (!discount) {
+        throw dbError('INTERNAL_ERROR', 'Failed to create discount')
+      }
+      return discount
+    })(),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create discount'),
+  ).mapErr(tapLogErr(databaseLogger, { schoolId: data.schoolId, code: data.code }))
 }
 
 export type UpdateDiscountData = Partial<Omit<DiscountInsert, 'id' | 'schoolId' | 'createdAt' | 'updatedAt'>>
 
-export async function updateDiscount(
+export function updateDiscount(
   discountId: string,
   data: UpdateDiscountData,
-): Promise<Discount | undefined> {
+): ResultAsync<Discount | undefined, DatabaseError> {
   const db = getDb()
-  const [discount] = await db
-    .update(discounts)
-    .set({ ...data, updatedAt: new Date() })
-    .where(eq(discounts.id, discountId))
-    .returning()
-  return discount
+  return ResultAsync.fromPromise(
+    (async () => {
+      const [discount] = await db
+        .update(discounts)
+        .set({ ...data, updatedAt: new Date() })
+        .where(eq(discounts.id, discountId))
+        .returning()
+      return discount
+    })(),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to update discount'),
+  ).mapErr(tapLogErr(databaseLogger, { discountId }))
 }
 
-export async function deleteDiscount(discountId: string): Promise<void> {
+export function deleteDiscount(discountId: string): ResultAsync<void, DatabaseError> {
   const db = getDb()
-  await db.delete(discounts).where(eq(discounts.id, discountId))
+  return ResultAsync.fromPromise(
+    (async () => {
+      await db.delete(discounts).where(eq(discounts.id, discountId))
+    })(),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to delete discount'),
+  ).mapErr(tapLogErr(databaseLogger, { discountId }))
 }
 
-export async function deactivateDiscount(discountId: string): Promise<Discount | undefined> {
+export function deactivateDiscount(discountId: string): ResultAsync<Discount | undefined, DatabaseError> {
   return updateDiscount(discountId, { status: 'inactive' })
 }

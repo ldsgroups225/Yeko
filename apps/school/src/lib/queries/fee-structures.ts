@@ -25,7 +25,12 @@ export const feeStructuresOptions = {
   list: (filters: FeeStructureFilters = {}) =>
     queryOptions({
       queryKey: feeStructuresKeys.list(filters),
-      queryFn: () => getFeeStructuresList({ data: filters }),
+      queryFn: async () => {
+        const res = await getFeeStructuresList({ data: filters })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
     }),
@@ -33,7 +38,12 @@ export const feeStructuresOptions = {
   withDetails: (filters: FeeStructureFilters = {}) =>
     queryOptions({
       queryKey: feeStructuresKeys.withDetails(filters),
-      queryFn: () => getFeeStructuresWithDetails({ data: filters }),
+      queryFn: async () => {
+        const res = await getFeeStructuresWithDetails({ data: filters })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
     }),
@@ -41,7 +51,12 @@ export const feeStructuresOptions = {
   detail: (id: string) =>
     queryOptions({
       queryKey: feeStructuresKeys.detail(id),
-      queryFn: () => getFeeStructure({ data: id }),
+      queryFn: async () => {
+        const res = await getFeeStructure({ data: id })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
       enabled: !!id,

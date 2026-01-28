@@ -28,7 +28,12 @@ export const studentFeesOptions = {
   list: (filters: StudentFeeFilters = {}) =>
     queryOptions({
       queryKey: studentFeesKeys.list(filters),
-      queryFn: () => getStudentFeesList({ data: filters }),
+      queryFn: async () => {
+        const res = await getStudentFeesList({ data: filters })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 2 * 60 * 1000,
       gcTime: 10 * 60 * 1000,
     }),
@@ -36,7 +41,12 @@ export const studentFeesOptions = {
   detail: (id: string) =>
     queryOptions({
       queryKey: studentFeesKeys.detail(id),
-      queryFn: () => getStudentFee({ data: id }),
+      queryFn: async () => {
+        const res = await getStudentFee({ data: id })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 2 * 60 * 1000,
       gcTime: 10 * 60 * 1000,
       enabled: !!id,
@@ -45,7 +55,12 @@ export const studentFeesOptions = {
   studentDetails: (studentId: string, schoolYearId?: string) =>
     queryOptions({
       queryKey: studentFeesKeys.studentDetails(studentId, schoolYearId),
-      queryFn: () => getStudentFeesDetails({ data: { studentId, schoolYearId } }),
+      queryFn: async () => {
+        const res = await getStudentFeesDetails({ data: { studentId, schoolYearId } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 2 * 60 * 1000,
       gcTime: 10 * 60 * 1000,
       enabled: !!studentId,
@@ -54,7 +69,12 @@ export const studentFeesOptions = {
   studentSummary: (studentId: string, schoolYearId?: string) =>
     queryOptions({
       queryKey: studentFeesKeys.studentSummary(studentId, schoolYearId),
-      queryFn: () => getStudentFeeSummaryData({ data: { studentId, schoolYearId } }),
+      queryFn: async () => {
+        const res = await getStudentFeeSummaryData({ data: { studentId, schoolYearId } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 2 * 60 * 1000,
       gcTime: 10 * 60 * 1000,
       enabled: !!studentId,
@@ -63,7 +83,12 @@ export const studentFeesOptions = {
   withBalance: (schoolYearId?: string) =>
     queryOptions({
       queryKey: studentFeesKeys.withBalance(schoolYearId),
-      queryFn: () => getStudentsWithBalance({ data: { schoolYearId } }),
+      queryFn: async () => {
+        const res = await getStudentsWithBalance({ data: { schoolYearId } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
     }),
