@@ -1,9 +1,9 @@
 import * as parentQueries from '@repo/data-ops/queries/parents'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
-import { createServerFn } from '@tanstack/react-start'
+import { DatabaseError } from '@repo/data-ops/errors'
 import { z } from 'zod'
+import { createAuthenticatedServerFn } from '../lib/server-fn'
 import { requirePermission } from '../middleware/permissions'
-import { getSchoolContext } from '../middleware/school-context'
 
 // ==================== Schemas ====================
 
@@ -28,7 +28,7 @@ const parentSchema = z.object({
   lastName: z.string().min(1, 'Last name is required').max(100).transform(val => sanitizeText(val)),
   phone: z.string().min(10, 'IconPhone is required').max(20).regex(phoneRegex, 'Format invalide. Utilisez: +2250701020304 ou 0701020304'),
   phone2: z.string().max(20).regex(phoneRegex, 'Format invalide').optional().or(z.literal('')),
-  email: z.string().email().optional().or(z.literal('')),
+  email: z.email().optional().or(z.literal('')),
   address: sanitizedString(500).optional(),
   occupation: sanitizedString(100).optional(),
   workplace: sanitizedString(200).optional(),
@@ -53,39 +53,53 @@ const parentFiltersSchema = z.object({
 
 // ==================== Server Functions ====================
 
-export const getParents = createServerFn()
+export const getParents = createAuthenticatedServerFn()
   .inputValidator(parentFiltersSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }: any) => {
+    const { school } = context
+    if (!school)
+      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    
     await requirePermission('students', 'view') // Parents access tied to students
-    return await parentQueries.getParents(context.schoolId, data as any)
+    
+    const result = await parentQueries.getParents(school.schoolId, data as any)
+    if (result.isErr()) {
+        throw result.error
+    }
+    return result.value
   })
 
-export const getParentById = createServerFn()
+export const getParentById = createAuthenticatedServerFn()
   .inputValidator(z.string())
-  .handler(async ({ data: id }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data: id, context }: any) => {
+    const { school } = context
+    if (!school)
+      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    
     await requirePermission('students', 'view')
-    return await parentQueries.getParentById(id)
+    
+    const result = await parentQueries.getParentById(id)
+    if (result.isErr()) {
+        throw result.error
+    }
+    return result.value
   })
 
-export const createParent = createServerFn()
+export const createParent = createAuthenticatedServerFn()
   .inputValidator(parentSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }: any) => {
+    const { school } = context
+    if (!school)
+      throw new DatabaseError('UNAUTHORIZED', 'No school context')
     await requirePermission('students', 'create')
 
-    const parent = await parentQueries.createParent(data)
+    const result = await parentQueries.createParent(data)
+    if (result.isErr()) throw result.error
+    const parent = result.value
 
     await createAuditLog({
-      schoolId: context.schoolId,
-      userId: context.userId,
+      schoolId: school.schoolId,
+      userId: school.userId,
       action: 'create',
       tableName: 'parents',
       recordId: parent.id,
@@ -95,24 +109,26 @@ export const createParent = createServerFn()
     return parent
   })
 
-export const updateParent = createServerFn()
+export const updateParent = createAuthenticatedServerFn()
   .inputValidator(
     z.object({
       id: z.string(),
       updates: parentSchema.partial(),
     }),
   )
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }: any) => {
+    const { school } = context
+    if (!school)
+      throw new DatabaseError('UNAUTHORIZED', 'No school context')
     await requirePermission('students', 'edit')
 
-    const parent = await parentQueries.updateParent(data.id, data.updates)
+    const result = await parentQueries.updateParent(data.id, data.updates)
+    if (result.isErr()) throw result.error
+    const parent = result.value
 
     await createAuditLog({
-      schoolId: context.schoolId,
-      userId: context.userId,
+      schoolId: school.schoolId,
+      userId: school.userId,
       action: 'update',
       tableName: 'parents',
       recordId: data.id,
@@ -122,19 +138,20 @@ export const updateParent = createServerFn()
     return parent
   })
 
-export const deleteParent = createServerFn()
+export const deleteParent = createAuthenticatedServerFn()
   .inputValidator(z.string())
-  .handler(async ({ data: id }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data: id, context }: any) => {
+    const { school } = context
+    if (!school)
+      throw new DatabaseError('UNAUTHORIZED', 'No school context')
     await requirePermission('students', 'delete')
 
-    await parentQueries.deleteParent(id)
+    const result = await parentQueries.deleteParent(id)
+    if (result.isErr()) throw result.error
 
     await createAuditLog({
-      schoolId: context.schoolId,
-      userId: context.userId,
+      schoolId: school.schoolId,
+      userId: school.userId,
       action: 'delete',
       tableName: 'parents',
       recordId: id,
@@ -143,19 +160,21 @@ export const deleteParent = createServerFn()
     return { success: true }
   })
 
-export const linkParentToStudent = createServerFn()
+export const linkParentToStudent = createAuthenticatedServerFn()
   .inputValidator(linkParentSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }: any) => {
+    const { school } = context
+    if (!school)
+      throw new DatabaseError('UNAUTHORIZED', 'No school context')
     await requirePermission('students', 'edit')
 
-    const link = await parentQueries.linkParentToStudent(data)
+    const result = await parentQueries.linkParentToStudent(data)
+    if (result.isErr()) throw result.error
+    const link = result.value
 
     await createAuditLog({
-      schoolId: context.schoolId,
-      userId: context.userId,
+      schoolId: school.schoolId,
+      userId: school.userId,
       action: 'create',
       tableName: 'student_parents',
       recordId: link!.id,
@@ -165,24 +184,25 @@ export const linkParentToStudent = createServerFn()
     return link
   })
 
-export const unlinkParentFromStudent = createServerFn()
+export const unlinkParentFromStudent = createAuthenticatedServerFn()
   .inputValidator(
     z.object({
       studentId: z.string(),
       parentId: z.string(),
     }),
   )
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }: any) => {
+    const { school } = context
+    if (!school)
+      throw new DatabaseError('UNAUTHORIZED', 'No school context')
     await requirePermission('students', 'edit')
 
-    await parentQueries.unlinkParentFromStudent(data.studentId, data.parentId)
+    const result = await parentQueries.unlinkParentFromStudent(data.studentId, data.parentId)
+    if (result.isErr()) throw result.error
 
     await createAuditLog({
-      schoolId: context.schoolId,
-      userId: context.userId,
+      schoolId: school.schoolId,
+      userId: school.userId,
       action: 'delete',
       tableName: 'student_parents',
       recordId: `${data.studentId}-${data.parentId}`,
@@ -191,32 +211,36 @@ export const unlinkParentFromStudent = createServerFn()
     return { success: true }
   })
 
-export const autoMatchParents = createServerFn().handler(async () => {
-  const context = await getSchoolContext()
-  if (!context)
-    throw new Error('No school context')
+export const autoMatchParents = createAuthenticatedServerFn().handler(async ({ context }: any) => {
+  const { school } = context
+  if (!school)
+    throw new DatabaseError('UNAUTHORIZED', 'No school context')
   await requirePermission('students', 'edit')
-  return await parentQueries.autoMatchParents(context.schoolId)
+  
+  const result = await parentQueries.autoMatchParents(school.schoolId)
+  if (result.isErr()) throw result.error
+  return result.value
 })
 
-export const sendParentInvitation = createServerFn()
+export const sendParentInvitation = createAuthenticatedServerFn()
   .inputValidator(z.string())
-  .handler(async ({ data: parentId }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data: parentId, context }: any) => {
+    const { school } = context
+    if (!school)
+      throw new DatabaseError('UNAUTHORIZED', 'No school context')
     await requirePermission('students', 'edit')
 
-    const result = await parentQueries.sendParentInvitation(parentId, context.schoolId)
+    const result = await parentQueries.sendParentInvitation(parentId, school.schoolId)
+    if (result.isErr()) throw result.error
 
     await createAuditLog({
-      schoolId: context.schoolId,
-      userId: context.userId,
+      schoolId: school.schoolId,
+      userId: school.userId,
       action: 'update',
       tableName: 'parents',
       recordId: parentId,
       newValues: { invitationStatus: 'sent' },
     })
 
-    return result
+    return result.value
   })

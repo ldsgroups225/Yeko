@@ -106,13 +106,79 @@ This phase aims to ensure that while we handle errors gracefully in the UI, we d
 - [x] Refactor `classes.ts` (server functions) to use `createAuthenticatedServerFn`.
 - [x] Enforce `schoolId` scoping for class operations.
 
-### 📍 Phase 4: User Relations (`parents.ts`)
+### 📍 Phase 4: User Relations (`parents.ts`) - **✅ COMPLETED**
 
-- [ ] Audit field naming (Check `phone` vs `phoneNumber` and `email` consistency).
-- [ ] Implement `ResultAsync` for parent-student links.
-- [ ] Refactor invitation logic to use the new error pattern.
+- [x] Audit field naming (Check `phone` vs `phone2` and `email` consistency).
+- [x] Implement `ResultAsync` for all parent-related queries and linking.
+- [x] Refactor server functions to use `createAuthenticatedServerFn` and handle `isErr()`.
+- [x] Verify strict `schoolId` scoping for parent-student associations.
+
+### 📍 Phase 5: Financial Operations & Transactions (`payments.ts`, `fee-structures.ts`)
+
+- [ ] Migrate `payments.ts`, `transactions.ts`, and `fee-structures.ts` to `ResultAsync`.
+- [ ] Implement strict precision validation in `DatabaseError` for financial data.
+- [ ] Standardize error codes for "Payment Conflict" or "Invalid Installment Plan".
+
+### 📍 Phase 6: Academic Lifecycle & Attendance (`attendance.ts`, `programs.ts`)
+
+- [ ] Refactor Student and Teacher Attendance modules to use `ResultAsync`.
+- [ ] Standardize Curriculum and Program data operations (School/Class Subjects).
+- [ ] Integrate `tapLogErr` with specific context for automated schedule validation failures.
+
+### 📍 Phase 7: Teacher Application & App Integration (`teacher-app.ts`)
+
+- [ ] Audit the critical `teacher-app.ts` module for `neverthrow` + `logger` penetration.
+- [ ] Optimize `DatabaseError` payloads for mobile-friendly consumption.
 
 ---
 
-**Current Status:** 🟢 Students Refined | 🟢 Enrollments Refined | 🟢 Logging Standardized | 🟢 Grades Refined | 🟢 Classes Refined
-**Next Targeted Action:** Start Phase 4: User Relations (Parents).
+## 🗣️ 5. Protocol for "Natural" Error Messages
+
+To elevate error handling from technical logs to user-centric feedback, we are adopting the following standards:
+
+1. **Context-Rich Codes**: Use descriptive sub-codes in `details` (e.g., `{ code: 'STUDENT_ALREADY_LINKED' }`) so the UI can provide the most relevant localized message.
+2. **Safe Message Propagation**: Ensure `DatabaseError.message` is "Safe for UI" by default, while keeping technical stack traces in `originalError` (captured only by `tapLogErr`).
+3. **Deep Penetration**: `neverthrow` should be utilized from the lowest database adapter up to the server function boundary, ensuring NO raw exceptions escape the structured lifecycle.
+
+---
+
+---
+
+## 🛠️ 6. Refactoring & Fix Workflow (Protocol)
+
+To maintain the high standards of the **Yeko Result-Oriented Framework**, all refactoring and bug fixing must follow this systematic protocol:
+
+### 🔄 The "Result-First" Refactoring Cycle
+
+1. **Identify Target**: Locate queries in `@repo/data-ops` (Queries) or server functions in `apps/school` (Functions).
+2. **Data Layer Transformation**:
+   - Change return types from `Promise<T>` to `ResultAsync<T, DatabaseError>`.
+   - Apply `.mapErr(tapLogErr(databaseLogger, { ...context }))` for automated error capture.
+3. **Type Propagation**:
+   - Run `pnpm build --filter=@repo/data-ops` to update the shared `dist` folder. This is critical for consumers (`apps/school`, `apps/teacher`) to recognize the `ResultAsync` return type.
+4. **Caller Refinement**:
+   - Update Server Functions to use `createAuthenticatedServerFn`.
+   - Directly handle `result.isErr()` and re-throw the error (the wrapper will catch and log it) or return the `result.value`.
+5. **Validation Gate**:
+   - **Typecheck**: Run `pnpm typecheck --filter=<app>` to catch "unhandled result" or "Promise mismatch" errors.
+   - **Tests**: Execute `npx vitest run packages/data-ops/src/tests/<file>.test.ts`.
+
+### 🧩 Peer Agent Collaboration
+
+I leverage specialized sub-agents from `.claude/agents/` to ensure 360-degree quality:
+
+- **Security Auditor (`04/security-auditor.md`)**: Verifies that every query enforces strict `schoolId` multi-tenant isolation.
+- **Error Detective (`04/error-detective.md`)**: Helps refine the `DatabaseError` hierarchy and ensures "Natural" error messages are truly helpful.
+- **Architect Reviewer (`04/architect-reviewer.md`)**: Ensures the `ResultAsync` pattern doesn't violate core systemic boundaries.
+- **QA Expert (`04/qa-expert.md`)**: Consulted when designing integration tests for the `data-ops` layer.
+
+### 🧪 Quality Assurance (Typechecking)
+
+- **Execution**: Typechecks are run **synchronously** after any signature change.
+- **Scope**: We prioritize `--filter=<affected-package>` to save time, followed by a full `--filter=school` before final validation.
+- **Fail-Safe**: If a `typecheck` fails, we rollback the specific chunk or fix the type narrowing immediately using `isErr()` checks.
+
+---
+
+**Current Status:** 🟢 Students | 🟢 Enrollments | 🟢 Grades | 🟢 Classes | 🟢 Parents
+**Next Targeted Action:** Start Phase 5: Financial Operations (Payments & Fees).

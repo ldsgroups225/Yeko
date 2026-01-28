@@ -17,7 +17,11 @@ function StudentParentsPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['student-parents', studentId],
-    queryFn: () => getStudentParents(studentId),
+    queryFn: async () => {
+      const result = await getStudentParents(studentId)
+      if (result.isErr()) throw result.error
+      return result.value
+    },
     enabled: !!studentId,
   })
 
