@@ -1,3 +1,4 @@
+import { DatabaseError } from '@repo/data-ops/errors'
 import { getSchoolYearsBySchool } from '@repo/data-ops/queries/school-admin/school-years'
 import { getUserSchoolsByAuthUserId } from '@repo/data-ops/queries/school-admin/users'
 import { createServerFn } from '@tanstack/react-start'
@@ -27,7 +28,7 @@ export const setSchoolContext = createServerFn()
   .handler(async ({ data: schoolId }) => {
     const authContext = await getAuthContext()
     if (!authContext) {
-      throw new Error('Unauthorized')
+      throw new DatabaseError('UNAUTHORIZED', 'Unauthorized')
     }
 
     // Validate user has access to this school
@@ -35,7 +36,7 @@ export const setSchoolContext = createServerFn()
     const hasAccess = schools.some((school: { id: string }) => school.id === schoolId)
 
     if (!hasAccess) {
-      throw new Error('Access denied to this school')
+      throw new DatabaseError('PERMISSION_DENIED', 'Access denied to this school')
     }
 
     // Set cookie
@@ -112,7 +113,7 @@ export const setSchoolYearContext = createServerFn()
   .handler(async ({ data: schoolYearId }) => {
     const schoolContext = await getSchoolContext()
     if (!schoolContext) {
-      throw new Error('No school context')
+      throw new DatabaseError('UNAUTHORIZED', 'No school context')
     }
 
     // Validate school year belongs to current school
@@ -120,7 +121,7 @@ export const setSchoolYearContext = createServerFn()
     const validYear = schoolYears.find((sy: { id: string }) => sy.id === schoolYearId)
 
     if (!validYear) {
-      throw new Error('Invalid school year for this school')
+      throw new DatabaseError('VALIDATION_ERROR', 'Invalid school year for this school')
     }
 
     // Set cookie

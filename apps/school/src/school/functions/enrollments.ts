@@ -1,3 +1,4 @@
+import type { EnrollmentStatistics, EnrollmentWithDetails } from '@repo/data-ops/queries/enrollments'
 import * as enrollmentQueries from '@repo/data-ops/queries/enrollments'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import { createServerFn } from '@tanstack/react-start'
@@ -40,176 +41,221 @@ const enrollmentFiltersSchema = z.object({
 
 // ==================== Server Functions ====================
 
-export const getEnrollments = createServerFn()
+import { DatabaseError } from '@repo/data-ops/errors'
+import { createAuthenticatedServerFn } from '../lib/server-fn'
+
+export const getEnrollments = createAuthenticatedServerFn()
   .inputValidator(enrollmentFiltersSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }: any): Promise<{ success: true; data: { data: EnrollmentWithDetails[], total: number, page: number, totalPages: number } } | { success: false; error: string }> => {
+    const { school } = context
+    if (!school)
+      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    
     await requirePermission('students', 'view')
-    return await enrollmentQueries.getEnrollments({ ...data, schoolId: context.schoolId } as any)
+
+    const result = await enrollmentQueries.getEnrollments({ ...data, schoolId: school.schoolId } as any)
+    return result.match(
+      paginatedData => ({ success: true as const, data: paginatedData }),
+      (error: any) => ({ success: false as const, error: error.message }),
+    )
   })
 
-export const getEnrollmentById = createServerFn()
+export const getEnrollmentById = createAuthenticatedServerFn()
   .inputValidator(z.string())
-  .handler(async ({ data: id }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data: id, context }: any): Promise<{ success: true; data: EnrollmentWithDetails | undefined } | { success: false; error: string }> => {
+    const { school } = context
+    if (!school)
+      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    
     await requirePermission('students', 'view')
-    return await enrollmentQueries.getEnrollmentById(id)
+
+    const result = await enrollmentQueries.getEnrollmentById(id)
+    return result.match(
+      enrollment => ({ success: true as const, data: enrollment }),
+      (error: any) => ({ success: false as const, error: error.message }),
+    )
   })
 
-export const createEnrollment = createServerFn()
+export const createEnrollment = createAuthenticatedServerFn()
   .inputValidator(enrollmentSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }: any): Promise<{ success: true; data: any } | { success: false; error: string }> => {
+    const { school } = context
+    if (!school)
+      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    
     await requirePermission('students', 'create')
 
-    const enrollment = await enrollmentQueries.createEnrollment(data)
-
-    await createAuditLog({
-      schoolId: context.schoolId,
-      userId: context.userId,
-      action: 'create',
-      tableName: 'enrollments',
-      recordId: enrollment.id,
-      newValues: data,
-    })
-
-    return enrollment
+    const result = await enrollmentQueries.createEnrollment(data)
+    return result.match(
+      async enrollment => {
+        await createAuditLog({
+          schoolId: school.schoolId,
+          userId: school.userId,
+          action: 'create',
+          tableName: 'enrollments',
+          recordId: enrollment.id,
+          newValues: data,
+        })
+        return { success: true as const, data: enrollment }
+      },
+      (error: any) => ({ success: false as const, error: error.message }),
+    )
   })
 
-export const confirmEnrollment = createServerFn()
+export const confirmEnrollment = createAuthenticatedServerFn()
   .inputValidator(z.string())
-  .handler(async ({ data: id }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data: id, context }: any): Promise<{ success: true; data: any } | { success: false; error: string }> => {
+    const { school } = context
+    if (!school)
+      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    
     await requirePermission('students', 'edit')
 
-    const enrollment = await enrollmentQueries.confirmEnrollment(id, context.userId)
-
-    await createAuditLog({
-      schoolId: context.schoolId,
-      userId: context.userId,
-      action: 'update',
-      tableName: 'enrollments',
-      recordId: id,
-      newValues: { status: 'confirmed' },
-    })
-
-    return enrollment
+    const result = await enrollmentQueries.confirmEnrollment(id, school.userId)
+    return result.match(
+      async enrollment => {
+        await createAuditLog({
+          schoolId: school.schoolId,
+          userId: school.userId,
+          action: 'update',
+          tableName: 'enrollments',
+          recordId: id,
+          newValues: { status: 'confirmed' },
+        })
+        return { success: true as const, data: enrollment }
+      },
+      (error: any) => ({ success: false as const, error: error.message }),
+    )
   })
 
-export const cancelEnrollment = createServerFn()
+export const cancelEnrollment = createAuthenticatedServerFn()
   .inputValidator(
     z.object({
       id: z.string(),
       reason: z.string().optional(),
     }),
   )
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }: any): Promise<{ success: true; data: any } | { success: false; error: string }> => {
+    const { school } = context
+    if (!school)
+      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    
     await requirePermission('students', 'edit')
 
-    const enrollment = await enrollmentQueries.cancelEnrollment(data.id, context.userId, data.reason)
-
-    await createAuditLog({
-      schoolId: context.schoolId,
-      userId: context.userId,
-      action: 'update',
-      tableName: 'enrollments',
-      recordId: data.id,
-      newValues: { status: 'cancelled', reason: data.reason },
-    })
-
-    return enrollment
+    const result = await enrollmentQueries.cancelEnrollment(data.id, school.userId, data.reason)
+    return result.match(
+      async enrollment => {
+        await createAuditLog({
+          schoolId: school.schoolId,
+          userId: school.userId,
+          action: 'update',
+          tableName: 'enrollments',
+          recordId: data.id,
+          newValues: { status: 'cancelled', reason: data.reason },
+        })
+        return { success: true as const, data: enrollment }
+      },
+      (error: any) => ({ success: false as const, error: error.message }),
+    )
   })
 
-export const deleteEnrollment = createServerFn()
+export const deleteEnrollment = createAuthenticatedServerFn()
   .inputValidator(z.string())
-  .handler(async ({ data: id }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data: id, context }: any): Promise<{ success: true } | { success: false; error: string }> => {
+    const { school } = context
+    if (!school)
+      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    
     await requirePermission('students', 'delete')
 
-    await enrollmentQueries.deleteEnrollment(id)
-
-    await createAuditLog({
-      schoolId: context.schoolId,
-      userId: context.userId,
-      action: 'delete',
-      tableName: 'enrollments',
-      recordId: id,
-    })
-
-    return { success: true }
+    const result = await enrollmentQueries.deleteEnrollment(id)
+    return result.match(
+      async () => {
+        await createAuditLog({
+          schoolId: school.schoolId,
+          userId: school.userId,
+          action: 'delete',
+          tableName: 'enrollments',
+          recordId: id,
+        })
+        return { success: true as const }
+      },
+      (error: any) => ({ success: false as const, error: error.message }),
+    )
   })
 
-export const transferStudent = createServerFn()
+export const transferStudent = createAuthenticatedServerFn()
   .inputValidator(transferSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }: any): Promise<{ success: true; data: any } | { success: false; error: string }> => {
+    const { school } = context
+    if (!school)
+      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    
     await requirePermission('students', 'edit')
 
-    const enrollment = await enrollmentQueries.transferStudent(data, context.userId)
-
-    await createAuditLog({
-      schoolId: context.schoolId,
-      userId: context.userId,
-      action: 'update',
-      tableName: 'enrollments',
-      recordId: data.enrollmentId,
-      newValues: { transferred: true, newClassId: data.newClassId, reason: data.reason },
-    })
-
-    return enrollment
+    const result = await enrollmentQueries.transferStudent(data, school.userId)
+    return result.match(
+      async enrollment => {
+        await createAuditLog({
+          schoolId: school.schoolId,
+          userId: school.userId,
+          action: 'update',
+          tableName: 'enrollments',
+          recordId: data.enrollmentId,
+          newValues: { transferred: true, newClassId: data.newClassId, reason: data.reason },
+        })
+        return { success: true as const, data: enrollment }
+      },
+      (error: any) => ({ success: false as const, error: error.message }),
+    )
   })
 
-export const bulkReEnroll = createServerFn()
+export const bulkReEnroll = createAuthenticatedServerFn()
   .inputValidator(reEnrollSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }: any): Promise<{ success: true; data: any } | { success: false; error: string }> => {
+    const { school } = context
+    if (!school)
+      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    
     await requirePermission('students', 'create')
 
-    const results = await enrollmentQueries.bulkReEnroll(context.schoolId, data.fromYearId, data.toYearId, {
+    const result = await enrollmentQueries.bulkReEnroll(school.schoolId, data.fromYearId, data.toYearId, {
       gradeMapping: data.gradeMapping,
       autoConfirm: data.autoConfirm,
     })
-
-    await createAuditLog({
-      schoolId: context.schoolId,
-      userId: context.userId,
-      action: 'create',
-      tableName: 'enrollments',
-      recordId: 'bulk-reenroll',
-      newValues: {
-        fromYearId: data.fromYearId,
-        toYearId: data.toYearId,
-        success: results.success,
-        errors: results.errors.length,
+    return result.match(
+      async results => {
+        await createAuditLog({
+          schoolId: school.schoolId,
+          userId: school.userId,
+          action: 'create',
+          tableName: 'enrollments',
+          recordId: 'bulk-reenroll',
+          newValues: {
+            fromYearId: data.fromYearId,
+            toYearId: data.toYearId,
+            success: results.success,
+            errors: results.errors.length,
+          },
+        })
+        return { success: true as const, data: results }
       },
-    })
-
-    return results
+      (error: any) => ({ success: false as const, error: error.message }),
+    )
   })
 
-export const getEnrollmentStatistics = createServerFn()
+export const getEnrollmentStatistics = createAuthenticatedServerFn()
   .inputValidator(z.string())
-  .handler(async ({ data: schoolYearId }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data: schoolYearId, context }: any): Promise<{ success: true; data: EnrollmentStatistics } | { success: false; error: string }> => {
+    const { school } = context
+    if (!school)
+      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    
     await requirePermission('students', 'view')
-    return await enrollmentQueries.getEnrollmentStatistics(context.schoolId, schoolYearId)
+
+    const result = await enrollmentQueries.getEnrollmentStatistics(school.schoolId, schoolYearId)
+    return result.match(
+      data => ({ success: true as const, data }),
+      (error: any) => ({ success: false as const, error: error.message }),
+    )
   })

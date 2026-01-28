@@ -27,7 +27,12 @@ export const enrollmentsOptions = {
   list: (filters: EnrollmentFilters = {}) =>
     queryOptions({
       queryKey: enrollmentsKeys.list(filters),
-      queryFn: () => getEnrollments({ data: filters }),
+      queryFn: async () => {
+        const result = await getEnrollments({ data: filters })
+        if (result.success)
+          return result.data
+        throw new Error(result.error)
+      },
       staleTime: 5 * 60 * 1000, // 5 minutes
       gcTime: 30 * 60 * 1000, // 30 minutes
     }),
@@ -35,7 +40,12 @@ export const enrollmentsOptions = {
   detail: (id: string) =>
     queryOptions({
       queryKey: enrollmentsKeys.detail(id),
-      queryFn: () => getEnrollmentById({ data: id }),
+      queryFn: async () => {
+        const result = await getEnrollmentById({ data: id })
+        if (result.success)
+          return result.data
+        throw new Error(result.error)
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
       enabled: !!id,
@@ -44,7 +54,12 @@ export const enrollmentsOptions = {
   statistics: (schoolYearId: string) =>
     queryOptions({
       queryKey: enrollmentsKeys.statistics(schoolYearId),
-      queryFn: () => getEnrollmentStatistics({ data: schoolYearId }),
+      queryFn: async () => {
+        const result = await getEnrollmentStatistics({ data: schoolYearId })
+        if (result.success)
+          return result.data
+        throw new Error(result.error)
+      },
       staleTime: 10 * 60 * 1000, // 10 minutes
       gcTime: 30 * 60 * 1000,
       enabled: !!schoolYearId,

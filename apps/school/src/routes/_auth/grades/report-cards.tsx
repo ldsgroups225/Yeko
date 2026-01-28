@@ -160,12 +160,12 @@ function ReportCardsPage() {
       pdfUrl: rc.pdfUrl,
     }))
 
-  const mappedStudents = enrollmentsData?.data.map(e => ({
+  const mappedStudents = (enrollmentsData?.success ? enrollmentsData.data.data : []).map(e => ({
     id: e.student.id,
     name: `${e.student.lastName} ${e.student.firstName}`,
-    matricule: e.student.matricule,
+    matricule: e.student.matricule || undefined,
     hasReportCard: reportCards?.some(rc => rc.studentId === e.student.id),
-  })) || []
+  }))
 
   const currentClass = classes?.find(c => c.class.id === selectedClassId)
   const currentTerm = terms?.find(t => t.id === selectedTermId)

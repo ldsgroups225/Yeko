@@ -1,6 +1,7 @@
 import { getAuth } from '@repo/data-ops/auth/server'
 import { createMiddleware } from '@tanstack/react-start'
 import { getRequest } from '@tanstack/react-start/server'
+import { DatabaseError } from '@repo/data-ops/errors'
 
 /**
  * Get auth context from the current request
@@ -31,7 +32,7 @@ export const protectedFunctionMiddleware = createMiddleware({
 }).server(async ({ next }) => {
   const context = await getAuthContext()
   if (!context) {
-    throw new Error('Unauthorized')
+    throw new DatabaseError('UNAUTHORIZED', 'Unauthorized')
   }
   return next({ context })
 })

@@ -64,7 +64,8 @@ interface StudentDetailProps {
 export function StudentDetail({ studentId }: StudentDetailProps) {
   const t = useTranslations()
   const queryClient = useQueryClient()
-  const { data, isLoading } = useQuery(studentsOptions.detail(studentId))
+  const { data, isLoading } = useQuery(studentsOptions.detail(studentId)) as any
+
   const [parentDialogOpen, setParentDialogOpen] = useState(false)
   const [enrollmentDialogOpen, setEnrollmentDialogOpen] = useState(false)
   const [transferDialogOpen, setTransferDialogOpen] = useState(false)
@@ -72,7 +73,8 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
 
   const updatePhotoMutation = useMutation({
     mutationFn: (photoUrl: string) =>
-      updateStudent({ data: { id: studentId, updates: { photoUrl } } }),
+      updateStudent({ data: { id: studentId, data: { photoUrl } } }),
+
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: studentsKeys.detail(studentId),
@@ -450,7 +452,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
               {parents && parents.length > 0
                 ? (
                     <div className="grid gap-4 md:grid-cols-2">
-                      {parents.map((item, idx: number) => (
+                      {parents.map((item: any, idx: number) => (
                         <motion.div
                           key={item.parent.id}
                           initial={{ opacity: 0, scale: 0.95 }}
@@ -567,7 +569,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
             <CardContent className="p-6">
               <EnrollmentTimeline
                 enrollments={
-                  enrollmentHistory?.map(item => ({
+                  enrollmentHistory?.map((item: any) => ({
                     ...item,
                     enrollment: {
                       ...item.enrollment,

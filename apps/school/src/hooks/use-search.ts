@@ -21,7 +21,8 @@ export function useSearch() {
           page: 1,
         },
       })
-      return res.data
+      if (!res.success) return []
+      return res.data.data
     },
     enabled: !!schoolId && debouncedQuery.length >= 2,
     staleTime: 60 * 1000,

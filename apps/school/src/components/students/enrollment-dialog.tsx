@@ -104,13 +104,18 @@ export function EnrollmentDialog({
   const enrollMutation = useMutation({
     mutationFn: (data: EnrollmentFormData) =>
       createEnrollment({ data: { ...data, studentId } }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: studentsKeys.detail(studentId),
-      })
-      toast.success(t.students.enrollmentSuccess())
-      onOpenChange(false)
-      form.reset()
+    onSuccess: (result) => {
+      if (result.success) {
+        queryClient.invalidateQueries({
+          queryKey: studentsKeys.detail(studentId),
+        })
+        toast.success(t.students.enrollmentSuccess())
+        onOpenChange(false)
+        form.reset()
+      }
+      else {
+        toast.error(result.error)
+      }
     },
     onError: (err: Error) => {
       toast.error(err.message)

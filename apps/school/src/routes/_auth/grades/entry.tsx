@@ -93,11 +93,12 @@ function GradeEntryPage() {
   const effectiveTeacherId = selectedClassSubject?.teacher?.id || currentTeacher?.id || ''
 
   // Transform enrolled students to the format expected by GradeEntryTable
+  // Transform enrolled students to the format expected by GradeEntryTable
   const students = enrollmentsData?.data?.map(e => ({
     id: e.student.id,
     firstName: e.student.firstName,
     lastName: e.student.lastName,
-    matricule: e.student.matricule,
+    matricule: e.student.matricule || undefined,
   })) ?? []
 
   // Reset subject when class changes

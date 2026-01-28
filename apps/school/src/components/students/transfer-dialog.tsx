@@ -91,14 +91,19 @@ export function TransferDialog({
           effectiveDate: data.effectiveDate,
         },
       }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: studentsKeys.detail(studentId),
-      })
-      queryClient.invalidateQueries({ queryKey: studentsKeys.all })
-      toast.success(t.students.transferSuccess())
-      onOpenChange(false)
-      form.reset()
+    onSuccess: (result) => {
+      if (result.success) {
+        queryClient.invalidateQueries({
+          queryKey: studentsKeys.detail(studentId),
+        })
+        queryClient.invalidateQueries({ queryKey: studentsKeys.all })
+        toast.success(t.students.transferSuccess())
+        onOpenChange(false)
+        form.reset()
+      }
+      else {
+        toast.error(result.error)
+      }
     },
     onError: (err: Error) => {
       toast.error(err.message)

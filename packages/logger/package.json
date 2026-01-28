@@ -39,7 +39,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@logtape/logtape": "catalog:"
+    "@logtape/logtape": "catalog:",
+    "neverthrow": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@workspace/typescript-config": "workspace:*",

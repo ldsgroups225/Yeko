@@ -39,6 +39,10 @@
       "types": "./dist/src/zod-schema/*.d.ts",
       "default": "./dist/src/zod-schema/*.js"
     },
+    "./errors": {
+      "types": "./dist/src/errors.d.ts",
+      "default": "./dist/src/errors.js"
+    },
     "./queries/*": {
       "types": "./dist/src/queries/*.d.ts",
       "default": "./dist/src/queries/*.js"
@@ -76,11 +80,13 @@
     "@planetscale/database": "catalog:",
     "@polar-sh/better-auth": "catalog:",
     "@polar-sh/sdk": "catalog:",
+    "@repo/logger": "workspace:*",
     "@types/pg": "catalog:",
     "aws4fetch": "catalog:",
     "better-auth": "catalog:",
     "better-sqlite3": "catalog:",
     "drizzle-orm": "catalog:",
+    "neverthrow": "catalog:",
     "pg": "catalog:",
     "resend": "catalog:",
     "zod": "catalog:"

@@ -83,6 +83,13 @@ export {
   structuredFormatter,
 } from './utils/formatters'
 
+export {
+  orLog,
+  orLogAsync,
+  safeParse,
+  tapLogErr,
+} from './utils/result'
+
 /**
  * Environment detection utility
  */

@@ -38,52 +38,57 @@ export function exportSubjectsToExcel(subjects: Subject[]) {
   URL.revokeObjectURL(url)
 }
 
-export async function importSubjectsFromExcel(file: File): Promise<Partial<Subject>[]> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
+import { ResultAsync } from 'neverthrow'
 
-    reader.onload = async (e) => {
-      try {
-        const data = e.target?.result
-        if (!data) {
-          reject(new Error('Impossible de lire le fichier'))
-          return
+// ... existing imports ...
+
+export function importSubjectsFromExcel(file: File): ResultAsync<Partial<Subject>[], Error> {
+  return ResultAsync.fromPromise(
+    new Promise<Partial<Subject>[]>((resolve, reject) => {
+      const reader = new FileReader()
+
+      reader.onload = async (e) => {
+        try {
+          const data = e.target?.result
+          if (!data) {
+            return reject(new Error('Impossible de lire le fichier'))
+          }
+
+          const XLSX = await import('xlsx')
+          const workbook = XLSX.read(data, { type: 'binary' })
+          const firstSheetName = workbook.SheetNames[0]
+
+          if (!firstSheetName) {
+            return reject(new Error('Le fichier Excel ne contient aucune feuille'))
+          }
+
+          const firstSheet = workbook.Sheets[firstSheetName]
+          if (!firstSheet) {
+            return reject(new Error('Impossible de lire la première feuille'))
+          }
+
+          const jsonData = XLSX.utils.sheet_to_json(firstSheet)
+
+          const subjects: Partial<Subject>[] = (jsonData as Record<string, unknown>[]).map(row => ({
+            name: (row.Nom || row.name) as string,
+            shortName: (row['Nom Court'] || row.shortName || null) as string | null,
+            category: (row.Catégorie || row.category || 'Autre') as SubjectCategory,
+          }))
+
+          resolve(subjects)
         }
-
-        const XLSX = await import('xlsx')
-        const workbook = XLSX.read(data, { type: 'binary' })
-        const firstSheetName = workbook.SheetNames[0]
-
-        if (!firstSheetName) {
-          reject(new Error('Le fichier Excel ne contient aucune feuille'))
-          return
+        catch (error) {
+          reject(error)
         }
-
-        const firstSheet = workbook.Sheets[firstSheetName]
-        if (!firstSheet) {
-          reject(new Error('Impossible de lire la première feuille'))
-          return
-        }
-
-        const jsonData = XLSX.utils.sheet_to_json(firstSheet)
-
-        const subjects: Partial<Subject>[] = (jsonData as Record<string, unknown>[]).map(row => ({
-          name: (row.Nom || row.name) as string,
-          shortName: (row['Nom Court'] || row.shortName || null) as string | null,
-          category: (row.Catégorie || row.category || 'Autre') as SubjectCategory,
-        }))
-
-        resolve(subjects)
       }
-      catch (error) {
-        reject(error)
-      }
-    }
 
-    reader.onerror = () => reject(new Error('Erreur lors de la lecture du fichier'))
-    reader.readAsBinaryString(file)
-  })
+      reader.onerror = () => reject(new Error('Erreur lors de la lecture du fichier'))
+      reader.readAsBinaryString(file)
+    }),
+    err => err instanceof Error ? err : new Error(String(err)),
+  )
 }
+
 
 // ===== GRADES EXPORT/IMPORT =====
 
