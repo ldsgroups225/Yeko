@@ -2,7 +2,7 @@ import type { InvitationStatus, Parent, ParentInsert, Relationship } from '../dr
 import crypto from 'node:crypto'
 import { databaseLogger, tapLogErr } from '@repo/logger'
 import { and, eq, ilike, isNull, or, sql } from 'drizzle-orm'
-import { err, ok, ResultAsync } from 'neverthrow'
+import { ResultAsync } from 'neverthrow'
 import { getDb } from '../database/setup'
 import { parents, studentParents, students, users } from '../drizzle/school-schema'
 import { DatabaseError } from '../errors'
@@ -38,13 +38,61 @@ export interface LinkParentInput {
   notes?: string
 }
 
+export interface ParentWithChildrenCount extends Parent {
+  childrenCount: number
+  hasUser: boolean
+}
+
+export interface PaginatedParents {
+  data: ParentWithChildrenCount[]
+  total: number
+  page: number
+  totalPages: number
+}
+
+export interface ParentChildren {
+  student: typeof students.$inferSelect
+  relationship: Relationship | null
+  isPrimary: boolean | null
+  canPickup: boolean | null
+  receiveNotifications: boolean | null
+}
+
+export interface ParentWithDetails extends Parent {
+  user: typeof users.$inferSelect | null
+  children: ParentChildren[]
+}
+
+export interface StudentParentDetail {
+  parent: typeof parents.$inferSelect
+  relationship: Relationship | null
+  isPrimary: boolean | null
+}
+
+export interface AutoMatchResult {
+  matched: number
+  created: number
+  suggestions: Array<{
+    studentId: string
+    studentName: string
+    phone: string
+    existingParent?: typeof parents.$inferSelect
+  }>
+}
+
+export interface InvitationSendResult {
+  parent: typeof parents.$inferSelect
+  token: string
+  emailSent: boolean
+}
+
 // ==================== Queries ====================
 
 export function getParents(
   schoolId: string,
   filters: ParentFilters,
 ): ResultAsync<
-  { data: any[], total: number, page: number, totalPages: number },
+  PaginatedParents,
   DatabaseError
 > {
   const { search, invitationStatus, hasChildren, page = 1, limit = 20 } = filters
@@ -52,7 +100,9 @@ export function getParents(
   return ResultAsync.fromPromise(
     (async () => {
       const db = getDb()
-      const conditions = []
+      const offset = (page - 1) * limit
+
+      const conditions = [eq(students.schoolId, schoolId)]
 
       if (search) {
         conditions.push(
@@ -60,8 +110,7 @@ export function getParents(
             ilike(parents.firstName, `%${search}%`),
             ilike(parents.lastName, `%${search}%`),
             ilike(parents.phone, `%${search}%`),
-            ilike(parents.email, `%${search}%`),
-          ),
+          )!,
         )
       }
 
@@ -72,21 +121,28 @@ export function getParents(
       const query = db
         .select({
           parent: parents,
-          childrenCount: sql<number>`COUNT(DISTINCT ${studentParents.studentId})`.as('children_count'),
-          hasUser: sql<boolean>`${parents.userId} IS NOT NULL`.as('has_user'),
+          childrenCount: sql<number>`COUNT(DISTINCT ${studentParents.id})`,
+          hasUser: sql<boolean>`CASE WHEN ${parents.userId} IS NOT NULL THEN true ELSE false END`,
         })
         .from(parents)
         .leftJoin(studentParents, eq(studentParents.parentId, parents.id))
         .leftJoin(students, eq(studentParents.studentId, students.id))
-        .where(and(eq(students.schoolId, schoolId), ...conditions))
+        .where(and(...conditions))
         .groupBy(parents.id)
 
-      const offset = (page - 1) * limit
-      let data = await query.limit(limit).offset(offset)
+      const data = await query.limit(limit).offset(offset)
 
       // Filter by children count in application layer if needed
+      // Note: filtering after pagination is not ideal but children_count is aggregated
+      // Ideally this should be a HAVING clause but checking children existence is easier this way
+      let processedData = data.map(d => ({
+        ...d.parent,
+        childrenCount: Number(d.childrenCount),
+        hasUser: Boolean(d.hasUser),
+      }))
+
       if (hasChildren !== undefined) {
-        data = data.filter((p: { childrenCount: number }) => (hasChildren ? p.childrenCount > 0 : p.childrenCount === 0))
+        processedData = processedData.filter(p => (hasChildren ? p.childrenCount > 0 : p.childrenCount === 0))
       }
 
       // Get total count
@@ -98,7 +154,7 @@ export function getParents(
         .where(eq(students.schoolId, schoolId))
 
       return {
-        data,
+        data: processedData,
         total: Number(countResult[0]?.count || 0),
         page,
         totalPages: Math.ceil(Number(countResult[0]?.count || 0) / limit),
@@ -108,7 +164,7 @@ export function getParents(
   ).mapErr(tapLogErr(databaseLogger, { schoolId, action: 'get_parents' }))
 }
 
-export function getParentById(id: string): ResultAsync<any, DatabaseError> {
+export function getParentById(id: string): ResultAsync<ParentWithDetails, DatabaseError> {
   return ResultAsync.fromPromise(
     (async () => {
       const db = getDb()
@@ -137,13 +193,13 @@ export function getParentById(id: string): ResultAsync<any, DatabaseError> {
         .innerJoin(students, eq(studentParents.studentId, students.id))
         .where(eq(studentParents.parentId, id))
 
-      return { ...parent, children }
+      return { ...parent.parent, user: parent.user, children }
     })(),
     e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to fetch parent'),
   ).mapErr(tapLogErr(databaseLogger, { parentId: id, action: 'get_parent_by_id' }))
 }
 
-export function getStudentParents(studentId: string): ResultAsync<any[], DatabaseError> {
+export function getStudentParents(studentId: string): ResultAsync<StudentParentDetail[], DatabaseError> {
   return ResultAsync.fromPromise(
     (async () => {
       const db = getDb()
@@ -190,7 +246,7 @@ export function findParentByPhone(phone: string): ResultAsync<Parent | null, Dat
   )
 }
 
-export function autoMatchParents(schoolId: string): ResultAsync<any, DatabaseError> {
+export function autoMatchParents(schoolId: string): ResultAsync<AutoMatchResult, DatabaseError> {
   return ResultAsync.fromPromise(
     (async () => {
       const db = getDb()
@@ -268,7 +324,10 @@ export function createParent(data: CreateParentInput): ResultAsync<Parent, Datab
 
       return parent
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to create parent'),
+    (e) => {
+      console.error('CREATE PARENT ERROR:', e)
+      return DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to create parent')
+    },
   ).mapErr(tapLogErr(databaseLogger, { action: 'create_parent' }))
 }
 
@@ -314,7 +373,7 @@ export function deleteParent(id: string): ResultAsync<void, DatabaseError> {
 
 // ==================== Parent-Student Linking ====================
 
-export function linkParentToStudent(data: LinkParentInput): ResultAsync<any, DatabaseError> {
+export function linkParentToStudent(data: LinkParentInput): ResultAsync<typeof studentParents.$inferSelect, DatabaseError> {
   return ResultAsync.fromPromise(
     (async () => {
       const db = getDb()
@@ -366,7 +425,7 @@ export function updateParentLink(
   studentId: string,
   parentId: string,
   data: Partial<Omit<LinkParentInput, 'studentId' | 'parentId'>>,
-): ResultAsync<any, DatabaseError> {
+): ResultAsync<typeof studentParents.$inferSelect, DatabaseError> {
   return ResultAsync.fromPromise(
     (async () => {
       const db = getDb()
@@ -397,7 +456,7 @@ function hashToken(token: string): string {
   return crypto.createHash('sha256').update(token).digest('hex')
 }
 
-export function sendParentInvitation(parentId: string, schoolId: string): ResultAsync<any, DatabaseError> {
+export function sendParentInvitation(parentId: string, schoolId: string): ResultAsync<InvitationSendResult, DatabaseError> {
   return ResultAsync.fromPromise(
     (async () => {
       const db = getDb()
@@ -494,7 +553,7 @@ export function sendParentInvitation(parentId: string, schoolId: string): Result
   ).mapErr(tapLogErr(databaseLogger, { parentId, schoolId, action: 'send_parent_invitation' }))
 }
 
-export function acceptParentInvitation(token: string, userId: string): ResultAsync<any, DatabaseError> {
+export function acceptParentInvitation(token: string, userId: string): ResultAsync<typeof parents.$inferSelect, DatabaseError> {
   return ResultAsync.fromPromise(
     (async () => {
       const db = getDb()
@@ -525,6 +584,10 @@ export function acceptParentInvitation(token: string, userId: string): ResultAsy
         .where(eq(parents.id, parent.id))
         .returning()
 
+      if (!updated) {
+        throw new DatabaseError('INTERNAL_ERROR', 'Failed to update parent')
+      }
+
       return updated
     })(),
     e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to accept invitation'),
@@ -533,60 +596,61 @@ export function acceptParentInvitation(token: string, userId: string): ResultAsy
 
 // ==================== Bulk Operations ====================
 
-export async function bulkImportParents(
+export function bulkImportParents(
   parentsData: Array<CreateParentInput & { studentMatricule?: string, relationship?: Relationship }>,
-): Promise<{ success: number, errors: Array<{ row: number, error: string }> }> {
+): ResultAsync<{ success: number, errors: Array<{ row: number, error: string }> }, DatabaseError> {
   const db = getDb()
-  const results = { success: 0, errors: [] as Array<{ row: number, error: string }> }
+  return ResultAsync.fromPromise((async () => {
+    const results = { success: 0, errors: [] as Array<{ row: number, error: string }> }
 
-  for (let i = 0; i < parentsData.length; i++) {
-    try {
-      const item = parentsData[i]
-      if (!item)
-        continue
-      const { studentMatricule, relationship, ...parentData } = item
+    for (let i = 0; i < parentsData.length; i++) {
+      try {
+        const item = parentsData[i]
+        if (!item)
+          continue
+        const { studentMatricule, relationship, ...parentData } = item
 
-      // Check if parent exists
-      const phoneResult = await findParentByPhone(parentData.phone)
+        // Check if parent exists
+        const phoneResult = await findParentByPhone(parentData.phone)
 
-      let parent
-      if (phoneResult.isOk() && phoneResult.value) {
-        parent = phoneResult.value
-      }
-      else {
-        const createResult = await createParent(parentData)
-        if (createResult.isErr())
-          throw createResult.error
-        parent = createResult.value
-      }
+        let parent
+        if (phoneResult.isOk() && phoneResult.value) {
+          parent = phoneResult.value
+        }
+        else {
+          const createResult = await createParent(parentData)
+          if (createResult.isErr())
+            throw createResult.error
+          parent = createResult.value
+        }
 
-      // Link to student if matricule provided
-      if (studentMatricule && parent) {
-        const [student] = await db.select().from(students).where(eq(students.matricule, studentMatricule))
+        // Link to student if matricule provided
+        if (studentMatricule && parent) {
+          const [student] = await db.select().from(students).where(eq(students.matricule, studentMatricule))
 
-        if (student) {
-          const linkResult = await linkParentToStudent({
-            studentId: student.id,
-            parentId: parent.id,
-            relationship: relationship || 'guardian',
-          })
-          // Ignore conflict if link already exists
-          if (linkResult.isErr() && linkResult.error.type !== 'CONFLICT') {
-            throw linkResult.error
+          if (student) {
+            const linkResult = await linkParentToStudent({
+              studentId: student.id,
+              parentId: parent.id,
+              relationship: relationship || 'guardian',
+            })
+            // Ignore conflict if link already exists
+            if (linkResult.isErr() && linkResult.error.type !== 'CONFLICT') {
+              throw linkResult.error
+            }
           }
         }
+
+        results.success++
       }
-
-      results.success++
+      catch (error) {
+        results.errors.push({
+          row: i + 1,
+          error: error instanceof Error ? error.message : 'Unknown error',
+        })
+      }
     }
-    catch (error: any) {
-      results.errors.push({
-        row: i + 1,
-        // Helper to extract message from DatabaseError or generic Error
-        error: error?.message || 'Unknown error',
-      })
-    }
-  }
 
-  return results
+    return results
+  })(), e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to bulk import parents')).mapErr(tapLogErr(databaseLogger, { parentsCount: parentsData.length, action: 'bulk_import_parents' }))
 }

@@ -1,3 +1,4 @@
+import type { ServerContext } from '../lib/server-fn'
 import {
   bulkUpsertTeacherAttendance,
   countTeacherLatenessInMonth,
@@ -8,143 +9,164 @@ import {
   getTeacherPunctualityReport,
   upsertTeacherAttendance,
 } from '@repo/data-ops'
-import { createServerFn } from '@tanstack/react-start'
-import { z } from 'zod'
 
+import { z } from 'zod'
 import { bulkTeacherAttendanceSchema, teacherAttendanceSchema } from '@/schemas/teacher-attendance'
-import { getSchoolContext } from '../middleware/school-context'
+import { createAuthenticatedServerFn } from '../lib/server-fn'
 
 /**
  * Get daily teacher attendance for a school
  */
-export const getDailyAttendance = createServerFn()
+export const getDailyAttendance = createAuthenticatedServerFn()
   .inputValidator(z.object({
     date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   }))
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context: unknownContext }) => {
+    const context = unknownContext as unknown as ServerContext
+    if (!context.school)
+      return { success: false as const, error: 'No school context' }
 
-    return getDailyTeacherAttendance(context.schoolId, data.date)
+    return getDailyTeacherAttendance(context.school.schoolId, data.date).match(
+      result => ({ success: true as const, data: result }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Get teacher attendance for a date range
  */
-export const getAttendanceRange = createServerFn()
+export const getAttendanceRange = createAuthenticatedServerFn()
   .inputValidator(z.object({
     startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
     endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
     teacherId: z.string().optional(),
     status: z.enum(['present', 'late', 'absent', 'excused', 'on_leave']).optional(),
   }))
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context: unknownContext }) => {
+    const context = unknownContext as unknown as ServerContext
+    if (!context.school)
+      return { success: false as const, error: 'No school context' }
 
     return getTeacherAttendanceRange({
-      schoolId: context.schoolId,
+      schoolId: context.school.schoolId,
       ...data,
-    })
+    }).match(
+      result => ({ success: true as const, data: result }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Record single teacher attendance
  */
-export const recordAttendance = createServerFn()
+export const recordAttendance = createAuthenticatedServerFn()
   .inputValidator(teacherAttendanceSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context: unknownContext }) => {
+    const context = unknownContext as unknown as ServerContext
+    if (!context.school)
+      return { success: false as const, error: 'No school context' }
 
     // Get school settings for expected arrival time
-    const settings = await getAttendanceSettings(context.schoolId)
-
-    const result = await upsertTeacherAttendance({
-      ...data,
-      schoolId: context.schoolId,
-      recordedBy: context.userId,
-      expectedArrival: settings.teacherExpectedArrival ?? '07:30',
-    })
-
-    // IconCheck for repeated lateness alert
-    if (data.status === 'late') {
-      const now = new Date()
-      const lateCount = await countTeacherLatenessInMonth(
-        data.teacherId,
-        now.getFullYear(),
-        now.getMonth() + 1,
-      )
-
-      if (lateCount >= (settings.teacherLatenessAlertCount ?? 3)) {
-        return { ...result, alertTriggered: true, lateCount }
-      }
+    const settingsResult = await getAttendanceSettings(context.school.schoolId)
+    if (settingsResult.isErr()) {
+      return { success: false as const, error: settingsResult.error.message }
     }
+    const settings = settingsResult.value
 
-    return { ...result, alertTriggered: false }
+    return upsertTeacherAttendance({
+      ...data,
+      schoolId: context.school.schoolId,
+      recordedBy: context.auth.userId,
+      expectedArrival: (settings as any)?.teacherExpectedArrival ?? '07:30',
+    }).match(
+      async (result) => {
+        // IconCheck for repeated lateness alert
+        if (data.status === 'late') {
+          const now = new Date()
+          const lateCountResult = await countTeacherLatenessInMonth(
+            data.teacherId,
+            now.getFullYear(),
+            now.getMonth() + 1,
+          )
+
+          if (lateCountResult.isOk() && lateCountResult.value >= ((settings as any)?.teacherLatenessAlertCount ?? 3)) {
+            return { success: true as const, data: { ...result, alertTriggered: true, lateCount: lateCountResult.value } }
+          }
+        }
+        return { success: true as const, data: { ...result, alertTriggered: false } }
+      },
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Bulk record teacher attendance
  */
-export const bulkRecordAttendance = createServerFn()
+export const bulkRecordAttendance = createAuthenticatedServerFn()
   .inputValidator(bulkTeacherAttendanceSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context: unknownContext }) => {
+    const context = unknownContext as unknown as ServerContext
+    if (!context.school)
+      return { success: false as const, error: 'No school context' }
 
     // Get school settings
-    const settings = await getAttendanceSettings(context.schoolId)
+    const settingsResult = await getAttendanceSettings(context.school.schoolId)
+    if (settingsResult.isErr()) {
+      return { success: false as const, error: settingsResult.error.message }
+    }
+    const settings = settingsResult.value
 
-    const results = await bulkUpsertTeacherAttendance({
-      schoolId: context.schoolId,
+    return bulkUpsertTeacherAttendance({
+      schoolId: context.school.schoolId,
       date: data.date,
       entries: data.entries,
-      recordedBy: context.userId,
-      expectedArrival: settings.teacherExpectedArrival ?? '07:30',
-    })
-
-    return {
-      success: true,
-      count: results.length,
-      data: results,
-    }
+      recordedBy: context.auth.userId,
+      expectedArrival: (settings as any)?.teacherExpectedArrival ?? '07:30',
+    }).match(
+      result => ({
+        success: true as const,
+        count: result.length,
+        data: result,
+      }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Get teacher punctuality report
  */
-export const getPunctualityReport = createServerFn()
+export const getPunctualityReport = createAuthenticatedServerFn()
   .inputValidator(z.object({
     startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
     endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
     teacherId: z.string().optional(),
   }))
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context: unknownContext }) => {
+    const context = unknownContext as unknown as ServerContext
+    if (!context.school)
+      return { success: false as const, error: 'No school context' }
 
     return getTeacherPunctualityReport({
-      schoolId: context.schoolId,
+      schoolId: context.school.schoolId,
       ...data,
-    })
+    }).match(
+      result => ({ success: true as const, data: result }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Delete teacher attendance record
  */
-export const removeAttendance = createServerFn()
+export const removeAttendance = createAuthenticatedServerFn()
   .inputValidator(z.object({ id: z.string() }))
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context: unknownContext }) => {
+    const context = unknownContext as unknown as ServerContext
+    if (!context.school)
+      return { success: false as const, error: 'No school context' }
 
-    await deleteTeacherAttendance(data.id)
-    return { success: true }
+    return deleteTeacherAttendance(data.id, context.school.schoolId).match(
+      () => ({ success: true as const, data: { success: true } }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })

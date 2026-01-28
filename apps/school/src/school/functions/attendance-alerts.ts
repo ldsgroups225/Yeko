@@ -1,3 +1,4 @@
+import type { ServerContext } from '../lib/server-fn'
 import {
   acknowledgeAlert as acknowledgeAlertQuery,
   dismissAlert as dismissAlertQuery,
@@ -5,102 +6,120 @@ import {
   getAlerts as getAlertsQuery,
   resolveAlert as resolveAlertQuery,
 } from '@repo/data-ops'
-import { createServerFn } from '@tanstack/react-start'
-import { z } from 'zod'
 
-import { getSchoolContext } from '../middleware/school-context'
+import { z } from 'zod'
+import { createAuthenticatedServerFn } from '../lib/server-fn'
 
 /**
  * Get active alerts for the school
  */
-export const getActiveAlerts = createServerFn()
+export const getActiveAlerts = createAuthenticatedServerFn()
   .inputValidator(z.object({
     alertType: z.string().optional(),
   }))
-  .handler(async () => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context: unknownContext }) => {
+    const context = unknownContext as unknown as ServerContext
+    if (!context.school)
+      return { success: false as const, error: 'No school context' }
 
-    const alerts = await getActiveAlertsQuery(context.schoolId)
-    return alerts.map(a => ({
-      ...a,
-      alert: { ...a.alert, data: a.alert.data as Record<string, any> | null },
-    }))
+    return getActiveAlertsQuery(context.school.schoolId).match(
+      alerts => ({
+        success: true as const,
+        data: alerts.map(a => ({
+          ...a,
+          alert: { ...a.alert, data: a.alert.data as Record<string, any> | null },
+        })),
+      }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Get all alerts with filters
  */
-export const getAlerts = createServerFn()
+export const getAlerts = createAuthenticatedServerFn()
   .inputValidator(z.object({
     status: z.enum(['active', 'acknowledged', 'resolved', 'dismissed']).optional(),
     alertType: z.enum(['teacher_repeated_lateness', 'teacher_absence_streak', 'student_chronic_absence', 'student_attendance_drop', 'class_low_attendance']).optional(),
     page: z.number().default(1),
     pageSize: z.number().default(20),
   }))
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context: unknownContext }) => {
+    const context = unknownContext as unknown as ServerContext
+    if (!context.school)
+      return { success: false as const, error: 'No school context' }
 
-    const result = await getAlertsQuery({
-      schoolId: context.schoolId,
+    return getAlertsQuery({
+      schoolId: context.school.schoolId,
       ...data,
-    })
-    return {
-      ...result,
-      data: result.data.map(alert => ({
-        ...alert,
-        data: alert.data as Record<string, any> | null,
-      })),
-    }
+    }).match(
+      result => ({
+        success: true as const,
+        data: {
+          ...result,
+          data: result.data.map(alert => ({
+            ...alert,
+            data: alert.data as Record<string, any> | null,
+          })),
+        },
+      }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Acknowledge an alert
  */
-export const acknowledgeAlert = createServerFn()
+export const acknowledgeAlert = createAuthenticatedServerFn()
   .inputValidator(z.object({ id: z.string() }))
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context: unknownContext }) => {
+    const context = unknownContext as unknown as ServerContext
+    if (!context.school)
+      return { success: false as const, error: 'No school context' }
 
-    const alert = await acknowledgeAlertQuery(data.id, context.userId)
-    if (!alert)
-      return undefined
-    return { ...alert, data: alert.data as Record<string, any> | null }
+    return acknowledgeAlertQuery(data.id, context.auth.userId, context.school.schoolId).match(
+      alert => ({
+        success: true as const,
+        data: alert ? { ...alert, data: alert.data as Record<string, any> | null } : undefined,
+      }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Dismiss an alert
  */
-export const dismissAlert = createServerFn()
+export const dismissAlert = createAuthenticatedServerFn()
   .inputValidator(z.object({ id: z.string() }))
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context: unknownContext }) => {
+    const context = unknownContext as unknown as ServerContext
+    if (!context.school)
+      return { success: false as const, error: 'No school context' }
 
-    const alert = await dismissAlertQuery(data.id, context.userId)
-    if (!alert)
-      return undefined
-    return { ...alert, data: alert.data as Record<string, any> | null }
+    return dismissAlertQuery(data.id, context.auth.userId, context.school.schoolId).match(
+      alert => ({
+        success: true as const,
+        data: alert ? { ...alert, data: alert.data as Record<string, any> | null } : undefined,
+      }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Resolve an alert
  */
-export const resolveAlert = createServerFn()
+export const resolveAlert = createAuthenticatedServerFn()
   .inputValidator(z.object({ id: z.string() }))
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context: unknownContext }) => {
+    const context = unknownContext as unknown as ServerContext
+    if (!context.school)
+      return { success: false as const, error: 'No school context' }
 
-    const alert = await resolveAlertQuery(data.id)
-    if (!alert)
-      return undefined
-    return { ...alert, data: alert.data as Record<string, any> | null }
+    return resolveAlertQuery(data.id, context.school.schoolId).match(
+      alert => ({
+        success: true as const,
+        data: alert ? { ...alert, data: alert.data as Record<string, any> | null } : undefined,
+      }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })

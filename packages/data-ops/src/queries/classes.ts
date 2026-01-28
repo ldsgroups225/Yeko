@@ -160,7 +160,11 @@ export function createClass(schoolId: string, data: ClassInsert) {
 
       // Validate classroom availability
       if (data.classroomId) {
-        const availability = await checkClassroomAvailability(data.classroomId, data.schoolYearId)
+        const availabilityResult = await checkClassroomAvailability(data.classroomId, data.schoolYearId)
+        if (availabilityResult.isErr()) {
+          throw availabilityResult.error
+        }
+        const availability = availabilityResult.value
         if (!availability.available) {
           throw dbError('VALIDATION_ERROR', `Classroom is already assigned to ${availability.assignedTo}`)
         }

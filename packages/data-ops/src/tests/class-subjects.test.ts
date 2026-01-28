@@ -36,13 +36,13 @@ describe('class subjects queries', () => {
     testClassIds = []
 
     // Create test school
-    const school = await createSchool({
+    const school = (await createSchool({
       name: 'Test School for Class Subjects',
       code: `TSCS-${Date.now()}`,
       email: 'class-subjects@test.com',
       phone: '+237123456789',
       status: 'active',
-    })
+    }))._unsafeUnwrap()
     testSchoolId = school.id
 
     // Note: In a real test environment, we would create or use existing
@@ -53,18 +53,14 @@ describe('class subjects queries', () => {
     testTeacherId = 'test-teacher-id'
 
     // Create test class
-    const result = await createClass(testSchoolId, {
+    const testClass = (await createClass(testSchoolId, {
       id: nanoid(),
       schoolId: testSchoolId,
       schoolYearId: testSchoolYearId,
       gradeId: testGradeId,
       section: `CS-${Date.now()}`,
       status: 'active',
-    })
-
-    if (result.isErr())
-      throw result.error
-    const testClass = result.value
+    }))._unsafeUnwrap()
 
     testClassId = testClass!.id
     testClassIds.push(testClassId)
@@ -72,31 +68,31 @@ describe('class subjects queries', () => {
 
   describe('getClassSubjects', () => {
     test('should return class subjects with filters', async () => {
-      const result = await getClassSubjects({ classId: testClassId })
+      const result = (await getClassSubjects({ classId: testClassId }))._unsafeUnwrap()
 
       expect(result).toBeDefined()
       expect(Array.isArray(result)).toBe(true)
     })
 
     test('should filter by school', async () => {
-      const result = await getClassSubjects({ schoolId: testSchoolId })
+      const result = (await getClassSubjects({ schoolId: testSchoolId }))._unsafeUnwrap()
 
       expect(result).toBeDefined()
       expect(Array.isArray(result)).toBe(true)
     })
 
     test('should filter by school year', async () => {
-      const result = await getClassSubjects({
+      const result = (await getClassSubjects({
         schoolId: testSchoolId,
         schoolYearId: testSchoolYearId,
-      })
+      }))._unsafeUnwrap()
 
       expect(result).toBeDefined()
       expect(Array.isArray(result)).toBe(true)
     })
 
     test('should include teacher information when assigned', async () => {
-      const result = await getClassSubjects({ classId: testClassId })
+      const result = (await getClassSubjects({ classId: testClassId }))._unsafeUnwrap()
 
       // Structure check - each result should have expected shape
       if (result.length > 0) {
@@ -110,14 +106,14 @@ describe('class subjects queries', () => {
 
   describe('getAssignmentMatrix', () => {
     test('should return assignment matrix for school year', async () => {
-      const result = await getAssignmentMatrix(testSchoolId, testSchoolYearId)
+      const result = (await getAssignmentMatrix(testSchoolId, testSchoolYearId))._unsafeUnwrap()
 
       expect(result).toBeDefined()
       expect(Array.isArray(result)).toBe(true)
     })
 
     test('should include class and subject information', async () => {
-      const result = await getAssignmentMatrix(testSchoolId, testSchoolYearId)
+      const result = (await getAssignmentMatrix(testSchoolId, testSchoolYearId))._unsafeUnwrap()
 
       if (result.length > 0) {
         expect(result[0]).toHaveProperty('classId')
@@ -128,7 +124,7 @@ describe('class subjects queries', () => {
     })
 
     test('should include teacher assignments', async () => {
-      const result = await getAssignmentMatrix(testSchoolId, testSchoolYearId)
+      const result = (await getAssignmentMatrix(testSchoolId, testSchoolYearId))._unsafeUnwrap()
 
       if (result.length > 0) {
         expect(result[0]).toHaveProperty('teacherId')
@@ -137,7 +133,7 @@ describe('class subjects queries', () => {
     })
 
     test('should order by grade and section', async () => {
-      const result = await getAssignmentMatrix(testSchoolId, testSchoolYearId)
+      const result = (await getAssignmentMatrix(testSchoolId, testSchoolYearId))._unsafeUnwrap()
 
       expect(result).toBeDefined()
       // Results should be ordered - verify structure exists
@@ -153,9 +149,7 @@ describe('class subjects queries', () => {
       // Using a teacher ID that doesn't have the subject qualification
       const unqualifiedTeacherId = 'unqualified-teacher-id'
 
-      await expect(
-        assignTeacherToClassSubject(testClassId, testSubjectId, unqualifiedTeacherId),
-      ).rejects.toThrow('Teacher is not qualified to teach this subject')
+      expect((await assignTeacherToClassSubject(testClassId, testSubjectId, unqualifiedTeacherId)).isErr()).toBe(true)
     })
 
     // Note: Test for assigning qualified teacher requires:
@@ -166,7 +160,7 @@ describe('class subjects queries', () => {
 
   describe('bulkAssignTeacher', () => {
     test('should handle empty assignments array', async () => {
-      const result = await bulkAssignTeacher([])
+      const result = (await bulkAssignTeacher([]))._unsafeUnwrap()
 
       expect(result).toBeDefined()
       expect(Array.isArray(result)).toBe(true)
@@ -176,15 +170,13 @@ describe('class subjects queries', () => {
     test('should reject if any teacher is unqualified', async () => {
       const unqualifiedTeacherId = 'unqualified-teacher-id'
 
-      await expect(
-        bulkAssignTeacher([
-          {
-            classId: testClassId,
-            subjectId: testSubjectId,
-            teacherId: unqualifiedTeacherId,
-          },
-        ]),
-      ).rejects.toThrow('Teacher not qualified')
+      expect((await bulkAssignTeacher([
+        {
+          classId: testClassId,
+          subjectId: testSubjectId,
+          teacherId: unqualifiedTeacherId,
+        },
+      ])).isErr()).toBe(true)
     })
 
     // Note: Full transaction and rollback tests require qualified teachers
@@ -192,10 +184,10 @@ describe('class subjects queries', () => {
 
   describe('removeTeacherFromClassSubject', () => {
     test('should handle non-existent assignment gracefully', async () => {
-      const result = await removeTeacherFromClassSubject(
+      const result = (await removeTeacherFromClassSubject(
         'non-existent-class-id',
         'non-existent-subject-id',
-      )
+      ))._unsafeUnwrap()
 
       // Should return undefined when no matching record exists
       expect(result).toBeUndefined()
@@ -204,7 +196,7 @@ describe('class subjects queries', () => {
 
   describe('detectTeacherConflicts', () => {
     test('should return empty array for teacher with no assignments', async () => {
-      const result = await detectTeacherConflicts('non-existent-teacher-id', testSchoolYearId)
+      const result = (await detectTeacherConflicts('non-existent-teacher-id', testSchoolYearId))._unsafeUnwrap()
 
       expect(result).toBeDefined()
       expect(Array.isArray(result)).toBe(true)
@@ -213,7 +205,7 @@ describe('class subjects queries', () => {
 
     test('should return empty for teacher under 30 hours', async () => {
       // A teacher with few or no assignments should not be flagged
-      const result = await detectTeacherConflicts(testTeacherId, testSchoolYearId)
+      const result = (await detectTeacherConflicts(testTeacherId, testSchoolYearId))._unsafeUnwrap()
 
       expect(result).toBeDefined()
       expect(Array.isArray(result)).toBe(true)
@@ -231,17 +223,14 @@ describe('class subjects queries', () => {
 
     beforeEach(async () => {
       // Create a source class
-      const result = await createClass(testSchoolId, {
+      const sourceClass = (await createClass(testSchoolId, {
         id: nanoid(),
         schoolId: testSchoolId,
         schoolYearId: testSchoolYearId,
         gradeId: testGradeId,
         section: `Source-${Date.now()}`,
         status: 'active',
-      })
-      if (result.isErr())
-        throw result.error
-      const sourceClass = result.value
+      }))._unsafeUnwrap()
 
       sourceClassId = sourceClass!.id
       testClassIds.push(sourceClassId)
@@ -251,7 +240,7 @@ describe('class subjects queries', () => {
     })
 
     test('should return empty result if source has no subjects', async () => {
-      const result = await copyClassSubjects(sourceClassId, testClassId)
+      const result = (await copyClassSubjects(sourceClassId, testClassId))._unsafeUnwrap()
       expect(result).toStrictEqual([])
     })
 

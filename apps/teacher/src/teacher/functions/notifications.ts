@@ -12,12 +12,20 @@ export const getTeacherNotifications = createServerFn()
     }),
   )
   .handler(async ({ data }) => {
-    const notifications = await getTeacherNotificationsQuery({
+    const notificationsResult = await getTeacherNotificationsQuery({
       teacherId: data.teacherId,
       unreadOnly: data.isRead === false,
       limit: data.limit,
     })
 
+    if (notificationsResult.isErr()) {
+      return {
+        notifications: [],
+        unreadCount: 0,
+      }
+    }
+
+    const notifications = notificationsResult.value
     const unreadCount = notifications.filter(n => !n.isRead).length // Approximate if not paginated fully
 
     return {

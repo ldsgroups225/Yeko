@@ -19,7 +19,8 @@ function StudentParentsPage() {
     queryKey: ['student-parents', studentId],
     queryFn: async () => {
       const result = await getStudentParents(studentId)
-      if (result.isErr()) throw result.error
+      if (result.isErr())
+        throw result.error
       return result.value
     },
     enabled: !!studentId,
@@ -37,7 +38,18 @@ function StudentParentsPage() {
         ? (
             <div className="space-y-4">
               {data.map(({ parent, relationship, isPrimary }) => (
-                <ParentCard key={parent.id} parent={{ ...parent, relationship, isPrimary, preferredContact: null, isVerified: false }} />
+                <ParentCard
+                  key={parent.id}
+                  parent={{
+                    ...parent,
+                    relationship: relationship ?? '',
+                    isPrimary: isPrimary ?? false,
+                    preferredContact: null,
+                    isVerified: false,
+                    phone: parent.phone ?? null,
+                    email: parent.email ?? null,
+                  }}
+                />
               ))}
             </div>
           )

@@ -2,14 +2,12 @@ import type { EnrollmentStatistics, EnrollmentWithDetails } from '@repo/data-ops
 import { DatabaseError } from '@repo/data-ops/errors'
 import * as enrollmentQueries from '@repo/data-ops/queries/enrollments'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
-import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 import { createAuthenticatedServerFn } from '../lib/server-fn'
 
 // ==================== Server Functions ====================
 
 import { requirePermission } from '../middleware/permissions'
-import { getSchoolContext } from '../middleware/school-context'
 
 // ==================== Schemas ====================
 

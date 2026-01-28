@@ -16,6 +16,9 @@ import {
   updateCoefficientTemplate,
 } from '../queries/coefficients'
 import { createSchoolYearTemplate } from '../queries/programs'
+import { createSchoolYear } from '../queries/school-admin/school-years'
+import { createSchool } from '../queries/schools'
+import './setup'
 
 describe('coefficient queries', () => {
   let testYearId: string
@@ -25,39 +28,39 @@ describe('coefficient queries', () => {
   let testTrackId: string
 
   beforeEach(async () => {
-    const track = await createTrack({
+    const track = (await createTrack({
       name: `Test Track ${nanoid()}`,
       code: `TTC-${nanoid()}`,
       educationLevelId: 1,
-    })
+    }))._unsafeUnwrap()
     testTrackId = track.id
 
-    const year = await createSchoolYearTemplate({
+    const year = (await createSchoolYearTemplate({
       name: `Test Year ${nanoid()}`,
       isActive: true,
-    })
+    }))._unsafeUnwrap()
     testYearId = year.id
 
-    const subject = await createSubject({
+    const subject = (await createSubject({
       name: `Test Subject ${nanoid()}`,
       shortName: `TS-${nanoid().slice(0, 5)}`,
       category: 'Scientifique',
-    })
+    }))._unsafeUnwrap()
     testSubjectId = subject.id
 
-    const grade = await createGrade({
+    const grade = (await createGrade({
       name: `Test Grade ${nanoid()}`,
       code: `TGC-${nanoid()}`,
       order: 1,
       trackId: track.id,
-    })
+    }))._unsafeUnwrap()
     testGradeId = grade.id
 
-    const serie = await createSerie({
+    const serie = (await createSerie({
       name: `Test Series ${nanoid()}`,
       code: `TS-${nanoid()}`,
       trackId: track.id,
-    })
+    }))._unsafeUnwrap()
     testSeriesId = serie.id
   })
 
@@ -78,13 +81,13 @@ describe('coefficient queries', () => {
 
   describe('cRUD Operations', () => {
     test('should create a coefficient template', async () => {
-      const coefficient = await createCoefficientTemplate({
+      const coefficient = (await createCoefficientTemplate({
         weight: 5,
         schoolYearTemplateId: testYearId,
         subjectId: testSubjectId,
         gradeId: testGradeId,
         seriesId: testSeriesId,
-      })
+      }))._unsafeUnwrap()
 
       expect(coefficient).toBeDefined()
       expect(coefficient.weight).toBe(5)
@@ -95,13 +98,13 @@ describe('coefficient queries', () => {
     })
 
     test('should create a coefficient without series (general coefficient)', async () => {
-      const coefficient = await createCoefficientTemplate({
+      const coefficient = (await createCoefficientTemplate({
         weight: 3,
         schoolYearTemplateId: testYearId,
         subjectId: testSubjectId,
         gradeId: testGradeId,
         seriesId: null,
-      })
+      }))._unsafeUnwrap()
 
       expect(coefficient).toBeDefined()
       expect(coefficient.weight).toBe(3)
@@ -109,15 +112,15 @@ describe('coefficient queries', () => {
     })
 
     test('should get coefficient template by id', async () => {
-      const created = await createCoefficientTemplate({
+      const created = (await createCoefficientTemplate({
         weight: 4,
         schoolYearTemplateId: testYearId,
         subjectId: testSubjectId,
         gradeId: testGradeId,
         seriesId: testSeriesId,
-      })
+      }))._unsafeUnwrap()
 
-      const fetched = await getCoefficientTemplateById(created.id)
+      const fetched = (await getCoefficientTemplateById(created.id))._unsafeUnwrap()
 
       expect(fetched).toBeDefined()
       expect(fetched?.id).toBe(created.id)
@@ -128,34 +131,34 @@ describe('coefficient queries', () => {
     })
 
     test('should update a coefficient template', async () => {
-      const created = await createCoefficientTemplate({
+      const created = (await createCoefficientTemplate({
         weight: 5,
         schoolYearTemplateId: testYearId,
         subjectId: testSubjectId,
         gradeId: testGradeId,
         seriesId: testSeriesId,
-      })
+      }))._unsafeUnwrap()
 
-      const updated = await updateCoefficientTemplate(created.id, {
+      const updated = (await updateCoefficientTemplate(created.id, {
         weight: 7,
-      })
+      }))._unsafeUnwrap()
 
       expect(updated.weight).toBe(7)
       expect(updated.id).toBe(created.id)
     })
 
     test('should delete a coefficient template', async () => {
-      const created = await createCoefficientTemplate({
+      const created = (await createCoefficientTemplate({
         weight: 5,
         schoolYearTemplateId: testYearId,
         subjectId: testSubjectId,
         gradeId: testGradeId,
         seriesId: testSeriesId,
-      })
+      }))._unsafeUnwrap()
 
       await deleteCoefficientTemplate(created.id)
 
-      const fetched = await getCoefficientTemplateById(created.id)
+      const fetched = (await getCoefficientTemplateById(created.id))._unsafeUnwrap()
       expect(fetched).toBeNull()
     })
   })
@@ -170,9 +173,9 @@ describe('coefficient queries', () => {
         seriesId: testSeriesId,
       })
 
-      const result = await getCoefficientTemplates({
+      const result = (await getCoefficientTemplates({
         schoolYearTemplateId: testYearId,
-      })
+      }))._unsafeUnwrap()
 
       expect(result.coefficients.length).toBeGreaterThan(0)
       expect(result.coefficients[0]?.schoolYearTemplateId).toBe(testYearId)
@@ -187,9 +190,9 @@ describe('coefficient queries', () => {
         seriesId: testSeriesId,
       })
 
-      const result = await getCoefficientTemplates({
+      const result = (await getCoefficientTemplates({
         gradeId: testGradeId,
-      })
+      }))._unsafeUnwrap()
 
       expect(result.coefficients.length).toBeGreaterThan(0)
       expect(result.coefficients[0]?.gradeId).toBe(testGradeId)
@@ -204,9 +207,9 @@ describe('coefficient queries', () => {
         seriesId: testSeriesId,
       })
 
-      const result = await getCoefficientTemplates({
+      const result = (await getCoefficientTemplates({
         seriesId: testSeriesId,
-      })
+      }))._unsafeUnwrap()
 
       expect(result.coefficients.length).toBeGreaterThan(0)
       expect(result.coefficients[0]?.seriesId).toBe(testSeriesId)
@@ -221,9 +224,9 @@ describe('coefficient queries', () => {
         seriesId: testSeriesId,
       })
 
-      const result = await getCoefficientTemplates({
+      const result = (await getCoefficientTemplates({
         subjectId: testSubjectId,
-      })
+      }))._unsafeUnwrap()
 
       expect(result.coefficients.length).toBeGreaterThan(0)
       expect(result.coefficients[0]?.subjectId).toBe(testSubjectId)
@@ -238,12 +241,12 @@ describe('coefficient queries', () => {
         seriesId: testSeriesId,
       })
 
-      const result = await getCoefficientTemplates({
+      const result = (await getCoefficientTemplates({
         schoolYearTemplateId: testYearId,
         gradeId: testGradeId,
         seriesId: testSeriesId,
         subjectId: testSubjectId,
-      })
+      }))._unsafeUnwrap()
 
       expect(result.coefficients.length).toBeGreaterThan(0)
       expect(result.coefficients[0]?.schoolYearTemplateId).toBe(testYearId)
@@ -264,10 +267,10 @@ describe('coefficient queries', () => {
         })
       }
 
-      const page1 = await getCoefficientTemplates({
+      const page1 = (await getCoefficientTemplates({
         page: 1,
         limit: 2,
-      })
+      }))._unsafeUnwrap()
 
       expect(page1.coefficients.length).toBeLessThanOrEqual(2)
       expect(page1.pagination.page).toBe(1)
@@ -294,7 +297,7 @@ describe('coefficient queries', () => {
         },
       ]
 
-      const created = await bulkCreateCoefficients(coefficients)
+      const created = (await bulkCreateCoefficients(coefficients))._unsafeUnwrap()
 
       expect(created).toHaveLength(2)
       expect(created[0]?.weight).toBe(5)
@@ -302,39 +305,39 @@ describe('coefficient queries', () => {
     })
 
     test('should bulk update coefficients', async () => {
-      const coef1 = await createCoefficientTemplate({
+      const coef1 = (await createCoefficientTemplate({
         weight: 5,
         schoolYearTemplateId: testYearId,
         subjectId: testSubjectId,
         gradeId: testGradeId,
         seriesId: testSeriesId,
-      })
+      }))._unsafeUnwrap()
 
-      const coef2 = await createCoefficientTemplate({
+      const coef2 = (await createCoefficientTemplate({
         weight: 3,
         schoolYearTemplateId: testYearId,
         subjectId: testSubjectId,
         gradeId: testGradeId,
         seriesId: null,
-      })
+      }))._unsafeUnwrap()
 
       await bulkUpdateCoefficients([
         { id: coef1.id, weight: 7 },
         { id: coef2.id, weight: 4 },
       ])
 
-      const updated1 = await getCoefficientTemplateById(coef1.id)
-      const updated2 = await getCoefficientTemplateById(coef2.id)
+      const updated1 = (await getCoefficientTemplateById(coef1.id))._unsafeUnwrap()
+      const updated2 = (await getCoefficientTemplateById(coef2.id))._unsafeUnwrap()
 
       expect(updated1?.weight).toBe(7)
       expect(updated2?.weight).toBe(4)
     })
 
     test('should handle empty bulk operations', async () => {
-      const created = await bulkCreateCoefficients([])
+      const created = (await bulkCreateCoefficients([]))._unsafeUnwrap()
       expect(created).toHaveLength(0)
 
-      await expect(bulkUpdateCoefficients([])).resolves.not.toThrow()
+      await expect(bulkUpdateCoefficients([]).then(r => r._unsafeUnwrap())).resolves.not.toThrow()
     })
   })
 
@@ -358,37 +361,37 @@ describe('coefficient queries', () => {
       })
 
       // Create target year
-      const targetYear = await createSchoolYearTemplate({
+      const targetYear = (await createSchoolYearTemplate({
         name: `Target Year ${Date.now()}`,
         isActive: false,
-      })
+      }))._unsafeUnwrap()
 
       // Copy coefficients
-      const copied = await copyCoefficientTemplates(testYearId, targetYear.id)
+      const copied = (await copyCoefficientTemplates(testYearId, targetYear.id))._unsafeUnwrap()
 
       expect(copied).toHaveLength(2)
       expect(copied[0]?.schoolYearTemplateId).toBe(targetYear.id)
       expect(copied[1]?.schoolYearTemplateId).toBe(targetYear.id)
 
       // Verify original coefficients still exist
-      const original = await getCoefficientTemplates({
+      const original = (await getCoefficientTemplates({
         schoolYearTemplateId: testYearId,
-      })
+      }))._unsafeUnwrap()
       expect(original.coefficients.length).toBeGreaterThanOrEqual(2)
     })
 
     test('should return empty array when copying from year with no coefficients', async () => {
-      const emptyYear = await createSchoolYearTemplate({
+      const emptyYear = (await createSchoolYearTemplate({
         name: `Empty Year ${Date.now()}`,
         isActive: false,
-      })
+      }))._unsafeUnwrap()
 
-      const targetYear = await createSchoolYearTemplate({
+      const targetYear = (await createSchoolYearTemplate({
         name: `Target Year ${Date.now()}`,
         isActive: false,
-      })
+      }))._unsafeUnwrap()
 
-      const copied = await copyCoefficientTemplates(emptyYear.id, targetYear.id)
+      const copied = (await copyCoefficientTemplates(emptyYear.id, targetYear.id))._unsafeUnwrap()
 
       expect(copied).toHaveLength(0)
     })
@@ -396,7 +399,7 @@ describe('coefficient queries', () => {
 
   describe('statistics', () => {
     test('should get coefficient stats', async () => {
-      const statsBefore = await getCoefficientStats()
+      const statsBefore = (await getCoefficientStats())._unsafeUnwrap()
       const totalBefore = statsBefore.total
 
       await createCoefficientTemplate({
@@ -407,7 +410,7 @@ describe('coefficient queries', () => {
         seriesId: testSeriesId,
       })
 
-      const statsAfter = await getCoefficientStats()
+      const statsAfter = (await getCoefficientStats())._unsafeUnwrap()
 
       expect(statsAfter.total).toBe(totalBefore + 1)
     })
@@ -415,15 +418,15 @@ describe('coefficient queries', () => {
 
   describe('data Integrity', () => {
     test('should include all relations when fetching coefficient', async () => {
-      const created = await createCoefficientTemplate({
+      const created = (await createCoefficientTemplate({
         weight: 5,
         schoolYearTemplateId: testYearId,
         subjectId: testSubjectId,
         gradeId: testGradeId,
         seriesId: testSeriesId,
-      })
+      }))._unsafeUnwrap()
 
-      const fetched = await getCoefficientTemplateById(created.id)
+      const fetched = (await getCoefficientTemplateById(created.id))._unsafeUnwrap()
 
       expect(fetched?.schoolYearTemplate).toBeDefined()
       expect(fetched?.schoolYearTemplate?.name).toBeDefined()
@@ -436,28 +439,28 @@ describe('coefficient queries', () => {
     })
 
     test('should handle null series correctly', async () => {
-      const created = await createCoefficientTemplate({
+      const created = (await createCoefficientTemplate({
         weight: 5,
         schoolYearTemplateId: testYearId,
         subjectId: testSubjectId,
         gradeId: testGradeId,
         seriesId: null,
-      })
+      }))._unsafeUnwrap()
 
-      const fetched = await getCoefficientTemplateById(created.id)
+      const fetched = (await getCoefficientTemplateById(created.id))._unsafeUnwrap()
 
       expect(fetched?.seriesId).toBeNull()
       expect(fetched?.series).toBeNull()
     })
 
     test('should maintain timestamps', async () => {
-      const created = await createCoefficientTemplate({
+      const created = (await createCoefficientTemplate({
         weight: 5,
         schoolYearTemplateId: testYearId,
         subjectId: testSubjectId,
         gradeId: testGradeId,
         seriesId: testSeriesId,
-      })
+      }))._unsafeUnwrap()
 
       expect(created.createdAt).toBeDefined()
       expect(created.updatedAt).toBeDefined()
@@ -467,9 +470,9 @@ describe('coefficient queries', () => {
       // Wait a bit
       await new Promise(resolve => setTimeout(resolve, 100))
 
-      const updated = await updateCoefficientTemplate(created.id, {
+      const updated = (await updateCoefficientTemplate(created.id, {
         weight: 7,
-      })
+      }))._unsafeUnwrap()
 
       expect(updated.updatedAt.getTime()).toBeGreaterThan(createdAt.getTime())
     })
@@ -478,9 +481,13 @@ describe('coefficient queries', () => {
       // This covers lines 188-189 in coefficients.ts
       const nonExistentId = 'non-existent-coefficient-id'
 
-      await expect(updateCoefficientTemplate(nonExistentId, { weight: 5 })).rejects.toThrow(
-        `Coefficient template with id ${nonExistentId} not found`,
-      )
+      const result = await updateCoefficientTemplate(nonExistentId, { weight: 5 })
+      if (result.isErr()) {
+        expect((result.error.originalError as Error).message).toContain(`Coefficient template with id ${nonExistentId} not found`)
+      }
+      else {
+        expect.fail('Should have returned an error')
+      }
     })
   })
 })

@@ -29,12 +29,12 @@ export const getTeacherDashboard = createServerFn()
 
     // Fetch all dashboard data in parallel
     const [
-      todaySchedule,
-      activeSession,
-      pendingGrades,
-      unreadMessages,
-      recentMessages,
-      notifications,
+      todayScheduleResult,
+      activeSessionResult,
+      pendingGradesResult,
+      unreadMessagesResult,
+      recentMessagesResult,
+      notificationsResult,
     ] = await Promise.all([
       getTeacherDaySchedule({
         teacherId: data.teacherId,
@@ -50,6 +50,14 @@ export const getTeacherDashboard = createServerFn()
       getTeacherRecentMessages({ teacherId: data.teacherId, limit: 5 }),
       getTeacherNotificationsQuery({ teacherId: data.teacherId, unreadOnly: true, limit: 10 }),
     ])
+
+    // Handle errors and extract values
+    const todaySchedule = todayScheduleResult.isErr() ? [] : todayScheduleResult.value
+    const activeSession = activeSessionResult.isErr() ? null : activeSessionResult.value
+    const pendingGrades = pendingGradesResult.isErr() ? 0 : pendingGradesResult.value
+    const unreadMessages = unreadMessagesResult.isErr() ? 0 : unreadMessagesResult.value
+    const recentMessages = recentMessagesResult.isErr() ? [] : recentMessagesResult.value
+    const notifications = notificationsResult.isErr() ? [] : notificationsResult.value
 
     // Format schedule with class names
     const formattedSchedule = todaySchedule.map((session: typeof todaySchedule[number]) => ({
@@ -158,10 +166,16 @@ export const getTeacherSchedule = createServerFn()
     }),
   )
   .handler(async ({ data }) => {
-    const schedule = await getTeacherWeeklySchedule({
+    const scheduleResult = await getTeacherWeeklySchedule({
       teacherId: data.teacherId,
       schoolYearId: data.schoolYearId,
     })
+
+    if (scheduleResult.isErr()) {
+      return { sessions: [] }
+    }
+
+    const schedule = scheduleResult.value
 
     // Format sessions with class names
     const sessions = schedule.map(session => ({
@@ -205,18 +219,27 @@ export const getTeacherClasses = createServerFn()
     }),
   )
   .handler(async ({ data }) => {
-    const classes = await getTeacherAssignedClasses({
+    const classesResult = await getTeacherAssignedClasses({
       teacherId: data.teacherId,
       schoolYearId: data.schoolYearId,
     })
 
+    if (classesResult.isErr()) {
+      return { classes: [] }
+    }
+
+    const classes = classesResult.value
+
     // Get student counts for each class
     const classesWithCounts = await Promise.all(
       classes.map(async (cls) => {
-        const students = await getClassStudents({
+        const studentsResult = await getClassStudents({
           classId: cls.id,
           schoolYearId: data.schoolYearId,
         })
+
+        const students = studentsResult.isErr() ? [] : studentsResult.value
+
         return {
           id: cls.id,
           name: cls.name,

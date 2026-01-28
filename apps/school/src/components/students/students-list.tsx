@@ -1,7 +1,6 @@
 import type { StudentStatus } from '@repo/data-ops/drizzle/school-schema'
 import type { StudentWithDetails } from '@repo/data-ops/queries/students'
 import type { StudentFilters } from '@/lib/queries/students'
-import type { getStudents } from '@/school/functions/students'
 import {
   IconAdjustmentsHorizontal,
   IconChevronLeft,

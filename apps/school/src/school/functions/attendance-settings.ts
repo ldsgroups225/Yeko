@@ -1,12 +1,12 @@
+import type { ServerContext } from '../lib/server-fn'
 import {
   deleteAttendanceSettings,
   getAttendanceSettings,
   upsertAttendanceSettings,
 } from '@repo/data-ops'
-import { createServerFn } from '@tanstack/react-start'
-import { z } from 'zod'
 
-import { getSchoolContext } from '../middleware/school-context'
+import { z } from 'zod'
+import { createAuthenticatedServerFn } from '../lib/server-fn'
 
 const attendanceSettingsSchema = z.object({
   teacherExpectedArrival: z.string().regex(/^\d{2}:\d{2}$/).optional(),
@@ -23,42 +23,48 @@ const attendanceSettingsSchema = z.object({
 /**
  * Get attendance settings for the school
  */
-export const getSettings = createServerFn()
-  .handler(async () => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+export const getSettings = createAuthenticatedServerFn()
+  .handler(async ({ context: unknownContext }) => {
+    const context = unknownContext as unknown as ServerContext
+    if (!context.school)
+      return { success: false as const, error: 'No school context' }
 
-    return getAttendanceSettings(context.schoolId)
+    return getAttendanceSettings(context.school.schoolId).match(
+      result => ({ success: true as const, data: result }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Update attendance settings
  */
-export const updateSettings = createServerFn()
+export const updateSettings = createAuthenticatedServerFn()
   .inputValidator(attendanceSettingsSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context: unknownContext }) => {
+    const context = unknownContext as unknown as ServerContext
+    if (!context.school)
+      return { success: false as const, error: 'No school context' }
 
-    const result = await upsertAttendanceSettings({
-      schoolId: context.schoolId,
+    return upsertAttendanceSettings({
+      schoolId: context.school.schoolId,
       ...data,
-    })
-
-    return result
+    }).match(
+      result => ({ success: true as const, data: result }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Reset attendance settings to defaults
  */
-export const resetSettings = createServerFn()
-  .handler(async () => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+export const resetSettings = createAuthenticatedServerFn()
+  .handler(async ({ context: unknownContext }) => {
+    const context = unknownContext as unknown as ServerContext
+    if (!context.school)
+      return { success: false as const, error: 'No school context' }
 
-    await deleteAttendanceSettings(context.schoolId)
-    return { success: true }
+    return deleteAttendanceSettings(context.school.schoolId).match(
+      () => ({ success: true as const, data: { success: true } }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })

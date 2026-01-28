@@ -29,6 +29,7 @@ import {
   createSchool,
   deleteSchool,
 } from '../queries/schools'
+import './setup'
 
 // ============================================================================
 // 7.1 CONSTRAINT VALIDATION
@@ -45,87 +46,80 @@ describe('7.1 Constraint Validation', () => {
     const db = getDb()
 
     // Create test school
-    testSchool = await createSchool({
-      name: 'Integrity Test School',
-      code: 'ITS001',
-      email: 'integrity@test.com',
+    testSchool = (await createSchool({
+      name: 'Test Integrity School',
+      code: `ITS-${nanoid()}`,
+      email: `integrity-${nanoid()}@test.com`,
       phone: '+1234567890',
       status: 'active',
-    })
+    }))._unsafeUnwrap()
     const [eduLevel] = await db.select().from(educationLevels).limit(1)
     if (!eduLevel)
       throw new Error('No education level found')
-    // Get or create test track
-    const tracksResult = await db.select().from(tracks).limit(1)
-    if (tracksResult.length > 0) {
-      testTrack = tracksResult[0]
-    }
-    else {
-      const [newTrack] = await db
-        .insert(tracks)
-        .values({
-          id: nanoid(),
-          name: 'Test Track',
-          code: 'TT001',
-          educationLevelId: eduLevel.id,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        })
-        .returning()
-      testTrack = newTrack
-    }
 
-    // Get or create test year
-    const yearsResult = await db.select().from(schoolYearTemplates).limit(1)
-    if (yearsResult.length > 0) {
-      testYear = yearsResult[0]
-    }
-    else {
-      const [newYear] = await db
-        .insert(schoolYearTemplates)
-        .values({
-          id: nanoid(),
-          name: 'Test Year',
-          isActive: true,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        })
-        .returning()
-      testYear = newYear
-    }
+    // Always create new track (Use "Integrity" prefix to avoid db-cleanup "TEST__" wildcard)
+    const [newTrack] = await db
+      .insert(tracks)
+      .values({
+        id: nanoid(),
+        name: `Integrity Track ${nanoid()}`,
+        code: `IT-${nanoid()}`,
+        educationLevelId: eduLevel.id,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning()
+    testTrack = newTrack
 
-    // Get or create test subject
-    const subjectsResult = await db.select().from(subjects).limit(1)
-    if (subjectsResult.length > 0) {
-      testSubject = subjectsResult[0]
-    }
-    else {
-      const [newSubject] = await db
-        .insert(subjects)
-        .values({
-          id: nanoid(),
-          name: 'Test Subject',
-          shortName: 'TS',
-          category: 'Scientifique',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        })
-        .returning()
-      testSubject = newSubject
-    }
+    // Always create new year
+    const [newYear] = await db
+      .insert(schoolYearTemplates)
+      .values({
+        id: nanoid(),
+        name: `Test Integrity Year ${nanoid()}`,
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning()
+    testYear = newYear
+
+    // Always create new subject
+    const [newSubject] = await db
+      .insert(subjects)
+      .values({
+        id: nanoid(),
+        name: `Integrity Subject ${nanoid()}`,
+        shortName: `IS-${nanoid().slice(0, 5)}`,
+        category: 'Scientifique',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning()
+    testSubject = newSubject
 
     // Create test grade
-    testGrade = await createGrade({
-      name: 'Test Grade',
-      code: 'TG001',
+    testGrade = (await createGrade({
+      name: 'Test Integrity Grade',
+      code: `IG-${nanoid()}`,
       order: 1,
       trackId: testTrack.id,
-    })
+    }))._unsafeUnwrap()
   })
 
   afterAll(async () => {
+    const db = getDb()
     if (testGrade?.id) {
       await deleteGrade(testGrade.id)
+    }
+    if (testTrack?.id) {
+      await db.delete(tracks).where(eq(tracks.id, testTrack.id))
+    }
+    if (testYear?.id) {
+      await db.delete(schoolYearTemplates).where(eq(schoolYearTemplates.id, testYear.id))
+    }
+    if (testSubject?.id) {
+      await db.delete(subjects).where(eq(subjects.id, testSubject.id))
     }
     if (testSchool?.id) {
       await deleteSchool(testSchool.id)
@@ -139,13 +133,13 @@ describe('7.1 Constraint Validation', () => {
   describe('unique Constraints', () => {
     test('should reject duplicate school codes', async () => {
       const uniqueCode = `DUP${Date.now()}`
-      const school1 = await createSchool({
+      const school1 = (await createSchool({
         name: 'School 1',
         code: uniqueCode,
         email: 'dup1@test.com',
         phone: '+1111111111',
         status: 'active',
-      })
+      }))._unsafeUnwrap()
 
       try {
         await createSchool({
@@ -207,8 +201,8 @@ describe('7.1 Constraint Validation', () => {
         .insert(tracks)
         .values({
           id: nanoid(),
-          name: 'Track 1',
-          code: 'DUPTRACK001',
+          name: `Test Integrity Track 1`,
+          code: `DUPTRACK-${nanoid()}`,
           educationLevelId: eduLevel.id,
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -220,8 +214,8 @@ describe('7.1 Constraint Validation', () => {
           .insert(tracks)
           .values({
             id: nanoid(),
-            name: 'Track 2',
-            code: 'DUPTRACK001', // Duplicate code
+            name: 'Test Integrity Track 2',
+            code: track1[0]!.code, // Duplicate code
             educationLevelId: eduLevel.id,
             createdAt: new Date(),
             updatedAt: new Date(),
@@ -237,16 +231,16 @@ describe('7.1 Constraint Validation', () => {
     })
 
     test('should reject duplicate series codes', async () => {
-      const series1 = await createSerie({
-        name: 'Series 1',
-        code: 'DUPSERIES001',
+      const series1 = (await createSerie({
+        name: 'Test Integrity Series 1',
+        code: `DUPSERIES-${nanoid()}`,
         trackId: testTrack.id,
-      })
+      }))._unsafeUnwrap()
 
       try {
         await createSerie({
-          name: 'Series 2',
-          code: 'DUPSERIES001', // Duplicate code
+          name: 'Test Integrity Series 2',
+          code: series1.code, // Duplicate code
           trackId: testTrack.id,
         })
         expect(true).toBe(false)
@@ -485,22 +479,22 @@ describe('7.1 Constraint Validation', () => {
         .returning()
       if (!newTrack)
         throw new Error('Failed to create newTrack')
-      const grade = await createGrade({
+      const grade = (await createGrade({
         name: 'Cascade Grade',
         code: 'CG001',
         order: 1,
         trackId: newTrack.id,
-      })
+      }))._unsafeUnwrap()
 
       // Verify grade exists
-      const gradesBeforeDelete = await getGrades({ trackId: newTrack.id })
+      const gradesBeforeDelete = (await getGrades({ trackId: newTrack.id }))._unsafeUnwrap()
       expect(gradesBeforeDelete).toContainEqual(expect.objectContaining({ id: grade.id }))
 
       // Delete track
       await db.delete(tracks).where(eq(tracks.id, newTrack.id))
 
       // Verify grades are deleted
-      const gradesAfterDelete = await getGrades({ trackId: newTrack.id })
+      const gradesAfterDelete = (await getGrades({ trackId: newTrack.id }))._unsafeUnwrap()
       expect(gradesAfterDelete).not.toContainEqual(expect.objectContaining({ id: grade.id }))
     })
 
@@ -525,21 +519,21 @@ describe('7.1 Constraint Validation', () => {
         .returning()
       if (!newTrack)
         throw new Error('Failed to create newTrack')
-      const serie = await createSerie({
+      const serie = (await createSerie({
         name: 'Cascade Series',
         code: 'CS001',
         trackId: newTrack.id,
-      })
+      }))._unsafeUnwrap()
 
       // Verify series exists
-      const seriesBeforeDelete = await getSeries({ trackId: newTrack.id })
+      const seriesBeforeDelete = (await getSeries({ trackId: newTrack.id }))._unsafeUnwrap()
       expect(seriesBeforeDelete).toContainEqual(expect.objectContaining({ id: serie.id }))
 
       // Delete track
       await db.delete(tracks).where(eq(tracks.id, newTrack.id))
 
       // Verify series are deleted
-      const seriesAfterDelete = await getSeries({ trackId: newTrack.id })
+      const seriesAfterDelete = (await getSeries({ trackId: newTrack.id }))._unsafeUnwrap()
       expect(seriesAfterDelete).not.toContainEqual(expect.objectContaining({ id: serie.id }))
     })
 
@@ -547,12 +541,16 @@ describe('7.1 Constraint Validation', () => {
       const db = getDb()
 
       // Create a program
-      const program = await createProgramTemplate({
+      const programResult = await createProgramTemplate({
         name: 'Cascade Program',
         schoolYearTemplateId: testYear.id,
         subjectId: testSubject.id,
         gradeId: testGrade.id,
       })
+      if (programResult.isErr()) {
+        console.error('Failed to create program:', programResult.error)
+      }
+      const program = programResult._unsafeUnwrap()
 
       // Add chapters
       await db
@@ -595,8 +593,8 @@ describe('7.1 Constraint Validation', () => {
         .insert(subjects)
         .values({
           id: nanoid(),
-          name: 'Cascade Subject',
-          shortName: 'CS',
+          name: `Test Integrity Subject ${nanoid()}`,
+          shortName: `IS-${nanoid().slice(0, 5)}`,
           category: 'Scientifique',
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -605,17 +603,21 @@ describe('7.1 Constraint Validation', () => {
       if (!newSubject)
         throw new Error('Failed to create newSubject')
       // Create coefficient
-      const coeff = await createCoefficientTemplate({
+      const coeffResult = await createCoefficientTemplate({
         schoolYearTemplateId: testYear.id,
         subjectId: newSubject.id,
         gradeId: testGrade.id,
         weight: 2,
       })
+      if (coeffResult.isErr()) {
+        console.error('Failed to create coefficient:', coeffResult.error)
+      }
+      const coeff = coeffResult._unsafeUnwrap()
 
       // Verify coefficient exists
-      const coeffsBeforeDeleteResult = await getCoefficientTemplates({
+      const coeffsBeforeDeleteResult = (await getCoefficientTemplates({
         subjectId: newSubject.id,
-      })
+      }))._unsafeUnwrap()
       const coeffsBeforeDelete = coeffsBeforeDeleteResult.coefficients
       expect(coeffsBeforeDelete).toContainEqual(expect.objectContaining({ id: coeff.id }))
 
@@ -623,9 +625,9 @@ describe('7.1 Constraint Validation', () => {
       await db.delete(subjects).where(eq(subjects.id, newSubject.id))
 
       // Verify coefficients are deleted
-      const coeffsAfterDeleteResult = await getCoefficientTemplates({
+      const coeffsAfterDeleteResult = (await getCoefficientTemplates({
         subjectId: newSubject.id,
-      })
+      }))._unsafeUnwrap()
       const coeffsAfterDelete = coeffsAfterDeleteResult.coefficients
       expect(coeffsAfterDelete).not.toContainEqual(expect.objectContaining({ id: coeff.id }))
     })

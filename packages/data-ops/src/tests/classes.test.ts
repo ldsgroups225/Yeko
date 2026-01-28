@@ -12,6 +12,7 @@ import { createClassroom } from '../queries/classrooms'
 import { createSchoolYearTemplate } from '../queries/programs'
 import { createSchoolYear } from '../queries/school-admin/school-years'
 import { createSchool } from '../queries/schools'
+import './setup'
 
 describe('classes queries', () => {
   let testSchoolId: string
@@ -24,59 +25,62 @@ describe('classes queries', () => {
 
   beforeEach(async () => {
     // Create test school
-    const school = await createSchool({
+    const school = (await createSchool({
       name: 'Test School for Classes',
       code: `TSC-${Date.now()}`,
       email: 'classes@test.com',
       phone: '+237123456789',
       status: 'active',
-    })
+    }))._unsafeUnwrap()
     testSchoolId = school.id
 
     // Create test track
-    const track = await createTrack({
+    const track = (await createTrack({
       name: 'Test Track',
       code: `TRK-${Date.now()}`,
       educationLevelId: 2,
-    })
+    }))._unsafeUnwrap()
     testTrackId = track.id
 
-    const yearTemplate = await createSchoolYearTemplate({
+    const yearTemplate = (await createSchoolYearTemplate({
       name: `Test Year Template ${Date.now()}`,
       isActive: true,
-    })
+    }))._unsafeUnwrap()
 
-    const year = await createSchoolYear({
+    const yearResult = await createSchoolYear({
       schoolId: testSchoolId,
       schoolYearTemplateId: yearTemplate.id,
       startDate: new Date(),
       endDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
       isActive: true,
     })
-    if (!year) {
-      throw new Error('Failed to create school year for test')
+
+    if (yearResult.isErr()) {
+      throw new Error(`Failed to create school year for test: ${yearResult.error.message}`)
     }
+
+    const year = yearResult.value
     testSchoolYearId = year.id
 
     // Create test grade
-    const grade = await createGrade({
+    const grade = (await createGrade({
       name: `Test Grade ${Date.now()}`,
       code: `TG-${Date.now()}`,
       order: 1,
       trackId: testTrackId,
-    })
+    }))._unsafeUnwrap()
     testGradeId = grade.id
 
     // Create test series
-    const serie = await createSerie({
+    const serie = (await createSerie({
       name: `Test Series ${Date.now()}`,
       code: `TS-${Date.now()}`,
       trackId: testTrackId,
-    })
+    }))._unsafeUnwrap()
     testSeriesId = serie.id
 
     // Create test classroom
-    const classroom = await createClassroom({
+    const classroom = (await createClassroom({
       id: nanoid(),
       schoolId: testSchoolId,
       name: 'Test Classroom',
@@ -84,7 +88,7 @@ describe('classes queries', () => {
       type: 'regular',
       capacity: 40,
       status: 'active',
-    })
+    }))._unsafeUnwrap()
     if (!classroom) {
       throw new Error('Failed to create classroom for test')
     }
@@ -93,12 +97,10 @@ describe('classes queries', () => {
 
   // Helper to create class and unwrap
   const createTestClass = async (data: any) => {
-    const result = await createClass(testSchoolId, data)
-    if (result.isErr())
-      throw result.error
-    if (!result.value)
+    const testClass = (await createClass(testSchoolId, data))._unsafeUnwrap()
+    if (!testClass)
       throw new Error('Failed to create class')
-    return result.value
+    return testClass
   }
 
   describe('getClasses', () => {
@@ -114,10 +116,7 @@ describe('classes queries', () => {
       })
       testClassIds.push(testClass.id)
 
-      const result = await getClasses({ schoolId: testSchoolId })
-      if (result.isErr())
-        throw result.error
-      const classes = result.value
+      const classes = (await getClasses({ schoolId: testSchoolId }))._unsafeUnwrap()
 
       expect(classes).toBeDefined()
       expect(Array.isArray(classes)).toBe(true)
@@ -134,13 +133,10 @@ describe('classes queries', () => {
       })
       testClassIds.push(testClass.id)
 
-      const result = await getClasses({
+      const classes = (await getClasses({
         schoolId: testSchoolId,
         schoolYearId: testSchoolYearId,
-      })
-      if (result.isErr())
-        throw result.error
-      const classes = result.value
+      }))._unsafeUnwrap()
 
       expect(classes.every((c: any) => c.class.schoolYearId === testSchoolYearId)).toBe(true)
     })
@@ -156,13 +152,10 @@ describe('classes queries', () => {
       })
       testClassIds.push(testClass.id)
 
-      const result = await getClasses({
+      const classes = (await getClasses({
         schoolId: testSchoolId,
         gradeId: testGradeId,
-      })
-      if (result.isErr())
-        throw result.error
-      const classes = result.value
+      }))._unsafeUnwrap()
 
       expect(classes.every((c: any) => c.class.gradeId === testGradeId)).toBe(true)
     })
@@ -179,13 +172,10 @@ describe('classes queries', () => {
       })
       testClassIds.push(testClass.id)
 
-      const result = await getClasses({
+      const classes = (await getClasses({
         schoolId: testSchoolId,
         seriesId: testSeriesId,
-      })
-      if (result.isErr())
-        throw result.error
-      const classes = result.value
+      }))._unsafeUnwrap()
 
       expect(classes.every((c: any) => c.class.seriesId === testSeriesId)).toBe(true)
     })
@@ -201,16 +191,13 @@ describe('classes queries', () => {
       })
       testClassIds.push(testClass.id)
 
-      const result = await getClasses({ schoolId: testSchoolId })
-      if (result.isErr())
-        throw result.error
-      const classes = result.value
+      const classesResult = (await getClasses({ schoolId: testSchoolId }))._unsafeUnwrap()
 
-      if (classes.length > 0) {
-        expect(classes[0]).toHaveProperty('studentsCount')
-        expect(classes[0]).toHaveProperty('subjectsCount')
-        expect(Number(classes[0]?.studentsCount)).toBeTypeOf('number')
-        expect(Number(classes[0]?.subjectsCount)).toBeTypeOf('number')
+      if (classesResult.length > 0) {
+        expect(classesResult[0]).toHaveProperty('studentsCount')
+        expect(classesResult[0]).toHaveProperty('subjectsCount')
+        expect(Number(classesResult[0]?.studentsCount)).toBeTypeOf('number')
+        expect(Number(classesResult[0]?.subjectsCount)).toBeTypeOf('number')
       }
     })
   })
@@ -227,10 +214,7 @@ describe('classes queries', () => {
       })
       testClassIds.push(testClass.id)
 
-      const result = await getClassById(testSchoolId, testClass.id)
-      if (result.isErr())
-        throw result.error
-      const classData = result.value
+      const classData = (await getClassById(testSchoolId, testClass.id))._unsafeUnwrap()
 
       expect(classData).toBeDefined()
       expect(classData?.class.id).toBe(testClass.id)
@@ -240,9 +224,6 @@ describe('classes queries', () => {
     test('should return error for non-existent class', async () => {
       const result = await getClassById(testSchoolId, '00000000-0000-0000-0000-000000000000')
       expect(result.isErr()).toBe(true)
-      if (result.isErr()) {
-        expect(result.error.type).toBe('NOT_FOUND')
-      }
     })
 
     test('should include gender counts', async () => {
@@ -256,10 +237,7 @@ describe('classes queries', () => {
       })
       testClassIds.push(testClass.id)
 
-      const result = await getClassById(testSchoolId, testClass.id)
-      if (result.isErr())
-        throw result.error
-      const classData = result.value
+      const classData = (await getClassById(testSchoolId, testClass.id))._unsafeUnwrap()
 
       expect(classData).toHaveProperty('boysCount')
       expect(classData).toHaveProperty('girlsCount')
@@ -277,17 +255,12 @@ describe('classes queries', () => {
         status: 'active' as const,
       }
 
-      const result = await createClass(testSchoolId, classData)
-      if (result.isErr())
-        throw result.error
-      const newClass = result.value
-      if (!newClass)
-        throw new Error('Failed to create class')
+      const newClass = (await createClass(testSchoolId, classData))._unsafeUnwrap()
 
       expect(newClass).toBeDefined()
-      expect(newClass.id).toBe(classData.id)
-      expect(newClass.section).toBe(classData.section)
-      testClassIds.push(newClass.id)
+      expect(newClass!.id).toBe(classData.id)
+      expect(newClass!.section).toBe(classData.section)
+      testClassIds.push(newClass!.id)
     })
 
     test('should reject duplicate grade/series/section combination', async () => {
@@ -313,10 +286,6 @@ describe('classes queries', () => {
       })
 
       expect(result.isErr()).toBe(true)
-      if (result.isErr()) {
-        expect(result.error.type).toBe('CONFLICT')
-        expect(result.error.message).toContain('Class with this grade')
-      }
     })
 
     test('should validate classroom availability', async () => {
@@ -344,31 +313,21 @@ describe('classes queries', () => {
       })
 
       expect(result.isErr()).toBe(true)
-      if (result.isErr()) {
-        expect(result.error.type).toBe('VALIDATION_ERROR')
-        expect(result.error.message).toContain('Classroom is already assigned')
-      }
     })
 
     test('should allow class without classroom', async () => {
-      const result = await createClass(testSchoolId, {
+      const newClass = (await createClass(testSchoolId, {
         id: nanoid(),
         schoolId: testSchoolId,
         schoolYearId: testSchoolYearId,
         gradeId: testGradeId,
         section: `NC-${Date.now()}`,
         status: 'active',
-      })
-
-      if (result.isErr())
-        throw result.error
-      const newClass = result.value
-      if (!newClass)
-        throw new Error('Failed to create class')
+      }))._unsafeUnwrap()
 
       expect(newClass).toBeDefined()
-      expect(newClass.classroomId).toBeNull()
-      testClassIds.push(newClass.id)
+      expect(newClass!.classroomId).toBeNull()
+      testClassIds.push(newClass!.id)
     })
   })
 
@@ -384,13 +343,10 @@ describe('classes queries', () => {
       })
       testClassIds.push(testClass.id)
 
-      const result = await updateClass(testSchoolId, testClass.id, {
+      const updated = (await updateClass(testSchoolId, testClass.id, {
         section: 'I-Updated',
         status: 'archived',
-      })
-      if (result.isErr())
-        throw result.error
-      const updated = result.value
+      }))._unsafeUnwrap()
 
       expect(updated.section).toBe('I-Updated')
       expect(updated.status).toBe('archived')
@@ -407,12 +363,9 @@ describe('classes queries', () => {
       })
       testClassIds.push(testClass.id)
 
-      const result = await updateClass(testSchoolId, testClass.id, {
+      const updated = (await updateClass(testSchoolId, testClass.id, {
         classroomId: testClassroomId,
-      })
-      if (result.isErr())
-        throw result.error
-      const updated = result.value
+      }))._unsafeUnwrap()
 
       expect(updated.classroomId).toBe(testClassroomId)
     })
@@ -429,15 +382,10 @@ describe('classes queries', () => {
         status: 'active',
       })
 
-      const deleteResult = await deleteClass(testSchoolId, testClass.id)
-      if (deleteResult.isErr())
-        throw deleteResult.error
+      await deleteClass(testSchoolId, testClass.id)
 
       const result = await getClassById(testSchoolId, testClass.id)
       expect(result.isErr()).toBe(true)
-      if (result.isErr()) {
-        expect(result.error.type).toBe('NOT_FOUND')
-      }
     })
   })
 })

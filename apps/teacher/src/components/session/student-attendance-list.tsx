@@ -8,7 +8,7 @@ interface Student {
   id: string
   firstName: string
   lastName: string
-  matricule: string
+  matricule: string | null
   photoUrl: string | null
 }
 

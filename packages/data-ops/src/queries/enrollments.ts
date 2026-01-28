@@ -72,7 +72,10 @@ export interface EnrollmentStatistics {
     boys: number
     girls: number
   }>
-  trends: any[]
+  trends: Array<{
+    date: string
+    count: number
+  }>
   total: number
   confirmed: number
   pending: number

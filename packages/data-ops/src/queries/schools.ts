@@ -1,17 +1,29 @@
 import type { School, SchoolInsert, SchoolStatus } from '../drizzle/core-schema'
+import { databaseLogger, tapLogErr } from '@repo/logger'
+
 import { and, asc, count, desc, eq, ilike, inArray, or } from 'drizzle-orm'
+import { ResultAsync } from 'neverthrow'
 import { getDb } from '../database/setup'
 import { schools } from '../drizzle/core-schema'
+import { DatabaseError } from '../errors'
 
 // Get all schools with pagination and filtering
-export async function getSchools(options: {
+export function getSchools(options: {
   page?: number
   limit?: number
   search?: string
   status?: SchoolStatus | SchoolStatus[]
   sortBy?: 'name' | 'code' | 'createdAt' | 'updatedAt'
   sortOrder?: 'asc' | 'desc'
-}) {
+}): ResultAsync<{
+  schools: School[]
+  pagination: {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+  }
+}, DatabaseError> {
   const db = getDb()
   const {
     page = 1,
@@ -48,151 +60,173 @@ export async function getSchools(options: {
 
   const whereClause = conditions.length > 0 ? and(...conditions) : undefined
 
-  // Get total count
-  const [countResult] = await db
-    .select({ count: count() })
-    .from(schools)
-    .where(whereClause)
+  return ResultAsync.fromPromise((async () => {
+    // Get total count
+    const [countResult] = await db
+      .select({ count: count() })
+      .from(schools)
+      .where(whereClause)
 
-  const total = countResult?.count || 0
+    const total = countResult?.count || 0
 
-  // Get schools with sorting
-  const orderByClause
-    = sortOrder === 'asc' ? asc(schools[sortBy]) : desc(schools[sortBy])
+    // Get schools with sorting
+    const orderByClause
+      = sortOrder === 'asc' ? asc(schools[sortBy]) : desc(schools[sortBy])
 
-  const schoolsList = await db
-    .select()
-    .from(schools)
-    .where(whereClause)
-    .orderBy(orderByClause)
-    .limit(limit)
-    .offset(offset)
+    const schoolsList = await db
+      .select()
+      .from(schools)
+      .where(whereClause)
+      .orderBy(orderByClause)
+      .limit(limit)
+      .offset(offset)
 
-  return {
-    schools: schoolsList,
-    pagination: {
-      page,
-      limit,
-      total,
-      totalPages: Math.ceil(total / limit),
-    },
-  }
+    return {
+      schools: schoolsList,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    }
+  })(), err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch schools'))
+    .mapErr(tapLogErr(databaseLogger, options))
 }
 
 // Get a single school by ID
-export async function getSchoolById(id: string): Promise<School | null> {
+export function getSchoolById(id: string): ResultAsync<School | null, DatabaseError> {
   const db = getDb()
 
-  const [school] = await db.select().from(schools).where(eq(schools.id, id))
-
-  return school || null
+  return ResultAsync.fromPromise(
+    db.select().from(schools).where(eq(schools.id, id)).then(res => res[0] || null),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', `Failed to fetch school with id ${id}`),
+  ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
 // Create a new school
-export async function createSchool(
+export function createSchool(
   data: Omit<SchoolInsert, 'id' | 'createdAt' | 'updatedAt'>,
-): Promise<School> {
+): ResultAsync<School, DatabaseError> {
   const db = getDb()
 
-  const newSchools = await db
-    .insert(schools)
-    .values({
-      id: crypto.randomUUID(), // Generate UUID
-      ...data,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    })
-    .returning()
-  if (!newSchools[0]) {
-    throw new Error('Failed to create school')
-  }
-  return newSchools[0]
+  return ResultAsync.fromPromise(
+    db
+      .insert(schools)
+      .values({
+        id: crypto.randomUUID(), // Generate UUID
+        ...data,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning()
+      .then((res) => {
+        if (!res[0])
+          throw new Error('Failed to create school')
+        return res[0]
+      }),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create school'),
+  ).mapErr(tapLogErr(databaseLogger, data))
 }
 
 // Update an existing school
-export async function updateSchool(
+export function updateSchool(
   id: string,
   data: Partial<Omit<SchoolInsert, 'id' | 'createdAt' | 'updatedAt'>>,
-): Promise<School> {
+): ResultAsync<School, DatabaseError> {
   const db = getDb()
 
-  const updatedSchools = await db
-    .update(schools)
-    .set({
-      ...data,
-      updatedAt: new Date(),
-    })
-    .where(eq(schools.id, id))
-    .returning()
-
-  if (updatedSchools.length === 0) {
-    throw new Error(`School with id ${id} not found`)
-  }
-
-  return updatedSchools[0]!
+  return ResultAsync.fromPromise(
+    db
+      .update(schools)
+      .set({
+        ...data,
+        updatedAt: new Date(),
+      })
+      .where(eq(schools.id, id))
+      .returning()
+      .then((res) => {
+        if (res.length === 0)
+          throw new Error(`School with id ${id} not found`)
+        return res[0]!
+      }),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', `Failed to update school with id ${id}`),
+  ).mapErr(tapLogErr(databaseLogger, { id, ...data }))
 }
 
 // Delete a school
-export async function deleteSchool(id: string): Promise<void> {
+export function deleteSchool(id: string): ResultAsync<void, DatabaseError> {
   const db = getDb()
 
-  await db.delete(schools).where(eq(schools.id, id))
+  return ResultAsync.fromPromise(
+    db.delete(schools).where(eq(schools.id, id)).then(() => {}),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', `Failed to delete school with id ${id}`),
+  ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
 // Get schools by status
-export async function getSchoolsByStatus(
+export function getSchoolsByStatus(
   status: SchoolStatus,
   limit?: number,
-): Promise<School[]> {
+): ResultAsync<School[], DatabaseError> {
   const db = getDb()
 
-  const query = db
-    .select()
-    .from(schools)
-    .where(eq(schools.status, status))
-    .orderBy(desc(schools.createdAt))
+  return ResultAsync.fromPromise((async () => {
+    const query = db
+      .select()
+      .from(schools)
+      .where(eq(schools.status, status))
+      .orderBy(desc(schools.createdAt))
 
-  if (limit) {
-    query.limit(limit)
-  }
+    if (limit) {
+      query.limit(limit)
+    }
 
-  return query
+    return query
+  })(), err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch schools by status'))
+    .mapErr(tapLogErr(databaseLogger, { status, limit }))
 }
 
 // Search schools by multiple criteria
-export async function searchSchools(
+export function searchSchools(
   query: string,
   limit: number = 10,
-): Promise<School[]> {
+): ResultAsync<School[], DatabaseError> {
   const db = getDb()
 
-  return db
-    .select()
-    .from(schools)
-    .where(
-      or(
-        ilike(schools.name, `%${query}%`),
-        ilike(schools.code, `%${query}%`),
-        ilike(schools.email, `%${query}%`),
-        ilike(schools.phone, `%${query}%`),
-      ),
-    )
-    .limit(limit)
+  return ResultAsync.fromPromise(
+    db
+      .select()
+      .from(schools)
+      .where(
+        or(
+          ilike(schools.name, `%${query}%`),
+          ilike(schools.code, `%${query}%`),
+          ilike(schools.email, `%${query}%`),
+          ilike(schools.phone, `%${query}%`),
+        ),
+      )
+      .limit(limit),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', `Failed to search schools with query: ${query}`),
+  ).mapErr(tapLogErr(databaseLogger, { query, limit }))
 }
 
 // Get school profile by ID with settings
-export async function getSchoolProfile(id: string): Promise<School | null> {
+export function getSchoolProfile(id: string): ResultAsync<School | null, DatabaseError> {
   const db = getDb()
-  const [school] = await db
-    .select()
-    .from(schools)
-    .where(eq(schools.id, id))
-    .limit(1)
-  return school || null
+  return ResultAsync.fromPromise(
+    db
+      .select()
+      .from(schools)
+      .where(eq(schools.id, id))
+      .limit(1)
+      .then(res => res[0] || null),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', `Failed to fetch school profile for id ${id}`),
+  ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
 // Update school profile (name, address, phone, email)
-export async function updateSchoolProfile(
+export function updateSchoolProfile(
   id: string,
   data: {
     name?: string
@@ -200,124 +234,135 @@ export async function updateSchoolProfile(
     phone?: string | null
     email?: string | null
   },
-): Promise<School | null> {
+): ResultAsync<School | null, DatabaseError> {
   const db = getDb()
-  const [updated] = await db
-    .update(schools)
-    .set({
-      ...data,
-      updatedAt: new Date(),
-    })
-    .where(eq(schools.id, id))
-    .returning()
-  return updated || null
+  return ResultAsync.fromPromise(
+    db
+      .update(schools)
+      .set({
+        ...data,
+        updatedAt: new Date(),
+      })
+      .where(eq(schools.id, id))
+      .returning()
+      .then(res => res[0] || null),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', `Failed to update school profile for id ${id}`),
+  ).mapErr(tapLogErr(databaseLogger, { id, ...data }))
 }
 
 // Update school settings (JSONB merge)
-export async function updateSchoolSettings(
+export function updateSchoolSettings(
   id: string,
   newSettings: Record<string, unknown>,
-): Promise<School | null> {
+): ResultAsync<School | null, DatabaseError> {
   const db = getDb()
-  // Get current settings
-  const [school] = await db
-    .select({ settings: schools.settings })
-    .from(schools)
-    .where(eq(schools.id, id))
-    .limit(1)
 
-  const currentSettings = (school?.settings as Record<string, unknown>) ?? {}
-  const mergedSettings = { ...currentSettings, ...newSettings }
+  return ResultAsync.fromPromise((async () => {
+    // Get current settings
+    const [school] = await db
+      .select({ settings: schools.settings })
+      .from(schools)
+      .where(eq(schools.id, id))
+      .limit(1)
 
-  const [updated] = await db
-    .update(schools)
-    .set({ settings: mergedSettings, updatedAt: new Date() })
-    .where(eq(schools.id, id))
-    .returning()
-  return updated || null
+    const currentSettings = (school?.settings as Record<string, unknown>) ?? {}
+    const mergedSettings = { ...currentSettings, ...newSettings }
+
+    const [updated] = await db
+      .update(schools)
+      .set({ settings: mergedSettings, updatedAt: new Date() })
+      .where(eq(schools.id, id))
+      .returning()
+    return updated || null
+  })(), err => DatabaseError.from(err, 'INTERNAL_ERROR', `Failed to update school settings for id ${id}`))
+    .mapErr(tapLogErr(databaseLogger, { id, newSettings }))
 }
 
 // Update school logo
-export async function updateSchoolLogo(
+export function updateSchoolLogo(
   id: string,
   logoUrl: string | null,
-): Promise<School | null> {
+): ResultAsync<School | null, DatabaseError> {
   const db = getDb()
-  const [updated] = await db
-    .update(schools)
-    .set({ logoUrl, updatedAt: new Date() })
-    .where(eq(schools.id, id))
-    .returning()
-  return updated || null
+  return ResultAsync.fromPromise(
+    db
+      .update(schools)
+      .set({ logoUrl, updatedAt: new Date() })
+      .where(eq(schools.id, id))
+      .returning()
+      .then(res => res[0] || null),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', `Failed to update school logo for id ${id}`),
+  ).mapErr(tapLogErr(databaseLogger, { id, logoUrl }))
 }
 
 // Bulk create schools with transaction
-export async function bulkCreateSchools(
+export function bulkCreateSchools(
   schoolsData: Array<Omit<SchoolInsert, 'id' | 'createdAt' | 'updatedAt'>>,
   options?: { skipDuplicates?: boolean },
-): Promise<{
+): ResultAsync<{
   success: boolean
   created: School[]
   errors: Array<{ index: number, code: string, error: string }>
-}> {
+}, DatabaseError> {
   const db = getDb()
-  const created: School[] = []
-  const errors: Array<{ index: number, code: string, error: string }> = []
 
-  // Get existing codes to check for duplicates
-  const codes = schoolsData.map(
-    (s: Omit<SchoolInsert, 'id' | 'createdAt' | 'updatedAt'>) => s.code,
-  )
-  const existingSchools = await db
-    .select({ code: schools.code })
-    .from(schools)
-    .where(inArray(schools.code, codes))
+  return ResultAsync.fromPromise((async () => {
+    const created: School[] = []
+    const errors: Array<{ index: number, code: string, error: string }> = []
 
-  const existingCodes = new Set(
-    existingSchools.map((s: { code: string }) => s.code),
-  )
+    // Get existing codes to check for duplicates
+    const codes = schoolsData.map(
+      (s: Omit<SchoolInsert, 'id' | 'createdAt' | 'updatedAt'>) => s.code,
+    )
+    const existingSchools = await db
+      .select({ code: schools.code })
+      .from(schools)
+      .where(inArray(schools.code, codes))
 
-  // Filter out duplicates if skipDuplicates is true
-  const schoolsToCreate: Array<{
-    index: number
-    data: Omit<SchoolInsert, 'id' | 'createdAt' | 'updatedAt'>
-  }> = []
+    const existingCodes = new Set(
+      existingSchools.map((s: { code: string }) => s.code),
+    )
 
-  for (let i = 0; i < schoolsData.length; i++) {
-    const school = schoolsData[i]
-    if (!school)
-      continue
+    // Filter out duplicates if skipDuplicates is true
+    const schoolsToCreate: Array<{
+      index: number
+      data: Omit<SchoolInsert, 'id' | 'createdAt' | 'updatedAt'>
+    }> = []
 
-    if (existingCodes.has(school.code)) {
-      if (options?.skipDuplicates) {
-        errors.push({
-          index: i,
-          code: school.code,
-          error: 'Code déjà existant (ignoré)',
-        })
+    for (let i = 0; i < schoolsData.length; i++) {
+      const school = schoolsData[i]
+      if (!school)
         continue
+
+      if (existingCodes.has(school.code)) {
+        if (options?.skipDuplicates) {
+          errors.push({
+            index: i,
+            code: school.code,
+            error: 'Code déjà existant (ignoré)',
+          })
+          continue
+        }
+        else {
+          errors.push({
+            index: i,
+            code: school.code,
+            error: 'Code déjà existant',
+          })
+        }
       }
       else {
-        errors.push({
-          index: i,
-          code: school.code,
-          error: 'Code déjà existant',
-        })
+        schoolsToCreate.push({ index: i, data: school })
       }
     }
-    else {
-      schoolsToCreate.push({ index: i, data: school })
+
+    // If not skipping duplicates and there are errors, return early
+    if (!options?.skipDuplicates && errors.length > 0) {
+      return { success: false, created: [], errors }
     }
-  }
 
-  // If not skipping duplicates and there are errors, return early
-  if (!options?.skipDuplicates && errors.length > 0) {
-    return { success: false, created: [], errors }
-  }
-
-  // Create schools
-  if (schoolsToCreate.length > 0) {
-    try {
+    // Create schools
+    if (schoolsToCreate.length > 0) {
       const inserted = await db
         .insert(schools)
         .values(schoolsToCreate.map(({ data }) => ({
@@ -332,27 +377,8 @@ export async function bulkCreateSchools(
         created.push(...inserted)
       }
     }
-    catch (error) {
-      return {
-        success: false,
-        created: [],
-        errors: [
-          {
-            index: -1,
-            code: '',
-            error:
-              error instanceof Error
-                ? error.message
-                : 'Erreur lors de la création',
-          },
-        ],
-      }
-    }
-  }
 
-  return {
-    success: errors.filter(e => !e.error.includes('ignoré')).length === 0,
-    created,
-    errors,
-  }
+    return { success: true, created, errors }
+  })(), err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to bulk create schools'))
+    .mapErr(tapLogErr(databaseLogger, options))
 }

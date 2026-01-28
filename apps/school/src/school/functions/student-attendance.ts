@@ -1,3 +1,4 @@
+import type { ServerContext } from '../lib/server-fn'
 import {
   bulkUpsertClassAttendance,
   countStudentAbsences,
@@ -10,20 +11,19 @@ import {
   markParentNotified,
   upsertStudentAttendance,
 } from '@repo/data-ops'
-import { createServerFn } from '@tanstack/react-start'
-import { z } from 'zod'
 
+import { z } from 'zod'
 import {
   bulkStudentAttendanceSchema,
   excuseAbsenceSchema,
   studentAttendanceSchema,
 } from '@/schemas/student-attendance'
-import { getSchoolContext } from '../middleware/school-context'
+import { createAuthenticatedServerFn } from '../lib/server-fn'
 
 /**
  * Get class attendance for a date
  */
-export const getClassAttendanceForDate = createServerFn()
+export const getClassAttendanceForDate = createAuthenticatedServerFn()
   .inputValidator(
     z.object({
       classId: z.string(),
@@ -31,18 +31,21 @@ export const getClassAttendanceForDate = createServerFn()
       classSessionId: z.string().optional(),
     }),
   )
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context: unknownContext }) => {
+    const context = unknownContext as unknown as ServerContext
+    if (!context.school)
+      return { success: false as const, error: 'No school context' }
 
-    return getClassAttendance(data)
+    return getClassAttendance(data).match(
+      result => ({ success: true as const, data: result }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Get student attendance history
  */
-export const getStudentHistory = createServerFn()
+export const getStudentHistory = createAuthenticatedServerFn()
   .inputValidator(
     z.object({
       studentId: z.string(),
@@ -51,55 +54,64 @@ export const getStudentHistory = createServerFn()
       classId: z.string().optional(),
     }),
   )
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context: unknownContext }) => {
+    const context = unknownContext as unknown as ServerContext
+    if (!context.school)
+      return { success: false as const, error: 'No school context' }
 
-    return getStudentAttendanceHistory(data)
+    return getStudentAttendanceHistory(data).match(
+      result => ({ success: true as const, data: result }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Record single student attendance
  */
-export const recordStudentAttendance = createServerFn()
+export const recordStudentAttendance = createAuthenticatedServerFn()
   .inputValidator(studentAttendanceSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context: unknownContext }) => {
+    const context = unknownContext as unknown as ServerContext
+    if (!context.school)
+      return { success: false as const, error: 'No school context' }
 
     // Get school settings
-    const settings = await getAttendanceSettings(context.schoolId)
+    const settingsResult = await getAttendanceSettings(context.school.schoolId)
+    if (settingsResult.isErr()) {
+      return { success: false as const, error: settingsResult.error.message }
+    }
 
-    const result = await upsertStudentAttendance({
+    const settings = settingsResult.value
+
+    return upsertStudentAttendance({
       studentId: data.studentId,
       classId: data.classId,
       date: data.date,
       status: data.status,
       reason: data.reason ?? undefined,
       classSessionId: data.classSessionId ?? undefined,
-      schoolId: context.schoolId,
-      recordedBy: context.userId,
-      lateThresholdMinutes: settings.studentLateThresholdMinutes ?? 10,
-    })
-
-    return result
+      schoolId: context.school.schoolId,
+      recordedBy: context.auth.userId,
+      lateThresholdMinutes: (settings as any)?.studentLateThresholdMinutes ?? 10,
+    }).match(
+      result => ({ success: true as const, data: result }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Bulk record class attendance
  */
-export const bulkRecordClassAttendance = createServerFn()
+export const bulkRecordClassAttendance = createAuthenticatedServerFn()
   .inputValidator(bulkStudentAttendanceSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context: unknownContext }) => {
+    const context = unknownContext as unknown as ServerContext
+    if (!context.school)
+      return { success: false as const, error: 'No school context' }
 
-    const results = await bulkUpsertClassAttendance({
+    return bulkUpsertClassAttendance({
       classId: data.classId,
-      schoolId: context.schoolId,
+      schoolId: context.school.schoolId,
       date: data.date,
       classSessionId: data.classSessionId ?? undefined,
       entries: data.entries.map(entry => ({
@@ -107,59 +119,66 @@ export const bulkRecordClassAttendance = createServerFn()
         status: entry.status,
         reason: entry.reason ?? undefined,
       })),
-      recordedBy: context.userId,
-    })
-
-    return {
-      success: true,
-      count: results,
-      data: results,
-    }
+      recordedBy: context.auth.userId,
+    }).match(
+      result => ({
+        success: true as const,
+        count: result,
+        data: result,
+      }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Excuse student absence
  */
-export const excuseAbsence = createServerFn()
+export const excuseAbsence = createAuthenticatedServerFn()
   .inputValidator(excuseAbsenceSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context: unknownContext }) => {
+    const context = unknownContext as unknown as ServerContext
+    if (!context.school)
+      return { success: false as const, error: 'No school context' }
 
-    const result = await excuseStudentAbsence({
+    return excuseStudentAbsence({
       ...data,
-      excusedBy: context.userId,
-    })
-
-    return result
+      schoolId: context.school.schoolId,
+      excusedBy: context.auth.userId,
+    }).match(
+      result => ({ success: true as const, data: result }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Notify parent of absence
  */
-export const notifyParent = createServerFn()
+export const notifyParent = createAuthenticatedServerFn()
   .inputValidator(
     z.object({
       attendanceId: z.string(),
       method: z.enum(['email', 'sms', 'in_app']),
     }),
   )
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context: unknownContext }) => {
+    const context = unknownContext as unknown as ServerContext
+    if (!context.school)
+      return { success: false as const, error: 'No school context' }
 
     // TODO: Implement actual notification sending
-    const result = await markParentNotified(data)
-
-    return result
+    return markParentNotified({
+      ...data,
+      schoolId: context.school.schoolId,
+    }).match(
+      result => ({ success: true as const, data: result }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Get attendance statistics
  */
-export const getStatistics = createServerFn()
+export const getStatistics = createAuthenticatedServerFn()
   .inputValidator(
     z.object({
       startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
@@ -167,21 +186,24 @@ export const getStatistics = createServerFn()
       classId: z.string().optional(),
     }),
   )
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context: unknownContext }) => {
+    const context = unknownContext as unknown as ServerContext
+    if (!context.school)
+      return { success: false as const, error: 'No school context' }
 
     return getAttendanceStatistics({
-      schoolId: context.schoolId,
+      schoolId: context.school.schoolId,
       ...data,
-    })
+    }).match(
+      result => ({ success: true as const, data: result }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * IconCheck chronic absence for a student
  */
-export const checkChronicAbsence = createServerFn()
+export const checkChronicAbsence = createAuthenticatedServerFn()
   .inputValidator(
     z.object({
       studentId: z.string(),
@@ -189,47 +211,60 @@ export const checkChronicAbsence = createServerFn()
       endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
     }),
   )
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context: unknownContext }) => {
+    const context = unknownContext as unknown as ServerContext
+    if (!context.school)
+      return { success: false as const, error: 'No school context' }
 
-    const settings = await getAttendanceSettings(context.schoolId)
-    const threshold = Number(settings.chronicAbsenceThresholdPercent ?? 10)
+    const settingsResult = await getAttendanceSettings(context.school.schoolId)
+    if (settingsResult.isErr()) {
+      return { success: false as const, error: settingsResult.error.message }
+    }
 
-    const absenceCount = await countStudentAbsences({
+    const settings = settingsResult.value
+    const threshold = Number((settings as any)?.chronicAbsenceThresholdPercent ?? 10)
+
+    return countStudentAbsences({
       ...data,
       excludeExcused: true,
-    })
+    }).match(
+      (absenceCount) => {
+        // Calculate total school days (simplified)
+        const start = new Date(data.startDate)
+        const end = new Date(data.endDate)
+        const diffTime = Math.abs(end.getTime() - start.getTime())
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+        const schoolDays = Math.floor((diffDays * 5) / 7)
 
-    // Calculate total school days (simplified)
-    const start = new Date(data.startDate)
-    const end = new Date(data.endDate)
-    const diffTime = Math.abs(end.getTime() - start.getTime())
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-    const schoolDays = Math.floor((diffDays * 5) / 7)
+        const absenceRate = schoolDays > 0 ? (absenceCount / schoolDays) * 100 : 0
 
-    const absenceRate = schoolDays > 0 ? (absenceCount / schoolDays) * 100 : 0
-
-    return {
-      absenceCount,
-      schoolDays,
-      absenceRate: Math.round(absenceRate * 100) / 100,
-      isChronicAbsent: absenceRate >= threshold,
-      threshold,
-    }
+        return {
+          success: true as const,
+          data: {
+            absenceCount,
+            schoolDays,
+            absenceRate: Math.round(absenceRate * 100) / 100,
+            isChronicAbsent: absenceRate >= threshold,
+            threshold,
+          },
+        }
+      },
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Delete student attendance record
  */
-export const removeStudentAttendance = createServerFn()
+export const removeStudentAttendance = createAuthenticatedServerFn()
   .inputValidator(z.object({ id: z.string() }))
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context: unknownContext }) => {
+    const context = unknownContext as unknown as ServerContext
+    if (!context.school)
+      return { success: false as const, error: 'No school context' }
 
-    await deleteStudentAttendance(data.id)
-    return { success: true }
+    return deleteStudentAttendance(data.id, context.school.schoolId).match(
+      () => ({ success: true as const, data: { success: true } }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })

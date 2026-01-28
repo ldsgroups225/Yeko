@@ -1,5 +1,4 @@
 import type { EnrollmentWithDetails } from '@repo/data-ops/queries/enrollments'
-import type { getEnrollments } from '@/school/functions/enrollments'
 import {
   IconCheck,
   IconClipboardCheck,

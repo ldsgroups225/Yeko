@@ -90,6 +90,17 @@ export function attendanceCountsQueryOptions(params: {
     queryFn: async () => {
       const { roster } = await getClassRoster({ data: params })
 
+      if (!roster) {
+        return {
+          total: 0,
+          present: 0,
+          absent: 0,
+          late: 0,
+          excused: 0,
+          notMarked: 0,
+        }
+      }
+
       interface RosterItem {
         attendance: { status: string } | null
       }

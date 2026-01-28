@@ -20,25 +20,41 @@ import {
 export const getTimetableByClass = createServerFn()
   .inputValidator(getTimetableByClassSchema)
   .handler(async ({ data }) => {
-    return await timetableQueries.getTimetableByClass(data)
+    const result = await timetableQueries.getTimetableByClass(data)
+    if (result.isErr()) {
+      return { success: false, error: result.error.message }
+    }
+    return { success: true, data: result.value }
   })
 
 export const getTimetableByTeacher = createServerFn()
   .inputValidator(getTimetableByTeacherSchema)
   .handler(async ({ data }) => {
-    return await timetableQueries.getTimetableByTeacher(data)
+    const result = await timetableQueries.getTimetableByTeacher(data)
+    if (result.isErr()) {
+      return { success: false, error: result.error.message }
+    }
+    return { success: true, data: result.value }
   })
 
 export const getTimetableByClassroom = createServerFn()
   .inputValidator(getTimetableByClassroomSchema)
   .handler(async ({ data }) => {
-    return await timetableQueries.getTimetableByClassroom(data)
+    const result = await timetableQueries.getTimetableByClassroom(data)
+    if (result.isErr()) {
+      return { success: false, error: result.error.message }
+    }
+    return { success: true, data: result.value }
   })
 
 export const getTimetableSession = createServerFn()
   .inputValidator(z.object({ id: z.string() }))
   .handler(async ({ data }) => {
-    return await timetableQueries.getTimetableSessionById(data.id)
+    const result = await timetableQueries.getTimetableSessionById(data.id)
+    if (result.isErr()) {
+      return { success: false, error: result.error.message }
+    }
+    return { success: true, data: result.value }
   })
 
 // ============================================
@@ -48,8 +64,8 @@ export const getTimetableSession = createServerFn()
 export const createTimetableSession = createServerFn()
   .inputValidator(createTimetableSessionSchema)
   .handler(async ({ data }) => {
-    // IconCheck for conflicts before creating
-    const conflicts = await timetableQueries.detectConflicts({
+    // Check for conflicts before creating
+    const conflictsResult = await timetableQueries.detectConflicts({
       schoolId: data.schoolId,
       schoolYearId: data.schoolYearId,
       dayOfWeek: data.dayOfWeek,
@@ -60,6 +76,12 @@ export const createTimetableSession = createServerFn()
       classId: data.classId,
     })
 
+    if (conflictsResult.isErr()) {
+      return { success: false, error: 'Échec de la vérification des conflits' }
+    }
+
+    const conflicts = conflictsResult.value
+
     if (conflicts.length > 0) {
       return {
         success: false,
@@ -68,12 +90,16 @@ export const createTimetableSession = createServerFn()
       }
     }
 
-    const session = await timetableQueries.createTimetableSession({
+    const sessionResult = await timetableQueries.createTimetableSession({
       id: crypto.randomUUID(),
       ...data,
     })
 
-    return { success: true, data: session }
+    if (sessionResult.isErr()) {
+      return { success: false, error: sessionResult.error.message }
+    }
+
+    return { success: true, data: sessionResult.value }
   })
 
 export const updateTimetableSession = createServerFn()
@@ -82,12 +108,17 @@ export const updateTimetableSession = createServerFn()
     const { id, ...updateData } = data
 
     // Get existing session to check conflicts
-    const existing = await timetableQueries.getTimetableSessionById(id)
+    const existingResult = await timetableQueries.getTimetableSessionById(id)
+    if (existingResult.isErr()) {
+      return { success: false, error: 'Erreur lors de la récupération de la séance' }
+    }
+    const existing = existingResult.value
+
     if (!existing) {
       return { success: false, error: 'Séance non trouvée' }
     }
 
-    // IconCheck for conflicts if time/day/teacher/classroom changed
+    // Check for conflicts if time/day/teacher/classroom changed
     if (
       updateData.dayOfWeek !== undefined
       || updateData.startTime !== undefined
@@ -95,7 +126,7 @@ export const updateTimetableSession = createServerFn()
       || updateData.teacherId !== undefined
       || updateData.classroomId !== undefined
     ) {
-      const conflicts = await timetableQueries.detectConflicts({
+      const conflictsResult = await timetableQueries.detectConflicts({
         schoolId: existing.schoolId,
         schoolYearId: existing.schoolYearId,
         dayOfWeek: updateData.dayOfWeek ?? existing.dayOfWeek,
@@ -107,6 +138,12 @@ export const updateTimetableSession = createServerFn()
         excludeSessionId: id,
       })
 
+      if (conflictsResult.isErr()) {
+        return { success: false, error: 'Échec de la vérification des conflits' }
+      }
+
+      const conflicts = conflictsResult.value
+
       if (conflicts.length > 0) {
         return {
           success: false,
@@ -116,14 +153,21 @@ export const updateTimetableSession = createServerFn()
       }
     }
 
-    const session = await timetableQueries.updateTimetableSession(id, updateData)
-    return { success: true, data: session }
+    const sessionResult = await timetableQueries.updateTimetableSession(id, updateData)
+    if (sessionResult.isErr()) {
+      return { success: false, error: sessionResult.error.message }
+    }
+
+    return { success: true, data: sessionResult.value }
   })
 
 export const deleteTimetableSession = createServerFn()
   .inputValidator(z.object({ id: z.string() }))
   .handler(async ({ data }) => {
-    await timetableQueries.deleteTimetableSession(data.id)
+    const result = await timetableQueries.deleteTimetableSession(data.id)
+    if (result.isErr()) {
+      return { success: false, error: result.error.message }
+    }
     return { success: true }
   })
 
@@ -145,6 +189,8 @@ export const importTimetable = createServerFn()
     if (data.replaceExisting) {
       const classIds = [...new Set(data.sessions.map((s: { classId: string }) => s.classId))]
       for (const classId of classIds) {
+        // We log error but don't abort specific class import if one delete fails?
+        // Or should we? For now, simplistic approach as in original
         await timetableQueries.deleteClassTimetable(classId, data.schoolYearId)
       }
     }
@@ -155,8 +201,8 @@ export const importTimetable = createServerFn()
       if (!session)
         continue
 
-      // IconCheck for conflicts
-      const conflicts = await timetableQueries.detectConflicts({
+      // Check for conflicts
+      const conflictsResult = await timetableQueries.detectConflicts({
         schoolId: data.schoolId,
         schoolYearId: data.schoolYearId,
         dayOfWeek: session.dayOfWeek,
@@ -167,22 +213,31 @@ export const importTimetable = createServerFn()
         classId: session.classId,
       })
 
+      if (conflictsResult.isErr()) {
+        results.failed++
+        // Logled internal error in detectConflicts via tapLogErr
+        continue
+      }
+
+      const conflicts = conflictsResult.value
+
       if (conflicts.length > 0) {
         results.failed++
         results.conflicts.push({ index: i, conflicts })
         continue
       }
 
-      try {
-        await timetableQueries.createTimetableSession({
-          id: crypto.randomUUID(),
-          schoolId: data.schoolId,
-          schoolYearId: data.schoolYearId,
-          ...session,
-        })
+      const createResult = await timetableQueries.createTimetableSession({
+        id: crypto.randomUUID(),
+        schoolId: data.schoolId,
+        schoolYearId: data.schoolYearId,
+        ...session,
+      })
+
+      if (createResult.isOk()) {
         results.success++
       }
-      catch {
+      else {
         results.failed++
       }
     }
@@ -193,7 +248,10 @@ export const importTimetable = createServerFn()
 export const deleteClassTimetable = createServerFn()
   .inputValidator(z.object({ classId: z.string(), schoolYearId: z.string() }))
   .handler(async ({ data }) => {
-    await timetableQueries.deleteClassTimetable(data.classId, data.schoolYearId)
+    const result = await timetableQueries.deleteClassTimetable(data.classId, data.schoolYearId)
+    if (result.isErr()) {
+      return { success: false, error: result.error.message }
+    }
     return { success: true }
   })
 
@@ -204,13 +262,21 @@ export const deleteClassTimetable = createServerFn()
 export const detectConflicts = createServerFn()
   .inputValidator(detectConflictsSchema)
   .handler(async ({ data }) => {
-    return await timetableQueries.detectConflicts(data)
+    const result = await timetableQueries.detectConflicts(data)
+    if (result.isErr()) {
+      return { success: false, error: result.error.message }
+    }
+    return { success: true, data: result.value }
   })
 
 export const getAllConflicts = createServerFn()
   .inputValidator(z.object({ schoolId: z.string(), schoolYearId: z.string() }))
   .handler(async ({ data }) => {
-    return await timetableQueries.getAllConflictsForSchool(data.schoolId, data.schoolYearId)
+    const result = await timetableQueries.getAllConflictsForSchool(data.schoolId, data.schoolYearId)
+    if (result.isErr()) {
+      return { success: false, error: result.error.message }
+    }
+    return { success: true, data: result.value }
   })
 
 // ============================================
@@ -220,7 +286,11 @@ export const getAllConflicts = createServerFn()
 export const getTeacherWeeklyHours = createServerFn()
   .inputValidator(z.object({ teacherId: z.string(), schoolYearId: z.string() }))
   .handler(async ({ data }) => {
-    return await timetableQueries.getTeacherWeeklyHours(data.teacherId, data.schoolYearId)
+    const result = await timetableQueries.getTeacherWeeklyHours(data.teacherId, data.schoolYearId)
+    if (result.isErr()) {
+      return { success: false, error: result.error.message }
+    }
+    return { success: true, data: result.value }
   })
 
 export const getTeacherAvailability = createServerFn()
@@ -230,7 +300,11 @@ export const getTeacherAvailability = createServerFn()
     dayOfWeek: z.number().min(1).max(7),
   }))
   .handler(async ({ data }) => {
-    return await timetableQueries.getTeacherAvailability(data)
+    const result = await timetableQueries.getTeacherAvailability(data)
+    if (result.isErr()) {
+      return { success: false, error: result.error.message }
+    }
+    return { success: true, data: result.value }
   })
 
 export const getClassroomAvailability = createServerFn()
@@ -240,5 +314,9 @@ export const getClassroomAvailability = createServerFn()
     dayOfWeek: z.number().min(1).max(7),
   }))
   .handler(async ({ data }) => {
-    return await timetableQueries.getClassroomAvailability(data)
+    const result = await timetableQueries.getClassroomAvailability(data)
+    if (result.isErr()) {
+      return { success: false, error: result.error.message }
+    }
+    return { success: true, data: result.value }
   })

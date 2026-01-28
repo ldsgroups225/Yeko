@@ -1,6 +1,7 @@
-import { type Result, type ResultAsync, err, ok } from 'neverthrow'
+import type { Result, ResultAsync } from 'neverthrow'
 import type { z } from 'zod'
 import type { YekoLogger } from '../types'
+import { err, ok } from 'neverthrow'
 
 /**
  * Type-safe wrapper for Zod's safeParse that returns a neverthrow Result.
@@ -60,4 +61,3 @@ export function tapLogErr<E>(logger: YekoLogger, context?: import('../types').Ye
     return error
   }
 }
-

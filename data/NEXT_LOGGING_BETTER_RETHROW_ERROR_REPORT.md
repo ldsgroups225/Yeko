@@ -1,7 +1,7 @@
 # 📊 Student Data Refinement & Standardization Report
 
 **Version:** 1.1.0
-**Status:** 🏗️ Module Migration (Finance & Transactions) - 🟢 COMPLETE
+**Status:** 🏗️ Phase 6: Academic Lifecycle & Attendance - 🟢 COMPLETE
 **Primary Goal:** Standardize error propagation using `neverthrow` and unify schema field naming.
 
 ---
@@ -82,7 +82,7 @@ This phase aims to ensure that while we handle errors gracefully in the UI, we d
   - [x] Standardize the `DatabaseError` class to include hierarchical error codes (e.g., `AUTH_MISSING_CONTEXT`, `PERM_DENIED`). (Added `UNAUTHORIZED`).
 
 - [x] **Middleware Refactoring (`apps/school/middleware`)**:
-  - [x] Refactor `requirePermission` and `getSchoolContext` to aviod raw `throw new Error(...)`. (Converted to `DatabaseError` with types).
+  - [x] Refactor `requirePermission` and `getSchoolContext` to avoid raw `throw new Error(...)`. (Converted to `DatabaseError` with types).
   - [x] Introduce a `Result`-based return type or a dedicated `AuthError` that can be caught and logged by a wrapper.
 
 - [x] **Server Function Wrapper**:
@@ -120,15 +120,68 @@ This phase aims to ensure that while we handle errors gracefully in the UI, we d
 - [x] Standardize error codes for "Payment Conflict" or "Invalid Installment Plan".
 - [x] Standardize journal entries and fiscal year management.
 
-### 📍 Phase 6: Academic Lifecycle & Attendance (`attendance.ts`, `programs.ts`)
+### 📍 Phase 6: Academic Lifecycle & Attendance (`attendance.ts`, `programs.ts`) - **✅ COMPLETED**
 
-- [ ] Refactor Student and Teacher Attendance modules to use `ResultAsync`.
-- [ ] Standardize Curriculum and Program data operations (School/Class Subjects).
-- [ ] Integrate `tapLogErr` with specific context for automated schedule validation failures.
+#### ✅ Completed: Strict Type Refactoring (TypeScript Pro Standards)
 
-### 📍 Phase 7: Teacher Application & App Integration (`teacher-app.ts`)
+**Objective**: Eliminate all `any` types from data-ops queries and enforce strict TypeScript typing throughout the academic lifecycle modules.
 
-- [ ] Audit the critical `teacher-app.ts` module for `neverthrow` + `logger` penetration.
+- [x] **`programs.ts`**: Refactored to remove `any` types
+  - Created `ProgramWithDetails` type for program templates with school year, subject, and grade details
+  - Updated `getProgramTemplates` to return `ProgramWithDetails[]`
+  - Updated `getProgramTemplateById` to return `ProgramWithDetails | null`
+  - Removed unsafe `any` type assertions in version restoration logic
+
+- [x] **`class-subjects.ts`**: Refactored to remove `any` types
+  - Created `ClassSubjectWithDetails` type for class-subject relationships
+  - Created `AssignmentMatrixItem` type for teacher assignment matrix
+  - Updated all 10 functions to return strict Drizzle-inferred types
+  - Fixed nullable teacher field handling in query results
+  - Added null checks for database operations returning potentially undefined values
+
+- [x] **`school-subjects.ts`**: Refactored to remove `any` types
+  - Created `SchoolSubjectWithDetails` type for school subjects with details
+  - Created `SubjectUsageStats` type for subject usage statistics
+  - Updated all 7 functions to return strict types
+  - Fixed syntax errors from type definition placement
+
+- [x] **`curriculum-progress.ts`**: Complete strict type refactoring
+  - Created **9 comprehensive type definitions**:
+    - `ClassSessionWithDetails` - class sessions with subject, teacher, chapter
+    - `ClassSessionFull` - full session data with class, grade, series
+    - `ChapterCompletionWithDetails` - chapter completions with relations
+    - `CurriculumProgressWithDetails` - progress with subject and program template
+    - `ProgressOverviewItem` - progress overview statistics
+    - `ClassBehindSchedule` - classes falling behind schedule
+    - `ProgressStatsByStatus` - progress stats by status
+    - `ProgressBySubject` - progress aggregated by subject
+    - `TeacherProgressSummaryItem` - teacher-specific progress summaries
+  - Updated **17 function signatures** to use strict types instead of `any`
+  - Fixed import issues (moved `series` from school-schema to core-schema)
+  - Added proper null checks for all database operations
+  - Removed unused `uuid` import (using `crypto.randomUUID()`)
+
+**Metrics**:
+
+- Files refactored: 4 (`programs.ts`, `class-subjects.ts`, `school-subjects.ts`, `curriculum-progress.ts`)
+- Type definitions created: 12+ comprehensive types
+- Functions with strict types: 40+
+- TypeScript compilation: ✅ **CLEAN** (0 errors)
+
+#### 🔄 Remaining Work
+
+- [x] Refactor Student Attendance modules (`student-attendance.ts`, `teacher-student-attendance.ts`) to remove `any` types
+- [x] Refactor remaining query files with `any` types:
+  - [x] `catalogs.ts` (Refactored to use `ResultAsync` and strict types)
+  - [x] `coefficients.ts` (Refactored to use `ResultAsync` and strict types)
+  - [x] `classrooms.ts` (Refactored to use `ResultAsync` and strict types)
+  - [x] `parents.ts` (Refactored to use `ResultAsync` and strict types)
+  - [x] `students.ts` (Refactored to use `ResultAsync` and strict types)
+- [x] Integrate `tapLogErr` with specific context for automated schedule validation failures
+
+### 📍 Phase 7: Teacher Application & App Integration (`teacher-app.ts`) - **🏗️ IN PROGRESS**
+
+- [x] Audit the critical `teacher-app.ts` module for `neverthrow` + `logger` penetration.
 - [ ] Optimize `DatabaseError` payloads for mobile-friendly consumption.
 
 ---
@@ -168,6 +221,7 @@ To maintain the high standards of the **Yeko Result-Oriented Framework**, all re
 
 I leverage specialized sub-agents from `.claude/agents/` to ensure 360-degree quality:
 
+- **TypeScript Pro (`02/typescript-pro.md`)**: Ensures strict/inherit typing and eliminates `any` types, it is always embedded.
 - **Security Auditor (`04/security-auditor.md`)**: Verifies that every query enforces strict `schoolId` multi-tenant isolation.
 - **Error Detective (`04/error-detective.md`)**: Helps refine the `DatabaseError` hierarchy and ensures "Natural" error messages are truly helpful.
 - **Architect Reviewer (`04/architect-reviewer.md`)**: Ensures the `ResultAsync` pattern doesn't violate core systemic boundaries.
@@ -182,4 +236,5 @@ I leverage specialized sub-agents from `.claude/agents/` to ensure 360-degree qu
 ---
 
 **Current Status:** 🟢 Students | 🟢 Enrollments | 🟢 Grades | 🟢 Classes | 🟢 Parents | 🟢 Finance
-**Next Targeted Action:** Start Phase 6: Academic Lifecycle & Attendance.
+**Current Status:** 🟢 Students | 🟢 Enrollments | 🟢 Grades | 🟢 Classes | 🟢 Parents | 🟢 Finance | 🟢 Academic Lifecycle
+**Next Targeted Action:** Start Phase 7: Teacher Application & App Integration.

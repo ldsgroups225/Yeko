@@ -15,34 +15,33 @@ import { homeworkSchema, homeworkUpdateSchema } from '@/schemas/homework'
 export const createHomework = createServerFn()
   .inputValidator(homeworkSchema)
   .handler(async ({ data }) => {
-    try {
-      const homework = await createHomeworkAssignment({
-        schoolId: data.schoolId,
-        classId: data.classId,
-        subjectId: data.subjectId,
-        teacherId: data.teacherId,
-        classSessionId: data.classSessionId,
-        title: data.title,
-        description: data.description,
-        instructions: data.instructions,
-        dueDate: data.dueDate,
-        dueTime: data.dueTime,
-        maxPoints: data.maxPoints,
-        isGraded: data.isGraded,
-        attachments: data.attachments,
-        status: data.status,
-      })
+    const homeworkResult = await createHomeworkAssignment({
+      schoolId: data.schoolId,
+      classId: data.classId,
+      subjectId: data.subjectId,
+      teacherId: data.teacherId,
+      classSessionId: data.classSessionId,
+      title: data.title,
+      description: data.description,
+      instructions: data.instructions,
+      dueDate: data.dueDate,
+      dueTime: data.dueTime,
+      maxPoints: data.maxPoints,
+      isGraded: data.isGraded,
+      attachments: data.attachments,
+      status: data.status,
+    })
 
-      return {
-        success: true,
-        homeworkId: homework?.id,
-      }
-    }
-    catch (error: unknown) {
+    if (homeworkResult.isErr()) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to create homework',
+        error: homeworkResult.error.message,
       }
+    }
+
+    return {
+      success: true,
+      homeworkId: homeworkResult.value.id,
     }
   })
 
@@ -68,21 +67,30 @@ export const getHomework = createServerFn()
       pageSize: data.pageSize,
     })
 
+    if (result.isErr()) {
+      return {
+        homework: [],
+        total: 0,
+        page: data.page,
+        pageSize: data.pageSize,
+      }
+    }
+
     return {
-      homework: result.homework.map(h => ({
+      homework: result.value.homework.map(h => ({
         id: h.id,
         title: h.title,
         className: h.className,
         subjectName: h.subjectName,
         dueDate: h.dueDate,
-        dueTime: h.dueTime,
+        dueTime: null, // Not available in this query
         status: h.status as 'draft' | 'active' | 'closed' | 'cancelled',
         submissionCount: h.submissionCount,
         totalStudents: 0, // Not available in current query
       })),
-      total: result.total,
-      page: result.page,
-      pageSize: result.pageSize,
+      total: result.value.total,
+      page: result.value.page,
+      pageSize: result.value.pageSize,
     }
   })
 
@@ -90,11 +98,13 @@ export const getHomework = createServerFn()
 export const getHomeworkDetails = createServerFn()
   .inputValidator(z.object({ homeworkId: z.string() }))
   .handler(async ({ data }) => {
-    const homework = await getHomeworkById(data.homeworkId)
+    const homeworkResult = await getHomeworkById(data.homeworkId)
 
-    if (!homework) {
+    if (homeworkResult.isErr() || !homeworkResult.value) {
       return { homework: null }
     }
+
+    const homework = homeworkResult.value
 
     return {
       homework: {
@@ -107,15 +117,10 @@ export const getHomeworkDetails = createServerFn()
         dueDate: homework.dueDate,
         dueTime: homework.dueTime,
         maxPoints: homework.maxPoints,
-        isGraded: homework.isGraded ?? false,
-        attachments: (homework.attachments ?? []) as Array<{
-          name: string
-          url: string
-          type: string
-          size: number
-        }>,
+        isGraded: homework.isGraded,
+        attachments: homework.attachments,
         status: homework.status as 'draft' | 'active' | 'closed' | 'cancelled',
-        createdAt: homework.createdAt.toISOString(),
+        createdAt: homework.createdAt?.toISOString() ?? new Date().toISOString(),
       },
     }
   })
@@ -128,30 +133,29 @@ export const updateHomework = createServerFn()
     }),
   )
   .handler(async ({ data }) => {
-    try {
-      const updated = await updateHomeworkAssignment({
-        homeworkId: data.id,
-        teacherId: data.teacherId,
-        title: data.title,
-        description: data.description,
-        instructions: data.instructions,
-        dueDate: data.dueDate,
-        dueTime: data.dueTime,
-        maxPoints: data.maxPoints,
-        isGraded: data.isGraded,
-        attachments: data.attachments,
-        status: data.status,
-      })
+    const updatedResult = await updateHomeworkAssignment({
+      homeworkId: data.id,
+      teacherId: data.teacherId,
+      title: data.title,
+      description: data.description,
+      instructions: data.instructions,
+      dueDate: data.dueDate,
+      dueTime: data.dueTime,
+      maxPoints: data.maxPoints,
+      isGraded: data.isGraded,
+      attachments: data.attachments,
+      status: data.status,
+    })
 
-      return {
-        success: !!updated,
-      }
-    }
-    catch (error: unknown) {
+    if (updatedResult.isErr()) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to update homework',
+        error: updatedResult.error.message,
       }
+    }
+
+    return {
+      success: true,
     }
   })
 
@@ -164,20 +168,19 @@ export const deleteHomework = createServerFn()
     }),
   )
   .handler(async ({ data }) => {
-    try {
-      const result = await deleteHomeworkAssignment({
-        homeworkId: data.homeworkId,
-        teacherId: data.teacherId,
-      })
+    const result = await deleteHomeworkAssignment({
+      homeworkId: data.homeworkId,
+      teacherId: data.teacherId,
+    })
 
-      return {
-        success: !!result,
-      }
-    }
-    catch (error: unknown) {
+    if (result.isErr()) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to delete homework',
+        error: result.error.message,
       }
+    }
+
+    return {
+      success: true,
     }
   })

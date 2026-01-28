@@ -26,11 +26,13 @@ export const submitGrades = createServerFn({ method: 'POST' })
   .inputValidator(submitGradesSchema)
   .handler(async ({ data }) => {
     // Get current term for the school year
-    const currentTerm = await getCurrentTermForSchoolYear(data.schoolYearId)
+    const currentTermResult = await getCurrentTermForSchoolYear(data.schoolYearId)
 
-    if (!currentTerm) {
+    if (currentTermResult.isErr() || !currentTermResult.value) {
       return { success: false, error: 'No term found for current school year' }
     }
+
+    const currentTerm = currentTermResult.value
 
     const result = await submitStudentGrades({
       teacherId: data.teacherId,
@@ -43,5 +45,9 @@ export const submitGrades = createServerFn({ method: 'POST' })
       gradeType: data.gradeType,
     })
 
-    return result
+    if (result.isErr()) {
+      return { success: false, error: result.error.message }
+    }
+
+    return { success: true }
   })

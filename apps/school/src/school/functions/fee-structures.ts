@@ -1,4 +1,3 @@
-import type { FeeStructure } from '@repo/data-ops'
 import type { ServerContext } from '../lib/server-fn'
 import {
   createFeeStructure,

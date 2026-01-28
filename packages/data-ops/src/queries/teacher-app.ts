@@ -1,9 +1,8 @@
-/**
- * Teacher App Queries
- * Queries specifically for the Yeko Teacher mobile app
- */
+import type { SQL } from 'drizzle-orm'
 import type { GradeStatus, GradeType, MessageCategory } from '../drizzle/school-schema'
+import { databaseLogger, tapLogErr } from '@repo/logger'
 import { and, asc, desc, eq, gte, lte, sql } from 'drizzle-orm'
+import { ResultAsync } from 'neverthrow'
 import { getDb } from '../database/setup'
 import { grades, schools, subjects } from '../drizzle/core-schema'
 import {
@@ -22,8 +21,123 @@ import {
   teacherMessages,
   userSchools,
 } from '../drizzle/school-schema'
+import { DatabaseError } from '../errors'
 
-export async function createTeacherClassSession(params: {
+// Type definitions for teacher app queries
+export interface TeacherClassSession {
+  id: string
+  classId: string
+  schoolId: string
+  className: string
+  schoolYearId: string
+  subjectId: string
+  subjectName: string
+  teacherId: string
+  date: string
+  startTime: string
+  endTime: string
+  topic: string | null
+  notes: string | null
+  homework: string | null
+  status: 'scheduled' | 'completed' | 'cancelled'
+  studentsPresent: number | null
+  studentsAbsent: number | null
+  chapterId: string | null
+  createdAt: Date
+  completedAt: Date | null
+}
+
+export interface ParticipationGrade {
+  studentId: string
+  grade: number
+  comment: string | null
+}
+
+export interface TeacherSchool {
+  id: string
+  name: string
+  code: string
+  address: string | null
+  phone: string | null
+  email: string | null
+  logoUrl: string | null
+  userId: string
+}
+
+export interface HomeworkDetails {
+  id: string
+  schoolId: string
+  classId: string
+  className: string
+  subjectId: string
+  subjectName: string
+  teacherId: string
+  classSessionId: string | null
+  title: string
+  description: string | null
+  instructions: string | null
+  dueDate: string
+  dueTime: string | null
+  maxPoints: number | null
+  isGraded: boolean
+  attachments: Array<{ name: string, url: string, type: string, size: number }> | null
+  status: 'draft' | 'active' | 'closed' | 'cancelled'
+  createdAt: Date
+  updatedAt: Date
+}
+
+export type HomeworkDeleteResult
+  = | { deleted: boolean }
+    | HomeworkDetails
+
+export interface MessageThread {
+  id: string
+  senderType: 'teacher' | 'parent'
+  senderId: string
+  content: string
+  createdAt: Date
+}
+
+export interface MessageDetails {
+  id: string
+  schoolId: string
+  senderType: 'teacher' | 'parent'
+  senderId: string
+  recipientType: 'teacher' | 'parent'
+  recipientId: string
+  studentId: string | null
+  studentName: string | null
+  classId: string | null
+  className: string | null
+  threadId: string
+  subject: string
+  content: string
+  attachments: Array<{ name: string, url: string, type: string, size: number }> | null
+  isRead: boolean
+  readAt: Date | null
+  createdAt: Date
+  thread: MessageThread[]
+}
+
+export interface TimetableSession {
+  id: string
+  dayOfWeek: number
+  startTime: string
+  endTime: string
+  class: { id: string, name: string }
+  subject: { id: string, name: string, shortName: string | null }
+  classroom: { id: string | null, name: string | null, code: string | null } | null
+}
+
+export interface ParentSearchResult {
+  id: string
+  name: string
+  phone: string
+  studentName: string
+  className: string
+}
+
+export function createTeacherClassSession(params: {
   timetableSessionId: string
   teacherId: string
   schoolId: string
@@ -34,35 +148,40 @@ export async function createTeacherClassSession(params: {
   endTime: string
   topic?: string
   chapterId?: string
-}) {
+}): ResultAsync<typeof classSessions.$inferSelect, DatabaseError> {
   const db = getDb()
 
-  const [session] = await db
-    .insert(classSessions)
-    .values({
-      id: crypto.randomUUID(),
-      classId: params.classId,
-      subjectId: params.subjectId,
-      teacherId: params.teacherId,
-      timetableSessionId: params.timetableSessionId,
-      date: params.date,
-      startTime: params.startTime,
-      endTime: params.endTime,
-      topic: params.topic,
-      chapterId: params.chapterId,
-      status: 'scheduled',
-    })
-    .returning()
-  if (!session) {
-    throw new Error('Failed to create class session')
-  }
-  return session
+  return ResultAsync.fromPromise(
+    (async () => {
+      const [session] = await db
+        .insert(classSessions)
+        .values({
+          id: crypto.randomUUID(),
+          classId: params.classId,
+          subjectId: params.subjectId,
+          teacherId: params.teacherId,
+          timetableSessionId: params.timetableSessionId,
+          date: params.date,
+          startTime: params.startTime,
+          endTime: params.endTime,
+          topic: params.topic,
+          chapterId: params.chapterId,
+          status: 'scheduled',
+        })
+        .returning()
+      if (!session) {
+        throw new Error('Failed to create class session')
+      }
+      return session
+    })(),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to create class session'),
+  ).mapErr(tapLogErr(databaseLogger, params))
 }
 
 /**
  * Complete a class session
  */
-export async function completeTeacherClassSession(params: {
+export function completeTeacherClassSession(params: {
   sessionId: string
   teacherId: string
   studentsPresent?: number
@@ -70,77 +189,84 @@ export async function completeTeacherClassSession(params: {
   notes?: string
   homework?: string
   chapterId?: string
-}) {
+}): ResultAsync<typeof classSessions.$inferSelect, DatabaseError> {
   const db = getDb()
 
-  const [updated] = await db
-    .update(classSessions)
-    .set({
-      status: 'completed',
-      completedAt: new Date(),
-      studentsPresent: params.studentsPresent,
-      studentsAbsent: params.studentsAbsent,
-      notes: params.notes,
-      homework: params.homework,
-      chapterId: params.chapterId,
-      updatedAt: new Date(),
-    })
-    .where(
-      and(
-        eq(classSessions.id, params.sessionId),
-        eq(classSessions.teacherId, params.teacherId),
-      ),
-    )
-    .returning()
-  if (!updated) {
-    throw new Error('Failed to complete class session')
-  }
-  return updated
+  return ResultAsync.fromPromise(
+    (async () => {
+      const [updated] = await db
+        .update(classSessions)
+        .set({
+          status: 'completed',
+          completedAt: new Date(),
+          studentsPresent: params.studentsPresent,
+          studentsAbsent: params.studentsAbsent,
+          notes: params.notes,
+          homework: params.homework,
+          chapterId: params.chapterId,
+          updatedAt: new Date(),
+        })
+        .where(
+          and(
+            eq(classSessions.id, params.sessionId),
+            eq(classSessions.teacherId, params.teacherId),
+          ),
+        )
+        .returning()
+      if (!updated) {
+        throw new Error('Failed to complete class session')
+      }
+      return updated
+    })(),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to complete class session'),
+  ).mapErr(tapLogErr(databaseLogger, params))
 }
 
 /**
  * Get session details
  */
-export async function getTeacherClassSessionById(sessionId: string) {
+export function getTeacherClassSessionById(sessionId: string): ResultAsync<TeacherClassSession | null, DatabaseError> {
   const db = getDb()
 
-  const result = await db
-    .select({
-      id: classSessions.id,
-      classId: classSessions.classId,
-      schoolId: classes.schoolId,
-      className: sql<string>`${grades.name} || ' ' || ${classes.section}`,
-      schoolYearId: classes.schoolYearId,
-      subjectId: classSessions.subjectId,
-      subjectName: subjects.name,
-      teacherId: classSessions.teacherId,
-      date: classSessions.date,
-      startTime: classSessions.startTime,
-      endTime: classSessions.endTime,
-      topic: classSessions.topic,
-      notes: classSessions.notes,
-      homework: classSessions.homework,
-      status: classSessions.status,
-      studentsPresent: classSessions.studentsPresent,
-      studentsAbsent: classSessions.studentsAbsent,
-      chapterId: classSessions.chapterId,
-      createdAt: classSessions.createdAt,
-      completedAt: classSessions.completedAt,
-    })
-    .from(classSessions)
-    .innerJoin(subjects, eq(classSessions.subjectId, subjects.id))
-    .innerJoin(classes, eq(classSessions.classId, classes.id))
-    .innerJoin(grades, eq(classes.gradeId, grades.id))
-    .where(eq(classSessions.id, sessionId))
-    .limit(1)
-
-  return result[0] ?? null
+  return ResultAsync.fromPromise(
+    db
+      .select({
+        id: classSessions.id,
+        classId: classSessions.classId,
+        schoolId: classes.schoolId,
+        className: sql<string>`${grades.name} || ' ' || ${classes.section}`,
+        schoolYearId: classes.schoolYearId,
+        subjectId: classSessions.subjectId,
+        subjectName: subjects.name,
+        teacherId: classSessions.teacherId,
+        date: classSessions.date,
+        startTime: classSessions.startTime,
+        endTime: classSessions.endTime,
+        topic: classSessions.topic,
+        notes: classSessions.notes,
+        homework: classSessions.homework,
+        status: classSessions.status,
+        studentsPresent: classSessions.studentsPresent,
+        studentsAbsent: classSessions.studentsAbsent,
+        chapterId: classSessions.chapterId,
+        createdAt: classSessions.createdAt,
+        completedAt: classSessions.completedAt,
+      })
+      .from(classSessions)
+      .innerJoin(subjects, eq(classSessions.subjectId, subjects.id))
+      .innerJoin(classes, eq(classSessions.classId, classes.id))
+      .innerJoin(grades, eq(classes.gradeId, grades.id))
+      .where(eq(classSessions.id, sessionId))
+      .limit(1)
+      .then(result => result[0] ?? null) as Promise<TeacherClassSession | null>,
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get class session by ID'),
+  ).mapErr(tapLogErr(databaseLogger, { sessionId }))
 }
 
 /**
  * Get session history for teacher
  */
-export async function getTeacherSessionHistory(params: {
+export function getTeacherSessionHistory(params: {
   teacherId: string
   classId?: string
   subjectId?: string
@@ -148,7 +274,22 @@ export async function getTeacherSessionHistory(params: {
   endDate?: string
   page?: number
   pageSize?: number
-}) {
+}): ResultAsync<{
+  sessions: Array<{
+    id: string
+    className: string
+    subjectName: string
+    date: string
+    startTime: string
+    endTime: string | null
+    status: 'scheduled' | 'completed' | 'cancelled'
+    studentsPresent: number | null
+    studentsAbsent: number | null
+  }>
+  total: number
+  page: number
+  pageSize: number
+}, DatabaseError> {
   const db = getDb()
   const page = params.page ?? 1
   const pageSize = params.pageSize ?? 20
@@ -163,39 +304,43 @@ export async function getTeacherSessionHistory(params: {
   if (params.endDate)
     conditions.push(lte(classSessions.date, params.endDate))
 
-  const [sessions, countResult] = await Promise.all([
-    db
-      .select({
-        id: classSessions.id,
-        className: sql<string>`${grades.name} || ' ' || ${classes.section}`,
-        subjectName: subjects.name,
-        date: classSessions.date,
-        startTime: classSessions.startTime,
-        endTime: classSessions.endTime,
-        status: classSessions.status,
-        studentsPresent: classSessions.studentsPresent,
-        studentsAbsent: classSessions.studentsAbsent,
-      })
-      .from(classSessions)
-      .innerJoin(subjects, eq(classSessions.subjectId, subjects.id))
-      .innerJoin(classes, eq(classSessions.classId, classes.id))
-      .innerJoin(grades, eq(classes.gradeId, grades.id))
-      .where(and(...conditions))
-      .orderBy(desc(classSessions.date), desc(classSessions.startTime))
-      .limit(pageSize)
-      .offset((page - 1) * pageSize),
-    db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(classSessions)
-      .where(and(...conditions)),
-  ])
-
-  return {
-    sessions,
-    total: countResult[0]?.count ?? 0,
-    page,
-    pageSize,
-  }
+  return ResultAsync.fromPromise(
+    Promise.all([
+      db
+        .select({
+          id: classSessions.id,
+          className: sql<string>`${grades.name} || ' ' || ${classes.section}`,
+          subjectName: subjects.name,
+          date: classSessions.date,
+          startTime: classSessions.startTime,
+          endTime: classSessions.endTime,
+          status: classSessions.status,
+          studentsPresent: classSessions.studentsPresent,
+          studentsAbsent: classSessions.studentsAbsent,
+        })
+        .from(classSessions)
+        .innerJoin(subjects, eq(classSessions.subjectId, subjects.id))
+        .innerJoin(classes, eq(classSessions.classId, classes.id))
+        .innerJoin(grades, eq(classes.gradeId, grades.id))
+        .where(and(...conditions))
+        .orderBy(desc(classSessions.date), desc(classSessions.startTime))
+        .limit(pageSize)
+        .offset((page - 1) * pageSize),
+      db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(classSessions)
+        .where(and(...conditions)),
+    ]).then(([sessions, countResult]) => ({
+      sessions: sessions.map(s => ({
+        ...s,
+        status: s.status as 'scheduled' | 'completed' | 'cancelled',
+      })),
+      total: countResult[0]?.count ?? 0,
+      page,
+      pageSize,
+    })),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher session history'),
+  ).mapErr(tapLogErr(databaseLogger, params))
 }
 
 // ============================================
@@ -205,36 +350,45 @@ export async function getTeacherSessionHistory(params: {
 /**
  * Get students enrolled in a class
  */
-export async function getClassStudents(params: {
+export function getClassStudents(params: {
   classId: string
   schoolYearId: string
-}) {
+}): ResultAsync<Array<{
+  id: string
+  firstName: string
+  lastName: string
+  matricule: string | null
+  photoUrl: string | null
+}>, DatabaseError> {
   const db = getDb()
 
-  return db
-    .select({
-      id: students.id,
-      firstName: students.firstName,
-      lastName: students.lastName,
-      matricule: students.matricule,
-      photoUrl: students.photoUrl,
-    })
-    .from(students)
-    .innerJoin(enrollments, eq(enrollments.studentId, students.id))
-    .where(
-      and(
-        eq(enrollments.classId, params.classId),
-        eq(enrollments.schoolYearId, params.schoolYearId),
-        eq(enrollments.status, 'confirmed'),
-      ),
-    )
-    .orderBy(asc(students.lastName), asc(students.firstName))
+  return ResultAsync.fromPromise(
+    db
+      .select({
+        id: students.id,
+        firstName: students.firstName,
+        lastName: students.lastName,
+        matricule: students.matricule,
+        photoUrl: students.photoUrl,
+      })
+      .from(students)
+      .innerJoin(enrollments, eq(enrollments.studentId, students.id))
+      .where(
+        and(
+          eq(enrollments.classId, params.classId),
+          eq(enrollments.schoolYearId, params.schoolYearId),
+          eq(enrollments.status, 'confirmed'),
+        ),
+      )
+      .orderBy(asc(students.lastName), asc(students.firstName)),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get class students'),
+  ).mapErr(tapLogErr(databaseLogger, params))
 }
 
 /**
  * Record participation grades for a session
  */
-export async function upsertParticipationGrades(params: {
+export function upsertParticipationGrades(params: {
   classSessionId: string
   teacherId: string
   grades: Array<{
@@ -242,49 +396,55 @@ export async function upsertParticipationGrades(params: {
     grade: number
     comment?: string
   }>
-}) {
+}): ResultAsync<{ success: boolean }, DatabaseError> {
   const db = getDb()
 
   if (params.grades.length === 0) {
-    return { success: true }
+    return ResultAsync.fromSafePromise(Promise.resolve({ success: true }))
   }
 
-  await db
-    .insert(participationGrades)
-    .values(params.grades.map(grade => ({
-      id: crypto.randomUUID(),
-      studentId: grade.studentId,
-      classSessionId: params.classSessionId,
-      teacherId: params.teacherId,
-      grade: grade.grade,
-      comment: grade.comment,
-    })))
-    .onConflictDoUpdate({
-      target: [participationGrades.studentId, participationGrades.classSessionId],
-      set: {
-        grade: sql`excluded.grade`,
-        comment: sql`excluded.comment`,
-        updatedAt: new Date(),
-      },
-    })
-
-  return { success: true }
+  return ResultAsync.fromPromise(
+    db
+      .insert(participationGrades)
+      .values(params.grades.map(grade => ({
+        id: crypto.randomUUID(),
+        studentId: grade.studentId,
+        classSessionId: params.classSessionId,
+        teacherId: params.teacherId,
+        grade: grade.grade,
+        comment: grade.comment,
+      })))
+      .onConflictDoUpdate({
+        target: [participationGrades.studentId, participationGrades.classSessionId],
+        set: {
+          grade: sql`excluded.grade`,
+          comment: sql`excluded.comment`,
+          updatedAt: new Date(),
+        },
+      })
+      .returning()
+      .then(() => ({ success: true })),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to upsert participation grades'),
+  ).mapErr(tapLogErr(databaseLogger, params))
 }
 
 /**
  * Get participation grades for a session
  */
-export async function getSessionParticipationGrades(classSessionId: string) {
+export function getSessionParticipationGrades(classSessionId: string): ResultAsync<ParticipationGrade[], DatabaseError> {
   const db = getDb()
 
-  return db
-    .select({
-      studentId: participationGrades.studentId,
-      grade: participationGrades.grade,
-      comment: participationGrades.comment,
-    })
-    .from(participationGrades)
-    .where(eq(participationGrades.classSessionId, classSessionId))
+  return ResultAsync.fromPromise(
+    db
+      .select({
+        studentId: participationGrades.studentId,
+        grade: participationGrades.grade,
+        comment: participationGrades.comment,
+      })
+      .from(participationGrades)
+      .where(eq(participationGrades.classSessionId, classSessionId)),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get session participation grades'),
+  ).mapErr(tapLogErr(databaseLogger, { classSessionId }))
 }
 
 // ============================================
@@ -294,87 +454,99 @@ export async function getSessionParticipationGrades(classSessionId: string) {
 /**
  * Get classes assigned to a teacher
  */
-export async function getTeacherAssignedClasses(params: {
+export function getTeacherAssignedClasses(params: {
   teacherId: string
   schoolYearId?: string | null
-}) {
+}): ResultAsync<Array<{
+  id: string
+  name: string
+  subjects: Array<{ id: string, name: string, shortName: string | null }>
+}>, DatabaseError> {
   const db = getDb()
 
   if (!params.schoolYearId) {
-    return []
+    return ResultAsync.fromSafePromise(Promise.resolve([]))
   }
 
-  const result = await db
-    .select({
-      classId: classSubjects.classId,
-      className: sql<string>`${grades.name} || ' ' || ${classes.section}`,
-      subjectId: classSubjects.subjectId,
-      subjectName: subjects.name,
-      subjectShortName: subjects.shortName,
-    })
-    .from(classSubjects)
-    .innerJoin(subjects, eq(classSubjects.subjectId, subjects.id))
-    .innerJoin(classes, eq(classSubjects.classId, classes.id))
-    .innerJoin(grades, eq(classes.gradeId, grades.id))
-    .where(
-      and(
-        eq(classSubjects.teacherId, params.teacherId),
-        eq(classes.schoolYearId, params.schoolYearId),
-      ),
-    )
-    .orderBy(grades.name, classes.section)
+  return ResultAsync.fromPromise(
+    (async () => {
+      const result = await db
+        .select({
+          classId: classSubjects.classId,
+          className: sql<string>`${grades.name} || ' ' || ${classes.section}`,
+          subjectId: classSubjects.subjectId,
+          subjectName: subjects.name,
+          subjectShortName: subjects.shortName,
+        })
+        .from(classSubjects)
+        .innerJoin(subjects, eq(classSubjects.subjectId, subjects.id))
+        .innerJoin(classes, eq(classSubjects.classId, classes.id))
+        .innerJoin(grades, eq(classes.gradeId, grades.id))
+        .where(
+          and(
+            eq(classSubjects.teacherId, params.teacherId),
+            eq(classes.schoolYearId, params.schoolYearId!),
+          ),
+        )
+        .orderBy(grades.name, classes.section)
 
-  const classMap = new Map<string, {
-    id: string
-    name: string
-    subjects: Array<{ id: string, name: string, shortName: string | null }>
-  }>()
+      const classMap = new Map<string, {
+        id: string
+        name: string
+        subjects: Array<{ id: string, name: string, shortName: string | null }>
+      }>()
 
-  for (const row of result) {
-    if (!classMap.has(row.classId)) {
-      classMap.set(row.classId, {
-        id: row.classId,
-        name: row.className,
-        subjects: [],
-      })
-    }
-    classMap.get(row.classId)!.subjects.push({
-      id: row.subjectId,
-      name: row.subjectName,
-      shortName: row.subjectShortName,
-    })
-  }
+      for (const row of result) {
+        if (!classMap.has(row.classId)) {
+          classMap.set(row.classId, {
+            id: row.classId,
+            name: row.className,
+            subjects: [],
+          })
+        }
+        classMap.get(row.classId)!.subjects.push({
+          id: row.subjectId,
+          name: row.subjectName,
+          shortName: row.subjectShortName,
+        })
+      }
 
-  return Array.from(classMap.values())
+      return Array.from(classMap.values())
+    })(),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher assigned classes'),
+  ).mapErr(tapLogErr(databaseLogger, params))
 }
 
 /**
  * Get schools that a teacher is linked to via userSchools
  */
-export async function getTeacherSchools(userId: string) {
+export function getTeacherSchools(userId: string): ResultAsync<TeacherSchool[], DatabaseError> {
   const db = getDb()
 
-  const result = await db
-    .select({
-      id: schools.id,
-      name: schools.name,
-      code: schools.code,
-      address: schools.address,
-      phone: schools.phone,
-      email: schools.email,
-    })
-    .from(userSchools)
-    .innerJoin(schools, eq(userSchools.schoolId, schools.id))
-    .where(eq(userSchools.userId, userId))
-    .orderBy(asc(schools.name))
-
-  return result
+  return ResultAsync.fromPromise(
+    db
+      .select({
+        id: schools.id,
+        name: schools.name,
+        code: schools.code,
+        address: schools.address,
+        phone: schools.phone,
+        email: schools.email,
+        logoUrl: schools.logoUrl,
+        userId: userSchools.userId,
+      })
+      .from(userSchools)
+      .innerJoin(schools, eq(userSchools.schoolId, schools.id))
+      .where(eq(userSchools.userId, userId))
+      .orderBy(asc(schools.name)),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher schools'),
+  ).mapErr(tapLogErr(databaseLogger, { userId }))
 }
 
 /**
  * Create a homework assignment
  */
-export async function createHomeworkAssignment(params: {
+export function createHomeworkAssignment(params: {
   schoolId: string
   classId: string
   subjectId: string
@@ -389,46 +561,64 @@ export async function createHomeworkAssignment(params: {
   isGraded?: boolean
   attachments?: Array<{ name: string, url: string, type: string, size: number }>
   status?: 'draft' | 'active' | 'closed' | 'cancelled'
-}) {
+}): ResultAsync<typeof homework.$inferSelect, DatabaseError> {
   const db = getDb()
 
-  const [created] = await db
-    .insert(homework)
-    .values({
-      id: crypto.randomUUID(),
-      schoolId: params.schoolId,
-      classId: params.classId,
-      subjectId: params.subjectId,
-      teacherId: params.teacherId,
-      classSessionId: params.classSessionId,
-      title: params.title,
-      description: params.description,
-      instructions: params.instructions,
-      dueDate: params.dueDate,
-      dueTime: params.dueTime,
-      maxPoints: params.maxPoints,
-      isGraded: params.isGraded ?? false,
-      attachments: params.attachments ?? [],
-      status: params.status ?? 'active',
-    })
-    .returning()
-  if (!created) {
-    throw new Error('Failed to create homework assignment')
-  }
-  return created
+  return ResultAsync.fromPromise(
+    (async () => {
+      const [created] = await db
+        .insert(homework)
+        .values({
+          id: crypto.randomUUID(),
+          schoolId: params.schoolId,
+          classId: params.classId,
+          subjectId: params.subjectId,
+          teacherId: params.teacherId,
+          classSessionId: params.classSessionId,
+          title: params.title,
+          description: params.description,
+          instructions: params.instructions,
+          dueDate: params.dueDate,
+          dueTime: params.dueTime,
+          maxPoints: params.maxPoints,
+          isGraded: params.isGraded ?? false,
+          attachments: params.attachments ?? [],
+          status: params.status ?? 'active',
+        })
+        .returning()
+      if (!created) {
+        throw new Error('Failed to create homework assignment')
+      }
+      return created
+    })(),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to create homework assignment'),
+  ).mapErr(tapLogErr(databaseLogger, params))
 }
 
 /**
  * Get homework list for teacher
  */
-export async function getTeacherHomework(params: {
+export function getTeacherHomework(params: {
   teacherId: string
   classId?: string
   subjectId?: string
   status?: 'draft' | 'active' | 'closed' | 'cancelled'
   page?: number
   pageSize?: number
-}) {
+}): ResultAsync<{
+  homework: Array<{
+    id: string
+    className: string
+    subjectName: string
+    title: string
+    dueDate: string
+    status: 'draft' | 'active' | 'closed' | 'cancelled'
+    submissionCount: number
+  }>
+  total: number
+  page: number
+  pageSize: number
+}, DatabaseError> {
   const db = getDb()
   const page = params.page ?? 1
   const pageSize = params.pageSize ?? 20
@@ -441,87 +631,90 @@ export async function getTeacherHomework(params: {
   if (params.status)
     conditions.push(eq(homework.status, params.status))
 
-  const [homeworkList, countResult] = await Promise.all([
-    db
-      .select({
-        id: homework.id,
-        title: homework.title,
-        className: sql<string>`${grades.name} || ' ' || ${classes.section}`,
-        subjectName: subjects.name,
-        dueDate: homework.dueDate,
-        dueTime: homework.dueTime,
-        status: homework.status,
-        maxPoints: homework.maxPoints,
-        isGraded: homework.isGraded,
-        createdAt: homework.createdAt,
-        submissionCount: sql<number>`count(${homeworkSubmissions.id})::int`,
-      })
-      .from(homework)
-      .innerJoin(subjects, eq(homework.subjectId, subjects.id))
-      .innerJoin(classes, eq(homework.classId, classes.id))
-      .innerJoin(grades, eq(classes.gradeId, grades.id))
-      .leftJoin(homeworkSubmissions, eq(homeworkSubmissions.homeworkId, homework.id))
-      .where(and(...conditions))
-      .groupBy(homework.id, subjects.id, classes.id, grades.id)
-      .orderBy(desc(homework.dueDate))
-      .limit(pageSize)
-      .offset((page - 1) * pageSize),
-    db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(homework)
-      .where(and(...conditions)),
-  ])
-
-  return {
-    homework: homeworkList,
-    total: countResult[0]?.count ?? 0,
-    page,
-    pageSize,
-  }
+  return ResultAsync.fromPromise(
+    Promise.all([
+      db
+        .select({
+          id: homework.id,
+          title: homework.title,
+          className: sql<string>`${grades.name} || ' ' || ${classes.section}`,
+          subjectName: subjects.name,
+          dueDate: homework.dueDate,
+          dueTime: homework.dueTime,
+          status: homework.status,
+          maxPoints: homework.maxPoints,
+          isGraded: homework.isGraded,
+          createdAt: homework.createdAt,
+          submissionCount: sql<number>`count(${homeworkSubmissions.id})::int`,
+        })
+        .from(homework)
+        .innerJoin(subjects, eq(homework.subjectId, subjects.id))
+        .innerJoin(classes, eq(homework.classId, classes.id))
+        .innerJoin(grades, eq(classes.gradeId, grades.id))
+        .leftJoin(homeworkSubmissions, eq(homeworkSubmissions.homeworkId, homework.id))
+        .where(and(...conditions))
+        .groupBy(homework.id, subjects.id, classes.id, grades.id)
+        .orderBy(desc(homework.dueDate))
+        .limit(pageSize)
+        .offset((page - 1) * pageSize),
+      db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(homework)
+        .where(and(...conditions)),
+    ]).then(([homeworkList, countResult]) => ({
+      homework: homeworkList,
+      total: countResult[0]?.count ?? 0,
+      page,
+      pageSize,
+    })),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher homework'),
+  ).mapErr(tapLogErr(databaseLogger, params))
 }
 
 /**
  * Get homework details by ID
  */
-export async function getHomeworkById(homeworkId: string) {
+export function getHomeworkById(homeworkId: string): ResultAsync<HomeworkDetails | null, DatabaseError> {
   const db = getDb()
 
-  const result = await db
-    .select({
-      id: homework.id,
-      schoolId: homework.schoolId,
-      classId: homework.classId,
-      className: sql<string>`${grades.name} || ' ' || ${classes.section}`,
-      subjectId: homework.subjectId,
-      subjectName: subjects.name,
-      teacherId: homework.teacherId,
-      classSessionId: homework.classSessionId,
-      title: homework.title,
-      description: homework.description,
-      instructions: homework.instructions,
-      dueDate: homework.dueDate,
-      dueTime: homework.dueTime,
-      maxPoints: homework.maxPoints,
-      isGraded: homework.isGraded,
-      attachments: homework.attachments,
-      status: homework.status,
-      createdAt: homework.createdAt,
-      updatedAt: homework.updatedAt,
-    })
-    .from(homework)
-    .innerJoin(subjects, eq(homework.subjectId, subjects.id))
-    .innerJoin(classes, eq(homework.classId, classes.id))
-    .innerJoin(grades, eq(classes.gradeId, grades.id))
-    .where(eq(homework.id, homeworkId))
-    .limit(1)
-
-  return result[0] ?? null
+  return ResultAsync.fromPromise(
+    db
+      .select({
+        id: homework.id,
+        schoolId: homework.schoolId,
+        classId: homework.classId,
+        className: sql<string>`${grades.name} || ' ' || ${classes.section}`,
+        subjectId: homework.subjectId,
+        subjectName: subjects.name,
+        teacherId: homework.teacherId,
+        classSessionId: homework.classSessionId,
+        title: homework.title,
+        description: homework.description,
+        instructions: homework.instructions,
+        dueDate: homework.dueDate,
+        dueTime: homework.dueTime,
+        maxPoints: homework.maxPoints,
+        isGraded: homework.isGraded,
+        attachments: homework.attachments,
+        status: homework.status,
+        createdAt: homework.createdAt,
+        updatedAt: homework.updatedAt,
+      })
+      .from(homework)
+      .innerJoin(subjects, eq(homework.subjectId, subjects.id))
+      .innerJoin(classes, eq(homework.classId, classes.id))
+      .innerJoin(grades, eq(classes.gradeId, grades.id))
+      .where(eq(homework.id, homeworkId))
+      .limit(1)
+      .then(result => result[0] ?? null) as Promise<HomeworkDetails | null>,
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get homework by ID'),
+  ).mapErr(tapLogErr(databaseLogger, { homeworkId }))
 }
 
 /**
  * Update homework assignment
  */
-export async function updateHomeworkAssignment(params: {
+export function updateHomeworkAssignment(params: {
   homeworkId: string
   teacherId: string
   title?: string
@@ -533,10 +726,10 @@ export async function updateHomeworkAssignment(params: {
   isGraded?: boolean
   attachments?: Array<{ name: string, url: string, type: string, size: number }>
   status?: 'draft' | 'active' | 'closed' | 'cancelled'
-}) {
+}): ResultAsync<typeof homework.$inferSelect, DatabaseError> {
   const db = getDb()
 
-  const updateData: Record<string, any> = {}
+  const updateData: Record<string, unknown> = {}
   if (params.title !== undefined)
     updateData.title = params.title
   if (params.description !== undefined)
@@ -556,62 +749,103 @@ export async function updateHomeworkAssignment(params: {
   if (params.status !== undefined)
     updateData.status = params.status
 
-  const [updated] = await db
-    .update(homework)
-    .set(updateData)
-    .where(
-      and(
-        eq(homework.id, params.homeworkId),
-        eq(homework.teacherId, params.teacherId),
-      ),
-    )
-    .returning()
-  if (!updated) {
-    throw new Error('Failed to update homework assignment')
-  }
-  return updated
+  return ResultAsync.fromPromise(
+    (async () => {
+      const [updated] = await db
+        .update(homework)
+        .set(updateData)
+        .where(
+          and(
+            eq(homework.id, params.homeworkId),
+            eq(homework.teacherId, params.teacherId),
+          ),
+        )
+        .returning()
+      if (!updated) {
+        throw new Error('Failed to update homework assignment')
+      }
+      return updated
+    })(),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to update homework assignment'),
+  ).mapErr(tapLogErr(databaseLogger, params))
 }
 
 /**
  * Delete homework (soft delete by setting status to cancelled, or hard delete if draft)
  */
-export async function deleteHomeworkAssignment(params: {
+export function deleteHomeworkAssignment(params: {
   homeworkId: string
   teacherId: string
-}) {
+}): ResultAsync<HomeworkDeleteResult | null, DatabaseError> {
   const db = getDb()
 
-  const existing = await db
-    .select({ status: homework.status })
-    .from(homework)
-    .where(
-      and(
-        eq(homework.id, params.homeworkId),
-        eq(homework.teacherId, params.teacherId),
-      ),
-    )
-    .limit(1)
+  return ResultAsync.fromPromise(
+    (async () => {
+      const existing = await db
+        .select({ status: homework.status })
+        .from(homework)
+        .where(
+          and(
+            eq(homework.id, params.homeworkId),
+            eq(homework.teacherId, params.teacherId),
+          ),
+        )
+        .limit(1)
 
-  if (!existing[0])
-    return null
+      if (!existing[0])
+        return null
 
-  if (existing[0].status === 'draft') {
-    await db
-      .delete(homework)
-      .where(eq(homework.id, params.homeworkId))
-    return { deleted: true }
-  }
-  else {
-    const [updated] = await db
-      .update(homework)
-      .set({ status: 'cancelled' })
-      .where(eq(homework.id, params.homeworkId))
-      .returning()
-    if (!updated) {
-      throw new Error('Failed to delete homework assignment')
-    }
-    return updated
-  }
+      if (existing[0].status === 'draft') {
+        await db
+          .delete(homework)
+          .where(eq(homework.id, params.homeworkId))
+        return { deleted: true }
+      }
+      else {
+        await db
+          .update(homework)
+          .set({ status: 'cancelled' })
+          .where(eq(homework.id, params.homeworkId))
+
+        // Fetch the updated homework with all details
+        const updatedHomework = await db
+          .select({
+            id: homework.id,
+            schoolId: homework.schoolId,
+            classId: homework.classId,
+            className: sql<string>`${grades.name} || ' ' || ${classes.section}`,
+            subjectId: homework.subjectId,
+            subjectName: subjects.name,
+            teacherId: homework.teacherId,
+            classSessionId: homework.classSessionId,
+            title: homework.title,
+            description: homework.description,
+            instructions: homework.instructions,
+            dueDate: homework.dueDate,
+            dueTime: homework.dueTime,
+            maxPoints: homework.maxPoints,
+            isGraded: homework.isGraded,
+            attachments: homework.attachments,
+            status: homework.status,
+            createdAt: homework.createdAt,
+            updatedAt: homework.updatedAt,
+          })
+          .from(homework)
+          .innerJoin(subjects, eq(homework.subjectId, subjects.id))
+          .innerJoin(classes, eq(homework.classId, classes.id))
+          .innerJoin(grades, eq(classes.gradeId, grades.id))
+          .where(eq(homework.id, params.homeworkId))
+          .limit(1)
+          .then(result => result[0])
+
+        if (!updatedHomework) {
+          throw new Error('Failed to delete homework assignment')
+        }
+        return updatedHomework as HomeworkDetails
+      }
+    })(),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to delete homework assignment'),
+  ).mapErr(tapLogErr(databaseLogger, params))
 }
 
 // ============================================
@@ -621,18 +855,38 @@ export async function deleteHomeworkAssignment(params: {
 /**
  * Get teacher messages (inbox, sent, or archived)
  */
-export async function getTeacherMessagesQuery(params: {
+export function getTeacherMessagesQuery(params: {
   teacherId: string
   folder: 'inbox' | 'sent' | 'archived'
   isRead?: boolean
   page?: number
   pageSize?: number
-}) {
+}): ResultAsync<{
+  messages: Array<{
+    id: string
+    senderType: 'teacher' | 'parent' | 'admin' | 'student'
+    senderId: string
+    recipientType: 'teacher' | 'parent' | 'admin' | 'student'
+    recipientId: string
+    studentId: string | null
+    studentName: string | null
+    subject: string | null
+    content: string
+    preview: string
+    isRead: boolean
+    isStarred: boolean
+    threadId: string | null
+    createdAt: Date
+  }>
+  total: number
+  page: number
+  pageSize: number
+}, DatabaseError> {
   const db = getDb()
   const page = params.page ?? 1
   const pageSize = params.pageSize ?? 20
 
-  const conditions: any[] = []
+  const conditions: SQL[] = []
 
   if (params.folder === 'inbox') {
     conditions.push(eq(teacherMessages.recipientType, 'teacher'))
@@ -653,111 +907,121 @@ export async function getTeacherMessagesQuery(params: {
     conditions.push(eq(teacherMessages.isRead, params.isRead))
   }
 
-  const [messages, countResult] = await Promise.all([
-    db
-      .select({
-        id: teacherMessages.id,
-        senderType: teacherMessages.senderType,
-        senderId: teacherMessages.senderId,
-        recipientType: teacherMessages.recipientType,
-        recipientId: teacherMessages.recipientId,
-        studentId: teacherMessages.studentId,
-        studentName: sql<string | null>`${students.firstName} || ' ' || ${students.lastName}`,
-        subject: teacherMessages.subject,
-        content: teacherMessages.content,
-        isRead: teacherMessages.isRead,
-        isStarred: teacherMessages.isStarred,
-        threadId: teacherMessages.threadId,
-        createdAt: teacherMessages.createdAt,
-      })
-      .from(teacherMessages)
-      .leftJoin(students, eq(teacherMessages.studentId, students.id))
-      .where(and(...conditions))
-      .orderBy(desc(teacherMessages.createdAt))
-      .limit(pageSize)
-      .offset((page - 1) * pageSize),
-    db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(teacherMessages)
-      .where(and(...conditions)),
-  ])
-
-  return {
-    messages: messages.map((m: any) => ({
-      ...m,
-      preview: m.content.substring(0, 100) + (m.content.length > 100 ? '...' : ''),
+  return ResultAsync.fromPromise(
+    Promise.all([
+      db
+        .select({
+          id: teacherMessages.id,
+          senderType: teacherMessages.senderType,
+          senderId: teacherMessages.senderId,
+          recipientType: teacherMessages.recipientType,
+          recipientId: teacherMessages.recipientId,
+          studentId: teacherMessages.studentId,
+          studentName: sql<string | null>`${students.firstName} || ' ' || ${students.lastName}`,
+          subject: teacherMessages.subject,
+          content: teacherMessages.content,
+          isRead: teacherMessages.isRead ?? false,
+          isStarred: teacherMessages.isStarred,
+          threadId: teacherMessages.threadId,
+          createdAt: teacherMessages.createdAt,
+        })
+        .from(teacherMessages)
+        .leftJoin(students, eq(teacherMessages.studentId, students.id))
+        .where(and(...conditions))
+        .orderBy(desc(teacherMessages.createdAt))
+        .limit(pageSize)
+        .offset((page - 1) * pageSize),
+      db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(teacherMessages)
+        .where(and(...conditions)),
+    ]).then(([messages, countResult]) => ({
+      messages: messages.map(m => ({
+        ...m,
+        isRead: m.isRead ?? false,
+        isStarred: m.isStarred ?? false,
+        preview: m.content.substring(0, 100) + (m.content.length > 100 ? '...' : ''),
+      })),
+      total: countResult[0]?.count ?? 0,
+      page,
+      pageSize,
     })),
-    total: countResult[0]?.count ?? 0,
-    page,
-    pageSize,
-  }
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher messages'),
+  ).mapErr(tapLogErr(databaseLogger, params))
 }
 
 /**
  * Get message details with thread
  */
-export async function getMessageDetailsQuery(params: {
+export function getMessageDetailsQuery(params: {
   messageId: string
   teacherId: string
-}) {
+}): ResultAsync<MessageDetails | null, DatabaseError> {
   const db = getDb()
 
-  const message = await db
-    .select({
-      id: teacherMessages.id,
-      schoolId: teacherMessages.schoolId,
-      senderType: teacherMessages.senderType,
-      senderId: teacherMessages.senderId,
-      recipientType: teacherMessages.recipientType,
-      recipientId: teacherMessages.recipientId,
-      studentId: teacherMessages.studentId,
-      studentName: sql<string | null>`${students.firstName} || ' ' || ${students.lastName}`,
-      classId: teacherMessages.classId,
-      className: sql<string | null>`${grades.name} || ' ' || ${classes.section}`,
-      threadId: teacherMessages.threadId,
-      subject: teacherMessages.subject,
-      content: teacherMessages.content,
-      attachments: teacherMessages.attachments,
-      isRead: teacherMessages.isRead,
-      readAt: teacherMessages.readAt,
-      createdAt: teacherMessages.createdAt,
-    })
-    .from(teacherMessages)
-    .leftJoin(students, eq(teacherMessages.studentId, students.id))
-    .leftJoin(classes, eq(teacherMessages.classId, classes.id))
-    .leftJoin(grades, eq(classes.gradeId, grades.id))
-    .where(eq(teacherMessages.id, params.messageId))
-    .limit(1)
+  return ResultAsync.fromPromise(
+    (async () => {
+      const message = await db
+        .select({
+          id: teacherMessages.id,
+          schoolId: teacherMessages.schoolId,
+          senderType: teacherMessages.senderType,
+          senderId: teacherMessages.senderId,
+          recipientType: teacherMessages.recipientType,
+          recipientId: teacherMessages.recipientId,
+          studentId: teacherMessages.studentId,
+          studentName: sql<string | null>`${students.firstName} || ' ' || ${students.lastName}`,
+          classId: teacherMessages.classId,
+          className: sql<string | null>`${grades.name} || ' ' || ${classes.section}`,
+          threadId: teacherMessages.threadId,
+          subject: teacherMessages.subject,
+          content: teacherMessages.content,
+          attachments: teacherMessages.attachments,
+          isRead: teacherMessages.isRead,
+          readAt: teacherMessages.readAt,
+          createdAt: teacherMessages.createdAt,
+        })
+        .from(teacherMessages)
+        .leftJoin(students, eq(teacherMessages.studentId, students.id))
+        .leftJoin(classes, eq(teacherMessages.classId, classes.id))
+        .leftJoin(grades, eq(classes.gradeId, grades.id))
+        .where(eq(teacherMessages.id, params.messageId))
+        .limit(1)
 
-  if (!message[0])
-    return null
+      if (!message[0])
+        return null
 
-  let thread: any[] = []
-  const threadId = message[0].threadId ?? message[0].id
-  if (threadId) {
-    thread = await db
-      .select({
-        id: teacherMessages.id,
-        senderType: teacherMessages.senderType,
-        senderId: teacherMessages.senderId,
-        content: teacherMessages.content,
-        createdAt: teacherMessages.createdAt,
-      })
-      .from(teacherMessages)
-      .where(eq(teacherMessages.threadId, threadId))
-      .orderBy(asc(teacherMessages.createdAt))
-  }
+      const threadId = message[0].threadId ?? message[0].id
+      const thread = await db
+        .select({
+          id: teacherMessages.id,
+          senderType: teacherMessages.senderType,
+          senderId: teacherMessages.senderId,
+          content: teacherMessages.content,
+          createdAt: teacherMessages.createdAt,
+        })
+        .from(teacherMessages)
+        .where(
+          and(
+            eq(teacherMessages.threadId, threadId!),
+            eq(teacherMessages.id, threadId!),
+          ),
+        )
+        .orderBy(asc(teacherMessages.createdAt))
 
-  return {
-    ...message[0],
-    thread,
-  }
+      return {
+        ...message[0],
+        thread,
+      } as MessageDetails
+    })() as Promise<MessageDetails | null>,
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get message details'),
+  ).mapErr(tapLogErr(databaseLogger, params))
 }
 
 /**
  * Send a message
  */
-export async function sendTeacherMessage(params: {
+export function sendTeacherMessage(params: {
   schoolId: string
   teacherId: string
   recipientId: string
@@ -767,79 +1031,96 @@ export async function sendTeacherMessage(params: {
   content: string
   replyToId?: string
   attachments?: Array<{ name: string, url: string, type: string, size: number }>
-}) {
+}): ResultAsync<typeof teacherMessages.$inferSelect, DatabaseError> {
   const db = getDb()
 
-  let threadId = null
-  if (params.replyToId) {
-    const original = await db
-      .select({ threadId: teacherMessages.threadId, id: teacherMessages.id })
-      .from(teacherMessages)
-      .where(eq(teacherMessages.id, params.replyToId))
-      .limit(1)
-    threadId = original[0]?.threadId ?? original[0]?.id
-  }
+  return ResultAsync.fromPromise(
+    (async () => {
+      let threadId = null
+      if (params.replyToId) {
+        const original = await db
+          .select({ threadId: teacherMessages.threadId, id: teacherMessages.id })
+          .from(teacherMessages)
+          .where(eq(teacherMessages.id, params.replyToId))
+          .limit(1)
+        threadId = original[0]?.threadId ?? original[0]?.id
+      }
 
-  const [created] = await db
-    .insert(teacherMessages)
-    .values({
-      id: crypto.randomUUID(),
-      schoolId: params.schoolId,
-      senderType: 'teacher',
-      senderId: params.teacherId,
-      recipientType: 'parent',
-      recipientId: params.recipientId,
-      studentId: params.studentId,
-      classId: params.classId,
-      threadId,
-      replyToId: params.replyToId,
-      subject: params.subject,
-      content: params.content,
-      attachments: params.attachments ?? [],
-    })
-    .returning()
-  if (!created) {
-    throw new Error('Failed to send message')
-  }
-  return created
+      const [created] = await db
+        .insert(teacherMessages)
+        .values({
+          id: crypto.randomUUID(),
+          schoolId: params.schoolId,
+          senderType: 'teacher',
+          senderId: params.teacherId,
+          recipientType: 'parent',
+          recipientId: params.recipientId,
+          studentId: params.studentId,
+          classId: params.classId,
+          threadId,
+          replyToId: params.replyToId,
+          subject: params.subject,
+          content: params.content,
+          attachments: params.attachments ?? [],
+        })
+        .returning()
+      if (!created) {
+        throw new Error('Failed to send message')
+      }
+      return created
+    })(),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to send message'),
+  ).mapErr(tapLogErr(databaseLogger, params))
 }
 
 /**
  * Mark message as read
  */
-export async function markMessageAsRead(params: {
+export function markMessageAsRead(params: {
   messageId: string
   teacherId: string
-}) {
+}): ResultAsync<typeof teacherMessages.$inferSelect, DatabaseError> {
   const db = getDb()
 
-  const [updated] = await db
-    .update(teacherMessages)
-    .set({
-      isRead: true,
-      readAt: new Date(),
-    })
-    .where(
-      and(
-        eq(teacherMessages.id, params.messageId),
-        eq(teacherMessages.recipientType, 'teacher'),
-        eq(teacherMessages.recipientId, params.teacherId),
-      ),
-    )
-    .returning()
-  if (!updated) {
-    throw new Error('Failed to mark message as read')
-  }
-  return updated
+  return ResultAsync.fromPromise(
+    (async () => {
+      const [updated] = await db
+        .update(teacherMessages)
+        .set({
+          isRead: true,
+          readAt: new Date(),
+        })
+        .where(
+          and(
+            eq(teacherMessages.id, params.messageId),
+            eq(teacherMessages.recipientType, 'teacher'),
+            eq(teacherMessages.recipientId, params.teacherId),
+          ),
+        )
+        .returning()
+      if (!updated) {
+        throw new Error('Failed to mark message as read')
+      }
+      return updated
+    })(),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to mark message as read'),
+  ).mapErr(tapLogErr(databaseLogger, params))
 }
 
 /**
  * Get message templates
  */
-export async function getMessageTemplatesQuery(params: {
+export function getMessageTemplatesQuery(params: {
   schoolId: string
   category?: MessageCategory
-}) {
+}): ResultAsync<Array<{
+  id: string
+  name: string
+  category: MessageCategory
+  subject: string | null
+  content: string
+  placeholders: string[] | null
+}>, DatabaseError> {
   const db = getDb()
 
   const conditions = [
@@ -850,33 +1131,42 @@ export async function getMessageTemplatesQuery(params: {
     conditions.push(eq(messageTemplates.category, params.category))
   }
 
-  return db
-    .select({
-      id: messageTemplates.id,
-      name: messageTemplates.name,
-      category: messageTemplates.category,
-      subject: messageTemplates.subject,
-      content: messageTemplates.content,
-      placeholders: messageTemplates.placeholders,
-    })
-    .from(messageTemplates)
-    .where(and(...conditions))
-    .orderBy(asc(messageTemplates.name))
+  return ResultAsync.fromPromise(
+    db
+      .select({
+        id: messageTemplates.id,
+        name: messageTemplates.name,
+        category: messageTemplates.category,
+        subject: messageTemplates.subject,
+        content: messageTemplates.content,
+        placeholders: messageTemplates.placeholders,
+      })
+      .from(messageTemplates)
+      .where(and(...conditions))
+      .orderBy(asc(messageTemplates.name)),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get message templates'),
+  ).mapErr(tapLogErr(databaseLogger, params))
 }
 
 /**
  * Search parents that teacher can message (parents of students in teacher's classes)
  */
-export async function searchParentsForTeacher(params: {
+export function searchParentsForTeacher(params: {
   teacherId: string
   schoolId: string
   schoolYearId: string
   query: string
   classId?: string
-}) {
+}): ResultAsync<Array<{
+  id: string
+  name: string
+  phone: string | null
+  studentName: string
+  className: string
+}>, DatabaseError> {
   const db = getDb()
 
-  const conditions: any[] = [
+  const conditions: SQL[] = [
     eq(students.schoolId, params.schoolId),
     sql`(${students.firstName} || ' ' || ${students.lastName}) ILIKE ${`%${params.query}%`}`,
   ]
@@ -885,46 +1175,51 @@ export async function searchParentsForTeacher(params: {
     conditions.push(eq(enrollments.classId, params.classId))
   }
 
-  const results = await db
-    .select({
-      studentId: students.id,
-      studentName: sql<string>`${students.firstName} || ' ' || ${students.lastName}`,
-      className: sql<string>`${grades.name} || ' ' || ${classes.section}`,
-      parentId: parents.id,
-      parentName: sql<string>`${parents.firstName} || ' ' || ${parents.lastName}`,
-      parentPhone: parents.phone,
-    })
-    .from(students)
-    .innerJoin(enrollments, eq(enrollments.studentId, students.id))
-    .innerJoin(classes, eq(enrollments.classId, classes.id))
-    .innerJoin(grades, eq(classes.gradeId, grades.id))
-    .innerJoin(classSubjects, eq(classSubjects.classId, enrollments.classId))
-    .innerJoin(studentParents, eq(studentParents.studentId, students.id))
-    .innerJoin(parents, eq(studentParents.parentId, parents.id))
-    .where(
-      and(
-        ...conditions,
-        eq(classSubjects.teacherId, params.teacherId),
-        eq(enrollments.schoolYearId, params.schoolYearId),
-        eq(enrollments.status, 'confirmed'),
-      ),
-    )
-    .limit(50)
+  return ResultAsync.fromPromise(
+    (async () => {
+      const results = await db
+        .select({
+          studentId: students.id,
+          studentName: sql<string>`${students.firstName} || ' ' || ${students.lastName}`,
+          className: sql<string>`${grades.name} || ' ' || ${classes.section}`,
+          parentId: parents.id,
+          parentName: sql<string>`${parents.firstName} || ' ' || ${parents.lastName}`,
+          parentPhone: parents.phone,
+        })
+        .from(students)
+        .innerJoin(enrollments, eq(enrollments.studentId, students.id))
+        .innerJoin(classes, eq(enrollments.classId, classes.id))
+        .innerJoin(grades, eq(classes.gradeId, grades.id))
+        .innerJoin(classSubjects, eq(classSubjects.classId, enrollments.classId))
+        .innerJoin(studentParents, eq(studentParents.studentId, students.id))
+        .innerJoin(parents, eq(studentParents.parentId, parents.id))
+        .where(
+          and(
+            ...conditions,
+            eq(classSubjects.teacherId, params.teacherId),
+            eq(enrollments.schoolYearId, params.schoolYearId),
+            eq(enrollments.status, 'confirmed'),
+          ),
+        )
+        .limit(50)
 
-  const parentMap = new Map<string, any>()
-  for (const r of results) {
-    if (!parentMap.has(r.parentId)) {
-      parentMap.set(r.parentId, {
-        id: r.parentId,
-        name: r.parentName,
-        phone: r.parentPhone,
-        studentName: r.studentName,
-        className: r.className,
-      })
-    }
-  }
+      const parentMap = new Map<string, ParentSearchResult>()
+      for (const r of results) {
+        if (!parentMap.has(r.parentId)) {
+          parentMap.set(r.parentId, {
+            id: r.parentId,
+            name: r.parentName,
+            phone: r.parentPhone,
+            studentName: r.studentName,
+            className: r.className,
+          })
+        }
+      }
 
-  return Array.from(parentMap.values())
+      return Array.from(parentMap.values())
+    })(),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to search parents for teacher'),
+  ).mapErr(tapLogErr(databaseLogger, params))
 }
 
 // ============================================
@@ -934,7 +1229,7 @@ export async function searchParentsForTeacher(params: {
 /**
  * Submit student grades for a class/subject
  */
-export async function submitStudentGrades(params: {
+export function submitStudentGrades(params: {
   teacherId: string
   schoolId: string
   classId: string
@@ -946,35 +1241,37 @@ export async function submitStudentGrades(params: {
   }>
   status: GradeStatus
   gradeType?: GradeType
-}) {
+}): ResultAsync<{ success: boolean, count: number }, DatabaseError> {
   const db = getDb()
 
   const gradeType: GradeType = params.gradeType ?? 'test'
   const today = new Date().toISOString().split('T')[0]!
 
   if (params.grades.length === 0) {
-    return { success: true, count: 0 }
+    return ResultAsync.fromSafePromise(Promise.resolve({ success: true, count: 0 }))
   }
 
-  const results = await db
-    .insert(studentGrades)
-    .values(params.grades.map(grade => ({
-      id: crypto.randomUUID(),
-      studentId: grade.studentId,
-      classId: params.classId,
-      subjectId: params.subjectId,
-      termId: params.termId,
-      teacherId: params.teacherId,
-      value: grade.grade.toFixed(2),
-      type: gradeType,
-      weight: 1,
-      gradeDate: today,
-      status: params.status,
-      submittedAt: params.status === 'submitted' ? new Date() : null,
-    })))
-    .returning()
-
-  return { success: true, count: results.length }
+  return ResultAsync.fromPromise(
+    db
+      .insert(studentGrades)
+      .values(params.grades.map(grade => ({
+        id: crypto.randomUUID(),
+        studentId: grade.studentId,
+        classId: params.classId,
+        subjectId: params.subjectId,
+        termId: params.termId,
+        teacherId: params.teacherId,
+        value: grade.grade.toFixed(2),
+        type: gradeType,
+        weight: 1,
+        gradeDate: today,
+        status: params.status,
+        submittedAt: params.status === 'submitted' ? new Date() : null,
+      })))
+      .returning()
+      .then(results => ({ success: true, count: results.length })),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to submit student grades'),
+  ).mapErr(tapLogErr(databaseLogger, params))
 }
 
 // ============================================
@@ -984,300 +1281,366 @@ export async function submitStudentGrades(params: {
 /**
  * Get teacher's schedule for a specific day
  */
-export async function getTeacherDaySchedule(params: {
+export function getTeacherDaySchedule(params: {
   teacherId: string
   schoolYearId: string
   dayOfWeek: number
-}) {
+}): ResultAsync<TimetableSession[], DatabaseError> {
   const db = getDb()
 
-  const { timetableSessions, classrooms } = await import('../drizzle/school-schema')
+  return ResultAsync.fromPromise(
+    (async () => {
+      const { timetableSessions, classrooms } = await import('../drizzle/school-schema')
 
-  const result = await db
-    .select({
-      id: timetableSessions.id,
-      dayOfWeek: timetableSessions.dayOfWeek,
-      startTime: timetableSessions.startTime,
-      endTime: timetableSessions.endTime,
-      class: {
-        id: classes.id,
-        gradeName: grades.name,
-        section: classes.section,
-      },
-      subject: {
-        id: subjects.id,
-        name: subjects.name,
-        shortName: subjects.shortName,
-      },
-      classroom: {
-        id: classrooms.id,
-        name: classrooms.name,
-        code: classrooms.code,
-      },
-    })
-    .from(timetableSessions)
-    .innerJoin(classes, eq(timetableSessions.classId, classes.id))
-    .innerJoin(grades, eq(classes.gradeId, grades.id))
-    .innerJoin(subjects, eq(timetableSessions.subjectId, subjects.id))
-    .leftJoin(classrooms, eq(timetableSessions.classroomId, classrooms.id))
-    .where(
-      and(
-        eq(timetableSessions.teacherId, params.teacherId),
-        eq(classes.schoolYearId, params.schoolYearId),
-        eq(timetableSessions.dayOfWeek, params.dayOfWeek),
-      ),
-    )
-    .orderBy(asc(timetableSessions.startTime))
+      const result = await db
+        .select({
+          id: timetableSessions.id,
+          dayOfWeek: timetableSessions.dayOfWeek,
+          startTime: timetableSessions.startTime,
+          endTime: timetableSessions.endTime,
+          class: {
+            id: classes.id,
+            name: sql<string>`${grades.name} || ' ' || ${classes.section}`,
+          },
+          subject: {
+            id: subjects.id,
+            name: subjects.name,
+            shortName: subjects.shortName,
+          },
+          classroom: {
+            id: classrooms.id,
+            name: classrooms.name,
+            code: classrooms.code,
+          },
+        })
+        .from(timetableSessions)
+        .innerJoin(classes, eq(timetableSessions.classId, classes.id))
+        .innerJoin(grades, eq(classes.gradeId, grades.id))
+        .innerJoin(subjects, eq(timetableSessions.subjectId, subjects.id))
+        .leftJoin(classrooms, eq(timetableSessions.classroomId, classrooms.id))
+        .where(
+          and(
+            eq(timetableSessions.teacherId, params.teacherId),
+            eq(classes.schoolYearId, params.schoolYearId),
+            eq(timetableSessions.dayOfWeek, params.dayOfWeek),
+          ),
+        )
+        .orderBy(asc(timetableSessions.startTime))
 
-  return result
+      return result.map(session => ({
+        ...session,
+        classroom: session.classroom?.id ? session.classroom : null,
+      }))
+    })(),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher day schedule'),
+  ).mapErr(tapLogErr(databaseLogger, params))
 }
 
 /**
  * Get teacher's weekly schedule
  */
-export async function getTeacherWeeklySchedule(params: {
+export function getTeacherWeeklySchedule(params: {
   teacherId: string
   schoolYearId: string
-}) {
+}): ResultAsync<TimetableSession[], DatabaseError> {
   const db = getDb()
 
-  const { timetableSessions, classrooms } = await import('../drizzle/school-schema')
+  return ResultAsync.fromPromise(
+    (async () => {
+      const { timetableSessions, classrooms } = await import('../drizzle/school-schema')
 
-  const result = await db
-    .select({
-      id: timetableSessions.id,
-      dayOfWeek: timetableSessions.dayOfWeek,
-      startTime: timetableSessions.startTime,
-      endTime: timetableSessions.endTime,
-      class: {
-        id: classes.id,
-        gradeName: grades.name,
-        section: classes.section,
-      },
-      subject: {
-        id: subjects.id,
-        name: subjects.name,
-        shortName: subjects.shortName,
-      },
-      classroom: {
-        id: classrooms.id,
-        name: classrooms.name,
-        code: classrooms.code,
-      },
-    })
-    .from(timetableSessions)
-    .innerJoin(classes, eq(timetableSessions.classId, classes.id))
-    .innerJoin(grades, eq(classes.gradeId, grades.id))
-    .innerJoin(subjects, eq(timetableSessions.subjectId, subjects.id))
-    .leftJoin(classrooms, eq(timetableSessions.classroomId, classrooms.id))
-    .where(
-      and(
-        eq(timetableSessions.teacherId, params.teacherId),
-        eq(classes.schoolYearId, params.schoolYearId),
-      ),
-    )
-    .orderBy(asc(timetableSessions.dayOfWeek), asc(timetableSessions.startTime))
+      const result = await db
+        .select({
+          id: timetableSessions.id,
+          dayOfWeek: timetableSessions.dayOfWeek,
+          startTime: timetableSessions.startTime,
+          endTime: timetableSessions.endTime,
+          class: {
+            id: classes.id,
+            name: sql<string>`${grades.name} || ' ' || ${classes.section}`,
+          },
+          subject: {
+            id: subjects.id,
+            name: subjects.name,
+            shortName: subjects.shortName,
+          },
+          classroom: {
+            id: classrooms.id,
+            name: classrooms.name,
+            code: classrooms.code,
+          },
+        })
+        .from(timetableSessions)
+        .innerJoin(classes, eq(timetableSessions.classId, classes.id))
+        .innerJoin(grades, eq(classes.gradeId, grades.id))
+        .innerJoin(subjects, eq(timetableSessions.subjectId, subjects.id))
+        .leftJoin(classrooms, eq(timetableSessions.classroomId, classrooms.id))
+        .where(
+          and(
+            eq(timetableSessions.teacherId, params.teacherId),
+            eq(classes.schoolYearId, params.schoolYearId),
+          ),
+        )
+        .orderBy(asc(timetableSessions.dayOfWeek), asc(timetableSessions.startTime))
 
-  return result
+      return result.map(session => ({
+        ...session,
+        classroom: session.classroom?.id ? session.classroom : null,
+      }))
+    })(),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher weekly schedule'),
+  ).mapErr(tapLogErr(databaseLogger, params))
 }
 
 /**
  * Get teacher's active session for today
  */
-export async function getTeacherActiveSession(params: {
+export function getTeacherActiveSession(params: {
   teacherId: string
   date: string
-}) {
+}): ResultAsync<{
+  id: string
+  classId: string
+  className: string
+  subjectName: string
+  startTime: string
+  startedAt: Date
+} | null, DatabaseError> {
   const db = getDb()
 
-  const result = await db
-    .select({
-      id: classSessions.id,
-      classId: classSessions.classId,
-      className: sql<string>`${grades.name} || ' ' || ${classes.section}`,
-      subjectName: subjects.name,
-      startTime: classSessions.startTime,
-      startedAt: classSessions.createdAt,
-    })
-    .from(classSessions)
-    .innerJoin(classes, eq(classSessions.classId, classes.id))
-    .innerJoin(grades, eq(classes.gradeId, grades.id))
-    .innerJoin(subjects, eq(classSessions.subjectId, subjects.id))
-    .where(
-      and(
-        eq(classSessions.teacherId, params.teacherId),
-        eq(classSessions.date, params.date),
-        eq(classSessions.status, 'scheduled'),
-      ),
-    )
-    .limit(1)
-
-  return result[0] ?? null
+  return ResultAsync.fromPromise(
+    db
+      .select({
+        id: classSessions.id,
+        classId: classSessions.classId,
+        className: sql<string>`${grades.name} || ' ' || ${classes.section}`,
+        subjectName: subjects.name,
+        startTime: classSessions.startTime,
+        startedAt: classSessions.createdAt,
+      })
+      .from(classSessions)
+      .innerJoin(classes, eq(classSessions.classId, classes.id))
+      .innerJoin(grades, eq(classes.gradeId, grades.id))
+      .innerJoin(subjects, eq(classSessions.subjectId, subjects.id))
+      .where(
+        and(
+          eq(classSessions.teacherId, params.teacherId),
+          eq(classSessions.date, params.date),
+          eq(classSessions.status, 'scheduled'),
+        ),
+      )
+      .limit(1)
+      .then(result => result[0] ?? null),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher active session'),
+  ).mapErr(tapLogErr(databaseLogger, params))
 }
 
 /**
  * Get count of pending grades for teacher
  */
-export async function getTeacherPendingGradesCount(teacherId: string): Promise<number> {
+export function getTeacherPendingGradesCount(teacherId: string): ResultAsync<number, DatabaseError> {
   const db = getDb()
 
-  const result = await db
-    .select({ count: sql<number>`count(*)::int` })
-    .from(studentGrades)
-    .where(
-      and(
-        eq(studentGrades.teacherId, teacherId),
-        eq(studentGrades.status, 'draft'),
-      ),
-    )
-
-  return result[0]?.count ?? 0
+  return ResultAsync.fromPromise(
+    db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(studentGrades)
+      .where(
+        and(
+          eq(studentGrades.teacherId, teacherId),
+          eq(studentGrades.status, 'draft'),
+        ),
+      )
+      .then(result => result[0]?.count ?? 0),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher pending grades count'),
+  ).mapErr(tapLogErr(databaseLogger, { teacherId }))
 }
 
 /**
  * Get count of unread messages for teacher
  */
-export async function getTeacherUnreadMessagesCount(teacherId: string): Promise<number> {
+export function getTeacherUnreadMessagesCount(teacherId: string): ResultAsync<number, DatabaseError> {
   const db = getDb()
 
-  const result = await db
-    .select({ count: sql<number>`count(*)::int` })
-    .from(teacherMessages)
-    .where(
-      and(
-        eq(teacherMessages.recipientType, 'teacher'),
-        eq(teacherMessages.recipientId, teacherId),
-        eq(teacherMessages.isRead, false),
-        eq(teacherMessages.isArchived, false),
-      ),
-    )
-
-  return result[0]?.count ?? 0
+  return ResultAsync.fromPromise(
+    db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(teacherMessages)
+      .where(
+        and(
+          eq(teacherMessages.recipientType, 'teacher'),
+          eq(teacherMessages.recipientId, teacherId),
+          eq(teacherMessages.isRead, false),
+          eq(teacherMessages.isArchived, false),
+        ),
+      )
+      .then(result => result[0]?.count ?? 0),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher unread messages count'),
+  ).mapErr(tapLogErr(databaseLogger, { teacherId }))
 }
 
 /**
  * Get recent messages for teacher
  */
-export async function getTeacherRecentMessages(params: {
+export function getTeacherRecentMessages(params: {
   teacherId: string
   limit?: number
-}) {
+}): ResultAsync<Array<{
+  id: string
+  senderType: 'teacher' | 'parent' | 'admin' | 'student'
+  subject: string | null
+  content: string
+  isRead: boolean
+  createdAt: Date
+}>, DatabaseError> {
   const db = getDb()
   const limit = params.limit ?? 5
 
-  return db
-    .select({
-      id: teacherMessages.id,
-      senderType: teacherMessages.senderType,
-      subject: teacherMessages.subject,
-      content: teacherMessages.content,
-      isRead: teacherMessages.isRead,
-      createdAt: teacherMessages.createdAt,
-    })
-    .from(teacherMessages)
-    .where(
-      and(
-        eq(teacherMessages.recipientType, 'teacher'),
-        eq(teacherMessages.recipientId, params.teacherId),
-        eq(teacherMessages.isArchived, false),
-      ),
-    )
-    .orderBy(desc(teacherMessages.createdAt))
-    .limit(limit)
+  return ResultAsync.fromPromise(
+    db
+      .select({
+        id: teacherMessages.id,
+        senderType: teacherMessages.senderType,
+        subject: teacherMessages.subject,
+        content: teacherMessages.content,
+        isRead: teacherMessages.isRead,
+        createdAt: teacherMessages.createdAt,
+      })
+      .from(teacherMessages)
+      .where(
+        and(
+          eq(teacherMessages.recipientType, 'teacher'),
+          eq(teacherMessages.recipientId, params.teacherId),
+          eq(teacherMessages.isArchived, false),
+        ),
+      )
+      .orderBy(desc(teacherMessages.createdAt))
+      .limit(limit)
+      .then(rows => rows.map(r => ({
+        ...r,
+        isRead: r.isRead ?? false,
+      }))),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher recent messages'),
+  ).mapErr(tapLogErr(databaseLogger, params))
 }
 
 /**
  * Get notifications for teacher
  */
-export async function getTeacherNotificationsQuery(params: {
+export function getTeacherNotificationsQuery(params: {
   teacherId: string
   unreadOnly?: boolean
   limit?: number
-}) {
+}): ResultAsync<Array<{
+  id: string
+  type: string
+  title: string
+  body: string
+  isRead: boolean
+  createdAt: Date
+}>, DatabaseError> {
   const db = getDb()
   const limit = params.limit ?? 10
 
-  const { teacherNotifications } = await import('../drizzle/school-schema')
+  return ResultAsync.fromPromise(
+    (async () => {
+      const { teacherNotifications } = await import('../drizzle/school-schema')
 
-  const conditions = [
-    eq(teacherNotifications.teacherId, params.teacherId),
-  ]
+      const conditions = [
+        eq(teacherNotifications.teacherId, params.teacherId),
+      ]
 
-  if (params.unreadOnly) {
-    conditions.push(eq(teacherNotifications.isRead, false))
-  }
+      if (params.unreadOnly) {
+        conditions.push(eq(teacherNotifications.isRead, false))
+      }
 
-  return db
-    .select({
-      id: teacherNotifications.id,
-      type: teacherNotifications.type,
-      title: teacherNotifications.title,
-      body: teacherNotifications.body,
-      isRead: teacherNotifications.isRead,
-      createdAt: teacherNotifications.createdAt,
-    })
-    .from(teacherNotifications)
-    .where(and(...conditions))
-    .orderBy(desc(teacherNotifications.createdAt))
-    .limit(limit)
+      return db
+        .select({
+          id: teacherNotifications.id,
+          type: teacherNotifications.type,
+          title: teacherNotifications.title,
+          body: teacherNotifications.body,
+          isRead: teacherNotifications.isRead,
+          createdAt: teacherNotifications.createdAt,
+        })
+        .from(teacherNotifications)
+        .where(and(...conditions))
+        .orderBy(desc(teacherNotifications.createdAt))
+        .limit(limit)
+        .then(rows => rows.map(r => ({
+          ...r,
+          body: r.body ?? '',
+          isRead: r.isRead ?? false,
+          type: r.type, // Ensure type is passed through or cast if needed, though basic string match is usually fine
+        })))
+    })(),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher notifications'),
+  ).mapErr(tapLogErr(databaseLogger, params))
 }
 
 /**
  * Get current term for a school year
  */
-export async function getCurrentTermForSchoolYear(schoolYearId: string) {
+export function getCurrentTermForSchoolYear(schoolYearId: string): ResultAsync<{
+  id: string
+  name: string
+  startDate: string
+  endDate: string
+} | null, DatabaseError> {
   const db = getDb()
 
-  const { terms } = await import('../drizzle/school-schema')
-  const { termTemplates } = await import('../drizzle/core-schema')
+  return ResultAsync.fromPromise(
+    (async () => {
+      const { terms } = await import('../drizzle/school-schema')
+      const { termTemplates } = await import('../drizzle/core-schema')
 
-  const today = new Date().toISOString().split('T')[0]!
+      const today = new Date().toISOString().split('T')[0]!
 
-  const result = await db
-    .select({
-      id: terms.id,
-      name: termTemplates.name,
-      startDate: terms.startDate,
-      endDate: terms.endDate,
-    })
-    .from(terms)
-    .innerJoin(termTemplates, eq(terms.termTemplateId, termTemplates.id))
-    .where(
-      and(
-        eq(terms.schoolYearId, schoolYearId),
-        lte(terms.startDate, today),
-        gte(terms.endDate, today),
-      ),
-    )
-    .limit(1)
+      const result = await db
+        .select({
+          id: terms.id,
+          name: termTemplates.name,
+          startDate: terms.startDate,
+          endDate: terms.endDate,
+        })
+        .from(terms)
+        .innerJoin(termTemplates, eq(terms.termTemplateId, termTemplates.id))
+        .where(
+          and(
+            eq(terms.schoolYearId, schoolYearId),
+            lte(terms.startDate, today),
+            gte(terms.endDate, today),
+          ),
+        )
+        .limit(1)
 
-  return result[0] ?? null
+      return result[0] ?? null
+    })(),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get current term for school year'),
+  ).mapErr(tapLogErr(databaseLogger, { schoolYearId }))
 }
 
 /**
  * Get class and subject info
  */
-export async function getClassSubjectInfo(params: {
+export function getClassSubjectInfo(params: {
   classId: string
   subjectId: string
-}) {
+}): ResultAsync<{ className: string, subjectName: string } | null, DatabaseError> {
   const db = getDb()
 
-  const result = await db
-    .select({
-      className: sql<string>`${grades.name} || ' ' || ${classes.section}`,
-      subjectName: subjects.name,
-    })
-    .from(classes)
-    .innerJoin(grades, eq(classes.gradeId, grades.id))
-    .crossJoin(subjects)
-    .where(
-      and(
-        eq(classes.id, params.classId),
-        eq(subjects.id, params.subjectId),
-      ),
-    )
-    .limit(1)
-
-  return result[0] ?? null
+  return ResultAsync.fromPromise(
+    db
+      .select({
+        className: sql<string>`${grades.name} || ' ' || ${classes.section}`,
+        subjectName: subjects.name,
+      })
+      .from(classes)
+      .innerJoin(grades, eq(classes.gradeId, grades.id))
+      .innerJoin(subjects, eq(sql`${params.subjectId}`, subjects.id)) // Workaround for simple select
+      .where(eq(classes.id, params.classId))
+      .limit(1)
+      .then(result => result[0] ?? null),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get class and subject info'),
+  ).mapErr(tapLogErr(databaseLogger, params))
 }

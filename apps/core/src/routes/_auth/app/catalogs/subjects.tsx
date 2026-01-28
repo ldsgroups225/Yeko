@@ -201,7 +201,7 @@ function SubjectsCatalog() {
       return
 
     const result = await importSubjectsFromExcel(file)
-    
+
     await result.match(
       async (importedSubjects) => {
         logger.info(`Imported ${importedSubjects.length} subjects from Excel`)
@@ -219,11 +219,10 @@ function SubjectsCatalog() {
         toast.error('Erreur lors de l\'import du fichier')
       },
     )
-    
+
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
-
   }
 
   const categories = useMemo(() => {

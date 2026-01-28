@@ -1,4 +1,4 @@
-import type { BloodType, EnrollmentStatus, Gender, StudentInsert, StudentStatus } from '../drizzle/school-schema'
+import type { BloodType, EnrollmentStatus, Gender, Relationship, StudentInsert, StudentStatus } from '../drizzle/school-schema'
 import crypto from 'node:crypto'
 import { databaseLogger, tapLogErr } from '@repo/logger'
 import { and, asc, desc, eq, ilike, or, sql } from 'drizzle-orm'
@@ -62,6 +62,54 @@ export interface StudentWithDetails {
   } | null
   parentsCount: number
   enrollmentStatus: EnrollmentStatus | null
+}
+
+export type StudentFullProfile = typeof students.$inferSelect & {
+  parents: Array<{
+    parent: typeof parents.$inferSelect
+    relationship: Relationship | null
+    isPrimary: boolean | null
+    canPickup: boolean | null
+    receiveNotifications: boolean | null
+  }>
+  enrollmentHistory: Array<{
+    enrollment: typeof enrollments.$inferSelect
+    class: {
+      id: string
+      section: string
+      gradeName: string
+      seriesName: string | null
+    }
+  }>
+}
+
+export interface StudentStatistics {
+  byStatus: Array<{ status: StudentStatus | null, count: number }>
+  byGender: Array<{ gender: Gender | null, count: number }>
+  byAge: Array<{ ageGroup: string, count: number }>
+  newAdmissions: number
+  total: number
+}
+
+export interface ExportStudentRow {
+  matricule: string | null
+  lastName: string
+  firstName: string
+  dateOfBirth: string | null
+  gender: string | null
+  status: string
+  class: string
+  series: string
+  nationality: string | null
+  address: string | null
+  emergencyContact: string | null
+  emergencyPhone: string | null
+  admissionDate: string | null
+}
+
+export interface ImportStudentResult {
+  success: number
+  errors: Array<{ row: number, error: string }>
 }
 
 // ==================== Queries ====================
@@ -194,7 +242,7 @@ export function getStudents(filters: StudentFilters): ResultAsync<{
   ).mapErr(tapLogErr(databaseLogger, { schoolId: filters.schoolId }))
 }
 
-export function getStudentById(id: string): ResultAsync<any, DatabaseError> {
+export function getStudentById(id: string): ResultAsync<StudentFullProfile, DatabaseError> {
   const db = getDb()
   return ResultAsync.fromPromise(
     (async () => {
@@ -261,13 +309,13 @@ export function getStudentById(id: string): ResultAsync<any, DatabaseError> {
         .orderBy(desc(enrollments.enrollmentDate))
 
       return {
-        ...student,
+        ...student.student,
         parents: studentParentsList,
         enrollmentHistory,
       }
     })(),
     err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch student'),
-  )
+  ).mapErr(tapLogErr(databaseLogger, { studentId: id }))
 }
 
 export function generateMatricule(schoolId: string, schoolYearId: string): ResultAsync<string, DatabaseError> {
@@ -323,7 +371,7 @@ export function generateMatricule(schoolId: string, schoolYearId: string): Resul
 
 // ==================== CRUD Operations ====================
 
-export function createStudent(data: CreateStudentInput): ResultAsync<any, DatabaseError> {
+export function createStudent(data: CreateStudentInput): ResultAsync<typeof students.$inferSelect, DatabaseError> {
   const db = getDb()
   const { schoolId, schoolYearId, ...studentData } = data
 
@@ -382,13 +430,16 @@ export function createStudent(data: CreateStudentInput): ResultAsync<any, Databa
         } as StudentInsert)
         .returning()
 
+      if (!student)
+        throw new DatabaseError('INTERNAL_ERROR', 'Failed to create student')
+
       return student
     })(),
     err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create student'),
   ).mapErr(tapLogErr(databaseLogger, { schoolId: data.schoolId }))
 }
 
-export function updateStudent(id: string, data: Partial<CreateStudentInput>): ResultAsync<any, DatabaseError> {
+export function updateStudent(id: string, data: Partial<CreateStudentInput>): ResultAsync<typeof students.$inferSelect, DatabaseError> {
   const db = getDb()
   return ResultAsync.fromPromise(
     (async () => {
@@ -435,11 +486,11 @@ export function updateStudentStatus(
   id: string,
   status: StudentStatus,
   reason?: string,
-): ResultAsync<any, DatabaseError> {
+): ResultAsync<typeof students.$inferSelect, DatabaseError> {
   const db = getDb()
   return ResultAsync.fromPromise(
     (async () => {
-      const updates: Record<string, any> = { status, updatedAt: new Date() }
+      const updates: Partial<typeof students.$inferInsert> = { status, updatedAt: new Date() }
 
       switch (status) {
         case 'graduated':
@@ -484,8 +535,8 @@ export function updateStudentStatus(
 
 export function bulkImportStudents(
   schoolId: string,
-  studentsData: any[],
-): ResultAsync<{ success: number, errors: Array<{ row: number, error: string }> }, DatabaseError> {
+  studentsData: Array<CreateStudentInput & { matricule?: string }>,
+): ResultAsync<ImportStudentResult, DatabaseError> {
   const db = getDb()
   return ResultAsync.fromPromise(
     (async () => {
@@ -537,9 +588,9 @@ export function bulkImportStudents(
   ).mapErr(tapLogErr(databaseLogger, { schoolId }))
 }
 
-export function exportStudents(filters: StudentFilters): ResultAsync<any[], DatabaseError> {
+export function exportStudents(filters: StudentFilters): ResultAsync<ExportStudentRow[], DatabaseError> {
   return getStudents({ ...filters, limit: 10000 }).map((result) => {
-    return result.data.map((item: { student: any, currentClass: any }) => ({
+    return result.data.map(item => ({
       matricule: item.student.matricule,
       lastName: item.student.lastName,
       firstName: item.student.firstName,
@@ -559,13 +610,7 @@ export function exportStudents(filters: StudentFilters): ResultAsync<any[], Data
 
 // ==================== Statistics ====================
 
-export function getStudentStatistics(schoolId: string): ResultAsync<{
-  byStatus: any[]
-  byGender: any[]
-  byAge: any[]
-  newAdmissions: number
-  total: number
-}, DatabaseError> {
+export function getStudentStatistics(schoolId: string): ResultAsync<StudentStatistics, DatabaseError> {
   const db = getDb()
   return ResultAsync.fromPromise(
     (async () => {
@@ -618,11 +663,11 @@ export function getStudentStatistics(schoolId: string): ResultAsync<{
         )
 
       return {
-        byStatus: statusCounts,
-        byGender: genderCounts,
-        byAge: ageCounts,
+        byStatus: statusCounts.map(s => ({ status: s.status, count: Number(s.count) })),
+        byGender: genderCounts.map(g => ({ gender: g.gender, count: Number(g.count) })),
+        byAge: ageCounts.map(a => ({ ageGroup: String(a.ageGroup), count: Number(a.count) })),
         newAdmissions: Number(newAdmissions[0]?.count || 0),
-        total: statusCounts.reduce((sum: number, s: { count: number }) => sum + Number(s.count), 0),
+        total: statusCounts.reduce((sum: number, s) => sum + Number(s.count), 0),
       }
     })(),
     err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch student statistics'),
@@ -639,19 +684,4 @@ function calculateAge(dob: Date): number {
     age--
   }
   return age
-}
-
-export function getActiveSchoolYear(schoolId: string): ResultAsync<any, DatabaseError> {
-  const db = getDb()
-  return ResultAsync.fromPromise(
-    (async () => {
-      const [activeYear] = await db
-        .select()
-        .from(schoolYears)
-        .where(and(eq(schoolYears.schoolId, schoolId), eq(schoolYears.isActive, true)))
-
-      return activeYear
-    })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch active school year'),
-  )
 }

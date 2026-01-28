@@ -27,20 +27,20 @@ describe('classrooms queries', () => {
     testClassroomIds = []
 
     // Create test school if not exists
-    const school = await createSchool({
-      name: 'Test School for Classrooms',
+    const school = (await createSchool({
+      name: 'TEST__ School for Classrooms',
       code: `TSC-${Date.now()}`,
-      email: 'classrooms@test.com',
+      email: 'TEST__classrooms@test.com',
       phone: '+237123456789',
       status: 'active',
-    })
+    }))._unsafeUnwrap()
     testSchoolId = school.id
 
     // Create test classrooms
-    const classroom1 = await createClassroom({
+    const classroom1 = (await createClassroom({
       id: nanoid(),
       schoolId: testSchoolId,
-      name: 'Room 101',
+      name: 'TEST__ Room 101',
       code: 'R101',
       type: 'regular',
       capacity: 30,
@@ -52,12 +52,12 @@ describe('classrooms queries', () => {
         whiteboard: true,
         ac: true,
       },
-    })
+    }))._unsafeUnwrap()
     if (!classroom1)
       throw new Error('Failed to create classroom1')
     testClassroomIds.push(classroom1.id)
 
-    const classroom2 = await createClassroom({
+    const classroom2 = (await createClassroom({
       id: nanoid(),
       schoolId: testSchoolId,
       name: 'Science Lab',
@@ -72,12 +72,12 @@ describe('classrooms queries', () => {
         computers: 20,
         smartboard: true,
       },
-    })
+    }))._unsafeUnwrap()
     if (!classroom2)
       throw new Error('Failed to create classroom2')
     testClassroomIds.push(classroom2.id)
 
-    const classroom3 = await createClassroom({
+    const classroom3 = (await createClassroom({
       id: nanoid(),
       schoolId: testSchoolId,
       name: 'Gymnasium',
@@ -87,7 +87,7 @@ describe('classrooms queries', () => {
       floor: 'Ground',
       building: 'Sports Complex',
       status: 'maintenance',
-    })
+    }))._unsafeUnwrap()
     if (!classroom3)
       throw new Error('Failed to create classroom3')
     testClassroomIds.push(classroom3.id)
@@ -95,43 +95,43 @@ describe('classrooms queries', () => {
 
   describe('getClassrooms', () => {
     test('should return classrooms for a school', async () => {
-      const result = await getClassrooms({ schoolId: testSchoolId })
+      const result = (await getClassrooms({ schoolId: testSchoolId }))._unsafeUnwrap()
 
       expect(result).toBeDefined()
       expect(result.length).toBeGreaterThanOrEqual(3)
-      expect(result.every((c: any) => c.classroom.schoolId === testSchoolId)).toBe(true)
+      expect(result.every((c: any) => c.schoolId === testSchoolId)).toBe(true)
     })
 
     test('should filter by type', async () => {
-      const result = await getClassrooms({ schoolId: testSchoolId, type: 'lab' })
+      const result = (await getClassrooms({ schoolId: testSchoolId, type: 'lab' }))._unsafeUnwrap()
 
       expect(result.length).toBeGreaterThanOrEqual(1)
-      expect(result.every((c: any) => c.classroom.type === 'lab')).toBe(true)
+      expect(result.every((c: any) => c.type === 'lab')).toBe(true)
     })
 
     test('should filter by status', async () => {
-      const activeResult = await getClassrooms({ schoolId: testSchoolId, status: 'active' })
-      const maintenanceResult = await getClassrooms({ schoolId: testSchoolId, status: 'maintenance' })
+      const activeResult = (await getClassrooms({ schoolId: testSchoolId, status: 'active' }))._unsafeUnwrap()
+      const maintenanceResult = (await getClassrooms({ schoolId: testSchoolId, status: 'maintenance' }))._unsafeUnwrap()
 
       expect(activeResult.length).toBeGreaterThanOrEqual(2)
       expect(maintenanceResult.length).toBeGreaterThanOrEqual(1)
-      expect(activeResult.every((c: any) => c.classroom.status === 'active')).toBe(true)
-      expect(maintenanceResult.every((c: any) => c.classroom.status === 'maintenance')).toBe(true)
+      expect(activeResult.every((c: any) => c.status === 'active')).toBe(true)
+      expect(maintenanceResult.every((c: any) => c.status === 'maintenance')).toBe(true)
     })
 
     test('should search by name or code', async () => {
-      const nameResult = await getClassrooms({ schoolId: testSchoolId, search: 'Science' })
-      const codeResult = await getClassrooms({ schoolId: testSchoolId, search: 'R101' })
+      const nameResult = (await getClassrooms({ schoolId: testSchoolId, search: 'Science' }))._unsafeUnwrap()
+      const codeResult = (await getClassrooms({ schoolId: testSchoolId, search: 'R101' }))._unsafeUnwrap()
 
       expect(nameResult.length).toBeGreaterThanOrEqual(1)
-      expect(nameResult[0]?.classroom.name).toContain('Science')
+      expect(nameResult[0]?.name).toContain('Science')
 
       expect(codeResult.length).toBeGreaterThanOrEqual(1)
-      expect(codeResult[0]?.classroom.code).toBe('R101')
+      expect(codeResult[0]?.code).toBe('R101')
     })
 
     test('should include assigned classes count', async () => {
-      const result = await getClassrooms({ schoolId: testSchoolId })
+      const result = (await getClassrooms({ schoolId: testSchoolId }))._unsafeUnwrap()
 
       expect(result[0]).toHaveProperty('assignedClassesCount')
       expect(typeof result[0]?.assignedClassesCount).toBe('number')
@@ -141,18 +141,18 @@ describe('classrooms queries', () => {
   describe('getClassroomById', () => {
     test('should return classroom with details', async () => {
       const classroomId = testClassroomIds[0]!
-      const result = await getClassroomById(classroomId)
+      const result = (await getClassroomById(classroomId))._unsafeUnwrap()
 
       expect(result).toBeDefined()
       expect(result?.classroom.id).toBe(classroomId)
-      expect(result?.classroom.name).toBe('Room 101')
+      expect(result?.classroom.name).toBe('TEST__ Room 101')
       expect(result?.classroom.equipment).toHaveProperty('projector')
     })
 
     test('should return undefined for non-existent classroom', async () => {
-      const result = await getClassroomById('00000000-0000-0000-0000-000000000000')
+      const result = (await getClassroomById('00000000-0000-0000-0000-000000000000'))._unsafeUnwrap()
 
-      expect(result).toBeUndefined()
+      expect(result).toBeNull()
     })
   })
 
@@ -170,7 +170,7 @@ describe('classrooms queries', () => {
         status: 'active' as const,
       }
 
-      const classroom = await createClassroom(classroomData)
+      const classroom = (await createClassroom(classroomData))._unsafeUnwrap()
       if (!classroom)
         throw new Error('Failed to create classroom')
       expect(classroom).toBeDefined()
@@ -194,30 +194,28 @@ describe('classrooms queries', () => {
         status: 'active',
       })
 
-      await expect(
-        createClassroom({
-          id: nanoid(),
-          schoolId: testSchoolId,
-          name: 'Second Classroom',
-          code: duplicateCode,
-          type: 'regular',
-          capacity: 30,
-          status: 'active',
-        }),
-      ).rejects.toThrow()
+      expect((await createClassroom({
+        id: nanoid(),
+        schoolId: testSchoolId,
+        name: 'Second Classroom',
+        code: duplicateCode,
+        type: 'regular',
+        capacity: 30,
+        status: 'active',
+      })).isErr()).toBe(true)
     })
 
     test('should allow same code in different schools', async () => {
       const sharedCode = `SHARED-${Date.now()}`
 
       // Create another school
-      const school2 = await createSchool({
+      const school2 = (await createSchool({
         name: 'Second Test School',
         code: `STS-${Date.now()}`,
         status: 'active',
-      })
+      }))._unsafeUnwrap()
 
-      const classroom1 = await createClassroom({
+      const classroom1 = (await createClassroom({
         id: nanoid(),
         schoolId: testSchoolId,
         name: 'Classroom in School 1',
@@ -225,12 +223,12 @@ describe('classrooms queries', () => {
         type: 'regular',
         capacity: 30,
         status: 'active',
-      })
+      }))._unsafeUnwrap()
       if (!classroom1)
         throw new Error('Failed to create classroom1')
       testClassroomIds.push(classroom1.id)
 
-      const classroom2 = await createClassroom({
+      const classroom2 = (await createClassroom({
         id: nanoid(),
         schoolId: school2.id,
         name: 'Classroom in School 2',
@@ -238,7 +236,7 @@ describe('classrooms queries', () => {
         type: 'regular',
         capacity: 30,
         status: 'active',
-      })
+      }))._unsafeUnwrap()
       if (!classroom2)
         throw new Error('Failed to create classroom2')
       expect(classroom1.code).toBe(sharedCode)
@@ -255,11 +253,11 @@ describe('classrooms queries', () => {
     test('should update classroom fields', async () => {
       const classroomId = testClassroomIds[0]!
 
-      const updated = await updateClassroom(classroomId, {
+      const updated = (await updateClassroom(classroomId, {
         name: 'Updated Room 101',
         capacity: 40,
         status: 'maintenance',
-      })
+      }))._unsafeUnwrap()
       if (!updated)
         throw new Error('Failed to update classroom')
       expect(updated.name).toBe('Updated Room 101')
@@ -270,14 +268,14 @@ describe('classrooms queries', () => {
     test('should update equipment', async () => {
       const classroomId = testClassroomIds[0]!
 
-      const updated = await updateClassroom(classroomId, {
+      const updated = (await updateClassroom(classroomId, {
         equipment: {
           projector: true,
           computers: 10,
           smartboard: true,
           ac: false,
         },
-      })
+      }))._unsafeUnwrap()
       if (!updated)
         throw new Error('Failed to update classroom')
       expect(updated.equipment).toHaveProperty('computers', 10)
@@ -287,7 +285,7 @@ describe('classrooms queries', () => {
 
   describe('deleteClassroom', () => {
     test('should delete unassigned classroom', async () => {
-      const classroom = await createClassroom({
+      const classroom = (await createClassroom({
         id: nanoid(),
         schoolId: testSchoolId,
         name: 'Classroom to Delete',
@@ -295,13 +293,13 @@ describe('classrooms queries', () => {
         type: 'regular',
         capacity: 30,
         status: 'active',
-      })
+      }))._unsafeUnwrap()
       if (!classroom)
         throw new Error('Failed to create classroom')
       await deleteClassroom(classroom.id)
 
-      const result = await getClassroomById(classroom.id)
-      expect(result).toBeUndefined()
+      const result = (await getClassroomById(classroom.id))._unsafeUnwrap()
+      expect(result).toBeNull()
     })
 
     // Note: Test for rejecting deletion of assigned classroom requires
@@ -315,8 +313,11 @@ describe('classrooms queries', () => {
 
       const result = await checkClassroomAvailability(classroomId, schoolYearId)
 
-      expect(result.available).toBe(true)
-      expect(result.assignedTo).toBeUndefined()
+      expect(result.isOk()).toBe(true)
+      if (result.isOk()) {
+        expect(result.value.available).toBe(true)
+        expect(result.value.assignedTo).toBeUndefined()
+      }
     })
 
     // Note: Test for unavailable classroom requires creating a class

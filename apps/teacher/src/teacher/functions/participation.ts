@@ -28,7 +28,16 @@ export const recordParticipation = createServerFn()
       grades: data.grades,
     })
 
-    return result
+    if (result.isErr()) {
+      return {
+        success: false,
+        error: result.error.message,
+      }
+    }
+
+    return {
+      success: true,
+    }
   })
 
 // Get participation grades for a session
@@ -39,7 +48,15 @@ export const getParticipationGrades = createServerFn()
     }),
   )
   .handler(async ({ data }) => {
-    const grades = await getSessionParticipationGrades(data.classSessionId)
+    const gradesResult = await getSessionParticipationGrades(data.classSessionId)
+
+    if (gradesResult.isErr()) {
+      return {
+        grades: [],
+      }
+    }
+
+    const grades = gradesResult.value
 
     return {
       grades: grades.map(g => ({

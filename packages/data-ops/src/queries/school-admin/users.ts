@@ -835,7 +835,7 @@ export async function assignSystemRolesToUser(userId: string, roleIds: string[])
 
   if (existingSystemRoleMappings.length > 0) {
     await db.delete(userRoles).where(
-      inArray(userRoles.id, existingSystemRoleMappings.map((m: any) => m.id)),
+      inArray(userRoles.id, existingSystemRoleMappings.map(m => m.id)),
     )
   }
 

@@ -25,7 +25,7 @@ import {
   teachers,
   users,
 } from '../drizzle/school-schema'
-import { DatabaseError, dbError } from '../errors'
+import { DatabaseError } from '../errors'
 
 export function getGradesByClass(params: {
   schoolId: string

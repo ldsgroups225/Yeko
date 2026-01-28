@@ -1,5 +1,7 @@
 import type { Grade, Serie, Subject, SubjectCategory } from '@repo/data-ops'
 import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
+import { ResultAsync } from 'neverthrow'
+
 import { formatDate } from '@/utils/formatDate'
 
 // ===== SUBJECTS EXPORT/IMPORT =====
@@ -37,8 +39,6 @@ export function exportSubjectsToExcel(subjects: Subject[]) {
   document.body.removeChild(link)
   URL.revokeObjectURL(url)
 }
-
-import { ResultAsync } from 'neverthrow'
 
 // ... existing imports ...
 
@@ -88,7 +88,6 @@ export function importSubjectsFromExcel(file: File): ResultAsync<Partial<Subject
     err => err instanceof Error ? err : new Error(String(err)),
   )
 }
-
 
 // ===== GRADES EXPORT/IMPORT =====
 

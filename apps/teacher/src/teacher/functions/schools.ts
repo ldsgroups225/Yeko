@@ -31,5 +31,11 @@ export const getCurrentTermFn = createServerFn()
   .inputValidator(z.object({ schoolYearId: z.string() }))
   .handler(async ({ data }) => {
     const { getCurrentTermForSchoolYear } = await import('@repo/data-ops/queries/teacher-app')
-    return getCurrentTermForSchoolYear(data.schoolYearId)
+    const result = await getCurrentTermForSchoolYear(data.schoolYearId)
+
+    if (result.isErr()) {
+      return null
+    }
+
+    return result.value
   })
