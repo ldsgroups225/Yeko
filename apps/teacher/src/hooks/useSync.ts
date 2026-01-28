@@ -1,7 +1,7 @@
 'use client'
 
 import type { PublishOptions, SyncResult } from '../lib/services/sync-service'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { syncService } from '../lib/services/sync-service'
 import { useSyncStatus } from './useDatabaseStatus'
 
@@ -174,15 +174,40 @@ export function useAutoSync(options: UseAutoSyncOptions = {}): {
   lastSyncResult: SyncResult | null
   toggleAutoSync: () => void
 } {
-  const { enabled = false } = options
+  const { enabled = false, interval = 5 * 60 * 1000 } = options // Default 5 mins
   const [isEnabled, setIsEnabled] = useState(enabled)
-  const [lastSyncResult] = useState<SyncResult | null>(null)
+  const [lastSyncResult, setLastSyncResult] = useState<SyncResult | null>(null)
 
-  // Note: syncStatus would be used for implementing auto-sync with intervals
-  // const _syncStatus = useSyncStatus()
+  const { processSyncQueue, isOnline } = useSync()
 
-  // Note: In a production app, you would set up an interval effect here
-  // For now, we'll just provide manual control
+  // Interval-based sync
+  useEffect(() => {
+    if (!isEnabled || !isOnline)
+      return
+
+    const timer = setInterval(async () => {
+      const result = await processSyncQueue()
+      setLastSyncResult(result)
+    }, interval)
+
+    return () => clearInterval(timer)
+  }, [isEnabled, isOnline, interval, processSyncQueue])
+
+  // Online-triggered sync
+  useEffect(() => {
+    if (!isEnabled)
+      return
+
+    const handleOnline = async () => {
+      const result = await processSyncQueue()
+      setLastSyncResult(result)
+    }
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('online', handleOnline)
+      return () => window.removeEventListener('online', handleOnline)
+    }
+  }, [isEnabled, processSyncQueue])
 
   const toggleAutoSync = useCallback(() => {
     setIsEnabled(prev => !prev)

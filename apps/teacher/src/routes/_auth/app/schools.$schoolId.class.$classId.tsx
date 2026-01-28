@@ -68,11 +68,17 @@ import { useParticipationManagement } from '@/hooks/use-participation-management
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { useI18nContext } from '@/i18n/i18n-react'
 import { localNotesService } from '@/lib/db/local-notes'
-import { classDetailsQueryOptions, classStudentsQueryOptions } from '@/lib/queries/classes'
+import { classDetailsQueryOptions, classStatsQueryOptions, classStudentsQueryOptions } from '@/lib/queries/classes'
 import { teacherClassesQueryOptions } from '@/lib/queries/dashboard'
 import { getCurrentTermFn, getTeacherSchoolsQuery } from '@/teacher/functions/schools'
+import { completeSession, startSession } from '@/teacher/functions/sessions'
 
 export const Route = createFileRoute('/_auth/app/schools/$schoolId/class/$classId')({
+  validateSearch: (search: Record<string, unknown>) => {
+    return {
+      timetableSessionId: (search.timetableSessionId as string) || undefined,
+    }
+  },
   component: ClassDetailPage,
 })
 
@@ -168,6 +174,9 @@ function ClassDetailPage() {
   // Session Mode states (for "Commencer le cours" flow)
   type SessionMode = 'view' | 'attendance_initial' | 'attendance_late' | 'participation' | 'finalization'
   const [sessionMode, setSessionMode] = useState<SessionMode>('view')
+  const [sessionId, setSessionId] = useState<string | null>(null)
+
+  const { timetableSessionId } = Route.useSearch()
 
   // Fetch class details
   const { data: classData, isLoading: classLoading } = useQuery({
@@ -184,6 +193,15 @@ function ClassDetailPage() {
       classId,
       schoolYearId: context?.schoolYearId ?? '',
       searchQuery: searchQuery || undefined,
+    }),
+    enabled: !!context?.schoolYearId,
+  })
+
+  // Fetch class stats
+  const { data: statsData, isLoading: statsLoading } = useQuery({
+    ...classStatsQueryOptions({
+      classId,
+      schoolYearId: context?.schoolYearId ?? '',
     }),
     enabled: !!context?.schoolYearId,
   })
@@ -239,7 +257,7 @@ function ClassDetailPage() {
     enabled: !!context?.teacherId && !!classId,
   })
 
-  const isLoading = contextLoading || classLoading || studentsLoading
+  const isLoading = contextLoading || classLoading || studentsLoading || statsLoading
 
   const classInfo = classData?.class
   const students = useMemo(() => studentsData?.students ?? [], [studentsData?.students])
@@ -286,8 +304,39 @@ function ClassDetailPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSessionCancelDialogOpen, setIsSessionCancelDialogOpen] = useState(false)
 
-  const handleStartSession = () => {
-    setSessionMode('attendance_initial')
+  const handleStartSession = async () => {
+    if (timetableSessionId && context?.teacherId) {
+      try {
+        setIsSubmitting(true)
+        const result = await startSession({
+          data: {
+            timetableSessionId,
+            teacherId: context.teacherId,
+            date: new Date().toISOString().split('T')[0]!,
+          },
+        })
+
+        if (result.success && result.sessionId) {
+          setSessionId(result.sessionId)
+          setSessionMode('attendance_initial')
+        }
+        else {
+          toast.error(result.error ?? LL.common.error())
+        }
+      }
+      catch (error) {
+        console.error('Failed to start session:', error)
+        toast.error(LL.common.error())
+      }
+      finally {
+        setIsSubmitting(false)
+      }
+    }
+    else {
+      // Ad-hoc session or no timetable info
+      // For now, we still move to attendance mode
+      setSessionMode('attendance_initial')
+    }
   }
 
   const handleFinishInitialAttendance = () => {
@@ -310,28 +359,69 @@ function ClassDetailPage() {
   }
 
   const handleSubmitSession = async (data: {
-    homework: any
+    homework: { title: string, description: string, dueDate: string } | null
     lessonCompleted: boolean
   }) => {
+    if (!sessionId && !timetableSessionId) {
+      toast.error('No active session to complete')
+      return
+    }
+
     setIsSubmitting(true)
     try {
-      // Mock submission - TODO: Implement actual API call
-      console.warn('Submitting Session:', {
-        classId,
-        date: new Date().toISOString(),
-        attendance: attendanceRecords,
-        participations,
-        ...data,
+      // If we don't have a sessionId but have a timetableSessionId, we might need to start it first
+      // But usually sessionId is set in handleStartSession
+      let activeId = sessionId
+
+      if (!activeId && timetableSessionId && context?.teacherId) {
+        const startResult = await startSession({
+          data: {
+            timetableSessionId,
+            teacherId: context.teacherId,
+            date: new Date().toISOString().split('T')[0]!,
+          },
+        })
+        if (startResult.success && startResult.sessionId) {
+          activeId = startResult.sessionId
+          setSessionId(activeId)
+        }
+      }
+
+      if (!activeId) {
+        throw new Error('Could not establish a session ID')
+      }
+
+      // Call the actual API
+      const result = await completeSession({
+        data: {
+          sessionId: activeId,
+          teacherId: context?.teacherId,
+          studentsPresent: attendanceStats.present,
+          studentsAbsent: attendanceStats.absent,
+          attendanceRecords: attendanceRecords.reduce((acc, r) => {
+            acc[r.studentId] = r.status
+            return acc
+          }, {} as Record<string, 'present' | 'absent' | 'late'>),
+          participationGrades: participations.map(p => ({
+            studentId: p.studentId,
+            grade: 10, // Default grade for participation, could be configurable
+            comment: p.comment,
+          })),
+          homework: data.homework,
+          lessonCompleted: data.lessonCompleted,
+        },
       })
 
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000))
-
-      toast.success(LL.session.saved())
-
-      resetAttendance()
-      resetParticipations()
-      setSessionMode('view')
+      if (result.success) {
+        toast.success(LL.session.saved())
+        resetAttendance()
+        resetParticipations()
+        setSessionMode('view')
+        setSessionId(null)
+      }
+      else {
+        toast.error(result.error ?? LL.common.error())
+      }
     }
     catch (error) {
       console.error('Failed to save session:', error)
@@ -525,16 +615,15 @@ function ClassDetailPage() {
 
   // Calculate class statistics
   const classStats = useMemo(() => {
-    if (!students.length)
+    if (!statsData?.success || !statsData.stats) {
       return { average: null, maxAverage: null, minAverage: null }
-    // For now, since we don't have grade data in the query, we'll use mock data
-    // This would be replaced with actual grade calculations
-    return {
-      average: null as number | null,
-      maxAverage: null as number | null,
-      minAverage: null as number | null,
     }
-  }, [students])
+    return {
+      average: statsData.stats.average,
+      maxAverage: statsData.stats.maxAverage,
+      minAverage: statsData.stats.minAverage,
+    }
+  }, [statsData])
 
   // Sort and filter students
   const processedStudents = useMemo(() => {

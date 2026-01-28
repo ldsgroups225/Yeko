@@ -163,16 +163,46 @@ export const deletePhoto = createServerFn()
       key: z.string().min(1, 'Key is required'),
     }),
   )
-  .handler(async (_ctx) => {
+  .handler(async (ctx) => {
     const context = await getSchoolContext()
     if (!context) {
       throw new Error('No school context')
     }
     await requirePermission('students', 'edit')
 
-    // TODO: Implement actual R2 deletion when needed
-    // For now, just return success
+    const { key } = ctx.data
+
+    // 1. Auditing & Soft Delete in DB (using school_files table)
+    const { getDb } = await import('@repo/data-ops/database/setup')
+    const { schoolFiles } = await import('@repo/data-ops/drizzle/school-schema')
+    const { createAuditLog } = await import('@repo/data-ops/queries/school-admin/audit')
+    const { deleteFile: r2DeleteFile, eq } = await import('@repo/data-ops')
+
+    const db = getDb()
+
+    // 1a. Mark as deleted in DB (Soft-Delete)
+    await db.update(schoolFiles)
+      .set({
+        deletedAt: new Date(),
+        deletedBy: context.userId,
+      })
+      .where(eq(schoolFiles.key, key))
+
+    // 1b. Create Audit Log
+    await createAuditLog({
+      schoolId: context.schoolId,
+      userId: context.userId,
+      action: 'delete',
+      tableName: 'school_files',
+      recordId: key,
+      oldValues: { key },
+    })
+
+    // 2. Physical Delete from R2
+    ensureR2Initialized()
+    const success = await r2DeleteFile(key)
+
     return {
-      success: true,
+      success,
     }
   })

@@ -1,15 +1,20 @@
 import {
+  and,
   classes,
   discounts,
   enrollments,
+  eq,
   feeStructures,
   feeTypes,
+  inArray,
+  isNull,
+  sql,
   studentDiscounts,
   studentFees,
+  students,
 } from '@repo/data-ops'
 import { getDb } from '@repo/data-ops/database/setup'
 import { createServerFn } from '@tanstack/react-start'
-import { and, eq, inArray, isNull, sql } from 'drizzle-orm'
 import { z } from 'zod'
 import { generateUUID } from '@/utils/generateUUID'
 import { getSchoolContext, getSchoolYearContext } from '../middleware/school-context'
@@ -23,6 +28,65 @@ interface FeeBreakdownItem {
   discountAmount: number
   finalAmount: number
   isNewStudent: boolean
+}
+
+/**
+ * Shared logic to calculate fee breakdown for a student
+ * Uses cents (integers) for precision to avoid floating point issues
+ */
+export function calculateBreakdown(params: {
+  isNewStudent: boolean
+  applicableFees: any[]
+  studentDiscounts: any[]
+}) {
+  const { isNewStudent, applicableFees, studentDiscounts } = params
+  const breakdown: FeeBreakdownItem[] = []
+
+  for (const fee of applicableFees) {
+    // Convert to cents for calculation (using millimes/cents as integers)
+    const baseAmountCents = Math.round(
+      (isNewStudent && fee.fee_structures.newStudentAmount
+        ? Number(fee.fee_structures.newStudentAmount)
+        : Number(fee.fee_structures.amount)) * 100,
+    )
+
+    let discountCents = 0
+    for (const sd of studentDiscounts) {
+      const appliesToFeeTypes = sd.discount.appliesToFeeTypes as string[] | null
+      if (!appliesToFeeTypes || appliesToFeeTypes.includes(fee.fee_types.id)) {
+        if (sd.discount.calculationType === 'percentage') {
+          discountCents += Math.round(baseAmountCents * (Number(sd.discount.value) / 100))
+        }
+        else {
+          discountCents += Math.round(Number(sd.calculatedAmount) * 100)
+        }
+      }
+    }
+
+    // Apply max discount cap
+    const maxDiscountCents = studentDiscounts.reduce((max: number, sd: any) => {
+      if (sd.discount.maxDiscountAmount) {
+        return Math.min(max, Math.round(Number(sd.discount.maxDiscountAmount) * 100))
+      }
+      return max
+    }, discountCents)
+
+    const finalDiscountCents = Math.min(discountCents, maxDiscountCents, baseAmountCents)
+    const finalAmountCents = baseAmountCents - finalDiscountCents
+
+    breakdown.push({
+      feeStructureId: fee.fee_structures.id,
+      feeTypeId: fee.fee_types.id,
+      feeTypeName: fee.fee_types.name,
+      feeTypeCategory: fee.fee_types.category,
+      originalAmount: baseAmountCents / 100,
+      discountAmount: finalDiscountCents / 100,
+      finalAmount: finalAmountCents / 100,
+      isNewStudent,
+    })
+  }
+
+  return breakdown
 }
 
 /**
@@ -45,7 +109,7 @@ export const calculateStudentFees = createServerFn()
 
     const db = getDb()
 
-    // Get student's current enrollment
+    // Get student's current enrollment - SCOPED by schoolId
     const [enrollment] = await db
       .select({
         id: enrollments.id,
@@ -56,7 +120,9 @@ export const calculateStudentFees = createServerFn()
       })
       .from(enrollments)
       .innerJoin(classes, eq(enrollments.classId, classes.id))
+      .innerJoin(students, eq(enrollments.studentId, students.id))
       .where(and(
+        eq(students.schoolId, context.schoolId),
         eq(enrollments.studentId, data.studentId),
         eq(enrollments.schoolYearId, schoolYearId),
         eq(enrollments.status, 'confirmed'),
@@ -64,10 +130,10 @@ export const calculateStudentFees = createServerFn()
       .limit(1)
 
     if (!enrollment) {
-      return { success: false as const, error: 'Student not enrolled for this year' }
+      return { success: false as const, error: 'Étudiant non inscrit pour cette année ou accès refusé' }
     }
 
-    // IconCheck if student is new (first enrollment)
+    // Check if student is new (first enrollment)
     const previousEnrollments = await db
       .select({ id: enrollments.id })
       .from(enrollments)
@@ -93,7 +159,7 @@ export const calculateStudentFees = createServerFn()
         eq(feeTypes.status, 'active'),
       ))
 
-    // Get student's approved discounts
+    // Get student's approved discounts - SCOPED by schoolId
     const studentDiscountsList = await db
       .select({
         discountId: studentDiscounts.discountId,
@@ -102,56 +168,19 @@ export const calculateStudentFees = createServerFn()
       })
       .from(studentDiscounts)
       .innerJoin(discounts, eq(studentDiscounts.discountId, discounts.id))
+      .innerJoin(students, eq(studentDiscounts.studentId, students.id))
       .where(and(
+        eq(students.schoolId, context.schoolId),
         eq(studentDiscounts.studentId, data.studentId),
         eq(studentDiscounts.schoolYearId, schoolYearId),
         eq(studentDiscounts.status, 'approved'),
       ))
 
-    type StudentDiscountRow = typeof studentDiscountsList[number]
-    const feeBreakdown: FeeBreakdownItem[] = []
-
-    for (const fee of applicableFees) {
-      const baseAmount = isNewStudent && fee.fee_structures.newStudentAmount
-        ? Number(fee.fee_structures.newStudentAmount)
-        : Number(fee.fee_structures.amount)
-
-      // Calculate applicable discounts
-      let discountAmount = 0
-      for (const sd of studentDiscountsList) {
-        const appliesToFeeTypes = sd.discount.appliesToFeeTypes as string[] | null
-        if (!appliesToFeeTypes || appliesToFeeTypes.includes(fee.fee_types.id)) {
-          if (sd.discount.calculationType === 'percentage') {
-            discountAmount += baseAmount * (Number(sd.discount.value) / 100)
-          }
-          else {
-            discountAmount += Number(sd.calculatedAmount)
-          }
-        }
-      }
-
-      // Apply max discount cap if set
-      const maxDiscount = studentDiscountsList.reduce((max: number, sd: StudentDiscountRow) => {
-        if (sd.discount.maxDiscountAmount) {
-          return Math.min(max, Number(sd.discount.maxDiscountAmount))
-        }
-        return max
-      }, discountAmount)
-
-      discountAmount = Math.min(discountAmount, maxDiscount, baseAmount)
-      const finalAmount = baseAmount - discountAmount
-
-      feeBreakdown.push({
-        feeStructureId: fee.fee_structures.id,
-        feeTypeId: fee.fee_types.id,
-        feeTypeName: fee.fee_types.name,
-        feeTypeCategory: fee.fee_types.category,
-        originalAmount: baseAmount,
-        discountAmount,
-        finalAmount,
-        isNewStudent,
-      })
-    }
+    const feeBreakdown = calculateBreakdown({
+      isNewStudent,
+      applicableFees,
+      studentDiscounts: studentDiscountsList,
+    })
 
     const totalOriginal = feeBreakdown.reduce((sum, f) => sum + f.originalAmount, 0)
     const totalDiscount = feeBreakdown.reduce((sum, f) => sum + f.discountAmount, 0)
@@ -209,7 +238,7 @@ export const assignFeesToStudent = createServerFn()
     const newFees = fees.filter(f => !existingFeeStructureIds.has(f.feeStructureId))
 
     if (newFees.length === 0) {
-      return { success: true as const, message: 'All fees already assigned', data: calculation.data }
+      return { success: true as const, message: 'Tous les frais sont déjà assignés', data: calculation.data }
     }
 
     await db.insert(studentFees).values(
@@ -229,7 +258,7 @@ export const assignFeesToStudent = createServerFn()
     return {
       success: true as const,
       data: calculation.data,
-      message: `${newFees.length} fees assigned`,
+      message: `${newFees.length} frais assignés`,
     }
   })
 
@@ -353,54 +382,33 @@ export async function executeBulkFeeAssignment(params: {
     const studentDiscountsList = discountMap.get(enrollment.studentId) || []
 
     // IconFilter applicable fees for this specific enrollment
-    const studentApplicableFees = applicableFees.filter((f: { fee_structures: { gradeId: string | null, seriesId: string | null } }) =>
+    const studentApplicableFees = applicableFees.filter((f: any) =>
       f.fee_structures.gradeId === enrollment.gradeId
       && (enrollment.seriesId
         ? f.fee_structures.seriesId === enrollment.seriesId
         : !f.fee_structures.seriesId),
     )
 
-    for (const fee of studentApplicableFees) {
-      if (existingFeesSet.has(`${enrollment.studentId}-${fee.fee_structures.id}`)) {
+    const feeBreakdown = calculateBreakdown({
+      isNewStudent,
+      applicableFees: studentApplicableFees,
+      studentDiscounts: studentDiscountsList,
+    })
+
+    for (const fee of feeBreakdown) {
+      if (existingFeesSet.has(`${enrollment.studentId}-${fee.feeStructureId}`)) {
         continue
       }
-
-      const baseAmount = isNewStudent && fee.fee_structures.newStudentAmount
-        ? Number(fee.fee_structures.newStudentAmount)
-        : Number(fee.fee_structures.amount)
-
-      let discountAmount = 0
-      for (const sd of studentDiscountsList) {
-        const appliesToFeeTypes = sd.discount.appliesToFeeTypes as string[] | null
-        if (!appliesToFeeTypes || appliesToFeeTypes.includes(fee.fee_types.id)) {
-          if (sd.discount.calculationType === 'percentage') {
-            discountAmount += baseAmount * (Number(sd.discount.value) / 100)
-          }
-          else {
-            discountAmount += Number(sd.calculatedAmount)
-          }
-        }
-      }
-
-      const maxDiscountCap = studentDiscountsList.reduce((max: number, sd: { discount: { maxDiscountAmount: string | number | null } }) => {
-        if (sd.discount.maxDiscountAmount) {
-          return Math.min(max, Number(sd.discount.maxDiscountAmount))
-        }
-        return max
-      }, Infinity)
-
-      discountAmount = Math.min(discountAmount, maxDiscountCap, baseAmount)
-      const finalAmount = baseAmount - discountAmount
 
       toInsert.push({
         id: generateUUID(),
         studentId: enrollment.studentId,
         enrollmentId: enrollment.id,
-        feeStructureId: fee.fee_structures.id,
-        originalAmount: baseAmount.toString(),
-        discountAmount: discountAmount.toString(),
-        finalAmount: finalAmount.toString(),
-        balance: finalAmount.toString(),
+        feeStructureId: fee.feeStructureId,
+        originalAmount: fee.originalAmount.toString(),
+        discountAmount: fee.discountAmount.toString(),
+        finalAmount: fee.finalAmount.toString(),
+        balance: fee.finalAmount.toString(),
         status: 'pending' as const,
       })
     }
@@ -408,16 +416,18 @@ export async function executeBulkFeeAssignment(params: {
 
   if (toInsert.length > 0) {
     try {
-      // Chunk inserts for large datasets
-      const chunkSize = 100
-      for (let i = 0; i < toInsert.length; i += chunkSize) {
-        await db.insert(studentFees).values(toInsert.slice(i, i + chunkSize) as any[])
-      }
+      await db.transaction(async (tx) => {
+        // Chunk inserts for large datasets
+        const chunkSize = 100
+        for (let i = 0; i < toInsert.length; i += chunkSize) {
+          await tx.insert(studentFees).values(toInsert.slice(i, i + chunkSize) as any[])
+        }
+      })
       results.succeeded = params.studentIds.length
     }
     catch (error) {
       results.failed = params.studentIds.length
-      results.errors.push({ studentId: 'batch', error: error instanceof Error ? error.message : 'Batch assignment failed' })
+      results.errors.push({ studentId: 'batch', error: error instanceof Error ? error.message : 'L\'assignation groupée a échoué' })
     }
   }
   else {

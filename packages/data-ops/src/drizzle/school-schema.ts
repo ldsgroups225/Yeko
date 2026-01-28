@@ -2496,3 +2496,33 @@ export type MessageTemplate = typeof messageTemplates.$inferSelect
 export type MessageTemplateInsert = typeof messageTemplates.$inferInsert
 export type TeacherNotification = typeof teacherNotifications.$inferSelect
 export type TeacherNotificationInsert = typeof teacherNotifications.$inferInsert
+
+// School Files & Storage Metadata
+export const schoolFiles = pgTable('school_files', {
+  id: text('id').primaryKey(),
+  schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
+  key: text('key').notNull().unique(),
+  filename: text('filename').notNull(),
+  contentType: text('content_type').notNull(),
+  size: integer('size'),
+  entityType: text('entity_type'), // student, staff, user
+  entityId: text('entity_id'),
+  uploadedBy: text('uploaded_by').references(() => users.id, { onDelete: 'set null' }),
+  deletedBy: text('deleted_by').references(() => users.id, { onDelete: 'set null' }),
+  deletedAt: timestamp('deleted_at'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, table => ({
+  schoolIdx: index('idx_school_files_school').on(table.schoolId),
+  entityIdx: index('idx_school_files_entity').on(table.entityType, table.entityId),
+  deletedAtIdx: index('idx_school_files_deleted_at').on(table.deletedAt),
+}))
+
+export const schoolFilesRelations = relations(schoolFiles, ({ one }) => ({
+  school: one(schools, { fields: [schoolFiles.schoolId], references: [schools.id] }),
+  uploader: one(users, { fields: [schoolFiles.uploadedBy], references: [users.id] }),
+  deleter: one(users, { fields: [schoolFiles.deletedBy], references: [users.id] }),
+}))
+
+export type SchoolFile = typeof schoolFiles.$inferSelect
+export type SchoolFileInsert = typeof schoolFiles.$inferInsert

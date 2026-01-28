@@ -108,6 +108,7 @@ export async function getTeacherClassSessionById(sessionId: string) {
     .select({
       id: classSessions.id,
       classId: classSessions.classId,
+      schoolId: classes.schoolId,
       className: sql<string>`${grades.name} || ' ' || ${classes.section}`,
       schoolYearId: classes.schoolYearId,
       subjectId: classSessions.subjectId,

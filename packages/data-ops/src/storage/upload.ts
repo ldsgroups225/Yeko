@@ -87,3 +87,26 @@ export function isValidImageType(contentType: string): boolean {
 export function isValidFileSize(size: number, maxSizeMB: number = 5): boolean {
   return size <= maxSizeMB * 1024 * 1024
 }
+
+/**
+ * Delete a file from R2
+ */
+export async function deleteFile(key: string): Promise<boolean> {
+  if (!isR2Configured()) {
+    throw new Error('R2 storage is not configured')
+  }
+
+  const client = getR2Client()
+  const config = getR2Config()
+  const endpoint = getR2Endpoint()
+
+  const objectUrl = new URL(`/${config.bucketName}/${key}`, endpoint)
+
+  const signedRequest = await client.sign(objectUrl.toString(), {
+    method: 'DELETE',
+  })
+
+  const response = await fetch(signedRequest)
+
+  return response.ok
+}
