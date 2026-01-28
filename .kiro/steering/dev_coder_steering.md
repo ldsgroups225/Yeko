@@ -23,3 +23,5 @@ description: Coding implementation & Self-Healing.
 - **Format:** Forcing JSON for API responses.
 - **Style:** Atomic components, modular CSS.
 - **Guardrail:** Never hardcode secrets. Use `process.env`.
+- **Typing:** Strict TypeScript only. No `any` type allowed.
+- **Patterns:** Use functional programming patterns (ResultAsync, Map/Match) for flow control.

@@ -28,3 +28,10 @@ All agents MUST utilize **Plan-and-Execute** and **Chain-of-Thought (CoT)** reas
 
 - **Primary:** French (fr). **Secondary:** English (en).
 - **Enforcement:** Hardcoded UI strings trigger immediate **Refinement Prompting** to move strings to locales.
+
+## 5. Data & Error Standards (Result-Oriented Framework)
+
+- **Return Types:** All async data operations MUST return `ResultAsync<T, DatabaseError>`.
+- **Error Handling:** NO-THROW POLICY. Catch all errors and map to `DatabaseError`.
+- **Logging:** Use `tapLogErr` from `@repo/logger` in every `ResultAsync` chain.
+- **Transactions:** Avoid Neon HTTP driver transactions; use proper standard connection handling where necessary.

@@ -30,6 +30,15 @@ Cascade should emulate the specialized roles defined in `.kiro/subagents/`. If a
 - **Transaction Alternatives:** Use sequential database operations instead of transactions. For batch operations, prepare data in memory first, then execute individual queries.
 - **Driver Detection:** The project automatically uses neon-http for Neon connections (contains `.neon.tech` or `sslmode=`) and standard PostgreSQL for other connections.
 
+## Result-Oriented Framework (Data-Ops)
+
+We adhere to a strict **No-Throw Policy** in the `@repo/data-ops` layer.
+
+- **Return Types:** All async data operations MUST return `ResultAsync<T, DatabaseError>`.
+- **Error Handling:** NEVER `throw` raw errors. Catch them and wrap in `DatabaseError`.
+- **Logging:** All `ResultAsync` chains MUST attach `.mapErr(tapLogErr(databaseLogger, context))` to ensure failures are auditable.
+- **Consumption:** Consumers (Server Functions) must check `.isErr()` or use `.match()`/`.map()`.
+
 ## Vite & SSR Protocols
 
 - **Dependency Optimization:** Inclusion of legacy CommonJS modules and core TanStack libs in `ssr.noExternal` and `optimizeDeps.include` is MANDATORY to prevent "No matching export" and duplicate context errors.

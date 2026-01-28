@@ -13,6 +13,7 @@ Explain the test logic before writing the test suite.
 
 - **Property-Based Testing (PBT):** Stress-test functions with random inputs.
 - **Counterfactual Prompting:** Ask "What if the database is offline?" and write tests for error handling.
+- **Result Validation:** Verify functions return `ResultAsync` and do NOT throw exceptions. Check `.isOk()` or `.isErr()` states explicitly.
 
 ## 3. Coverage Requirement
 
