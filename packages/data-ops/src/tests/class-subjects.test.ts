@@ -25,7 +25,9 @@ describe('class subjects queries', () => {
     // Clean up existing test classes
     for (const id of testClassIds) {
       try {
-        await deleteClass(id)
+        if (testSchoolId) {
+          await deleteClass(testSchoolId, id)
+        }
       }
       catch {
         // Ignore errors during cleanup
@@ -51,7 +53,7 @@ describe('class subjects queries', () => {
     testTeacherId = 'test-teacher-id'
 
     // Create test class
-    const testClass = await createClass({
+    const result = await createClass(testSchoolId, {
       id: nanoid(),
       schoolId: testSchoolId,
       schoolYearId: testSchoolYearId,
@@ -59,6 +61,10 @@ describe('class subjects queries', () => {
       section: `CS-${Date.now()}`,
       status: 'active',
     })
+    
+    if (result.isErr()) throw result.error
+    const testClass = result.value
+    
     testClassId = testClass!.id
     testClassIds.push(testClassId)
   })
@@ -224,7 +230,7 @@ describe('class subjects queries', () => {
 
     beforeEach(async () => {
       // Create a source class
-      const sourceClass = await createClass({
+      const result = await createClass(testSchoolId, {
         id: nanoid(),
         schoolId: testSchoolId,
         schoolYearId: testSchoolYearId,
@@ -232,32 +238,14 @@ describe('class subjects queries', () => {
         section: `Source-${Date.now()}`,
         status: 'active',
       })
+      if (result.isErr()) throw result.error
+      const sourceClass = result.value
+
       sourceClassId = sourceClass!.id
       testClassIds.push(sourceClassId)
 
       // Add subjects to source class (mocking subject IDs since we don't create subjects in test setup yet)
       // Note: In real DB test, we need valid subject IDs.
-      // Assuming testSubjectId exists or foreign key constraints will fail.
-      // Since createClass/createSchool work, we might be hitting a mock or need to skip foreign key constraints if not enforcing?
-      // Actually, createClass relies on foreign keys. The beforeEach setup created createSchool but not subjects.
-      // If constraints are enforced, addSubjectToClass will fail if subject doesn't exist.
-      // Let's assume for this "unit-ish" test we might mock or rely on behavior.
-      // But this looks like integration tests against a real DB.
-      // So I will proceed assuming I can use testSubjectId.
-
-      // However, addSubjectToClass inserts into class_subjects which references subjects(id).
-      // We haven't created a subject in beforeEach.
-      // Currently the test file comments say: "Note: In a real test environment, we would create ... subject ... records."
-      // BUT `createClass` implies we are running against a DB.
-      // If so, `testSubjectId = 'test-subject-id'` will fail FK constraint if not created.
-      // I should create a subject if possible or skip if tests are mocked?
-      // Looking at `assignTeacherToClassSubject` test, it expects failure on qualification, which might check DB.
-      // Let's write the test assuming we can insert. If it fails, I'll need to create a subject.
-
-      // For now, I'll skip the actual insert in beforeEach until I verify if I can insert subjects.
-      // Wait, I can see `testSubjectId` is just a string.
-      // If I run this against a real DB (which `createSchool` suggests), this will fail.
-      // I will write the test structure.
     })
 
     test('should return empty result if source has no subjects', async () => {

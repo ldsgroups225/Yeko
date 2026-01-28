@@ -102,6 +102,9 @@ This phase aims to ensure that while we handle errors gracefully in the UI, we d
 - [x] Refactor `student-grades.ts` to use `ResultAsync`.
 - [x] Ensure `schoolId` multi-tenant scoping is enforced via the `data-ops` layer (for grades).
 - [x] Simplify query return types to use the success/error union (for grades).
+- [x] Refactor `classes.ts` (data-ops) to use `ResultAsync`.
+- [x] Refactor `classes.ts` (server functions) to use `createAuthenticatedServerFn`.
+- [x] Enforce `schoolId` scoping for class operations.
 
 ### 📍 Phase 4: User Relations (`parents.ts`)
 
@@ -111,5 +114,5 @@ This phase aims to ensure that while we handle errors gracefully in the UI, we d
 
 ---
 
-**Current Status:** 🟢 Students Refined | 🟢 Enrollments Refined | 🟢 Logging Standardized | 🟢 Grades Refined
-**Next Targeted Action:** Complete Phase 3: Classes Refinement.
+**Current Status:** 🟢 Students Refined | 🟢 Enrollments Refined | 🟢 Logging Standardized | 🟢 Grades Refined | 🟢 Classes Refined
+**Next Targeted Action:** Start Phase 4: User Relations (Parents).
