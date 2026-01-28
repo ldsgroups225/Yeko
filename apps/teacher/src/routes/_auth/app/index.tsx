@@ -222,6 +222,7 @@ function ScheduleCard({ session, schoolId }: ScheduleCardProps) {
               schoolId,
               classId: session.class.id,
             }}
+            search={{ timetableSessionId: session.id }}
           >
             <Button size="sm">
               {LL.session.startClass()}

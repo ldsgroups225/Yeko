@@ -53,22 +53,62 @@ export const startSession = createServerFn()
   })
 
 // Complete a class session
-export const completeSession = createServerFn()
+export const completeSession = createServerFn({ method: 'POST' })
   .inputValidator(completeSessionSchema)
   .handler(async ({ data }) => {
+    const {
+      upsertParticipationGrades,
+      createHomeworkAssignment,
+    } = await import('@repo/data-ops/queries/teacher-app')
+
+    // 1. Update session status and basic info
     const updated = await completeTeacherClassSession({
       sessionId: data.sessionId,
       teacherId: data.teacherId ?? '',
       studentsPresent: data.studentsPresent,
       studentsAbsent: data.studentsAbsent,
       notes: data.notes,
-      homework: data.homework,
+      homework: data.homework?.title, // Store title as summary
       chapterId: data.chapterId,
     })
 
     if (!updated) {
       return { success: false, error: 'Session not found or unauthorized' }
     }
+
+    // 2. Upsert participation grades if any
+    if (data.participationGrades && data.participationGrades.length > 0) {
+      await upsertParticipationGrades({
+        classSessionId: data.sessionId,
+        teacherId: data.teacherId ?? '',
+        grades: data.participationGrades.map(g => ({
+          studentId: g.studentId,
+          grade: g.grade,
+          comment: g.comment,
+        })),
+      })
+    }
+
+    // 3. Create homework if provided
+    if (data.homework) {
+      const session = await getTeacherClassSessionById(data.sessionId)
+      if (session) {
+        await createHomeworkAssignment({
+          schoolId: session.schoolId,
+          classId: session.classId,
+          subjectId: session.subjectId,
+          teacherId: session.teacherId,
+          classSessionId: session.id,
+          title: data.homework.title,
+          description: data.homework.description,
+          dueDate: data.homework.dueDate,
+          status: 'active',
+        })
+      }
+    }
+
+    // TODO: In Phase 13/14, we should also store attendanceRecords (per student)
+    // For now, we only store totals in the session table
 
     return { success: true }
   })

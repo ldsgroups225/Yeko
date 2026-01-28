@@ -23,12 +23,18 @@ export type RemotePublishHandler = (
   note: NoteWithDetails,
 ) => Promise<{ success: boolean, remoteId?: string, error?: string }>
 
+export type RemoteDeleteHandler = (
+  tableName: string,
+  recordId: string,
+) => Promise<{ success: boolean, error?: string }>
+
 // ============================================================================
 // Sync Service
 // ============================================================================
 
 class SyncService {
   private remotePublishHandler: RemotePublishHandler | null = null
+  private remoteDeleteHandler: RemoteDeleteHandler | null = null
   private isSyncing = false
 
   // --------------------------------------------------------------------------
@@ -41,6 +47,13 @@ class SyncService {
    */
   setRemotePublishHandler(handler: RemotePublishHandler): void {
     this.remotePublishHandler = handler
+  }
+
+  /**
+   * Register a handler for deleting records from the remote database
+   */
+  setRemoteDeleteHandler(handler: RemoteDeleteHandler): void {
+    this.remoteDeleteHandler = handler
   }
 
   // --------------------------------------------------------------------------
@@ -223,9 +236,11 @@ class SyncService {
         }
 
         if (item.operation === 'delete') {
-          // For now, if we delete a note locally, we might want to delete it remotely
-          // However, many remote APIs use soft deletes or manual cleanup.
-          // In our case, we'll just consider it done if no specific delete handler is set.
+          if (this.remoteDeleteHandler) {
+            const deleteResult = await this.remoteDeleteHandler('notes', item.recordId)
+            return deleteResult.success
+          }
+          // If no delete handler, we still consider it "done" locally (soft delete logic might apply)
           return true
         }
       }

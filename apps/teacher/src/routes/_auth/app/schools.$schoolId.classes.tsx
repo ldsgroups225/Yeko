@@ -286,7 +286,11 @@ function ClassCard({ classData, viewMode, schoolId }: ClassCardProps) {
   )
 
   return (
-    <Link to="/app/schools/$schoolId/class/$classId" params={{ schoolId, classId: classData.id }}>
+    <Link
+      to="/app/schools/$schoolId/class/$classId"
+      params={{ schoolId, classId: classData.id }}
+      search={{ timetableSessionId: undefined }}
+    >
       <motion.div whileHover={{ y: -4 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }}>
         {content}
       </motion.div>

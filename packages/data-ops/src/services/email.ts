@@ -29,6 +29,17 @@ export interface EmailResult {
  * Send welcome email to new school administrator
  */
 export async function sendWelcomeEmail(data: WelcomeEmailData): Promise<EmailResult> {
+  const subject = `Bienvenue sur Yeko - Accès Administrateur ${data.schoolName}`
+
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('--- [DEVELOPMENT] EMAIL TO:', data.to, '---')
+    console.warn('Subject:', subject)
+    console.warn('Credentials:', { email: data.email, password: data.password })
+    console.warn('Login URL:', data.loginUrl)
+    console.warn('-------------------------------------------')
+    return { success: true, messageId: 'dev-mode-log' }
+  }
+
   const resend = getResendClient()
 
   if (!resend) {
@@ -39,7 +50,7 @@ export async function sendWelcomeEmail(data: WelcomeEmailData): Promise<EmailRes
     const result = await resend.emails.send({
       from: process.env.EMAIL_FROM || 'Yeko <noreply@yeko.app>',
       to: data.to,
-      subject: `Bienvenue sur Yeko - Accès Administrateur ${data.schoolName}`,
+      subject,
       html: generateWelcomeEmailHTML(data),
       text: generateWelcomeEmailText(data),
     })
@@ -186,6 +197,18 @@ export interface ParentInvitationEmailData {
  * Send invitation email to parent
  */
 export async function sendParentInvitationEmail(data: ParentInvitationEmailData): Promise<EmailResult> {
+  const subject = `Invitation Yeko - Accès Parent pour ${data.schoolName}`
+
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('--- [DEVELOPMENT] EMAIL TO:', data.to, '---')
+    console.warn('Subject:', subject)
+    console.warn('Parent:', data.parentName)
+    console.warn('Students:', data.studentNames.join(', '))
+    console.warn('Invitation URL:', data.invitationUrl)
+    console.warn('-------------------------------------------')
+    return { success: true, messageId: 'dev-mode-log' }
+  }
+
   const resend = getResendClient()
 
   if (!resend) {
@@ -196,7 +219,7 @@ export async function sendParentInvitationEmail(data: ParentInvitationEmailData)
     const result = await resend.emails.send({
       from: process.env.EMAIL_FROM || 'Yeko <noreply@yeko.app>',
       to: data.to,
-      subject: `Invitation Yeko - Accès Parent pour ${data.schoolName}`,
+      subject,
       html: generateParentInvitationHTML(data),
       text: generateParentInvitationText(data),
     })

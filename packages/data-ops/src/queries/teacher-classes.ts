@@ -187,14 +187,17 @@ export async function getClassStats(params: {
 
   const [result] = await db
     .select({
-      totalStudents: count(),
-      genderBreakdown: sql<any>`jsonb_build_object(
-        'male', count(*) FILTER (WHERE ${students.gender} = 'male'),
-        'female', count(*) FILTER (WHERE ${students.gender} = 'female')
-      )`,
+      totalStudents: count(enrollments.id),
+      average: sql<number | null>`AVG(${studentAverages.average})::float`,
+      maxAverage: sql<number | null>`MAX(${studentAverages.average})::float`,
+      minAverage: sql<number | null>`MIN(${studentAverages.average})::float`,
     })
     .from(enrollments)
-    .innerJoin(students, eq(enrollments.studentId, students.id))
+    .leftJoin(studentAverages, and(
+      eq(enrollments.studentId, studentAverages.studentId),
+      eq(enrollments.classId, studentAverages.classId),
+      eq(studentAverages.isFinal, false),
+    ))
     .where(
       and(
         eq(enrollments.classId, params.classId),
@@ -204,6 +207,6 @@ export async function getClassStats(params: {
     )
 
   return (
-    result ?? { totalStudents: 0, genderBreakdown: { male: 0, female: 0 } }
+    result ?? { totalStudents: 0, average: null, maxAverage: null, minAverage: null }
   )
 }

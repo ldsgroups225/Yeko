@@ -1,7 +1,10 @@
 import {
+  and,
   classes,
   enrollments,
+  eq,
   grades,
+  inArray,
   parents,
   series,
   studentParents,
@@ -9,7 +12,6 @@ import {
 } from '@repo/data-ops'
 import { getDb } from '@repo/data-ops/database/setup'
 import { createServerFn } from '@tanstack/react-start'
-import { and, eq, inArray } from 'drizzle-orm'
 import { z } from 'zod'
 import {
   bulkEnrollmentSchema,
@@ -55,24 +57,44 @@ export const bulkEnrollStudents = createServerFn()
       .limit(1)
 
     if (!targetClass) {
-      throw new Error('Class not found')
+      throw new Error('Classe non trouvée')
     }
 
-    // IconCheck for existing enrollments
+    // Verify student ownership and get those that are confirmed elsewhere
+    const validStudents = await db
+      .select({ id: students.id })
+      .from(students)
+      .where(and(
+        eq(students.schoolId, context.schoolId),
+        inArray(students.id, data.studentIds),
+      ))
+
+    const validStudentIds = new Set(validStudents.map(s => s.id))
+    const invalidIds = data.studentIds.filter(id => !validStudentIds.has(id))
+
+    for (const id of invalidIds) {
+      results.failed++
+      results.errors.push({ studentId: id, error: 'Étudiant non trouvé dans cette école' })
+    }
+
+    if (validStudents.length === 0) {
+      return { success: true as const, data: results }
+    }
+
+    // Check for existing enrollments
     const existingEnrollments = await db
       .select({ studentId: enrollments.studentId })
       .from(enrollments)
       .where(and(
-        inArray(enrollments.studentId, data.studentIds),
+        inArray(enrollments.studentId, Array.from(validStudentIds)),
         eq(enrollments.schoolYearId, data.schoolYearId),
         inArray(enrollments.status, ['pending', 'confirmed']),
       ))
 
     const alreadyEnrolled = new Set(existingEnrollments.map((e: { studentId: string }) => e.studentId))
-
     const today = new Date().toISOString().split('T')[0] ?? new Date().toISOString().slice(0, 10)
 
-    const toInsert = data.studentIds
+    const toInsert = Array.from(validStudentIds)
       .filter(studentId => !alreadyEnrolled.has(studentId))
       .map(studentId => ({
         id: generateUUID(),
@@ -86,24 +108,17 @@ export const bulkEnrollStudents = createServerFn()
 
     if (toInsert.length > 0) {
       try {
-        await db.insert(enrollments).values(toInsert)
+        await db.transaction(async (tx) => {
+          await tx.insert(enrollments).values(toInsert)
+        })
         results.succeeded = toInsert.length
       }
-      catch {
-        // Fallback to individual inserts to capture specific errors if batch fails
-        for (const item of toInsert) {
-          try {
-            await db.insert(enrollments).values(item)
-            results.succeeded++
-          }
-          catch (e) {
-            results.failed++
-            results.errors.push({
-              studentId: item.studentId,
-              error: e instanceof Error ? e.message : 'Individual insertion failed',
-            })
-          }
-        }
+      catch (e) {
+        results.failed += toInsert.length
+        results.errors.push({
+          studentId: 'batch',
+          error: e instanceof Error ? e.message : 'L\'inscription groupée a échoué',
+        })
       }
     }
 
@@ -165,11 +180,13 @@ export const bulkReEnrollFromPreviousYear = createServerFn()
       errors: [] as Array<{ studentId: string, error: string }>,
     }
 
-    // IconCheck existing enrollments in target year
+    // Check existing enrollments in target year - SCOPED by schoolId
     const existingEnrollmentsTarget = await db
       .select({ studentId: enrollments.studentId })
       .from(enrollments)
+      .innerJoin(students, eq(enrollments.studentId, students.id))
       .where(and(
+        eq(students.schoolId, context.schoolId),
         eq(enrollments.schoolYearId, data.toSchoolYearId),
         inArray(enrollments.status, ['pending', 'confirmed']),
       ))
@@ -209,7 +226,7 @@ export const bulkReEnrollFromPreviousYear = createServerFn()
         results.failed++
         results.errors.push({
           studentId: enrollment.studentId,
-          error: 'No matching class found in target year',
+          error: 'Aucune classe correspondante trouvée pour l\'année cible',
         })
         continue
       }
@@ -227,24 +244,17 @@ export const bulkReEnrollFromPreviousYear = createServerFn()
 
     if (toInsert.length > 0) {
       try {
-        await db.insert(enrollments).values(toInsert)
+        await db.transaction(async (tx) => {
+          await tx.insert(enrollments).values(toInsert)
+        })
         results.succeeded = toInsert.length
       }
-      catch {
-        // Fallback to individual inserts to capture specific errors if batch fails
-        for (const item of toInsert) {
-          try {
-            await db.insert(enrollments).values(item)
-            results.succeeded++
-          }
-          catch (e) {
-            results.failed++
-            results.errors.push({
-              studentId: item.studentId,
-              error: e instanceof Error ? e.message : 'Individual insertion failed',
-            })
-          }
-        }
+      catch (e) {
+        results.failed += toInsert.length
+        results.errors.push({
+          studentId: 'batch',
+          error: e instanceof Error ? e.message : 'La réinscription groupée a échoué',
+        })
       }
     }
 
@@ -278,11 +288,16 @@ export const bulkTransferStudents = createServerFn()
     const now = new Date()
 
     try {
-      // 1. Get all current confirmed enrollments for these students
+      // 1. Get all current confirmed enrollments for these students - SCOPED by schoolId
       const currentEnrollments = await db
-        .select()
+        .select({
+          id: enrollments.id,
+          studentId: enrollments.studentId,
+        })
         .from(enrollments)
+        .innerJoin(students, eq(enrollments.studentId, students.id))
         .where(and(
+          eq(students.schoolId, context.schoolId),
           inArray(enrollments.studentId, data.studentIds),
           eq(enrollments.schoolYearId, yearContext.schoolYearId),
           eq(enrollments.status, 'confirmed'),
@@ -299,7 +314,7 @@ export const bulkTransferStudents = createServerFn()
       for (const id of data.studentIds) {
         if (!enrolledStudentIds.has(id)) {
           results.failed++
-          results.errors.push({ studentId: id, error: 'No active enrollment found' })
+          results.errors.push({ studentId: id, error: 'Aucune inscription active trouvée' })
         }
       }
 
