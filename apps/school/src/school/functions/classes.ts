@@ -3,8 +3,8 @@ import * as classQueries from '@repo/data-ops/queries/classes'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
-import { requirePermission } from '../middleware/permissions'
 import { createAuthenticatedServerFn } from '../lib/server-fn'
+import { requirePermission } from '../middleware/permissions'
 
 const classSchema = z.object({
   schoolYearId: z.string(),
@@ -31,7 +31,7 @@ export const getClasses = createAuthenticatedServerFn()
     const { school } = context
     if (!school)
       throw new DatabaseError('UNAUTHORIZED', 'No school context')
-    
+
     await requirePermission('classes', 'view')
 
     // Filter out null values to match ClassFilters type
@@ -55,7 +55,7 @@ export const getClassById = createAuthenticatedServerFn()
     const { school } = context
     if (!school)
       throw new DatabaseError('UNAUTHORIZED', 'No school context')
-    
+
     await requirePermission('classes', 'view')
 
     const result = await classQueries.getClassById(school.schoolId, id)
@@ -71,7 +71,7 @@ export const createClass = createAuthenticatedServerFn()
     const { school } = context
     if (!school)
       throw new DatabaseError('UNAUTHORIZED', 'No school context')
-    
+
     await requirePermission('classes', 'create')
 
     const result = await classQueries.createClass(school.schoolId, {
@@ -85,7 +85,8 @@ export const createClass = createAuthenticatedServerFn()
     }
 
     const newClass = result.value
-    if (!newClass) throw new DatabaseError('INTERNAL_ERROR', 'Failed to create class')
+    if (!newClass)
+      throw new DatabaseError('INTERNAL_ERROR', 'Failed to create class')
     await createAuditLog({
       schoolId: school.schoolId,
       userId: school.userId,
@@ -109,7 +110,7 @@ export const updateClass = createAuthenticatedServerFn()
     const { school } = context
     if (!school)
       throw new DatabaseError('UNAUTHORIZED', 'No school context')
-    
+
     await requirePermission('classes', 'edit')
 
     const oldClassResult = await classQueries.getClassById(school.schoolId, data.id)
@@ -139,7 +140,7 @@ export const deleteClass = createAuthenticatedServerFn()
     const { school } = context
     if (!school)
       throw new DatabaseError('UNAUTHORIZED', 'No school context')
-    
+
     await requirePermission('classes', 'delete')
 
     const oldClassResult = await classQueries.getClassById(school.schoolId, id)

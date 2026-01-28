@@ -1,11 +1,11 @@
 import type { InvitationStatus, Parent, ParentInsert, Relationship } from '../drizzle/school-schema'
 import crypto from 'node:crypto'
+import { databaseLogger, tapLogErr } from '@repo/logger'
 import { and, eq, ilike, isNull, or, sql } from 'drizzle-orm'
 import { err, ok, ResultAsync } from 'neverthrow'
-import { databaseLogger, tapLogErr } from '@repo/logger'
 import { getDb } from '../database/setup'
-import { DatabaseError } from '../errors'
 import { parents, studentParents, students, users } from '../drizzle/school-schema'
+import { DatabaseError } from '../errors'
 
 // ==================== Types ====================
 
@@ -220,7 +220,7 @@ export function autoMatchParents(schoolId: string): ResultAsync<any, DatabaseErr
         if (student.emergencyPhone) {
           const checkResult = await findParentByPhone(student.emergencyPhone)
           if (checkResult.isOk()) {
-             const existingParent = checkResult.value
+            const existingParent = checkResult.value
 
             results.suggestions.push({
               studentId: student.id,
@@ -281,7 +281,7 @@ export function updateParent(id: string, data: Partial<CreateParentInput>): Resu
         .set({ ...data, updatedAt: new Date() })
         .where(eq(parents.id, id))
         .returning()
-      
+
       if (!parent)
         throw new DatabaseError('NOT_FOUND', 'Parent not found')
 
@@ -341,7 +341,8 @@ export function linkParentToStudent(data: LinkParentInput): ResultAsync<any, Dat
         })
         .returning()
 
-      if (!link) throw new DatabaseError('INTERNAL_ERROR', 'Failed to link parent')
+      if (!link)
+        throw new DatabaseError('INTERNAL_ERROR', 'Failed to link parent')
 
       return link
     })(),
@@ -379,8 +380,9 @@ export function updateParentLink(
         .set(data)
         .where(and(eq(studentParents.studentId, studentId), eq(studentParents.parentId, parentId)))
         .returning()
-      
-      if (!link) throw new DatabaseError('NOT_FOUND', 'Link not found')
+
+      if (!link)
+        throw new DatabaseError('NOT_FOUND', 'Link not found')
 
       return link
     })(),
@@ -546,13 +548,15 @@ export async function bulkImportParents(
 
       // Check if parent exists
       const phoneResult = await findParentByPhone(parentData.phone)
-      
+
       let parent
       if (phoneResult.isOk() && phoneResult.value) {
         parent = phoneResult.value
-      } else {
+      }
+      else {
         const createResult = await createParent(parentData)
-        if (createResult.isErr()) throw createResult.error
+        if (createResult.isErr())
+          throw createResult.error
         parent = createResult.value
       }
 
@@ -561,15 +565,15 @@ export async function bulkImportParents(
         const [student] = await db.select().from(students).where(eq(students.matricule, studentMatricule))
 
         if (student) {
-            const linkResult = await linkParentToStudent({
-              studentId: student.id,
-              parentId: parent.id,
-              relationship: relationship || 'guardian',
-            })
-            // Ignore conflict if link already exists
-             if (linkResult.isErr() && linkResult.error.type !== 'CONFLICT') {
-                throw linkResult.error
-             }
+          const linkResult = await linkParentToStudent({
+            studentId: student.id,
+            parentId: parent.id,
+            relationship: relationship || 'guardian',
+          })
+          // Ignore conflict if link already exists
+          if (linkResult.isErr() && linkResult.error.type !== 'CONFLICT') {
+            throw linkResult.error
+          }
         }
       }
 

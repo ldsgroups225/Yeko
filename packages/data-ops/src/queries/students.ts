@@ -176,12 +176,14 @@ export function getStudents(filters: StudentFilters): ResultAsync<{
 
       const mappedData: StudentWithDetails[] = data.map(d => ({
         student: d.student,
-        currentClass: d.currentClass.id ? {
-          id: d.currentClass.id,
-          section: d.currentClass.section,
-          gradeName: d.currentClass.gradeName,
-          seriesName: d.currentClass.seriesName,
-        } : null,
+        currentClass: d.currentClass.id
+          ? {
+              id: d.currentClass.id,
+              section: d.currentClass.section,
+              gradeName: d.currentClass.gradeName,
+              seriesName: d.currentClass.seriesName,
+            }
+          : null,
         parentsCount: d.parentsCount,
         enrollmentStatus: d.enrollmentStatus,
       }))
@@ -191,7 +193,6 @@ export function getStudents(filters: StudentFilters): ResultAsync<{
     err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch students'),
   ).mapErr(tapLogErr(databaseLogger, { schoolId: filters.schoolId }))
 }
-
 
 export function getStudentById(id: string): ResultAsync<any, DatabaseError> {
   const db = getDb()
@@ -319,7 +320,6 @@ export function generateMatricule(schoolId: string, schoolYearId: string): Resul
     err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to generate matricule'),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, schoolYearId }))
 }
-
 
 // ==================== CRUD Operations ====================
 
@@ -480,7 +480,6 @@ export function updateStudentStatus(
   ).mapErr(tapLogErr(databaseLogger, { studentId: id, status }))
 }
 
-
 // ==================== Bulk Operations ====================
 
 export function bulkImportStudents(
@@ -539,7 +538,7 @@ export function bulkImportStudents(
 }
 
 export function exportStudents(filters: StudentFilters): ResultAsync<any[], DatabaseError> {
-  return getStudents({ ...filters, limit: 10000 }).map(result => {
+  return getStudents({ ...filters, limit: 10000 }).map((result) => {
     return result.data.map((item: { student: any, currentClass: any }) => ({
       matricule: item.student.matricule,
       lastName: item.student.lastName,
@@ -557,7 +556,6 @@ export function exportStudents(filters: StudentFilters): ResultAsync<any[], Data
     }))
   })
 }
-
 
 // ==================== Statistics ====================
 
@@ -631,7 +629,6 @@ export function getStudentStatistics(schoolId: string): ResultAsync<{
   ).mapErr(tapLogErr(databaseLogger, { schoolId }))
 }
 
-
 // ==================== Helper Functions ====================
 
 function calculateAge(dob: Date): number {
@@ -658,4 +655,3 @@ export function getActiveSchoolYear(schoolId: string): ResultAsync<any, Database
     err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch active school year'),
   )
 }
-

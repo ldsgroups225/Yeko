@@ -61,10 +61,11 @@ describe('class subjects queries', () => {
       section: `CS-${Date.now()}`,
       status: 'active',
     })
-    
-    if (result.isErr()) throw result.error
+
+    if (result.isErr())
+      throw result.error
     const testClass = result.value
-    
+
     testClassId = testClass!.id
     testClassIds.push(testClassId)
   })
@@ -238,7 +239,8 @@ describe('class subjects queries', () => {
         section: `Source-${Date.now()}`,
         status: 'active',
       })
-      if (result.isErr()) throw result.error
+      if (result.isErr())
+        throw result.error
       const sourceClass = result.value
 
       sourceClassId = sourceClass!.id

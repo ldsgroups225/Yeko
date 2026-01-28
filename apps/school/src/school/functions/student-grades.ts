@@ -20,7 +20,8 @@ export const getGradesByClass = createAuthenticatedServerFn()
   .inputValidator(getGradesByClassSchema)
   .handler(async ({ data, context }: any) => {
     const result = await gradeQueries.getGradesByClass({ ...data, schoolId: context!.school.id })
-    if (result.isErr()) throw result.error
+    if (result.isErr())
+      throw result.error
     return result.value
   })
 
@@ -29,7 +30,8 @@ export const getGrade = createAuthenticatedServerFn()
   .inputValidator(z.object({ id: z.string() }))
   .handler(async ({ data, context }: any) => {
     const result = await gradeQueries.getStudentGradeById(context!.school.id, data.id)
-    if (result.isErr()) throw result.error
+    if (result.isErr())
+      throw result.error
     return result.value
   })
 
@@ -51,7 +53,8 @@ export const createGrade = createAuthenticatedServerFn()
       gradeDate: data.gradeDate ?? new Date().toISOString().split('T')[0],
       status: 'draft',
     })
-    if (result.isErr()) throw result.error
+    if (result.isErr())
+      throw result.error
     return { success: true, data: result.value }
   })
 
@@ -62,10 +65,10 @@ export const createBulkGrades = createAuthenticatedServerFn()
     const gradeDate = data.gradeDate ?? new Date().toISOString().split('T')[0]
 
     // Use Promise.all with ResultAsync for parallel execution
-    // Or better: Use ResultAsync.combine if supported by neverthrow version, 
+    // Or better: Use ResultAsync.combine if supported by neverthrow version,
     // but importing ResultAsync here is needed.
     // Instead of importing ResultAsync, lets just await loops or map.
-    
+
     // We'll iterate and collect results. If any fails, we throw.
     const results = []
     for (const gradeItem of data.grades) {
@@ -83,7 +86,8 @@ export const createBulkGrades = createAuthenticatedServerFn()
         gradeDate,
         status: 'draft',
       })
-      if (result.isErr()) throw result.error
+      if (result.isErr())
+        throw result.error
       results.push(result.value)
     }
 
@@ -107,7 +111,8 @@ export const updateGrade = createAuthenticatedServerFn()
       updateData.gradeDate = data.gradeDate
 
     const result = await gradeQueries.updateStudentGrade(context!.school.id, data.id, updateData)
-    if (result.isErr()) throw result.error
+    if (result.isErr())
+      throw result.error
     return { success: true, data: result.value }
   })
 
@@ -132,7 +137,8 @@ export const deleteDraftGrades = createAuthenticatedServerFn()
   }))
   .handler(async ({ data, context }: any) => {
     const result = await gradeQueries.deleteDraftGrades({ ...data, schoolId: context!.school.id })
-    if (result.isErr()) throw result.error
+    if (result.isErr())
+      throw result.error
     return { success: true, count: result.value.length }
   })
 
@@ -141,7 +147,8 @@ export const submitGradesForValidation = createAuthenticatedServerFn()
   .inputValidator(submitGradesSchema)
   .handler(async ({ data, context }: any) => {
     const result = await gradeQueries.updateGradesStatus(context!.school.id, data.gradeIds, 'submitted')
-    if (result.isErr()) throw result.error
+    if (result.isErr())
+      throw result.error
     return { success: true, count: result.value.length }
   })
 
@@ -150,7 +157,8 @@ export const validateGrades = createAuthenticatedServerFn()
   .inputValidator(validateGradesSchema.extend({ userId: z.string() }))
   .handler(async ({ data, context }: any) => {
     const result = await gradeQueries.updateGradesStatus(context!.school.id, data.gradeIds, 'validated', data.userId)
-    if (result.isErr()) throw result.error
+    if (result.isErr())
+      throw result.error
     return { success: true, count: result.value.length }
   })
 
@@ -159,7 +167,8 @@ export const rejectGrades = createAuthenticatedServerFn()
   .inputValidator(rejectGradesSchema.extend({ userId: z.string() }))
   .handler(async ({ data, context }: any) => {
     const result = await gradeQueries.updateGradesStatus(context!.school.id, data.gradeIds, 'rejected', data.userId, data.reason)
-    if (result.isErr()) throw result.error
+    if (result.isErr())
+      throw result.error
     return { success: true, count: result.value.length }
   })
 
@@ -168,7 +177,8 @@ export const getPendingValidations = createAuthenticatedServerFn()
   .inputValidator(getPendingValidationsSchema)
   .handler(async ({ data, context }: any) => {
     const result = await gradeQueries.getPendingValidations({ ...data, schoolId: context!.school.id })
-    if (result.isErr()) throw result.error
+    if (result.isErr())
+      throw result.error
     return result.value
   })
 
@@ -180,7 +190,8 @@ export const getGradeStatistics = createAuthenticatedServerFn()
     // getGradeStatistics uses classId. We must ensure class belongs to school.
     // The query logic now does this check inside data-ops.
     const result = await gradeQueries.getClassGradeStatistics({ ...data, schoolId: context!.school.id })
-    if (result.isErr()) throw result.error
+    if (result.isErr())
+      throw result.error
     return result.value
   })
 
@@ -189,7 +200,8 @@ export const getGradeValidationHistory = createAuthenticatedServerFn()
   .inputValidator(z.object({ gradeId: z.string() }))
   .handler(async ({ data }) => {
     const result = await gradeQueries.getGradeValidationHistory(data.gradeId)
-    if (result.isErr()) throw result.error
+    if (result.isErr())
+      throw result.error
     return result.value
   })
 
@@ -202,6 +214,7 @@ export const getSubmittedGradeIds = createAuthenticatedServerFn()
   }))
   .handler(async ({ data, context }: any) => {
     const result = await gradeQueries.getSubmittedGradeIds({ ...data, schoolId: context!.school.id })
-    if (result.isErr()) throw result.error
+    if (result.isErr())
+      throw result.error
     return result.value
   })

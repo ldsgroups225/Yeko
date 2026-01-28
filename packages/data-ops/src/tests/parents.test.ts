@@ -1,7 +1,5 @@
-import './setup'
 import { nanoid } from 'nanoid'
 import { beforeEach, describe, expect, test } from 'vitest'
-
 import {
   autoMatchParents,
   createParent,
@@ -12,10 +10,12 @@ import {
   linkParentToStudent,
   updateParent,
 } from '../queries/parents'
+
 import { createSchoolYearTemplate } from '../queries/programs'
 import { createSchoolYear } from '../queries/school-admin/school-years'
 import { createSchool } from '../queries/schools'
 import { createStudent } from '../queries/students'
+import './setup'
 
 describe('parents queries', () => {
   let testSchoolId: string
@@ -47,7 +47,6 @@ describe('parents queries', () => {
       isActive: true,
     })
 
-
     // Create test student
     const studentResult = await createStudent({
       schoolId: testSchoolId,
@@ -58,8 +57,9 @@ describe('parents queries', () => {
       matricule: `ST-${Date.now()}`,
       emergencyPhone: '0700000001', // For auto-match
     })
-    
-    if (studentResult.isErr()) throw studentResult.error
+
+    if (studentResult.isErr())
+      throw studentResult.error
     testStudentId = studentResult.value.id
   })
 
@@ -72,7 +72,8 @@ describe('parents queries', () => {
       ...data,
     }
     const result = await createParent(parentData)
-    if (result.isErr()) throw result.error
+    if (result.isErr())
+      throw result.error
     const parent = result.value
     testParentIds.push(parent.id)
     return parent
@@ -89,7 +90,7 @@ describe('parents queries', () => {
     test('should fail with duplicate phone', async () => {
       const phone = `07${Date.now()}`.slice(0, 10)
       await createTestParent({ phone })
-      
+
       const result = await createParent({
         firstName: 'Other',
         lastName: 'Parent',
@@ -106,13 +107,13 @@ describe('parents queries', () => {
   describe('getParents', () => {
     test('should return parents for a school', async () => {
       await createTestParent()
-      // Note: getParents is school-scoped via students link usually, 
+      // Note: getParents is school-scoped via students link usually,
       // but current implementation filters by schoolId on studentParents join.
       // So unconnected parents might NOT show up unless we link them or they are global users?
       // Let's check getParents implementation.
-      // It joins studentParents and students filtering by schoolId. 
+      // It joins studentParents and students filtering by schoolId.
       // So we MUST link parent to a student in this school to see them.
-      
+
       const parent = await createTestParent()
       await linkParentToStudent({
         studentId: testStudentId,
@@ -121,7 +122,8 @@ describe('parents queries', () => {
       })
 
       const result = await getParents(testSchoolId, {})
-      if (result.isErr()) throw result.error
+      if (result.isErr())
+        throw result.error
       const parents = result.value.data
 
       expect(parents.length).toBeGreaterThan(0)
@@ -139,7 +141,8 @@ describe('parents queries', () => {
       })
 
       const result = await getParentById(parent.id)
-      if (result.isErr()) throw result.error
+      if (result.isErr())
+        throw result.error
       const data = result.value
 
       expect(data).toBeDefined()
@@ -155,7 +158,8 @@ describe('parents queries', () => {
       const newEmail = `updated-${Date.now()}@test.com`
 
       const result = await updateParent(parent.id, { email: newEmail })
-      if (result.isErr()) throw result.error
+      if (result.isErr())
+        throw result.error
       const updated = result.value
 
       expect(updated.email).toBe(newEmail)
@@ -167,7 +171,7 @@ describe('parents queries', () => {
       // Student has emergencyPhone '0700000001' locally created in beforeEach
       // Create parent with same phone
       const phone = '0700000001'
-      
+
       // Ensure no parent with this phone exists first (cleanup issues?)
       // We rely on unique/random data usually, but here fixed number.
       // Let's create parent with THIS phone.
@@ -176,21 +180,24 @@ describe('parents queries', () => {
         lastName: 'Contact',
         phone,
       })
-      
+
       // If it fails (conflict), we try to verify if it's found.
       let parentId
       if (parentResult.isErr()) {
-         const existing = await findParentByPhone(phone)
-         if (existing.isErr() || !existing.value) throw new Error('Parent conflict state unclear')
-         parentId = existing.value.id
-      } else {
-         parentId = parentResult.value.id
-         testParentIds.push(parentId)
+        const existing = await findParentByPhone(phone)
+        if (existing.isErr() || !existing.value)
+          throw new Error('Parent conflict state unclear')
+        parentId = existing.value.id
+      }
+      else {
+        parentId = parentResult.value.id
+        testParentIds.push(parentId)
       }
 
       // Run auto-match
       const matchResult = await autoMatchParents(testSchoolId)
-      if (matchResult.isErr()) throw matchResult.error
+      if (matchResult.isErr())
+        throw matchResult.error
       const suggestions = matchResult.value.suggestions
 
       expect(suggestions).toBeDefined()

@@ -94,7 +94,8 @@ export function StudentForm({ student, mode }: StudentFormProps) {
       if (result.success) {
         toast.success(t.students.createSuccess())
         navigate({ to: '/students/$studentId', params: { studentId: result.data.id } })
-      } else {
+      }
+      else {
         toast.error(result.error)
       }
     },
@@ -113,7 +114,8 @@ export function StudentForm({ student, mode }: StudentFormProps) {
       if (result.success) {
         toast.success(t.students.updateSuccess())
         navigate({ to: '/students/$studentId', params: { studentId: student!.id } })
-      } else {
+      }
+      else {
         toast.error(result.error)
       }
     },
@@ -129,7 +131,8 @@ export function StudentForm({ student, mode }: StudentFormProps) {
       if (result.success) {
         form.setValue('matricule', result.data)
         toast.success(t.students.matriculeGenerated())
-      } else {
+      }
+      else {
         toast.error(result.error)
       }
     },
@@ -159,7 +162,6 @@ export function StudentForm({ student, mode }: StudentFormProps) {
             <TabsTrigger value="contact" className="rounded-full px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all">{t.students.contactInfo()}</TabsTrigger>
             <TabsTrigger value="medical" className="rounded-full px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all">{t.students.medicalInfo()}</TabsTrigger>
           </TabsList>
-
 
           {/* Personal Information Tab */}
           <TabsContent value="personal" className="space-y-4">

@@ -1,6 +1,6 @@
+import { DatabaseError } from '@repo/data-ops/errors'
 import * as parentQueries from '@repo/data-ops/queries/parents'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
-import { DatabaseError } from '@repo/data-ops/errors'
 import { z } from 'zod'
 import { createAuthenticatedServerFn } from '../lib/server-fn'
 import { requirePermission } from '../middleware/permissions'
@@ -59,12 +59,12 @@ export const getParents = createAuthenticatedServerFn()
     const { school } = context
     if (!school)
       throw new DatabaseError('UNAUTHORIZED', 'No school context')
-    
+
     await requirePermission('students', 'view') // Parents access tied to students
-    
+
     const result = await parentQueries.getParents(school.schoolId, data as any)
     if (result.isErr()) {
-        throw result.error
+      throw result.error
     }
     return result.value
   })
@@ -75,12 +75,12 @@ export const getParentById = createAuthenticatedServerFn()
     const { school } = context
     if (!school)
       throw new DatabaseError('UNAUTHORIZED', 'No school context')
-    
+
     await requirePermission('students', 'view')
-    
+
     const result = await parentQueries.getParentById(id)
     if (result.isErr()) {
-        throw result.error
+      throw result.error
     }
     return result.value
   })
@@ -94,7 +94,8 @@ export const createParent = createAuthenticatedServerFn()
     await requirePermission('students', 'create')
 
     const result = await parentQueries.createParent(data)
-    if (result.isErr()) throw result.error
+    if (result.isErr())
+      throw result.error
     const parent = result.value
 
     await createAuditLog({
@@ -123,7 +124,8 @@ export const updateParent = createAuthenticatedServerFn()
     await requirePermission('students', 'edit')
 
     const result = await parentQueries.updateParent(data.id, data.updates)
-    if (result.isErr()) throw result.error
+    if (result.isErr())
+      throw result.error
     const parent = result.value
 
     await createAuditLog({
@@ -147,7 +149,8 @@ export const deleteParent = createAuthenticatedServerFn()
     await requirePermission('students', 'delete')
 
     const result = await parentQueries.deleteParent(id)
-    if (result.isErr()) throw result.error
+    if (result.isErr())
+      throw result.error
 
     await createAuditLog({
       schoolId: school.schoolId,
@@ -169,7 +172,8 @@ export const linkParentToStudent = createAuthenticatedServerFn()
     await requirePermission('students', 'edit')
 
     const result = await parentQueries.linkParentToStudent(data)
-    if (result.isErr()) throw result.error
+    if (result.isErr())
+      throw result.error
     const link = result.value
 
     await createAuditLog({
@@ -198,7 +202,8 @@ export const unlinkParentFromStudent = createAuthenticatedServerFn()
     await requirePermission('students', 'edit')
 
     const result = await parentQueries.unlinkParentFromStudent(data.studentId, data.parentId)
-    if (result.isErr()) throw result.error
+    if (result.isErr())
+      throw result.error
 
     await createAuditLog({
       schoolId: school.schoolId,
@@ -216,9 +221,10 @@ export const autoMatchParents = createAuthenticatedServerFn().handler(async ({ c
   if (!school)
     throw new DatabaseError('UNAUTHORIZED', 'No school context')
   await requirePermission('students', 'edit')
-  
+
   const result = await parentQueries.autoMatchParents(school.schoolId)
-  if (result.isErr()) throw result.error
+  if (result.isErr())
+    throw result.error
   return result.value
 })
 
@@ -231,7 +237,8 @@ export const sendParentInvitation = createAuthenticatedServerFn()
     await requirePermission('students', 'edit')
 
     const result = await parentQueries.sendParentInvitation(parentId, school.schoolId)
-    if (result.isErr()) throw result.error
+    if (result.isErr())
+      throw result.error
 
     await createAuditLog({
       schoolId: school.schoolId,

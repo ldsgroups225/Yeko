@@ -1,7 +1,7 @@
 import { getAuth } from '@repo/data-ops/auth/server'
+import { DatabaseError } from '@repo/data-ops/errors'
 import { createMiddleware } from '@tanstack/react-start'
 import { getRequest } from '@tanstack/react-start/server'
-import { DatabaseError } from '@repo/data-ops/errors'
 
 /**
  * Get auth context from the current request

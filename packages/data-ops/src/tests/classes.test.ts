@@ -94,8 +94,10 @@ describe('classes queries', () => {
   // Helper to create class and unwrap
   const createTestClass = async (data: any) => {
     const result = await createClass(testSchoolId, data)
-    if (result.isErr()) throw result.error
-    if (!result.value) throw new Error('Failed to create class')
+    if (result.isErr())
+      throw result.error
+    if (!result.value)
+      throw new Error('Failed to create class')
     return result.value
   }
 
@@ -113,7 +115,8 @@ describe('classes queries', () => {
       testClassIds.push(testClass.id)
 
       const result = await getClasses({ schoolId: testSchoolId })
-      if (result.isErr()) throw result.error
+      if (result.isErr())
+        throw result.error
       const classes = result.value
 
       expect(classes).toBeDefined()
@@ -135,7 +138,8 @@ describe('classes queries', () => {
         schoolId: testSchoolId,
         schoolYearId: testSchoolYearId,
       })
-      if (result.isErr()) throw result.error
+      if (result.isErr())
+        throw result.error
       const classes = result.value
 
       expect(classes.every((c: any) => c.class.schoolYearId === testSchoolYearId)).toBe(true)
@@ -156,7 +160,8 @@ describe('classes queries', () => {
         schoolId: testSchoolId,
         gradeId: testGradeId,
       })
-      if (result.isErr()) throw result.error
+      if (result.isErr())
+        throw result.error
       const classes = result.value
 
       expect(classes.every((c: any) => c.class.gradeId === testGradeId)).toBe(true)
@@ -178,7 +183,8 @@ describe('classes queries', () => {
         schoolId: testSchoolId,
         seriesId: testSeriesId,
       })
-      if (result.isErr()) throw result.error
+      if (result.isErr())
+        throw result.error
       const classes = result.value
 
       expect(classes.every((c: any) => c.class.seriesId === testSeriesId)).toBe(true)
@@ -196,7 +202,8 @@ describe('classes queries', () => {
       testClassIds.push(testClass.id)
 
       const result = await getClasses({ schoolId: testSchoolId })
-      if (result.isErr()) throw result.error
+      if (result.isErr())
+        throw result.error
       const classes = result.value
 
       if (classes.length > 0) {
@@ -221,7 +228,8 @@ describe('classes queries', () => {
       testClassIds.push(testClass.id)
 
       const result = await getClassById(testSchoolId, testClass.id)
-      if (result.isErr()) throw result.error
+      if (result.isErr())
+        throw result.error
       const classData = result.value
 
       expect(classData).toBeDefined()
@@ -249,7 +257,8 @@ describe('classes queries', () => {
       testClassIds.push(testClass.id)
 
       const result = await getClassById(testSchoolId, testClass.id)
-      if (result.isErr()) throw result.error
+      if (result.isErr())
+        throw result.error
       const classData = result.value
 
       expect(classData).toHaveProperty('boysCount')
@@ -269,9 +278,11 @@ describe('classes queries', () => {
       }
 
       const result = await createClass(testSchoolId, classData)
-      if (result.isErr()) throw result.error
+      if (result.isErr())
+        throw result.error
       const newClass = result.value
-      if (!newClass) throw new Error('Failed to create class')
+      if (!newClass)
+        throw new Error('Failed to create class')
 
       expect(newClass).toBeDefined()
       expect(newClass.id).toBe(classData.id)
@@ -348,10 +359,12 @@ describe('classes queries', () => {
         section: `NC-${Date.now()}`,
         status: 'active',
       })
-      
-      if (result.isErr()) throw result.error
+
+      if (result.isErr())
+        throw result.error
       const newClass = result.value
-      if (!newClass) throw new Error('Failed to create class')
+      if (!newClass)
+        throw new Error('Failed to create class')
 
       expect(newClass).toBeDefined()
       expect(newClass.classroomId).toBeNull()
@@ -375,7 +388,8 @@ describe('classes queries', () => {
         section: 'I-Updated',
         status: 'archived',
       })
-      if (result.isErr()) throw result.error
+      if (result.isErr())
+        throw result.error
       const updated = result.value
 
       expect(updated.section).toBe('I-Updated')
@@ -396,7 +410,8 @@ describe('classes queries', () => {
       const result = await updateClass(testSchoolId, testClass.id, {
         classroomId: testClassroomId,
       })
-      if (result.isErr()) throw result.error
+      if (result.isErr())
+        throw result.error
       const updated = result.value
 
       expect(updated.classroomId).toBe(testClassroomId)
@@ -413,9 +428,10 @@ describe('classes queries', () => {
         section: `DEL-${Date.now()}`,
         status: 'active',
       })
-      
+
       const deleteResult = await deleteClass(testSchoolId, testClass.id)
-      if (deleteResult.isErr()) throw deleteResult.error
+      if (deleteResult.isErr())
+        throw deleteResult.error
 
       const result = await getClassById(testSchoolId, testClass.id)
       expect(result.isErr()).toBe(true)

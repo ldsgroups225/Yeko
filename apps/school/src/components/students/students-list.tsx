@@ -91,7 +91,6 @@ const statusColors = {
 
 type StudentItem = StudentWithDetails
 
-
 export function StudentsList() {
   const t = useTranslations()
   const queryClient = useQueryClient()
@@ -215,7 +214,7 @@ export function StudentsList() {
     setIsExporting(true)
     try {
       const result = await exportStudents({ data: filters })
-      
+
       if (!result.success || result.data.length === 0) {
         toast.error(t.students.noDataToExport())
         return

@@ -1,10 +1,10 @@
+import type { StudentWithDetails } from '@repo/data-ops/queries/students'
+import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
+import * as studentQueries from '@repo/data-ops/queries/students'
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
-import * as studentQueries from '@repo/data-ops/queries/students'
-import type { StudentWithDetails } from '@repo/data-ops/queries/students'
 import { requirePermission } from '../middleware/permissions'
 import { getSchoolContext, getSchoolYearContext } from '../middleware/school-context'
-import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 
 // Students schema matched with DB
 const studentSchema = z.object({
@@ -26,10 +26,6 @@ const studentSchema = z.object({
   photoUrl: z.string().optional(),
 })
 
-
-
-
-
 const studentFiltersSchema = z.object({
   classId: z.string().optional(),
   gradeId: z.string().optional(),
@@ -47,7 +43,7 @@ const studentFiltersSchema = z.object({
 
 export const getStudents = createServerFn()
   .inputValidator(studentFiltersSchema)
-  .handler(async ({ data }): Promise<{ success: true; data: { data: StudentWithDetails[], total: number, page: number, totalPages: number } } | { success: false; error: string }> => {
+  .handler(async ({ data }): Promise<{ success: true, data: { data: StudentWithDetails[], total: number, page: number, totalPages: number } } | { success: false, error: string }> => {
     const context = await getSchoolContext()
     if (!context)
       throw new Error('No school context')
@@ -61,7 +57,7 @@ export const getStudents = createServerFn()
 
 export const getStudentById = createServerFn()
   .inputValidator(z.string())
-  .handler(async ({ data: id }): Promise<{ success: true; data: any } | { success: false; error: string }> => {
+  .handler(async ({ data: id }): Promise<{ success: true, data: any } | { success: false, error: string }> => {
     const context = await getSchoolContext()
     if (!context)
       throw new Error('No school context')
@@ -71,13 +67,11 @@ export const getStudentById = createServerFn()
       student => ({ success: true as const, data: student }),
       error => ({ success: false as const, error: error.message }),
     )
-
   })
-
 
 export const createStudent = createServerFn()
   .inputValidator(studentSchema)
-  .handler(async ({ data }): Promise<{ success: true; data: any } | { success: false; error: string }> => {
+  .handler(async ({ data }): Promise<{ success: true, data: any } | { success: false, error: string }> => {
     const context = await getSchoolContext()
     if (!context)
       throw new Error('No school context')
@@ -91,7 +85,7 @@ export const createStudent = createServerFn()
       schoolId: context.schoolId,
       schoolYearId,
     })).match(
-      async student => {
+      async (student) => {
         await createAuditLog({
           schoolId: context.schoolId,
           userId: context.userId,
@@ -104,9 +98,7 @@ export const createStudent = createServerFn()
       },
       error => ({ success: false as const, error: error.message }),
     )
-
   })
-
 
 export const updateStudent = createServerFn()
   .inputValidator(
@@ -115,14 +107,14 @@ export const updateStudent = createServerFn()
       data: studentSchema.partial(),
     }),
   )
-  .handler(async ({ data }): Promise<{ success: true; data: any } | { success: false; error: string }> => {
+  .handler(async ({ data }): Promise<{ success: true, data: any } | { success: false, error: string }> => {
     const context = await getSchoolContext()
     if (!context)
       throw new Error('No school context')
     await requirePermission('students', 'edit')
 
     return (await studentQueries.updateStudent(data.id, data.data)).match(
-      async student => {
+      async (student) => {
         await createAuditLog({
           schoolId: context.schoolId,
           userId: context.userId,
@@ -137,10 +129,9 @@ export const updateStudent = createServerFn()
     )
   })
 
-
 export const deleteStudent = createServerFn()
   .inputValidator(z.string())
-  .handler(async ({ data: id }): Promise<{ success: true } | { success: false; error: string }> => {
+  .handler(async ({ data: id }): Promise<{ success: true } | { success: false, error: string }> => {
     const context = await getSchoolContext()
     if (!context)
       throw new Error('No school context')
@@ -159,9 +150,7 @@ export const deleteStudent = createServerFn()
       },
       error => ({ success: false as const, error: error.message }),
     )
-
   })
-
 
 export const updateStudentStatus = createServerFn()
   .inputValidator(
@@ -171,14 +160,14 @@ export const updateStudentStatus = createServerFn()
       reason: z.string().optional(),
     }),
   )
-  .handler(async ({ data }): Promise<{ success: true; data: any } | { success: false; error: string }> => {
+  .handler(async ({ data }): Promise<{ success: true, data: any } | { success: false, error: string }> => {
     const context = await getSchoolContext()
     if (!context)
       throw new Error('No school context')
     await requirePermission('students', 'edit')
 
     return (await studentQueries.updateStudentStatus(data.id, data.status, data.reason)).match(
-      async student => {
+      async (student) => {
         await createAuditLog({
           schoolId: context.schoolId,
           userId: context.userId,
@@ -191,13 +180,11 @@ export const updateStudentStatus = createServerFn()
       },
       error => ({ success: false as const, error: error.message }),
     )
-
   })
-
 
 export const bulkImportStudents = createServerFn()
   .inputValidator(z.array(studentSchema))
-  .handler(async ({ data }): Promise<{ success: true; data: any } | { success: false; error: string }> => {
+  .handler(async ({ data }): Promise<{ success: true, data: any } | { success: false, error: string }> => {
     const context = await getSchoolContext()
     if (!context)
       throw new Error('No school context')
@@ -207,7 +194,7 @@ export const bulkImportStudents = createServerFn()
       ...student,
       schoolId: context.schoolId,
     })))).match(
-      async results => {
+      async (results) => {
         await createAuditLog({
           schoolId: context.schoolId,
           userId: context.userId,
@@ -220,13 +207,11 @@ export const bulkImportStudents = createServerFn()
       },
       error => ({ success: false as const, error: error.message }),
     )
-
   })
-
 
 export const exportStudents = createServerFn()
   .inputValidator(studentFiltersSchema)
-  .handler(async ({ data }): Promise<{ success: true; data: any } | { success: false; error: string }> => {
+  .handler(async ({ data }): Promise<{ success: true, data: any } | { success: false, error: string }> => {
     const context = await getSchoolContext()
     if (!context)
       throw new Error('No school context')
@@ -238,21 +223,19 @@ export const exportStudents = createServerFn()
     )
   })
 
-
-export const getStudentStatistics = createServerFn().handler(async (): Promise<{ success: true; data: any } | { success: false; error: string }> => {
+export const getStudentStatistics = createServerFn().handler(async (): Promise<{ success: true, data: any } | { success: false, error: string }> => {
   const context = await getSchoolContext()
   if (!context)
     throw new Error('No school context')
   await requirePermission('students', 'view')
 
-    return (await studentQueries.getStudentStatistics(context.schoolId)).match(
+  return (await studentQueries.getStudentStatistics(context.schoolId)).match(
     data => ({ success: true as const, data }),
     error => ({ success: false as const, error: error.message }),
   )
-
 })
 
-export const generateMatricule = createServerFn().handler(async (): Promise<{ success: true; data: any } | { success: false; error: string }> => {
+export const generateMatricule = createServerFn().handler(async (): Promise<{ success: true, data: any } | { success: false, error: string }> => {
   const context = await getSchoolContext()
   if (!context)
     throw new Error('No school context')
@@ -265,9 +248,9 @@ export const generateMatricule = createServerFn().handler(async (): Promise<{ su
     const activeYearResult = await studentQueries.getActiveSchoolYear(context.schoolId)
     const activeYear = activeYearResult.match(
       ay => ay,
-      () => null
+      () => null,
     )
-    
+
     if (!activeYear) {
       throw new Error('No school year selected. Please select a school year.')
     }
@@ -278,5 +261,4 @@ export const generateMatricule = createServerFn().handler(async (): Promise<{ su
     data => ({ success: true as const, data }),
     error => ({ success: false as const, error: error.message }),
   )
-
 })

@@ -67,7 +67,8 @@ export function StudentCombobox({
           limit: 50,
         },
       })
-      if (!result.success) return []
+      if (!result.success)
+        return []
       return result.data.data.map((item) => {
         const className = [
           item.currentClass?.gradeName,

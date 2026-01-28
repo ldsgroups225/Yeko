@@ -3,6 +3,7 @@ import type {
   GradeType,
   StudentGradeInsert,
 } from '../drizzle/school-schema'
+import { databaseLogger, tapLogErr } from '@repo/logger'
 import {
   and,
   asc,
@@ -12,8 +13,6 @@ import {
   sql,
 } from 'drizzle-orm'
 import { ResultAsync } from 'neverthrow'
-import { databaseLogger, tapLogErr } from '@repo/logger'
-import { DatabaseError, dbError } from '../errors'
 import { getDb } from '../database/setup'
 import {
   grades,
@@ -26,6 +25,7 @@ import {
   teachers,
   users,
 } from '../drizzle/school-schema'
+import { DatabaseError, dbError } from '../errors'
 
 export function getGradesByClass(params: {
   schoolId: string
@@ -61,7 +61,7 @@ export function getGradesByClass(params: {
         orderBy: [asc(studentGrades.gradeDate)],
       })
     })(),
-    (e) => DatabaseError.from(e),
+    e => DatabaseError.from(e),
   ).mapErr(tapLogErr(databaseLogger, { ...params, action: 'Getting grades by class' }))
 }
 
@@ -116,7 +116,7 @@ export function getPendingValidations(params: {
         users.name,
       )
       .orderBy(desc(sql`min(${studentGrades.submittedAt})`)),
-    (e) => DatabaseError.from(e),
+    e => DatabaseError.from(e),
   ).mapErr(tapLogErr(databaseLogger, { ...params, action: 'Getting pending validations' }))
 }
 
@@ -141,7 +141,7 @@ export function getClassGradeStatistics(params: {
       above15: sql<number>`count(*) filter (where ${studentGrades.value} >= 15)`,
     })
       .from(studentGrades)
-      .innerJoin(classes, eq(studentGrades.classId, classes.id)) 
+      .innerJoin(classes, eq(studentGrades.classId, classes.id))
       .innerJoin(subjects, eq(studentGrades.subjectId, subjects.id))
       .where(and(
         eq(studentGrades.classId, params.classId),
@@ -151,7 +151,7 @@ export function getClassGradeStatistics(params: {
         params.subjectId ? eq(studentGrades.subjectId, params.subjectId) : undefined,
       ))
       .groupBy(studentGrades.subjectId, subjects.name, studentGrades.type),
-    (e) => DatabaseError.from(e),
+    e => DatabaseError.from(e),
   ).mapErr(tapLogErr(databaseLogger, { ...params, action: 'Getting class grade statistics' }))
 }
 
@@ -171,7 +171,7 @@ export function createStudentGrade(schoolId: string, data: StudentGradeInsert) {
       const [grade] = await db.insert(studentGrades).values(data).returning()
       return grade
     })(),
-    (e) => DatabaseError.from(e),
+    e => DatabaseError.from(e),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, data, action: 'Creating student grade' }))
 }
 
@@ -196,7 +196,7 @@ export function updateStudentGrade(schoolId: string, id: string, data: Partial<S
         .returning()
       return updated
     })(),
-    (e) => DatabaseError.from(e),
+    e => DatabaseError.from(e),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, id, data, action: 'Updating student grade' }))
 }
 
@@ -219,7 +219,7 @@ export function getStudentGradeById(schoolId: string, id: string) {
           },
         },
       })
-      
+
       // Since studentGrades->class relation is likely defined but Typescript might complain if not defined in schema imports above.
       // Assuming 'class' relation exists on studentGrades (it has class_id).
       // If not, we fall back to manual check or 2 queries.
@@ -229,26 +229,28 @@ export function getStudentGradeById(schoolId: string, id: string) {
       // Ah, I saw `gradeValidations` and `studentGrades` table defs, but I probably missed relations at the bottom.
       // Assuming relation exists. If not, I'll error.
       // Better: Use `getGradesByClass` approach or manual verification.
-      
-      if (!grade) return undefined
-      
-      // Manual verification of schoolId logic if relation isn't easily accessible or trusted 
+
+      if (!grade)
+        return undefined
+
+      // Manual verification of schoolId logic if relation isn't easily accessible or trusted
       // (Actually, if I fetch `class` relation, I can check properties. But type safety relies on Drizzle types).
-      
+
       // Let's do a separate check for safety and type simplicity if relation isn't clear from snippet.
       // Better: join check.
-      
-       const [check] = await db.select({ id: studentGrades.id })
+
+      const [check] = await db.select({ id: studentGrades.id })
         .from(studentGrades)
         .innerJoin(classes, eq(studentGrades.classId, classes.id))
         .where(and(eq(studentGrades.id, id), eq(classes.schoolId, schoolId)))
         .limit(1)
-        
-       if (!check) return undefined // Not found or no access
 
-       return grade
+      if (!check)
+        return undefined // Not found or no access
+
+      return grade
     })(),
-    (e) => DatabaseError.from(e),
+    e => DatabaseError.from(e),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, id, action: 'Getting student grade by ID' }))
 }
 
@@ -280,19 +282,19 @@ export function updateGradesStatus(schoolId: string, gradeIds: string[], status:
       // Ensure we only update grades belonging to the school
       // Subquery or join logic:
       // UPDATE student_grades SET ... WHERE id IN (...) AND class_id IN (SELECT id FROM classes WHERE school_id = ...)
-      
+
       return db.update(studentGrades)
         .set(updates)
         .where(and(
           inArray(studentGrades.id, gradeIds),
           inArray(
             studentGrades.classId,
-            db.select({ id: classes.id }).from(classes).where(eq(classes.schoolId, schoolId))
-          )
+            db.select({ id: classes.id }).from(classes).where(eq(classes.schoolId, schoolId)),
+          ),
         ))
         .returning()
     })(),
-    (e) => DatabaseError.from(e),
+    e => DatabaseError.from(e),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, gradeIds, status, action: 'Updating grades status' }))
 }
 
@@ -336,7 +338,7 @@ export function deleteDraftGrades(params: {
 
       return deleted
     })(),
-    (e) => DatabaseError.from(e),
+    e => DatabaseError.from(e),
   ).mapErr(tapLogErr(databaseLogger, { ...params, action: 'Deleting draft grades' }))
 }
 
@@ -352,7 +354,7 @@ export function getGradeValidationHistory(gradeId: string) {
       },
       orderBy: [desc(gradeValidations.createdAt)],
     }),
-    (e) => DatabaseError.from(e),
+    e => DatabaseError.from(e),
   ).mapErr(tapLogErr(databaseLogger, { gradeId, action: 'Getting grade validation history' }))
 }
 
@@ -386,6 +388,6 @@ export function getSubmittedGradeIds(params: {
 
       return results.map((r: { id: string }) => r.id)
     })(),
-    (e) => DatabaseError.from(e),
+    e => DatabaseError.from(e),
   ).mapErr(tapLogErr(databaseLogger, { ...params, action: 'Getting submitted grade IDs' }))
 }

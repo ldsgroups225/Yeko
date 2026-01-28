@@ -80,7 +80,7 @@ export function getClasses(filters: ClassFilters) {
         .groupBy(classes.id, grades.id, series.id, classrooms.id, teachers.id, users.id)
         .orderBy(grades.order, classes.section)
     })(),
-    (e) => DatabaseError.from(e),
+    e => DatabaseError.from(e),
   ).mapErr(tapLogErr(databaseLogger, { ...filters, action: 'Getting classes' }))
 }
 
@@ -127,7 +127,7 @@ export function getClassById(schoolId: string, id: string) {
 
       return classData
     })(),
-    (e) => DatabaseError.from(e),
+    e => DatabaseError.from(e),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, id, action: 'Getting class by ID' }))
 }
 
@@ -169,7 +169,7 @@ export function createClass(schoolId: string, data: ClassInsert) {
       const [newClass] = await db.insert(classes).values(data).returning()
       return newClass
     })(),
-    (e) => DatabaseError.from(e),
+    e => DatabaseError.from(e),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, data, action: 'Creating class' }))
 }
 
@@ -190,7 +190,7 @@ export function updateClass(schoolId: string, id: string, data: Partial<ClassIns
 
       return updatedClass
     })(),
-    (e) => DatabaseError.from(e),
+    e => DatabaseError.from(e),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, id, data, action: 'Updating class' }))
 }
 
@@ -218,6 +218,6 @@ export function deleteClass(schoolId: string, id: string) {
       }
       return deleted
     })(),
-    (e) => DatabaseError.from(e),
+    e => DatabaseError.from(e),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, id, action: 'Deleting class' }))
 }
