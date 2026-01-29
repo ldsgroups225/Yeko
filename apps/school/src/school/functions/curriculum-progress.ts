@@ -1,7 +1,5 @@
 import * as progressQueries from '@repo/data-ops/queries/curriculum-progress'
-import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
-
 import {
   createClassSessionSchema,
   getClassesBehindSchema,
@@ -14,126 +12,204 @@ import {
   unmarkChapterCompleteSchema,
   updateClassSessionSchema,
 } from '@/schemas/curriculum-progress'
+import { authServerFn } from '../lib/server-fn'
 
 // ============================================
 // CLASS SESSIONS
 // ============================================
 
-export const getClassSessions = createServerFn()
+export const getClassSessions = authServerFn
   .inputValidator(getClassSessionsSchema)
-  .handler(async ({ data }) => {
-    return await progressQueries.getClassSessions(data)
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    return (await progressQueries.getClassSessions(data)).match(
+      result => ({ success: true as const, data: result }),
+      _ => ({ success: false as const, error: 'Erreur lors de la récupération des sessions' }),
+    )
   })
 
-export const getClassSession = createServerFn()
+export const getClassSession = authServerFn
   .inputValidator(z.object({ id: z.string() }))
-  .handler(async ({ data }) => {
-    return await progressQueries.getClassSessionById(data.id)
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    return (await progressQueries.getClassSessionById(data.id)).match(
+      result => ({ success: true as const, data: result }),
+      _ => ({ success: false as const, error: 'Erreur lors de la récupération de la session' }),
+    )
   })
 
-export const createClassSession = createServerFn()
+export const createClassSession = authServerFn
   .inputValidator(createClassSessionSchema)
-  .handler(async ({ data }) => {
-    const session = await progressQueries.createClassSession({
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    return (await progressQueries.createClassSession({
       id: crypto.randomUUID(),
       ...data,
-    })
-    return { success: true, data: session }
+    })).match(
+      session => ({ success: true as const, data: session }),
+      _ => ({ success: false as const, error: 'Erreur lors de la création de la session' }),
+    )
   })
 
-export const updateClassSession = createServerFn()
+export const updateClassSession = authServerFn
   .inputValidator(updateClassSessionSchema)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
     const { id, ...updateData } = data
-    const session = await progressQueries.updateClassSession(id, updateData)
-    return { success: true, data: session }
+    return (await progressQueries.updateClassSession(id, updateData)).match(
+      session => ({ success: true as const, data: session }),
+      _ => ({ success: false as const, error: 'Erreur lors de la mise à jour de la session' }),
+    )
   })
 
-export const markSessionCompleted = createServerFn()
+export const markSessionCompleted = authServerFn
   .inputValidator(markSessionCompletedSchema)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
     const { id, ...completionData } = data
-    const session = await progressQueries.markSessionCompleted(id, completionData)
-    return { success: true, data: session }
+    return (await progressQueries.markSessionCompleted(id, completionData)).match(
+      session => ({ success: true as const, data: session }),
+      _ => ({ success: false as const, error: 'Erreur lors de la validation de la session' }),
+    )
   })
 
-export const deleteClassSession = createServerFn()
+export const deleteClassSession = authServerFn
   .inputValidator(z.object({ id: z.string() }))
-  .handler(async ({ data }) => {
-    await progressQueries.deleteClassSession(data.id)
-    return { success: true }
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    return (await progressQueries.deleteClassSession(data.id)).match(
+      _ => ({ success: true as const, data: { success: true } }),
+      _ => ({ success: false as const, error: 'Erreur lors de la suppression de la session' }),
+    )
   })
 
 // ============================================
 // CHAPTER COMPLETIONS
 // ============================================
 
-export const getChapterCompletions = createServerFn()
+export const getChapterCompletions = authServerFn
   .inputValidator(z.object({
     classId: z.string(),
     subjectId: z.string().optional(),
   }))
-  .handler(async ({ data }) => {
-    return await progressQueries.getChapterCompletions(data)
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    return (await progressQueries.getChapterCompletions(data)).match(
+      result => ({ success: true as const, data: result }),
+      _ => ({ success: false as const, error: 'Erreur lors de la récupération des chapitres terminés' }),
+    )
   })
 
-export const markChapterComplete = createServerFn()
+export const markChapterComplete = authServerFn
   .inputValidator(markChapterCompleteSchema)
-  .handler(async ({ data }) => {
-    // IconCheck if already completed
-    const isCompleted = await progressQueries.isChapterCompleted(data.classId, data.chapterId)
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    // Check if already completed
+    const isCompleted = (await progressQueries.isChapterCompleted(data.classId, data.chapterId)).match(
+      val => val,
+      _ => false,
+    )
     if (isCompleted) {
-      return { success: false, error: 'Chapitre déjà marqué comme terminé' }
+      return { success: false as const, error: 'Chapitre déjà marqué comme terminé' }
     }
 
-    const completion = await progressQueries.markChapterComplete({
+    return (await progressQueries.markChapterComplete({
       id: crypto.randomUUID(),
       ...data,
-    })
-
-    return { success: true, data: completion }
+    })).match(
+      completion => ({ success: true as const, data: completion }),
+      _ => ({ success: false as const, error: 'Erreur lors de la validation du chapitre' }),
+    )
   })
 
-export const unmarkChapterComplete = createServerFn()
+export const unmarkChapterComplete = authServerFn
   .inputValidator(unmarkChapterCompleteSchema)
-  .handler(async ({ data }) => {
-    await progressQueries.unmarkChapterComplete(data.classId, data.chapterId)
-    return { success: true }
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    return (await progressQueries.unmarkChapterComplete(data.classId, data.chapterId)).match(
+      _ => ({ success: true as const, data: { success: true } }),
+      _ => ({ success: false as const, error: 'Erreur lors de l\'annulation du chapitre' }),
+    )
   })
 
-export const isChapterCompleted = createServerFn()
+export const isChapterCompleted = authServerFn
   .inputValidator(z.object({ classId: z.string(), chapterId: z.string() }))
-  .handler(async ({ data }) => {
-    return await progressQueries.isChapterCompleted(data.classId, data.chapterId)
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    return (await progressQueries.isChapterCompleted(data.classId, data.chapterId)).match(
+      result => ({ success: true as const, data: result }),
+      _ => ({ success: false as const, error: 'Erreur lors de la vérification du chapitre' }),
+    )
   })
 
 // ============================================
 // CURRICULUM PROGRESS
 // ============================================
 
-export const getCurriculumProgress = createServerFn()
+export const getCurriculumProgress = authServerFn
   .inputValidator(getProgressSchema)
-  .handler(async ({ data }) => {
-    return await progressQueries.getCurriculumProgress(data)
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    return (await progressQueries.getCurriculumProgress(data)).match(
+      result => ({ success: true as const, data: result }),
+      _ => ({ success: false as const, error: 'Erreur lors de la récupération de la progression' }),
+    )
   })
 
-export const getProgressOverview = createServerFn()
+export const getProgressOverview = authServerFn
   .inputValidator(getProgressOverviewSchema)
-  .handler(async ({ data }) => {
-    return await progressQueries.getProgressOverview(data)
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    return (await progressQueries.getProgressOverview(data)).match(
+      result => ({ success: true as const, data: result }),
+      _ => ({ success: false as const, error: 'Erreur lors de la récupération de la vue d\'ensemble' }),
+    )
   })
 
-export const getClassesBehindSchedule = createServerFn()
+export const getClassesBehindSchedule = authServerFn
   .inputValidator(getClassesBehindSchema)
-  .handler(async ({ data }) => {
-    return await progressQueries.getClassesBehindSchedule(data)
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    return (await progressQueries.getClassesBehindSchedule(data)).match(
+      result => ({ success: true as const, data: result }),
+      _ => ({ success: false as const, error: 'Erreur lors de la récupération des classes en retard' }),
+    )
   })
 
-export const recalculateProgress = createServerFn()
+export const recalculateProgress = authServerFn
   .inputValidator(recalculateProgressSchema)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
     // Calculate progress
-    const progress = await progressQueries.calculateProgress({
+    const progressResult = await progressQueries.calculateProgress({
       classId: data.classId,
       subjectId: data.subjectId,
       termId: data.termId,
@@ -142,8 +218,13 @@ export const recalculateProgress = createServerFn()
       termEndDate: new Date(data.termEndDate),
     })
 
+    if (progressResult.isErr()) {
+      return { success: false as const, error: 'Erreur lors du calcul de la progression' }
+    }
+    const progress = progressResult.value
+
     // Upsert progress record
-    const record = await progressQueries.upsertCurriculumProgress({
+    return (await progressQueries.upsertCurriculumProgress({
       id: crypto.randomUUID(),
       classId: data.classId,
       subjectId: data.subjectId,
@@ -156,29 +237,48 @@ export const recalculateProgress = createServerFn()
       variance: String(progress.variance),
       status: progress.status,
       lastChapterCompletedAt: progress.completedChapters > 0 ? new Date() : null,
-    })
-
-    return { success: true, data: record }
+    })).match(
+      record => ({ success: true as const, data: record }),
+      _ => ({ success: false as const, error: 'Erreur lors de l\'enregistrement de la progression' }),
+    )
   })
 
 // ============================================
 // STATISTICS
 // ============================================
 
-export const getProgressStatsByStatus = createServerFn()
+export const getProgressStatsByStatus = authServerFn
   .inputValidator(z.object({ schoolId: z.string(), termId: z.string() }))
-  .handler(async ({ data }) => {
-    return await progressQueries.getProgressStatsByStatus(data.schoolId, data.termId)
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    return (await progressQueries.getProgressStatsByStatus(data.schoolId, data.termId)).match(
+      result => ({ success: true as const, data: result }),
+      _ => ({ success: false as const, error: 'Erreur lors de la récupération des statistiques' }),
+    )
   })
 
-export const getProgressBySubject = createServerFn()
+export const getProgressBySubject = authServerFn
   .inputValidator(z.object({ schoolId: z.string(), termId: z.string() }))
-  .handler(async ({ data }) => {
-    return await progressQueries.getProgressBySubject(data.schoolId, data.termId)
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    return (await progressQueries.getProgressBySubject(data.schoolId, data.termId)).match(
+      result => ({ success: true as const, data: result }),
+      _ => ({ success: false as const, error: 'Erreur lors de la récupération de la progression par matière' }),
+    )
   })
 
-export const getTeacherProgressSummary = createServerFn()
+export const getTeacherProgressSummary = authServerFn
   .inputValidator(z.object({ teacherId: z.string(), termId: z.string() }))
-  .handler(async ({ data }) => {
-    return await progressQueries.getTeacherProgressSummary(data.teacherId, data.termId)
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    return (await progressQueries.getTeacherProgressSummary(data.teacherId, data.termId)).match(
+      result => ({ success: true as const, data: result }),
+      _ => ({ success: false as const, error: 'Erreur lors de la récupération du résumé par enseignant' }),
+    )
   })

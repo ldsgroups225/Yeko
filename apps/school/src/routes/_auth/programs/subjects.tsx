@@ -26,15 +26,16 @@ function SchoolSubjectsPage() {
   const [selectedYearId, setSelectedYearId] = useState<string>('')
 
   // Fetch school years
-  const { data: schoolYears, isLoading: yearsLoading } = useQuery({
+  const { data: schoolYearsResult, isLoading: yearsLoading } = useQuery({
     queryKey: ['school-years'],
     queryFn: () => getSchoolYears(),
     staleTime: 5 * 60 * 1000,
   })
+  const schoolYears = schoolYearsResult?.success ? schoolYearsResult.data : []
 
   // Auto-select active year
-  if (!selectedYearId && schoolYears) {
-    const activeYear = schoolYears.find((y: { isActive: boolean }) => y.isActive)
+  if (!selectedYearId && schoolYears.length > 0) {
+    const activeYear = schoolYears.find(y => y.isActive)
     if (activeYear) {
       setSelectedYearId(activeYear.id)
     }

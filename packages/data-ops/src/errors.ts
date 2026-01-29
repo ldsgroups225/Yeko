@@ -23,13 +23,13 @@ export class DatabaseError extends Error {
     this.name = 'DatabaseError'
   }
 
-  static from(error: unknown, type: DatabaseErrorType = 'INTERNAL_ERROR', message?: string): DatabaseError {
+  static from(error: unknown, type: DatabaseErrorType = 'INTERNAL_ERROR', message?: string, details: Record<string, unknown> = {}): DatabaseError {
     if (error instanceof DatabaseError)
       return error
     if (error instanceof Error) {
-      return new DatabaseError(type, message || error.message, {}, error)
+      return new DatabaseError(type, message || error.message, details, error)
     }
-    return new DatabaseError(type, message || String(error), {}, error)
+    return new DatabaseError(type, message || String(error), details, error)
   }
 }
 

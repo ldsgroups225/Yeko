@@ -46,7 +46,11 @@ export const submitGrades = createServerFn({ method: 'POST' })
     })
 
     if (result.isErr()) {
-      return { success: false, error: result.error.message }
+      return {
+        success: false,
+        error: result.error.message,
+        code: result.error.details?.code as string | undefined,
+      }
     }
 
     return { success: true }

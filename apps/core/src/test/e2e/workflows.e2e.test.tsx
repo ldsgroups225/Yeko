@@ -11,6 +11,15 @@ import * as React from 'react'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 
 // Mock data-ops
+
+function mockOk<T>(value: T) {
+  return {
+    isOk: () => true,
+    isErr: () => false,
+    value,
+  }
+}
+
 vi.mock('@repo/data-ops', () => ({
   createSchool: vi.fn(),
   getSchools: vi.fn(),
@@ -70,7 +79,7 @@ describe('e2E: 4.1 End-to-End Workflows', () => {
           updatedAt: new Date(),
         }
 
-        vi.mocked(dataOps.createSchool).mockResolvedValue(mockSchool as any)
+        vi.mocked(dataOps.createSchool).mockResolvedValue(mockOk(mockSchool) as any)
 
         const SchoolForm = () => {
           const [school, setSchool] = React.useState<any>(null)
@@ -83,8 +92,9 @@ describe('e2E: 4.1 End-to-End Workflows', () => {
 
           const handleSubmit = async (e: React.FormEvent) => {
             e.preventDefault()
-            const created = await dataOps.createSchool(formData as any)
-            setSchool(created)
+            const result = await dataOps.createSchool(formData as any)
+            if (result.isOk())
+              setSchool(result.value)
           }
 
           return (
@@ -166,7 +176,7 @@ describe('e2E: 4.1 End-to-End Workflows', () => {
           email: 'updated@school.com',
         }
 
-        vi.mocked(dataOps.updateSchool).mockResolvedValue(updated as any)
+        vi.mocked(dataOps.updateSchool).mockResolvedValue(mockOk(updated) as any)
 
         const SchoolEditForm = () => {
           const [school, setSchool] = React.useState<any>(original)
@@ -175,7 +185,8 @@ describe('e2E: 4.1 End-to-End Workflows', () => {
           const handleSubmit = async (e: React.FormEvent) => {
             e.preventDefault()
             const result = await dataOps.updateSchool('school-1', formData as any)
-            setSchool(result)
+            if (result.isOk())
+              setSchool(result.value)
           }
 
           return (
@@ -221,7 +232,7 @@ describe('e2E: 4.1 End-to-End Workflows', () => {
       test('should delete school with confirmation', async () => {
         const user = userEvent.setup()
 
-        vi.mocked(dataOps.deleteSchool).mockResolvedValue(undefined)
+        vi.mocked(dataOps.deleteSchool).mockResolvedValue(mockOk(undefined) as any)
 
         const SchoolsList = () => {
           const [schools, setSchools] = React.useState([
@@ -417,9 +428,9 @@ describe('catalog Management Workflows', () => {
         trackId: 'track-1',
       }
 
-      vi.mocked(dataOps.getGrades).mockResolvedValue(mockGrades as any)
-      vi.mocked(dataOps.createGrade).mockResolvedValue(newGrade as any)
-      vi.mocked(dataOps.deleteGrade).mockResolvedValue(undefined)
+      vi.mocked(dataOps.getGrades).mockResolvedValue(mockOk(mockGrades) as any)
+      vi.mocked(dataOps.createGrade).mockResolvedValue(mockOk(newGrade) as any)
+      vi.mocked(dataOps.deleteGrade).mockResolvedValue(mockOk(undefined) as any)
 
       const GradesPage = () => {
         const [grades, setGrades] = React.useState<any[]>([])
@@ -427,18 +438,23 @@ describe('catalog Management Workflows', () => {
         const [formData, setFormData] = React.useState({ name: '', code: '' })
 
         React.useEffect(() => {
-          dataOps.getGrades({ trackId: 'track-1' }).then(setGrades)
+          dataOps.getGrades({ trackId: 'track-1' }).then((res: any) => {
+            if (res.isOk())
+              setGrades(res.value)
+          })
         }, [])
 
         const handleCreate = async (e: React.FormEvent) => {
           e.preventDefault()
-          const created = await dataOps.createGrade({
+          const result = await dataOps.createGrade({
             ...formData,
             trackId: 'track-1',
           } as any)
-          setGrades([...grades, created])
-          setShowForm(false)
-          setFormData({ name: '', code: '' })
+          if (result.isOk()) {
+            setGrades([...grades, result.value])
+            setShowForm(false)
+            setFormData({ name: '', code: '' })
+          }
         }
 
         const handleDelete = async (id: string) => {
@@ -525,7 +541,7 @@ describe('catalog Management Workflows', () => {
         trackId: 'track-1',
       }
 
-      vi.mocked(dataOps.createSerie).mockResolvedValue(newSerie as any)
+      vi.mocked(dataOps.createSerie).mockResolvedValue(mockOk(newSerie) as any)
 
       const SeriesPage = () => {
         const [series, setSeries] = React.useState<any[]>([])
@@ -533,12 +549,14 @@ describe('catalog Management Workflows', () => {
 
         const handleCreate = async (e: React.FormEvent) => {
           e.preventDefault()
-          const created = await dataOps.createSerie({
+          const result = await dataOps.createSerie({
             ...formData,
             trackId: 'track-1',
           } as any)
-          setSeries([...series, created])
-          setFormData({ name: '', code: '' })
+          if (result.isOk()) {
+            setSeries([...series, result.value])
+            setFormData({ name: '', code: '' })
+          }
         }
 
         return (
@@ -599,8 +617,8 @@ describe('catalog Management Workflows', () => {
         category: 'science',
       }
 
-      vi.mocked(dataOps.getSubjects).mockResolvedValue(mockSubjects as any)
-      vi.mocked(dataOps.createSubject).mockResolvedValue(newSubject as any)
+      vi.mocked(dataOps.getSubjects).mockResolvedValue(mockOk(mockSubjects) as any)
+      vi.mocked(dataOps.createSubject).mockResolvedValue(mockOk(newSubject) as any)
 
       const SubjectsPage = () => {
         const [subjects, setSubjects] = React.useState<any[]>([])
@@ -609,15 +627,20 @@ describe('catalog Management Workflows', () => {
 
         React.useEffect(() => {
           dataOps.getSubjects().then((result: any) => {
-            setSubjects(Array.isArray(result) ? result : result.subjects || [])
+            if (result.isOk()) {
+              const val = result.value
+              setSubjects(Array.isArray(val) ? val : val.subjects || [])
+            }
           })
         }, [])
 
         const handleCreate = async (e: React.FormEvent) => {
           e.preventDefault()
-          const created = await dataOps.createSubject(formData as any)
-          setSubjects([...subjects, created])
-          setFormData({ name: '', category: 'science' })
+          const result = await dataOps.createSubject(formData as any)
+          if (result.isOk()) {
+            setSubjects([...subjects, result.value])
+            setFormData({ name: '', category: 'science' })
+          }
         }
 
         const filteredSubjects = categoryFilter === 'all'
@@ -711,7 +734,7 @@ describe('program Management Workflows', () => {
         status: 'draft',
       }
 
-      vi.mocked(dataOps.createProgramTemplate).mockResolvedValue(mockProgram as any)
+      vi.mocked(dataOps.createProgramTemplate).mockResolvedValue(mockOk(mockProgram) as any)
 
       const ProgramForm = () => {
         const [program, setProgram] = React.useState<any>(null)
@@ -724,8 +747,9 @@ describe('program Management Workflows', () => {
 
         const handleSubmit = async (e: React.FormEvent) => {
           e.preventDefault()
-          const created = await dataOps.createProgramTemplate(formData as any)
-          setProgram(created)
+          const result = await dataOps.createProgramTemplate(formData as any)
+          if (result.isOk())
+            setProgram(result.value)
         }
 
         return (
@@ -796,7 +820,7 @@ describe('program Management Workflows', () => {
         name: 'Updated Program',
       }
 
-      vi.mocked(dataOps.updateProgramTemplate).mockResolvedValue(updated as any)
+      vi.mocked(dataOps.updateProgramTemplate).mockResolvedValue(mockOk(updated) as any)
 
       const ProgramEditForm = () => {
         const [program, setProgram] = React.useState<any>(original)
@@ -805,7 +829,8 @@ describe('program Management Workflows', () => {
         const handleSubmit = async (e: React.FormEvent) => {
           e.preventDefault()
           const result = await dataOps.updateProgramTemplate('prog-1', { name } as any)
-          setProgram(result)
+          if (result.isOk())
+            setProgram(result.value)
         }
 
         return (
@@ -854,7 +879,7 @@ describe('program Management Workflows', () => {
         schoolYearTemplateId: 'year-2',
       }
 
-      vi.mocked(dataOps.cloneProgramTemplate).mockResolvedValue(cloned as any)
+      vi.mocked(dataOps.cloneProgramTemplate).mockResolvedValue(mockOk(cloned) as any)
 
       const ProgramsList = () => {
         const [programs, setPrograms] = React.useState([original])
@@ -862,13 +887,15 @@ describe('program Management Workflows', () => {
         const [selectedYear, setSelectedYear] = React.useState('year-2')
 
         const handleClone = async () => {
-          const clonedProgram = await dataOps.cloneProgramTemplate(
+          const result = await dataOps.cloneProgramTemplate(
             'prog-1',
             selectedYear,
             `${original.name} (Copy)`,
           )
-          setPrograms([...programs, clonedProgram])
-          setShowCloneForm(false)
+          if (result.isOk()) {
+            setPrograms([...programs, result.value])
+            setShowCloneForm(false)
+          }
         }
 
         return (
@@ -939,7 +966,7 @@ describe('coefficient Management Workflows', () => {
         weight: 2.5,
       }
 
-      vi.mocked(dataOps.createCoefficientTemplate).mockResolvedValue(mockCoefficient as any)
+      vi.mocked(dataOps.createCoefficientTemplate).mockResolvedValue(mockOk(mockCoefficient) as any)
 
       const CoefficientForm = () => {
         const [coefficient, setCoefficient] = React.useState<any>(null)
@@ -953,11 +980,12 @@ describe('coefficient Management Workflows', () => {
 
         const handleSubmit = async (e: React.FormEvent) => {
           e.preventDefault()
-          const created = await dataOps.createCoefficientTemplate({
+          const result = await dataOps.createCoefficientTemplate({
             ...formData,
             weight: Number.parseFloat(formData.weight),
           } as any)
-          setCoefficient(created)
+          if (result.isOk())
+            setCoefficient(result.value)
         }
 
         return (
@@ -1042,11 +1070,11 @@ describe('coefficient Management Workflows', () => {
         { id: 'c2', schoolYearTemplateId: 'y1', subjectId: 's2', gradeId: 'g1', weight: 2.0 },
       ]
 
-      vi.mocked(dataOps.getCoefficientTemplates).mockResolvedValue(mockCoefficients as any)
-      vi.mocked(dataOps.updateCoefficientTemplate).mockResolvedValue({
+      vi.mocked(dataOps.getCoefficientTemplates).mockResolvedValue(mockOk(mockCoefficients) as any)
+      vi.mocked(dataOps.updateCoefficientTemplate).mockResolvedValue(mockOk({
         ...mockCoefficients[0],
         weight: 2.5,
-      } as any)
+      }) as any)
 
       const CoefficientMatrix = () => {
         const [coefficients, setCoefficients] = React.useState<any[]>([])
@@ -1054,15 +1082,21 @@ describe('coefficient Management Workflows', () => {
         const [editValue, setEditValue] = React.useState('')
 
         React.useEffect(() => {
-          dataOps.getCoefficientTemplates({ schoolYearTemplateId: 'y1' }).then((result: any) => {
-            setCoefficients(Array.isArray(result) ? result : result.coefficients || [])
+          dataOps.getCoefficientTemplates({ schoolYearTemplateId: 'y1' }).then((res: any) => {
+            if (res.isOk()) {
+              const val = res.value
+              setCoefficients(Array.isArray(val) ? val : val.coefficients || [])
+            }
           })
         }, [])
 
         const handleEdit = async (id: string, newWeight: number) => {
-          const updated = await dataOps.updateCoefficientTemplate(id, { weight: newWeight } as any)
-          setCoefficients(coefficients.map(c => (c.id === id ? updated : c)))
-          setEditingId(null)
+          const result = await dataOps.updateCoefficientTemplate(id, { weight: newWeight } as any)
+          if (result.isOk()) {
+            const updated = result.value
+            setCoefficients(coefficients.map(c => (c.id === id ? updated : c)))
+            setEditingId(null)
+          }
         }
 
         return (
@@ -1153,7 +1187,7 @@ describe('coefficient Management Workflows', () => {
         { id: 'c3', weight: 1.0 },
       ]
 
-      vi.mocked(dataOps.getCoefficientTemplates).mockResolvedValue(mockCoefficients as any)
+      vi.mocked(dataOps.getCoefficientTemplates).mockResolvedValue(mockOk(mockCoefficients) as any)
 
       const BulkUpdateForm = () => {
         const [coefficients, setCoefficients] = React.useState<any[]>([])
@@ -1161,8 +1195,11 @@ describe('coefficient Management Workflows', () => {
         const [updates, setUpdates] = React.useState<Record<string, number>>({})
 
         React.useEffect(() => {
-          dataOps.getCoefficientTemplates().then((result: any) => {
-            setCoefficients(Array.isArray(result) ? result : result.coefficients || [])
+          dataOps.getCoefficientTemplates().then((res: any) => {
+            if (res.isOk()) {
+              const val = res.value
+              setCoefficients(Array.isArray(val) ? val : val.coefficients || [])
+            }
           })
         }, [])
 
@@ -1243,8 +1280,8 @@ describe('coefficient Management Workflows', () => {
         { id: 'c2', schoolYearTemplateId: 'year-1', weight: 2.0 },
       ]
 
-      vi.mocked(dataOps.getCoefficientTemplates).mockResolvedValue(previousYearCoefficients as any)
-      vi.mocked(dataOps.copyCoefficientTemplates).mockResolvedValue([])
+      vi.mocked(dataOps.getCoefficientTemplates).mockResolvedValue(mockOk(previousYearCoefficients) as any)
+      vi.mocked(dataOps.copyCoefficientTemplates).mockResolvedValue(mockOk([]) as any)
 
       const CopyYearForm = () => {
         const [coefficients, setCoefficients] = React.useState<any[]>([])

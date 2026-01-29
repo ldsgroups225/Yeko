@@ -67,7 +67,9 @@ export function SubjectCopyDialog({
     enabled: !!schoolYearId && open,
   })
 
-  const sourceClasses = classesData?.filter(c => c.class.id !== targetClassId) || []
+  // Safe unwrapping of Result type
+  const classesList = classesData?.success ? classesData.data : []
+  const sourceClasses = classesList.filter(c => c.class.id !== targetClassId)
 
   const form = useForm<CopyFormValues>({
     resolver: zodResolver(copyFormSchema),
@@ -86,12 +88,17 @@ export function SubjectCopyDialog({
           overwrite: values.overwrite,
         },
       }),
-    onSuccess: (data) => {
+    onSuccess: (result) => {
+      if (!result.success) {
+        toast.error(result.error)
+        return
+      }
+
       queryClient.invalidateQueries({
         queryKey: classSubjectsKeys.list({ classId: targetClassId }),
       })
       toast.success(
-        t.academic.classes.copySubjectsSuccess({ count: data.count }),
+        t.academic.classes.copySubjectsSuccess({ count: result.data.count }),
       )
       onOpenChange(false)
       form.reset()

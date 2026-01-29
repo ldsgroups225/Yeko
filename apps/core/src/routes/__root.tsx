@@ -20,7 +20,6 @@ import { initializeLogger } from '@/lib/logger'
 import appCss from '@/styles.css?url'
 import { seo } from '@/utils/seo'
 import { generateStructuredData } from '@/utils/structuredData'
-// import '@/i18n/config'
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient

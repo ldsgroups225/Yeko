@@ -49,7 +49,7 @@ import { getStaffList } from '@/school/functions/staff'
 import { formatDate } from '@/utils/formatDate'
 
 type StaffListResponse = Awaited<ReturnType<typeof getStaffList>>
-type StaffMember = StaffListResponse['staff'][number]
+type StaffMember = Extract<StaffListResponse, { success: true }>['data']['staff'][number]
 
 interface StaffTableProps {
   filters: {
@@ -66,7 +66,7 @@ export function StaffTable({ filters }: StaffTableProps) {
   const [searchInput, setSearchInput] = useState(filters.search || '')
   const debouncedSearch = useDebounce(searchInput, 500)
 
-  const { data, isLoading } = useQuery({
+  const { data: result, isLoading } = useQuery({
     queryKey: ['staff', { ...filters, search: debouncedSearch }],
     queryFn: async () => {
       const result = await getStaffList({
@@ -217,19 +217,21 @@ export function StaffTable({ filters }: StaffTableProps) {
     [t, navigate],
   )
 
+  const staffData = result?.success ? result.data : undefined
+
   const table = useReactTable({
-    data: data?.staff || [],
+    data: staffData?.staff || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
-    pageCount: data?.totalPages || 0,
+    pageCount: staffData?.totalPages || 0,
   })
 
   if (isLoading) {
     return <TableSkeleton columns={6} rows={5} />
   }
 
-  const hasNoData = !data?.staff || data.staff.length === 0
+  const hasNoData = !staffData?.staff || staffData.staff.length === 0
   const hasNoResults
     = hasNoData && (debouncedSearch || filters.position || filters.status)
 
@@ -340,24 +342,24 @@ export function StaffTable({ filters }: StaffTableProps) {
           )}
 
           {/* Pagination */}
-          {!hasNoData && data && data.totalPages > 1 && (
+          {!hasNoData && staffData && staffData.totalPages > 1 && (
             <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
               <div className="text-sm text-muted-foreground font-medium">
                 {t.common.showing()}
                 {' '}
                 <span className="text-foreground">
-                  {(data.page - 1) * data.limit + 1}
+                  {(staffData.page - 1) * staffData.limit + 1}
                 </span>
                 {' '}
                 -
                 {' '}
                 <span className="text-foreground">
-                  {Math.min(data.page * data.limit, data.total)}
+                  {Math.min(staffData.page * staffData.limit, staffData.total)}
                 </span>
                 {' '}
                 {t.common.of()}
                 {' '}
-                <span className="text-foreground">{data.total}</span>
+                <span className="text-foreground">{staffData.total}</span>
               </div>
               <div className="flex gap-3">
                 <Button
@@ -368,10 +370,10 @@ export function StaffTable({ filters }: StaffTableProps) {
                     e.stopPropagation()
                     navigate({
                       to: '/users/staff',
-                      search: { ...filters, page: data.page - 1 },
+                      search: { ...filters, page: staffData.page - 1 },
                     })
                   }}
-                  disabled={data.page === 1}
+                  disabled={staffData.page === 1}
                 >
                   {t.common.previous()}
                 </Button>
@@ -383,10 +385,10 @@ export function StaffTable({ filters }: StaffTableProps) {
                     e.stopPropagation()
                     navigate({
                       to: '/users/staff',
-                      search: { ...filters, page: data.page + 1 },
+                      search: { ...filters, page: staffData.page + 1 },
                     })
                   }}
-                  disabled={data.page === data.totalPages}
+                  disabled={staffData.page === staffData.totalPages}
                 >
                   {t.common.next()}
                 </Button>

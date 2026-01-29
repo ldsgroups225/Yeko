@@ -1,4 +1,3 @@
-import type { ServerContext } from '../lib/server-fn'
 import {
   createFeeType,
   deleteFeeType,
@@ -6,10 +5,9 @@ import {
   getFeeTypes,
   updateFeeType,
 } from '@repo/data-ops'
-import { DatabaseError } from '@repo/data-ops/errors'
 import { z } from 'zod'
 import { createFeeTypeSchema, updateFeeTypeSchema } from '@/schemas/fee-type'
-import { createAuthenticatedServerFn } from '../lib/server-fn'
+import { authServerFn } from '../lib/server-fn'
 
 /**
  * Filters for fee types queries
@@ -22,15 +20,14 @@ const feeTypeFiltersSchema = z.object({
 /**
  * Get fee types list
  */
-export const getFeeTypesList = createAuthenticatedServerFn()
+export const getFeeTypesList = authServerFn
   .inputValidator(feeTypeFiltersSchema.optional())
   .handler(async ({ data: filters, context }) => {
-    const { school } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await getFeeTypes({
-      schoolId: school.schoolId,
+      schoolId: context.school.schoolId,
       ...filters,
     })
 
@@ -43,7 +40,7 @@ export const getFeeTypesList = createAuthenticatedServerFn()
 /**
  * Get single fee type
  */
-export const getFeeType = createAuthenticatedServerFn()
+export const getFeeType = authServerFn
   .inputValidator(z.string())
   .handler(async ({ data: feeTypeId }) => {
     const result = await getFeeTypeById(feeTypeId)
@@ -57,15 +54,14 @@ export const getFeeType = createAuthenticatedServerFn()
 /**
  * Create new fee type
  */
-export const createNewFeeType = createAuthenticatedServerFn()
+export const createNewFeeType = authServerFn
   .inputValidator(createFeeTypeSchema)
   .handler(async ({ data, context }) => {
-    const { school } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await createFeeType({
-      schoolId: school.schoolId,
+      schoolId: context.school.schoolId,
       ...data,
     })
 
@@ -78,7 +74,7 @@ export const createNewFeeType = createAuthenticatedServerFn()
 /**
  * Update fee type
  */
-export const updateExistingFeeType = createAuthenticatedServerFn()
+export const updateExistingFeeType = authServerFn
   .inputValidator(updateFeeTypeSchema)
   .handler(async ({ data }) => {
     const { id, ...updateData } = data
@@ -93,13 +89,13 @@ export const updateExistingFeeType = createAuthenticatedServerFn()
 /**
  * Delete fee type
  */
-export const deleteExistingFeeType = createAuthenticatedServerFn()
+export const deleteExistingFeeType = authServerFn
   .inputValidator(z.string())
   .handler(async ({ data: feeTypeId }) => {
     const result = await deleteFeeType(feeTypeId)
 
     return result.match(
-      () => ({ success: true as const }),
+      () => ({ success: true as const, data: { success: true } }),
       error => ({ success: false as const, error: error.message }),
     )
   })

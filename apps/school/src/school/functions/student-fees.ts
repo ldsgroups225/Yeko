@@ -1,4 +1,3 @@
-import type { ServerContext } from '../lib/server-fn'
 import {
   createStudentFee,
   createStudentFeesBulk,
@@ -9,9 +8,8 @@ import {
   getStudentsWithOutstandingBalance,
   waiveStudentFee,
 } from '@repo/data-ops'
-import { DatabaseError } from '@repo/data-ops/errors'
 import { z } from 'zod'
-import { createAuthenticatedServerFn } from '../lib/server-fn'
+import { authServerFn } from '../lib/server-fn'
 
 /**
  * Amount validation
@@ -49,16 +47,15 @@ const waiveFeeSchema = z.object({
 /**
  * Get student fees
  */
-export const getStudentFeesList = createAuthenticatedServerFn()
+export const getStudentFeesList = authServerFn
   .inputValidator(z.object({
     studentId: z.string().optional(),
     enrollmentId: z.string().optional(),
     status: z.enum(['pending', 'partial', 'paid', 'waived', 'cancelled']).optional(),
   }).optional())
   .handler(async ({ data: filters, context }) => {
-    const { school } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await getStudentFees(filters ?? {})
     return result.match(
@@ -70,16 +67,16 @@ export const getStudentFeesList = createAuthenticatedServerFn()
 /**
  * Get student fees with details
  */
-export const getStudentFeesDetails = createAuthenticatedServerFn()
+export const getStudentFeesDetails = authServerFn
   .inputValidator(z.object({ studentId: z.string(), schoolYearId: z.string().optional() }))
   .handler(async ({ data, context }) => {
-    const { school, schoolYear } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
+    const { schoolYear } = context
     const schoolYearId = data.schoolYearId || schoolYear?.schoolYearId
     if (!schoolYearId)
-      throw new DatabaseError('UNAUTHORIZED', 'No school year context')
+      return { success: false as const, error: 'Année scolaire non sélectionnée' }
 
     const result = await getStudentFeesWithDetails(data.studentId, schoolYearId)
     return result.match(
@@ -91,16 +88,16 @@ export const getStudentFeesDetails = createAuthenticatedServerFn()
 /**
  * Get student fee summary
  */
-export const getStudentFeeSummaryData = createAuthenticatedServerFn()
+export const getStudentFeeSummaryData = authServerFn
   .inputValidator(z.object({ studentId: z.string(), schoolYearId: z.string().optional() }))
   .handler(async ({ data, context }) => {
-    const { school, schoolYear } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
+    const { schoolYear } = context
     const schoolYearId = data.schoolYearId || schoolYear?.schoolYearId
     if (!schoolYearId)
-      throw new DatabaseError('UNAUTHORIZED', 'No school year context')
+      return { success: false as const, error: 'Année scolaire non sélectionnée' }
 
     const result = await getStudentFeeSummary(data.studentId, schoolYearId)
     return result.match(
@@ -112,12 +109,11 @@ export const getStudentFeeSummaryData = createAuthenticatedServerFn()
 /**
  * Get single student fee
  */
-export const getStudentFee = createAuthenticatedServerFn()
+export const getStudentFee = authServerFn
   .inputValidator(z.string())
   .handler(async ({ data: studentFeeId, context }) => {
-    const { school } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await getStudentFeeById(studentFeeId)
     return result.match(
@@ -129,12 +125,11 @@ export const getStudentFee = createAuthenticatedServerFn()
 /**
  * Create student fee
  */
-export const createNewStudentFee = createAuthenticatedServerFn()
+export const createNewStudentFee = authServerFn
   .inputValidator(createStudentFeeSchema)
   .handler(async ({ data, context }) => {
-    const { school } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await createStudentFee(data)
     return result.match(
@@ -146,12 +141,11 @@ export const createNewStudentFee = createAuthenticatedServerFn()
 /**
  * Bulk create student fees
  */
-export const bulkCreateStudentFees = createAuthenticatedServerFn()
+export const bulkCreateStudentFees = authServerFn
   .inputValidator(bulkCreateStudentFeesSchema)
   .handler(async ({ data, context }) => {
-    const { school } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await createStudentFeesBulk(data.fees)
     return result.match(
@@ -163,13 +157,13 @@ export const bulkCreateStudentFees = createAuthenticatedServerFn()
 /**
  * Waive student fee
  */
-export const waiveExistingStudentFee = createAuthenticatedServerFn()
+export const waiveExistingStudentFee = authServerFn
   .inputValidator(waiveFeeSchema)
   .handler(async ({ data, context }) => {
-    const { school } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
+    const { school } = context
     const result = await waiveStudentFee(data.studentFeeId, school.userId, data.reason)
     return result.match(
       data => ({ success: true as const, data }),
@@ -180,16 +174,16 @@ export const waiveExistingStudentFee = createAuthenticatedServerFn()
 /**
  * Get students with outstanding balance
  */
-export const getStudentsWithBalance = createAuthenticatedServerFn()
+export const getStudentsWithBalance = authServerFn
   .inputValidator(z.object({ schoolYearId: z.string().optional() }).optional())
   .handler(async ({ data, context }) => {
-    const { school, schoolYear } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
+    const { school, schoolYear } = context
     const schoolYearId = data?.schoolYearId || schoolYear?.schoolYearId
     if (!schoolYearId)
-      throw new DatabaseError('UNAUTHORIZED', 'No school year context')
+      return { success: false as const, error: 'Année scolaire non sélectionnée' }
 
     const result = await getStudentsWithOutstandingBalance(school.schoolId, schoolYearId)
     return result.match(

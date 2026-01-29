@@ -59,6 +59,7 @@ export const createSchoolAdmin = createServerFn({ method: 'POST' })
 
       // Get school_administrator role
       const adminRole = await getRoleBySlug('school_administrator')
+
       if (!adminRole) {
         throw new Error('School administrator role not found')
       }
@@ -73,7 +74,10 @@ export const createSchoolAdmin = createServerFn({ method: 'POST' })
       })
 
       // Get school name for email
-      const school = await getSchoolById(schoolId)
+      const schoolResult = await getSchoolById(schoolId)
+      if (schoolResult.isErr())
+        throw schoolResult.error
+      const school = schoolResult.value
       const schoolName = school?.name || 'Votre école'
 
       // In development, log credentials to console

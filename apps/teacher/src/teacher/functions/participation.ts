@@ -32,6 +32,7 @@ export const recordParticipation = createServerFn()
       return {
         success: false,
         error: result.error.message,
+        code: result.error.details?.code as string | undefined,
       }
     }
 

@@ -1,18 +1,14 @@
-import type { ServerContext } from '../lib/server-fn'
 import {
-
   createAccount,
   deleteAccount,
   getAccountById,
   getAccounts,
   getAccountsTree,
-
   updateAccount,
 } from '@repo/data-ops'
-import { DatabaseError } from '@repo/data-ops/errors'
 import { z } from 'zod'
 import { createAccountSchema, updateAccountSchema } from '@/schemas/account'
-import { createAuthenticatedServerFn } from '../lib/server-fn'
+import { authServerFn } from '../lib/server-fn'
 
 /**
  * Filters for accounts queries
@@ -26,13 +22,13 @@ const accountFiltersSchema = z.object({
 /**
  * Get accounts list
  */
-export const getAccountsList = createAuthenticatedServerFn()
+export const getAccountsList = authServerFn
   .inputValidator(accountFiltersSchema.optional())
   .handler(async ({ data: filters, context }) => {
-    const { school } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
+    const { school } = context
     const result = await getAccounts({
       schoolId: school.schoolId,
       type: filters?.type,
@@ -48,14 +44,13 @@ export const getAccountsList = createAuthenticatedServerFn()
 /**
  * Get account tree (hierarchical)
  */
-export const getAccountsTreeData = createAuthenticatedServerFn()
+export const getAccountsTreeData = authServerFn
   .inputValidator(z.object({ includeInactive: z.boolean().optional() }).optional())
   .handler(async ({ data, context }) => {
-    const { school } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    const result = await getAccountsTree(school.schoolId, data?.includeInactive)
+    const result = await getAccountsTree(context.school.schoolId, data?.includeInactive)
     return result.match(
       data => ({ success: true as const, data }),
       error => ({ success: false as const, error: error.message }),
@@ -65,12 +60,11 @@ export const getAccountsTreeData = createAuthenticatedServerFn()
 /**
  * Get single account
  */
-export const getAccount = createAuthenticatedServerFn()
+export const getAccount = authServerFn
   .inputValidator(z.string())
   .handler(async ({ data: accountId, context }) => {
-    const { school } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await getAccountById(accountId)
     return result.match(
@@ -82,15 +76,14 @@ export const getAccount = createAuthenticatedServerFn()
 /**
  * Create new account
  */
-export const createNewAccount = createAuthenticatedServerFn()
+export const createNewAccount = authServerFn
   .inputValidator(createAccountSchema)
   .handler(async ({ data, context }) => {
-    const { school } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await createAccount({
-      schoolId: school.schoolId,
+      schoolId: context.school.schoolId,
       ...data,
     })
 
@@ -103,12 +96,11 @@ export const createNewAccount = createAuthenticatedServerFn()
 /**
  * Update account
  */
-export const updateExistingAccount = createAuthenticatedServerFn()
+export const updateExistingAccount = authServerFn
   .inputValidator(updateAccountSchema)
   .handler(async ({ data, context }) => {
-    const { school } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
     const { id, ...updateData } = data
     const result = await updateAccount(id, updateData)
@@ -121,16 +113,15 @@ export const updateExistingAccount = createAuthenticatedServerFn()
 /**
  * Delete account
  */
-export const deleteExistingAccount = createAuthenticatedServerFn()
+export const deleteExistingAccount = authServerFn
   .inputValidator(z.string())
   .handler(async ({ data: accountId, context }) => {
-    const { school } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await deleteAccount(accountId)
     return result.match(
-      () => ({ success: true as const }),
+      () => ({ success: true as const, data: { success: true } }),
       error => ({ success: false as const, error: error.message }),
     )
   })

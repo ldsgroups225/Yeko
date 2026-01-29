@@ -1,7 +1,7 @@
 import type { SchoolSubjectsFilters } from '@/schemas/school-subject'
 import { queryOptions } from '@tanstack/react-query'
 import {
-  checkSubjectInUse,
+  checkSubjectInUseForUI,
   getAvailableCoreSubjects,
   getSchoolSubjectById,
   getSchoolSubjects,
@@ -82,7 +82,7 @@ export const schoolSubjectsOptions = {
   inUse: (subjectId: string, schoolYearId?: string) =>
     queryOptions({
       queryKey: schoolSubjectsKeys.inUseCheck(subjectId),
-      queryFn: () => checkSubjectInUse({ data: { subjectId, schoolYearId } }),
+      queryFn: () => checkSubjectInUseForUI({ data: { subjectId, schoolYearId } }),
       staleTime: 1 * 60 * 1000, // 1 minute - shorter since this is used for validation
       gcTime: 5 * 60 * 1000,
       enabled: !!subjectId,

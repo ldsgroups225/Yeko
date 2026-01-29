@@ -28,17 +28,6 @@ export const Route = createFileRoute('/_auth/conducts/student-attendance/statist
   component: StudentAttendanceStatisticsPage,
 })
 
-interface AttendanceStats {
-  totalStudents: number
-  totalDays: number
-  presentCount: number
-  lateCount: number
-  absentCount: number
-  excusedCount: number
-  attendanceRate: number
-  chronicAbsentees: number
-}
-
 function StudentAttendanceStatisticsPage() {
   const t = useTranslations()
   const [classId, setClassId] = useState('')
@@ -50,23 +39,26 @@ function StudentAttendanceStatisticsPage() {
   const [endDate, setEndDate] = useState(() => new Date())
 
   const { schoolYearId: contextSchoolYearId } = useSchoolYearContext()
-  const { data: schoolYears } = useQuery({
+  const { data: schoolYearsResult } = useQuery({
     queryKey: ['school-years'],
     queryFn: () => getSchoolYears(),
   })
-  const activeSchoolYear = schoolYears?.find(sy => sy.isActive)
+  const schoolYears = schoolYearsResult?.success ? schoolYearsResult.data : []
+  const activeSchoolYear = schoolYears.find(sy => sy.isActive)
   const schoolYearId = contextSchoolYearId || activeSchoolYear?.id || 'current-year'
 
-  const { data: classes } = useQuery({
+  const { data: classesResult } = useQuery({
     queryKey: ['classes', { schoolYearId }],
     queryFn: () => getClasses({ data: { schoolYearId: schoolYearId ?? undefined } }),
     enabled: !!schoolYearId,
   })
 
+  const classes = classesResult?.success ? classesResult.data : []
+
   const startDateStr = startDate.toISOString().split('T')[0] ?? ''
   const endDateStr = endDate.toISOString().split('T')[0] ?? ''
 
-  const { data, isLoading } = useQuery(
+  const { data: result, isLoading } = useQuery(
     attendanceStatisticsOptions({
       startDate: startDateStr,
       endDate: endDateStr,
@@ -74,7 +66,7 @@ function StudentAttendanceStatisticsPage() {
     }),
   )
 
-  const stats = data as AttendanceStats | undefined
+  const stats = result?.success ? result.data : undefined
 
   const container = {
     hidden: { opacity: 0 },
@@ -145,7 +137,7 @@ function StudentAttendanceStatisticsPage() {
             </SelectTrigger>
             <SelectContent className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40">
               <SelectItem value="all" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">{t.attendance.allClasses()}</SelectItem>
-              {classes?.map(c => (
+              {classes.map(c => (
                 <SelectItem key={c.class.id} value={c.class.id} className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">
                   {c.grade?.name}
                   {' '}
@@ -210,14 +202,14 @@ function StudentAttendanceStatisticsPage() {
                         <div className="space-y-4">
                           <p className="text-[10px] font-black uppercase tracking-widest text-emerald-500/60">{t.attendance.status.present()}</p>
                           <div className="flex items-baseline gap-2">
-                            <span className="text-4xl font-black text-emerald-500">{stats.presentCount}</span>
+                            <span className="text-4xl font-black text-emerald-500">{stats.present}</span>
                             <span className="text-sm font-bold text-emerald-500/60 uppercase tracking-widest">
-                              {((stats.presentCount / Math.max(1, stats.totalStudents * stats.totalDays)) * 100).toFixed(1)}
+                              {((stats.present / Math.max(1, stats.totalRecords)) * 100).toFixed(1)}
                               %
                             </span>
                           </div>
                           <div className="h-1 rounded-full bg-emerald-500/20 overflow-hidden">
-                            <div className="h-full bg-emerald-500" style={{ width: `${(stats.presentCount / Math.max(1, stats.totalStudents * stats.totalDays)) * 100}%` }} />
+                            <div className="h-full bg-emerald-500" style={{ width: `${(stats.present / Math.max(1, stats.totalRecords)) * 100}%` }} />
                           </div>
                         </div>
                       </Card>
@@ -231,30 +223,15 @@ function StudentAttendanceStatisticsPage() {
                         <div className="space-y-4">
                           <p className="text-[10px] font-black uppercase tracking-widest text-rose-500/60">{t.attendance.status.absent()}</p>
                           <div className="flex items-baseline gap-2">
-                            <span className="text-4xl font-black text-rose-500">{stats.absentCount}</span>
+                            <span className="text-4xl font-black text-rose-500">{stats.absent}</span>
                             <span className="text-sm font-bold text-rose-500/60 uppercase tracking-widest">
-                              {((stats.absentCount / Math.max(1, stats.totalStudents * stats.totalDays)) * 100).toFixed(1)}
+                              {((stats.absent / Math.max(1, stats.totalRecords)) * 100).toFixed(1)}
                               %
                             </span>
                           </div>
                           <div className="h-1 rounded-full bg-rose-500/20 overflow-hidden">
-                            <div className="h-full bg-rose-500" style={{ width: `${(stats.absentCount / Math.max(1, stats.totalStudents * stats.totalDays)) * 100}%` }} />
+                            <div className="h-full bg-rose-500" style={{ width: `${(stats.absent / Math.max(1, stats.totalRecords)) * 100}%` }} />
                           </div>
-                        </div>
-                      </Card>
-                    </motion.div>
-
-                    <motion.div variants={item}>
-                      <Card className="relative overflow-hidden rounded-3xl border-orange-500/20 bg-orange-500/5 backdrop-blur-xl shadow-xl p-6 hover:translate-y-[-4px] transition-all group">
-                        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                          <IconAlertTriangle className="size-12 text-orange-500" />
-                        </div>
-                        <div className="space-y-4">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-orange-500/60">{t.attendance.chronicAbsentees()}</p>
-                          <div className="flex items-baseline gap-2">
-                            <span className="text-4xl font-black text-orange-500">{stats.chronicAbsentees}</span>
-                          </div>
-                          <p className="text-[10px] font-bold text-orange-500/60 italic uppercase tracking-widest">{t.attendance.studentsAtRisk()}</p>
                         </div>
                       </Card>
                     </motion.div>
@@ -273,10 +250,10 @@ function StudentAttendanceStatisticsPage() {
                       </CardHeader>
                       <CardContent className="pt-8 grid md:grid-cols-2 gap-12">
                         <div className="space-y-6">
-                          <BreakdownItem label={t.attendance.status.present()} value={stats.presentCount} total={stats.totalStudents * stats.totalDays} color="bg-emerald-500" />
-                          <BreakdownItem label={t.attendance.status.late()} value={stats.lateCount} total={stats.totalStudents * stats.totalDays} color="bg-orange-400" />
-                          <BreakdownItem label={t.attendance.status.absent()} value={stats.absentCount} total={stats.totalStudents * stats.totalDays} color="bg-rose-500" />
-                          <BreakdownItem label={t.attendance.status.excused()} value={stats.excusedCount} total={stats.totalStudents * stats.totalDays} color="bg-blue-400" />
+                          <BreakdownItem label={t.attendance.status.present()} value={stats.present} total={stats.totalRecords} color="bg-emerald-500" />
+                          <BreakdownItem label={t.attendance.status.late()} value={stats.late} total={stats.totalRecords} color="bg-orange-400" />
+                          <BreakdownItem label={t.attendance.status.absent()} value={stats.absent} total={stats.totalRecords} color="bg-rose-500" />
+                          <BreakdownItem label={t.attendance.status.excused()} value={stats.excused} total={stats.totalRecords} color="bg-blue-400" />
                         </div>
                         <div className="flex flex-col justify-center items-center text-center p-8 rounded-3xl bg-primary/5 border border-primary/10">
                           <div className="p-4 rounded-2xl bg-primary/10 mb-4">

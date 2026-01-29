@@ -1,4 +1,3 @@
-import type { ServerContext } from '../lib/server-fn'
 import {
   createJournalEntry,
   getOpenFiscalYear,
@@ -6,21 +5,20 @@ import {
   getTransactions,
   voidTransaction,
 } from '@repo/data-ops'
-import { DatabaseError } from '@repo/data-ops/errors'
 import { z } from 'zod'
 import { createTransactionSchema, transactionFiltersSchema, voidTransactionSchema } from '@/schemas/transaction'
-import { createAuthenticatedServerFn } from '../lib/server-fn'
+import { authServerFn } from '../lib/server-fn'
 
 /**
  * Get transactions list with pagination
  */
-export const getTransactionsList = createAuthenticatedServerFn()
+export const getTransactionsList = authServerFn
   .inputValidator(transactionFiltersSchema.optional())
   .handler(async ({ data: filters, context }) => {
-    const { school } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
+    const { school } = context
     const result = await getTransactions({
       schoolId: school.schoolId,
       ...filters,
@@ -34,12 +32,11 @@ export const getTransactionsList = createAuthenticatedServerFn()
 /**
  * Get single transaction
  */
-export const getTransaction = createAuthenticatedServerFn()
+export const getTransaction = authServerFn
   .inputValidator(z.string())
   .handler(async ({ data: transactionId, context }) => {
-    const { school } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await getTransactionById(transactionId)
     return result.match(
@@ -51,23 +48,23 @@ export const getTransaction = createAuthenticatedServerFn()
 /**
  * Create a new journal entry
  */
-export const createEntry = createAuthenticatedServerFn()
+export const createEntry = authServerFn
   .inputValidator(createTransactionSchema)
   .handler(async ({ data, context }) => {
-    const { school } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
+    const { school } = context
     const fiscalYearResult = await getOpenFiscalYear(school.schoolId)
     if (fiscalYearResult.isErr())
       return { success: false as const, error: fiscalYearResult.error.message }
 
     const fiscalYear = fiscalYearResult.value
     if (!fiscalYear)
-      return { success: false as const, error: 'No open fiscal year found for this school' }
+      return { success: false as const, error: 'Aucun exercice comptable ouvert n\'a été trouvé pour cet établissement' }
 
     // Calculate total amount (sum of debits)
-    const totalAmount = data.lines.reduce((sum, line) => sum + line.debitAmount, 0).toString()
+    const totalAmount = data.lines.reduce((sum: number, line) => sum + line.debitAmount, 0).toString()
 
     const result = await createJournalEntry({
       schoolId: school.schoolId,
@@ -93,13 +90,13 @@ export const createEntry = createAuthenticatedServerFn()
 /**
  * Void a transaction
  */
-export const voidExistingTransaction = createAuthenticatedServerFn()
+export const voidExistingTransaction = authServerFn
   .inputValidator(voidTransactionSchema)
   .handler(async ({ data, context }) => {
-    const { school } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
+    const { school } = context
     const result = await voidTransaction(data.transactionId, school.userId, data.voidReason)
     return result.match(
       data => ({ success: true as const, data }),

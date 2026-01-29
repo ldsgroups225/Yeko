@@ -77,6 +77,7 @@ export const sendMessage = createServerFn()
       return {
         success: false,
         error: messageResult.error.message,
+        code: messageResult.error.details?.code as string | undefined,
       }
     }
 
@@ -155,6 +156,7 @@ export const markMessageRead = createServerFn()
       return {
         success: false,
         error: result.error.message,
+        code: result.error.details?.code as string | undefined,
       }
     }
 

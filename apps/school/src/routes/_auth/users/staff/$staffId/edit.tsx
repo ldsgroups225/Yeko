@@ -20,11 +20,13 @@ function EditStaffPage() {
   const { staffId } = Route.useParams()
   const staffData = Route.useLoaderData()
 
-  const { data: staff } = useSuspenseQuery({
+  const { data: staffResult } = useSuspenseQuery({
     queryKey: ['staff', staffId],
     queryFn: () => getStaffMember({ data: staffId }),
     initialData: staffData,
   })
+
+  const staff = staffResult?.success ? staffResult.data : null
 
   const handleSubmit = async (data: UpdateStaffData) => {
     try {

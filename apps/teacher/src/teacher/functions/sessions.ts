@@ -49,7 +49,11 @@ export const startSession = createServerFn()
     })
 
     if (sessionResult.isErr()) {
-      return { success: false, error: sessionResult.error.message }
+      return {
+        success: false,
+        error: sessionResult.error.message,
+        code: sessionResult.error.details?.code as string | undefined,
+      }
     }
 
     return {
@@ -79,7 +83,11 @@ export const completeSession = createServerFn({ method: 'POST' })
     })
 
     if (updatedResult.isErr()) {
-      return { success: false, error: updatedResult.error.message }
+      return {
+        success: false,
+        error: updatedResult.error.message,
+        code: updatedResult.error.details?.code as string | undefined,
+      }
     }
 
     // 2. Upsert participation grades if any
@@ -132,7 +140,11 @@ export const updateSessionAttendance = createServerFn()
     })
 
     if (updatedResult.isErr()) {
-      return { success: false, error: updatedResult.error.message }
+      return {
+        success: false,
+        error: updatedResult.error.message,
+        code: updatedResult.error.details?.code as string | undefined,
+      }
     }
 
     return { success: true }

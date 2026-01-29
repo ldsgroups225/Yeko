@@ -74,11 +74,13 @@ export function BulkReEnrollDialog({
   const queryClient = useQueryClient()
   const [result, setResult] = useState<ReEnrollResult | null>(null)
 
-  const { data: schoolYears } = useQuery({
+  const { data: schoolYearsData } = useQuery({
     queryKey: ['school-years'],
     queryFn: () => getSchoolYears(),
     enabled: open,
   })
+
+  const schoolYears = schoolYearsData?.success ? schoolYearsData.data : []
 
   const form = useForm<ReEnrollFormData>({
     resolver: zodResolver(reEnrollSchema),

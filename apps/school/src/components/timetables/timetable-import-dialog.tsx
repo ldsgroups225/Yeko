@@ -155,13 +155,10 @@ export function TimetableImportDialog({
 
       // Prepare context
       const context = {
-        classes: classesData || [],
-        subjects: (subjectsData?.subjects || []).map(s => ({ subject: s })),
-        teachers: teachersData?.teachers || [],
-        classrooms:
-          (Array.isArray(classroomsData)
-            ? classroomsData
-            : (classroomsData as unknown as { classrooms: Awaited<ReturnType<typeof getClassrooms>> })?.classrooms) || [],
+        classes: classesData?.success ? classesData.data : [],
+        subjects: (subjectsData?.success ? subjectsData.data.subjects : []).map(s => ({ subject: s })),
+        teachers: teachersData?.success ? teachersData.data.teachers : [],
+        classrooms: (classroomsData?.success ? classroomsData.data : []).map(c => ({ classroom: c })),
       }
 
       // Call parser

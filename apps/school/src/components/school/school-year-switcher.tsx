@@ -34,10 +34,11 @@ export function SchoolYearSwitcher() {
     = useSchoolYearContext()
   const [open, setOpen] = useState(false)
 
-  const { data: schoolYears, isLoading } = useQuery({
+  const { data: schoolYearsResult, isLoading } = useQuery({
     queryKey: ['school-years'],
     queryFn: async () => await getSchoolYears(),
   })
+  const schoolYears = schoolYearsResult?.success ? schoolYearsResult.data : []
 
   const currentYear = schoolYears?.find(
     (sy: SchoolYear) => sy.id === schoolYearId,

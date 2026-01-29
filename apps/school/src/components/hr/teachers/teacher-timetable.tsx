@@ -19,7 +19,10 @@ export function TeacherTimetable({ teacherId }: TeacherTimetableProps) {
     enabled: !!teacherId && !!schoolYearId,
   })
 
-  const formattedSessions: TimetableSessionData[] = (sessions || []).map(session => ({
+  // Unwraps the Result object if successful, otherwise defaults to empty array
+  const sessionsList = sessions?.success ? sessions.data : []
+
+  const formattedSessions: TimetableSessionData[] = (sessionsList || []).map(session => ({
     id: session.id,
     subjectId: session.subjectId,
     subjectName: session.subject?.name || '',

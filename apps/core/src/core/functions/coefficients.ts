@@ -21,7 +21,10 @@ export const coefficientTemplatesQuery = createServerFn()
   .inputValidator(data => GetCoefficientTemplatesSchema.parse(data))
   .handler(async (ctx) => {
     const { getCoefficientTemplates } = await import('@repo/data-ops/queries/coefficients')
-    return await getCoefficientTemplates(ctx.data)
+    const result = await getCoefficientTemplates(ctx.data)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const coefficientTemplateByIdQuery = createServerFn()
@@ -29,7 +32,10 @@ export const coefficientTemplateByIdQuery = createServerFn()
   .inputValidator(data => CoefficientTemplateIdSchema.parse(data))
   .handler(async (ctx) => {
     const { getCoefficientTemplateById } = await import('@repo/data-ops/queries/coefficients')
-    return await getCoefficientTemplateById(ctx.data.id)
+    const result = await getCoefficientTemplateById(ctx.data.id)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const createCoefficientTemplateMutation = createServerFn()
@@ -37,7 +43,10 @@ export const createCoefficientTemplateMutation = createServerFn()
   .inputValidator(data => CreateCoefficientTemplateSchema.parse(data))
   .handler(async (ctx) => {
     const { createCoefficientTemplate } = await import('@repo/data-ops/queries/coefficients')
-    return await createCoefficientTemplate(ctx.data)
+    const result = await createCoefficientTemplate(ctx.data)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const updateCoefficientTemplateMutation = createServerFn()
@@ -46,7 +55,10 @@ export const updateCoefficientTemplateMutation = createServerFn()
   .handler(async (ctx) => {
     const { updateCoefficientTemplate } = await import('@repo/data-ops/queries/coefficients')
     const { id, ...updateData } = ctx.data
-    return await updateCoefficientTemplate(id, updateData)
+    const result = await updateCoefficientTemplate(id, updateData)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const deleteCoefficientTemplateMutation = createServerFn()
@@ -54,7 +66,9 @@ export const deleteCoefficientTemplateMutation = createServerFn()
   .inputValidator(data => CoefficientTemplateIdSchema.parse(data))
   .handler(async (ctx) => {
     const { deleteCoefficientTemplate } = await import('@repo/data-ops/queries/coefficients')
-    await deleteCoefficientTemplate(ctx.data.id)
+    const result = await deleteCoefficientTemplate(ctx.data.id)
+    if (result.isErr())
+      throw result.error
     return { success: true, id: ctx.data.id }
   })
 
@@ -63,7 +77,10 @@ export const bulkCreateCoefficientsMutation = createServerFn()
   .inputValidator(data => BulkCreateCoefficientsSchema.parse(data))
   .handler(async (ctx) => {
     const { bulkCreateCoefficients } = await import('@repo/data-ops/queries/coefficients')
-    return await bulkCreateCoefficients(ctx.data.coefficients)
+    const result = await bulkCreateCoefficients(ctx.data.coefficients)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const bulkUpdateCoefficientsMutation = createServerFn()
@@ -71,7 +88,9 @@ export const bulkUpdateCoefficientsMutation = createServerFn()
   .inputValidator(data => BulkUpdateCoefficientsSchema.parse(data))
   .handler(async (ctx) => {
     const { bulkUpdateCoefficients } = await import('@repo/data-ops/queries/coefficients')
-    await bulkUpdateCoefficients(ctx.data)
+    const result = await bulkUpdateCoefficients(ctx.data)
+    if (result.isErr())
+      throw result.error
     return { success: true }
   })
 
@@ -80,14 +99,20 @@ export const copyCoefficientsMutation = createServerFn()
   .inputValidator(data => CopyCoefficientsSchema.parse(data))
   .handler(async (ctx) => {
     const { copyCoefficientTemplates } = await import('@repo/data-ops/queries/coefficients')
-    return await copyCoefficientTemplates(ctx.data.sourceYearId, ctx.data.targetYearId)
+    const result = await copyCoefficientTemplates(ctx.data.sourceYearId, ctx.data.targetYearId)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const coefficientStatsQuery = createServerFn()
   .middleware([databaseMiddleware])
   .handler(async () => {
     const { getCoefficientStats } = await import('@repo/data-ops/queries/coefficients')
-    return await getCoefficientStats()
+    const result = await getCoefficientStats()
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 // Schema for coefficient import validation

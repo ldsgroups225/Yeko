@@ -6,10 +6,9 @@ import {
   isValidFileSize,
   isValidImageType,
 } from '@repo/data-ops'
-import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
+import { authServerFn } from '../lib/server-fn'
 import { requirePermission } from '../middleware/permissions'
-import { getSchoolContext } from '../middleware/school-context'
 
 // Auto-initialize R2 from environment variables if available
 function ensureR2Initialized() {
@@ -44,21 +43,20 @@ const GetPresignedUrlSchema = z.object({
   entityId: z.string().min(1, 'Entity ID is required'),
 })
 
-export const getPresignedUploadUrl = createServerFn()
+export const getPresignedUploadUrl = authServerFn
   .inputValidator(data => GetPresignedUrlSchema.parse(data))
-  .handler(async (ctx) => {
-    const context = await getSchoolContext()
-    if (!context) {
-      throw new Error('No school context')
-    }
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
     await requirePermission('students', 'edit')
 
-    const { filename, contentType, fileSize, entityType, entityId } = ctx.data
+    const { filename, contentType, fileSize, entityType, entityId } = data
 
     // Try to initialize R2 from environment variables
     ensureR2Initialized()
 
-    // IconCheck if R2 is configured
+    // Check if R2 is configured
     if (!isR2Configured()) {
       return {
         success: false as const,
@@ -91,34 +89,39 @@ export const getPresignedUploadUrl = createServerFn()
       const result = await generatePresignedUploadUrl({
         filename,
         contentType,
-        folder: `${context.schoolId}/${entityType}/${entityId}`,
+        folder: `${context.school.schoolId}/${entityType}/${entityId}`,
         expiresIn: 3600, // 1 hour
       })
 
       return {
         success: true as const,
-        presignedUrl: result.presignedUrl,
-        publicUrl: result.publicUrl,
-        key: result.key,
-        configured: true,
+        data: {
+          presignedUrl: result.presignedUrl,
+          publicUrl: result.publicUrl,
+          key: result.key,
+          configured: true,
+        },
       }
     }
     catch (error) {
       console.error('Failed to generate presigned URL:', error)
       return {
         success: false as const,
-        error: 'Failed to generate upload URL.',
+        error: 'Échec de la génération de l\'URL de téléchargement.',
         configured: true,
       }
     }
   })
 
-export const checkStorageConfigured = createServerFn().handler(async () => {
+export const checkStorageConfigured = authServerFn.handler(async () => {
   // Try to initialize R2 from environment variables
   ensureR2Initialized()
 
   return {
-    configured: isR2Configured(),
+    success: true as const,
+    data: {
+      configured: isR2Configured(),
+    },
   }
 })
 
@@ -134,43 +137,43 @@ const uploadPhotoSchema = z.object({
  * @deprecated Use getPresignedUploadUrl and upload directly to R2 instead
  * This function is kept for backward compatibility but stores as base64
  */
-export const uploadPhoto = createServerFn()
+export const uploadPhoto = authServerFn
   .inputValidator(data => uploadPhotoSchema.parse(data))
-  .handler(async (ctx) => {
-    const context = await getSchoolContext()
-    if (!context) {
-      throw new Error('No school context')
-    }
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
     await requirePermission('students', 'edit')
 
-    const { imageData } = ctx.data
+    const { imageData } = data
 
     // For backward compatibility, return the base64 data URL
     // New code should use getPresignedUploadUrl instead
     return {
-      success: true,
-      photoUrl: imageData,
-      key: '',
+      success: true as const,
+      data: {
+        photoUrl: imageData,
+        key: '',
+      },
     }
   })
 
 /**
  * Delete a photo from storage
  */
-export const deletePhoto = createServerFn()
+export const deletePhoto = authServerFn
   .inputValidator(
     z.object({
       key: z.string().min(1, 'Key is required'),
     }),
   )
-  .handler(async (ctx) => {
-    const context = await getSchoolContext()
-    if (!context) {
-      throw new Error('No school context')
-    }
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
     await requirePermission('students', 'edit')
 
-    const { key } = ctx.data
+    const { key } = data
 
     // 1. Auditing & Soft Delete in DB (using school_files table)
     const { getDb } = await import('@repo/data-ops/database/setup')
@@ -184,14 +187,14 @@ export const deletePhoto = createServerFn()
     await db.update(schoolFiles)
       .set({
         deletedAt: new Date(),
-        deletedBy: context.userId,
+        deletedBy: context.school.userId,
       })
       .where(eq(schoolFiles.key, key))
 
     // 1b. Create Audit Log
     await createAuditLog({
-      schoolId: context.schoolId,
-      userId: context.userId,
+      schoolId: context.school.schoolId,
+      userId: context.school.userId,
       action: 'delete',
       tableName: 'school_files',
       recordId: key,
@@ -200,9 +203,12 @@ export const deletePhoto = createServerFn()
 
     // 2. Physical Delete from R2
     ensureR2Initialized()
-    const success = await r2DeleteFile(key)
+    const successResult = await r2DeleteFile(key)
 
     return {
-      success,
+      success: true as const,
+      data: {
+        success: successResult,
+      },
     }
   })

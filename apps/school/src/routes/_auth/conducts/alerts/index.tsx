@@ -35,10 +35,12 @@ function AlertsPage() {
   const t = useTranslations()
   const queryClient = useQueryClient()
 
-  const { data: alerts, isLoading } = useQuery({
+  const { data: alertsResult, isLoading } = useQuery({
     queryKey: ['attendance-alerts', 'active'],
     queryFn: () => getActiveAlerts({ data: {} }),
   })
+
+  const alerts = alertsResult?.success ? alertsResult.data : []
 
   const acknowledgeMutation = useMutation({
     mutationFn: (id: string) => acknowledgeAlert({ data: { id } }),
@@ -108,7 +110,7 @@ function AlertsPage() {
           </CardHeader>
           <CardContent className="pt-6">
             <AlertsTable
-              alerts={alerts?.map((item: AlertData) => ({
+              alerts={alerts.map((item: AlertData) => ({
                 id: item.alert.id,
                 alertType: item.alert.alertType,
                 severity: item.alert.severity as 'info' | 'warning' | 'critical',

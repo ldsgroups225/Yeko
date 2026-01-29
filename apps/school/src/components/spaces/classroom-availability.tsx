@@ -180,23 +180,23 @@ export function ClassroomAvailability() {
     )
   }
 
-  const classroomList = classrooms || []
+  const classroomList = classrooms?.success ? classrooms.data : []
 
   if (classroomList.length === 0) {
     return <EmptyState />
   }
 
   const availableCount = classroomList.filter(
-    c => c.assignedClassesCount === 0 && c.classroom.status === 'active',
+    c => c.assignedClassesCount === 0 && c.status === 'active',
   ).length
   const occupiedCount = classroomList.filter(
     c => c.assignedClassesCount > 0,
   ).length
   const maintenanceCount = classroomList.filter(
-    c => c.classroom.status === 'maintenance',
+    c => c.status === 'maintenance',
   ).length
   const inactiveCount = classroomList.filter(
-    c => c.classroom.status === 'inactive',
+    c => c.status === 'inactive',
   ).length
 
   return (
@@ -241,15 +241,15 @@ export function ClassroomAvailability() {
               {classroomList.map((item, index) => {
                 const isAvailable
                   = item.assignedClassesCount === 0
-                    && item.classroom.status === 'active'
+                    && item.status === 'active'
                 const occupancyPercent
-                  = item.classroom.capacity > 0
+                  = item.capacity > 0
                     ? Math.min(100, (item.assignedClassesCount / 1) * 100)
                     : 0
 
                 return (
                   <motion.tr
-                    key={item.classroom.id}
+                    key={item.id}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05 }}
@@ -258,10 +258,10 @@ export function ClassroomAvailability() {
                     <TableCell className="pl-6">
                       <div>
                         <div className="font-bold text-foreground">
-                          {item.classroom.name}
+                          {item.name}
                         </div>
                         <div className="font-mono text-xs font-medium text-muted-foreground">
-                          {item.classroom.code}
+                          {item.code}
                         </div>
                       </div>
                     </TableCell>
@@ -270,7 +270,7 @@ export function ClassroomAvailability() {
                         variant="secondary"
                         className="font-medium capitalize"
                       >
-                        {item.classroom.type}
+                        {item.type}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -287,7 +287,7 @@ export function ClassroomAvailability() {
                           {' '}
                           /
                           {' '}
-                          {item.classroom.capacity}
+                          {item.capacity}
                         </span>
                       </div>
                     </TableCell>
@@ -301,13 +301,13 @@ export function ClassroomAvailability() {
                               {t.spaces.classrooms.available()}
                             </Badge>
                           )
-                        : item.classroom.status !== 'active'
+                        : item.status !== 'active'
                           ? (
                               <Badge
                                 variant="secondary"
                                 className="bg-muted text-muted-foreground rounded-lg"
                               >
-                                {item.classroom.status === 'maintenance'
+                                {item.status === 'maintenance'
                                   ? t.spaces.classrooms.maintenance()
                                   : t.spaces.classrooms.inactive()}
                               </Badge>

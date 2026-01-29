@@ -23,7 +23,7 @@ function SettingsProfilePage() {
   const t = useTranslations()
   const queryClient = useQueryClient()
 
-  const { data: school, isLoading } = useQuery(schoolProfileOptions.detail())
+  const { data: result, isLoading } = useQuery(schoolProfileOptions.detail())
 
   const profileMutation = useMutation({
     mutationFn: updateSchoolProfile,
@@ -80,6 +80,8 @@ function SettingsProfilePage() {
       </div>
     )
   }
+
+  const school = result?.success ? result.data : null
 
   return (
     <div className="space-y-6">

@@ -20,7 +20,7 @@ export const teacherSubjectsOptions = {
       queryKey: teacherSubjectsKeys.available(teacherId, schoolYearId || ''),
       queryFn: () => schoolYearId
         ? getAvailableSubjectsForTeacher({ data: { teacherId, schoolYearId } })
-        : Promise.resolve([]),
+        : Promise.resolve({ success: true as const, data: [] }),
       enabled: !!schoolYearId,
     }),
 }

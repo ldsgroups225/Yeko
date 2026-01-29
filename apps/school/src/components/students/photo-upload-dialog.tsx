@@ -96,7 +96,7 @@ export function PhotoUploadDialog({
       }
 
       // IconUpload file directly to R2
-      const uploadResponse = await fetch(result.presignedUrl, {
+      const uploadResponse = await fetch(result.data.presignedUrl, {
         method: 'PUT',
         body: croppedImageBlob,
         headers: {
@@ -108,7 +108,7 @@ export function PhotoUploadDialog({
         throw new Error('Failed to upload photo')
       }
 
-      return { photoUrl: result.publicUrl }
+      return { photoUrl: result.data.publicUrl }
     },
     onSuccess: (result) => {
       onPhotoUploaded(result.photoUrl)

@@ -67,14 +67,15 @@ export function EnrollmentDialog({
   const queryClient = useQueryClient()
   const { schoolYearId: contextSchoolYearId } = useSchoolYearContext()
 
-  const { data: schoolYears } = useQuery({
+  const { data: schoolYearsData } = useQuery({
     queryKey: ['school-years'],
     queryFn: () => getSchoolYears(),
     enabled: open,
   })
 
   // Find the active school year or use context school year
-  const activeSchoolYear = schoolYears?.find(sy => sy.isActive)
+  const activeSchoolYear = schoolYearsData?.success ? schoolYearsData.data.find(sy => sy.isActive) : undefined
+  const schoolYears = schoolYearsData?.success ? schoolYearsData.data : []
   const defaultSchoolYearId = contextSchoolYearId || activeSchoolYear?.id || ''
 
   const form = useForm<EnrollmentFormData>({
@@ -96,10 +97,12 @@ export function EnrollmentDialog({
 
   const selectedYearId = form.watch('schoolYearId')
 
-  const { data: classesData, isLoading: classesLoading } = useQuery({
+  const { data: classesResult, isLoading: classesLoading } = useQuery({
     ...classesOptions.list({ schoolYearId: selectedYearId }),
     enabled: open && !!selectedYearId,
   })
+
+  const classesData = classesResult?.success ? classesResult.data : []
 
   const enrollMutation = useMutation({
     mutationFn: (data: EnrollmentFormData) =>

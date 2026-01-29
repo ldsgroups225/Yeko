@@ -82,6 +82,7 @@ export const getClassRoster = createServerFn()
       return {
         success: false,
         error: rosterResult.error.message,
+        code: rosterResult.error.details?.code as string | undefined,
       }
     }
 
@@ -128,6 +129,7 @@ export const getOrCreateSession = createServerFn()
       return {
         success: false,
         error: result.error.message,
+        code: result.error.details?.code as string | undefined,
       }
     }
 
@@ -166,6 +168,7 @@ export const saveAttendance = createServerFn()
       return {
         success: false,
         error: result.error.message,
+        code: result.error.details?.code as string | undefined,
       }
     }
 
@@ -203,6 +206,7 @@ export const saveBulkAttendance = createServerFn()
       return {
         success: false,
         error: result.error.message,
+        code: result.error.details?.code as string | undefined,
       }
     }
 
@@ -237,6 +241,7 @@ export const getAttendanceStats = createServerFn()
       return {
         success: false,
         error: statsResult.error.message,
+        code: statsResult.error.details?.code as string | undefined,
       }
     }
 
@@ -274,6 +279,7 @@ export const getStudentAttendanceHistory = createServerFn()
       return {
         success: false,
         error: historyResult.error.message,
+        code: historyResult.error.details?.code as string | undefined,
       }
     }
 
@@ -312,6 +318,7 @@ export const getStudentAttendanceTrend = createServerFn()
       return {
         success: false,
         error: trendResult.error.message,
+        code: trendResult.error.details?.code as string | undefined,
       }
     }
 

@@ -13,6 +13,9 @@ export interface SmartTemplatesResponse {
 
 export const getSmartTemplatesFn = createServerFn()
   .inputValidator(z.void())
-  .handler(async (): Promise<SmartTemplatesResponse> => {
-    return await getSmartCatalogData()
+  .handler(async () => {
+    return (await getSmartCatalogData()).match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })

@@ -124,7 +124,7 @@ export interface TimetableSession {
   dayOfWeek: number
   startTime: string
   endTime: string
-  class: { id: string, name: string }
+  class: { id: string, name: string, gradeName: string, section: string }
   subject: { id: string, name: string, shortName: string | null }
   classroom: { id: string | null, name: string | null, code: string | null } | null
 }
@@ -174,7 +174,7 @@ export function createTeacherClassSession(params: {
       }
       return session
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to create class session'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to create class session', { code: 'CREATE_SESSION_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -218,7 +218,7 @@ export function completeTeacherClassSession(params: {
       }
       return updated
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to complete class session'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to complete class session', { code: 'COMPLETE_SESSION_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -259,7 +259,7 @@ export function getTeacherClassSessionById(sessionId: string): ResultAsync<Teach
       .where(eq(classSessions.id, sessionId))
       .limit(1)
       .then(result => result[0] ?? null) as Promise<TeacherClassSession | null>,
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get class session by ID'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get class session by ID', { code: 'GET_SESSION_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, { sessionId }))
 }
 
@@ -339,7 +339,7 @@ export function getTeacherSessionHistory(params: {
       page,
       pageSize,
     })),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher session history'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher session history', { code: 'GET_SESSION_HISTORY_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -381,7 +381,7 @@ export function getClassStudents(params: {
         ),
       )
       .orderBy(asc(students.lastName), asc(students.firstName)),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get class students'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get class students', { code: 'GET_CLASS_STUDENTS_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -424,7 +424,7 @@ export function upsertParticipationGrades(params: {
       })
       .returning()
       .then(() => ({ success: true })),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to upsert participation grades'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to upsert participation grades', { code: 'UPSERT_PARTICIPATION_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -443,7 +443,7 @@ export function getSessionParticipationGrades(classSessionId: string): ResultAsy
       })
       .from(participationGrades)
       .where(eq(participationGrades.classSessionId, classSessionId)),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get session participation grades'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get session participation grades', { code: 'GET_PARTICIPATION_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, { classSessionId }))
 }
 
@@ -513,7 +513,7 @@ export function getTeacherAssignedClasses(params: {
 
       return Array.from(classMap.values())
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher assigned classes'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher assigned classes', { code: 'GET_TEACHER_CLASSES_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -539,7 +539,7 @@ export function getTeacherSchools(userId: string): ResultAsync<TeacherSchool[], 
       .innerJoin(schools, eq(userSchools.schoolId, schools.id))
       .where(eq(userSchools.userId, userId))
       .orderBy(asc(schools.name)),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher schools'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher schools', { code: 'GET_TEACHER_SCHOOLS_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, { userId }))
 }
 
@@ -591,7 +591,7 @@ export function createHomeworkAssignment(params: {
       }
       return created
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to create homework assignment'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to create homework assignment', { code: 'CREATE_HOMEWORK_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -667,7 +667,7 @@ export function getTeacherHomework(params: {
       page,
       pageSize,
     })),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher homework'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher homework', { code: 'GET_HOMEWORK_LIST_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -707,7 +707,7 @@ export function getHomeworkById(homeworkId: string): ResultAsync<HomeworkDetails
       .where(eq(homework.id, homeworkId))
       .limit(1)
       .then(result => result[0] ?? null) as Promise<HomeworkDetails | null>,
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get homework by ID'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get homework by ID', { code: 'GET_HOMEWORK_DETAILS_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, { homeworkId }))
 }
 
@@ -766,7 +766,7 @@ export function updateHomeworkAssignment(params: {
       }
       return updated
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to update homework assignment'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to update homework assignment', { code: 'UPDATE_HOMEWORK_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -844,7 +844,7 @@ export function deleteHomeworkAssignment(params: {
         return updatedHomework as HomeworkDetails
       }
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to delete homework assignment'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to delete homework assignment', { code: 'DELETE_HOMEWORK_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -946,7 +946,7 @@ export function getTeacherMessagesQuery(params: {
       page,
       pageSize,
     })),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher messages'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher messages', { code: 'GET_MESSAGES_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -1014,7 +1014,7 @@ export function getMessageDetailsQuery(params: {
         thread,
       } as MessageDetails
     })() as Promise<MessageDetails | null>,
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get message details'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get message details', { code: 'GET_MESSAGE_DETAILS_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -1069,7 +1069,7 @@ export function sendTeacherMessage(params: {
       }
       return created
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to send message'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to send message', { code: 'SEND_MESSAGE_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -1103,7 +1103,7 @@ export function markMessageAsRead(params: {
       }
       return updated
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to mark message as read'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to mark message as read', { code: 'MARK_MESSAGE_READ_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -1144,7 +1144,7 @@ export function getMessageTemplatesQuery(params: {
       .from(messageTemplates)
       .where(and(...conditions))
       .orderBy(asc(messageTemplates.name)),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get message templates'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get message templates', { code: 'GET_TEMPLATES_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -1218,7 +1218,7 @@ export function searchParentsForTeacher(params: {
 
       return Array.from(parentMap.values())
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to search parents for teacher'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to search parents for teacher', { code: 'SEARCH_PARENTS_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -1270,7 +1270,7 @@ export function submitStudentGrades(params: {
       })))
       .returning()
       .then(results => ({ success: true, count: results.length })),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to submit student grades'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to submit student grades', { code: 'SUBMIT_GRADES_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -1301,6 +1301,8 @@ export function getTeacherDaySchedule(params: {
           class: {
             id: classes.id,
             name: sql<string>`${grades.name} || ' ' || ${classes.section}`,
+            gradeName: grades.name,
+            section: classes.section,
           },
           subject: {
             id: subjects.id,
@@ -1332,7 +1334,7 @@ export function getTeacherDaySchedule(params: {
         classroom: session.classroom?.id ? session.classroom : null,
       }))
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher day schedule'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher day schedule', { code: 'GET_SCHEDULE_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -1358,6 +1360,8 @@ export function getTeacherWeeklySchedule(params: {
           class: {
             id: classes.id,
             name: sql<string>`${grades.name} || ' ' || ${classes.section}`,
+            gradeName: grades.name,
+            section: classes.section,
           },
           subject: {
             id: subjects.id,
@@ -1388,7 +1392,7 @@ export function getTeacherWeeklySchedule(params: {
         classroom: session.classroom?.id ? session.classroom : null,
       }))
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher weekly schedule'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher weekly schedule', { code: 'GET_WEEKLY_SCHEDULE_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -1431,7 +1435,7 @@ export function getTeacherActiveSession(params: {
       )
       .limit(1)
       .then(result => result[0] ?? null),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher active session'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher active session', { code: 'GET_ACTIVE_SESSION_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -1452,7 +1456,7 @@ export function getTeacherPendingGradesCount(teacherId: string): ResultAsync<num
         ),
       )
       .then(result => result[0]?.count ?? 0),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher pending grades count'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher pending grades count', { code: 'GET_PENDING_GRADES_COUNT_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, { teacherId }))
 }
 
@@ -1475,7 +1479,7 @@ export function getTeacherUnreadMessagesCount(teacherId: string): ResultAsync<nu
         ),
       )
       .then(result => result[0]?.count ?? 0),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher unread messages count'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher unread messages count', { code: 'GET_UNREAD_MESSAGES_COUNT_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, { teacherId }))
 }
 
@@ -1520,7 +1524,7 @@ export function getTeacherRecentMessages(params: {
         ...r,
         isRead: r.isRead ?? false,
       }))),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher recent messages'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher recent messages', { code: 'GET_RECENT_MESSAGES_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -1574,7 +1578,7 @@ export function getTeacherNotificationsQuery(params: {
           type: r.type, // Ensure type is passed through or cast if needed, though basic string match is usually fine
         })))
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher notifications'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher notifications', { code: 'GET_NOTIFICATIONS_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -1616,7 +1620,7 @@ export function getCurrentTermForSchoolYear(schoolYearId: string): ResultAsync<{
 
       return result[0] ?? null
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get current term for school year'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get current term for school year', { code: 'GET_CURRENT_TERM_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, { schoolYearId }))
 }
 
@@ -1641,6 +1645,6 @@ export function getClassSubjectInfo(params: {
       .where(eq(classes.id, params.classId))
       .limit(1)
       .then(result => result[0] ?? null),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get class and subject info'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get class and subject info', { code: 'GET_CLASS_UBJECT_INFO_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }

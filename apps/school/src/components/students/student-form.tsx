@@ -239,7 +239,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                                   }
 
                                   // IconUpload file directly to R2
-                                  const uploadResponse = await fetch(result.presignedUrl, {
+                                  const uploadResponse = await fetch(result.data.presignedUrl, {
                                     method: 'PUT',
                                     body: file,
                                     headers: {
@@ -254,7 +254,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                                   }
 
                                   // Set the public URL in the form
-                                  form.setValue('photoUrl', result.publicUrl)
+                                  form.setValue('photoUrl', result.data.publicUrl)
                                   toast.success(t.students.photoUploadSuccess())
                                 }
                                 catch (error) {

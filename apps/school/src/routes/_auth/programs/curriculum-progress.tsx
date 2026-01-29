@@ -39,38 +39,42 @@ function CurriculumProgressPage() {
   const [selectedClassId, setSelectedClassId] = useState<string>('')
 
   // Fetch school years
-  const { data: schoolYears, isLoading: yearsLoading } = useQuery({
+  const { data: schoolYearsResult, isLoading: yearsLoading } = useQuery({
     queryKey: ['school-years'],
     queryFn: () => getSchoolYears(),
     staleTime: 5 * 60 * 1000,
   })
+  const schoolYears = schoolYearsResult?.success ? schoolYearsResult.data : []
 
   // Determine effective year ID
   // If context has an ID, use it. Otherwise fall back to local selection or active year.
-  const activeYear = schoolYears?.find((y: { isActive: boolean }) => y.isActive)
+  const activeYear = schoolYears?.find(y => y.isActive)
   const effectiveYearId = contextSchoolYearId || localYearId || activeYear?.id || ''
 
   // Fetch terms for selected year
-  const { data: terms, isLoading: termsLoading } = useQuery({
+  const { data: termsResult, isLoading: termsLoading } = useQuery({
     queryKey: ['terms', effectiveYearId],
     queryFn: () => getTerms({ data: { schoolYearId: effectiveYearId } }),
     enabled: !!effectiveYearId,
     staleTime: 5 * 60 * 1000,
   })
+  const terms = termsResult?.success ? termsResult.data : []
 
   // Fetch classes for selected year
-  const { data: classes, isLoading: classesLoading } = useQuery({
+  const { data: classesResult, isLoading: classesLoading } = useQuery({
     queryKey: ['classes', effectiveYearId],
     queryFn: () => getClasses({ data: { schoolYearId: effectiveYearId } }),
     enabled: !!effectiveYearId,
     staleTime: 5 * 60 * 1000,
   })
+  const classes = classesResult?.success ? classesResult.data : []
 
   // Fetch progress for selected class and term
-  const { data: progress, isLoading: progressLoading } = useQuery({
+  const { data: progressResult, isLoading: progressLoading } = useQuery({
     ...progressOptions.byClass({ classId: selectedClassId, termId: selectedTermId }),
     enabled: !!selectedClassId && !!selectedTermId,
   })
+  const progress = progressResult?.success ? progressResult.data : []
 
   const canShowProgress = effectiveYearId && selectedTermId && selectedClassId
 
@@ -78,18 +82,18 @@ function CurriculumProgressPage() {
   const overviewData = progress
     ? {
         totalClasses: classes?.length ?? 0,
-        onTrack: progress.filter((p: { status: string }) => p.status === 'on_track').length,
-        slightlyBehind: progress.filter((p: { status: string }) => p.status === 'slightly_behind').length,
-        significantlyBehind: progress.filter((p: { status: string }) => p.status === 'significantly_behind').length,
-        ahead: progress.filter((p: { status: string }) => p.status === 'ahead').length,
+        onTrack: progress.filter(p => p.status === 'on_track').length,
+        slightlyBehind: progress.filter(p => p.status === 'slightly_behind').length,
+        significantlyBehind: progress.filter(p => p.status === 'significantly_behind').length,
+        ahead: progress.filter(p => p.status === 'ahead').length,
         averageProgress: progress.length > 0
-          ? progress.reduce((sum: number, p) => sum + Number(p.progressPercentage), 0) / progress.length
+          ? progress.reduce((sum, p) => sum + Number(p.progressPercentage), 0) / progress.length
           : 0,
       }
     : null
 
   const behindClasses = progress?.filter(
-    (p: { status: string }) => p.status === 'slightly_behind' || p.status === 'significantly_behind',
+    p => p.status === 'slightly_behind' || p.status === 'significantly_behind',
   ).map(p => ({
     ...p,
     className: classes?.find(c => c.class.id === p.classId)?.grade.name ?? '',

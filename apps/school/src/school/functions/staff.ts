@@ -6,10 +6,9 @@ import {
   getStaffBySchool,
   updateStaff,
 } from '@repo/data-ops/queries/school-admin/staff'
-import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 import { createStaffSchema, updateStaffSchema } from '@/schemas/staff'
-import { getSchoolContext } from '../middleware/school-context'
+import { authServerFn } from '../lib/server-fn'
 
 /**
  * Filters for staff queries
@@ -31,18 +30,18 @@ const paginationSchema = z.object({
 /**
  * Get staff with pagination and filters
  */
-export const getStaffList = createServerFn()
+export const getStaffList = authServerFn
   .inputValidator(
     z.object({
       filters: staffFiltersSchema.optional(),
       pagination: paginationSchema.optional(),
     }),
   )
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
-    const { schoolId } = context
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    const { schoolId } = context.school
     const { filters = {}, pagination = { page: 1, limit: 20 } } = data
 
     const offset = (pagination.page - 1) * pagination.limit
@@ -57,80 +56,89 @@ export const getStaffList = createServerFn()
     ])
 
     return {
-      staff: staffList,
-      total,
-      page: pagination.page,
-      limit: pagination.limit,
-      totalPages: Math.ceil(total / pagination.limit),
+      success: true as const,
+      data: {
+        staff: staffList,
+        total,
+        page: pagination.page,
+        limit: pagination.limit,
+        totalPages: Math.ceil(total / pagination.limit),
+      },
     }
   })
 
 /**
  * Get staff member by ID
  */
-export const getStaffMember = createServerFn()
+export const getStaffMember = authServerFn
   .inputValidator(z.string())
-  .handler(async ({ data: staffId }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
-    const { schoolId } = context
-    return await getStaffById(staffId, schoolId)
+  .handler(async ({ data: staffId, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    const { schoolId } = context.school
+    const result = await getStaffById(staffId, schoolId)
+    return { success: true as const, data: result }
   })
 
 /**
  * Create new staff member
  */
-export const createNewStaff = createServerFn()
+export const createNewStaff = authServerFn
   .inputValidator(createStaffSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
-    const { schoolId } = context
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return await createStaff({
+    const { schoolId } = context.school
+
+    const result = await createStaff({
       userId: data.userId,
       schoolId,
       position: data.position,
       department: data.department || undefined,
       hireDate: data.hireDate || undefined,
     })
+
+    return { success: true as const, data: result }
   })
 
 /**
  * Update staff member
  */
-export const updateExistingStaff = createServerFn()
+export const updateExistingStaff = authServerFn
   .inputValidator(
     z.object({
       staffId: z.string(),
       data: updateStaffSchema,
     }),
   )
-  .handler(async ({ data: { staffId, data } }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
-    const { schoolId } = context
+  .handler(async ({ data: { staffId, data }, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return await updateStaff(staffId, schoolId, {
+    const { schoolId } = context.school
+
+    const result = await updateStaff(staffId, schoolId, {
       position: data.position,
       department: data.department || undefined,
       hireDate: data.hireDate || undefined,
       status: data.status,
     })
+
+    return { success: true as const, data: result }
   })
 
 /**
  * Delete staff member
  */
-export const deleteExistingStaff = createServerFn()
+export const deleteExistingStaff = authServerFn
   .inputValidator(z.string())
-  .handler(async ({ data: staffId }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
-    const { schoolId } = context
-    return await deleteStaff(staffId, schoolId)
+  .handler(async ({ data: staffId, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    const { schoolId } = context.school
+    const result = await deleteStaff(staffId, schoolId)
+    return { success: true as const, data: result }
   })

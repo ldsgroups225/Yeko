@@ -1,8 +1,7 @@
-import { DatabaseError } from '@repo/data-ops/errors'
 import * as classQueries from '@repo/data-ops/queries/classes'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import { z } from 'zod'
-import { createAuthenticatedServerFn } from '../lib/server-fn'
+import { authServerFn } from '../lib/server-fn'
 import { requirePermission } from '../middleware/permissions'
 
 const classSchema = z.object({
@@ -16,7 +15,7 @@ const classSchema = z.object({
   status: z.enum(['active', 'archived']).default('active'),
 })
 
-export const getClasses = createAuthenticatedServerFn()
+export const getClasses = authServerFn
   .inputValidator(
     z.object({
       schoolYearId: z.string().nullish(),
@@ -26,138 +25,132 @@ export const getClasses = createAuthenticatedServerFn()
       search: z.string().optional(),
     }),
   )
-  .handler(async ({ data, context }: any) => {
-    const { school } = context
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
+    const { schoolId } = context.school
     await requirePermission('classes', 'view')
 
     // Filter out null values to match ClassFilters type
     const filters: classQueries.ClassFilters = {
       ...data,
-      schoolId: school.schoolId,
+      schoolId,
       schoolYearId: data.schoolYearId ?? undefined,
       status: data.status as any,
     }
 
-    const result = await classQueries.getClasses(filters)
-    if (result.isErr()) {
-      throw result.error
-    }
-    return result.value
+    return (await classQueries.getClasses(filters)).match(
+      value => ({ success: true as const, data: value }),
+      _ => ({ success: false as const, error: 'Erreur lors de la récupération des classes' }),
+    )
   })
 
-export const getClassById = createAuthenticatedServerFn()
+export const getClassById = authServerFn
   .inputValidator(z.string())
-  .handler(async ({ data: id, context }: any) => {
-    const { school } = context
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+  .handler(async ({ data: id, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
+    const { schoolId } = context.school
     await requirePermission('classes', 'view')
 
-    const result = await classQueries.getClassById(school.schoolId, id)
-    if (result.isErr()) {
-      throw result.error
-    }
-    return result.value
+    return (await classQueries.getClassById(schoolId, id)).match(
+      value => ({ success: true as const, data: value }),
+      _ => ({ success: false as const, error: 'Erreur lors de la récupération de la classe' }),
+    )
   })
 
-export const createClass = createAuthenticatedServerFn()
+export const createClass = authServerFn
   .inputValidator(classSchema)
-  .handler(async ({ data, context }: any) => {
-    const { school } = context
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
+    const { schoolId, userId } = context.school
     await requirePermission('classes', 'create')
 
-    const result = await classQueries.createClass(school.schoolId, {
+    return (await classQueries.createClass(schoolId, {
       ...data,
-      schoolId: school.schoolId,
+      schoolId,
       id: crypto.randomUUID(),
-    })
+    })).match(
+      async (newClass) => {
+        if (!newClass)
+          return { success: false as const, error: 'La création de la classe a échoué' }
 
-    if (result.isErr()) {
-      throw result.error
-    }
-
-    const newClass = result.value
-    if (!newClass)
-      throw new DatabaseError('INTERNAL_ERROR', 'Failed to create class')
-    await createAuditLog({
-      schoolId: school.schoolId,
-      userId: school.userId,
-      action: 'create',
-      tableName: 'classes',
-      recordId: newClass.id,
-      newValues: data,
-    })
-
-    return newClass
+        await createAuditLog({
+          schoolId,
+          userId,
+          action: 'create',
+          tableName: 'classes',
+          recordId: newClass.id,
+          newValues: data,
+        })
+        return { success: true as const, data: newClass }
+      },
+      _ => ({ success: false as const, error: 'Erreur lors de la création de la classe' }),
+    )
   })
 
-export const updateClass = createAuthenticatedServerFn()
+export const updateClass = authServerFn
   .inputValidator(
     z.object({
       id: z.string(),
       updates: classSchema.partial(),
     }),
   )
-  .handler(async ({ data, context }: any) => {
-    const { school } = context
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
+    const { schoolId, userId } = context.school
     await requirePermission('classes', 'edit')
 
-    const oldClassResult = await classQueries.getClassById(school.schoolId, data.id)
+    const oldClassResult = await classQueries.getClassById(schoolId, data.id)
     const oldClass = oldClassResult.isOk() ? oldClassResult.value.class : undefined
 
-    const result = await classQueries.updateClass(school.schoolId, data.id, data.updates)
-    if (result.isErr()) {
-      throw result.error
-    }
-
-    await createAuditLog({
-      schoolId: school.schoolId,
-      userId: school.userId,
-      action: 'update',
-      tableName: 'classes',
-      recordId: data.id,
-      oldValues: oldClass,
-      newValues: data.updates,
-    })
-
-    return result.value
+    return (await classQueries.updateClass(schoolId, data.id, data.updates)).match(
+      async (updatedClass) => {
+        await createAuditLog({
+          schoolId,
+          userId,
+          action: 'update',
+          tableName: 'classes',
+          recordId: data.id,
+          oldValues: oldClass,
+          newValues: data.updates,
+        })
+        return { success: true as const, data: updatedClass }
+      },
+      _ => ({ success: false as const, error: 'Erreur lors de la mise à jour de la classe' }),
+    )
   })
 
-export const deleteClass = createAuthenticatedServerFn()
+export const deleteClass = authServerFn
   .inputValidator(z.string())
-  .handler(async ({ data: id, context }: any) => {
-    const { school } = context
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+  .handler(async ({ data: id, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
+    const { schoolId, userId } = context.school
     await requirePermission('classes', 'delete')
 
-    const oldClassResult = await classQueries.getClassById(school.schoolId, id)
+    const oldClassResult = await classQueries.getClassById(schoolId, id)
     const oldClass = oldClassResult.isOk() ? oldClassResult.value.class : undefined
 
-    const result = await classQueries.deleteClass(school.schoolId, id)
-    if (result.isErr()) {
-      throw result.error
-    }
-
-    await createAuditLog({
-      schoolId: school.schoolId,
-      userId: school.userId,
-      action: 'delete',
-      tableName: 'classes',
-      recordId: id,
-      oldValues: oldClass,
-    })
-
-    return { success: true }
+    return (await classQueries.deleteClass(schoolId, id)).match(
+      async () => {
+        await createAuditLog({
+          schoolId,
+          userId,
+          action: 'delete',
+          tableName: 'classes',
+          recordId: id,
+          oldValues: oldClass,
+        })
+        return { success: true as const, data: { success: true } }
+      },
+      _ => ({ success: false as const, error: 'Erreur lors de la suppression de la classe' }),
+    )
   })

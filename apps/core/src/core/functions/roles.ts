@@ -14,7 +14,8 @@ export const getPlatformRoles = createServerFn({ method: 'GET' })
   )
   .handler(async ({ data }) => {
     const { getAllRoles } = await import('@repo/data-ops/queries/school-admin/roles')
-    return getAllRoles(data)
+    const result = await getAllRoles(data)
+    return result
   })
 
 /**
@@ -32,10 +33,11 @@ export const createPlatformRole = createServerFn({ method: 'POST' })
   )
   .handler(async ({ data }) => {
     const { createRole } = await import('@repo/data-ops/queries/school-admin/roles')
-    return createRole({
+    const result = await createRole({
       ...data,
       permissions: data.permissions as SystemPermissions,
     })
+    return result
   })
 
 /**
@@ -53,10 +55,11 @@ export const updatePlatformRole = createServerFn({ method: 'POST' })
   .handler(async ({ data }) => {
     const { updateRole } = await import('@repo/data-ops/queries/school-admin/roles')
     const { id, ...updates } = data
-    return updateRole(id, {
+    const result = await updateRole(id, {
       ...updates,
       permissions: updates.permissions as SystemPermissions,
     })
+    return result
   })
 
 /**
@@ -66,5 +69,6 @@ export const deletePlatformRole = createServerFn({ method: 'POST' })
   .inputValidator((data: unknown) => z.object({ id: z.string() }).parse(data))
   .handler(async ({ data }) => {
     const { deleteRole } = await import('@repo/data-ops/queries/school-admin/roles')
-    return deleteRole(data.id)
+    const result = await deleteRole(data.id)
+    return result
   })

@@ -54,11 +54,15 @@ export function ClassSubjectManager({
 }: ClassSubjectManagerProps) {
   const t = useTranslations()
   const queryClient = useQueryClient()
-  const { data: subjects, isLoading } = useQuery(
+  const { data: subjectsResult, isLoading } = useQuery(
     classSubjectsOptions.list({ classId }),
   )
+
+  const subjects = subjectsResult?.success ? subjectsResult.data : []
+
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isCopyDialogOpen, setIsCopyDialogOpen] = useState(false)
+
   const [subjectToDelete, setSubjectToDelete] = useState<{
     id: string
     name: string
@@ -86,7 +90,7 @@ export function ClassSubjectManager({
   })
 
   // Quick Teacher Assignment
-  const { data: teachersData } = useQuery({
+  const { data: teachersResult } = useQuery({
     ...teacherOptions.list({}, { page: 1, limit: 100 }),
   })
 
@@ -107,7 +111,7 @@ export function ClassSubjectManager({
     },
   })
 
-  const teachers = teachersData?.teachers || []
+  const teachers = teachersResult?.success ? (teachersResult.data.teachers || []) : []
 
   // Group subjects by category for better display if needed, but for now simple list
   // The query returns subjects sorted by name

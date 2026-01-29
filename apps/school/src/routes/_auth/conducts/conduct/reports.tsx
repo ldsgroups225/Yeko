@@ -49,34 +49,38 @@ function ConductReportsPage() {
   const [endDate, setEndDate] = useState(() => new Date())
 
   const { schoolYearId: contextSchoolYearId } = useSchoolYearContext()
-  const { data: schoolYears } = useQuery({
+  const { data: schoolYearsResult } = useQuery({
     queryKey: ['school-years'],
     queryFn: () => getSchoolYears(),
   })
-  const activeSchoolYear = schoolYears?.find(sy => sy.isActive)
-  const schoolYearId = contextSchoolYearId || activeSchoolYear?.id || 'current-year'
+  const schoolYears = schoolYearsResult?.success ? schoolYearsResult.data : []
+  const activeSchoolYear = schoolYears.find(sy => sy.isActive)
+  const schoolYearId = contextSchoolYearId || activeSchoolYear?.id
 
-  const { data: classes } = useQuery({
+  const { data: classesResult } = useQuery({
     queryKey: ['classes', { schoolYearId }],
     queryFn: () => getClasses({ data: { schoolYearId: schoolYearId ?? undefined } }),
     enabled: !!schoolYearId,
   })
 
+  const classes = classesResult?.success ? classesResult.data : []
+
   const startDateStr = startDate.toISOString().split('T')[0] ?? ''
   const endDateStr = endDate.toISOString().split('T')[0] ?? ''
 
-  const { data, isLoading } = useQuery(
-    conductRecordsOptions({
-      schoolYearId,
+  const { data: result, isLoading } = useQuery({
+    ...conductRecordsOptions({
+      schoolYearId: schoolYearId || '',
       classId: classId || undefined,
       type,
       startDate: startDateStr,
       endDate: endDateStr,
       pageSize: 100,
     }),
-  )
+    enabled: !!schoolYearId,
+  })
 
-  const rawRecords = data?.data ?? []
+  const rawRecords = result?.success ? (result.data.data ?? []) : []
 
   // Calculate statistics
   const stats = {
@@ -165,7 +169,7 @@ function ConductReportsPage() {
             </SelectTrigger>
             <SelectContent className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40">
               <SelectItem value="all" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">{t.conduct.allClasses()}</SelectItem>
-              {classes?.map(c => (
+              {classes.map(c => (
                 <SelectItem key={c.class.id} value={c.class.id} className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">
                   {c.grade?.name}
                   {' '}

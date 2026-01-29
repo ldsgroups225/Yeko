@@ -9,6 +9,20 @@ import { fiscalYears, schoolYears, terms } from '../../drizzle/school-schema'
 import { DatabaseError } from '../../errors'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
 
+export interface SchoolYearWithTemplate {
+  id: string
+  schoolId: string
+  schoolYearTemplateId: string
+  startDate: string
+  endDate: string
+  isActive: boolean
+  createdAt: Date
+  template: {
+    id: string
+    name: string
+  }
+}
+
 export function getSchoolYearsBySchool(
   schoolId: string,
   options?: {
@@ -16,7 +30,7 @@ export function getSchoolYearsBySchool(
     limit?: number
     offset?: number
   },
-): ResultAsync<any[], DatabaseError> { // TODO: Define strict return type
+): ResultAsync<SchoolYearWithTemplate[], DatabaseError> {
   if (!schoolId) {
     return errAsync(new DatabaseError('VALIDATION_ERROR', SCHOOL_ERRORS.NO_SCHOOL_CONTEXT))
   }

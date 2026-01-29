@@ -49,13 +49,17 @@ function TeacherDetailsPage() {
   const queryClient = useQueryClient()
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
-  const { data: teacher, isLoading } = useQuery({
+  const { data: teacherResult, isLoading } = useQuery({
     ...teacherOptions.detail(teacherId),
   })
 
-  const { data: classes, isLoading: isLoadingClasses } = useQuery({
+  const teacher = teacherResult?.success ? teacherResult.data : null
+
+  const { data: classesResult, isLoading: isLoadingClasses } = useQuery({
     ...teacherOptions.classes(teacherId),
   })
+
+  const classes = classesResult?.success ? classesResult.data : []
 
   const deleteMutation = useMutation({
     mutationFn: async () => {

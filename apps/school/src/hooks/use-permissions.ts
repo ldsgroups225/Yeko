@@ -24,13 +24,15 @@ export type Permissions = Record<string, string[]>
  * ```
  */
 export function usePermissions() {
-  const { data: permissions, isLoading, error } = useQuery({
+  const { data: result, isLoading, error } = useQuery({
     queryKey: ['user-permissions'],
     queryFn: () => getUserPermissions(),
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 30 * 60 * 1000, // 30 minutes
     refetchOnWindowFocus: false,
   })
+
+  const permissions = result?.success ? result.data : {}
 
   /**
    * IconCheck if user has a specific permission
@@ -39,8 +41,6 @@ export function usePermissions() {
    * @returns true if user has the permission, false otherwise
    */
   const can = (action: string, resource: string): boolean => {
-    if (!permissions)
-      return false
     return permissions[resource]?.includes(action) ?? false
   }
 

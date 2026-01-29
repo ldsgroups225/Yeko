@@ -9,12 +9,15 @@ export function SchoolSwitcher() {
   const t = useTranslations()
   const { schoolId, isSwitching } = useSchoolContext()
 
-  const { data: schools, isLoading } = useQuery({
+  const { data: result, isLoading } = useQuery({
     queryKey: ['user-schools'],
     queryFn: async () => await getUserSchools(),
   })
 
-  const currentSchool = schools?.find((school: { id: string }) => school.id === schoolId)
+  /* Safe unwrapping of schools Result */
+  const schools = result?.success ? result.data : []
+
+  const currentSchool = schools?.find((school: { id: string, name: string }) => school.id === schoolId)
 
   if (isLoading) {
     return (

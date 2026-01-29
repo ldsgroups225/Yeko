@@ -65,15 +65,13 @@ import { useTranslations } from '@/i18n'
 import { deleteClassroom, getClassrooms } from '@/school/functions/classrooms'
 
 interface ClassroomItem {
-  classroom: {
-    id: string
-    name: string
-    code: string
-    type: string
-    capacity: number
-    status: 'active' | 'maintenance' | 'inactive'
-  }
-  assignedClassesCount: number
+  id: string
+  name: string
+  code: string
+  type: string
+  capacity: number
+  status: 'active' | 'maintenance' | 'inactive'
+  assignedClassesCount?: number
 }
 
 interface ClassroomsTableProps {
@@ -94,23 +92,26 @@ export function ClassroomsTable({
   const [itemToDelete, setItemToDelete] = useState<ClassroomItem | null>(null)
   const debouncedSearch = useDebounce(searchInput, 500)
 
-  const { data, isLoading, refetch } = useQuery({
+  const { data: result, isLoading: isLoadingQuery, refetch } = useQuery({
     queryKey: ['classrooms', { search: debouncedSearch }],
     queryFn: async () => {
-      const result = await getClassrooms({
+      const res = await getClassrooms({
         data: {
           search: debouncedSearch,
         },
       })
-      return result as unknown as ClassroomItem[]
+      return res
     },
   })
+
+  const data = result?.success ? (result.data as unknown as ClassroomItem[]) : []
+  const isLoading = isLoadingQuery
 
   const handleDelete = async () => {
     if (!itemToDelete)
       return
     try {
-      await deleteClassroom({ data: itemToDelete.classroom.id })
+      await deleteClassroom({ data: itemToDelete.id })
       toast.success(t.common.deleteSuccess())
       refetch()
     }
@@ -125,30 +126,30 @@ export function ClassroomsTable({
   const columns = useMemo<ColumnDef<ClassroomItem>[]>(
     () => [
       {
-        accessorKey: 'classroom.name',
+        accessorKey: 'name',
         header: 'Nom',
         cell: ({ row }) => (
           <div>
             <div className="font-bold text-foreground">
-              {row.original.classroom.name}
+              {row.original.name}
             </div>
             <div className="font-mono text-xs font-medium text-muted-foreground">
-              {row.original.classroom.code}
+              {row.original.code}
             </div>
           </div>
         ),
       },
       {
-        accessorKey: 'classroom.type',
+        accessorKey: 'type',
         header: 'Type',
         cell: ({ row }) => (
           <Badge variant="secondary" className="font-medium">
-            <span className="capitalize">{row.original.classroom.type}</span>
+            <span className="capitalize">{row.original.type}</span>
           </Badge>
         ),
       },
       {
-        accessorKey: 'classroom.capacity',
+        accessorKey: 'capacity',
         header: 'Capacité',
         cell: ({ row }) => (
           <div className="flex items-center gap-2">
@@ -156,7 +157,7 @@ export function ClassroomsTable({
               <IconUsers className="h-3.5 w-3.5 text-muted-foreground" />
             </div>
             <span className="font-medium tabular-nums">
-              {row.original.classroom.capacity}
+              {row.original.capacity}
             </span>
           </div>
         ),
@@ -170,16 +171,16 @@ export function ClassroomsTable({
               <IconStack2 className="h-3.5 w-3.5 text-muted-foreground" />
             </div>
             <span className="font-medium tabular-nums">
-              {row.original.assignedClassesCount}
+              {row.original.assignedClassesCount ?? 0}
             </span>
           </div>
         ),
       },
       {
-        accessorKey: 'classroom.status',
+        accessorKey: 'status',
         header: 'Statut',
         cell: ({ row }) => {
-          const status = row.original.classroom.status
+          const status = row.original.status
           return (
             <Badge
               variant={status === 'active' ? 'default' : 'secondary'}
@@ -221,7 +222,7 @@ export function ClassroomsTable({
                 className="rounded-lg cursor-pointer focus:bg-primary/10 font-medium"
                 onClick={() =>
                   navigate({
-                    to: `/spaces/classrooms/${row.original.classroom.id}`,
+                    to: `/spaces/classrooms/${row.original.id}`,
                   })}
               >
                 <IconEye className="mr-2 h-4 w-4 text-muted-foreground" />
@@ -370,7 +371,7 @@ export function ClassroomsTable({
                 <AnimatePresence>
                   {data?.map((item, index) => (
                     <motion.div
-                      key={item.classroom.id}
+                      key={item.id}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 }}
@@ -379,17 +380,17 @@ export function ClassroomsTable({
                       <div className="flex justify-between items-start">
                         <div className="flex items-center gap-2">
                           <div className="font-mono text-xs font-bold text-muted-foreground bg-muted/20 px-2 py-1 rounded-md">
-                            {item.classroom.code}
+                            {item.code}
                           </div>
                           <Badge
                             variant={
-                              item.classroom.status === 'active'
+                              item.status === 'active'
                                 ? 'default'
                                 : 'secondary'
                             }
                             className="capitalize rounded-md text-[10px]"
                           >
-                            {item.classroom.status === 'active'
+                            {item.status === 'active'
                               ? 'Actif'
                               : 'Inactif'}
                           </Badge>
@@ -400,7 +401,7 @@ export function ClassroomsTable({
                           className="h-8 w-8 rounded-lg -mr-2 -mt-2 text-muted-foreground"
                           onClick={() =>
                             navigate({
-                              to: `/spaces/classrooms/${item.classroom.id}`,
+                              to: `/spaces/classrooms/${item.id}`,
                             })}
                         >
                           <IconEye className="h-4 w-4" />
@@ -409,13 +410,13 @@ export function ClassroomsTable({
 
                       <div>
                         <div className="font-bold text-lg">
-                          {item.classroom.name}
+                          {item.name}
                         </div>
                         <Badge
                           variant="outline"
                           className="mt-1 font-medium text-xs capitalize"
                         >
-                          {item.classroom.type}
+                          {item.type}
                         </Badge>
                       </div>
 
@@ -426,7 +427,7 @@ export function ClassroomsTable({
                             Capacité
                           </span>
                           <span className="font-bold">
-                            {item.classroom.capacity}
+                            {item.capacity}
                           </span>
                         </div>
                         <div className="p-2 rounded-xl bg-muted/20 flex flex-col items-center justify-center text-center">
@@ -435,7 +436,7 @@ export function ClassroomsTable({
                             Classes
                           </span>
                           <span className="font-bold">
-                            {item.assignedClassesCount}
+                            {item.assignedClassesCount ?? 0}
                           </span>
                         </div>
                       </div>
@@ -507,7 +508,7 @@ export function ClassroomsTable({
             </AlertDialogTitle>
             <AlertDialogDescription className="text-muted-foreground/80">
               {t.dialogs.deleteConfirmation.description({
-                item: itemToDelete ? itemToDelete.classroom.name : '',
+                item: itemToDelete ? itemToDelete.name : '',
               })}
             </AlertDialogDescription>
           </AlertDialogHeader>

@@ -18,14 +18,18 @@ export const createSchool = createServerFn()
   .inputValidator(data => CreateSchoolSchema.parse(data))
   .handler(async (ctx) => {
     const { createSchool: createSchoolQuery } = await import('@repo/data-ops/queries/schools')
-    const newSchool = await createSchoolQuery({
+    const result = await createSchoolQuery({
       ...ctx.data,
       settings: (ctx.data.settings as Record<string, object>) || {},
     })
 
+    if (result.isErr()) {
+      throw result.error
+    }
+
     return {
-      ...newSchool,
-      settings: (newSchool.settings as Record<string, object>) || {},
+      ...result.value,
+      settings: (result.value.settings as Record<string, object>) || {},
     }
   })
 
@@ -38,13 +42,16 @@ export const getSchools = createServerFn()
   .handler(async (ctx) => {
     const { getSchools: getSchoolsQuery } = await import('@repo/data-ops/queries/schools')
     const result = await getSchoolsQuery(ctx.data)
+    if (result.isErr()) {
+      throw result.error
+    }
 
     return {
-      data: result.schools.map((s: School) => ({
+      data: result.value.schools.map((s: School) => ({
         ...s,
         settings: (s.settings as Record<string, object>) || {},
       })),
-      meta: result.pagination,
+      meta: result.value.pagination,
     }
   })
 
@@ -56,15 +63,17 @@ export const getSchoolById = createServerFn()
   .inputValidator(data => SchoolIdSchema.parse(data))
   .handler(async (ctx) => {
     const { getSchoolById: getSchoolByIdQuery } = await import('@repo/data-ops/queries/schools')
-    const school = await getSchoolByIdQuery(ctx.data.id)
+    const result = await getSchoolByIdQuery(ctx.data.id)
+    if (result.isErr())
+      throw result.error
+    const s = result.value
 
-    if (!school) {
+    if (!s) {
       throw new Error('School not found')
     }
-
     return {
-      ...school,
-      settings: (school.settings as Record<string, object>) || {},
+      ...s,
+      settings: (s.settings as Record<string, object>) || {},
     }
   })
 
@@ -77,19 +86,20 @@ export const updateSchool = createServerFn()
   .handler(async (ctx) => {
     const { id, ...updateData } = ctx.data
 
-    try {
-      const { updateSchool: updateSchoolQuery } = await import('@repo/data-ops/queries/schools')
-      const updatedSchool = await updateSchoolQuery(id, updateData)
-      return {
-        ...updatedSchool,
-        settings: (updatedSchool.settings as Record<string, object>) || {},
-      }
-    }
-    catch (error) {
-      if (error instanceof Error && error.message.includes('not found')) {
+    const { updateSchool: updateSchoolQuery } = await import('@repo/data-ops/queries/schools')
+    const result = await updateSchoolQuery(id, updateData)
+    if (result.isErr()) {
+      const error = result.error
+      if (error instanceof Error && error.message?.includes('not found')) {
         throw new Error('School not found')
       }
       throw error
+    }
+
+    const updatedSchool = result.value
+    return {
+      ...updatedSchool,
+      settings: (updatedSchool.settings as Record<string, object>) || {},
     }
   })
 
@@ -101,7 +111,9 @@ export const deleteSchool = createServerFn()
   .inputValidator(data => SchoolIdSchema.parse(data))
   .handler(async (ctx) => {
     const { deleteSchool: deleteSchoolQuery } = await import('@repo/data-ops/queries/schools')
-    await deleteSchoolQuery(ctx.data.id)
+    const result = await deleteSchoolQuery(ctx.data.id)
+    if (result.isErr())
+      throw result.error
     return { success: true, id: ctx.data.id }
   })
 
@@ -115,13 +127,12 @@ export const bulkUpdateSchools = createServerFn()
     const { schoolIds, status } = ctx.data
 
     // Update each school individually since we don't have bulk operations in the queries
+    // Update each school individually since we don't have bulk operations in the queries
     for (const id of schoolIds) {
-      try {
-        const { updateSchool: updateSchoolQuery } = await import('@repo/data-ops/queries/schools')
-        await updateSchoolQuery(id, { status })
-      }
-      catch {
-        // Skip schools that don't exist
+      const { updateSchool: updateSchoolQuery } = await import('@repo/data-ops/queries/schools')
+      const result = await updateSchoolQuery(id, { status })
+      if (result.isErr()) {
+        // Skip schools that don't exist or error
         continue
       }
     }
@@ -153,11 +164,15 @@ export const bulkCreateSchools = createServerFn()
       { skipDuplicates },
     )
 
+    if (result.isErr())
+      throw result.error
+    const res = result.value
+
     return {
-      success: result.success,
-      created: result.created.length,
-      errors: result.errors,
-      schools: result.created.map(s => ({
+      success: res.success,
+      created: res.created.length,
+      errors: res.errors,
+      schools: res.created.map(s => ({
         ...s,
         settings: (s.settings as Record<string, object>) || {},
       })),

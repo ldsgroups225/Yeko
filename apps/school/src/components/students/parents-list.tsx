@@ -74,7 +74,7 @@ const invitationStatusColors: Record<string, string> = {
   expired: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
 }
 
-type ParentItem = Awaited<ReturnType<typeof getParents>>['data'][number]
+type ParentItem = Extract<Awaited<ReturnType<typeof getParents>>, { success: true }>['data']['data'][number]
 
 export function ParentsList() {
   const t = useTranslations()
@@ -91,7 +91,7 @@ export function ParentsList() {
 
   const debouncedSearch = useDebounce(search, 500)
 
-  const { data, isLoading } = useQuery(
+  const { data: parentsResult, isLoading } = useQuery(
     parentsOptions.list({
       search: debouncedSearch || undefined,
       invitationStatus:
@@ -100,6 +100,8 @@ export function ParentsList() {
       limit: 20,
     }),
   )
+
+  const data = parentsResult?.success ? parentsResult.data : null
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteParent({ data: id }),
@@ -155,7 +157,7 @@ export function ParentsList() {
           <CardContent>
             <div className="text-2xl font-bold text-yellow-600">
               {data?.data?.filter(
-                p => p.parent.invitationStatus === 'pending',
+                p => p.invitationStatus === 'pending',
               ).length || 0}
             </div>
           </CardContent>
@@ -169,7 +171,7 @@ export function ParentsList() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600">
-              {data?.data?.filter(p => p.parent.invitationStatus === 'sent')
+              {data?.data?.filter(p => p.invitationStatus === 'sent')
                 .length || 0}
             </div>
           </CardContent>
@@ -184,7 +186,7 @@ export function ParentsList() {
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
               {data?.data?.filter(
-                p => p.parent.invitationStatus === 'accepted',
+                p => p.invitationStatus === 'accepted',
               ).length || 0}
             </div>
           </CardContent>
@@ -306,7 +308,7 @@ export function ParentsList() {
                   : (
                       data?.data?.map((item, index: number) => (
                         <motion.tr
-                          key={item.parent.id}
+                          key={item.id}
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: index * 0.02 }}
@@ -316,19 +318,19 @@ export function ParentsList() {
                             <div className="flex items-center gap-3">
                               <Avatar>
                                 <AvatarFallback>
-                                  {item.parent.firstName?.[0]}
-                                  {item.parent.lastName?.[0]}
+                                  {item.firstName?.[0]}
+                                  {item.lastName?.[0]}
                                 </AvatarFallback>
                               </Avatar>
                               <div>
                                 <p className="font-medium">
-                                  {item.parent.lastName}
+                                  {item.lastName}
                                   {' '}
-                                  {item.parent.firstName}
+                                  {item.firstName}
                                 </p>
-                                {item.parent.occupation && (
+                                {item.occupation && (
                                   <p className="text-sm text-muted-foreground">
-                                    {item.parent.occupation}
+                                    {item.occupation}
                                   </p>
                                 )}
                               </div>
@@ -337,15 +339,15 @@ export function ParentsList() {
                           <TableCell>
                             <div className="flex items-center gap-1">
                               <IconPhone className="h-3 w-3 text-muted-foreground" />
-                              {item.parent.phone}
+                              {item.phone}
                             </div>
                           </TableCell>
                           <TableCell>
-                            {item.parent.email
+                            {item.email
                               ? (
                                   <div className="flex items-center gap-1">
                                     <IconMail className="h-3 w-3 text-muted-foreground" />
-                                    {item.parent.email}
+                                    {item.email}
                                   </div>
                                 )
                               : (
@@ -363,7 +365,7 @@ export function ParentsList() {
                             <Badge
                               className={
                                 invitationStatusColors[
-                                  item.parent.invitationStatus || 'pending'
+                                  item.invitationStatus || 'pending'
                                 ]
                               }
                             >
@@ -373,7 +375,7 @@ export function ParentsList() {
                                 accepted: t.parents.statusAccepted,
                                 expired: t.parents.statusExpired,
                               }[
-                                item.parent.invitationStatus as
+                                item.invitationStatus as
                                 | 'pending'
                                 | 'sent'
                                 | 'accepted'
@@ -391,10 +393,10 @@ export function ParentsList() {
                                 )}
                               />
                               <DropdownMenuContent align="end">
-                                {item.parent.invitationStatus !== 'accepted' && (
+                                {item.invitationStatus !== 'accepted' && (
                                   <DropdownMenuItem
                                     onClick={() =>
-                                      inviteMutation.mutate(item.parent.id)}
+                                      inviteMutation.mutate(item.id)}
                                     disabled={inviteMutation.isPending}
                                   >
                                     <IconSend className="mr-2 h-4 w-4" />
@@ -475,7 +477,7 @@ export function ParentsList() {
             <DialogTitle>{t.parents.deleteTitle()}</DialogTitle>
             <DialogDescription>
               {t.parents.deleteDescription({
-                name: `${selectedParent?.parent?.lastName} ${selectedParent?.parent?.firstName}`,
+                name: `${selectedParent?.lastName} ${selectedParent?.firstName}`,
               })}
             </DialogDescription>
           </DialogHeader>
@@ -490,7 +492,7 @@ export function ParentsList() {
               variant="destructive"
               onClick={() =>
                 selectedParent
-                && deleteMutation.mutate(selectedParent.parent.id)}
+                && deleteMutation.mutate(selectedParent.id)}
               disabled={deleteMutation.isPending}
             >
               {t.common.delete()}

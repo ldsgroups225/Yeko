@@ -94,17 +94,19 @@ function EmptyState() {
 
 export function TeacherWorkload() {
   const t = useTranslations()
-  const { data: schoolYear, isLoading: schoolYearLoading } = useQuery({
+  const { data: schoolYearResult, isLoading: schoolYearLoading } = useQuery({
     queryKey: ['activeSchoolYear'],
     queryFn: () => getActiveSchoolYear(),
   })
 
-  const { data: teachersData, isLoading: teachersLoading } = useQuery({
+  const schoolYear = schoolYearResult?.success ? schoolYearResult.data : undefined
+
+  const { data: teachersResult, isLoading: teachersLoading } = useQuery({
     queryKey: ['teachers'],
     queryFn: () => getTeachers({ data: {} }),
   })
 
-  const { data: classSubjectsData, isLoading: subjectsLoading } = useQuery({
+  const { data: classSubjectsResult, isLoading: subjectsLoading } = useQuery({
     queryKey: ['classSubjects', schoolYear?.id],
     queryFn: () => getClassSubjects({ data: { schoolYearId: schoolYear?.id } }),
     enabled: !!schoolYear?.id,
@@ -116,16 +118,18 @@ export function TeacherWorkload() {
     return <WorkloadSkeleton />
   }
 
-  const teachers = teachersData?.teachers || []
+  const teachers = teachersResult?.success ? teachersResult.data.teachers : []
 
   if (teachers.length === 0) {
     return <EmptyState />
   }
 
+  const subjects = classSubjectsResult?.success ? classSubjectsResult.data : []
+
   // Calculate workload per teacher
   const teacherWorkloads = teachers.map((teacher) => {
     const assignments
-      = classSubjectsData?.filter(cs => cs.teacher?.id === teacher.id) || []
+      = subjects.filter(cs => cs.teacher?.id === teacher.id) || []
     const totalHours = assignments.reduce(
       (sum: number, cs) => sum + (cs.classSubject.hoursPerWeek || 0),
       0,

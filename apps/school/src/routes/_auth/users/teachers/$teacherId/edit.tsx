@@ -14,13 +14,15 @@ function EditTeacherPage() {
   const t = useTranslations()
   const navigate = useNavigate()
 
-  const { data: teacher, isLoading } = useQuery({
+  const { data: teacherResult, isLoading } = useQuery({
     queryKey: ['teacher', teacherId],
     queryFn: async () => {
       const result = await getTeacher({ data: teacherId })
       return result
     },
   })
+
+  const teacher = teacherResult?.success ? teacherResult.data : null
 
   const handleSuccess = () => {
     navigate({ to: `/users/teachers/${teacherId}` })

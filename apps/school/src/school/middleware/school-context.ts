@@ -4,7 +4,6 @@ import { getUserSchoolsByAuthUserId } from '@repo/data-ops/queries/school-admin/
 import { createServerFn } from '@tanstack/react-start'
 import { getRequest, setResponseHeader } from '@tanstack/react-start/server'
 import { getAuthContext } from './auth'
-
 import {
   parseCookies,
   retrieveSchoolContext,
@@ -64,40 +63,67 @@ export const getSchoolYearContext = createServerFn().handler(async () => {
 
     if (!schoolYearId) {
       // Try to auto-select the active school year
-      const schoolYears = await getSchoolYearsBySchool(schoolContext.schoolId, { isActive: true, limit: 1 })
-      if (schoolYears.length > 0) {
-        const activeYear = schoolYears[0]!
-        setResponseHeader(
-          'Set-Cookie',
-          `${SCHOOL_YEAR_CONTEXT_COOKIE}=${activeYear.id}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${60 * 60 * 24 * 30}`,
-        )
-        return { schoolYearId: activeYear.id, schoolId: schoolContext.schoolId }
-      }
-      return null
+      const schoolYearsResult = await getSchoolYearsBySchool(schoolContext.schoolId, { isActive: true, limit: 1 })
+
+      return await schoolYearsResult.match(
+        async (schoolYears) => {
+          if (schoolYears.length > 0) {
+            const activeYear = schoolYears[0]!
+            setResponseHeader(
+              'Set-Cookie',
+              `${SCHOOL_YEAR_CONTEXT_COOKIE}=${activeYear.id}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${60 * 60 * 24 * 30}`,
+            )
+            return { schoolYearId: activeYear.id, schoolId: schoolContext.schoolId }
+          }
+          return null
+        },
+        async (error) => {
+          console.error('Error fetching active school year:', error)
+          return null
+        },
+      )
     }
 
     // Validate school year belongs to current school
-    const schoolYears = await getSchoolYearsBySchool(schoolContext.schoolId, {})
-    const validYear = schoolYears.find((sy: { id: string }) => sy.id === schoolYearId)
+    const schoolYearsResult = await getSchoolYearsBySchool(schoolContext.schoolId, {})
 
-    if (!validYear) {
-      // Clear invalid cookie and try to get active year
-      const activeYears = await getSchoolYearsBySchool(schoolContext.schoolId, { isActive: true, limit: 1 })
-      if (activeYears.length > 0) {
-        setResponseHeader(
-          'Set-Cookie',
-          `${SCHOOL_YEAR_CONTEXT_COOKIE}=${activeYears[0]!.id}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${60 * 60 * 24 * 30}`,
-        )
-        return { schoolYearId: activeYears[0]!.id, schoolId: schoolContext.schoolId }
-      }
-      setResponseHeader(
-        'Set-Cookie',
-        `${SCHOOL_YEAR_CONTEXT_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`,
-      )
-      return null
-    }
+    return await schoolYearsResult.match(
+      async (schoolYears) => {
+        const validYear = schoolYears.find((sy: { id: string }) => sy.id === schoolYearId)
 
-    return { schoolYearId, schoolId: schoolContext.schoolId }
+        if (!validYear) {
+          // Clear invalid cookie and try to get active year
+          const activeYearsResult = await getSchoolYearsBySchool(schoolContext.schoolId, { isActive: true, limit: 1 })
+
+          return await activeYearsResult.match(
+            async (activeYears) => {
+              if (activeYears.length > 0) {
+                setResponseHeader(
+                  'Set-Cookie',
+                  `${SCHOOL_YEAR_CONTEXT_COOKIE}=${activeYears[0]!.id}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${60 * 60 * 24 * 30}`,
+                )
+                return { schoolYearId: activeYears[0]!.id, schoolId: schoolContext.schoolId }
+              }
+              setResponseHeader(
+                'Set-Cookie',
+                `${SCHOOL_YEAR_CONTEXT_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`,
+              )
+              return null
+            },
+            async (error) => {
+              console.error('Error fetching active school year after invalid cookie:', error)
+              return null
+            },
+          )
+        }
+
+        return { schoolYearId, schoolId: schoolContext.schoolId }
+      },
+      async (error) => {
+        console.error('Error validating school year context:', error)
+        return null
+      },
+    )
   }
   catch (error) {
     console.error('Error getting school year context:', error)
@@ -117,8 +143,12 @@ export const setSchoolYearContext = createServerFn()
     }
 
     // Validate school year belongs to current school
-    const schoolYears = await getSchoolYearsBySchool(schoolContext.schoolId, {})
-    const validYear = schoolYears.find((sy: { id: string }) => sy.id === schoolYearId)
+    const schoolYearsResult = await getSchoolYearsBySchool(schoolContext.schoolId, {})
+
+    const validYear = await schoolYearsResult.match(
+      schoolYears => schoolYears.find((sy: { id: string }) => sy.id === schoolYearId),
+      () => null,
+    )
 
     if (!validYear) {
       throw new DatabaseError('VALIDATION_ERROR', 'Invalid school year for this school')

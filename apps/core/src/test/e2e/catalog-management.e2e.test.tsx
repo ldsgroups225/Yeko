@@ -12,8 +12,11 @@
 import * as dataOps from '@repo/data-ops/queries/catalogs'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { ok } from 'neverthrow'
 import * as React from 'react'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+
+const mockOk = (val: any) => ok(val)
 
 // Mock data-ops package
 vi.mock('@repo/data-ops/queries/catalogs', () => ({
@@ -58,8 +61,8 @@ describe('e2E: Catalog Management Workflows', () => {
         trackId: 'track-1',
       }
 
-      vi.mocked(dataOps.getGrades).mockResolvedValue(mockGrades as any)
-      vi.mocked(dataOps.createGrade).mockResolvedValue(newGrade as any)
+      vi.mocked(dataOps.getGrades).mockResolvedValue(mockOk(mockGrades) as any)
+      vi.mocked(dataOps.createGrade).mockResolvedValue(mockOk(newGrade) as any)
 
       const GradesPage = () => {
         const [grades, setGrades] = React.useState<any[]>([])
@@ -67,18 +70,23 @@ describe('e2E: Catalog Management Workflows', () => {
         const [formData, setFormData] = React.useState({ name: '', code: '', order: 0 })
 
         React.useEffect(() => {
-          dataOps.getGrades({ trackId: 'track-1' }).then(setGrades)
+          dataOps.getGrades({ trackId: 'track-1' }).then((res: any) => {
+            if (res.isOk())
+              setGrades(res.value)
+          })
         }, [])
 
         const handleCreate = async (e: React.FormEvent) => {
           e.preventDefault()
-          const created = await dataOps.createGrade({
+          const result = await dataOps.createGrade({
             ...formData,
             trackId: 'track-1',
           } as any)
-          setGrades([...grades, created])
-          setShowForm(false)
-          setFormData({ name: '', code: '', order: 0 })
+          if (result.isOk()) {
+            setGrades([...grades, result.value])
+            setShowForm(false)
+            setFormData({ name: '', code: '', order: 0 })
+          }
         }
 
         return (
@@ -170,15 +178,18 @@ describe('e2E: Catalog Management Workflows', () => {
         { id: '3', name: 'Grade 3', code: 'G3', order: 3, trackId: 'track-1' },
       ]
 
-      vi.mocked(dataOps.getGrades).mockResolvedValue(mockGrades as any)
-      vi.mocked(dataOps.bulkUpdateGradesOrder).mockResolvedValue(undefined)
+      vi.mocked(dataOps.getGrades).mockResolvedValue(mockOk(mockGrades) as any)
+      vi.mocked(dataOps.bulkUpdateGradesOrder).mockResolvedValue(mockOk(undefined) as any)
 
       const GradesReorder = () => {
         const [grades, setGrades] = React.useState<any[]>([])
         const [reorderMode, setReorderMode] = React.useState(false)
 
         React.useEffect(() => {
-          dataOps.getGrades({ trackId: 'track-1' }).then(setGrades)
+          dataOps.getGrades({ trackId: 'track-1' }).then((res: any) => {
+            if (res.isOk())
+              setGrades(res.value)
+          })
         }, [])
 
         const moveUp = (index: number) => {
@@ -263,8 +274,8 @@ describe('e2E: Catalog Management Workflows', () => {
         { id: '1', name: 'Grade 1', code: 'G1', order: 1, trackId: 'track-1' },
       ]
 
-      vi.mocked(dataOps.getGrades).mockResolvedValue(mockGrades as any)
-      vi.mocked(dataOps.deleteGrade).mockResolvedValue(undefined)
+      vi.mocked(dataOps.getGrades).mockResolvedValue(mockOk(mockGrades) as any)
+      vi.mocked(dataOps.deleteGrade).mockResolvedValue(mockOk(undefined) as any)
 
       const GradesList = () => {
         const [grades, setGrades] = React.useState<any[]>([])
@@ -272,7 +283,10 @@ describe('e2E: Catalog Management Workflows', () => {
         const [gradeToDelete, setGradeToDelete] = React.useState<string | null>(null)
 
         React.useEffect(() => {
-          dataOps.getGrades({ trackId: 'track-1' }).then(setGrades)
+          dataOps.getGrades({ trackId: 'track-1' }).then((res: any) => {
+            if (res.isOk())
+              setGrades(res.value)
+          })
         }, [])
 
         const handleDelete = (id: string) => {
@@ -346,8 +360,8 @@ describe('e2E: Catalog Management Workflows', () => {
         trackId: 'track-1',
       }
 
-      vi.mocked(dataOps.getSeries).mockResolvedValue(mockSeries as any)
-      vi.mocked(dataOps.createSerie).mockResolvedValue(newSerie as any)
+      vi.mocked(dataOps.getSeries).mockResolvedValue(mockOk(mockSeries) as any)
+      vi.mocked(dataOps.createSerie).mockResolvedValue(mockOk(newSerie) as any)
 
       const SeriesPage = () => {
         const [series, setSeries] = React.useState<any[]>([])
@@ -355,17 +369,22 @@ describe('e2E: Catalog Management Workflows', () => {
         const [formData, setFormData] = React.useState({ name: '', code: '' })
 
         React.useEffect(() => {
-          dataOps.getSeries({ trackId: 'track-1' }).then(setSeries)
+          dataOps.getSeries({ trackId: 'track-1' }).then((res: any) => {
+            if (res.isOk())
+              setSeries(res.value)
+          })
         }, [])
 
         const handleCreate = async (e: React.FormEvent) => {
           e.preventDefault()
-          const created = await dataOps.createSerie({
+          const result = await dataOps.createSerie({
             ...formData,
             trackId: 'track-1',
           } as any)
-          setSeries([...series, created])
-          setShowForm(false)
+          if (result.isOk()) {
+            setSeries([...series, result.value])
+            setShowForm(false)
+          }
         }
 
         return (
@@ -433,18 +452,19 @@ describe('e2E: Catalog Management Workflows', () => {
         { id: '3', name: 'Physics', shortName: 'Phys', category: 'Scientifique' },
       ]
 
-      vi.mocked(dataOps.getSubjects).mockResolvedValue({
+      vi.mocked(dataOps.getSubjects).mockResolvedValue(mockOk({
         subjects: mockSubjects,
         pagination: { total: 3, page: 1, limit: 20, totalPages: 1 },
-      } as any)
+      }) as any)
 
       const SubjectsPage = () => {
         const [subjects, setSubjects] = React.useState<any[]>([])
         const [categoryFilter, setCategoryFilter] = React.useState('all')
 
         React.useEffect(() => {
-          dataOps.getSubjects({ page: 1, limit: 20 }).then((result: any) => {
-            setSubjects(result.subjects)
+          dataOps.getSubjects({ page: 1, limit: 20 }).then((res: any) => {
+            if (res.isOk())
+              setSubjects(res.value.subjects)
           })
         }, [])
 

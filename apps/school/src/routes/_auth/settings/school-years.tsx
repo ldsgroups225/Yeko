@@ -76,16 +76,19 @@ function SchoolYearsSettingsPage() {
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
 
   // Fetch school years
-  const { data: schoolYears, isLoading } = useQuery({
+  const { data: schoolYearsResult, isLoading } = useQuery({
     queryKey: ['school-years'],
     queryFn: () => getSchoolYears(),
   })
 
   // Fetch available templates
-  const { data: templates } = useQuery({
+  const { data: templatesResult } = useQuery({
     queryKey: ['school-year-templates'],
     queryFn: () => getAvailableSchoolYearTemplates(),
   })
+
+  const schoolYears = schoolYearsResult?.success ? schoolYearsResult.data : []
+  const templates = templatesResult?.success ? templatesResult.data : []
 
   // Set active mutation
   const setActiveMutation = useMutation({

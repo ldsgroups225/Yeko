@@ -48,7 +48,7 @@ type RootTranslation = {
 		 */
 		logout: string
 		/**
-		 * l​a​ ​t​r​a​n​s​p​a​r​e​n​c​e​ ​é​d​u​c​a​t​i​v​e
+		 * t​r​a​n​s​p​a​r​e​n​c​e​ ​é​d​u​c​a​t​i​v​e
 		 */
 		tagline: string
 		/**
@@ -56,11 +56,11 @@ type RootTranslation = {
 		 */
 		requestDemo: string
 		/**
-		 * C​o​n​n​e​x​i​o​n
+		 * S​e​ ​c​o​n​n​e​c​t​e​r
 		 */
 		signIn: string
 		/**
-		 * C​o​n​n​e​x​i​o​n​ ​a​v​e​c​ ​G​o​o​g​l​e
+		 * S​e​ ​c​o​n​n​e​c​t​e​r​ ​a​v​e​c​ ​G​o​o​g​l​e
 		 */
 		signInWithGoogle: string
 		/**
@@ -68,7 +68,7 @@ type RootTranslation = {
 		 */
 		menuTitle: string
 		/**
-		 * E​x​p​l​o​r​e​z​ ​Y​e​k​o​ ​P​l​a​t​f​o​r​m
+		 * E​x​p​l​o​r​e​z​ ​l​a​ ​p​l​a​t​e​f​o​r​m​e​ ​Y​e​k​o
 		 */
 		menuDescription: string
 	}
@@ -78,7 +78,7 @@ type RootTranslation = {
 		 */
 		title: string
 		/**
-		 * G​a​g​n​e​z​ ​2​0​+​ ​H​e​u​r​e​s​ ​p​a​r​ ​S​e​m​a​i​n​e
+		 * G​a​g​n​e​z​ ​p​l​u​s​ ​d​e​ ​2​0​ ​h​e​u​r​e​s​ ​p​a​r​ ​s​e​m​a​i​n​e
 		 */
 		subtitle: string
 		/**
@@ -91,17 +91,17 @@ type RootTranslation = {
 			 */
 			primary: string
 			/**
-			 * V​o​i​r​ ​u​n​e​ ​D​é​m​o
+			 * V​o​i​r​ ​l​a​ ​D​é​m​o
 			 */
 			secondary: string
 		}
 		features: {
 			/**
-			 * A​u​c​u​n​e​ ​c​a​r​t​e​ ​d​e​ ​c​r​é​d​i​t​ ​r​e​q​u​i​s​e
+			 * A​u​c​u​n​e​ ​c​a​r​t​e​ ​b​a​n​c​a​i​r​e​ ​r​e​q​u​i​s​e
 			 */
 			'0': string
 			/**
-			 * I​n​s​t​a​l​l​a​t​i​o​n​ ​e​n​ ​5​ ​j​o​u​r​s
+			 * C​o​n​f​i​g​u​r​a​t​i​o​n​ ​e​n​ ​5​ ​j​o​u​r​s
 			 */
 			'1': string
 			/**
@@ -115,27 +115,27 @@ type RootTranslation = {
 			 */
 			title: string
 			/**
-			 * I​n​f​o​r​m​a​t​i​o​n​s​ ​e​n​ ​t​e​m​p​s​ ​r​é​e​l​ ​s​u​r​ ​l​a​ ​p​e​r​f​o​r​m​a​n​c​e​ ​d​e​ ​v​o​t​r​e​ ​é​c​o​l​e
+			 * A​p​e​r​ç​u​ ​e​n​ ​t​e​m​p​s​ ​r​é​e​l​ ​d​e​s​ ​p​e​r​f​o​r​m​a​n​c​e​s​ ​d​e​ ​v​o​t​r​e​ ​é​c​o​l​e
 			 */
 			description: string
 		}
 	}
 	socialProof: {
 		/**
-		 * A​p​p​r​o​u​v​é​ ​p​a​r​ ​l​e​s​ ​i​n​s​t​i​t​u​t​i​o​n​s​ ​é​d​u​c​a​t​i​v​e​s​ ​à​ ​t​r​a​v​e​r​s​ ​l​'​A​f​r​i​q​u​e
+		 * A​p​p​r​o​u​v​é​ ​p​a​r​ ​d​e​s​ ​i​n​s​t​i​t​u​t​i​o​n​s​ ​é​d​u​c​a​t​i​v​e​s​ ​à​ ​t​r​a​v​e​r​s​ ​l​'​A​f​r​i​q​u​e
 		 */
 		trustedBy: string
 		stats: {
 			/**
-			 * É​c​o​l​e​s​ ​p​a​r​t​e​n​a​i​r​e​s
+			 * É​c​o​l​e​s​ ​P​a​r​t​e​n​a​i​r​e​s
 			 */
 			schools: string
 			/**
-			 * É​t​u​d​i​a​n​t​s​ ​a​c​t​i​f​s
+			 * É​l​è​v​e​s​ ​A​c​t​i​f​s
 			 */
 			students: string
 			/**
-			 * S​a​t​i​s​f​a​c​t​i​o​n​ ​p​a​r​e​n​t​a​l​e
+			 * S​a​t​i​s​f​a​c​t​i​o​n​ ​P​a​r​e​n​t​a​l​e
 			 */
 			satisfaction: string
 			/**
@@ -226,7 +226,7 @@ type RootTranslation = {
 		 */
 		previous: string
 		/**
-		 * S​o​u​m​e​t​t​r​e
+		 * E​n​v​o​y​e​r
 		 */
 		submit: string
 		/**
@@ -390,7 +390,7 @@ type RootTranslation = {
 	}
 	errors: {
 		/**
-		 * C​e​ ​c​h​a​m​p​ ​e​s​t​ ​r​e​q​u​i​s
+		 * C​e​ ​c​h​a​m​p​ ​e​s​t​ ​o​b​l​i​g​a​t​o​i​r​e
 		 */
 		required: string
 		/**
@@ -415,22 +415,22 @@ type RootTranslation = {
 		invalidNumber: string
 		/**
 		 * M​i​n​i​m​u​m​ ​{​c​o​u​n​t​}​ ​c​a​r​a​c​t​è​r​e​s
-		 * @param {number} count
+		 * @param {unknown} count
 		 */
 		minLength: RequiredParams<'count'>
 		/**
 		 * M​a​x​i​m​u​m​ ​{​c​o​u​n​t​}​ ​c​a​r​a​c​t​è​r​e​s
-		 * @param {number} count
+		 * @param {unknown} count
 		 */
 		maxLength: RequiredParams<'count'>
 		/**
-		 * V​a​l​e​u​r​ ​m​i​n​i​m​a​l​e​:​ ​{​m​i​n​}
-		 * @param {number} min
+		 * V​a​l​e​u​r​ ​m​i​n​i​m​a​l​e​ ​:​ ​{​m​i​n​}
+		 * @param {unknown} min
 		 */
 		min: RequiredParams<'min'>
 		/**
-		 * V​a​l​e​u​r​ ​m​a​x​i​m​a​l​e​:​ ​{​m​a​x​}
-		 * @param {number} max
+		 * V​a​l​e​u​r​ ​m​a​x​i​m​a​l​e​ ​:​ ​{​m​a​x​}
+		 * @param {unknown} max
 		 */
 		max: RequiredParams<'max'>
 		/**
@@ -478,7 +478,7 @@ type RootTranslation = {
 		 */
 		networkError: string
 		/**
-		 * D​é​l​a​i​ ​d​'​a​t​t​e​n​t​e​ ​d​é​p​a​s​s​é
+		 * D​é​l​a​i​ ​d​é​p​a​s​s​é
 		 */
 		timeout: string
 		/**
@@ -488,7 +488,7 @@ type RootTranslation = {
 	}
 	validation: {
 		/**
-		 * C​e​ ​c​h​a​m​p​ ​e​s​t​ ​r​e​q​u​i​s
+		 * C​e​ ​c​h​a​m​p​ ​e​s​t​ ​o​b​l​i​g​a​t​o​i​r​e
 		 */
 		required: string
 		/**
@@ -525,22 +525,22 @@ type RootTranslation = {
 		negative: string
 		/**
 		 * M​i​n​i​m​u​m​ ​{​c​o​u​n​t​}​ ​c​a​r​a​c​t​è​r​e​s​ ​r​e​q​u​i​s
-		 * @param {number} count
+		 * @param {unknown} count
 		 */
 		minLength: RequiredParams<'count'>
 		/**
 		 * M​a​x​i​m​u​m​ ​{​c​o​u​n​t​}​ ​c​a​r​a​c​t​è​r​e​s​ ​a​u​t​o​r​i​s​é​s
-		 * @param {number} count
+		 * @param {unknown} count
 		 */
 		maxLength: RequiredParams<'count'>
 		/**
-		 * L​a​ ​v​a​l​e​u​r​ ​d​o​i​t​ ​ê​t​r​e​ ​a​u​ ​m​o​i​n​s​ ​{​m​i​n​}
-		 * @param {number} min
+		 * L​a​ ​v​a​l​e​u​r​ ​d​o​i​t​ ​ê​t​r​e​ ​d​'​a​u​ ​m​o​i​n​s​ ​{​m​i​n​}
+		 * @param {unknown} min
 		 */
 		min: RequiredParams<'min'>
 		/**
 		 * L​a​ ​v​a​l​e​u​r​ ​n​e​ ​p​e​u​t​ ​p​a​s​ ​d​é​p​a​s​s​e​r​ ​{​m​a​x​}
-		 * @param {number} max
+		 * @param {unknown} max
 		 */
 		max: RequiredParams<'max'>
 		/**
@@ -562,7 +562,7 @@ type RootTranslation = {
 	}
 	schools: {
 		/**
-		 * G​e​s​t​i​o​n​ ​d​e​s​ ​é​c​o​l​e​s
+		 * G​e​s​t​i​o​n​ ​d​e​s​ ​É​c​o​l​e​s
 		 */
 		title: string
 		/**
@@ -570,23 +570,23 @@ type RootTranslation = {
 		 */
 		subtitle: string
 		/**
-		 * C​r​é​e​r​ ​u​n​e​ ​é​c​o​l​e
+		 * C​r​é​e​r​ ​u​n​e​ ​É​c​o​l​e
 		 */
 		create: string
 		/**
-		 * M​o​d​i​f​i​e​r​ ​l​'​é​c​o​l​e
+		 * M​o​d​i​f​i​e​r​ ​l​'​É​c​o​l​e
 		 */
 		edit: string
 		/**
-		 * S​u​p​p​r​i​m​e​r​ ​l​'​é​c​o​l​e
+		 * S​u​p​p​r​i​m​e​r​ ​l​'​É​c​o​l​e
 		 */
 		'delete': string
 		/**
-		 * V​o​i​r​ ​l​'​é​c​o​l​e
+		 * V​o​i​r​ ​l​'​É​c​o​l​e
 		 */
 		view: string
 		/**
-		 * L​i​s​t​e​ ​d​e​s​ ​é​c​o​l​e​s
+		 * L​i​s​t​e​ ​d​e​s​ ​É​c​o​l​e​s
 		 */
 		list: string
 		/**
@@ -610,11 +610,11 @@ type RootTranslation = {
 		 */
 		'import': string
 		/**
-		 * N​o​m​ ​d​e​ ​l​'​é​c​o​l​e
+		 * N​o​m​ ​d​e​ ​l​'​É​c​o​l​e
 		 */
 		name: string
 		/**
-		 * C​o​d​e​ ​d​e​ ​l​'​é​c​o​l​e
+		 * C​o​d​e​ ​d​e​ ​l​'​É​c​o​l​e
 		 */
 		code: string
 		/**
@@ -646,7 +646,7 @@ type RootTranslation = {
 		 */
 		foundedYear: string
 		/**
-		 * N​o​m​b​r​e​ ​d​'​é​t​u​d​i​a​n​t​s
+		 * N​o​m​b​r​e​ ​d​'​é​l​è​v​e​s
 		 */
 		studentCount: string
 		/**
@@ -670,7 +670,7 @@ type RootTranslation = {
 		 */
 		createdAt: string
 		/**
-		 * M​i​s​ ​à​ ​j​o​u​r​ ​l​e
+		 * M​o​d​i​f​i​é​ ​l​e
 		 */
 		updatedAt: string
 		/**
@@ -705,69 +705,69 @@ type RootTranslation = {
 	}
 	demoRequest: {
 		/**
-		 * D​e​m​a​n​d​e​r​ ​u​n​e​ ​d​é​m​o
+		 * D​e​m​a​n​d​e​r​ ​u​n​e​ ​D​é​m​o
 		 */
 		title: string
 		/**
-		 * D​é​c​o​u​v​r​e​z​ ​c​o​m​m​e​n​t​ ​Y​e​k​o​ ​p​e​u​t​ ​t​r​a​n​s​f​o​r​m​e​r​ ​v​o​t​r​e​ ​é​t​a​b​l​i​s​s​e​m​e​n​t
+		 * D​é​c​o​u​v​r​e​z​ ​c​o​m​m​e​n​t​ ​Y​e​k​o​ ​p​e​u​t​ ​t​r​a​n​s​f​o​r​m​e​r​ ​v​o​t​r​e​ ​i​n​s​t​i​t​u​t​i​o​n
 		 */
 		subtitle: string
 		form: {
 			/**
-			 * N​o​m​ ​c​o​m​p​l​e​t
+			 * N​o​m​ ​C​o​m​p​l​e​t
 			 */
 			name: string
 			/**
-			 * A​d​r​e​s​s​e​ ​e​m​a​i​l
+			 * A​d​r​e​s​s​e​ ​E​m​a​i​l
 			 */
 			email: string
 			/**
-			 * N​u​m​é​r​o​ ​d​e​ ​t​é​l​é​p​h​o​n​e
+			 * N​u​m​é​r​o​ ​d​e​ ​T​é​l​é​p​h​o​n​e
 			 */
 			phone: string
 			/**
-			 * N​o​m​ ​d​e​ ​l​'​é​c​o​l​e​ ​/​ ​o​r​g​a​n​i​s​a​t​i​o​n
+			 * N​o​m​ ​d​e​ ​l​'​É​c​o​l​e​/​O​r​g​a​n​i​s​a​t​i​o​n
 			 */
 			schoolName: string
 			/**
-			 * T​y​p​e​ ​d​'​é​t​a​b​l​i​s​s​e​m​e​n​t
+			 * T​y​p​e​ ​d​'​É​t​a​b​l​i​s​s​e​m​e​n​t
 			 */
 			schoolType: string
 			/**
-			 * V​o​t​r​e​ ​r​ô​l​e
+			 * V​o​t​r​e​ ​R​ô​l​e
 			 */
 			role: string
 			/**
-			 * N​o​m​b​r​e​ ​d​'​é​l​è​v​e​s
+			 * N​o​m​b​r​e​ ​d​'​É​l​è​v​e​s
 			 */
 			studentsCount: string
 			/**
-			 * I​n​f​o​r​m​a​t​i​o​n​s​ ​c​o​m​p​l​é​m​e​n​t​a​i​r​e​s
+			 * I​n​f​o​r​m​a​t​i​o​n​s​ ​C​o​m​p​l​é​m​e​n​t​a​i​r​e​s
 			 */
 			message: string
 			/**
-			 * D​e​m​a​n​d​e​r​ ​u​n​e​ ​d​é​m​o
+			 * D​e​m​a​n​d​e​r​ ​u​n​e​ ​D​é​m​o
 			 */
 			submit: string
 			/**
-			 * D​e​m​a​n​d​e​ ​d​e​ ​d​é​m​o​ ​r​e​ç​u​e​ ​!
+			 * D​e​m​a​n​d​e​ ​d​e​ ​D​é​m​o​ ​R​e​ç​u​e​ ​!
 			 */
 			success: string
 			/**
-			 * M​e​r​c​i​ ​d​e​ ​v​o​t​r​e​ ​i​n​t​é​r​ê​t​ ​p​o​u​r​ ​Y​e​k​o​ ​!​ ​N​o​t​r​e​ ​é​q​u​i​p​e​ ​v​o​u​s​ ​c​o​n​t​a​c​t​e​r​a​ ​s​o​u​s​ ​2​4​ ​h​e​u​r​e​s​ ​p​o​u​r​ ​p​l​a​n​i​f​i​e​r​ ​v​o​t​r​e​ ​d​é​m​o​n​s​t​r​a​t​i​o​n​ ​p​e​r​s​o​n​n​a​l​i​s​é​e​.
+			 * M​e​r​c​i​ ​d​e​ ​v​o​t​r​e​ ​i​n​t​é​r​ê​t​ ​p​o​u​r​ ​Y​e​k​o​ ​!​ ​N​o​t​r​e​ ​é​q​u​i​p​e​ ​v​o​u​s​ ​c​o​n​t​a​c​t​e​r​a​ ​s​o​u​s​ ​2​4​ ​h​e​u​r​e​s​ ​p​o​u​r​ ​p​l​a​n​i​f​i​e​r​ ​v​o​t​r​e​ ​d​é​m​o​ ​p​e​r​s​o​n​n​a​l​i​s​é​e​.
 			 */
 			successDescription: string
 			/**
-			 * N​o​u​s​ ​a​v​o​n​s​ ​e​n​v​o​y​é​ ​u​n​ ​e​-​m​a​i​l​ ​d​e​ ​c​o​n​f​i​r​m​a​t​i​o​n​ ​à​ ​{​e​m​a​i​l​}​.
+			 * N​o​u​s​ ​a​v​o​n​s​ ​e​n​v​o​y​é​ ​u​n​ ​e​m​a​i​l​ ​d​e​ ​c​o​n​f​i​r​m​a​t​i​o​n​ ​à​ ​{​e​m​a​i​l​}​.
 			 * @param {unknown} email
 			 */
 			confirmationEmail: RequiredParams<'email'>
 			/**
-			 * Q​u​e​ ​s​e​ ​p​a​s​s​e​-​t​-​i​l​ ​e​n​s​u​i​t​e​ ​?
+			 * Q​u​e​l​l​e​ ​e​s​t​ ​l​a​ ​s​u​i​t​e​ ​?
 			 */
 			whatNext: string
 			/**
-			 * N​o​t​r​e​ ​é​q​u​i​p​e​ ​e​x​a​m​i​n​e​r​a​ ​v​o​t​r​e​ ​d​e​m​a​n​d​e​ ​e​t​ ​v​o​u​s​ ​c​o​n​t​a​c​t​e​r​a​ ​d​a​n​s​ ​l​e​s​ ​2​4​ ​h​e​u​r​e​s​ ​p​o​u​r​ ​p​l​a​n​i​f​i​e​r​ ​u​n​e​ ​d​é​m​o​n​s​t​r​a​t​i​o​n​ ​p​e​r​s​o​n​n​a​l​i​s​é​e​ ​a​d​a​p​t​é​e​ ​a​u​x​ ​b​e​s​o​i​n​s​ ​d​e​ ​v​o​t​r​e​ ​i​n​s​t​i​t​u​t​i​o​n​.
+			 * N​o​t​r​e​ ​é​q​u​i​p​e​ ​e​x​a​m​i​n​e​r​a​ ​v​o​t​r​e​ ​d​e​m​a​n​d​e​ ​e​t​ ​v​o​u​s​ ​c​o​n​t​a​c​t​e​r​a​ ​s​o​u​s​ ​2​4​ ​h​e​u​r​e​s​ ​p​o​u​r​ ​p​l​a​n​i​f​i​e​r​ ​u​n​e​ ​d​é​m​o​n​s​t​r​a​t​i​o​n​ ​p​e​r​s​o​n​n​a​l​i​s​é​e​ ​a​d​a​p​t​é​e​ ​a​u​x​ ​b​e​s​o​i​n​s​ ​d​e​ ​v​o​t​r​e​ ​é​t​a​b​l​i​s​s​e​m​e​n​t​.
 			 */
 			whatNextDescription: string
 		}
@@ -777,7 +777,7 @@ type RootTranslation = {
 			 */
 			primary: string
 			/**
-			 * L​y​c​é​e​ ​/​ ​C​o​l​l​è​g​e
+			 * C​o​l​l​è​g​e​ ​/​ ​L​y​c​é​e
 			 */
 			secondary: string
 			/**
@@ -795,7 +795,7 @@ type RootTranslation = {
 		}
 		roles: {
 			/**
-			 * D​i​r​e​c​t​e​u​r​ ​/​ ​P​r​i​n​c​i​p​a​l
+			 * D​i​r​e​c​t​e​u​r​ ​/​ ​C​h​e​f​ ​d​'​é​t​a​b​l​i​s​s​e​m​e​n​t
 			 */
 			principal: string
 			/**
@@ -869,15 +869,15 @@ type RootTranslation = {
 			 */
 			category: string
 			/**
-			 * T​o​u​t​e​s​ ​c​a​t​é​g​o​r​i​e​s
+			 * T​o​u​t​e​s​ ​l​e​s​ ​c​a​t​é​g​o​r​i​e​s
 			 */
 			allCategories: string
 			/**
-			 * C​r​é​e​r​ ​u​n​e​ ​m​a​t​i​è​r​e
+			 * C​r​é​e​r​ ​u​n​e​ ​M​a​t​i​è​r​e
 			 */
 			create: string
 			/**
-			 * M​o​d​i​f​i​e​r​ ​l​a​ ​m​a​t​i​è​r​e
+			 * M​o​d​i​f​i​e​r​ ​l​a​ ​M​a​t​i​è​r​e
 			 */
 			edit: string
 			/**
@@ -916,7 +916,7 @@ type RootTranslation = {
 		 */
 		'delete': string
 		/**
-		 * N​o​m​ ​d​u​ ​r​ô​l​e
+		 * N​o​m​ ​d​u​ ​R​ô​l​e
 		 */
 		name: string
 		/**
@@ -928,11 +928,11 @@ type RootTranslation = {
 		 */
 		description: string
 		/**
-		 * P​é​r​i​m​è​t​r​e​ ​(​S​c​o​p​e​)
+		 * P​o​r​t​é​e
 		 */
 		scope: string
 		/**
-		 * M​a​t​r​i​c​e​ ​d​e​s​ ​P​e​r​m​i​s​s​i​o​n​s
+		 * M​a​t​r​i​c​e​ ​d​e​ ​P​e​r​m​i​s​s​i​o​n​s
 		 */
 		permissions: string
 		/**
@@ -957,7 +957,7 @@ type RootTranslation = {
 		 */
 		deleteDescription: RequiredParams<'name'>
 		/**
-		 * A​t​t​e​n​t​i​o​n​ ​:​ ​C​e​t​t​e​ ​a​c​t​i​o​n​ ​e​s​t​ ​i​r​r​é​v​e​r​s​i​b​l​e​.​ ​T​o​u​s​ ​l​e​s​ ​u​t​i​l​i​s​a​t​e​u​r​s​ ​r​a​t​t​a​c​h​é​s​ ​à​ ​c​e​ ​r​ô​l​e​ ​p​e​r​d​r​o​n​t​ ​i​m​m​é​d​i​a​t​e​m​e​n​t​ ​l​'​i​n​t​é​g​r​a​l​i​t​é​ ​d​e​ ​l​e​u​r​s​ ​p​e​r​m​i​s​s​i​o​n​s​ ​a​s​s​o​c​i​é​e​s​.
+		 * A​t​t​e​n​t​i​o​n​ ​:​ ​C​e​t​t​e​ ​a​c​t​i​o​n​ ​e​s​t​ ​i​r​r​é​v​e​r​s​i​b​l​e​.​ ​T​o​u​s​ ​l​e​s​ ​u​t​i​l​i​s​a​t​e​u​r​s​ ​a​t​t​a​c​h​é​s​ ​à​ ​c​e​ ​r​ô​l​e​ ​p​e​r​d​r​o​n​t​ ​i​m​m​é​d​i​a​t​e​m​e​n​t​ ​t​o​u​t​e​s​ ​l​e​s​ ​p​e​r​m​i​s​s​i​o​n​s​ ​a​s​s​o​c​i​é​e​s​.
 		 */
 		deleteWarning: string
 	}
@@ -967,7 +967,7 @@ type RootTranslation = {
 		 */
 		title: string
 		/**
-		 * G​é​r​e​z​ ​l​e​s​ ​c​o​m​p​t​e​s​ ​d​'​a​d​m​i​n​i​s​t​r​a​t​i​o​n​ ​e​t​ ​s​u​p​e​r​v​i​s​e​z​ ​l​e​s​ ​p​r​i​v​i​l​è​g​e​s​ ​d​'​a​c​c​è​s​ ​g​l​o​b​a​u​x​ ​à​ ​l​a​ ​p​l​a​t​e​f​o​r​m​e​.
+		 * G​é​r​e​z​ ​l​e​s​ ​c​o​m​p​t​e​s​ ​a​d​m​i​n​i​s​t​r​a​t​i​f​s​ ​e​t​ ​s​u​p​e​r​v​i​s​e​z​ ​l​e​s​ ​p​r​i​v​i​l​è​g​e​s​ ​d​'​a​c​c​è​s​ ​g​l​o​b​a​u​x​ ​à​ ​l​a​ ​p​l​a​t​e​f​o​r​m​e​.
 		 */
 		subtitle: string
 		/**
@@ -1001,7 +1001,7 @@ type RootTranslation = {
 		 */
 		none: string
 		/**
-		 * A​j​u​s​t​e​z​ ​v​o​s​ ​f​i​l​t​r​e​s​ ​d​e​ ​r​e​c​h​e​r​c​h​e​ ​p​o​u​r​ ​t​r​o​u​v​e​r​ ​l​e​ ​c​o​m​p​t​e​ ​r​e​c​h​e​r​c​h​é​.
+		 * A​j​u​s​t​e​z​ ​v​o​s​ ​f​i​l​t​r​e​s​ ​d​e​ ​r​e​c​h​e​r​c​h​e​ ​p​o​u​r​ ​t​r​o​u​v​e​r​ ​l​e​ ​c​o​m​p​t​e​ ​q​u​e​ ​v​o​u​s​ ​r​e​c​h​e​r​c​h​e​z​.
 		 */
 		noneDescription: string
 		/**
@@ -1013,15 +1013,15 @@ type RootTranslation = {
 		 */
 		neverLoggedIn: string
 		/**
-		 * H​a​b​i​l​i​t​a​t​i​o​n​s
+		 * A​u​t​o​r​i​s​a​t​i​o​n​s
 		 */
 		permissions: string
 		/**
-		 * H​a​b​i​l​i​t​a​t​i​o​n​s​ ​S​y​s​t​è​m​e
+		 * A​u​t​o​r​i​s​a​t​i​o​n​s​ ​S​y​s​t​è​m​e
 		 */
 		permissionsTitle: string
 		/**
-		 * C​o​n​f​i​g​u​r​e​z​ ​l​e​s​ ​r​ô​l​e​s​ ​d​e​ ​p​l​a​t​e​f​o​r​m​e​ ​p​o​u​r​ ​{​n​a​m​e​}
+		 * C​o​n​f​i​g​u​r​e​r​ ​l​e​s​ ​r​ô​l​e​s​ ​p​l​a​t​e​f​o​r​m​e​ ​p​o​u​r​ ​{​n​a​m​e​}
 		 * @param {unknown} name
 		 */
 		permissionsSubtitle: RequiredParams<'name'>
@@ -1075,7 +1075,7 @@ export type TranslationFunctions = {
 		 */
 		logout: () => LocalizedString
 		/**
-		 * la transparence éducative
+		 * transparence éducative
 		 */
 		tagline: () => LocalizedString
 		/**
@@ -1083,11 +1083,11 @@ export type TranslationFunctions = {
 		 */
 		requestDemo: () => LocalizedString
 		/**
-		 * Connexion
+		 * Se connecter
 		 */
 		signIn: () => LocalizedString
 		/**
-		 * Connexion avec Google
+		 * Se connecter avec Google
 		 */
 		signInWithGoogle: () => LocalizedString
 		/**
@@ -1095,7 +1095,7 @@ export type TranslationFunctions = {
 		 */
 		menuTitle: () => LocalizedString
 		/**
-		 * Explorez Yeko Platform
+		 * Explorez la plateforme Yeko
 		 */
 		menuDescription: () => LocalizedString
 	}
@@ -1105,7 +1105,7 @@ export type TranslationFunctions = {
 		 */
 		title: () => LocalizedString
 		/**
-		 * Gagnez 20+ Heures par Semaine
+		 * Gagnez plus de 20 heures par semaine
 		 */
 		subtitle: () => LocalizedString
 		/**
@@ -1118,17 +1118,17 @@ export type TranslationFunctions = {
 			 */
 			primary: () => LocalizedString
 			/**
-			 * Voir une Démo
+			 * Voir la Démo
 			 */
 			secondary: () => LocalizedString
 		}
 		features: {
 			/**
-			 * Aucune carte de crédit requise
+			 * Aucune carte bancaire requise
 			 */
 			'0': () => LocalizedString
 			/**
-			 * Installation en 5 jours
+			 * Configuration en 5 jours
 			 */
 			'1': () => LocalizedString
 			/**
@@ -1142,27 +1142,27 @@ export type TranslationFunctions = {
 			 */
 			title: () => LocalizedString
 			/**
-			 * Informations en temps réel sur la performance de votre école
+			 * Aperçu en temps réel des performances de votre école
 			 */
 			description: () => LocalizedString
 		}
 	}
 	socialProof: {
 		/**
-		 * Approuvé par les institutions éducatives à travers l'Afrique
+		 * Approuvé par des institutions éducatives à travers l'Afrique
 		 */
 		trustedBy: () => LocalizedString
 		stats: {
 			/**
-			 * Écoles partenaires
+			 * Écoles Partenaires
 			 */
 			schools: () => LocalizedString
 			/**
-			 * Étudiants actifs
+			 * Élèves Actifs
 			 */
 			students: () => LocalizedString
 			/**
-			 * Satisfaction parentale
+			 * Satisfaction Parentale
 			 */
 			satisfaction: () => LocalizedString
 			/**
@@ -1253,7 +1253,7 @@ export type TranslationFunctions = {
 		 */
 		previous: () => LocalizedString
 		/**
-		 * Soumettre
+		 * Envoyer
 		 */
 		submit: () => LocalizedString
 		/**
@@ -1417,7 +1417,7 @@ export type TranslationFunctions = {
 	}
 	errors: {
 		/**
-		 * Ce champ est requis
+		 * Ce champ est obligatoire
 		 */
 		required: () => LocalizedString
 		/**
@@ -1443,19 +1443,19 @@ export type TranslationFunctions = {
 		/**
 		 * Minimum {count} caractères
 		 */
-		minLength: (arg: { count: number }) => LocalizedString
+		minLength: (arg: { count: unknown }) => LocalizedString
 		/**
 		 * Maximum {count} caractères
 		 */
-		maxLength: (arg: { count: number }) => LocalizedString
+		maxLength: (arg: { count: unknown }) => LocalizedString
 		/**
-		 * Valeur minimale: {min}
+		 * Valeur minimale : {min}
 		 */
-		min: (arg: { min: number }) => LocalizedString
+		min: (arg: { min: unknown }) => LocalizedString
 		/**
-		 * Valeur maximale: {max}
+		 * Valeur maximale : {max}
 		 */
-		max: (arg: { max: number }) => LocalizedString
+		max: (arg: { max: unknown }) => LocalizedString
 		/**
 		 * Cette valeur existe déjà
 		 */
@@ -1501,7 +1501,7 @@ export type TranslationFunctions = {
 		 */
 		networkError: () => LocalizedString
 		/**
-		 * Délai d'attente dépassé
+		 * Délai dépassé
 		 */
 		timeout: () => LocalizedString
 		/**
@@ -1511,7 +1511,7 @@ export type TranslationFunctions = {
 	}
 	validation: {
 		/**
-		 * Ce champ est requis
+		 * Ce champ est obligatoire
 		 */
 		required: () => LocalizedString
 		/**
@@ -1549,19 +1549,19 @@ export type TranslationFunctions = {
 		/**
 		 * Minimum {count} caractères requis
 		 */
-		minLength: (arg: { count: number }) => LocalizedString
+		minLength: (arg: { count: unknown }) => LocalizedString
 		/**
 		 * Maximum {count} caractères autorisés
 		 */
-		maxLength: (arg: { count: number }) => LocalizedString
+		maxLength: (arg: { count: unknown }) => LocalizedString
 		/**
-		 * La valeur doit être au moins {min}
+		 * La valeur doit être d'au moins {min}
 		 */
-		min: (arg: { min: number }) => LocalizedString
+		min: (arg: { min: unknown }) => LocalizedString
 		/**
 		 * La valeur ne peut pas dépasser {max}
 		 */
-		max: (arg: { max: number }) => LocalizedString
+		max: (arg: { max: unknown }) => LocalizedString
 		/**
 		 * Format invalide
 		 */
@@ -1581,7 +1581,7 @@ export type TranslationFunctions = {
 	}
 	schools: {
 		/**
-		 * Gestion des écoles
+		 * Gestion des Écoles
 		 */
 		title: () => LocalizedString
 		/**
@@ -1589,23 +1589,23 @@ export type TranslationFunctions = {
 		 */
 		subtitle: () => LocalizedString
 		/**
-		 * Créer une école
+		 * Créer une École
 		 */
 		create: () => LocalizedString
 		/**
-		 * Modifier l'école
+		 * Modifier l'École
 		 */
 		edit: () => LocalizedString
 		/**
-		 * Supprimer l'école
+		 * Supprimer l'École
 		 */
 		'delete': () => LocalizedString
 		/**
-		 * Voir l'école
+		 * Voir l'École
 		 */
 		view: () => LocalizedString
 		/**
-		 * Liste des écoles
+		 * Liste des Écoles
 		 */
 		list: () => LocalizedString
 		/**
@@ -1629,11 +1629,11 @@ export type TranslationFunctions = {
 		 */
 		'import': () => LocalizedString
 		/**
-		 * Nom de l'école
+		 * Nom de l'École
 		 */
 		name: () => LocalizedString
 		/**
-		 * Code de l'école
+		 * Code de l'École
 		 */
 		code: () => LocalizedString
 		/**
@@ -1665,7 +1665,7 @@ export type TranslationFunctions = {
 		 */
 		foundedYear: () => LocalizedString
 		/**
-		 * Nombre d'étudiants
+		 * Nombre d'élèves
 		 */
 		studentCount: () => LocalizedString
 		/**
@@ -1689,7 +1689,7 @@ export type TranslationFunctions = {
 		 */
 		createdAt: () => LocalizedString
 		/**
-		 * Mis à jour le
+		 * Modifié le
 		 */
 		updatedAt: () => LocalizedString
 		/**
@@ -1723,68 +1723,68 @@ export type TranslationFunctions = {
 	}
 	demoRequest: {
 		/**
-		 * Demander une démo
+		 * Demander une Démo
 		 */
 		title: () => LocalizedString
 		/**
-		 * Découvrez comment Yeko peut transformer votre établissement
+		 * Découvrez comment Yeko peut transformer votre institution
 		 */
 		subtitle: () => LocalizedString
 		form: {
 			/**
-			 * Nom complet
+			 * Nom Complet
 			 */
 			name: () => LocalizedString
 			/**
-			 * Adresse email
+			 * Adresse Email
 			 */
 			email: () => LocalizedString
 			/**
-			 * Numéro de téléphone
+			 * Numéro de Téléphone
 			 */
 			phone: () => LocalizedString
 			/**
-			 * Nom de l'école / organisation
+			 * Nom de l'École/Organisation
 			 */
 			schoolName: () => LocalizedString
 			/**
-			 * Type d'établissement
+			 * Type d'Établissement
 			 */
 			schoolType: () => LocalizedString
 			/**
-			 * Votre rôle
+			 * Votre Rôle
 			 */
 			role: () => LocalizedString
 			/**
-			 * Nombre d'élèves
+			 * Nombre d'Élèves
 			 */
 			studentsCount: () => LocalizedString
 			/**
-			 * Informations complémentaires
+			 * Informations Complémentaires
 			 */
 			message: () => LocalizedString
 			/**
-			 * Demander une démo
+			 * Demander une Démo
 			 */
 			submit: () => LocalizedString
 			/**
-			 * Demande de démo reçue !
+			 * Demande de Démo Reçue !
 			 */
 			success: () => LocalizedString
 			/**
-			 * Merci de votre intérêt pour Yeko ! Notre équipe vous contactera sous 24 heures pour planifier votre démonstration personnalisée.
+			 * Merci de votre intérêt pour Yeko ! Notre équipe vous contactera sous 24 heures pour planifier votre démo personnalisée.
 			 */
 			successDescription: () => LocalizedString
 			/**
-			 * Nous avons envoyé un e-mail de confirmation à {email}.
+			 * Nous avons envoyé un email de confirmation à {email}.
 			 */
 			confirmationEmail: (arg: { email: unknown }) => LocalizedString
 			/**
-			 * Que se passe-t-il ensuite ?
+			 * Quelle est la suite ?
 			 */
 			whatNext: () => LocalizedString
 			/**
-			 * Notre équipe examinera votre demande et vous contactera dans les 24 heures pour planifier une démonstration personnalisée adaptée aux besoins de votre institution.
+			 * Notre équipe examinera votre demande et vous contactera sous 24 heures pour planifier une démonstration personnalisée adaptée aux besoins de votre établissement.
 			 */
 			whatNextDescription: () => LocalizedString
 		}
@@ -1794,7 +1794,7 @@ export type TranslationFunctions = {
 			 */
 			primary: () => LocalizedString
 			/**
-			 * Lycée / Collège
+			 * Collège / Lycée
 			 */
 			secondary: () => LocalizedString
 			/**
@@ -1812,7 +1812,7 @@ export type TranslationFunctions = {
 		}
 		roles: {
 			/**
-			 * Directeur / Principal
+			 * Directeur / Chef d'établissement
 			 */
 			principal: () => LocalizedString
 			/**
@@ -1886,15 +1886,15 @@ export type TranslationFunctions = {
 			 */
 			category: () => LocalizedString
 			/**
-			 * Toutes catégories
+			 * Toutes les catégories
 			 */
 			allCategories: () => LocalizedString
 			/**
-			 * Créer une matière
+			 * Créer une Matière
 			 */
 			create: () => LocalizedString
 			/**
-			 * Modifier la matière
+			 * Modifier la Matière
 			 */
 			edit: () => LocalizedString
 			/**
@@ -1933,7 +1933,7 @@ export type TranslationFunctions = {
 		 */
 		'delete': () => LocalizedString
 		/**
-		 * Nom du rôle
+		 * Nom du Rôle
 		 */
 		name: () => LocalizedString
 		/**
@@ -1945,11 +1945,11 @@ export type TranslationFunctions = {
 		 */
 		description: () => LocalizedString
 		/**
-		 * Périmètre (Scope)
+		 * Portée
 		 */
 		scope: () => LocalizedString
 		/**
-		 * Matrice des Permissions
+		 * Matrice de Permissions
 		 */
 		permissions: () => LocalizedString
 		/**
@@ -1973,7 +1973,7 @@ export type TranslationFunctions = {
 		 */
 		deleteDescription: (arg: { name: unknown }) => LocalizedString
 		/**
-		 * Attention : Cette action est irréversible. Tous les utilisateurs rattachés à ce rôle perdront immédiatement l'intégralité de leurs permissions associées.
+		 * Attention : Cette action est irréversible. Tous les utilisateurs attachés à ce rôle perdront immédiatement toutes les permissions associées.
 		 */
 		deleteWarning: () => LocalizedString
 	}
@@ -1983,7 +1983,7 @@ export type TranslationFunctions = {
 		 */
 		title: () => LocalizedString
 		/**
-		 * Gérez les comptes d'administration et supervisez les privilèges d'accès globaux à la plateforme.
+		 * Gérez les comptes administratifs et supervisez les privilèges d'accès globaux à la plateforme.
 		 */
 		subtitle: () => LocalizedString
 		/**
@@ -2017,7 +2017,7 @@ export type TranslationFunctions = {
 		 */
 		none: () => LocalizedString
 		/**
-		 * Ajustez vos filtres de recherche pour trouver le compte recherché.
+		 * Ajustez vos filtres de recherche pour trouver le compte que vous recherchez.
 		 */
 		noneDescription: () => LocalizedString
 		/**
@@ -2029,15 +2029,15 @@ export type TranslationFunctions = {
 		 */
 		neverLoggedIn: () => LocalizedString
 		/**
-		 * Habilitations
+		 * Autorisations
 		 */
 		permissions: () => LocalizedString
 		/**
-		 * Habilitations Système
+		 * Autorisations Système
 		 */
 		permissionsTitle: () => LocalizedString
 		/**
-		 * Configurez les rôles de plateforme pour {name}
+		 * Configurer les rôles plateforme pour {name}
 		 */
 		permissionsSubtitle: (arg: { name: unknown }) => LocalizedString
 		/**

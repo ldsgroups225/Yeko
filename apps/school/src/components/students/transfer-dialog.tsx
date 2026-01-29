@@ -67,10 +67,12 @@ export function TransferDialog({
   const t = useTranslations()
   const queryClient = useQueryClient()
 
-  const { data: classesData, isLoading: classesLoading } = useQuery({
+  const { data: classesResult, isLoading: classesLoading } = useQuery({
     ...classesOptions.list({ schoolYearId }),
     enabled: open && !!schoolYearId,
   })
+
+  const classesData = classesResult?.success ? classesResult.data : []
 
   const form = useForm<TransferFormData>({
     resolver: zodResolver(transferSchema),

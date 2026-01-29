@@ -11,9 +11,11 @@
 import * as dataOps from '@repo/data-ops'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { ok } from 'neverthrow'
 import * as React from 'react'
-
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+
+const mockOk = (val: any) => ok(val)
 
 // Mock data-ops
 vi.mock('@repo/data-ops', () => ({
@@ -57,7 +59,7 @@ describe('e2E: Program Management Workflows', () => {
         chapters: [],
       }
 
-      vi.mocked(dataOps.createProgramTemplate).mockResolvedValue(newProgram as any)
+      vi.mocked(dataOps.createProgramTemplate).mockResolvedValue(mockOk(newProgram) as any)
 
       const ProgramCreatePage = () => {
         const [formData, setFormData] = React.useState({
@@ -236,14 +238,15 @@ describe('e2E: Program Management Workflows', () => {
         version: 2,
       }
 
-      vi.mocked(dataOps.publishProgram).mockResolvedValue(publishedProgram as any)
+      vi.mocked(dataOps.publishProgram).mockResolvedValue(mockOk(publishedProgram) as any)
 
       const ProgramDetailsPage = () => {
         const [program, setProgram] = React.useState(draftProgram)
 
         const handlePublish = async () => {
-          const published = await dataOps.publishProgram('prog-1')
-          setProgram(published as any)
+          const result = await dataOps.publishProgram('prog-1')
+          if (result.isOk())
+            setProgram(result.value as any)
         }
 
         return (
@@ -296,19 +299,22 @@ describe('e2E: Program Management Workflows', () => {
         { id: 'v3', version: 3, createdAt: new Date('2024-03-01'), status: 'draft' },
       ]
 
-      vi.mocked(dataOps.getProgramVersions).mockResolvedValue(versions as any)
-      vi.mocked(dataOps.restoreProgramVersion).mockResolvedValue({
+      vi.mocked(dataOps.getProgramVersions).mockResolvedValue(mockOk(versions) as any)
+      vi.mocked(dataOps.restoreProgramVersion).mockResolvedValue(mockOk({
         id: 'prog-1',
         version: 4,
         status: 'draft',
-      } as any)
+      }) as any)
 
       const ProgramVersionHistory = () => {
         const [versions, setVersions] = React.useState<any[]>([])
         const [currentVersion, setCurrentVersion] = React.useState(3)
 
         React.useEffect(() => {
-          dataOps.getProgramVersions('prog-1').then(setVersions)
+          dataOps.getProgramVersions('prog-1').then((res: any) => {
+            if (res.isOk())
+              setVersions(res.value)
+          })
         }, [])
 
         const handleRestore = async (versionId: string) => {
@@ -391,7 +397,7 @@ describe('e2E: Program Management Workflows', () => {
         ],
       }
 
-      vi.mocked(dataOps.cloneProgramTemplate).mockResolvedValue(clonedProgram as any)
+      vi.mocked(dataOps.cloneProgramTemplate).mockResolvedValue(mockOk(clonedProgram) as any)
 
       const ProgramClonePage = () => {
         const [program] = React.useState(originalProgram)
@@ -400,7 +406,8 @@ describe('e2E: Program Management Workflows', () => {
 
         const handleClone = async () => {
           const result = await dataOps.cloneProgramTemplate('prog-1', targetYear, 'Math Program 2024')
-          setCloned(result)
+          if (result.isOk())
+            setCloned(result.value)
         }
 
         return (
@@ -493,15 +500,15 @@ describe('e2E: Coefficient Management Workflows', () => {
         { id: 'c2', subjectId: 's2', gradeId: 'g1', weight: 2 },
       ]
 
-      vi.mocked(dataOps.getCoefficientTemplates).mockResolvedValue({
+      vi.mocked(dataOps.getCoefficientTemplates).mockResolvedValue(mockOk({
         coefficients: mockCoefficients,
         pagination: { total: 2, page: 1, limit: 100, totalPages: 1 },
-      } as any)
+      }) as any)
 
-      vi.mocked(dataOps.updateCoefficientTemplate).mockResolvedValue({
+      vi.mocked(dataOps.updateCoefficientTemplate).mockResolvedValue(mockOk({
         id: 'c1',
         weight: 4,
-      } as any)
+      }) as any)
 
       const CoefficientsMatrix = () => {
         const [coefficients, setCoefficients] = React.useState<any[]>([])
@@ -509,8 +516,9 @@ describe('e2E: Coefficient Management Workflows', () => {
         const [editValue, setEditValue] = React.useState(0)
 
         React.useEffect(() => {
-          dataOps.getCoefficientTemplates({ schoolYearTemplateId: 'year-1' }).then((result: any) => {
-            setCoefficients(result.coefficients)
+          dataOps.getCoefficientTemplates({ schoolYearTemplateId: 'year-1' }).then((res: any) => {
+            if (res.isOk())
+              setCoefficients(res.value.coefficients)
           })
         }, [])
 
@@ -520,9 +528,12 @@ describe('e2E: Coefficient Management Workflows', () => {
         }
 
         const saveEdit = async (id: string) => {
-          const updated = await dataOps.updateCoefficientTemplate(id, { weight: editValue })
-          setCoefficients(coefficients.map(c => c.id === id ? { ...c, weight: updated.weight } : c))
-          setEditingId(null)
+          const result = await dataOps.updateCoefficientTemplate(id, { weight: editValue })
+          if (result.isOk()) {
+            const updated = result.value
+            setCoefficients(coefficients.map(c => c.id === id ? { ...c, weight: updated.weight } : c))
+            setEditingId(null)
+          }
         }
 
         return (
@@ -608,12 +619,12 @@ describe('e2E: Coefficient Management Workflows', () => {
         { id: 'c2', subjectId: 's2', gradeId: 'g1', weight: 2 },
       ]
 
-      vi.mocked(dataOps.getCoefficientTemplates).mockResolvedValue({
+      vi.mocked(dataOps.getCoefficientTemplates).mockResolvedValue(mockOk({
         coefficients: mockCoefficients,
         pagination: { total: 2, page: 1, limit: 100, totalPages: 1 },
-      } as any)
+      }) as any)
 
-      vi.mocked(dataOps.bulkUpdateCoefficients).mockResolvedValue(undefined)
+      vi.mocked(dataOps.bulkUpdateCoefficients).mockResolvedValue(mockOk(undefined) as any)
 
       const BulkEditCoefficients = () => {
         const [coefficients, setCoefficients] = React.useState<any[]>([])
@@ -621,8 +632,9 @@ describe('e2E: Coefficient Management Workflows', () => {
         const [updates, setUpdates] = React.useState<Record<string, number>>({})
 
         React.useEffect(() => {
-          dataOps.getCoefficientTemplates({ schoolYearTemplateId: 'year-1' }).then((result: any) => {
-            setCoefficients(result.coefficients)
+          dataOps.getCoefficientTemplates({ schoolYearTemplateId: 'year-1' }).then((res: any) => {
+            if (res.isOk())
+              setCoefficients(res.value.coefficients)
           })
         }, [])
 
@@ -716,7 +728,7 @@ describe('e2E: Coefficient Management Workflows', () => {
         { id: 'new-c2', subjectId: 's2', gradeId: 'g1', weight: 2, schoolYearTemplateId: 'year-2024' },
       ]
 
-      vi.mocked(dataOps.copyCoefficientTemplates).mockResolvedValue(copiedCoefficients as any)
+      vi.mocked(dataOps.copyCoefficientTemplates).mockResolvedValue(mockOk(copiedCoefficients) as any)
 
       const CopyCoefficientsPage = () => {
         const [sourceYear, setSourceYear] = React.useState('')
@@ -725,7 +737,8 @@ describe('e2E: Coefficient Management Workflows', () => {
 
         const handleCopy = async () => {
           const result = await dataOps.copyCoefficientTemplates(sourceYear, targetYear)
-          setCopied(result)
+          if (result.isOk())
+            setCopied(result.value)
         }
 
         return (

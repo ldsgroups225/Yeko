@@ -32,7 +32,7 @@ const classSchema = z.object({
 })
 
 type ClassFormData = z.infer<typeof classSchema>
-type ClassInfo = Awaited<ReturnType<typeof getClasses>>[number]
+type ClassInfo = Extract<Awaited<ReturnType<typeof getClasses>>, { success: true }>['data'][number]
 
 interface ClassFormProps {
   classData?: ClassInfo
@@ -45,33 +45,39 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
   const isEditing = !!classData
   const { schoolYearId } = useSchoolYearContext()
 
-  const { data: schoolYears } = useQuery({
+  const { data: schoolYearsResult } = useQuery({
     queryKey: ['school-years'],
     queryFn: () => getSchoolYears(),
   })
 
+  const schoolYears = schoolYearsResult?.success ? schoolYearsResult.data : []
+
   // Find the current school year from context or use the first one
   const currentSchoolYear = schoolYears?.find(sy => sy.id === schoolYearId) || schoolYears?.[0]
 
-  const { data: grades } = useSuspenseQuery({
+  const { data: gradesResult } = useSuspenseQuery({
     queryKey: ['grades'],
     queryFn: () => getGrades({ data: {} }),
   })
+  const grades = gradesResult.success ? gradesResult.data : []
 
-  const { data: series } = useSuspenseQuery({
+  const { data: seriesResult } = useSuspenseQuery({
     queryKey: ['series'],
     queryFn: () => getSeries({ data: {} }),
   })
+  const series = seriesResult.success ? seriesResult.data : []
 
-  const { data: classrooms } = useSuspenseQuery({
+  const { data: classroomsResult } = useSuspenseQuery({
     queryKey: ['classrooms'],
     queryFn: () => getClassrooms({ data: {} }),
   })
+  const classrooms = classroomsResult.success ? classroomsResult.data : []
 
-  const { data: teachersData } = useSuspenseQuery({
+  const { data: teachersResult } = useSuspenseQuery({
     queryKey: ['teachers'],
     queryFn: () => getTeachers({ data: {} }),
   })
+  const teachersData = teachersResult.success ? teachersResult.data : { teachers: [] }
 
   const defaultSchoolYearId = classData?.class.schoolYearId || schoolYearId || currentSchoolYear?.id || ''
 
@@ -241,12 +247,12 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
               <SelectValue placeholder={t.classes.selectClassroom()}>
                 {watch('classroomId')
                   ? (() => {
-                      const c = classrooms.find(cr => cr.classroom.id === watch('classroomId'))
+                      const c = classrooms.find(cr => cr.id === watch('classroomId'))
                       return c
                         ? (
                             <div className="flex items-center gap-2">
-                              <span>{c.classroom.name}</span>
-                              <Badge variant="outline" className="text-[10px] bg-white/5 border-white/10">{c.classroom.code}</Badge>
+                              <span>{c.name}</span>
+                              <Badge variant="outline" className="text-[10px] bg-white/5 border-white/10">{c.code}</Badge>
                             </div>
                           )
                         : null
@@ -257,10 +263,10 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
             <SelectContent className="backdrop-blur-xl bg-card/95 border-white/10">
               <SelectItem value="__none__">{t.common.none()}</SelectItem>
               {classrooms.map(c => (
-                <SelectItem key={c.classroom.id} value={c.classroom.id}>
+                <SelectItem key={c.id} value={c.id}>
                   <div className="flex items-center justify-between w-full gap-2">
-                    <span>{c.classroom.name}</span>
-                    <Badge variant="outline" className="text-[10px] bg-white/5 border-white/10">{c.classroom.code}</Badge>
+                    <span>{c.name}</span>
+                    <Badge variant="outline" className="text-[10px] bg-white/5 border-white/10">{c.code}</Badge>
                   </div>
                 </SelectItem>
               ))}

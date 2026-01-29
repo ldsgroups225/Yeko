@@ -16,8 +16,6 @@ import {
   updateCoefficientTemplate,
 } from '../queries/coefficients'
 import { createSchoolYearTemplate } from '../queries/programs'
-import { createSchoolYear } from '../queries/school-admin/school-years'
-import { createSchool } from '../queries/schools'
 import './setup'
 
 describe('coefficient queries', () => {

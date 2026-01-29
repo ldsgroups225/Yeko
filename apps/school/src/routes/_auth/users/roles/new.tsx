@@ -15,14 +15,13 @@ function NewRolePage() {
   const navigate = useNavigate()
 
   const handleSubmit = async (data: CreateRoleData) => {
-    try {
-      const result = await createNewRole({ data })
+    const result = await createNewRole({ data })
+    if (result.success) {
       toast.success(t.hr.roles.createSuccess())
-      navigate({ to: '/users/roles/$roleId', params: { roleId: result?.id ?? '' } })
+      navigate({ to: '/users/roles/$roleId', params: { roleId: result.data?.id ?? '' } })
     }
-    catch (error) {
-      toast.error(t.hr.roles.createError())
-      throw error
+    else {
+      toast.error(result.error || t.hr.roles.createError())
     }
   }
 

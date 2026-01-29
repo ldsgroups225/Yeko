@@ -36,6 +36,7 @@ export const createHomework = createServerFn()
       return {
         success: false,
         error: homeworkResult.error.message,
+        code: homeworkResult.error.details?.code as string | undefined,
       }
     }
 
@@ -151,6 +152,7 @@ export const updateHomework = createServerFn()
       return {
         success: false,
         error: updatedResult.error.message,
+        code: updatedResult.error.details?.code as string | undefined,
       }
     }
 
@@ -177,6 +179,7 @@ export const deleteHomework = createServerFn()
       return {
         success: false,
         error: result.error.message,
+        code: result.error.details?.code as string | undefined,
       }
     }
 

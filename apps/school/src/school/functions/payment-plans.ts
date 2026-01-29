@@ -1,4 +1,3 @@
-import type { ServerContext } from '../lib/server-fn'
 import {
   cancelPaymentPlan,
   createPaymentPlanFromTemplate,
@@ -15,27 +14,26 @@ import {
   setDefaultPaymentPlanTemplate,
   updatePaymentPlanTemplate,
 } from '@repo/data-ops'
-import { DatabaseError } from '@repo/data-ops/errors'
 import { ResultAsync } from 'neverthrow'
 import { z } from 'zod'
 import { createPaymentPlanFromTemplateSchema, createPaymentPlanTemplateSchema, updatePaymentPlanTemplateSchema } from '@/schemas/payment-plan'
-import { createAuthenticatedServerFn } from '../lib/server-fn'
+import { authServerFn } from '../lib/server-fn'
 
 // ============ PAYMENT PLAN TEMPLATES ============
 
 /**
  * Get payment plan templates
  */
-export const getPaymentPlanTemplatesList = createAuthenticatedServerFn()
+export const getPaymentPlanTemplatesList = authServerFn
   .inputValidator(z.object({ schoolYearId: z.string().optional(), includeInactive: z.boolean().optional() }).optional())
   .handler(async ({ data: filters, context }) => {
-    const { school, schoolYear } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
+    const { school, schoolYear } = context
     const schoolYearId = filters?.schoolYearId || schoolYear?.schoolYearId
     if (!schoolYearId)
-      throw new DatabaseError('VALIDATION_ERROR', 'No school year context')
+      return { success: false as const, error: 'Année scolaire non sélectionnée' }
 
     const result = await getPaymentPlanTemplates({
       schoolId: school.schoolId,
@@ -52,16 +50,16 @@ export const getPaymentPlanTemplatesList = createAuthenticatedServerFn()
 /**
  * Get default payment plan template
  */
-export const getDefaultTemplate = createAuthenticatedServerFn()
+export const getDefaultTemplate = authServerFn
   .inputValidator(z.object({ schoolYearId: z.string().optional() }).optional())
   .handler(async ({ data, context }) => {
-    const { school, schoolYear } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
+    const { school, schoolYear } = context
     const schoolYearId = data?.schoolYearId || schoolYear?.schoolYearId
     if (!schoolYearId)
-      throw new DatabaseError('VALIDATION_ERROR', 'No school year context')
+      return { success: false as const, error: 'Année scolaire non sélectionnée' }
 
     const result = await getDefaultPaymentPlanTemplate(school.schoolId, schoolYearId)
 
@@ -74,7 +72,7 @@ export const getDefaultTemplate = createAuthenticatedServerFn()
 /**
  * Get single template
  */
-export const getPaymentPlanTemplate = createAuthenticatedServerFn()
+export const getPaymentPlanTemplate = authServerFn
   .inputValidator(z.string())
   .handler(async ({ data: templateId }) => {
     const result = await getPaymentPlanTemplateById(templateId)
@@ -88,15 +86,14 @@ export const getPaymentPlanTemplate = createAuthenticatedServerFn()
 /**
  * Create payment plan template
  */
-export const createNewPaymentPlanTemplate = createAuthenticatedServerFn()
+export const createNewPaymentPlanTemplate = authServerFn
   .inputValidator(createPaymentPlanTemplateSchema)
   .handler(async ({ data, context }) => {
-    const { school } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await createPaymentPlanTemplate({
-      schoolId: school.schoolId,
+      schoolId: context.school.schoolId,
       ...data,
     })
 
@@ -109,7 +106,7 @@ export const createNewPaymentPlanTemplate = createAuthenticatedServerFn()
 /**
  * Update payment plan template
  */
-export const updateExistingPaymentPlanTemplate = createAuthenticatedServerFn()
+export const updateExistingPaymentPlanTemplate = authServerFn
   .inputValidator(updatePaymentPlanTemplateSchema)
   .handler(async ({ data }) => {
     const { id, ...updateData } = data
@@ -124,21 +121,21 @@ export const updateExistingPaymentPlanTemplate = createAuthenticatedServerFn()
 /**
  * Set default template
  */
-export const setDefaultTemplate = createAuthenticatedServerFn()
+export const setDefaultTemplate = authServerFn
   .inputValidator(z.object({ templateId: z.string(), schoolYearId: z.string().optional() }))
   .handler(async ({ data, context }) => {
-    const { school, schoolYear } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
+    const { school, schoolYear } = context
     const schoolYearId = data.schoolYearId || schoolYear?.schoolYearId
     if (!schoolYearId)
-      throw new DatabaseError('VALIDATION_ERROR', 'No school year context')
+      return { success: false as const, error: 'Année scolaire non sélectionnée' }
 
     const result = await setDefaultPaymentPlanTemplate(school.schoolId, schoolYearId, data.templateId)
 
     return result.match(
-      () => ({ success: true as const }),
+      () => ({ success: true as const, data: { success: true } }),
       error => ({ success: false as const, error: error.message }),
     )
   })
@@ -146,13 +143,13 @@ export const setDefaultTemplate = createAuthenticatedServerFn()
 /**
  * Delete template
  */
-export const deleteExistingPaymentPlanTemplate = createAuthenticatedServerFn()
+export const deleteExistingPaymentPlanTemplate = authServerFn
   .inputValidator(z.string())
   .handler(async ({ data: templateId }) => {
     const result = await deletePaymentPlanTemplate(templateId)
 
     return result.match(
-      () => ({ success: true as const }),
+      () => ({ success: true as const, data: { success: true } }),
       error => ({ success: false as const, error: error.message }),
     )
   })
@@ -162,20 +159,20 @@ export const deleteExistingPaymentPlanTemplate = createAuthenticatedServerFn()
 /**
  * Get payment plans
  */
-export const getPaymentPlansList = createAuthenticatedServerFn()
+export const getPaymentPlansList = authServerFn
   .inputValidator(z.object({
     schoolYearId: z.string().optional(),
     studentId: z.string().optional(),
     status: z.enum(['active', 'completed', 'defaulted', 'cancelled']).optional(),
   }).optional())
   .handler(async ({ data: filters, context }) => {
-    const { school, schoolYear } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
+    const { schoolYear } = context
     const schoolYearId = filters?.schoolYearId || schoolYear?.schoolYearId
     if (!schoolYearId)
-      throw new DatabaseError('VALIDATION_ERROR', 'No school year context')
+      return { success: false as const, error: 'Année scolaire non sélectionnée' }
 
     const result = await getPaymentPlans({
       schoolYearId,
@@ -191,16 +188,16 @@ export const getPaymentPlansList = createAuthenticatedServerFn()
 /**
  * Get payment plan for student
  */
-export const getStudentPaymentPlan = createAuthenticatedServerFn()
+export const getStudentPaymentPlan = authServerFn
   .inputValidator(z.object({ studentId: z.string(), schoolYearId: z.string().optional() }))
   .handler(async ({ data, context }) => {
-    const { school, schoolYear } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
+    const { schoolYear } = context
     const schoolYearId = data.schoolYearId || schoolYear?.schoolYearId
     if (!schoolYearId)
-      throw new DatabaseError('VALIDATION_ERROR', 'No school year context')
+      return { success: false as const, error: 'Année scolaire non sélectionnée' }
 
     const result = await getPaymentPlanForStudent(data.studentId, schoolYearId)
 
@@ -213,7 +210,7 @@ export const getStudentPaymentPlan = createAuthenticatedServerFn()
 /**
  * Get payment plan with installments
  */
-export const getPaymentPlanWithInstallments = createAuthenticatedServerFn()
+export const getPaymentPlanWithInstallments = authServerFn
   .inputValidator(z.string())
   .handler(async ({ data: paymentPlanId }) => {
     const result = await ResultAsync.combine([
@@ -230,16 +227,15 @@ export const getPaymentPlanWithInstallments = createAuthenticatedServerFn()
 /**
  * Create payment plan from template
  */
-export const createStudentPaymentPlan = createAuthenticatedServerFn()
+export const createStudentPaymentPlan = authServerFn
   .inputValidator(createPaymentPlanFromTemplateSchema)
   .handler(async ({ data, context }) => {
-    const { school } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await createPaymentPlanFromTemplate({
       ...data,
-      createdBy: school.userId,
+      createdBy: context.school.userId,
     })
 
     return result.match(
@@ -251,7 +247,7 @@ export const createStudentPaymentPlan = createAuthenticatedServerFn()
 /**
  * Cancel payment plan
  */
-export const cancelStudentPaymentPlan = createAuthenticatedServerFn()
+export const cancelStudentPaymentPlan = authServerFn
   .inputValidator(z.string())
   .handler(async ({ data: paymentPlanId }) => {
     const result = await cancelPaymentPlan(paymentPlanId)
@@ -265,16 +261,16 @@ export const cancelStudentPaymentPlan = createAuthenticatedServerFn()
 /**
  * Get payment plans summary
  */
-export const getPaymentPlansSummaryData = createAuthenticatedServerFn()
+export const getPaymentPlansSummaryData = authServerFn
   .inputValidator(z.object({ schoolYearId: z.string().optional() }).optional())
   .handler(async ({ data, context }) => {
-    const { school, schoolYear } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
+    const { schoolYear } = context
     const schoolYearId = data?.schoolYearId || schoolYear?.schoolYearId
     if (!schoolYearId)
-      throw new DatabaseError('VALIDATION_ERROR', 'No school year context')
+      return { success: false as const, error: 'Année scolaire non sélectionnée' }
 
     const result = await getPaymentPlansSummary(schoolYearId)
 

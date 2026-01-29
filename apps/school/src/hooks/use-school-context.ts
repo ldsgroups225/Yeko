@@ -25,7 +25,7 @@ export function useSchoolContext() {
   })
 
   return {
-    schoolId: context?.schoolId ?? null,
+    schoolId: context?.success ? context.data?.schoolId ?? null : null,
     isLoading,
     switchSchool: switchSchool.mutate,
     isSwitching: switchSchool.isPending,

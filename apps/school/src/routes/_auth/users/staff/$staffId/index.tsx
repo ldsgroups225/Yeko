@@ -32,11 +32,13 @@ function StaffDetailPage() {
   const { staffId } = Route.useParams()
   const staffData = Route.useLoaderData()
 
-  const { data: staff } = useSuspenseQuery({
+  const { data: staffResult } = useSuspenseQuery({
     queryKey: ['staff', staffId],
     queryFn: () => getStaffMember({ data: staffId }),
     initialData: staffData,
   })
+
+  const staff = staffResult?.success ? staffResult.data : null
 
   if (!staff) {
     return <div>{t.hr.staff.notFound()}</div>

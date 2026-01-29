@@ -103,6 +103,10 @@ export function FeeStructureFormDialog({
     queryFn: () => getSeries({ data: {} }),
   })
 
+  const feeTypeList = feeTypes || []
+  const gradesList = grades?.success ? grades.data : []
+  const seriesList = series?.success ? series.data : []
+
   const form = useForm<FeeStructureFormData>({
     resolver: zodResolver(feeStructureFormSchema),
     defaultValues: {
@@ -150,8 +154,8 @@ export function FeeStructureFormDialog({
   const isEditing = !!initialData
 
   // Get selected fee type for display
-  const selectedFeeType = feeTypes?.find(
-    ft => ft.id === form.watch('feeTypeId'),
+  const selectedFeeType = feeTypeList.find(
+    (ft: { id: string }) => ft.id === form.watch('feeTypeId'),
   )
 
   const mutation = useMutation({
@@ -295,7 +299,7 @@ export function FeeStructureFormDialog({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">
-                      {feeTypes?.map(ft => (
+                      {feeTypeList?.map(ft => (
                         <SelectItem
                           key={ft.id}
                           value={ft.id}
@@ -339,7 +343,7 @@ export function FeeStructureFormDialog({
                         <SelectItem value="all">
                           {t.finance.feeStructures.allLevels()}
                         </SelectItem>
-                        {grades?.map(g => (
+                        {gradesList?.map(g => (
                           <SelectItem key={g.id} value={g.id}>
                             {g.name}
                           </SelectItem>
@@ -370,7 +374,7 @@ export function FeeStructureFormDialog({
                       </FormControl>
                       <SelectContent className="rounded-xl backdrop-blur-xl">
                         <SelectItem value="all">Toutes les séries</SelectItem>
-                        {series?.map(s => (
+                        {seriesList.map((s: { id: string, name: string }) => (
                           <SelectItem key={s.id} value={s.id}>
                             {s.name}
                           </SelectItem>

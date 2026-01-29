@@ -31,22 +31,25 @@ function GradeStatisticsPage() {
   const [selectedClassId, setSelectedClassId] = useState<string>('')
   const [selectedTermId, setSelectedTermId] = useState<string>('')
 
-  const { data: classesData, isLoading: classesLoading } = useQuery(
+  const { data: classesResult, isLoading: classesLoading } = useQuery(
     classesOptions.list({ schoolYearId: schoolYearId ?? undefined, status: 'active' }),
   )
+  const classesData = classesResult?.success ? classesResult.data : []
 
-  const { data: termsData, isLoading: termsLoading } = useQuery(
+  const { data: termsResult, isLoading: termsLoading } = useQuery(
     termsOptions.list(schoolYearId ?? ''),
   )
+  const termsData = termsResult?.success ? termsResult.data : []
 
   const canFetchStats = selectedClassId && selectedTermId
-  const { data: statisticsData, isLoading: statsLoading } = useQuery({
+  const { data: statisticsResult, isLoading: statsLoading } = useQuery({
     ...gradesOptions.statistics({
       classId: selectedClassId,
       termId: selectedTermId,
     }),
     enabled: !!canFetchStats,
   })
+  const statisticsData = statisticsResult?.success ? statisticsResult.data : []
 
   // Transform statistics for display
   const statistics = statisticsData?.[0] ?? {

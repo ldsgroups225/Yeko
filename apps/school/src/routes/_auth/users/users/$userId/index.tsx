@@ -38,21 +38,23 @@ function UserDetailsPage() {
   const queryClient = useQueryClient()
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
-  const { data: user, isLoading } = useQuery({
+  const { data: userResult, isLoading } = useQuery({
     queryKey: ['user', userId],
     queryFn: async () => {
       const result = await getUser({ data: userId })
       return result
     },
   })
+  const user = userResult?.success ? userResult.data : null
 
-  const { data: activity } = useQuery({
+  const { data: activityResult } = useQuery({
     queryKey: ['user-activity', userId],
     queryFn: async () => {
       const result = await getUserActivity({ data: { userId, limit: 20 } })
       return result
     },
   })
+  const activity = activityResult?.success ? activityResult.data : []
 
   const deleteMutation = useMutation({
     mutationFn: async () => {

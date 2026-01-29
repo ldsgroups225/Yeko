@@ -5,85 +5,91 @@ import {
 } from '@repo/data-ops'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import { getSchoolSubjects } from '@repo/data-ops/queries/school-subjects'
-import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 import { assignSubjectsSchema } from '../../schemas/teacher-subject'
+import { authServerFn } from '../lib/server-fn'
 import { requirePermission } from '../middleware/permissions'
-import { getSchoolContext } from '../middleware/school-context'
 
-export const getTeacherAssignments = createServerFn()
+export const getTeacherAssignments = authServerFn
   .inputValidator(z.object({ teacherId: z.string() }))
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
     await requirePermission('teachers', 'view')
-    return getTeacherSubjects(data.teacherId)
+    const result = await getTeacherSubjects(data.teacherId)
+    return { success: true as const, data: result }
   })
 
-export const getAvailableSubjectsForTeacher = createServerFn()
+export const getAvailableSubjectsForTeacher = authServerFn
   .inputValidator(z.object({ teacherId: z.string(), schoolYearId: z.string() }))
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    const { schoolId } = context.school
     await requirePermission('teachers', 'view')
 
     // Get all school subjects
-    const allSubjectsResult = await getSchoolSubjects({
-      schoolId: context.schoolId,
+    return (await getSchoolSubjects({
+      schoolId,
       schoolYearId: data.schoolYearId,
-    })
+    })).match(
+      async (allSubjectsData) => {
+        // Get currently assigned subjects
+        const assigned = await getTeacherSubjects(data.teacherId)
+        const assignedIds = new Set(assigned.map(a => a.subjectId))
 
-    // Get currently assigned subjects
-    const assigned = await getTeacherSubjects(data.teacherId)
-    const assignedIds = new Set(assigned.map(a => a.subjectId))
-
-    // Return only those not yet assigned
-    // allSubjectsResult.subjects is the array
-    return allSubjectsResult.subjects.filter(s => !assignedIds.has(s.subjectId))
+        // Return only those not yet assigned
+        const filteredSubjects = allSubjectsData.subjects.filter(s => !assignedIds.has(s.subjectId))
+        return { success: true as const, data: filteredSubjects }
+      },
+      _ => ({ success: false as const, error: 'Erreur lors de la récupération des matières disponibles' }),
+    )
   })
 
-export const saveTeacherAssignments = createServerFn()
+export const saveTeacherAssignments = authServerFn
   .inputValidator(assignSubjectsSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    const { schoolId, userId } = context.school
     await requirePermission('teachers', 'edit')
 
     const result = await assignSubjectsToTeacher(data.teacherId, data.subjectIds)
 
     await createAuditLog({
-      schoolId: context.schoolId,
-      userId: context.userId,
+      schoolId,
+      userId,
       action: 'create',
-      tableName: 'teacher_subjects', // Using table name consistent with schema
+      tableName: 'teacher_subjects',
       recordId: 'bulk',
-      newValues: { teacherId: data.teacherId, count: data.subjectIds.length },
+      newValues: { count: data.subjectIds.length },
     })
 
-    return result
+    return { success: true as const, data: result }
   })
 
-export const removeTeacherAssignment = createServerFn()
+export const removeTeacherAssignment = authServerFn
   .inputValidator(z.object({ teacherId: z.string(), subjectId: z.string() }))
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    const { schoolId, userId } = context.school
     await requirePermission('teachers', 'edit')
 
     const result = await removeSubjectsFromTeacher(data.teacherId, [data.subjectId])
 
     await createAuditLog({
-      schoolId: context.schoolId,
-      userId: context.userId,
+      schoolId,
+      userId,
       action: 'delete',
       tableName: 'teacher_subjects',
       recordId: `${data.teacherId}-${data.subjectId}`,
       oldValues: { teacherId: data.teacherId, subjectId: data.subjectId },
     })
 
-    return result
+    return { success: true as const, data: result }
   })

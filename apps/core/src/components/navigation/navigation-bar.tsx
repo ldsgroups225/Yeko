@@ -21,10 +21,10 @@ import {
 } from '@workspace/ui/components/sheet'
 import { motion } from 'motion/react'
 import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { AccountDialog } from '@/components/auth/account-dialog'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { ThemeToggle } from '@/components/theme'
+import { useI18nContext } from '@/i18n/i18n-react'
 import { authClient } from '@/lib/auth-client'
 import { cn } from '@/lib/utils'
 
@@ -36,15 +36,15 @@ interface NavigationItem {
 }
 
 export function NavigationBar() {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const { data: session } = authClient.useSession()
 
   const navigationItems: NavigationItem[] = [
-    { label: t('nav.solutions'), href: '/#solutions', scrollTo: 'solutions' },
-    { label: t('nav.benefits'), href: '/#benefits', scrollTo: 'benefits' },
-    { label: t('nav.pricing'), href: '/#pricing', scrollTo: 'pricing' },
+    { label: LL.nav.solutions(), href: '/#solutions', scrollTo: 'solutions' },
+    { label: LL.nav.benefits(), href: '/#benefits', scrollTo: 'benefits' },
+    { label: LL.nav.pricing(), href: '/#pricing', scrollTo: 'pricing' },
     { label: 'About', href: '/about', isExternal: false },
   ]
 
@@ -110,7 +110,7 @@ export function NavigationBar() {
                 Yeko Platform
               </span>
               <span className="text-xs text-muted-foreground font-medium tracking-wider">
-                {t('nav.tagline')}
+                {LL.nav.tagline()}
               </span>
             </div>
           </Link>

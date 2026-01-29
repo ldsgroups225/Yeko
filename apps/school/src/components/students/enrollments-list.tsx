@@ -219,7 +219,7 @@ export function EnrollmentsList() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t.common.all()}</SelectItem>
-              {classesData?.map(cls => (
+              {classesData?.success && classesData.data.map(cls => (
                 <SelectItem key={cls.class.id} value={cls.class.id}>
                   {cls.grade.name}
                   {' '}

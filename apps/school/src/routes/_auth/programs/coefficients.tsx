@@ -22,18 +22,22 @@ function CoefficientsPage() {
   const [selectedSeriesId, setSelectedSeriesId] = useState<string>('all')
 
   // Fetch school years to get templates
-  const { data: schoolYears, isLoading: yearsLoading } = useQuery({
+  const { data: schoolYearsResult, isLoading: yearsLoading } = useQuery({
     queryKey: ['school-years'],
     queryFn: () => getSchoolYears(),
     staleTime: 5 * 60 * 1000,
   })
 
+  const schoolYears = schoolYearsResult?.success ? schoolYearsResult.data : []
+
   // Fetch series for filtering
-  const { data: series, isLoading: seriesLoading } = useQuery({
+  const { data: seriesResult, isLoading: seriesLoading } = useQuery({
     queryKey: ['series'],
     queryFn: () => getSeries({ data: {} }),
     staleTime: 10 * 60 * 1000,
   })
+
+  const series = seriesResult?.success ? seriesResult.data : []
 
   // Auto-select active year
   if (!selectedYearTemplateId && schoolYears) {

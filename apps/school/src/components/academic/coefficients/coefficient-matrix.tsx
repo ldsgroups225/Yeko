@@ -19,7 +19,7 @@ import {
   TableRow,
 } from '@workspace/ui/components/table'
 import { motion } from 'motion/react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { useTranslations } from '@/i18n'
 import {
@@ -48,6 +48,13 @@ export function CoefficientMatrix({
   const { data, isLoading, error } = useQuery(
     schoolCoefficientsOptions.matrix({ schoolYearTemplateId, seriesId }),
   )
+
+  const { subjects = [], grades = [], matrix = {} } = useMemo(() => {
+    if (data?.success) {
+      return data.data
+    }
+    return { subjects: [], grades: [], matrix: {} }
+  }, [data])
 
   const bulkUpdateMutation = useMutation({
     mutationFn: (
@@ -137,8 +144,6 @@ export function CoefficientMatrix({
       </Card>
     )
   }
-
-  const { subjects = [], grades = [], matrix = {} } = data || {}
 
   return (
     <div className="space-y-4">

@@ -79,9 +79,11 @@ function GradeValidationsPage() {
   const [search, setSearch] = useState('')
   const [selectedRows, setSelectedRows] = useState<string[]>([])
 
-  const { data: pendingValidations, isLoading } = useQuery(
+  const { data: pendingValidationsResult, isLoading } = useQuery(
     gradesOptions.pending(schoolId ?? ''),
   )
+
+  const pendingValidations = pendingValidationsResult?.success ? pendingValidationsResult.data : []
 
   const validateMutation = useMutation({
     mutationFn: (params: {
@@ -157,25 +159,34 @@ function GradeValidationsPage() {
 
     try {
       // Convert auth user ID to internal user ID
-      const internalUserId = await getUserIdFromAuthUserId({
+      const userResult = await getUserIdFromAuthUserId({
         data: { authUserId: userId },
       })
-      if (!internalUserId) {
+      if (!userResult.success || !userResult.data) {
         toast.error(t.common.error())
         return
       }
+      const internalUserId = userResult.data
 
       let gradeIds: string[] = []
 
       if (selectedValidation) {
         // Individual validation
-        gradeIds = await getSubmittedGradeIds({
+        const result = await getSubmittedGradeIds({
           data: {
             classId: selectedValidation.classId,
             subjectId: selectedValidation.subjectId,
             termId: selectedValidation.termId,
           },
         })
+
+        if (result.success) {
+          gradeIds = result.data
+        }
+        else {
+          toast.error(typeof result.error === 'string' ? result.error : t.common.error())
+          return
+        }
       }
       else if (selectedRows.length > 0) {
         // Bulk validation
@@ -190,7 +201,15 @@ function GradeValidationsPage() {
           })
         })
         const results = await Promise.all(promises)
-        gradeIds = results.flat()
+
+        // Filter successful results and flatten the arrays
+        gradeIds = results
+          .filter(r => r.success)
+          .flatMap(r => (r as any).data as string[])
+
+        if (results.some(r => !r.success)) {
+          toast.error(t.academic.grades.errors.loadError())
+        }
       }
 
       if (gradeIds.length === 0) {

@@ -43,10 +43,11 @@ function ClassroomDetailPage() {
   const queryClient = useQueryClient()
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
-  const { data, isLoading } = useQuery({
+  const { data: result, isLoading } = useQuery({
     queryKey: ['classroom', classroomId],
     queryFn: () => getClassroomById({ data: classroomId }),
   })
+  const data = result?.success ? result.data : null
 
   const deleteMutation = useMutation({
     mutationFn: () => deleteClassroom({ data: classroomId }),

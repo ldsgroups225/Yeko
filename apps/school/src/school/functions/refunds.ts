@@ -1,4 +1,3 @@
-import type { ServerContext } from '../lib/server-fn'
 import {
   approveRefund,
   cancelRefund,
@@ -9,10 +8,9 @@ import {
   processRefund,
   rejectRefund,
 } from '@repo/data-ops'
-import { DatabaseError } from '@repo/data-ops/errors'
 import { z } from 'zod'
 import { approveRefundSchema, createRefundSchema, processRefundSchema, rejectRefundSchema } from '@/schemas/refund'
-import { createAuthenticatedServerFn } from '../lib/server-fn'
+import { authServerFn } from '../lib/server-fn'
 
 /**
  * Filters for refunds queries
@@ -29,13 +27,13 @@ const refundFiltersSchema = z.object({
 /**
  * Get refunds list with pagination
  */
-export const getRefundsList = createAuthenticatedServerFn()
+export const getRefundsList = authServerFn
   .inputValidator(refundFiltersSchema.optional())
   .handler(async ({ data: filters, context }) => {
-    const { school } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
+    const { school } = context
     const result = await getRefunds({
       schoolId: school.schoolId,
       ...filters,
@@ -49,12 +47,11 @@ export const getRefundsList = createAuthenticatedServerFn()
 /**
  * Get single refund
  */
-export const getRefund = createAuthenticatedServerFn()
+export const getRefund = authServerFn
   .inputValidator(z.string())
   .handler(async ({ data: refundId, context }) => {
-    const { school } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await getRefundById(refundId)
     return result.match(
@@ -66,12 +63,12 @@ export const getRefund = createAuthenticatedServerFn()
 /**
  * Get pending refunds count
  */
-export const getPendingRefunds = createAuthenticatedServerFn()
+export const getPendingRefunds = authServerFn
   .handler(async ({ context }) => {
-    const { school } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
+    const { school } = context
     const result = await getPendingRefundsCount(school.schoolId)
     return result.match(
       data => ({ success: true as const, data }),
@@ -82,13 +79,13 @@ export const getPendingRefunds = createAuthenticatedServerFn()
 /**
  * Request new refund
  */
-export const requestRefund = createAuthenticatedServerFn()
+export const requestRefund = authServerFn
   .inputValidator(createRefundSchema)
   .handler(async ({ data, context }) => {
-    const { school } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
+    const { school } = context
     const result = await createRefund({
       schoolId: school.schoolId,
       requestedBy: school.userId,
@@ -103,13 +100,13 @@ export const requestRefund = createAuthenticatedServerFn()
 /**
  * Approve refund
  */
-export const approveExistingRefund = createAuthenticatedServerFn()
+export const approveExistingRefund = authServerFn
   .inputValidator(approveRefundSchema)
   .handler(async ({ data, context }) => {
-    const { school } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
+    const { school } = context
     const result = await approveRefund(data.refundId, school.userId)
     return result.match(
       data => ({ success: true as const, data }),
@@ -120,12 +117,11 @@ export const approveExistingRefund = createAuthenticatedServerFn()
 /**
  * Reject refund
  */
-export const rejectExistingRefund = createAuthenticatedServerFn()
+export const rejectExistingRefund = authServerFn
   .inputValidator(rejectRefundSchema)
   .handler(async ({ data, context }) => {
-    const { school } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await rejectRefund(data.refundId, data.rejectionReason)
     return result.match(
@@ -137,13 +133,13 @@ export const rejectExistingRefund = createAuthenticatedServerFn()
 /**
  * Process refund
  */
-export const processExistingRefund = createAuthenticatedServerFn()
+export const processExistingRefund = authServerFn
   .inputValidator(processRefundSchema)
   .handler(async ({ data, context }) => {
-    const { school } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
+    const { school } = context
     const result = await processRefund(data.refundId, school.userId, data.reference)
     return result.match(
       data => ({ success: true as const, data }),
@@ -154,12 +150,11 @@ export const processExistingRefund = createAuthenticatedServerFn()
 /**
  * Cancel refund
  */
-export const cancelExistingRefund = createAuthenticatedServerFn()
+export const cancelExistingRefund = authServerFn
   .inputValidator(z.string())
   .handler(async ({ data: refundId, context }) => {
-    const { school } = context as unknown as ServerContext
-    if (!school)
-      throw new DatabaseError('UNAUTHORIZED', 'No school context')
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await cancelRefund(refundId)
     return result.match(

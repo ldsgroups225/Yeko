@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
-import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'vitest'
+import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import { getDb } from '../database/setup'
 import {
   coefficientTemplates,
@@ -26,17 +26,13 @@ import {
 } from '../queries/coefficients'
 import {
   createProgramTemplate,
-  createSchoolYearTemplate,
   deleteProgramTemplate,
 } from '../queries/programs'
-import {
-  createSchoolYear,
-} from '../queries/school-admin/school-years'
+
 import {
   createSchool,
   deleteSchool,
 } from '../queries/schools'
-import { createStudent } from '../queries/students'
 import './setup'
 
 // ============================================================================

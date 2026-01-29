@@ -28,7 +28,10 @@ export const educationLevelsQuery = createServerFn()
   .middleware([databaseMiddleware])
   .handler(async () => {
     const { getEducationLevels } = await loadCatalogQueries()
-    return await getEducationLevels()
+    const result = await getEducationLevels()
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 // ===== TRACKS =====
@@ -37,7 +40,10 @@ export const tracksQuery = createServerFn()
   .middleware([databaseMiddleware])
   .handler(async () => {
     const { getTracks } = await loadCatalogQueries()
-    return await getTracks()
+    const result = await getTracks()
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const trackByIdQuery = createServerFn()
@@ -45,7 +51,10 @@ export const trackByIdQuery = createServerFn()
   .inputValidator(data => TrackIdSchema.parse(data))
   .handler(async (ctx) => {
     const { getTrackById } = await loadCatalogQueries()
-    return await getTrackById(ctx.data.id)
+    const result = await getTrackById(ctx.data.id)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const createTrackMutation = createServerFn()
@@ -53,7 +62,10 @@ export const createTrackMutation = createServerFn()
   .inputValidator(data => CreateTrackSchema.parse(data))
   .handler(async (ctx) => {
     const { createTrack } = await loadCatalogQueries()
-    return await createTrack(ctx.data)
+    const result = await createTrack(ctx.data)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const updateTrackMutation = createServerFn()
@@ -62,7 +74,10 @@ export const updateTrackMutation = createServerFn()
   .handler(async (ctx) => {
     const { updateTrack } = await loadCatalogQueries()
     const { id, ...updateData } = ctx.data
-    return await updateTrack(id, updateData)
+    const result = await updateTrack(id, updateData)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const deleteTrackMutation = createServerFn()
@@ -70,7 +85,9 @@ export const deleteTrackMutation = createServerFn()
   .inputValidator(data => TrackIdSchema.parse(data))
   .handler(async (ctx) => {
     const { deleteTrack } = await loadCatalogQueries()
-    await deleteTrack(ctx.data.id)
+    const result = await deleteTrack(ctx.data.id)
+    if (result.isErr())
+      throw result.error
     return { success: true, id: ctx.data.id }
   })
 
@@ -81,7 +98,10 @@ export const gradesQuery = createServerFn()
   .inputValidator(data => GetGradesSchema.parse(data))
   .handler(async (ctx) => {
     const { getGrades } = await loadCatalogQueries()
-    return await getGrades(ctx.data)
+    const result = await getGrades(ctx.data)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const gradeByIdQuery = createServerFn()
@@ -89,7 +109,10 @@ export const gradeByIdQuery = createServerFn()
   .inputValidator(data => GradeIdSchema.parse(data))
   .handler(async (ctx) => {
     const { getGradeById } = await loadCatalogQueries()
-    return await getGradeById(ctx.data.id)
+    const result = await getGradeById(ctx.data.id)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const createGradeMutation = createServerFn()
@@ -97,7 +120,10 @@ export const createGradeMutation = createServerFn()
   .inputValidator(data => CreateGradeSchema.parse(data))
   .handler(async (ctx) => {
     const { createGrade } = await loadCatalogQueries()
-    return await createGrade(ctx.data)
+    const result = await createGrade(ctx.data)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const updateGradeMutation = createServerFn()
@@ -106,7 +132,10 @@ export const updateGradeMutation = createServerFn()
   .handler(async (ctx) => {
     const { updateGrade } = await loadCatalogQueries()
     const { id, ...updateData } = ctx.data
-    return await updateGrade(id, updateData)
+    const result = await updateGrade(id, updateData)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const deleteGradeMutation = createServerFn()
@@ -114,7 +143,9 @@ export const deleteGradeMutation = createServerFn()
   .inputValidator(data => GradeIdSchema.parse(data))
   .handler(async (ctx) => {
     const { deleteGrade } = await loadCatalogQueries()
-    await deleteGrade(ctx.data.id)
+    const result = await deleteGrade(ctx.data.id)
+    if (result.isErr())
+      throw result.error
     return { success: true, id: ctx.data.id }
   })
 
@@ -125,7 +156,10 @@ export const seriesQuery = createServerFn()
   .inputValidator(data => GetSeriesSchema.parse(data))
   .handler(async (ctx) => {
     const { getSeries } = await loadCatalogQueries()
-    return await getSeries(ctx.data)
+    const result = await getSeries(ctx.data)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const serieByIdQuery = createServerFn()
@@ -133,7 +167,10 @@ export const serieByIdQuery = createServerFn()
   .inputValidator(data => SerieIdSchema.parse(data))
   .handler(async (ctx) => {
     const { getSerieById } = await loadCatalogQueries()
-    return await getSerieById(ctx.data.id)
+    const result = await getSerieById(ctx.data.id)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const createSerieMutation = createServerFn()
@@ -141,7 +178,10 @@ export const createSerieMutation = createServerFn()
   .inputValidator(data => CreateSerieSchema.parse(data))
   .handler(async (ctx) => {
     const { createSerie } = await loadCatalogQueries()
-    return await createSerie(ctx.data)
+    const result = await createSerie(ctx.data)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const updateSerieMutation = createServerFn()
@@ -150,7 +190,10 @@ export const updateSerieMutation = createServerFn()
   .handler(async (ctx) => {
     const { updateSerie } = await loadCatalogQueries()
     const { id, ...updateData } = ctx.data
-    return await updateSerie(id, updateData)
+    const result = await updateSerie(id, updateData)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const deleteSerieMutation = createServerFn()
@@ -158,7 +201,9 @@ export const deleteSerieMutation = createServerFn()
   .inputValidator(data => SerieIdSchema.parse(data))
   .handler(async (ctx) => {
     const { deleteSerie } = await loadCatalogQueries()
-    await deleteSerie(ctx.data.id)
+    const result = await deleteSerie(ctx.data.id)
+    if (result.isErr())
+      throw result.error
     return { success: true, id: ctx.data.id }
   })
 
@@ -169,7 +214,10 @@ export const subjectsQuery = createServerFn()
   .inputValidator(data => GetSubjectsSchema.parse(data))
   .handler(async (ctx) => {
     const { getSubjects } = await loadCatalogQueries()
-    return await getSubjects(ctx.data)
+    const result = await getSubjects(ctx.data)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const subjectByIdQuery = createServerFn()
@@ -177,7 +225,10 @@ export const subjectByIdQuery = createServerFn()
   .inputValidator(data => SubjectIdSchema.parse(data))
   .handler(async (ctx) => {
     const { getSubjectById } = await loadCatalogQueries()
-    return await getSubjectById(ctx.data.id)
+    const result = await getSubjectById(ctx.data.id)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const createSubjectMutation = createServerFn()
@@ -185,7 +236,10 @@ export const createSubjectMutation = createServerFn()
   .inputValidator(data => CreateSubjectSchema.parse(data))
   .handler(async (ctx) => {
     const { createSubject } = await loadCatalogQueries()
-    return await createSubject(ctx.data)
+    const result = await createSubject(ctx.data)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const updateSubjectMutation = createServerFn()
@@ -194,7 +248,10 @@ export const updateSubjectMutation = createServerFn()
   .handler(async (ctx) => {
     const { updateSubject } = await loadCatalogQueries()
     const { id, ...updateData } = ctx.data
-    return await updateSubject(id, updateData)
+    const result = await updateSubject(id, updateData)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const deleteSubjectMutation = createServerFn()
@@ -202,7 +259,9 @@ export const deleteSubjectMutation = createServerFn()
   .inputValidator(data => SubjectIdSchema.parse(data))
   .handler(async (ctx) => {
     const { deleteSubject } = await loadCatalogQueries()
-    await deleteSubject(ctx.data.id)
+    const result = await deleteSubject(ctx.data.id)
+    if (result.isErr())
+      throw result.error
     return { success: true, id: ctx.data.id }
   })
 
@@ -212,7 +271,10 @@ export const catalogStatsQuery = createServerFn()
   .middleware([databaseMiddleware])
   .handler(async () => {
     const { getCatalogStats } = await loadCatalogQueries()
-    return await getCatalogStats()
+    const result = await getCatalogStats()
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 // ===== BULK OPERATIONS =====
@@ -222,7 +284,9 @@ export const bulkUpdateGradesOrderMutation = createServerFn()
   .inputValidator(data => z.array(z.object({ id: z.string(), order: z.number() })).parse(data))
   .handler(async (ctx) => {
     const { bulkUpdateGradesOrder } = await loadCatalogQueries()
-    await bulkUpdateGradesOrder(ctx.data)
+    const result = await bulkUpdateGradesOrder(ctx.data)
+    if (result.isErr())
+      throw result.error
     return { success: true }
   })
 
@@ -231,7 +295,10 @@ export const bulkCreateSeriesMutation = createServerFn()
   .inputValidator(data => z.array(CreateSerieSchema).parse(data))
   .handler(async (ctx) => {
     const { bulkCreateSeries } = await loadCatalogQueries()
-    return await bulkCreateSeries(ctx.data)
+    const result = await bulkCreateSeries(ctx.data)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const bulkCreateSubjectsMutation = createServerFn()
@@ -239,5 +306,8 @@ export const bulkCreateSubjectsMutation = createServerFn()
   .inputValidator(data => z.array(CreateSubjectSchema).parse(data))
   .handler(async (ctx) => {
     const { bulkCreateSubjects } = await loadCatalogQueries()
-    return await bulkCreateSubjects(ctx.data)
+    const result = await bulkCreateSubjects(ctx.data)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })

@@ -192,23 +192,10 @@ export function GradeEntryTable({
   const { data: classSubjectsData } = useQuery(
     classSubjectsOptions.list({ classId }),
   )
-  const currentSubject = classSubjectsData?.find(cs => cs.subject.id === subjectId)
+  const teachers = teachersData?.success ? teachersData.data.teachers : []
+
+  const currentSubject = classSubjectsData?.success ? classSubjectsData.data.find(cs => cs.subject.id === subjectId) : undefined
   const subjectName = currentSubject?.subject.name || ''
-
-  const assignMutation = useMutation({
-    mutationFn: (teacherId: string) =>
-      assignTeacherToClassSubject({ data: { classId, subjectId, teacherId } }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: classSubjectsKeys.list({ classId }) })
-      toast.success(t.academic.grades.assignment.success())
-      setPendingAssignment(null)
-    },
-    onError: (error) => {
-      toast.error(error instanceof Error ? error.message : t.common.error())
-    },
-  })
-
-  const teachers = teachersData?.teachers || []
 
   const submitMutation = useMutation({
     mutationFn: (params: { gradeIds: string[] }) => submitGradesForValidation({ data: params }),
@@ -238,6 +225,24 @@ export function GradeEntryTable({
       setPendingChanges(new Map())
       setIsConfirmingReset(false)
       onReset?.()
+    },
+  })
+
+  const assignMutation = useMutation({
+    mutationFn: (newTeacherId: string) => assignTeacherToClassSubject({
+      data: {
+        classId,
+        subjectId,
+        teacherId: newTeacherId,
+      },
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: classSubjectsKeys.list({ classId }) })
+      toast.success(t.common.success())
+      setPendingAssignment(null)
+    },
+    onError: () => {
+      toast.error(t.common.error())
     },
   })
 
