@@ -45,7 +45,7 @@ export function NavigationBar() {
     { label: LL.nav.solutions(), href: '/#solutions', scrollTo: 'solutions' },
     { label: LL.nav.benefits.title(), href: '/#benefits', scrollTo: 'benefits' },
     { label: LL.nav.pricing.title(), href: '/#pricing', scrollTo: 'pricing' },
-    { label: 'About', href: '/about', isExternal: false },
+    { label: LL.footerNav.product.about(), href: '/about', isExternal: false },
   ]
 
 

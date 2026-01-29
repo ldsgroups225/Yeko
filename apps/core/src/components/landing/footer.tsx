@@ -1,36 +1,36 @@
 import { Link } from '@tanstack/react-router'
-import { useTranslation } from 'react-i18next'
 import { FaFacebook, FaLinkedin, FaXTwitter } from 'react-icons/fa6'
+import { useI18nContext } from '@/i18n/i18n-react'
 
 export function Footer() {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
 
   const navigation = {
     product: [
-      { name: t('footerNav.product.features'), href: '/#features' },
-      { name: t('footerNav.product.pricing'), href: '/pricing' },
-      { name: t('footerNav.product.about'), href: '/about' },
-      { name: t('footerNav.product.contact'), href: '/contact' },
+      { name: LL.footerNav.product.features(), href: '/#features' },
+      { name: LL.footerNav.product.pricing(), href: '/pricing' },
+      { name: LL.footerNav.product.about(), href: '/about' },
+      { name: LL.footerNav.product.contact(), href: '/contact' },
     ],
     resources: [
-      { name: t('footerNav.resources.help'), href: '/help' },
-      { name: t('footerNav.resources.privacy'), href: '/privacy' },
-      { name: t('footerNav.resources.terms'), href: '/terms' },
-      { name: t('footerNav.resources.security'), href: '/security' },
+      { name: LL.footerNav.resources.help(), href: '/help' },
+      { name: LL.footerNav.resources.privacy(), href: '/privacy' },
+      { name: LL.footerNav.resources.terms(), href: '/terms' },
+      { name: LL.footerNav.resources.security(), href: '/security' },
     ],
     social: [
       {
-        name: t('footerNav.social.facebook'),
+        name: LL.footerNav.social.facebook(),
         href: 'https://facebook.com/yekoplatform',
         icon: FaFacebook,
       },
       {
-        name: t('footerNav.social.twitter'),
+        name: LL.footerNav.social.twitter(),
         href: 'https://twitter.com/yekoplatform',
         icon: FaXTwitter,
       },
       {
-        name: t('footerNav.social.linkedin'),
+        name: LL.footerNav.social.linkedin(),
         href: 'https://linkedin.com/company/yekoplatform',
         icon: FaLinkedin,
       },
@@ -43,7 +43,7 @@ export function Footer() {
         <div className="flex flex-col md:flex-row md:items-center md:space-x-8 space-y-6 md:space-y-0">
           <div>
             <h3 className="text-sm font-semibold text-foreground">
-              {t('footerNav.product.title')}
+              {LL.footerNav.product.title()}
             </h3>
             <ul className="mt-2 space-y-1">
               {navigation.product.map(item => (
@@ -61,7 +61,7 @@ export function Footer() {
 
           <div>
             <h3 className="text-sm font-semibold text-foreground">
-              {t('footerNav.resources.title')}
+              {LL.footerNav.resources.title()}
             </h3>
             <ul className="mt-2 space-y-1">
               {navigation.resources.map(item => (
@@ -99,14 +99,10 @@ export function Footer() {
 
           <div className="text-center md:text-right">
             <p className="text-xs text-muted-foreground">
-              {t('footerNav.tagline')}
+              {LL.footerNav.tagline()}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              &copy;
-              {' '}
-              {new Date().getFullYear()}
-              {' '}
-              {t('footerNav.copyright')}
+              {LL.footerNav.copyright({ year: new Date().getFullYear() })}
             </p>
           </div>
         </div>
