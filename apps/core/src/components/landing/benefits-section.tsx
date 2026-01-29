@@ -1,6 +1,6 @@
 import { IconClock, IconCurrencyDollar, IconTrendingUp, IconUsers } from '@tabler/icons-react'
 import { Card, CardContent } from '@workspace/ui/components/card'
-import { useTranslation } from 'react-i18next'
+import { useI18nContext } from '@/i18n/i18n-react'
 
 const iconMap = {
   timeSaving: IconClock,
@@ -10,7 +10,7 @@ const iconMap = {
 }
 
 export function BenefitsSection() {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
 
   const benefitKeys = ['timeSaving', 'costReduction', 'satisfaction', 'growth'] as const
 
@@ -19,19 +19,16 @@ export function BenefitsSection() {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            {t('benefits.title')}
+            {LL.nav.benefits.title()}
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            {t('benefits.subtitle')}
+            {LL.nav.benefits.subtitle()}
           </p>
         </div>
 
         <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8 lg:mx-0 lg:max-w-none lg:grid-cols-2">
           {benefitKeys.map((key) => {
-            const benefit = t(`benefits.items.${key}`, { returnObjects: true }) as {
-              title: string
-              description: string
-            }
+            const benefit = LL.nav.benefits.items[key]
             const IconComponent = iconMap[key]
 
             return (
@@ -42,8 +39,8 @@ export function BenefitsSection() {
                       <IconComponent className="h-7 w-7 text-primary" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-semibold mb-3">{benefit.title}</h3>
-                      <p className="text-muted-foreground leading-relaxed">{benefit.description}</p>
+                      <h3 className="text-xl font-semibold mb-3">{benefit.title()}</h3>
+                      <p className="text-muted-foreground leading-relaxed">{benefit.description()}</p>
                     </div>
                   </div>
                 </CardContent>

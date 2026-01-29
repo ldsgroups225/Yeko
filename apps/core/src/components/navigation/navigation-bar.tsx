@@ -43,10 +43,12 @@ export function NavigationBar() {
 
   const navigationItems: NavigationItem[] = [
     { label: LL.nav.solutions(), href: '/#solutions', scrollTo: 'solutions' },
-    { label: LL.nav.benefits(), href: '/#benefits', scrollTo: 'benefits' },
-    { label: LL.nav.pricing(), href: '/#pricing', scrollTo: 'pricing' },
+    { label: LL.nav.benefits.title(), href: '/#benefits', scrollTo: 'benefits' },
+    { label: LL.nav.pricing.title(), href: '/#pricing', scrollTo: 'pricing' },
     { label: 'About', href: '/about', isExternal: false },
   ]
+
+
 
   const handleGoogleSignIn = async () => {
     await authClient.signIn.social({
@@ -181,8 +183,9 @@ export function NavigationBar() {
                   <div className="flex flex-row items-center gap-4">
                     <Button
                       variant="secondary"
-                      render={<Link to="/app">{t('nav.dashboard')}</Link>}
+                      render={<Link to="/app">{LL.nav.dashboard()}</Link>}
                     />
+
 
                     <AccountDialog>
                       <Button
@@ -211,7 +214,7 @@ export function NavigationBar() {
                       variant="outline"
                       size="sm"
                       render={
-                        <Link to="/demo-request">{t('nav.requestDemo')}</Link>
+                        <Link to="/demo-request">{LL.nav.requestDemo()}</Link>
                       }
                     />
                     <Button
@@ -221,8 +224,9 @@ export function NavigationBar() {
                       className="gap-2"
                     >
                       <IconLogin className="h-4 w-4" />
-                      {t('nav.signIn')}
+                      {LL.nav.signIn()}
                     </Button>
+
                   </div>
                 )}
           </div>
@@ -254,12 +258,13 @@ export function NavigationBar() {
                       className="h-10 w-10 object-contain"
                     />
                     <SheetTitle className="text-xl font-bold bg-linear-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-                      {t('nav.menuTitle')}
+                      {LL.nav.menuTitle()}
                     </SheetTitle>
                   </div>
                   <SheetDescription className="text-muted-foreground">
-                    {t('nav.menuDescription')}
+                    {LL.nav.menuDescription()}
                   </SheetDescription>
+
                 </SheetHeader>
 
                 <div className="flex flex-col space-y-2 pb-6">
@@ -327,7 +332,7 @@ export function NavigationBar() {
                             variant="outline"
                             className="w-full"
                             render={
-                              <Link to="/demo-request">{t('nav.requestDemo')}</Link>
+                              <Link to="/demo-request">{LL.nav.requestDemo()}</Link>
                             }
                           />
                           <Button
@@ -336,8 +341,9 @@ export function NavigationBar() {
                             className="w-full gap-2"
                           >
                             <IconLogin className="h-4 w-4" />
-                            {t('nav.signInWithGoogle')}
+                            {LL.nav.signInWithGoogle()}
                           </Button>
+
                         </div>
                       )}
                 </div>

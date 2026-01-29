@@ -5,8 +5,77 @@ const en = {
   nav: {
     home: 'Home',
     solutions: 'Solutions',
-    benefits: 'Benefits',
-    pricing: 'Pricing',
+    benefits: {
+      title: 'Designed for Efficiency',
+      subtitle: 'Streamline your school operations and focus on what matters most: education.',
+      items: {
+        timeSaving: {
+          title: 'Time Saving',
+          description: 'Reduce administrative workload by 50% with automated processes.',
+        },
+        costReduction: {
+          title: 'Cost Reduction',
+          description: 'Minimize operational costs and physical paperwork overhead.',
+        },
+        satisfaction: {
+          title: 'Better Satisfaction',
+          description: 'Improve communication between teachers, students, and parents.',
+        },
+        growth: {
+          title: 'Scalable Growth',
+          description: 'Easily manage multiple schools or branches from a single platform.',
+        },
+      },
+    },
+    pricing: {
+      title: 'Pricing Plan',
+      subtitle: 'Choose the best plan for your institution.',
+      annual: 'Annual',
+      monthly: 'Monthly',
+      features: 'Features',
+      getStarted: 'Get Started',
+      contactSales: 'Contact Sales',
+      contactUs: 'Contact Us',
+      cta: 'Choose Plan',
+      footer: 'Prices are in local currency. Taxes may apply.',
+      plans: {
+        starter: {
+          title: 'Starter',
+          description: 'Perfect for small schools just getting started.',
+          price: 'Free',
+          features: [
+            'Up to 100 students',
+            'Basic academic management',
+            'Attendance tracking',
+            'Email support',
+          ],
+        },
+        professional: {
+          title: 'Professional',
+          description: 'Advanced features for growing educational institutions.',
+          price: '$29',
+          popular: 'Most Popular',
+          features: [
+            'Up to 1000 students',
+            'Financial management',
+            'Parent-teacher portal',
+            'Priority support',
+          ],
+        },
+        enterprise: {
+          title: 'Enterprise',
+          description: 'Custom solutions for large networks and universities.',
+          price: 'Custom',
+          features: [
+            'Unlimited students',
+            'Custom integrations',
+            'Multi-campus support',
+            'Dedicated account manager',
+          ],
+        },
+      },
+    },
+
     login: 'Login',
     signup: 'Sign Up',
     dashboard: 'Dashboard',
@@ -19,6 +88,31 @@ const en = {
     menuDescription: 'Explore Yeko Platform',
   },
 
+  // Footer Navigation
+  footerNav: {
+    product: {
+      title: 'Product',
+      features: 'Features',
+      pricing: 'Pricing',
+      about: 'About',
+      contact: 'Contact',
+    },
+    resources: {
+      title: 'Resources',
+      help: 'Help Center',
+      privacy: 'Privacy Policy',
+      terms: 'Terms of Service',
+      security: 'Security',
+    },
+    social: {
+      facebook: 'Facebook',
+      twitter: 'Twitter',
+      linkedin: 'LinkedIn',
+    },
+    tagline: 'Yeko - Empowering African Schools through Digital Innovation.',
+    copyright: '© {year} Yeko. All rights reserved.',
+  },
+
   // Hero Section
   hero: {
     title: 'Modernize Your School',
@@ -29,13 +123,36 @@ const en = {
       secondary: 'Watch Demo',
     },
     features: {
-      0: 'No credit card required',
-      1: 'Setup in 5 days',
-      2: 'Cancel anytime',
+      '0': 'No credit card required',
+      '1': 'Setup in 5 days',
+      '2': 'Cancel anytime',
     },
     demo: {
       title: 'Dashboard Preview',
       description: 'Real-time insights into your school\'s performance',
+    },
+  },
+
+  // Pain Points Section
+  painPoints: {
+    title: 'Stop Struggling with Outdated Systems',
+    subtitle: 'We solve the most common challenges schools face today.',
+    items: {
+      paperwork: {
+        title: 'Manual Paperwork',
+        description: 'No more stacks of paper and manual entry errors.',
+        solution: 'Digital student files and automated record keeping.',
+      },
+      communication: {
+        title: 'Poor Communication',
+        description: 'Instantly reach parents and staff through integrated channels.',
+        solution: 'Instant mobile notifications and unified messaging.',
+      },
+      admin: {
+        title: 'Administrative Burden',
+        description: 'Reduce the time spent on repetitive tasks and focus on teaching.',
+        solution: 'Online tools integration and automatic processes.',
+      },
     },
   },
 
@@ -47,6 +164,30 @@ const en = {
       students: 'Active Students',
       satisfaction: 'Parent Satisfaction',
       countries: 'Countries',
+    },
+  },
+
+  // Use Cases Section
+  useCases: {
+    title: 'Tailored for Every Stakeholder',
+    subtitle: 'Our platform brings everyone together in a unified digital ecosystem.',
+    stakeholders: {
+      administrators: {
+        title: 'Administrators',
+        description: 'Complete oversight and control over school operations.',
+      },
+      teachers: {
+        title: 'Teachers',
+        description: 'Effortless grading, attendance, and lesson planning.',
+      },
+      parents: {
+        title: 'Parents',
+        description: 'Real-time tracking of their child\'s progress and activities.',
+      },
+      students: {
+        title: 'Students',
+        description: 'Access to learning materials and performance insights.',
+      },
     },
   },
 
@@ -109,7 +250,7 @@ const en = {
     suspended: 'Suspended',
     draft: 'Draft',
     published: 'Published',
-    archived: 'Archived',
+    archived: 'Archivé',
     pending: 'Pending',
     approved: 'Approved',
     rejected: 'Rejected',
@@ -309,6 +450,29 @@ const en = {
     availableRoles: 'Available Roles',
     updateSuccess: 'Access updated successfully',
     updateError: 'Error updating access',
+  },
+  // Why Yeko Section
+  whyYeko: {
+    title: 'Why Choose Yeko?',
+    subtitle: 'We provide the tools you need to succeed in a digital world.',
+    features: {
+      lightning: {
+        title: 'Lightning Fast',
+        description: 'Optimized for performance and efficiency in everything you do.',
+      },
+      secure: {
+        title: 'Bank-Grade Security',
+        description: 'Your data is encrypted and protected with industry-leading standards.',
+      },
+      africa: {
+        title: 'Built for Africa',
+        description: 'Tailored specifically for the unique challenges of educational institutions in Africa.',
+      },
+      mobile: {
+        title: 'Mobile First',
+        description: 'Access everything from your smartphone with our fully responsive platform.',
+      },
+    },
   },
 } satisfies Translation
 

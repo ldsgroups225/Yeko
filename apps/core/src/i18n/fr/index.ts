@@ -5,8 +5,76 @@ const fr: BaseTranslation = {
   nav: {
     home: 'Accueil',
     solutions: 'Solutions',
-    benefits: 'Avantages',
-    pricing: 'Tarifs',
+    benefits: {
+      title: 'Conçu pour l\'Efficacité',
+      subtitle: 'Optimisez les opérations de votre école et concentrez-vous sur l\'essentiel : l\'éducation.',
+      items: {
+        timeSaving: {
+          title: 'Gain de Temps',
+          description: 'Réduisez la charge de travail administrative de 50 % grâce à des processus automatisés.',
+        },
+        costReduction: {
+          title: 'Réduction des Coûts',
+          description: 'Minimisez les coûts opérationnels et les frais de paperasserie physique.',
+        },
+        satisfaction: {
+          title: 'Meilleure Satisfaction',
+          description: 'Améliorez la communication entre les enseignants, les élèves et les parents.',
+        },
+        growth: {
+          title: 'Croissance Évolutive',
+          description: 'Gérez facilement plusieurs écoles ou succursales à partir d\'une seule plateforme.',
+        },
+      },
+    },
+    pricing: {
+      title: 'Plans Tarifaires',
+      subtitle: 'Choisissez le meilleur plan pour votre institution.',
+      annual: 'Annuel',
+      monthly: 'Mensuel',
+      features: 'Fonctionnalités',
+      getStarted: 'Commencer',
+      contactSales: 'Contacter le service commercial',
+      contactUs: 'Contactez-nous',
+      cta: 'Choisir le plan',
+      footer: 'Les prix sont en monnaie locale. Des taxes peuvent s\'appliquer.',
+      plans: {
+        starter: {
+          title: 'Starter',
+          description: 'Parfait pour les petites écoles qui débutent.',
+          price: 'Gratuit',
+          features: [
+            'Jusqu\'à 100 élèves',
+            'Gestion académique de base',
+            'Suivi des présences',
+            'Support par email',
+          ],
+        },
+        professional: {
+          title: 'Professionnel',
+          description: 'Fonctionnalités avancées pour les institutions éducatives en croissance.',
+          price: '29$',
+          popular: 'Le plus populaire',
+          features: [
+            'Jusqu\'à 1000 élèves',
+            'Gestion financière',
+            'Portail parents-enseignants',
+            'Support prioritaire',
+          ],
+        },
+        enterprise: {
+          title: 'Entreprise',
+          description: 'Solutions sur mesure pour les grands réseaux et universités.',
+          price: 'Sur mesure',
+          features: [
+            'Élèves illimités',
+            'Intégrations personnalisées',
+            'Support multi-campus',
+            'Gestionnaire de compte dédié',
+          ],
+        },
+      },
+    },
     login: 'Connexion',
     signup: 'Inscription',
     dashboard: 'Tableau de bord',
@@ -17,6 +85,31 @@ const fr: BaseTranslation = {
     signInWithGoogle: 'Se connecter avec Google',
     menuTitle: 'Navigation',
     menuDescription: 'Explorez la plateforme Yeko',
+  },
+
+  // Footer Navigation
+  footerNav: {
+    product: {
+      title: 'Produit',
+      features: 'Fonctionnalités',
+      pricing: 'Tarifs',
+      about: 'À propos',
+      contact: 'Contact',
+    },
+    resources: {
+      title: 'Ressources',
+      help: 'Centre d\'aide',
+      privacy: 'Politique de confidentialité',
+      terms: 'Conditions d\'utilisation',
+      security: 'Sécurité',
+    },
+    social: {
+      facebook: 'Facebook',
+      twitter: 'Twitter',
+      linkedin: 'LinkedIn',
+    },
+    tagline: 'Yeko - Propulser les écoles africaines grâce à l\'innovation numérique.',
+    copyright: '© {year:number} Yeko. Tous droits réservés.',
   },
 
   // Hero Section
@@ -39,6 +132,29 @@ const fr: BaseTranslation = {
     },
   },
 
+  // Pain Points Section
+  painPoints: {
+    title: 'Arrêtez de lutter avec des systèmes obsolètes',
+    subtitle: 'Nous résolvons les défis les plus courants auxquels les écoles sont confrontées aujourd\'hui.',
+    items: {
+      paperwork: {
+        title: 'Paperasserie manuelle',
+        description: 'Plus de piles de papier et d\'erreurs de saisie manuelle.',
+        solution: 'Dossiers d\'élèves numériques et tenue de registres automatisée.',
+      },
+      communication: {
+        title: 'Mauvaise communication',
+        description: 'Contactez instantanément les parents et le personnel via des canaux intégrés.',
+        solution: 'Notifications mobiles instantanées et messagerie unifiée.',
+      },
+      admin: {
+        title: 'Charge administrative',
+        description: 'Réduisez le temps passé sur les tâches répétitives et concentrez-vous sur l\'enseignement.',
+        solution: 'Intégration d\'outils en ligne et processus automatiques.',
+      },
+    },
+  },
+
   // Social Proof
   socialProof: {
     trustedBy: 'Approuvé par des institutions éducatives à travers l\'Afrique',
@@ -47,6 +163,30 @@ const fr: BaseTranslation = {
       students: 'Élèves Actifs',
       satisfaction: 'Satisfaction Parentale',
       countries: 'Pays',
+    },
+  },
+
+  // Use Cases Section
+  useCases: {
+    title: 'Adapté à chaque partie prenante',
+    subtitle: 'Notre plateforme rassemble tout le monde dans un écosystème numérique unifié.',
+    stakeholders: {
+      administrators: {
+        title: 'Administrateurs',
+        description: 'Supervision et contrôle complets des opérations scolaires.',
+      },
+      teachers: {
+        title: 'Enseignants',
+        description: 'Notation, présence et planification des cours sans effort.',
+      },
+      parents: {
+        title: 'Parents',
+        description: 'Suivi en temps réel des progrès et des activités de leur enfant.',
+      },
+      students: {
+        title: 'Élèves',
+        description: 'Accès au matériel pédagogique et aperçu des performances.',
+      },
     },
   },
 
@@ -309,6 +449,30 @@ const fr: BaseTranslation = {
     availableRoles: 'Rôles Disponibles',
     updateSuccess: 'Accès mis à jour avec succès',
     updateError: 'Erreur lors de la mise à jour des accès',
+  },
+
+  // Why Yeko Section
+  whyYeko: {
+    title: 'Pourquoi Choisir Yeko ?',
+    subtitle: 'Nous fournissons les outils dont vous avez besoin pour réussir dans un monde numérique.',
+    features: {
+      lightning: {
+        title: 'Ultra Rapide',
+        description: 'Optimisé pour la performance et l\'efficacité dans tout ce que vous faites.',
+      },
+      secure: {
+        title: 'Sécurité Bancaire',
+        description: 'Vos données sont cryptées et protégées selon les normes les plus strictes de l\'industrie.',
+      },
+      africa: {
+        title: 'Conçu pour l\'Afrique',
+        description: 'Adapté spécifiquement aux défis uniques des institutions éducatives en Afrique.',
+      },
+      mobile: {
+        title: 'Mobile First',
+        description: 'Accédez à tout depuis votre smartphone avec notre plateforme entièrement responsive.',
+      },
+    },
   },
 }
 

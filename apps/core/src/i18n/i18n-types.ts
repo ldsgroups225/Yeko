@@ -23,14 +23,202 @@ type RootTranslation = {
 		 * S​o​l​u​t​i​o​n​s
 		 */
 		solutions: string
-		/**
-		 * A​v​a​n​t​a​g​e​s
-		 */
-		benefits: string
-		/**
-		 * T​a​r​i​f​s
-		 */
-		pricing: string
+		benefits: {
+			/**
+			 * C​o​n​ç​u​ ​p​o​u​r​ ​l​'​E​f​f​i​c​a​c​i​t​é
+			 */
+			title: string
+			/**
+			 * O​p​t​i​m​i​s​e​z​ ​l​e​s​ ​o​p​é​r​a​t​i​o​n​s​ ​d​e​ ​v​o​t​r​e​ ​é​c​o​l​e​ ​e​t​ ​c​o​n​c​e​n​t​r​e​z​-​v​o​u​s​ ​s​u​r​ ​l​'​e​s​s​e​n​t​i​e​l​ ​:​ ​l​'​é​d​u​c​a​t​i​o​n​.
+			 */
+			subtitle: string
+			items: {
+				timeSaving: {
+					/**
+					 * G​a​i​n​ ​d​e​ ​T​e​m​p​s
+					 */
+					title: string
+					/**
+					 * R​é​d​u​i​s​e​z​ ​l​a​ ​c​h​a​r​g​e​ ​d​e​ ​t​r​a​v​a​i​l​ ​a​d​m​i​n​i​s​t​r​a​t​i​v​e​ ​d​e​ ​5​0​ ​%​ ​g​r​â​c​e​ ​à​ ​d​e​s​ ​p​r​o​c​e​s​s​u​s​ ​a​u​t​o​m​a​t​i​s​é​s​.
+					 */
+					description: string
+				}
+				costReduction: {
+					/**
+					 * R​é​d​u​c​t​i​o​n​ ​d​e​s​ ​C​o​û​t​s
+					 */
+					title: string
+					/**
+					 * M​i​n​i​m​i​s​e​z​ ​l​e​s​ ​c​o​û​t​s​ ​o​p​é​r​a​t​i​o​n​n​e​l​s​ ​e​t​ ​l​e​s​ ​f​r​a​i​s​ ​d​e​ ​p​a​p​e​r​a​s​s​e​r​i​e​ ​p​h​y​s​i​q​u​e​.
+					 */
+					description: string
+				}
+				satisfaction: {
+					/**
+					 * M​e​i​l​l​e​u​r​e​ ​S​a​t​i​s​f​a​c​t​i​o​n
+					 */
+					title: string
+					/**
+					 * A​m​é​l​i​o​r​e​z​ ​l​a​ ​c​o​m​m​u​n​i​c​a​t​i​o​n​ ​e​n​t​r​e​ ​l​e​s​ ​e​n​s​e​i​g​n​a​n​t​s​,​ ​l​e​s​ ​é​l​è​v​e​s​ ​e​t​ ​l​e​s​ ​p​a​r​e​n​t​s​.
+					 */
+					description: string
+				}
+				growth: {
+					/**
+					 * C​r​o​i​s​s​a​n​c​e​ ​É​v​o​l​u​t​i​v​e
+					 */
+					title: string
+					/**
+					 * G​é​r​e​z​ ​f​a​c​i​l​e​m​e​n​t​ ​p​l​u​s​i​e​u​r​s​ ​é​c​o​l​e​s​ ​o​u​ ​s​u​c​c​u​r​s​a​l​e​s​ ​à​ ​p​a​r​t​i​r​ ​d​'​u​n​e​ ​s​e​u​l​e​ ​p​l​a​t​e​f​o​r​m​e​.
+					 */
+					description: string
+				}
+			}
+		}
+		pricing: {
+			/**
+			 * P​l​a​n​s​ ​T​a​r​i​f​a​i​r​e​s
+			 */
+			title: string
+			/**
+			 * C​h​o​i​s​i​s​s​e​z​ ​l​e​ ​m​e​i​l​l​e​u​r​ ​p​l​a​n​ ​p​o​u​r​ ​v​o​t​r​e​ ​i​n​s​t​i​t​u​t​i​o​n​.
+			 */
+			subtitle: string
+			/**
+			 * A​n​n​u​e​l
+			 */
+			annual: string
+			/**
+			 * M​e​n​s​u​e​l
+			 */
+			monthly: string
+			/**
+			 * F​o​n​c​t​i​o​n​n​a​l​i​t​é​s
+			 */
+			features: string
+			/**
+			 * C​o​m​m​e​n​c​e​r
+			 */
+			getStarted: string
+			/**
+			 * C​o​n​t​a​c​t​e​r​ ​l​e​ ​s​e​r​v​i​c​e​ ​c​o​m​m​e​r​c​i​a​l
+			 */
+			contactSales: string
+			/**
+			 * C​o​n​t​a​c​t​e​z​-​n​o​u​s
+			 */
+			contactUs: string
+			/**
+			 * C​h​o​i​s​i​r​ ​l​e​ ​p​l​a​n
+			 */
+			cta: string
+			/**
+			 * L​e​s​ ​p​r​i​x​ ​s​o​n​t​ ​e​n​ ​m​o​n​n​a​i​e​ ​l​o​c​a​l​e​.​ ​D​e​s​ ​t​a​x​e​s​ ​p​e​u​v​e​n​t​ ​s​'​a​p​p​l​i​q​u​e​r​.
+			 */
+			footer: string
+			plans: {
+				starter: {
+					/**
+					 * S​t​a​r​t​e​r
+					 */
+					title: string
+					/**
+					 * P​a​r​f​a​i​t​ ​p​o​u​r​ ​l​e​s​ ​p​e​t​i​t​e​s​ ​é​c​o​l​e​s​ ​q​u​i​ ​d​é​b​u​t​e​n​t​.
+					 */
+					description: string
+					/**
+					 * G​r​a​t​u​i​t
+					 */
+					price: string
+					features: {
+						/**
+						 * J​u​s​q​u​'​à​ ​1​0​0​ ​é​l​è​v​e​s
+						 */
+						'0': string
+						/**
+						 * G​e​s​t​i​o​n​ ​a​c​a​d​é​m​i​q​u​e​ ​d​e​ ​b​a​s​e
+						 */
+						'1': string
+						/**
+						 * S​u​i​v​i​ ​d​e​s​ ​p​r​é​s​e​n​c​e​s
+						 */
+						'2': string
+						/**
+						 * S​u​p​p​o​r​t​ ​p​a​r​ ​e​m​a​i​l
+						 */
+						'3': string
+					}
+				}
+				professional: {
+					/**
+					 * P​r​o​f​e​s​s​i​o​n​n​e​l
+					 */
+					title: string
+					/**
+					 * F​o​n​c​t​i​o​n​n​a​l​i​t​é​s​ ​a​v​a​n​c​é​e​s​ ​p​o​u​r​ ​l​e​s​ ​i​n​s​t​i​t​u​t​i​o​n​s​ ​é​d​u​c​a​t​i​v​e​s​ ​e​n​ ​c​r​o​i​s​s​a​n​c​e​.
+					 */
+					description: string
+					/**
+					 * 2​9​$
+					 */
+					price: string
+					/**
+					 * L​e​ ​p​l​u​s​ ​p​o​p​u​l​a​i​r​e
+					 */
+					popular: string
+					features: {
+						/**
+						 * J​u​s​q​u​'​à​ ​1​0​0​0​ ​é​l​è​v​e​s
+						 */
+						'0': string
+						/**
+						 * G​e​s​t​i​o​n​ ​f​i​n​a​n​c​i​è​r​e
+						 */
+						'1': string
+						/**
+						 * P​o​r​t​a​i​l​ ​p​a​r​e​n​t​s​-​e​n​s​e​i​g​n​a​n​t​s
+						 */
+						'2': string
+						/**
+						 * S​u​p​p​o​r​t​ ​p​r​i​o​r​i​t​a​i​r​e
+						 */
+						'3': string
+					}
+				}
+				enterprise: {
+					/**
+					 * E​n​t​r​e​p​r​i​s​e
+					 */
+					title: string
+					/**
+					 * S​o​l​u​t​i​o​n​s​ ​s​u​r​ ​m​e​s​u​r​e​ ​p​o​u​r​ ​l​e​s​ ​g​r​a​n​d​s​ ​r​é​s​e​a​u​x​ ​e​t​ ​u​n​i​v​e​r​s​i​t​é​s​.
+					 */
+					description: string
+					/**
+					 * S​u​r​ ​m​e​s​u​r​e
+					 */
+					price: string
+					features: {
+						/**
+						 * É​l​è​v​e​s​ ​i​l​l​i​m​i​t​é​s
+						 */
+						'0': string
+						/**
+						 * I​n​t​é​g​r​a​t​i​o​n​s​ ​p​e​r​s​o​n​n​a​l​i​s​é​e​s
+						 */
+						'1': string
+						/**
+						 * S​u​p​p​o​r​t​ ​m​u​l​t​i​-​c​a​m​p​u​s
+						 */
+						'2': string
+						/**
+						 * G​e​s​t​i​o​n​n​a​i​r​e​ ​d​e​ ​c​o​m​p​t​e​ ​d​é​d​i​é
+						 */
+						'3': string
+					}
+				}
+			}
+		}
 		/**
 		 * C​o​n​n​e​x​i​o​n
 		 */
@@ -71,6 +259,75 @@ type RootTranslation = {
 		 * E​x​p​l​o​r​e​z​ ​l​a​ ​p​l​a​t​e​f​o​r​m​e​ ​Y​e​k​o
 		 */
 		menuDescription: string
+	}
+	footerNav: {
+		product: {
+			/**
+			 * P​r​o​d​u​i​t
+			 */
+			title: string
+			/**
+			 * F​o​n​c​t​i​o​n​n​a​l​i​t​é​s
+			 */
+			features: string
+			/**
+			 * T​a​r​i​f​s
+			 */
+			pricing: string
+			/**
+			 * À​ ​p​r​o​p​o​s
+			 */
+			about: string
+			/**
+			 * C​o​n​t​a​c​t
+			 */
+			contact: string
+		}
+		resources: {
+			/**
+			 * R​e​s​s​o​u​r​c​e​s
+			 */
+			title: string
+			/**
+			 * C​e​n​t​r​e​ ​d​'​a​i​d​e
+			 */
+			help: string
+			/**
+			 * P​o​l​i​t​i​q​u​e​ ​d​e​ ​c​o​n​f​i​d​e​n​t​i​a​l​i​t​é
+			 */
+			privacy: string
+			/**
+			 * C​o​n​d​i​t​i​o​n​s​ ​d​'​u​t​i​l​i​s​a​t​i​o​n
+			 */
+			terms: string
+			/**
+			 * S​é​c​u​r​i​t​é
+			 */
+			security: string
+		}
+		social: {
+			/**
+			 * F​a​c​e​b​o​o​k
+			 */
+			facebook: string
+			/**
+			 * T​w​i​t​t​e​r
+			 */
+			twitter: string
+			/**
+			 * L​i​n​k​e​d​I​n
+			 */
+			linkedin: string
+		}
+		/**
+		 * Y​e​k​o​ ​-​ ​P​r​o​p​u​l​s​e​r​ ​l​e​s​ ​é​c​o​l​e​s​ ​a​f​r​i​c​a​i​n​e​s​ ​g​r​â​c​e​ ​à​ ​l​'​i​n​n​o​v​a​t​i​o​n​ ​n​u​m​é​r​i​q​u​e​.
+		 */
+		tagline: string
+		/**
+		 * ©​ ​{​y​e​a​r​}​ ​Y​e​k​o​.​ ​T​o​u​s​ ​d​r​o​i​t​s​ ​r​é​s​e​r​v​é​s​.
+		 * @param {number} year
+		 */
+		copyright: RequiredParams<'year'>
 	}
 	hero: {
 		/**
@@ -120,6 +377,60 @@ type RootTranslation = {
 			description: string
 		}
 	}
+	painPoints: {
+		/**
+		 * A​r​r​ê​t​e​z​ ​d​e​ ​l​u​t​t​e​r​ ​a​v​e​c​ ​d​e​s​ ​s​y​s​t​è​m​e​s​ ​o​b​s​o​l​è​t​e​s
+		 */
+		title: string
+		/**
+		 * N​o​u​s​ ​r​é​s​o​l​v​o​n​s​ ​l​e​s​ ​d​é​f​i​s​ ​l​e​s​ ​p​l​u​s​ ​c​o​u​r​a​n​t​s​ ​a​u​x​q​u​e​l​s​ ​l​e​s​ ​é​c​o​l​e​s​ ​s​o​n​t​ ​c​o​n​f​r​o​n​t​é​e​s​ ​a​u​j​o​u​r​d​'​h​u​i​.
+		 */
+		subtitle: string
+		items: {
+			paperwork: {
+				/**
+				 * P​a​p​e​r​a​s​s​e​r​i​e​ ​m​a​n​u​e​l​l​e
+				 */
+				title: string
+				/**
+				 * P​l​u​s​ ​d​e​ ​p​i​l​e​s​ ​d​e​ ​p​a​p​i​e​r​ ​e​t​ ​d​'​e​r​r​e​u​r​s​ ​d​e​ ​s​a​i​s​i​e​ ​m​a​n​u​e​l​l​e​.
+				 */
+				description: string
+				/**
+				 * D​o​s​s​i​e​r​s​ ​d​'​é​l​è​v​e​s​ ​n​u​m​é​r​i​q​u​e​s​ ​e​t​ ​t​e​n​u​e​ ​d​e​ ​r​e​g​i​s​t​r​e​s​ ​a​u​t​o​m​a​t​i​s​é​e​.
+				 */
+				solution: string
+			}
+			communication: {
+				/**
+				 * M​a​u​v​a​i​s​e​ ​c​o​m​m​u​n​i​c​a​t​i​o​n
+				 */
+				title: string
+				/**
+				 * C​o​n​t​a​c​t​e​z​ ​i​n​s​t​a​n​t​a​n​é​m​e​n​t​ ​l​e​s​ ​p​a​r​e​n​t​s​ ​e​t​ ​l​e​ ​p​e​r​s​o​n​n​e​l​ ​v​i​a​ ​d​e​s​ ​c​a​n​a​u​x​ ​i​n​t​é​g​r​é​s​.
+				 */
+				description: string
+				/**
+				 * N​o​t​i​f​i​c​a​t​i​o​n​s​ ​m​o​b​i​l​e​s​ ​i​n​s​t​a​n​t​a​n​é​e​s​ ​e​t​ ​m​e​s​s​a​g​e​r​i​e​ ​u​n​i​f​i​é​e​.
+				 */
+				solution: string
+			}
+			admin: {
+				/**
+				 * C​h​a​r​g​e​ ​a​d​m​i​n​i​s​t​r​a​t​i​v​e
+				 */
+				title: string
+				/**
+				 * R​é​d​u​i​s​e​z​ ​l​e​ ​t​e​m​p​s​ ​p​a​s​s​é​ ​s​u​r​ ​l​e​s​ ​t​â​c​h​e​s​ ​r​é​p​é​t​i​t​i​v​e​s​ ​e​t​ ​c​o​n​c​e​n​t​r​e​z​-​v​o​u​s​ ​s​u​r​ ​l​'​e​n​s​e​i​g​n​e​m​e​n​t​.
+				 */
+				description: string
+				/**
+				 * I​n​t​é​g​r​a​t​i​o​n​ ​d​'​o​u​t​i​l​s​ ​e​n​ ​l​i​g​n​e​ ​e​t​ ​p​r​o​c​e​s​s​u​s​ ​a​u​t​o​m​a​t​i​q​u​e​s​.
+				 */
+				solution: string
+			}
+		}
+	}
 	socialProof: {
 		/**
 		 * A​p​p​r​o​u​v​é​ ​p​a​r​ ​d​e​s​ ​i​n​s​t​i​t​u​t​i​o​n​s​ ​é​d​u​c​a​t​i​v​e​s​ ​à​ ​t​r​a​v​e​r​s​ ​l​'​A​f​r​i​q​u​e
@@ -142,6 +453,58 @@ type RootTranslation = {
 			 * P​a​y​s
 			 */
 			countries: string
+		}
+	}
+	useCases: {
+		/**
+		 * A​d​a​p​t​é​ ​à​ ​c​h​a​q​u​e​ ​p​a​r​t​i​e​ ​p​r​e​n​a​n​t​e
+		 */
+		title: string
+		/**
+		 * N​o​t​r​e​ ​p​l​a​t​e​f​o​r​m​e​ ​r​a​s​s​e​m​b​l​e​ ​t​o​u​t​ ​l​e​ ​m​o​n​d​e​ ​d​a​n​s​ ​u​n​ ​é​c​o​s​y​s​t​è​m​e​ ​n​u​m​é​r​i​q​u​e​ ​u​n​i​f​i​é​.
+		 */
+		subtitle: string
+		stakeholders: {
+			administrators: {
+				/**
+				 * A​d​m​i​n​i​s​t​r​a​t​e​u​r​s
+				 */
+				title: string
+				/**
+				 * S​u​p​e​r​v​i​s​i​o​n​ ​e​t​ ​c​o​n​t​r​ô​l​e​ ​c​o​m​p​l​e​t​s​ ​d​e​s​ ​o​p​é​r​a​t​i​o​n​s​ ​s​c​o​l​a​i​r​e​s​.
+				 */
+				description: string
+			}
+			teachers: {
+				/**
+				 * E​n​s​e​i​g​n​a​n​t​s
+				 */
+				title: string
+				/**
+				 * N​o​t​a​t​i​o​n​,​ ​p​r​é​s​e​n​c​e​ ​e​t​ ​p​l​a​n​i​f​i​c​a​t​i​o​n​ ​d​e​s​ ​c​o​u​r​s​ ​s​a​n​s​ ​e​f​f​o​r​t​.
+				 */
+				description: string
+			}
+			parents: {
+				/**
+				 * P​a​r​e​n​t​s
+				 */
+				title: string
+				/**
+				 * S​u​i​v​i​ ​e​n​ ​t​e​m​p​s​ ​r​é​e​l​ ​d​e​s​ ​p​r​o​g​r​è​s​ ​e​t​ ​d​e​s​ ​a​c​t​i​v​i​t​é​s​ ​d​e​ ​l​e​u​r​ ​e​n​f​a​n​t​.
+				 */
+				description: string
+			}
+			students: {
+				/**
+				 * É​l​è​v​e​s
+				 */
+				title: string
+				/**
+				 * A​c​c​è​s​ ​a​u​ ​m​a​t​é​r​i​e​l​ ​p​é​d​a​g​o​g​i​q​u​e​ ​e​t​ ​a​p​e​r​ç​u​ ​d​e​s​ ​p​e​r​f​o​r​m​a​n​c​e​s​.
+				 */
+				description: string
+			}
 		}
 	}
 	common: {
@@ -1038,6 +1401,58 @@ type RootTranslation = {
 		 */
 		updateError: string
 	}
+	whyYeko: {
+		/**
+		 * P​o​u​r​q​u​o​i​ ​C​h​o​i​s​i​r​ ​Y​e​k​o​ ​?
+		 */
+		title: string
+		/**
+		 * N​o​u​s​ ​f​o​u​r​n​i​s​s​o​n​s​ ​l​e​s​ ​o​u​t​i​l​s​ ​d​o​n​t​ ​v​o​u​s​ ​a​v​e​z​ ​b​e​s​o​i​n​ ​p​o​u​r​ ​r​é​u​s​s​i​r​ ​d​a​n​s​ ​u​n​ ​m​o​n​d​e​ ​n​u​m​é​r​i​q​u​e​.
+		 */
+		subtitle: string
+		features: {
+			lightning: {
+				/**
+				 * U​l​t​r​a​ ​R​a​p​i​d​e
+				 */
+				title: string
+				/**
+				 * O​p​t​i​m​i​s​é​ ​p​o​u​r​ ​l​a​ ​p​e​r​f​o​r​m​a​n​c​e​ ​e​t​ ​l​'​e​f​f​i​c​a​c​i​t​é​ ​d​a​n​s​ ​t​o​u​t​ ​c​e​ ​q​u​e​ ​v​o​u​s​ ​f​a​i​t​e​s​.
+				 */
+				description: string
+			}
+			secure: {
+				/**
+				 * S​é​c​u​r​i​t​é​ ​B​a​n​c​a​i​r​e
+				 */
+				title: string
+				/**
+				 * V​o​s​ ​d​o​n​n​é​e​s​ ​s​o​n​t​ ​c​r​y​p​t​é​e​s​ ​e​t​ ​p​r​o​t​é​g​é​e​s​ ​s​e​l​o​n​ ​l​e​s​ ​n​o​r​m​e​s​ ​l​e​s​ ​p​l​u​s​ ​s​t​r​i​c​t​e​s​ ​d​e​ ​l​'​i​n​d​u​s​t​r​i​e​.
+				 */
+				description: string
+			}
+			africa: {
+				/**
+				 * C​o​n​ç​u​ ​p​o​u​r​ ​l​'​A​f​r​i​q​u​e
+				 */
+				title: string
+				/**
+				 * A​d​a​p​t​é​ ​s​p​é​c​i​f​i​q​u​e​m​e​n​t​ ​a​u​x​ ​d​é​f​i​s​ ​u​n​i​q​u​e​s​ ​d​e​s​ ​i​n​s​t​i​t​u​t​i​o​n​s​ ​é​d​u​c​a​t​i​v​e​s​ ​e​n​ ​A​f​r​i​q​u​e​.
+				 */
+				description: string
+			}
+			mobile: {
+				/**
+				 * M​o​b​i​l​e​ ​F​i​r​s​t
+				 */
+				title: string
+				/**
+				 * A​c​c​é​d​e​z​ ​à​ ​t​o​u​t​ ​d​e​p​u​i​s​ ​v​o​t​r​e​ ​s​m​a​r​t​p​h​o​n​e​ ​a​v​e​c​ ​n​o​t​r​e​ ​p​l​a​t​e​f​o​r​m​e​ ​e​n​t​i​è​r​e​m​e​n​t​ ​r​e​s​p​o​n​s​i​v​e​.
+				 */
+				description: string
+			}
+		}
+	}
 }
 
 export type TranslationFunctions = {
@@ -1050,14 +1465,202 @@ export type TranslationFunctions = {
 		 * Solutions
 		 */
 		solutions: () => LocalizedString
-		/**
-		 * Avantages
-		 */
-		benefits: () => LocalizedString
-		/**
-		 * Tarifs
-		 */
-		pricing: () => LocalizedString
+		benefits: {
+			/**
+			 * Conçu pour l'Efficacité
+			 */
+			title: () => LocalizedString
+			/**
+			 * Optimisez les opérations de votre école et concentrez-vous sur l'essentiel : l'éducation.
+			 */
+			subtitle: () => LocalizedString
+			items: {
+				timeSaving: {
+					/**
+					 * Gain de Temps
+					 */
+					title: () => LocalizedString
+					/**
+					 * Réduisez la charge de travail administrative de 50 % grâce à des processus automatisés.
+					 */
+					description: () => LocalizedString
+				}
+				costReduction: {
+					/**
+					 * Réduction des Coûts
+					 */
+					title: () => LocalizedString
+					/**
+					 * Minimisez les coûts opérationnels et les frais de paperasserie physique.
+					 */
+					description: () => LocalizedString
+				}
+				satisfaction: {
+					/**
+					 * Meilleure Satisfaction
+					 */
+					title: () => LocalizedString
+					/**
+					 * Améliorez la communication entre les enseignants, les élèves et les parents.
+					 */
+					description: () => LocalizedString
+				}
+				growth: {
+					/**
+					 * Croissance Évolutive
+					 */
+					title: () => LocalizedString
+					/**
+					 * Gérez facilement plusieurs écoles ou succursales à partir d'une seule plateforme.
+					 */
+					description: () => LocalizedString
+				}
+			}
+		}
+		pricing: {
+			/**
+			 * Plans Tarifaires
+			 */
+			title: () => LocalizedString
+			/**
+			 * Choisissez le meilleur plan pour votre institution.
+			 */
+			subtitle: () => LocalizedString
+			/**
+			 * Annuel
+			 */
+			annual: () => LocalizedString
+			/**
+			 * Mensuel
+			 */
+			monthly: () => LocalizedString
+			/**
+			 * Fonctionnalités
+			 */
+			features: () => LocalizedString
+			/**
+			 * Commencer
+			 */
+			getStarted: () => LocalizedString
+			/**
+			 * Contacter le service commercial
+			 */
+			contactSales: () => LocalizedString
+			/**
+			 * Contactez-nous
+			 */
+			contactUs: () => LocalizedString
+			/**
+			 * Choisir le plan
+			 */
+			cta: () => LocalizedString
+			/**
+			 * Les prix sont en monnaie locale. Des taxes peuvent s'appliquer.
+			 */
+			footer: () => LocalizedString
+			plans: {
+				starter: {
+					/**
+					 * Starter
+					 */
+					title: () => LocalizedString
+					/**
+					 * Parfait pour les petites écoles qui débutent.
+					 */
+					description: () => LocalizedString
+					/**
+					 * Gratuit
+					 */
+					price: () => LocalizedString
+					features: {
+						/**
+						 * Jusqu'à 100 élèves
+						 */
+						'0': () => LocalizedString
+						/**
+						 * Gestion académique de base
+						 */
+						'1': () => LocalizedString
+						/**
+						 * Suivi des présences
+						 */
+						'2': () => LocalizedString
+						/**
+						 * Support par email
+						 */
+						'3': () => LocalizedString
+					}
+				}
+				professional: {
+					/**
+					 * Professionnel
+					 */
+					title: () => LocalizedString
+					/**
+					 * Fonctionnalités avancées pour les institutions éducatives en croissance.
+					 */
+					description: () => LocalizedString
+					/**
+					 * 29$
+					 */
+					price: () => LocalizedString
+					/**
+					 * Le plus populaire
+					 */
+					popular: () => LocalizedString
+					features: {
+						/**
+						 * Jusqu'à 1000 élèves
+						 */
+						'0': () => LocalizedString
+						/**
+						 * Gestion financière
+						 */
+						'1': () => LocalizedString
+						/**
+						 * Portail parents-enseignants
+						 */
+						'2': () => LocalizedString
+						/**
+						 * Support prioritaire
+						 */
+						'3': () => LocalizedString
+					}
+				}
+				enterprise: {
+					/**
+					 * Entreprise
+					 */
+					title: () => LocalizedString
+					/**
+					 * Solutions sur mesure pour les grands réseaux et universités.
+					 */
+					description: () => LocalizedString
+					/**
+					 * Sur mesure
+					 */
+					price: () => LocalizedString
+					features: {
+						/**
+						 * Élèves illimités
+						 */
+						'0': () => LocalizedString
+						/**
+						 * Intégrations personnalisées
+						 */
+						'1': () => LocalizedString
+						/**
+						 * Support multi-campus
+						 */
+						'2': () => LocalizedString
+						/**
+						 * Gestionnaire de compte dédié
+						 */
+						'3': () => LocalizedString
+					}
+				}
+			}
+		}
 		/**
 		 * Connexion
 		 */
@@ -1098,6 +1701,74 @@ export type TranslationFunctions = {
 		 * Explorez la plateforme Yeko
 		 */
 		menuDescription: () => LocalizedString
+	}
+	footerNav: {
+		product: {
+			/**
+			 * Produit
+			 */
+			title: () => LocalizedString
+			/**
+			 * Fonctionnalités
+			 */
+			features: () => LocalizedString
+			/**
+			 * Tarifs
+			 */
+			pricing: () => LocalizedString
+			/**
+			 * À propos
+			 */
+			about: () => LocalizedString
+			/**
+			 * Contact
+			 */
+			contact: () => LocalizedString
+		}
+		resources: {
+			/**
+			 * Ressources
+			 */
+			title: () => LocalizedString
+			/**
+			 * Centre d'aide
+			 */
+			help: () => LocalizedString
+			/**
+			 * Politique de confidentialité
+			 */
+			privacy: () => LocalizedString
+			/**
+			 * Conditions d'utilisation
+			 */
+			terms: () => LocalizedString
+			/**
+			 * Sécurité
+			 */
+			security: () => LocalizedString
+		}
+		social: {
+			/**
+			 * Facebook
+			 */
+			facebook: () => LocalizedString
+			/**
+			 * Twitter
+			 */
+			twitter: () => LocalizedString
+			/**
+			 * LinkedIn
+			 */
+			linkedin: () => LocalizedString
+		}
+		/**
+		 * Yeko - Propulser les écoles africaines grâce à l'innovation numérique.
+		 */
+		tagline: () => LocalizedString
+		/**
+		 * © {year} Yeko. Tous droits réservés.
+		 */
+		copyright: (arg: { year: number }) => LocalizedString
 	}
 	hero: {
 		/**
@@ -1147,6 +1818,60 @@ export type TranslationFunctions = {
 			description: () => LocalizedString
 		}
 	}
+	painPoints: {
+		/**
+		 * Arrêtez de lutter avec des systèmes obsolètes
+		 */
+		title: () => LocalizedString
+		/**
+		 * Nous résolvons les défis les plus courants auxquels les écoles sont confrontées aujourd'hui.
+		 */
+		subtitle: () => LocalizedString
+		items: {
+			paperwork: {
+				/**
+				 * Paperasserie manuelle
+				 */
+				title: () => LocalizedString
+				/**
+				 * Plus de piles de papier et d'erreurs de saisie manuelle.
+				 */
+				description: () => LocalizedString
+				/**
+				 * Dossiers d'élèves numériques et tenue de registres automatisée.
+				 */
+				solution: () => LocalizedString
+			}
+			communication: {
+				/**
+				 * Mauvaise communication
+				 */
+				title: () => LocalizedString
+				/**
+				 * Contactez instantanément les parents et le personnel via des canaux intégrés.
+				 */
+				description: () => LocalizedString
+				/**
+				 * Notifications mobiles instantanées et messagerie unifiée.
+				 */
+				solution: () => LocalizedString
+			}
+			admin: {
+				/**
+				 * Charge administrative
+				 */
+				title: () => LocalizedString
+				/**
+				 * Réduisez le temps passé sur les tâches répétitives et concentrez-vous sur l'enseignement.
+				 */
+				description: () => LocalizedString
+				/**
+				 * Intégration d'outils en ligne et processus automatiques.
+				 */
+				solution: () => LocalizedString
+			}
+		}
+	}
 	socialProof: {
 		/**
 		 * Approuvé par des institutions éducatives à travers l'Afrique
@@ -1169,6 +1894,58 @@ export type TranslationFunctions = {
 			 * Pays
 			 */
 			countries: () => LocalizedString
+		}
+	}
+	useCases: {
+		/**
+		 * Adapté à chaque partie prenante
+		 */
+		title: () => LocalizedString
+		/**
+		 * Notre plateforme rassemble tout le monde dans un écosystème numérique unifié.
+		 */
+		subtitle: () => LocalizedString
+		stakeholders: {
+			administrators: {
+				/**
+				 * Administrateurs
+				 */
+				title: () => LocalizedString
+				/**
+				 * Supervision et contrôle complets des opérations scolaires.
+				 */
+				description: () => LocalizedString
+			}
+			teachers: {
+				/**
+				 * Enseignants
+				 */
+				title: () => LocalizedString
+				/**
+				 * Notation, présence et planification des cours sans effort.
+				 */
+				description: () => LocalizedString
+			}
+			parents: {
+				/**
+				 * Parents
+				 */
+				title: () => LocalizedString
+				/**
+				 * Suivi en temps réel des progrès et des activités de leur enfant.
+				 */
+				description: () => LocalizedString
+			}
+			students: {
+				/**
+				 * Élèves
+				 */
+				title: () => LocalizedString
+				/**
+				 * Accès au matériel pédagogique et aperçu des performances.
+				 */
+				description: () => LocalizedString
+			}
 		}
 	}
 	common: {
@@ -2052,6 +2829,58 @@ export type TranslationFunctions = {
 		 * Erreur lors de la mise à jour des accès
 		 */
 		updateError: () => LocalizedString
+	}
+	whyYeko: {
+		/**
+		 * Pourquoi Choisir Yeko ?
+		 */
+		title: () => LocalizedString
+		/**
+		 * Nous fournissons les outils dont vous avez besoin pour réussir dans un monde numérique.
+		 */
+		subtitle: () => LocalizedString
+		features: {
+			lightning: {
+				/**
+				 * Ultra Rapide
+				 */
+				title: () => LocalizedString
+				/**
+				 * Optimisé pour la performance et l'efficacité dans tout ce que vous faites.
+				 */
+				description: () => LocalizedString
+			}
+			secure: {
+				/**
+				 * Sécurité Bancaire
+				 */
+				title: () => LocalizedString
+				/**
+				 * Vos données sont cryptées et protégées selon les normes les plus strictes de l'industrie.
+				 */
+				description: () => LocalizedString
+			}
+			africa: {
+				/**
+				 * Conçu pour l'Afrique
+				 */
+				title: () => LocalizedString
+				/**
+				 * Adapté spécifiquement aux défis uniques des institutions éducatives en Afrique.
+				 */
+				description: () => LocalizedString
+			}
+			mobile: {
+				/**
+				 * Mobile First
+				 */
+				title: () => LocalizedString
+				/**
+				 * Accédez à tout depuis votre smartphone avec notre plateforme entièrement responsive.
+				 */
+				description: () => LocalizedString
+			}
+		}
 	}
 }
 
