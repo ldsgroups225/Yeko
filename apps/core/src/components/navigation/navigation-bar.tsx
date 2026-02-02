@@ -10,7 +10,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from '@workspace/ui/components/avatar'
-import { Button } from '@workspace/ui/components/button'
+import { Button, buttonVariants } from '@workspace/ui/components/button'
 import {
   Sheet,
   SheetContent,
@@ -47,8 +47,6 @@ export function NavigationBar() {
     { label: LL.nav.pricing.title(), href: '/#pricing', scrollTo: 'pricing' },
     { label: LL.footerNav.product.about(), href: '/about', isExternal: false },
   ]
-
-
 
   const handleGoogleSignIn = async () => {
     await authClient.signIn.social({
@@ -181,16 +179,17 @@ export function NavigationBar() {
             {session
               ? (
                   <div className="flex flex-row items-center gap-4">
-                    <Button
-                      variant="secondary"
-                      render={<Link to="/app">{LL.nav.dashboard()}</Link>}
-                    />
-
+                    <Link
+                      to="/app"
+                      className={buttonVariants({ variant: 'secondary' })}
+                    >
+                      {LL.nav.dashboard()}
+                    </Link>
 
                     <AccountDialog>
-                      <Button
-                        variant="ghost"
-                        className="flex items-center gap-2 px-3"
+                      <button
+                        type="button"
+                        className={buttonVariants({ variant: 'ghost', className: 'flex items-center gap-2 px-3' })}
                       >
                         <Avatar className="h-7 w-7">
                           <AvatarImage
@@ -204,19 +203,18 @@ export function NavigationBar() {
                         <span className="text-sm font-medium">
                           {user?.name || 'Account'}
                         </span>
-                      </Button>
+                      </button>
                     </AccountDialog>
                   </div>
                 )
               : (
                   <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      render={
-                        <Link to="/demo-request">{LL.nav.requestDemo()}</Link>
-                      }
-                    />
+                    <Link
+                      to="/demo-request"
+                      className={buttonVariants({ variant: 'outline', size: 'sm' })}
+                    >
+                      {LL.nav.requestDemo()}
+                    </Link>
                     <Button
                       onClick={handleGoogleSignIn}
                       variant="default"
@@ -236,16 +234,17 @@ export function NavigationBar() {
             <LanguageSwitcher />
             <ThemeToggle variant="ghost" align="end" />
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
-              <SheetTrigger>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="relative h-10 w-10 hover:bg-accent/50"
-                >
-                  <IconMenu className="h-5 w-5" />
-                  <span className="sr-only">Open navigation menu</span>
-                </Button>
-              </SheetTrigger>
+              <SheetTrigger
+                render={(
+                  <button
+                    type="button"
+                    className={buttonVariants({ variant: 'ghost', size: 'icon', className: 'relative h-10 w-10 hover:bg-accent/50' })}
+                  >
+                    <IconMenu className="h-5 w-5" />
+                    <span className="sr-only">Open navigation menu</span>
+                  </button>
+                )}
+              />
               <SheetContent
                 side="right"
                 className="w-[300px] bg-background/95 backdrop-blur-xl border-l border-border/50"
@@ -328,13 +327,12 @@ export function NavigationBar() {
                       )
                     : (
                         <div className="space-y-2">
-                          <Button
-                            variant="outline"
-                            className="w-full"
-                            render={
-                              <Link to="/demo-request">{LL.nav.requestDemo()}</Link>
-                            }
-                          />
+                          <Link
+                            to="/demo-request"
+                            className={buttonVariants({ variant: 'outline', className: 'w-full' })}
+                          >
+                            {LL.nav.requestDemo()}
+                          </Link>
                           <Button
                             onClick={handleGoogleSignIn}
                             variant="default"

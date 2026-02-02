@@ -17,7 +17,7 @@ import {
   AvatarImage,
 } from '@workspace/ui/components/avatar'
 import { Badge } from '@workspace/ui/components/badge'
-import { Button } from '@workspace/ui/components/button'
+import { buttonVariants } from '@workspace/ui/components/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -154,15 +154,14 @@ export function SchoolsTableVirtual({
                     <DropdownMenu>
                       <DropdownMenuTrigger
                         render={(
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8"
+                          <button
+                            type="button"
+                            className={buttonVariants({ variant: 'ghost', size: 'icon', className: 'h-8 w-8' })}
                             onClick={e => e.stopPropagation()}
                           >
                             <IconDots className="h-4 w-4" />
                             <span className="sr-only">Actions</span>
-                          </Button>
+                          </button>
                         )}
                       />
                       <DropdownMenuContent

@@ -1,7 +1,7 @@
 import { IconArrowRight, IconCheck } from '@tabler/icons-react'
 import { Link } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'
-import { Button } from '@workspace/ui/components/button'
+import { buttonVariants } from '@workspace/ui/components/button'
 import {
   Card,
   CardContent,
@@ -93,28 +93,22 @@ export function PricingSection() {
                             {featureFn()}
                           </span>
                         </li>
-                      )
+                      ),
                     )}
                   </ul>
-                  <Button
-                    className="w-full group"
-                    variant={plan.popular ? 'default' : 'outline'}
-                    size="lg"
-                    render={(
-                      <Link
-                        to={
-                          plan.key === 'enterprise'
-                            ? '/demo-request'
-                            : '/demo-request'
-                        }
-                      >
-                        {plan.key === 'enterprise'
-                          ? LL.nav.pricing.contactUs()
-                          : LL.nav.pricing.cta()}
-                        <IconArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                      </Link>
-                    )}
-                  />
+                  <Link
+                    className={buttonVariants({ className: 'w-full group', variant: plan.popular ? 'default' : 'outline', size: 'lg' })}
+                    to={
+                      plan.key === 'enterprise'
+                        ? '/demo-request'
+                        : '/demo-request'
+                    }
+                  >
+                    {plan.key === 'enterprise'
+                      ? LL.nav.pricing.contactUs()
+                      : LL.nav.pricing.cta()}
+                    <IconArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Link>
                 </CardContent>
               </Card>
             )

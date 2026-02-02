@@ -5,7 +5,7 @@ import {
 } from '@tabler/icons-react'
 import { Link } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'
-import { Button } from '@workspace/ui/components/button'
+import { buttonVariants } from '@workspace/ui/components/button'
 import { useI18nContext } from '@/i18n/i18n-react'
 
 export function HeroSection() {
@@ -37,28 +37,21 @@ export function HeroSection() {
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-400 fill-mode-backwards">
-            <Button
-              size="lg"
-              className="group h-14 px-8 text-lg shadow-lg shadow-primary/20"
-              render={(
-                <a href="/signup">
-                  {LL.hero.cta.primary()}
-                  <IconArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                </a>
-              )}
-            />
+            <a
+              href="/signup"
+              className={buttonVariants({ size: 'lg', className: 'group h-14 px-8 text-lg shadow-lg shadow-primary/20' })}
+            >
+              {LL.hero.cta.primary()}
+              <IconArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+            </a>
 
-            <Button
-              variant="outline"
-              size="lg"
-              className="h-14 px-8 text-lg backdrop-blur-sm bg-background/50"
-              render={(
-                <Link to="/demo-request">
-                  <IconPlayerPlay className="mr-2 h-5 w-5" />
-                  {LL.hero.cta.secondary()}
-                </Link>
-              )}
-            />
+            <Link
+              to="/demo-request"
+              className={buttonVariants({ variant: 'outline', size: 'lg', className: 'h-14 px-8 text-lg backdrop-blur-sm bg-background/50' })}
+            >
+              <IconPlayerPlay className="mr-2 h-5 w-5" />
+              {LL.hero.cta.secondary()}
+            </Link>
           </div>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground animate-in fade-in duration-1000 delay-500 fill-mode-backwards">

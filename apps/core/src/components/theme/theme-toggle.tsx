@@ -5,13 +5,14 @@ import {
   IconSun,
 } from '@tabler/icons-react'
 
-import { Button } from '@workspace/ui/components/button'
+import { Button, buttonVariants } from '@workspace/ui/components/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu'
+import { cn } from '@/lib/utils'
 import { useTheme } from './use-theme'
 
 interface ThemeToggleProps {
@@ -92,15 +93,14 @@ export function ThemeToggle({
     <DropdownMenu>
       <DropdownMenuTrigger
         render={(
-          <Button
-            variant={variant}
-            size={size}
-            className={`
+          <button
+            type="button"
+            className={cn(buttonVariants({ variant, size }), `
             relative overflow-hidden transition-all duration-200 ease-in-out
             hover:scale-105 active:scale-95
             focus:ring-2 focus:ring-ring focus:ring-offset-2
             ${showLabel ? 'gap-2' : 'aspect-square'}
-          `}
+          `)}
             aria-label="Toggle theme"
           >
             <div className="relative flex items-center justify-center">
@@ -116,7 +116,7 @@ export function ThemeToggle({
               {' '}
               {theme === 'system' ? `System (${resolvedTheme})` : theme}
             </span>
-          </Button>
+          </button>
         )}
       />
 

@@ -1,5 +1,5 @@
 import type { Locales } from '@/i18n/i18n-types'
-import { Button } from '@workspace/ui/components/button'
+import { buttonVariants } from '@workspace/ui/components/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,14 +27,17 @@ export function LanguageSwitcher() {
     <DropdownMenu>
       <DropdownMenuTrigger
         render={(
-          <Button variant="ghost" size="sm">
+          <button
+            type="button"
+            className={buttonVariants({ variant: 'ghost', size: 'sm' })}
+          >
             <span className="hidden sm:inline">
               {currentLanguage?.flag}
               {' '}
               {currentLanguage?.name}
             </span>
             <span className="sm:hidden">{currentLanguage?.flag}</span>
-          </Button>
+          </button>
         )}
       />
       <DropdownMenuContent align="end">

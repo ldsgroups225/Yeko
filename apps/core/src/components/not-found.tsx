@@ -5,7 +5,7 @@ import {
   IconSearch,
 } from '@tabler/icons-react'
 import { Link } from '@tanstack/react-router'
-import { Button } from '@workspace/ui/components/button'
+import { Button, buttonVariants } from '@workspace/ui/components/button'
 import { Card, CardContent } from '@workspace/ui/components/card'
 
 export function NotFound({ children }: { children?: React.ReactNode }) {
@@ -43,15 +43,13 @@ export function NotFound({ children }: { children?: React.ReactNode }) {
                 <IconArrowLeft className="h-4 w-4" />
                 Go Back
               </Button>
-              <Button
-                variant="outline"
-                render={(
-                  <Link to="/" className="flex items-center gap-2">
-                    <IconHome className="h-4 w-4" />
-                    Home
-                  </Link>
-                )}
-              />
+              <Link
+                to="/"
+                className={buttonVariants({ variant: 'outline', className: 'flex items-center gap-2' })}
+              >
+                <IconHome className="h-4 w-4" />
+                Home
+              </Link>
             </div>
 
             {/* Help text */}
