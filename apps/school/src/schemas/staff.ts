@@ -27,7 +27,7 @@ export const staffSchema = z.object({
     ),
   status: z.enum(['active', 'inactive', 'on_leave'], {
     message: 'Statut invalide',
-  }),
+  }).default('active'),
 })
 
 export const createStaffSchema = staffSchema
