@@ -35,7 +35,7 @@ export function BulkImportUsers() {
 
   const downloadTemplate = () => {
     const csv = `name,email,phone,roles,status
-John Doe,john@example.com,+225 01 02 03 04,school_administrator,active
+John Doe,john@example.com,+225 01 02 03 04,school_director,active
 Jane Smith,jane@example.com,+225 05 06 07 08,academic_coordinator,active`
 
     const blob = new Blob([csv], { type: 'text/csv' })

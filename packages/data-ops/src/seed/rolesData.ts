@@ -96,7 +96,7 @@ export const defaultRoles: RoleData[] = [
       conduct: ['view', 'create', 'validate'],
       finance: ['view'],
       reports: ['view', 'export'],
-      settings: ['view'],
+      settings: ['view', 'edit'],
       school_subjects: ['view'],
       coefficients: ['view'],
     },

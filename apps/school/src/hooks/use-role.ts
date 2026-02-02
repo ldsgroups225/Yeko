@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { getCurrentUserRole } from '@/school/functions/users'
 
 export type RoleSlug
-  = | 'school_administrator'
+  = | 'school_director'
     | 'academic_coordinator'
     | 'discipline_officer'
     | 'accountant'

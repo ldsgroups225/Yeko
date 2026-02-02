@@ -1157,7 +1157,7 @@ const en: Translation = {
   },
   roles: {
     descriptions: {
-      school_administrator: 'Full access to all modules',
+      school_director: 'Operational head: general supervision, decision validation, and discipline.',
       academic_coordinator: 'Curriculum management and grade validation',
       discipline_officer: 'Attendance and conduct management',
       accountant: 'Financial management and reports',

@@ -1017,7 +1017,7 @@ export const fr: TypedLocale = {
   },
   roles: {
     descriptions: {
-      school_administrator: 'Accès complet à tous les modules',
+      school_director: 'Chef opérationnel : supervision générale, validation des décisions et discipline.',
       academic_coordinator: 'Gestion du curriculum et validation des notes',
       discipline_officer: 'Gestion de la présence et de la conduite',
       accountant: 'Gestion financière et rapports',

@@ -19,7 +19,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'
-import { Button } from '@workspace/ui/components/button'
+import { Button, buttonVariants } from '@workspace/ui/components/button'
 import {
   Card,
   CardContent,
@@ -92,7 +92,7 @@ function SchoolDetails() {
   // Process users data
   const users = usersData?.data?.users || []
   const adminCount = users.filter(user =>
-    user.roles?.includes('school_administrator'),
+    user.roles?.includes('school_director'),
   ).length
   const teacherCount = users.filter(user =>
     user.roles?.includes('teacher'),
@@ -101,7 +101,7 @@ function SchoolDetails() {
     user =>
       user.roles?.includes('staff')
       || (user.roles
-        && !user.roles.includes('school_administrator')
+        && !user.roles.includes('school_director')
         && !user.roles.includes('teacher')),
   ).length
 
@@ -612,13 +612,12 @@ function SchoolDetails() {
                                 <DropdownMenu>
                                   <DropdownMenuTrigger
                                     render={(
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-8 w-8"
+                                      <button
+                                        type="button"
+                                        className={buttonVariants({ variant: 'ghost', size: 'icon', className: 'h-8 w-8' })}
                                       >
                                         <IconDotsVertical className="h-4 w-4" />
-                                      </Button>
+                                      </button>
                                     )}
                                   />
                                   <DropdownMenuContent align="end">

@@ -265,7 +265,7 @@ export function RoleDashboardExample() {
   const t = useTranslations()
 
   const roles = [
-    'school_administrator',
+    'school_director',
     'academic_coordinator',
     'discipline_officer',
     'accountant',
@@ -274,7 +274,7 @@ export function RoleDashboardExample() {
   ]
 
   const roleDescriptionTranslations = {
-    school_administrator: t.roles.descriptions.school_administrator,
+    school_director: t.roles.descriptions.school_director,
     academic_coordinator: t.roles.descriptions.academic_coordinator,
     discipline_officer: t.roles.descriptions.discipline_officer,
     accountant: t.roles.descriptions.accountant,
@@ -283,7 +283,7 @@ export function RoleDashboardExample() {
   }
 
   const dashboardTitleTranslations = {
-    school_administrator: t.dashboard.admin.title,
+    school_director: t.dashboard.admin.title,
     academic_coordinator: t.dashboard.coordinator.title,
     discipline_officer: t.dashboard.description, // No specific title
     accountant: t.dashboard.accountant.title,

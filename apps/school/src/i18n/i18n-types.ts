@@ -4227,9 +4227,9 @@ type RootTranslation = {
 	roles: {
 		descriptions: {
 			/**
-			 * A​c​c​è​s​ ​c​o​m​p​l​e​t​ ​à​ ​t​o​u​s​ ​l​e​s​ ​m​o​d​u​l​e​s
+			 * C​h​e​f​ ​o​p​é​r​a​t​i​o​n​n​e​l​ ​:​ ​s​u​p​e​r​v​i​s​i​o​n​ ​g​é​n​é​r​a​l​e​,​ ​v​a​l​i​d​a​t​i​o​n​ ​d​e​s​ ​d​é​c​i​s​i​o​n​s​ ​e​t​ ​d​i​s​c​i​p​l​i​n​e​.
 			 */
-			school_administrator: string
+			school_director: string
 			/**
 			 * G​e​s​t​i​o​n​ ​d​u​ ​c​u​r​r​i​c​u​l​u​m​ ​e​t​ ​v​a​l​i​d​a​t​i​o​n​ ​d​e​s​ ​n​o​t​e​s
 			 */
@@ -12106,9 +12106,9 @@ export type TranslationFunctions = {
 	roles: {
 		descriptions: {
 			/**
-			 * Accès complet à tous les modules
+			 * Chef opérationnel : supervision générale, validation des décisions et discipline.
 			 */
-			school_administrator: () => LocalizedString
+			school_director: () => LocalizedString
 			/**
 			 * Gestion du curriculum et validation des notes
 			 */
