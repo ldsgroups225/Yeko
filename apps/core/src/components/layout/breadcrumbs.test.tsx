@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react'
+import * as React from 'react'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { Breadcrumbs } from './breadcrumbs'
 
@@ -11,11 +12,8 @@ const mockRouterState = {
 
 vi.mock('@tanstack/react-router', () => ({
   useRouterState: () => mockRouterState,
-  Link: ({ children, to, ...props }: any) => (
-    <a href={to} {...props}>
-      {children}
-    </a>
-  ),
+  Link: ({ children, to, ...props }: any) =>
+    React.createElement('a', { href: to, ...props }, children),
 }))
 
 // Mock generateUUID utility to return different values each call
@@ -29,8 +27,8 @@ vi.mock('@tabler/icons-react', async () => {
   const icons = await import('lucide-react')
   return {
     ...icons,
-    IconHome: () => <span data-testid="home-icon">🏠</span>,
-    IconChevronRight: () => <span data-testid="chevron-right">›</span>,
+    IconHome: () => React.createElement('span', { 'data-testid': 'home-icon' }, '🏠'),
+    IconChevronRight: () => React.createElement('span', { 'data-testid': 'chevron-right' }, '›'),
   }
 })
 

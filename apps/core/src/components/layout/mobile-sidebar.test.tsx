@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import * as React from 'react'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { MobileSidebar } from './mobile-sidebar'
 
@@ -18,65 +19,47 @@ vi.mock('@tanstack/react-router', () => ({
 
 // Mock Sheet component
 vi.mock('@workspace/ui/components/sheet', () => ({
-  Sheet: ({ children, open, onOpenChange }: any) => (
-    <div
-      data-testid="sheet"
-      data-open={open}
-      onClick={() => onOpenChange?.(false)}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
+  Sheet: ({ children, open, onOpenChange }: any) =>
+    React.createElement('div', {
+      'data-testid': 'sheet',
+      'data-open': open,
+      'onClick': () => onOpenChange?.(false),
+      'role': 'button',
+      'tabIndex': 0,
+      'onKeyDown': (e: any) => {
         if (e.key === 'Enter' || e.key === ' ') {
           onOpenChange?.(false)
         }
-      }}
-    >
-      {children}
-    </div>
-  ),
-  SheetContent: ({ children, side, className }: any) => (
-    <div
-      data-testid="sheet-content"
-      data-side={side}
-      className={className}
-    >
-      {children}
-    </div>
-  ),
-  SheetHeader: ({ children, className }: any) => (
-    <div data-testid="sheet-header" className={className}>
-      {children}
-    </div>
-  ),
-  SheetTitle: ({ children, className }: any) => (
-    <h2 data-testid="sheet-title" className={className}>
-      {children}
-    </h2>
-  ),
+      },
+    }, children),
+  SheetContent: ({ children, side, className }: any) =>
+    React.createElement('div', {
+      'data-testid': 'sheet-content',
+      'data-side': side,
+      className,
+    }, children),
+  SheetHeader: ({ children, className }: any) =>
+    React.createElement('div', { 'data-testid': 'sheet-header', className }, children),
+  SheetTitle: ({ children, className }: any) =>
+    React.createElement('h2', { 'data-testid': 'sheet-title', className }, children),
 }))
 
 // Mock other UI components
 vi.mock('@workspace/ui/components/button', () => ({
-  Button: ({ children, onClick, className, variant, ...props }: any) => (
-    <button
-      type={props.type || 'button'}
-      onClick={onClick}
-      className={className}
-      data-testid={props['data-testid'] || 'button'}
-      data-variant={variant}
-      {...props}
-    >
-      {children}
-    </button>
-  ),
+  Button: ({ children, onClick, className, variant, ...props }: any) =>
+    React.createElement('button', {
+      'type': props.type || 'button',
+      onClick,
+      className,
+      'data-testid': props['data-testid'] || 'button',
+      'data-variant': variant,
+      ...props,
+    }, children),
 }))
 
 vi.mock('@workspace/ui/components/scroll-area', () => ({
-  ScrollArea: ({ children, className }: any) => (
-    <div className={className} data-testid="scroll-area">
-      {children}
-    </div>
-  ),
+  ScrollArea: ({ children, className }: any) =>
+    React.createElement('div', { className, 'data-testid': 'scroll-area' }, children),
 }))
 
 // Mock cn utility to simulate actual Tailwind class merging
@@ -89,17 +72,17 @@ vi.mock('@/lib/utils', () => ({
 
 // Mock Sidebar components
 vi.mock('@workspace/ui/components/sidebar', () => ({
-  Sidebar: ({ children, ...props }: any) => <aside {...props}>{children}</aside>,
-  SidebarContent: ({ children }: any) => <div>{children}</div>,
-  SidebarFooter: ({ children }: any) => <div>{children}</div>,
-  SidebarGroup: ({ children }: any) => <div>{children}</div>,
-  SidebarGroupContent: ({ children }: any) => <div>{children}</div>,
-  SidebarGroupLabel: ({ children }: any) => <div>{children}</div>,
-  SidebarHeader: ({ children }: any) => <div>{children}</div>,
-  SidebarMenu: ({ children }: any) => <ul>{children}</ul>,
-  SidebarMenuButton: ({ children, ...props }: any) => <button type="button" {...props}>{children}</button>,
-  SidebarMenuItem: ({ children }: any) => <li>{children}</li>,
-  SidebarProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  Sidebar: ({ children, ...props }: any) => React.createElement('aside', props, children),
+  SidebarContent: ({ children }: any) => React.createElement('div', null, children),
+  SidebarFooter: ({ children }: any) => React.createElement('div', null, children),
+  SidebarGroup: ({ children }: any) => React.createElement('div', null, children),
+  SidebarGroupContent: ({ children }: any) => React.createElement('div', null, children),
+  SidebarGroupLabel: ({ children }: any) => React.createElement('div', null, children),
+  SidebarHeader: ({ children }: any) => React.createElement('div', null, children),
+  SidebarMenu: ({ children }: any) => React.createElement('ul', null, children),
+  SidebarMenuButton: ({ children, ...props }: any) => React.createElement('button', { type: 'button', ...props }, children),
+  SidebarMenuItem: ({ children }: any) => React.createElement('li', null, children),
+  SidebarProvider: ({ children }: { children: React.ReactNode }) => React.createElement('div', null, children),
   useSidebar: () => ({
     open: true,
     setOpen: vi.fn(),
@@ -112,9 +95,9 @@ vi.mock('@workspace/ui/components/sidebar', () => ({
 
 // Mock Avatar
 vi.mock('@workspace/ui/components/avatar', () => ({
-  Avatar: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-  AvatarFallback: ({ children }: any) => <div>{children}</div>,
-  AvatarImage: ({ src, alt }: any) => <img src={src} alt={alt} />,
+  Avatar: ({ children, ...props }: any) => React.createElement('div', props, children),
+  AvatarFallback: ({ children }: any) => React.createElement('div', null, children),
+  AvatarImage: ({ src, alt }: any) => React.createElement('img', { src, alt }),
 }))
 
 describe('mobileSidebar Component', () => {

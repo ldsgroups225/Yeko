@@ -1,13 +1,14 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import * as React from 'react'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 
-// Mock motion/react
+// Mock motion/react - using React.createElement to avoid JSX in hoisted mocks
 vi.mock('motion/react', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: any) => React.createElement('div', props, children),
   },
-  AnimatePresence: ({ children }: any) => <>{children}</>,
+  AnimatePresence: ({ children }: any) => React.createElement(React.Fragment, null, children),
 }))
 
 // Mock TanStack Query
@@ -27,35 +28,36 @@ vi.mock('sonner', () => ({
   },
 }))
 
-// Mock UI components
+// Mock UI components - using React.createElement to avoid JSX in hoisted mocks
 vi.mock('@workspace/ui/components/card', () => ({
-  Card: ({ children, className, ...props }: any) => (
-    <div className={className} {...props}>{children}</div>
-  ),
-  CardHeader: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-  CardTitle: ({ children, ...props }: any) => <h3 {...props}>{children}</h3>,
-  CardContent: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-  CardDescription: ({ children, ...props }: any) => <p {...props}>{children}</p>,
+  Card: ({ children, className, ...props }: any) =>
+    React.createElement('div', { className, ...props }, children),
+  CardHeader: ({ children, ...props }: any) =>
+    React.createElement('div', props, children),
+  CardTitle: ({ children, ...props }: any) =>
+    React.createElement('h3', props, children),
+  CardContent: ({ children, ...props }: any) =>
+    React.createElement('div', props, children),
+  CardDescription: ({ children, ...props }: any) =>
+    React.createElement('p', props, children),
 }))
 
 vi.mock('@workspace/ui/components/input', () => ({
-  Input: ({ value, onChange, min, max, className, ...props }: any) => (
-    <input
-      type="number"
-      value={value}
-      onChange={onChange}
-      min={min}
-      max={max}
-      className={className}
-      {...props}
-    />
-  ),
+  Input: ({ value, onChange, min, max, className, ...props }: any) =>
+    React.createElement('input', {
+      type: 'number',
+      value,
+      onChange,
+      min,
+      max,
+      className,
+      ...props,
+    }),
 }))
 
 vi.mock('@workspace/ui/components/button', () => ({
-  Button: ({ children, onClick, ...props }: any) => (
-    <button type="button" onClick={onClick} {...props}>{children}</button>
-  ),
+  Button: ({ children, onClick, ...props }: any) =>
+    React.createElement('button', { type: 'button', onClick, ...props }, children),
 }))
 
 // Mock Excel functions

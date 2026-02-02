@@ -30,7 +30,7 @@ vi.mock('@/hooks/use-school-context', () => ({
 // Mock role hook
 vi.mock('@/hooks/use-role', () => ({
   useRole: vi.fn(() => ({
-    role: 'school_administrator',
+    role: 'school_director',
     isLoading: false,
   })),
 }))
