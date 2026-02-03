@@ -31,6 +31,7 @@ import { useSchoolContext } from '@/hooks/use-school-context'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { timetablesOptions } from '@/lib/queries/timetables'
+import { detectConflicts } from '@/lib/utils/timetable-conflicts'
 import {
 
   dayOfWeekLabels,
@@ -166,7 +167,7 @@ function TimetablesPage() {
       ? (classTimetableResult?.success ? classTimetableResult.data : [])
       : (teacherTimetableResult?.success ? teacherTimetableResult.data : [])
 
-    return (timetable?.map((session) => {
+    const sessions = (timetable?.map((session) => {
       // Handle different data structures for class vs teacher views
       const teacherName = 'teacher' in session && session.teacher?.user?.name
         ? session.teacher.user.name
@@ -184,9 +185,10 @@ function TimetablesPage() {
         startTime: session.startTime,
         endTime: session.endTime,
         color: session.color,
-        hasConflict: false, // TODO: Add conflict detection
       }
     }) || []) as TimetableSessionData[]
+
+    return detectConflicts(sessions)
   }, [viewMode, classTimetableResult, teacherTimetableResult])
 
   // Mutations
