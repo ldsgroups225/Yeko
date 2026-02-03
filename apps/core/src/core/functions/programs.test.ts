@@ -91,6 +91,14 @@ vi.mock('@/core/middleware/example-middleware', () => ({
   exampleMiddlewareWithContext: {},
 }))
 
+function mockOk<T>(value: T) {
+  return {
+    isOk: () => true,
+    isErr: () => false,
+    value,
+  }
+}
+
 describe('programs Server Functions', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -103,7 +111,7 @@ describe('programs Server Functions', () => {
         { id: '2', name: '2024-2025', status: 'draft' },
       ]
 
-      vi.mocked(dataOps.getSchoolYearTemplates).mockResolvedValue(mockTemplates as any)
+      vi.mocked(dataOps.getSchoolYearTemplates).mockResolvedValue(mockOk(mockTemplates) as any)
 
       const result = await schoolYearTemplatesQuery()
 
@@ -114,7 +122,7 @@ describe('programs Server Functions', () => {
     test('should return school year template by ID', async () => {
       const mockTemplate = { id: '1', name: '2023-2024', status: 'active' }
 
-      vi.mocked(dataOps.getSchoolYearTemplateById).mockResolvedValue(mockTemplate as any)
+      vi.mocked(dataOps.getSchoolYearTemplateById).mockResolvedValue(mockOk(mockTemplate) as any)
 
       const result = await schoolYearTemplateByIdQuery({ data: { id: '1' } })
 
@@ -126,7 +134,7 @@ describe('programs Server Functions', () => {
       const newTemplateData = { name: '2025-2026', status: 'draft' }
       const createdTemplate = { ...newTemplateData, id: '3', createdAt: new Date(), updatedAt: new Date() }
 
-      vi.mocked(dataOps.createSchoolYearTemplate).mockResolvedValue(createdTemplate as any)
+      vi.mocked(dataOps.createSchoolYearTemplate).mockResolvedValue(mockOk(createdTemplate) as any)
 
       const result = await createSchoolYearTemplateMutation({ data: newTemplateData })
 
@@ -141,7 +149,7 @@ describe('programs Server Functions', () => {
       const updateData = { id: '1', name: '2023-2024 Updated' }
       const updatedTemplate = { ...updateData, status: 'active' }
 
-      vi.mocked(dataOps.updateSchoolYearTemplate).mockResolvedValue(updatedTemplate as any)
+      vi.mocked(dataOps.updateSchoolYearTemplate).mockResolvedValue(mockOk(updatedTemplate) as any)
 
       const result = await updateSchoolYearTemplateMutation({ data: updateData })
 
@@ -153,7 +161,7 @@ describe('programs Server Functions', () => {
     })
 
     test('should delete school year template', async () => {
-      vi.mocked(dataOps.deleteSchoolYearTemplate).mockResolvedValue(undefined)
+      vi.mocked(dataOps.deleteSchoolYearTemplate).mockResolvedValue(mockOk(undefined) as any)
 
       const result = await deleteSchoolYearTemplateMutation({ data: { id: '1' } })
 
@@ -169,10 +177,10 @@ describe('programs Server Functions', () => {
         { id: '2', name: 'Science Program', status: 'published', schoolYearTemplateId: '1' },
       ]
 
-      vi.mocked(dataOps.getProgramTemplates).mockResolvedValue({
+      vi.mocked(dataOps.getProgramTemplates).mockResolvedValue(mockOk({
         programs: mockTemplates as any,
         pagination: { total: 2, page: 1, limit: 10, totalPages: 1 },
-      })
+      }) as any)
 
       const result = await programTemplatesQuery({ data: { page: 1, limit: 10, schoolYearTemplateId: '1' } })
 
@@ -190,7 +198,7 @@ describe('programs Server Functions', () => {
         gradeId: '1',
       }
 
-      vi.mocked(dataOps.getProgramTemplateById).mockResolvedValue(mockTemplate as any)
+      vi.mocked(dataOps.getProgramTemplateById).mockResolvedValue(mockOk(mockTemplate) as any)
 
       const result = await programTemplateByIdQuery({ data: { id: '1' } })
 
@@ -208,7 +216,7 @@ describe('programs Server Functions', () => {
       }
       const createdProgram = { ...newProgramData, id: '3', createdAt: new Date(), updatedAt: new Date() }
 
-      vi.mocked(dataOps.createProgramTemplate).mockResolvedValue(createdProgram as any)
+      vi.mocked(dataOps.createProgramTemplate).mockResolvedValue(mockOk(createdProgram) as any)
 
       const result = await createProgramTemplateMutation({ data: newProgramData })
 
@@ -238,7 +246,7 @@ describe('programs Server Functions', () => {
         gradeId: '1',
       }
 
-      vi.mocked(dataOps.updateProgramTemplate).mockResolvedValue(updatedProgram as any)
+      vi.mocked(dataOps.updateProgramTemplate).mockResolvedValue(mockOk(updatedProgram) as any)
 
       const result = await updateProgramTemplateMutation({ data: updateData })
 
@@ -261,7 +269,7 @@ describe('programs Server Functions', () => {
         gradeId: '1',
       }
 
-      vi.mocked(dataOps.updateProgramTemplate).mockResolvedValue(publishedProgram as any)
+      vi.mocked(dataOps.updateProgramTemplate).mockResolvedValue(mockOk(publishedProgram) as any)
 
       const result = await updateProgramTemplateMutation({ data: statusUpdate })
 
@@ -280,7 +288,7 @@ describe('programs Server Functions', () => {
     })
 
     test('should delete program template', async () => {
-      vi.mocked(dataOps.deleteProgramTemplate).mockResolvedValue(undefined)
+      vi.mocked(dataOps.deleteProgramTemplate).mockResolvedValue(mockOk(undefined) as any)
 
       const result = await deleteProgramTemplateMutation({ data: { id: '1' } })
 
@@ -299,7 +307,7 @@ describe('programs Server Functions', () => {
         status: 'draft',
       }
 
-      vi.mocked(dataOps.cloneProgramTemplate).mockResolvedValue(clonedProgram as any)
+      vi.mocked(dataOps.cloneProgramTemplate).mockResolvedValue(mockOk(clonedProgram) as any)
 
       const result = await cloneProgramTemplateMutation({ data: cloneData })
 
@@ -315,7 +323,7 @@ describe('programs Server Functions', () => {
         { id: '2', title: 'Chapter 2', order: 2, programTemplateId: '1' },
       ]
 
-      vi.mocked(dataOps.getProgramTemplateChapters).mockResolvedValue(mockChapters as any)
+      vi.mocked(dataOps.getProgramTemplateChapters).mockResolvedValue(mockOk(mockChapters) as any)
 
       const result = await programTemplateChaptersQuery({ data: { id: '1' } })
 
@@ -333,7 +341,7 @@ describe('programs Server Functions', () => {
         durationHours: 120, // minutes
       }
 
-      vi.mocked(dataOps.getProgramTemplateChapterById).mockResolvedValue(mockChapter as any)
+      vi.mocked(dataOps.getProgramTemplateChapterById).mockResolvedValue(mockOk(mockChapter) as any)
 
       const result = await programTemplateChapterByIdQuery({ data: { id: '1' } })
 
@@ -351,7 +359,7 @@ describe('programs Server Functions', () => {
       }
       const createdChapter = { ...newChapterData, id: '3', createdAt: new Date(), updatedAt: new Date() }
 
-      vi.mocked(dataOps.createProgramTemplateChapter).mockResolvedValue(createdChapter as any)
+      vi.mocked(dataOps.createProgramTemplateChapter).mockResolvedValue(mockOk(createdChapter) as any)
 
       const result = await createProgramTemplateChapterMutation({ data: newChapterData })
 
@@ -371,7 +379,7 @@ describe('programs Server Functions', () => {
       }
       const createdChapter = { ...chapterWithDuration, id: '1', createdAt: new Date(), updatedAt: new Date() }
 
-      vi.mocked(dataOps.createProgramTemplateChapter).mockResolvedValue(createdChapter as any)
+      vi.mocked(dataOps.createProgramTemplateChapter).mockResolvedValue(mockOk(createdChapter) as any)
 
       const result = await createProgramTemplateChapterMutation({ data: chapterWithDuration })
 
@@ -390,7 +398,7 @@ describe('programs Server Functions', () => {
         durationHours: 120,
       }
 
-      vi.mocked(dataOps.updateProgramTemplateChapter).mockResolvedValue(updatedChapter as any)
+      vi.mocked(dataOps.updateProgramTemplateChapter).mockResolvedValue(mockOk(updatedChapter) as any)
 
       const result = await updateProgramTemplateChapterMutation({ data: updateData })
 
@@ -402,7 +410,7 @@ describe('programs Server Functions', () => {
     })
 
     test('should delete chapter', async () => {
-      vi.mocked(dataOps.deleteProgramTemplateChapter).mockResolvedValue(undefined)
+      vi.mocked(dataOps.deleteProgramTemplateChapter).mockResolvedValue(mockOk(undefined) as any)
 
       const result = await deleteProgramTemplateChapterMutation({ data: { id: '1' } })
 
@@ -418,7 +426,7 @@ describe('programs Server Functions', () => {
           { id: '3', order: 3 },
         ]
 
-        vi.mocked(dataOps.bulkUpdateChaptersOrder).mockResolvedValue(undefined)
+        vi.mocked(dataOps.bulkUpdateChaptersOrder).mockResolvedValue(mockOk(undefined) as any)
 
         const result = await bulkUpdateChaptersOrderMutation({ data: chapterOrders })
 
@@ -444,7 +452,7 @@ describe('programs Server Functions', () => {
           updatedAt: new Date(),
         }))
 
-        vi.mocked(dataOps.bulkCreateChapters).mockResolvedValue(createdChapters as any)
+        vi.mocked(dataOps.bulkCreateChapters).mockResolvedValue(mockOk(createdChapters) as any)
 
         const result = await bulkCreateChaptersMutation({ data: chaptersData })
 
@@ -498,7 +506,7 @@ describe('programs Server Functions', () => {
           createdAt: new Date(),
         }
 
-        vi.mocked(dataOps.publishProgram).mockResolvedValue(versionData as any)
+        vi.mocked(dataOps.publishProgram).mockResolvedValue(mockOk(versionData) as any)
 
         const result = await publishProgramMutation({ data: { id: programId } })
 
@@ -522,7 +530,7 @@ describe('programs Server Functions', () => {
         { id: 'v2', programTemplateId: '1', versionNumber: 2, status: 'published' },
       ]
 
-      vi.mocked(dataOps.getProgramVersions).mockResolvedValue(mockVersions as any)
+      vi.mocked(dataOps.getProgramVersions).mockResolvedValue(mockOk(mockVersions) as any)
 
       const result = await getProgramVersionsQuery({ data: { id: '1' } })
 
@@ -537,7 +545,7 @@ describe('programs Server Functions', () => {
         const versionId = 'v1'
         const restoredResult = { success: true }
 
-        vi.mocked(dataOps.restoreProgramVersion).mockResolvedValue(restoredResult as any)
+        vi.mocked(dataOps.restoreProgramVersion).mockResolvedValue(mockOk(restoredResult) as any)
 
         const result = await restoreProgramVersionMutation({ data: { versionId } })
 
@@ -550,7 +558,7 @@ describe('programs Server Functions', () => {
         // But we can keep it if we update expectations or remove it.
         // I will remove the invalid expectations.
         const versionId = 'v1'
-        vi.mocked(dataOps.restoreProgramVersion).mockResolvedValue({ success: true } as any)
+        vi.mocked(dataOps.restoreProgramVersion).mockResolvedValue(mockOk({ success: true }) as any)
         const result = await restoreProgramVersionMutation({ data: { versionId } })
         expect(result.success).toBe(true)
       })
@@ -565,7 +573,7 @@ describe('programs Server Functions', () => {
         schoolYears: 5,
       }
 
-      vi.mocked(dataOps.getProgramStats).mockResolvedValue(mockStats as any)
+      vi.mocked(dataOps.getProgramStats).mockResolvedValue(mockOk(mockStats) as any)
 
       const result = await programStatsQuery()
 
@@ -576,7 +584,7 @@ describe('programs Server Functions', () => {
 
   describe('error Handling', () => {
     test('should handle not found errors gracefully', async () => {
-      vi.mocked(dataOps.getProgramTemplateById).mockResolvedValue(null)
+      vi.mocked(dataOps.getProgramTemplateById).mockResolvedValue(mockOk(null) as any)
 
       const result = await programTemplateByIdQuery({ data: { id: 'nonexistent' } })
       expect(result).toBeNull()

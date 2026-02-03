@@ -207,19 +207,22 @@ export function RolesTable({ filters }: RolesTableProps) {
     [t, navigate],
   )
 
+  // Unwrap result data
+  const rolesData = data?.success ? data.data : undefined
+
   const table = useReactTable({
-    data: data?.roles || [],
+    data: rolesData?.roles || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
-    pageCount: data?.totalPages || 0,
+    pageCount: rolesData?.totalPages || 0,
   })
 
   if (isLoading) {
     return <TableSkeleton columns={5} rows={5} />
   }
 
-  const hasNoData = !data?.roles || data.roles.length === 0
+  const hasNoData = !rolesData?.roles || rolesData.roles.length === 0
   const hasNoResults = hasNoData && (debouncedSearch || filters.scope)
 
   return (
@@ -329,24 +332,24 @@ export function RolesTable({ filters }: RolesTableProps) {
           )}
 
           {/* Pagination */}
-          {!hasNoData && data && data.totalPages > 1 && (
+          {!hasNoData && rolesData && rolesData.totalPages > 1 && (
             <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
               <div className="text-sm text-muted-foreground font-medium">
                 {t.common.showing()}
                 {' '}
                 <span className="text-foreground">
-                  {(data.page - 1) * data.limit + 1}
+                  {(rolesData.page - 1) * rolesData.limit + 1}
                 </span>
                 {' '}
                 -
                 {' '}
                 <span className="text-foreground">
-                  {Math.min(data.page * data.limit, data.total)}
+                  {Math.min(rolesData.page * rolesData.limit, rolesData.total)}
                 </span>
                 {' '}
                 {t.common.of()}
                 {' '}
-                <span className="text-foreground">{data.total}</span>
+                <span className="text-foreground">{rolesData.total}</span>
               </div>
               <div className="flex gap-3">
                 <Button
@@ -357,10 +360,10 @@ export function RolesTable({ filters }: RolesTableProps) {
                     e.stopPropagation()
                     navigate({
                       to: '/users/roles',
-                      search: { ...filters, page: data.page - 1 },
+                      search: { ...filters, page: rolesData.page - 1 },
                     })
                   }}
-                  disabled={data.page === 1}
+                  disabled={rolesData.page === 1}
                 >
                   {t.common.previous()}
                 </Button>
@@ -372,10 +375,10 @@ export function RolesTable({ filters }: RolesTableProps) {
                     e.stopPropagation()
                     navigate({
                       to: '/users/roles',
-                      search: { ...filters, page: data.page + 1 },
+                      search: { ...filters, page: rolesData.page + 1 },
                     })
                   }}
-                  disabled={data.page === data.totalPages}
+                  disabled={rolesData.page === rolesData.totalPages}
                 >
                   {t.common.next()}
                 </Button>

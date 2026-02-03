@@ -35,6 +35,14 @@ import {
   updateTrackMutation,
 } from './catalogs'
 
+function mockOk<T>(value: T) {
+  return {
+    isOk: () => true,
+    isErr: () => false,
+    value,
+  }
+}
+
 // Mock the data-ops catalog queries
 vi.mock('@repo/data-ops/queries/catalogs', () => ({
   // Education Levels
@@ -88,7 +96,7 @@ describe('catalogs Server Functions', () => {
         { id: '2', name: 'Secondary', code: 'secondary' },
       ]
 
-      vi.mocked(dataOps.getEducationLevels).mockResolvedValue(mockEducationLevels as any)
+      vi.mocked(dataOps.getEducationLevels).mockResolvedValue(mockOk(mockEducationLevels) as any)
 
       const result = await educationLevelsQuery()
 
@@ -104,7 +112,7 @@ describe('catalogs Server Functions', () => {
         { id: '2', name: 'Literature', code: 'LIT', educationLevelId: 1 },
       ]
 
-      vi.mocked(dataOps.getTracks).mockResolvedValue(mockTracks as any)
+      vi.mocked(dataOps.getTracks).mockResolvedValue(mockOk(mockTracks) as any)
 
       const result = await tracksQuery()
 
@@ -115,7 +123,7 @@ describe('catalogs Server Functions', () => {
     test('should return track by ID', async () => {
       const mockTrack = { id: '1', name: 'Science', code: 'SCI', educationLevelId: 1 }
 
-      vi.mocked(dataOps.getTrackById).mockResolvedValue(mockTrack as any)
+      vi.mocked(dataOps.getTrackById).mockResolvedValue(mockOk(mockTrack) as any)
 
       const result = await trackByIdQuery({ data: { id: '1' } })
 
@@ -127,7 +135,7 @@ describe('catalogs Server Functions', () => {
       const newTrackData = { name: 'Arts', code: 'ARTS', educationLevelId: 1 }
       const createdTrack = { ...newTrackData, id: '3', createdAt: new Date(), updatedAt: new Date() }
 
-      vi.mocked(dataOps.createTrack).mockResolvedValue(createdTrack as any)
+      vi.mocked(dataOps.createTrack).mockResolvedValue(mockOk(createdTrack) as any)
 
       const result = await createTrackMutation({ data: newTrackData })
 
@@ -139,7 +147,7 @@ describe('catalogs Server Functions', () => {
       const updateData = { id: '1', name: 'Advanced Science' }
       const updatedTrack = { id: '1', name: 'Advanced Science', code: 'SCI', educationLevelId: 1 }
 
-      vi.mocked(dataOps.updateTrack).mockResolvedValue(updatedTrack as any)
+      vi.mocked(dataOps.updateTrack).mockResolvedValue(mockOk(updatedTrack) as any)
 
       const result = await updateTrackMutation({ data: updateData })
 
@@ -148,7 +156,7 @@ describe('catalogs Server Functions', () => {
     })
 
     test('should delete track', async () => {
-      vi.mocked(dataOps.deleteTrack).mockResolvedValue(undefined)
+      vi.mocked(dataOps.deleteTrack).mockResolvedValue(mockOk(undefined) as any)
 
       const result = await deleteTrackMutation({ data: { id: '1' } })
 
@@ -164,7 +172,7 @@ describe('catalogs Server Functions', () => {
         { id: '2', name: 'Grade 2', trackId: '1', order: 2 },
       ]
 
-      vi.mocked(dataOps.getGrades).mockResolvedValue(mockGrades as any)
+      vi.mocked(dataOps.getGrades).mockResolvedValue(mockOk(mockGrades) as any)
 
       const result = await gradesQuery({ data: { page: 1, limit: 10, trackId: '1' } })
 
@@ -175,7 +183,7 @@ describe('catalogs Server Functions', () => {
     test('should return grade by ID', async () => {
       const mockGrade = { id: '1', name: 'Grade 1', trackId: '1', order: 1 }
 
-      vi.mocked(dataOps.getGradeById).mockResolvedValue(mockGrade as any)
+      vi.mocked(dataOps.getGradeById).mockResolvedValue(mockOk(mockGrade) as any)
 
       const result = await gradeByIdQuery({ data: { id: '1' } })
 
@@ -187,7 +195,7 @@ describe('catalogs Server Functions', () => {
       const newGradeData = { name: 'Grade 3', code: 'G3', trackId: '1', order: 3 }
       const createdGrade = { ...newGradeData, id: '3', createdAt: new Date(), updatedAt: new Date() }
 
-      vi.mocked(dataOps.createGrade).mockResolvedValue(createdGrade as any)
+      vi.mocked(dataOps.createGrade).mockResolvedValue(mockOk(createdGrade) as any)
 
       const result = await createGradeMutation({ data: newGradeData })
 
@@ -199,7 +207,7 @@ describe('catalogs Server Functions', () => {
       const updateData = { id: '1', name: 'Grade 1A', order: 1 }
       const updatedGrade = { id: '1', name: 'Grade 1A', trackId: '1', order: 1 }
 
-      vi.mocked(dataOps.updateGrade).mockResolvedValue(updatedGrade as any)
+      vi.mocked(dataOps.updateGrade).mockResolvedValue(mockOk(updatedGrade) as any)
 
       const result = await updateGradeMutation({ data: updateData })
 
@@ -216,7 +224,7 @@ describe('catalogs Server Functions', () => {
     })
 
     test('should delete grade', async () => {
-      vi.mocked(dataOps.deleteGrade).mockResolvedValue(undefined)
+      vi.mocked(dataOps.deleteGrade).mockResolvedValue(mockOk(undefined) as any)
 
       const result = await deleteGradeMutation({ data: { id: '1' } })
 
@@ -232,7 +240,7 @@ describe('catalogs Server Functions', () => {
         { id: '2', name: 'Series B', code: 'SB', gradeId: '1' },
       ]
 
-      vi.mocked(dataOps.getSeries).mockResolvedValue(mockSeries as any)
+      vi.mocked(dataOps.getSeries).mockResolvedValue(mockOk(mockSeries) as any)
 
       const result = await seriesQuery({ data: { page: 1, limit: 10, gradeId: '1' } })
 
@@ -243,7 +251,7 @@ describe('catalogs Server Functions', () => {
     test('should return series by ID', async () => {
       const mockSerie = { id: '1', name: 'Series A', code: 'SA', gradeId: '1' }
 
-      vi.mocked(dataOps.getSerieById).mockResolvedValue(mockSerie as any)
+      vi.mocked(dataOps.getSerieById).mockResolvedValue(mockOk(mockSerie) as any)
 
       const result = await serieByIdQuery({ data: { id: '1' } })
 
@@ -255,7 +263,7 @@ describe('catalogs Server Functions', () => {
       const newSerieData = { name: 'Series C', code: 'SC', trackId: '1' }
       const createdSerie = { ...newSerieData, id: '3', gradeId: '1', createdAt: new Date(), updatedAt: new Date() }
 
-      vi.mocked(dataOps.createSerie).mockResolvedValue(createdSerie as any)
+      vi.mocked(dataOps.createSerie).mockResolvedValue(mockOk(createdSerie) as any)
 
       const result = await createSerieMutation({ data: newSerieData })
 
@@ -275,7 +283,7 @@ describe('catalogs Server Functions', () => {
       const updateData = { id: '1', name: 'Series A Updated' }
       const updatedSerie = { id: '1', name: 'Series A Updated', code: 'SA', gradeId: '1' }
 
-      vi.mocked(dataOps.updateSerie).mockResolvedValue(updatedSerie as any)
+      vi.mocked(dataOps.updateSerie).mockResolvedValue(mockOk(updatedSerie) as any)
 
       const result = await updateSerieMutation({ data: updateData })
 
@@ -284,7 +292,7 @@ describe('catalogs Server Functions', () => {
     })
 
     test('should delete series', async () => {
-      vi.mocked(dataOps.deleteSerie).mockResolvedValue(undefined)
+      vi.mocked(dataOps.deleteSerie).mockResolvedValue(mockOk(undefined) as any)
 
       const result = await deleteSerieMutation({ data: { id: '1' } })
 
@@ -300,10 +308,10 @@ describe('catalogs Server Functions', () => {
         { id: '2', name: 'Physics', code: 'PHY', category: 'Scientifique', trackId: '1' },
       ]
 
-      vi.mocked(dataOps.getSubjects).mockResolvedValue({
+      vi.mocked(dataOps.getSubjects).mockResolvedValue(mockOk({
         subjects: mockSubjects as any,
         pagination: { total: 2, page: 1, limit: 10, totalPages: 1 },
-      })
+      }) as any)
 
       const result = await subjectsQuery({ data: { page: 1, limit: 10, trackId: '1' } })
 
@@ -314,7 +322,7 @@ describe('catalogs Server Functions', () => {
     test('should return subject by ID', async () => {
       const mockSubject = { id: '1', name: 'Mathematics', code: 'MATH', category: 'Scientifique', trackId: '1' }
 
-      vi.mocked(dataOps.getSubjectById).mockResolvedValue(mockSubject as any)
+      vi.mocked(dataOps.getSubjectById).mockResolvedValue(mockOk(mockSubject) as any)
 
       const result = await subjectByIdQuery({ data: { id: '1' } })
 
@@ -326,7 +334,7 @@ describe('catalogs Server Functions', () => {
       const newSubjectData = { name: 'Chemistry', shortName: 'CHEM', category: 'Scientifique' }
       const createdSubject = { ...newSubjectData, id: '3', createdAt: new Date(), updatedAt: new Date() }
 
-      vi.mocked(dataOps.createSubject).mockResolvedValue(createdSubject as any)
+      vi.mocked(dataOps.createSubject).mockResolvedValue(mockOk(createdSubject) as any)
 
       const result = await createSubjectMutation({ data: newSubjectData })
 
@@ -338,7 +346,7 @@ describe('catalogs Server Functions', () => {
       const crossTrackSubject = { name: 'English', shortName: 'ENG', category: 'Littéraire' }
       const createdSubject = { ...crossTrackSubject, id: '4', createdAt: new Date(), updatedAt: new Date() }
 
-      vi.mocked(dataOps.createSubject).mockResolvedValue(createdSubject as any)
+      vi.mocked(dataOps.createSubject).mockResolvedValue(mockOk(createdSubject) as any)
 
       await createSubjectMutation({ data: crossTrackSubject })
 
@@ -349,7 +357,7 @@ describe('catalogs Server Functions', () => {
       const updateData = { id: '1', name: 'Advanced Mathematics' }
       const updatedSubject = { id: '1', name: 'Advanced Mathematics', code: 'MATH', category: 'Scientifique', trackId: '1' }
 
-      vi.mocked(dataOps.updateSubject).mockResolvedValue(updatedSubject as any)
+      vi.mocked(dataOps.updateSubject).mockResolvedValue(mockOk(updatedSubject) as any)
 
       const result = await updateSubjectMutation({ data: updateData })
 
@@ -358,7 +366,7 @@ describe('catalogs Server Functions', () => {
     })
 
     test('should delete subject', async () => {
-      vi.mocked(dataOps.deleteSubject).mockResolvedValue(undefined)
+      vi.mocked(dataOps.deleteSubject).mockResolvedValue(mockOk(undefined) as any)
 
       const result = await deleteSubjectMutation({ data: { id: '1' } })
 
@@ -377,7 +385,7 @@ describe('catalogs Server Functions', () => {
         subjects: 48,
       }
 
-      vi.mocked(dataOps.getCatalogStats).mockResolvedValue(mockStats as any)
+      vi.mocked(dataOps.getCatalogStats).mockResolvedValue(mockOk(mockStats) as any)
 
       const result = await catalogStatsQuery()
 
@@ -395,7 +403,7 @@ describe('catalogs Server Functions', () => {
           { id: '3', order: 3 },
         ]
 
-        vi.mocked(dataOps.bulkUpdateGradesOrder).mockResolvedValue(undefined)
+        vi.mocked(dataOps.bulkUpdateGradesOrder).mockResolvedValue(mockOk(undefined) as any)
 
         const result = await bulkUpdateGradesOrderMutation({ data: gradeOrders })
 
@@ -431,7 +439,7 @@ describe('catalogs Server Functions', () => {
           updatedAt: new Date(),
         }))
 
-        vi.mocked(dataOps.bulkCreateSeries).mockResolvedValue(createdSeries as any)
+        vi.mocked(dataOps.bulkCreateSeries).mockResolvedValue(mockOk(createdSeries) as any)
 
         const result = await bulkCreateSeriesMutation({ data: newSeries })
 
@@ -467,7 +475,7 @@ describe('catalogs Server Functions', () => {
           updatedAt: new Date(),
         }))
 
-        vi.mocked(dataOps.bulkCreateSubjects).mockResolvedValue(createdSubjects as any)
+        vi.mocked(dataOps.bulkCreateSubjects).mockResolvedValue(mockOk(createdSubjects) as any)
 
         const result = await bulkCreateSubjectsMutation({ data: newSubjects })
 
@@ -493,7 +501,7 @@ describe('catalogs Server Functions', () => {
 
   describe('error Handling', () => {
     test('should handle not found errors gracefully', async () => {
-      vi.mocked(dataOps.getTrackById).mockResolvedValue(null)
+      vi.mocked(dataOps.getTrackById).mockResolvedValue(mockOk(null) as any)
 
       const result = await trackByIdQuery({ data: { id: 'nonexistent' } })
       expect(result).toBeNull()

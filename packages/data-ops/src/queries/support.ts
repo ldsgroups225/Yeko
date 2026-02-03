@@ -246,7 +246,7 @@ export async function updateTicket(
 ): Promise<SupportTicket | null> {
   const db = getDb()
 
-  const updateData: any = { ...data }
+  const updateData: Partial<typeof supportTickets.$inferInsert> = { ...data }
 
   // Set resolvedAt if status is resolved
   if (data.status === 'resolved' || data.status === 'closed') {
@@ -797,7 +797,7 @@ export async function updateCrmTask(
 ): Promise<CrmTask | null> {
   const db = getDb()
 
-  const updateData: any = { ...data }
+  const updateData: Partial<typeof crmTasks.$inferInsert> = { ...data }
   if (data.status === 'completed') {
     updateData.completedAt = new Date()
   }

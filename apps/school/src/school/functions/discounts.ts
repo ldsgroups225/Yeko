@@ -7,10 +7,11 @@ import {
   getDiscounts,
   updateDiscount,
 } from '@repo/data-ops'
-import { createServerFn } from '@tanstack/react-start'
+import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import { z } from 'zod'
 import { createDiscountSchema, updateDiscountSchema } from '@/schemas/discount'
-import { getSchoolContext } from '../middleware/school-context'
+import { authServerFn } from '../lib/server-fn'
+import { requirePermission } from '../middleware/permissions'
 
 /**
  * Filters for discounts queries
@@ -23,97 +24,169 @@ const discountFiltersSchema = z.object({
 /**
  * Get discounts list
  */
-export const getDiscountsList = createServerFn()
+export const getDiscountsList = authServerFn
   .inputValidator(discountFiltersSchema.optional())
-  .handler(async ({ data: filters }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data: filters, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return await getDiscounts({
-      schoolId: context.schoolId,
+    const { schoolId } = context.school
+    await requirePermission('finance', 'view')
+
+    return (await getDiscounts({
+      schoolId,
       ...filters,
-    })
+    })).match(
+      data => ({ success: true as const, data }),
+      _ => ({ success: false as const, error: 'Erreur lors de la récupération des remises' }),
+    )
   })
 
 /**
  * Get auto-apply discounts
  */
-export const getAutoApplyDiscountsList = createServerFn()
-  .handler(async () => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+export const getAutoApplyDiscountsList = authServerFn
+  .handler(async ({ context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return await getAutoApplyDiscounts(context.schoolId)
+    const { schoolId } = context.school
+    await requirePermission('finance', 'view')
+
+    return (await getAutoApplyDiscounts(schoolId)).match(
+      data => ({ success: true as const, data }),
+      _ => ({ success: false as const, error: 'Erreur lors de la récupération des remises automatiques' }),
+    )
   })
 
 /**
  * Get single discount
  */
-export const getDiscount = createServerFn()
+export const getDiscount = authServerFn
   .inputValidator(z.string())
-  .handler(async ({ data: discountId }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data: discountId, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return await getDiscountById(discountId)
+    await requirePermission('finance', 'view')
+
+    return (await getDiscountById(discountId)).match(
+      data => ({ success: true as const, data }),
+      _ => ({ success: false as const, error: 'Erreur lors de la récupération de la remise' }),
+    )
   })
 
 /**
  * Create new discount
  */
-export const createNewDiscount = createServerFn()
+export const createNewDiscount = authServerFn
   .inputValidator(createDiscountSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return await createDiscount({
-      schoolId: context.schoolId,
+    const { schoolId, userId } = context.school
+    await requirePermission('finance', 'create')
+
+    return (await createDiscount({
+      schoolId,
       ...data,
-    })
+    })).match(
+      async (result) => {
+        await createAuditLog({
+          schoolId,
+          userId,
+          action: 'create',
+          tableName: 'discounts',
+          recordId: result.id,
+          newValues: data,
+        })
+        return { success: true as const, data: result }
+      },
+      _ => ({ success: false as const, error: 'Erreur lors de la création de la remise' }),
+    )
   })
 
 /**
  * Update discount
  */
-export const updateExistingDiscount = createServerFn()
+export const updateExistingDiscount = authServerFn
   .inputValidator(updateDiscountSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    const { schoolId, userId } = context.school
+    await requirePermission('finance', 'edit')
 
     const { id, ...updateData } = data
-    return await updateDiscount(id, updateData)
+    return (await updateDiscount(id, updateData)).match(
+      async (result) => {
+        await createAuditLog({
+          schoolId,
+          userId,
+          action: 'update',
+          tableName: 'discounts',
+          recordId: id,
+          newValues: updateData,
+        })
+        return { success: true as const, data: result }
+      },
+      _ => ({ success: false as const, error: 'Erreur lors de la mise à jour de la remise' }),
+    )
   })
 
 /**
  * Deactivate discount
  */
-export const deactivateExistingDiscount = createServerFn()
+export const deactivateExistingDiscount = authServerFn
   .inputValidator(z.string())
-  .handler(async ({ data: discountId }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data: discountId, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return await deactivateDiscount(discountId)
+    const { schoolId, userId } = context.school
+    await requirePermission('finance', 'edit')
+
+    return (await deactivateDiscount(discountId)).match(
+      async (result) => {
+        await createAuditLog({
+          schoolId,
+          userId,
+          action: 'update',
+          tableName: 'discounts',
+          recordId: discountId,
+          newValues: { status: 'inactive' },
+        })
+        return { success: true as const, data: result }
+      },
+      _ => ({ success: false as const, error: 'Erreur lors de la désactivation de la remise' }),
+    )
   })
 
 /**
  * Delete discount
  */
-export const deleteExistingDiscount = createServerFn()
+export const deleteExistingDiscount = authServerFn
   .inputValidator(z.string())
-  .handler(async ({ data: discountId }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data: discountId, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    await deleteDiscount(discountId)
-    return { success: true }
+    const { schoolId, userId } = context.school
+    await requirePermission('finance', 'delete')
+
+    return (await deleteDiscount(discountId)).match(
+      async () => {
+        await createAuditLog({
+          schoolId,
+          userId,
+          action: 'delete',
+          tableName: 'discounts',
+          recordId: discountId,
+        })
+        return { success: true as const, data: { success: true } }
+      },
+      _ => ({ success: false as const, error: 'Erreur lors de la suppression de la remise' }),
+    )
   })

@@ -63,14 +63,14 @@ export const getTeacherContext = createServerFn().handler(async (): Promise<Teac
 
     // If no school year context, try to find the open fiscal year
     if (!schoolYearId) {
-      const openYear = await getOpenFiscalYear(schoolId)
-      if (openYear) {
-        schoolYearId = openYear.schoolYearId
+      const openYearResult = await getOpenFiscalYear(schoolId)
+      if (openYearResult.isOk() && openYearResult.value) {
+        schoolYearId = openYearResult.value.schoolYearId
       }
       else {
-        const [latestYear] = await getFiscalYears({ schoolId })
-        if (latestYear) {
-          schoolYearId = latestYear.schoolYearId
+        const latestYearResult = await getFiscalYears({ schoolId })
+        if (latestYearResult.isOk() && latestYearResult.value.length > 0 && latestYearResult.value[0]) {
+          schoolYearId = latestYearResult.value[0].schoolYearId
         }
       }
 

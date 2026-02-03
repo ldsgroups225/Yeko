@@ -62,6 +62,7 @@ import {
   getSchoolYears,
   setActiveSchoolYear,
 } from '@/school/functions/school-years'
+import { parseServerFnError } from '@/utils/error-handlers'
 import { formatDate } from '@/utils/formatDate'
 import { generateUUID } from '@/utils/generateUUID'
 
@@ -76,16 +77,19 @@ function SchoolYearsSettingsPage() {
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
 
   // Fetch school years
-  const { data: schoolYears, isLoading } = useQuery({
+  const { data: schoolYearsResult, isLoading } = useQuery({
     queryKey: ['school-years'],
     queryFn: () => getSchoolYears(),
   })
 
   // Fetch available templates
-  const { data: templates } = useQuery({
+  const { data: templatesResult } = useQuery({
     queryKey: ['school-year-templates'],
     queryFn: () => getAvailableSchoolYearTemplates(),
   })
+
+  const schoolYears = schoolYearsResult?.success ? schoolYearsResult.data : []
+  const templates = templatesResult?.success ? templatesResult.data : []
 
   // Set active mutation
   const setActiveMutation = useMutation({
@@ -95,8 +99,8 @@ function SchoolYearsSettingsPage() {
       queryClient.invalidateQueries({ queryKey: ['school-context'] })
       toast.success(t.settings.schoolYears.activatedSuccess())
     },
-    onError: () => {
-      toast.error(t.settings.schoolYears.activatedError())
+    onError: (err) => {
+      toast.error(parseServerFnError(err, t.settings.schoolYears.activatedError()))
     },
   })
 
@@ -108,8 +112,8 @@ function SchoolYearsSettingsPage() {
       toast.success(t.settings.schoolYears.deletedSuccess())
       setDeleteConfirmId(null)
     },
-    onError: () => {
-      toast.error(t.settings.schoolYears.deletedError())
+    onError: (err) => {
+      toast.error(parseServerFnError(err, t.settings.schoolYears.deletedError()))
     },
   })
 
@@ -363,6 +367,8 @@ function CreateSchoolYearDialog({
   const [endDate, setEndDate] = useState('')
   const [isActive, setIsActive] = useState(false)
 
+  const selectedTemplate = templates.find(t => t.id === templateId)
+
   const resetForm = () => {
     setTemplateId('')
     setStartDate('')
@@ -389,8 +395,8 @@ function CreateSchoolYearDialog({
       onOpenChange(false)
       resetForm()
     },
-    onError: () => {
-      toast.error(t.settings.schoolYears.createdError())
+    onError: (err) => {
+      toast.error(parseServerFnError(err, t.settings.schoolYears.createdError()))
     },
   })
 
@@ -432,9 +438,9 @@ function CreateSchoolYearDialog({
               onValueChange={val => setTemplateId(val ?? '')}
             >
               <SelectTrigger className={selectTriggerClass}>
-                <SelectValue
-                  placeholder={t.settings.schoolYears.selectTemplate()}
-                />
+                <SelectValue placeholder={t.settings.schoolYears.selectTemplate()}>
+                  {selectedTemplate?.name}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent className="rounded-xl backdrop-blur-xl bg-card/95 border-border/40 shadow-xl">
                 {templates.map(template => (

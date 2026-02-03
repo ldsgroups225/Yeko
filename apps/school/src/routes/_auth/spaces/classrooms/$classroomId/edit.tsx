@@ -25,10 +25,11 @@ function EditClassroomPage() {
   const { classroomId } = Route.useParams()
   const navigate = useNavigate()
 
-  const { data, isLoading } = useQuery({
+  const { data: result, isLoading } = useQuery({
     queryKey: ['classroom', classroomId],
     queryFn: () => getClassroomById({ data: classroomId }),
   })
+  const data = result?.success ? result.data : null
 
   if (isLoading) {
     return (

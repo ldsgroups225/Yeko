@@ -14,127 +14,144 @@ import {
   setDefaultPaymentPlanTemplate,
   updatePaymentPlanTemplate,
 } from '@repo/data-ops'
-import { createServerFn } from '@tanstack/react-start'
+import { ResultAsync } from 'neverthrow'
 import { z } from 'zod'
 import { createPaymentPlanFromTemplateSchema, createPaymentPlanTemplateSchema, updatePaymentPlanTemplateSchema } from '@/schemas/payment-plan'
-import { getSchoolContext, getSchoolYearContext } from '../middleware/school-context'
+import { authServerFn } from '../lib/server-fn'
 
 // ============ PAYMENT PLAN TEMPLATES ============
 
 /**
  * Get payment plan templates
  */
-export const getPaymentPlanTemplatesList = createServerFn()
+export const getPaymentPlanTemplatesList = authServerFn
   .inputValidator(z.object({ schoolYearId: z.string().optional(), includeInactive: z.boolean().optional() }).optional())
-  .handler(async ({ data: filters }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data: filters, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    const yearContext = await getSchoolYearContext()
-    const schoolYearId = filters?.schoolYearId || yearContext?.schoolYearId
+    const { school, schoolYear } = context
+    const schoolYearId = filters?.schoolYearId || schoolYear?.schoolYearId
     if (!schoolYearId)
-      throw new Error('No school year context')
+      return { success: false as const, error: 'Année scolaire non sélectionnée' }
 
-    return await getPaymentPlanTemplates({
-      schoolId: context.schoolId,
+    const result = await getPaymentPlanTemplates({
+      schoolId: school.schoolId,
       schoolYearId,
       includeInactive: filters?.includeInactive,
     })
+
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Get default payment plan template
  */
-export const getDefaultTemplate = createServerFn()
+export const getDefaultTemplate = authServerFn
   .inputValidator(z.object({ schoolYearId: z.string().optional() }).optional())
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    const yearContext = await getSchoolYearContext()
-    const schoolYearId = data?.schoolYearId || yearContext?.schoolYearId
+    const { school, schoolYear } = context
+    const schoolYearId = data?.schoolYearId || schoolYear?.schoolYearId
     if (!schoolYearId)
-      throw new Error('No school year context')
+      return { success: false as const, error: 'Année scolaire non sélectionnée' }
 
-    return await getDefaultPaymentPlanTemplate(context.schoolId, schoolYearId)
+    const result = await getDefaultPaymentPlanTemplate(school.schoolId, schoolYearId)
+
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Get single template
  */
-export const getPaymentPlanTemplate = createServerFn()
+export const getPaymentPlanTemplate = authServerFn
   .inputValidator(z.string())
   .handler(async ({ data: templateId }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+    const result = await getPaymentPlanTemplateById(templateId)
 
-    return await getPaymentPlanTemplateById(templateId)
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Create payment plan template
  */
-export const createNewPaymentPlanTemplate = createServerFn()
+export const createNewPaymentPlanTemplate = authServerFn
   .inputValidator(createPaymentPlanTemplateSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return await createPaymentPlanTemplate({
-      schoolId: context.schoolId,
+    const result = await createPaymentPlanTemplate({
+      schoolId: context.school.schoolId,
       ...data,
     })
+
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Update payment plan template
  */
-export const updateExistingPaymentPlanTemplate = createServerFn()
+export const updateExistingPaymentPlanTemplate = authServerFn
   .inputValidator(updatePaymentPlanTemplateSchema)
   .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
-
     const { id, ...updateData } = data
-    return await updatePaymentPlanTemplate(id, updateData)
+    const result = await updatePaymentPlanTemplate(id, updateData)
+
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Set default template
  */
-export const setDefaultTemplate = createServerFn()
+export const setDefaultTemplate = authServerFn
   .inputValidator(z.object({ templateId: z.string(), schoolYearId: z.string().optional() }))
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    const yearContext = await getSchoolYearContext()
-    const schoolYearId = data.schoolYearId || yearContext?.schoolYearId
+    const { school, schoolYear } = context
+    const schoolYearId = data.schoolYearId || schoolYear?.schoolYearId
     if (!schoolYearId)
-      throw new Error('No school year context')
+      return { success: false as const, error: 'Année scolaire non sélectionnée' }
 
-    await setDefaultPaymentPlanTemplate(context.schoolId, schoolYearId, data.templateId)
-    return { success: true }
+    const result = await setDefaultPaymentPlanTemplate(school.schoolId, schoolYearId, data.templateId)
+
+    return result.match(
+      () => ({ success: true as const, data: { success: true } }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Delete template
  */
-export const deleteExistingPaymentPlanTemplate = createServerFn()
+export const deleteExistingPaymentPlanTemplate = authServerFn
   .inputValidator(z.string())
   .handler(async ({ data: templateId }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+    const result = await deletePaymentPlanTemplate(templateId)
 
-    await deletePaymentPlanTemplate(templateId)
-    return { success: true }
+    return result.match(
+      () => ({ success: true as const, data: { success: true } }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 // ============ PAYMENT PLANS ============
@@ -142,107 +159,123 @@ export const deleteExistingPaymentPlanTemplate = createServerFn()
 /**
  * Get payment plans
  */
-export const getPaymentPlansList = createServerFn()
+export const getPaymentPlansList = authServerFn
   .inputValidator(z.object({
     schoolYearId: z.string().optional(),
     studentId: z.string().optional(),
     status: z.enum(['active', 'completed', 'defaulted', 'cancelled']).optional(),
   }).optional())
-  .handler(async ({ data: filters }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data: filters, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    const yearContext = await getSchoolYearContext()
-    const schoolYearId = filters?.schoolYearId || yearContext?.schoolYearId
+    const { schoolYear } = context
+    const schoolYearId = filters?.schoolYearId || schoolYear?.schoolYearId
     if (!schoolYearId)
-      throw new Error('No school year context')
+      return { success: false as const, error: 'Année scolaire non sélectionnée' }
 
-    return await getPaymentPlans({
+    const result = await getPaymentPlans({
       schoolYearId,
       ...filters,
     })
+
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Get payment plan for student
  */
-export const getStudentPaymentPlan = createServerFn()
+export const getStudentPaymentPlan = authServerFn
   .inputValidator(z.object({ studentId: z.string(), schoolYearId: z.string().optional() }))
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    const yearContext = await getSchoolYearContext()
-    const schoolYearId = data.schoolYearId || yearContext?.schoolYearId
+    const { schoolYear } = context
+    const schoolYearId = data.schoolYearId || schoolYear?.schoolYearId
     if (!schoolYearId)
-      throw new Error('No school year context')
+      return { success: false as const, error: 'Année scolaire non sélectionnée' }
 
-    return await getPaymentPlanForStudent(data.studentId, schoolYearId)
+    const result = await getPaymentPlanForStudent(data.studentId, schoolYearId)
+
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Get payment plan with installments
  */
-export const getPaymentPlanWithInstallments = createServerFn()
+export const getPaymentPlanWithInstallments = authServerFn
   .inputValidator(z.string())
   .handler(async ({ data: paymentPlanId }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
-
-    const [plan, installments] = await Promise.all([
+    const result = await ResultAsync.combine([
       getPaymentPlanById(paymentPlanId),
       getInstallmentsByPaymentPlan(paymentPlanId),
     ])
 
-    return { plan, installments }
+    return result.match(
+      ([plan, installments]) => ({ success: true as const, data: { plan, installments } }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Create payment plan from template
  */
-export const createStudentPaymentPlan = createServerFn()
+export const createStudentPaymentPlan = authServerFn
   .inputValidator(createPaymentPlanFromTemplateSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return await createPaymentPlanFromTemplate({
+    const result = await createPaymentPlanFromTemplate({
       ...data,
-      createdBy: context.userId,
+      createdBy: context.school.userId,
     })
+
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Cancel payment plan
  */
-export const cancelStudentPaymentPlan = createServerFn()
+export const cancelStudentPaymentPlan = authServerFn
   .inputValidator(z.string())
   .handler(async ({ data: paymentPlanId }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+    const result = await cancelPaymentPlan(paymentPlanId)
 
-    return await cancelPaymentPlan(paymentPlanId)
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Get payment plans summary
  */
-export const getPaymentPlansSummaryData = createServerFn()
+export const getPaymentPlansSummaryData = authServerFn
   .inputValidator(z.object({ schoolYearId: z.string().optional() }).optional())
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    const yearContext = await getSchoolYearContext()
-    const schoolYearId = data?.schoolYearId || yearContext?.schoolYearId
+    const { schoolYear } = context
+    const schoolYearId = data?.schoolYearId || schoolYear?.schoolYearId
     if (!schoolYearId)
-      throw new Error('No school year context')
+      return { success: false as const, error: 'Année scolaire non sélectionnée' }
 
-    return await getPaymentPlansSummary(schoolYearId)
+    const result = await getPaymentPlansSummary(schoolYearId)
+
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })

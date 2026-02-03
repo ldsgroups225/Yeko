@@ -27,7 +27,11 @@
   "packageManager": "pnpm@10.28.1",
   "devDependencies": {
     "@types/node": "^25.0.10",
+    "eslint-plugin-neverthrow": "^1.1.4",
     "lefthook": "^2.0.15",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "neverthrow": "^8.2.0"
   }
 }

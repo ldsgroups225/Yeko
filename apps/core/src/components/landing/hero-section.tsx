@@ -5,11 +5,11 @@ import {
 } from '@tabler/icons-react'
 import { Link } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'
-import { Button } from '@workspace/ui/components/button'
-import { useTranslation } from 'react-i18next'
+import { buttonVariants } from '@workspace/ui/components/button'
+import { useI18nContext } from '@/i18n/i18n-react'
 
 export function HeroSection() {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
 
   return (
     <section className="relative px-6 lg:px-8 pt-32 pb-24 sm:pt-40 sm:pb-32 overflow-hidden">
@@ -21,58 +21,51 @@ export function HeroSection() {
               className="mb-6 px-4 py-2 hover:bg-secondary/80 transition-colors cursor-default"
             >
               <IconCircleCheck className="mr-2 h-4 w-4 text-primary animate-pulse" />
-              {t('socialProof.trustedBy')}
+              {LL.socialProof.trustedBy()}
             </Badge>
           </div>
 
           <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-7xl animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200 fill-mode-backwards">
-            {t('hero.title')}
+            {LL.hero.title()}
             <span className="block text-primary mt-2">
-              {t('hero.subtitle')}
+              {LL.hero.subtitle()}
             </span>
           </h1>
 
           <p className="mt-8 text-xl leading-8 text-muted-foreground max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300 fill-mode-backwards">
-            {t('hero.description')}
+            {LL.hero.description()}
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-400 fill-mode-backwards">
-            <Button
-              size="lg"
-              className="group h-14 px-8 text-lg shadow-lg shadow-primary/20"
-              render={(
-                <a href="/signup">
-                  {t('hero.cta.primary')}
-                  <IconArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                </a>
-              )}
-            />
+            <a
+              href="/signup"
+              className={buttonVariants({ size: 'lg', className: 'group h-14 px-8 text-lg shadow-lg shadow-primary/20' })}
+            >
+              {LL.hero.cta.primary()}
+              <IconArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+            </a>
 
-            <Button
-              variant="outline"
-              size="lg"
-              className="h-14 px-8 text-lg backdrop-blur-sm bg-background/50"
-              render={(
-                <Link to="/demo-request">
-                  <IconPlayerPlay className="mr-2 h-5 w-5" />
-                  {t('hero.cta.secondary')}
-                </Link>
-              )}
-            />
+            <Link
+              to="/demo-request"
+              className={buttonVariants({ variant: 'outline', size: 'lg', className: 'h-14 px-8 text-lg backdrop-blur-sm bg-background/50' })}
+            >
+              <IconPlayerPlay className="mr-2 h-5 w-5" />
+              {LL.hero.cta.secondary()}
+            </Link>
           </div>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground animate-in fade-in duration-1000 delay-500 fill-mode-backwards">
             <div className="flex items-center gap-2">
               <IconCircleCheck className="h-4 w-4 text-primary" />
-              {t('hero.features.0')}
+              {LL.hero.features['0']()}
             </div>
             <div className="flex items-center gap-2">
               <IconCircleCheck className="h-4 w-4 text-primary" />
-              {t('hero.features.1')}
+              {LL.hero.features['1']()}
             </div>
             <div className="flex items-center gap-2">
               <IconCircleCheck className="h-4 w-4 text-primary" />
-              {t('hero.features.2')}
+              {LL.hero.features['2']()}
             </div>
           </div>
         </div>
@@ -84,10 +77,10 @@ export function HeroSection() {
               <div className="text-center">
                 <div className="text-6xl mb-4">📊</div>
                 <p className="text-lg font-semibold text-muted-foreground">
-                  {t('hero.demo.title')}
+                  {LL.hero.demo.title()}
                 </p>
                 <p className="text-sm text-muted-foreground mt-2">
-                  {t('hero.demo.description')}
+                  {LL.hero.demo.description()}
                 </p>
               </div>
             </div>

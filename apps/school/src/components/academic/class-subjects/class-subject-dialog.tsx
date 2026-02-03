@@ -42,11 +42,13 @@ export function ClassSubjectDialog({
   const [coefficient, setCoefficient] = useState(2)
   const [hours, setHours] = useState(3)
 
-  const { data: allSubjects, isLoading } = useQuery({
+  const { data: result, isLoading } = useQuery({
     queryKey: ['schoolSubjects', schoolYearId],
     queryFn: () => getSchoolSubjects({ data: { schoolYearId: schoolYearId! } }),
     enabled: open && !!schoolYearId,
   })
+
+  const subjects = result?.success ? result.data.subjects : []
 
   const saveMutation = useMutation({
     mutationFn: (
@@ -127,7 +129,7 @@ export function ClassSubjectDialog({
                         animate={{ opacity: 1 }}
                         className="p-1.5 space-y-1"
                       >
-                        {allSubjects?.subjects?.map((item) => {
+                        {subjects.map((item) => {
                           const isSelected = selectedSubjectId === item.subjectId
                           return (
                             <div

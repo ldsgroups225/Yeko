@@ -86,34 +86,37 @@ function TimetablesPage() {
   const [selectedSlot, setSelectedSlot] = useState<{ dayOfWeek: number, startTime: string, endTime: string } | null>(null)
 
   // Fetch school years
-  const { data: schoolYears, isLoading: yearsLoading } = useQuery({
+  const { data: schoolYearsResult, isLoading: yearsLoading } = useQuery({
     queryKey: ['school-years'],
     queryFn: () => getSchoolYears(),
     staleTime: 5 * 60 * 1000,
   })
 
   // Determine effective year ID
+  const schoolYears = schoolYearsResult?.success ? schoolYearsResult.data : []
   const activeYear = schoolYears?.find((y: SchoolYear) => y.isActive)
   const effectiveYearId = contextSchoolYearId || localYearId || activeYear?.id || ''
 
   // Fetch classes for selected year
-  const { data: classes, isLoading: classesLoading } = useQuery({
+  const { data: classesResult, isLoading: classesLoading } = useQuery({
     queryKey: ['classes', effectiveYearId],
     queryFn: () => getClasses({ data: { schoolYearId: effectiveYearId } }),
     enabled: !!effectiveYearId,
     staleTime: 5 * 60 * 1000,
   })
+  const classes = classesResult?.success ? classesResult.data : []
 
   // Fetch teachers
-  const { data: teachersData, isLoading: teachersLoading } = useQuery({
+  const { data: teachersResult, isLoading: teachersLoading } = useQuery({
     queryKey: ['teachers'],
     queryFn: () => getTeachers({ data: {} }),
     staleTime: 5 * 60 * 1000,
   })
+  const teachersData = teachersResult?.success ? teachersResult.data : null
   const teachers = useMemo(() => teachersData?.teachers ?? [], [teachersData])
 
   // Fetch classrooms
-  const { data: classroomsData } = useQuery({
+  const { data: classroomsResult } = useQuery({
     queryKey: ['classrooms', { schoolId }],
     queryFn: () => getClassrooms({ data: {} }),
     staleTime: 5 * 60 * 1000,
@@ -121,45 +124,48 @@ function TimetablesPage() {
 
   // We handle both array and object result structures gracefully with specific types
   const classrooms = useMemo(() => {
-    if (Array.isArray(classroomsData))
-      return classroomsData
-    if (classroomsData && typeof classroomsData === 'object' && 'classrooms' in (classroomsData as object))
-      return (classroomsData as unknown as { classrooms: Awaited<ReturnType<typeof getClassrooms>> }).classrooms
+    if (classroomsResult?.success) {
+      const data = classroomsResult.data
+      if (Array.isArray(data))
+        return data
+      if (data && typeof data === 'object' && 'classrooms' in (data as object)) {
+        return (data as { classrooms: any[] }).classrooms
+      }
+    }
     return []
-  }, [classroomsData])
+  }, [classroomsResult])
 
   // Fetch subjects for class
-  const { data: classSubjectsData } = useQuery({
+  const { data: classSubjectsResult } = useQuery({
     queryKey: ['class-subjects', selectedClassId],
     queryFn: () => getClassSubjects({ data: { classId: selectedClassId, schoolYearId: effectiveYearId } }),
     enabled: !!selectedClassId,
   })
 
   const classSubjects = useMemo(() => {
-    if (Array.isArray(classSubjectsData))
-      return classSubjectsData
-    if (classSubjectsData && typeof classSubjectsData === 'object' && 'data' in (classSubjectsData as object))
-      return (classSubjectsData as unknown as { data: Awaited<ReturnType<typeof getClassSubjects>> }).data
-    return []
-  }, [classSubjectsData])
+    return classSubjectsResult?.success ? classSubjectsResult.data : []
+  }, [classSubjectsResult])
 
   // Fetch timetable for class view
-  const { data: classTimetable, isLoading: classTimetableLoading } = useQuery({
+  const { data: classTimetableResult, isLoading: classTimetableLoading } = useQuery({
     ...timetablesOptions.byClass({ classId: selectedClassId, schoolYearId: effectiveYearId }),
     enabled: viewMode === 'class' && !!selectedClassId && !!effectiveYearId,
   })
 
   // Fetch timetable for teacher view
-  const { data: teacherTimetable, isLoading: teacherTimetableLoading } = useQuery({
+  const { data: teacherTimetableResult, isLoading: teacherTimetableLoading } = useQuery({
     ...timetablesOptions.byTeacher({ teacherId: selectedTeacherId, schoolYearId: effectiveYearId }),
     enabled: viewMode === 'teacher' && !!selectedTeacherId && !!effectiveYearId,
   })
 
-  const timetable = viewMode === 'class' ? classTimetable : teacherTimetable
   const timetableLoading = viewMode === 'class' ? classTimetableLoading : teacherTimetableLoading
 
   // Transform timetable data to match TimetableSessionData interface
   const transformedTimetable = useMemo(() => {
+    const timetable = viewMode === 'class'
+      ? (classTimetableResult?.success ? classTimetableResult.data : [])
+      : (teacherTimetableResult?.success ? teacherTimetableResult.data : [])
+
     return (timetable?.map((session) => {
       // Handle different data structures for class vs teacher views
       const teacherName = 'teacher' in session && session.teacher?.user?.name
@@ -181,7 +187,7 @@ function TimetablesPage() {
         hasConflict: false, // TODO: Add conflict detection
       }
     }) || []) as TimetableSessionData[]
-  }, [timetable])
+  }, [viewMode, classTimetableResult, teacherTimetableResult])
 
   // Mutations
   const createMutation = useMutation({

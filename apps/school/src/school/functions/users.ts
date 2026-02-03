@@ -12,11 +12,9 @@ import {
   getUserWithRoles,
   updateUser,
 } from '@repo/data-ops/queries/school-admin/users'
-
-import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 import { userCreateSchema, userUpdateSchema } from '@/schemas/user'
-import { getSchoolContext } from '../middleware/school-context'
+import { authServerFn } from '../lib/server-fn'
 
 /**
  * Filters for user queries
@@ -38,18 +36,18 @@ const paginationSchema = z.object({
 /**
  * Get users with pagination and filters
  */
-export const getUsers = createServerFn()
+export const getUsers = authServerFn
   .inputValidator(
     z.object({
       filters: userFiltersSchema.optional(),
       pagination: paginationSchema.optional(),
     }),
   )
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
-    const { schoolId } = context
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    const { schoolId } = context.school
     const { filters = {}, pagination = { page: 1, limit: 20 } } = data
 
     const offset = (pagination.page - 1) * pagination.limit
@@ -64,46 +62,56 @@ export const getUsers = createServerFn()
     ])
 
     return {
-      users,
-      total,
-      page: pagination.page,
-      limit: pagination.limit,
-      totalPages: Math.ceil(total / pagination.limit),
+      success: true as const,
+      data: {
+        users,
+        total,
+        page: pagination.page,
+        limit: pagination.limit,
+        totalPages: Math.ceil(total / pagination.limit),
+      },
     }
   })
 
 /**
  * Get user by ID with roles
  */
-export const getUser = createServerFn()
+export const getUser = authServerFn
   .inputValidator(z.string())
-  .handler(async ({ data: userId }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
-    const { schoolId } = context
+  .handler(async ({ data: userId, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    const { schoolId } = context.school
     const user = await getUserWithRoles(userId, schoolId)
+
+    if (!user)
+      return { success: false as const, error: 'Utilisateur non trouvé' }
+
     return {
-      ...user,
-      roleIds: user.roles.map((r: { roleId: string }) => r.roleId),
+      success: true as const,
+      data: {
+        ...user,
+        roleIds: user.roles.map((r: { roleId: string }) => r.roleId),
+      },
     }
   })
 
 /**
  * Create new user
  */
-export const createNewUser = createServerFn()
+export const createNewUser = authServerFn
   .inputValidator(userCreateSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
-    const { schoolId, userId } = context
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    // IconCheck email uniqueness (returns true if email is available)
+    const { schoolId, userId } = context.school
+
+    // Check email uniqueness (returns true if email is available)
     const emailIsAvailable = await checkEmailUniqueness(data.email, schoolId)
     if (!emailIsAvailable) {
-      throw new Error('Email already exists in this school')
+      return { success: false as const, error: 'Cet e-mail est déjà utilisé dans cet établissement' }
     }
 
     // TODO: Create auth user account and get real authUserId
@@ -128,30 +136,30 @@ export const createNewUser = createServerFn()
       newValues: { name: data.name, email: data.email, roleIds: data.roleIds },
     })
 
-    return user
+    return { success: true as const, data: user }
   })
 
 /**
  * Update user
  */
-export const updateExistingUser = createServerFn()
+export const updateExistingUser = authServerFn
   .inputValidator(
     z.object({
       userId: z.string(),
       data: userUpdateSchema,
     }),
   )
-  .handler(async ({ data: { userId: targetUserId, data } }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
-    const { schoolId, userId } = context
+  .handler(async ({ data: { userId: targetUserId, data }, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    // IconCheck email uniqueness if email is being changed (returns true if email is available)
+    const { schoolId, userId } = context.school
+
+    // Check email uniqueness if email is being changed (returns true if email is available)
     if (data.email) {
       const emailIsAvailable = await checkEmailUniqueness(data.email, schoolId, targetUserId)
       if (!emailIsAvailable) {
-        throw new Error('Email already exists in this school')
+        return { success: false as const, error: 'Cet e-mail est déjà utilisé dans cet établissement' }
       }
     }
 
@@ -172,19 +180,19 @@ export const updateExistingUser = createServerFn()
       newValues: data as Record<string, unknown>,
     })
 
-    return result
+    return { success: true as const, data: result }
   })
 
 /**
  * Delete user
  */
-export const deleteExistingUser = createServerFn()
+export const deleteExistingUser = authServerFn
   .inputValidator(z.string())
-  .handler(async ({ data: targetUserId }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
-    const { schoolId, userId } = context
+  .handler(async ({ data: targetUserId, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    const { schoolId, userId } = context.school
 
     const result = await deleteUser(targetUserId, schoolId)
 
@@ -197,88 +205,93 @@ export const deleteExistingUser = createServerFn()
       recordId: targetUserId,
     })
 
-    return result
+    return { success: true as const, data: result }
   })
 
 /**
  * Bulk update users status
  */
-export const bulkUpdateStatus = createServerFn()
+export const bulkUpdateStatus = authServerFn
   .inputValidator(
     z.object({
       userIds: z.array(z.string()).min(1),
       status: z.enum(['active', 'inactive', 'suspended']),
     }),
   )
-  .handler(async ({ data: { userIds, status } }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
-    const { schoolId } = context
-    return await bulkUpdateUsersStatus(userIds, schoolId, status, 'system')
+  .handler(async ({ data: { userIds, status }, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    const { schoolId } = context.school
+    const result = await bulkUpdateUsersStatus(userIds, schoolId, status, 'system')
+    return { success: true as const, data: result }
   })
 
 /**
  * Bulk delete users
  */
-export const bulkDeleteExistingUsers = createServerFn()
+export const bulkDeleteExistingUsers = authServerFn
   .inputValidator(z.array(z.string()).min(1))
-  .handler(async ({ data: userIds }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
-    const { schoolId } = context
-    return await bulkDeleteUsers(userIds, schoolId, 'system')
+  .handler(async ({ data: userIds, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    const { schoolId } = context.school
+    const result = await bulkDeleteUsers(userIds, schoolId, 'system')
+    return { success: true as const, data: result }
   })
 
 /**
  * Get user activity logs
  */
-export const getUserActivity = createServerFn()
+export const getUserActivity = authServerFn
   .inputValidator(
     z.object({
       userId: z.string(),
       limit: z.number().min(1).max(100).default(50),
     }),
   )
-  .handler(async ({ data: { userId, limit } }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
-    const { schoolId } = context
-    return await getUserActivityLogs(userId, schoolId, limit)
+  .handler(async ({ data: { userId, limit }, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    const { schoolId } = context.school
+    const result = await getUserActivityLogs(userId, schoolId, limit)
+    return { success: true as const, data: result }
   })
 
 /**
  * Get current user's role for the current school context
  * Used by the useRole hook
  */
-export const getCurrentUserRole = createServerFn()
-  .handler(async () => {
-    const context = await getSchoolContext()
-    if (!context?.schoolId || !context?.userId) {
-      return null
+export const getCurrentUserRole = authServerFn
+  .handler(async ({ context }) => {
+    if (!context?.school) {
+      return { success: true as const, data: null }
     }
 
-    const { schoolId, userId } = context
+    const { schoolId, userId } = context.school
 
     try {
       const user = await getUserWithRoles(userId, schoolId)
       if (!user || user.roles.length === 0) {
-        return null
+        return { success: true as const, data: null }
       }
 
       // Return the first role (primary role)
       const primaryRole = user.roles[0]!
       return {
-        roleSlug: primaryRole.roleSlug,
-        roleName: primaryRole.roleName,
-        permissions: primaryRole.permissions || {},
+        success: true as const,
+        data: {
+          roleSlug: primaryRole.roleSlug,
+          roleName: primaryRole.roleName,
+          permissions: (primaryRole.permissions as Record<string, any>) || {},
+        },
       }
     }
     catch (error) {
       console.error('Error fetching current user role:', error)
-      return null
+      return { success: true as const, data: null }
     }
   })
 
@@ -286,9 +299,9 @@ export const getCurrentUserRole = createServerFn()
  * Get internal user ID from auth user ID (Better Auth user ID)
  * This is used to convert the session user ID to the internal users table ID
  */
-export const getUserIdFromAuthUserId = createServerFn()
+export const getUserIdFromAuthUserId = authServerFn
   .inputValidator(z.object({ authUserId: z.string() }))
   .handler(async ({ data }) => {
     const userId = await getUserIdFromAuthUserIdQuery(data.authUserId)
-    return userId
+    return { success: true as const, data: userId }
   })

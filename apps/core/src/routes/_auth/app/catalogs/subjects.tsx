@@ -200,27 +200,28 @@ function SubjectsCatalog() {
     if (!file)
       return
 
-    try {
-      const importedSubjects = await importSubjectsFromExcel(file)
-      logger.info(`Imported ${importedSubjects.length} subjects from Excel`)
+    const result = await importSubjectsFromExcel(file)
 
-      // Create subjects in batch
-      const subjectsToCreate = importedSubjects
-        .filter(s => s.name && s.category)
-        .map(s => s as CreateSubjectInput)
+    await result.match(
+      async (importedSubjects) => {
+        logger.info(`Imported ${importedSubjects.length} subjects from Excel`)
 
-      if (subjectsToCreate.length > 0) {
-        await bulkCreateMutation.mutateAsync({ subjects: subjectsToCreate })
-      }
-    }
-    catch (error) {
-      logger.error('Failed to import subjects', error as Error)
-      toast.error('Erreur lors de l\'import du fichier')
-    }
-    finally {
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ''
-      }
+        // Create subjects in batch
+        const subjectsToCreate = importedSubjects
+          .filter(s => s.name && s.category) as CreateSubjectInput[]
+
+        if (subjectsToCreate.length > 0) {
+          await bulkCreateMutation.mutateAsync({ subjects: subjectsToCreate })
+        }
+      },
+      async (error) => {
+        logger.error('Failed to import subjects', error)
+        toast.error('Erreur lors de l\'import du fichier')
+      },
+    )
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
     }
   }
 

@@ -49,7 +49,7 @@ export function LinkTeacherDialog() {
         form.reset()
       }
       else {
-        toast.error(result.message || 'Erreur lors de la liaison')
+        toast.error(typeof result.error === 'string' ? result.error : 'Erreur lors de la liaison')
       }
     },
     onError: (error) => {

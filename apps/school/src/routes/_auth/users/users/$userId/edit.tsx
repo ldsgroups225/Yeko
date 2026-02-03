@@ -14,13 +14,14 @@ function EditUserPage() {
   const t = useTranslations()
   const navigate = useNavigate()
 
-  const { data: user, isLoading } = useQuery({
+  const { data: userResult, isLoading } = useQuery({
     queryKey: ['user', userId],
     queryFn: async () => {
       const result = await getUser({ data: userId })
       return result
     },
   })
+  const user = userResult?.success ? userResult.data : undefined
 
   const handleSuccess = () => {
     navigate({ to: '/users/users/$userId', params: { userId } })

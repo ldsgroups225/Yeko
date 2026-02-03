@@ -29,7 +29,10 @@ export const schoolYearTemplatesQuery = createServerFn()
   .middleware([databaseMiddleware])
   .handler(async () => {
     const { getSchoolYearTemplates } = await import('@repo/data-ops/queries/programs')
-    return await getSchoolYearTemplates()
+    const result = await getSchoolYearTemplates()
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const schoolYearTemplateByIdQuery = createServerFn()
@@ -37,7 +40,10 @@ export const schoolYearTemplateByIdQuery = createServerFn()
   .inputValidator(data => SchoolYearTemplateIdSchema.parse(data))
   .handler(async (ctx) => {
     const { getSchoolYearTemplateById } = await import('@repo/data-ops/queries/programs')
-    return await getSchoolYearTemplateById(ctx.data.id)
+    const result = await getSchoolYearTemplateById(ctx.data.id)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const createSchoolYearTemplateMutation = createServerFn()
@@ -45,7 +51,10 @@ export const createSchoolYearTemplateMutation = createServerFn()
   .inputValidator(data => CreateSchoolYearTemplateSchema.parse(data))
   .handler(async (ctx) => {
     const { createSchoolYearTemplate } = await import('@repo/data-ops/queries/programs')
-    return await createSchoolYearTemplate(ctx.data)
+    const result = await createSchoolYearTemplate(ctx.data)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const updateSchoolYearTemplateMutation = createServerFn()
@@ -54,7 +63,10 @@ export const updateSchoolYearTemplateMutation = createServerFn()
   .handler(async (ctx) => {
     const { updateSchoolYearTemplate } = await import('@repo/data-ops/queries/programs')
     const { id, ...updateData } = ctx.data
-    return await updateSchoolYearTemplate(id, updateData)
+    const result = await updateSchoolYearTemplate(id, updateData)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const deleteSchoolYearTemplateMutation = createServerFn()
@@ -62,7 +74,9 @@ export const deleteSchoolYearTemplateMutation = createServerFn()
   .inputValidator(data => SchoolYearTemplateIdSchema.parse(data))
   .handler(async (ctx) => {
     const { deleteSchoolYearTemplate } = await import('@repo/data-ops/queries/programs')
-    await deleteSchoolYearTemplate(ctx.data.id)
+    const result = await deleteSchoolYearTemplate(ctx.data.id)
+    if (result.isErr())
+      throw result.error
     return { success: true, id: ctx.data.id }
   })
 
@@ -73,7 +87,10 @@ export const programTemplatesQuery = createServerFn()
   .inputValidator(data => GetProgramTemplatesSchema.parse(data))
   .handler(async (ctx) => {
     const { getProgramTemplates } = await import('@repo/data-ops/queries/programs')
-    return await getProgramTemplates(ctx.data)
+    const result = await getProgramTemplates(ctx.data)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const programTemplateByIdQuery = createServerFn()
@@ -81,7 +98,10 @@ export const programTemplateByIdQuery = createServerFn()
   .inputValidator(data => ProgramTemplateIdSchema.parse(data))
   .handler(async (ctx) => {
     const { getProgramTemplateById } = await import('@repo/data-ops/queries/programs')
-    return await getProgramTemplateById(ctx.data.id)
+    const result = await getProgramTemplateById(ctx.data.id)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const createProgramTemplateMutation = createServerFn()
@@ -89,7 +109,10 @@ export const createProgramTemplateMutation = createServerFn()
   .inputValidator(data => CreateProgramTemplateSchema.parse(data))
   .handler(async (ctx) => {
     const { createProgramTemplate } = await import('@repo/data-ops/queries/programs')
-    return await createProgramTemplate(ctx.data)
+    const result = await createProgramTemplate(ctx.data)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const updateProgramTemplateMutation = createServerFn()
@@ -98,7 +121,10 @@ export const updateProgramTemplateMutation = createServerFn()
   .handler(async (ctx) => {
     const { updateProgramTemplate } = await import('@repo/data-ops/queries/programs')
     const { id, ...updateData } = ctx.data
-    return await updateProgramTemplate(id, updateData)
+    const result = await updateProgramTemplate(id, updateData)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const deleteProgramTemplateMutation = createServerFn()
@@ -106,7 +132,9 @@ export const deleteProgramTemplateMutation = createServerFn()
   .inputValidator(data => ProgramTemplateIdSchema.parse(data))
   .handler(async (ctx) => {
     const { deleteProgramTemplate } = await import('@repo/data-ops/queries/programs')
-    await deleteProgramTemplate(ctx.data.id)
+    const result = await deleteProgramTemplate(ctx.data.id)
+    if (result.isErr())
+      throw result.error
     return { success: true, id: ctx.data.id }
   })
 
@@ -115,7 +143,10 @@ export const cloneProgramTemplateMutation = createServerFn()
   .inputValidator(data => CloneProgramTemplateSchema.parse(data))
   .handler(async (ctx) => {
     const { cloneProgramTemplate } = await import('@repo/data-ops/queries/programs')
-    return await cloneProgramTemplate(ctx.data.id, ctx.data.newSchoolYearTemplateId, ctx.data.newName)
+    const result = await cloneProgramTemplate(ctx.data.id, ctx.data.newSchoolYearTemplateId, ctx.data.newName)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 // ===== PROGRAM TEMPLATE CHAPTERS =====
@@ -125,7 +156,10 @@ export const programTemplateChaptersQuery = createServerFn()
   .inputValidator(data => ProgramTemplateIdSchema.parse(data))
   .handler(async (ctx) => {
     const { getProgramTemplateChapters } = await import('@repo/data-ops/queries/programs')
-    return await getProgramTemplateChapters(ctx.data.id)
+    const result = await getProgramTemplateChapters(ctx.data.id)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const programTemplateChapterByIdQuery = createServerFn()
@@ -133,7 +167,10 @@ export const programTemplateChapterByIdQuery = createServerFn()
   .inputValidator(data => ProgramTemplateChapterIdSchema.parse(data))
   .handler(async (ctx) => {
     const { getProgramTemplateChapterById } = await import('@repo/data-ops/queries/programs')
-    return await getProgramTemplateChapterById(ctx.data.id)
+    const result = await getProgramTemplateChapterById(ctx.data.id)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const createProgramTemplateChapterMutation = createServerFn()
@@ -141,7 +178,10 @@ export const createProgramTemplateChapterMutation = createServerFn()
   .inputValidator(data => CreateProgramTemplateChapterSchema.parse(data))
   .handler(async (ctx) => {
     const { createProgramTemplateChapter } = await import('@repo/data-ops/queries/programs')
-    return await createProgramTemplateChapter(ctx.data)
+    const result = await createProgramTemplateChapter(ctx.data)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const updateProgramTemplateChapterMutation = createServerFn()
@@ -150,7 +190,10 @@ export const updateProgramTemplateChapterMutation = createServerFn()
   .handler(async (ctx) => {
     const { updateProgramTemplateChapter } = await import('@repo/data-ops/queries/programs')
     const { id, ...updateData } = ctx.data
-    return await updateProgramTemplateChapter(id, updateData)
+    const result = await updateProgramTemplateChapter(id, updateData)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const deleteProgramTemplateChapterMutation = createServerFn()
@@ -158,7 +201,9 @@ export const deleteProgramTemplateChapterMutation = createServerFn()
   .inputValidator(data => ProgramTemplateChapterIdSchema.parse(data))
   .handler(async (ctx) => {
     const { deleteProgramTemplateChapter } = await import('@repo/data-ops/queries/programs')
-    await deleteProgramTemplateChapter(ctx.data.id)
+    const result = await deleteProgramTemplateChapter(ctx.data.id)
+    if (result.isErr())
+      throw result.error
     return { success: true, id: ctx.data.id }
   })
 
@@ -167,7 +212,9 @@ export const bulkUpdateChaptersOrderMutation = createServerFn()
   .inputValidator(data => BulkUpdateChaptersOrderSchema.parse(data))
   .handler(async (ctx) => {
     const { bulkUpdateChaptersOrder } = await import('@repo/data-ops/queries/programs')
-    await bulkUpdateChaptersOrder(ctx.data)
+    const result = await bulkUpdateChaptersOrder(ctx.data)
+    if (result.isErr())
+      throw result.error
     return { success: true }
   })
 
@@ -176,7 +223,10 @@ export const bulkCreateChaptersMutation = createServerFn()
   .inputValidator(data => BulkCreateChaptersSchema.parse(data))
   .handler(async (ctx) => {
     const { bulkCreateChapters } = await import('@repo/data-ops/queries/programs')
-    return await bulkCreateChapters(ctx.data.programTemplateId, ctx.data.chapters)
+    const result = await bulkCreateChapters(ctx.data.programTemplateId, ctx.data.chapters)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 // ===== PROGRAM VERSIONS =====
@@ -186,7 +236,10 @@ export const publishProgramMutation = createServerFn()
   .inputValidator(data => PublishProgramSchema.parse(data))
   .handler(async (ctx) => {
     const { publishProgram } = await import('@repo/data-ops/queries/programs')
-    return await publishProgram(ctx.data.id)
+    const result = await publishProgram(ctx.data.id)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const getProgramVersionsQuery = createServerFn()
@@ -194,7 +247,10 @@ export const getProgramVersionsQuery = createServerFn()
   .inputValidator(data => ProgramTemplateIdSchema.parse(data))
   .handler(async (ctx) => {
     const { getProgramVersions } = await import('@repo/data-ops/queries/programs')
-    return await getProgramVersions(ctx.data.id)
+    const result = await getProgramVersions(ctx.data.id)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const restoreProgramVersionMutation = createServerFn()
@@ -202,7 +258,10 @@ export const restoreProgramVersionMutation = createServerFn()
   .inputValidator(data => RestoreProgramVersionSchema.parse(data))
   .handler(async (ctx) => {
     const { restoreProgramVersion } = await import('@repo/data-ops/queries/programs')
-    return await restoreProgramVersion(ctx.data.versionId)
+    const result = await restoreProgramVersion(ctx.data.versionId)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 // ===== PROGRAM STATS =====
@@ -211,7 +270,10 @@ export const programStatsQuery = createServerFn()
   .middleware([databaseMiddleware])
   .handler(async () => {
     const { getProgramStats } = await import('@repo/data-ops/queries/programs')
-    return await getProgramStats()
+    const result = await getProgramStats()
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 // ===== TERM TEMPLATES =====
@@ -221,7 +283,10 @@ export const termTemplatesQuery = createServerFn()
   .inputValidator(data => GetTermTemplatesSchema.parse(data))
   .handler(async (ctx) => {
     const { getTermTemplates } = await import('@repo/data-ops/queries/programs')
-    return await getTermTemplates(ctx.data.schoolYearTemplateId)
+    const result = await getTermTemplates(ctx.data.schoolYearTemplateId)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const termTemplateByIdQuery = createServerFn()
@@ -229,7 +294,10 @@ export const termTemplateByIdQuery = createServerFn()
   .inputValidator(data => TermTemplateIdSchema.parse(data))
   .handler(async (ctx) => {
     const { getTermTemplateById } = await import('@repo/data-ops/queries/programs')
-    return await getTermTemplateById(ctx.data.id)
+    const result = await getTermTemplateById(ctx.data.id)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const createTermTemplateMutation = createServerFn()
@@ -237,7 +305,10 @@ export const createTermTemplateMutation = createServerFn()
   .inputValidator(data => CreateTermTemplateSchema.parse(data))
   .handler(async (ctx) => {
     const { createTermTemplate } = await import('@repo/data-ops/queries/programs')
-    return await createTermTemplate(ctx.data)
+    const result = await createTermTemplate(ctx.data)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const updateTermTemplateMutation = createServerFn()
@@ -246,7 +317,10 @@ export const updateTermTemplateMutation = createServerFn()
   .handler(async (ctx) => {
     const { updateTermTemplate } = await import('@repo/data-ops/queries/programs')
     const { id, ...updateData } = ctx.data
-    return await updateTermTemplate(id, updateData)
+    const result = await updateTermTemplate(id, updateData)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const deleteTermTemplateMutation = createServerFn()
@@ -254,7 +328,9 @@ export const deleteTermTemplateMutation = createServerFn()
   .inputValidator(data => TermTemplateIdSchema.parse(data))
   .handler(async (ctx) => {
     const { deleteTermTemplate } = await import('@repo/data-ops/queries/programs')
-    await deleteTermTemplate(ctx.data.id)
+    const result = await deleteTermTemplate(ctx.data.id)
+    if (result.isErr())
+      throw result.error
     return { success: true, id: ctx.data.id }
   })
 
@@ -263,12 +339,18 @@ export const bulkCreateTermTemplatesMutation = createServerFn()
   .inputValidator(data => BulkCreateTermTemplatesSchema.parse(data))
   .handler(async (ctx) => {
     const { bulkCreateTermTemplates } = await import('@repo/data-ops/queries/programs')
-    return await bulkCreateTermTemplates(ctx.data.schoolYearTemplateId, ctx.data.terms)
+    const result = await bulkCreateTermTemplates(ctx.data.schoolYearTemplateId, ctx.data.terms)
+    if (result.isErr())
+      throw result.error
+    return result.value
   })
 
 export const schoolYearTemplatesWithTermsQuery = createServerFn()
   .middleware([databaseMiddleware])
   .handler(async () => {
     const { getSchoolYearTemplatesWithTerms } = await import('@repo/data-ops/queries/programs')
-    return await getSchoolYearTemplatesWithTerms()
+    const result = await getSchoolYearTemplatesWithTerms()
+    if (result.isErr())
+      throw result.error
+    return result.value
   })

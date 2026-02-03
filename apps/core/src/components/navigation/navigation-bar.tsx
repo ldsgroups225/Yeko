@@ -10,7 +10,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from '@workspace/ui/components/avatar'
-import { Button } from '@workspace/ui/components/button'
+import { Button, buttonVariants } from '@workspace/ui/components/button'
 import {
   Sheet,
   SheetContent,
@@ -21,10 +21,10 @@ import {
 } from '@workspace/ui/components/sheet'
 import { motion } from 'motion/react'
 import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { AccountDialog } from '@/components/auth/account-dialog'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { ThemeToggle } from '@/components/theme'
+import { useI18nContext } from '@/i18n/i18n-react'
 import { authClient } from '@/lib/auth-client'
 import { cn } from '@/lib/utils'
 
@@ -36,16 +36,16 @@ interface NavigationItem {
 }
 
 export function NavigationBar() {
-  const { t } = useTranslation()
+  const { LL } = useI18nContext()
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const { data: session } = authClient.useSession()
 
   const navigationItems: NavigationItem[] = [
-    { label: t('nav.solutions'), href: '/#solutions', scrollTo: 'solutions' },
-    { label: t('nav.benefits'), href: '/#benefits', scrollTo: 'benefits' },
-    { label: t('nav.pricing'), href: '/#pricing', scrollTo: 'pricing' },
-    { label: 'About', href: '/about', isExternal: false },
+    { label: LL.nav.solutions(), href: '/#solutions', scrollTo: 'solutions' },
+    { label: LL.nav.benefits.title(), href: '/#benefits', scrollTo: 'benefits' },
+    { label: LL.nav.pricing.title(), href: '/#pricing', scrollTo: 'pricing' },
+    { label: LL.footerNav.product.about(), href: '/about', isExternal: false },
   ]
 
   const handleGoogleSignIn = async () => {
@@ -110,7 +110,7 @@ export function NavigationBar() {
                 Yeko Platform
               </span>
               <span className="text-xs text-muted-foreground font-medium tracking-wider">
-                {t('nav.tagline')}
+                {LL.nav.tagline()}
               </span>
             </div>
           </Link>
@@ -179,15 +179,17 @@ export function NavigationBar() {
             {session
               ? (
                   <div className="flex flex-row items-center gap-4">
-                    <Button
-                      variant="secondary"
-                      render={<Link to="/app">{t('nav.dashboard')}</Link>}
-                    />
+                    <Link
+                      to="/app"
+                      className={buttonVariants({ variant: 'secondary' })}
+                    >
+                      {LL.nav.dashboard()}
+                    </Link>
 
                     <AccountDialog>
-                      <Button
-                        variant="ghost"
-                        className="flex items-center gap-2 px-3"
+                      <button
+                        type="button"
+                        className={buttonVariants({ variant: 'ghost', className: 'flex items-center gap-2 px-3' })}
                       >
                         <Avatar className="h-7 w-7">
                           <AvatarImage
@@ -201,19 +203,18 @@ export function NavigationBar() {
                         <span className="text-sm font-medium">
                           {user?.name || 'Account'}
                         </span>
-                      </Button>
+                      </button>
                     </AccountDialog>
                   </div>
                 )
               : (
                   <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      render={
-                        <Link to="/demo-request">{t('nav.requestDemo')}</Link>
-                      }
-                    />
+                    <Link
+                      to="/demo-request"
+                      className={buttonVariants({ variant: 'outline', size: 'sm' })}
+                    >
+                      {LL.nav.requestDemo()}
+                    </Link>
                     <Button
                       onClick={handleGoogleSignIn}
                       variant="default"
@@ -221,8 +222,9 @@ export function NavigationBar() {
                       className="gap-2"
                     >
                       <IconLogin className="h-4 w-4" />
-                      {t('nav.signIn')}
+                      {LL.nav.signIn()}
                     </Button>
+
                   </div>
                 )}
           </div>
@@ -232,16 +234,17 @@ export function NavigationBar() {
             <LanguageSwitcher />
             <ThemeToggle variant="ghost" align="end" />
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
-              <SheetTrigger>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="relative h-10 w-10 hover:bg-accent/50"
-                >
-                  <IconMenu className="h-5 w-5" />
-                  <span className="sr-only">Open navigation menu</span>
-                </Button>
-              </SheetTrigger>
+              <SheetTrigger
+                render={(
+                  <button
+                    type="button"
+                    className={buttonVariants({ variant: 'ghost', size: 'icon', className: 'relative h-10 w-10 hover:bg-accent/50' })}
+                  >
+                    <IconMenu className="h-5 w-5" />
+                    <span className="sr-only">Open navigation menu</span>
+                  </button>
+                )}
+              />
               <SheetContent
                 side="right"
                 className="w-[300px] bg-background/95 backdrop-blur-xl border-l border-border/50"
@@ -254,12 +257,13 @@ export function NavigationBar() {
                       className="h-10 w-10 object-contain"
                     />
                     <SheetTitle className="text-xl font-bold bg-linear-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-                      {t('nav.menuTitle')}
+                      {LL.nav.menuTitle()}
                     </SheetTitle>
                   </div>
                   <SheetDescription className="text-muted-foreground">
-                    {t('nav.menuDescription')}
+                    {LL.nav.menuDescription()}
                   </SheetDescription>
+
                 </SheetHeader>
 
                 <div className="flex flex-col space-y-2 pb-6">
@@ -323,21 +327,21 @@ export function NavigationBar() {
                       )
                     : (
                         <div className="space-y-2">
-                          <Button
-                            variant="outline"
-                            className="w-full"
-                            render={
-                              <Link to="/demo-request">{t('nav.requestDemo')}</Link>
-                            }
-                          />
+                          <Link
+                            to="/demo-request"
+                            className={buttonVariants({ variant: 'outline', className: 'w-full' })}
+                          >
+                            {LL.nav.requestDemo()}
+                          </Link>
                           <Button
                             onClick={handleGoogleSignIn}
                             variant="default"
                             className="w-full gap-2"
                           >
                             <IconLogin className="h-4 w-4" />
-                            {t('nav.signInWithGoogle')}
+                            {LL.nav.signInWithGoogle()}
                           </Button>
+
                         </div>
                       )}
                 </div>

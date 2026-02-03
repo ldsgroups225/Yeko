@@ -58,7 +58,8 @@ export const updatePlatformUser = createServerFn({ method: 'POST' })
   .handler(async ({ data }) => {
     const { updateSystemUser } = await import('@repo/data-ops/queries/school-admin/users')
     const { id, ...updates } = data
-    return updateSystemUser(id, updates)
+    const result = await updateSystemUser(id, updates)
+    return result
   })
 
 /**
@@ -73,5 +74,6 @@ export const assignUserSystemRoles = createServerFn({ method: 'POST' })
   )
   .handler(async ({ data }) => {
     const { assignSystemRolesToUser } = await import('@repo/data-ops/queries/school-admin/users')
-    return assignSystemRolesToUser(data.userId, data.roleIds)
+    const result = await assignSystemRolesToUser(data.userId, data.roleIds)
+    return result
   })

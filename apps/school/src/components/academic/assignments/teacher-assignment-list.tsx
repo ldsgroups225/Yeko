@@ -43,9 +43,9 @@ export function TeacherAssignmentList() {
     name: string
   } | null>(null)
 
-  const { data, isLoading } = useQuery(teacherOptions.list({ search }))
+  const { data: result, isLoading } = useQuery(teacherOptions.list({ search }))
 
-  const teachers = data?.teachers || []
+  const teachers = result?.success ? (result.data.teachers || []) : []
 
   if (isLoading) {
     return <TableSkeleton columns={4} rows={5} />

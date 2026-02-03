@@ -51,7 +51,8 @@ interface StudentAttendance {
 
 interface RosterResponse {
   success: boolean
-  roster: StudentAttendance[]
+  roster?: StudentAttendance[]
+  error?: string
 }
 
 interface CountsResponse {

@@ -38,7 +38,8 @@ export const Route = createFileRoute('/_auth/grades/entry')({
 function GradeEntryPage() {
   const t = useTranslations()
   const { schoolYearId } = useSchoolYearContext()
-  const { data: currentTeacher } = useCurrentTeacher()
+  const { data: currentTeacherResult } = useCurrentTeacher()
+  const currentTeacher = currentTeacherResult?.success ? currentTeacherResult.data : null
   const [selectedClassId, setSelectedClassId] = useState<string>('')
   const [selectedSubjectId, setSelectedSubjectId] = useState<string>('')
   const [selectedTermId, setSelectedTermId] = useState<string>('')
@@ -48,25 +49,28 @@ function GradeEntryPage() {
   const [gradeDate, setGradeDate] = useState(new Date().toISOString().split('T')[0])
 
   // Fetch classes for current school year
-  const { data: classesData, isLoading: classesLoading } = useQuery(
+  const { data: classesResult, isLoading: classesLoading } = useQuery(
     classesOptions.list({ schoolYearId: schoolYearId ?? undefined, status: 'active' }),
   )
+  const classesData = classesResult?.success ? classesResult.data : []
 
   // Fetch subjects for selected class
-  const { data: classSubjectsData, isLoading: subjectsLoading } = useQuery({
+  const { data: classSubjectsResult, isLoading: subjectsLoading } = useQuery({
     queryKey: classSubjectsKeys.list({ classId: selectedClassId }),
     queryFn: () => getClassSubjects({ data: { classId: selectedClassId } }),
     enabled: !!selectedClassId,
     staleTime: 5 * 60 * 1000,
   })
+  const classSubjectsData = classSubjectsResult?.success ? classSubjectsResult.data : []
 
   // Fetch terms for current school year
-  const { data: termsData, isLoading: termsLoading } = useQuery(
+  const { data: termsResult, isLoading: termsLoading } = useQuery(
     termsOptions.list(schoolYearId ?? ''),
   )
+  const termsData = termsResult?.success ? termsResult.data : []
 
   // Fetch enrolled students for selected class
-  const { data: enrollmentsData, isLoading: studentsLoading } = useQuery({
+  const { data: enrollmentsResult, isLoading: studentsLoading } = useQuery({
     ...enrollmentsOptions.list({
       classId: selectedClassId,
       schoolYearId: schoolYearId ?? '',
@@ -74,10 +78,11 @@ function GradeEntryPage() {
     }),
     enabled: !!selectedClassId && !!schoolYearId,
   })
+  const enrollmentsData = enrollmentsResult?.data ?? null
 
   // Fetch grades when all selections are made
   const canFetchGrades = selectedClassId && selectedSubjectId && selectedTermId
-  const { data: gradesData, isLoading: gradesLoading } = useQuery({
+  const { data: gradesResult, isLoading: gradesLoading } = useQuery({
     ...gradesOptions.byClass({
       classId: selectedClassId,
       subjectId: selectedSubjectId,
@@ -85,6 +90,7 @@ function GradeEntryPage() {
     }),
     enabled: !!canFetchGrades,
   })
+  const gradesData = gradesResult?.success ? gradesResult.data : []
 
   // Determine effective teacher ID (assigned teacher for subject or current user if they are a teacher)
   const selectedClassSubject = classSubjectsData?.find(
@@ -93,11 +99,11 @@ function GradeEntryPage() {
   const effectiveTeacherId = selectedClassSubject?.teacher?.id || currentTeacher?.id || ''
 
   // Transform enrolled students to the format expected by GradeEntryTable
-  const students = enrollmentsData?.data?.map(e => ({
+  const students = enrollmentsData?.map(e => ({
     id: e.student.id,
     firstName: e.student.firstName,
     lastName: e.student.lastName,
-    matricule: e.student.matricule,
+    matricule: e.student.matricule || undefined,
   })) ?? []
 
   // Reset subject when class changes
@@ -189,7 +195,7 @@ function GradeEntryPage() {
                         <SelectTrigger id="class-select" className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
                           <SelectValue placeholder={t.academic.grades.entry.selectClass()}>
                             {selectedClassId && (() => {
-                              const selectedItem = classesData?.find(item => item.class.id === selectedClassId)
+                              const selectedItem = classesData.find(item => item.class.id === selectedClassId)
                               return selectedItem
                                 ? (
                                     <div className="flex items-center gap-2">
@@ -206,7 +212,7 @@ function GradeEntryPage() {
                           </SelectValue>
                         </SelectTrigger>
                         <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
-                          {classesData?.map(item => (
+                          {classesData.map(item => (
                             <SelectItem key={item.class.id} value={item.class.id} className="rounded-lg">
                               <div className="flex items-center gap-2">
                                 <IconLayoutGrid className="size-3.5 text-primary/60" />
@@ -240,7 +246,7 @@ function GradeEntryPage() {
                         <SelectTrigger id="subject-select" className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
                           <SelectValue placeholder={t.academic.grades.entry.selectSubject()}>
                             {selectedSubjectId && (() => {
-                              const selectedItem = classSubjectsData?.find(cs => cs.subject.id === selectedSubjectId)
+                              const selectedItem = classSubjectsData.find(cs => cs.subject.id === selectedSubjectId)
                               return selectedItem
                                 ? (
                                     <div className="flex items-center gap-2">
@@ -253,7 +259,7 @@ function GradeEntryPage() {
                           </SelectValue>
                         </SelectTrigger>
                         <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
-                          {classSubjectsData?.map(cs => (
+                          {classSubjectsData.map(cs => (
                             <SelectItem key={cs.subject.id} value={cs.subject.id} className="rounded-lg">
                               <div className="flex items-center gap-2">
                                 <IconSparkles className="size-3.5 text-primary/60" />
@@ -283,7 +289,7 @@ function GradeEntryPage() {
                         <SelectTrigger id="term-select" className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
                           <SelectValue placeholder={t.academic.grades.entry.selectTerm()}>
                             {selectedTermId && (() => {
-                              const selectedItem = termsData?.find(term => term.id === selectedTermId)
+                              const selectedItem = termsData.find(term => term.id === selectedTermId)
                               return selectedItem
                                 ? (
                                     <div className="flex items-center gap-2">
@@ -296,7 +302,7 @@ function GradeEntryPage() {
                           </SelectValue>
                         </SelectTrigger>
                         <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
-                          {termsData?.map(term => (
+                          {termsData.map(term => (
                             <SelectItem key={term.id} value={term.id} className="rounded-lg">
                               <span className="font-semibold">{term.template.name}</span>
                             </SelectItem>

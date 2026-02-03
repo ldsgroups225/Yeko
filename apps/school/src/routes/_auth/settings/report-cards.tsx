@@ -69,12 +69,13 @@ function ReportCardTemplatesSettingsPage() {
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
 
   // Fetch templates
-  const { data: templates, isLoading } = useQuery({
+  const { data: templatesResult, isLoading } = useQuery({
     queryKey: ['report-card-templates', schoolId],
     queryFn: () =>
       getReportCardTemplates({ data: { schoolId: schoolId ?? '' } }),
     enabled: !!schoolId,
   })
+  const templates = templatesResult?.success ? templatesResult.data : []
 
   // Set default mutation
   const setDefaultMutation = useMutation({

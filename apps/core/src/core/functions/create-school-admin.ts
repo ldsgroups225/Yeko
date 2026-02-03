@@ -57,10 +57,11 @@ export const createSchoolAdmin = createServerFn({ method: 'POST' })
         throw new Error('Failed to create auth user')
       }
 
-      // Get school_administrator role
-      const adminRole = await getRoleBySlug('school_administrator')
+      // Get school_director role
+      const adminRole = await getRoleBySlug('school_director')
+
       if (!adminRole) {
-        throw new Error('School administrator role not found')
+        throw new Error('School director role not found')
       }
 
       // Create user in school system and link to school
@@ -73,7 +74,10 @@ export const createSchoolAdmin = createServerFn({ method: 'POST' })
       })
 
       // Get school name for email
-      const school = await getSchoolById(schoolId)
+      const schoolResult = await getSchoolById(schoolId)
+      if (schoolResult.isErr())
+        throw schoolResult.error
+      const school = schoolResult.value
       const schoolName = school?.name || 'Votre école'
 
       // In development, log credentials to console

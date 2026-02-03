@@ -67,10 +67,12 @@ export function StudentCombobox({
           limit: 50,
         },
       })
-      return result.data.map((item) => {
+      if (!result.success)
+        return []
+      return result.data.data.map((item) => {
         const className = [
-          item.currentClass.gradeName,
-          item.currentClass.section,
+          item.currentClass?.gradeName,
+          item.currentClass?.section,
         ]
           .filter(Boolean)
           .join(' ')
@@ -78,7 +80,7 @@ export function StudentCombobox({
           id: item.student.id,
           matricule: item.student.matricule,
           user: {
-            name: `${item.student.firstName} ${item.student.lastName}`,
+            name: `${item.student.lastName} ${item.student.firstName}`,
             image: item.student.photoUrl,
           },
           currentEnrollment: item.currentClass

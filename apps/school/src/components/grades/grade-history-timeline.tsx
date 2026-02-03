@@ -39,7 +39,9 @@ const actionColors = {
 export function GradeHistoryTimeline({ gradeId }: GradeHistoryTimelineProps) {
   const t = useTranslations()
 
-  const { data: history, isLoading } = useQuery(gradesOptions.history(gradeId))
+  const { data: result, isLoading } = useQuery(gradesOptions.history(gradeId))
+
+  const history = result?.success ? result.data : []
 
   if (isLoading) {
     return (

@@ -23,7 +23,12 @@ export const discountsOptions = {
   list: (filters: DiscountFilters = {}) =>
     queryOptions({
       queryKey: discountsKeys.list(filters),
-      queryFn: () => getDiscountsList({ data: filters }),
+      queryFn: async () => {
+        const res = await getDiscountsList({ data: filters })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
     }),
@@ -31,7 +36,12 @@ export const discountsOptions = {
   autoApply: () =>
     queryOptions({
       queryKey: discountsKeys.autoApply(),
-      queryFn: () => getAutoApplyDiscountsList(),
+      queryFn: async () => {
+        const res = await getAutoApplyDiscountsList()
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
     }),
@@ -39,7 +49,12 @@ export const discountsOptions = {
   detail: (id: string) =>
     queryOptions({
       queryKey: discountsKeys.detail(id),
-      queryFn: () => getDiscount({ data: id }),
+      queryFn: async () => {
+        const res = await getDiscount({ data: id })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
       enabled: !!id,

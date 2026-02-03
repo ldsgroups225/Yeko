@@ -53,22 +53,25 @@ function StudentAttendancePage() {
   const [classId, setClassId] = useState<string>('')
 
   const { schoolYearId: contextSchoolYearId } = useSchoolYearContext()
-  const { data: schoolYears } = useQuery({
+  const { data: schoolYearsResult } = useQuery({
     queryKey: ['school-years'],
     queryFn: () => getSchoolYears(),
   })
-  const activeSchoolYear = schoolYears?.find(sy => sy.isActive)
+  const schoolYears = schoolYearsResult?.success ? schoolYearsResult.data : []
+  const activeSchoolYear = schoolYears.find(sy => sy.isActive)
   const schoolYearId = contextSchoolYearId || activeSchoolYear?.id
 
-  const { data: classes } = useQuery({
+  const { data: classesResult } = useQuery({
     queryKey: ['classes', { schoolYearId }],
     queryFn: () => getClasses({ data: { schoolYearId: schoolYearId ?? undefined } }),
     enabled: !!schoolYearId,
   })
 
+  const classes = classesResult?.success ? classesResult.data : []
+
   const dateStr = date.toISOString().split('T')[0] ?? ''
 
-  const { data, isLoading } = useQuery({
+  const { data: attendanceResult, isLoading } = useQuery({
     ...classAttendanceOptions(classId, dateStr),
     enabled: !!classId,
   })
@@ -88,7 +91,8 @@ function StudentAttendancePage() {
     },
   })
 
-  const entries: StudentAttendanceEntry[] = (data as StudentAttendanceRecord[] | undefined)?.map(record => ({
+  const attendanceData = attendanceResult?.success ? attendanceResult.data : []
+  const entries: StudentAttendanceEntry[] = (attendanceData as StudentAttendanceRecord[]).map(record => ({
     studentId: record.studentId,
     studentName: record.studentName,
     studentPhoto: record.photoUrl,
@@ -103,7 +107,7 @@ function StudentAttendancePage() {
     mutation.mutate({
       classId,
       date: dateStr,
-      entries: updatedEntries.map(e => ({
+      entries: updatedEntries.map((e: StudentAttendanceEntry) => ({
         studentId: e.studentId,
         status: e.status,
         arrivalTime: e.arrivalTime ?? null,
@@ -112,7 +116,7 @@ function StudentAttendancePage() {
     })
   }
 
-  const selectedClass = classes?.find(c => c.class.id === classId)
+  const selectedClass = classes.find(c => c.class.id === classId)
   const className = selectedClass ? `${selectedClass.grade?.name ?? ''} ${selectedClass.class.section}` : ''
 
   return (
@@ -174,7 +178,7 @@ function StudentAttendancePage() {
               <SelectValue placeholder={t.attendance.selectClass()} />
             </SelectTrigger>
             <SelectContent className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40">
-              {classes?.map(c => (
+              {classes.map(c => (
                 <SelectItem key={c.class.id} value={c.class.id} className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">
                   {c.grade?.name}
                   {' '}

@@ -1080,6 +1080,15 @@ const en: Translation = {
     serverError: 'Server error',
     networkError: 'Network error',
     validationError: 'Validation error',
+    teacherContextNotFound: 'Teacher context not found',
+    noTermFound: 'No term found for current school year',
+    sessionNotFound: 'Timetable session not found',
+    notAssignedToSession: 'Unauthorized: You are not assigned to this session',
+    classNotFound: 'Class not found',
+    noSchoolContext: 'No school context',
+    permissionDenied: 'Forbidden: You don\'t have permission to {action} {resource}',
+    accessDeniedToSchool: 'Access denied to this school',
+    invalidSchoolYear: 'Invalid school year for this school',
   },
   validation: {
     required: 'This field is required',
@@ -1157,7 +1166,7 @@ const en: Translation = {
   },
   roles: {
     descriptions: {
-      school_administrator: 'Full access to all modules',
+      school_director: 'Operational head: general supervision, decision validation, and discipline.',
       academic_coordinator: 'Curriculum management and grade validation',
       discipline_officer: 'Attendance and conduct management',
       accountant: 'Financial management and reports',

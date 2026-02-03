@@ -4,74 +4,56 @@ import userEvent from '@testing-library/user-event'
 import * as React from 'react'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 
-// Mock UI components
+// Mock UI components - using React.createElement to avoid JSX in hoisted mocks
 vi.mock('@workspace/ui/components/button', () => ({
-  Button: ({ children, ...props }: any) => (
-    <button type="button" {...props}>
-      {children}
-    </button>
-  ),
+  Button: ({ children, ...props }: any) =>
+    React.createElement('button', { type: 'button', ...props }, children),
 }))
 
 vi.mock('@workspace/ui/components/card', () => ({
-  Card: ({ children, ...props }: any) => (
-    <div data-testid="card" {...props}>
-      {children}
-    </div>
-  ),
-  CardContent: ({ children }: any) => (
-    <div data-testid="card-content">{children}</div>
-  ),
-  CardDescription: ({ children }: any) => (
-    <div data-testid="card-description">{children}</div>
-  ),
-  CardHeader: ({ children }: any) => (
-    <div data-testid="card-header">{children}</div>
-  ),
-  CardTitle: ({ children }: any) => (
-    <h3 data-testid="card-title">{children}</h3>
-  ),
+  Card: ({ children, ...props }: any) =>
+    React.createElement('div', { 'data-testid': 'card', ...props }, children),
+  CardContent: ({ children }: any) =>
+    React.createElement('div', { 'data-testid': 'card-content' }, children),
+  CardDescription: ({ children }: any) =>
+    React.createElement('div', { 'data-testid': 'card-description' }, children),
+  CardHeader: ({ children }: any) =>
+    React.createElement('div', { 'data-testid': 'card-header' }, children),
+  CardTitle: ({ children }: any) =>
+    React.createElement('h3', { 'data-testid': 'card-title' }, children),
 }))
 
 vi.mock('@workspace/ui/components/input', () => ({
-  Input: ({ ...props }: any) => <input {...props} />,
+  Input: ({ ...props }: any) => React.createElement('input', props),
 }))
 
 vi.mock('@workspace/ui/components/label', () => ({
-  Label: ({ children, htmlFor }: any) => (
-    <label htmlFor={htmlFor}>{children}</label>
-  ),
+  Label: ({ children, htmlFor }: any) =>
+    React.createElement('label', { htmlFor }, children),
 }))
 
 vi.mock('@workspace/ui/components/select', () => ({
-  Select: ({ children, onValueChange, value }: any) => (
-    <select value={value} onChange={e => onValueChange?.(e.target.value)}>
-      {children}
-    </select>
-  ),
-  SelectContent: ({ children }: any) => <>{children}</>,
-  SelectItem: ({ children, value }: any) => (
-    <option value={value}>{children}</option>
-  ),
-  SelectTrigger: ({ placeholder }: any) => (
-    <option value="" disabled>
-      {placeholder}
-    </option>
-  ),
-  SelectValue: ({ placeholder }: any) => (
-    <option value="" disabled>
-      {placeholder}
-    </option>
-  ),
+  Select: ({ children, onValueChange, value }: any) =>
+    React.createElement('select', {
+      value,
+      onChange: (e: any) => onValueChange?.(e.target.value),
+    }, children),
+  SelectContent: ({ children }: any) => React.createElement(React.Fragment, null, children),
+  SelectItem: ({ children, value }: any) =>
+    React.createElement('option', { value }, children),
+  SelectTrigger: ({ placeholder }: any) =>
+    React.createElement('option', { value: '', disabled: true }, placeholder),
+  SelectValue: ({ placeholder }: any) =>
+    React.createElement('option', { value: '', disabled: true }, placeholder),
 }))
 
 vi.mock('@workspace/ui/components/table', () => ({
-  Table: ({ children }: any) => <table>{children}</table>,
-  TableBody: ({ children }: any) => <tbody>{children}</tbody>,
-  TableCell: ({ children }: any) => <td>{children}</td>,
-  TableHead: ({ children }: any) => <th>{children}</th>,
-  TableHeader: ({ children }: any) => <thead>{children}</thead>,
-  TableRow: ({ children }: any) => <tr>{children}</tr>,
+  Table: ({ children }: any) => React.createElement('table', null, children),
+  TableBody: ({ children }: any) => React.createElement('tbody', null, children),
+  TableCell: ({ children }: any) => React.createElement('td', null, children),
+  TableHead: ({ children }: any) => React.createElement('th', null, children),
+  TableHeader: ({ children }: any) => React.createElement('thead', null, children),
+  TableRow: ({ children }: any) => React.createElement('tr', null, children),
 }))
 
 // Mock Coefficient Form Component

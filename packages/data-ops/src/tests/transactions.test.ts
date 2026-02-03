@@ -28,10 +28,12 @@ import {
   createProgramTemplate,
   deleteProgramTemplate,
 } from '../queries/programs'
+
 import {
   createSchool,
   deleteSchool,
 } from '../queries/schools'
+import './setup'
 
 // ============================================================================
 // 7.2 TRANSACTION TESTING
@@ -48,13 +50,13 @@ describe('7.2 Transaction Testing', () => {
     const db = getDb()
 
     // Create test school with unique code
-    testSchool = await createSchool({
+    testSchool = (await createSchool({
       name: 'Transaction Test School',
       code: `TTS${Date.now()}`,
       email: 'transaction@test.com',
       phone: '+1234567890',
       status: 'active',
-    })
+    }))._unsafeUnwrap()
 
     // Get or create test track
     const tracksResult = await db.select().from(tracks).limit(1)
@@ -118,12 +120,12 @@ describe('7.2 Transaction Testing', () => {
     }
 
     // Create test grade
-    testGrade = await createGrade({
+    testGrade = (await createGrade({
       name: 'Transaction Grade',
       code: 'TG001',
       order: 1,
       trackId: testTrack.id,
-    })
+    }))._unsafeUnwrap()
   })
 
   afterAll(async () => {
@@ -149,7 +151,7 @@ describe('7.2 Transaction Testing', () => {
 
       const createdGrades = []
       for (const gradeData of gradesToCreate) {
-        const grade = await createGrade(gradeData)
+        const grade = (await createGrade(gradeData))._unsafeUnwrap()
         createdGrades.push(grade)
       }
 
@@ -160,7 +162,7 @@ describe('7.2 Transaction Testing', () => {
       expect(createdGrades[2]?.name).toBe('Bulk Grade 3')
 
       // Verify grades exist in database
-      const allGrades = await getGrades({ trackId: testTrack.id })
+      const allGrades = (await getGrades({ trackId: testTrack.id }))._unsafeUnwrap()
       const bulkGrades = allGrades.filter(g => g.code.startsWith('BG'))
       expect(bulkGrades).toHaveLength(3)
 
@@ -173,19 +175,19 @@ describe('7.2 Transaction Testing', () => {
     test('should bulk update coefficients atomically', async () => {
       // Create test coefficients
       const _db = getDb()
-      const coeff1 = await createCoefficientTemplate({
+      const coeff1 = (await createCoefficientTemplate({
         schoolYearTemplateId: testYear.id,
         subjectId: testSubject.id,
         gradeId: testGrade.id,
         weight: 1,
-      })
+      }))._unsafeUnwrap()
 
-      const coeff2 = await createCoefficientTemplate({
+      const coeff2 = (await createCoefficientTemplate({
         schoolYearTemplateId: testYear.id,
         subjectId: testSubject.id,
         gradeId: testGrade.id,
         weight: 2,
-      })
+      }))._unsafeUnwrap()
 
       // Bulk update
       const updates = [
@@ -196,10 +198,10 @@ describe('7.2 Transaction Testing', () => {
       await bulkUpdateCoefficients(updates)
 
       // Verify updates
-      const updatedResult = await getCoefficientTemplates({
+      const updatedResult = (await getCoefficientTemplates({
         schoolYearTemplateId: testYear.id,
-      })
-      const updated = Array.isArray(updatedResult) ? updatedResult : updatedResult.coefficients
+      }))._unsafeUnwrap()
+      const updated = updatedResult.coefficients
 
       const updatedCoeff1 = updated.find((c: any) => c.id === coeff1.id)
       const updatedCoeff2 = updated.find((c: any) => c.id === coeff2.id)
@@ -214,12 +216,12 @@ describe('7.2 Transaction Testing', () => {
 
     test('should handle partial failure in bulk operations', async () => {
       // Attempt to create grades with one invalid
-      const validGrade = await createGrade({
+      const validGrade = (await createGrade({
         name: 'Valid Bulk Grade',
         code: 'VBG001',
         order: 20,
         trackId: testTrack.id,
-      })
+      }))._unsafeUnwrap()
 
       try {
         // Attempt to create with duplicate code
@@ -236,7 +238,7 @@ describe('7.2 Transaction Testing', () => {
       }
 
       // Verify valid grade still exists
-      const grades_result = await getGrades({ trackId: testTrack.id })
+      const grades_result = (await getGrades({ trackId: testTrack.id }))._unsafeUnwrap()
       expect(grades_result).toContainEqual(expect.objectContaining({ id: validGrade.id }))
 
       // Cleanup
@@ -252,7 +254,7 @@ describe('7.2 Transaction Testing', () => {
 
       const createdSeries = []
       for (const serieData of seriesToCreate) {
-        const serie = await createSerie(serieData)
+        const serie = (await createSerie(serieData))._unsafeUnwrap()
         createdSeries.push(serie)
       }
 
@@ -260,7 +262,7 @@ describe('7.2 Transaction Testing', () => {
       expect(createdSeries).toHaveLength(3)
 
       // Verify series exist in database
-      const allSeries = await getSeries({ trackId: testTrack.id })
+      const allSeries = (await getSeries({ trackId: testTrack.id }))._unsafeUnwrap()
       const bulkSeries = allSeries.filter(s => s.code.startsWith('BS'))
       expect(bulkSeries).toHaveLength(3)
 
@@ -280,13 +282,13 @@ describe('7.2 Transaction Testing', () => {
       const db = getDb()
 
       // Create a new school with related data
-      const school = await createSchool({
+      const school = (await createSchool({
         name: 'Cascade Delete School',
         code: `CDS${Date.now()}`,
         email: 'cascade@test.com',
         phone: '+9999999999',
         status: 'active',
-      })
+      }))._unsafeUnwrap()
 
       // Verify school exists
       const schoolsBeforeDelete = await db
@@ -312,12 +314,12 @@ describe('7.2 Transaction Testing', () => {
       const db = getDb()
 
       // Create program
-      const program = await createProgramTemplate({
+      const program = (await createProgramTemplate({
         name: 'Cascade Program',
         schoolYearTemplateId: testYear.id,
         subjectId: testSubject.id,
         gradeId: testGrade.id,
-      })
+      }))._unsafeUnwrap()
 
       // Add multiple chapters
       const chapters = []
@@ -396,8 +398,8 @@ describe('7.2 Transaction Testing', () => {
       })
 
       // Verify all records exist
-      const gradesBeforeDelete = await getGrades({ trackId: newTrack!.id })
-      const _seriesBeforeDelete = await getSeries({ trackId: newTrack!.id })
+      const gradesBeforeDelete = (await getGrades({ trackId: newTrack!.id }))._unsafeUnwrap()
+      const _seriesBeforeDelete = (await getSeries({ trackId: newTrack!.id }))._unsafeUnwrap()
 
       expect(gradesBeforeDelete).toHaveLength(2)
       expect(_seriesBeforeDelete).toHaveLength(1)
@@ -406,8 +408,8 @@ describe('7.2 Transaction Testing', () => {
       await db.delete(tracks).where(eq(tracks.id, newTrack!.id))
 
       // Verify all related records are deleted
-      const gradesAfterDelete = await getGrades({ trackId: newTrack!.id })
-      const _seriesAfterDelete = await getSeries({ trackId: newTrack!.id })
+      const gradesAfterDelete = (await getGrades({ trackId: newTrack!.id }))._unsafeUnwrap()
+      const _seriesAfterDelete = (await getSeries({ trackId: newTrack!.id }))._unsafeUnwrap()
 
       expect(gradesAfterDelete).toHaveLength(0)
       expect(_seriesAfterDelete).toHaveLength(0)
@@ -429,7 +431,7 @@ describe('7.2 Transaction Testing', () => {
           trackId: testTrack.id,
         }))
 
-      const createdGrades = await Promise.all(gradePromises)
+      const createdGrades = (await Promise.all(gradePromises)).map(r => r._unsafeUnwrap())
 
       // Verify all grades created
       expect(createdGrades).toHaveLength(5)
@@ -450,12 +452,12 @@ describe('7.2 Transaction Testing', () => {
       // Create test coefficients
       const coeffs: any[] = []
       for (let i = 0; i < 3; i++) {
-        const coeff = await createCoefficientTemplate({
+        const coeff = (await createCoefficientTemplate({
           schoolYearTemplateId: testYear.id,
           subjectId: testSubject.id,
           gradeId: testGrade.id,
           weight: 1 + i,
-        })
+        }))._unsafeUnwrap()
         coeffs.push(coeff)
       }
 
@@ -469,10 +471,10 @@ describe('7.2 Transaction Testing', () => {
       await Promise.all(updatePromises)
 
       // Verify updates applied
-      const updatedResult = await getCoefficientTemplates({
+      const updatedResult = (await getCoefficientTemplates({
         schoolYearTemplateId: testYear.id,
-      })
-      const updated = Array.isArray(updatedResult) ? updatedResult : updatedResult.coefficients
+      }))._unsafeUnwrap()
+      const updated = updatedResult.coefficients
 
       const updatedCoeffs = updated.filter((c: any) => coeffs.some(orig => orig.id === c.id))
       expect(updatedCoeffs).toHaveLength(3)
@@ -486,12 +488,12 @@ describe('7.2 Transaction Testing', () => {
 
     test('should detect conflicts in concurrent updates', async () => {
       // Create a coefficient
-      const coeff = await createCoefficientTemplate({
+      const coeff = (await createCoefficientTemplate({
         schoolYearTemplateId: testYear.id,
         subjectId: testSubject.id,
         gradeId: testGrade.id,
         weight: 1,
-      })
+      }))._unsafeUnwrap()
 
       // Perform concurrent updates to same record
       const updatePromises = [
@@ -503,10 +505,10 @@ describe('7.2 Transaction Testing', () => {
       await Promise.all(updatePromises)
 
       // Verify final state (last write wins)
-      const updatedResult = await getCoefficientTemplates({
+      const updatedResult = (await getCoefficientTemplates({
         schoolYearTemplateId: testYear.id,
-      })
-      const updated = Array.isArray(updatedResult) ? updatedResult : updatedResult.coefficients
+      }))._unsafeUnwrap()
+      const updated = updatedResult.coefficients
 
       const finalCoeff = updated.find((c: any) => c.id === coeff.id)
       expect(finalCoeff?.weight).toBeDefined()
@@ -519,12 +521,12 @@ describe('7.2 Transaction Testing', () => {
 
     test('should maintain data consistency under concurrent operations', async () => {
       // Create initial data
-      const grade = await createGrade({
+      const grade = (await createGrade({
         name: 'Consistency Grade',
         code: 'CG999',
         order: 99,
         trackId: testTrack.id,
-      })
+      }))._unsafeUnwrap()
 
       // Perform concurrent reads and writes
       const operations = [
@@ -548,7 +550,7 @@ describe('7.2 Transaction Testing', () => {
       const results = await Promise.all(operations)
 
       // Verify consistency
-      const finalGrades = await getGrades({ trackId: testTrack.id })
+      const finalGrades = (await getGrades({ trackId: testTrack.id }))._unsafeUnwrap()
       expect(finalGrades.length).toBeGreaterThanOrEqual(3)
 
       // Cleanup

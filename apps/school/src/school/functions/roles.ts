@@ -7,10 +7,9 @@ import {
   getRoleUsersCount,
   updateRole,
 } from '@repo/data-ops/queries/school-admin/roles'
-import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 import { createRoleSchema, updateRoleSchema } from '@/schemas/role'
-import { getSchoolContext } from '../middleware/school-context'
+import { authServerFn } from '../lib/server-fn'
 
 /**
  * Filters for role queries
@@ -31,18 +30,18 @@ const paginationSchema = z.object({
 /**
  * Get roles with pagination and filters
  */
-export const getRoles = createServerFn()
+export const getRoles = authServerFn
   .inputValidator(
     z.object({
       filters: roleFiltersSchema.optional(),
       pagination: paginationSchema.optional(),
     }),
   )
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
-    const { schoolId } = context
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    const { schoolId } = context.school
     const { filters = {}, pagination = { page: 1, limit: 20 } } = data
 
     const offset = (pagination.page - 1) * pagination.limit
@@ -69,87 +68,96 @@ export const getRoles = createServerFn()
     )
 
     return {
-      roles: rolesWithCounts,
-      total,
-      page: pagination.page,
-      limit: pagination.limit,
-      totalPages: Math.ceil(total / pagination.limit),
+      success: true as const,
+      data: {
+        roles: rolesWithCounts,
+        total,
+        page: pagination.page,
+        limit: pagination.limit,
+        totalPages: Math.ceil(total / pagination.limit),
+      },
     }
   })
 
 /**
  * Get role by ID
  */
-export const getRole = createServerFn()
+export const getRole = authServerFn
   .inputValidator(z.string())
-  .handler(async ({ data: roleId }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
-    const { schoolId } = context
+  .handler(async ({ data: roleId, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    const { schoolId } = context.school
 
     const role = await getRoleById(roleId)
     if (!role)
-      return null
+      return { success: true as const, data: null }
 
     const userCount = await getRoleUsersCount(roleId, schoolId)
 
     return {
-      ...role,
-      userCount,
-      permissionCount: Object.values(role.permissions as Record<string, string[]>).flat().length,
+      success: true as const,
+      data: {
+        ...role,
+        userCount,
+        permissionCount: Object.values(role.permissions as Record<string, string[]>).flat().length,
+      },
     }
   })
 
 /**
  * Create new role
  */
-export const createNewRole = createServerFn()
+export const createNewRole = authServerFn
   .inputValidator(createRoleSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return await createRole({
+    const result = await createRole({
       name: data.name,
       slug: data.slug,
       description: data.description || undefined,
       permissions: data.permissions as any,
       scope: data.scope,
     })
+
+    return { success: true as const, data: result }
   })
 
 /**
  * Update role
  */
-export const updateExistingRole = createServerFn()
+export const updateExistingRole = authServerFn
   .inputValidator(
     z.object({
       roleId: z.string(),
       data: updateRoleSchema,
     }),
   )
-  .handler(async ({ data: { roleId, data } }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data: { roleId, data }, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return await updateRole(roleId, {
+    const result = await updateRole(roleId, {
       name: data.name,
       description: data.description || undefined,
       permissions: data.permissions as any,
     })
+
+    return { success: true as const, data: result }
   })
 
 /**
  * Delete role
  */
-export const deleteExistingRole = createServerFn()
+export const deleteExistingRole = authServerFn
   .inputValidator(z.string())
-  .handler(async ({ data: roleId }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
-    return await deleteRole(roleId)
+  .handler(async ({ data: roleId, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    const result = await deleteRole(roleId)
+    return { success: true as const, data: result }
   })

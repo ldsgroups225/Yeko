@@ -4,6 +4,7 @@
  */
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
+import { getTeacherContext } from '../middleware/teacher-context'
 
 // Schema for saving individual student attendance
 export const saveAttendanceSchema = z.object({
@@ -60,17 +61,34 @@ export const getStudentHistorySchema = z.object({
 export const getClassRoster = createServerFn()
   .inputValidator(getClassRosterSchema)
   .handler(async ({ data }) => {
+    const context = await getTeacherContext()
+    if (!context) {
+      return {
+        success: false,
+        error: 'Teacher context not found',
+      }
+    }
+
     const { getClassRosterForAttendance }
       = await import('@repo/data-ops/queries/teacher-student-attendance')
-    const roster = await getClassRosterForAttendance({
+    const rosterResult = await getClassRosterForAttendance({
+      schoolId: context.schoolId,
       classId: data.classId,
       schoolYearId: data.schoolYearId,
       date: data.date,
     })
 
+    if (rosterResult.isErr()) {
+      return {
+        success: false,
+        error: rosterResult.error.message,
+        code: rosterResult.error.details?.code as string | undefined,
+      }
+    }
+
     return {
       success: true,
-      roster,
+      roster: rosterResult.value,
     }
   })
 
@@ -87,9 +105,18 @@ export const getOrCreateSession = createServerFn()
     }),
   )
   .handler(async ({ data }) => {
+    const context = await getTeacherContext()
+    if (!context) {
+      return {
+        success: false,
+        error: 'Teacher context not found',
+      }
+    }
+
     const { getOrCreateAttendanceSession }
       = await import('@repo/data-ops/queries/teacher-student-attendance')
     const result = await getOrCreateAttendanceSession({
+      schoolId: context.schoolId,
       classId: data.classId,
       subjectId: data.subjectId,
       teacherId: data.teacherId,
@@ -98,10 +125,18 @@ export const getOrCreateSession = createServerFn()
       endTime: data.endTime,
     })
 
+    if (result.isErr()) {
+      return {
+        success: false,
+        error: result.error.message,
+        code: result.error.details?.code as string | undefined,
+      }
+    }
+
     return {
       success: true,
-      session: result.session,
-      isNew: result.isNew,
+      session: result.value.session,
+      isNew: result.value.isNew,
     }
   })
 
@@ -109,9 +144,18 @@ export const getOrCreateSession = createServerFn()
 export const saveAttendance = createServerFn()
   .inputValidator(saveAttendanceSchema)
   .handler(async ({ data }) => {
+    const context = await getTeacherContext()
+    if (!context) {
+      return {
+        success: false,
+        error: 'Teacher context not found',
+      }
+    }
+
     const { saveStudentAttendance }
       = await import('@repo/data-ops/queries/teacher-student-attendance')
     const result = await saveStudentAttendance({
+      schoolId: context.schoolId,
       enrollmentId: data.enrollmentId,
       sessionId: data.sessionId,
       sessionDate: data.sessionDate,
@@ -120,10 +164,18 @@ export const saveAttendance = createServerFn()
       teacherId: data.teacherId,
     })
 
+    if (result.isErr()) {
+      return {
+        success: false,
+        error: result.error.message,
+        code: result.error.details?.code as string | undefined,
+      }
+    }
+
     return {
       success: true,
-      attendance: result.attendance,
-      isNew: result.isNew,
+      attendance: result.value.attendance,
+      isNew: result.value.isNew,
     }
   })
 
@@ -131,9 +183,18 @@ export const saveAttendance = createServerFn()
 export const saveBulkAttendance = createServerFn()
   .inputValidator(bulkAttendanceSchema)
   .handler(async ({ data }) => {
+    const context = await getTeacherContext()
+    if (!context) {
+      return {
+        success: false,
+        error: 'Teacher context not found',
+      }
+    }
+
     const { bulkSaveAttendance }
       = await import('@repo/data-ops/queries/teacher-student-attendance')
     const result = await bulkSaveAttendance({
+      schoolId: context.schoolId,
       classId: data.classId,
       sessionId: data.sessionId,
       sessionDate: data.sessionDate,
@@ -141,8 +202,17 @@ export const saveBulkAttendance = createServerFn()
       attendanceRecords: data.attendanceRecords,
     })
 
+    if (result.isErr()) {
+      return {
+        success: false,
+        error: result.error.message,
+        code: result.error.details?.code as string | undefined,
+      }
+    }
+
     return {
-      ...result,
+      success: true,
+      count: result.value.count,
     }
   })
 
@@ -150,18 +220,34 @@ export const saveBulkAttendance = createServerFn()
 export const getAttendanceStats = createServerFn()
   .inputValidator(getAttendanceStatsSchema)
   .handler(async ({ data }) => {
+    const context = await getTeacherContext()
+    if (!context) {
+      return {
+        success: false,
+        error: 'Teacher context not found',
+      }
+    }
+
     const { getClassAttendanceStats }
       = await import('@repo/data-ops/queries/teacher-student-attendance')
-    const stats = await getClassAttendanceStats({
+    const statsResult = await getClassAttendanceStats({
+      schoolId: context.schoolId,
       classId: data.classId,
-      schoolYearId: data.schoolYearId,
       startDate: data.startDate,
       endDate: data.endDate,
     })
 
+    if (statsResult.isErr()) {
+      return {
+        success: false,
+        error: statsResult.error.message,
+        code: statsResult.error.details?.code as string | undefined,
+      }
+    }
+
     return {
       success: true,
-      stats,
+      stats: statsResult.value,
     }
   })
 
@@ -169,21 +255,37 @@ export const getAttendanceStats = createServerFn()
 export const getStudentAttendanceHistory = createServerFn()
   .inputValidator(getStudentHistorySchema)
   .handler(async ({ data }) => {
+    const context = await getTeacherContext()
+    if (!context) {
+      return {
+        success: false,
+        error: 'Teacher context not found',
+      }
+    }
+
     const { getStudentAttendanceHistory: fetchHistory }
       = await import('@repo/data-ops/queries/teacher-student-attendance')
-    const history = await fetchHistory({
+    const historyResult = await fetchHistory({
+      schoolId: context.schoolId,
       studentId: data.studentId,
       classId: data.classId,
-      schoolYearId: data.schoolYearId,
       startDate: data.startDate,
       endDate: data.endDate,
       limit: data.limit,
       offset: data.offset,
     })
 
+    if (historyResult.isErr()) {
+      return {
+        success: false,
+        error: historyResult.error.message,
+        code: historyResult.error.details?.code as string | undefined,
+      }
+    }
+
     return {
       success: true,
-      history,
+      history: historyResult.value,
     }
   })
 
@@ -192,21 +294,36 @@ export const getStudentAttendanceTrend = createServerFn()
   .inputValidator(
     z.object({
       studentId: z.string(),
-      schoolYearId: z.string(),
       months: z.number().default(6),
     }),
   )
   .handler(async ({ data }) => {
+    const context = await getTeacherContext()
+    if (!context) {
+      return {
+        success: false,
+        error: 'Teacher context not found',
+      }
+    }
+
     const { getStudentAttendanceTrend: fetchTrend }
       = await import('@repo/data-ops/queries/teacher-student-attendance')
-    const trend = await fetchTrend({
+    const trendResult = await fetchTrend({
+      schoolId: context.schoolId,
       studentId: data.studentId,
-      schoolYearId: data.schoolYearId,
       months: data.months,
     })
 
+    if (trendResult.isErr()) {
+      return {
+        success: false,
+        error: trendResult.error.message,
+        code: trendResult.error.details?.code as string | undefined,
+      }
+    }
+
     return {
       success: true,
-      trend,
+      trend: trendResult.value,
     }
   })

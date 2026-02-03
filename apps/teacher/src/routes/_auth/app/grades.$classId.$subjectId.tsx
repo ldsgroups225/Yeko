@@ -220,7 +220,7 @@ interface StudentGradeRowProps {
     id: string
     firstName: string
     lastName: string
-    matricule: string
+    matricule: string | null
   }
   value: string
   onChange: (value: string) => void

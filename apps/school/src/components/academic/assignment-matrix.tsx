@@ -143,26 +143,28 @@ export function AssignmentMatrix({
     subjectId: string
   } | null>(null)
 
-  const { data: schoolYear } = useQuery({
+  const { data: schoolYearResult } = useQuery({
     queryKey: ['activeSchoolYear'],
     queryFn: () => getActiveSchoolYear(),
     enabled: !propSchoolYearId,
   })
 
-  const effectiveSchoolYearId = propSchoolYearId || schoolYear?.id
+  const activeSchoolYear = schoolYearResult?.success ? schoolYearResult.data : null
+  const effectiveSchoolYearId = propSchoolYearId || activeSchoolYear?.id
 
-  const { data: matrixData, isLoading: matrixLoading } = useQuery({
+  const { data: matrixResult, isLoading: matrixLoading } = useQuery({
     queryKey: ['assignmentMatrix', effectiveSchoolYearId],
     queryFn: () => getAssignmentMatrix({ data: effectiveSchoolYearId! }),
     enabled: !!effectiveSchoolYearId,
   })
+  const matrixData = matrixResult?.success ? matrixResult.data : []
 
-  const { data: teachersData } = useQuery({
+  const { data: teachersResult } = useQuery({
     queryKey: ['teachers'],
     queryFn: () => getTeachers({ data: {} }),
   })
 
-  const { data: subjectsData } = useQuery({
+  const { data: subjectsResult } = useQuery({
     queryKey: ['subjects'],
     queryFn: () => getAllSubjects({ data: {} }),
   })
@@ -210,12 +212,14 @@ export function AssignmentMatrix({
 
   // Calculate teacher workload for overload warnings
   const teacherWorkload = new Map<string, number>()
-  matrixData?.forEach((item) => {
-    if (item.teacherId && item.hoursPerWeek) {
-      const current = teacherWorkload.get(item.teacherId) || 0
-      teacherWorkload.set(item.teacherId, current + item.hoursPerWeek)
-    }
-  })
+  if (Array.isArray(matrixData)) {
+    matrixData.forEach((item) => {
+      if (item.teacherId && item.hoursPerWeek) {
+        const current = teacherWorkload.get(item.teacherId) || 0
+        teacherWorkload.set(item.teacherId, current + item.hoursPerWeek)
+      }
+    })
+  }
 
   const isTeacherOverloaded = (teacherId: string) => {
     return (teacherWorkload.get(teacherId) || 0) > 30
@@ -225,27 +229,29 @@ export function AssignmentMatrix({
     return <MatrixSkeleton />
   }
 
-  if (!matrixData || matrixData.length === 0) {
+  if (!matrixData || !Array.isArray(matrixData) || matrixData.length === 0) {
     return <EmptyState />
   }
 
   // Build matrix structure
   const classes = [
     ...new Map(
-      matrixData.map(item => [
-        item.classId,
-        { id: item.classId, name: item.className },
+      matrixData.map((itemValue: { classId: string, className: string }) => [
+        itemValue.classId,
+        { id: itemValue.classId, name: itemValue.className },
       ]),
     ).values(),
   ]
-  const subjects = subjectsData?.subjects || []
+
+  // Handle serializable Result or direct value
+  const subjects = subjectsResult?.success ? (subjectsResult.data.subjects || []) : []
 
   // Create assignment lookup
   const assignmentMap = new Map<
     string,
     { teacherId: string | null, teacherName: string | null }
   >()
-  matrixData.forEach((item) => {
+  matrixData.forEach((item: { classId: string, subjectId: string | null, teacherId: string | null, teacherName: string | null }) => {
     if (item.subjectId) {
       assignmentMap.set(`${item.classId}-${item.subjectId}`, {
         teacherId: item.teacherId,
@@ -254,7 +260,7 @@ export function AssignmentMatrix({
     }
   })
 
-  const teachers = teachersData?.teachers || []
+  const teachers = teachersResult?.success ? (teachersResult.data.teachers || []) : []
 
   return (
     <motion.div
@@ -308,7 +314,7 @@ export function AssignmentMatrix({
                       {t.common.classes()}
                     </span>
                   </TableHead>
-                  {subjects.map(subject => (
+                  {subjects.map((subject: any) => (
                     <TableHead
                       key={subject.id}
                       className="text-center min-w-[160px] border-b border-border/10 py-4"
@@ -338,7 +344,7 @@ export function AssignmentMatrix({
                     >
                       {cls.name}
                     </TableCell>
-                    {subjects.map((subject) => {
+                    {subjects.map((subject: any) => {
                       const key = `${cls.id}-${subject.id}`
                       const assignment = assignmentMap.get(key)
                       const isEditing
@@ -396,7 +402,7 @@ export function AssignmentMatrix({
                                         >
                                           {t.assignmentMatrix.notAssigned()}
                                         </SelectItem>
-                                        {teachers.map((teacher) => {
+                                        {teachers.map((teacher: any) => {
                                           const overloaded = isTeacherOverloaded(
                                             teacher.id,
                                           )

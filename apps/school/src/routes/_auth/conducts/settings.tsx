@@ -45,7 +45,7 @@ function AttendanceSettingsPage() {
   const t = useTranslations()
   const queryClient = useQueryClient()
 
-  const { data: settings, isLoading } = useQuery({
+  const { data: result, isLoading } = useQuery({
     queryKey: ['attendance-settings'],
     queryFn: () => getSettings(),
   })
@@ -65,7 +65,8 @@ function AttendanceSettingsPage() {
 
   // Update form values when settings data loads
   React.useEffect(() => {
-    if (settings) {
+    if (result?.success) {
+      const settings = result.data
       form.reset({
         teacherExpectedArrival: settings.teacherExpectedArrival ?? '07:30',
         teacherLateThresholdMinutes: settings.teacherLateThresholdMinutes ?? 15,
@@ -76,7 +77,7 @@ function AttendanceSettingsPage() {
         notifyParentOnLate: settings.notifyParentOnLate ?? false,
       })
     }
-  }, [settings, form])
+  }, [result, form])
 
   const mutation = useMutation({
     mutationFn: (values: SettingsFormValues) =>

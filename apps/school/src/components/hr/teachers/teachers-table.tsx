@@ -84,6 +84,8 @@ export function TeachersTable({ filters }: TeachersTableProps) {
     },
   })
 
+  const teachersData = data?.success ? data.data : undefined
+
   const columns = useMemo<ColumnDef<any>[]>(
     () => [
       {
@@ -230,18 +232,18 @@ export function TeachersTable({ filters }: TeachersTableProps) {
   )
 
   const table = useReactTable({
-    data: data?.teachers || [],
+    data: teachersData?.teachers || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
-    pageCount: data?.totalPages || 0,
+    pageCount: teachersData?.totalPages || 0,
   })
 
   if (isLoading) {
     return <TableSkeleton columns={6} rows={5} />
   }
 
-  const hasNoData = !data?.teachers || data.teachers.length === 0
+  const hasNoData = !teachersData?.teachers || teachersData.teachers.length === 0
   const hasNoResults
     = hasNoData && (debouncedSearch || filters.subjectId || filters.status)
 
@@ -352,24 +354,24 @@ export function TeachersTable({ filters }: TeachersTableProps) {
           )}
 
           {/* Pagination */}
-          {!hasNoData && data && data.totalPages > 1 && (
+          {!hasNoData && teachersData && teachersData.totalPages > 1 && (
             <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
               <div className="text-sm text-muted-foreground font-medium">
                 {t.common.showing()}
                 {' '}
                 <span className="text-foreground">
-                  {(data.page - 1) * data.limit + 1}
+                  {(teachersData.page - 1) * teachersData.limit + 1}
                 </span>
                 {' '}
                 -
                 {' '}
                 <span className="text-foreground">
-                  {Math.min(data.page * data.limit, data.total)}
+                  {Math.min(teachersData.page * teachersData.limit, teachersData.total)}
                 </span>
                 {' '}
                 {t.common.of()}
                 {' '}
-                <span className="text-foreground">{data.total}</span>
+                <span className="text-foreground">{teachersData.total}</span>
               </div>
               <div className="flex gap-3">
                 <Button
@@ -380,10 +382,10 @@ export function TeachersTable({ filters }: TeachersTableProps) {
                     e.stopPropagation()
                     navigate({
                       to: '/users/teachers',
-                      search: { ...filters, page: data.page - 1 },
+                      search: { ...filters, page: teachersData.page - 1 },
                     })
                   }}
-                  disabled={data.page === 1}
+                  disabled={teachersData.page === 1}
                 >
                   {t.common.previous()}
                 </Button>
@@ -395,10 +397,10 @@ export function TeachersTable({ filters }: TeachersTableProps) {
                     e.stopPropagation()
                     navigate({
                       to: '/users/teachers',
-                      search: { ...filters, page: data.page + 1 },
+                      search: { ...filters, page: teachersData.page + 1 },
                     })
                   }}
-                  disabled={data.page === data.totalPages}
+                  disabled={teachersData.page === teachersData.totalPages}
                 >
                   {t.common.next()}
                 </Button>

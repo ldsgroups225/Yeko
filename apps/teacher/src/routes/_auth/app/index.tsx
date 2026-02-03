@@ -189,7 +189,12 @@ interface ScheduleCardProps {
     endTime: string
     class: { id: string, name: string }
     subject: { id: string, name: string, shortName: string | null }
-    classroom: { id: string, name: string, code: string | null } | null
+    classroom: { id: string | null, name: string | null, code: string | null } | null
+    date: string
+    hasSession: boolean
+    sessionStatus: 'scheduled' | 'substituted' | 'cancelled'
+    statusDetails: null
+    dayOfWeek: number
   }
 }
 

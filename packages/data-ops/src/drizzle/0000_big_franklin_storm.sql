@@ -782,9 +782,27 @@ CREATE TABLE "roles" (
 	"permissions" jsonb DEFAULT '{}'::jsonb NOT NULL,
 	"scope" text NOT NULL,
 	"is_system_role" boolean DEFAULT false NOT NULL,
+	"extra_languages" jsonb,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "roles_slug_unique" UNIQUE("slug")
+);
+--> statement-breakpoint
+CREATE TABLE "school_files" (
+	"id" text PRIMARY KEY NOT NULL,
+	"school_id" text NOT NULL,
+	"key" text NOT NULL,
+	"filename" text NOT NULL,
+	"content_type" text NOT NULL,
+	"size" integer,
+	"entity_type" text,
+	"entity_id" text,
+	"uploaded_by" text,
+	"deleted_by" text,
+	"deleted_at" timestamp,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "school_files_key_unique" UNIQUE("key")
 );
 --> statement-breakpoint
 CREATE TABLE "school_subject_coefficients" (
@@ -1121,7 +1139,7 @@ CREATE TABLE "user_roles" (
 	"id" text PRIMARY KEY NOT NULL,
 	"user_id" text NOT NULL,
 	"role_id" text NOT NULL,
-	"school_id" text NOT NULL,
+	"school_id" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "unique_user_role_school" UNIQUE("user_id","role_id","school_id")
 );
@@ -1276,6 +1294,9 @@ ALTER TABLE "report_cards" ADD CONSTRAINT "report_cards_term_id_terms_id_fk" FOR
 ALTER TABLE "report_cards" ADD CONSTRAINT "report_cards_school_year_id_school_years_id_fk" FOREIGN KEY ("school_year_id") REFERENCES "public"."school_years"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "report_cards" ADD CONSTRAINT "report_cards_template_id_report_card_templates_id_fk" FOREIGN KEY ("template_id") REFERENCES "public"."report_card_templates"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "report_cards" ADD CONSTRAINT "report_cards_generated_by_users_id_fk" FOREIGN KEY ("generated_by") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "school_files" ADD CONSTRAINT "school_files_school_id_schools_id_fk" FOREIGN KEY ("school_id") REFERENCES "public"."schools"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "school_files" ADD CONSTRAINT "school_files_uploaded_by_users_id_fk" FOREIGN KEY ("uploaded_by") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "school_files" ADD CONSTRAINT "school_files_deleted_by_users_id_fk" FOREIGN KEY ("deleted_by") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "school_subject_coefficients" ADD CONSTRAINT "school_subject_coefficients_school_id_schools_id_fk" FOREIGN KEY ("school_id") REFERENCES "public"."schools"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "school_subject_coefficients" ADD CONSTRAINT "school_subject_coefficients_coefficient_template_id_coefficient_templates_id_fk" FOREIGN KEY ("coefficient_template_id") REFERENCES "public"."coefficient_templates"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "school_subjects" ADD CONSTRAINT "school_subjects_school_id_schools_id_fk" FOREIGN KEY ("school_id") REFERENCES "public"."schools"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -1488,6 +1509,9 @@ CREATE INDEX "idx_report_cards_student" ON "report_cards" USING btree ("student_
 CREATE INDEX "idx_report_cards_school_year" ON "report_cards" USING btree ("school_year_id");--> statement-breakpoint
 CREATE INDEX "idx_roles_slug" ON "roles" USING btree ("slug");--> statement-breakpoint
 CREATE INDEX "idx_roles_scope" ON "roles" USING btree ("scope");--> statement-breakpoint
+CREATE INDEX "idx_school_files_school" ON "school_files" USING btree ("school_id");--> statement-breakpoint
+CREATE INDEX "idx_school_files_entity" ON "school_files" USING btree ("entity_type","entity_id");--> statement-breakpoint
+CREATE INDEX "idx_school_files_deleted_at" ON "school_files" USING btree ("deleted_at");--> statement-breakpoint
 CREATE INDEX "idx_school_coeffs_school" ON "school_subject_coefficients" USING btree ("school_id");--> statement-breakpoint
 CREATE INDEX "idx_school_coeffs_template" ON "school_subject_coefficients" USING btree ("coefficient_template_id");--> statement-breakpoint
 CREATE INDEX "idx_school_coeffs_lookup" ON "school_subject_coefficients" USING btree ("school_id","coefficient_template_id");--> statement-breakpoint

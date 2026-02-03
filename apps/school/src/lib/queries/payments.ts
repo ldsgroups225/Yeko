@@ -31,15 +31,25 @@ export const paymentsOptions = {
   list: (filters: PaymentFilters = {}) =>
     queryOptions({
       queryKey: paymentsKeys.list(filters),
-      queryFn: () => getPaymentsList({ data: filters }),
-      staleTime: 2 * 60 * 1000, // 2 minutes - payments change frequently
+      queryFn: async () => {
+        const res = await getPaymentsList({ data: filters })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
+      staleTime: 2 * 60 * 1000,
       gcTime: 10 * 60 * 1000,
     }),
 
   detail: (id: string) =>
     queryOptions({
       queryKey: paymentsKeys.detail(id),
-      queryFn: () => getPayment({ data: id }),
+      queryFn: async () => {
+        const res = await getPayment({ data: id })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 2 * 60 * 1000,
       gcTime: 10 * 60 * 1000,
       enabled: !!id,
@@ -48,7 +58,12 @@ export const paymentsOptions = {
   byReceipt: (receiptNumber: string) =>
     queryOptions({
       queryKey: paymentsKeys.byReceipt(receiptNumber),
-      queryFn: () => getPaymentByReceipt({ data: receiptNumber }),
+      queryFn: async () => {
+        const res = await getPaymentByReceipt({ data: receiptNumber })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 2 * 60 * 1000,
       gcTime: 10 * 60 * 1000,
       enabled: !!receiptNumber,
@@ -57,8 +72,13 @@ export const paymentsOptions = {
   cashierSummary: (date: string, cashierId?: string) =>
     queryOptions({
       queryKey: paymentsKeys.cashierSummary(date, cashierId),
-      queryFn: () => getCashierSummary({ data: { date, cashierId } }),
-      staleTime: 1 * 60 * 1000, // 1 minute - cashier summary needs to be fresh
+      queryFn: async () => {
+        const res = await getCashierSummary({ data: { date, cashierId } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
+      staleTime: 1 * 60 * 1000,
       gcTime: 5 * 60 * 1000,
       enabled: !!date,
     }),

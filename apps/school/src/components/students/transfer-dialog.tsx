@@ -67,10 +67,12 @@ export function TransferDialog({
   const t = useTranslations()
   const queryClient = useQueryClient()
 
-  const { data: classesData, isLoading: classesLoading } = useQuery({
+  const { data: classesResult, isLoading: classesLoading } = useQuery({
     ...classesOptions.list({ schoolYearId }),
     enabled: open && !!schoolYearId,
   })
+
+  const classesData = classesResult?.success ? classesResult.data : []
 
   const form = useForm<TransferFormData>({
     resolver: zodResolver(transferSchema),
@@ -91,14 +93,19 @@ export function TransferDialog({
           effectiveDate: data.effectiveDate,
         },
       }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: studentsKeys.detail(studentId),
-      })
-      queryClient.invalidateQueries({ queryKey: studentsKeys.all })
-      toast.success(t.students.transferSuccess())
-      onOpenChange(false)
-      form.reset()
+    onSuccess: (result) => {
+      if (result.success) {
+        queryClient.invalidateQueries({
+          queryKey: studentsKeys.detail(studentId),
+        })
+        queryClient.invalidateQueries({ queryKey: studentsKeys.all })
+        toast.success(t.students.transferSuccess())
+        onOpenChange(false)
+        form.reset()
+      }
+      else {
+        toast.error(result.error)
+      }
     },
     onError: (err: Error) => {
       toast.error(err.message)

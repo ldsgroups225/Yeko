@@ -31,7 +31,9 @@ function ConductRecordDetailPage() {
   const { recordId } = Route.useParams()
   const queryClient = useQueryClient()
 
-  const { data: record, isLoading } = useQuery(conductRecordOptions(recordId))
+  const { data: result, isLoading } = useQuery(conductRecordOptions(recordId))
+
+  const record = result?.success ? result.data : null
 
   const statusMutation = useMutation({
     mutationFn: changeStatus,

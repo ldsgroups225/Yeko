@@ -5,102 +5,167 @@ import {
   getAlerts as getAlertsQuery,
   resolveAlert as resolveAlertQuery,
 } from '@repo/data-ops'
-import { createServerFn } from '@tanstack/react-start'
+import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import { z } from 'zod'
-
-import { getSchoolContext } from '../middleware/school-context'
+import { authServerFn } from '../lib/server-fn'
+import { requirePermission } from '../middleware/permissions'
 
 /**
  * Get active alerts for the school
  */
-export const getActiveAlerts = createServerFn()
+export const getActiveAlerts = authServerFn
   .inputValidator(z.object({
     alertType: z.string().optional(),
   }))
-  .handler(async () => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    const alerts = await getActiveAlertsQuery(context.schoolId)
-    return alerts.map(a => ({
-      ...a,
-      alert: { ...a.alert, data: a.alert.data as Record<string, any> | null },
-    }))
+    const { schoolId } = context.school
+    await requirePermission('student_attendance', 'view')
+
+    return (await getActiveAlertsQuery(schoolId)).match(
+      alerts => ({
+        success: true as const,
+        data: alerts.map(a => ({
+          ...a,
+          alert: { ...a.alert, data: a.alert.data as Record<string, any> | null },
+        })),
+      }),
+      _ => ({ success: false as const, error: 'Erreur lors de la récupération des alertes actives' }),
+    )
   })
 
 /**
  * Get all alerts with filters
  */
-export const getAlerts = createServerFn()
+export const getAlerts = authServerFn
   .inputValidator(z.object({
     status: z.enum(['active', 'acknowledged', 'resolved', 'dismissed']).optional(),
     alertType: z.enum(['teacher_repeated_lateness', 'teacher_absence_streak', 'student_chronic_absence', 'student_attendance_drop', 'class_low_attendance']).optional(),
     page: z.number().default(1),
     pageSize: z.number().default(20),
   }))
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    const result = await getAlertsQuery({
-      schoolId: context.schoolId,
+    const { schoolId } = context.school
+    await requirePermission('student_attendance', 'view')
+
+    return (await getAlertsQuery({
+      schoolId,
       ...data,
-    })
-    return {
-      ...result,
-      data: result.data.map(alert => ({
-        ...alert,
-        data: alert.data as Record<string, any> | null,
-      })),
-    }
+    })).match(
+      result => ({
+        success: true as const,
+        data: {
+          ...result,
+          data: result.data.map(alert => ({
+            ...alert,
+            data: alert.data as Record<string, any> | null,
+          })),
+        },
+      }),
+      _ => ({ success: false as const, error: 'Erreur lors de la récupération des alertes' }),
+    )
   })
 
 /**
  * Acknowledge an alert
  */
-export const acknowledgeAlert = createServerFn()
+export const acknowledgeAlert = authServerFn
   .inputValidator(z.object({ id: z.string() }))
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    const alert = await acknowledgeAlertQuery(data.id, context.userId)
-    if (!alert)
-      return undefined
-    return { ...alert, data: alert.data as Record<string, any> | null }
+    const { auth, school } = context
+    await requirePermission('student_attendance', 'edit')
+
+    return (await acknowledgeAlertQuery(data.id, auth.userId, school.schoolId)).match(
+      async (alert) => {
+        if (alert) {
+          await createAuditLog({
+            schoolId: school.schoolId,
+            userId: school.userId,
+            action: 'update',
+            tableName: 'attendance_alerts',
+            recordId: data.id,
+            newValues: { status: 'acknowledged' },
+          })
+        }
+        return {
+          success: true as const,
+          data: alert ? { ...alert, data: alert.data as Record<string, any> | null } : undefined,
+        }
+      },
+      _ => ({ success: false as const, error: 'Erreur lors de l\'acquittement de l\'alerte' }),
+    )
   })
 
 /**
  * Dismiss an alert
  */
-export const dismissAlert = createServerFn()
+export const dismissAlert = authServerFn
   .inputValidator(z.object({ id: z.string() }))
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    const alert = await dismissAlertQuery(data.id, context.userId)
-    if (!alert)
-      return undefined
-    return { ...alert, data: alert.data as Record<string, any> | null }
+    const { auth, school } = context
+    await requirePermission('student_attendance', 'edit')
+
+    return (await dismissAlertQuery(data.id, auth.userId, school.schoolId)).match(
+      async (alert) => {
+        if (alert) {
+          await createAuditLog({
+            schoolId: school.schoolId,
+            userId: school.userId,
+            action: 'update',
+            tableName: 'attendance_alerts',
+            recordId: data.id,
+            newValues: { status: 'dismissed' },
+          })
+        }
+        return {
+          success: true as const,
+          data: alert ? { ...alert, data: alert.data as Record<string, any> | null } : undefined,
+        }
+      },
+      _ => ({ success: false as const, error: 'Erreur lors du rejet de l\'alerte' }),
+    )
   })
 
 /**
  * Resolve an alert
  */
-export const resolveAlert = createServerFn()
+export const resolveAlert = authServerFn
   .inputValidator(z.object({ id: z.string() }))
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    const alert = await resolveAlertQuery(data.id)
-    if (!alert)
-      return undefined
-    return { ...alert, data: alert.data as Record<string, any> | null }
+    const { schoolId, userId } = context.school
+    await requirePermission('student_attendance', 'edit')
+
+    return (await resolveAlertQuery(data.id, schoolId)).match(
+      async (alert) => {
+        if (alert) {
+          await createAuditLog({
+            schoolId,
+            userId,
+            action: 'update',
+            tableName: 'attendance_alerts',
+            recordId: data.id,
+            newValues: { status: 'resolved' },
+          })
+        }
+        return {
+          success: true as const,
+          data: alert ? { ...alert, data: alert.data as Record<string, any> | null } : undefined,
+        }
+      },
+      _ => ({ success: false as const, error: 'Erreur lors de la résolution de l\'alerte' }),
+    )
   })

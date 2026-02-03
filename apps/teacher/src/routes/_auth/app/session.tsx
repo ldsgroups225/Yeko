@@ -118,7 +118,7 @@ interface SessionHistoryCardProps {
     subjectName: string
     date: string
     startTime: string
-    endTime: string
+    endTime: string | null
     status: 'scheduled' | 'completed' | 'cancelled'
     studentsPresent: number | null
     studentsAbsent: number | null

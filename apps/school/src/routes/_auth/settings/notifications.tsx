@@ -18,7 +18,7 @@ function NotificationsSettingsPage() {
   const t = useTranslations()
   const queryClient = useQueryClient()
 
-  const { data: school, isLoading } = useQuery(schoolProfileOptions.detail())
+  const { data: result, isLoading } = useQuery(schoolProfileOptions.detail())
 
   const settingsMutation = useMutation({
     mutationFn: updateSchoolSettings,
@@ -43,6 +43,7 @@ function NotificationsSettingsPage() {
     )
   }
 
+  const school = result?.success ? result.data : null
   const settings = school?.settings as SchoolSettings | undefined
 
   return (

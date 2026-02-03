@@ -22,13 +22,15 @@ export const getTeacherStats = createServerFn()
       }
     }
 
-    const [classes, schoolsCount] = await Promise.all([
+    const [classesResult, schoolsCount] = await Promise.all([
       getTeacherAssignedClasses({
         teacherId: data.teacherId,
         schoolYearId: data.schoolYearId,
       }),
       getTeacherSchoolsCount(context.userId),
     ])
+
+    const classes = classesResult.isOk() ? classesResult.value : []
 
     return {
       schoolsCount,

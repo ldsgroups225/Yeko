@@ -35,15 +35,29 @@ export const studentsOptions = {
   list: (filters: StudentFilters = {}) =>
     queryOptions({
       queryKey: studentsKeys.list(filters),
-      queryFn: () => getStudents({ data: filters }),
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      gcTime: 30 * 60 * 1000, // 30 minutes
+      queryFn: async () => {
+        const result = await getStudents({ data: filters })
+        if (result.success === true) {
+          return result.data
+        }
+        throw new Error('error' in result ? result.error : 'Failed to fetch students')
+      },
+
+      staleTime: 5 * 60 * 1000,
+      gcTime: 30 * 60 * 1000,
     }),
 
   detail: (id: string) =>
     queryOptions({
       queryKey: studentsKeys.detail(id),
-      queryFn: () => getStudentById({ data: id }),
+      queryFn: async () => {
+        const result = await getStudentById({ data: id })
+        if (result.success === true) {
+          return result.data
+        }
+        throw new Error('error' in result ? result.error : 'Failed to fetch student')
+      },
+
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
       enabled: !!id,
@@ -52,25 +66,43 @@ export const studentsOptions = {
   statistics: () =>
     queryOptions({
       queryKey: studentsKeys.statistics(),
-      queryFn: () => getStudentStatistics(),
-      staleTime: 10 * 60 * 1000, // 10 minutes
+      queryFn: async () => {
+        const result = await getStudentStatistics()
+        if (result && 'success' in result && result.success) {
+          return result.data
+        }
+        throw new Error(result && 'error' in result ? (result as any).error : 'Failed to fetch statistics')
+      },
+      staleTime: 10 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
     }),
 
   export: (filters: StudentFilters = {}) =>
     queryOptions({
       queryKey: studentsKeys.export(filters),
-      queryFn: () => exportStudents({ data: filters }),
-      staleTime: 0, // Always fresh for exports
+      queryFn: async () => {
+        const result = await exportStudents({ data: filters })
+        if (result && 'success' in result && result.success) {
+          return result.data
+        }
+        throw new Error(result && 'error' in result ? (result as any).error : 'Failed to export students')
+      },
+      staleTime: 0,
       gcTime: 5 * 60 * 1000,
-      enabled: false, // Manual trigger only
+      enabled: false,
     }),
 
   generateMatricule: () =>
     queryOptions({
       queryKey: studentsKeys.matricule(),
-      queryFn: () => generateMatricule(),
-      staleTime: 0, // Always generate fresh
+      queryFn: async () => {
+        const result = await generateMatricule()
+        if (result && typeof result === 'object' && 'success' in result && result.success) {
+          return result.data
+        }
+        throw new Error(result && typeof result === 'object' && 'error' in result ? (result as any).error : 'Failed to generate matricule')
+      },
+      staleTime: 0,
       gcTime: 0,
     }),
 }

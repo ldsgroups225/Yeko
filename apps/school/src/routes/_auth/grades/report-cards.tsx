@@ -31,7 +31,6 @@ import {
 } from '@/school/functions/report-cards'
 import { getSchoolYears } from '@/school/functions/school-years'
 import { getTerms } from '@/school/functions/terms'
-import { getUserIdFromAuthUserId } from '@/school/functions/users'
 
 export const Route = createFileRoute('/_auth/grades/report-cards')({
   component: ReportCardsPage,
@@ -52,31 +51,34 @@ function ReportCardsPage() {
   const [isGenerationDialogOpen, setIsGenerationDialogOpen] = useState(false)
 
   // Fetch school years
-  const { data: schoolYears, isLoading: yearsLoading } = useQuery({
+  const { data: schoolYearsResult, isLoading: yearsLoading } = useQuery({
     queryKey: ['school-years'],
     queryFn: () => getSchoolYears(),
     staleTime: 5 * 60 * 1000,
   })
 
   // Determine effective year ID
+  const schoolYears = schoolYearsResult?.success ? schoolYearsResult.data : []
   const activeYear = schoolYears?.find((y: { isActive: boolean }) => y.isActive)
   const effectiveYearId = contextSchoolYearId || localYearId || activeYear?.id || ''
 
   // Fetch terms for selected year
-  const { data: terms, isLoading: termsLoading } = useQuery({
+  const { data: termsResult, isLoading: termsLoading } = useQuery({
     queryKey: ['terms', effectiveYearId],
     queryFn: () => getTerms({ data: { schoolYearId: effectiveYearId } }),
     enabled: !!effectiveYearId,
     staleTime: 5 * 60 * 1000,
   })
+  const terms = termsResult?.success ? termsResult.data : []
 
   // Fetch classes for selected year
-  const { data: classes, isLoading: classesLoading } = useQuery({
+  const { data: classesResult, isLoading: classesLoading } = useQuery({
     queryKey: ['classes', effectiveYearId],
     queryFn: () => getClasses({ data: { schoolYearId: effectiveYearId } }),
     enabled: !!effectiveYearId,
     staleTime: 5 * 60 * 1000,
   })
+  const classes = classesResult?.success ? classesResult.data : []
 
   // Fetch students for the selected class (enrollments)
   const { data: enrollmentsData } = useQuery({
@@ -87,18 +89,20 @@ function ReportCardsPage() {
   })
 
   // Fetch existing report cards
-  const { data: reportCards, isLoading: reportCardsLoading } = useQuery({
+  const { data: reportCardsResult, isLoading: reportCardsLoading } = useQuery({
     queryKey: ['report-cards', selectedClassId, selectedTermId],
     queryFn: () => getReportCards({ data: { classId: selectedClassId, termId: selectedTermId } }),
     enabled: !!selectedClassId && !!selectedTermId,
   })
+  const reportCards = reportCardsResult?.success ? reportCardsResult.data : []
 
   // Fetch all templates
-  const { data: templates } = useQuery({
+  const { data: templatesResult } = useQuery({
     queryKey: ['report-card-templates', schoolId],
     queryFn: () => getReportCardTemplates({ data: { schoolId: schoolId ?? '' } }),
     enabled: !!schoolId,
   })
+  const templates = templatesResult?.success ? templatesResult.data : []
 
   // Determine which template to use (default or first available)
   const activeTemplate = templates?.find(t => t.isDefault) || templates?.[0]
@@ -111,10 +115,6 @@ function ReportCardsPage() {
       if (!activeTemplate)
         throw new Error('No report card template found. Please create one in settings.')
 
-      const internalUserId = await getUserIdFromAuthUserId({ data: { authUserId } })
-      if (!internalUserId)
-        throw new Error('IconUser not found')
-
       return await bulkGenerateReportCards({
         data: {
           classId: selectedClassId,
@@ -122,7 +122,6 @@ function ReportCardsPage() {
           schoolYearId: effectiveYearId,
           templateId: activeTemplate.id,
           studentIds,
-          generatedBy: internalUserId,
         },
       })
     },
@@ -160,12 +159,12 @@ function ReportCardsPage() {
       pdfUrl: rc.pdfUrl,
     }))
 
-  const mappedStudents = enrollmentsData?.data.map(e => ({
+  const mappedStudents = (enrollmentsData?.success ? enrollmentsData.data.data : []).map(e => ({
     id: e.student.id,
     name: `${e.student.lastName} ${e.student.firstName}`,
-    matricule: e.student.matricule,
+    matricule: e.student.matricule || undefined,
     hasReportCard: reportCards?.some(rc => rc.studentId === e.student.id),
-  })) || []
+  }))
 
   const currentClass = classes?.find(c => c.class.id === selectedClassId)
   const currentTerm = terms?.find(t => t.id === selectedTermId)
@@ -360,6 +359,9 @@ function ReportCardsPage() {
         termName={currentTerm?.template.name || ''}
         onGenerate={async (ids) => {
           const res = await generateMutation.mutateAsync(ids)
+          if (!res.success) {
+            throw new Error(typeof res.error === 'string' ? res.error : 'Erreur lors de la génération')
+          }
           return res.data
         }}
       />

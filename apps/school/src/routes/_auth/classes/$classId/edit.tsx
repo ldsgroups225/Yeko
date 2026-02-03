@@ -21,10 +21,13 @@ function EditClassPage() {
   const { classId } = Route.useParams()
   const navigate = useNavigate()
 
-  const { data, isLoading } = useQuery({
+  const { data: result, isLoading } = useQuery({
     queryKey: ['class', classId],
     queryFn: () => getClassById({ data: classId }),
   })
+
+  // Safely extract the data from the Result object
+  const classInfo = result?.success ? result.data : null
 
   if (isLoading) {
     return (
@@ -34,7 +37,7 @@ function EditClassPage() {
     )
   }
 
-  if (!data?.class) {
+  if (!classInfo) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-center">
@@ -48,7 +51,7 @@ function EditClassPage() {
     )
   }
 
-  const { class: classData, grade, series } = data
+  const { class: classData, grade, series } = classInfo
   const className
     = `${grade.name} ${series?.name || ''} ${classData.section}`.trim()
 
@@ -76,7 +79,7 @@ function EditClassPage() {
         </CardHeader>
         <CardContent>
           <ClassForm
-            classData={{ ...data, subjectsCount: 0 }}
+            classData={{ ...classInfo, subjectsCount: 0 }}
             onSuccess={() =>
               navigate({ to: '/classes/$classId', params: { classId } })}
           />

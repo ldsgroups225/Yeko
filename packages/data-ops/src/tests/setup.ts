@@ -1,11 +1,20 @@
+import fs from 'node:fs'
 import path from 'node:path'
 import dotenv from 'dotenv'
-import { beforeAll } from 'vitest'
+import { afterEach, beforeAll } from 'vitest'
 import { initDatabase } from '../database/setup'
+import { cleanupDatabase } from './db-cleanup'
 
-// Load environment variables from .env file
-// dotenv.config({ path: path.resolve(__dirname, '../../.env.test') })
-dotenv.config({ path: path.resolve(__dirname, '../../.env') })
+// Load environment variables
+const envTestPath = path.resolve(__dirname, '../../.env.test')
+const envPath = path.resolve(__dirname, '../../.env')
+
+if (fs.existsSync(envTestPath)) {
+  dotenv.config({ path: envTestPath })
+}
+else {
+  dotenv.config({ path: envPath })
+}
 
 // Initialize database before all tests
 beforeAll(async () => {
@@ -30,4 +39,9 @@ beforeAll(async () => {
     console.error('Failed to initialize test database:', error)
     throw error
   }
+})
+
+// Cleanup database after each test
+afterEach(async () => {
+  await cleanupDatabase()
 })

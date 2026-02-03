@@ -105,7 +105,7 @@ export function ParentLinkDialog({
 
   const createAndLinkMutation = useMutation({
     mutationFn: async () => {
-      const parent = await createParent({
+      const parentResult = await createParent({
         data: {
           firstName,
           lastName,
@@ -114,6 +114,13 @@ export function ParentLinkDialog({
           occupation: occupation || undefined,
         },
       })
+
+      if (!parentResult.success) {
+        throw new Error(parentResult.error)
+      }
+
+      const parent = parentResult.data
+
       await linkParentToStudent({
         data: {
           studentId,
@@ -205,8 +212,8 @@ export function ParentLinkDialog({
 
             {!parentsLoading
               && search.length >= 2
-              && parentsData?.data
-              && parentsData.data.length === 0 && (
+              && parentsData?.success
+              && parentsData.data.data.length === 0 && (
               <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
                 <IconUser className="h-8 w-8 opacity-50 mb-2" />
                 <p>{t.parents.noParents()}</p>
@@ -220,40 +227,40 @@ export function ParentLinkDialog({
               </div>
             )}
 
-            {parentsData?.data && parentsData.data.length > 0 && (
+            {parentsData?.success && parentsData.data.data.length > 0 && (
               <RadioGroup
                 value={selectedParentId || ''}
                 onValueChange={v => setSelectedParentId(v as string | null)}
                 className="max-h-[240px] overflow-y-auto pr-2"
               >
                 <div className="space-y-2">
-                  {parentsData.data.map(parent => (
+                  {parentsData.data.data.map(parent => (
                     <div
-                      key={parent.parent.id}
+                      key={parent.id}
                       className="flex items-center space-x-3 rounded-lg border p-3 transition-colors hover:bg-muted/50"
                     >
                       <RadioGroupItem
-                        value={parent.parent.id}
-                        id={parent.parent.id}
+                        value={parent.id}
+                        id={parent.id}
                       />
                       <Label
-                        htmlFor={parent.parent.id}
+                        htmlFor={parent.id}
                         className="flex flex-1 cursor-pointer items-center gap-3"
                       >
                         <Avatar className="h-10 w-10">
                           <AvatarFallback>
-                            {parent.parent.firstName?.[0]}
-                            {parent.parent.lastName?.[0]}
+                            {parent.firstName?.[0]}
+                            {parent.lastName?.[0]}
                           </AvatarFallback>
                         </Avatar>
                         <div>
                           <p className="font-medium">
-                            {parent.parent.lastName}
+                            {parent.lastName}
                             {' '}
-                            {parent.parent.firstName}
+                            {parent.firstName}
                           </p>
                           <p className="text-sm text-muted-foreground">
-                            {parent.parent.phone}
+                            {parent.phone}
                           </p>
                         </div>
                       </Label>

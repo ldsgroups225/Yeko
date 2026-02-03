@@ -35,7 +35,9 @@ export function RoleSelector({
           pagination: { page: 1, limit: 100 },
         },
       })
-      return result.roles as Role[]
+      if (!result.success)
+        return []
+      return result.data.roles as Role[]
     },
   })
 

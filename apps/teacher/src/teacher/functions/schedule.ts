@@ -14,12 +14,22 @@ export const getDetailedSchedule = createServerFn()
     }),
   )
   .handler(async ({ data }) => {
-    const detailedData = await getTeacherDetailedSchedule({
+    const detailedDataResult = await getTeacherDetailedSchedule({
       teacherId: data.teacherId,
       schoolYearId: data.schoolYearId,
       startDate: data.startDate,
       endDate: data.endDate,
     })
+
+    if (detailedDataResult.isErr()) {
+      return {
+        sessions: [],
+        substitutions: [],
+        cancellations: [],
+      }
+    }
+
+    const detailedData = detailedDataResult.value
 
     const weekStart = parseISO(data.startDate)
     const sessionsWithDates = detailedData.timetableSessions.map((session) => {

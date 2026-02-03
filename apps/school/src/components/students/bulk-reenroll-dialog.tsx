@@ -74,11 +74,13 @@ export function BulkReEnrollDialog({
   const queryClient = useQueryClient()
   const [result, setResult] = useState<ReEnrollResult | null>(null)
 
-  const { data: schoolYears } = useQuery({
+  const { data: schoolYearsData } = useQuery({
     queryKey: ['school-years'],
     queryFn: () => getSchoolYears(),
     enabled: open,
   })
+
+  const schoolYears = schoolYearsData?.success ? schoolYearsData.data : []
 
   const form = useForm<ReEnrollFormData>({
     resolver: zodResolver(reEnrollSchema),
@@ -91,11 +93,16 @@ export function BulkReEnrollDialog({
 
   const reEnrollMutation = useMutation({
     mutationFn: (data: ReEnrollFormData) => bulkReEnroll({ data }),
-    onSuccess: (data) => {
-      setResult(data)
-      queryClient.invalidateQueries({ queryKey: studentsKeys.all })
-      if (data.success > 0) {
-        toast.success(t.students.reEnrollSuccess({ count: data.success }))
+    onSuccess: (result) => {
+      if (result.success) {
+        setResult(result.data)
+        queryClient.invalidateQueries({ queryKey: studentsKeys.all })
+        if (result.data.success > 0) {
+          toast.success(t.students.reEnrollSuccess({ count: result.data.success }))
+        }
+      }
+      else {
+        toast.error(result.error)
       }
     },
     onError: (err: Error) => {

@@ -19,13 +19,14 @@ function GradesIndexPage() {
   const t = useTranslations()
   const { schoolId } = useSchoolContext()
 
-  const { data: pendingValidations, isLoading: pendingLoading } = useQuery(
+  const { data: result, isLoading: pendingLoading } = useQuery(
     gradesOptions.pending(schoolId ?? ''),
   )
 
-  const pendingCount = pendingValidations?.length ?? 0
-  const totalPendingGrades = pendingValidations?.reduce(
-    (sum: number, v) => sum + (v.pendingCount || 0),
+  const pendingValidations = result?.success ? result.data : []
+  const pendingCount = pendingValidations.length
+  const totalPendingGrades = pendingValidations.reduce(
+    (sum, v) => sum + (v.pendingCount || 0),
     0,
   ) ?? 0
 

@@ -1,7 +1,10 @@
 import type { FeeStatus, StudentFee, StudentFeeInsert } from '../drizzle/school-schema'
+import { databaseLogger, tapLogErr } from '@repo/logger'
 import { and, eq, gt, sql } from 'drizzle-orm'
+import { ResultAsync } from 'neverthrow'
 import { getDb } from '../database/setup'
 import { enrollments, feeStructures, feeTypes, studentFees } from '../drizzle/school-schema'
+import { DatabaseError, dbError } from '../errors'
 
 export interface GetStudentFeesParams {
   studentId?: string
@@ -9,42 +12,69 @@ export interface GetStudentFeesParams {
   status?: FeeStatus
 }
 
-export async function getStudentFees(params: GetStudentFeesParams): Promise<StudentFee[]> {
+export function getStudentFees(params: GetStudentFeesParams): ResultAsync<StudentFee[], DatabaseError> {
   const db = getDb()
   const { studentId, enrollmentId, status } = params
-  const conditions = []
-  if (studentId)
-    conditions.push(eq(studentFees.studentId, studentId))
-  if (enrollmentId)
-    conditions.push(eq(studentFees.enrollmentId, enrollmentId))
-  if (status)
-    conditions.push(eq(studentFees.status, status))
 
-  if (conditions.length === 0)
-    return []
-  return db.select().from(studentFees).where(and(...conditions))
+  return ResultAsync.fromPromise(
+    (async () => {
+      const conditions = []
+      if (studentId)
+        conditions.push(eq(studentFees.studentId, studentId))
+      if (enrollmentId)
+        conditions.push(eq(studentFees.enrollmentId, enrollmentId))
+      if (status)
+        conditions.push(eq(studentFees.status, status))
+
+      if (conditions.length === 0)
+        return []
+
+      return db.select().from(studentFees).where(and(...conditions))
+    })(),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch student fees'),
+  ).mapErr(tapLogErr(databaseLogger, { studentId, enrollmentId }))
 }
 
-export async function getStudentFeeById(studentFeeId: string): Promise<StudentFee | null> {
+export function getStudentFeeById(studentFeeId: string): ResultAsync<StudentFee | null, DatabaseError> {
   const db = getDb()
-  const [studentFee] = await db.select().from(studentFees).where(eq(studentFees.id, studentFeeId)).limit(1)
-  return studentFee ?? null
+  return ResultAsync.fromPromise(
+    db
+      .select()
+      .from(studentFees)
+      .where(eq(studentFees.id, studentFeeId))
+      .limit(1)
+      .then(rows => rows[0] ?? null),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch student fee by ID'),
+  ).mapErr(tapLogErr(databaseLogger, { studentFeeId }))
 }
 
-export async function getStudentFeesWithDetails(studentId: string, schoolYearId: string) {
+export interface StudentFeeWithDetails {
+  studentFee: StudentFee
+  feeTypeName: string
+  feeTypeCode: string
+  feeTypeCategory: string
+}
+
+export function getStudentFeesWithDetails(
+  studentId: string,
+  schoolYearId: string,
+): ResultAsync<StudentFeeWithDetails[], DatabaseError> {
   const db = getDb()
-  return db
-    .select({
-      studentFee: studentFees,
-      feeTypeName: feeTypes.name,
-      feeTypeCode: feeTypes.code,
-      feeTypeCategory: feeTypes.category,
-    })
-    .from(studentFees)
-    .innerJoin(feeStructures, eq(studentFees.feeStructureId, feeStructures.id))
-    .innerJoin(feeTypes, eq(feeStructures.feeTypeId, feeTypes.id))
-    .innerJoin(enrollments, eq(studentFees.enrollmentId, enrollments.id))
-    .where(and(eq(studentFees.studentId, studentId), eq(enrollments.schoolYearId, schoolYearId)))
+  return ResultAsync.fromPromise(
+    db
+      .select({
+        studentFee: studentFees,
+        feeTypeName: feeTypes.name,
+        feeTypeCode: feeTypes.code,
+        feeTypeCategory: feeTypes.category,
+      })
+      .from(studentFees)
+      .innerJoin(feeStructures, eq(studentFees.feeStructureId, feeStructures.id))
+      .innerJoin(feeTypes, eq(feeStructures.feeTypeId, feeTypes.id))
+      .innerJoin(enrollments, eq(studentFees.enrollmentId, enrollments.id))
+      .where(and(eq(studentFees.studentId, studentId), eq(enrollments.schoolYearId, schoolYearId))) as Promise<StudentFeeWithDetails[]>,
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch student fees with details'),
+  ).mapErr(tapLogErr(databaseLogger, { studentId, schoolYearId }))
 }
 
 export interface StudentFeeSummary {
@@ -55,71 +85,110 @@ export interface StudentFeeSummary {
   feeCount: number
 }
 
-export async function getStudentFeeSummary(studentId: string, schoolYearId: string): Promise<StudentFeeSummary> {
+export function getStudentFeeSummary(
+  studentId: string,
+  schoolYearId: string,
+): ResultAsync<StudentFeeSummary, DatabaseError> {
   const db = getDb()
-  const [result] = await db
-    .select({
-      totalFees: sql<string>`COALESCE(SUM(${studentFees.finalAmount}), 0)`,
-      totalDiscounts: sql<string>`COALESCE(SUM(${studentFees.discountAmount}), 0)`,
-      totalPaid: sql<string>`COALESCE(SUM(${studentFees.paidAmount}), 0)`,
-      totalBalance: sql<string>`COALESCE(SUM(${studentFees.balance}), 0)`,
-      feeCount: sql<number>`COUNT(${studentFees.id})::int`,
-    })
-    .from(studentFees)
-    .innerJoin(enrollments, eq(studentFees.enrollmentId, enrollments.id))
-    .where(and(eq(studentFees.studentId, studentId), eq(enrollments.schoolYearId, schoolYearId)))
-
-  return {
-    totalFees: Number.parseFloat(result?.totalFees ?? '0'),
-    totalDiscounts: Number.parseFloat(result?.totalDiscounts ?? '0'),
-    totalPaid: Number.parseFloat(result?.totalPaid ?? '0'),
-    totalBalance: Number.parseFloat(result?.totalBalance ?? '0'),
-    feeCount: result?.feeCount ?? 0,
-  }
+  return ResultAsync.fromPromise(
+    db
+      .select({
+        totalFees: sql<string>`COALESCE(SUM(${studentFees.finalAmount}), 0)`,
+        totalDiscounts: sql<string>`COALESCE(SUM(${studentFees.discountAmount}), 0)`,
+        totalPaid: sql<string>`COALESCE(SUM(${studentFees.paidAmount}), 0)`,
+        totalBalance: sql<string>`COALESCE(SUM(${studentFees.balance}), 0)`,
+        feeCount: sql<number>`COUNT(${studentFees.id})::int`,
+      })
+      .from(studentFees)
+      .innerJoin(enrollments, eq(studentFees.enrollmentId, enrollments.id))
+      .where(and(eq(studentFees.studentId, studentId), eq(enrollments.schoolYearId, schoolYearId)))
+      .then((rows) => {
+        const result = rows[0]
+        return {
+          totalFees: Number.parseFloat(result?.totalFees ?? '0'),
+          totalDiscounts: Number.parseFloat(result?.totalDiscounts ?? '0'),
+          totalPaid: Number.parseFloat(result?.totalPaid ?? '0'),
+          totalBalance: Number.parseFloat(result?.totalBalance ?? '0'),
+          feeCount: result?.feeCount ?? 0,
+        }
+      }),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch student fee summary'),
+  ).mapErr(tapLogErr(databaseLogger, { studentId, schoolYearId }))
 }
 
 export type CreateStudentFeeData = Omit<StudentFeeInsert, 'id' | 'createdAt' | 'updatedAt'>
 
-export async function createStudentFee(data: CreateStudentFeeData): Promise<StudentFee> {
+export function createStudentFee(data: CreateStudentFeeData): ResultAsync<StudentFee, DatabaseError> {
   const db = getDb()
-  const [studentFee] = await db.insert(studentFees).values({ id: crypto.randomUUID(), ...data }).returning()
-  if (!studentFee) {
-    throw new Error('Failed to create student fee')
-  }
-  return studentFee
+  return ResultAsync.fromPromise(
+    (async () => {
+      const [studentFee] = await db
+        .insert(studentFees)
+        .values({ id: crypto.randomUUID(), ...data })
+        .returning()
+
+      if (!studentFee) {
+        throw dbError('INTERNAL_ERROR', 'Failed to create student fee')
+      }
+      return studentFee
+    })(),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create student fee'),
+  ).mapErr(tapLogErr(databaseLogger, { studentId: data.studentId }))
 }
 
-export async function createStudentFeesBulk(dataList: CreateStudentFeeData[]): Promise<StudentFee[]> {
+export function createStudentFeesBulk(dataList: CreateStudentFeeData[]): ResultAsync<StudentFee[], DatabaseError> {
   const db = getDb()
-  if (dataList.length === 0)
-    return []
-  const values = dataList.map(data => ({ id: crypto.randomUUID(), ...data }))
-  return db.insert(studentFees).values(values).returning()
+  return ResultAsync.fromPromise(
+    (async () => {
+      if (dataList.length === 0)
+        return []
+
+      const values = dataList.map(data => ({ id: crypto.randomUUID(), ...data }))
+      return db.insert(studentFees).values(values).returning()
+    })(),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create student fees bulk'),
+  ).mapErr(tapLogErr(databaseLogger, { count: dataList.length }))
 }
 
-export async function waiveStudentFee(
+export function waiveStudentFee(
   studentFeeId: string,
   waivedBy: string,
   reason: string,
-): Promise<StudentFee | undefined> {
+): ResultAsync<StudentFee | undefined, DatabaseError> {
   const db = getDb()
-  const [studentFee] = await db
-    .update(studentFees)
-    .set({ status: 'waived', waivedAt: new Date(), waivedBy, waiverReason: reason, balance: '0', updatedAt: new Date() })
-    .where(eq(studentFees.id, studentFeeId))
-    .returning()
-  return studentFee
+  return ResultAsync.fromPromise(
+    (async () => {
+      const [studentFee] = await db
+        .update(studentFees)
+        .set({ status: 'waived', waivedAt: new Date(), waivedBy, waiverReason: reason, balance: '0', updatedAt: new Date() })
+        .where(eq(studentFees.id, studentFeeId))
+        .returning()
+      return studentFee
+    })(),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to waive student fee'),
+  ).mapErr(tapLogErr(databaseLogger, { studentFeeId, waivedBy }))
 }
 
-export async function getStudentsWithOutstandingBalance(_schoolId: string, schoolYearId: string) {
+export interface OutstandingBalanceEntry {
+  studentId: string
+  totalBalance: string
+}
+
+export function getStudentsWithOutstandingBalance(
+  _schoolId: string,
+  schoolYearId: string,
+): ResultAsync<OutstandingBalanceEntry[], DatabaseError> {
   const db = getDb()
-  return db
-    .select({
-      studentId: studentFees.studentId,
-      totalBalance: sql<string>`SUM(${studentFees.balance})`,
-    })
-    .from(studentFees)
-    .innerJoin(enrollments, eq(studentFees.enrollmentId, enrollments.id))
-    .where(and(eq(enrollments.schoolYearId, schoolYearId), gt(studentFees.balance, '0')))
-    .groupBy(studentFees.studentId)
+  return ResultAsync.fromPromise(
+    db
+      .select({
+        studentId: studentFees.studentId,
+        totalBalance: sql<string>`SUM(${studentFees.balance})`,
+      })
+      .from(studentFees)
+      .innerJoin(enrollments, eq(studentFees.enrollmentId, enrollments.id))
+      .where(and(eq(enrollments.schoolYearId, schoolYearId), gt(studentFees.balance, '0')))
+      .groupBy(studentFees.studentId) as Promise<OutstandingBalanceEntry[]>,
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch students with outstanding balance'),
+  ).mapErr(tapLogErr(databaseLogger, { schoolYearId }))
 }

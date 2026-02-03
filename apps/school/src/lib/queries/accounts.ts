@@ -24,7 +24,12 @@ export const accountsOptions = {
   list: (filters: AccountFilters = {}) =>
     queryOptions({
       queryKey: accountsKeys.list(filters),
-      queryFn: () => getAccountsList({ data: filters }),
+      queryFn: async () => {
+        const res = await getAccountsList({ data: filters })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
     }),
@@ -32,7 +37,12 @@ export const accountsOptions = {
   tree: (includeInactive = false) =>
     queryOptions({
       queryKey: accountsKeys.tree(),
-      queryFn: () => getAccountsTreeData({ data: { includeInactive } }),
+      queryFn: async () => {
+        const res = await getAccountsTreeData({ data: { includeInactive } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
     }),
@@ -40,7 +50,12 @@ export const accountsOptions = {
   detail: (id: string) =>
     queryOptions({
       queryKey: accountsKeys.detail(id),
-      queryFn: () => getAccount({ data: id }),
+      queryFn: async () => {
+        const res = await getAccount({ data: id })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
       enabled: !!id,

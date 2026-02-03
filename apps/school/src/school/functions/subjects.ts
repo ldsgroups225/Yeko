@@ -1,9 +1,8 @@
 import { getSubjects } from '@repo/data-ops/queries/catalogs'
 import { getSchoolSubjects } from '@repo/data-ops/queries/school-subjects'
-import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
+import { authServerFn } from '../lib/server-fn'
 import { requirePermission } from '../middleware/permissions'
-import { getSchoolYearContext } from '../middleware/school-context'
 
 const subjectsInputSchema = z.object({
   search: z.string().optional(),
@@ -13,34 +12,53 @@ const subjectsInputSchema = z.object({
 /**
  * Get all subjects (global catalog)
  */
-export const getAllSubjects = createServerFn()
+export const getAllSubjects = authServerFn
   .inputValidator(subjectsInputSchema)
-  .handler(async ({ data }: { data?: z.infer<typeof subjectsInputSchema> }) => {
-    return await getSubjects(data)
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    const result = await getSubjects(data)
+
+    return result.match(
+      value => ({ success: true as const, data: value }),
+      error => ({ success: false as const, error: error.message || 'Erreur lors de la récupération des matières' }),
+    )
   })
 
 /**
  * Get all subjects of the school for the current year
  */
-export const getAllSubjectsOfTheSchoolThisCurrentYear = createServerFn()
+export const getAllSubjectsOfTheSchoolThisCurrentYear = authServerFn
   .inputValidator(subjectsInputSchema)
-  .handler(async ({ data }: { data?: z.infer<typeof subjectsInputSchema> }) => {
-    const context = await getSchoolYearContext()
-    if (!context) {
-      throw new Error('No school context')
-    }
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    const { schoolId } = context.school
+    const schoolYearId = context.schoolYear?.schoolYearId
+
+    if (!schoolYearId)
+      return { success: false as const, error: 'Année scolaire non sélectionnée' }
+
     await requirePermission('school_subjects', 'view')
 
     const result = await getSchoolSubjects({
-      schoolId: context.schoolId,
-      schoolYearId: context.schoolYearId,
+      schoolId,
+      schoolYearId,
       status: 'active',
       search: data?.search,
       category: data?.category,
       limit: 100,
     })
 
-    return {
-      subjects: result.subjects.map(s => s.subject),
-    }
+    return result.match(
+      value => ({
+        success: true as const,
+        data: {
+          subjects: value.subjects.map(s => s.subject),
+        },
+      }),
+      error => ({ success: false as const, error: error.message || 'Erreur lors de la récupération des matières de l\'école' }),
+    )
   })

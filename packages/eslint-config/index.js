@@ -1,6 +1,7 @@
 import antfu from '@antfu/eslint-config'
 import betterTailwindcss from 'eslint-plugin-better-tailwindcss'
 import jsxA11y from 'eslint-plugin-jsx-a11y'
+import neverthrow from 'eslint-plugin-neverthrow'
 
 /**
  * ESLint configuration for the Yeko project
@@ -146,5 +147,13 @@ export default antfu({
     'test/expect-expect': 'warn',
     'test/no-identical-title': 'error',
     'test/valid-expect': 'error',
+  },
+}, {
+  // Neverthrow plugin configuration
+  plugins: {
+    neverthrow,
+  },
+  rules: {
+    'neverthrow/must-use-result': 'off', // Disabled globally to prevent crash, will enable per-project
   },
 })

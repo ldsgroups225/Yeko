@@ -1,6 +1,6 @@
 import { IconCircleCheck } from '@tabler/icons-react'
 import { Badge } from '@workspace/ui/components/badge'
-import { Button } from '@workspace/ui/components/button'
+import { buttonVariants } from '@workspace/ui/components/button'
 
 export function CoursePromoSection() {
   return (
@@ -98,18 +98,14 @@ export function CoursePromoSection() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button
-              size="lg"
-              render={(
-                <a
-                  href="https://learn.yeko.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Start Learning Now
-                </a>
-              )}
-            />
+            <a
+              className={buttonVariants({ size: 'lg' })}
+              href="https://learn.yeko.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Start Learning Now
+            </a>
           </div>
         </div>
       </div>

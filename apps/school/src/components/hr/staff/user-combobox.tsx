@@ -60,7 +60,9 @@ export function UserCombobox({
           pagination: { page: 1, limit: 50 },
         },
       })
-      return result.users as User[]
+      if (!result.success)
+        return []
+      return result.data.users as User[]
     },
   })
 

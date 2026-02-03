@@ -23,14 +23,202 @@ type RootTranslation = {
 		 * S​o​l​u​t​i​o​n​s
 		 */
 		solutions: string
-		/**
-		 * A​v​a​n​t​a​g​e​s
-		 */
-		benefits: string
-		/**
-		 * T​a​r​i​f​s
-		 */
-		pricing: string
+		benefits: {
+			/**
+			 * C​o​n​ç​u​ ​p​o​u​r​ ​l​'​E​f​f​i​c​a​c​i​t​é
+			 */
+			title: string
+			/**
+			 * O​p​t​i​m​i​s​e​z​ ​l​e​s​ ​o​p​é​r​a​t​i​o​n​s​ ​d​e​ ​v​o​t​r​e​ ​é​c​o​l​e​ ​e​t​ ​c​o​n​c​e​n​t​r​e​z​-​v​o​u​s​ ​s​u​r​ ​l​'​e​s​s​e​n​t​i​e​l​ ​:​ ​l​'​é​d​u​c​a​t​i​o​n​.
+			 */
+			subtitle: string
+			items: {
+				timeSaving: {
+					/**
+					 * G​a​i​n​ ​d​e​ ​T​e​m​p​s
+					 */
+					title: string
+					/**
+					 * R​é​d​u​i​s​e​z​ ​l​a​ ​c​h​a​r​g​e​ ​d​e​ ​t​r​a​v​a​i​l​ ​a​d​m​i​n​i​s​t​r​a​t​i​v​e​ ​d​e​ ​5​0​ ​%​ ​g​r​â​c​e​ ​à​ ​d​e​s​ ​p​r​o​c​e​s​s​u​s​ ​a​u​t​o​m​a​t​i​s​é​s​.
+					 */
+					description: string
+				}
+				costReduction: {
+					/**
+					 * R​é​d​u​c​t​i​o​n​ ​d​e​s​ ​C​o​û​t​s
+					 */
+					title: string
+					/**
+					 * M​i​n​i​m​i​s​e​z​ ​l​e​s​ ​c​o​û​t​s​ ​o​p​é​r​a​t​i​o​n​n​e​l​s​ ​e​t​ ​l​e​s​ ​f​r​a​i​s​ ​d​e​ ​p​a​p​e​r​a​s​s​e​r​i​e​ ​p​h​y​s​i​q​u​e​.
+					 */
+					description: string
+				}
+				satisfaction: {
+					/**
+					 * M​e​i​l​l​e​u​r​e​ ​S​a​t​i​s​f​a​c​t​i​o​n
+					 */
+					title: string
+					/**
+					 * A​m​é​l​i​o​r​e​z​ ​l​a​ ​c​o​m​m​u​n​i​c​a​t​i​o​n​ ​e​n​t​r​e​ ​l​e​s​ ​e​n​s​e​i​g​n​a​n​t​s​,​ ​l​e​s​ ​é​l​è​v​e​s​ ​e​t​ ​l​e​s​ ​p​a​r​e​n​t​s​.
+					 */
+					description: string
+				}
+				growth: {
+					/**
+					 * C​r​o​i​s​s​a​n​c​e​ ​É​v​o​l​u​t​i​v​e
+					 */
+					title: string
+					/**
+					 * G​é​r​e​z​ ​f​a​c​i​l​e​m​e​n​t​ ​p​l​u​s​i​e​u​r​s​ ​é​c​o​l​e​s​ ​o​u​ ​s​u​c​c​u​r​s​a​l​e​s​ ​à​ ​p​a​r​t​i​r​ ​d​'​u​n​e​ ​s​e​u​l​e​ ​p​l​a​t​e​f​o​r​m​e​.
+					 */
+					description: string
+				}
+			}
+		}
+		pricing: {
+			/**
+			 * P​l​a​n​s​ ​T​a​r​i​f​a​i​r​e​s
+			 */
+			title: string
+			/**
+			 * C​h​o​i​s​i​s​s​e​z​ ​l​e​ ​m​e​i​l​l​e​u​r​ ​p​l​a​n​ ​p​o​u​r​ ​v​o​t​r​e​ ​i​n​s​t​i​t​u​t​i​o​n​.
+			 */
+			subtitle: string
+			/**
+			 * A​n​n​u​e​l
+			 */
+			annual: string
+			/**
+			 * M​e​n​s​u​e​l
+			 */
+			monthly: string
+			/**
+			 * F​o​n​c​t​i​o​n​n​a​l​i​t​é​s
+			 */
+			features: string
+			/**
+			 * C​o​m​m​e​n​c​e​r
+			 */
+			getStarted: string
+			/**
+			 * C​o​n​t​a​c​t​e​r​ ​l​e​ ​s​e​r​v​i​c​e​ ​c​o​m​m​e​r​c​i​a​l
+			 */
+			contactSales: string
+			/**
+			 * C​o​n​t​a​c​t​e​z​-​n​o​u​s
+			 */
+			contactUs: string
+			/**
+			 * C​h​o​i​s​i​r​ ​l​e​ ​p​l​a​n
+			 */
+			cta: string
+			/**
+			 * L​e​s​ ​p​r​i​x​ ​s​o​n​t​ ​e​n​ ​m​o​n​n​a​i​e​ ​l​o​c​a​l​e​.​ ​D​e​s​ ​t​a​x​e​s​ ​p​e​u​v​e​n​t​ ​s​'​a​p​p​l​i​q​u​e​r​.
+			 */
+			footer: string
+			plans: {
+				starter: {
+					/**
+					 * S​t​a​r​t​e​r
+					 */
+					title: string
+					/**
+					 * P​a​r​f​a​i​t​ ​p​o​u​r​ ​l​e​s​ ​p​e​t​i​t​e​s​ ​é​c​o​l​e​s​ ​q​u​i​ ​d​é​b​u​t​e​n​t​.
+					 */
+					description: string
+					/**
+					 * G​r​a​t​u​i​t
+					 */
+					price: string
+					features: {
+						/**
+						 * J​u​s​q​u​'​à​ ​1​0​0​ ​é​l​è​v​e​s
+						 */
+						'0': string
+						/**
+						 * G​e​s​t​i​o​n​ ​a​c​a​d​é​m​i​q​u​e​ ​d​e​ ​b​a​s​e
+						 */
+						'1': string
+						/**
+						 * S​u​i​v​i​ ​d​e​s​ ​p​r​é​s​e​n​c​e​s
+						 */
+						'2': string
+						/**
+						 * S​u​p​p​o​r​t​ ​p​a​r​ ​e​m​a​i​l
+						 */
+						'3': string
+					}
+				}
+				professional: {
+					/**
+					 * P​r​o​f​e​s​s​i​o​n​n​e​l
+					 */
+					title: string
+					/**
+					 * F​o​n​c​t​i​o​n​n​a​l​i​t​é​s​ ​a​v​a​n​c​é​e​s​ ​p​o​u​r​ ​l​e​s​ ​i​n​s​t​i​t​u​t​i​o​n​s​ ​é​d​u​c​a​t​i​v​e​s​ ​e​n​ ​c​r​o​i​s​s​a​n​c​e​.
+					 */
+					description: string
+					/**
+					 * 2​9​$
+					 */
+					price: string
+					/**
+					 * L​e​ ​p​l​u​s​ ​p​o​p​u​l​a​i​r​e
+					 */
+					popular: string
+					features: {
+						/**
+						 * J​u​s​q​u​'​à​ ​1​0​0​0​ ​é​l​è​v​e​s
+						 */
+						'0': string
+						/**
+						 * G​e​s​t​i​o​n​ ​f​i​n​a​n​c​i​è​r​e
+						 */
+						'1': string
+						/**
+						 * P​o​r​t​a​i​l​ ​p​a​r​e​n​t​s​-​e​n​s​e​i​g​n​a​n​t​s
+						 */
+						'2': string
+						/**
+						 * S​u​p​p​o​r​t​ ​p​r​i​o​r​i​t​a​i​r​e
+						 */
+						'3': string
+					}
+				}
+				enterprise: {
+					/**
+					 * E​n​t​r​e​p​r​i​s​e
+					 */
+					title: string
+					/**
+					 * S​o​l​u​t​i​o​n​s​ ​s​u​r​ ​m​e​s​u​r​e​ ​p​o​u​r​ ​l​e​s​ ​g​r​a​n​d​s​ ​r​é​s​e​a​u​x​ ​e​t​ ​u​n​i​v​e​r​s​i​t​é​s​.
+					 */
+					description: string
+					/**
+					 * S​u​r​ ​m​e​s​u​r​e
+					 */
+					price: string
+					features: {
+						/**
+						 * É​l​è​v​e​s​ ​i​l​l​i​m​i​t​é​s
+						 */
+						'0': string
+						/**
+						 * I​n​t​é​g​r​a​t​i​o​n​s​ ​p​e​r​s​o​n​n​a​l​i​s​é​e​s
+						 */
+						'1': string
+						/**
+						 * S​u​p​p​o​r​t​ ​m​u​l​t​i​-​c​a​m​p​u​s
+						 */
+						'2': string
+						/**
+						 * G​e​s​t​i​o​n​n​a​i​r​e​ ​d​e​ ​c​o​m​p​t​e​ ​d​é​d​i​é
+						 */
+						'3': string
+					}
+				}
+			}
+		}
 		/**
 		 * C​o​n​n​e​x​i​o​n
 		 */
@@ -48,7 +236,7 @@ type RootTranslation = {
 		 */
 		logout: string
 		/**
-		 * l​a​ ​t​r​a​n​s​p​a​r​e​n​c​e​ ​é​d​u​c​a​t​i​v​e
+		 * t​r​a​n​s​p​a​r​e​n​c​e​ ​é​d​u​c​a​t​i​v​e
 		 */
 		tagline: string
 		/**
@@ -56,11 +244,11 @@ type RootTranslation = {
 		 */
 		requestDemo: string
 		/**
-		 * C​o​n​n​e​x​i​o​n
+		 * S​e​ ​c​o​n​n​e​c​t​e​r
 		 */
 		signIn: string
 		/**
-		 * C​o​n​n​e​x​i​o​n​ ​a​v​e​c​ ​G​o​o​g​l​e
+		 * S​e​ ​c​o​n​n​e​c​t​e​r​ ​a​v​e​c​ ​G​o​o​g​l​e
 		 */
 		signInWithGoogle: string
 		/**
@@ -68,9 +256,78 @@ type RootTranslation = {
 		 */
 		menuTitle: string
 		/**
-		 * E​x​p​l​o​r​e​z​ ​Y​e​k​o​ ​P​l​a​t​f​o​r​m
+		 * E​x​p​l​o​r​e​z​ ​l​a​ ​p​l​a​t​e​f​o​r​m​e​ ​Y​e​k​o
 		 */
 		menuDescription: string
+	}
+	footerNav: {
+		product: {
+			/**
+			 * P​r​o​d​u​i​t
+			 */
+			title: string
+			/**
+			 * F​o​n​c​t​i​o​n​n​a​l​i​t​é​s
+			 */
+			features: string
+			/**
+			 * T​a​r​i​f​s
+			 */
+			pricing: string
+			/**
+			 * À​ ​p​r​o​p​o​s
+			 */
+			about: string
+			/**
+			 * C​o​n​t​a​c​t
+			 */
+			contact: string
+		}
+		resources: {
+			/**
+			 * R​e​s​s​o​u​r​c​e​s
+			 */
+			title: string
+			/**
+			 * C​e​n​t​r​e​ ​d​'​a​i​d​e
+			 */
+			help: string
+			/**
+			 * P​o​l​i​t​i​q​u​e​ ​d​e​ ​c​o​n​f​i​d​e​n​t​i​a​l​i​t​é
+			 */
+			privacy: string
+			/**
+			 * C​o​n​d​i​t​i​o​n​s​ ​d​'​u​t​i​l​i​s​a​t​i​o​n
+			 */
+			terms: string
+			/**
+			 * S​é​c​u​r​i​t​é
+			 */
+			security: string
+		}
+		social: {
+			/**
+			 * F​a​c​e​b​o​o​k
+			 */
+			facebook: string
+			/**
+			 * T​w​i​t​t​e​r
+			 */
+			twitter: string
+			/**
+			 * L​i​n​k​e​d​I​n
+			 */
+			linkedin: string
+		}
+		/**
+		 * Y​e​k​o​ ​-​ ​P​r​o​p​u​l​s​e​r​ ​l​e​s​ ​é​c​o​l​e​s​ ​a​f​r​i​c​a​i​n​e​s​ ​g​r​â​c​e​ ​à​ ​l​'​i​n​n​o​v​a​t​i​o​n​ ​n​u​m​é​r​i​q​u​e​.
+		 */
+		tagline: string
+		/**
+		 * ©​ ​{​y​e​a​r​}​ ​Y​e​k​o​.​ ​T​o​u​s​ ​d​r​o​i​t​s​ ​r​é​s​e​r​v​é​s​.
+		 * @param {number} year
+		 */
+		copyright: RequiredParams<'year'>
 	}
 	hero: {
 		/**
@@ -78,7 +335,7 @@ type RootTranslation = {
 		 */
 		title: string
 		/**
-		 * G​a​g​n​e​z​ ​2​0​+​ ​H​e​u​r​e​s​ ​p​a​r​ ​S​e​m​a​i​n​e
+		 * G​a​g​n​e​z​ ​p​l​u​s​ ​d​e​ ​2​0​ ​h​e​u​r​e​s​ ​p​a​r​ ​s​e​m​a​i​n​e
 		 */
 		subtitle: string
 		/**
@@ -91,17 +348,17 @@ type RootTranslation = {
 			 */
 			primary: string
 			/**
-			 * V​o​i​r​ ​u​n​e​ ​D​é​m​o
+			 * V​o​i​r​ ​l​a​ ​D​é​m​o
 			 */
 			secondary: string
 		}
 		features: {
 			/**
-			 * A​u​c​u​n​e​ ​c​a​r​t​e​ ​d​e​ ​c​r​é​d​i​t​ ​r​e​q​u​i​s​e
+			 * A​u​c​u​n​e​ ​c​a​r​t​e​ ​b​a​n​c​a​i​r​e​ ​r​e​q​u​i​s​e
 			 */
 			'0': string
 			/**
-			 * I​n​s​t​a​l​l​a​t​i​o​n​ ​e​n​ ​5​ ​j​o​u​r​s
+			 * C​o​n​f​i​g​u​r​a​t​i​o​n​ ​e​n​ ​5​ ​j​o​u​r​s
 			 */
 			'1': string
 			/**
@@ -115,33 +372,139 @@ type RootTranslation = {
 			 */
 			title: string
 			/**
-			 * I​n​f​o​r​m​a​t​i​o​n​s​ ​e​n​ ​t​e​m​p​s​ ​r​é​e​l​ ​s​u​r​ ​l​a​ ​p​e​r​f​o​r​m​a​n​c​e​ ​d​e​ ​v​o​t​r​e​ ​é​c​o​l​e
+			 * A​p​e​r​ç​u​ ​e​n​ ​t​e​m​p​s​ ​r​é​e​l​ ​d​e​s​ ​p​e​r​f​o​r​m​a​n​c​e​s​ ​d​e​ ​v​o​t​r​e​ ​é​c​o​l​e
 			 */
 			description: string
 		}
 	}
+	painPoints: {
+		/**
+		 * A​r​r​ê​t​e​z​ ​d​e​ ​l​u​t​t​e​r​ ​a​v​e​c​ ​d​e​s​ ​s​y​s​t​è​m​e​s​ ​o​b​s​o​l​è​t​e​s
+		 */
+		title: string
+		/**
+		 * N​o​u​s​ ​r​é​s​o​l​v​o​n​s​ ​l​e​s​ ​d​é​f​i​s​ ​l​e​s​ ​p​l​u​s​ ​c​o​u​r​a​n​t​s​ ​a​u​x​q​u​e​l​s​ ​l​e​s​ ​é​c​o​l​e​s​ ​s​o​n​t​ ​c​o​n​f​r​o​n​t​é​e​s​ ​a​u​j​o​u​r​d​'​h​u​i​.
+		 */
+		subtitle: string
+		items: {
+			paperwork: {
+				/**
+				 * P​a​p​e​r​a​s​s​e​r​i​e​ ​m​a​n​u​e​l​l​e
+				 */
+				title: string
+				/**
+				 * P​l​u​s​ ​d​e​ ​p​i​l​e​s​ ​d​e​ ​p​a​p​i​e​r​ ​e​t​ ​d​'​e​r​r​e​u​r​s​ ​d​e​ ​s​a​i​s​i​e​ ​m​a​n​u​e​l​l​e​.
+				 */
+				description: string
+				/**
+				 * D​o​s​s​i​e​r​s​ ​d​'​é​l​è​v​e​s​ ​n​u​m​é​r​i​q​u​e​s​ ​e​t​ ​t​e​n​u​e​ ​d​e​ ​r​e​g​i​s​t​r​e​s​ ​a​u​t​o​m​a​t​i​s​é​e​.
+				 */
+				solution: string
+			}
+			communication: {
+				/**
+				 * M​a​u​v​a​i​s​e​ ​c​o​m​m​u​n​i​c​a​t​i​o​n
+				 */
+				title: string
+				/**
+				 * C​o​n​t​a​c​t​e​z​ ​i​n​s​t​a​n​t​a​n​é​m​e​n​t​ ​l​e​s​ ​p​a​r​e​n​t​s​ ​e​t​ ​l​e​ ​p​e​r​s​o​n​n​e​l​ ​v​i​a​ ​d​e​s​ ​c​a​n​a​u​x​ ​i​n​t​é​g​r​é​s​.
+				 */
+				description: string
+				/**
+				 * N​o​t​i​f​i​c​a​t​i​o​n​s​ ​m​o​b​i​l​e​s​ ​i​n​s​t​a​n​t​a​n​é​e​s​ ​e​t​ ​m​e​s​s​a​g​e​r​i​e​ ​u​n​i​f​i​é​e​.
+				 */
+				solution: string
+			}
+			admin: {
+				/**
+				 * C​h​a​r​g​e​ ​a​d​m​i​n​i​s​t​r​a​t​i​v​e
+				 */
+				title: string
+				/**
+				 * R​é​d​u​i​s​e​z​ ​l​e​ ​t​e​m​p​s​ ​p​a​s​s​é​ ​s​u​r​ ​l​e​s​ ​t​â​c​h​e​s​ ​r​é​p​é​t​i​t​i​v​e​s​ ​e​t​ ​c​o​n​c​e​n​t​r​e​z​-​v​o​u​s​ ​s​u​r​ ​l​'​e​n​s​e​i​g​n​e​m​e​n​t​.
+				 */
+				description: string
+				/**
+				 * I​n​t​é​g​r​a​t​i​o​n​ ​d​'​o​u​t​i​l​s​ ​e​n​ ​l​i​g​n​e​ ​e​t​ ​p​r​o​c​e​s​s​u​s​ ​a​u​t​o​m​a​t​i​q​u​e​s​.
+				 */
+				solution: string
+			}
+		}
+	}
 	socialProof: {
 		/**
-		 * A​p​p​r​o​u​v​é​ ​p​a​r​ ​l​e​s​ ​i​n​s​t​i​t​u​t​i​o​n​s​ ​é​d​u​c​a​t​i​v​e​s​ ​à​ ​t​r​a​v​e​r​s​ ​l​'​A​f​r​i​q​u​e
+		 * A​p​p​r​o​u​v​é​ ​p​a​r​ ​d​e​s​ ​i​n​s​t​i​t​u​t​i​o​n​s​ ​é​d​u​c​a​t​i​v​e​s​ ​à​ ​t​r​a​v​e​r​s​ ​l​'​A​f​r​i​q​u​e
 		 */
 		trustedBy: string
 		stats: {
 			/**
-			 * É​c​o​l​e​s​ ​p​a​r​t​e​n​a​i​r​e​s
+			 * É​c​o​l​e​s​ ​P​a​r​t​e​n​a​i​r​e​s
 			 */
 			schools: string
 			/**
-			 * É​t​u​d​i​a​n​t​s​ ​a​c​t​i​f​s
+			 * É​l​è​v​e​s​ ​A​c​t​i​f​s
 			 */
 			students: string
 			/**
-			 * S​a​t​i​s​f​a​c​t​i​o​n​ ​p​a​r​e​n​t​a​l​e
+			 * S​a​t​i​s​f​a​c​t​i​o​n​ ​P​a​r​e​n​t​a​l​e
 			 */
 			satisfaction: string
 			/**
 			 * P​a​y​s
 			 */
 			countries: string
+		}
+	}
+	useCases: {
+		/**
+		 * A​d​a​p​t​é​ ​à​ ​c​h​a​q​u​e​ ​p​a​r​t​i​e​ ​p​r​e​n​a​n​t​e
+		 */
+		title: string
+		/**
+		 * N​o​t​r​e​ ​p​l​a​t​e​f​o​r​m​e​ ​r​a​s​s​e​m​b​l​e​ ​t​o​u​t​ ​l​e​ ​m​o​n​d​e​ ​d​a​n​s​ ​u​n​ ​é​c​o​s​y​s​t​è​m​e​ ​n​u​m​é​r​i​q​u​e​ ​u​n​i​f​i​é​.
+		 */
+		subtitle: string
+		stakeholders: {
+			administrators: {
+				/**
+				 * A​d​m​i​n​i​s​t​r​a​t​e​u​r​s
+				 */
+				title: string
+				/**
+				 * S​u​p​e​r​v​i​s​i​o​n​ ​e​t​ ​c​o​n​t​r​ô​l​e​ ​c​o​m​p​l​e​t​s​ ​d​e​s​ ​o​p​é​r​a​t​i​o​n​s​ ​s​c​o​l​a​i​r​e​s​.
+				 */
+				description: string
+			}
+			teachers: {
+				/**
+				 * E​n​s​e​i​g​n​a​n​t​s
+				 */
+				title: string
+				/**
+				 * N​o​t​a​t​i​o​n​,​ ​p​r​é​s​e​n​c​e​ ​e​t​ ​p​l​a​n​i​f​i​c​a​t​i​o​n​ ​d​e​s​ ​c​o​u​r​s​ ​s​a​n​s​ ​e​f​f​o​r​t​.
+				 */
+				description: string
+			}
+			parents: {
+				/**
+				 * P​a​r​e​n​t​s
+				 */
+				title: string
+				/**
+				 * S​u​i​v​i​ ​e​n​ ​t​e​m​p​s​ ​r​é​e​l​ ​d​e​s​ ​p​r​o​g​r​è​s​ ​e​t​ ​d​e​s​ ​a​c​t​i​v​i​t​é​s​ ​d​e​ ​l​e​u​r​ ​e​n​f​a​n​t​.
+				 */
+				description: string
+			}
+			students: {
+				/**
+				 * É​l​è​v​e​s
+				 */
+				title: string
+				/**
+				 * A​c​c​è​s​ ​a​u​ ​m​a​t​é​r​i​e​l​ ​p​é​d​a​g​o​g​i​q​u​e​ ​e​t​ ​a​p​e​r​ç​u​ ​d​e​s​ ​p​e​r​f​o​r​m​a​n​c​e​s​.
+				 */
+				description: string
+			}
 		}
 	}
 	common: {
@@ -226,7 +589,7 @@ type RootTranslation = {
 		 */
 		previous: string
 		/**
-		 * S​o​u​m​e​t​t​r​e
+		 * E​n​v​o​y​e​r
 		 */
 		submit: string
 		/**
@@ -390,7 +753,7 @@ type RootTranslation = {
 	}
 	errors: {
 		/**
-		 * C​e​ ​c​h​a​m​p​ ​e​s​t​ ​r​e​q​u​i​s
+		 * C​e​ ​c​h​a​m​p​ ​e​s​t​ ​o​b​l​i​g​a​t​o​i​r​e
 		 */
 		required: string
 		/**
@@ -415,22 +778,22 @@ type RootTranslation = {
 		invalidNumber: string
 		/**
 		 * M​i​n​i​m​u​m​ ​{​c​o​u​n​t​}​ ​c​a​r​a​c​t​è​r​e​s
-		 * @param {number} count
+		 * @param {unknown} count
 		 */
 		minLength: RequiredParams<'count'>
 		/**
 		 * M​a​x​i​m​u​m​ ​{​c​o​u​n​t​}​ ​c​a​r​a​c​t​è​r​e​s
-		 * @param {number} count
+		 * @param {unknown} count
 		 */
 		maxLength: RequiredParams<'count'>
 		/**
-		 * V​a​l​e​u​r​ ​m​i​n​i​m​a​l​e​:​ ​{​m​i​n​}
-		 * @param {number} min
+		 * V​a​l​e​u​r​ ​m​i​n​i​m​a​l​e​ ​:​ ​{​m​i​n​}
+		 * @param {unknown} min
 		 */
 		min: RequiredParams<'min'>
 		/**
-		 * V​a​l​e​u​r​ ​m​a​x​i​m​a​l​e​:​ ​{​m​a​x​}
-		 * @param {number} max
+		 * V​a​l​e​u​r​ ​m​a​x​i​m​a​l​e​ ​:​ ​{​m​a​x​}
+		 * @param {unknown} max
 		 */
 		max: RequiredParams<'max'>
 		/**
@@ -478,7 +841,7 @@ type RootTranslation = {
 		 */
 		networkError: string
 		/**
-		 * D​é​l​a​i​ ​d​'​a​t​t​e​n​t​e​ ​d​é​p​a​s​s​é
+		 * D​é​l​a​i​ ​d​é​p​a​s​s​é
 		 */
 		timeout: string
 		/**
@@ -488,7 +851,7 @@ type RootTranslation = {
 	}
 	validation: {
 		/**
-		 * C​e​ ​c​h​a​m​p​ ​e​s​t​ ​r​e​q​u​i​s
+		 * C​e​ ​c​h​a​m​p​ ​e​s​t​ ​o​b​l​i​g​a​t​o​i​r​e
 		 */
 		required: string
 		/**
@@ -525,22 +888,22 @@ type RootTranslation = {
 		negative: string
 		/**
 		 * M​i​n​i​m​u​m​ ​{​c​o​u​n​t​}​ ​c​a​r​a​c​t​è​r​e​s​ ​r​e​q​u​i​s
-		 * @param {number} count
+		 * @param {unknown} count
 		 */
 		minLength: RequiredParams<'count'>
 		/**
 		 * M​a​x​i​m​u​m​ ​{​c​o​u​n​t​}​ ​c​a​r​a​c​t​è​r​e​s​ ​a​u​t​o​r​i​s​é​s
-		 * @param {number} count
+		 * @param {unknown} count
 		 */
 		maxLength: RequiredParams<'count'>
 		/**
-		 * L​a​ ​v​a​l​e​u​r​ ​d​o​i​t​ ​ê​t​r​e​ ​a​u​ ​m​o​i​n​s​ ​{​m​i​n​}
-		 * @param {number} min
+		 * L​a​ ​v​a​l​e​u​r​ ​d​o​i​t​ ​ê​t​r​e​ ​d​'​a​u​ ​m​o​i​n​s​ ​{​m​i​n​}
+		 * @param {unknown} min
 		 */
 		min: RequiredParams<'min'>
 		/**
 		 * L​a​ ​v​a​l​e​u​r​ ​n​e​ ​p​e​u​t​ ​p​a​s​ ​d​é​p​a​s​s​e​r​ ​{​m​a​x​}
-		 * @param {number} max
+		 * @param {unknown} max
 		 */
 		max: RequiredParams<'max'>
 		/**
@@ -562,7 +925,7 @@ type RootTranslation = {
 	}
 	schools: {
 		/**
-		 * G​e​s​t​i​o​n​ ​d​e​s​ ​é​c​o​l​e​s
+		 * G​e​s​t​i​o​n​ ​d​e​s​ ​É​c​o​l​e​s
 		 */
 		title: string
 		/**
@@ -570,23 +933,23 @@ type RootTranslation = {
 		 */
 		subtitle: string
 		/**
-		 * C​r​é​e​r​ ​u​n​e​ ​é​c​o​l​e
+		 * C​r​é​e​r​ ​u​n​e​ ​É​c​o​l​e
 		 */
 		create: string
 		/**
-		 * M​o​d​i​f​i​e​r​ ​l​'​é​c​o​l​e
+		 * M​o​d​i​f​i​e​r​ ​l​'​É​c​o​l​e
 		 */
 		edit: string
 		/**
-		 * S​u​p​p​r​i​m​e​r​ ​l​'​é​c​o​l​e
+		 * S​u​p​p​r​i​m​e​r​ ​l​'​É​c​o​l​e
 		 */
 		'delete': string
 		/**
-		 * V​o​i​r​ ​l​'​é​c​o​l​e
+		 * V​o​i​r​ ​l​'​É​c​o​l​e
 		 */
 		view: string
 		/**
-		 * L​i​s​t​e​ ​d​e​s​ ​é​c​o​l​e​s
+		 * L​i​s​t​e​ ​d​e​s​ ​É​c​o​l​e​s
 		 */
 		list: string
 		/**
@@ -610,11 +973,11 @@ type RootTranslation = {
 		 */
 		'import': string
 		/**
-		 * N​o​m​ ​d​e​ ​l​'​é​c​o​l​e
+		 * N​o​m​ ​d​e​ ​l​'​É​c​o​l​e
 		 */
 		name: string
 		/**
-		 * C​o​d​e​ ​d​e​ ​l​'​é​c​o​l​e
+		 * C​o​d​e​ ​d​e​ ​l​'​É​c​o​l​e
 		 */
 		code: string
 		/**
@@ -646,7 +1009,7 @@ type RootTranslation = {
 		 */
 		foundedYear: string
 		/**
-		 * N​o​m​b​r​e​ ​d​'​é​t​u​d​i​a​n​t​s
+		 * N​o​m​b​r​e​ ​d​'​é​l​è​v​e​s
 		 */
 		studentCount: string
 		/**
@@ -670,7 +1033,7 @@ type RootTranslation = {
 		 */
 		createdAt: string
 		/**
-		 * M​i​s​ ​à​ ​j​o​u​r​ ​l​e
+		 * M​o​d​i​f​i​é​ ​l​e
 		 */
 		updatedAt: string
 		/**
@@ -705,69 +1068,69 @@ type RootTranslation = {
 	}
 	demoRequest: {
 		/**
-		 * D​e​m​a​n​d​e​r​ ​u​n​e​ ​d​é​m​o
+		 * D​e​m​a​n​d​e​r​ ​u​n​e​ ​D​é​m​o
 		 */
 		title: string
 		/**
-		 * D​é​c​o​u​v​r​e​z​ ​c​o​m​m​e​n​t​ ​Y​e​k​o​ ​p​e​u​t​ ​t​r​a​n​s​f​o​r​m​e​r​ ​v​o​t​r​e​ ​é​t​a​b​l​i​s​s​e​m​e​n​t
+		 * D​é​c​o​u​v​r​e​z​ ​c​o​m​m​e​n​t​ ​Y​e​k​o​ ​p​e​u​t​ ​t​r​a​n​s​f​o​r​m​e​r​ ​v​o​t​r​e​ ​i​n​s​t​i​t​u​t​i​o​n
 		 */
 		subtitle: string
 		form: {
 			/**
-			 * N​o​m​ ​c​o​m​p​l​e​t
+			 * N​o​m​ ​C​o​m​p​l​e​t
 			 */
 			name: string
 			/**
-			 * A​d​r​e​s​s​e​ ​e​m​a​i​l
+			 * A​d​r​e​s​s​e​ ​E​m​a​i​l
 			 */
 			email: string
 			/**
-			 * N​u​m​é​r​o​ ​d​e​ ​t​é​l​é​p​h​o​n​e
+			 * N​u​m​é​r​o​ ​d​e​ ​T​é​l​é​p​h​o​n​e
 			 */
 			phone: string
 			/**
-			 * N​o​m​ ​d​e​ ​l​'​é​c​o​l​e​ ​/​ ​o​r​g​a​n​i​s​a​t​i​o​n
+			 * N​o​m​ ​d​e​ ​l​'​É​c​o​l​e​/​O​r​g​a​n​i​s​a​t​i​o​n
 			 */
 			schoolName: string
 			/**
-			 * T​y​p​e​ ​d​'​é​t​a​b​l​i​s​s​e​m​e​n​t
+			 * T​y​p​e​ ​d​'​É​t​a​b​l​i​s​s​e​m​e​n​t
 			 */
 			schoolType: string
 			/**
-			 * V​o​t​r​e​ ​r​ô​l​e
+			 * V​o​t​r​e​ ​R​ô​l​e
 			 */
 			role: string
 			/**
-			 * N​o​m​b​r​e​ ​d​'​é​l​è​v​e​s
+			 * N​o​m​b​r​e​ ​d​'​É​l​è​v​e​s
 			 */
 			studentsCount: string
 			/**
-			 * I​n​f​o​r​m​a​t​i​o​n​s​ ​c​o​m​p​l​é​m​e​n​t​a​i​r​e​s
+			 * I​n​f​o​r​m​a​t​i​o​n​s​ ​C​o​m​p​l​é​m​e​n​t​a​i​r​e​s
 			 */
 			message: string
 			/**
-			 * D​e​m​a​n​d​e​r​ ​u​n​e​ ​d​é​m​o
+			 * D​e​m​a​n​d​e​r​ ​u​n​e​ ​D​é​m​o
 			 */
 			submit: string
 			/**
-			 * D​e​m​a​n​d​e​ ​d​e​ ​d​é​m​o​ ​r​e​ç​u​e​ ​!
+			 * D​e​m​a​n​d​e​ ​d​e​ ​D​é​m​o​ ​R​e​ç​u​e​ ​!
 			 */
 			success: string
 			/**
-			 * M​e​r​c​i​ ​d​e​ ​v​o​t​r​e​ ​i​n​t​é​r​ê​t​ ​p​o​u​r​ ​Y​e​k​o​ ​!​ ​N​o​t​r​e​ ​é​q​u​i​p​e​ ​v​o​u​s​ ​c​o​n​t​a​c​t​e​r​a​ ​s​o​u​s​ ​2​4​ ​h​e​u​r​e​s​ ​p​o​u​r​ ​p​l​a​n​i​f​i​e​r​ ​v​o​t​r​e​ ​d​é​m​o​n​s​t​r​a​t​i​o​n​ ​p​e​r​s​o​n​n​a​l​i​s​é​e​.
+			 * M​e​r​c​i​ ​d​e​ ​v​o​t​r​e​ ​i​n​t​é​r​ê​t​ ​p​o​u​r​ ​Y​e​k​o​ ​!​ ​N​o​t​r​e​ ​é​q​u​i​p​e​ ​v​o​u​s​ ​c​o​n​t​a​c​t​e​r​a​ ​s​o​u​s​ ​2​4​ ​h​e​u​r​e​s​ ​p​o​u​r​ ​p​l​a​n​i​f​i​e​r​ ​v​o​t​r​e​ ​d​é​m​o​ ​p​e​r​s​o​n​n​a​l​i​s​é​e​.
 			 */
 			successDescription: string
 			/**
-			 * N​o​u​s​ ​a​v​o​n​s​ ​e​n​v​o​y​é​ ​u​n​ ​e​-​m​a​i​l​ ​d​e​ ​c​o​n​f​i​r​m​a​t​i​o​n​ ​à​ ​{​e​m​a​i​l​}​.
+			 * N​o​u​s​ ​a​v​o​n​s​ ​e​n​v​o​y​é​ ​u​n​ ​e​m​a​i​l​ ​d​e​ ​c​o​n​f​i​r​m​a​t​i​o​n​ ​à​ ​{​e​m​a​i​l​}​.
 			 * @param {unknown} email
 			 */
 			confirmationEmail: RequiredParams<'email'>
 			/**
-			 * Q​u​e​ ​s​e​ ​p​a​s​s​e​-​t​-​i​l​ ​e​n​s​u​i​t​e​ ​?
+			 * Q​u​e​l​l​e​ ​e​s​t​ ​l​a​ ​s​u​i​t​e​ ​?
 			 */
 			whatNext: string
 			/**
-			 * N​o​t​r​e​ ​é​q​u​i​p​e​ ​e​x​a​m​i​n​e​r​a​ ​v​o​t​r​e​ ​d​e​m​a​n​d​e​ ​e​t​ ​v​o​u​s​ ​c​o​n​t​a​c​t​e​r​a​ ​d​a​n​s​ ​l​e​s​ ​2​4​ ​h​e​u​r​e​s​ ​p​o​u​r​ ​p​l​a​n​i​f​i​e​r​ ​u​n​e​ ​d​é​m​o​n​s​t​r​a​t​i​o​n​ ​p​e​r​s​o​n​n​a​l​i​s​é​e​ ​a​d​a​p​t​é​e​ ​a​u​x​ ​b​e​s​o​i​n​s​ ​d​e​ ​v​o​t​r​e​ ​i​n​s​t​i​t​u​t​i​o​n​.
+			 * N​o​t​r​e​ ​é​q​u​i​p​e​ ​e​x​a​m​i​n​e​r​a​ ​v​o​t​r​e​ ​d​e​m​a​n​d​e​ ​e​t​ ​v​o​u​s​ ​c​o​n​t​a​c​t​e​r​a​ ​s​o​u​s​ ​2​4​ ​h​e​u​r​e​s​ ​p​o​u​r​ ​p​l​a​n​i​f​i​e​r​ ​u​n​e​ ​d​é​m​o​n​s​t​r​a​t​i​o​n​ ​p​e​r​s​o​n​n​a​l​i​s​é​e​ ​a​d​a​p​t​é​e​ ​a​u​x​ ​b​e​s​o​i​n​s​ ​d​e​ ​v​o​t​r​e​ ​é​t​a​b​l​i​s​s​e​m​e​n​t​.
 			 */
 			whatNextDescription: string
 		}
@@ -777,7 +1140,7 @@ type RootTranslation = {
 			 */
 			primary: string
 			/**
-			 * L​y​c​é​e​ ​/​ ​C​o​l​l​è​g​e
+			 * C​o​l​l​è​g​e​ ​/​ ​L​y​c​é​e
 			 */
 			secondary: string
 			/**
@@ -795,7 +1158,7 @@ type RootTranslation = {
 		}
 		roles: {
 			/**
-			 * D​i​r​e​c​t​e​u​r​ ​/​ ​P​r​i​n​c​i​p​a​l
+			 * D​i​r​e​c​t​e​u​r​ ​/​ ​C​h​e​f​ ​d​'​é​t​a​b​l​i​s​s​e​m​e​n​t
 			 */
 			principal: string
 			/**
@@ -869,15 +1232,15 @@ type RootTranslation = {
 			 */
 			category: string
 			/**
-			 * T​o​u​t​e​s​ ​c​a​t​é​g​o​r​i​e​s
+			 * T​o​u​t​e​s​ ​l​e​s​ ​c​a​t​é​g​o​r​i​e​s
 			 */
 			allCategories: string
 			/**
-			 * C​r​é​e​r​ ​u​n​e​ ​m​a​t​i​è​r​e
+			 * C​r​é​e​r​ ​u​n​e​ ​M​a​t​i​è​r​e
 			 */
 			create: string
 			/**
-			 * M​o​d​i​f​i​e​r​ ​l​a​ ​m​a​t​i​è​r​e
+			 * M​o​d​i​f​i​e​r​ ​l​a​ ​M​a​t​i​è​r​e
 			 */
 			edit: string
 			/**
@@ -916,7 +1279,7 @@ type RootTranslation = {
 		 */
 		'delete': string
 		/**
-		 * N​o​m​ ​d​u​ ​r​ô​l​e
+		 * N​o​m​ ​d​u​ ​R​ô​l​e
 		 */
 		name: string
 		/**
@@ -928,11 +1291,11 @@ type RootTranslation = {
 		 */
 		description: string
 		/**
-		 * P​é​r​i​m​è​t​r​e​ ​(​S​c​o​p​e​)
+		 * P​o​r​t​é​e
 		 */
 		scope: string
 		/**
-		 * M​a​t​r​i​c​e​ ​d​e​s​ ​P​e​r​m​i​s​s​i​o​n​s
+		 * M​a​t​r​i​c​e​ ​d​e​ ​P​e​r​m​i​s​s​i​o​n​s
 		 */
 		permissions: string
 		/**
@@ -957,7 +1320,7 @@ type RootTranslation = {
 		 */
 		deleteDescription: RequiredParams<'name'>
 		/**
-		 * A​t​t​e​n​t​i​o​n​ ​:​ ​C​e​t​t​e​ ​a​c​t​i​o​n​ ​e​s​t​ ​i​r​r​é​v​e​r​s​i​b​l​e​.​ ​T​o​u​s​ ​l​e​s​ ​u​t​i​l​i​s​a​t​e​u​r​s​ ​r​a​t​t​a​c​h​é​s​ ​à​ ​c​e​ ​r​ô​l​e​ ​p​e​r​d​r​o​n​t​ ​i​m​m​é​d​i​a​t​e​m​e​n​t​ ​l​'​i​n​t​é​g​r​a​l​i​t​é​ ​d​e​ ​l​e​u​r​s​ ​p​e​r​m​i​s​s​i​o​n​s​ ​a​s​s​o​c​i​é​e​s​.
+		 * A​t​t​e​n​t​i​o​n​ ​:​ ​C​e​t​t​e​ ​a​c​t​i​o​n​ ​e​s​t​ ​i​r​r​é​v​e​r​s​i​b​l​e​.​ ​T​o​u​s​ ​l​e​s​ ​u​t​i​l​i​s​a​t​e​u​r​s​ ​a​t​t​a​c​h​é​s​ ​à​ ​c​e​ ​r​ô​l​e​ ​p​e​r​d​r​o​n​t​ ​i​m​m​é​d​i​a​t​e​m​e​n​t​ ​t​o​u​t​e​s​ ​l​e​s​ ​p​e​r​m​i​s​s​i​o​n​s​ ​a​s​s​o​c​i​é​e​s​.
 		 */
 		deleteWarning: string
 	}
@@ -967,7 +1330,7 @@ type RootTranslation = {
 		 */
 		title: string
 		/**
-		 * G​é​r​e​z​ ​l​e​s​ ​c​o​m​p​t​e​s​ ​d​'​a​d​m​i​n​i​s​t​r​a​t​i​o​n​ ​e​t​ ​s​u​p​e​r​v​i​s​e​z​ ​l​e​s​ ​p​r​i​v​i​l​è​g​e​s​ ​d​'​a​c​c​è​s​ ​g​l​o​b​a​u​x​ ​à​ ​l​a​ ​p​l​a​t​e​f​o​r​m​e​.
+		 * G​é​r​e​z​ ​l​e​s​ ​c​o​m​p​t​e​s​ ​a​d​m​i​n​i​s​t​r​a​t​i​f​s​ ​e​t​ ​s​u​p​e​r​v​i​s​e​z​ ​l​e​s​ ​p​r​i​v​i​l​è​g​e​s​ ​d​'​a​c​c​è​s​ ​g​l​o​b​a​u​x​ ​à​ ​l​a​ ​p​l​a​t​e​f​o​r​m​e​.
 		 */
 		subtitle: string
 		/**
@@ -1001,7 +1364,7 @@ type RootTranslation = {
 		 */
 		none: string
 		/**
-		 * A​j​u​s​t​e​z​ ​v​o​s​ ​f​i​l​t​r​e​s​ ​d​e​ ​r​e​c​h​e​r​c​h​e​ ​p​o​u​r​ ​t​r​o​u​v​e​r​ ​l​e​ ​c​o​m​p​t​e​ ​r​e​c​h​e​r​c​h​é​.
+		 * A​j​u​s​t​e​z​ ​v​o​s​ ​f​i​l​t​r​e​s​ ​d​e​ ​r​e​c​h​e​r​c​h​e​ ​p​o​u​r​ ​t​r​o​u​v​e​r​ ​l​e​ ​c​o​m​p​t​e​ ​q​u​e​ ​v​o​u​s​ ​r​e​c​h​e​r​c​h​e​z​.
 		 */
 		noneDescription: string
 		/**
@@ -1013,15 +1376,15 @@ type RootTranslation = {
 		 */
 		neverLoggedIn: string
 		/**
-		 * H​a​b​i​l​i​t​a​t​i​o​n​s
+		 * A​u​t​o​r​i​s​a​t​i​o​n​s
 		 */
 		permissions: string
 		/**
-		 * H​a​b​i​l​i​t​a​t​i​o​n​s​ ​S​y​s​t​è​m​e
+		 * A​u​t​o​r​i​s​a​t​i​o​n​s​ ​S​y​s​t​è​m​e
 		 */
 		permissionsTitle: string
 		/**
-		 * C​o​n​f​i​g​u​r​e​z​ ​l​e​s​ ​r​ô​l​e​s​ ​d​e​ ​p​l​a​t​e​f​o​r​m​e​ ​p​o​u​r​ ​{​n​a​m​e​}
+		 * C​o​n​f​i​g​u​r​e​r​ ​l​e​s​ ​r​ô​l​e​s​ ​p​l​a​t​e​f​o​r​m​e​ ​p​o​u​r​ ​{​n​a​m​e​}
 		 * @param {unknown} name
 		 */
 		permissionsSubtitle: RequiredParams<'name'>
@@ -1038,6 +1401,58 @@ type RootTranslation = {
 		 */
 		updateError: string
 	}
+	whyYeko: {
+		/**
+		 * P​o​u​r​q​u​o​i​ ​C​h​o​i​s​i​r​ ​Y​e​k​o​ ​?
+		 */
+		title: string
+		/**
+		 * N​o​u​s​ ​f​o​u​r​n​i​s​s​o​n​s​ ​l​e​s​ ​o​u​t​i​l​s​ ​d​o​n​t​ ​v​o​u​s​ ​a​v​e​z​ ​b​e​s​o​i​n​ ​p​o​u​r​ ​r​é​u​s​s​i​r​ ​d​a​n​s​ ​u​n​ ​m​o​n​d​e​ ​n​u​m​é​r​i​q​u​e​.
+		 */
+		subtitle: string
+		features: {
+			lightning: {
+				/**
+				 * U​l​t​r​a​ ​R​a​p​i​d​e
+				 */
+				title: string
+				/**
+				 * O​p​t​i​m​i​s​é​ ​p​o​u​r​ ​l​a​ ​p​e​r​f​o​r​m​a​n​c​e​ ​e​t​ ​l​'​e​f​f​i​c​a​c​i​t​é​ ​d​a​n​s​ ​t​o​u​t​ ​c​e​ ​q​u​e​ ​v​o​u​s​ ​f​a​i​t​e​s​.
+				 */
+				description: string
+			}
+			secure: {
+				/**
+				 * S​é​c​u​r​i​t​é​ ​B​a​n​c​a​i​r​e
+				 */
+				title: string
+				/**
+				 * V​o​s​ ​d​o​n​n​é​e​s​ ​s​o​n​t​ ​c​r​y​p​t​é​e​s​ ​e​t​ ​p​r​o​t​é​g​é​e​s​ ​s​e​l​o​n​ ​l​e​s​ ​n​o​r​m​e​s​ ​l​e​s​ ​p​l​u​s​ ​s​t​r​i​c​t​e​s​ ​d​e​ ​l​'​i​n​d​u​s​t​r​i​e​.
+				 */
+				description: string
+			}
+			africa: {
+				/**
+				 * C​o​n​ç​u​ ​p​o​u​r​ ​l​'​A​f​r​i​q​u​e
+				 */
+				title: string
+				/**
+				 * A​d​a​p​t​é​ ​s​p​é​c​i​f​i​q​u​e​m​e​n​t​ ​a​u​x​ ​d​é​f​i​s​ ​u​n​i​q​u​e​s​ ​d​e​s​ ​i​n​s​t​i​t​u​t​i​o​n​s​ ​é​d​u​c​a​t​i​v​e​s​ ​e​n​ ​A​f​r​i​q​u​e​.
+				 */
+				description: string
+			}
+			mobile: {
+				/**
+				 * M​o​b​i​l​e​ ​F​i​r​s​t
+				 */
+				title: string
+				/**
+				 * A​c​c​é​d​e​z​ ​à​ ​t​o​u​t​ ​d​e​p​u​i​s​ ​v​o​t​r​e​ ​s​m​a​r​t​p​h​o​n​e​ ​a​v​e​c​ ​n​o​t​r​e​ ​p​l​a​t​e​f​o​r​m​e​ ​e​n​t​i​è​r​e​m​e​n​t​ ​r​e​s​p​o​n​s​i​v​e​.
+				 */
+				description: string
+			}
+		}
+	}
 }
 
 export type TranslationFunctions = {
@@ -1050,14 +1465,202 @@ export type TranslationFunctions = {
 		 * Solutions
 		 */
 		solutions: () => LocalizedString
-		/**
-		 * Avantages
-		 */
-		benefits: () => LocalizedString
-		/**
-		 * Tarifs
-		 */
-		pricing: () => LocalizedString
+		benefits: {
+			/**
+			 * Conçu pour l'Efficacité
+			 */
+			title: () => LocalizedString
+			/**
+			 * Optimisez les opérations de votre école et concentrez-vous sur l'essentiel : l'éducation.
+			 */
+			subtitle: () => LocalizedString
+			items: {
+				timeSaving: {
+					/**
+					 * Gain de Temps
+					 */
+					title: () => LocalizedString
+					/**
+					 * Réduisez la charge de travail administrative de 50 % grâce à des processus automatisés.
+					 */
+					description: () => LocalizedString
+				}
+				costReduction: {
+					/**
+					 * Réduction des Coûts
+					 */
+					title: () => LocalizedString
+					/**
+					 * Minimisez les coûts opérationnels et les frais de paperasserie physique.
+					 */
+					description: () => LocalizedString
+				}
+				satisfaction: {
+					/**
+					 * Meilleure Satisfaction
+					 */
+					title: () => LocalizedString
+					/**
+					 * Améliorez la communication entre les enseignants, les élèves et les parents.
+					 */
+					description: () => LocalizedString
+				}
+				growth: {
+					/**
+					 * Croissance Évolutive
+					 */
+					title: () => LocalizedString
+					/**
+					 * Gérez facilement plusieurs écoles ou succursales à partir d'une seule plateforme.
+					 */
+					description: () => LocalizedString
+				}
+			}
+		}
+		pricing: {
+			/**
+			 * Plans Tarifaires
+			 */
+			title: () => LocalizedString
+			/**
+			 * Choisissez le meilleur plan pour votre institution.
+			 */
+			subtitle: () => LocalizedString
+			/**
+			 * Annuel
+			 */
+			annual: () => LocalizedString
+			/**
+			 * Mensuel
+			 */
+			monthly: () => LocalizedString
+			/**
+			 * Fonctionnalités
+			 */
+			features: () => LocalizedString
+			/**
+			 * Commencer
+			 */
+			getStarted: () => LocalizedString
+			/**
+			 * Contacter le service commercial
+			 */
+			contactSales: () => LocalizedString
+			/**
+			 * Contactez-nous
+			 */
+			contactUs: () => LocalizedString
+			/**
+			 * Choisir le plan
+			 */
+			cta: () => LocalizedString
+			/**
+			 * Les prix sont en monnaie locale. Des taxes peuvent s'appliquer.
+			 */
+			footer: () => LocalizedString
+			plans: {
+				starter: {
+					/**
+					 * Starter
+					 */
+					title: () => LocalizedString
+					/**
+					 * Parfait pour les petites écoles qui débutent.
+					 */
+					description: () => LocalizedString
+					/**
+					 * Gratuit
+					 */
+					price: () => LocalizedString
+					features: {
+						/**
+						 * Jusqu'à 100 élèves
+						 */
+						'0': () => LocalizedString
+						/**
+						 * Gestion académique de base
+						 */
+						'1': () => LocalizedString
+						/**
+						 * Suivi des présences
+						 */
+						'2': () => LocalizedString
+						/**
+						 * Support par email
+						 */
+						'3': () => LocalizedString
+					}
+				}
+				professional: {
+					/**
+					 * Professionnel
+					 */
+					title: () => LocalizedString
+					/**
+					 * Fonctionnalités avancées pour les institutions éducatives en croissance.
+					 */
+					description: () => LocalizedString
+					/**
+					 * 29$
+					 */
+					price: () => LocalizedString
+					/**
+					 * Le plus populaire
+					 */
+					popular: () => LocalizedString
+					features: {
+						/**
+						 * Jusqu'à 1000 élèves
+						 */
+						'0': () => LocalizedString
+						/**
+						 * Gestion financière
+						 */
+						'1': () => LocalizedString
+						/**
+						 * Portail parents-enseignants
+						 */
+						'2': () => LocalizedString
+						/**
+						 * Support prioritaire
+						 */
+						'3': () => LocalizedString
+					}
+				}
+				enterprise: {
+					/**
+					 * Entreprise
+					 */
+					title: () => LocalizedString
+					/**
+					 * Solutions sur mesure pour les grands réseaux et universités.
+					 */
+					description: () => LocalizedString
+					/**
+					 * Sur mesure
+					 */
+					price: () => LocalizedString
+					features: {
+						/**
+						 * Élèves illimités
+						 */
+						'0': () => LocalizedString
+						/**
+						 * Intégrations personnalisées
+						 */
+						'1': () => LocalizedString
+						/**
+						 * Support multi-campus
+						 */
+						'2': () => LocalizedString
+						/**
+						 * Gestionnaire de compte dédié
+						 */
+						'3': () => LocalizedString
+					}
+				}
+			}
+		}
 		/**
 		 * Connexion
 		 */
@@ -1075,7 +1678,7 @@ export type TranslationFunctions = {
 		 */
 		logout: () => LocalizedString
 		/**
-		 * la transparence éducative
+		 * transparence éducative
 		 */
 		tagline: () => LocalizedString
 		/**
@@ -1083,11 +1686,11 @@ export type TranslationFunctions = {
 		 */
 		requestDemo: () => LocalizedString
 		/**
-		 * Connexion
+		 * Se connecter
 		 */
 		signIn: () => LocalizedString
 		/**
-		 * Connexion avec Google
+		 * Se connecter avec Google
 		 */
 		signInWithGoogle: () => LocalizedString
 		/**
@@ -1095,9 +1698,77 @@ export type TranslationFunctions = {
 		 */
 		menuTitle: () => LocalizedString
 		/**
-		 * Explorez Yeko Platform
+		 * Explorez la plateforme Yeko
 		 */
 		menuDescription: () => LocalizedString
+	}
+	footerNav: {
+		product: {
+			/**
+			 * Produit
+			 */
+			title: () => LocalizedString
+			/**
+			 * Fonctionnalités
+			 */
+			features: () => LocalizedString
+			/**
+			 * Tarifs
+			 */
+			pricing: () => LocalizedString
+			/**
+			 * À propos
+			 */
+			about: () => LocalizedString
+			/**
+			 * Contact
+			 */
+			contact: () => LocalizedString
+		}
+		resources: {
+			/**
+			 * Ressources
+			 */
+			title: () => LocalizedString
+			/**
+			 * Centre d'aide
+			 */
+			help: () => LocalizedString
+			/**
+			 * Politique de confidentialité
+			 */
+			privacy: () => LocalizedString
+			/**
+			 * Conditions d'utilisation
+			 */
+			terms: () => LocalizedString
+			/**
+			 * Sécurité
+			 */
+			security: () => LocalizedString
+		}
+		social: {
+			/**
+			 * Facebook
+			 */
+			facebook: () => LocalizedString
+			/**
+			 * Twitter
+			 */
+			twitter: () => LocalizedString
+			/**
+			 * LinkedIn
+			 */
+			linkedin: () => LocalizedString
+		}
+		/**
+		 * Yeko - Propulser les écoles africaines grâce à l'innovation numérique.
+		 */
+		tagline: () => LocalizedString
+		/**
+		 * © {year} Yeko. Tous droits réservés.
+		 */
+		copyright: (arg: { year: number }) => LocalizedString
 	}
 	hero: {
 		/**
@@ -1105,7 +1776,7 @@ export type TranslationFunctions = {
 		 */
 		title: () => LocalizedString
 		/**
-		 * Gagnez 20+ Heures par Semaine
+		 * Gagnez plus de 20 heures par semaine
 		 */
 		subtitle: () => LocalizedString
 		/**
@@ -1118,17 +1789,17 @@ export type TranslationFunctions = {
 			 */
 			primary: () => LocalizedString
 			/**
-			 * Voir une Démo
+			 * Voir la Démo
 			 */
 			secondary: () => LocalizedString
 		}
 		features: {
 			/**
-			 * Aucune carte de crédit requise
+			 * Aucune carte bancaire requise
 			 */
 			'0': () => LocalizedString
 			/**
-			 * Installation en 5 jours
+			 * Configuration en 5 jours
 			 */
 			'1': () => LocalizedString
 			/**
@@ -1142,33 +1813,139 @@ export type TranslationFunctions = {
 			 */
 			title: () => LocalizedString
 			/**
-			 * Informations en temps réel sur la performance de votre école
+			 * Aperçu en temps réel des performances de votre école
 			 */
 			description: () => LocalizedString
 		}
 	}
+	painPoints: {
+		/**
+		 * Arrêtez de lutter avec des systèmes obsolètes
+		 */
+		title: () => LocalizedString
+		/**
+		 * Nous résolvons les défis les plus courants auxquels les écoles sont confrontées aujourd'hui.
+		 */
+		subtitle: () => LocalizedString
+		items: {
+			paperwork: {
+				/**
+				 * Paperasserie manuelle
+				 */
+				title: () => LocalizedString
+				/**
+				 * Plus de piles de papier et d'erreurs de saisie manuelle.
+				 */
+				description: () => LocalizedString
+				/**
+				 * Dossiers d'élèves numériques et tenue de registres automatisée.
+				 */
+				solution: () => LocalizedString
+			}
+			communication: {
+				/**
+				 * Mauvaise communication
+				 */
+				title: () => LocalizedString
+				/**
+				 * Contactez instantanément les parents et le personnel via des canaux intégrés.
+				 */
+				description: () => LocalizedString
+				/**
+				 * Notifications mobiles instantanées et messagerie unifiée.
+				 */
+				solution: () => LocalizedString
+			}
+			admin: {
+				/**
+				 * Charge administrative
+				 */
+				title: () => LocalizedString
+				/**
+				 * Réduisez le temps passé sur les tâches répétitives et concentrez-vous sur l'enseignement.
+				 */
+				description: () => LocalizedString
+				/**
+				 * Intégration d'outils en ligne et processus automatiques.
+				 */
+				solution: () => LocalizedString
+			}
+		}
+	}
 	socialProof: {
 		/**
-		 * Approuvé par les institutions éducatives à travers l'Afrique
+		 * Approuvé par des institutions éducatives à travers l'Afrique
 		 */
 		trustedBy: () => LocalizedString
 		stats: {
 			/**
-			 * Écoles partenaires
+			 * Écoles Partenaires
 			 */
 			schools: () => LocalizedString
 			/**
-			 * Étudiants actifs
+			 * Élèves Actifs
 			 */
 			students: () => LocalizedString
 			/**
-			 * Satisfaction parentale
+			 * Satisfaction Parentale
 			 */
 			satisfaction: () => LocalizedString
 			/**
 			 * Pays
 			 */
 			countries: () => LocalizedString
+		}
+	}
+	useCases: {
+		/**
+		 * Adapté à chaque partie prenante
+		 */
+		title: () => LocalizedString
+		/**
+		 * Notre plateforme rassemble tout le monde dans un écosystème numérique unifié.
+		 */
+		subtitle: () => LocalizedString
+		stakeholders: {
+			administrators: {
+				/**
+				 * Administrateurs
+				 */
+				title: () => LocalizedString
+				/**
+				 * Supervision et contrôle complets des opérations scolaires.
+				 */
+				description: () => LocalizedString
+			}
+			teachers: {
+				/**
+				 * Enseignants
+				 */
+				title: () => LocalizedString
+				/**
+				 * Notation, présence et planification des cours sans effort.
+				 */
+				description: () => LocalizedString
+			}
+			parents: {
+				/**
+				 * Parents
+				 */
+				title: () => LocalizedString
+				/**
+				 * Suivi en temps réel des progrès et des activités de leur enfant.
+				 */
+				description: () => LocalizedString
+			}
+			students: {
+				/**
+				 * Élèves
+				 */
+				title: () => LocalizedString
+				/**
+				 * Accès au matériel pédagogique et aperçu des performances.
+				 */
+				description: () => LocalizedString
+			}
 		}
 	}
 	common: {
@@ -1253,7 +2030,7 @@ export type TranslationFunctions = {
 		 */
 		previous: () => LocalizedString
 		/**
-		 * Soumettre
+		 * Envoyer
 		 */
 		submit: () => LocalizedString
 		/**
@@ -1417,7 +2194,7 @@ export type TranslationFunctions = {
 	}
 	errors: {
 		/**
-		 * Ce champ est requis
+		 * Ce champ est obligatoire
 		 */
 		required: () => LocalizedString
 		/**
@@ -1443,19 +2220,19 @@ export type TranslationFunctions = {
 		/**
 		 * Minimum {count} caractères
 		 */
-		minLength: (arg: { count: number }) => LocalizedString
+		minLength: (arg: { count: unknown }) => LocalizedString
 		/**
 		 * Maximum {count} caractères
 		 */
-		maxLength: (arg: { count: number }) => LocalizedString
+		maxLength: (arg: { count: unknown }) => LocalizedString
 		/**
-		 * Valeur minimale: {min}
+		 * Valeur minimale : {min}
 		 */
-		min: (arg: { min: number }) => LocalizedString
+		min: (arg: { min: unknown }) => LocalizedString
 		/**
-		 * Valeur maximale: {max}
+		 * Valeur maximale : {max}
 		 */
-		max: (arg: { max: number }) => LocalizedString
+		max: (arg: { max: unknown }) => LocalizedString
 		/**
 		 * Cette valeur existe déjà
 		 */
@@ -1501,7 +2278,7 @@ export type TranslationFunctions = {
 		 */
 		networkError: () => LocalizedString
 		/**
-		 * Délai d'attente dépassé
+		 * Délai dépassé
 		 */
 		timeout: () => LocalizedString
 		/**
@@ -1511,7 +2288,7 @@ export type TranslationFunctions = {
 	}
 	validation: {
 		/**
-		 * Ce champ est requis
+		 * Ce champ est obligatoire
 		 */
 		required: () => LocalizedString
 		/**
@@ -1549,19 +2326,19 @@ export type TranslationFunctions = {
 		/**
 		 * Minimum {count} caractères requis
 		 */
-		minLength: (arg: { count: number }) => LocalizedString
+		minLength: (arg: { count: unknown }) => LocalizedString
 		/**
 		 * Maximum {count} caractères autorisés
 		 */
-		maxLength: (arg: { count: number }) => LocalizedString
+		maxLength: (arg: { count: unknown }) => LocalizedString
 		/**
-		 * La valeur doit être au moins {min}
+		 * La valeur doit être d'au moins {min}
 		 */
-		min: (arg: { min: number }) => LocalizedString
+		min: (arg: { min: unknown }) => LocalizedString
 		/**
 		 * La valeur ne peut pas dépasser {max}
 		 */
-		max: (arg: { max: number }) => LocalizedString
+		max: (arg: { max: unknown }) => LocalizedString
 		/**
 		 * Format invalide
 		 */
@@ -1581,7 +2358,7 @@ export type TranslationFunctions = {
 	}
 	schools: {
 		/**
-		 * Gestion des écoles
+		 * Gestion des Écoles
 		 */
 		title: () => LocalizedString
 		/**
@@ -1589,23 +2366,23 @@ export type TranslationFunctions = {
 		 */
 		subtitle: () => LocalizedString
 		/**
-		 * Créer une école
+		 * Créer une École
 		 */
 		create: () => LocalizedString
 		/**
-		 * Modifier l'école
+		 * Modifier l'École
 		 */
 		edit: () => LocalizedString
 		/**
-		 * Supprimer l'école
+		 * Supprimer l'École
 		 */
 		'delete': () => LocalizedString
 		/**
-		 * Voir l'école
+		 * Voir l'École
 		 */
 		view: () => LocalizedString
 		/**
-		 * Liste des écoles
+		 * Liste des Écoles
 		 */
 		list: () => LocalizedString
 		/**
@@ -1629,11 +2406,11 @@ export type TranslationFunctions = {
 		 */
 		'import': () => LocalizedString
 		/**
-		 * Nom de l'école
+		 * Nom de l'École
 		 */
 		name: () => LocalizedString
 		/**
-		 * Code de l'école
+		 * Code de l'École
 		 */
 		code: () => LocalizedString
 		/**
@@ -1665,7 +2442,7 @@ export type TranslationFunctions = {
 		 */
 		foundedYear: () => LocalizedString
 		/**
-		 * Nombre d'étudiants
+		 * Nombre d'élèves
 		 */
 		studentCount: () => LocalizedString
 		/**
@@ -1689,7 +2466,7 @@ export type TranslationFunctions = {
 		 */
 		createdAt: () => LocalizedString
 		/**
-		 * Mis à jour le
+		 * Modifié le
 		 */
 		updatedAt: () => LocalizedString
 		/**
@@ -1723,68 +2500,68 @@ export type TranslationFunctions = {
 	}
 	demoRequest: {
 		/**
-		 * Demander une démo
+		 * Demander une Démo
 		 */
 		title: () => LocalizedString
 		/**
-		 * Découvrez comment Yeko peut transformer votre établissement
+		 * Découvrez comment Yeko peut transformer votre institution
 		 */
 		subtitle: () => LocalizedString
 		form: {
 			/**
-			 * Nom complet
+			 * Nom Complet
 			 */
 			name: () => LocalizedString
 			/**
-			 * Adresse email
+			 * Adresse Email
 			 */
 			email: () => LocalizedString
 			/**
-			 * Numéro de téléphone
+			 * Numéro de Téléphone
 			 */
 			phone: () => LocalizedString
 			/**
-			 * Nom de l'école / organisation
+			 * Nom de l'École/Organisation
 			 */
 			schoolName: () => LocalizedString
 			/**
-			 * Type d'établissement
+			 * Type d'Établissement
 			 */
 			schoolType: () => LocalizedString
 			/**
-			 * Votre rôle
+			 * Votre Rôle
 			 */
 			role: () => LocalizedString
 			/**
-			 * Nombre d'élèves
+			 * Nombre d'Élèves
 			 */
 			studentsCount: () => LocalizedString
 			/**
-			 * Informations complémentaires
+			 * Informations Complémentaires
 			 */
 			message: () => LocalizedString
 			/**
-			 * Demander une démo
+			 * Demander une Démo
 			 */
 			submit: () => LocalizedString
 			/**
-			 * Demande de démo reçue !
+			 * Demande de Démo Reçue !
 			 */
 			success: () => LocalizedString
 			/**
-			 * Merci de votre intérêt pour Yeko ! Notre équipe vous contactera sous 24 heures pour planifier votre démonstration personnalisée.
+			 * Merci de votre intérêt pour Yeko ! Notre équipe vous contactera sous 24 heures pour planifier votre démo personnalisée.
 			 */
 			successDescription: () => LocalizedString
 			/**
-			 * Nous avons envoyé un e-mail de confirmation à {email}.
+			 * Nous avons envoyé un email de confirmation à {email}.
 			 */
 			confirmationEmail: (arg: { email: unknown }) => LocalizedString
 			/**
-			 * Que se passe-t-il ensuite ?
+			 * Quelle est la suite ?
 			 */
 			whatNext: () => LocalizedString
 			/**
-			 * Notre équipe examinera votre demande et vous contactera dans les 24 heures pour planifier une démonstration personnalisée adaptée aux besoins de votre institution.
+			 * Notre équipe examinera votre demande et vous contactera sous 24 heures pour planifier une démonstration personnalisée adaptée aux besoins de votre établissement.
 			 */
 			whatNextDescription: () => LocalizedString
 		}
@@ -1794,7 +2571,7 @@ export type TranslationFunctions = {
 			 */
 			primary: () => LocalizedString
 			/**
-			 * Lycée / Collège
+			 * Collège / Lycée
 			 */
 			secondary: () => LocalizedString
 			/**
@@ -1812,7 +2589,7 @@ export type TranslationFunctions = {
 		}
 		roles: {
 			/**
-			 * Directeur / Principal
+			 * Directeur / Chef d'établissement
 			 */
 			principal: () => LocalizedString
 			/**
@@ -1886,15 +2663,15 @@ export type TranslationFunctions = {
 			 */
 			category: () => LocalizedString
 			/**
-			 * Toutes catégories
+			 * Toutes les catégories
 			 */
 			allCategories: () => LocalizedString
 			/**
-			 * Créer une matière
+			 * Créer une Matière
 			 */
 			create: () => LocalizedString
 			/**
-			 * Modifier la matière
+			 * Modifier la Matière
 			 */
 			edit: () => LocalizedString
 			/**
@@ -1933,7 +2710,7 @@ export type TranslationFunctions = {
 		 */
 		'delete': () => LocalizedString
 		/**
-		 * Nom du rôle
+		 * Nom du Rôle
 		 */
 		name: () => LocalizedString
 		/**
@@ -1945,11 +2722,11 @@ export type TranslationFunctions = {
 		 */
 		description: () => LocalizedString
 		/**
-		 * Périmètre (Scope)
+		 * Portée
 		 */
 		scope: () => LocalizedString
 		/**
-		 * Matrice des Permissions
+		 * Matrice de Permissions
 		 */
 		permissions: () => LocalizedString
 		/**
@@ -1973,7 +2750,7 @@ export type TranslationFunctions = {
 		 */
 		deleteDescription: (arg: { name: unknown }) => LocalizedString
 		/**
-		 * Attention : Cette action est irréversible. Tous les utilisateurs rattachés à ce rôle perdront immédiatement l'intégralité de leurs permissions associées.
+		 * Attention : Cette action est irréversible. Tous les utilisateurs attachés à ce rôle perdront immédiatement toutes les permissions associées.
 		 */
 		deleteWarning: () => LocalizedString
 	}
@@ -1983,7 +2760,7 @@ export type TranslationFunctions = {
 		 */
 		title: () => LocalizedString
 		/**
-		 * Gérez les comptes d'administration et supervisez les privilèges d'accès globaux à la plateforme.
+		 * Gérez les comptes administratifs et supervisez les privilèges d'accès globaux à la plateforme.
 		 */
 		subtitle: () => LocalizedString
 		/**
@@ -2017,7 +2794,7 @@ export type TranslationFunctions = {
 		 */
 		none: () => LocalizedString
 		/**
-		 * Ajustez vos filtres de recherche pour trouver le compte recherché.
+		 * Ajustez vos filtres de recherche pour trouver le compte que vous recherchez.
 		 */
 		noneDescription: () => LocalizedString
 		/**
@@ -2029,15 +2806,15 @@ export type TranslationFunctions = {
 		 */
 		neverLoggedIn: () => LocalizedString
 		/**
-		 * Habilitations
+		 * Autorisations
 		 */
 		permissions: () => LocalizedString
 		/**
-		 * Habilitations Système
+		 * Autorisations Système
 		 */
 		permissionsTitle: () => LocalizedString
 		/**
-		 * Configurez les rôles de plateforme pour {name}
+		 * Configurer les rôles plateforme pour {name}
 		 */
 		permissionsSubtitle: (arg: { name: unknown }) => LocalizedString
 		/**
@@ -2052,6 +2829,58 @@ export type TranslationFunctions = {
 		 * Erreur lors de la mise à jour des accès
 		 */
 		updateError: () => LocalizedString
+	}
+	whyYeko: {
+		/**
+		 * Pourquoi Choisir Yeko ?
+		 */
+		title: () => LocalizedString
+		/**
+		 * Nous fournissons les outils dont vous avez besoin pour réussir dans un monde numérique.
+		 */
+		subtitle: () => LocalizedString
+		features: {
+			lightning: {
+				/**
+				 * Ultra Rapide
+				 */
+				title: () => LocalizedString
+				/**
+				 * Optimisé pour la performance et l'efficacité dans tout ce que vous faites.
+				 */
+				description: () => LocalizedString
+			}
+			secure: {
+				/**
+				 * Sécurité Bancaire
+				 */
+				title: () => LocalizedString
+				/**
+				 * Vos données sont cryptées et protégées selon les normes les plus strictes de l'industrie.
+				 */
+				description: () => LocalizedString
+			}
+			africa: {
+				/**
+				 * Conçu pour l'Afrique
+				 */
+				title: () => LocalizedString
+				/**
+				 * Adapté spécifiquement aux défis uniques des institutions éducatives en Afrique.
+				 */
+				description: () => LocalizedString
+			}
+			mobile: {
+				/**
+				 * Mobile First
+				 */
+				title: () => LocalizedString
+				/**
+				 * Accédez à tout depuis votre smartphone avec notre plateforme entièrement responsive.
+				 */
+				description: () => LocalizedString
+			}
+		}
 	}
 }
 

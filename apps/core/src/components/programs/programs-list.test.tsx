@@ -1,17 +1,18 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { AnimatePresence, motion } from 'motion/react'
+import * as React from 'react'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 
-// Mock motion/react
+// Mock motion/react - using React.createElement to avoid JSX in hoisted mocks
 vi.mock('motion/react', () => ({
   motion: {
     div: ({ children, ...props }: any) => {
       // Filter out motion-specific props that shouldn't be on DOM elements
-      return <div {...props}>{children}</div>
+      return React.createElement('div', props, children)
     },
   },
-  AnimatePresence: ({ children }: any) => <>{children}</>,
+  AnimatePresence: ({ children }: any) => React.createElement(React.Fragment, null, children),
 }))
 
 // Mock TanStack Router
@@ -37,17 +38,15 @@ vi.mock('sonner', () => ({
   },
 }))
 
-// Mock UI components
+// Mock UI components - using React.createElement to avoid JSX in hoisted mocks
 vi.mock('@workspace/ui/components/badge', () => ({
-  Badge: ({ children, className, ...props }: any) => (
-    <span className={className} {...props}>{children}</span>
-  ),
+  Badge: ({ children, className, ...props }: any) =>
+    React.createElement('span', { className, ...props }, children),
 }))
 
 vi.mock('@workspace/ui/components/button', () => ({
-  Button: ({ children, onClick, ...props }: any) => (
-    <button type="button" onClick={onClick} {...props}>{children}</button>
-  ),
+  Button: ({ children, onClick, ...props }: any) =>
+    React.createElement('button', { type: 'button', onClick, ...props }, children),
 }))
 
 vi.mock('@/hooks/use-debounce', () => ({

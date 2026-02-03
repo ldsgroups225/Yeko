@@ -250,11 +250,15 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
   const importMutation = useMutation({
     mutationFn: (students: ParsedStudent[]) =>
       bulkImportStudents({ data: students }),
-    onSuccess: (data) => {
-      setResult(data)
+    onSuccess: (result) => {
+      if (!result.success) {
+        toast.error(result.error)
+        return
+      }
+      setResult(result.data)
       queryClient.invalidateQueries({ queryKey: studentsKeys.all })
-      if (data.success > 0) {
-        toast.success(t.students.importSuccess({ count: data.success }))
+      if (result.data.success > 0) {
+        toast.success(t.students.importSuccess({ count: result.data.success }))
       }
     },
     onError: (err: Error) => {

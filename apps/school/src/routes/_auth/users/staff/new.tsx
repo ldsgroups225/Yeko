@@ -15,14 +15,13 @@ function NewStaffPage() {
   const navigate = useNavigate()
 
   const handleSubmit = async (data: CreateStaffData) => {
-    try {
-      const result = await createNewStaff({ data })
+    const result = await createNewStaff({ data })
+    if (result.success) {
       toast.success(t.hr.staff.createSuccess())
-      navigate({ to: '/users/staff/$staffId', params: { staffId: result.id } })
+      navigate({ to: '/users/staff/$staffId', params: { staffId: result.data?.id ?? '' } })
     }
-    catch (error) {
-      toast.error(t.hr.staff.createError())
-      throw error
+    else {
+      toast.error(result.error || t.hr.staff.createError())
     }
   }
 

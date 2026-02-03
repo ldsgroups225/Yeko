@@ -7,10 +7,9 @@ import {
   getFeeStructuresWithTypes,
   updateFeeStructure,
 } from '@repo/data-ops'
-import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 import { bulkCreateFeeStructuresSchema, createFeeStructureSchema, updateFeeStructureSchema } from '@/schemas/fee-structure'
-import { getSchoolContext, getSchoolYearContext } from '../middleware/school-context'
+import { authServerFn } from '../lib/server-fn'
 
 /**
  * Filters for fee structures queries
@@ -25,120 +24,144 @@ const feeStructureFiltersSchema = z.object({
 /**
  * Get fee structures list
  */
-export const getFeeStructuresList = createServerFn()
+export const getFeeStructuresList = authServerFn
   .inputValidator(feeStructureFiltersSchema.optional())
-  .handler(async ({ data: filters }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data: filters, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    const yearContext = await getSchoolYearContext()
-    const schoolYearId = filters?.schoolYearId || yearContext?.schoolYearId
+    const { school, schoolYear } = context
+    const schoolYearId = filters?.schoolYearId || schoolYear?.schoolYearId
     if (!schoolYearId)
-      throw new Error('No school year context')
+      return { success: false as const, error: 'Année scolaire non sélectionnée' }
 
-    return await getFeeStructures({
-      schoolId: context.schoolId,
+    const result = await getFeeStructures({
+      schoolId: school.schoolId,
       schoolYearId,
       ...filters,
     })
+
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Get fee structures with fee type details
  */
-export const getFeeStructuresWithDetails = createServerFn()
+export const getFeeStructuresWithDetails = authServerFn
   .inputValidator(feeStructureFiltersSchema.optional())
-  .handler(async ({ data: filters }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data: filters, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    const yearContext = await getSchoolYearContext()
-    const schoolYearId = filters?.schoolYearId || yearContext?.schoolYearId
+    const { school, schoolYear } = context
+    const schoolYearId = filters?.schoolYearId || schoolYear?.schoolYearId
     if (!schoolYearId)
-      throw new Error('No school year context')
+      return { success: false as const, error: 'Année scolaire non sélectionnée' }
 
-    return await getFeeStructuresWithTypes({
-      schoolId: context.schoolId,
+    const result = await getFeeStructuresWithTypes({
+      schoolId: school.schoolId,
       schoolYearId,
       gradeId: filters?.gradeId,
     })
+
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Get single fee structure
  */
-export const getFeeStructure = createServerFn()
+export const getFeeStructure = authServerFn
   .inputValidator(z.string())
-  .handler(async ({ data: feeStructureId }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data: feeStructureId, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return await getFeeStructureById(feeStructureId)
+    const result = await getFeeStructureById(feeStructureId)
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Create new fee structure
  */
-export const createNewFeeStructure = createServerFn()
+export const createNewFeeStructure = authServerFn
   .inputValidator(createFeeStructureSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return await createFeeStructure({
-      schoolId: context.schoolId,
+    const result = await createFeeStructure({
+      schoolId: context.school.schoolId,
       ...data,
     })
+
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Bulk create fee structures
  */
-export const bulkCreateFeeStructures = createServerFn()
+export const bulkCreateFeeStructures = authServerFn
   .inputValidator(bulkCreateFeeStructuresSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
+    const { school } = context
     const structures = data.structures.map(s => ({
-      schoolId: context.schoolId,
+      ...s,
+      schoolId: school.schoolId,
       schoolYearId: data.schoolYearId,
       feeTypeId: data.feeTypeId,
-      ...s,
     }))
 
-    return await createFeeStructuresBulk(structures)
+    const result = await createFeeStructuresBulk(structures)
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Update fee structure
  */
-export const updateExistingFeeStructure = createServerFn()
+export const updateExistingFeeStructure = authServerFn
   .inputValidator(updateFeeStructureSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
     const { id, ...updateData } = data
-    return await updateFeeStructure(id, updateData)
+    const result = await updateFeeStructure(id, updateData)
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Delete fee structure
  */
-export const deleteExistingFeeStructure = createServerFn()
+export const deleteExistingFeeStructure = authServerFn
   .inputValidator(z.string())
-  .handler(async ({ data: feeStructureId }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data: feeStructureId, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    await deleteFeeStructure(feeStructureId)
-    return { success: true }
+    const result = await deleteFeeStructure(feeStructureId)
+    return result.match(
+      () => ({ success: true as const, data: { success: true } }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })

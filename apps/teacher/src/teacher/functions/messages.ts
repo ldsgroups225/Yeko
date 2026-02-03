@@ -24,8 +24,17 @@ export const getTeacherMessages = createServerFn()
       pageSize: data.pageSize,
     })
 
+    if (result.isErr()) {
+      return {
+        messages: [],
+        total: 0,
+        page: data.page,
+        pageSize: data.pageSize,
+      }
+    }
+
     return {
-      messages: result.messages.map(m => ({
+      messages: result.value.messages.map(m => ({
         id: m.id,
         senderType: m.senderType as 'teacher' | 'parent',
         senderName: m.senderType === 'teacher' ? 'You' : 'Parent', // TODO: Get actual name
@@ -38,9 +47,9 @@ export const getTeacherMessages = createServerFn()
         createdAt: m.createdAt.toISOString(),
         threadId: m.threadId,
       })),
-      total: result.total,
-      page: result.page,
-      pageSize: result.pageSize,
+      total: result.value.total,
+      page: result.value.page,
+      pageSize: result.value.pageSize,
     }
   })
 
@@ -52,29 +61,29 @@ export const sendMessage = createServerFn()
     }),
   )
   .handler(async ({ data }) => {
-    try {
-      const message = await sendTeacherMessage({
-        schoolId: data.schoolId,
-        teacherId: data.teacherId,
-        recipientId: data.recipientId,
-        studentId: data.studentId,
-        classId: data.classId,
-        subject: data.subject,
-        content: data.content,
-        replyToId: data.replyToId,
-        attachments: data.attachments,
-      })
+    const messageResult = await sendTeacherMessage({
+      schoolId: data.schoolId,
+      teacherId: data.teacherId,
+      recipientId: data.recipientId,
+      studentId: data.studentId,
+      classId: data.classId,
+      subject: data.subject,
+      content: data.content,
+      replyToId: data.replyToId,
+      attachments: data.attachments,
+    })
 
-      return {
-        success: true,
-        messageId: message?.id,
-      }
-    }
-    catch (error: unknown) {
+    if (messageResult.isErr()) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to send message',
+        error: messageResult.error.message,
+        code: messageResult.error.details?.code as string | undefined,
       }
+    }
+
+    return {
+      success: true,
+      messageId: messageResult.value.id,
     }
   })
 
@@ -87,14 +96,16 @@ export const getMessageDetails = createServerFn()
     }),
   )
   .handler(async ({ data }) => {
-    const message = await getMessageDetailsQuery({
+    const messageResult = await getMessageDetailsQuery({
       messageId: data.messageId,
       teacherId: data.teacherId,
     })
 
-    if (!message) {
+    if (messageResult.isErr() || !messageResult.value) {
       return { message: null }
     }
+
+    const message = messageResult.value
 
     return {
       message: {
@@ -116,7 +127,7 @@ export const getMessageDetails = createServerFn()
         readAt: message.readAt?.toISOString() ?? null,
         createdAt: message.createdAt.toISOString(),
         threadId: message.threadId,
-        thread: message.thread.map(t => ({
+        thread: message.thread.map((t: any) => ({
           id: t.id,
           senderType: t.senderType as 'teacher' | 'parent',
           senderName: t.senderType === 'teacher' ? 'You' : 'Parent',
@@ -136,20 +147,20 @@ export const markMessageRead = createServerFn()
     }),
   )
   .handler(async ({ data }) => {
-    try {
-      await markMessageAsRead({
-        messageId: data.messageId,
-        teacherId: data.teacherId,
-      })
+    const result = await markMessageAsRead({
+      messageId: data.messageId,
+      teacherId: data.teacherId,
+    })
 
-      return { success: true }
-    }
-    catch (error: unknown) {
+    if (result.isErr()) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to mark message as read',
+        error: result.error.message,
+        code: result.error.details?.code as string | undefined,
       }
     }
+
+    return { success: true }
   })
 
 // Get message templates
@@ -161,13 +172,17 @@ export const getMessageTemplates = createServerFn()
     }),
   )
   .handler(async ({ data }) => {
-    const templates = await getMessageTemplatesQuery({
+    const templatesResult = await getMessageTemplatesQuery({
       schoolId: data.schoolId,
       category: data.category,
     })
 
+    if (templatesResult.isErr()) {
+      return { templates: [] }
+    }
+
     return {
-      templates: templates.map(t => ({
+      templates: templatesResult.value.map(t => ({
         id: t.id,
         name: t.name,
         category: t.category,
@@ -190,7 +205,7 @@ export const searchParents = createServerFn()
     }),
   )
   .handler(async ({ data }) => {
-    const parents = await searchParentsForTeacher({
+    const parentsResult = await searchParentsForTeacher({
       teacherId: data.teacherId,
       schoolId: data.schoolId,
       schoolYearId: data.schoolYearId,
@@ -198,7 +213,11 @@ export const searchParents = createServerFn()
       classId: data.classId,
     })
 
-    return parents.map(p => ({
+    if (parentsResult.isErr()) {
+      return []
+    }
+
+    return parentsResult.value.map(p => ({
       id: p.id,
       name: p.name,
       phone: p.phone,

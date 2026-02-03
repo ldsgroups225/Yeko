@@ -8,10 +8,9 @@ import {
   processRefund,
   rejectRefund,
 } from '@repo/data-ops'
-import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 import { approveRefundSchema, createRefundSchema, processRefundSchema, rejectRefundSchema } from '@/schemas/refund'
-import { getSchoolContext } from '../middleware/school-context'
+import { authServerFn } from '../lib/server-fn'
 
 /**
  * Filters for refunds queries
@@ -28,109 +27,138 @@ const refundFiltersSchema = z.object({
 /**
  * Get refunds list with pagination
  */
-export const getRefundsList = createServerFn()
+export const getRefundsList = authServerFn
   .inputValidator(refundFiltersSchema.optional())
-  .handler(async ({ data: filters }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data: filters, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return await getRefunds({
-      schoolId: context.schoolId,
+    const { school } = context
+    const result = await getRefunds({
+      schoolId: school.schoolId,
       ...filters,
     })
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Get single refund
  */
-export const getRefund = createServerFn()
+export const getRefund = authServerFn
   .inputValidator(z.string())
-  .handler(async ({ data: refundId }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data: refundId, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return await getRefundById(refundId)
+    const result = await getRefundById(refundId)
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Get pending refunds count
  */
-export const getPendingRefunds = createServerFn()
-  .handler(async () => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+export const getPendingRefunds = authServerFn
+  .handler(async ({ context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return await getPendingRefundsCount(context.schoolId)
+    const { school } = context
+    const result = await getPendingRefundsCount(school.schoolId)
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Request new refund
  */
-export const requestRefund = createServerFn()
+export const requestRefund = authServerFn
   .inputValidator(createRefundSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return await createRefund({
-      schoolId: context.schoolId,
-      requestedBy: context.userId,
+    const { school } = context
+    const result = await createRefund({
+      schoolId: school.schoolId,
+      requestedBy: school.userId,
       ...data,
     })
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Approve refund
  */
-export const approveExistingRefund = createServerFn()
+export const approveExistingRefund = authServerFn
   .inputValidator(approveRefundSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return await approveRefund(data.refundId, context.userId)
+    const { school } = context
+    const result = await approveRefund(data.refundId, school.userId)
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Reject refund
  */
-export const rejectExistingRefund = createServerFn()
+export const rejectExistingRefund = authServerFn
   .inputValidator(rejectRefundSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return await rejectRefund(data.refundId, data.rejectionReason)
+    const result = await rejectRefund(data.refundId, data.rejectionReason)
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Process refund
  */
-export const processExistingRefund = createServerFn()
+export const processExistingRefund = authServerFn
   .inputValidator(processRefundSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return await processRefund(data.refundId, context.userId, data.reference)
+    const { school } = context
+    const result = await processRefund(data.refundId, school.userId, data.reference)
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Cancel refund
  */
-export const cancelExistingRefund = createServerFn()
+export const cancelExistingRefund = authServerFn
   .inputValidator(z.string())
-  .handler(async ({ data: refundId }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data: refundId, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return await cancelRefund(refundId)
+    const result = await cancelRefund(refundId)
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })

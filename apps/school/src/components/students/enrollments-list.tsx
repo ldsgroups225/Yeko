@@ -1,4 +1,4 @@
-import type { getEnrollments } from '@/school/functions/enrollments'
+import type { EnrollmentWithDetails } from '@repo/data-ops/queries/enrollments'
 import {
   IconCheck,
   IconClipboardCheck,
@@ -96,9 +96,7 @@ export function EnrollmentsList() {
 
   const [bulkReEnrollOpen, setBulkReEnrollOpen] = useState(false)
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false)
-  type EnrollmentItem = Awaited<
-    ReturnType<typeof getEnrollments>
-  >['data'][number]
+  type EnrollmentItem = EnrollmentWithDetails
 
   const [selectedEnrollment, setSelectedEnrollment]
     = useState<EnrollmentItem | null>(null)
@@ -127,9 +125,14 @@ export function EnrollmentsList() {
 
   const confirmMutation = useMutation({
     mutationFn: (id: string) => confirmEnrollment({ data: id }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: enrollmentsKeys.all })
-      toast.success(t.enrollments.confirmSuccess())
+    onSuccess: (result) => {
+      if (result.success) {
+        queryClient.invalidateQueries({ queryKey: enrollmentsKeys.all })
+        toast.success(t.enrollments.confirmSuccess())
+      }
+      else {
+        toast.error(result.error)
+      }
     },
     onError: (error: Error) => {
       toast.error(error.message)
@@ -139,12 +142,17 @@ export function EnrollmentsList() {
   const cancelMutation = useMutation({
     mutationFn: (data: { id: string, reason?: string }) =>
       cancelEnrollment({ data }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: enrollmentsKeys.all })
-      toast.success(t.enrollments.cancelSuccess())
-      setCancelDialogOpen(false)
-      setSelectedEnrollment(null)
-      setCancelReason('')
+    onSuccess: (result) => {
+      if (result.success) {
+        queryClient.invalidateQueries({ queryKey: enrollmentsKeys.all })
+        toast.success(t.enrollments.cancelSuccess())
+        setCancelDialogOpen(false)
+        setSelectedEnrollment(null)
+        setCancelReason('')
+      }
+      else {
+        toast.error(result.error)
+      }
     },
     onError: (error: Error) => {
       toast.error(error.message)
@@ -211,7 +219,7 @@ export function EnrollmentsList() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t.common.all()}</SelectItem>
-              {classesData?.map(cls => (
+              {classesData?.success && classesData.data.map(cls => (
                 <SelectItem key={cls.class.id} value={cls.class.id}>
                   {cls.grade.name}
                   {' '}

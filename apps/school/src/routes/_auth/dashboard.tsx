@@ -40,7 +40,7 @@ function DashboardPage() {
     <div className="space-y-6">
       <Breadcrumbs items={[{ label: t.nav.dashboard() }]} />
 
-      {role === 'school_administrator' && (
+      {role === 'school_director' && (
         <>
           <OnboardingWidget />
           <AdminDashboard />

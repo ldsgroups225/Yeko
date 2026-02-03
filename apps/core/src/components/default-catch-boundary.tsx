@@ -10,7 +10,7 @@ import {
 } from '@tabler/icons-react'
 import { Link, rootRouteId, useMatch, useRouter } from '@tanstack/react-router'
 import { Alert, AlertDescription } from '@workspace/ui/components/alert'
-import { Button } from '@workspace/ui/components/button'
+import { Button, buttonVariants } from '@workspace/ui/components/button'
 import {
   Card,
   CardContent,
@@ -85,15 +85,13 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
 
             {isRoot
               ? (
-                  <Button
-                    variant="outline"
-                    render={(
-                      <Link to="/" className="flex items-center gap-2">
-                        <IconHome className="h-4 w-4" />
-                        Go to Home
-                      </Link>
-                    )}
-                  />
+                  <Link
+                    to="/"
+                    className={buttonVariants({ variant: 'outline', className: 'flex items-center gap-2' })}
+                  >
+                    <IconHome className="h-4 w-4" />
+                    Go to Home
+                  </Link>
                 )
               : (
                   <Button

@@ -82,7 +82,7 @@ export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
     enabled: open,
   })
 
-  const suggestions: Suggestion[] = data?.suggestions || []
+  const suggestions: Suggestion[] = data?.success ? data.data.suggestions : []
 
   const toggleSelection = (studentId: string, suggestion: Suggestion) => {
     const newMap = new Map(selectedMatches)
@@ -146,14 +146,20 @@ export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
         else {
           // Create new parent from emergency contact
           const nameParts = suggestion.studentName.split(' ')
-          const parent = await createParent({
+          const parentResult = await createParent({
             data: {
               firstName: t.students.emergencyContact(),
               lastName: nameParts[0] || '',
               phone: suggestion.phone,
             },
           })
-          parentId = parent.id
+
+          if (!parentResult.success) {
+            toast.error(parentResult.error)
+            continue
+          }
+
+          parentId = parentResult.data.id
           created++
         }
 

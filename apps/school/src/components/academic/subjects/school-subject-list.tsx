@@ -132,7 +132,7 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
         : undefined,
   }
 
-  const { data, isLoading, error } = useQuery(
+  const { data: result, isLoading, error } = useQuery(
     schoolSubjectsOptions.list(filters),
   )
 
@@ -158,8 +158,13 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
   }
 
   const subjectsData = useMemo(
-    () => (data?.subjects || []) as SchoolSubjectItem[],
-    [data],
+    () => {
+      if (result?.success) {
+        return result.data.subjects as unknown as SchoolSubjectItem[]
+      }
+      return [] as SchoolSubjectItem[]
+    },
+    [result],
   )
 
   const columns = useMemo<ColumnDef<SchoolSubjectItem>[]>(

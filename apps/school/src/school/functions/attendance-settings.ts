@@ -3,10 +3,10 @@ import {
   getAttendanceSettings,
   upsertAttendanceSettings,
 } from '@repo/data-ops'
-import { createServerFn } from '@tanstack/react-start'
+import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import { z } from 'zod'
-
-import { getSchoolContext } from '../middleware/school-context'
+import { authServerFn } from '../lib/server-fn'
+import { requirePermission } from '../middleware/permissions'
 
 const attendanceSettingsSchema = z.object({
   teacherExpectedArrival: z.string().regex(/^\d{2}:\d{2}$/).optional(),
@@ -23,42 +23,71 @@ const attendanceSettingsSchema = z.object({
 /**
  * Get attendance settings for the school
  */
-export const getSettings = createServerFn()
-  .handler(async () => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+export const getSettings = authServerFn
+  .handler(async ({ context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return getAttendanceSettings(context.schoolId)
+    await requirePermission('settings', 'view')
+    return (await getAttendanceSettings(context.school.schoolId)).match(
+      result => ({ success: true as const, data: result }),
+      _ => ({ success: false as const, error: 'Erreur lors de la récupération des paramètres de présence' }),
+    )
   })
 
 /**
  * Update attendance settings
  */
-export const updateSettings = createServerFn()
+export const updateSettings = authServerFn
   .inputValidator(attendanceSettingsSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    const result = await upsertAttendanceSettings({
-      schoolId: context.schoolId,
+    const { schoolId, userId } = context.school
+    await requirePermission('settings', 'edit')
+
+    return (await upsertAttendanceSettings({
+      schoolId,
       ...data,
-    })
-
-    return result
+    })).match(
+      async (result) => {
+        await createAuditLog({
+          schoolId,
+          userId,
+          action: 'update',
+          tableName: 'attendance_settings',
+          recordId: schoolId,
+          newValues: data,
+        })
+        return { success: true as const, data: result }
+      },
+      _ => ({ success: false as const, error: 'Erreur lors de la mise à jour des paramètres de présence' }),
+    )
   })
 
 /**
  * Reset attendance settings to defaults
  */
-export const resetSettings = createServerFn()
-  .handler(async () => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+export const resetSettings = authServerFn
+  .handler(async ({ context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    await deleteAttendanceSettings(context.schoolId)
-    return { success: true }
+    const { schoolId, userId } = context.school
+    await requirePermission('settings', 'edit')
+
+    return (await deleteAttendanceSettings(schoolId)).match(
+      async () => {
+        await createAuditLog({
+          schoolId,
+          userId,
+          action: 'delete',
+          tableName: 'attendance_settings',
+          recordId: schoolId,
+        })
+        return { success: true as const, data: { success: true } }
+      },
+      _ => ({ success: false as const, error: 'Erreur lors de la réinitialisation des paramètres' }),
+    )
   })

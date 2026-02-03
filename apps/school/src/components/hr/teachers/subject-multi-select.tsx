@@ -51,7 +51,8 @@ export function SubjectMultiSelect({
     },
   })
 
-  const subjects = data?.subjects || []
+  const subjectsData = data?.success ? data.data : undefined
+  const subjects = subjectsData?.subjects || []
   const selectedSubjects = subjects.filter(s =>
     value.includes(s.id),
   )

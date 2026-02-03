@@ -1,6 +1,6 @@
 import { IconArrowRight, IconSparkles } from '@tabler/icons-react'
 import { Link } from '@tanstack/react-router'
-import { Button } from '@workspace/ui/components/button'
+import { buttonVariants } from '@workspace/ui/components/button'
 
 export function CTASection() {
   return (
@@ -25,22 +25,19 @@ export function CTASection() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-            <Button
-              size="lg"
-              className="group h-14 px-8 text-lg"
-              render={(
-                <a href="/signup">
-                  Start Free Trial Now
-                  <IconArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                </a>
-              )}
-            />
-            <Button
-              variant="outline"
-              size="lg"
-              className="h-14 px-8 text-lg"
-              render={<Link to="/demo-request">Talk to Sales</Link>}
-            />
+            <a
+              href="/signup"
+              className={buttonVariants({ size: 'lg', className: 'group h-14 px-8 text-lg' })}
+            >
+              Start Free Trial Now
+              <IconArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+            </a>
+            <Link
+              to="/demo-request"
+              className={buttonVariants({ variant: 'outline', size: 'lg', className: 'h-14 px-8 text-lg' })}
+            >
+              Talk to Sales
+            </Link>
           </div>
 
           <p className="text-sm text-muted-foreground">

@@ -259,19 +259,21 @@ export function UsersTable({ filters }: UsersTableProps) {
     [t, navigate],
   )
 
+  const usersData = data?.success ? data.data : undefined
+
   const table = useReactTable({
-    data: data?.users || [],
+    data: usersData?.users || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
-    pageCount: data?.totalPages || 0,
+    pageCount: usersData?.totalPages || 0,
   })
 
   if (isLoading) {
     return <TableSkeleton columns={6} rows={5} />
   }
 
-  const hasNoData = !data?.users || data.users.length === 0
+  const hasNoData = !usersData?.users || usersData.users.length === 0
   const hasNoResults
     = hasNoData && (debouncedSearch || filters.roleId || filters.status)
 
@@ -382,24 +384,24 @@ export function UsersTable({ filters }: UsersTableProps) {
           )}
 
           {/* Pagination */}
-          {!hasNoData && data && data.totalPages > 1 && (
+          {!hasNoData && usersData && usersData.totalPages > 1 && (
             <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
               <div className="text-sm text-muted-foreground font-medium">
                 {t.common.showing()}
                 {' '}
                 <span className="text-foreground">
-                  {(data.page - 1) * data.limit + 1}
+                  {(usersData.page - 1) * usersData.limit + 1}
                 </span>
                 {' '}
                 -
                 {' '}
                 <span className="text-foreground">
-                  {Math.min(data.page * data.limit, data.total)}
+                  {Math.min(usersData.page * usersData.limit, usersData.total)}
                 </span>
                 {' '}
                 {t.common.of()}
                 {' '}
-                <span className="text-foreground">{data.total}</span>
+                <span className="text-foreground">{usersData.total}</span>
               </div>
               <div className="flex gap-3">
                 <Button
@@ -410,10 +412,10 @@ export function UsersTable({ filters }: UsersTableProps) {
                     e.stopPropagation()
                     navigate({
                       to: '/users/users',
-                      search: { ...filters, page: data.page - 1 },
+                      search: { ...filters, page: usersData.page - 1 },
                     })
                   }}
-                  disabled={data.page === 1}
+                  disabled={usersData.page === 1}
                 >
                   {t.common.previous()}
                 </Button>
@@ -425,10 +427,10 @@ export function UsersTable({ filters }: UsersTableProps) {
                     e.stopPropagation()
                     navigate({
                       to: '/users/users',
-                      search: { ...filters, page: data.page + 1 },
+                      search: { ...filters, page: usersData.page + 1 },
                     })
                   }}
-                  disabled={data.page === data.totalPages}
+                  disabled={usersData.page === usersData.totalPages}
                 >
                   {t.common.next()}
                 </Button>

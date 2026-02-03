@@ -27,7 +27,8 @@ export function BulkEnrollmentCard() {
   const [selectedClassId, setSelectedClassId] = useState<string>('')
   const [autoConfirm, setAutoConfirm] = useState(false)
 
-  const { data: classes } = useQuery(classesOptions.list())
+  const { data: result } = useQuery(classesOptions.list())
+  const classes = result?.success ? result.data : []
 
   const enrollMutation = useMutation({
     mutationFn: bulkEnrollStudents,
@@ -56,12 +57,12 @@ export function BulkEnrollmentCard() {
       data: { limit: 1000 },
     })
 
-    if (!studentsResult.data?.length) {
+    if (!studentsResult.success || !studentsResult.data.data.length) {
       toast.error(t.students.bulkOperations.noStudentsToEnroll())
       return
     }
 
-    const studentIds = studentsResult.data.map(s => s.student.id)
+    const studentIds = studentsResult.data.data.map((s: any) => s.student.id)
 
     enrollMutation.mutate({
       data: {

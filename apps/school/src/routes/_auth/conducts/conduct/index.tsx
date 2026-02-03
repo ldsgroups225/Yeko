@@ -44,11 +44,12 @@ function ConductPage() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set())
 
   const { schoolYearId: contextSchoolYearId } = useSchoolYearContext()
-  const { data: schoolYears } = useQuery({ queryKey: ['school-years'], queryFn: () => getSchoolYears() })
-  const activeSchoolYear = schoolYears?.find(sy => sy.isActive)
+  const { data: schoolYearsResult } = useQuery({ queryKey: ['school-years'], queryFn: () => getSchoolYears() })
+  const schoolYears = schoolYearsResult?.success ? schoolYearsResult.data : []
+  const activeSchoolYear = schoolYears.find(sy => sy.isActive)
   const schoolYearId = contextSchoolYearId || activeSchoolYear?.id || 'current-year'
 
-  const { data, isLoading } = useQuery(
+  const { data: result, isLoading } = useQuery(
     conductRecordsOptions({
       schoolYearId,
       type: search.type,
@@ -90,7 +91,7 @@ function ConductPage() {
     setSelectedIds(new Set())
   }
 
-  const rawRecords = data?.data ?? []
+  const rawRecords = result?.success ? result.data.data : []
   const records = rawRecords.map(record => ({
     id: record.id,
     studentId: record.studentId,

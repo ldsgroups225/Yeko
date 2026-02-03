@@ -352,6 +352,11 @@ const en: Translation = {
     validationError: 'Validation error',
     databaseSaveFailed: 'Failed to save to database',
     publishFailed: 'Failed to publish',
+    teacherContextNotFound: 'Teacher context not found',
+    noTermFound: 'No term found for current school year',
+    sessionNotFound: 'Timetable session not found',
+    notAssignedToSession: 'Unauthorized: You are not assigned to this session',
+    classNotFound: 'Class not found',
   },
   auth: {
     login: 'Login',

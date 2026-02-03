@@ -7,7 +7,7 @@ import {
 } from '@tabler/icons-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Alert, AlertDescription } from '@workspace/ui/components/alert'
-import { Button } from '@workspace/ui/components/button'
+import { Button, buttonVariants } from '@workspace/ui/components/button'
 import {
   Dialog,
   DialogContent,
@@ -120,10 +120,13 @@ export function CreateAdminDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={(
-          <Button className="gap-2">
+          <button
+            type="button"
+            className={buttonVariants({ className: 'gap-2' })}
+          >
             <IconUserPlus className="h-4 w-4" />
             Créer un administrateur
-          </Button>
+          </button>
         )}
       />
       <DialogContent className="sm:max-w-[500px]">

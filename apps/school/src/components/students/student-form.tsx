@@ -39,6 +39,7 @@ const studentSchema = z.object({
   photoUrl: z.string().optional(),
   matricule: z.string().max(20).optional(),
   birthPlace: z.string().max(100).optional(),
+
   nationality: z.string().max(50).optional(),
   address: z.string().max(500).optional(),
   emergencyContact: z.string().max(100).optional(),
@@ -70,11 +71,12 @@ export function StudentForm({ student, mode }: StudentFormProps) {
       firstName: student?.firstName,
       lastName: student?.lastName,
       dob: student?.dob,
-      gender: student?.gender,
+      gender: student?.gender as any,
       photoUrl: student?.photoUrl,
       matricule: student?.matricule,
       birthPlace: student?.birthPlace,
       nationality: student?.nationality || 'Ivoirien',
+
       address: student?.address,
       emergencyContact: student?.emergencyContact,
       emergencyPhone: student?.emergencyPhone,
@@ -87,13 +89,17 @@ export function StudentForm({ student, mode }: StudentFormProps) {
 
   const createMutation = useMutation({
     mutationFn: (data: StudentFormData) => createStudent({ data }),
-    onSuccess: (newStudent) => {
+    onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: studentsKeys.all })
-      toast.success(t.students.createSuccess())
-      if (newStudent) {
-        navigate({ to: '/students/$studentId', params: { studentId: newStudent.id } })
+      if (result.success) {
+        toast.success(t.students.createSuccess())
+        navigate({ to: '/students/$studentId', params: { studentId: result.data.id } })
+      }
+      else {
+        toast.error(result.error)
       }
     },
+
     onError: (err: Error) => {
       toast.error(err.message)
     },
@@ -101,12 +107,19 @@ export function StudentForm({ student, mode }: StudentFormProps) {
 
   const updateMutation = useMutation({
     mutationFn: (data: StudentFormData) =>
-      updateStudent({ data: { id: student!.id, updates: data } }),
-    onSuccess: () => {
+      updateStudent({ data: { id: student!.id, data } as any }),
+
+    onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: studentsKeys.all })
-      toast.success(t.students.updateSuccess())
-      navigate({ to: '/students/$studentId', params: { studentId: student!.id } })
+      if (result.success) {
+        toast.success(t.students.updateSuccess())
+        navigate({ to: '/students/$studentId', params: { studentId: student!.id } })
+      }
+      else {
+        toast.error(result.error)
+      }
     },
+
     onError: (err: Error) => {
       toast.error(err.message)
     },
@@ -114,10 +127,16 @@ export function StudentForm({ student, mode }: StudentFormProps) {
 
   const generateMatriculeMutation = useMutation({
     mutationFn: () => generateMatricule(),
-    onSuccess: (matricule) => {
-      form.setValue('matricule', matricule)
-      toast.success(t.students.matriculeGenerated())
+    onSuccess: (result) => {
+      if (result.success) {
+        form.setValue('matricule', result.data)
+        toast.success(t.students.matriculeGenerated())
+      }
+      else {
+        toast.error(result.error)
+      }
     },
+
     onError: (err: Error) => {
       toast.error(err.message)
     },
@@ -220,7 +239,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                                   }
 
                                   // IconUpload file directly to R2
-                                  const uploadResponse = await fetch(result.presignedUrl, {
+                                  const uploadResponse = await fetch(result.data.presignedUrl, {
                                     method: 'PUT',
                                     body: file,
                                     headers: {
@@ -235,7 +254,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                                   }
 
                                   // Set the public URL in the form
-                                  form.setValue('photoUrl', result.publicUrl)
+                                  form.setValue('photoUrl', result.data.publicUrl)
                                   toast.success(t.students.photoUploadSuccess())
                                 }
                                 catch (error) {
@@ -372,7 +391,6 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                       </FormItem>
                     )}
                   />
-
                   <FormField
                     control={form.control}
                     name="nationality"

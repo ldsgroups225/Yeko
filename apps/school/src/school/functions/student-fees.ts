@@ -8,9 +8,8 @@ import {
   getStudentsWithOutstandingBalance,
   waiveStudentFee,
 } from '@repo/data-ops'
-import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
-import { getSchoolContext, getSchoolYearContext } from '../middleware/school-context'
+import { authServerFn } from '../lib/server-fn'
 
 /**
  * Amount validation
@@ -48,122 +47,147 @@ const waiveFeeSchema = z.object({
 /**
  * Get student fees
  */
-export const getStudentFeesList = createServerFn()
+export const getStudentFeesList = authServerFn
   .inputValidator(z.object({
     studentId: z.string().optional(),
     enrollmentId: z.string().optional(),
     status: z.enum(['pending', 'partial', 'paid', 'waived', 'cancelled']).optional(),
   }).optional())
-  .handler(async ({ data: filters }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data: filters, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return await getStudentFees(filters ?? {})
+    const result = await getStudentFees(filters ?? {})
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Get student fees with details
  */
-export const getStudentFeesDetails = createServerFn()
+export const getStudentFeesDetails = authServerFn
   .inputValidator(z.object({ studentId: z.string(), schoolYearId: z.string().optional() }))
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    const yearContext = await getSchoolYearContext()
-    const schoolYearId = data.schoolYearId || yearContext?.schoolYearId
+    const { schoolYear } = context
+    const schoolYearId = data.schoolYearId || schoolYear?.schoolYearId
     if (!schoolYearId)
-      throw new Error('No school year context')
+      return { success: false as const, error: 'Année scolaire non sélectionnée' }
 
-    return await getStudentFeesWithDetails(data.studentId, schoolYearId)
+    const result = await getStudentFeesWithDetails(data.studentId, schoolYearId)
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Get student fee summary
  */
-export const getStudentFeeSummaryData = createServerFn()
+export const getStudentFeeSummaryData = authServerFn
   .inputValidator(z.object({ studentId: z.string(), schoolYearId: z.string().optional() }))
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    const yearContext = await getSchoolYearContext()
-    const schoolYearId = data.schoolYearId || yearContext?.schoolYearId
+    const { schoolYear } = context
+    const schoolYearId = data.schoolYearId || schoolYear?.schoolYearId
     if (!schoolYearId)
-      throw new Error('No school year context')
+      return { success: false as const, error: 'Année scolaire non sélectionnée' }
 
-    return await getStudentFeeSummary(data.studentId, schoolYearId)
+    const result = await getStudentFeeSummary(data.studentId, schoolYearId)
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Get single student fee
  */
-export const getStudentFee = createServerFn()
+export const getStudentFee = authServerFn
   .inputValidator(z.string())
-  .handler(async ({ data: studentFeeId }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data: studentFeeId, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return await getStudentFeeById(studentFeeId)
+    const result = await getStudentFeeById(studentFeeId)
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Create student fee
  */
-export const createNewStudentFee = createServerFn()
+export const createNewStudentFee = authServerFn
   .inputValidator(createStudentFeeSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return await createStudentFee(data)
+    const result = await createStudentFee(data)
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Bulk create student fees
  */
-export const bulkCreateStudentFees = createServerFn()
+export const bulkCreateStudentFees = authServerFn
   .inputValidator(bulkCreateStudentFeesSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return await createStudentFeesBulk(data.fees)
+    const result = await createStudentFeesBulk(data.fees)
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Waive student fee
  */
-export const waiveExistingStudentFee = createServerFn()
+export const waiveExistingStudentFee = authServerFn
   .inputValidator(waiveFeeSchema)
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return await waiveStudentFee(data.studentFeeId, context.userId, data.reason)
+    const { school } = context
+    const result = await waiveStudentFee(data.studentFeeId, school.userId, data.reason)
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })
 
 /**
  * Get students with outstanding balance
  */
-export const getStudentsWithBalance = createServerFn()
+export const getStudentsWithBalance = authServerFn
   .inputValidator(z.object({ schoolYearId: z.string().optional() }).optional())
-  .handler(async ({ data }) => {
-    const context = await getSchoolContext()
-    if (!context)
-      throw new Error('No school context')
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
 
-    const yearContext = await getSchoolYearContext()
-    const schoolYearId = data?.schoolYearId || yearContext?.schoolYearId
+    const { school, schoolYear } = context
+    const schoolYearId = data?.schoolYearId || schoolYear?.schoolYearId
     if (!schoolYearId)
-      throw new Error('No school year context')
+      return { success: false as const, error: 'Année scolaire non sélectionnée' }
 
-    return await getStudentsWithOutstandingBalance(context.schoolId, schoolYearId)
+    const result = await getStudentsWithOutstandingBalance(school.schoolId, schoolYearId)
+    return result.match(
+      data => ({ success: true as const, data }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })

@@ -1,39 +1,43 @@
-import { Button } from '@workspace/ui/components/button'
+import type { Locales } from '@/i18n/i18n-types'
+import { buttonVariants } from '@workspace/ui/components/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu'
-import { useTranslation } from 'react-i18next'
+import { useI18nContext } from '@/i18n/i18n-react'
 
-const languages = [
+const languages: { code: Locales, name: string, flag: string }[] = [
   { code: 'fr', name: 'Français', flag: '🇫🇷' },
   { code: 'en', name: 'English', flag: '🇬🇧' },
 ]
 
 export function LanguageSwitcher() {
-  const { i18n } = useTranslation()
+  const { locale, setLocale } = useI18nContext()
 
   const currentLanguage
-    = languages.find(lang => lang.code === i18n.language) ?? languages[0]
+    = languages.find(lang => lang.code === locale) ?? languages[0]
 
-  const changeLanguage = (langCode: string) => {
-    i18n.changeLanguage(langCode)
+  const changeLanguage = (langCode: Locales) => {
+    setLocale(langCode)
   }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
         render={(
-          <Button variant="ghost" size="sm">
+          <button
+            type="button"
+            className={buttonVariants({ variant: 'ghost', size: 'sm' })}
+          >
             <span className="hidden sm:inline">
               {currentLanguage?.flag}
               {' '}
               {currentLanguage?.name}
             </span>
             <span className="sm:hidden">{currentLanguage?.flag}</span>
-          </Button>
+          </button>
         )}
       />
       <DropdownMenuContent align="end">
@@ -41,7 +45,7 @@ export function LanguageSwitcher() {
           <DropdownMenuItem
             key={lang.code}
             onClick={() => changeLanguage(lang.code)}
-            className={i18n.language === lang.code ? 'bg-accent' : ''}
+            className={locale === lang.code ? 'bg-accent' : ''}
           >
             <span className="mr-2">{lang.flag}</span>
             {lang.name}

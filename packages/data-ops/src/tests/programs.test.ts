@@ -30,27 +30,27 @@ vi.mock('../drizzle/db', () => ({
 
 describe('program Queries', () => {
   test('should get program templates', async () => {
-    const result = await getProgramTemplates({})
+    const result = (await getProgramTemplates({}))._unsafeUnwrap()
     expect(result).toBeDefined()
   })
 
   test('should get program template by id', async () => {
-    const result = await getProgramTemplateById('test-id')
+    const result = (await getProgramTemplateById('test-id'))._unsafeUnwrap()
     expect(result).toBeDefined()
   })
 
   test('should publish a program', async () => {
     // Mock implementation details would go here
     // For now we just check if the function exists and runs
-    await expect(publishProgram('test-id')).rejects.toThrow()
+    expect((await publishProgram('test-id')).isErr()).toBe(true)
   })
 
   test('should get program versions', async () => {
-    const result = await getProgramVersions('test-id')
+    const result = (await getProgramVersions('test-id'))._unsafeUnwrap()
     expect(result).toBeDefined()
   })
 
   test('should restore a program version', async () => {
-    await expect(restoreProgramVersion('version-id')).rejects.toThrow()
+    expect((await restoreProgramVersion('version-id')).isErr()).toBe(true)
   })
 })

@@ -1,5 +1,6 @@
+import type { StudentStatus } from '@repo/data-ops/drizzle/school-schema'
+import type { StudentWithDetails } from '@repo/data-ops/queries/students'
 import type { StudentFilters } from '@/lib/queries/students'
-import type { getStudents } from '@/school/functions/students'
 import {
   IconAdjustmentsHorizontal,
   IconChevronLeft,
@@ -87,8 +88,7 @@ const statusColors = {
   withdrawn: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
 }
 
-type StudentStatus = 'active' | 'graduated' | 'transferred' | 'withdrawn'
-type StudentItem = Awaited<ReturnType<typeof getStudents>>['data'][number]
+type StudentItem = StudentWithDetails
 
 export function StudentsList() {
   const t = useTranslations()
@@ -152,8 +152,9 @@ export function StudentsList() {
 
   const handleSelectAll = (checked: boolean) => {
     if (checked && data?.data) {
-      setSelectedRows(data.data.map(item => item.student.id))
+      setSelectedRows(data.data.map((item: StudentItem) => item.student.id))
     }
+
     else {
       setSelectedRows([])
     }
@@ -211,12 +212,14 @@ export function StudentsList() {
   const handleExport = async () => {
     setIsExporting(true)
     try {
-      const exportData = await exportStudents({ data: filters })
+      const result = await exportStudents({ data: filters })
 
-      if (exportData.length === 0) {
+      if (!result.success || result.data.length === 0) {
         toast.error(t.students.noDataToExport())
         return
       }
+
+      const exportData = result.data
 
       // Export to Excel with translated column names
       const excelBuffer = exportStudentsToExcel(exportData, {

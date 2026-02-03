@@ -1,3 +1,4 @@
+import { DatabaseError } from '@repo/data-ops/errors'
 import { getUserPermissionsBySchool } from '@repo/data-ops/queries/school-admin/users'
 import { getSchoolContext } from './school-context'
 
@@ -21,6 +22,9 @@ export type PermissionResource
     | 'school_subjects'
     | 'coefficients'
     | 'teacher_assignments'
+    | 'teacher_attendance'
+    | 'student_attendance'
+    | 'conduct_records'
   // Phase 15: Grading
     | 'student_grades'
 
@@ -35,7 +39,7 @@ export async function requirePermission(
   const context = await getSchoolContext()
 
   if (!context) {
-    throw new Error('Unauthorized: No school context')
+    throw new DatabaseError('UNAUTHORIZED', 'Unauthorized: No school context')
   }
 
   const { userId, schoolId } = context
@@ -46,7 +50,7 @@ export async function requirePermission(
   const resourcePermissions = permissions[resource]
 
   if (!resourcePermissions || !resourcePermissions.includes(action)) {
-    throw new Error(`Forbidden: You don't have permission to ${action} ${resource}`)
+    throw new DatabaseError('PERMISSION_DENIED', `Forbidden: You don't have permission to ${action} ${resource}`)
   }
 }
 

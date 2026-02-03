@@ -1,5 +1,7 @@
 import type { ClassInsert, ClassStatus } from '../drizzle/school-schema'
+import { databaseLogger, tapLogErr } from '@repo/logger'
 import { and, eq, ilike, sql } from 'drizzle-orm'
+import { ResultAsync } from 'neverthrow'
 import { getDb } from '../database/setup'
 import { grades, series } from '../drizzle/core-schema'
 import {
@@ -12,6 +14,7 @@ import {
   teachers,
   users,
 } from '../drizzle/school-schema'
+import { DatabaseError, dbError } from '../errors'
 import { checkClassroomAvailability } from './classrooms'
 
 export interface ClassFilters {
@@ -23,151 +26,202 @@ export interface ClassFilters {
   search?: string
 }
 
-export async function getClasses(filters: ClassFilters) {
+export function getClasses(filters: ClassFilters) {
   const db = getDb()
-  const conditions = [eq(classes.schoolId, filters.schoolId)]
+  return ResultAsync.fromPromise(
+    (async () => {
+      const conditions = [eq(classes.schoolId, filters.schoolId)]
 
-  if (filters.schoolYearId) {
-    conditions.push(eq(classes.schoolYearId, filters.schoolYearId))
-  }
+      if (filters.schoolYearId) {
+        conditions.push(eq(classes.schoolYearId, filters.schoolYearId))
+      }
 
-  if (filters.gradeId) {
-    conditions.push(eq(classes.gradeId, filters.gradeId))
-  }
+      if (filters.gradeId) {
+        conditions.push(eq(classes.gradeId, filters.gradeId))
+      }
 
-  if (filters.seriesId) {
-    conditions.push(eq(classes.seriesId, filters.seriesId))
-  }
+      if (filters.seriesId) {
+        conditions.push(eq(classes.seriesId, filters.seriesId))
+      }
 
-  if (filters.status) {
-    conditions.push(eq(classes.status, filters.status))
-  }
+      if (filters.status) {
+        conditions.push(eq(classes.status, filters.status))
+      }
 
-  if (filters.search) {
-    conditions.push(ilike(classes.section, `%${filters.search}%`))
-  }
+      if (filters.search) {
+        conditions.push(ilike(classes.section, `%${filters.search}%`))
+      }
 
-  return await db
-    .select({
-      class: classes,
-      grade: grades,
-      series,
-      classroom: classrooms,
-      homeroomTeacher: {
-        id: teachers.id,
-        name: users.name,
-      },
-      studentsCount: sql<number>`COUNT(DISTINCT ${enrollments.id})`.as('students_count'),
-      subjectsCount: sql<number>`COUNT(DISTINCT ${classSubjects.id})`.as('subjects_count'),
-    })
-    .from(classes)
-    .innerJoin(grades, eq(classes.gradeId, grades.id))
-    .leftJoin(series, eq(classes.seriesId, series.id))
-    .leftJoin(classrooms, eq(classes.classroomId, classrooms.id))
-    .leftJoin(teachers, eq(classes.homeroomTeacherId, teachers.id))
-    .leftJoin(users, eq(teachers.userId, users.id))
-    .leftJoin(
-      enrollments,
-      and(eq(enrollments.classId, classes.id), eq(enrollments.status, 'confirmed')),
-    )
-    .leftJoin(classSubjects, eq(classSubjects.classId, classes.id))
-    .where(and(...conditions))
-    .groupBy(classes.id, grades.id, series.id, classrooms.id, teachers.id, users.id)
-    .orderBy(grades.order, classes.section)
+      return await db
+        .select({
+          class: classes,
+          grade: grades,
+          series,
+          classroom: classrooms,
+          homeroomTeacher: {
+            id: teachers.id,
+            name: users.name,
+          },
+          studentsCount: sql<number>`COUNT(DISTINCT ${enrollments.id})`.as('students_count'),
+          subjectsCount: sql<number>`COUNT(DISTINCT ${classSubjects.id})`.as('subjects_count'),
+        })
+        .from(classes)
+        .innerJoin(grades, eq(classes.gradeId, grades.id))
+        .leftJoin(series, eq(classes.seriesId, series.id))
+        .leftJoin(classrooms, eq(classes.classroomId, classrooms.id))
+        .leftJoin(teachers, eq(classes.homeroomTeacherId, teachers.id))
+        .leftJoin(users, eq(teachers.userId, users.id))
+        .leftJoin(
+          enrollments,
+          and(eq(enrollments.classId, classes.id), eq(enrollments.status, 'confirmed')),
+        )
+        .leftJoin(classSubjects, eq(classSubjects.classId, classes.id))
+        .where(and(...conditions))
+        .groupBy(classes.id, grades.id, series.id, classrooms.id, teachers.id, users.id)
+        .orderBy(grades.order, classes.section)
+    })(),
+    e => DatabaseError.from(e),
+  ).mapErr(tapLogErr(databaseLogger, { ...filters, action: 'Getting classes' }))
 }
 
-export async function getClassById(id: string) {
+export function getClassById(schoolId: string, id: string) {
   const db = getDb()
-  const [classData] = await db
-    .select({
-      class: classes,
-      grade: grades,
-      series,
-      classroom: classrooms,
-      homeroomTeacher: {
-        id: teachers.id,
-        name: users.name,
-        email: users.email,
-      },
-      studentsCount: sql<number>`COUNT(DISTINCT ${enrollments.id})`.as('students_count'),
-      boysCount: sql<number>`COUNT(DISTINCT CASE WHEN ${students.gender} = 'M' THEN ${students.id} END)`.as(
-        'boys_count',
-      ),
-      girlsCount: sql<number>`COUNT(DISTINCT CASE WHEN ${students.gender} = 'F' THEN ${students.id} END)`.as(
-        'girls_count',
-      ),
-    })
-    .from(classes)
-    .innerJoin(grades, eq(classes.gradeId, grades.id))
-    .leftJoin(series, eq(classes.seriesId, series.id))
-    .leftJoin(classrooms, eq(classes.classroomId, classrooms.id))
-    .leftJoin(teachers, eq(classes.homeroomTeacherId, teachers.id))
-    .leftJoin(users, eq(teachers.userId, users.id))
-    .leftJoin(
-      enrollments,
-      and(eq(enrollments.classId, classes.id), eq(enrollments.status, 'confirmed')),
-    )
-    .leftJoin(students, eq(enrollments.studentId, students.id))
-    .where(eq(classes.id, id))
-    .groupBy(classes.id, grades.id, series.id, classrooms.id, teachers.id, users.id)
+  return ResultAsync.fromPromise(
+    (async () => {
+      const [classData] = await db
+        .select({
+          class: classes,
+          grade: grades,
+          series,
+          classroom: classrooms,
+          homeroomTeacher: {
+            id: teachers.id,
+            name: users.name,
+            email: users.email,
+          },
+          studentsCount: sql<number>`COUNT(DISTINCT ${enrollments.id})`.as('students_count'),
+          boysCount: sql<number>`COUNT(DISTINCT CASE WHEN ${students.gender} = 'M' THEN ${students.id} END)`.as(
+            'boys_count',
+          ),
+          girlsCount: sql<number>`COUNT(DISTINCT CASE WHEN ${students.gender} = 'F' THEN ${students.id} END)`.as(
+            'girls_count',
+          ),
+        })
+        .from(classes)
+        .innerJoin(grades, eq(classes.gradeId, grades.id))
+        .leftJoin(series, eq(classes.seriesId, series.id))
+        .leftJoin(classrooms, eq(classes.classroomId, classrooms.id))
+        .leftJoin(teachers, eq(classes.homeroomTeacherId, teachers.id))
+        .leftJoin(users, eq(teachers.userId, users.id))
+        .leftJoin(
+          enrollments,
+          and(eq(enrollments.classId, classes.id), eq(enrollments.status, 'confirmed')),
+        )
+        .leftJoin(students, eq(enrollments.studentId, students.id))
+        .where(and(eq(classes.id, id), eq(classes.schoolId, schoolId)))
+        .groupBy(classes.id, grades.id, series.id, classrooms.id, teachers.id, users.id)
 
-  return classData
+      if (!classData) {
+        throw dbError('NOT_FOUND', `Class with ID ${id} not found in this school`)
+      }
+
+      return classData
+    })(),
+    e => DatabaseError.from(e),
+  ).mapErr(tapLogErr(databaseLogger, { schoolId, id, action: 'Getting class by ID' }))
 }
 
-export async function createClass(data: ClassInsert) {
+export function createClass(schoolId: string, data: ClassInsert) {
   const db = getDb()
-  // Validate unique constraint
-  const existing = await db
-    .select()
-    .from(classes)
-    .where(
-      and(
-        eq(classes.schoolYearId, data.schoolYearId),
-        eq(classes.gradeId, data.gradeId),
-        data.seriesId ? eq(classes.seriesId, data.seriesId) : sql`${classes.seriesId} IS NULL`,
-        eq(classes.section, data.section),
-      ),
-    )
-    .limit(1)
+  return ResultAsync.fromPromise(
+    (async () => {
+      if (data.schoolId !== schoolId) {
+        throw dbError('PERMISSION_DENIED', 'Cannot create class for another school')
+      }
 
-  if (existing.length > 0) {
-    throw new Error('Class with this grade, series, and section already exists for this school year')
-  }
+      // Validate unique constraint
+      const existing = await db
+        .select()
+        .from(classes)
+        .where(
+          and(
+            eq(classes.schoolYearId, data.schoolYearId),
+            eq(classes.gradeId, data.gradeId),
+            data.seriesId ? eq(classes.seriesId, data.seriesId) : sql`${classes.seriesId} IS NULL`,
+            eq(classes.section, data.section),
+            eq(classes.schoolId, schoolId),
+          ),
+        )
+        .limit(1)
 
-  // Validate classroom availability
-  if (data.classroomId) {
-    const availability = await checkClassroomAvailability(data.classroomId, data.schoolYearId)
-    if (!availability.available) {
-      throw new Error(`Classroom is already assigned to ${availability.assignedTo}`)
-    }
-  }
+      if (existing.length > 0) {
+        throw dbError('CONFLICT', 'Class with this grade, series, and section already exists for this school year')
+      }
 
-  const [newClass] = await db.insert(classes).values(data).returning()
-  return newClass
+      // Validate classroom availability
+      if (data.classroomId) {
+        const availabilityResult = await checkClassroomAvailability(data.classroomId, data.schoolYearId)
+        if (availabilityResult.isErr()) {
+          throw availabilityResult.error
+        }
+        const availability = availabilityResult.value
+        if (!availability.available) {
+          throw dbError('VALIDATION_ERROR', `Classroom is already assigned to ${availability.assignedTo}`)
+        }
+      }
+
+      const [newClass] = await db.insert(classes).values(data).returning()
+      return newClass
+    })(),
+    e => DatabaseError.from(e),
+  ).mapErr(tapLogErr(databaseLogger, { schoolId, data, action: 'Creating class' }))
 }
 
-export async function updateClass(id: string, data: Partial<ClassInsert>) {
+export function updateClass(schoolId: string, id: string, data: Partial<ClassInsert>) {
   const db = getDb()
-  const [updatedClass] = await db
-    .update(classes)
-    .set({ ...data, updatedAt: new Date() })
-    .where(eq(classes.id, id))
-    .returning()
-  return updatedClass
+  return ResultAsync.fromPromise(
+    (async () => {
+      // Allow implicit security by adding schoolId to where clause
+      const [updatedClass] = await db
+        .update(classes)
+        .set({ ...data, updatedAt: new Date() })
+        .where(and(eq(classes.id, id), eq(classes.schoolId, schoolId)))
+        .returning()
+
+      if (!updatedClass) {
+        throw dbError('NOT_FOUND', `Class with ID ${id} not found or permission denied`)
+      }
+
+      return updatedClass
+    })(),
+    e => DatabaseError.from(e),
+  ).mapErr(tapLogErr(databaseLogger, { schoolId, id, data, action: 'Updating class' }))
 }
 
-export async function deleteClass(id: string) {
+export function deleteClass(schoolId: string, id: string) {
   const db = getDb()
-  // Check if class has enrolled students
-  const [enrollment] = await db
-    .select()
-    .from(enrollments)
-    .where(and(eq(enrollments.classId, id), eq(enrollments.status, 'confirmed')))
-    .limit(1)
+  return ResultAsync.fromPromise(
+    (async () => {
+      // Check if class has enrolled students
+      const [enrollment] = await db
+        .select()
+        .from(enrollments)
+        .where(and(eq(enrollments.classId, id), eq(enrollments.status, 'confirmed')))
+        .limit(1)
 
-  if (enrollment) {
-    throw new Error('Cannot delete class with enrolled students')
-  }
+      if (enrollment) {
+        throw dbError('VALIDATION_ERROR', 'Cannot delete class with enrolled students')
+      }
 
-  await db.delete(classes).where(eq(classes.id, id))
+      const [deleted] = await db.delete(classes)
+        .where(and(eq(classes.id, id), eq(classes.schoolId, schoolId)))
+        .returning()
+
+      if (!deleted) {
+        throw dbError('NOT_FOUND', `Class with ID ${id} not found or permission denied`)
+      }
+      return deleted
+    })(),
+    e => DatabaseError.from(e),
+  ).mapErr(tapLogErr(databaseLogger, { schoolId, id, action: 'Deleting class' }))
 }

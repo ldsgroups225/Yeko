@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import * as React from 'react'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { Header } from './header'
 
@@ -32,55 +33,45 @@ vi.mock('@/lib/auth-client', () => ({
 
 // Mock Breadcrumbs component
 vi.mock('./breadcrumbs', () => ({
-  Breadcrumbs: () => <div data-testid="breadcrumbs">Breadcrumbs</div>,
+  Breadcrumbs: () => React.createElement('div', { 'data-testid': 'breadcrumbs' }, 'Breadcrumbs'),
 }))
 
 // Mock AccountDialog component
 vi.mock('@/components/auth/account-dialog', () => ({
-  AccountDialog: ({ children }: { children: React.ReactNode }) => <div data-testid="account-dialog">{children}</div>,
+  AccountDialog: ({ children }: { children: React.ReactNode }) =>
+    React.createElement('div', { 'data-testid': 'account-dialog' }, children),
 }))
 
 // Mock UI components
 vi.mock('@workspace/ui/components/button', () => ({
-  Button: ({ children, onClick, className, ...props }: any) => (
-    <button
-      type="button"
-      onClick={onClick}
-      className={className}
-      data-testid={props['data-testid'] || 'button'}
-      {...props}
-    >
-      {children}
-    </button>
-  ),
+  Button: ({ children, onClick, className, ...props }: any) =>
+    React.createElement('button', {
+      'type': 'button',
+      onClick,
+      className,
+      'data-testid': props['data-testid'] || 'button',
+      ...props,
+    }, children),
 }))
 
 vi.mock('@workspace/ui/components/input', () => ({
-  Input: ({ onChange, value, placeholder, ...props }: any) => (
-    <input
-      onChange={onChange}
-      value={value}
-      placeholder={placeholder}
-      data-testid={props['data-testid'] || 'input'}
-      {...props}
-    />
-  ),
+  Input: ({ onChange, value, placeholder, ...props }: any) =>
+    React.createElement('input', {
+      onChange,
+      value,
+      placeholder,
+      'data-testid': props['data-testid'] || 'input',
+      ...props,
+    }),
 }))
 
 vi.mock('@workspace/ui/components/avatar', () => ({
-  Avatar: ({ children, className, ...props }: any) => (
-    <div className={className} data-testid="avatar" {...props}>
-      {children}
-    </div>
-  ),
-  AvatarImage: ({ src, alt, ...props }: any) => (
-    <img src={src} alt={alt} data-testid="avatar-image" {...props} />
-  ),
-  AvatarFallback: ({ children, className, ...props }: any) => (
-    <div className={className} data-testid="avatar-fallback" {...props}>
-      {children}
-    </div>
-  ),
+  Avatar: ({ children, className, ...props }: any) =>
+    React.createElement('div', { className, 'data-testid': 'avatar', ...props }, children),
+  AvatarImage: ({ src, alt, ...props }: any) =>
+    React.createElement('img', { src, alt, 'data-testid': 'avatar-image', ...props }),
+  AvatarFallback: ({ children, className, ...props }: any) =>
+    React.createElement('div', { className, 'data-testid': 'avatar-fallback', ...props }, children),
 }))
 
 // Mock cn utility
@@ -90,8 +81,10 @@ vi.mock('@/lib/utils', () => ({
 
 // Mock SidebarProvider
 vi.mock('@workspace/ui/components/sidebar', () => ({
-  SidebarProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  SidebarTrigger: ({ children, ...props }: any) => <button type="button" {...props}>{children}</button>,
+  SidebarProvider: ({ children }: { children: React.ReactNode }) =>
+    React.createElement('div', null, children),
+  SidebarTrigger: ({ children, ...props }: any) =>
+    React.createElement('button', { type: 'button', ...props }, children),
   useSidebar: () => ({
     open: true,
     setOpen: vi.fn(),
@@ -104,26 +97,18 @@ vi.mock('@workspace/ui/components/sidebar', () => ({
 
 // Mock @tabler/icons-react icons with data-testid attributes
 vi.mock('@tabler/icons-react', () => ({
-  IconMenu: ({ className }: { className?: string }) => (
-    <svg className={className} data-testid="icon-menu">
-      <path d="M4 6h16a2 2 0 012-2 2v12a2 2 0 01-2-2H4a2 2 0 00-2-2v-12a2 2 0 012 2z" />
-    </svg>
-  ),
-  IconSearch: ({ className }: { className?: string }) => (
-    <svg className={className} data-testid="icon-search">
-      <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 11 14 0 7-7-7-7a7 7 0 00-14 0 14-14zm0 14a1 1 0 00-2-2v3a1 1 0 012-2H3" />
-    </svg>
-  ),
-  IconBell: ({ className }: { className?: string }) => (
-    <svg className={className} data-testid="icon-bell">
-      <path d="M18 8A6 6 0 016-6v2c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2v-2a6 6 0 016 6z" />
-    </svg>
-  ),
-  IconSettings: ({ className }: { className?: string }) => (
-    <svg className={className} data-testid="icon-settings">
-      <path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 002 2h.44a2 2 0 002-2V4a2 2 0 00-2-2h-.44z" />
-    </svg>
-  ),
+  IconMenu: ({ className }: { className?: string }) =>
+    React.createElement('svg', { className, 'data-testid': 'icon-menu' }, React.createElement('path', { d: 'M4 6h16a2 2 0 012-2 2v12a2 2 0 01-2-2H4a2 2 0 00-2-2v-12a2 2 0 012 2z' }),
+    ),
+  IconSearch: ({ className }: { className?: string }) =>
+    React.createElement('svg', { className, 'data-testid': 'icon-search' }, React.createElement('path', { d: 'M21 21l-6-6m2-5a7 7 0 11-14 0 11 14 0 7-7-7-7a7 7 0 00-14 0 14-14zm0 14a1 1 0 00-2-2v3a1 1 0 012-2H3' }),
+    ),
+  IconBell: ({ className }: { className?: string }) =>
+    React.createElement('svg', { className, 'data-testid': 'icon-bell' }, React.createElement('path', { d: 'M18 8A6 6 0 016-6v2c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2v-2a6 6 0 016 6z' }),
+    ),
+  IconSettings: ({ className }: { className?: string }) =>
+    React.createElement('svg', { className, 'data-testid': 'icon-settings' }, React.createElement('path', { d: 'M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 002 2h.44a2 2 0 002-2V4a2 2 0 00-2-2h-.44z' }),
+    ),
 }))
 
 describe('header Component', () => {

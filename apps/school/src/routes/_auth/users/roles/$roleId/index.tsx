@@ -25,11 +25,13 @@ function RoleDetailPage() {
   const { roleId } = Route.useParams()
   const roleData = Route.useLoaderData()
 
-  const { data: role } = useSuspenseQuery({
+  const { data: roleResult } = useSuspenseQuery({
     queryKey: ['role', roleId],
     queryFn: () => getRole({ data: roleId }),
     initialData: roleData,
   })
+
+  const role = roleResult?.success ? roleResult.data : null
 
   if (!role) {
     return <div>{t.hr.roles.notFound()}</div>

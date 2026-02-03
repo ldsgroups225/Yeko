@@ -6,7 +6,10 @@ import type {
   SubjectCategory,
   Track,
 } from '../drizzle/core-schema'
+import { databaseLogger, tapLogErr } from '@repo/logger'
 import { and, asc, count, eq, ilike, or } from 'drizzle-orm'
+
+import { ResultAsync } from 'neverthrow'
 import { getDb } from '../database/setup'
 import {
   educationLevels,
@@ -15,19 +18,23 @@ import {
   subjects,
   tracks,
 } from '../drizzle/core-schema'
+import { DatabaseError } from '../errors'
 
 // ===== EDUCATION LEVELS =====
 
-export async function getEducationLevels(): Promise<EducationLevel[]> {
+export function getEducationLevels(): ResultAsync<EducationLevel[], DatabaseError> {
   const db = getDb()
-  return db.select().from(educationLevels).orderBy(asc(educationLevels.order))
+  return ResultAsync.fromPromise(
+    db.select().from(educationLevels).orderBy(asc(educationLevels.order)),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch education levels'),
+  ).mapErr(tapLogErr(databaseLogger, {}))
 }
 
 // ===== TRACKS =====
 
-export async function getTracks(options?: {
+export function getTracks(options?: {
   educationLevelId?: number
-}): Promise<Track[]> {
+}): ResultAsync<Track[], DatabaseError> {
   const db = getDb()
   const query = db.select().from(tracks)
 
@@ -35,64 +42,78 @@ export async function getTracks(options?: {
     query.where(eq(tracks.educationLevelId, options.educationLevelId))
   }
 
-  return query.orderBy(asc(tracks.name))
+  return ResultAsync.fromPromise(
+    query.orderBy(asc(tracks.name)),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch tracks'),
+  ).mapErr(tapLogErr(databaseLogger, options || {}))
 }
 
-export async function getTrackById(id: string): Promise<Track | null> {
+export function getTrackById(id: string): ResultAsync<Track | null, DatabaseError> {
   const db = getDb()
-  const [track] = await db.select().from(tracks).where(eq(tracks.id, id))
-  return track || null
+  return ResultAsync.fromPromise(
+    db.select().from(tracks).where(eq(tracks.id, id)).then(rows => rows[0] ?? null),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch track by ID'),
+  ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
-export async function createTrack(
+export function createTrack(
   data: Omit<typeof tracks.$inferInsert, 'id' | 'createdAt' | 'updatedAt'>,
-): Promise<Track> {
+): ResultAsync<Track, DatabaseError> {
   const db = getDb()
-  const [newTrack] = await db
-    .insert(tracks)
-    .values({
-      id: crypto.randomUUID(),
-      ...data,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    })
-    .returning()
-  return newTrack!
+  return ResultAsync.fromPromise(
+    db
+      .insert(tracks)
+      .values({
+        id: crypto.randomUUID(),
+        ...data,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning()
+      .then(rows => rows[0]!),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create track'),
+  ).mapErr(tapLogErr(databaseLogger, data))
 }
 
-export async function updateTrack(
+export function updateTrack(
   id: string,
   data: Partial<
     Omit<typeof tracks.$inferInsert, 'id' | 'createdAt' | 'updatedAt'>
   >,
-): Promise<Track> {
+): ResultAsync<Track, DatabaseError> {
   const db = getDb()
-  const [updatedTrack] = await db
-    .update(tracks)
-    .set({
-      ...data,
-      updatedAt: new Date(),
-    })
-    .where(eq(tracks.id, id))
-    .returning()
-
-  if (!updatedTrack) {
-    throw new Error(`Track with id ${id} not found`)
-  }
-
-  return updatedTrack
+  return ResultAsync.fromPromise(
+    db
+      .update(tracks)
+      .set({
+        ...data,
+        updatedAt: new Date(),
+      })
+      .where(eq(tracks.id, id))
+      .returning()
+      .then((rows) => {
+        if (rows.length === 0) {
+          throw new Error(`Track with id ${id} not found`)
+        }
+        return rows[0]!
+      }),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to update track'),
+  ).mapErr(tapLogErr(databaseLogger, { id, ...data }))
 }
 
-export async function deleteTrack(id: string): Promise<void> {
+export function deleteTrack(id: string): ResultAsync<void, DatabaseError> {
   const db = getDb()
-  await db.delete(tracks).where(eq(tracks.id, id))
+  return ResultAsync.fromPromise(
+    db.delete(tracks).where(eq(tracks.id, id)).then(() => {}),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to delete track'),
+  ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
 // ===== GRADES =====
 
-export async function getGrades(options?: {
+export function getGrades(options?: {
   trackId?: string
-}): Promise<Grade[]> {
+}): ResultAsync<Grade[], DatabaseError> {
   const db = getDb()
   const query = db.select().from(grades)
 
@@ -100,84 +121,101 @@ export async function getGrades(options?: {
     query.where(eq(grades.trackId, options.trackId))
   }
 
-  return query.orderBy(asc(grades.order))
+  return ResultAsync.fromPromise(
+    query.orderBy(asc(grades.order)),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch grades'),
+  ).mapErr(tapLogErr(databaseLogger, options || {}))
 }
 
-export async function getGradeById(id: string): Promise<Grade | null> {
+export function getGradeById(id: string): ResultAsync<Grade | null, DatabaseError> {
   const db = getDb()
-  const [grade] = await db.select().from(grades).where(eq(grades.id, id))
-  return grade || null
+  return ResultAsync.fromPromise(
+    db.select().from(grades).where(eq(grades.id, id)).then(rows => rows[0] ?? null),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch grade by ID'),
+  ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
-export async function createGrade(
+export function createGrade(
   data: Omit<typeof grades.$inferInsert, 'id' | 'createdAt' | 'updatedAt'>,
-): Promise<Grade> {
+): ResultAsync<Grade, DatabaseError> {
   const db = getDb()
-  const [newGrade] = await db
-    .insert(grades)
-    .values({
-      id: crypto.randomUUID(),
-      ...data,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    })
-    .returning()
-  return newGrade!
+  return ResultAsync.fromPromise(
+    db
+      .insert(grades)
+      .values({
+        id: crypto.randomUUID(),
+        ...data,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning()
+      .then(rows => rows[0]!),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create grade'),
+  ).mapErr(tapLogErr(databaseLogger, data))
 }
 
-export async function updateGrade(
+export function updateGrade(
   id: string,
   data: Partial<
     Omit<typeof grades.$inferInsert, 'id' | 'createdAt' | 'updatedAt'>
   >,
-): Promise<Grade> {
+): ResultAsync<Grade, DatabaseError> {
   const db = getDb()
-  const [updatedGrade] = await db
-    .update(grades)
-    .set({
-      ...data,
-      updatedAt: new Date(),
-    })
-    .where(eq(grades.id, id))
-    .returning()
-
-  if (!updatedGrade) {
-    throw new Error(`Grade with id ${id} not found`)
-  }
-
-  return updatedGrade
+  return ResultAsync.fromPromise(
+    db
+      .update(grades)
+      .set({
+        ...data,
+        updatedAt: new Date(),
+      })
+      .where(eq(grades.id, id))
+      .returning()
+      .then((rows) => {
+        if (rows.length === 0) {
+          throw new Error(`Grade with id ${id} not found`)
+        }
+        return rows[0]!
+      }),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to update grade'),
+  ).mapErr(tapLogErr(databaseLogger, { id, ...data }))
 }
 
-export async function deleteGrade(id: string): Promise<void> {
+export function deleteGrade(id: string): ResultAsync<void, DatabaseError> {
   const db = getDb()
-  await db.delete(grades).where(eq(grades.id, id))
+  return ResultAsync.fromPromise(
+    db.delete(grades).where(eq(grades.id, id)).then(() => {}),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to delete grade'),
+  ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
-export async function bulkUpdateGradesOrder(
+export function bulkUpdateGradesOrder(
   items: { id: string, order: number }[],
-): Promise<void> {
+): ResultAsync<void, DatabaseError> {
   const db = getDb()
   if (items.length === 0)
-    return
+    return ResultAsync.fromPromise(Promise.resolve(), err => DatabaseError.from(err))
 
-  await Promise.all(
-    items.map(item =>
-      db
-        .update(grades)
-        .set({
-          order: item.order,
-          updatedAt: new Date(),
-        })
-        .where(eq(grades.id, item.id)),
-    ),
-  )
+  return ResultAsync.fromPromise(
+    Promise.all(
+      items.map(item =>
+        db
+          .update(grades)
+          .set({
+            order: item.order,
+            updatedAt: new Date(),
+          })
+          .where(eq(grades.id, item.id)),
+      ),
+    ).then(() => {}),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to bulk update grades order'),
+  ).mapErr(tapLogErr(databaseLogger, { items }))
 }
 
 // ===== SERIES =====
 
-export async function getSeries(options?: {
+export function getSeries(options?: {
   trackId?: string
-}): Promise<Serie[]> {
+}): ResultAsync<Serie[], DatabaseError> {
   const db = getDb()
   const query = db.select().from(series)
 
@@ -185,65 +223,79 @@ export async function getSeries(options?: {
     query.where(eq(series.trackId, options.trackId))
   }
 
-  return query.orderBy(asc(series.name))
+  return ResultAsync.fromPromise(
+    query.orderBy(asc(series.name)),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch series'),
+  ).mapErr(tapLogErr(databaseLogger, options || {}))
 }
 
-export async function getSerieById(id: string): Promise<Serie | null> {
+export function getSerieById(id: string): ResultAsync<Serie | null, DatabaseError> {
   const db = getDb()
-  const [serie] = await db.select().from(series).where(eq(series.id, id))
-  return serie || null
+  return ResultAsync.fromPromise(
+    db.select().from(series).where(eq(series.id, id)).then(rows => rows[0] ?? null),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch serie by ID'),
+  ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
-export async function createSerie(
+export function createSerie(
   data: Omit<typeof series.$inferInsert, 'id' | 'createdAt' | 'updatedAt'>,
-): Promise<Serie> {
+): ResultAsync<Serie, DatabaseError> {
   const db = getDb()
-  const [newSerie] = await db
-    .insert(series)
-    .values({
-      id: crypto.randomUUID(),
-      ...data,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    })
-    .returning()
-  return newSerie!
+  return ResultAsync.fromPromise(
+    db
+      .insert(series)
+      .values({
+        id: crypto.randomUUID(),
+        ...data,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning()
+      .then(rows => rows[0]!),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create serie'),
+  ).mapErr(tapLogErr(databaseLogger, data))
 }
 
-export async function updateSerie(
+export function updateSerie(
   id: string,
   data: Partial<
     Omit<typeof series.$inferInsert, 'id' | 'createdAt' | 'updatedAt'>
   >,
-): Promise<Serie> {
+): ResultAsync<Serie, DatabaseError> {
   const db = getDb()
-  const [updatedSerie] = await db
-    .update(series)
-    .set({
-      ...data,
-      updatedAt: new Date(),
-    })
-    .where(eq(series.id, id))
-    .returning()
-
-  if (!updatedSerie) {
-    throw new Error(`Serie with id ${id} not found`)
-  }
-
-  return updatedSerie
+  return ResultAsync.fromPromise(
+    db
+      .update(series)
+      .set({
+        ...data,
+        updatedAt: new Date(),
+      })
+      .where(eq(series.id, id))
+      .returning()
+      .then((rows) => {
+        if (rows.length === 0) {
+          throw new Error(`Serie with id ${id} not found`)
+        }
+        return rows[0]!
+      }),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to update serie'),
+  ).mapErr(tapLogErr(databaseLogger, { id, ...data }))
 }
 
-export async function deleteSerie(id: string): Promise<void> {
+export function deleteSerie(id: string): ResultAsync<void, DatabaseError> {
   const db = getDb()
-  await db.delete(series).where(eq(series.id, id))
+  return ResultAsync.fromPromise(
+    db.delete(series).where(eq(series.id, id)).then(() => {}),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to delete serie'),
+  ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
-export async function bulkCreateSeries(
+export function bulkCreateSeries(
   data: Omit<typeof series.$inferInsert, 'id' | 'createdAt' | 'updatedAt'>[],
-): Promise<Serie[]> {
+): ResultAsync<Serie[], DatabaseError> {
   const db = getDb()
   if (data.length === 0)
-    return []
+    return ResultAsync.fromPromise(Promise.resolve([]), err => DatabaseError.from(err))
 
   const values = data.map(item => ({
     id: crypto.randomUUID(),
@@ -252,19 +304,20 @@ export async function bulkCreateSeries(
     updatedAt: new Date(),
   }))
 
-  const newSeries = await db.insert(series).values(values).returning()
-
-  return newSeries
+  return ResultAsync.fromPromise(
+    db.insert(series).values(values).returning(),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to bulk create series'),
+  ).mapErr(tapLogErr(databaseLogger, { data }))
 }
 
 // ===== SUBJECTS =====
 
-export async function getSubjects(options?: {
+export function getSubjects(options?: {
   category?: SubjectCategory
   search?: string
   page?: number
   limit?: number
-}): Promise<{
+}): ResultAsync<{
   subjects: Subject[]
   pagination: {
     total: number
@@ -272,7 +325,7 @@ export async function getSubjects(options?: {
     limit: number
     totalPages: number
   }
-}> {
+}, DatabaseError> {
   const db = getDb()
   const { category, search, page = 1, limit = 20 } = options || {}
   const offset = (page - 1) * limit
@@ -295,90 +348,106 @@ export async function getSubjects(options?: {
 
   const whereClause = conditions.length > 0 ? and(...conditions) : undefined
 
-  // Get total count
-  const [countResult] = await db
-    .select({ count: count() })
-    .from(subjects)
-    .where(whereClause)
+  return ResultAsync.fromPromise(
+    (async () => {
+      // Get total count
+      const [countResult] = await db
+        .select({ count: count() })
+        .from(subjects)
+        .where(whereClause)
 
-  const total = countResult?.count || 0
+      const total = countResult?.count || 0
 
-  // Get subjects with stable ordering
-  const subjectsList = await db
-    .select()
-    .from(subjects)
-    .where(whereClause)
-    .orderBy(asc(subjects.name), asc(subjects.id)) // Add id as secondary sort for stability
-    .limit(limit)
-    .offset(offset)
+      // Get subjects with stable ordering
+      const subjectsList = await db
+        .select()
+        .from(subjects)
+        .where(whereClause)
+        .orderBy(asc(subjects.name), asc(subjects.id)) // Add id as secondary sort for stability
+        .limit(limit)
+        .offset(offset)
 
-  return {
-    subjects: subjectsList,
-    pagination: {
-      page,
-      limit,
-      total,
-      totalPages: Math.ceil(total / limit),
-    },
-  }
+      return {
+        subjects: subjectsList,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
+      }
+    })(),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch subjects'),
+  ).mapErr(tapLogErr(databaseLogger, options || {}))
 }
 
-export async function getSubjectById(id: string): Promise<Subject | null> {
+export function getSubjectById(id: string): ResultAsync<Subject | null, DatabaseError> {
   const db = getDb()
-  const [subject] = await db.select().from(subjects).where(eq(subjects.id, id))
-  return subject || null
+  return ResultAsync.fromPromise(
+    db.select().from(subjects).where(eq(subjects.id, id)).then(rows => rows[0] ?? null),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch subject by ID'),
+  ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
-export async function createSubject(
+export function createSubject(
   data: Omit<typeof subjects.$inferInsert, 'id' | 'createdAt' | 'updatedAt'>,
-): Promise<Subject> {
+): ResultAsync<Subject, DatabaseError> {
   const db = getDb()
-  const [newSubject] = await db
-    .insert(subjects)
-    .values({
-      id: crypto.randomUUID(),
-      ...data,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    })
-    .returning()
-  return newSubject!
+  return ResultAsync.fromPromise(
+    db
+      .insert(subjects)
+      .values({
+        id: crypto.randomUUID(),
+        ...data,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning()
+      .then(rows => rows[0]!),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create subject'),
+  ).mapErr(tapLogErr(databaseLogger, data))
 }
 
-export async function updateSubject(
+export function updateSubject(
   id: string,
   data: Partial<
     Omit<typeof subjects.$inferInsert, 'id' | 'createdAt' | 'updatedAt'>
   >,
-): Promise<Subject> {
+): ResultAsync<Subject, DatabaseError> {
   const db = getDb()
-  const [updatedSubject] = await db
-    .update(subjects)
-    .set({
-      ...data,
-      updatedAt: new Date(),
-    })
-    .where(eq(subjects.id, id))
-    .returning()
-
-  if (!updatedSubject) {
-    throw new Error(`Subject with id ${id} not found`)
-  }
-
-  return updatedSubject
+  return ResultAsync.fromPromise(
+    db
+      .update(subjects)
+      .set({
+        ...data,
+        updatedAt: new Date(),
+      })
+      .where(eq(subjects.id, id))
+      .returning()
+      .then((rows) => {
+        if (rows.length === 0) {
+          throw new Error(`Subject with id ${id} not found`)
+        }
+        return rows[0]!
+      }),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to update subject'),
+  ).mapErr(tapLogErr(databaseLogger, { id, ...data }))
 }
 
-export async function deleteSubject(id: string): Promise<void> {
+export function deleteSubject(id: string): ResultAsync<void, DatabaseError> {
   const db = getDb()
-  await db.delete(subjects).where(eq(subjects.id, id))
+  return ResultAsync.fromPromise(
+    db.delete(subjects).where(eq(subjects.id, id)).then(() => {}),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to delete subject'),
+  ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
-export async function bulkCreateSubjects(
+export function bulkCreateSubjects(
   data: Omit<typeof subjects.$inferInsert, 'id' | 'createdAt' | 'updatedAt'>[],
-): Promise<Subject[]> {
+): ResultAsync<Subject[], DatabaseError> {
   const db = getDb()
   if (data.length === 0)
-    return []
+    return ResultAsync.fromPromise(Promise.resolve([]), err => DatabaseError.from(err))
 
   const values = data.map(item => ({
     id: crypto.randomUUID(),
@@ -387,47 +456,53 @@ export async function bulkCreateSubjects(
     updatedAt: new Date(),
   }))
 
-  const newSubjects = await db.insert(subjects).values(values).returning()
-
-  return newSubjects
+  return ResultAsync.fromPromise(
+    db.insert(subjects).values(values).returning(),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to bulk create subjects'),
+  ).mapErr(tapLogErr(databaseLogger, { data }))
 }
 
 // ===== CATALOG STATS =====
 
-export async function getCatalogStats() {
+export function getCatalogStats(): ResultAsync<{
+  educationLevels: number
+  tracks: number
+  grades: number
+  series: number
+  subjects: number
+}, DatabaseError> {
   const db = getDb()
 
-  const [educationLevelsCount] = await db
-    .select({ count: count() })
-    .from(educationLevels)
-  const [tracksCount] = await db.select({ count: count() }).from(tracks)
-  const [gradesCount] = await db.select({ count: count() }).from(grades)
-  const [seriesCount] = await db.select({ count: count() }).from(series)
-  const [subjectsCount] = await db.select({ count: count() }).from(subjects)
-
-  return {
-    educationLevels: educationLevelsCount?.count || 0,
-    tracks: tracksCount?.count || 0,
-    grades: gradesCount?.count || 0,
-    series: seriesCount?.count || 0,
-    subjects: subjectsCount?.count || 0,
-  }
+  return ResultAsync.fromPromise(
+    Promise.all([
+      db.select({ count: count() }).from(educationLevels),
+      db.select({ count: count() }).from(tracks),
+      db.select({ count: count() }).from(grades),
+      db.select({ count: count() }).from(series),
+      db.select({ count: count() }).from(subjects),
+    ]).then(([educationLevelsCount, tracksCount, gradesCount, seriesCount, subjectsCount]) => ({
+      educationLevels: educationLevelsCount[0]?.count || 0,
+      tracks: tracksCount[0]?.count || 0,
+      grades: gradesCount[0]?.count || 0,
+      series: seriesCount[0]?.count || 0,
+      subjects: subjectsCount[0]?.count || 0,
+    })),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch catalog stats'),
+  ).mapErr(tapLogErr(databaseLogger, {}))
 }
 
-export async function getSmartCatalogData(): Promise<{
+export function getSmartCatalogData(): ResultAsync<{
   educationLevels: EducationLevel[]
   tracks: Track[]
   series: Serie[]
-}> {
-  const [educationLevels, tracks, series] = await Promise.all([
+}, DatabaseError> {
+  return ResultAsync.combine([
     getEducationLevels(),
     getTracks(),
     getSeries(),
-  ])
-
-  return {
+  ]).map(([educationLevels, tracks, series]) => ({
     educationLevels,
     tracks,
     series,
-  }
+  }))
 }

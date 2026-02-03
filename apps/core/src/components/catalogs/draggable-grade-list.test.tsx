@@ -1,14 +1,15 @@
 import type { Grade } from '@repo/data-ops'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import * as React from 'react'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 
 // Import the real component after mocking
 import { DraggableGradeList } from './draggable-grade-list'
 
-// Mock @dnd-kit to avoid complex drag & drop setup
+// Mock @dnd-kit to avoid complex drag & drop setup - using React.createElement to avoid JSX in hoisted mocks
 vi.mock('@dnd-kit/core', () => ({
-  DndContext: ({ children }: any) => <div data-testid="dnd-context">{children}</div>,
+  DndContext: ({ children }: any) => React.createElement('div', { 'data-testid': 'dnd-context' }, children),
   closestCenter: vi.fn(),
   PointerSensor: vi.fn(),
   KeyboardSensor: vi.fn(),
@@ -17,7 +18,7 @@ vi.mock('@dnd-kit/core', () => ({
 }))
 
 vi.mock('@dnd-kit/sortable', () => ({
-  SortableContext: ({ children }: any) => <div data-testid="sortable-context">{children}</div>,
+  SortableContext: ({ children }: any) => React.createElement('div', { 'data-testid': 'sortable-context' }, children),
   arrayMove: vi.fn((array, fromIndex, toIndex) => {
     const result = [...array]
     const [removed] = result.splice(fromIndex, 1)

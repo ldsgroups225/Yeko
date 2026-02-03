@@ -1,52 +1,192 @@
 import type { BaseTranslation } from '../i18n-types'
 
-const fr = {
+const fr: BaseTranslation = {
   // Navigation
   nav: {
     home: 'Accueil',
     solutions: 'Solutions',
-    benefits: 'Avantages',
-    pricing: 'Tarifs',
+    benefits: {
+      title: 'Conçu pour l\'Efficacité',
+      subtitle: 'Optimisez les opérations de votre école et concentrez-vous sur l\'essentiel : l\'éducation.',
+      items: {
+        timeSaving: {
+          title: 'Gain de Temps',
+          description: 'Réduisez la charge de travail administrative de 50 % grâce à des processus automatisés.',
+        },
+        costReduction: {
+          title: 'Réduction des Coûts',
+          description: 'Minimisez les coûts opérationnels et les frais de paperasserie physique.',
+        },
+        satisfaction: {
+          title: 'Meilleure Satisfaction',
+          description: 'Améliorez la communication entre les enseignants, les élèves et les parents.',
+        },
+        growth: {
+          title: 'Croissance Évolutive',
+          description: 'Gérez facilement plusieurs écoles ou succursales à partir d\'une seule plateforme.',
+        },
+      },
+    },
+    pricing: {
+      title: 'Plans Tarifaires',
+      subtitle: 'Choisissez le meilleur plan pour votre institution.',
+      annual: 'Annuel',
+      monthly: 'Mensuel',
+      features: 'Fonctionnalités',
+      getStarted: 'Commencer',
+      contactSales: 'Contacter le service commercial',
+      contactUs: 'Contactez-nous',
+      cta: 'Choisir le plan',
+      footer: 'Les prix sont en monnaie locale. Des taxes peuvent s\'appliquer.',
+      plans: {
+        starter: {
+          title: 'Starter',
+          description: 'Parfait pour les petites écoles qui débutent.',
+          price: 'Gratuit',
+          features: [
+            'Jusqu\'à 100 élèves',
+            'Gestion académique de base',
+            'Suivi des présences',
+            'Support par email',
+          ],
+        },
+        professional: {
+          title: 'Professionnel',
+          description: 'Fonctionnalités avancées pour les institutions éducatives en croissance.',
+          price: '29$',
+          popular: 'Le plus populaire',
+          features: [
+            'Jusqu\'à 1000 élèves',
+            'Gestion financière',
+            'Portail parents-enseignants',
+            'Support prioritaire',
+          ],
+        },
+        enterprise: {
+          title: 'Entreprise',
+          description: 'Solutions sur mesure pour les grands réseaux et universités.',
+          price: 'Sur mesure',
+          features: [
+            'Élèves illimités',
+            'Intégrations personnalisées',
+            'Support multi-campus',
+            'Gestionnaire de compte dédié',
+          ],
+        },
+      },
+    },
     login: 'Connexion',
     signup: 'Inscription',
     dashboard: 'Tableau de bord',
     logout: 'Déconnexion',
-    tagline: 'la transparence éducative',
+    tagline: 'transparence éducative',
     requestDemo: 'Demander une démo',
-    signIn: 'Connexion',
-    signInWithGoogle: 'Connexion avec Google',
+    signIn: 'Se connecter',
+    signInWithGoogle: 'Se connecter avec Google',
     menuTitle: 'Navigation',
-    menuDescription: 'Explorez Yeko Platform',
+    menuDescription: 'Explorez la plateforme Yeko',
+  },
+
+  // Footer Navigation
+  footerNav: {
+    product: {
+      title: 'Produit',
+      features: 'Fonctionnalités',
+      pricing: 'Tarifs',
+      about: 'À propos',
+      contact: 'Contact',
+    },
+    resources: {
+      title: 'Ressources',
+      help: 'Centre d\'aide',
+      privacy: 'Politique de confidentialité',
+      terms: 'Conditions d\'utilisation',
+      security: 'Sécurité',
+    },
+    social: {
+      facebook: 'Facebook',
+      twitter: 'Twitter',
+      linkedin: 'LinkedIn',
+    },
+    tagline: 'Yeko - Propulser les écoles africaines grâce à l\'innovation numérique.',
+    copyright: '© {year:number} Yeko. Tous droits réservés.',
   },
 
   // Hero Section
   hero: {
     title: 'Modernisez Votre École',
-    subtitle: 'Gagnez 20+ Heures par Semaine',
+    subtitle: 'Gagnez plus de 20 heures par semaine',
     description: 'Automatisez la gestion administrative, les communications et les paiements avec notre plateforme tout-en-un conçue pour les écoles modernes.',
     cta: {
       primary: 'Commencer Gratuitement',
-      secondary: 'Voir une Démo',
+      secondary: 'Voir la Démo',
     },
     features: {
-      0: 'Aucune carte de crédit requise',
-      1: 'Installation en 5 jours',
-      2: 'Annulez à tout moment',
+      '0': 'Aucune carte bancaire requise',
+      '1': 'Configuration en 5 jours',
+      '2': 'Annulez à tout moment',
     },
     demo: {
       title: 'Aperçu du Tableau de Bord',
-      description: 'Informations en temps réel sur la performance de votre école',
+      description: 'Aperçu en temps réel des performances de votre école',
+    },
+  },
+
+  // Pain Points Section
+  painPoints: {
+    title: 'Arrêtez de lutter avec des systèmes obsolètes',
+    subtitle: 'Nous résolvons les défis les plus courants auxquels les écoles sont confrontées aujourd\'hui.',
+    items: {
+      paperwork: {
+        title: 'Paperasserie manuelle',
+        description: 'Plus de piles de papier et d\'erreurs de saisie manuelle.',
+        solution: 'Dossiers d\'élèves numériques et tenue de registres automatisée.',
+      },
+      communication: {
+        title: 'Mauvaise communication',
+        description: 'Contactez instantanément les parents et le personnel via des canaux intégrés.',
+        solution: 'Notifications mobiles instantanées et messagerie unifiée.',
+      },
+      admin: {
+        title: 'Charge administrative',
+        description: 'Réduisez le temps passé sur les tâches répétitives et concentrez-vous sur l\'enseignement.',
+        solution: 'Intégration d\'outils en ligne et processus automatiques.',
+      },
     },
   },
 
   // Social Proof
   socialProof: {
-    trustedBy: 'Approuvé par les institutions éducatives à travers l\'Afrique',
+    trustedBy: 'Approuvé par des institutions éducatives à travers l\'Afrique',
     stats: {
-      schools: 'Écoles partenaires',
-      students: 'Étudiants actifs',
-      satisfaction: 'Satisfaction parentale',
+      schools: 'Écoles Partenaires',
+      students: 'Élèves Actifs',
+      satisfaction: 'Satisfaction Parentale',
       countries: 'Pays',
+    },
+  },
+
+  // Use Cases Section
+  useCases: {
+    title: 'Adapté à chaque partie prenante',
+    subtitle: 'Notre plateforme rassemble tout le monde dans un écosystème numérique unifié.',
+    stakeholders: {
+      administrators: {
+        title: 'Administrateurs',
+        description: 'Supervision et contrôle complets des opérations scolaires.',
+      },
+      teachers: {
+        title: 'Enseignants',
+        description: 'Notation, présence et planification des cours sans effort.',
+      },
+      parents: {
+        title: 'Parents',
+        description: 'Suivi en temps réel des progrès et des activités de leur enfant.',
+      },
+      students: {
+        title: 'Élèves',
+        description: 'Accès au matériel pédagogique et aperçu des performances.',
+      },
     },
   },
 
@@ -72,7 +212,7 @@ const fr = {
     back: 'Retour',
     next: 'Suivant',
     previous: 'Précédent',
-    submit: 'Soumettre',
+    submit: 'Envoyer',
     reset: 'Réinitialiser',
     clear: 'Effacer',
     select: 'Sélectionner',
@@ -120,16 +260,16 @@ const fr = {
 
   // Error messages
   errors: {
-    required: 'Ce champ est requis',
+    required: 'Ce champ est obligatoire',
     invalidEmail: 'Email invalide',
     invalidPhone: 'Numéro de téléphone invalide',
     invalidUrl: 'URL invalide',
     invalidDate: 'Date invalide',
     invalidNumber: 'Nombre invalide',
-    minLength: 'Minimum {count:number} caractères',
-    maxLength: 'Maximum {count:number} caractères',
-    min: 'Valeur minimale: {min:number}',
-    max: 'Valeur maximale: {max:number}',
+    minLength: 'Minimum {count} caractères',
+    maxLength: 'Maximum {count} caractères',
+    min: 'Valeur minimale : {min}',
+    max: 'Valeur maximale : {max}',
     unique: 'Cette valeur existe déjà',
     createFailed: 'Échec de la création',
     updateFailed: 'Échec de la mise à jour',
@@ -141,13 +281,13 @@ const fr = {
     notFound: 'Non trouvé',
     serverError: 'Erreur serveur',
     networkError: 'Erreur réseau',
-    timeout: 'Délai d\'attente dépassé',
+    timeout: 'Délai dépassé',
     unknown: 'Erreur inconnue',
   },
 
   // Validation messages
   validation: {
-    required: 'Ce champ est requis',
+    required: 'Ce champ est obligatoire',
     email: 'Veuillez entrer un email valide',
     phone: 'Veuillez entrer un numéro de téléphone valide',
     url: 'Veuillez entrer une URL valide',
@@ -156,10 +296,10 @@ const fr = {
     integer: 'Veuillez entrer un nombre entier',
     positive: 'La valeur doit être positive',
     negative: 'La valeur doit être négative',
-    minLength: 'Minimum {count:number} caractères requis',
-    maxLength: 'Maximum {count:number} caractères autorisés',
-    min: 'La valeur doit être au moins {min:number}',
-    max: 'La valeur ne peut pas dépasser {max:number}',
+    minLength: 'Minimum {count} caractères requis',
+    maxLength: 'Maximum {count} caractères autorisés',
+    min: 'La valeur doit être d\'au moins {min}',
+    max: 'La valeur ne peut pas dépasser {max}',
     pattern: 'Format invalide',
     unique: 'Cette valeur doit être unique',
     match: 'Les valeurs ne correspondent pas',
@@ -168,20 +308,20 @@ const fr = {
 
   // Schools management
   schools: {
-    title: 'Gestion des écoles',
+    title: 'Gestion des Écoles',
     subtitle: 'Gérez toutes vos écoles partenaires',
-    create: 'Créer une école',
-    edit: 'Modifier l\'école',
-    delete: 'Supprimer l\'école',
-    view: 'Voir l\'école',
-    list: 'Liste des écoles',
+    create: 'Créer une École',
+    edit: 'Modifier l\'École',
+    delete: 'Supprimer l\'École',
+    view: 'Voir l\'École',
+    list: 'Liste des Écoles',
     search: 'Rechercher une école',
     filter: 'Filtrer les écoles',
     sort: 'Trier les écoles',
     export: 'Exporter les écoles',
     import: 'Importer les écoles',
-    name: 'Nom de l\'école',
-    code: 'Code de l\'école',
+    name: 'Nom de l\'École',
+    code: 'Code de l\'École',
     status: 'Statut',
     address: 'Adresse',
     phone: 'Téléphone',
@@ -189,13 +329,13 @@ const fr = {
     website: 'Site web',
     director: 'Directeur',
     foundedYear: 'Année de fondation',
-    studentCount: 'Nombre d\'étudiants',
+    studentCount: 'Nombre d\'élèves',
     teacherCount: 'Nombre d\'enseignants',
     classCount: 'Nombre de classes',
     description: 'Description',
     notes: 'Notes',
     createdAt: 'Créé le',
-    updatedAt: 'Mis à jour le',
+    updatedAt: 'Modifié le',
     confirmDelete: 'Êtes-vous sûr de vouloir supprimer {name} ?',
     deleteWarning: 'Cette action est irréversible. Toutes les données associées seront supprimées.',
     created: 'École créée avec succès',
@@ -207,33 +347,33 @@ const fr = {
 
   // Demo Request
   demoRequest: {
-    title: 'Demander une démo',
-    subtitle: 'Découvrez comment Yeko peut transformer votre établissement',
+    title: 'Demander une Démo',
+    subtitle: 'Découvrez comment Yeko peut transformer votre institution',
     form: {
-      name: 'Nom complet',
-      email: 'Adresse email',
-      phone: 'Numéro de téléphone',
-      schoolName: 'Nom de l\'école / organisation',
-      schoolType: 'Type d\'établissement',
-      role: 'Votre rôle',
-      studentsCount: 'Nombre d\'élèves',
-      message: 'Informations complémentaires',
-      submit: 'Demander une démo',
-      success: 'Demande de démo reçue !',
-      successDescription: 'Merci de votre intérêt pour Yeko ! Notre équipe vous contactera sous 24 heures pour planifier votre démonstration personnalisée.',
-      confirmationEmail: 'Nous avons envoyé un e-mail de confirmation à {email}.',
-      whatNext: 'Que se passe-t-il ensuite ?',
-      whatNextDescription: 'Notre équipe examinera votre demande et vous contactera dans les 24 heures pour planifier une démonstration personnalisée adaptée aux besoins de votre institution.',
+      name: 'Nom Complet',
+      email: 'Adresse Email',
+      phone: 'Numéro de Téléphone',
+      schoolName: 'Nom de l\'École/Organisation',
+      schoolType: 'Type d\'Établissement',
+      role: 'Votre Rôle',
+      studentsCount: 'Nombre d\'Élèves',
+      message: 'Informations Complémentaires',
+      submit: 'Demander une Démo',
+      success: 'Demande de Démo Reçue !',
+      successDescription: 'Merci de votre intérêt pour Yeko ! Notre équipe vous contactera sous 24 heures pour planifier votre démo personnalisée.',
+      confirmationEmail: 'Nous avons envoyé un email de confirmation à {email}.',
+      whatNext: 'Quelle est la suite ?',
+      whatNextDescription: 'Notre équipe examinera votre demande et vous contactera sous 24 heures pour planifier une démonstration personnalisée adaptée aux besoins de votre établissement.',
     },
     schoolTypes: {
       primary: 'École Primaire',
-      secondary: 'Lycée / Collège',
+      secondary: 'Collège / Lycée',
       higherEducation: 'Enseignement Supérieur',
       vocational: 'Formation Professionnelle',
       other: 'Autre',
     },
     roles: {
-      principal: 'Directeur / Principal',
+      principal: 'Directeur / Chef d\'établissement',
       vicePrincipal: 'Directeur Adjoint',
       administrator: 'Administrateur',
       teacher: 'Enseignant',
@@ -258,9 +398,9 @@ const fr = {
       title: 'Matières',
       search: 'Rechercher des matières...',
       category: 'Catégorie',
-      allCategories: 'Toutes catégories',
-      create: 'Créer une matière',
-      edit: 'Modifier la matière',
+      allCategories: 'Toutes les catégories',
+      create: 'Créer une Matière',
+      edit: 'Modifier la Matière',
       namePlaceholder: 'Mathématiques',
       shortNamePlaceholder: 'Maths',
       selectCategory: 'Sélectionner une catégorie',
@@ -274,23 +414,23 @@ const fr = {
     create: 'Nouveau Rôle',
     edit: 'Modifier le Rôle',
     delete: 'Supprimer le Rôle',
-    name: 'Nom du rôle',
+    name: 'Nom du Rôle',
     slug: 'Identifiant (Slug)',
     description: 'Description & Mission',
-    scope: 'Périmètre (Scope)',
-    permissions: 'Matrice des Permissions',
+    scope: 'Portée',
+    permissions: 'Matrice de Permissions',
     systemRoles: 'Rôles Plateforme',
     schoolRoles: 'Rôles École',
     none: 'Aucun rôle défini.',
     confirmDelete: 'Suppression de Rôle',
     deleteDescription: 'Vous êtes sur le point de supprimer le rôle {name}.',
-    deleteWarning: 'Attention : Cette action est irréversible. Tous les utilisateurs rattachés à ce rôle perdront immédiatement l\'intégralité de leurs permissions associées.',
+    deleteWarning: 'Attention : Cette action est irréversible. Tous les utilisateurs attachés à ce rôle perdront immédiatement toutes les permissions associées.',
   },
 
   // Users management
   users: {
     title: 'Utilisateurs Système',
-    subtitle: 'Gérez les comptes d\'administration et supervisez les privilèges d\'accès globaux à la plateforme.',
+    subtitle: 'Gérez les comptes administratifs et supervisez les privilèges d\'accès globaux à la plateforme.',
     search: 'Rechercher par nom, email...',
     table: {
       user: 'Utilisateur',
@@ -300,16 +440,40 @@ const fr = {
       actions: 'Actions',
     },
     none: 'Aucun utilisateur trouvé',
-    noneDescription: 'Ajustez vos filtres de recherche pour trouver le compte recherché.',
+    noneDescription: 'Ajustez vos filtres de recherche pour trouver le compte que vous recherchez.',
     syncing: 'Synchronisation des données...',
     neverLoggedIn: 'Jamais',
-    permissions: 'Habilitations',
-    permissionsTitle: 'Habilitations Système',
-    permissionsSubtitle: 'Configurez les rôles de plateforme pour {name}',
+    permissions: 'Autorisations',
+    permissionsTitle: 'Autorisations Système',
+    permissionsSubtitle: 'Configurer les rôles plateforme pour {name}',
     availableRoles: 'Rôles Disponibles',
     updateSuccess: 'Accès mis à jour avec succès',
     updateError: 'Erreur lors de la mise à jour des accès',
   },
-} satisfies BaseTranslation
+
+  // Why Yeko Section
+  whyYeko: {
+    title: 'Pourquoi Choisir Yeko ?',
+    subtitle: 'Nous fournissons les outils dont vous avez besoin pour réussir dans un monde numérique.',
+    features: {
+      lightning: {
+        title: 'Ultra Rapide',
+        description: 'Optimisé pour la performance et l\'efficacité dans tout ce que vous faites.',
+      },
+      secure: {
+        title: 'Sécurité Bancaire',
+        description: 'Vos données sont cryptées et protégées selon les normes les plus strictes de l\'industrie.',
+      },
+      africa: {
+        title: 'Conçu pour l\'Afrique',
+        description: 'Adapté spécifiquement aux défis uniques des institutions éducatives en Afrique.',
+      },
+      mobile: {
+        title: 'Mobile First',
+        description: 'Accédez à tout depuis votre smartphone avec notre plateforme entièrement responsive.',
+      },
+    },
+  },
+}
 
 export default fr

@@ -81,17 +81,53 @@ async function main() {
   await seedMethod
 
   console.log('Seeding Roles...')
+
+  // Helper to expand 'manage' shorthand to actual CRUD permissions
+  type SystemAction = 'view' | 'create' | 'edit' | 'delete' | 'manage' | 'export' | 'validate' | 'enroll' | 'process_payment'
+  type SystemPermissions = Record<string, SystemAction[]>
+
+  function expandManagePermissions(permissions: SystemPermissions): SystemPermissions {
+    const expanded: SystemPermissions = {}
+    for (const [resource, actions] of Object.entries(permissions)) {
+      const expandedActions: SystemAction[] = []
+      for (const action of actions) {
+        if (action === 'manage') {
+          // Expand 'manage' to create, edit, delete
+          expandedActions.push('create', 'edit', 'delete')
+        }
+        else {
+          expandedActions.push(action)
+        }
+      }
+      // Remove duplicates
+      expanded[resource] = [...new Set(expandedActions)]
+    }
+    return expanded
+  }
+
   for (const role of defaultRoles) {
+    const expandedPermissions = expandManagePermissions(role.permissions as SystemPermissions)
+
     const insertQuery = db.insert(schoolSchema.roles).values({
       id: crypto.randomUUID(),
       ...role,
+      permissions: expandedPermissions,
     })
 
     if (isFresh) {
       await insertQuery
     }
     else {
-      await insertQuery.onConflictDoNothing({ target: schoolSchema.roles.slug })
+      await insertQuery.onConflictDoUpdate({
+        target: schoolSchema.roles.slug,
+        set: {
+          name: role.name,
+          description: role.description,
+          permissions: expandedPermissions,
+          extraLanguages: role.extraLanguages,
+          updatedAt: new Date(),
+        },
+      })
     }
   }
 

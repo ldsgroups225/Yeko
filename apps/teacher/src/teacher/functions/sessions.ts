@@ -21,11 +21,13 @@ export const startSession = createServerFn()
   .inputValidator(startSessionSchema)
   .handler(async ({ data }) => {
     // Get timetable session details
-    const timetableSession = await getTimetableSessionById(data.timetableSessionId)
+    const timetableSessionResult = await getTimetableSessionById(data.timetableSessionId)
 
-    if (!timetableSession) {
+    if (timetableSessionResult.isErr() || !timetableSessionResult.value) {
       return { success: false, error: 'Timetable session not found' }
     }
+
+    const timetableSession = timetableSessionResult.value
 
     // Validate teacher is assigned to this timetable session
     if (timetableSession.teacherId !== data.teacherId) {
@@ -33,7 +35,7 @@ export const startSession = createServerFn()
     }
 
     // Create class session
-    const session = await createTeacherClassSession({
+    const sessionResult = await createTeacherClassSession({
       timetableSessionId: data.timetableSessionId,
       teacherId: data.teacherId,
       schoolId: timetableSession.schoolId,
@@ -46,9 +48,17 @@ export const startSession = createServerFn()
       chapterId: data.chapterId,
     })
 
+    if (sessionResult.isErr()) {
+      return {
+        success: false,
+        error: sessionResult.error.message,
+        code: sessionResult.error.details?.code as string | undefined,
+      }
+    }
+
     return {
       success: true,
-      sessionId: session?.id,
+      sessionId: sessionResult.value.id,
     }
   })
 
@@ -62,7 +72,7 @@ export const completeSession = createServerFn({ method: 'POST' })
     } = await import('@repo/data-ops/queries/teacher-app')
 
     // 1. Update session status and basic info
-    const updated = await completeTeacherClassSession({
+    const updatedResult = await completeTeacherClassSession({
       sessionId: data.sessionId,
       teacherId: data.teacherId ?? '',
       studentsPresent: data.studentsPresent,
@@ -72,8 +82,12 @@ export const completeSession = createServerFn({ method: 'POST' })
       chapterId: data.chapterId,
     })
 
-    if (!updated) {
-      return { success: false, error: 'Session not found or unauthorized' }
+    if (updatedResult.isErr()) {
+      return {
+        success: false,
+        error: updatedResult.error.message,
+        code: updatedResult.error.details?.code as string | undefined,
+      }
     }
 
     // 2. Upsert participation grades if any
@@ -91,8 +105,9 @@ export const completeSession = createServerFn({ method: 'POST' })
 
     // 3. Create homework if provided
     if (data.homework) {
-      const session = await getTeacherClassSessionById(data.sessionId)
-      if (session) {
+      const sessionResult = await getTeacherClassSessionById(data.sessionId)
+      if (sessionResult.isOk() && sessionResult.value) {
+        const session = sessionResult.value
         await createHomeworkAssignment({
           schoolId: session.schoolId,
           classId: session.classId,
@@ -117,15 +132,19 @@ export const completeSession = createServerFn({ method: 'POST' })
 export const updateSessionAttendance = createServerFn()
   .inputValidator(updateAttendanceSchema)
   .handler(async ({ data }) => {
-    const updated = await completeTeacherClassSession({
+    const updatedResult = await completeTeacherClassSession({
       sessionId: data.sessionId,
       teacherId: data.teacherId ?? '',
       studentsPresent: data.studentsPresent,
       studentsAbsent: data.studentsAbsent,
     })
 
-    if (!updated) {
-      return { success: false, error: 'Session not found or unauthorized' }
+    if (updatedResult.isErr()) {
+      return {
+        success: false,
+        error: updatedResult.error.message,
+        code: updatedResult.error.details?.code as string | undefined,
+      }
     }
 
     return { success: true }
@@ -141,10 +160,16 @@ export const getSessionStudents = createServerFn()
     }),
   )
   .handler(async ({ data }) => {
-    const students = await getClassStudents({
+    const studentsResult = await getClassStudents({
       classId: data.classId,
       schoolYearId: data.schoolYearId,
     })
+
+    if (studentsResult.isErr()) {
+      return { students: [], className: null, subjectName: null }
+    }
+
+    const students = studentsResult.value
 
     // Get class/subject info if subjectId provided
     let className: string | null = null
@@ -152,12 +177,15 @@ export const getSessionStudents = createServerFn()
 
     if (data.subjectId) {
       const { getClassSubjectInfo } = await import('@repo/data-ops/queries/teacher-app')
-      const info = await getClassSubjectInfo({
+      const infoResult = await getClassSubjectInfo({
         classId: data.classId,
         subjectId: data.subjectId,
       })
-      className = info?.className ?? null
-      subjectName = info?.subjectName ?? null
+
+      if (infoResult.isOk() && infoResult.value) {
+        className = infoResult.value.className ?? null
+        subjectName = infoResult.value.subjectName ?? null
+      }
     }
 
     return { students, className, subjectName }
@@ -167,11 +195,13 @@ export const getSessionStudents = createServerFn()
 export const getSessionDetails = createServerFn()
   .inputValidator(z.object({ sessionId: z.string() }))
   .handler(async ({ data }) => {
-    const session = await getTeacherClassSessionById(data.sessionId)
+    const sessionResult = await getTeacherClassSessionById(data.sessionId)
 
-    if (!session) {
+    if (sessionResult.isErr() || !sessionResult.value) {
       return { session: null }
     }
+
+    const session = sessionResult.value
 
     return {
       session: {
@@ -221,8 +251,17 @@ export const getSessionHistory = createServerFn()
       pageSize: data.pageSize,
     })
 
+    if (result.isErr()) {
+      return {
+        sessions: [],
+        total: 0,
+        page: data.page,
+        pageSize: data.pageSize,
+      }
+    }
+
     return {
-      sessions: result.sessions.map(s => ({
+      sessions: result.value.sessions.map(s => ({
         id: s.id,
         className: s.className,
         subjectName: s.subjectName,
@@ -233,8 +272,8 @@ export const getSessionHistory = createServerFn()
         studentsPresent: s.studentsPresent,
         studentsAbsent: s.studentsAbsent,
       })),
-      total: result.total,
-      page: result.page,
-      pageSize: result.pageSize,
+      total: result.value.total,
+      page: result.value.page,
+      pageSize: result.value.pageSize,
     }
   })

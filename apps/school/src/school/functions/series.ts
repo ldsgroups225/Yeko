@@ -1,9 +1,16 @@
 import { getSeries as getSeriesQuery } from '@repo/data-ops/queries/catalogs'
-import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
+import { authServerFn } from '../lib/server-fn'
 
-export const getSeries = createServerFn()
+export const getSeries = authServerFn
   .inputValidator(z.object({}))
-  .handler(async () => {
-    return await getSeriesQuery()
+  .handler(async ({ context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    const result = await getSeriesQuery()
+    return result.match(
+      value => ({ success: true as const, data: value }),
+      error => ({ success: false as const, error: error.message }),
+    )
   })

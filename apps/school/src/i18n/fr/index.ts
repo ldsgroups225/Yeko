@@ -1103,6 +1103,15 @@ const fr = {
     serverError: 'Erreur serveur',
     networkError: 'Erreur réseau',
     validationError: 'Erreur de validation',
+    teacherContextNotFound: 'Contexte enseignant non trouvé',
+    noTermFound: 'Aucune période trouvée pour l\'année scolaire en cours',
+    sessionNotFound: 'Session d\'emploi du temps non trouvée',
+    notAssignedToSession: 'Non autorisé : Vous n\'êtes pas assigné à cette session',
+    classNotFound: 'Classe non trouvée',
+    noSchoolContext: 'Aucun contexte d\'école',
+    permissionDenied: 'Interdit : Vous n\'avez pas la permission de {action} {resource}',
+    accessDeniedToSchool: 'Accès refusé à cette école',
+    invalidSchoolYear: 'Année scolaire invalide pour cette école',
   },
   validation: {
     required: 'Ce champ est requis',
@@ -1184,7 +1193,7 @@ const fr = {
   },
   roles: {
     descriptions: {
-      school_administrator: 'Accès complet à tous les modules',
+      school_director: 'Chef opérationnel : supervision générale, validation des décisions et discipline.',
       academic_coordinator: 'Gestion du curriculum et validation des notes',
       discipline_officer: 'Gestion de la présence et de la conduite',
       accountant: 'Gestion financière et rapports',

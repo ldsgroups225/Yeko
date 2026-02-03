@@ -15,11 +15,11 @@ describe('teacher subjects queries', () => {
 
   beforeEach(async () => {
     // Create test school
-    const school = await createSchool({
+    const school = (await createSchool({
       name: `Test Teacher Subjects ${nanoid()}`,
       code: `TTS-${Date.now()}`,
       status: 'active',
-    })
+    }))._unsafeUnwrap()
     testSchoolId = school.id
   })
 

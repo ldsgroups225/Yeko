@@ -18,7 +18,7 @@ export const roleSchema = z.object({
   permissions: z.record(z.string(), z.array(z.string())),
   scope: z.enum(['school', 'system'], {
     message: 'Portée invalide',
-  }),
+  }).default('school'),
 })
 
 export const createRoleSchema = roleSchema

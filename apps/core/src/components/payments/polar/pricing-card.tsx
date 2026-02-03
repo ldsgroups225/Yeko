@@ -2,7 +2,7 @@ import type { Price, Product, Subscription } from './types'
 import { IconCheck } from '@tabler/icons-react'
 import { Link } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'
-import { Button } from '@workspace/ui/components/button'
+import { Button, buttonVariants } from '@workspace/ui/components/button'
 import {
   Card,
   CardContent,
@@ -102,12 +102,12 @@ export function PricingCard({
                 {subscription.status}
               </p>
             </div>
-            <Button
-              className="w-full"
-              size="lg"
-              variant="outline"
-              render={<Link to="/app/polar/portal">Manage Subscription</Link>}
-            />
+            <Link
+              to="/app/polar/portal"
+              className={buttonVariants({ variant: 'outline', size: 'lg', className: 'w-full' })}
+            >
+              Manage Subscription
+            </Link>
           </div>
         )
       }
@@ -117,12 +117,12 @@ export function PricingCard({
             <p className="text-sm text-muted-foreground mb-4">
               Manage your subscription in the portal
             </p>
-            <Button
-              className="w-full"
-              size="lg"
-              variant="secondary"
-              render={<Link to="/app/polar/portal">Go to Portal</Link>}
-            />
+            <Link
+              to="/app/polar/portal"
+              className={buttonVariants({ variant: 'secondary', size: 'lg', className: 'w-full' })}
+            >
+              Go to Portal
+            </Link>
           </div>
         )
       }

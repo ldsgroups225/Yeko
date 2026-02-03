@@ -25,7 +25,9 @@ describe('class subjects queries', () => {
     // Clean up existing test classes
     for (const id of testClassIds) {
       try {
-        await deleteClass(id)
+        if (testSchoolId) {
+          await deleteClass(testSchoolId, id)
+        }
       }
       catch {
         // Ignore errors during cleanup
@@ -34,13 +36,13 @@ describe('class subjects queries', () => {
     testClassIds = []
 
     // Create test school
-    const school = await createSchool({
+    const school = (await createSchool({
       name: 'Test School for Class Subjects',
       code: `TSCS-${Date.now()}`,
       email: 'class-subjects@test.com',
       phone: '+237123456789',
       status: 'active',
-    })
+    }))._unsafeUnwrap()
     testSchoolId = school.id
 
     // Note: In a real test environment, we would create or use existing
@@ -51,45 +53,46 @@ describe('class subjects queries', () => {
     testTeacherId = 'test-teacher-id'
 
     // Create test class
-    const testClass = await createClass({
+    const testClass = (await createClass(testSchoolId, {
       id: nanoid(),
       schoolId: testSchoolId,
       schoolYearId: testSchoolYearId,
       gradeId: testGradeId,
       section: `CS-${Date.now()}`,
       status: 'active',
-    })
+    }))._unsafeUnwrap()
+
     testClassId = testClass!.id
     testClassIds.push(testClassId)
   })
 
   describe('getClassSubjects', () => {
     test('should return class subjects with filters', async () => {
-      const result = await getClassSubjects({ classId: testClassId })
+      const result = (await getClassSubjects({ classId: testClassId }))._unsafeUnwrap()
 
       expect(result).toBeDefined()
       expect(Array.isArray(result)).toBe(true)
     })
 
     test('should filter by school', async () => {
-      const result = await getClassSubjects({ schoolId: testSchoolId })
+      const result = (await getClassSubjects({ schoolId: testSchoolId }))._unsafeUnwrap()
 
       expect(result).toBeDefined()
       expect(Array.isArray(result)).toBe(true)
     })
 
     test('should filter by school year', async () => {
-      const result = await getClassSubjects({
+      const result = (await getClassSubjects({
         schoolId: testSchoolId,
         schoolYearId: testSchoolYearId,
-      })
+      }))._unsafeUnwrap()
 
       expect(result).toBeDefined()
       expect(Array.isArray(result)).toBe(true)
     })
 
     test('should include teacher information when assigned', async () => {
-      const result = await getClassSubjects({ classId: testClassId })
+      const result = (await getClassSubjects({ classId: testClassId }))._unsafeUnwrap()
 
       // Structure check - each result should have expected shape
       if (result.length > 0) {
@@ -103,14 +106,14 @@ describe('class subjects queries', () => {
 
   describe('getAssignmentMatrix', () => {
     test('should return assignment matrix for school year', async () => {
-      const result = await getAssignmentMatrix(testSchoolId, testSchoolYearId)
+      const result = (await getAssignmentMatrix(testSchoolId, testSchoolYearId))._unsafeUnwrap()
 
       expect(result).toBeDefined()
       expect(Array.isArray(result)).toBe(true)
     })
 
     test('should include class and subject information', async () => {
-      const result = await getAssignmentMatrix(testSchoolId, testSchoolYearId)
+      const result = (await getAssignmentMatrix(testSchoolId, testSchoolYearId))._unsafeUnwrap()
 
       if (result.length > 0) {
         expect(result[0]).toHaveProperty('classId')
@@ -121,7 +124,7 @@ describe('class subjects queries', () => {
     })
 
     test('should include teacher assignments', async () => {
-      const result = await getAssignmentMatrix(testSchoolId, testSchoolYearId)
+      const result = (await getAssignmentMatrix(testSchoolId, testSchoolYearId))._unsafeUnwrap()
 
       if (result.length > 0) {
         expect(result[0]).toHaveProperty('teacherId')
@@ -130,7 +133,7 @@ describe('class subjects queries', () => {
     })
 
     test('should order by grade and section', async () => {
-      const result = await getAssignmentMatrix(testSchoolId, testSchoolYearId)
+      const result = (await getAssignmentMatrix(testSchoolId, testSchoolYearId))._unsafeUnwrap()
 
       expect(result).toBeDefined()
       // Results should be ordered - verify structure exists
@@ -146,9 +149,7 @@ describe('class subjects queries', () => {
       // Using a teacher ID that doesn't have the subject qualification
       const unqualifiedTeacherId = 'unqualified-teacher-id'
 
-      await expect(
-        assignTeacherToClassSubject(testClassId, testSubjectId, unqualifiedTeacherId),
-      ).rejects.toThrow('Teacher is not qualified to teach this subject')
+      expect((await assignTeacherToClassSubject(testClassId, testSubjectId, unqualifiedTeacherId)).isErr()).toBe(true)
     })
 
     // Note: Test for assigning qualified teacher requires:
@@ -159,7 +160,7 @@ describe('class subjects queries', () => {
 
   describe('bulkAssignTeacher', () => {
     test('should handle empty assignments array', async () => {
-      const result = await bulkAssignTeacher([])
+      const result = (await bulkAssignTeacher([]))._unsafeUnwrap()
 
       expect(result).toBeDefined()
       expect(Array.isArray(result)).toBe(true)
@@ -169,15 +170,13 @@ describe('class subjects queries', () => {
     test('should reject if any teacher is unqualified', async () => {
       const unqualifiedTeacherId = 'unqualified-teacher-id'
 
-      await expect(
-        bulkAssignTeacher([
-          {
-            classId: testClassId,
-            subjectId: testSubjectId,
-            teacherId: unqualifiedTeacherId,
-          },
-        ]),
-      ).rejects.toThrow('Teacher not qualified')
+      expect((await bulkAssignTeacher([
+        {
+          classId: testClassId,
+          subjectId: testSubjectId,
+          teacherId: unqualifiedTeacherId,
+        },
+      ])).isErr()).toBe(true)
     })
 
     // Note: Full transaction and rollback tests require qualified teachers
@@ -185,10 +184,10 @@ describe('class subjects queries', () => {
 
   describe('removeTeacherFromClassSubject', () => {
     test('should handle non-existent assignment gracefully', async () => {
-      const result = await removeTeacherFromClassSubject(
+      const result = (await removeTeacherFromClassSubject(
         'non-existent-class-id',
         'non-existent-subject-id',
-      )
+      ))._unsafeUnwrap()
 
       // Should return undefined when no matching record exists
       expect(result).toBeUndefined()
@@ -197,7 +196,7 @@ describe('class subjects queries', () => {
 
   describe('detectTeacherConflicts', () => {
     test('should return empty array for teacher with no assignments', async () => {
-      const result = await detectTeacherConflicts('non-existent-teacher-id', testSchoolYearId)
+      const result = (await detectTeacherConflicts('non-existent-teacher-id', testSchoolYearId))._unsafeUnwrap()
 
       expect(result).toBeDefined()
       expect(Array.isArray(result)).toBe(true)
@@ -206,7 +205,7 @@ describe('class subjects queries', () => {
 
     test('should return empty for teacher under 30 hours', async () => {
       // A teacher with few or no assignments should not be flagged
-      const result = await detectTeacherConflicts(testTeacherId, testSchoolYearId)
+      const result = (await detectTeacherConflicts(testTeacherId, testSchoolYearId))._unsafeUnwrap()
 
       expect(result).toBeDefined()
       expect(Array.isArray(result)).toBe(true)
@@ -224,44 +223,24 @@ describe('class subjects queries', () => {
 
     beforeEach(async () => {
       // Create a source class
-      const sourceClass = await createClass({
+      const sourceClass = (await createClass(testSchoolId, {
         id: nanoid(),
         schoolId: testSchoolId,
         schoolYearId: testSchoolYearId,
         gradeId: testGradeId,
         section: `Source-${Date.now()}`,
         status: 'active',
-      })
+      }))._unsafeUnwrap()
+
       sourceClassId = sourceClass!.id
       testClassIds.push(sourceClassId)
 
       // Add subjects to source class (mocking subject IDs since we don't create subjects in test setup yet)
       // Note: In real DB test, we need valid subject IDs.
-      // Assuming testSubjectId exists or foreign key constraints will fail.
-      // Since createClass/createSchool work, we might be hitting a mock or need to skip foreign key constraints if not enforcing?
-      // Actually, createClass relies on foreign keys. The beforeEach setup created createSchool but not subjects.
-      // If constraints are enforced, addSubjectToClass will fail if subject doesn't exist.
-      // Let's assume for this "unit-ish" test we might mock or rely on behavior.
-      // But this looks like integration tests against a real DB.
-      // So I will proceed assuming I can use testSubjectId.
-
-      // However, addSubjectToClass inserts into class_subjects which references subjects(id).
-      // We haven't created a subject in beforeEach.
-      // Currently the test file comments say: "Note: In a real test environment, we would create ... subject ... records."
-      // BUT `createClass` implies we are running against a DB.
-      // If so, `testSubjectId = 'test-subject-id'` will fail FK constraint if not created.
-      // I should create a subject if possible or skip if tests are mocked?
-      // Looking at `assignTeacherToClassSubject` test, it expects failure on qualification, which might check DB.
-      // Let's write the test assuming we can insert. If it fails, I'll need to create a subject.
-
-      // For now, I'll skip the actual insert in beforeEach until I verify if I can insert subjects.
-      // Wait, I can see `testSubjectId` is just a string.
-      // If I run this against a real DB (which `createSchool` suggests), this will fail.
-      // I will write the test structure.
     })
 
     test('should return empty result if source has no subjects', async () => {
-      const result = await copyClassSubjects(sourceClassId, testClassId)
+      const result = (await copyClassSubjects(sourceClassId, testClassId))._unsafeUnwrap()
       expect(result).toStrictEqual([])
     })
 

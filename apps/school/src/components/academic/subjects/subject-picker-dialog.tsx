@@ -57,7 +57,7 @@ export function SubjectPickerDialog({
 
   const queryClient = useQueryClient()
 
-  const { data, isLoading } = useQuery({
+  const { data: result, isLoading } = useQuery({
     ...schoolSubjectsOptions.available({
       search: search || undefined,
       category: categoryFilter !== 'all' ? categoryFilter : undefined,
@@ -66,7 +66,15 @@ export function SubjectPickerDialog({
     enabled: open,
   })
 
-  const subjects = (data || []) as CoreSubject[]
+  /*
+  Fix: Unwrapping result and handling type mismatch properly.
+  */
+  // Ensure typed as CoreSubject[] and handle potential null values
+  const subjectsData = (result?.success ? result.data : []) as unknown as CoreSubject[]
+  const subjects = subjectsData.map(s => ({
+    ...s,
+    category: s.category || null, // Ensure category matches type definition
+  }))
 
   const addMutation = useMutation({
     mutationFn: (subjectIds: string[]) =>
@@ -77,9 +85,13 @@ export function SubjectPickerDialog({
         },
       }),
     onSuccess: (result) => {
+      if (!result.success) {
+        toast.error(t.academic.subjects.messages.addError())
+        return
+      }
       queryClient.invalidateQueries({ queryKey: schoolSubjectsKeys.all })
       toast.success(
-        t.academic.subjects.messages.addSuccess({ count: result.length }),
+        t.academic.subjects.messages.addSuccess({ count: result.data.length }),
       )
       setSelectedIds(new Set())
       onOpenChange(false)

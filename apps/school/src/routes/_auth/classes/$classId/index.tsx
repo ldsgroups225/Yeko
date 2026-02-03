@@ -41,10 +41,13 @@ function ClassDetailPage() {
   const queryClient = useQueryClient()
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
-  const { data, isLoading } = useQuery({
+  const { data: result, isLoading } = useQuery({
     queryKey: ['class', classId],
     queryFn: () => getClassById({ data: classId }),
   })
+
+  // Safely extract data from Result
+  const classInfo = result?.success ? result.data : null
 
   const deleteMutation = useMutation({
     mutationFn: () => deleteClass({ data: classId }),
@@ -76,7 +79,7 @@ function ClassDetailPage() {
     )
   }
 
-  if (!data?.class) {
+  if (!classInfo) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-center">
@@ -99,7 +102,7 @@ function ClassDetailPage() {
     studentsCount,
     boysCount,
     girlsCount,
-  } = data
+  } = classInfo
   const className
     = `${grade.name} ${series?.name || ''} ${classData.section}`.trim()
 

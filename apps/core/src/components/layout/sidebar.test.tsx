@@ -32,7 +32,7 @@ vi.mock('@tanstack/react-router', () => ({
   useRouterState: () => mockRouterState,
   createRootRouteWithContext: () => () => mockRoute,
   createFileRoute: () => () => mockRoute,
-  Link: ({ children, ...props }: any) => <a {...props}>{children}</a>,
+  Link: ({ children, ...props }: any) => React.createElement('a', props, children),
 }))
 
 vi.mock('@/routes/__root', () => ({
