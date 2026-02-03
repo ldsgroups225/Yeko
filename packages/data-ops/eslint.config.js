@@ -10,6 +10,7 @@ export default config.append(
       'src/seed/',
       'src/verify.ts',
       'scripts',
+      'src/i18n/',
     ],
   },
   {

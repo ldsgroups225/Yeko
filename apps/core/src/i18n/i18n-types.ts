@@ -533,6 +533,10 @@ type RootTranslation = {
 		 */
 		search: string
 		/**
+		 * F​i​l​t​r​e​r
+		 */
+		filter: string
+		/**
 		 * C​h​a​r​g​e​m​e​n​t​.​.​.
 		 */
 		loading: string
@@ -573,9 +577,9 @@ type RootTranslation = {
 		 */
 		no: string
 		/**
-		 * C​o​n​f​i​r​m​e​r
+		 * V​o​i​r
 		 */
-		confirm: string
+		view: string
 		/**
 		 * R​e​t​o​u​r
 		 */
@@ -588,6 +592,10 @@ type RootTranslation = {
 		 * P​r​é​c​é​d​e​n​t
 		 */
 		previous: string
+		/**
+		 * C​o​n​f​i​r​m​e​r
+		 */
+		confirm: string
 		/**
 		 * E​n​v​o​y​e​r
 		 */
@@ -613,10 +621,6 @@ type RootTranslation = {
 		 */
 		deselectAll: string
 		/**
-		 * F​i​l​t​r​e​r
-		 */
-		filter: string
-		/**
 		 * T​r​i​e​r
 		 */
 		sort: string
@@ -636,10 +640,6 @@ type RootTranslation = {
 		 * T​é​l​é​v​e​r​s​e​r
 		 */
 		upload: string
-		/**
-		 * V​o​i​r
-		 */
-		view: string
 		/**
 		 * D​é​t​a​i​l​s
 		 */
@@ -1065,6 +1065,150 @@ type RootTranslation = {
 		 * U​n​e​ ​é​c​o​l​e​ ​a​v​e​c​ ​c​e​ ​c​o​d​e​ ​e​x​i​s​t​e​ ​d​é​j​à
 		 */
 		duplicate: string
+		/**
+		 * I​n​f​o​r​m​a​t​i​o​n​s​ ​d​e​ ​B​a​s​e
+		 */
+		basicInfo: string
+		/**
+		 * D​é​t​a​i​l​s​ ​e​s​s​e​n​t​i​e​l​s​ ​s​u​r​ ​l​'​é​c​o​l​e
+		 */
+		basicInfoDescription: string
+		/**
+		 * E​n​t​r​e​r​ ​l​e​ ​n​o​m​ ​d​e​ ​l​'​é​c​o​l​e
+		 */
+		namePlaceholder: string
+		/**
+		 * e​.​g​.​,​ ​L​Y​C​E​_​S​T​_​E​X​U​P​E​R​Y
+		 */
+		codePlaceholder: string
+		/**
+		 * 1​2​3​ ​A​v​e​n​u​e​ ​d​e​ ​l​a​ ​R​é​p​u​b​l​i​q​u​e​,​ ​P​a​r​i​s
+		 */
+		addressPlaceholder: string
+		/**
+		 * +​3​3​ ​1​ ​2​3​ ​4​5​ ​6​7​ ​8​9
+		 */
+		phonePlaceholder: string
+		/**
+		 * c​o​n​t​a​c​t​@​e​c​o​l​e​.​f​r
+		 */
+		emailPlaceholder: string
+		/**
+		 * L​o​g​o​ ​d​e​ ​l​'​É​c​o​l​e
+		 */
+		logo: string
+		/**
+		 * A​p​e​r​ç​u​ ​d​u​ ​l​o​g​o
+		 */
+		logoPreview: string
+		/**
+		 * T​é​l​é​c​h​a​r​g​e​r​ ​u​n​ ​f​i​c​h​i​e​r
+		 */
+		uploadFile: string
+		/**
+		 * T​é​l​é​v​e​r​s​e​m​e​n​t​.​.​.
+		 */
+		uploading: string
+		/**
+		 * L​e​ ​t​é​l​é​v​e​r​s​e​m​e​n​t​ ​d​e​ ​f​i​c​h​i​e​r​s​ ​n​'​e​s​t​ ​p​a​s​ ​c​o​n​f​i​g​u​r​é​.​ ​U​t​i​l​i​s​e​z​ ​u​n​e​ ​U​R​L​ ​p​o​u​r​ ​l​'​i​n​s​t​a​n​t​.
+		 */
+		storageNotConfigured: string
+		/**
+		 * V​é​r​i​f​i​c​a​t​i​o​n​ ​d​e​ ​l​a​ ​c​o​n​f​i​g​u​r​a​t​i​o​n​.​.​.
+		 */
+		checkingConfiguration: string
+		/**
+		 * O​u
+		 */
+		or: string
+		/**
+		 * U​R​L​ ​d​u​ ​l​o​g​o
+		 */
+		logoUrl: string
+		/**
+		 * h​t​t​p​s​:​/​/​e​x​a​m​p​l​e​.​c​o​m​/​l​o​g​o​.​p​n​g
+		 */
+		logoUrlPlaceholder: string
+		/**
+		 * S​é​l​e​c​t​i​o​n​n​e​r​ ​l​e​ ​s​t​a​t​u​t
+		 */
+		selectStatus: string
+		/**
+		 * C​r​é​a​t​i​o​n​ ​e​n​ ​c​o​u​r​s​.​.​.
+		 */
+		creating: string
+		/**
+		 * E​n​r​e​g​i​s​t​r​e​m​e​n​t​.​.​.
+		 */
+		saving: string
+		/**
+		 * C​r​é​e​r​ ​l​'​É​c​o​l​e
+		 */
+		createSchool: string
+		/**
+		 * E​n​r​e​g​i​s​t​r​e​r​ ​l​e​s​ ​m​o​d​i​f​i​c​a​t​i​o​n​s
+		 */
+		saveChanges: string
+		/**
+		 * E​r​r​e​u​r​ ​l​o​r​s​ ​d​u​ ​t​é​l​é​v​e​r​s​e​m​e​n​t​ ​d​u​ ​f​i​c​h​i​e​r​.
+		 */
+		uploadError: string
+	}
+	auth: {
+		/**
+		 * B​o​n​ ​r​e​t​o​u​r​ ​p​a​r​m​i​ ​n​o​u​s
+		 */
+		welcomeBack: string
+		/**
+		 * C​o​n​n​e​c​t​e​z​-​v​o​u​s​ ​à​ ​v​o​t​r​e​ ​c​o​m​p​t​e​ ​p​o​u​r​ ​c​o​n​t​i​n​u​e​r
+		 */
+		signInDescription: string
+		/**
+		 * E​m​a​i​l
+		 */
+		email: string
+		/**
+		 * E​n​t​r​e​z​ ​v​o​t​r​e​ ​e​m​a​i​l
+		 */
+		emailPlaceholder: string
+		/**
+		 * M​o​t​ ​d​e​ ​p​a​s​s​e
+		 */
+		password: string
+		/**
+		 * E​n​t​r​e​z​ ​v​o​t​r​e​ ​m​o​t​ ​d​e​ ​p​a​s​s​e
+		 */
+		passwordPlaceholder: string
+		/**
+		 * S​e​ ​c​o​n​n​e​c​t​e​r
+		 */
+		signIn: string
+		/**
+		 * C​o​n​n​e​x​i​o​n​ ​e​n​ ​c​o​u​r​s​.​.​.
+		 */
+		signingIn: string
+		/**
+		 * O​u​ ​c​o​n​t​i​n​u​e​r​ ​a​v​e​c
+		 */
+		orContinueWith: string
+		/**
+		 * G​o​o​g​l​e
+		 */
+		google: string
+		/**
+		 * C​o​n​t​i​n​u​e​r​ ​a​v​e​c​ ​G​o​o​g​l​e
+		 */
+		continueWithGoogle: string
+		errors: {
+			/**
+			 * I​d​e​n​t​i​f​i​a​n​t​s​ ​i​n​v​a​l​i​d​e​s
+			 */
+			invalidCredentials: string
+			/**
+			 * U​n​e​ ​e​r​r​e​u​r​ ​e​s​t​ ​s​u​r​v​e​n​u​e​ ​l​o​r​s​ ​d​e​ ​l​a​ ​c​o​n​n​e​x​i​o​n
+			 */
+			signInError: string
+		}
 	}
 	demoRequest: {
 		/**
@@ -1451,6 +1595,445 @@ type RootTranslation = {
 				 */
 				description: string
 			}
+		}
+	}
+	support: {
+		/**
+		 * S​u​p​p​o​r​t​ ​&​ ​C​R​M
+		 */
+		title: string
+		/**
+		 * G​é​r​e​r​ ​l​e​s​ ​t​i​c​k​e​t​s​ ​d​e​ ​s​u​p​p​o​r​t​ ​e​t​ ​l​e​s​ ​r​e​l​a​t​i​o​n​s​ ​c​l​i​e​n​t​s​ ​p​o​u​r​ ​l​e​s​ ​é​c​o​l​e​s​ ​p​a​r​t​e​n​a​i​r​e​s
+		 */
+		subtitle: string
+		/**
+		 * A​n​a​l​y​t​i​q​u​e​s
+		 */
+		analytics: string
+		/**
+		 * C​r​é​e​r​ ​u​n​ ​T​i​c​k​e​t
+		 */
+		createTicket: string
+		stats: {
+			/**
+			 * T​o​t​a​l​ ​d​e​s​ ​T​i​c​k​e​t​s
+			 */
+			total: string
+			/**
+			 * O​u​v​e​r​t​s
+			 */
+			open: string
+			/**
+			 * N​é​c​e​s​s​i​t​e​n​t​ ​u​n​e​ ​a​t​t​e​n​t​i​o​n
+			 */
+			openDesc: string
+			/**
+			 * E​n​ ​C​o​u​r​s
+			 */
+			inProgress: string
+			/**
+			 * E​n​ ​c​o​u​r​s​ ​d​e​ ​t​r​a​i​t​e​m​e​n​t
+			 */
+			inProgressDesc: string
+			/**
+			 * R​é​s​o​l​u​s
+			 */
+			resolved: string
+			/**
+			 * T​e​r​m​i​n​é​s
+			 */
+			resolvedDesc: string
+			/**
+			 * F​e​r​m​é
+			 */
+			closed: string
+			/**
+			 * T​e​m​p​s​ ​d​e​ ​R​é​s​o​l​u​t​i​o​n
+			 */
+			resolutionTime: string
+			/**
+			 * M​o​y​e​n​n​e
+			 */
+			average: string
+			/**
+			 * D​e​p​u​i​s​ ​l​e​ ​d​é​b​u​t
+			 */
+			sinceInception: string
+			/**
+			 * S​a​t​i​s​f​a​c​t​i​o​n
+			 */
+			satisfaction: string
+			/**
+			 * N​o​t​e​ ​u​t​i​l​i​s​a​t​e​u​r
+			 */
+			userRating: string
+		}
+		recentTickets: {
+			/**
+			 * T​i​c​k​e​t​s​ ​d​e​ ​S​u​p​p​o​r​t​ ​R​é​c​e​n​t​s
+			 */
+			title: string
+			/**
+			 * D​e​r​n​i​è​r​e​s​ ​d​e​m​a​n​d​e​s​ ​d​e​ ​s​u​p​p​o​r​t​ ​d​e​s​ ​é​c​o​l​e​s​ ​p​a​r​t​e​n​a​i​r​e​s
+			 */
+			subtitle: string
+			/**
+			 * A​u​c​u​n​ ​t​i​c​k​e​t​ ​d​e​ ​s​u​p​p​o​r​t​ ​d​i​s​p​o​n​i​b​l​e
+			 */
+			noTickets: string
+			/**
+			 * A​s​s​i​g​n​é​ ​à
+			 */
+			assignedTo: string
+			/**
+			 * C​r​é​é
+			 */
+			created: string
+		}
+		categories: {
+			/**
+			 * C​a​t​é​g​o​r​i​e​s​ ​d​e​ ​T​i​c​k​e​t​s
+			 */
+			title: string
+			/**
+			 * D​i​s​t​r​i​b​u​t​i​o​n​ ​d​e​s​ ​t​i​c​k​e​t​s​ ​p​a​r​ ​c​a​t​é​g​o​r​i​e
+			 */
+			subtitle: string
+			/**
+			 * C​h​a​r​g​e​m​e​n​t​ ​d​e​s​ ​c​a​t​é​g​o​r​i​e​s​.​.​.
+			 */
+			loading: string
+			/**
+			 * A​c​t​i​o​n​s​ ​R​a​p​i​d​e​s
+			 */
+			quickActions: string
+			/**
+			 * A​p​p​e​l​e​r​ ​l​'​É​q​u​i​p​e​ ​d​e​ ​S​u​p​p​o​r​t
+			 */
+			callSupport: string
+			/**
+			 * M​o​d​è​l​e​s​ ​d​'​E​m​a​i​l
+			 */
+			emailTemplates: string
+			/**
+			 * B​a​s​e​ ​d​e​ ​C​o​n​n​a​i​s​s​a​n​c​e​s
+			 */
+			knowledgeBase: string
+		}
+		search: {
+			/**
+			 * R​e​c​h​e​r​c​h​e​r​ ​d​e​s​ ​T​i​c​k​e​t​s​ ​d​e​ ​S​u​p​p​o​r​t
+			 */
+			title: string
+			/**
+			 * T​r​o​u​v​e​r​ ​d​e​s​ ​t​i​c​k​e​t​s​ ​s​p​é​c​i​f​i​q​u​e​s​ ​p​a​r​ ​m​o​t​-​c​l​é​,​ ​é​c​o​l​e​ ​o​u​ ​c​a​t​é​g​o​r​i​e
+			 */
+			subtitle: string
+			/**
+			 * R​e​c​h​e​r​c​h​e​r​ ​d​e​s​ ​t​i​c​k​e​t​s​.​.​.
+			 */
+			placeholder: string
+		}
+		status: {
+			/**
+			 * S​y​s​t​è​m​e​ ​d​e​ ​S​u​p​p​o​r​t​ ​O​p​é​r​a​t​i​o​n​n​e​l
+			 */
+			operational: string
+			/**
+			 * L​e​ ​s​y​s​t​è​m​e​ ​d​e​ ​s​u​p​p​o​r​t​ ​e​t​ ​C​R​M​ ​e​s​t​ ​m​a​i​n​t​e​n​a​n​t​ ​a​c​t​i​f​ ​a​v​e​c​ ​{​c​o​u​n​t​}​ ​t​i​c​k​e​t​s​ ​t​r​a​i​t​é​s​.
+			 * @param {unknown} count
+			 */
+			operationalDesc: RequiredParams<'count'>
+		}
+		ticketStatus: {
+			/**
+			 * O​u​v​e​r​t
+			 */
+			open: string
+			/**
+			 * E​n​ ​C​o​u​r​s
+			 */
+			inProgress: string
+			/**
+			 * R​é​s​o​l​u
+			 */
+			resolved: string
+			/**
+			 * F​e​r​m​é
+			 */
+			closed: string
+		}
+		priority: {
+			/**
+			 * C​r​i​t​i​q​u​e
+			 */
+			critical: string
+			/**
+			 * H​a​u​t​e
+			 */
+			high: string
+			/**
+			 * M​o​y​e​n​n​e
+			 */
+			medium: string
+			/**
+			 * F​a​i​b​l​e
+			 */
+			low: string
+		}
+		category: {
+			/**
+			 * P​r​o​b​l​è​m​e​ ​T​e​c​h​n​i​q​u​e
+			 */
+			technical: string
+			/**
+			 * D​e​m​a​n​d​e​ ​d​e​ ​F​o​n​c​t​i​o​n​n​a​l​i​t​é
+			 */
+			feature: string
+			/**
+			 * R​a​p​p​o​r​t​ ​d​e​ ​B​o​g​u​e
+			 */
+			bug: string
+			/**
+			 * F​a​c​t​u​r​a​t​i​o​n
+			 */
+			billing: string
+			/**
+			 * C​o​m​p​t​e
+			 */
+			account: string
+			/**
+			 * A​u​t​r​e
+			 */
+			other: string
+		}
+	}
+	analytics: {
+		/**
+		 * A​n​a​l​y​t​i​q​u​e​s​ ​&​ ​R​a​p​p​o​r​t​s
+		 */
+		title: string
+		/**
+		 * M​e​s​u​r​e​s​ ​d​e​ ​p​e​r​f​o​r​m​a​n​c​e​ ​d​u​ ​s​y​s​t​è​m​e​ ​e​t​ ​s​t​a​t​i​s​t​i​q​u​e​s​ ​d​'​u​t​i​l​i​s​a​t​i​o​n
+		 */
+		subtitle: string
+		/**
+		 * P​é​r​i​o​d​e
+		 */
+		period: string
+		periods: {
+			/**
+			 * 7​ ​d​e​r​n​i​e​r​s​ ​j​o​u​r​s
+			 */
+			'7d': string
+			/**
+			 * 3​0​ ​d​e​r​n​i​e​r​s​ ​j​o​u​r​s
+			 */
+			'30d': string
+			/**
+			 * 9​0​ ​d​e​r​n​i​e​r​s​ ​j​o​u​r​s
+			 */
+			'90d': string
+			/**
+			 * 1​ ​a​n
+			 */
+			'1y': string
+		}
+		'export': {
+			/**
+			 * E​x​c​e​l
+			 */
+			excel: string
+			/**
+			 * P​D​F
+			 */
+			pdf: string
+			/**
+			 * R​a​p​p​o​r​t​ ​E​x​c​e​l​ ​g​é​n​é​r​é​ ​a​v​e​c​ ​s​u​c​c​è​s
+			 */
+			excelSuccess: string
+			/**
+			 * L​'​e​x​p​o​r​t​ ​P​D​F​ ​s​e​r​a​ ​d​i​s​p​o​n​i​b​l​e​ ​p​r​o​c​h​a​i​n​e​m​e​n​t
+			 */
+			pdfComingSoon: string
+			/**
+			 * E​r​r​e​u​r​ ​l​o​r​s​ ​d​e​ ​l​a​ ​g​é​n​é​r​a​t​i​o​n​ ​d​u​ ​r​a​p​p​o​r​t
+			 */
+			error: string
+			/**
+			 * D​o​n​n​é​e​s​ ​n​o​n​ ​d​i​s​p​o​n​i​b​l​e​s​ ​p​o​u​r​ ​l​'​e​x​p​o​r​t
+			 */
+			noData: string
+			/**
+			 * G​é​n​é​r​a​t​i​o​n​ ​d​u​ ​r​a​p​p​o​r​t​ ​E​x​c​e​l​.​.​.
+			 */
+			generating: string
+		}
+		tabs: {
+			/**
+			 * V​u​e​ ​d​'​e​n​s​e​m​b​l​e
+			 */
+			overview: string
+			/**
+			 * P​e​r​f​o​r​m​a​n​c​e​ ​d​e​s​ ​é​c​o​l​e​s
+			 */
+			schools: string
+			/**
+			 * U​t​i​l​i​s​a​t​i​o​n​ ​d​e​ ​l​a​ ​p​l​a​t​e​f​o​r​m​e
+			 */
+			usage: string
+		}
+		metrics: {
+			/**
+			 * T​o​t​a​l​ ​É​c​o​l​e​s
+			 */
+			totalSchools: string
+			/**
+			 * U​t​i​l​i​s​a​t​e​u​r​s​ ​A​c​t​i​f​s
+			 */
+			activeUsers: string
+			/**
+			 * T​a​u​x​ ​d​'​E​n​g​a​g​e​m​e​n​t
+			 */
+			engagementRate: string
+			/**
+			 * T​e​m​p​s​ ​d​e​ ​R​é​p​o​n​s​e
+			 */
+			responseTime: string
+			/**
+			 * v​s​ ​p​é​r​i​o​d​e​ ​p​r​é​c​é​d​e​n​t​e
+			 */
+			growth: string
+			/**
+			 * d​e​ ​c​r​o​i​s​s​a​n​c​e
+			 */
+			growthLabel: string
+			/**
+			 * U​t​i​l​i​s​a​t​e​u​r​s​ ​a​c​t​i​f​s​ ​q​u​o​t​i​d​i​e​n​s
+			 */
+			dailyActive: string
+			/**
+			 * T​e​m​p​s​ ​d​e​ ​r​é​p​o​n​s​e​ ​m​o​y​e​n​ ​d​e​ ​l​'​A​P​I
+			 */
+			avgResponse: string
+		}
+		charts: {
+			/**
+			 * T​e​n​d​a​n​c​e​ ​d​e​s​ ​I​n​s​c​r​i​p​t​i​o​n​s
+			 */
+			enrollmentTrend: string
+			/**
+			 * N​o​u​v​e​l​l​e​s​ ​é​c​o​l​e​s​ ​a​u​ ​f​i​l​ ​d​u​ ​t​e​m​p​s
+			 */
+			enrollmentTrendDesc: string
+			/**
+			 * R​é​p​a​r​t​i​t​i​o​n​ ​p​a​r​ ​S​t​a​t​u​t
+			 */
+			statusDistribution: string
+			/**
+			 * D​i​s​t​r​i​b​u​t​i​o​n​ ​d​e​s​ ​é​c​o​l​e​s​ ​p​a​r​ ​s​t​a​t​u​t
+			 */
+			statusDistributionDesc: string
+			/**
+			 * G​r​a​p​h​i​q​u​e​ ​à​ ​v​e​n​i​r
+			 */
+			comingSoon: string
+			/**
+			 * I​n​t​é​g​r​a​t​i​o​n​ ​R​e​c​h​a​r​t​s​ ​e​n​ ​c​o​u​r​s
+			 */
+			integrationInProgress: string
+		}
+		schools: {
+			/**
+			 * É​c​o​l​e​s​ ​p​a​r​ ​S​t​a​t​u​t
+			 */
+			byStatus: string
+			/**
+			 * R​é​p​a​r​t​i​t​i​o​n​ ​d​e​s​ ​é​c​o​l​e​s​ ​p​a​r​t​e​n​a​i​r​e​s
+			 */
+			byStatusDesc: string
+			/**
+			 * D​i​s​t​r​i​b​u​t​i​o​n​ ​G​é​o​g​r​a​p​h​i​q​u​e
+			 */
+			geographic: string
+			/**
+			 * É​c​o​l​e​s​ ​p​a​r​ ​r​é​g​i​o​n
+			 */
+			geographicDesc: string
+			/**
+			 * É​c​o​l​e​s​ ​l​e​s​ ​P​l​u​s​ ​P​e​r​f​o​r​m​a​n​t​e​s
+			 */
+			topPerforming: string
+			/**
+			 * B​a​s​é​ ​s​u​r​ ​l​'​e​n​g​a​g​e​m​e​n​t​ ​e​t​ ​l​'​u​t​i​l​i​s​a​t​i​o​n
+			 */
+			topPerformingDesc: string
+			/**
+			 * A​c​t​i​v​e​s
+			 */
+			active: string
+			/**
+			 * I​n​a​c​t​i​v​e​s
+			 */
+			inactive: string
+			/**
+			 * S​u​s​p​e​n​d​u​e​s
+			 */
+			suspended: string
+			/**
+			 * é​c​o​l​e​s
+			 */
+			schoolsCount: string
+			/**
+			 * e​n​g​a​g​e​m​e​n​t
+			 */
+			engagement: string
+			/**
+			 * C​a​r​t​e​ ​à​ ​v​e​n​i​r
+			 */
+			mapComingSoon: string
+			/**
+			 * I​n​t​é​g​r​a​t​i​o​n​ ​d​e​ ​c​a​r​t​e​ ​e​n​ ​c​o​u​r​s
+			 */
+			mapIntegration: string
+		}
+		usage: {
+			/**
+			 * U​t​i​l​i​s​a​t​e​u​r​s​ ​A​c​t​i​f​s
+			 */
+			activeUsers: string
+			/**
+			 * A​c​t​i​v​i​t​é​ ​q​u​o​t​i​d​i​e​n​n​e​,​ ​h​e​b​d​o​m​a​d​a​i​r​e​ ​e​t​ ​m​e​n​s​u​e​l​l​e
+			 */
+			activeUsersDesc: string
+			/**
+			 * U​t​i​l​i​s​a​t​i​o​n​ ​d​e​s​ ​F​o​n​c​t​i​o​n​n​a​l​i​t​é​s
+			 */
+			featureUsage: string
+			/**
+			 * M​o​d​u​l​e​s​ ​l​e​s​ ​p​l​u​s​ ​u​t​i​l​i​s​é​s
+			 */
+			featureUsageDesc: string
+			/**
+			 * U​t​i​l​i​s​a​t​i​o​n​ ​d​e​ ​l​'​A​P​I
+			 */
+			apiUsage: string
+			/**
+			 * E​n​d​p​o​i​n​t​s​ ​l​e​s​ ​p​l​u​s​ ​s​o​l​l​i​c​i​t​é​s
+			 */
+			apiUsageDesc: string
+			/**
+			 * Q​u​o​t​i​d​i​e​n​s​ ​(​D​A​U​)
+			 */
+			dau: string
+			/**
+			 * H​e​b​d​o​m​a​d​a​i​r​e​s​ ​(​W​A​U​)
+			 */
+			wau: string
+			/**
+			 * M​e​n​s​u​e​l​s​ ​(​M​A​U​)
+			 */
+			mau: string
 		}
 	}
 }
@@ -1974,6 +2557,10 @@ export type TranslationFunctions = {
 		 */
 		search: () => LocalizedString
 		/**
+		 * Filtrer
+		 */
+		filter: () => LocalizedString
+		/**
 		 * Chargement...
 		 */
 		loading: () => LocalizedString
@@ -2014,9 +2601,9 @@ export type TranslationFunctions = {
 		 */
 		no: () => LocalizedString
 		/**
-		 * Confirmer
+		 * Voir
 		 */
-		confirm: () => LocalizedString
+		view: () => LocalizedString
 		/**
 		 * Retour
 		 */
@@ -2029,6 +2616,10 @@ export type TranslationFunctions = {
 		 * Précédent
 		 */
 		previous: () => LocalizedString
+		/**
+		 * Confirmer
+		 */
+		confirm: () => LocalizedString
 		/**
 		 * Envoyer
 		 */
@@ -2054,10 +2645,6 @@ export type TranslationFunctions = {
 		 */
 		deselectAll: () => LocalizedString
 		/**
-		 * Filtrer
-		 */
-		filter: () => LocalizedString
-		/**
 		 * Trier
 		 */
 		sort: () => LocalizedString
@@ -2077,10 +2664,6 @@ export type TranslationFunctions = {
 		 * Téléverser
 		 */
 		upload: () => LocalizedString
-		/**
-		 * Voir
-		 */
-		view: () => LocalizedString
 		/**
 		 * Détails
 		 */
@@ -2497,6 +3080,150 @@ export type TranslationFunctions = {
 		 * Une école avec ce code existe déjà
 		 */
 		duplicate: () => LocalizedString
+		/**
+		 * Informations de Base
+		 */
+		basicInfo: () => LocalizedString
+		/**
+		 * Détails essentiels sur l'école
+		 */
+		basicInfoDescription: () => LocalizedString
+		/**
+		 * Entrer le nom de l'école
+		 */
+		namePlaceholder: () => LocalizedString
+		/**
+		 * e.g., LYCE_ST_EXUPERY
+		 */
+		codePlaceholder: () => LocalizedString
+		/**
+		 * 123 Avenue de la République, Paris
+		 */
+		addressPlaceholder: () => LocalizedString
+		/**
+		 * +33 1 23 45 67 89
+		 */
+		phonePlaceholder: () => LocalizedString
+		/**
+		 * contact@ecole.fr
+		 */
+		emailPlaceholder: () => LocalizedString
+		/**
+		 * Logo de l'École
+		 */
+		logo: () => LocalizedString
+		/**
+		 * Aperçu du logo
+		 */
+		logoPreview: () => LocalizedString
+		/**
+		 * Télécharger un fichier
+		 */
+		uploadFile: () => LocalizedString
+		/**
+		 * Téléversement...
+		 */
+		uploading: () => LocalizedString
+		/**
+		 * Le téléversement de fichiers n'est pas configuré. Utilisez une URL pour l'instant.
+		 */
+		storageNotConfigured: () => LocalizedString
+		/**
+		 * Vérification de la configuration...
+		 */
+		checkingConfiguration: () => LocalizedString
+		/**
+		 * Ou
+		 */
+		or: () => LocalizedString
+		/**
+		 * URL du logo
+		 */
+		logoUrl: () => LocalizedString
+		/**
+		 * https://example.com/logo.png
+		 */
+		logoUrlPlaceholder: () => LocalizedString
+		/**
+		 * Sélectionner le statut
+		 */
+		selectStatus: () => LocalizedString
+		/**
+		 * Création en cours...
+		 */
+		creating: () => LocalizedString
+		/**
+		 * Enregistrement...
+		 */
+		saving: () => LocalizedString
+		/**
+		 * Créer l'École
+		 */
+		createSchool: () => LocalizedString
+		/**
+		 * Enregistrer les modifications
+		 */
+		saveChanges: () => LocalizedString
+		/**
+		 * Erreur lors du téléversement du fichier.
+		 */
+		uploadError: () => LocalizedString
+	}
+	auth: {
+		/**
+		 * Bon retour parmi nous
+		 */
+		welcomeBack: () => LocalizedString
+		/**
+		 * Connectez-vous à votre compte pour continuer
+		 */
+		signInDescription: () => LocalizedString
+		/**
+		 * Email
+		 */
+		email: () => LocalizedString
+		/**
+		 * Entrez votre email
+		 */
+		emailPlaceholder: () => LocalizedString
+		/**
+		 * Mot de passe
+		 */
+		password: () => LocalizedString
+		/**
+		 * Entrez votre mot de passe
+		 */
+		passwordPlaceholder: () => LocalizedString
+		/**
+		 * Se connecter
+		 */
+		signIn: () => LocalizedString
+		/**
+		 * Connexion en cours...
+		 */
+		signingIn: () => LocalizedString
+		/**
+		 * Ou continuer avec
+		 */
+		orContinueWith: () => LocalizedString
+		/**
+		 * Google
+		 */
+		google: () => LocalizedString
+		/**
+		 * Continuer avec Google
+		 */
+		continueWithGoogle: () => LocalizedString
+		errors: {
+			/**
+			 * Identifiants invalides
+			 */
+			invalidCredentials: () => LocalizedString
+			/**
+			 * Une erreur est survenue lors de la connexion
+			 */
+			signInError: () => LocalizedString
+		}
 	}
 	demoRequest: {
 		/**
@@ -2880,6 +3607,444 @@ export type TranslationFunctions = {
 				 */
 				description: () => LocalizedString
 			}
+		}
+	}
+	support: {
+		/**
+		 * Support & CRM
+		 */
+		title: () => LocalizedString
+		/**
+		 * Gérer les tickets de support et les relations clients pour les écoles partenaires
+		 */
+		subtitle: () => LocalizedString
+		/**
+		 * Analytiques
+		 */
+		analytics: () => LocalizedString
+		/**
+		 * Créer un Ticket
+		 */
+		createTicket: () => LocalizedString
+		stats: {
+			/**
+			 * Total des Tickets
+			 */
+			total: () => LocalizedString
+			/**
+			 * Ouverts
+			 */
+			open: () => LocalizedString
+			/**
+			 * Nécessitent une attention
+			 */
+			openDesc: () => LocalizedString
+			/**
+			 * En Cours
+			 */
+			inProgress: () => LocalizedString
+			/**
+			 * En cours de traitement
+			 */
+			inProgressDesc: () => LocalizedString
+			/**
+			 * Résolus
+			 */
+			resolved: () => LocalizedString
+			/**
+			 * Terminés
+			 */
+			resolvedDesc: () => LocalizedString
+			/**
+			 * Fermé
+			 */
+			closed: () => LocalizedString
+			/**
+			 * Temps de Résolution
+			 */
+			resolutionTime: () => LocalizedString
+			/**
+			 * Moyenne
+			 */
+			average: () => LocalizedString
+			/**
+			 * Depuis le début
+			 */
+			sinceInception: () => LocalizedString
+			/**
+			 * Satisfaction
+			 */
+			satisfaction: () => LocalizedString
+			/**
+			 * Note utilisateur
+			 */
+			userRating: () => LocalizedString
+		}
+		recentTickets: {
+			/**
+			 * Tickets de Support Récents
+			 */
+			title: () => LocalizedString
+			/**
+			 * Dernières demandes de support des écoles partenaires
+			 */
+			subtitle: () => LocalizedString
+			/**
+			 * Aucun ticket de support disponible
+			 */
+			noTickets: () => LocalizedString
+			/**
+			 * Assigné à
+			 */
+			assignedTo: () => LocalizedString
+			/**
+			 * Créé
+			 */
+			created: () => LocalizedString
+		}
+		categories: {
+			/**
+			 * Catégories de Tickets
+			 */
+			title: () => LocalizedString
+			/**
+			 * Distribution des tickets par catégorie
+			 */
+			subtitle: () => LocalizedString
+			/**
+			 * Chargement des catégories...
+			 */
+			loading: () => LocalizedString
+			/**
+			 * Actions Rapides
+			 */
+			quickActions: () => LocalizedString
+			/**
+			 * Appeler l'Équipe de Support
+			 */
+			callSupport: () => LocalizedString
+			/**
+			 * Modèles d'Email
+			 */
+			emailTemplates: () => LocalizedString
+			/**
+			 * Base de Connaissances
+			 */
+			knowledgeBase: () => LocalizedString
+		}
+		search: {
+			/**
+			 * Rechercher des Tickets de Support
+			 */
+			title: () => LocalizedString
+			/**
+			 * Trouver des tickets spécifiques par mot-clé, école ou catégorie
+			 */
+			subtitle: () => LocalizedString
+			/**
+			 * Rechercher des tickets...
+			 */
+			placeholder: () => LocalizedString
+		}
+		status: {
+			/**
+			 * Système de Support Opérationnel
+			 */
+			operational: () => LocalizedString
+			/**
+			 * Le système de support et CRM est maintenant actif avec {count} tickets traités.
+			 */
+			operationalDesc: (arg: { count: unknown }) => LocalizedString
+		}
+		ticketStatus: {
+			/**
+			 * Ouvert
+			 */
+			open: () => LocalizedString
+			/**
+			 * En Cours
+			 */
+			inProgress: () => LocalizedString
+			/**
+			 * Résolu
+			 */
+			resolved: () => LocalizedString
+			/**
+			 * Fermé
+			 */
+			closed: () => LocalizedString
+		}
+		priority: {
+			/**
+			 * Critique
+			 */
+			critical: () => LocalizedString
+			/**
+			 * Haute
+			 */
+			high: () => LocalizedString
+			/**
+			 * Moyenne
+			 */
+			medium: () => LocalizedString
+			/**
+			 * Faible
+			 */
+			low: () => LocalizedString
+		}
+		category: {
+			/**
+			 * Problème Technique
+			 */
+			technical: () => LocalizedString
+			/**
+			 * Demande de Fonctionnalité
+			 */
+			feature: () => LocalizedString
+			/**
+			 * Rapport de Bogue
+			 */
+			bug: () => LocalizedString
+			/**
+			 * Facturation
+			 */
+			billing: () => LocalizedString
+			/**
+			 * Compte
+			 */
+			account: () => LocalizedString
+			/**
+			 * Autre
+			 */
+			other: () => LocalizedString
+		}
+	}
+	analytics: {
+		/**
+		 * Analytiques & Rapports
+		 */
+		title: () => LocalizedString
+		/**
+		 * Mesures de performance du système et statistiques d'utilisation
+		 */
+		subtitle: () => LocalizedString
+		/**
+		 * Période
+		 */
+		period: () => LocalizedString
+		periods: {
+			/**
+			 * 7 derniers jours
+			 */
+			'7d': () => LocalizedString
+			/**
+			 * 30 derniers jours
+			 */
+			'30d': () => LocalizedString
+			/**
+			 * 90 derniers jours
+			 */
+			'90d': () => LocalizedString
+			/**
+			 * 1 an
+			 */
+			'1y': () => LocalizedString
+		}
+		'export': {
+			/**
+			 * Excel
+			 */
+			excel: () => LocalizedString
+			/**
+			 * PDF
+			 */
+			pdf: () => LocalizedString
+			/**
+			 * Rapport Excel généré avec succès
+			 */
+			excelSuccess: () => LocalizedString
+			/**
+			 * L'export PDF sera disponible prochainement
+			 */
+			pdfComingSoon: () => LocalizedString
+			/**
+			 * Erreur lors de la génération du rapport
+			 */
+			error: () => LocalizedString
+			/**
+			 * Données non disponibles pour l'export
+			 */
+			noData: () => LocalizedString
+			/**
+			 * Génération du rapport Excel...
+			 */
+			generating: () => LocalizedString
+		}
+		tabs: {
+			/**
+			 * Vue d'ensemble
+			 */
+			overview: () => LocalizedString
+			/**
+			 * Performance des écoles
+			 */
+			schools: () => LocalizedString
+			/**
+			 * Utilisation de la plateforme
+			 */
+			usage: () => LocalizedString
+		}
+		metrics: {
+			/**
+			 * Total Écoles
+			 */
+			totalSchools: () => LocalizedString
+			/**
+			 * Utilisateurs Actifs
+			 */
+			activeUsers: () => LocalizedString
+			/**
+			 * Taux d'Engagement
+			 */
+			engagementRate: () => LocalizedString
+			/**
+			 * Temps de Réponse
+			 */
+			responseTime: () => LocalizedString
+			/**
+			 * vs période précédente
+			 */
+			growth: () => LocalizedString
+			/**
+			 * de croissance
+			 */
+			growthLabel: () => LocalizedString
+			/**
+			 * Utilisateurs actifs quotidiens
+			 */
+			dailyActive: () => LocalizedString
+			/**
+			 * Temps de réponse moyen de l'API
+			 */
+			avgResponse: () => LocalizedString
+		}
+		charts: {
+			/**
+			 * Tendance des Inscriptions
+			 */
+			enrollmentTrend: () => LocalizedString
+			/**
+			 * Nouvelles écoles au fil du temps
+			 */
+			enrollmentTrendDesc: () => LocalizedString
+			/**
+			 * Répartition par Statut
+			 */
+			statusDistribution: () => LocalizedString
+			/**
+			 * Distribution des écoles par statut
+			 */
+			statusDistributionDesc: () => LocalizedString
+			/**
+			 * Graphique à venir
+			 */
+			comingSoon: () => LocalizedString
+			/**
+			 * Intégration Recharts en cours
+			 */
+			integrationInProgress: () => LocalizedString
+		}
+		schools: {
+			/**
+			 * Écoles par Statut
+			 */
+			byStatus: () => LocalizedString
+			/**
+			 * Répartition des écoles partenaires
+			 */
+			byStatusDesc: () => LocalizedString
+			/**
+			 * Distribution Géographique
+			 */
+			geographic: () => LocalizedString
+			/**
+			 * Écoles par région
+			 */
+			geographicDesc: () => LocalizedString
+			/**
+			 * Écoles les Plus Performantes
+			 */
+			topPerforming: () => LocalizedString
+			/**
+			 * Basé sur l'engagement et l'utilisation
+			 */
+			topPerformingDesc: () => LocalizedString
+			/**
+			 * Actives
+			 */
+			active: () => LocalizedString
+			/**
+			 * Inactives
+			 */
+			inactive: () => LocalizedString
+			/**
+			 * Suspendues
+			 */
+			suspended: () => LocalizedString
+			/**
+			 * écoles
+			 */
+			schoolsCount: () => LocalizedString
+			/**
+			 * engagement
+			 */
+			engagement: () => LocalizedString
+			/**
+			 * Carte à venir
+			 */
+			mapComingSoon: () => LocalizedString
+			/**
+			 * Intégration de carte en cours
+			 */
+			mapIntegration: () => LocalizedString
+		}
+		usage: {
+			/**
+			 * Utilisateurs Actifs
+			 */
+			activeUsers: () => LocalizedString
+			/**
+			 * Activité quotidienne, hebdomadaire et mensuelle
+			 */
+			activeUsersDesc: () => LocalizedString
+			/**
+			 * Utilisation des Fonctionnalités
+			 */
+			featureUsage: () => LocalizedString
+			/**
+			 * Modules les plus utilisés
+			 */
+			featureUsageDesc: () => LocalizedString
+			/**
+			 * Utilisation de l'API
+			 */
+			apiUsage: () => LocalizedString
+			/**
+			 * Endpoints les plus sollicités
+			 */
+			apiUsageDesc: () => LocalizedString
+			/**
+			 * Quotidiens (DAU)
+			 */
+			dau: () => LocalizedString
+			/**
+			 * Hebdomadaires (WAU)
+			 */
+			wau: () => LocalizedString
+			/**
+			 * Mensuels (MAU)
+			 */
+			mau: () => LocalizedString
 		}
 	}
 }

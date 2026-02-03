@@ -28,6 +28,7 @@ const en: Translation = {
     next: 'Next',
     previous: 'Previous',
     submit: 'Submit',
+    notAvailable: 'Not Available',
     confirm: 'Confirm',
     yes: 'Yes',
     no: 'No',

@@ -20,13 +20,13 @@ import {
   CommandShortcut,
 } from '@workspace/ui/components/command'
 import * as React from 'react'
+import { useTranslation } from 'react-i18next'
 import { useSearch } from '@/hooks/use-search'
-import { useTranslations } from '@/i18n'
 
 export function CommandPalette() {
   const [open, setOpen] = React.useState(false)
   const navigate = useNavigate()
-  const t = useTranslations()
+  const { t } = useTranslation()
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -50,18 +50,18 @@ export function CommandPalette() {
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
       <CommandInput
-        placeholder={`${t.common.search()}...`}
+        placeholder={`${t('common.search')}...`}
         value={query}
         onValueChange={setQuery}
       />
       <CommandList>
-        <CommandEmpty>No results found.</CommandEmpty>
+        <CommandEmpty>{t('common.noResults')}</CommandEmpty>
 
         {query.length > 0 && (
-          <CommandGroup heading="Students">
+          <CommandGroup heading={t('students.title')}>
             {isLoading
               ? (
-                  <CommandItem disabled>Loading...</CommandItem>
+                  <CommandItem disabled>{t('common.loading')}</CommandItem>
                 )
               : (
                   results.students.map(item => (
@@ -101,12 +101,12 @@ export function CommandPalette() {
 
         <CommandSeparator />
 
-        <CommandGroup heading="Hubs">
+        <CommandGroup heading={t('nav.spaces')}>
           <CommandItem
             onSelect={() => runCommand(() => navigate({ to: '/dashboard' }))}
           >
             <IconLayoutDashboard className="mr-2 h-4 w-4" />
-            <span>Dashboard</span>
+            <span>{t('nav.dashboard')}</span>
           </CommandItem>
           <CommandItem
             onSelect={() =>
@@ -115,31 +115,31 @@ export function CommandPalette() {
               )}
           >
             <IconSchool className="mr-2 h-4 w-4" />
-            <span>Students</span>
+            <span>{t('nav.students')}</span>
           </CommandItem>
           <CommandItem
             onSelect={() => runCommand(() => navigate({ to: '/classes' }))}
           >
             <IconBook className="mr-2 h-4 w-4" />
-            <span>Classes</span>
+            <span>{t('nav.classes')}</span>
           </CommandItem>
           <CommandItem
             onSelect={() => runCommand(() => navigate({ to: '/accounting' }))}
           >
             <IconCreditCard className="mr-2 h-4 w-4" />
-            <span>Accounting</span>
+            <span>{t('nav.accounting')}</span>
           </CommandItem>
         </CommandGroup>
 
         <CommandSeparator />
 
-        <CommandGroup heading="Settings">
+        <CommandGroup heading={t('nav.settings')}>
           <CommandItem
             onSelect={() =>
               runCommand(() => navigate({ to: '/settings/profile' }))}
           >
             <IconBuilding className="mr-2 h-4 w-4" />
-            <span>School Profile</span>
+            <span>{t('school.profile')}</span>
             <CommandShortcut>⌘P</CommandShortcut>
           </CommandItem>
           <CommandItem
@@ -147,13 +147,13 @@ export function CommandPalette() {
               runCommand(() => navigate({ to: '/settings/school-years' }))}
           >
             <IconCalendar className="mr-2 h-4 w-4" />
-            <span>Academic Years</span>
+            <span>{t('nav.schoolYears')}</span>
           </CommandItem>
           <CommandItem
             onSelect={() => runCommand(() => navigate({ to: '/settings' }))}
           >
             <IconSettings className="mr-2 h-4 w-4" />
-            <span>Settings</span>
+            <span>{t('nav.settings')}</span>
             <CommandShortcut>⌘S</CommandShortcut>
           </CommandItem>
         </CommandGroup>

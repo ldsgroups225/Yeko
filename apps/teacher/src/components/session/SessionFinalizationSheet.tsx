@@ -107,7 +107,7 @@ export function SessionFinalizationSheet({
           <div className="rounded-2xl bg-muted/30 border border-border/50 p-4 space-y-4">
             <h4 className="font-black text-foreground flex items-center gap-2">
               <IconBook className="w-5 h-5 text-primary" />
-              Résumé de la session
+              {LL.session.summary()}
             </h4>
 
             <div className="grid grid-cols-2 gap-3">
@@ -117,7 +117,7 @@ export function SessionFinalizationSheet({
                 </span>
                 <div className="flex items-center gap-2">
                   <span className="text-xl font-black text-emerald-500">{attendanceStats.present}</span>
-                  <span className="text-sm text-muted-foreground">élèves</span>
+                  <span className="text-sm text-muted-foreground">{LL.common.students()}</span>
                 </div>
               </div>
               <div className="space-y-1">
@@ -126,7 +126,7 @@ export function SessionFinalizationSheet({
                 </span>
                 <div className="flex items-center gap-2">
                   <span className="text-xl font-black text-red-500">{attendanceStats.absent}</span>
-                  <span className="text-sm text-muted-foreground">élèves</span>
+                  <span className="text-sm text-muted-foreground">{LL.common.students()}</span>
                 </div>
               </div>
               <div className="space-y-1">
@@ -135,7 +135,7 @@ export function SessionFinalizationSheet({
                 </span>
                 <div className="flex items-center gap-2">
                   <span className="text-xl font-black text-amber-500">{attendanceStats.late}</span>
-                  <span className="text-sm text-muted-foreground">élèves</span>
+                  <span className="text-sm text-muted-foreground">{LL.common.students()}</span>
                 </div>
               </div>
               <div className="space-y-1">
@@ -168,7 +168,7 @@ export function SessionFinalizationSheet({
                   className="h-8"
                 >
                   <IconCheck className="w-4 h-4 mr-1" />
-                  Oui
+                  {LL.common.yes()}
                 </Button>
                 <Button
                   variant={!showHomeworkForm ? 'default' : 'outline'}
@@ -177,7 +177,7 @@ export function SessionFinalizationSheet({
                   className="h-8"
                 >
                   <IconX className="w-4 h-4 mr-1" />
-                  Non
+                  {LL.common.no()}
                 </Button>
               </div>
             </div>
@@ -190,7 +190,7 @@ export function SessionFinalizationSheet({
                     id="homework-title"
                     value={homeworkTitle}
                     onChange={e => setHomeworkTitle(e.target.value)}
-                    placeholder="Ex: Exercices page 42..."
+                    placeholder={LL.homework.titlePlaceholder()}
                     className="h-11 rounded-xl"
                   />
                 </div>
@@ -200,7 +200,7 @@ export function SessionFinalizationSheet({
                     id="homework-description"
                     value={homeworkDescription}
                     onChange={e => setHomeworkDescription(e.target.value)}
-                    placeholder="Instructions pour les élèves..."
+                    placeholder={LL.homework.descriptionPlaceholder()}
                     className="rounded-xl resize-none"
                     rows={3}
                   />
@@ -242,7 +242,7 @@ export function SessionFinalizationSheet({
             <div className="p-4 rounded-xl bg-amber-500/5 border border-amber-500/10 flex items-start gap-3">
               <IconAlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
               <p className="text-xs font-medium text-amber-700/80 leading-relaxed">
-                Vous avez indiqué vouloir assigner un devoir mais le titre est vide. Le devoir ne sera pas enregistré si vous finalisez maintenant.
+                {LL.session.homeworkWarning()}
               </p>
             </div>
           )}

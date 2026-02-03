@@ -8,9 +8,7 @@ import { Label } from '@workspace/ui/components/label'
 import { Textarea } from '@workspace/ui/components/textarea'
 import { useForm } from 'react-hook-form'
 import { useTranslations } from '@/i18n'
-import {
-  updateSchoolProfileSchema,
-} from '@/schemas/school-profile'
+import { updateSchoolProfileSchema } from '@/schemas/school-profile'
 
 interface SchoolProfileFormProps {
   school: {

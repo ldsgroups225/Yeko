@@ -16,6 +16,7 @@ import {
   students,
 } from '../drizzle/school-schema'
 import { DatabaseError } from '../errors'
+import { getNestedErrorMessage } from '../i18n'
 
 export function getClassRosterForAttendance(params: {
   schoolId: string
@@ -163,7 +164,7 @@ export function getOrCreateAttendanceSession(params: {
   )
     .andThen((result) => {
       if (!result)
-        return err(new DatabaseError('INTERNAL_ERROR', 'Failed to create session'))
+        return err(new DatabaseError('INTERNAL_ERROR', getNestedErrorMessage('attendance', 'createFailed')))
       return ok(result)
     })
     .mapErr(tapLogErr(databaseLogger, params))
@@ -270,9 +271,9 @@ export function saveStudentAttendance(params: {
   )
     .andThen((result) => {
       if (!result)
-        return err(new DatabaseError('NOT_FOUND', 'Enrollment not found'))
+        return err(new DatabaseError('NOT_FOUND', getNestedErrorMessage('enrollments', 'notFound')))
       if (result === 'FAILED_INSERT')
-        return err(new DatabaseError('INTERNAL_ERROR', 'Failed to insert attendance'))
+        return err(new DatabaseError('INTERNAL_ERROR', getNestedErrorMessage('attendance', 'createFailed')))
       return ok(result)
     })
     .mapErr(tapLogErr(databaseLogger, params))

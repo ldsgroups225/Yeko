@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { IconShieldExclamation } from '@tabler/icons-react'
 import { Alert, AlertDescription, AlertTitle } from '@workspace/ui/components/alert'
+import { useTranslation } from 'react-i18next'
 import { usePermissions } from '@/hooks/use-permissions'
 
 interface PermissionGuardProps {
@@ -41,6 +42,7 @@ export function PermissionGuard({
   fallback,
   showDenied = false,
 }: PermissionGuardProps) {
+  const { t } = useTranslation()
   const { can, isLoading } = usePermissions()
 
   // Show loading state
@@ -56,9 +58,9 @@ export function PermissionGuard({
       return (
         <Alert variant="destructive">
           <IconShieldExclamation className="h-4 w-4" />
-          <AlertTitle>Accès refusé</AlertTitle>
+          <AlertTitle>{t('permissions.accessDenied')}</AlertTitle>
           <AlertDescription>
-            Vous n'avez pas la permission d'accéder à cette ressource.
+            {t('permissions.noPermission')}
           </AlertDescription>
         </Alert>
       )

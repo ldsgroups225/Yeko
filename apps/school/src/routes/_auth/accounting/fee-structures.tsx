@@ -1,26 +1,16 @@
-import type {
-  FeeStructure,
-} from '@/components/finance'
+import type { FeeStructure } from '@/components/finance'
 import { IconPlus, IconStack2 } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@workspace/ui/components/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
 import { motion } from 'motion/react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import {
-  FeeStructureFormDialog,
-  FeeStructuresTable,
-} from '@/components/finance'
+import { FeeStructureFormDialog, FeeStructuresTable } from '@/components/finance'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { useTranslations } from '@/i18n'
 import { feeStructuresKeys, feeStructuresOptions } from '@/lib/queries'
 import { deleteExistingFeeStructure } from '@/school/functions/fee-structures'
 
@@ -29,7 +19,7 @@ export const Route = createFileRoute('/_auth/accounting/fee-structures')({
 })
 
 function FeeStructuresPage() {
-  const t = useTranslations()
+  const { t } = useTranslation()
   const queryClient = useQueryClient()
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [editingStructure, setEditingStructure] = useState<FeeStructure | null>(null)
@@ -43,11 +33,11 @@ function FeeStructuresPage() {
     mutationFn: (id: string) => deleteExistingFeeStructure({ data: id }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: feeStructuresKeys.lists() })
-      toast.success('Structure de frais supprimée')
+      toast.success(t('finance.feeStructures.success.delete'))
       setDeletingId(null)
     },
     onError: (err: unknown) => {
-      const message = err instanceof Error ? err.message : 'Erreur lors de la suppression'
+      const message = err instanceof Error ? err.message : t('errors.generic')
       toast.error(message)
     },
   })
@@ -81,8 +71,8 @@ function FeeStructuresPage() {
     <div className="space-y-8 p-1">
       <Breadcrumbs
         items={[
-          { label: t.nav.finance(), href: '/accounting' },
-          { label: t.finance.feeStructures.title() },
+          { label: t('nav.finance'), href: '/accounting' },
+          { label: t('finance.feeStructures.title') },
         ]}
       />
 
@@ -97,10 +87,10 @@ function FeeStructuresPage() {
           </div>
           <div>
             <h1 className="text-3xl font-black tracking-tight uppercase italic">
-              {t.finance.feeStructures.title()}
+              {t('finance.feeStructures.title')}
             </h1>
             <p className="text-sm font-medium text-muted-foreground italic max-w-lg">
-              {t.finance.feeStructures.description()}
+              {t('finance.feeStructures.description')}
             </p>
           </div>
         </motion.div>
@@ -114,7 +104,7 @@ function FeeStructuresPage() {
             className="shadow-lg shadow-primary/20"
           >
             <IconPlus className="mr-2 h-4 w-4" />
-            {t.finance.feeStructures.create()}
+            {t('finance.feeStructures.create')}
           </Button>
         </motion.div>
       </div>
@@ -127,7 +117,7 @@ function FeeStructuresPage() {
         <Card className="border-border/40 bg-card/40 backdrop-blur-xl overflow-hidden shadow-sm">
           <CardHeader className="border-b border-border/40 bg-muted/5">
             <CardTitle className="text-lg font-bold">
-              {t.finance.feeStructures.title()}
+              {t('finance.feeStructures.title')}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
@@ -159,8 +149,8 @@ function FeeStructuresPage() {
             deleteMutation.mutate(deletingId)
         }}
         isLoading={deleteMutation.isPending}
-        title={t.accounting.feeStructures.deleteFeeStructure()}
-        description={t.accounting.feeStructures.deleteFeeStructureConfirm()}
+        title={t('finance.feeStructures.deleteFeeStructure')}
+        description={t('finance.feeStructures.deleteFeeStructureConfirm')}
       />
     </div>
   )

@@ -127,6 +127,10 @@ type RootTranslation = {
 		 */
 		no: string
 		/**
+		 * N​o​n​ ​d​i​s​p​o​n​i​b​l​e
+		 */
+		notAvailable: string
+		/**
 		 * T​o​u​s
 		 */
 		all: string
@@ -8084,6 +8088,10 @@ export type TranslationFunctions = {
 		 * Non
 		 */
 		no: () => LocalizedString
+		/**
+		 * Non disponible
+		 */
+		notAvailable: () => LocalizedString
 		/**
 		 * Tous
 		 */

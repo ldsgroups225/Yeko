@@ -32,6 +32,7 @@ export function StudentGradeRow({
   onGradeChange,
   disabled = false,
 }: StudentGradeRowProps) {
+  const { LL } = useI18nContext()
   const [localValue, setLocalValue] = useState(currentGrade)
   const [isFocused, setIsFocused] = useState(false)
 
@@ -114,7 +115,7 @@ export function StudentGradeRow({
           min="0"
           max={totalPoints}
           step="0.5"
-          placeholder="—"
+          placeholder={LL.common.notAvailable()}
           className={cn(
             'w-20 text-center font-medium',
             getGradeColorClass(),

@@ -13,6 +13,7 @@ import {
   termTemplates,
 } from '../drizzle/core-schema'
 import { DatabaseError } from '../errors'
+import { getNestedErrorMessage } from '../i18n'
 
 interface ProgramSnapshot {
   program: {
@@ -44,7 +45,7 @@ export function getSchoolYearTemplates(): ResultAsync<typeof schoolYearTemplates
       .select()
       .from(schoolYearTemplates)
       .orderBy(desc(schoolYearTemplates.isActive), desc(schoolYearTemplates.name)),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch school year templates'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'fetchSchoolYearTemplatesFailed')),
   ).mapErr(tapLogErr(databaseLogger, {}))
 }
 
@@ -56,7 +57,7 @@ export function getSchoolYearTemplateById(id: string): ResultAsync<typeof school
       .from(schoolYearTemplates)
       .where(eq(schoolYearTemplates.id, id))
       .then(rows => rows[0] ?? null),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch school year template by ID'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'fetchSchoolYearTemplateFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
@@ -75,7 +76,7 @@ export function createSchoolYearTemplate(
       })
       .returning()
       .then(rows => rows[0]!),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create school year template'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'createSchoolYearTemplateFailed')),
   ).mapErr(tapLogErr(databaseLogger, data))
 }
 
@@ -99,7 +100,7 @@ export function updateSchoolYearTemplate(
         }
         return rows[0]!
       }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to update school year template'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'updateSchoolYearTemplateFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id, ...data }))
 }
 
@@ -107,7 +108,7 @@ export function deleteSchoolYearTemplate(id: string): ResultAsync<void, Database
   const db = getDb()
   return ResultAsync.fromPromise(
     db.delete(schoolYearTemplates).where(eq(schoolYearTemplates.id, id)).then(() => {}),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to delete school year template'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'deleteSchoolYearTemplateFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
@@ -209,7 +210,7 @@ export function getProgramTemplates(options?: {
         },
       }
     }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch program templates'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'fetchProgramTemplatesFailed')),
   ).mapErr(tapLogErr(databaseLogger, options || {}))
 }
 
@@ -250,7 +251,7 @@ export function getProgramTemplateById(id: string): ResultAsync<ProgramWithDetai
       .leftJoin(grades, eq(programTemplates.gradeId, grades.id))
       .where(eq(programTemplates.id, id))
       .then(rows => rows[0] ?? null),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch program template by ID'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'fetchProgramTemplateFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
@@ -269,7 +270,7 @@ export function createProgramTemplate(
       })
       .returning()
       .then(rows => rows[0]!),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create program template'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'createProgramTemplateFailed')),
   ).mapErr(tapLogErr(databaseLogger, data))
 }
 
@@ -293,7 +294,7 @@ export function updateProgramTemplate(
         }
         return rows[0]!
       }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to update program template'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'updateProgramTemplateFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id, ...data }))
 }
 
@@ -306,7 +307,7 @@ export function deleteProgramTemplate(id: string): ResultAsync<void, DatabaseErr
       // Then delete program
       await tx.delete(programTemplates).where(eq(programTemplates.id, id))
     }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to delete program template'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'deleteProgramTemplateFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
@@ -365,7 +366,7 @@ export function cloneProgramTemplate(id: string, newSchoolYearTemplateId: string
 
       return newProgram!
     }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to clone program template'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'cloneProgramTemplateFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id, newSchoolYearTemplateId, newName }))
 }
 
@@ -379,7 +380,7 @@ export function getProgramTemplateChapters(programTemplateId: string): ResultAsy
       .from(programTemplateChapters)
       .where(eq(programTemplateChapters.programTemplateId, programTemplateId))
       .orderBy(asc(programTemplateChapters.order)),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch program template chapters'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'fetchProgramTemplateChaptersFailed')),
   ).mapErr(tapLogErr(databaseLogger, { programTemplateId }))
 }
 
@@ -391,7 +392,7 @@ export function getProgramTemplateChapterById(id: string): ResultAsync<typeof pr
       .from(programTemplateChapters)
       .where(eq(programTemplateChapters.id, id))
       .then(rows => rows[0] ?? null),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch program template chapter by ID'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'fetchProgramTemplateChapterFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
@@ -410,7 +411,7 @@ export function createProgramTemplateChapter(
       })
       .returning()
       .then(rows => rows[0]!),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create program template chapter'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'createProgramTemplateChapterFailed')),
   ).mapErr(tapLogErr(databaseLogger, data))
 }
 
@@ -434,7 +435,7 @@ export function updateProgramTemplateChapter(
         }
         return rows[0]!
       }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to update program template chapter'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'updateProgramTemplateChapterFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id, ...data }))
 }
 
@@ -442,7 +443,7 @@ export function deleteProgramTemplateChapter(id: string): ResultAsync<void, Data
   const db = getDb()
   return ResultAsync.fromPromise(
     db.delete(programTemplateChapters).where(eq(programTemplateChapters.id, id)).then(() => {}),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to delete program template chapter'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'deleteProgramTemplateChapterFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
@@ -466,7 +467,7 @@ export function bulkUpdateChaptersOrder(items: { id: string, order: number }[]):
       })
       .where(inArray(programTemplateChapters.id, ids))
       .then(() => {}),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to bulk update chapters order'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'bulkUpdateChaptersOrderFailed')),
   ).mapErr(tapLogErr(databaseLogger, { items }))
 }
 
@@ -497,7 +498,7 @@ export function bulkCreateChapters(
       .insert(programTemplateChapters)
       .values(values)
       .returning(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to bulk create chapters'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'bulkCreateChaptersFailed')),
   ).mapErr(tapLogErr(databaseLogger, { programTemplateId, chapters }))
 }
 
@@ -575,7 +576,7 @@ export function publishProgram(id: string): ResultAsync<{ success: true, version
 
       return { success: true as const, version: nextVersion }
     }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to publish program'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'publishProgramFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
@@ -587,7 +588,7 @@ export function getProgramVersions(programTemplateId: string): ResultAsync<typeo
       .from(programTemplateVersions)
       .where(eq(programTemplateVersions.programTemplateId, programTemplateId))
       .orderBy(desc(programTemplateVersions.versionNumber)),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch program versions'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'fetchProgramVersionsFailed')),
   ).mapErr(tapLogErr(databaseLogger, { programTemplateId }))
 }
 
@@ -645,7 +646,7 @@ export function restoreProgramVersion(versionId: string): ResultAsync<{ success:
 
       return { success: true as const }
     }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to restore program version'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'restoreProgramVersionFailed')),
   ).mapErr(tapLogErr(databaseLogger, { versionId }))
 }
 
@@ -668,7 +669,7 @@ export function getProgramStats(): ResultAsync<{
       chapters: chaptersCount[0]?.count || 0,
       schoolYears: schoolYearsCount[0]?.count || 0,
     })),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch program stats'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'fetchProgramStatsFailed')),
   ).mapErr(tapLogErr(databaseLogger, {}))
 }
 
@@ -685,7 +686,7 @@ export function getTermTemplates(schoolYearTemplateId?: string): ResultAsync<typ
 
   return ResultAsync.fromPromise(
     query,
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch term templates'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'fetchTermTemplatesFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolYearTemplateId }))
 }
 
@@ -697,7 +698,7 @@ export function getTermTemplateById(id: string): ResultAsync<typeof termTemplate
       .from(termTemplates)
       .where(eq(termTemplates.id, id))
       .then(rows => rows[0] ?? null),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch term template by ID'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'fetchTermTemplateFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
@@ -716,7 +717,7 @@ export function createTermTemplate(
       })
       .returning()
       .then(rows => rows[0]!),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create term template'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'createTermTemplateFailed')),
   ).mapErr(tapLogErr(databaseLogger, data))
 }
 
@@ -740,7 +741,7 @@ export function updateTermTemplate(
         }
         return rows[0]!
       }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to update term template'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'updateTermTemplateFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id, ...data }))
 }
 
@@ -748,7 +749,7 @@ export function deleteTermTemplate(id: string): ResultAsync<void, DatabaseError>
   const db = getDb()
   return ResultAsync.fromPromise(
     db.delete(termTemplates).where(eq(termTemplates.id, id)).then(() => {}),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to delete term template'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'deleteTermTemplateFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
@@ -773,7 +774,7 @@ export function bulkCreateTermTemplates(
       .insert(termTemplates)
       .values(values)
       .returning(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to bulk create term templates'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'bulkCreateTermTemplatesFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolYearTemplateId, terms }))
 }
 
@@ -788,6 +789,6 @@ export function getSchoolYearTemplatesWithTerms(): ResultAsync<Array<typeof scho
       ...year,
       terms: terms.filter(t => t.schoolYearTemplateId === year.id),
     }))),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch school year templates with terms'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'fetchSchoolYearTemplatesWithTermsFailed')),
   ).mapErr(tapLogErr(databaseLogger, {}))
 }

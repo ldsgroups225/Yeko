@@ -11,6 +11,7 @@ import {
   timetableSessions,
 } from '../drizzle/school-schema'
 import { DatabaseError } from '../errors'
+import { getNestedErrorMessage } from '../i18n'
 
 // ============================================
 // TIMETABLE SESSIONS
@@ -40,7 +41,7 @@ export function getTimetableByClass(params: {
       },
       orderBy: [asc(timetableSessions.dayOfWeek), asc(timetableSessions.startTime)],
     }),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get timetable by class'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('timetables', 'fetchByClassFailed')),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -72,7 +73,7 @@ export function getTimetableByTeacher(params: {
       },
       orderBy: [asc(timetableSessions.dayOfWeek), asc(timetableSessions.startTime)],
     }),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get timetable by teacher'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('timetables', 'fetchByTeacherFailed')),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -106,7 +107,7 @@ export function getTimetableByClassroom(params: {
       },
       orderBy: [asc(timetableSessions.dayOfWeek), asc(timetableSessions.startTime)],
     }),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get timetable by classroom'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('timetables', 'fetchByClassroomFailed')),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -134,7 +135,7 @@ export function getTimetableSessionById(id: string): ResultAsync<(typeof timetab
         classroom: true,
       },
     }),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get timetable session by id'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('timetables', 'fetchByIdFailed')),
   ).map(res => res ?? null).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
@@ -147,7 +148,7 @@ export function createTimetableSession(data: TimetableSessionInsert): ResultAsyn
         throw new Error('Failed to create session')
       return session
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to create timetable session'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('timetables', 'createFailed')),
   ).mapErr(tapLogErr(databaseLogger, data))
 }
 
@@ -167,7 +168,7 @@ export function updateTimetableSession(
         throw new Error(`Session with id ${id} not found`)
       return updated
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to update timetable session'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('timetables', 'updateFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id, ...data }))
 }
 
@@ -177,7 +178,7 @@ export function deleteTimetableSession(id: string): ResultAsync<void, DatabaseEr
     (async () => {
       await db.delete(timetableSessions).where(eq(timetableSessions.id, id))
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to delete timetable session'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('timetables', 'deleteFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
@@ -185,7 +186,7 @@ export function bulkCreateTimetableSessions(sessions: TimetableSessionInsert[]):
   const db = getDb()
   return ResultAsync.fromPromise(
     db.insert(timetableSessions).values(sessions).returning(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to bulk create timetable sessions'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('timetables', 'bulkCreateFailed')),
   ).mapErr(tapLogErr(databaseLogger, { count: sessions.length }))
 }
 
@@ -202,7 +203,7 @@ export function deleteClassTimetable(classId: string, schoolYearId: string): Res
           ),
         )
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to delete class timetable'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('timetables', 'deleteClassTimetableFailed')),
   ).mapErr(tapLogErr(databaseLogger, { classId, schoolYearId }))
 }
 
@@ -272,7 +273,7 @@ export function detectConflicts(params: {
             dayOfWeek: session.dayOfWeek,
             startTime: session.startTime,
             endTime: session.endTime,
-            message: 'Enseignant déjà assigné à cette heure',
+            message: getNestedErrorMessage('timetables', 'teacherConflict'),
           })
         }
       }
@@ -297,7 +298,7 @@ export function detectConflicts(params: {
             dayOfWeek: session.dayOfWeek,
             startTime: session.startTime,
             endTime: session.endTime,
-            message: 'Salle déjà occupée à cette heure',
+            message: getNestedErrorMessage('timetables', 'classroomConflict'),
           })
         }
       }
@@ -322,14 +323,14 @@ export function detectConflicts(params: {
             dayOfWeek: session.dayOfWeek,
             startTime: session.startTime,
             endTime: session.endTime,
-            message: 'Classe déjà en cours à cette heure',
+            message: getNestedErrorMessage('timetables', 'conflict'),
           })
         }
       }
 
       return conflicts
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to detect conflicts'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('timetables', 'detectConflictsFailed')),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -378,7 +379,7 @@ export function getAllConflictsForSchool(schoolId: string, schoolYearId: string)
               dayOfWeek: s1.dayOfWeek,
               startTime: s1.startTime,
               endTime: s1.endTime,
-              message: `Conflit enseignant: ${s1.teacher?.user?.name}`,
+              message: `${getNestedErrorMessage('timetables', 'teacherConflict')}: ${s1.teacher?.user?.name}`,
             })
           }
 
@@ -390,7 +391,7 @@ export function getAllConflictsForSchool(schoolId: string, schoolYearId: string)
               dayOfWeek: s1.dayOfWeek,
               startTime: s1.startTime,
               endTime: s1.endTime,
-              message: `Conflit salle: ${s1.classroom?.name}`,
+              message: `${getNestedErrorMessage('timetables', 'classroomConflict')}: ${s1.classroom?.name}`,
             })
           }
 
@@ -402,7 +403,7 @@ export function getAllConflictsForSchool(schoolId: string, schoolYearId: string)
               dayOfWeek: s1.dayOfWeek,
               startTime: s1.startTime,
               endTime: s1.endTime,
-              message: `Conflit classe: ${s1.class?.grade?.name} ${s1.class?.section}`,
+              message: `${getNestedErrorMessage('timetables', 'conflict')}: ${s1.class?.grade?.name} ${s1.class?.section}`,
             })
           }
         }
@@ -410,7 +411,7 @@ export function getAllConflictsForSchool(schoolId: string, schoolYearId: string)
 
       return conflicts
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get all conflicts for school'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('timetables', 'fetchAllConflictsFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, schoolYearId }))
 }
 
@@ -445,7 +446,7 @@ export function getTeacherWeeklyHours(teacherId: string, schoolYearId: string): 
         sessionCount: sessions.length,
       }
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher weekly hours'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('timetables', 'fetchTeacherWeeklyHoursFailed')),
   ).mapErr(tapLogErr(databaseLogger, { teacherId, schoolYearId }))
 }
 
@@ -475,7 +476,7 @@ export function getTeacherAvailability(params: {
         ),
       )
       .orderBy(asc(timetableSessions.startTime)),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher availability'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('timetables', 'fetchTeacherAvailabilityFailed')),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -503,6 +504,6 @@ export function getClassroomAvailability(params: {
         ),
       )
       .orderBy(asc(timetableSessions.startTime)),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get classroom availability'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('timetables', 'fetchClassroomAvailabilityFailed')),
   ).mapErr(tapLogErr(databaseLogger, params))
 }

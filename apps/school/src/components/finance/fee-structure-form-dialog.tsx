@@ -1,3 +1,4 @@
+import type { FeeStructure } from '@repo/data-ops'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { IconLoader2 } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -29,55 +30,16 @@ import {
 } from '@workspace/ui/components/select'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod'
-import { useTranslations } from '@/i18n'
-import {
-  feeStructuresKeys,
-  feeTypesKeys,
-  feeTypesOptions,
-} from '@/lib/queries'
-import {
-  createNewFeeStructure,
-  updateExistingFeeStructure,
-} from '@/school/functions/fee-structures'
+import { feeStructuresKeys, feeTypesKeys, feeTypesOptions } from '@/lib/queries'
+import { createNewFeeStructure, updateExistingFeeStructure } from '@/school/functions/fee-structures'
 import { getGrades } from '@/school/functions/grades'
 import { getSeries } from '@/school/functions/series'
 import { getSchoolYearContext } from '@/school/middleware/school-context'
 
-const feeStructureFormSchema = z.object({
-  feeTypeId: z.string().min(1, 'Type de frais requis'),
-  gradeId: z.string().optional().nullable(),
-  seriesId: z.string().optional().nullable(),
-  amount: z
-    .string()
-    .regex(/^\d+(\.\d{1,2})?$/, 'Montant invalide')
-    .min(1, 'Montant requis'),
-  currency: z.string(),
-  newStudentAmount: z
-    .string()
-    .regex(/^\d+(\.\d{1,2})?$/, 'Montant invalide')
-    .optional()
-    .nullable(),
-  effectiveDate: z.string().optional().nullable(),
-})
-
-type FeeStructureFormData = z.infer<typeof feeStructureFormSchema>
-
-export interface FeeStructure extends FeeStructureFormData {
-  id: string
-}
-
-interface UpdateFeeStructureData {
-  id: string
-  feeTypeId: string
-  gradeId: string | null
-  seriesId: string | null
-  amount: string
-  currency: string
-  newStudentAmount: string | null
-  effectiveDate: string | null
-}
+export type { FeeStructure }
 
 interface FeeStructureFormDialogProps {
   open: boolean
@@ -90,8 +52,27 @@ export function FeeStructureFormDialog({
   onOpenChange,
   initialData,
 }: FeeStructureFormDialogProps) {
-  const t = useTranslations()
+  const { t } = useTranslation()
   const queryClient = useQueryClient()
+
+  const feeStructureFormSchema = z.object({
+    feeTypeId: z.string().min(1, t('finance.feeStructures.errors.feeTypeRequired')),
+    gradeId: z.string().optional().nullable(),
+    seriesId: z.string().optional().nullable(),
+    amount: z
+      .string()
+      .regex(/^\d+(\.\d{1,2})?$/, t('finance.feeStructures.errors.invalidAmount'))
+      .min(1, t('finance.feeStructures.errors.amountRequired')),
+    currency: z.string(),
+    newStudentAmount: z
+      .string()
+      .regex(/^\d+(\.\d{1,2})?$/, t('finance.feeStructures.errors.invalidAmount'))
+      .optional()
+      .nullable(),
+    effectiveDate: z.string().optional().nullable(),
+  })
+
+  type FeeStructureFormData = z.infer<typeof feeStructureFormSchema>
 
   const { data: feeTypes } = useQuery(feeTypesOptions.list())
   const { data: grades } = useQuery({
@@ -132,9 +113,7 @@ export function FeeStructureFormDialog({
           newStudentAmount: initialData.newStudentAmount
             ? String(initialData.newStudentAmount)
             : '',
-          effectiveDate: initialData.effectiveDate
-            ? new Date(initialData.effectiveDate).toISOString().split('T')[0]
-            : new Date().toISOString().split('T')[0],
+          effectiveDate: initialData.effectiveDate || '',
         })
       }
       else {
@@ -145,7 +124,7 @@ export function FeeStructureFormDialog({
           amount: '',
           currency: 'XOF',
           newStudentAmount: '',
-          effectiveDate: new Date().toISOString().split('T')[0],
+          effectiveDate: '',
         })
       }
     }
@@ -162,7 +141,7 @@ export function FeeStructureFormDialog({
     mutationFn: async (data: FeeStructureFormData) => {
       const yearContext = await getSchoolYearContext()
       if (!yearContext?.schoolYearId) {
-        throw new Error('Année scolaire non définie')
+        throw new Error(t('errors.generic'))
       }
 
       const gradeId = data.gradeId === 'all' ? null : data.gradeId
@@ -182,7 +161,7 @@ export function FeeStructureFormDialog({
                 ? data.newStudentAmount.trim()
                 : null,
             effectiveDate: data.effectiveDate || null,
-          } satisfies UpdateFeeStructureData,
+          },
         })
       }
 
@@ -207,15 +186,15 @@ export function FeeStructureFormDialog({
       queryClient.invalidateQueries({ queryKey: feeStructuresKeys.lists() })
       toast.success(
         isEditing
-          ? 'Structure de frais modifiée avec succès'
-          : 'Structure de frais créée avec succès',
+          ? t('finance.feeStructures.success.update')
+          : t('finance.feeStructures.success.create'),
       )
       form.reset()
       onOpenChange(false)
     },
     onError: (err: { message?: string, p?: { v?: Array<{ s?: { message?: string | { s: string } } }> } }) => {
       console.error('Fee creation error:', err)
-      let message = err.message || 'Une erreur est survenue'
+      let message = err.message || t('errors.generic')
 
       try {
         const errorNode = err?.p?.v?.[1]?.s?.message
@@ -229,13 +208,13 @@ export function FeeStructureFormDialog({
       }
 
       if (message.includes('unique_fee_structure')) {
-        message = 'Cette structure de frais existe déjà pour ce niveau/série'
+        message = t('finance.feeStructures.errors.duplicate')
       }
       else if (message.includes('foreign key constraint')) {
-        message = 'Données de référence invalides'
+        message = t('errors.validationError')
       }
       else if (message.includes('Failed query')) {
-        message = 'Erreur lors de l\'enregistrement dans la base de données'
+        message = t('errors.serverError')
       }
 
       toast.error(message, {
@@ -256,13 +235,13 @@ export function FeeStructureFormDialog({
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">
             {isEditing
-              ? 'Modifier une structure de frais'
-              : 'Créer une structure de frais'}
+              ? t('finance.feeStructures.edit')
+              : t('finance.feeStructures.create')}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground/80">
             {isEditing
-              ? 'Modifier les paramètres de cette structure'
-              : 'Définir les frais pour une classe ou série'}
+              ? t('finance.feeStructures.editDescription')
+              : t('finance.feeStructures.createDescription')}
           </DialogDescription>
         </DialogHeader>
 
@@ -274,7 +253,9 @@ export function FeeStructureFormDialog({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
-                    Type de frais *
+                    {t('finance.feeStructures.feeType')}
+                    {' '}
+                    *
                   </FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
@@ -292,7 +273,7 @@ export function FeeStructureFormDialog({
                               )
                             : (
                                 <span className="text-muted-foreground">
-                                  Sélectionner un type de frais
+                                  {t('finance.feeStructures.selectFeeType')}
                                 </span>
                               )}
                         </SelectValue>
@@ -326,7 +307,11 @@ export function FeeStructureFormDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
-                      Niveau (Optionnel)
+                      {t('finance.feeStructures.grade')}
+                      {' '}
+                      (
+                      {t('common.optional')}
+                      )
                     </FormLabel>
                     <Select
                       onValueChange={field.onChange}
@@ -335,13 +320,13 @@ export function FeeStructureFormDialog({
                       <FormControl>
                         <SelectTrigger className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors">
                           <SelectValue
-                            placeholder={t.finance.feeStructures.allLevels()}
+                            placeholder={t('finance.feeStructures.allLevels')}
                           />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="rounded-xl backdrop-blur-xl">
                         <SelectItem value="all">
-                          {t.finance.feeStructures.allLevels()}
+                          {t('finance.feeStructures.allLevels')}
                         </SelectItem>
                         {gradesList?.map(g => (
                           <SelectItem key={g.id} value={g.id}>
@@ -361,7 +346,11 @@ export function FeeStructureFormDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
-                      Série (Optionnel)
+                      {t('finance.feeStructures.series')}
+                      {' '}
+                      (
+                      {t('common.optional')}
+                      )
                     </FormLabel>
                     <Select
                       onValueChange={field.onChange}
@@ -369,11 +358,11 @@ export function FeeStructureFormDialog({
                     >
                       <FormControl>
                         <SelectTrigger className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors">
-                          <SelectValue placeholder="Toutes les séries" />
+                          <SelectValue placeholder={t('finance.feeStructures.allSeries')} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="rounded-xl backdrop-blur-xl">
-                        <SelectItem value="all">Toutes les séries</SelectItem>
+                        <SelectItem value="all">{t('finance.feeStructures.allSeries')}</SelectItem>
                         {seriesList.map((s: { id: string, name: string }) => (
                           <SelectItem key={s.id} value={s.id}>
                             {s.name}
@@ -393,7 +382,9 @@ export function FeeStructureFormDialog({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
-                    Montant *
+                    {t('finance.feeStructures.amount')}
+                    {' '}
+                    *
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -415,7 +406,7 @@ export function FeeStructureFormDialog({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
-                    Montant nouvel élève
+                    {t('finance.feeStructures.newStudentAmount')}
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -437,13 +428,13 @@ export function FeeStructureFormDialog({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
-                    Date d'effet
+                    {t('finance.feeStructures.effectiveDate')}
                   </FormLabel>
                   <FormControl>
                     <DatePicker
                       date={field.value ? new Date(field.value) : undefined}
                       onSelect={(date: Date | undefined) => field.onChange(date ? (date.toISOString().split('T')[0] ?? '') : null)}
-                      placeholder="Date d'effet"
+                      placeholder={t('finance.feeStructures.effectiveDate')}
                       className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors"
                     />
                   </FormControl>
@@ -459,7 +450,7 @@ export function FeeStructureFormDialog({
                 onClick={() => onOpenChange(false)}
                 className="rounded-xl border-border/40"
               >
-                {t.common.cancel()}
+                {t('common.cancel')}
               </Button>
               <Button
                 type="submit"
@@ -469,7 +460,7 @@ export function FeeStructureFormDialog({
                 {isPending && (
                   <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                {t.common.save()}
+                {t('common.save')}
               </Button>
             </DialogFooter>
           </form>

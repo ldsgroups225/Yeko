@@ -25,6 +25,7 @@ import {
 } from '@workspace/ui/components/card'
 import { Input } from '@workspace/ui/components/input'
 import { useEffect } from 'react'
+import { useI18nContext } from '@/i18n/i18n-react'
 import {
   recentTicketsQueryOptions,
   ticketStatsQueryOptions,
@@ -37,6 +38,7 @@ export const Route = createFileRoute('/_auth/app/support/')({
 
 function Support() {
   const { logger } = useLogger()
+  const { LL } = useI18nContext()
 
   useEffect(() => {
     logger.info('Support page viewed', {
@@ -59,28 +61,28 @@ function Support() {
         return (
           <Badge variant="destructive">
             <IconAlertCircle className="mr-1 h-3 w-3" />
-            Ouvert
+            {LL.support.ticketStatus.open()}
           </Badge>
         )
       case 'in_progress':
         return (
           <Badge variant="secondary">
             <IconClock className="mr-1 h-3 w-3" />
-            En Cours
+            {LL.support.ticketStatus.inProgress()}
           </Badge>
         )
       case 'resolved':
         return (
           <Badge variant="default">
             <IconCircleCheck className="mr-1 h-3 w-3" />
-            Résolu
+            {LL.support.ticketStatus.resolved()}
           </Badge>
         )
       case 'closed':
         return (
           <Badge variant="outline">
             <IconCircleCheck className="mr-1 h-3 w-3" />
-            Fermé
+            {LL.support.ticketStatus.closed()}
           </Badge>
         )
       default:
@@ -106,13 +108,13 @@ function Support() {
   const formatPriority = (priority: string): string => {
     switch (priority) {
       case 'critical':
-        return 'Critique'
+        return LL.support.priority.critical()
       case 'high':
-        return 'Haute'
+        return LL.support.priority.high()
       case 'medium':
-        return 'Moyenne'
+        return LL.support.priority.medium()
       case 'low':
-        return 'Faible'
+        return LL.support.priority.low()
       default:
         return priority
     }
@@ -121,17 +123,17 @@ function Support() {
   const formatCategory = (category: string): string => {
     switch (category) {
       case 'technical':
-        return 'Problème Technique'
+        return LL.support.category.technical()
       case 'feature':
-        return 'Demande de Fonctionnalité'
+        return LL.support.category.feature()
       case 'bug':
-        return 'Rapport de Bogue'
+        return LL.support.category.bug()
       case 'billing':
-        return 'Facturation'
+        return LL.support.category.billing()
       case 'account':
-        return 'Compte'
+        return LL.support.category.account()
       case 'other':
-        return 'Autre'
+        return LL.support.category.other()
       default:
         return category
     }
@@ -142,20 +144,19 @@ function Support() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Support & CRM</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{LL.support.title()}</h1>
           <p className="text-muted-foreground">
-            Gérer les tickets de support et les relations clients pour les
-            écoles partenaires
+            {LL.support.subtitle()}
           </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" className="gap-2">
             <IconTrendingUp className="h-4 w-4" />
-            Analytiques
+            {LL.support.analytics()}
           </Button>
           <Button className="gap-2">
             <IconPlus className="h-4 w-4" />
-            Créer un Ticket
+            {LL.support.createTicket()}
           </Button>
         </div>
       </div>
@@ -165,7 +166,7 @@ function Support() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Total des Tickets
+              {LL.support.stats.total()}
             </CardTitle>
             <IconHelpCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -177,13 +178,13 @@ function Support() {
               : (
                   <div className="text-2xl font-bold">{stats?.total ?? 0}</div>
                 )}
-            <p className="text-xs text-muted-foreground">Depuis le début</p>
+            <p className="text-xs text-muted-foreground">{LL.support.stats.sinceInception()}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Ouverts</CardTitle>
+            <CardTitle className="text-sm font-medium">{LL.support.stats.open()}</CardTitle>
             <IconAlertCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -195,14 +196,14 @@ function Support() {
                   <div className="text-2xl font-bold">{stats?.open ?? 0}</div>
                 )}
             <p className="text-xs text-muted-foreground">
-              Nécessitent une attention
+              {LL.support.stats.openDesc()}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">En Cours</CardTitle>
+            <CardTitle className="text-sm font-medium">{LL.support.stats.inProgress()}</CardTitle>
             <IconClock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -214,14 +215,14 @@ function Support() {
                   <div className="text-2xl font-bold">{stats?.inProgress ?? 0}</div>
                 )}
             <p className="text-xs text-muted-foreground">
-              En cours de traitement
+              {LL.support.stats.inProgressDesc()}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Résolus</CardTitle>
+            <CardTitle className="text-sm font-medium">{LL.support.stats.resolved()}</CardTitle>
             <IconCircleCheck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -232,14 +233,14 @@ function Support() {
               : (
                   <div className="text-2xl font-bold">{stats?.resolved ?? 0}</div>
                 )}
-            <p className="text-xs text-muted-foreground">Terminés</p>
+            <p className="text-xs text-muted-foreground">{LL.support.stats.resolvedDesc()}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Temps de Résolution
+              {LL.support.stats.resolutionTime()}
             </CardTitle>
             <IconClock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -255,13 +256,13 @@ function Support() {
                       : 'N/A'}
                   </div>
                 )}
-            <p className="text-xs text-muted-foreground">Moyenne</p>
+            <p className="text-xs text-muted-foreground">{LL.support.stats.average()}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Satisfaction</CardTitle>
+            <CardTitle className="text-sm font-medium">{LL.support.stats.satisfaction()}</CardTitle>
             <IconUsers className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -276,7 +277,7 @@ function Support() {
                       : 'N/A'}
                   </div>
                 )}
-            <p className="text-xs text-muted-foreground">Note utilisateur</p>
+            <p className="text-xs text-muted-foreground">{LL.support.stats.userRating()}</p>
           </CardContent>
         </Card>
       </div>
@@ -285,9 +286,9 @@ function Support() {
         {/* Recent Tickets */}
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle>Tickets de Support Récents</CardTitle>
+            <CardTitle>{LL.support.recentTickets.title()}</CardTitle>
             <CardDescription>
-              Dernières demandes de support des écoles partenaires
+              {LL.support.recentTickets.subtitle()}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -344,7 +345,8 @@ function Support() {
                                   <>
                                     <span>•</span>
                                     <span>
-                                      Assigné à:
+                                      {LL.support.recentTickets.assignedTo()}
+                                      :
                                       {ticket.assigneeName}
                                     </span>
                                   </>
@@ -352,7 +354,8 @@ function Support() {
                               </div>
                               <div className="flex items-center gap-4 text-xs text-muted-foreground mt-1">
                                 <span>
-                                  Créé:
+                                  {LL.support.recentTickets.created()}
+                                  :
                                   {' '}
                                   {ticket.createdAt instanceof Date
                                     ? ticket.createdAt.toLocaleDateString('fr-FR')
@@ -368,7 +371,7 @@ function Support() {
                 : (
                     <div className="text-center py-8 text-muted-foreground">
                       <IconMessage className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                      <p>Aucun ticket de support disponible</p>
+                      <p>{LL.support.recentTickets.noTickets()}</p>
                     </div>
                   )}
           </CardContent>
@@ -377,19 +380,19 @@ function Support() {
         {/* Categories Overview */}
         <Card>
           <CardHeader>
-            <CardTitle>Catégories de Tickets</CardTitle>
+            <CardTitle>{LL.support.categories.title()}</CardTitle>
             <CardDescription>
-              Distribution des tickets par catégorie
+              {LL.support.categories.subtitle()}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="text-center py-8 text-muted-foreground">
               <IconLoader className="h-12 w-12 mx-auto mb-4 opacity-50 animate-spin" />
-              <p>Chargement des catégories...</p>
+              <p>{LL.support.categories.loading()}</p>
             </div>
 
             <div className="mt-6 pt-6 border-t">
-              <h4 className="text-sm font-medium mb-4">Actions Rapides</h4>
+              <h4 className="text-sm font-medium mb-4">{LL.support.categories.quickActions()}</h4>
               <div className="space-y-2">
                 <Button
                   variant="outline"
@@ -397,7 +400,7 @@ function Support() {
                   size="sm"
                 >
                   <IconPhone className="h-4 w-4" />
-                  Appeler l'Équipe de Support
+                  {LL.support.categories.callSupport()}
                 </Button>
                 <Button
                   variant="outline"
@@ -405,7 +408,7 @@ function Support() {
                   size="sm"
                 >
                   <IconMail className="h-4 w-4" />
-                  Modèles d'Email
+                  {LL.support.categories.emailTemplates()}
                 </Button>
                 <Button
                   variant="outline"
@@ -413,7 +416,7 @@ function Support() {
                   size="sm"
                 >
                   <IconMessage className="h-4 w-4" />
-                  Base de Connaissances
+                  {LL.support.categories.knowledgeBase()}
                 </Button>
               </div>
             </div>
@@ -424,15 +427,15 @@ function Support() {
       {/* Search */}
       <Card>
         <CardHeader>
-          <CardTitle>Rechercher des Tickets de Support</CardTitle>
+          <CardTitle>{LL.support.search.title()}</CardTitle>
           <CardDescription>
-            Trouver des tickets spécifiques par mot-clé, école ou catégorie
+            {LL.support.search.subtitle()}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="relative max-w-md">
             <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input placeholder="Rechercher des tickets..." className="pl-9" />
+            <Input placeholder={LL.support.search.placeholder()} className="pl-9" />
           </div>
         </CardContent>
       </Card>
@@ -446,14 +449,10 @@ function Support() {
             </div>
             <div>
               <h3 className="text-lg font-semibold">
-                Système de Support Opérationnel
+                {LL.support.status.operational()}
               </h3>
               <p className="text-muted-foreground">
-                Le système de support et CRM est maintenant actif avec
-                {' '}
-                {stats?.total ?? 0}
-                {' '}
-                tickets traités.
+                {LL.support.status.operationalDesc({ count: stats?.total ?? 0 })}
               </p>
             </div>
           </div>

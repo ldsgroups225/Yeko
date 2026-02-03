@@ -2,6 +2,7 @@ export const en = {
   app: {
     name: 'Yeko School',
     tagline: 'Smart school management',
+    footer: 'Built with care for modern education',
   },
   common: {
     loading: 'Loading...',
@@ -25,6 +26,8 @@ export const en = {
     back: 'Back',
     next: 'Next',
     previous: 'Previous',
+    optional: 'Optional',
+    required: 'Required',
     submit: 'Submit',
     confirm: 'Confirm',
     yes: 'Yes',
@@ -127,6 +130,7 @@ export const en = {
     schoolSubtitle: 'Administration',
   },
   school: {
+    profile: 'School Profile',
     switcher: {
       title: 'Switch School',
       placeholder: 'Select a school',
@@ -852,9 +856,34 @@ export const en = {
     feeStructures: {
       title: 'Fee Structures',
       description: 'Configure fee amounts by grade and series',
-      create: 'Create Structure',
+      create: 'Create Fee Structure',
+      edit: 'Edit Fee Structure',
+      createDescription: 'Define fees for a class or series',
+      editDescription: 'Edit parameters of this structure',
       noFeeStructures: 'No fee structures configured',
       newStudentAmount: 'New Student Amount',
+      feeType: 'Fee Type',
+      selectFeeType: 'Select a fee type',
+      grade: 'Level',
+      series: 'Series',
+      amount: 'Amount',
+      effectiveDate: 'Effective Date',
+      allLevels: 'All levels',
+      allSeries: 'All series',
+      deleteFeeStructure: 'Delete Fee Structure',
+      deleteFeeStructureConfirm:
+        'Are you sure you want to delete this fee structure? This action is irreversible.',
+      success: {
+        create: 'Fee structure created successfully',
+        update: 'Fee structure updated successfully',
+        delete: 'Fee structure deleted successfully',
+      },
+      errors: {
+        duplicate: 'This fee structure already exists for this level/series',
+        invalidAmount: 'Invalid amount',
+        amountRequired: 'Amount required',
+        feeTypeRequired: 'Fee type required',
+      },
     },
     accounts: {
       title: 'Chart of Accounts',
@@ -1956,11 +1985,6 @@ export const en = {
       deleteAccount: 'Delete Account',
       deleteAccountConfirm:
         'Are you sure you want to delete this account? This action is irreversible.',
-    },
-    feeStructures: {
-      deleteFeeStructure: 'Delete Fee Structure',
-      deleteFeeStructureConfirm:
-        'Are you sure you want to delete this fee structure? This action is irreversible.',
     },
     discounts: {
       deleteDiscount: 'Delete Discount',

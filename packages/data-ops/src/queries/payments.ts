@@ -17,6 +17,7 @@ import {
   studentFees,
 } from '../drizzle/school-schema'
 import { DatabaseError, dbError } from '../errors'
+import { getNestedErrorMessage } from '../i18n'
 
 export interface GetPaymentsParams {
   schoolId: string
@@ -78,7 +79,7 @@ export function getPayments(params: GetPaymentsParams): ResultAsync<PaginatedPay
 
       return { data, total: countResult[0]?.count ?? 0, page, pageSize }
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch payments'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'payment.fetchFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, studentId }))
 }
 
@@ -86,7 +87,7 @@ export function getPaymentById(paymentId: string): ResultAsync<Payment | null, D
   const db = getDb()
   return ResultAsync.fromPromise(
     db.select().from(payments).where(eq(payments.id, paymentId)).limit(1).then(rows => rows[0] ?? null),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch payment by ID'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'payment.fetchByIdFailed')),
   ).mapErr(tapLogErr(databaseLogger, { paymentId }))
 }
 
@@ -99,7 +100,7 @@ export function getPaymentByReceiptNumber(schoolId: string, receiptNumber: strin
       .where(and(eq(payments.schoolId, schoolId), eq(payments.receiptNumber, receiptNumber)))
       .limit(1)
       .then(rows => rows[0] ?? null),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch payment by receipt number'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'payment.fetchByReceiptNumberFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, receiptNumber }))
 }
 
@@ -126,7 +127,7 @@ export function generateReceiptNumber(schoolId: string): ResultAsync<string, Dat
 
       return `${prefix}${nextNumber.toString().padStart(5, '0')}`
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to generate receipt number'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'payment.generateReceiptNumberFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId }))
 }
 
@@ -153,11 +154,11 @@ export function createPayment(data: CreatePaymentData): ResultAsync<Payment, Dat
 
       const [payment] = await db.insert(payments).values({ id: crypto.randomUUID(), receiptNumber, ...data }).returning()
       if (!payment) {
-        throw dbError('INTERNAL_ERROR', 'Failed to create payment')
+        throw dbError('INTERNAL_ERROR', getNestedErrorMessage('finance', 'payment.createRecordFailed'))
       }
       return payment
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create payment'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'payment.createFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId: data.schoolId }))
 }
 
@@ -174,7 +175,7 @@ export function createPaymentWithAllocations(
       const paymentAmount = Number.parseFloat(paymentData.amount)
 
       if (Math.abs(totalAllocated - paymentAmount) > 0.01) {
-        throw dbError('PAYMENT_CONFLICT', `Payment amount (${paymentAmount}) does not match total allocations (${totalAllocated})`)
+        throw dbError('PAYMENT_CONFLICT', getNestedErrorMessage('finance', 'payment.amountMismatch', { paymentAmount, totalAllocated }))
       }
 
       const receiptNumberResult = await generateReceiptNumber(paymentData.schoolId)
@@ -188,7 +189,7 @@ export function createPaymentWithAllocations(
         .returning()
 
       if (!payment) {
-        throw dbError('INTERNAL_ERROR', 'Failed to create payment record')
+        throw dbError('INTERNAL_ERROR', getNestedErrorMessage('finance', 'payment.createRecordFailed'))
       }
 
       const allocations: PaymentAllocation[] = []
@@ -199,7 +200,7 @@ export function createPaymentWithAllocations(
           .returning()
 
         if (!allocation) {
-          throw dbError('INTERNAL_ERROR', 'Failed to create payment allocation')
+          throw dbError('INTERNAL_ERROR', getNestedErrorMessage('finance', 'payment.createAllocationFailed'))
         }
         allocations.push(allocation)
 
@@ -241,7 +242,7 @@ export function createPaymentWithAllocations(
 
       return { payment, allocations }
     }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create payment with allocations'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'payment.createWithAllocationsFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId: data.schoolId, studentId: data.studentId }))
 }
 
@@ -259,9 +260,9 @@ export function cancelPayment(
       const payment = paymentResult.value
 
       if (!payment)
-        throw dbError('NOT_FOUND', `Payment with ID ${paymentId} not found`)
+        throw dbError('NOT_FOUND', getNestedErrorMessage('finance', 'payment.notFoundWithId', { id: paymentId }))
       if (payment.status === 'cancelled')
-        throw dbError('CONFLICT', 'Payment is already cancelled')
+        throw dbError('CONFLICT', getNestedErrorMessage('finance', 'payment.alreadyCancelled'))
 
       const allocs = await tx.select().from(paymentAllocations).where(eq(paymentAllocations.paymentId, paymentId))
 
@@ -309,12 +310,12 @@ export function cancelPayment(
         .returning()
 
       if (!cancelledPayment) {
-        throw dbError('INTERNAL_ERROR', 'Failed to cancel payment record')
+        throw dbError('INTERNAL_ERROR', getNestedErrorMessage('finance', 'payment.cancelRecordFailed'))
       }
 
       return cancelledPayment
     }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to cancel payment'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'payment.cancelFailed')),
   ).mapErr(tapLogErr(databaseLogger, { paymentId, cancelledBy }))
 }
 
@@ -350,6 +351,6 @@ export function getCashierDailySummary(schoolId: string, cashierId: string, date
 
       return { cashierId, date, totalPayments: dayPayments.length, totalAmount, byMethod: byMethod as CashierDailySummary['byMethod'] }
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch cashier summary'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'payment.fetchSummaryFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, cashierId, date }))
 }

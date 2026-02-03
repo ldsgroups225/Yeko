@@ -743,7 +743,7 @@ function ClassDetailPage() {
           >
             <IconChartBar className="w-5 h-5 text-muted-foreground mb-1" />
             <span className={cn('text-xl font-black', getPerformanceColor(classStats.average))}>
-              {classStats.average?.toFixed(2) ?? '--.--'}
+              {classStats.average?.toFixed(2) ?? LL.common.notAvailable()}
             </span>
             <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
               {LL.common.average()}
@@ -757,7 +757,7 @@ function ClassDetailPage() {
             className="flex flex-col items-center justify-center p-3 rounded-xl bg-linear-to-br from-muted/50 to-muted/30 border border-border/40"
           >
             <IconBook className="w-5 h-5 text-muted-foreground mb-1" />
-            <span className="text-xl font-black text-foreground">--</span>
+            <span className="text-xl font-black text-foreground">{LL.common.notAvailable()}</span>
             <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
               {LL.grades.title()}
             </span>
@@ -1213,7 +1213,7 @@ function ClassDetailPage() {
                                         )}
                                       </div>
                                     </TableHead>
-                                    <TableHead className="text-center min-w-[80px]">Actions</TableHead>
+                                    <TableHead className="text-center min-w-[80px]">{LL.common.actions()}</TableHead>
                                   </>
                                 )
                               : (
@@ -1262,14 +1262,14 @@ function ClassDetailPage() {
                                     <>
                                       <TableCell className="text-center">
                                         <Badge variant="secondary" className="font-medium">
-                                          --
+                                          {LL.common.notAvailable()}
                                         </Badge>
                                       </TableCell>
-                                      <TableCell className="text-center text-muted-foreground text-xs">--</TableCell>
-                                      <TableCell className="text-center text-muted-foreground text-xs">--</TableCell>
-                                      <TableCell className="text-center text-muted-foreground text-xs">--</TableCell>
+                                      <TableCell className="text-center text-muted-foreground text-xs">{LL.common.notAvailable()}</TableCell>
+                                      <TableCell className="text-center text-muted-foreground text-xs">{LL.common.notAvailable()}</TableCell>
+                                      <TableCell className="text-center text-muted-foreground text-xs">{LL.common.notAvailable()}</TableCell>
                                       <TableCell className="sticky right-0 z-10 bg-inherit text-center font-bold text-lg text-muted-foreground border-l">
-                                        --.--
+                                        {LL.common.notAvailable()}
                                       </TableCell>
                                       <TableCell className="text-center">
                                         <Link to="/app/students/$studentId/notes" params={{ studentId: student.id }}>
@@ -1286,7 +1286,7 @@ function ClassDetailPage() {
                                         <Input
                                           type="text"
                                           inputMode="decimal"
-                                          placeholder="--"
+                                          placeholder={LL.common.notAvailable()}
                                           value={gradesMap.get(student.id) || ''}
                                           onChange={e => handleGradeChange(student.id, e.target.value)}
                                           className="h-10 text-center text-lg font-black bg-background border-primary/30 rounded-lg focus:ring-2 focus:ring-primary/40"
@@ -1417,7 +1417,10 @@ function StudentCard({
             {!isEntryMode && (
               <div className="mt-1 flex items-center gap-2">
                 <Badge variant="outline" className="h-5 font-normal text-xs">
-                  <span className="text-muted-foreground">Participation:</span>
+                  <span className="text-muted-foreground">
+                    {LL.common.participation()}
+                    :
+                  </span>
                   <span className="ml-1 font-semibold">{participationCount}</span>
                 </Badge>
               </div>
@@ -1431,7 +1434,7 @@ function StudentCard({
                 <Input
                   type="text"
                   inputMode="decimal"
-                  placeholder="--"
+                  placeholder={LL.common.notAvailable()}
                   value={gradeValue || ''}
                   onChange={e => onGradeChange?.(e.target.value)}
                   className="h-12 w-20 text-center text-xl font-black bg-muted/40 border-primary/20 rounded-xl focus:ring-2 focus:ring-primary/30"
@@ -1458,7 +1461,7 @@ function StudentCard({
                   >
                     {getPerformanceIcon(studentAverage, classAverage)}
                     <span className={getPerformanceColor(studentAverage)}>
-                      {studentAverage !== null ? studentAverage.toFixed(2) : '--.--'}
+                      {studentAverage !== null ? studentAverage.toFixed(2) : LL.common.notAvailable()}
                     </span>
                   </div>
                 </div>
@@ -1487,15 +1490,15 @@ function StudentCard({
               <div className="grid grid-cols-3 gap-3 text-xs">
                 <div className="flex flex-col rounded-md bg-background p-2">
                   <span className="mb-1.5 font-medium text-muted-foreground">{LL.grades.quizzes()}</span>
-                  <span className="font-semibold text-base text-muted-foreground">--</span>
+                  <span className="font-semibold text-base text-muted-foreground">{LL.common.notAvailable()}</span>
                 </div>
                 <div className="flex flex-col rounded-md bg-background p-2">
                   <span className="mb-1.5 font-medium text-muted-foreground">{LL.grades.tests()}</span>
-                  <span className="font-semibold text-base text-muted-foreground">--</span>
+                  <span className="font-semibold text-base text-muted-foreground">{LL.common.notAvailable()}</span>
                 </div>
                 <div className="flex flex-col rounded-md bg-background p-2">
                   <span className="mb-1.5 font-medium text-muted-foreground">{LL.grades.level_tests()}</span>
-                  <span className="font-semibold text-base text-muted-foreground">--</span>
+                  <span className="font-semibold text-base text-muted-foreground">{LL.common.notAvailable()}</span>
                 </div>
               </div>
 

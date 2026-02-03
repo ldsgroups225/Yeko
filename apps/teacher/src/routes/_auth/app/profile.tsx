@@ -303,7 +303,7 @@ function ProfilePage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-1">
-                <p className="text-sm font-medium">Email</p>
+                <p className="text-sm font-medium">{LL.auth.email()}</p>
                 <p className="text-sm text-muted-foreground">{user?.email}</p>
               </div>
               <div className="grid gap-1">

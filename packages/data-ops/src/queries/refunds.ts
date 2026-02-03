@@ -5,6 +5,7 @@ import { ResultAsync } from 'neverthrow'
 import { getDb } from '../database/setup'
 import { payments, refunds } from '../drizzle/school-schema'
 import { DatabaseError, dbError } from '../errors'
+import { getNestedErrorMessage } from '../i18n'
 
 export interface GetRefundsParams {
   schoolId: string
@@ -46,7 +47,7 @@ export function getRefunds(params: GetRefundsParams): ResultAsync<PaginatedRefun
 
       return { data, total: countResult[0]?.count ?? 0, page, pageSize }
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch refunds'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'refund.fetchFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, paymentId }))
 }
 
@@ -54,7 +55,7 @@ export function getRefundById(refundId: string): ResultAsync<Refund | null, Data
   const db = getDb()
   return ResultAsync.fromPromise(
     db.select().from(refunds).where(eq(refunds.id, refundId)).limit(1).then(rows => rows[0] ?? null),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch refund by ID'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'refund.fetchByIdFailed')),
   ).mapErr(tapLogErr(databaseLogger, { refundId }))
 }
 
@@ -81,7 +82,7 @@ export function generateRefundNumber(schoolId: string): ResultAsync<string, Data
 
       return `${prefix}${nextNumber.toString().padStart(5, '0')}`
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to generate refund number'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'refund.generateNumberFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId }))
 }
 
@@ -98,11 +99,11 @@ export function createRefund(data: CreateRefundData): ResultAsync<Refund, Databa
       const refundNumber = refundNumberResult.value
       const [refund] = await db.insert(refunds).values({ id: crypto.randomUUID(), refundNumber, ...data }).returning()
       if (!refund) {
-        throw dbError('INTERNAL_ERROR', 'Failed to create refund')
+        throw dbError('INTERNAL_ERROR', getNestedErrorMessage('finance', 'refund.createFailed'))
       }
       return refund
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create refund'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'refund.createFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId: data.schoolId, paymentId: data.paymentId }))
 }
 
@@ -117,7 +118,7 @@ export function approveRefund(refundId: string, approvedBy: string): ResultAsync
         .returning()
       return refund
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to approve refund'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'refund.approveFailed')),
   ).mapErr(tapLogErr(databaseLogger, { refundId, approvedBy }))
 }
 
@@ -132,7 +133,7 @@ export function rejectRefund(refundId: string, rejectionReason: string): ResultA
         .returning()
       return refund
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to reject refund'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'refund.rejectFailed')),
   ).mapErr(tapLogErr(databaseLogger, { refundId }))
 }
 
@@ -146,9 +147,9 @@ export function processRefund(
     db.transaction(async (tx) => {
       const [refund] = await tx.select().from(refunds).where(eq(refunds.id, refundId)).limit(1)
       if (!refund)
-        throw dbError('NOT_FOUND', 'Refund not found')
+        throw dbError('NOT_FOUND', getNestedErrorMessage('finance', 'refund.notFound'))
       if (refund.status !== 'approved')
-        throw dbError('CONFLICT', 'Refund must be approved before processing')
+        throw dbError('CONFLICT', getNestedErrorMessage('finance', 'refund.mustBeApproved'))
 
       // Update payment status
       await tx
@@ -167,12 +168,12 @@ export function processRefund(
         .returning()
 
       if (!processedRefund) {
-        throw dbError('INTERNAL_ERROR', 'Failed to process refund')
+        throw dbError('INTERNAL_ERROR', getNestedErrorMessage('finance', 'refund.processFailed'))
       }
 
       return processedRefund
     }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to process refund'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'refund.processFailed')),
   ).mapErr(tapLogErr(databaseLogger, { refundId, processedBy }))
 }
 
@@ -187,7 +188,7 @@ export function cancelRefund(refundId: string): ResultAsync<Refund | undefined, 
         .returning()
       return refund
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to cancel refund'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'refund.cancelFailed')),
   ).mapErr(tapLogErr(databaseLogger, { refundId }))
 }
 
@@ -199,6 +200,6 @@ export function getPendingRefundsCount(schoolId: string): ResultAsync<number, Da
       .from(refunds)
       .where(and(eq(refunds.schoolId, schoolId), eq(refunds.status, 'pending')))
       .then(result => result[0]?.count ?? 0),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to get pending refunds count'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'refund.pendingCountFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId }))
 }

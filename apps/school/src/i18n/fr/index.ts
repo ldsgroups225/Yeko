@@ -31,6 +31,7 @@ const fr = {
     confirm: 'Confirmer',
     yes: 'Oui',
     no: 'Non',
+    notAvailable: 'Non disponible',
     all: 'Tous',
     none: 'Aucun',
     select: 'Sélectionner',

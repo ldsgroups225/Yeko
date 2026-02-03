@@ -1,5 +1,3 @@
-import { getUserSchoolsByAuthUserId, syncUserAuthOnLogin } from '@repo/data-ops/queries/school-admin/users'
-import { getRequest, setResponseHeader } from '@tanstack/react-start/server'
 import { getAuthContext } from './auth'
 
 export const SCHOOL_CONTEXT_COOKIE = 'yeko_school_id'
@@ -21,8 +19,12 @@ export function parseCookies(cookieHeader: string | null): Record<string, string
 
 /**
  * Get the current school context from cookie (logic only)
+ * This function should only be called from server functions
  */
 export async function retrieveSchoolContext() {
+  const { getRequest, setResponseHeader } = await import('@tanstack/react-start/server')
+  const { getUserSchoolsByAuthUserId, syncUserAuthOnLogin } = await import('@repo/data-ops/queries/school-admin/users')
+
   try {
     const authContext = await getAuthContext()
     if (!authContext) {

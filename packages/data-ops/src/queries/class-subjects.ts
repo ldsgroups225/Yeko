@@ -11,6 +11,7 @@ import {
   users,
 } from '../drizzle/school-schema'
 import { DatabaseError } from '../errors'
+import { getNestedErrorMessage } from '../i18n'
 
 export interface ClassSubjectFilters {
   classId?: string
@@ -82,7 +83,7 @@ export function getClassSubjects(filters: ClassSubjectFilters): ResultAsync<Clas
           }
         : null,
     }))
-  })(), e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to fetch class subjects')).mapErr(tapLogErr(databaseLogger, { ...filters }))
+  })(), e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('classSubjects', 'fetchFailed'))).mapErr(tapLogErr(databaseLogger, { ...filters }))
 }
 
 export interface AssignmentMatrixItem {
@@ -122,7 +123,7 @@ export function getAssignmentMatrix(schoolId: string, schoolYearId: string): Res
       .leftJoin(users, eq(teachers.userId, users.id))
       .where(and(eq(classes.schoolId, schoolId), eq(classes.schoolYearId, schoolYearId), eq(classes.status, 'active')))
       .orderBy(grades.order, classes.section, subjects.name)
-  })(), e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to fetch assignment matrix')).mapErr(tapLogErr(databaseLogger, { schoolId, schoolYearId }))
+  })(), e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('classSubjects', 'fetchAssignmentMatrixFailed'))).mapErr(tapLogErr(databaseLogger, { schoolId, schoolYearId }))
 }
 
 export function assignTeacherToClassSubject(classId: string, subjectId: string, teacherId: string): ResultAsync<typeof classSubjects.$inferSelect, DatabaseError> {
@@ -136,7 +137,7 @@ export function assignTeacherToClassSubject(classId: string, subjectId: string, 
       .limit(1)
 
     if (!teacherSubject) {
-      throw new Error('Teacher is not qualified to teach this subject')
+      throw new Error(getNestedErrorMessage('classSubjects', 'teacherNotQualified'))
     }
 
     // Check if assignment already exists
@@ -154,17 +155,17 @@ export function assignTeacherToClassSubject(classId: string, subjectId: string, 
         .where(eq(classSubjects.id, existing.id))
         .returning()
       if (!updated)
-        throw new Error('Failed to update assignment')
+        throw new Error(getNestedErrorMessage('classSubjects', 'updateAssignmentFailed'))
       return updated
     }
     else {
       // Create new assignment
       const [created] = await db.insert(classSubjects).values({ id: crypto.randomUUID(), classId, subjectId, teacherId }).returning()
       if (!created)
-        throw new Error('Failed to create assignment')
+        throw new Error(getNestedErrorMessage('classSubjects', 'createAssignmentFailed'))
       return created
     }
-  })(), e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to assign teacher')).mapErr(tapLogErr(databaseLogger, { classId, subjectId, teacherId }))
+  })(), e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('classSubjects', 'assignTeacherFailed'))).mapErr(tapLogErr(databaseLogger, { classId, subjectId, teacherId }))
 }
 
 export function bulkAssignTeacher(
@@ -183,7 +184,7 @@ export function bulkAssignTeacher(
         .limit(1)
 
       if (!teacherSubject) {
-        throw new Error(`Teacher not qualified for subject ${assignment.subjectId}`)
+        throw new Error(getNestedErrorMessage('classSubjects', 'teacherNotQualifiedWithId', { subjectId: assignment.subjectId }))
       }
 
       // Upsert assignment
@@ -210,7 +211,7 @@ export function bulkAssignTeacher(
     }
 
     return results
-  })(), e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to bulk assign teachers')).mapErr(tapLogErr(databaseLogger, { assignmentsCount: assignments.length }))
+  })(), e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('classSubjects', 'bulkAssignFailed'))).mapErr(tapLogErr(databaseLogger, { assignmentsCount: assignments.length }))
 }
 
 export function removeTeacherFromClassSubject(classId: string, subjectId: string): ResultAsync<typeof classSubjects.$inferSelect | undefined, DatabaseError> {
@@ -222,7 +223,7 @@ export function removeTeacherFromClassSubject(classId: string, subjectId: string
       .where(and(eq(classSubjects.classId, classId), eq(classSubjects.subjectId, subjectId)))
       .returning()
     return updated
-  })(), e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to remove teacher from class subject')).mapErr(tapLogErr(databaseLogger, { classId, subjectId }))
+  })(), e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('classSubjects', 'removeTeacherFailed'))).mapErr(tapLogErr(databaseLogger, { classId, subjectId }))
 }
 
 export function removeSubjectFromClass(classId: string, subjectId: string): ResultAsync<typeof classSubjects.$inferSelect | undefined, DatabaseError> {
@@ -233,7 +234,7 @@ export function removeSubjectFromClass(classId: string, subjectId: string): Resu
       .where(and(eq(classSubjects.classId, classId), eq(classSubjects.subjectId, subjectId)))
       .returning()
     return deleted
-  })(), e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to remove subject from class')).mapErr(tapLogErr(databaseLogger, { classId, subjectId }))
+  })(), e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('classSubjects', 'removeSubjectFailed'))).mapErr(tapLogErr(databaseLogger, { classId, subjectId }))
 }
 
 export function detectTeacherConflicts(
@@ -270,7 +271,7 @@ export function detectTeacherConflicts(
     }
 
     return []
-  })(), e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to detect teacher conflicts')).mapErr(tapLogErr(databaseLogger, { teacherId, schoolYearId }))
+  })(), e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('classSubjects', 'detectConflictsFailed'))).mapErr(tapLogErr(databaseLogger, { teacherId, schoolYearId }))
 }
 
 export function addSubjectToClass(data: {
@@ -303,9 +304,9 @@ export function addSubjectToClass(data: {
       })
       .returning()
     if (!created)
-      throw new Error('Failed to add subject to class')
+      throw new Error(getNestedErrorMessage('classSubjects', 'addSubjectFailed'))
     return created
-  })(), e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to add subject to class')).mapErr(tapLogErr(databaseLogger, data))
+  })(), e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('classSubjects', 'addSubjectFailed'))).mapErr(tapLogErr(databaseLogger, data))
 }
 
 export function updateClassSubjectDetails(
@@ -327,9 +328,9 @@ export function updateClassSubjectDetails(
       .where(eq(classSubjects.id, id))
       .returning()
     if (!updated)
-      throw new Error('Failed to update class subject details')
+      throw new Error(getNestedErrorMessage('classSubjects', 'updateDetailsFailed'))
     return updated
-  })(), e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to update class subject details')).mapErr(tapLogErr(databaseLogger, { id, ...data }))
+  })(), e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('classSubjects', 'updateDetailsFailed'))).mapErr(tapLogErr(databaseLogger, { id, ...data }))
 }
 
 export function copyClassSubjects(
@@ -395,5 +396,5 @@ export function copyClassSubjects(
     }
 
     return results
-  })(), e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to copy class subjects')).mapErr(tapLogErr(databaseLogger, { sourceClassId, targetClassId, ...options }))
+  })(), e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('classSubjects', 'copyFailed'))).mapErr(tapLogErr(databaseLogger, { sourceClassId, targetClassId, ...options }))
 }

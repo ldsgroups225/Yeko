@@ -12,6 +12,7 @@ import {
   users,
 } from '../drizzle/school-schema'
 import { DatabaseError } from '../errors'
+import { getNestedErrorMessage } from '../i18n'
 
 // Get active alerts for a school
 export function getActiveAlerts(schoolId: string, alertType?: string): ResultAsync<Array<{
@@ -42,7 +43,7 @@ export function getActiveAlerts(schoolId: string, alertType?: string): ResultAsy
       .leftJoin(students, eq(attendanceAlerts.studentId, students.id))
       .where(and(...conditions))
       .orderBy(desc(attendanceAlerts.createdAt)),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch active alerts'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('attendanceAlerts', 'fetchActiveFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, alertType }))
 }
 
@@ -104,7 +105,7 @@ export function getAlerts(params: {
       page,
       pageSize,
     })),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch alerts'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('attendanceAlerts', 'fetchFailed')),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -120,7 +121,7 @@ export function createAlert(data: Omit<AttendanceAlertInsert, 'id' | 'createdAt'
       })
       .returning()
       .then(rows => rows[0]!),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create alert'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('attendanceAlerts', 'createFailed')),
   ).mapErr(tapLogErr(databaseLogger, data))
 }
 
@@ -160,7 +161,7 @@ export function checkExistingAlert(params: {
       .where(and(...conditions))
       .limit(1)
       .then(rows => rows[0] ?? null),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to check existing alert'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('attendanceAlerts', 'checkExistingFailed')),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -182,11 +183,11 @@ export function acknowledgeAlert(id: string, userId: string, schoolId: string): 
       .returning()
       .then((rows) => {
         if (rows.length === 0) {
-          throw new Error('Alert not found')
+          throw new Error(getNestedErrorMessage('attendanceAlerts', 'notFound'))
         }
         return rows[0]!
       }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to acknowledge alert'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('attendanceAlerts', 'acknowledgeFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id, userId, schoolId }))
 }
 
@@ -207,11 +208,11 @@ export function resolveAlert(id: string, schoolId: string): ResultAsync<typeof a
       .returning()
       .then((rows) => {
         if (rows.length === 0) {
-          throw new Error('Alert not found')
+          throw new Error(getNestedErrorMessage('attendanceAlerts', 'notFound'))
         }
         return rows[0]!
       }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to resolve alert'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('attendanceAlerts', 'resolveFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id, schoolId }))
 }
 
@@ -233,11 +234,11 @@ export function dismissAlert(id: string, userId: string, schoolId: string): Resu
       .returning()
       .then((rows) => {
         if (rows.length === 0) {
-          throw new Error('Alert not found')
+          throw new Error(getNestedErrorMessage('attendanceAlerts', 'notFound'))
         }
         return rows[0]!
       }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to dismiss alert'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('attendanceAlerts', 'dismissFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id, userId, schoolId }))
 }
 
@@ -249,7 +250,7 @@ export function deleteAlert(id: string, schoolId: string): ResultAsync<void, Dat
       eq(attendanceAlerts.id, id),
       eq(attendanceAlerts.schoolId, schoolId),
     )).then(() => {}),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to delete alert'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('attendanceAlerts', 'deleteFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id, schoolId }))
 }
 
@@ -276,6 +277,6 @@ export function getAlertCounts(schoolId: string): ResultAsync<{
         resolved: results.find(r => r.status === 'resolved')?.count ?? 0,
         dismissed: results.find(r => r.status === 'dismissed')?.count ?? 0,
       })),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch alert counts'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('attendanceAlerts', 'fetchCountsFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId }))
 }

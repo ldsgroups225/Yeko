@@ -97,7 +97,7 @@ function GradesIndexPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-1">
-                <div className="text-3xl font-black tracking-tight">--</div>
+                <div className="text-3xl font-black tracking-tight">{t.common.notAvailable()}</div>
                 <p className="text-xs font-medium text-muted-foreground/60">
                   {t.academic.grades.statistics.description()}
                 </p>
@@ -122,7 +122,7 @@ function GradesIndexPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-1">
-                <div className="text-3xl font-black tracking-tight">--</div>
+                <div className="text-3xl font-black tracking-tight">{t.common.notAvailable()}</div>
                 <p className="text-xs font-medium text-muted-foreground/60">
                   {t.academic.grades.statistics.above15()}
                 </p>

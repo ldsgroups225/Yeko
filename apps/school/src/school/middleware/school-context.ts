@@ -1,8 +1,5 @@
 import { DatabaseError } from '@repo/data-ops/errors'
-import { getSchoolYearsBySchool } from '@repo/data-ops/queries/school-admin/school-years'
-import { getUserSchoolsByAuthUserId } from '@repo/data-ops/queries/school-admin/users'
 import { createServerFn } from '@tanstack/react-start'
-import { getRequest, setResponseHeader } from '@tanstack/react-start/server'
 import { getAuthContext } from './auth'
 import {
   parseCookies,
@@ -25,6 +22,9 @@ export const getSchoolContext = createServerFn().handler(async () => {
 export const setSchoolContext = createServerFn()
   .inputValidator((data: string) => data)
   .handler(async ({ data: schoolId }) => {
+    const { setResponseHeader } = await import('@tanstack/react-start/server')
+    const { getUserSchoolsByAuthUserId } = await import('@repo/data-ops/queries/school-admin/users')
+
     const authContext = await getAuthContext()
     if (!authContext) {
       throw new DatabaseError('UNAUTHORIZED', 'Unauthorized')
@@ -51,6 +51,9 @@ export const setSchoolContext = createServerFn()
  * Get the current school year context from cookie
  */
 export const getSchoolYearContext = createServerFn().handler(async () => {
+  const { getRequest, setResponseHeader } = await import('@tanstack/react-start/server')
+  const { getSchoolYearsBySchool } = await import('@repo/data-ops/queries/school-admin/school-years')
+
   try {
     const schoolContext = await getSchoolContext()
     if (!schoolContext) {
@@ -137,6 +140,9 @@ export const getSchoolYearContext = createServerFn().handler(async () => {
 export const setSchoolYearContext = createServerFn()
   .inputValidator((data: string) => data)
   .handler(async ({ data: schoolYearId }) => {
+    const { setResponseHeader } = await import('@tanstack/react-start/server')
+    const { getSchoolYearsBySchool } = await import('@repo/data-ops/queries/school-admin/school-years')
+
     const schoolContext = await getSchoolContext()
     if (!schoolContext) {
       throw new DatabaseError('UNAUTHORIZED', 'No school context')

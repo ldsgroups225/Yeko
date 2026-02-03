@@ -252,3 +252,30 @@ export const updateTermTemplate = undefined as any
 export const deleteTermTemplate = undefined as any
 export const bulkCreateTermTemplates = undefined as any
 export const getSchoolYearTemplatesWithTerms = undefined as any
+
+// Drizzle ORM operators - stubs for browser bundle
+// These are server-only but must be exported to satisfy bundler analysis
+export const and = undefined as any
+export const asc = undefined as any
+export const between = undefined as any
+export const count = undefined as any
+export const desc = undefined as any
+export const eq = undefined as any
+export const exists = undefined as any
+export const gt = undefined as any
+export const gte = undefined as any
+export const ilike = undefined as any
+export const inArray = undefined as any
+export const isNotNull = undefined as any
+export const isNull = undefined as any
+export const like = undefined as any
+export const lt = undefined as any
+export const lte = undefined as any
+export const ne = undefined as any
+export const not = undefined as any
+export const notBetween = undefined as any
+export const notExists = undefined as any
+export const notInArray = undefined as any
+export const or = undefined as any
+export const sql = undefined as any
+
