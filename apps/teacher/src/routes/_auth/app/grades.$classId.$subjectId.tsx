@@ -242,7 +242,7 @@ function StudentGradeRow({ student, value, onChange }: StudentGradeRowProps) {
         <Input
           type="text"
           inputMode="decimal"
-          placeholder="--"
+          placeholder={LL.common.notAvailable()}
           value={value}
           onChange={e => onChange(e.target.value)}
           className="h-10 w-16 text-center text-lg font-semibold"

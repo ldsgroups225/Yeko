@@ -1,10 +1,10 @@
 import type { SQL } from 'drizzle-orm'
 import type { GradeStatus, GradeType, MessageCategory } from '../drizzle/school-schema'
 import { databaseLogger, tapLogErr } from '@repo/logger'
-import { and, asc, desc, eq, gte, lte, sql } from 'drizzle-orm'
+import { aliasedTable, and, asc, desc, eq, gte, lte, or, sql } from 'drizzle-orm'
 import { ResultAsync } from 'neverthrow'
 import { getDb } from '../database/setup'
-import { grades, schools, subjects } from '../drizzle/core-schema'
+import { grades, programTemplateChapters, schools, subjects } from '../drizzle/core-schema'
 import {
   classes,
   classSessions,
@@ -19,9 +19,21 @@ import {
   studentParents,
   students,
   teacherMessages,
+  teachers,
+  users,
   userSchools,
 } from '../drizzle/school-schema'
 import { DatabaseError } from '../errors'
+import { getNestedErrorMessage } from '../i18n'
+
+// Aliased tables for messaging polymorphic names
+const senderTeachers = aliasedTable(teachers, 'sender_teachers')
+const senderUsers = aliasedTable(users, 'sender_users')
+const senderParents = aliasedTable(parents, 'sender_parents')
+
+const recipientTeachers = aliasedTable(teachers, 'recipient_teachers')
+const recipientUsers = aliasedTable(users, 'recipient_users')
+const recipientParents = aliasedTable(parents, 'recipient_parents')
 
 // Type definitions for teacher app queries
 export interface TeacherClassSession {
@@ -43,6 +55,7 @@ export interface TeacherClassSession {
   studentsPresent: number | null
   studentsAbsent: number | null
   chapterId: string | null
+  chapterName: string | null
   createdAt: Date
   completedAt: Date | null
 }
@@ -94,6 +107,7 @@ export interface MessageThread {
   id: string
   senderType: 'teacher' | 'parent'
   senderId: string
+  senderName: string | null
   content: string
   createdAt: Date
 }
@@ -103,8 +117,10 @@ export interface MessageDetails {
   schoolId: string
   senderType: 'teacher' | 'parent'
   senderId: string
+  senderName: string | null
   recipientType: 'teacher' | 'parent'
   recipientId: string
+  recipientName: string | null
   studentId: string | null
   studentName: string | null
   classId: string | null
@@ -174,7 +190,7 @@ export function createTeacherClassSession(params: {
       }
       return session
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to create class session', { code: 'CREATE_SESSION_FAILED' }),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'session.createFailed'), { code: 'CREATE_SESSION_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -218,7 +234,7 @@ export function completeTeacherClassSession(params: {
       }
       return updated
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to complete class session', { code: 'COMPLETE_SESSION_FAILED' }),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'session.completeFailed'), { code: 'COMPLETE_SESSION_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -249,6 +265,7 @@ export function getTeacherClassSessionById(sessionId: string): ResultAsync<Teach
         studentsPresent: classSessions.studentsPresent,
         studentsAbsent: classSessions.studentsAbsent,
         chapterId: classSessions.chapterId,
+        chapterName: programTemplateChapters.title,
         createdAt: classSessions.createdAt,
         completedAt: classSessions.completedAt,
       })
@@ -256,10 +273,11 @@ export function getTeacherClassSessionById(sessionId: string): ResultAsync<Teach
       .innerJoin(subjects, eq(classSessions.subjectId, subjects.id))
       .innerJoin(classes, eq(classSessions.classId, classes.id))
       .innerJoin(grades, eq(classes.gradeId, grades.id))
+      .leftJoin(programTemplateChapters, eq(classSessions.chapterId, programTemplateChapters.id))
       .where(eq(classSessions.id, sessionId))
       .limit(1)
       .then(result => result[0] ?? null) as Promise<TeacherClassSession | null>,
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get class session by ID', { code: 'GET_SESSION_FAILED' }),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'session.getFailed'), { code: 'GET_SESSION_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, { sessionId }))
 }
 
@@ -339,7 +357,7 @@ export function getTeacherSessionHistory(params: {
       page,
       pageSize,
     })),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher session history', { code: 'GET_SESSION_HISTORY_FAILED' }),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'session.historyFailed'), { code: 'GET_SESSION_HISTORY_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -381,7 +399,7 @@ export function getClassStudents(params: {
         ),
       )
       .orderBy(asc(students.lastName), asc(students.firstName)),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get class students', { code: 'GET_CLASS_STUDENTS_FAILED' }),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'students.getFailed'), { code: 'GET_CLASS_STUDENTS_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -424,7 +442,7 @@ export function upsertParticipationGrades(params: {
       })
       .returning()
       .then(() => ({ success: true })),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to upsert participation grades', { code: 'UPSERT_PARTICIPATION_FAILED' }),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'participation.upsertFailed'), { code: 'UPSERT_PARTICIPATION_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -443,7 +461,7 @@ export function getSessionParticipationGrades(classSessionId: string): ResultAsy
       })
       .from(participationGrades)
       .where(eq(participationGrades.classSessionId, classSessionId)),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get session participation grades', { code: 'GET_PARTICIPATION_FAILED' }),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'participation.getFailed'), { code: 'GET_PARTICIPATION_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, { classSessionId }))
 }
 
@@ -513,7 +531,7 @@ export function getTeacherAssignedClasses(params: {
 
       return Array.from(classMap.values())
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher assigned classes', { code: 'GET_TEACHER_CLASSES_FAILED' }),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'classes.listFailed'), { code: 'GET_TEACHER_CLASSES_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -539,7 +557,7 @@ export function getTeacherSchools(userId: string): ResultAsync<TeacherSchool[], 
       .innerJoin(schools, eq(userSchools.schoolId, schools.id))
       .where(eq(userSchools.userId, userId))
       .orderBy(asc(schools.name)),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher schools', { code: 'GET_TEACHER_SCHOOLS_FAILED' }),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'classes.schoolsFailed'), { code: 'GET_TEACHER_SCHOOLS_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, { userId }))
 }
 
@@ -591,7 +609,7 @@ export function createHomeworkAssignment(params: {
       }
       return created
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to create homework assignment', { code: 'CREATE_HOMEWORK_FAILED' }),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'homework.createFailed'), { code: 'CREATE_HOMEWORK_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -667,7 +685,7 @@ export function getTeacherHomework(params: {
       page,
       pageSize,
     })),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher homework', { code: 'GET_HOMEWORK_LIST_FAILED' }),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'homework.listFailed'), { code: 'GET_HOMEWORK_LIST_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -707,7 +725,7 @@ export function getHomeworkById(homeworkId: string): ResultAsync<HomeworkDetails
       .where(eq(homework.id, homeworkId))
       .limit(1)
       .then(result => result[0] ?? null) as Promise<HomeworkDetails | null>,
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get homework by ID', { code: 'GET_HOMEWORK_DETAILS_FAILED' }),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'homework.getFailed'), { code: 'GET_HOMEWORK_DETAILS_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, { homeworkId }))
 }
 
@@ -766,7 +784,7 @@ export function updateHomeworkAssignment(params: {
       }
       return updated
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to update homework assignment', { code: 'UPDATE_HOMEWORK_FAILED' }),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'homework.updateFailed'), { code: 'UPDATE_HOMEWORK_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -844,7 +862,7 @@ export function deleteHomeworkAssignment(params: {
         return updatedHomework as HomeworkDetails
       }
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to delete homework assignment', { code: 'DELETE_HOMEWORK_FAILED' }),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'homework.deleteFailed'), { code: 'DELETE_HOMEWORK_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -866,8 +884,10 @@ export function getTeacherMessagesQuery(params: {
     id: string
     senderType: 'teacher' | 'parent' | 'admin' | 'student'
     senderId: string
+    senderName: string | null
     recipientType: 'teacher' | 'parent' | 'admin' | 'student'
     recipientId: string
+    recipientName: string | null
     studentId: string | null
     studentName: string | null
     subject: string | null
@@ -914,8 +934,22 @@ export function getTeacherMessagesQuery(params: {
           id: teacherMessages.id,
           senderType: teacherMessages.senderType,
           senderId: teacherMessages.senderId,
+          senderName: sql<string | null>`
+            CASE 
+              WHEN ${teacherMessages.senderType} = 'teacher' THEN ${senderUsers.name}
+              WHEN ${teacherMessages.senderType} = 'parent' THEN ${senderParents.firstName} || ' ' || ${senderParents.lastName}
+              ELSE NULL
+            END
+          `,
           recipientType: teacherMessages.recipientType,
           recipientId: teacherMessages.recipientId,
+          recipientName: sql<string | null>`
+            CASE 
+              WHEN ${teacherMessages.recipientType} = 'teacher' THEN ${recipientUsers.name}
+              WHEN ${teacherMessages.recipientType} = 'parent' THEN ${recipientParents.firstName} || ' ' || ${recipientParents.lastName}
+              ELSE NULL
+            END
+          `,
           studentId: teacherMessages.studentId,
           studentName: sql<string | null>`${students.firstName} || ' ' || ${students.lastName}`,
           subject: teacherMessages.subject,
@@ -927,6 +961,12 @@ export function getTeacherMessagesQuery(params: {
         })
         .from(teacherMessages)
         .leftJoin(students, eq(teacherMessages.studentId, students.id))
+        .leftJoin(senderTeachers, eq(teacherMessages.senderId, senderTeachers.id))
+        .leftJoin(senderUsers, eq(senderTeachers.userId, senderUsers.id))
+        .leftJoin(senderParents, eq(teacherMessages.senderId, senderParents.id))
+        .leftJoin(recipientTeachers, eq(teacherMessages.recipientId, recipientTeachers.id))
+        .leftJoin(recipientUsers, eq(recipientTeachers.userId, recipientUsers.id))
+        .leftJoin(recipientParents, eq(teacherMessages.recipientId, recipientParents.id))
         .where(and(...conditions))
         .orderBy(desc(teacherMessages.createdAt))
         .limit(pageSize)
@@ -946,7 +986,7 @@ export function getTeacherMessagesQuery(params: {
       page,
       pageSize,
     })),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher messages', { code: 'GET_MESSAGES_FAILED' }),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'messaging.listFailed'), { code: 'GET_MESSAGES_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -967,8 +1007,22 @@ export function getMessageDetailsQuery(params: {
           schoolId: teacherMessages.schoolId,
           senderType: teacherMessages.senderType,
           senderId: teacherMessages.senderId,
+          senderName: sql<string | null>`
+            CASE 
+              WHEN ${teacherMessages.senderType} = 'teacher' THEN ${senderUsers.name}
+              WHEN ${teacherMessages.senderType} = 'parent' THEN ${senderParents.firstName} || ' ' || ${senderParents.lastName}
+              ELSE NULL
+            END
+          `,
           recipientType: teacherMessages.recipientType,
           recipientId: teacherMessages.recipientId,
+          recipientName: sql<string | null>`
+            CASE 
+              WHEN ${teacherMessages.recipientType} = 'teacher' THEN ${recipientUsers.name}
+              WHEN ${teacherMessages.recipientType} = 'parent' THEN ${recipientParents.firstName} || ' ' || ${recipientParents.lastName}
+              ELSE NULL
+            END
+          `,
           studentId: teacherMessages.studentId,
           studentName: sql<string | null>`${students.firstName} || ' ' || ${students.lastName}`,
           classId: teacherMessages.classId,
@@ -985,6 +1039,12 @@ export function getMessageDetailsQuery(params: {
         .leftJoin(students, eq(teacherMessages.studentId, students.id))
         .leftJoin(classes, eq(teacherMessages.classId, classes.id))
         .leftJoin(grades, eq(classes.gradeId, grades.id))
+        .leftJoin(senderTeachers, eq(teacherMessages.senderId, senderTeachers.id))
+        .leftJoin(senderUsers, eq(senderTeachers.userId, senderUsers.id))
+        .leftJoin(senderParents, eq(teacherMessages.senderId, senderParents.id))
+        .leftJoin(recipientTeachers, eq(teacherMessages.recipientId, recipientTeachers.id))
+        .leftJoin(recipientUsers, eq(recipientTeachers.userId, recipientUsers.id))
+        .leftJoin(recipientParents, eq(teacherMessages.recipientId, recipientParents.id))
         .where(eq(teacherMessages.id, params.messageId))
         .limit(1)
 
@@ -997,12 +1057,22 @@ export function getMessageDetailsQuery(params: {
           id: teacherMessages.id,
           senderType: teacherMessages.senderType,
           senderId: teacherMessages.senderId,
+          senderName: sql<string | null>`
+            CASE 
+              WHEN ${teacherMessages.senderType} = 'teacher' THEN ${senderUsers.name}
+              WHEN ${teacherMessages.senderType} = 'parent' THEN ${senderParents.firstName} || ' ' || ${senderParents.lastName}
+              ELSE NULL
+            END
+          `,
           content: teacherMessages.content,
           createdAt: teacherMessages.createdAt,
         })
         .from(teacherMessages)
+        .leftJoin(senderTeachers, eq(teacherMessages.senderId, senderTeachers.id))
+        .leftJoin(senderUsers, eq(senderTeachers.userId, senderUsers.id))
+        .leftJoin(senderParents, eq(teacherMessages.senderId, senderParents.id))
         .where(
-          and(
+          or(
             eq(teacherMessages.threadId, threadId!),
             eq(teacherMessages.id, threadId!),
           ),
@@ -1014,7 +1084,7 @@ export function getMessageDetailsQuery(params: {
         thread,
       } as MessageDetails
     })() as Promise<MessageDetails | null>,
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get message details', { code: 'GET_MESSAGE_DETAILS_FAILED' }),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'messaging.detailsFailed'), { code: 'GET_MESSAGE_DETAILS_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -1069,7 +1139,7 @@ export function sendTeacherMessage(params: {
       }
       return created
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to send message', { code: 'SEND_MESSAGE_FAILED' }),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'messaging.sendFailed'), { code: 'SEND_MESSAGE_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -1103,7 +1173,7 @@ export function markMessageAsRead(params: {
       }
       return updated
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to mark message as read', { code: 'MARK_MESSAGE_READ_FAILED' }),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'messaging.markReadFailed'), { code: 'MARK_MESSAGE_READ_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -1144,7 +1214,7 @@ export function getMessageTemplatesQuery(params: {
       .from(messageTemplates)
       .where(and(...conditions))
       .orderBy(asc(messageTemplates.name)),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get message templates', { code: 'GET_TEMPLATES_FAILED' }),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'messaging.templatesFailed'), { code: 'GET_TEMPLATES_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -1218,7 +1288,7 @@ export function searchParentsForTeacher(params: {
 
       return Array.from(parentMap.values())
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to search parents for teacher', { code: 'SEARCH_PARENTS_FAILED' }),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'parents.searchFailed'), { code: 'SEARCH_PARENTS_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -1270,7 +1340,7 @@ export function submitStudentGrades(params: {
       })))
       .returning()
       .then(results => ({ success: true, count: results.length })),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to submit student grades', { code: 'SUBMIT_GRADES_FAILED' }),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'grades.submitFailed'), { code: 'SUBMIT_GRADES_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -1334,7 +1404,7 @@ export function getTeacherDaySchedule(params: {
         classroom: session.classroom?.id ? session.classroom : null,
       }))
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher day schedule', { code: 'GET_SCHEDULE_FAILED' }),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'session.dayScheduleFailed'), { code: 'GET_SCHEDULE_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -1392,7 +1462,7 @@ export function getTeacherWeeklySchedule(params: {
         classroom: session.classroom?.id ? session.classroom : null,
       }))
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher weekly schedule', { code: 'GET_WEEKLY_SCHEDULE_FAILED' }),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'session.weeklyScheduleFailed'), { code: 'GET_WEEKLY_SCHEDULE_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -1435,7 +1505,7 @@ export function getTeacherActiveSession(params: {
       )
       .limit(1)
       .then(result => result[0] ?? null),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher active session', { code: 'GET_ACTIVE_SESSION_FAILED' }),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'session.activeFailed'), { code: 'GET_ACTIVE_SESSION_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -1456,7 +1526,7 @@ export function getTeacherPendingGradesCount(teacherId: string): ResultAsync<num
         ),
       )
       .then(result => result[0]?.count ?? 0),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher pending grades count', { code: 'GET_PENDING_GRADES_COUNT_FAILED' }),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'grades.pendingCountFailed'), { code: 'GET_PENDING_GRADES_COUNT_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, { teacherId }))
 }
 
@@ -1479,7 +1549,7 @@ export function getTeacherUnreadMessagesCount(teacherId: string): ResultAsync<nu
         ),
       )
       .then(result => result[0]?.count ?? 0),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher unread messages count', { code: 'GET_UNREAD_MESSAGES_COUNT_FAILED' }),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'messaging.unreadCountFailed'), { code: 'GET_UNREAD_MESSAGES_COUNT_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, { teacherId }))
 }
 
@@ -1524,7 +1594,7 @@ export function getTeacherRecentMessages(params: {
         ...r,
         isRead: r.isRead ?? false,
       }))),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher recent messages', { code: 'GET_RECENT_MESSAGES_FAILED' }),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'messaging.recentFailed'), { code: 'GET_RECENT_MESSAGES_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -1578,7 +1648,7 @@ export function getTeacherNotificationsQuery(params: {
           type: r.type, // Ensure type is passed through or cast if needed, though basic string match is usually fine
         })))
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher notifications', { code: 'GET_NOTIFICATIONS_FAILED' }),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'notifications.listFailed'), { code: 'GET_NOTIFICATIONS_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -1620,7 +1690,7 @@ export function getCurrentTermForSchoolYear(schoolYearId: string): ResultAsync<{
 
       return result[0] ?? null
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get current term for school year', { code: 'GET_CURRENT_TERM_FAILED' }),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'session.termFailed'), { code: 'GET_CURRENT_TERM_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, { schoolYearId }))
 }
 
@@ -1645,6 +1715,6 @@ export function getClassSubjectInfo(params: {
       .where(eq(classes.id, params.classId))
       .limit(1)
       .then(result => result[0] ?? null),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get class and subject info', { code: 'GET_CLASS_UBJECT_INFO_FAILED' }),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'classes.infoFailed'), { code: 'GET_CLASS_UBJECT_INFO_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }

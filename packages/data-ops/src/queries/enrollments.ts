@@ -7,6 +7,7 @@ import { getDb } from '../database/setup'
 import { grades, series } from '../drizzle/core-schema'
 import { classes, enrollments, schoolYears, students, users } from '../drizzle/school-schema'
 import { DatabaseError, dbError } from '../errors'
+import { getNestedErrorMessage } from '../i18n'
 
 // ==================== Types ====================
 export interface EnrollmentFilters {
@@ -487,7 +488,7 @@ export function bulkReEnroll(
         if (!targetClass) {
           results.errors.push({
             studentId: student.id,
-            error: `No matching class found for grade ${targetGradeId}`,
+            error: `${getNestedErrorMessage('classes', 'notFound')}: ${targetGradeId}`,
           })
           continue
         }

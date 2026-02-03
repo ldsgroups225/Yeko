@@ -10,6 +10,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { checkStorageConfigured, getPresignedUploadUrl } from '@/core/functions/storage'
 import { CreateSchoolSchema } from '@/schemas/school'
+import { useI18nContext } from '@/i18n/i18n-react'
 
 interface SchoolFormProps {
   defaultValues?: Partial<CreateSchoolInput>
@@ -28,6 +29,7 @@ export function SchoolForm({
 }: SchoolFormProps) {
   'use no memo'
 
+  const { LL } = useI18nContext()
   const [storageConfigured, setStorageConfigured] = useState<boolean | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const [uploadError, setUploadError] = useState<string | null>(null)
@@ -103,7 +105,7 @@ export function SchoolForm({
       })
 
       if (!uploadResponse.ok) {
-        setUploadError('Erreur lors du téléversement du fichier.')
+        setUploadError(LL.schools.uploadError())
         setIsUploading(false)
         return
       }
@@ -114,7 +116,7 @@ export function SchoolForm({
     }
     catch (error) {
       console.error('Upload error:', error)
-      setUploadError('Erreur lors du téléversement du fichier.')
+      setUploadError(LL.schools.uploadError())
       setIsUploading(false)
     }
 
@@ -132,19 +134,19 @@ export function SchoolForm({
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <IconSchool className="h-5 w-5" />
-              Informations de Base
+              {LL.schools.basicInfo()}
             </CardTitle>
             <CardDescription>
-              Détails essentiels sur l'école
+              {LL.schools.basicInfoDescription()}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="name">Nom de l'École *</Label>
+                <Label htmlFor="name">{LL.schools.name()} *</Label>
                 <Input
                   id="name"
-                  placeholder="Entrer le nom de l'école"
+                  placeholder={LL.schools.namePlaceholder()}
                   {...register('name')}
                 />
                 {errors.name && (
@@ -152,10 +154,10 @@ export function SchoolForm({
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="code">Code de l'École *</Label>
+                <Label htmlFor="code">{LL.schools.code()} *</Label>
                 <Input
                   id="code"
-                  placeholder="e.g., LYCE_ST_EXUPERY"
+                  placeholder={LL.schools.codePlaceholder()}
                   {...register('code')}
                 />
                 {errors.code && (
@@ -165,10 +167,10 @@ export function SchoolForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="address">Adresse</Label>
+              <Label htmlFor="address">{LL.schools.address()}</Label>
               <Input
                 id="address"
-                placeholder="123 Avenue de la République, Paris"
+                placeholder={LL.schools.addressPlaceholder()}
                 {...register('address')}
               />
               {errors.address && (
@@ -177,10 +179,10 @@ export function SchoolForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phone">Numéro de Téléphone</Label>
+              <Label htmlFor="phone">{LL.schools.phone()}</Label>
               <Input
                 id="phone"
-                placeholder="+33 1 23 45 67 89"
+                placeholder={LL.schools.phonePlaceholder()}
                 {...register('phone')}
               />
               {errors.phone && (
@@ -189,11 +191,11 @@ export function SchoolForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">Adresse Email</Label>
+              <Label htmlFor="email">{LL.schools.email()}</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="contact@ecole.fr"
+                placeholder={LL.schools.emailPlaceholder()}
                 {...register('email')}
               />
               {errors.email && (
@@ -202,7 +204,7 @@ export function SchoolForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="logoUrl">Logo de l'École</Label>
+              <Label htmlFor="logoUrl">{LL.schools.logo()}</Label>
               <div className="flex items-start gap-4">
                 {/* Logo preview */}
                 <div className="shrink-0">
@@ -211,7 +213,7 @@ export function SchoolForm({
                         <div className="relative w-24 h-24 border-2 border-dashed rounded-lg overflow-hidden">
                           <img
                             src={logoUrl}
-                            alt="Logo preview"
+                            alt={LL.schools.logoPreview()}
                             className="w-full h-full object-cover"
                           />
                           <button
@@ -236,7 +238,7 @@ export function SchoolForm({
                 <div className="flex-1 space-y-3">
                   <div className="space-y-2">
                     <Label htmlFor="logoFile" className="text-sm text-muted-foreground">
-                      Télécharger un fichier
+                      {LL.schools.uploadFile()}
                     </Label>
                     <div className="flex gap-2">
                       <Input
@@ -251,18 +253,18 @@ export function SchoolForm({
                       {isUploading && (
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <IconLoader2 className="h-4 w-4 animate-spin" />
-                          <span>Téléversement...</span>
+                          <span>{LL.schools.uploading()}</span>
                         </div>
                       )}
                     </div>
                     {storageConfigured === false && (
                       <p className="text-xs text-muted-foreground">
-                        Le téléversement de fichiers n'est pas configuré. Utilisez une URL pour l'instant.
+                        {LL.schools.storageNotConfigured()}
                       </p>
                     )}
                     {storageConfigured === null && (
                       <p className="text-xs text-muted-foreground">
-                        Vérification de la configuration...
+                        {LL.schools.checkingConfiguration()}
                       </p>
                     )}
                     {uploadError && (
@@ -274,17 +276,17 @@ export function SchoolForm({
                       <span className="w-full border-t" />
                     </div>
                     <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-background px-2 text-muted-foreground">Ou</span>
+                      <span className="bg-background px-2 text-muted-foreground">{LL.schools.or()}</span>
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="logoUrl" className="text-sm text-muted-foreground">
-                      URL du logo
+                      {LL.schools.logoUrl()}
                     </Label>
                     <Input
                       id="logoUrl"
                       type="url"
-                      placeholder="https://example.com/logo.png"
+                      placeholder={LL.schools.logoUrlPlaceholder()}
                       {...register('logoUrl')}
                     />
                   </div>
@@ -296,7 +298,7 @@ export function SchoolForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="status">Statut</Label>
+              <Label htmlFor="status">{LL.schools.status()}</Label>
               <Select
                 value={status}
                 onValueChange={(value) => {
@@ -305,16 +307,16 @@ export function SchoolForm({
                 }}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner le statut">
-                    {status === 'active' && 'Active'}
-                    {status === 'inactive' && 'Inactive'}
-                    {status === 'suspended' && 'Suspendue'}
+                  <SelectValue placeholder={LL.schools.selectStatus()}>
+                    {status === 'active' && LL.status.active()}
+                    {status === 'inactive' && LL.status.inactive()}
+                    {status === 'suspended' && LL.status.suspended()}
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
-                  <SelectItem value="suspended">Suspendue</SelectItem>
+                  <SelectItem value="active">{LL.status.active()}</SelectItem>
+                  <SelectItem value="inactive">{LL.status.inactive()}</SelectItem>
+                  <SelectItem value="suspended">{LL.status.suspended()}</SelectItem>
                 </SelectContent>
               </Select>
               {errors.status && (
@@ -332,20 +334,20 @@ export function SchoolForm({
           variant="outline"
           onClick={onCancel}
         >
-          Annuler
+          {LL.common.cancel()}
         </Button>
         <Button type="submit" disabled={isSubmitting || isUploading} className="gap-2">
           {isSubmitting
             ? (
                 <>
                   <IconLoader2 className="h-4 w-4 animate-spin" />
-                  {mode === 'create' ? 'Création en cours...' : 'Enregistrement...'}
+                  {mode === 'create' ? LL.schools.creating() : LL.schools.saving()}
                 </>
               )
             : (
                 <>
                   <IconDeviceFloppy className="h-4 w-4" />
-                  {mode === 'create' ? 'Créer l\'École' : 'Enregistrer les modifications'}
+                  {mode === 'create' ? LL.schools.createSchool() : LL.schools.saveChanges()}
                 </>
               )}
         </Button>

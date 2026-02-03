@@ -5,6 +5,7 @@ import { ResultAsync } from 'neverthrow'
 import { getDb } from '../database/setup'
 import { installments, paymentPlans, students } from '../drizzle/school-schema'
 import { DatabaseError, dbError } from '../errors'
+import { getNestedErrorMessage } from '../i18n'
 
 export interface GetInstallmentsParams {
   paymentPlanId?: string
@@ -28,7 +29,7 @@ export function getInstallments(params: GetInstallmentsParams): ResultAsync<Inst
 
       return db.select().from(installments).where(and(...conditions))
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch installments'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'installment.fetchFailed')),
   ).mapErr(tapLogErr(databaseLogger, { paymentPlanId }))
 }
 
@@ -36,7 +37,7 @@ export function getInstallmentById(installmentId: string): ResultAsync<Installme
   const db = getDb()
   return ResultAsync.fromPromise(
     db.select().from(installments).where(eq(installments.id, installmentId)).limit(1).then(rows => rows[0] ?? null),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch installment by ID'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'installment.fetchByIdFailed')),
   ).mapErr(tapLogErr(databaseLogger, { installmentId }))
 }
 
@@ -44,7 +45,7 @@ export function getInstallmentsByPaymentPlan(paymentPlanId: string): ResultAsync
   const db = getDb()
   return ResultAsync.fromPromise(
     db.select().from(installments).where(eq(installments.paymentPlanId, paymentPlanId)).orderBy(installments.installmentNumber),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch installments by payment plan'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'installment.fetchByPaymentPlanFailed')),
   ).mapErr(tapLogErr(databaseLogger, { paymentPlanId }))
 }
 
@@ -56,11 +57,11 @@ export function createInstallment(data: CreateInstallmentData): ResultAsync<Inst
     (async () => {
       const [installment] = await db.insert(installments).values({ id: crypto.randomUUID(), ...data }).returning()
       if (!installment) {
-        throw dbError('INTERNAL_ERROR', 'Failed to create installment')
+        throw dbError('INTERNAL_ERROR', getNestedErrorMessage('finance', 'installment.createFailed'))
       }
       return installment
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create installment'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'installment.createFailed')),
   ).mapErr(tapLogErr(databaseLogger, { paymentPlanId: data.paymentPlanId }))
 }
 
@@ -73,7 +74,7 @@ export function createInstallmentsBulk(dataList: CreateInstallmentData[]): Resul
       const values = dataList.map(data => ({ id: crypto.randomUUID(), ...data }))
       return db.insert(installments).values(values).returning()
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create installments bulk'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'installment.bulkCreateFailed')),
   ).mapErr(tapLogErr(databaseLogger, { count: dataList.length }))
 }
 
@@ -88,7 +89,7 @@ export function waiveInstallment(installmentId: string): ResultAsync<Installment
         .returning()
       return installment
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to waive installment'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'installment.waiveFailed')),
   ).mapErr(tapLogErr(databaseLogger, { installmentId }))
 }
 
@@ -113,7 +114,7 @@ export function getOverdueInstallments(schoolYearId: string): ResultAsync<Array<
 
       return result.map(r => ({ ...r.installment, studentId: r.studentId }))
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch overdue installments'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'installment.fetchOverdueFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolYearId }))
 }
 
@@ -149,7 +150,7 @@ export function updateOverdueInstallments(schoolYearId: string): ResultAsync<num
 
       return overdueInstallmentIds.length
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to update overdue installments'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'installment.updateOverdueFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolYearId }))
 }
 
@@ -193,6 +194,6 @@ export function getOverdueInstallmentsWithStudents(schoolYearId: string): Result
         daysOverdue: r.daysOverdue ?? 0,
       }))
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch overdue installments with students'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'installment.fetchOverdueWithStudentsFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolYearId }))
 }

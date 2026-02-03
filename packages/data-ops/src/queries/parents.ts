@@ -6,6 +6,7 @@ import { ResultAsync } from 'neverthrow'
 import { getDb } from '../database/setup'
 import { parents, studentParents, students, users } from '../drizzle/school-schema'
 import { DatabaseError } from '../errors'
+import { getNestedErrorMessage } from '../i18n'
 
 // ==================== Types ====================
 
@@ -160,7 +161,7 @@ export function getParents(
         totalPages: Math.ceil(Number(countResult[0]?.count || 0) / limit),
       }
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to fetch parents'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('parents', 'fetchFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, action: 'get_parents' }))
 }
 
@@ -178,7 +179,7 @@ export function getParentById(id: string): ResultAsync<ParentWithDetails, Databa
         .where(eq(parents.id, id))
 
       if (!parent)
-        throw new DatabaseError('NOT_FOUND', 'Parent not found')
+        throw new DatabaseError('NOT_FOUND', getNestedErrorMessage('parents', 'notFound'))
 
       // Get linked children
       const children = await db
@@ -195,7 +196,7 @@ export function getParentById(id: string): ResultAsync<ParentWithDetails, Databa
 
       return { ...parent.parent, user: parent.user, children }
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to fetch parent'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('parents', 'fetchByIdFailed')),
   ).mapErr(tapLogErr(databaseLogger, { parentId: id, action: 'get_parent_by_id' }))
 }
 
@@ -215,7 +216,7 @@ export function getStudentParents(studentId: string): ResultAsync<StudentParentD
 
       return results
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to fetch student parents'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('parents', 'fetchStudentParentsFailed')),
   ).mapErr(tapLogErr(databaseLogger, { studentId, action: 'get_student_parents' }))
 }
 
@@ -242,7 +243,7 @@ export function findParentByPhone(phone: string): ResultAsync<Parent | null, Dat
 
       return parent || null
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to find parent by phone'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('parents', 'findByPhoneFailed')),
   )
 }
 
@@ -290,7 +291,7 @@ export function autoMatchParents(schoolId: string): ResultAsync<AutoMatchResult,
 
       return results
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to auto-match parents'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('parents', 'autoMatchFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, action: 'auto_match_parents' }))
 }
 
@@ -303,7 +304,7 @@ export function createParent(data: CreateParentInput): ResultAsync<Parent, Datab
       // Check if parent with same phone exists
       const checkResult = await findParentByPhone(data.phone)
       if (checkResult.isOk() && checkResult.value) {
-        throw new DatabaseError('CONFLICT', `Parent with phone ${data.phone} already exists`)
+        throw new DatabaseError('CONFLICT', getNestedErrorMessage('parents', 'alreadyExistsWithPhone', { phone: data.phone }))
       }
       if (checkResult.isErr()) {
         throw checkResult.error
@@ -319,14 +320,14 @@ export function createParent(data: CreateParentInput): ResultAsync<Parent, Datab
         .returning()
 
       if (!parent) {
-        throw new DatabaseError('INTERNAL_ERROR', 'Failed to create parent')
+        throw new DatabaseError('INTERNAL_ERROR', getNestedErrorMessage('parents', 'createFailed'))
       }
 
       return parent
     })(),
     (e) => {
       console.error('CREATE PARENT ERROR:', e)
-      return DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to create parent')
+      return DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('parents', 'createFailed'))
     },
   ).mapErr(tapLogErr(databaseLogger, { action: 'create_parent' }))
 }
@@ -342,11 +343,11 @@ export function updateParent(id: string, data: Partial<CreateParentInput>): Resu
         .returning()
 
       if (!parent)
-        throw new DatabaseError('NOT_FOUND', 'Parent not found')
+        throw new DatabaseError('NOT_FOUND', getNestedErrorMessage('parents', 'notFound'))
 
       return parent
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to update parent'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('parents', 'updateFailed')),
   ).mapErr(tapLogErr(databaseLogger, { parentId: id, action: 'update_parent' }))
 }
 
@@ -358,7 +359,7 @@ export function deleteParent(id: string): ResultAsync<void, DatabaseError> {
       const [link] = await db.select().from(studentParents).where(eq(studentParents.parentId, id))
 
       if (link) {
-        throw new DatabaseError('CONFLICT', 'Cannot delete parent with linked children. Unlink children first.')
+        throw new DatabaseError('CONFLICT', getNestedErrorMessage('parents', 'deleteFailed'))
       }
 
       const result = await db.delete(parents).where(eq(parents.id, id))
@@ -367,7 +368,7 @@ export function deleteParent(id: string): ResultAsync<void, DatabaseError> {
         // throw new DatabaseError('NOT_FOUND', 'Parent not found')
       }
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to delete parent'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('parents', 'deleteFailed')),
   ).mapErr(tapLogErr(databaseLogger, { parentId: id, action: 'delete_parent' }))
 }
 
@@ -384,7 +385,7 @@ export function linkParentToStudent(data: LinkParentInput): ResultAsync<typeof s
         .where(and(eq(studentParents.studentId, data.studentId), eq(studentParents.parentId, data.parentId)))
 
       if (existing) {
-        throw new DatabaseError('CONFLICT', 'Parent is already linked to this student')
+        throw new DatabaseError('CONFLICT', getNestedErrorMessage('parents', 'linkFailed'))
       }
 
       // If setting as primary, unset other primaries
@@ -401,11 +402,11 @@ export function linkParentToStudent(data: LinkParentInput): ResultAsync<typeof s
         .returning()
 
       if (!link)
-        throw new DatabaseError('INTERNAL_ERROR', 'Failed to link parent')
+        throw new DatabaseError('INTERNAL_ERROR', getNestedErrorMessage('parents', 'linkFailed'))
 
       return link
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to link parent'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('parents', 'linkFailed')),
   ).mapErr(tapLogErr(databaseLogger, { studentId: data.studentId, parentId: data.parentId, action: 'link_parent' }))
 }
 
@@ -417,7 +418,7 @@ export function unlinkParentFromStudent(studentId: string, parentId: string): Re
         .delete(studentParents)
         .where(and(eq(studentParents.studentId, studentId), eq(studentParents.parentId, parentId)))
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to unlink parent'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('parents', 'unlinkFailed')),
   ).mapErr(tapLogErr(databaseLogger, { studentId, parentId, action: 'unlink_parent' }))
 }
 
@@ -441,11 +442,11 @@ export function updateParentLink(
         .returning()
 
       if (!link)
-        throw new DatabaseError('NOT_FOUND', 'Link not found')
+        throw new DatabaseError('NOT_FOUND', getNestedErrorMessage('parents', 'unlinkFailed'))
 
       return link
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to update parent link'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('parents', 'updateLinkFailed')),
   ).mapErr(tapLogErr(databaseLogger, { studentId, parentId, action: 'update_parent_link' }))
 }
 
@@ -468,11 +469,11 @@ export function sendParentInvitation(parentId: string, schoolId: string): Result
         .where(eq(parents.id, parentId))
 
       if (!existingParent) {
-        throw new DatabaseError('NOT_FOUND', 'Parent introuvable')
+        throw new DatabaseError('NOT_FOUND', getNestedErrorMessage('parents', 'notFound'))
       }
 
       if (!existingParent.email) {
-        throw new DatabaseError('VALIDATION_ERROR', 'Le parent n\'a pas d\'adresse email')
+        throw new DatabaseError('VALIDATION_ERROR', getNestedErrorMessage('parents', 'noEmail'))
       }
 
       // Generate invitation token
@@ -495,7 +496,7 @@ export function sendParentInvitation(parentId: string, schoolId: string): Result
         .returning()
 
       if (!parent) {
-        throw new DatabaseError('INTERNAL_ERROR', 'Échec de la mise à jour du parent')
+        throw new DatabaseError('INTERNAL_ERROR', getNestedErrorMessage('parents', 'updateFailed'))
       }
 
       // Get linked children for email context
@@ -509,7 +510,7 @@ export function sendParentInvitation(parentId: string, schoolId: string): Result
         .where(eq(studentParents.parentId, parentId))
 
       if (children.length === 0) {
-        throw new DatabaseError('VALIDATION_ERROR', 'Aucun enfant lié au parent')
+        throw new DatabaseError('VALIDATION_ERROR', getNestedErrorMessage('parents', 'noChildren'))
       }
 
       // Get school name - import schools table
@@ -543,13 +544,13 @@ export function sendParentInvitation(parentId: string, schoolId: string): Result
           .set({ invitationStatus: 'expired', updatedAt: new Date() })
           .where(eq(parents.id, parentId))
 
-        throw new DatabaseError('INTERNAL_ERROR', `Échec de l'envoi de l'invitation: ${emailResult.error}`)
+        throw new DatabaseError('INTERNAL_ERROR', getNestedErrorMessage('parents', 'invitationFailedWithError', { error: String(emailResult.error) }))
       }
 
       // Return plain token (for testing/debugging only)
       return { parent, token, emailSent: true }
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to send parent invitation'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('parents', 'sendInvitationFailed')),
   ).mapErr(tapLogErr(databaseLogger, { parentId, schoolId, action: 'send_parent_invitation' }))
 }
 
@@ -565,12 +566,12 @@ export function acceptParentInvitation(token: string, userId: string): ResultAsy
         .where(and(eq(parents.invitationToken, hashedToken), eq(parents.invitationStatus, 'sent')))
 
       if (!parent) {
-        throw new DatabaseError('NOT_FOUND', 'Invalid or expired invitation')
+        throw new DatabaseError('NOT_FOUND', getNestedErrorMessage('parents', 'invalidToken'))
       }
 
       if (parent.invitationExpiresAt && new Date() > parent.invitationExpiresAt) {
         await db.update(parents).set({ invitationStatus: 'expired', updatedAt: new Date() }).where(eq(parents.id, parent.id))
-        throw new DatabaseError('VALIDATION_ERROR', 'Invitation has expired')
+        throw new DatabaseError('VALIDATION_ERROR', getNestedErrorMessage('parents', 'invalidToken'))
       }
 
       const [updated] = await db
@@ -585,12 +586,12 @@ export function acceptParentInvitation(token: string, userId: string): ResultAsy
         .returning()
 
       if (!updated) {
-        throw new DatabaseError('INTERNAL_ERROR', 'Failed to update parent')
+        throw new DatabaseError('INTERNAL_ERROR', getNestedErrorMessage('parents', 'updateFailed'))
       }
 
       return updated
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to accept invitation'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('parents', 'acceptInvitationFailed')),
   ).mapErr(tapLogErr(databaseLogger, { userId, action: 'accept_parent_invitation' }))
 }
 
@@ -652,5 +653,5 @@ export function bulkImportParents(
     }
 
     return results
-  })(), e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to bulk import parents')).mapErr(tapLogErr(databaseLogger, { parentsCount: parentsData.length, action: 'bulk_import_parents' }))
+  })(), e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('parents', 'bulkImportFailed'))).mapErr(tapLogErr(databaseLogger, { parentsCount: parentsData.length, action: 'bulk_import_parents' }))
 }

@@ -46,7 +46,7 @@ export function expectResultSuccess<T, E>(
         throw new Error(`Expected success but got error: ${JSON.stringify(r.error)}`)
       }
       return r.value
-    })
+    }) as Promise<T>
   }
 
   if (result.isErr()) {
@@ -67,7 +67,7 @@ export function expectResultError<T, E>(
         throw new Error(`Expected error but got success: ${JSON.stringify(r.value)}`)
       }
       return r.error
-    })
+    }) as Promise<E>
   }
 
   if (result.isOk()) {
@@ -102,7 +102,7 @@ export async function expectDatabaseErrorType<T>(
 /**
  * Creates a mock logger for testing
  */
-export function createMockLogger() {
+export function createMockLogger(): any {
   return {
     debug: vi.fn(),
     info: vi.fn(),
@@ -157,7 +157,7 @@ export function expectDatabaseErrorLogged(
     throw new Error('Expected logger to be called but it was not')
   }
 
-  const errorArg = calls[0][0]
+  const errorArg = calls[0]?.[0]
 
   if (!(errorArg instanceof DatabaseError)) {
     throw new Error(`Expected DatabaseError but got ${typeof errorArg}`)
@@ -171,7 +171,7 @@ export function expectDatabaseErrorLogged(
 /**
  * Creates a mock database client for testing
  */
-export function createMockDbClient() {
+export function createMockDbClient(): any {
   return {
     query: {
       students: {

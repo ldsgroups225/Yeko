@@ -136,3 +136,37 @@ export async function getOnboardingStatus(schoolId: string) {
     hasStructure,
   }
 }
+
+export async function getSmartTemplateCurriculum(schoolId: string) {
+  const db = getDb()
+
+  const activeYear = await db.query.schoolYears.findFirst({
+    where: and(
+      eq(schoolYears.schoolId, schoolId),
+      eq(schoolYears.isActive, true),
+    ),
+    with: {
+      schoolYearTemplate: true,
+    },
+  })
+
+  if (!activeYear || !activeYear.schoolYearTemplateId) {
+    return null
+  }
+
+  const programs = await db.query.programTemplates.findMany({
+    where: eq(programTemplates.schoolYearTemplateId, activeYear.schoolYearTemplateId),
+    with: {
+      subject: true,
+      grade: true,
+    },
+  })
+
+  return {
+    templateName: (activeYear as any).schoolYearTemplate?.name || 'Standard',
+    curriculum: programs.map(p => ({
+      subject: p.subject,
+      grade: p.grade,
+    })),
+  }
+}

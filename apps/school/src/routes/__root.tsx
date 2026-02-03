@@ -9,9 +9,11 @@ import {
 } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { useMemo } from 'react'
+import { I18nextProvider } from 'react-i18next'
 import { Toaster } from 'sonner'
 import { ThemeProvider } from '@/components/theme/theme-provider'
 import { I18nProvider } from '@/i18n'
+import i18n from '@/i18n/config'
 import appCss from '@/styles.css?url'
 
 export const Route = createRootRouteWithContext<{
@@ -41,12 +43,14 @@ export const Route = createRootRouteWithContext<{
 function RootComponent() {
   return (
     <RootDocument>
-      <I18nProvider>
-        <ThemeProvider defaultTheme="system" storageKey="school-ui-theme">
-          <Outlet />
-          <Toaster position="top-right" richColors />
-        </ThemeProvider>
-      </I18nProvider>
+      <I18nextProvider i18n={i18n}>
+        <I18nProvider>
+          <ThemeProvider defaultTheme="system" storageKey="school-ui-theme">
+            <Outlet />
+            <Toaster position="top-right" richColors />
+          </ThemeProvider>
+        </I18nProvider>
+      </I18nextProvider>
     </RootDocument>
   )
 }

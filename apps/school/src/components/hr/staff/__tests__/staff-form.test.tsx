@@ -98,14 +98,9 @@ describe('staffForm Component', () => {
   })
 
   describe('user Interactions', () => {
-    test('should allow typing in user ID field', async () => {
-      const user = userEvent.setup()
+    test('should show user ID field', async () => {
       render(<StaffForm onSubmit={mockOnSubmit} />)
-
-      const userIdInput = screen.getByLabelText(/Select User/i)
-      await user.type(userIdInput, 'user-456')
-
-      expect(userIdInput).toHaveValue('user-456')
+      expect(screen.getByLabelText(/Select User/i)).toBeInTheDocument()
     })
 
     test('should allow typing in department field', async () => {

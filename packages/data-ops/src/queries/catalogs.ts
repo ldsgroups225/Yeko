@@ -19,6 +19,7 @@ import {
   tracks,
 } from '../drizzle/core-schema'
 import { DatabaseError } from '../errors'
+import { getNestedErrorMessage } from '../i18n'
 
 // ===== EDUCATION LEVELS =====
 
@@ -26,7 +27,7 @@ export function getEducationLevels(): ResultAsync<EducationLevel[], DatabaseErro
   const db = getDb()
   return ResultAsync.fromPromise(
     db.select().from(educationLevels).orderBy(asc(educationLevels.order)),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch education levels'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('catalogs', 'educationLevels.fetchFailed')),
   ).mapErr(tapLogErr(databaseLogger, {}))
 }
 
@@ -44,7 +45,7 @@ export function getTracks(options?: {
 
   return ResultAsync.fromPromise(
     query.orderBy(asc(tracks.name)),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch tracks'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('catalogs', 'tracks.fetchFailed')),
   ).mapErr(tapLogErr(databaseLogger, options || {}))
 }
 
@@ -52,7 +53,7 @@ export function getTrackById(id: string): ResultAsync<Track | null, DatabaseErro
   const db = getDb()
   return ResultAsync.fromPromise(
     db.select().from(tracks).where(eq(tracks.id, id)).then(rows => rows[0] ?? null),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch track by ID'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('catalogs', 'tracks.fetchByIdFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
@@ -71,7 +72,7 @@ export function createTrack(
       })
       .returning()
       .then(rows => rows[0]!),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create track'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('catalogs', 'tracks.createFailed')),
   ).mapErr(tapLogErr(databaseLogger, data))
 }
 
@@ -97,7 +98,7 @@ export function updateTrack(
         }
         return rows[0]!
       }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to update track'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('catalogs', 'tracks.updateFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id, ...data }))
 }
 
@@ -105,7 +106,7 @@ export function deleteTrack(id: string): ResultAsync<void, DatabaseError> {
   const db = getDb()
   return ResultAsync.fromPromise(
     db.delete(tracks).where(eq(tracks.id, id)).then(() => {}),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to delete track'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('catalogs', 'tracks.deleteFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
@@ -123,7 +124,7 @@ export function getGrades(options?: {
 
   return ResultAsync.fromPromise(
     query.orderBy(asc(grades.order)),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch grades'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('catalogs', 'grades.fetchFailed')),
   ).mapErr(tapLogErr(databaseLogger, options || {}))
 }
 
@@ -131,7 +132,7 @@ export function getGradeById(id: string): ResultAsync<Grade | null, DatabaseErro
   const db = getDb()
   return ResultAsync.fromPromise(
     db.select().from(grades).where(eq(grades.id, id)).then(rows => rows[0] ?? null),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch grade by ID'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('catalogs', 'grades.fetchByIdFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
@@ -150,7 +151,7 @@ export function createGrade(
       })
       .returning()
       .then(rows => rows[0]!),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create grade'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('catalogs', 'grades.createFailed')),
   ).mapErr(tapLogErr(databaseLogger, data))
 }
 
@@ -176,7 +177,7 @@ export function updateGrade(
         }
         return rows[0]!
       }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to update grade'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('catalogs', 'grades.updateFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id, ...data }))
 }
 
@@ -184,7 +185,7 @@ export function deleteGrade(id: string): ResultAsync<void, DatabaseError> {
   const db = getDb()
   return ResultAsync.fromPromise(
     db.delete(grades).where(eq(grades.id, id)).then(() => {}),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to delete grade'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('catalogs', 'grades.deleteFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
@@ -207,7 +208,7 @@ export function bulkUpdateGradesOrder(
           .where(eq(grades.id, item.id)),
       ),
     ).then(() => {}),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to bulk update grades order'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('catalogs', 'grades.bulkUpdateOrderFailed')),
   ).mapErr(tapLogErr(databaseLogger, { items }))
 }
 
@@ -225,7 +226,7 @@ export function getSeries(options?: {
 
   return ResultAsync.fromPromise(
     query.orderBy(asc(series.name)),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch series'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('catalogs', 'series.fetchFailed')),
   ).mapErr(tapLogErr(databaseLogger, options || {}))
 }
 
@@ -233,7 +234,7 @@ export function getSerieById(id: string): ResultAsync<Serie | null, DatabaseErro
   const db = getDb()
   return ResultAsync.fromPromise(
     db.select().from(series).where(eq(series.id, id)).then(rows => rows[0] ?? null),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch serie by ID'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('catalogs', 'series.fetchByIdFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
@@ -252,7 +253,7 @@ export function createSerie(
       })
       .returning()
       .then(rows => rows[0]!),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create serie'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('catalogs', 'series.createFailed')),
   ).mapErr(tapLogErr(databaseLogger, data))
 }
 
@@ -278,7 +279,7 @@ export function updateSerie(
         }
         return rows[0]!
       }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to update serie'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('catalogs', 'series.updateFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id, ...data }))
 }
 
@@ -286,7 +287,7 @@ export function deleteSerie(id: string): ResultAsync<void, DatabaseError> {
   const db = getDb()
   return ResultAsync.fromPromise(
     db.delete(series).where(eq(series.id, id)).then(() => {}),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to delete serie'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('catalogs', 'series.deleteFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
@@ -306,7 +307,7 @@ export function bulkCreateSeries(
 
   return ResultAsync.fromPromise(
     db.insert(series).values(values).returning(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to bulk create series'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('catalogs', 'series.bulkCreateFailed')),
   ).mapErr(tapLogErr(databaseLogger, { data }))
 }
 
@@ -377,7 +378,7 @@ export function getSubjects(options?: {
         },
       }
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch subjects'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('catalogs', 'subjects.fetchFailed')),
   ).mapErr(tapLogErr(databaseLogger, options || {}))
 }
 
@@ -385,7 +386,7 @@ export function getSubjectById(id: string): ResultAsync<Subject | null, Database
   const db = getDb()
   return ResultAsync.fromPromise(
     db.select().from(subjects).where(eq(subjects.id, id)).then(rows => rows[0] ?? null),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch subject by ID'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('catalogs', 'subjects.fetchByIdFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
@@ -404,7 +405,7 @@ export function createSubject(
       })
       .returning()
       .then(rows => rows[0]!),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create subject'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('catalogs', 'subjects.createFailed')),
   ).mapErr(tapLogErr(databaseLogger, data))
 }
 
@@ -430,7 +431,7 @@ export function updateSubject(
         }
         return rows[0]!
       }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to update subject'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('catalogs', 'subjects.updateFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id, ...data }))
 }
 
@@ -438,7 +439,7 @@ export function deleteSubject(id: string): ResultAsync<void, DatabaseError> {
   const db = getDb()
   return ResultAsync.fromPromise(
     db.delete(subjects).where(eq(subjects.id, id)).then(() => {}),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to delete subject'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('catalogs', 'subjects.deleteFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
@@ -458,7 +459,7 @@ export function bulkCreateSubjects(
 
   return ResultAsync.fromPromise(
     db.insert(subjects).values(values).returning(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to bulk create subjects'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('catalogs', 'subjects.bulkCreateFailed')),
   ).mapErr(tapLogErr(databaseLogger, { data }))
 }
 
@@ -487,7 +488,7 @@ export function getCatalogStats(): ResultAsync<{
       series: seriesCount[0]?.count || 0,
       subjects: subjectsCount[0]?.count || 0,
     })),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch catalog stats'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('catalogs', 'stats.fetchFailed')),
   ).mapErr(tapLogErr(databaseLogger, {}))
 }
 

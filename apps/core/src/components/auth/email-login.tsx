@@ -10,8 +10,10 @@ import { Input } from '@workspace/ui/components/input'
 import { Label } from '@workspace/ui/components/label'
 import { useState } from 'react'
 import { authClient } from '@/lib/auth-client'
+import { useI18nContext } from '@/i18n/i18n-react'
 
 export function EmailLogin() {
+  const { LL } = useI18nContext()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -30,11 +32,11 @@ export function EmailLogin() {
       })
 
       if (result.error) {
-        setError(result.error.message || 'Invalid credentials')
+        setError(result.error.message || LL.auth.errors.invalidCredentials())
       }
     }
     catch {
-      setError('An error occurred during sign in')
+      setError(LL.auth.errors.signInError())
     }
     finally {
       setIsLoading(false)
@@ -45,28 +47,28 @@ export function EmailLogin() {
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
-          <CardDescription>Sign in to your account to continue</CardDescription>
+          <CardTitle className="text-2xl font-bold">{LL.auth.welcomeBack()}</CardTitle>
+          <CardDescription>{LL.auth.signInDescription()}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleEmailSignIn} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{LL.auth.email()}</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="Enter your email"
+                placeholder={LL.auth.emailPlaceholder()}
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{LL.auth.password()}</Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="Enter your password"
+                placeholder={LL.auth.passwordPlaceholder()}
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 required
@@ -78,7 +80,7 @@ export function EmailLogin() {
               </div>
             )}
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Signing in...' : 'Sign in'}
+              {isLoading ? LL.auth.signingIn() : LL.auth.signIn()}
             </Button>
           </form>
 
@@ -100,7 +102,7 @@ export function EmailLogin() {
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-background px-2 text-muted-foreground">
-                  Or continue with
+                  {LL.auth.orContinueWith()}
                 </span>
               </div>
             </div>
@@ -136,7 +138,7 @@ export function EmailLogin() {
                   fill="#EA4335"
                 />
               </svg>
-              Google
+              {LL.auth.google()}
             </Button>
           </div>
         </CardContent>

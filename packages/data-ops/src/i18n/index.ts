@@ -1,4 +1,10 @@
 import frErrors from './fr/errors'
+import { i18nObject } from './i18n-util'
+import { loadLocale } from './i18n-util.sync'
+
+loadLocale('fr')
+
+export const LL = i18nObject('fr')
 
 export type ErrorKey = keyof typeof frErrors.errors
 
@@ -26,8 +32,27 @@ export function getNestedErrorMessage(
   const categoryObj = (frErrors.errors as Record<string, unknown>)[category]
 
   if (categoryObj && typeof categoryObj === 'object') {
-    const message = (categoryObj as Record<string, string>)[key]
-    if (message) {
+    const keyParts = key.split('.')
+    let current: unknown = categoryObj
+
+    for (const part of keyParts) {
+      if (
+        current
+        && typeof current === 'object'
+        && current !== null
+        && part in current
+      ) {
+        current = (current as Record<string, unknown>)[part]
+      }
+      else {
+        current = undefined
+        break
+      }
+    }
+
+    const message = current as string | undefined
+
+    if (message && typeof message === 'string') {
       if (params) {
         return Object.entries(params).reduce<string>(
           (msg, [k, v]) => msg.replace(`{${k}}`, String(v)),

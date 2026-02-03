@@ -15,6 +15,7 @@ import {
   users,
 } from '../drizzle/school-schema'
 import { DatabaseError, dbError } from '../errors'
+import { getNestedErrorMessage } from '../i18n'
 import { checkClassroomAvailability } from './classrooms'
 
 export interface ClassFilters {
@@ -122,7 +123,7 @@ export function getClassById(schoolId: string, id: string) {
         .groupBy(classes.id, grades.id, series.id, classrooms.id, teachers.id, users.id)
 
       if (!classData) {
-        throw dbError('NOT_FOUND', `Class with ID ${id} not found in this school`)
+        throw dbError('NOT_FOUND', getNestedErrorMessage('classes', 'notFound'))
       }
 
       return classData
@@ -136,7 +137,7 @@ export function createClass(schoolId: string, data: ClassInsert) {
   return ResultAsync.fromPromise(
     (async () => {
       if (data.schoolId !== schoolId) {
-        throw dbError('PERMISSION_DENIED', 'Cannot create class for another school')
+        throw dbError('PERMISSION_DENIED', getNestedErrorMessage('classes', 'differentSchool'))
       }
 
       // Validate unique constraint
@@ -155,7 +156,7 @@ export function createClass(schoolId: string, data: ClassInsert) {
         .limit(1)
 
       if (existing.length > 0) {
-        throw dbError('CONFLICT', 'Class with this grade, series, and section already exists for this school year')
+        throw dbError('CONFLICT', getNestedErrorMessage('classes', 'alreadyExistsVerbose'))
       }
 
       // Validate classroom availability
@@ -166,7 +167,7 @@ export function createClass(schoolId: string, data: ClassInsert) {
         }
         const availability = availabilityResult.value
         if (!availability.available) {
-          throw dbError('VALIDATION_ERROR', `Classroom is already assigned to ${availability.assignedTo}`)
+          throw dbError('VALIDATION_ERROR', getNestedErrorMessage('classes', 'classroomConflict', { assignedTo: availability.assignedTo || '' }))
         }
       }
 
@@ -189,7 +190,7 @@ export function updateClass(schoolId: string, id: string, data: Partial<ClassIns
         .returning()
 
       if (!updatedClass) {
-        throw dbError('NOT_FOUND', `Class with ID ${id} not found or permission denied`)
+        throw dbError('NOT_FOUND', getNestedErrorMessage('classes', 'notFoundOrPermission'))
       }
 
       return updatedClass
@@ -210,7 +211,7 @@ export function deleteClass(schoolId: string, id: string) {
         .limit(1)
 
       if (enrollment) {
-        throw dbError('VALIDATION_ERROR', 'Cannot delete class with enrolled students')
+        throw dbError('VALIDATION_ERROR', getNestedErrorMessage('classes', 'notEmpty'))
       }
 
       const [deleted] = await db.delete(classes)
@@ -218,7 +219,7 @@ export function deleteClass(schoolId: string, id: string) {
         .returning()
 
       if (!deleted) {
-        throw dbError('NOT_FOUND', `Class with ID ${id} not found or permission denied`)
+        throw dbError('NOT_FOUND', getNestedErrorMessage('classes', 'notFoundOrPermission'))
       }
       return deleted
     })(),

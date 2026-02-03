@@ -222,7 +222,7 @@ export const getSessionDetails = createServerFn()
         studentsPresent: session.studentsPresent,
         studentsAbsent: session.studentsAbsent,
         chapterId: session.chapterId,
-        chapterName: null, // TODO: Fetch chapter name if needed
+        chapterName: session.chapterName,
       },
     }
   })

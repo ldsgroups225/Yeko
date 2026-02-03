@@ -6,6 +6,7 @@ import { getDb } from '../database/setup'
 import { subjects } from '../drizzle/core-schema'
 import { classes, classSubjects, schoolSubjects, schoolYears } from '../drizzle/school-schema'
 import { DatabaseError } from '../errors'
+import { getNestedErrorMessage } from '../i18n'
 
 // ===== SCHOOL SUBJECTS =====
 
@@ -124,7 +125,7 @@ export function getSchoolSubjects(options: {
         },
       }
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch school subjects'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('schoolSubjects', 'fetchFailed')),
   ).mapErr(tapLogErr(databaseLogger, options))
 }
 
@@ -199,7 +200,7 @@ export function getAvailableCoreSubjects(options: {
         .where(whereClause)
         .orderBy(subjects.category, subjects.name)
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch available core subjects'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('schoolSubjects', 'fetchAvailableCoreFailed')),
   ).mapErr(tapLogErr(databaseLogger, options))
 }
 
@@ -235,7 +236,7 @@ export function addSubjectsToSchool(options: {
       }
 
       if (!activeSchoolYearId) {
-        throw new Error('No active school year found')
+        throw new Error(getNestedErrorMessage('schoolSubjects', 'noActiveSchoolYear'))
       }
 
       const values = subjectIds.map(subjectId => ({
@@ -256,7 +257,7 @@ export function addSubjectsToSchool(options: {
 
       return inserted
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to add subjects to school'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('schoolSubjects', 'addFailed')),
   ).mapErr(tapLogErr(databaseLogger, options))
 }
 
@@ -284,11 +285,11 @@ export function toggleSchoolSubjectStatus(
       .returning()
       .then((rows) => {
         if (rows.length === 0) {
-          throw new Error('Failed to toggle subject status')
+          throw new Error(getNestedErrorMessage('schoolSubjects', 'toggleStatusFailed'))
         }
         return rows[0]!
       }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to toggle subject status'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('schoolSubjects', 'toggleStatusFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id, status, schoolId }))
 }
 
@@ -302,7 +303,7 @@ export function deleteSchoolSubject(id: string, schoolId: string): ResultAsync<v
       eq(schoolSubjects.id, id),
       eq(schoolSubjects.schoolId, schoolId),
     )).then(() => {}),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to delete school subject'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('schoolSubjects', 'deleteFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id, schoolId }))
 }
 
@@ -371,7 +372,7 @@ export function getSubjectUsageStats(options: {
 
       return result
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch subject usage stats'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('schoolSubjects', 'fetchUsageStatsFailed')),
   ).mapErr(tapLogErr(databaseLogger, options))
 }
 
@@ -405,7 +406,7 @@ export function getSchoolSubjectById(id: string, schoolId: string): ResultAsync<
         eq(schoolSubjects.schoolId, schoolId),
       ))
       .then(rows => rows[0] ?? null),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch school subject by ID'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('schoolSubjects', 'fetchByIdFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id, schoolId }))
 }
 
@@ -443,6 +444,6 @@ export function checkSubjectInUse(options: {
         inUse: rows.length > 0,
         classCount: rows.length,
       })),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to check subject in use'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('schoolSubjects', 'checkInUseFailed')),
   ).mapErr(tapLogErr(databaseLogger, options))
 }

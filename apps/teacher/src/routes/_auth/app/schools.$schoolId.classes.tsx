@@ -245,7 +245,7 @@ function ClassCard({ classData, viewMode, schoolId }: ClassCardProps) {
               )}
               <div className="flex flex-col">
                 <span className={cn('text-sm font-black leading-none', averageColor)}>
-                  {classData.classAverage ? classData.classAverage.toFixed(2) : '--.--'}
+                  {classData.classAverage ? classData.classAverage.toFixed(2) : LL.common.notAvailable()}
                 </span>
                 <span className="text-[8px] font-bold text-muted-foreground uppercase mt-0.5">
                   {LL.classes.average()}

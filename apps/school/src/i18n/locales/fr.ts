@@ -4,6 +4,7 @@ export const fr: TypedLocale = {
   app: {
     name: 'Yeko School',
     tagline: 'Gestion scolaire intelligente',
+    footer: 'Conçu avec soin pour l\'éducation moderne',
   },
   common: {
     loading: 'Chargement...',
@@ -27,6 +28,8 @@ export const fr: TypedLocale = {
     back: 'Retour',
     next: 'Suivant',
     previous: 'Précédent',
+    optional: 'Optionnel',
+    required: 'Requis',
     submit: 'Soumettre',
     confirm: 'Confirmer',
     yes: 'Oui',
@@ -130,6 +133,7 @@ export const fr: TypedLocale = {
     schoolSubtitle: 'Administration',
   },
   school: {
+    profile: 'Profil de l\'école',
     switcher: {
       title: 'Changer d\'école',
       placeholder: 'Sélectionner une école',
@@ -873,9 +877,34 @@ export const fr: TypedLocale = {
     feeStructures: {
       title: 'Structures tarifaires',
       description: 'Configurer les montants des frais par niveau et série',
-      create: 'Créer une structure',
+      create: 'Créer une structure de frais',
+      edit: 'Modifier une structure de frais',
+      createDescription: 'Définir les frais pour une classe ou série',
+      editDescription: 'Modifier les paramètres de cette structure',
       noFeeStructures: 'Aucune structure tarifaire configurée',
       newStudentAmount: 'Montant nouvel élève',
+      feeType: 'Type de frais',
+      selectFeeType: 'Sélectionner un type de frais',
+      grade: 'Niveau',
+      series: 'Série',
+      amount: 'Montant',
+      effectiveDate: 'Date d\'effet',
+      allLevels: 'Tous les niveaux',
+      allSeries: 'Toutes les séries',
+      deleteFeeStructure: 'Supprimer la structure de frais',
+      deleteFeeStructureConfirm:
+        'Êtes-vous sûr de vouloir supprimer cette structure de frais ? Cette action est irréversible.',
+      success: {
+        create: 'Structure de frais créée avec succès',
+        update: 'Structure de frais modifiée avec succès',
+        delete: 'Structure de frais supprimée avec succès',
+      },
+      errors: {
+        duplicate: 'Cette structure de frais existe déjà pour ce niveau/série',
+        invalidAmount: 'Montant invalide',
+        amountRequired: 'Montant requis',
+        feeTypeRequired: 'Type de frais requis',
+      },
     },
     accounts: {
       title: 'Plan comptable',
@@ -2009,11 +2038,6 @@ export const fr: TypedLocale = {
       deleteAccount: 'Supprimer le compte',
       deleteAccountConfirm:
         'Voulez-vous vraiment supprimer ce compte ? Cette action est irréversible.',
-    },
-    feeStructures: {
-      deleteFeeStructure: 'Supprimer la structure de frais',
-      deleteFeeStructureConfirm:
-        'Voulez-vous vraiment supprimer cette structure de frais ? Cette action est irréversible.',
     },
     discounts: {
       deleteDiscount: 'Supprimer la réduction',

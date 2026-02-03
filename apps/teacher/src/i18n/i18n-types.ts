@@ -692,6 +692,14 @@ type RootTranslation = {
 		 * A​j​o​u​t​e​z​ ​u​n​e​ ​n​o​t​e​ ​o​u​ ​u​n​ ​c​o​m​m​e​n​t​a​i​r​e​ ​p​o​u​r​ ​l​a​ ​p​a​r​t​i​c​i​p​a​t​i​o​n​ ​d​e​ ​c​e​t​ ​é​l​è​v​e​.
 		 */
 		addCommentDescription: string
+		/**
+		 * R​é​s​u​m​é​ ​d​e​ ​l​a​ ​s​e​s​s​i​o​n
+		 */
+		summary: string
+		/**
+		 * V​o​u​s​ ​a​v​e​z​ ​i​n​d​i​q​u​é​ ​v​o​u​l​o​i​r​ ​a​s​s​i​g​n​e​r​ ​u​n​ ​d​e​v​o​i​r​ ​m​a​i​s​ ​l​e​ ​t​i​t​r​e​ ​e​s​t​ ​v​i​d​e​.​ ​L​e​ ​d​e​v​o​i​r​ ​n​e​ ​s​e​r​a​ ​p​a​s​ ​e​n​r​e​g​i​s​t​r​é​ ​s​i​ ​v​o​u​s​ ​f​i​n​a​l​i​s​e​z​ ​m​a​i​n​t​e​n​a​n​t​.
+		 */
+		homeworkWarning: string
 	}
 	participation: {
 		/**
@@ -850,6 +858,14 @@ type RootTranslation = {
 		 * E​n​ ​r​e​t​a​r​d
 		 */
 		overdue: string
+		/**
+		 * E​x​:​ ​E​x​e​r​c​i​c​e​s​ ​p​a​g​e​ ​4​2​.​.​.
+		 */
+		titlePlaceholder: string
+		/**
+		 * I​n​s​t​r​u​c​t​i​o​n​s​ ​p​o​u​r​ ​l​e​s​ ​é​l​è​v​e​s​.​.​.
+		 */
+		descriptionPlaceholder: string
 	}
 	grades: {
 		/**
@@ -1153,6 +1169,10 @@ type RootTranslation = {
 		 */
 		you: string
 		/**
+		 * E​x​p​é​d​i​t​e​u​r​ ​i​n​c​o​n​n​u
+		 */
+		unknownSender: string
+		/**
 		 * C​o​n​v​e​r​s​a​t​i​o​n
 		 */
 		thread: string
@@ -1196,6 +1216,20 @@ type RootTranslation = {
 			 */
 			reminder: string
 		}
+	}
+	unauthorized: {
+		/**
+		 * A​c​c​è​s​ ​N​o​n​ ​A​u​t​o​r​i​s​é
+		 */
+		title: string
+		/**
+		 * V​o​t​r​e​ ​c​o​m​p​t​e​ ​n​'​e​s​t​ ​p​a​s​ ​a​s​s​o​c​i​é​ ​à​ ​u​n​ ​é​t​a​b​l​i​s​s​e​m​e​n​t​ ​s​c​o​l​a​i​r​e​ ​a​c​t​i​f​ ​e​n​ ​t​a​n​t​ ​q​u​'​e​n​s​e​i​g​n​a​n​t​.
+		 */
+		description: string
+		/**
+		 * S​i​ ​v​o​u​s​ ​p​e​n​s​e​z​ ​q​u​'​i​l​ ​s​'​a​g​i​t​ ​d​'​u​n​e​ ​e​r​r​e​u​r​,​ ​v​e​u​i​l​l​e​z​ ​c​o​n​t​a​c​t​e​r​ ​l​'​a​d​m​i​n​i​s​t​r​a​t​e​u​r​ ​d​e​ ​v​o​t​r​e​ ​é​t​a​b​l​i​s​s​e​m​e​n​t​ ​o​u​ ​e​s​s​a​y​e​z​ ​d​'​a​c​t​u​a​l​i​s​e​r​ ​l​a​ ​p​a​g​e​.
+		 */
+		message: string
 	}
 	common: {
 		/**
@@ -1282,6 +1316,96 @@ type RootTranslation = {
 		 * M​o​y​e​n​n​e
 		 */
 		average: string
+		/**
+		 * A​c​t​u​a​l​i​s​e​r
+		 */
+		refresh: string
+		/**
+		 * O​u​i
+		 */
+		yes: string
+		/**
+		 * N​o​n
+		 */
+		no: string
+		/**
+		 * N​o​n​ ​d​i​s​p​o​n​i​b​l​e
+		 */
+		notAvailable: string
+		/**
+		 * A​c​t​i​o​n​s
+		 */
+		actions: string
+		/**
+		 * F​e​r​m​e​r
+		 */
+		close: string
+	}
+	sync: {
+		/**
+		 * S​y​n​c​h​r​o​n​i​s​a​t​i​o​n
+		 */
+		title: string
+		/**
+		 * C​o​n​n​e​c​t​é
+		 */
+		online: string
+		/**
+		 * H​o​r​s​ ​l​i​g​n​e
+		 */
+		offline: string
+		/**
+		 * S​y​n​c​h​r​o​n​i​s​é
+		 */
+		synced: string
+		/**
+		 * {​c​o​u​n​t​}​ ​e​n​ ​a​t​t​e​n​t​e
+		 * @param {unknown} count
+		 */
+		pending: RequiredParams<'count'>
+		/**
+		 * P​u​b​l​i​c​a​t​i​o​n​.​.​.
+		 */
+		publishing: string
+		/**
+		 * P​u​b​l​i​c​a​t​i​o​n​ ​{​c​u​r​r​e​n​t​}​/​{​t​o​t​a​l​}
+		 * @param {unknown} current
+		 * @param {unknown} total
+		 */
+		publishingProgress: RequiredParams<'current' | 'total'>
+		/**
+		 * P​u​b​l​i​e​r​ ​(​{​c​o​u​n​t​}​)
+		 * @param {unknown} count
+		 */
+		publishCount: RequiredParams<'count'>
+		/**
+		 * P​u​b​l​i​c​a​t​i​o​n​ ​r​é​u​s​s​i​e
+		 */
+		success: string
+		/**
+		 * E​r​r​e​u​r​s​ ​l​o​r​s​ ​d​e​ ​l​a​ ​p​u​b​l​i​c​a​t​i​o​n
+		 */
+		error: string
+		/**
+		 * {​c​o​u​n​t​}​ ​n​o​t​e​(​s​)​ ​p​u​b​l​i​é​e​(​s​)
+		 * @param {unknown} count
+		 */
+		notesPublished: RequiredParams<'count'>
+		/**
+		 * {​c​o​u​n​t​}​ ​n​o​t​e​(​s​)​ ​e​n​ ​é​c​h​e​c
+		 * @param {unknown} count
+		 */
+		notesFailed: RequiredParams<'count'>
+		/**
+		 * .​.​.​ ​e​t​ ​{​c​o​u​n​t​}​ ​a​u​t​r​e​s​ ​e​r​r​e​u​r​s
+		 * @param {unknown} count
+		 */
+		moreErrors: RequiredParams<'count'>
+		/**
+		 * {​c​o​u​n​t​}​ ​m​o​d​i​f​i​c​a​t​i​o​n​(​s​)​ ​e​n​ ​a​t​t​e​n​t​e​ ​d​e​ ​p​u​b​l​i​c​a​t​i​o​n
+		 * @param {unknown} count
+		 */
+		pendingChanges: RequiredParams<'count'>
 	}
 	errors: {
 		/**
@@ -1312,6 +1436,26 @@ type RootTranslation = {
 		 * E​r​r​e​u​r​ ​l​o​r​s​ ​d​e​ ​l​a​ ​p​u​b​l​i​c​a​t​i​o​n
 		 */
 		publishFailed: string
+		/**
+		 * C​o​n​t​e​x​t​e​ ​e​n​s​e​i​g​n​a​n​t​ ​n​o​n​ ​t​r​o​u​v​é
+		 */
+		teacherContextNotFound: string
+		/**
+		 * A​u​c​u​n​e​ ​p​é​r​i​o​d​e​ ​t​r​o​u​v​é​e​ ​p​o​u​r​ ​l​'​a​n​n​é​e​ ​s​c​o​l​a​i​r​e​ ​e​n​ ​c​o​u​r​s
+		 */
+		noTermFound: string
+		/**
+		 * S​e​s​s​i​o​n​ ​d​'​e​m​p​l​o​i​ ​d​u​ ​t​e​m​p​s​ ​n​o​n​ ​t​r​o​u​v​é​e
+		 */
+		sessionNotFound: string
+		/**
+		 * N​o​n​ ​a​u​t​o​r​i​s​é​ ​:​ ​V​o​u​s​ ​n​'​ê​t​e​s​ ​p​a​s​ ​a​s​s​i​g​n​é​ ​à​ ​c​e​t​t​e​ ​s​e​s​s​i​o​n
+		 */
+		notAssignedToSession: string
+		/**
+		 * C​l​a​s​s​e​ ​n​o​n​ ​t​r​o​u​v​é​e
+		 */
+		classNotFound: string
 	}
 	auth: {
 		/**
@@ -2501,6 +2645,14 @@ export type TranslationFunctions = {
 		 * Ajoutez une note ou un commentaire pour la participation de cet élève.
 		 */
 		addCommentDescription: () => LocalizedString
+		/**
+		 * Résumé de la session
+		 */
+		summary: () => LocalizedString
+		/**
+		 * Vous avez indiqué vouloir assigner un devoir mais le titre est vide. Le devoir ne sera pas enregistré si vous finalisez maintenant.
+		 */
+		homeworkWarning: () => LocalizedString
 	}
 	participation: {
 		/**
@@ -2659,6 +2811,14 @@ export type TranslationFunctions = {
 		 * En retard
 		 */
 		overdue: () => LocalizedString
+		/**
+		 * Ex: Exercices page 42...
+		 */
+		titlePlaceholder: () => LocalizedString
+		/**
+		 * Instructions pour les élèves...
+		 */
+		descriptionPlaceholder: () => LocalizedString
 	}
 	grades: {
 		/**
@@ -2958,6 +3118,10 @@ export type TranslationFunctions = {
 		 */
 		you: () => LocalizedString
 		/**
+		 * Expéditeur inconnu
+		 */
+		unknownSender: () => LocalizedString
+		/**
 		 * Conversation
 		 */
 		thread: () => LocalizedString
@@ -3001,6 +3165,20 @@ export type TranslationFunctions = {
 			 */
 			reminder: () => LocalizedString
 		}
+	}
+	unauthorized: {
+		/**
+		 * Accès Non Autorisé
+		 */
+		title: () => LocalizedString
+		/**
+		 * Votre compte n'est pas associé à un établissement scolaire actif en tant qu'enseignant.
+		 */
+		description: () => LocalizedString
+		/**
+		 * Si vous pensez qu'il s'agit d'une erreur, veuillez contacter l'administrateur de votre établissement ou essayez d'actualiser la page.
+		 */
+		message: () => LocalizedString
 	}
 	common: {
 		/**
@@ -3087,6 +3265,88 @@ export type TranslationFunctions = {
 		 * Moyenne
 		 */
 		average: () => LocalizedString
+		/**
+		 * Actualiser
+		 */
+		refresh: () => LocalizedString
+		/**
+		 * Oui
+		 */
+		yes: () => LocalizedString
+		/**
+		 * Non
+		 */
+		no: () => LocalizedString
+		/**
+		 * Non disponible
+		 */
+		notAvailable: () => LocalizedString
+		/**
+		 * Actions
+		 */
+		actions: () => LocalizedString
+		/**
+		 * Fermer
+		 */
+		close: () => LocalizedString
+	}
+	sync: {
+		/**
+		 * Synchronisation
+		 */
+		title: () => LocalizedString
+		/**
+		 * Connecté
+		 */
+		online: () => LocalizedString
+		/**
+		 * Hors ligne
+		 */
+		offline: () => LocalizedString
+		/**
+		 * Synchronisé
+		 */
+		synced: () => LocalizedString
+		/**
+		 * {count} en attente
+		 */
+		pending: (arg: { count: unknown }) => LocalizedString
+		/**
+		 * Publication...
+		 */
+		publishing: () => LocalizedString
+		/**
+		 * Publication {current}/{total}
+		 */
+		publishingProgress: (arg: { current: unknown, total: unknown }) => LocalizedString
+		/**
+		 * Publier ({count})
+		 */
+		publishCount: (arg: { count: unknown }) => LocalizedString
+		/**
+		 * Publication réussie
+		 */
+		success: () => LocalizedString
+		/**
+		 * Erreurs lors de la publication
+		 */
+		error: () => LocalizedString
+		/**
+		 * {count} note(s) publiée(s)
+		 */
+		notesPublished: (arg: { count: unknown }) => LocalizedString
+		/**
+		 * {count} note(s) en échec
+		 */
+		notesFailed: (arg: { count: unknown }) => LocalizedString
+		/**
+		 * ... et {count} autres erreurs
+		 */
+		moreErrors: (arg: { count: unknown }) => LocalizedString
+		/**
+		 * {count} modification(s) en attente de publication
+		 */
+		pendingChanges: (arg: { count: unknown }) => LocalizedString
 	}
 	errors: {
 		/**
@@ -3117,6 +3377,26 @@ export type TranslationFunctions = {
 		 * Erreur lors de la publication
 		 */
 		publishFailed: () => LocalizedString
+		/**
+		 * Contexte enseignant non trouvé
+		 */
+		teacherContextNotFound: () => LocalizedString
+		/**
+		 * Aucune période trouvée pour l'année scolaire en cours
+		 */
+		noTermFound: () => LocalizedString
+		/**
+		 * Session d'emploi du temps non trouvée
+		 */
+		sessionNotFound: () => LocalizedString
+		/**
+		 * Non autorisé : Vous n'êtes pas assigné à cette session
+		 */
+		notAssignedToSession: () => LocalizedString
+		/**
+		 * Classe non trouvée
+		 */
+		classNotFound: () => LocalizedString
 	}
 	auth: {
 		/**

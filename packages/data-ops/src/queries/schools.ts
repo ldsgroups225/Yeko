@@ -6,6 +6,7 @@ import { ResultAsync } from 'neverthrow'
 import { getDb } from '../database/setup'
 import { schools } from '../drizzle/core-schema'
 import { DatabaseError } from '../errors'
+import { getNestedErrorMessage } from '../i18n'
 
 // Get all schools with pagination and filtering
 export function getSchools(options: {
@@ -339,7 +340,7 @@ export function bulkCreateSchools(
           errors.push({
             index: i,
             code: school.code,
-            error: 'Code déjà existant (ignoré)',
+            error: getNestedErrorMessage('school', 'alreadyExists'),
           })
           continue
         }
@@ -347,7 +348,7 @@ export function bulkCreateSchools(
           errors.push({
             index: i,
             code: school.code,
-            error: 'Code déjà existant',
+            error: getNestedErrorMessage('school', 'alreadyExists'),
           })
         }
       }

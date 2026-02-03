@@ -6,6 +6,7 @@ import { getDb } from '../database/setup'
 import { grades, series } from '../drizzle/core-schema'
 import { feeStructures, feeTypes } from '../drizzle/school-schema'
 import { DatabaseError, dbError } from '../errors'
+import { getNestedErrorMessage } from '../i18n'
 
 export interface GetFeeStructuresParams {
   schoolId: string
@@ -39,7 +40,7 @@ export function getFeeStructures(
         .from(feeStructures)
         .where(and(...conditions))
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch fee structures'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'feeStructure.fetchFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, schoolYearId }))
 }
 
@@ -54,7 +55,7 @@ export function getFeeStructureById(
       .where(eq(feeStructures.id, feeStructureId))
       .limit(1)
       .then(rows => rows[0] ?? null),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch fee structure by ID'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'feeStructure.fetchByIdFailed')),
   ).mapErr(tapLogErr(databaseLogger, { feeStructureId }))
 }
 
@@ -84,7 +85,7 @@ export function getFeeStructureForStudent(
         .limit(1)
       return feeStructure ?? null
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch fee structure for student'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'feeStructure.fetchForStudentFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, schoolYearId, gradeId, feeTypeId }))
 }
 
@@ -104,11 +105,11 @@ export function createFeeStructure(
         .values({ id: crypto.randomUUID(), ...data })
         .returning()
       if (!feeStructure) {
-        throw dbError('INTERNAL_ERROR', 'Failed to create fee structure')
+        throw dbError('INTERNAL_ERROR', getNestedErrorMessage('finance', 'feeStructure.createFailed'))
       }
       return feeStructure
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create fee structure'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'feeStructure.createFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId: data.schoolId, schoolYearId: data.schoolYearId }))
 }
 
@@ -124,7 +125,7 @@ export function createFeeStructuresBulk(
       const values = dataList.map(data => ({ id: crypto.randomUUID(), ...data }))
       return db.insert(feeStructures).values(values).returning()
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to bulk create fee structures'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'feeStructure.bulkCreateFailed')),
   ).mapErr(tapLogErr(databaseLogger, { count: dataList.length }))
 }
 
@@ -146,7 +147,7 @@ export function updateFeeStructure(
         .returning()
       return feeStructure
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to update fee structure'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'feeStructure.updateFailed')),
   ).mapErr(tapLogErr(databaseLogger, { feeStructureId }))
 }
 
@@ -158,7 +159,7 @@ export function deleteFeeStructure(
     (async () => {
       await db.delete(feeStructures).where(eq(feeStructures.id, feeStructureId))
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to delete fee structure'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'feeStructure.deleteFailed')),
   ).mapErr(tapLogErr(databaseLogger, { feeStructureId }))
 }
 
@@ -210,6 +211,6 @@ export function getFeeStructuresWithTypes(
         seriesName: r.seriesName,
       }))
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch fee structures with details'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'feeStructure.fetchWithDetailsFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, schoolYearId }))
 }

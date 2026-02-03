@@ -26,6 +26,7 @@ import {
   users,
 } from '../drizzle/school-schema'
 import { DatabaseError } from '../errors'
+import { getNestedErrorMessage } from '../i18n'
 
 export function getGradesByClass(params: {
   schoolId: string
@@ -43,7 +44,7 @@ export function getGradesByClass(params: {
         columns: { id: true },
       })
       if (!classExists) {
-        throw new DatabaseError('PERMISSION_DENIED', 'Class does not belong to this school')
+        throw new DatabaseError('PERMISSION_DENIED', getNestedErrorMessage('auth', 'noSchoolContext'))
       }
 
       return db.query.studentGrades.findMany({
@@ -165,7 +166,7 @@ export function createStudentGrade(schoolId: string, data: StudentGradeInsert) {
         columns: { id: true },
       })
       if (!classExists) {
-        throw new DatabaseError('PERMISSION_DENIED', 'Class does not belong to this school')
+        throw new DatabaseError('PERMISSION_DENIED', getNestedErrorMessage('auth', 'noSchoolContext'))
       }
 
       const [grade] = await db.insert(studentGrades).values(data).returning()
@@ -187,7 +188,7 @@ export function updateStudentGrade(schoolId: string, id: string, data: Partial<S
         .limit(1)
 
       if (!grade) {
-        throw new DatabaseError('NOT_FOUND', 'Grade not found or access denied')
+        throw new DatabaseError('NOT_FOUND', getNestedErrorMessage('grades', 'notFound'))
       }
 
       const [updated] = await db.update(studentGrades)
@@ -316,7 +317,7 @@ export function deleteDraftGrades(params: {
         columns: { id: true },
       })
       if (!classValid) {
-        throw new DatabaseError('PERMISSION_DENIED', 'Class does not belong to this school')
+        throw new DatabaseError('PERMISSION_DENIED', getNestedErrorMessage('auth', 'noSchoolContext'))
       }
 
       const conditions = [
@@ -374,7 +375,7 @@ export function getSubmittedGradeIds(params: {
         columns: { id: true },
       })
       if (!classValid) {
-        throw new DatabaseError('PERMISSION_DENIED', 'Class does not belong to this school')
+        throw new DatabaseError('PERMISSION_DENIED', getNestedErrorMessage('auth', 'noSchoolContext'))
       }
 
       const results = await db.select({ id: studentGrades.id })

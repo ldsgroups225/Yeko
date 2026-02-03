@@ -7,6 +7,7 @@ import { getDb } from '../../database/setup'
 import { schoolYearTemplates, termTemplates } from '../../drizzle/core-schema'
 import { fiscalYears, schoolYears, terms } from '../../drizzle/school-schema'
 import { DatabaseError } from '../../errors'
+import { getNestedErrorMessage } from '../../i18n'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
 
 export interface SchoolYearWithTemplate {
@@ -68,7 +69,7 @@ export function getSchoolYearsBySchool(
       .orderBy(desc(schoolYears.startDate))
       .limit(limit)
       .offset(offset),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to fetch school years'),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('schoolYear', 'fetchFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, action: 'get_school_years' }))
 }
 
@@ -87,8 +88,8 @@ export function getSchoolYearById(
       .from(schoolYears)
       .where(and(eq(schoolYears.id, schoolYearId), eq(schoolYears.schoolId, schoolId)))
       .limit(1)
-      .then(rows => rows[0] || null),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to fetch school year'),
+      .then(rows => rows[0] ?? null),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('schoolYear', 'fetchByIdFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolYearId, schoolId, action: 'get_school_year_by_id' }))
 }
 
@@ -104,8 +105,8 @@ export function getActiveSchoolYear(schoolId: string): ResultAsync<typeof school
       .from(schoolYears)
       .where(and(eq(schoolYears.schoolId, schoolId), eq(schoolYears.isActive, true)))
       .limit(1)
-      .then(rows => rows[0] || null),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to fetch active school year'),
+      .then(rows => rows[0] ?? null),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('schoolYear', 'fetchActiveFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, action: 'get_active_school_year' }))
 }
 
@@ -116,13 +117,12 @@ export function createSchoolYear(data: {
   endDate: Date
   isActive?: boolean
 }): ResultAsync<typeof schoolYears.$inferSelect, DatabaseError> {
-  if (!data.schoolId) {
-    return errAsync(new DatabaseError('VALIDATION_ERROR', SCHOOL_ERRORS.NO_SCHOOL_CONTEXT))
-  }
-
   const db = getDb()
   return ResultAsync.fromPromise(
     (async () => {
+      if (!data.schoolId) {
+        throw new Error(getNestedErrorMessage('schoolYear', 'noSchoolContext'))
+      }
       // If setting as active, deactivate other school years first
       if (data.isActive) {
         await db
@@ -143,7 +143,7 @@ export function createSchoolYear(data: {
       const [schoolYear] = await db.insert(schoolYears).values(insertData).returning()
 
       if (!schoolYear)
-        throw new Error('Failed to create school year')
+        throw new Error(getNestedErrorMessage('schoolYear', 'createFailed'))
 
       const fiscalYearData: FiscalYearInsert = {
         id: crypto.randomUUID(),
@@ -202,7 +202,7 @@ export function createSchoolYear(data: {
 
       return schoolYear
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to create school year'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('schoolYear', 'createFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId: data.schoolId, action: 'create_school_year' }))
 }
 
@@ -225,7 +225,7 @@ export function updateSchoolYear(
       // Verify school year belongs to school (we could reuse getSchoolYearById but we need to handle ResultAsync unwrapping inside async, cleaner to just query)
       const [existing] = await db.select().from(schoolYears).where(and(eq(schoolYears.id, schoolYearId), eq(schoolYears.schoolId, schoolId))).limit(1)
       if (!existing) {
-        throw new Error(SCHOOL_ERRORS.SCHOOL_YEAR_NOT_FOUND)
+        throw new Error(getNestedErrorMessage('schoolYear', 'notFound'))
       }
 
       if (data.isActive) {
@@ -246,10 +246,10 @@ export function updateSchoolYear(
         .returning()
 
       if (!updated)
-        throw new Error('Failed to update school year')
+        throw new Error(getNestedErrorMessage('schoolYear', 'updateFailed'))
       return updated
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to update school year'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('schoolYear', 'updateFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolYearId, schoolId, action: 'update_school_year' }))
 }
 
@@ -263,12 +263,12 @@ export function deleteSchoolYear(schoolYearId: string, schoolId: string): Result
     (async () => {
       const [existing] = await db.select().from(schoolYears).where(and(eq(schoolYears.id, schoolYearId), eq(schoolYears.schoolId, schoolId))).limit(1)
       if (!existing) {
-        throw new Error(SCHOOL_ERRORS.SCHOOL_YEAR_NOT_FOUND)
+        throw new Error(getNestedErrorMessage('schoolYear', 'notFound'))
       }
 
       await db.delete(schoolYears).where(eq(schoolYears.id, schoolYearId))
       return { success: true }
     })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to delete school year'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('schoolYear', 'deleteFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolYearId, schoolId, action: 'delete_school_year' }))
 }

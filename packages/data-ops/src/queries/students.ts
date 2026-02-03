@@ -15,6 +15,7 @@ import {
   students,
 } from '../drizzle/school-schema'
 import { DatabaseError, dbError } from '../errors'
+import { getNestedErrorMessage } from '../i18n'
 
 // ==================== Types ====================
 
@@ -50,6 +51,7 @@ export interface CreateStudentInput {
   medicalNotes?: string
   previousSchool?: string
   admissionDate?: string
+  status?: StudentStatus
 }
 
 export interface StudentWithDetails {
@@ -238,7 +240,7 @@ export function getStudents(filters: StudentFilters): ResultAsync<{
 
       return { data: mappedData, total, page, totalPages }
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch students'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'fetchFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId: filters.schoolId }))
 }
 
@@ -275,7 +277,7 @@ export function getStudentById(id: string): ResultAsync<StudentFullProfile, Data
         .where(eq(students.id, id))
 
       if (!student)
-        throw dbError('NOT_FOUND', `Student with ID ${id} not found`)
+        throw dbError('NOT_FOUND', getNestedErrorMessage('students', 'notFoundWithId', { id }))
 
       // Get parents
       const studentParentsList = await db
@@ -314,7 +316,7 @@ export function getStudentById(id: string): ResultAsync<StudentFullProfile, Data
         enrollmentHistory,
       }
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch student'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'fetchByIdFailed')),
   ).mapErr(tapLogErr(databaseLogger, { studentId: id }))
 }
 
@@ -365,7 +367,7 @@ export function generateMatricule(schoolId: string, schoolYearId: string): Resul
 
       return `${sequence.prefix}${year}${paddedNumber}`
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to generate matricule'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'generateMatriculeFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, schoolYearId }))
 }
 
@@ -389,7 +391,7 @@ export function createStudent(data: CreateStudentInput): ResultAsync<typeof stud
             .where(and(eq(schoolYears.schoolId, schoolId), eq(schoolYears.isActive, true)))
 
           if (!activeYear) {
-            throw dbError('VALIDATION_ERROR', 'No active school year found. Please select a school year.')
+            throw dbError('VALIDATION_ERROR', getNestedErrorMessage('students', 'noActiveSchoolYear'))
           }
           yearId = activeYear.id
         }
@@ -408,14 +410,14 @@ export function createStudent(data: CreateStudentInput): ResultAsync<typeof stud
         .where(and(eq(students.schoolId, schoolId), eq(students.matricule, matricule)))
 
       if (existing) {
-        throw dbError('CONFLICT', `Matricule ${matricule} already exists`)
+        throw dbError('CONFLICT', getNestedErrorMessage('students', 'matriculeExistsWithId', { matricule }))
       }
 
       // Validate age (optional - based on school settings)
       if (data.dob) {
         const age = calculateAge(new Date(data.dob))
         if (age < 3 || age > 30) {
-          throw dbError('VALIDATION_ERROR', 'Student age must be between 3 and 30 years')
+          throw dbError('VALIDATION_ERROR', getNestedErrorMessage('students', 'invalidAgeRange'))
         }
       }
 
@@ -431,16 +433,17 @@ export function createStudent(data: CreateStudentInput): ResultAsync<typeof stud
         .returning()
 
       if (!student)
-        throw new DatabaseError('INTERNAL_ERROR', 'Failed to create student')
+        throw new DatabaseError('INTERNAL_ERROR', getNestedErrorMessage('students', 'createFailed'))
 
       return student
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create student'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'createFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId: data.schoolId }))
 }
 
 export function updateStudent(id: string, data: Partial<CreateStudentInput>): ResultAsync<typeof students.$inferSelect, DatabaseError> {
   const db = getDb()
+  const { status } = data
   return ResultAsync.fromPromise(
     (async () => {
       const [student] = await db
@@ -449,71 +452,12 @@ export function updateStudent(id: string, data: Partial<CreateStudentInput>): Re
         .where(eq(students.id, id))
         .returning()
 
-      if (!student)
-        throw dbError('NOT_FOUND', `Student with ID ${id} not found`)
-      return student
-    })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to update student'),
-  ).mapErr(tapLogErr(databaseLogger, { studentId: id }))
-}
-
-export function deleteStudent(id: string): ResultAsync<void, DatabaseError> {
-  const db = getDb()
-  return ResultAsync.fromPromise(
-    (async () => {
-      // Check for active enrollments
-      const [activeEnrollment] = await db
-        .select()
-        .from(enrollments)
-        .where(and(eq(enrollments.studentId, id), eq(enrollments.status, 'confirmed')))
-
-      if (activeEnrollment) {
-        throw dbError('CONFLICT', 'Cannot delete student with active enrollment. Cancel enrollment first.')
-      }
-
-      const [deleted] = await db.delete(students).where(eq(students.id, id)).returning()
-      if (!deleted) {
-        throw dbError('NOT_FOUND', `Student with ID ${id} not found`)
-      }
-    })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to delete student'),
-  ).mapErr(tapLogErr(databaseLogger, { studentId: id }))
-}
-
-// ==================== Status Management ====================
-
-export function updateStudentStatus(
-  id: string,
-  status: StudentStatus,
-  reason?: string,
-): ResultAsync<typeof students.$inferSelect, DatabaseError> {
-  const db = getDb()
-  return ResultAsync.fromPromise(
-    (async () => {
-      const updates: Partial<typeof students.$inferInsert> = { status, updatedAt: new Date() }
-
-      switch (status) {
-        case 'graduated':
-          updates.graduationDate = new Date().toISOString().split('T')[0]
-          break
-        case 'transferred':
-          updates.transferDate = new Date().toISOString().split('T')[0]
-          updates.transferReason = reason
-          break
-        case 'withdrawn':
-          updates.withdrawalDate = new Date().toISOString().split('T')[0]
-          updates.withdrawalReason = reason
-          break
-      }
-
-      const [student] = await db.update(students).set(updates).where(eq(students.id, id)).returning()
-
       if (!student) {
-        throw new DatabaseError('NOT_FOUND', `Student with ID ${id} not found`)
+        throw new DatabaseError('NOT_FOUND', getNestedErrorMessage('students', 'notFound'))
       }
 
       // Cancel active enrollments if not active
-      if (status !== 'active') {
+      if (status && status !== 'active') {
         await db
           .update(enrollments)
           .set({
@@ -527,8 +471,64 @@ export function updateStudentStatus(
 
       return student
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to update student status'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'updateFailed')),
   ).mapErr(tapLogErr(databaseLogger, { studentId: id, status }))
+}
+
+export function updateStudentStatus(id: string, status: StudentStatus, reason?: string): ResultAsync<typeof students.$inferSelect, DatabaseError> {
+  const db = getDb()
+  return ResultAsync.fromPromise(
+    (async () => {
+      const [student] = await db
+        .update(students)
+        .set({
+          status,
+          withdrawalReason: reason,
+          withdrawalDate: status === 'withdrawn' ? new Date().toISOString().split('T')[0] : null,
+          updatedAt: new Date(),
+        })
+        .where(eq(students.id, id))
+        .returning()
+
+      if (!student) {
+        throw new DatabaseError('NOT_FOUND', getNestedErrorMessage('students', 'notFound'))
+      }
+
+      // Handle enrollments
+      if (status !== 'active') {
+        await db
+          .update(enrollments)
+          .set({
+            status: 'cancelled',
+            cancelledAt: new Date(),
+            cancellationReason: reason || `Student ${status}`,
+            updatedAt: new Date(),
+          })
+          .where(and(eq(enrollments.studentId, id), eq(enrollments.status, 'confirmed')))
+      }
+
+      return student
+    })(),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'updateStatusFailed')),
+  ).mapErr(tapLogErr(databaseLogger, { studentId: id, status }))
+}
+
+export function deleteStudent(id: string): ResultAsync<void, DatabaseError> {
+  const db = getDb()
+  return ResultAsync.fromPromise(
+    (async () => {
+      // First check if student exists
+      const [student] = await db.select().from(students).where(eq(students.id, id))
+      if (!student) {
+        throw new DatabaseError('NOT_FOUND', getNestedErrorMessage('students', 'notFound'))
+      }
+
+      // Hard delete for now - will cascade to related tables based on schema definition
+      // If we implement soft delete later, this will change to an update
+      await db.delete(students).where(eq(students.id, id))
+    })(),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'deleteFailed')),
+  ).mapErr(tapLogErr(databaseLogger, { studentId: id }))
 }
 
 // ==================== Bulk Operations ====================
@@ -549,7 +549,7 @@ export function bulkImportStudents(
         .where(and(eq(schoolYears.schoolId, schoolId), eq(schoolYears.isActive, true)))
 
       if (!activeYear) {
-        throw new Error('No active school year found')
+        throw new Error(getNestedErrorMessage('students', 'noActiveSchoolYear'))
       }
 
       for (let i = 0; i < studentsData.length; i++) {
@@ -584,7 +584,7 @@ export function bulkImportStudents(
 
       return results
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to bulk import students'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'bulkImportFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId }))
 }
 
@@ -670,7 +670,7 @@ export function getStudentStatistics(schoolId: string): ResultAsync<StudentStati
         total: statusCounts.reduce((sum: number, s) => sum + Number(s.count), 0),
       }
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch student statistics'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'fetchStatsFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId }))
 }
 

@@ -1,12 +1,13 @@
-import { getAuth } from '@repo/data-ops/auth/server'
 import { DatabaseError } from '@repo/data-ops/errors'
 import { createMiddleware } from '@tanstack/react-start'
-import { getRequest } from '@tanstack/react-start/server'
 
 /**
  * Get auth context from the current request
  */
 export async function getAuthContext() {
+  const { getRequest } = await import('@tanstack/react-start/server')
+  const { getAuth } = await import('@repo/data-ops/auth/server')
+
   const auth = getAuth()
   const req = getRequest()
 

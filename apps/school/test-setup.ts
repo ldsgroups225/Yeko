@@ -9,6 +9,7 @@ class ResizeObserverMock {
   disconnect = vi.fn()
 }
 globalThis.ResizeObserver = ResizeObserverMock as unknown as typeof ResizeObserver
+Element.prototype.getAnimations = vi.fn().mockReturnValue([])
 
 // Mock matchMedia for jsdom
 Object.defineProperty(window, 'matchMedia', {

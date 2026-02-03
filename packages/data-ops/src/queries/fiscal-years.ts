@@ -5,6 +5,7 @@ import { ResultAsync } from 'neverthrow'
 import { getDb } from '../database/setup'
 import { fiscalYears } from '../drizzle/school-schema'
 import { DatabaseError } from '../errors'
+import { getNestedErrorMessage } from '../i18n'
 
 export interface GetFiscalYearsParams {
   schoolId: string
@@ -23,7 +24,7 @@ export function getFiscalYears(params: GetFiscalYearsParams): ResultAsync<Fiscal
 
       return db.select().from(fiscalYears).where(and(...conditions)).orderBy(desc(fiscalYears.startDate))
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch fiscal years'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'fiscalYear.fetchFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId }))
 }
 
@@ -31,7 +32,7 @@ export function getFiscalYearById(fiscalYearId: string): ResultAsync<FiscalYear 
   const db = getDb()
   return ResultAsync.fromPromise(
     db.select().from(fiscalYears).where(eq(fiscalYears.id, fiscalYearId)).limit(1).then(rows => rows[0] ?? null),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch fiscal year by ID'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'fiscalYear.fetchByIdFailed')),
   ).mapErr(tapLogErr(databaseLogger, { fiscalYearId }))
 }
 
@@ -44,7 +45,7 @@ export function getFiscalYearBySchoolYear(schoolId: string, schoolYearId: string
       .where(and(eq(fiscalYears.schoolId, schoolId), eq(fiscalYears.schoolYearId, schoolYearId)))
       .limit(1)
       .then(rows => rows[0] ?? null),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch fiscal year by school year'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'fiscalYear.fetchBySchoolYearFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, schoolYearId }))
 }
 
@@ -57,7 +58,7 @@ export function getOpenFiscalYear(schoolId: string): ResultAsync<FiscalYear | nu
       .where(and(eq(fiscalYears.schoolId, schoolId), eq(fiscalYears.status, 'open')))
       .limit(1)
       .then(rows => rows[0] ?? null),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch open fiscal year'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'fiscalYear.fetchOpenFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId }))
 }
 
@@ -70,7 +71,7 @@ export function getFiscalYearForDate(schoolId: string, date: string): ResultAsyn
       .where(and(eq(fiscalYears.schoolId, schoolId), lte(fiscalYears.startDate, date), gte(fiscalYears.endDate, date)))
       .limit(1)
       .then(rows => rows[0] ?? null),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch fiscal year for date'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'fiscalYear.fetchForDateFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, date }))
 }
 
@@ -82,11 +83,11 @@ export function createFiscalYear(data: CreateFiscalYearData): ResultAsync<Fiscal
     (async () => {
       const [fiscalYear] = await db.insert(fiscalYears).values({ id: crypto.randomUUID(), ...data }).returning()
       if (!fiscalYear) {
-        throw new Error('Failed to create fiscal year')
+        throw new Error(getNestedErrorMessage('finance', 'fiscalYear.createFailed'))
       }
       return fiscalYear
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create fiscal year'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'fiscalYear.createFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId: data.schoolId }))
 }
 
@@ -104,7 +105,7 @@ export function closeFiscalYear(
         .returning()
       return fiscalYear
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to close fiscal year'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'fiscalYear.closeFailed')),
   ).mapErr(tapLogErr(databaseLogger, { fiscalYearId, closedBy }))
 }
 
@@ -119,7 +120,7 @@ export function lockFiscalYear(fiscalYearId: string): ResultAsync<FiscalYear | u
         .returning()
       return fiscalYear
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to lock fiscal year'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'fiscalYear.lockFailed')),
   ).mapErr(tapLogErr(databaseLogger, { fiscalYearId }))
 }
 
@@ -134,6 +135,6 @@ export function reopenFiscalYear(fiscalYearId: string): ResultAsync<FiscalYear |
         .returning()
       return fiscalYear
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to reopen fiscal year'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'fiscalYear.reopenFailed')),
   ).mapErr(tapLogErr(databaseLogger, { fiscalYearId }))
 }

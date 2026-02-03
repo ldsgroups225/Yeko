@@ -11,7 +11,7 @@ import {
   TableRow,
 } from '@workspace/ui/components/table'
 import { AnimatePresence, motion } from 'motion/react'
-import { useTranslations } from '@/i18n'
+import { useTranslation } from 'react-i18next'
 import { generateUUID } from '@/utils/generateUUID'
 
 interface FeeStructure {
@@ -42,7 +42,7 @@ export function FeeStructuresTable({
   onEdit,
   onDelete,
 }: FeeStructuresTableProps) {
-  const t = useTranslations()
+  const { t } = useTranslation()
 
   if (isLoading) {
     return (
@@ -61,10 +61,10 @@ export function FeeStructuresTable({
           <IconStack2 className="h-8 w-8 text-muted-foreground/50" />
         </div>
         <p className="text-lg font-medium">
-          {t.finance.feeStructures.noFeeStructures()}
+          {t('finance.feeStructures.noFeeStructures')}
         </p>
         <p className="text-sm max-w-sm mt-1 text-muted-foreground/70">
-          {t.finance.feeStructures.description()}
+          {t('finance.feeStructures.description')}
         </p>
       </div>
     )
@@ -77,22 +77,22 @@ export function FeeStructuresTable({
           <TableHeader className="bg-muted/50">
             <TableRow className="hover:bg-transparent border-border/40">
               <TableHead className="font-semibold">
-                {t.finance.feeTypes.title()}
+                {t('finance.feeTypes.title')}
               </TableHead>
               <TableHead className="font-semibold">
-                {t.classes.grade()}
+                {t('classes.grade')}
               </TableHead>
               <TableHead className="font-semibold">
-                {t.classes.series()}
+                {t('classes.series')}
               </TableHead>
               <TableHead className="text-right font-semibold">
-                {t.finance.amount()}
+                {t('finance.amount')}
               </TableHead>
               <TableHead className="text-right font-semibold">
-                {t.finance.feeStructures.newStudentAmount()}
+                {t('finance.feeStructures.newStudentAmount')}
               </TableHead>
               <TableHead className="text-right font-semibold">
-                {t.common.actions()}
+                {t('common.actions')}
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -120,7 +120,7 @@ export function FeeStructuresTable({
                     </div>
                   </TableCell>
                   <TableCell className="font-medium">
-                    {structure.gradeName || 'Tous les niveaux'}
+                    {structure.gradeName || t('finance.feeStructures.allLevels')}
                   </TableCell>
                   <TableCell>
                     {structure.seriesName
@@ -134,7 +134,7 @@ export function FeeStructuresTable({
                         )
                       : (
                           <span className="text-muted-foreground italic text-sm">
-                            Toutes les séries
+                            {t('finance.feeStructures.allSeries')}
                           </span>
                         )}
                   </TableCell>
@@ -164,9 +164,9 @@ export function FeeStructuresTable({
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 rounded-lg hover:bg-muted"
+                         className="h-8 w-8 rounded-lg hover:bg-muted"
                         onClick={() => onEdit?.(structure.id)}
-                        aria-label={t.common.edit()}
+                        aria-label={t('common.edit')}
                       >
                         <IconPencil className="h-4 w-4" />
                       </Button>
@@ -175,7 +175,7 @@ export function FeeStructuresTable({
                         size="icon"
                         className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 rounded-lg"
                         onClick={() => onDelete?.(structure.id)}
-                        aria-label={t.common.delete()}
+                        aria-label={t('common.delete')}
                       >
                         <IconTrash className="h-4 w-4" />
                       </Button>
@@ -215,9 +215,9 @@ export function FeeStructuresTable({
                     )
                   : (
                       <span className="text-xs text-muted-foreground italic">
-                        {t.classes.grade()}
+                        {t('classes.grade')}
                         {' '}
-                        {structure.gradeName || 'Tous les niveaux'}
+                        {structure.gradeName || t('finance.feeStructures.allLevels')}
                       </span>
                     )}
               </div>
@@ -225,7 +225,7 @@ export function FeeStructuresTable({
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-3 rounded-xl bg-muted/20 border border-border/20">
                   <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
-                    {t.finance.amount()}
+                    {t('finance.amount')}
                   </div>
                   <div className="font-bold text-lg">
                     {formatCurrency(structure.amount, structure.currency)}
@@ -234,7 +234,7 @@ export function FeeStructuresTable({
                 {structure.newStudentAmount && (
                   <div className="p-3 rounded-xl bg-muted/20 border border-border/20">
                     <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
-                      {t.finance.feeStructures.newStudentAmount()}
+                      {t('finance.feeStructures.newStudentAmount')}
                     </div>
                     <div className="font-bold text-lg text-muted-foreground">
                       {formatCurrency(
@@ -254,7 +254,7 @@ export function FeeStructuresTable({
                   onClick={() => onEdit?.(structure.id)}
                 >
                   <IconPencil className="mr-2 h-3.5 w-3.5" />
-                  {t.common.edit()}
+                  {t('common.edit')}
                 </Button>
                 <Button
                   size="sm"
@@ -263,7 +263,7 @@ export function FeeStructuresTable({
                   onClick={() => onDelete?.(structure.id)}
                 >
                   <IconTrash className="mr-2 h-3.5 w-3.5" />
-                  {t.common.delete()}
+                  {t('common.delete')}
                 </Button>
               </div>
             </motion.div>

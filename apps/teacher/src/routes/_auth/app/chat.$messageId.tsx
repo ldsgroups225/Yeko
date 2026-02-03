@@ -73,7 +73,11 @@ function MessageDetailPage() {
           )
         : message
           ? (
-              <MessageContent message={message} locale={locale} />
+              <MessageContent
+                message={message as any}
+                teacherId={context?.teacherId ?? ''}
+                locale={locale}
+              />
             )
           : (
               <Card>
@@ -93,8 +97,10 @@ interface MessageContentProps {
   message: {
     id: string
     senderType: 'teacher' | 'parent'
-    senderName?: string
-    recipientName?: string
+    senderId: string
+    senderName?: string | null
+    recipientId: string
+    recipientName?: string | null
     studentName: string | null
     className: string | null
     subject: string | null
@@ -105,16 +111,23 @@ interface MessageContentProps {
     thread?: Array<{
       id: string
       senderType: 'teacher' | 'parent'
+      senderId: string
+      senderName?: string | null
       content: string
       createdAt: string
     }>
   }
+  teacherId: string
   locale?: Locale
 }
 
-function MessageContent({ message, locale }: MessageContentProps) {
+function MessageContent({ message, teacherId, locale }: MessageContentProps) {
   const { LL } = useI18nContext()
   const date = new Date(message.createdAt)
+
+  const senderDisplayName = message.senderId === teacherId
+    ? LL.messages.you()
+    : (message.senderName ?? LL.messages.unknownSender())
 
   return (
     <div className="space-y-4">
@@ -127,9 +140,7 @@ function MessageContent({ message, locale }: MessageContentProps) {
               </div>
               <div>
                 <p className="font-semibold">
-                  {message.senderType === 'parent'
-                    ? message.senderName ?? LL.messages.parent()
-                    : LL.messages.you()}
+                  {senderDisplayName}
                 </p>
                 {message.studentName && (
                   <p className="text-xs text-muted-foreground">
@@ -163,25 +174,29 @@ function MessageContent({ message, locale }: MessageContentProps) {
           <h3 className="text-sm font-medium text-muted-foreground">
             {LL.messages.thread()}
           </h3>
-          {message.thread.map(reply => (
-            <Card key={reply.id} className="bg-muted/30">
-              <CardContent className="p-3">
-                <div className="mb-2 flex items-center justify-between">
-                  <span className="text-xs font-medium">
-                    {reply.senderType === 'parent'
-                      ? LL.messages.parent()
-                      : LL.messages.you()}
-                  </span>
-                  <span className="text-xs text-muted-foreground">
-                    {format(new Date(reply.createdAt), 'd MMM, HH:mm', {
-                      locale,
-                    })}
-                  </span>
-                </div>
-                <p className="whitespace-pre-wrap text-sm">{reply.content}</p>
-              </CardContent>
-            </Card>
-          ))}
+          {message.thread.map((reply) => {
+            const replySenderDisplayName = reply.senderId === teacherId
+              ? LL.messages.you()
+              : (reply.senderName ?? LL.messages.unknownSender())
+
+            return (
+              <Card key={reply.id} className="bg-muted/30">
+                <CardContent className="p-3">
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="text-xs font-medium">
+                      {replySenderDisplayName}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {format(new Date(reply.createdAt), 'd MMM, HH:mm', {
+                        locale,
+                      })}
+                    </span>
+                  </div>
+                  <p className="whitespace-pre-wrap text-sm">{reply.content}</p>
+                </CardContent>
+              </Card>
+            )
+          })}
         </div>
       )}
 

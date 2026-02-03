@@ -21,6 +21,7 @@ import {
   curriculumProgress,
 } from '../drizzle/school-schema'
 import { DatabaseError } from '../errors'
+import { getNestedErrorMessage } from '../i18n'
 
 // ============================================
 // TYPE DEFINITIONS
@@ -149,7 +150,7 @@ export function getClassSessions(params: {
       },
       orderBy: [desc(classSessions.date), asc(classSessions.startTime)],
     }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch class sessions'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('curriculum', 'fetchSessionsFailed')),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -170,7 +171,7 @@ export function getClassSessionById(id: string): ResultAsync<ClassSessionFull | 
         timetableSession: true,
       },
     }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch class session by ID'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('curriculum', 'fetchSessionByIdFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
@@ -178,7 +179,7 @@ export function createClassSession(data: ClassSessionInsert): ResultAsync<typeof
   const db = getDb()
   return ResultAsync.fromPromise(
     db.insert(classSessions).values(data).returning().then(rows => rows[0]!),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create class session'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('curriculum', 'createSessionFailed')),
   ).mapErr(tapLogErr(databaseLogger, data))
 }
 
@@ -194,7 +195,7 @@ export function updateClassSession(
       .where(eq(classSessions.id, id))
       .returning()
       .then(rows => rows[0]!),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to update class session'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('curriculum', 'updateSessionFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id, ...data }))
 }
 
@@ -220,7 +221,7 @@ export function markSessionCompleted(
       .where(eq(classSessions.id, id))
       .returning()
       .then(rows => rows[0]!),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to mark session completed'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('curriculum', 'markSessionCompletedFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id, ...data }))
 }
 
@@ -228,7 +229,7 @@ export function deleteClassSession(id: string): ResultAsync<void, DatabaseError>
   const db = getDb()
   return ResultAsync.fromPromise(
     db.delete(classSessions).where(eq(classSessions.id, id)).then(() => {}),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to delete class session'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('curriculum', 'deleteSessionFailed')),
   ).mapErr(tapLogErr(databaseLogger, { id }))
 }
 
@@ -263,7 +264,7 @@ export function getChapterCompletions(params: {
       },
       orderBy: [desc(chapterCompletions.completedAt)],
     }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch chapter completions'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('curriculum', 'fetchChapterCompletionsFailed')),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -271,7 +272,7 @@ export function markChapterComplete(data: ChapterCompletionInsert): ResultAsync<
   const db = getDb()
   return ResultAsync.fromPromise(
     db.insert(chapterCompletions).values(data).returning().then(rows => rows[0]!),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to mark chapter complete'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('curriculum', 'markChapterCompleteFailed')),
   ).mapErr(tapLogErr(databaseLogger, data))
 }
 
@@ -286,7 +287,7 @@ export function unmarkChapterComplete(classId: string, chapterId: string): Resul
           eq(chapterCompletions.chapterId, chapterId),
         ),
       ).then(() => {}),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to unmark chapter complete'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('curriculum', 'unmarkChapterCompleteFailed')),
   ).mapErr(tapLogErr(databaseLogger, { classId, chapterId }))
 }
 
@@ -299,7 +300,7 @@ export function isChapterCompleted(classId: string, chapterId: string): ResultAs
         eq(chapterCompletions.chapterId, chapterId),
       ),
     }).then(completion => !!completion),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to check if chapter is completed'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('curriculum', 'checkChapterCompletedFailed')),
   ).mapErr(tapLogErr(databaseLogger, { classId, chapterId }))
 }
 
@@ -339,7 +340,7 @@ export function getCurriculumProgress(params: {
       },
       orderBy: [asc(subjects.name)],
     }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch curriculum progress'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('curriculum', 'fetchProgressFailed')),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -377,7 +378,7 @@ export function getProgressOverview(params: {
       .innerJoin(subjects, eq(curriculumProgress.subjectId, subjects.id))
       .where(and(...conditions))
       .orderBy(asc(grades.order), asc(classes.section), asc(subjects.name)),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch progress overview'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('curriculum', 'fetchOverviewFailed')),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -414,7 +415,7 @@ export function getClassesBehindSchedule(params: {
         ),
       )
       .orderBy(asc(curriculumProgress.variance)),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch classes behind schedule'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('curriculum', 'fetchBehindScheduleFailed')),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -448,16 +449,16 @@ export function upsertCurriculumProgress(data: CurriculumProgressInsert): Result
           .where(eq(curriculumProgress.id, existing.id))
           .returning()
         if (!updated)
-          throw new Error('Failed to update curriculum progress')
+          throw new DatabaseError('INTERNAL_ERROR', getNestedErrorMessage('curriculum', 'updateProgressFailed'))
         return updated
       }
 
       const [created] = await db.insert(curriculumProgress).values(data).returning()
       if (!created)
-        throw new Error('Failed to create curriculum progress')
+        throw new DatabaseError('INTERNAL_ERROR', getNestedErrorMessage('curriculum', 'createProgressFailed'))
       return created
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to upsert curriculum progress'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('curriculum', 'upsertProgressFailed')),
   ).mapErr(tapLogErr(databaseLogger, data))
 }
 
@@ -549,7 +550,7 @@ export function calculateProgress(params: {
         status,
       }
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to calculate progress'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('curriculum', 'calculateProgressFailed')),
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 
@@ -575,7 +576,7 @@ export function getProgressStatsByStatus(schoolId: string, termId: string): Resu
         ),
       )
       .groupBy(curriculumProgress.status),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch progress stats by status'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('curriculum', 'fetchStatsByStatusFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, termId }))
 }
 
@@ -603,7 +604,7 @@ export function getProgressBySubject(schoolId: string, termId: string): ResultAs
       )
       .groupBy(curriculumProgress.subjectId, subjects.name)
       .orderBy(asc(subjects.name)),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch progress by subject'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('curriculum', 'fetchProgressBySubjectFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, termId }))
 }
 
@@ -654,6 +655,6 @@ export function getTeacherProgressSummary(teacherId: string, termId: string): Re
 
       return progressRecords
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch teacher progress summary'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('curriculum', 'fetchTeacherSummaryFailed')),
   ).mapErr(tapLogErr(databaseLogger, { teacherId, termId }))
 }

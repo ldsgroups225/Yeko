@@ -1,11 +1,14 @@
 import { IconChevronRight, IconSchool } from '@tabler/icons-react'
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 
 export const Route = createFileRoute('/')({
   component: IndexComponent,
 })
 
 function IndexComponent() {
+  const { t } = useTranslation()
+
   return (
     <main className="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8">
       <div className="w-full max-w-md animate-in fade-in zoom-in-95 duration-500">
@@ -24,10 +27,10 @@ function IndexComponent() {
 
             <div className="text-center space-y-2">
               <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-                Yeko School
+                {t('app.name')}
               </h1>
               <p className="text-sm sm:text-base text-muted-foreground">
-                Smart School Management System
+                {t('app.tagline')}
               </p>
             </div>
 
@@ -36,7 +39,7 @@ function IndexComponent() {
                 to="/accounting/dashboard"
                 className="group relative flex items-center justify-center gap-2 w-full px-6 py-3 bg-primary text-primary-foreground font-medium rounded-lg shadow-md hover:shadow-lg hover:bg-primary/90 hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm transition-all duration-200 ease-out"
               >
-                <span>Accounting Dashboard</span>
+                <span>{t('finance.dashboard.title')}</span>
                 <IconChevronRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" />
                 <div className="absolute inset-0 rounded-lg bg-primary/20 blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 -z-10" />
               </Link>
@@ -45,7 +48,7 @@ function IndexComponent() {
         </div>
 
         <p className="text-center text-xs text-muted-foreground/60 mt-6">
-          Built with care for modern education
+          {t('app.footer')}
         </p>
       </div>
     </main>

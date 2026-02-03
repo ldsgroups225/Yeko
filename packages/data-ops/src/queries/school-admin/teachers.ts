@@ -10,6 +10,7 @@ import {
   teacherSubjects,
   users,
 } from '../../drizzle/school-schema'
+import { getNestedErrorMessage } from '../../i18n'
 import { PAGINATION, SCHOOL_ERRORS } from './constants'
 
 export async function getTeachersBySchool(
@@ -427,7 +428,7 @@ export async function linkTeacherByEmail(email: string, schoolId: string) {
       .limit(1)
 
     if (existingTeacher) {
-      return { success: false, message: 'User is already a teacher in this school' }
+      return { success: false, message: getNestedErrorMessage('teachers', 'alreadyExists') }
     }
 
     // Create teacher record

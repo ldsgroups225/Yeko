@@ -6,6 +6,7 @@ import { getDb } from '../database/setup'
 import { grades, series } from '../drizzle/core-schema'
 import { classes, classrooms } from '../drizzle/school-schema'
 import { DatabaseError } from '../errors'
+import { getNestedErrorMessage } from '../i18n'
 
 // ... (Types remain same)
 
@@ -116,7 +117,7 @@ export function createClassroom(data: ClassroomInsert): ResultAsync<typeof class
   )
     .andThen((rows) => {
       if (!rows[0])
-        return err(new DatabaseError('INTERNAL_ERROR', 'Failed to create classroom'))
+        return err(new DatabaseError('INTERNAL_ERROR', getNestedErrorMessage('classes', 'createFailed')))
       return ok(rows[0])
     })
     .mapErr(tapLogErr(databaseLogger, data))
@@ -134,7 +135,7 @@ export function updateClassroom(id: string, data: Partial<ClassroomInsert>): Res
   )
     .andThen((rows) => {
       if (!rows[0])
-        return err(new DatabaseError('NOT_FOUND', `Classroom with id ${id} not found`))
+        return err(new DatabaseError('NOT_FOUND', getNestedErrorMessage('classes', 'notFound')))
       return ok(rows[0])
     })
     .mapErr(tapLogErr(databaseLogger, { id, ...data }))
@@ -152,7 +153,7 @@ export function deleteClassroom(id: string): ResultAsync<void, DatabaseError> {
   )
     .andThen((assignedClasses) => {
       if (assignedClasses.length > 0) {
-        return err(new DatabaseError('CONFLICT', 'Cannot delete classroom assigned to active classes'))
+        return err(new DatabaseError('CONFLICT', getNestedErrorMessage('classes', 'deleteFailed')))
       }
       return ResultAsync.fromPromise(
         (async () => {

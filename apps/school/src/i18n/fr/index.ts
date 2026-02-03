@@ -31,6 +31,7 @@ const fr = {
     confirm: 'Confirmer',
     yes: 'Oui',
     no: 'Non',
+    notAvailable: 'Non disponible',
     all: 'Tous',
     none: 'Aucun',
     select: 'Sélectionner',
@@ -1740,6 +1741,8 @@ const fr = {
     addSessionDescription: 'Ajouter une nouvelle séance à l\'emploi du temps',
     editSessionDescription: 'Modifier les détails de la séance',
     conflicts: 'conflit(s)',
+    conflictDetected: 'Conflit détecté',
+    conflictDescription: 'Cette séance chevauche une autre séance.',
     importTimetable: 'Importer un emploi du temps',
     importDescription:
       'Importez un fichier CSV ou Excel contenant l\'emploi du temps',
@@ -2127,6 +2130,17 @@ const fr = {
     notifyOnLate: 'Notifier en cas de retard',
     notifyOnLateDescription:
       'Envoyer une notification aux parents quand l\'élève est en retard',
+    pedagogicalStructure: {
+      title: 'Structure Pédagogique',
+      description: 'Configurez les classes et matières pour votre établissement',
+      smartTemplate: 'Modèle intelligent',
+      importTemplate: 'Importer le modèle',
+      importing: 'Importation...',
+      importSuccess: 'Structure importée ! {subjects} matières et {classes} classes ajoutées.',
+      importError: 'Erreur lors de l\'importation',
+      templateCurriculum: 'Programme du modèle',
+      noActiveYear: 'Aucune année scolaire active trouvée. Veuillez d\'abord créer et activer une année scolaire.',
+    },
   },
   coefficients: {
     title: 'Gestion des coefficients',

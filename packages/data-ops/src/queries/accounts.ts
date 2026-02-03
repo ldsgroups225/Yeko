@@ -5,6 +5,7 @@ import { ResultAsync } from 'neverthrow'
 import { getDb } from '../database/setup'
 import { accounts } from '../drizzle/school-schema'
 import { DatabaseError, dbError } from '../errors'
+import { getNestedErrorMessage } from '../i18n'
 
 // --- Account Queries ---
 
@@ -53,7 +54,7 @@ export function getAccounts(params: GetAccountsParams): ResultAsync<Account[], D
         .where(and(...conditions))
         .orderBy(asc(accounts.code))
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch accounts'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'account.fetchFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, type }))
 }
 
@@ -93,7 +94,7 @@ export function getAccountById(accountId: string): ResultAsync<Account | null, D
       .where(eq(accounts.id, accountId))
       .limit(1)
       .then(rows => rows[0] ?? null),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch account by ID'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'account.fetchByIdFailed')),
   ).mapErr(tapLogErr(databaseLogger, { accountId }))
 }
 
@@ -106,7 +107,7 @@ export function getAccountByCode(schoolId: string, code: string): ResultAsync<Ac
       .where(and(eq(accounts.schoolId, schoolId), eq(accounts.code, code)))
       .limit(1)
       .then(rows => rows[0] ?? null),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch account by code'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'account.fetchByCodeFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, code }))
 }
 
@@ -133,12 +134,12 @@ export function createAccount(data: CreateAccountData): ResultAsync<Account, Dat
         .returning()
 
       if (!account) {
-        throw dbError('INTERNAL_ERROR', 'Failed to create account')
+        throw dbError('INTERNAL_ERROR', getNestedErrorMessage('finance', 'account.createFailed'))
       }
 
       return account
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create account'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'account.createFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId: data.schoolId, code: data.code }))
 }
 
@@ -175,7 +176,7 @@ export function updateAccount(
 
       return account
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to update account'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'account.updateFailed')),
   ).mapErr(tapLogErr(databaseLogger, { accountId }))
 }
 
@@ -194,7 +195,7 @@ export function updateAccountBalance(
 
       return account
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to update account balance'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'account.updateBalanceFailed')),
   ).mapErr(tapLogErr(databaseLogger, { accountId, amount }))
 }
 
@@ -204,7 +205,7 @@ export function deleteAccount(accountId: string): ResultAsync<void, DatabaseErro
     (async () => {
       await db.delete(accounts).where(eq(accounts.id, accountId))
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to delete account'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'account.deleteFailed')),
   ).mapErr(tapLogErr(databaseLogger, { accountId }))
 }
 
@@ -239,7 +240,7 @@ export function getAccountBalancesByType(
       .from(accounts)
       .where(and(eq(accounts.schoolId, schoolId), eq(accounts.type, type), eq(accounts.status, 'active')))
       .orderBy(asc(accounts.code)) as Promise<AccountBalanceSummary[]>,
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch account balances'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'account.fetchBalancesFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, type }))
 }
 
@@ -251,6 +252,6 @@ export function getTotalBalanceByType(schoolId: string, type: AccountType): Resu
       .from(accounts)
       .where(and(eq(accounts.schoolId, schoolId), eq(accounts.type, type), eq(accounts.status, 'active')))
       .then(rows => Number.parseFloat(rows[0]?.total ?? '0')),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch total balance'),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'account.fetchTotalBalanceFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, type }))
 }

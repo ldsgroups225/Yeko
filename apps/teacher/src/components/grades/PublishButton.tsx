@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/componen
 import { Progress } from '@workspace/ui/components/progress'
 import { AnimatePresence, motion } from 'motion/react'
 import { useMemo } from 'react'
+import { useI18nContext } from '@/i18n/i18n-react'
 
 // ============================================================================
 // Types
@@ -51,6 +52,7 @@ export function PublishButton({
   onPublish,
   disabled = false,
 }: PublishButtonProps) {
+  const { LL } = useI18nContext()
   const progressPercentage = publishProgress
     ? (publishProgress.current / publishProgress.total) * 100
     : 0
@@ -76,11 +78,7 @@ export function PublishButton({
               >
                 <IconLoader2 className="h-4 w-4 animate-spin" />
                 <span>
-                  Publication
-                  {' '}
-                  {publishProgress?.current}
-                  /
-                  {publishProgress?.total}
+                  {LL.sync.publishingProgress({ current: publishProgress?.current ?? 0, total: publishProgress?.total ?? 0 })}
                 </span>
               </motion.div>
             )
@@ -94,9 +92,7 @@ export function PublishButton({
               >
                 <IconCloudUpload className="h-4 w-4" />
                 <span>
-                  Publier (
-                  {pendingCount}
-                  )
+                  {LL.sync.publishCount({ count: pendingCount })}
                 </span>
               </motion.div>
             )}
@@ -124,18 +120,19 @@ export function SyncStatusBadge({
   isOnline,
   isPublishing,
 }: SyncStatusBadgeProps) {
+  const { LL } = useI18nContext()
   const status = useMemo(() => {
     if (!isOnline) {
       return {
         icon: IconWifiOff,
-        label: 'Hors ligne',
+        label: LL.sync.offline(),
         variant: 'destructive' as const,
       }
     }
     if (isPublishing) {
       return {
         icon: IconLoader2,
-        label: 'Publication...',
+        label: LL.sync.publishing(),
         variant: 'default' as const,
         iconClass: 'animate-spin',
       }
@@ -143,13 +140,13 @@ export function SyncStatusBadge({
     if (pendingCount > 0) {
       return {
         icon: IconCloudUpload,
-        label: `${pendingCount} en attente`,
+        label: LL.sync.pending({ count: pendingCount }),
         variant: 'secondary' as const,
       }
     }
     return {
       icon: IconCheck,
-      label: 'Synchronisé',
+      label: LL.sync.synced(),
       variant: 'outline' as const,
     }
   }, [isOnline, isPublishing, pendingCount])
@@ -169,6 +166,7 @@ export function SyncStatusBadge({
 // ============================================================================
 
 export function PublishResult({ result, onDismiss }: PublishResultProps) {
+  const { LL } = useI18nContext()
   if (!result)
     return null
 
@@ -187,13 +185,13 @@ export function PublishResult({ result, onDismiss }: PublishResultProps) {
                 ? (
                     <>
                       <IconCheck className="h-5 w-5 text-green-500" />
-                      Publication réussie
+                      {LL.sync.success()}
                     </>
                   )
                 : (
                     <>
                       <IconAlertTriangle className="h-5 w-5 text-red-500" />
-                      Erreurs lors de la publication
+                      {LL.sync.error()}
                     </>
                   )}
             </CardTitle>
@@ -203,18 +201,14 @@ export function PublishResult({ result, onDismiss }: PublishResultProps) {
               <p className="text-green-600 dark:text-green-400">
                 ✓
                 {' '}
-                {result.syncedNotes.length}
-                {' '}
-                note(s) publiée(s)
+                {LL.sync.notesPublished({ count: result.syncedNotes.length })}
               </p>
             )}
             {result.failedNotes.length > 0 && (
               <p className="text-red-600 dark:text-red-400">
                 ✗
                 {' '}
-                {result.failedNotes.length}
-                {' '}
-                note(s) en échec
+                {LL.sync.notesFailed({ count: result.failedNotes.length })}
               </p>
             )}
             {result.errors.length > 0 && (
@@ -226,11 +220,7 @@ export function PublishResult({ result, onDismiss }: PublishResultProps) {
                 ))}
                 {result.errors.length > 3 && (
                   <p className="text-muted-foreground text-xs">
-                    ... et
-                    {' '}
-                    {result.errors.length - 3}
-                    {' '}
-                    autres erreurs
+                    {LL.sync.moreErrors({ count: result.errors.length - 3 })}
                   </p>
                 )}
               </div>
@@ -242,7 +232,7 @@ export function PublishResult({ result, onDismiss }: PublishResultProps) {
                 onClick={onDismiss}
                 className="mt-2"
               >
-                Fermer
+                {LL.common.close()}
               </Button>
             )}
           </CardContent>
@@ -277,6 +267,7 @@ export function SyncStatusCard({
   onRetry,
   disabled = false,
 }: SyncStatusCardProps) {
+  const { LL } = useI18nContext()
   const hasErrors = lastSyncResult && lastSyncResult.failedNotes.length > 0
 
   return (
@@ -284,7 +275,7 @@ export function SyncStatusCard({
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-base font-medium">
-            Synchronisation
+            {LL.sync.title()}
           </CardTitle>
           <SyncStatusBadge
             pendingCount={pendingCount}
@@ -300,13 +291,13 @@ export function SyncStatusCard({
             ? (
                 <>
                   <IconWifi className="h-4 w-4 text-green-500" />
-                  <span className="text-muted-foreground">Connecté</span>
+                  <span className="text-muted-foreground">{LL.sync.online()}</span>
                 </>
               )
             : (
                 <>
                   <IconWifiOff className="h-4 w-4 text-red-500" />
-                  <span className="text-muted-foreground">Hors ligne</span>
+                  <span className="text-muted-foreground">{LL.sync.offline()}</span>
                 </>
               )}
         </div>
@@ -315,9 +306,7 @@ export function SyncStatusCard({
         {pendingCount > 0 && (
           <div className="space-y-2">
             <p className="text-sm text-muted-foreground">
-              {pendingCount}
-              {' '}
-              modification(s) en attente de publication
+              {LL.sync.pendingChanges({ count: pendingCount })}
             </p>
             {isPublishing && publishProgress && (
               <Progress value={(publishProgress.current / publishProgress.total) * 100} />
@@ -334,7 +323,7 @@ export function SyncStatusCard({
             className="gap-2"
           >
             <IconRefresh className="h-4 w-4" />
-            Réessayer
+            {LL.common.retry()}
           </Button>
         )}
 

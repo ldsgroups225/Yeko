@@ -78,7 +78,7 @@ describe('students queries', () => {
 
       const data = await expectResultSuccess(result)
       expect(data.data).toHaveLength(1)
-      expect(data.data[0].student.firstName).toBe('John')
+      expect(data.data[0]?.student.firstName).toBe('John')
       expect(data.total).toBe(1)
     })
 
@@ -180,7 +180,7 @@ describe('students queries', () => {
       const result = await getStudentById('1')
 
       const data = await expectResultSuccess(result)
-      expect(data.student!.firstName).toBe('John')
+      expect(data.firstName).toBe('John')
     })
 
     test('should return NOT_FOUND error when student does not exist', async () => {

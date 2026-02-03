@@ -1,4 +1,5 @@
 import { Resend } from 'resend'
+import { getErrorMessage } from '../i18n'
 
 // Initialize Resend client
 function getResendClient() {
@@ -43,7 +44,7 @@ export async function sendWelcomeEmail(data: WelcomeEmailData): Promise<EmailRes
   const resend = getResendClient()
 
   if (!resend) {
-    return { success: false, error: 'Email service not configured' }
+    return { success: false, error: getErrorMessage('serverError') }
   }
 
   try {
@@ -197,7 +198,7 @@ export interface ParentInvitationEmailData {
  * Send invitation email to parent
  */
 export async function sendParentInvitationEmail(data: ParentInvitationEmailData): Promise<EmailResult> {
-  const subject = `Invitation Yeko - Accès Parent pour ${data.schoolName}`
+  const subject = `Invitation Yeko - ${data.schoolName}`
 
   if (process.env.NODE_ENV === 'development') {
     console.warn('--- [DEVELOPMENT] EMAIL TO:', data.to, '---')
@@ -212,7 +213,7 @@ export async function sendParentInvitationEmail(data: ParentInvitationEmailData)
   const resend = getResendClient()
 
   if (!resend) {
-    return { success: false, error: 'Email service not configured' }
+    return { success: false, error: getErrorMessage('serverError') }
   }
 
   try {
