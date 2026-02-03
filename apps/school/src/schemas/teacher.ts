@@ -15,7 +15,7 @@ export const teacherSchema = z.object({
     ),
   status: z.enum(['active', 'inactive', 'on_leave'], {
     message: 'Statut invalide',
-  }).default('active'),
+  }),
 })
 
 export const teacherCreateSchema = teacherSchema
@@ -37,7 +37,7 @@ export const teacherWithUserSchema = z.object({
   subjectIds: z.array(z.string()).min(1, 'Au moins une matière requise'),
   specialization: z.string().optional().nullable(),
   hireDate: z.date().optional().nullable(),
-  status: z.enum(['active', 'inactive', 'on_leave']).default('active'),
+  status: z.enum(['active', 'inactive', 'on_leave']),
 })
 
 export type TeacherFormData = z.infer<typeof teacherSchema>

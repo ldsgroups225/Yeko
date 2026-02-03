@@ -27,7 +27,7 @@ export const staffSchema = z.object({
     ),
   status: z.enum(['active', 'inactive', 'on_leave'], {
     message: 'Statut invalide',
-  }).default('active'),
+  }),
 })
 
 export const createStaffSchema = staffSchema
@@ -44,7 +44,7 @@ export const staffWithUserSchema = z.object({
   position: z.enum(staffPositions),
   department: z.string().optional().nullable(),
   hireDate: z.date().optional().nullable(),
-  status: z.enum(['active', 'inactive', 'on_leave']).default('active'),
+  status: z.enum(['active', 'inactive', 'on_leave']),
 })
 
 export type StaffFormData = z.infer<typeof staffSchema>

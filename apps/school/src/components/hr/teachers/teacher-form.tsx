@@ -130,11 +130,15 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
                 <span className="text-destructive">*</span>
               </Label>
               <UserCombobox
+                id="userId"
                 value={watch('userId')}
                 onSelect={(userId) => {
                   setValue('userId', userId, { shouldValidate: true })
                 }}
               />
+              <p className="text-[10px] text-muted-foreground ml-1">
+                {t.hr.teachers.userIdHelp()}
+              </p>
               {errors.userId && (
                 <motion.p initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="text-xs font-medium text-destructive">{String(errors.userId.message)}</motion.p>
               )}

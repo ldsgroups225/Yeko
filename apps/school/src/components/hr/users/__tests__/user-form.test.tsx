@@ -35,7 +35,7 @@ describe('userForm Component', () => {
       render(<UserForm onSuccess={mockOnSuccess} />)
 
       expect(screen.getByText('Role Assignment')).toBeInTheDocument()
-      expect(screen.getByText('Select the roles to assign to this user')).toBeInTheDocument()
+      expect(screen.getByText(/Select the roles to assign to this user/i)).toBeInTheDocument()
     })
 
     test('should render action buttons', () => {
