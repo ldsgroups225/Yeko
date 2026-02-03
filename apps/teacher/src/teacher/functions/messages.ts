@@ -37,8 +37,10 @@ export const getTeacherMessages = createServerFn()
       messages: result.value.messages.map(m => ({
         id: m.id,
         senderType: m.senderType as 'teacher' | 'parent',
-        senderName: m.senderType === 'teacher' ? 'You' : 'Parent', // TODO: Get actual name
-        recipientName: m.recipientType === 'teacher' ? 'You' : 'Parent',
+        senderId: m.senderId,
+        senderName: m.senderName,
+        recipientId: m.recipientId,
+        recipientName: m.recipientName,
         studentName: m.studentName,
         subject: m.subject,
         preview: m.preview,
@@ -111,8 +113,11 @@ export const getMessageDetails = createServerFn()
       message: {
         id: message.id,
         senderType: message.senderType as 'teacher' | 'parent',
-        senderName: message.senderType === 'teacher' ? 'You' : 'Parent',
-        recipientName: message.recipientType === 'teacher' ? 'You' : 'Parent',
+        senderId: message.senderId,
+        senderName: message.senderName,
+        recipientType: message.recipientType as 'teacher' | 'parent',
+        recipientId: message.recipientId,
+        recipientName: message.recipientName,
         studentName: message.studentName,
         className: message.className,
         subject: message.subject,
@@ -127,10 +132,11 @@ export const getMessageDetails = createServerFn()
         readAt: message.readAt?.toISOString() ?? null,
         createdAt: message.createdAt.toISOString(),
         threadId: message.threadId,
-        thread: message.thread.map((t: any) => ({
+        thread: message.thread.map(t => ({
           id: t.id,
           senderType: t.senderType as 'teacher' | 'parent',
-          senderName: t.senderType === 'teacher' ? 'You' : 'Parent',
+          senderId: t.senderId,
+          senderName: t.senderName,
           content: t.content,
           createdAt: t.createdAt.toISOString(),
         })),

@@ -1,10 +1,10 @@
 import type { SQL } from 'drizzle-orm'
 import type { GradeStatus, GradeType, MessageCategory } from '../drizzle/school-schema'
 import { databaseLogger, tapLogErr } from '@repo/logger'
-import { and, asc, desc, eq, gte, lte, sql } from 'drizzle-orm'
+import { aliasedTable, and, asc, desc, eq, gte, lte, or, sql } from 'drizzle-orm'
 import { ResultAsync } from 'neverthrow'
 import { getDb } from '../database/setup'
-import { grades, schools, subjects } from '../drizzle/core-schema'
+import { grades, programTemplateChapters, schools, subjects } from '../drizzle/core-schema'
 import {
   classes,
   classSessions,
@@ -19,10 +19,21 @@ import {
   studentParents,
   students,
   teacherMessages,
+  teachers,
+  users,
   userSchools,
 } from '../drizzle/school-schema'
 import { DatabaseError } from '../errors'
 import { getNestedErrorMessage } from '../i18n'
+
+// Aliased tables for messaging polymorphic names
+const senderTeachers = aliasedTable(teachers, 'sender_teachers')
+const senderUsers = aliasedTable(users, 'sender_users')
+const senderParents = aliasedTable(parents, 'sender_parents')
+
+const recipientTeachers = aliasedTable(teachers, 'recipient_teachers')
+const recipientUsers = aliasedTable(users, 'recipient_users')
+const recipientParents = aliasedTable(parents, 'recipient_parents')
 
 // Type definitions for teacher app queries
 export interface TeacherClassSession {
@@ -44,6 +55,7 @@ export interface TeacherClassSession {
   studentsPresent: number | null
   studentsAbsent: number | null
   chapterId: string | null
+  chapterName: string | null
   createdAt: Date
   completedAt: Date | null
 }
@@ -95,6 +107,7 @@ export interface MessageThread {
   id: string
   senderType: 'teacher' | 'parent'
   senderId: string
+  senderName: string | null
   content: string
   createdAt: Date
 }
@@ -104,8 +117,10 @@ export interface MessageDetails {
   schoolId: string
   senderType: 'teacher' | 'parent'
   senderId: string
+  senderName: string | null
   recipientType: 'teacher' | 'parent'
   recipientId: string
+  recipientName: string | null
   studentId: string | null
   studentName: string | null
   classId: string | null
@@ -250,6 +265,7 @@ export function getTeacherClassSessionById(sessionId: string): ResultAsync<Teach
         studentsPresent: classSessions.studentsPresent,
         studentsAbsent: classSessions.studentsAbsent,
         chapterId: classSessions.chapterId,
+        chapterName: programTemplateChapters.title,
         createdAt: classSessions.createdAt,
         completedAt: classSessions.completedAt,
       })
@@ -257,6 +273,7 @@ export function getTeacherClassSessionById(sessionId: string): ResultAsync<Teach
       .innerJoin(subjects, eq(classSessions.subjectId, subjects.id))
       .innerJoin(classes, eq(classSessions.classId, classes.id))
       .innerJoin(grades, eq(classes.gradeId, grades.id))
+      .leftJoin(programTemplateChapters, eq(classSessions.chapterId, programTemplateChapters.id))
       .where(eq(classSessions.id, sessionId))
       .limit(1)
       .then(result => result[0] ?? null) as Promise<TeacherClassSession | null>,
@@ -867,8 +884,10 @@ export function getTeacherMessagesQuery(params: {
     id: string
     senderType: 'teacher' | 'parent' | 'admin' | 'student'
     senderId: string
+    senderName: string | null
     recipientType: 'teacher' | 'parent' | 'admin' | 'student'
     recipientId: string
+    recipientName: string | null
     studentId: string | null
     studentName: string | null
     subject: string | null
@@ -915,8 +934,22 @@ export function getTeacherMessagesQuery(params: {
           id: teacherMessages.id,
           senderType: teacherMessages.senderType,
           senderId: teacherMessages.senderId,
+          senderName: sql<string | null>`
+            CASE 
+              WHEN ${teacherMessages.senderType} = 'teacher' THEN ${senderUsers.name}
+              WHEN ${teacherMessages.senderType} = 'parent' THEN ${senderParents.firstName} || ' ' || ${senderParents.lastName}
+              ELSE NULL
+            END
+          `,
           recipientType: teacherMessages.recipientType,
           recipientId: teacherMessages.recipientId,
+          recipientName: sql<string | null>`
+            CASE 
+              WHEN ${teacherMessages.recipientType} = 'teacher' THEN ${recipientUsers.name}
+              WHEN ${teacherMessages.recipientType} = 'parent' THEN ${recipientParents.firstName} || ' ' || ${recipientParents.lastName}
+              ELSE NULL
+            END
+          `,
           studentId: teacherMessages.studentId,
           studentName: sql<string | null>`${students.firstName} || ' ' || ${students.lastName}`,
           subject: teacherMessages.subject,
@@ -928,6 +961,12 @@ export function getTeacherMessagesQuery(params: {
         })
         .from(teacherMessages)
         .leftJoin(students, eq(teacherMessages.studentId, students.id))
+        .leftJoin(senderTeachers, eq(teacherMessages.senderId, senderTeachers.id))
+        .leftJoin(senderUsers, eq(senderTeachers.userId, senderUsers.id))
+        .leftJoin(senderParents, eq(teacherMessages.senderId, senderParents.id))
+        .leftJoin(recipientTeachers, eq(teacherMessages.recipientId, recipientTeachers.id))
+        .leftJoin(recipientUsers, eq(recipientTeachers.userId, recipientUsers.id))
+        .leftJoin(recipientParents, eq(teacherMessages.recipientId, recipientParents.id))
         .where(and(...conditions))
         .orderBy(desc(teacherMessages.createdAt))
         .limit(pageSize)
@@ -968,8 +1007,22 @@ export function getMessageDetailsQuery(params: {
           schoolId: teacherMessages.schoolId,
           senderType: teacherMessages.senderType,
           senderId: teacherMessages.senderId,
+          senderName: sql<string | null>`
+            CASE 
+              WHEN ${teacherMessages.senderType} = 'teacher' THEN ${senderUsers.name}
+              WHEN ${teacherMessages.senderType} = 'parent' THEN ${senderParents.firstName} || ' ' || ${senderParents.lastName}
+              ELSE NULL
+            END
+          `,
           recipientType: teacherMessages.recipientType,
           recipientId: teacherMessages.recipientId,
+          recipientName: sql<string | null>`
+            CASE 
+              WHEN ${teacherMessages.recipientType} = 'teacher' THEN ${recipientUsers.name}
+              WHEN ${teacherMessages.recipientType} = 'parent' THEN ${recipientParents.firstName} || ' ' || ${recipientParents.lastName}
+              ELSE NULL
+            END
+          `,
           studentId: teacherMessages.studentId,
           studentName: sql<string | null>`${students.firstName} || ' ' || ${students.lastName}`,
           classId: teacherMessages.classId,
@@ -986,6 +1039,12 @@ export function getMessageDetailsQuery(params: {
         .leftJoin(students, eq(teacherMessages.studentId, students.id))
         .leftJoin(classes, eq(teacherMessages.classId, classes.id))
         .leftJoin(grades, eq(classes.gradeId, grades.id))
+        .leftJoin(senderTeachers, eq(teacherMessages.senderId, senderTeachers.id))
+        .leftJoin(senderUsers, eq(senderTeachers.userId, senderUsers.id))
+        .leftJoin(senderParents, eq(teacherMessages.senderId, senderParents.id))
+        .leftJoin(recipientTeachers, eq(teacherMessages.recipientId, recipientTeachers.id))
+        .leftJoin(recipientUsers, eq(recipientTeachers.userId, recipientUsers.id))
+        .leftJoin(recipientParents, eq(teacherMessages.recipientId, recipientParents.id))
         .where(eq(teacherMessages.id, params.messageId))
         .limit(1)
 
@@ -998,12 +1057,22 @@ export function getMessageDetailsQuery(params: {
           id: teacherMessages.id,
           senderType: teacherMessages.senderType,
           senderId: teacherMessages.senderId,
+          senderName: sql<string | null>`
+            CASE 
+              WHEN ${teacherMessages.senderType} = 'teacher' THEN ${senderUsers.name}
+              WHEN ${teacherMessages.senderType} = 'parent' THEN ${senderParents.firstName} || ' ' || ${senderParents.lastName}
+              ELSE NULL
+            END
+          `,
           content: teacherMessages.content,
           createdAt: teacherMessages.createdAt,
         })
         .from(teacherMessages)
+        .leftJoin(senderTeachers, eq(teacherMessages.senderId, senderTeachers.id))
+        .leftJoin(senderUsers, eq(senderTeachers.userId, senderUsers.id))
+        .leftJoin(senderParents, eq(teacherMessages.senderId, senderParents.id))
         .where(
-          and(
+          or(
             eq(teacherMessages.threadId, threadId!),
             eq(teacherMessages.id, threadId!),
           ),

@@ -83,7 +83,8 @@ function MessagesPage() {
                     {data.messages.map(message => (
                       <MessageItem
                         key={message.id}
-                        message={message}
+                        message={message as any}
+                        teacherId={context?.teacherId ?? ''}
                         locale={locale}
                       />
                     ))}
@@ -102,8 +103,10 @@ interface MessageItemProps {
   message: {
     id: string
     senderType: 'teacher' | 'parent'
-    senderName: string
-    recipientName: string
+    senderId: string
+    senderName: string | null
+    recipientId: string
+    recipientName: string | null
     studentName: string | null
     subject: string | null
     preview: string
@@ -111,12 +114,18 @@ interface MessageItemProps {
     isStarred: boolean
     createdAt: string
   }
+  teacherId: string
   locale?: Locale
 }
 
-function MessageItem({ message, locale }: MessageItemProps) {
+function MessageItem({ message, teacherId, locale }: MessageItemProps) {
+  const { LL } = useI18nContext()
   const date = new Date(message.createdAt)
   const isToday = new Date().toDateString() === date.toDateString()
+
+  const displayName = message.senderId === teacherId
+    ? LL.messages.you()
+    : (message.senderName ?? LL.messages.unknownSender())
 
   return (
     <Link to="/app/chat/$messageId" params={{ messageId: message.id }}>
@@ -133,9 +142,7 @@ function MessageItem({ message, locale }: MessageItemProps) {
                 <p
                   className={`truncate text-sm ${!message.isRead ? 'font-semibold' : 'font-medium'}`}
                 >
-                  {message.senderType === 'parent'
-                    ? message.senderName
-                    : message.recipientName}
+                  {displayName}
                 </p>
                 <span className="shrink-0 text-xs text-muted-foreground">
                   {isToday

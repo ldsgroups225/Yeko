@@ -1169,6 +1169,10 @@ type RootTranslation = {
 		 */
 		you: string
 		/**
+		 * E​x​p​é​d​i​t​e​u​r​ ​i​n​c​o​n​n​u
+		 */
+		unknownSender: string
+		/**
 		 * C​o​n​v​e​r​s​a​t​i​o​n
 		 */
 		thread: string
@@ -3113,6 +3117,10 @@ export type TranslationFunctions = {
 		 * Vous
 		 */
 		you: () => LocalizedString
+		/**
+		 * Expéditeur inconnu
+		 */
+		unknownSender: () => LocalizedString
 		/**
 		 * Conversation
 		 */

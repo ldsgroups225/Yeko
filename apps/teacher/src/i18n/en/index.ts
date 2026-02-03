@@ -310,6 +310,7 @@ const en: Translation = {
     sentSuccess: 'Message sent',
     parent: 'Parent',
     you: 'You',
+    unknownSender: 'Unknown sender',
     thread: 'Conversation',
   },
   notifications: {
