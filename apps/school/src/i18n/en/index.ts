@@ -1702,6 +1702,8 @@ const en: Translation = {
     addSessionDescription: 'Add a new session to the timetable',
     editSessionDescription: 'IconEdit session details',
     conflicts: 'conflict(s)',
+    conflictDetected: 'Conflict detected',
+    conflictDescription: 'This session overlaps with another session.',
     importTimetable: 'Import timetable',
     importDescription: 'Import a CSV or Excel file containing the timetable',
     supportedFormats: 'Supported formats: CSV, XLSX, XLS',

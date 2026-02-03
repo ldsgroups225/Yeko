@@ -6093,6 +6093,14 @@ type RootTranslation = {
 		 */
 		conflicts: string
 		/**
+		 * C​o​n​f​l​i​t​ ​d​é​t​e​c​t​é
+		 */
+		conflictDetected: string
+		/**
+		 * C​e​t​t​e​ ​s​é​a​n​c​e​ ​c​h​e​v​a​u​c​h​e​ ​u​n​e​ ​a​u​t​r​e​ ​s​é​a​n​c​e​.
+		 */
+		conflictDescription: string
+		/**
 		 * I​m​p​o​r​t​e​r​ ​u​n​ ​e​m​p​l​o​i​ ​d​u​ ​t​e​m​p​s
 		 */
 		importTimetable: string
@@ -14020,6 +14028,14 @@ export type TranslationFunctions = {
 		 * conflit(s)
 		 */
 		conflicts: () => LocalizedString
+		/**
+		 * Conflit détecté
+		 */
+		conflictDetected: () => LocalizedString
+		/**
+		 * Cette séance chevauche une autre séance.
+		 */
+		conflictDescription: () => LocalizedString
 		/**
 		 * Importer un emploi du temps
 		 */

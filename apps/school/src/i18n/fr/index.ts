@@ -1741,6 +1741,8 @@ const fr = {
     addSessionDescription: 'Ajouter une nouvelle séance à l\'emploi du temps',
     editSessionDescription: 'Modifier les détails de la séance',
     conflicts: 'conflit(s)',
+    conflictDetected: 'Conflit détecté',
+    conflictDescription: 'Cette séance chevauche une autre séance.',
     importTimetable: 'Importer un emploi du temps',
     importDescription:
       'Importez un fichier CSV ou Excel contenant l\'emploi du temps',
