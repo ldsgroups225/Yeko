@@ -3970,6 +3970,44 @@ type RootTranslation = {
 		 * E​r​r​e​u​r​ ​d​e​ ​v​a​l​i​d​a​t​i​o​n
 		 */
 		validationError: string
+		/**
+		 * C​o​n​t​e​x​t​e​ ​e​n​s​e​i​g​n​a​n​t​ ​n​o​n​ ​t​r​o​u​v​é
+		 */
+		teacherContextNotFound: string
+		/**
+		 * A​u​c​u​n​e​ ​p​é​r​i​o​d​e​ ​t​r​o​u​v​é​e​ ​p​o​u​r​ ​l​'​a​n​n​é​e​ ​s​c​o​l​a​i​r​e​ ​e​n​ ​c​o​u​r​s
+		 */
+		noTermFound: string
+		/**
+		 * S​e​s​s​i​o​n​ ​d​'​e​m​p​l​o​i​ ​d​u​ ​t​e​m​p​s​ ​n​o​n​ ​t​r​o​u​v​é​e
+		 */
+		sessionNotFound: string
+		/**
+		 * N​o​n​ ​a​u​t​o​r​i​s​é​ ​:​ ​V​o​u​s​ ​n​'​ê​t​e​s​ ​p​a​s​ ​a​s​s​i​g​n​é​ ​à​ ​c​e​t​t​e​ ​s​e​s​s​i​o​n
+		 */
+		notAssignedToSession: string
+		/**
+		 * C​l​a​s​s​e​ ​n​o​n​ ​t​r​o​u​v​é​e
+		 */
+		classNotFound: string
+		/**
+		 * A​u​c​u​n​ ​c​o​n​t​e​x​t​e​ ​d​'​é​c​o​l​e
+		 */
+		noSchoolContext: string
+		/**
+		 * I​n​t​e​r​d​i​t​ ​:​ ​V​o​u​s​ ​n​'​a​v​e​z​ ​p​a​s​ ​l​a​ ​p​e​r​m​i​s​s​i​o​n​ ​d​e​ ​{​a​c​t​i​o​n​}​ ​{​r​e​s​o​u​r​c​e​}
+		 * @param {unknown} action
+		 * @param {unknown} resource
+		 */
+		permissionDenied: RequiredParams<'action' | 'resource'>
+		/**
+		 * A​c​c​è​s​ ​r​e​f​u​s​é​ ​à​ ​c​e​t​t​e​ ​é​c​o​l​e
+		 */
+		accessDeniedToSchool: string
+		/**
+		 * A​n​n​é​e​ ​s​c​o​l​a​i​r​e​ ​i​n​v​a​l​i​d​e​ ​p​o​u​r​ ​c​e​t​t​e​ ​é​c​o​l​e
+		 */
+		invalidSchoolYear: string
 	}
 	validation: {
 		/**
@@ -11852,6 +11890,42 @@ export type TranslationFunctions = {
 		 * Erreur de validation
 		 */
 		validationError: () => LocalizedString
+		/**
+		 * Contexte enseignant non trouvé
+		 */
+		teacherContextNotFound: () => LocalizedString
+		/**
+		 * Aucune période trouvée pour l'année scolaire en cours
+		 */
+		noTermFound: () => LocalizedString
+		/**
+		 * Session d'emploi du temps non trouvée
+		 */
+		sessionNotFound: () => LocalizedString
+		/**
+		 * Non autorisé : Vous n'êtes pas assigné à cette session
+		 */
+		notAssignedToSession: () => LocalizedString
+		/**
+		 * Classe non trouvée
+		 */
+		classNotFound: () => LocalizedString
+		/**
+		 * Aucun contexte d'école
+		 */
+		noSchoolContext: () => LocalizedString
+		/**
+		 * Interdit : Vous n'avez pas la permission de {action} {resource}
+		 */
+		permissionDenied: (arg: { action: unknown, resource: unknown }) => LocalizedString
+		/**
+		 * Accès refusé à cette école
+		 */
+		accessDeniedToSchool: () => LocalizedString
+		/**
+		 * Année scolaire invalide pour cette école
+		 */
+		invalidSchoolYear: () => LocalizedString
 	}
 	validation: {
 		/**

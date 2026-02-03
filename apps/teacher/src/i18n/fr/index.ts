@@ -352,6 +352,11 @@ const fr: BaseTranslation = {
     validationError: 'Erreur de validation',
     databaseSaveFailed: 'Erreur lors de l\'enregistrement en base de données',
     publishFailed: 'Erreur lors de la publication',
+    teacherContextNotFound: 'Contexte enseignant non trouvé',
+    noTermFound: 'Aucune période trouvée pour l\'année scolaire en cours',
+    sessionNotFound: 'Session d\'emploi du temps non trouvée',
+    notAssignedToSession: 'Non autorisé : Vous n\'êtes pas assigné à cette session',
+    classNotFound: 'Classe non trouvée',
   },
   auth: {
     login: 'Connexion',
