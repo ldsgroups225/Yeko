@@ -145,3 +145,4 @@ apps/teacher/e2e-tests/.auth/
 
 .wrangler/
 .tanstack/
+playwright-report/

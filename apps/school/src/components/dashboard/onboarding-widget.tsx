@@ -3,10 +3,9 @@ import {
   IconCalendar,
   IconCheck,
   IconChevronRight,
-  IconLoader2,
   IconSchool,
 } from '@tabler/icons-react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
 import {
@@ -18,30 +17,14 @@ import {
 } from '@workspace/ui/components/card'
 
 import { cn } from '@workspace/ui/lib/utils'
-import { toast } from 'sonner'
-import { getOnboardingStatus } from '@/lib/api/onboarding-status'
-import { importSmartTemplate } from '@/lib/mutations/onboarding'
+import { getOnboardingStatus } from '@/lib/api/onboarding'
 
 export function OnboardingWidget() {
   const navigate = useNavigate()
-  const queryClient = useQueryClient()
 
   const { data: status, isLoading } = useQuery({
     queryKey: ['onboarding-status'],
     queryFn: () => getOnboardingStatus(),
-  })
-
-  const importMutation = useMutation({
-    mutationFn: () => importSmartTemplate(),
-    onSuccess: (res: { importedSubjects: number, importedClasses: number }) => {
-      toast.success(
-        `Structure imported! Added ${res.importedSubjects} subjects and ${res.importedClasses} classes.`,
-      )
-      queryClient.invalidateQueries({ queryKey: ['onboarding-status'] })
-    },
-    onError: (err) => {
-      toast.error(err.message)
-    },
   })
 
   if (isLoading)
@@ -76,12 +59,11 @@ export function OnboardingWidget() {
     {
       id: 'structure',
       title: 'Structure Pédagogique',
-      description: 'Importez les classes et matières standards.',
+      description: 'Configurez les classes et matières standards.',
       icon: IconBuildingArch,
       isCompleted: status.hasStructure,
-      actionLabel: 'Importer Modèle',
-      onAction: () => importMutation.mutate(),
-      isLoading: importMutation.isPending,
+      actionLabel: 'Configurer',
+      onAction: () => navigate({ to: '/settings/pedagogical-structure' }),
       disabled: !status.hasYear, // Cannot import without year
     },
   ]
@@ -157,19 +139,11 @@ export function OnboardingWidget() {
                 <Button
                   size="sm"
                   variant={isActive ? 'default' : 'ghost'}
-                  disabled={step.disabled || isFuture || step.isLoading}
+                  disabled={step.disabled || isFuture}
                   onClick={step.onAction}
                 >
-                  {step.isLoading
-                    ? (
-                        <IconLoader2 className="animate-spin h-4 w-4" />
-                      )
-                    : (
-                        <>
-                          {step.actionLabel}
-                          <IconChevronRight size={16} className="ml-1" />
-                        </>
-                      )}
+                  {step.actionLabel}
+                  <IconChevronRight size={16} className="ml-1" />
                 </Button>
               )}
             </div>

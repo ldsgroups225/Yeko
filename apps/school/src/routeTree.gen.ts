@@ -40,6 +40,7 @@ import { Route as AuthSpacesAvailabilityRouteImport } from './routes/_auth/space
 import { Route as AuthSettingsSchoolYearsRouteImport } from './routes/_auth/settings/school-years'
 import { Route as AuthSettingsReportCardsRouteImport } from './routes/_auth/settings/report-cards'
 import { Route as AuthSettingsProfileRouteImport } from './routes/_auth/settings/profile'
+import { Route as AuthSettingsPedagogicalStructureRouteImport } from './routes/_auth/settings/pedagogical-structure'
 import { Route as AuthSettingsNotificationsRouteImport } from './routes/_auth/settings/notifications'
 import { Route as AuthProgramsSubjectsRouteImport } from './routes/_auth/programs/subjects'
 import { Route as AuthProgramsCurriculumProgressRouteImport } from './routes/_auth/programs/curriculum-progress'
@@ -249,6 +250,12 @@ const AuthSettingsProfileRoute = AuthSettingsProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AuthSettingsRoute,
 } as any)
+const AuthSettingsPedagogicalStructureRoute =
+  AuthSettingsPedagogicalStructureRouteImport.update({
+    id: '/pedagogical-structure',
+    path: '/pedagogical-structure',
+    getParentRoute: () => AuthSettingsRoute,
+  } as any)
 const AuthSettingsNotificationsRoute =
   AuthSettingsNotificationsRouteImport.update({
     id: '/notifications',
@@ -575,6 +582,7 @@ export interface FileRoutesByFullPath {
   '/programs/curriculum-progress': typeof AuthProgramsCurriculumProgressRoute
   '/programs/subjects': typeof AuthProgramsSubjectsRoute
   '/settings/notifications': typeof AuthSettingsNotificationsRoute
+  '/settings/pedagogical-structure': typeof AuthSettingsPedagogicalStructureRoute
   '/settings/profile': typeof AuthSettingsProfileRoute
   '/settings/report-cards': typeof AuthSettingsReportCardsRoute
   '/settings/school-years': typeof AuthSettingsSchoolYearsRoute
@@ -652,6 +660,7 @@ export interface FileRoutesByTo {
   '/programs/curriculum-progress': typeof AuthProgramsCurriculumProgressRoute
   '/programs/subjects': typeof AuthProgramsSubjectsRoute
   '/settings/notifications': typeof AuthSettingsNotificationsRoute
+  '/settings/pedagogical-structure': typeof AuthSettingsPedagogicalStructureRoute
   '/settings/profile': typeof AuthSettingsProfileRoute
   '/settings/report-cards': typeof AuthSettingsReportCardsRoute
   '/settings/school-years': typeof AuthSettingsSchoolYearsRoute
@@ -739,6 +748,7 @@ export interface FileRoutesById {
   '/_auth/programs/curriculum-progress': typeof AuthProgramsCurriculumProgressRoute
   '/_auth/programs/subjects': typeof AuthProgramsSubjectsRoute
   '/_auth/settings/notifications': typeof AuthSettingsNotificationsRoute
+  '/_auth/settings/pedagogical-structure': typeof AuthSettingsPedagogicalStructureRoute
   '/_auth/settings/profile': typeof AuthSettingsProfileRoute
   '/_auth/settings/report-cards': typeof AuthSettingsReportCardsRoute
   '/_auth/settings/school-years': typeof AuthSettingsSchoolYearsRoute
@@ -826,6 +836,7 @@ export interface FileRouteTypes {
     | '/programs/curriculum-progress'
     | '/programs/subjects'
     | '/settings/notifications'
+    | '/settings/pedagogical-structure'
     | '/settings/profile'
     | '/settings/report-cards'
     | '/settings/school-years'
@@ -903,6 +914,7 @@ export interface FileRouteTypes {
     | '/programs/curriculum-progress'
     | '/programs/subjects'
     | '/settings/notifications'
+    | '/settings/pedagogical-structure'
     | '/settings/profile'
     | '/settings/report-cards'
     | '/settings/school-years'
@@ -989,6 +1001,7 @@ export interface FileRouteTypes {
     | '/_auth/programs/curriculum-progress'
     | '/_auth/programs/subjects'
     | '/_auth/settings/notifications'
+    | '/_auth/settings/pedagogical-structure'
     | '/_auth/settings/profile'
     | '/_auth/settings/report-cards'
     | '/_auth/settings/school-years'
@@ -1266,6 +1279,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/settings/profile'
       preLoaderRoute: typeof AuthSettingsProfileRouteImport
+      parentRoute: typeof AuthSettingsRoute
+    }
+    '/_auth/settings/pedagogical-structure': {
+      id: '/_auth/settings/pedagogical-structure'
+      path: '/pedagogical-structure'
+      fullPath: '/settings/pedagogical-structure'
+      preLoaderRoute: typeof AuthSettingsPedagogicalStructureRouteImport
       parentRoute: typeof AuthSettingsRoute
     }
     '/_auth/settings/notifications': {
@@ -1767,6 +1787,7 @@ const AuthProgramsRouteWithChildren = AuthProgramsRoute._addFileChildren(
 
 interface AuthSettingsRouteChildren {
   AuthSettingsNotificationsRoute: typeof AuthSettingsNotificationsRoute
+  AuthSettingsPedagogicalStructureRoute: typeof AuthSettingsPedagogicalStructureRoute
   AuthSettingsProfileRoute: typeof AuthSettingsProfileRoute
   AuthSettingsReportCardsRoute: typeof AuthSettingsReportCardsRoute
   AuthSettingsSchoolYearsRoute: typeof AuthSettingsSchoolYearsRoute
@@ -1775,6 +1796,7 @@ interface AuthSettingsRouteChildren {
 
 const AuthSettingsRouteChildren: AuthSettingsRouteChildren = {
   AuthSettingsNotificationsRoute: AuthSettingsNotificationsRoute,
+  AuthSettingsPedagogicalStructureRoute: AuthSettingsPedagogicalStructureRoute,
   AuthSettingsProfileRoute: AuthSettingsProfileRoute,
   AuthSettingsReportCardsRoute: AuthSettingsReportCardsRoute,
   AuthSettingsSchoolYearsRoute: AuthSettingsSchoolYearsRoute,

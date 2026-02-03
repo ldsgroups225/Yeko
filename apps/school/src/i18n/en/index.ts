@@ -2073,6 +2073,17 @@ const en: Translation = {
     notifyOnLate: 'Notify on Late',
     notifyOnLateDescription:
       'IconSend notification to parents when student is late',
+    pedagogicalStructure: {
+      title: 'Pedagogical Structure',
+      description: 'Configure classes and subjects for your school',
+      smartTemplate: 'Smart Template',
+      importTemplate: 'Import Template',
+      importing: 'Importing...',
+      importSuccess: 'Structure imported! Added {subjects} subjects and {classes} classes.',
+      importError: 'Error during import',
+      templateCurriculum: 'Template Curriculum',
+      noActiveYear: 'No active school year found. Please create and activate a school year first.',
+    },
   },
   dialogs: {
     createClass: {

@@ -12,6 +12,13 @@ export default config.append(
       'src/routeTree.gen.ts',
       'src/i18n/',
       '**/*.md',
+      '**/node_modules/**',
+      '**/build/**',
+      '**/dist/**',
+      '**/coverage/**',
+      '**/.next/**',
+      '**/playwright-report/**',
+      '**/test-results/**',
     ],
   },
   {

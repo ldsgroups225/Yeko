@@ -7350,6 +7350,46 @@ type RootTranslation = {
 		 * E​n​v​o​y​e​r​ ​u​n​e​ ​n​o​t​i​f​i​c​a​t​i​o​n​ ​a​u​x​ ​p​a​r​e​n​t​s​ ​q​u​a​n​d​ ​l​'​é​l​è​v​e​ ​e​s​t​ ​e​n​ ​r​e​t​a​r​d
 		 */
 		notifyOnLateDescription: string
+		pedagogicalStructure: {
+			/**
+			 * S​t​r​u​c​t​u​r​e​ ​P​é​d​a​g​o​g​i​q​u​e
+			 */
+			title: string
+			/**
+			 * C​o​n​f​i​g​u​r​e​z​ ​l​e​s​ ​c​l​a​s​s​e​s​ ​e​t​ ​m​a​t​i​è​r​e​s​ ​p​o​u​r​ ​v​o​t​r​e​ ​é​t​a​b​l​i​s​s​e​m​e​n​t
+			 */
+			description: string
+			/**
+			 * M​o​d​è​l​e​ ​i​n​t​e​l​l​i​g​e​n​t
+			 */
+			smartTemplate: string
+			/**
+			 * I​m​p​o​r​t​e​r​ ​l​e​ ​m​o​d​è​l​e
+			 */
+			importTemplate: string
+			/**
+			 * I​m​p​o​r​t​a​t​i​o​n​.​.​.
+			 */
+			importing: string
+			/**
+			 * S​t​r​u​c​t​u​r​e​ ​i​m​p​o​r​t​é​e​ ​!​ ​{​s​u​b​j​e​c​t​s​}​ ​m​a​t​i​è​r​e​s​ ​e​t​ ​{​c​l​a​s​s​e​s​}​ ​c​l​a​s​s​e​s​ ​a​j​o​u​t​é​e​s​.
+			 * @param {unknown} classes
+			 * @param {unknown} subjects
+			 */
+			importSuccess: RequiredParams<'classes' | 'subjects'>
+			/**
+			 * E​r​r​e​u​r​ ​l​o​r​s​ ​d​e​ ​l​'​i​m​p​o​r​t​a​t​i​o​n
+			 */
+			importError: string
+			/**
+			 * P​r​o​g​r​a​m​m​e​ ​d​u​ ​m​o​d​è​l​e
+			 */
+			templateCurriculum: string
+			/**
+			 * A​u​c​u​n​e​ ​a​n​n​é​e​ ​s​c​o​l​a​i​r​e​ ​a​c​t​i​v​e​ ​t​r​o​u​v​é​e​.​ ​V​e​u​i​l​l​e​z​ ​d​'​a​b​o​r​d​ ​c​r​é​e​r​ ​e​t​ ​a​c​t​i​v​e​r​ ​u​n​e​ ​a​n​n​é​e​ ​s​c​o​l​a​i​r​e​.
+			 */
+			noActiveYear: string
+		}
 	}
 	coefficients: {
 		/**
@@ -15234,6 +15274,44 @@ export type TranslationFunctions = {
 		 * Envoyer une notification aux parents quand l'élève est en retard
 		 */
 		notifyOnLateDescription: () => LocalizedString
+		pedagogicalStructure: {
+			/**
+			 * Structure Pédagogique
+			 */
+			title: () => LocalizedString
+			/**
+			 * Configurez les classes et matières pour votre établissement
+			 */
+			description: () => LocalizedString
+			/**
+			 * Modèle intelligent
+			 */
+			smartTemplate: () => LocalizedString
+			/**
+			 * Importer le modèle
+			 */
+			importTemplate: () => LocalizedString
+			/**
+			 * Importation...
+			 */
+			importing: () => LocalizedString
+			/**
+			 * Structure importée ! {subjects} matières et {classes} classes ajoutées.
+			 */
+			importSuccess: (arg: { classes: unknown, subjects: unknown }) => LocalizedString
+			/**
+			 * Erreur lors de l'importation
+			 */
+			importError: () => LocalizedString
+			/**
+			 * Programme du modèle
+			 */
+			templateCurriculum: () => LocalizedString
+			/**
+			 * Aucune année scolaire active trouvée. Veuillez d'abord créer et activer une année scolaire.
+			 */
+			noActiveYear: () => LocalizedString
+		}
 	}
 	coefficients: {
 		/**
