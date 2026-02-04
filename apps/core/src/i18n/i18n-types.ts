@@ -236,6 +236,26 @@ type RootTranslation = {
 		 */
 		logout: string
 		/**
+		 * Y​e​k​o
+		 */
+		brandName: string
+		/**
+		 * L​o​g​o​ ​Y​e​k​o
+		 */
+		logoAlt: string
+		/**
+		 * O​u​v​r​i​r​ ​l​e​ ​m​e​n​u​ ​d​e​ ​n​a​v​i​g​a​t​i​o​n
+		 */
+		openMenu: string
+		/**
+		 * C​o​m​p​t​e
+		 */
+		accountLabel: string
+		/**
+		 * U​t​i​l​i​s​a​t​e​u​r
+		 */
+		userLabel: string
+		/**
 		 * t​r​a​n​s​p​a​r​e​n​c​e​ ​é​d​u​c​a​t​i​v​e
 		 */
 		tagline: string
@@ -848,6 +868,32 @@ type RootTranslation = {
 		 * E​r​r​e​u​r​ ​i​n​c​o​n​n​u​e
 		 */
 		unknown: string
+	}
+	unauthorized: {
+		/**
+		 * A​c​c​è​s​ ​n​o​n​ ​a​u​t​o​r​i​s​é
+		 */
+		title: string
+		/**
+		 * D​é​s​o​l​é​,​ ​v​o​t​r​e​ ​c​o​m​p​t​e​ ​n​'​a​ ​p​a​s​ ​e​n​c​o​r​e​ ​l​e​s​ ​p​e​r​m​i​s​s​i​o​n​s​ ​n​é​c​e​s​s​a​i​r​e​s​.
+		 */
+		description: string
+		/**
+		 * E​n​ ​a​t​t​e​n​d​a​n​t​ ​l​'​a​t​t​r​i​b​u​t​i​o​n​ ​d​e​ ​v​o​t​r​e​ ​r​ô​l​e​ ​p​a​r​ ​l​'​a​d​m​i​n​i​s​t​r​a​t​e​u​r​,​ ​o​u​ ​c​o​n​t​a​c​t​e​z​-​l​e​ ​p​o​u​r​ ​p​l​u​s​ ​d​'​i​n​f​o​r​m​a​t​i​o​n​s​.
+		 */
+		hint: string
+		/**
+		 * R​e​t​o​u​r​ ​à​ ​l​'​a​c​c​u​e​i​l
+		 */
+		backHome: string
+		/**
+		 * C​o​n​t​a​c​t​e​r​ ​l​e​ ​s​u​p​p​o​r​t
+		 */
+		contactSupport: string
+		/**
+		 * C​o​d​e​ ​e​r​r​e​u​r​ ​4​0​3​ ​•​ ​A​c​c​è​s​ ​n​o​n​ ​a​u​t​o​r​i​s​é
+		 */
+		errorCode: string
 	}
 	validation: {
 		/**
@@ -2261,6 +2307,26 @@ export type TranslationFunctions = {
 		 */
 		logout: () => LocalizedString
 		/**
+		 * Yeko
+		 */
+		brandName: () => LocalizedString
+		/**
+		 * Logo Yeko
+		 */
+		logoAlt: () => LocalizedString
+		/**
+		 * Ouvrir le menu de navigation
+		 */
+		openMenu: () => LocalizedString
+		/**
+		 * Compte
+		 */
+		accountLabel: () => LocalizedString
+		/**
+		 * Utilisateur
+		 */
+		userLabel: () => LocalizedString
+		/**
 		 * transparence éducative
 		 */
 		tagline: () => LocalizedString
@@ -2868,6 +2934,32 @@ export type TranslationFunctions = {
 		 * Erreur inconnue
 		 */
 		unknown: () => LocalizedString
+	}
+	unauthorized: {
+		/**
+		 * Accès non autorisé
+		 */
+		title: () => LocalizedString
+		/**
+		 * Désolé, votre compte n'a pas encore les permissions nécessaires.
+		 */
+		description: () => LocalizedString
+		/**
+		 * En attendant l'attribution de votre rôle par l'administrateur, ou contactez-le pour plus d'informations.
+		 */
+		hint: () => LocalizedString
+		/**
+		 * Retour à l'accueil
+		 */
+		backHome: () => LocalizedString
+		/**
+		 * Contacter le support
+		 */
+		contactSupport: () => LocalizedString
+		/**
+		 * Code erreur 403 • Accès non autorisé
+		 */
+		errorCode: () => LocalizedString
 	}
 	validation: {
 		/**

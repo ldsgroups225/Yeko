@@ -75,7 +75,7 @@ export function NavigationBar() {
       setIsScrolled(window.scrollY > 20)
     }
 
-    window.addEventListener('scroll', handleScroll)
+    window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
@@ -100,14 +100,14 @@ export function NavigationBar() {
           >
             <motion.img
               src="/icon.png"
-              alt="Yeko Logo"
+              alt={LL.nav.logoAlt()}
               className="h-10 w-10 lg:h-12 lg:w-12 object-contain"
               whileHover={{ scale: 1.05, rotate: 5 }}
               transition={{ type: 'spring', stiffness: 400, damping: 10 }}
             />
             <div className="flex flex-col">
               <span className="text-lg lg:text-xl font-bold bg-linear-to-r from-foreground to-foreground/80 bg-clip-text text-transparent group-hover:from-primary group-hover:to-primary/80 transition-all duration-300">
-                Yeko Platform
+                {LL.nav.brandName()}
               </span>
               <span className="text-xs text-muted-foreground font-medium tracking-wider">
                 {LL.nav.tagline()}
@@ -194,14 +194,14 @@ export function NavigationBar() {
                         <Avatar className="h-7 w-7">
                           <AvatarImage
                             src={user?.image || undefined}
-                            alt={user?.name || 'User'}
+                            alt={user?.name || LL.nav.userLabel()}
                           />
                           <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                             {fallbackText}
                           </AvatarFallback>
                         </Avatar>
                         <span className="text-sm font-medium">
-                          {user?.name || 'Account'}
+                          {user?.name || LL.nav.accountLabel()}
                         </span>
                       </button>
                     </AccountDialog>
@@ -241,7 +241,7 @@ export function NavigationBar() {
                     className={buttonVariants({ variant: 'ghost', size: 'icon', className: 'relative h-10 w-10 hover:bg-accent/50' })}
                   >
                     <IconMenu className="h-5 w-5" />
-                    <span className="sr-only">Open navigation menu</span>
+                    <span className="sr-only">{LL.nav.openMenu()}</span>
                   </button>
                 )}
               />
@@ -253,7 +253,7 @@ export function NavigationBar() {
                   <div className="flex items-center gap-3 mb-2">
                     <img
                       src="/icon.png"
-                      alt="Yeko Logo"
+                      alt={LL.nav.logoAlt()}
                       className="h-10 w-10 object-contain"
                     />
                     <SheetTitle className="text-xl font-bold bg-linear-to-r from-primary to-primary/80 bg-clip-text text-transparent">
@@ -309,7 +309,7 @@ export function NavigationBar() {
                           <Avatar className="h-10 w-10">
                             <AvatarImage
                               src={user?.image || undefined}
-                              alt={user?.name || 'User'}
+                              alt={user?.name || LL.nav.userLabel()}
                             />
                             <AvatarFallback className="bg-primary text-primary-foreground text-sm">
                               {fallbackText}
@@ -317,7 +317,7 @@ export function NavigationBar() {
                           </Avatar>
                           <div className="flex-1">
                             <p className="text-sm font-medium">
-                              {user?.name || 'User'}
+                              {user?.name || LL.nav.userLabel()}
                             </p>
                             <p className="text-xs text-muted-foreground">
                               {user?.email}

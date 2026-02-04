@@ -11,7 +11,6 @@ export const getAuthStatus = createServerFn({ method: 'GET' })
   .middleware([databaseMiddleware])
   .handler(async () => {
     const { getAuth } = await import('@repo/data-ops/auth/server')
-    const { getUserSystemPermissionsByAuthUserId, getUserSystemRolesByAuthUserId, syncUserAuthOnLogin } = await import('@repo/data-ops/queries/school-admin/users')
 
     const auth = getAuth()
     const req = getRequest()
@@ -32,6 +31,12 @@ export const getAuthStatus = createServerFn({ method: 'GET' })
         hasSystemAccess: false,
       }
     }
+
+    const {
+      getUserSystemPermissionsByAuthUserId,
+      getUserSystemRolesByAuthUserId,
+      syncUserAuthOnLogin,
+    } = await import('@repo/data-ops/queries/school-admin/users')
 
     // Sync user data and auto-create user account if they don't exist (registration flow)
     await syncUserAuthOnLogin(session.user.id, session.user.email, session.user.name)

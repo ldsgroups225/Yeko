@@ -79,6 +79,11 @@ const fr: BaseTranslation = {
     signup: 'Inscription',
     dashboard: 'Tableau de bord',
     logout: 'Déconnexion',
+    brandName: 'Yeko',
+    logoAlt: 'Logo Yeko',
+    openMenu: 'Ouvrir le menu de navigation',
+    accountLabel: 'Compte',
+    userLabel: 'Utilisateur',
     tagline: 'transparence éducative',
     requestDemo: 'Demander une démo',
     signIn: 'Se connecter',
@@ -283,6 +288,16 @@ const fr: BaseTranslation = {
     networkError: 'Erreur réseau',
     timeout: 'Délai dépassé',
     unknown: 'Erreur inconnue',
+  },
+
+  // Unauthorized page
+  unauthorized: {
+    title: 'Accès non autorisé',
+    description: "Désolé, votre compte n'a pas encore les permissions nécessaires.",
+    hint: "En attendant l'attribution de votre rôle par l'administrateur, ou contactez-le pour plus d'informations.",
+    backHome: "Retour à l'accueil",
+    contactSupport: 'Contacter le support',
+    errorCode: 'Code erreur 403 • Accès non autorisé',
   },
 
   // Validation messages

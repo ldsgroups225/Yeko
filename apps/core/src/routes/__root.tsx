@@ -1,28 +1,15 @@
 /// <reference types="vite/client" />
 
 import type { QueryClient } from '@tanstack/react-query'
-import type { ReactNode } from 'react'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import {
-  createRootRouteWithContext,
-  HeadContent,
-  Outlet,
-  Scripts,
-} from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-import { useEffect, useMemo } from 'react'
+import { createRootRouteWithContext } from '@tanstack/react-router'
 import { DefaultCatchBoundary } from '@/components/default-catch-boundary'
 import { NotFound } from '@/components/not-found'
-import { ThemeProvider } from '@/components/theme'
 import { getAuthStatus } from '@/core/functions/get-auth-status'
-import TypesafeI18n from '@/i18n/i18n-react'
 import { loadAllLocales } from '@/i18n/i18n-util.sync'
-import { initializeLogger } from '@/lib/logger'
 import appCss from '@/styles.css?url'
 import { seo } from '@/utils/seo'
-import { generateStructuredData } from '@/utils/structuredData'
-
-loadAllLocales()
+import { RootComponent } from './root-component'
+import { RootDocument } from './root-document'
 
 loadAllLocales()
 
@@ -32,9 +19,7 @@ export const Route = createRootRouteWithContext<{
 }>()({
   beforeLoad: async () => {
     const auth = await getAuthStatus()
-    return {
-      auth,
-    }
+    return { auth }
   },
 
   head: () => ({
@@ -86,104 +71,3 @@ export const Route = createRootRouteWithContext<{
   notFoundComponent: () => <NotFound />,
   component: RootComponent,
 })
-
-function RootComponent() {
-  // Initialize logger on app startup
-  useEffect(() => {
-    initializeLogger().catch((error) => {
-      console.error('Failed to initialize logger:', error)
-    })
-  }, [])
-
-  return (
-    <RootDocument>
-      <TypesafeI18n locale="fr">
-        <ThemeProvider
-
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange={false}
-        >
-          <Outlet />
-        </ThemeProvider>
-      </TypesafeI18n>
-    </RootDocument>
-
-  )
-}
-
-function RootDocument({ children }: { children: ReactNode }) {
-  // Generate structured data JSON (no sanitization needed - we control the data)
-  const organizationData = useMemo(
-    () => JSON.stringify(generateStructuredData('organization')),
-    [],
-  )
-  const softwareData = useMemo(
-    () => JSON.stringify(generateStructuredData('software')),
-    [],
-  )
-  const websiteData = useMemo(
-    () => JSON.stringify(generateStructuredData('website')),
-    [],
-  )
-
-  // Theme initialization script (static, trusted code)
-  const themeScript = useMemo(
-    () => `
-      (function() {
-        try {
-          var theme = localStorage.getItem('ui-theme') || 'system';
-          var systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-          var resolvedTheme = theme === 'system' ? systemTheme : theme;
-
-          if (resolvedTheme === 'dark') {
-            document.documentElement.classList.add('dark');
-          } else {
-            document.documentElement.classList.add('light');
-          }
-        } catch (e) {}
-      })();
-    `,
-    [],
-  )
-
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <HeadContent />
-        {/* eslint-disable react-dom/no-dangerously-set-innerhtml */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: organizationData,
-          }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: softwareData,
-          }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: websiteData,
-          }}
-        />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: themeScript,
-          }}
-        />
-        {/* eslint-enable react-dom/no-dangerously-set-innerhtml */}
-      </head>
-      <body>
-        {children}
-        <TanStackRouterDevtools position="bottom-right" />
-        <ReactQueryDevtools buttonPosition="bottom-left" />
-        <Scripts />
-      </body>
-    </html>
-  )
-}

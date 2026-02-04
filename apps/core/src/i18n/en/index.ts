@@ -80,6 +80,11 @@ const en = {
     signup: 'Sign Up',
     dashboard: 'Dashboard',
     logout: 'Logout',
+    brandName: 'Yeko Platform',
+    logoAlt: 'Yeko logo',
+    openMenu: 'Open navigation menu',
+    accountLabel: 'Account',
+    userLabel: 'User',
     tagline: 'educational transparency',
     requestDemo: 'Request Demo',
     signIn: 'Sign In',
@@ -284,6 +289,16 @@ const en = {
     networkError: 'Network error',
     timeout: 'Timeout exceeded',
     unknown: 'Unknown error',
+  },
+
+  // Unauthorized page
+  unauthorized: {
+    title: 'Access denied',
+    description: "Sorry, your account doesn't have the required permissions yet.",
+    hint: 'Wait for your role to be assigned by an administrator, or contact them for more information.',
+    backHome: 'Back to home',
+    contactSupport: 'Contact support',
+    errorCode: 'Error code 403 • Unauthorized access',
   },
 
   // Validation messages
