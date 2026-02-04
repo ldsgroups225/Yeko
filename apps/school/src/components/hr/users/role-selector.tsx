@@ -42,8 +42,9 @@ export function RoleSelector({
   })
 
   const roles = data ?? []
-  const availableRoles = roles.filter(r => !selectedRoleIds.includes(r.id))
-  const selectedRoles = roles.filter(r => selectedRoleIds.includes(r.id))
+  const filteredRoles = roles.filter(r => r.scope !== 'system' && (r as any).slug !== 'school_founder')
+  const availableRoles = filteredRoles.filter(r => !selectedRoleIds.includes(r.id))
+  const selectedRoles = filteredRoles.filter(r => selectedRoleIds.includes(r.id))
 
   const handleSelect = (roleId: string) => {
     if (!disabled) {
@@ -59,7 +60,7 @@ export function RoleSelector({
 
   const handleSelectAll = () => {
     if (!disabled) {
-      onChange(roles.map(r => r.id))
+      onChange(filteredRoles.map(r => r.id))
     }
   }
 
@@ -126,7 +127,7 @@ export function RoleSelector({
             size="sm"
             className="rounded-xl h-8 text-xs font-semibold hover:bg-primary/10 hover:text-primary transition-all px-3"
             onClick={handleSelectAll}
-            disabled={disabled || roles.length === selectedRoleIds.length}
+            disabled={disabled || filteredRoles.length === selectedRoleIds.length}
           >
             <IconSparkles className="mr-1.5 h-3 w-3" />
             {t.hr.roles.selectAll()}

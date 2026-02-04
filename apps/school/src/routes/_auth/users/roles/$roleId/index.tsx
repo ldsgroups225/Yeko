@@ -67,7 +67,7 @@ function RoleDetailPage() {
           </div>
         </div>
         <div className="flex gap-2">
-          {!role.isSystemRole && (
+          {!role.isSystemRole && role.slug !== 'school_founder' && (
             <>
               <Button
                 variant="outline"

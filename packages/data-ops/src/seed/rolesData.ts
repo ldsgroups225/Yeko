@@ -99,6 +99,8 @@ export const defaultRoles: RoleData[] = [
       settings: ['view', 'edit'],
       school_subjects: ['view'],
       coefficients: ['view'],
+      dashboard: ['view'],
+      roles: ['view', 'create', 'edit'],
     },
   },
   {

@@ -183,7 +183,7 @@ export function RolesTable({ filters }: RolesTableProps) {
                 <IconEye className="h-4 w-4" />
                 {t.common.view()}
               </DropdownMenuItem>
-              {!row.original.isSystemRole && (
+              {!row.original.isSystemRole && row.original.slug !== 'school_founder' && (
                 <>
                   <DropdownMenuItem
                     className="cursor-pointer gap-2"

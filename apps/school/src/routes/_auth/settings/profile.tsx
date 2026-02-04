@@ -81,7 +81,7 @@ function SettingsProfilePage() {
     )
   }
 
-  const school = result?.success ? result.data : null
+  const school = result
 
   return (
     <div className="space-y-6">
