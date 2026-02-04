@@ -62,25 +62,26 @@ export function getSchools(options: {
   const whereClause = conditions.length > 0 ? and(...conditions) : undefined
 
   return ResultAsync.fromPromise((async () => {
-    // Get total count
-    const [countResult] = await db
-      .select({ count: count() })
-      .from(schools)
-      .where(whereClause)
-
-    const total = countResult?.count || 0
-
-    // Get schools with sorting
     const orderByClause
       = sortOrder === 'asc' ? asc(schools[sortBy]) : desc(schools[sortBy])
 
-    const schoolsList = await db
-      .select()
-      .from(schools)
-      .where(whereClause)
-      .orderBy(orderByClause)
-      .limit(limit)
-      .offset(offset)
+    const [[countResult], schoolsList] = await Promise.all([
+      // Get total count
+      db
+        .select({ count: count() })
+        .from(schools)
+        .where(whereClause),
+      // Get schools with sorting
+      db
+        .select()
+        .from(schools)
+        .where(whereClause)
+        .orderBy(orderByClause)
+        .limit(limit)
+        .offset(offset),
+    ])
+
+    const total = countResult?.count || 0
 
     return {
       schools: schoolsList,

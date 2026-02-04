@@ -138,8 +138,11 @@ export function ClassesTable({
           status: status === 'all' ? undefined : status,
         },
       })
-      return result as unknown as ClassItem[]
+      if (!result.success)
+        throw new Error(result.error)
+      return result.data as ClassItem[]
     },
+    placeholderData: [],
   })
 
   const handleSelectAll = useCallback(

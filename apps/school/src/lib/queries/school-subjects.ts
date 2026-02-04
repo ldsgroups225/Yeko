@@ -32,7 +32,12 @@ export const schoolSubjectsOptions = {
   list: (filters: SchoolSubjectsFilters = {}) =>
     queryOptions({
       queryKey: schoolSubjectsKeys.list(filters),
-      queryFn: () => getSchoolSubjects({ data: filters }),
+      queryFn: async () => {
+        const res = await getSchoolSubjects({ data: filters })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000, // 5 minutes
       gcTime: 30 * 60 * 1000, // 30 minutes
     }),
@@ -43,7 +48,12 @@ export const schoolSubjectsOptions = {
   detail: (id: string) =>
     queryOptions({
       queryKey: schoolSubjectsKeys.detail(id),
-      queryFn: () => getSchoolSubjectById({ data: id }),
+      queryFn: async () => {
+        const res = await getSchoolSubjectById({ data: id })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
       enabled: !!id,
@@ -55,12 +65,17 @@ export const schoolSubjectsOptions = {
   available: (filters: { category?: string, search?: string, schoolYearId?: string } = {}) =>
     queryOptions({
       queryKey: schoolSubjectsKeys.availableFiltered(filters),
-      queryFn: () => getAvailableCoreSubjects({
-        data: {
-          ...filters,
-          category: filters.category as 'Scientifique' | 'Littéraire' | 'Sportif' | 'Autre' | undefined,
-        },
-      }),
+      queryFn: async () => {
+        const res = await getAvailableCoreSubjects({
+          data: {
+            ...filters,
+            category: filters.category as 'Scientifique' | 'Littéraire' | 'Sportif' | 'Autre' | undefined,
+          },
+        })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
     }),
@@ -71,7 +86,12 @@ export const schoolSubjectsOptions = {
   usageStats: (subjectId?: string) =>
     queryOptions({
       queryKey: schoolSubjectsKeys.usageStats(subjectId),
-      queryFn: () => getSubjectUsageStats({ data: { subjectId } }),
+      queryFn: async () => {
+        const res = await getSubjectUsageStats({ data: { subjectId } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
     }),
@@ -82,7 +102,12 @@ export const schoolSubjectsOptions = {
   inUse: (subjectId: string, schoolYearId?: string) =>
     queryOptions({
       queryKey: schoolSubjectsKeys.inUseCheck(subjectId),
-      queryFn: () => checkSubjectInUseForUI({ data: { subjectId, schoolYearId } }),
+      queryFn: async () => {
+        const res = await checkSubjectInUseForUI({ data: { subjectId, schoolYearId } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 1 * 60 * 1000, // 1 minute - shorter since this is used for validation
       gcTime: 5 * 60 * 1000,
       enabled: !!subjectId,

@@ -49,7 +49,7 @@ function ConductPage() {
   const activeSchoolYear = schoolYears.find(sy => sy.isActive)
   const schoolYearId = contextSchoolYearId || activeSchoolYear?.id || 'current-year'
 
-  const { data: result, isLoading } = useQuery(
+  const { data: recordsData, isLoading } = useQuery(
     conductRecordsOptions({
       schoolYearId,
       type: search.type,
@@ -91,7 +91,7 @@ function ConductPage() {
     setSelectedIds(new Set())
   }
 
-  const rawRecords = result?.success ? result.data.data : []
+  const rawRecords = recordsData?.data ?? []
   const records = rawRecords.map(record => ({
     id: record.id,
     studentId: record.studentId,

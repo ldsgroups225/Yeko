@@ -4,7 +4,7 @@ import {
   getFeeTypeById,
   getFeeTypes,
   updateFeeType,
-} from '@repo/data-ops'
+} from '@repo/data-ops/queries/fee-types'
 import { z } from 'zod'
 import { createFeeTypeSchema, updateFeeTypeSchema } from '@/schemas/fee-type'
 import { authServerFn } from '../lib/server-fn'

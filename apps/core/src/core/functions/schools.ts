@@ -126,18 +126,20 @@ export const bulkUpdateSchools = createServerFn()
   .handler(async (ctx) => {
     const { schoolIds, status } = ctx.data
 
-    // Update each school individually since we don't have bulk operations in the queries
-    // Update each school individually since we don't have bulk operations in the queries
-    for (const id of schoolIds) {
-      const { updateSchool: updateSchoolQuery } = await import('@repo/data-ops/queries/schools')
-      const result = await updateSchoolQuery(id, { status })
-      if (result.isErr()) {
-        // Skip schools that don't exist or error
-        continue
-      }
+    const { updateSchool: updateSchoolQuery } = await import('@repo/data-ops/queries/schools')
+
+    const BATCH_SIZE = 10
+    let successCount = 0
+
+    for (let i = 0; i < schoolIds.length; i += BATCH_SIZE) {
+      const batch = schoolIds.slice(i, i + BATCH_SIZE)
+      const results = await Promise.all(
+        batch.map(id => updateSchoolQuery(id, { status })),
+      )
+      successCount += results.filter(r => r.isOk()).length
     }
 
-    return { success: true, count: schoolIds.length }
+    return { success: true, count: successCount }
   })
 
 // Bulk create schools from import

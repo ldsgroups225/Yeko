@@ -23,9 +23,10 @@ import { Label } from '@workspace/ui/components/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
 import { Skeleton } from '@workspace/ui/components/skeleton'
 import { AnimatePresence, motion } from 'motion/react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { CatalogListSkeleton, CatalogStatsSkeleton } from '@/components/catalogs/catalog-skeleton'
+import { useDateFormatter } from '@/hooks/use-date-formatter'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useInfiniteScroll } from '@/hooks/use-infinite-scroll'
 import { useTranslations } from '@/i18n/hooks'
@@ -39,7 +40,6 @@ import {
 import { downloadSubjectsTemplate, exportSubjectsToExcel, importSubjectsFromExcel } from '@/lib/catalog-csv'
 import { useLogger } from '@/lib/logger'
 import { parseServerFnError } from '@/utils/error-handlers'
-import { formatDate } from '@/utils/formatDate'
 import { generateUUID } from '@/utils/generateUUID'
 
 export const Route = createFileRoute('/_auth/app/catalogs/subjects')({
@@ -51,6 +51,7 @@ function SubjectsCatalog() {
   const { logger } = useLogger()
   const queryClient = useQueryClient()
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const { format: formatDate } = useDateFormatter()
 
   const [isCreating, setIsCreating] = useState(false)
   const [newSubjectCategory, setNewSubjectCategory] = useState<string>('')
@@ -81,8 +82,12 @@ function SubjectsCatalog() {
   const pagination = subjectsData?.pagination
   const hasMore = pagination ? page < pagination.totalPages : false
 
+  const handleLoadMore = useCallback(() => {
+    setPage(prev => prev + 1)
+  }, [])
+
   const loadMoreRef = useInfiniteScroll({
-    onLoadMore: () => setPage(prev => prev + 1),
+    onLoadMore: handleLoadMore,
     hasMore,
     isLoading,
   })

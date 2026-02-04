@@ -4,7 +4,7 @@ import {
   getActiveAlerts as getActiveAlertsQuery,
   getAlerts as getAlertsQuery,
   resolveAlert as resolveAlertQuery,
-} from '@repo/data-ops'
+} from '@repo/data-ops/queries/attendance-alerts'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import { z } from 'zod'
 import { authServerFn } from '../lib/server-fn'

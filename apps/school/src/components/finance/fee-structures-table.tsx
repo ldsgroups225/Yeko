@@ -164,7 +164,7 @@ export function FeeStructuresTable({
                       <Button
                         variant="ghost"
                         size="icon"
-                         className="h-8 w-8 rounded-lg hover:bg-muted"
+                        className="h-8 w-8 rounded-lg hover:bg-muted"
                         onClick={() => onEdit?.(structure.id)}
                         aria-label={t('common.edit')}
                       >

@@ -2,6 +2,7 @@
   "name": "@repo/logger",
   "type": "module",
   "version": "1.0.0",
+  "private": true,
   "packageManager": "pnpm@10.28.2",
   "description": "Logger package for Yeko educational management platform using LogTape",
   "author": "Yeko Team",
@@ -19,6 +20,7 @@
     "education",
     "saas"
   ],
+  "sideEffects": false,
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",

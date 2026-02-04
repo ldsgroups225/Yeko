@@ -14,10 +14,10 @@ import { useEffect } from 'react'
 import { ActivityFeed } from '@/components/dashboard/activity-feed'
 import { StatsCard } from '@/components/dashboard/stats-card'
 import { SystemHealth } from '@/components/dashboard/system-health'
+import { useDateFormatter } from '@/hooks/use-date-formatter'
 import { dashboardStatsQueryOptions, recentActivityQueryOptions, systemHealthQueryOptions } from '@/integrations/tanstack-query/dashboard-options'
 import { authClient } from '@/lib/auth-client'
 import { useLogger } from '@/lib/logger'
-import { formatDate } from '@/utils/formatDate'
 
 export const Route = createFileRoute('/_auth/app/dashboard')({
   component: Dashboard,
@@ -26,6 +26,7 @@ export const Route = createFileRoute('/_auth/app/dashboard')({
 function Dashboard() {
   const { logger } = useLogger()
   const { data: session } = authClient.useSession()
+  const { format: formatDate } = useDateFormatter()
 
   // Fetch real data using TanStack Query
   const { data: stats, isLoading: statsLoading, error: statsError } = useQuery(dashboardStatsQueryOptions())

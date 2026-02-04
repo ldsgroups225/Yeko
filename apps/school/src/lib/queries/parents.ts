@@ -25,7 +25,12 @@ export const parentsOptions = {
   list: (filters: ParentFilters = {}) =>
     queryOptions({
       queryKey: parentsKeys.list(filters),
-      queryFn: () => getParents({ data: filters }),
+      queryFn: async () => {
+        const res = await getParents({ data: filters })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000, // 5 minutes
       gcTime: 30 * 60 * 1000, // 30 minutes
     }),
@@ -33,7 +38,12 @@ export const parentsOptions = {
   detail: (id: string) =>
     queryOptions({
       queryKey: parentsKeys.detail(id),
-      queryFn: () => getParentById({ data: id }),
+      queryFn: async () => {
+        const res = await getParentById({ data: id })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
       enabled: !!id,
@@ -42,7 +52,12 @@ export const parentsOptions = {
   autoMatch: () =>
     queryOptions({
       queryKey: parentsKeys.autoMatch(),
-      queryFn: () => autoMatchParents(),
+      queryFn: async () => {
+        const res = await autoMatchParents()
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 0, // Always fresh
       gcTime: 5 * 60 * 1000,
       enabled: false, // Manual trigger only

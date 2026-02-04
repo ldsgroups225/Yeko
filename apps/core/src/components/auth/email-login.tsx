@@ -9,8 +9,8 @@ import {
 import { Input } from '@workspace/ui/components/input'
 import { Label } from '@workspace/ui/components/label'
 import { useState } from 'react'
-import { authClient } from '@/lib/auth-client'
 import { useI18nContext } from '@/i18n/i18n-react'
+import { authClient } from '@/lib/auth-client'
 
 export function EmailLogin() {
   const { LL } = useI18nContext()

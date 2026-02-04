@@ -7,7 +7,7 @@ import {
   getRefunds,
   processRefund,
   rejectRefund,
-} from '@repo/data-ops'
+} from '@repo/data-ops/queries/refunds'
 import { z } from 'zod'
 import { approveRefundSchema, createRefundSchema, processRefundSchema, rejectRefundSchema } from '@/schemas/refund'
 import { authServerFn } from '../lib/server-fn'

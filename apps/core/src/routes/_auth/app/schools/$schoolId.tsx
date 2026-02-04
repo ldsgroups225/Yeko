@@ -46,6 +46,7 @@ import {
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { CreateAdminDialog } from '@/components/schools/create-admin-dialog'
+import { useDateFormatter } from '@/hooks/use-date-formatter'
 import { schoolUsersQueryOptions } from '@/integrations/tanstack-query/school-users-options'
 import {
   deleteSchoolMutationOptions,
@@ -57,7 +58,6 @@ import {
 } from '@/integrations/tanstack-query/user-actions-options'
 import { useLogger } from '@/lib/logger'
 import { parseServerFnError } from '@/utils/error-handlers'
-import { formatDate } from '@/utils/formatDate'
 
 export const Route = createFileRoute('/_auth/app/schools/$schoolId')({
   component: SchoolDetails,
@@ -68,6 +68,7 @@ function SchoolDetails() {
   const { logger } = useLogger()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const { format: formatDate } = useDateFormatter()
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [selectedUserForSuspend, setSelectedUserForSuspend] = useState<{
     id: string

@@ -29,33 +29,25 @@ export function ThemeProvider({
   disableTransitionOnChange = false,
   ...props
 }: ThemeProviderProps) {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    // During SSR, always return the default theme to avoid hydration mismatch
-    if (typeof window === 'undefined') {
-      return defaultTheme
-    }
-
-    // Client-side: try to get theme from localStorage
-    try {
-      const stored = localStorage.getItem(storageKey) as Theme
-      return stored || defaultTheme
-    }
-    catch {
-      return defaultTheme
-    }
-  })
-
-  const [systemTheme, setSystemTheme] = useState<'light' | 'dark' | undefined>(() => {
-    // During SSR, return undefined
-    if (typeof window === 'undefined') {
-      return undefined
-    }
-
-    // Client-side: detect system theme
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-  })
-
+  const [theme, setThemeState] = useState<Theme>(defaultTheme)
+  const [systemTheme, setSystemTheme] = useState<'light' | 'dark' | undefined>(undefined)
   const [isMounted, setIsMounted] = useState(false)
+
+  // Initialize theme from storage on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem(storageKey) as Theme
+        if (stored) {
+          setThemeState(stored)
+        }
+      }
+      catch {
+        // Ignore
+      }
+      setSystemTheme(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+    }
+  }, [storageKey])
 
   const resolvedTheme = theme === 'system' ? systemTheme : theme
 

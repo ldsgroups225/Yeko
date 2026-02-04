@@ -66,7 +66,12 @@ export const timetablesOptions = {
   byClass: (params: TimetableByClassParams) =>
     queryOptions({
       queryKey: timetablesKeys.byClass(params.classId, params.schoolYearId),
-      queryFn: () => getTimetableByClass({ data: params }),
+      queryFn: async () => {
+        const res = await getTimetableByClass({ data: params })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 10 * 60 * 1000, // 10 minutes - timetables rarely change
       gcTime: 60 * 60 * 1000, // 1 hour
       enabled: !!params.classId && !!params.schoolYearId,
@@ -75,7 +80,12 @@ export const timetablesOptions = {
   byTeacher: (params: TimetableByTeacherParams) =>
     queryOptions({
       queryKey: timetablesKeys.byTeacher(params.teacherId, params.schoolYearId),
-      queryFn: () => getTimetableByTeacher({ data: params }),
+      queryFn: async () => {
+        const res = await getTimetableByTeacher({ data: params })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 10 * 60 * 1000,
       gcTime: 60 * 60 * 1000,
       enabled: !!params.teacherId && !!params.schoolYearId,
@@ -84,7 +94,12 @@ export const timetablesOptions = {
   byClassroom: (params: TimetableByClassroomParams) =>
     queryOptions({
       queryKey: timetablesKeys.byClassroom(params.classroomId, params.schoolYearId),
-      queryFn: () => getTimetableByClassroom({ data: params }),
+      queryFn: async () => {
+        const res = await getTimetableByClassroom({ data: params })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 10 * 60 * 1000,
       gcTime: 60 * 60 * 1000,
       enabled: !!params.classroomId && !!params.schoolYearId,
@@ -93,7 +108,12 @@ export const timetablesOptions = {
   detail: (id: string) =>
     queryOptions({
       queryKey: timetablesKeys.detail(id),
-      queryFn: () => getTimetableSession({ data: { id } }),
+      queryFn: async () => {
+        const res = await getTimetableSession({ data: { id } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 10 * 60 * 1000,
       gcTime: 60 * 60 * 1000,
       enabled: !!id,
@@ -102,7 +122,12 @@ export const timetablesOptions = {
   conflicts: (schoolId: string, schoolYearId: string) =>
     queryOptions({
       queryKey: timetablesKeys.conflicts(schoolId, schoolYearId),
-      queryFn: () => getAllConflicts({ data: { schoolId, schoolYearId } }),
+      queryFn: async () => {
+        const res = await getAllConflicts({ data: { schoolId, schoolYearId } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000, // 5 minutes
       gcTime: 30 * 60 * 1000,
       enabled: !!schoolId && !!schoolYearId,
@@ -111,7 +136,12 @@ export const timetablesOptions = {
   teacherHours: (teacherId: string, schoolYearId: string) =>
     queryOptions({
       queryKey: timetablesKeys.teacherHours(teacherId, schoolYearId),
-      queryFn: () => getTeacherWeeklyHours({ data: { teacherId, schoolYearId } }),
+      queryFn: async () => {
+        const res = await getTeacherWeeklyHours({ data: { teacherId, schoolYearId } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 10 * 60 * 1000,
       gcTime: 60 * 60 * 1000,
       enabled: !!teacherId && !!schoolYearId,
@@ -120,7 +150,12 @@ export const timetablesOptions = {
   teacherAvailability: (teacherId: string, schoolYearId: string, dayOfWeek: number) =>
     queryOptions({
       queryKey: timetablesKeys.teacherAvailability(teacherId, schoolYearId, dayOfWeek),
-      queryFn: () => getTeacherAvailability({ data: { teacherId, schoolYearId, dayOfWeek } }),
+      queryFn: async () => {
+        const res = await getTeacherAvailability({ data: { teacherId, schoolYearId, dayOfWeek } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
       enabled: !!teacherId && !!schoolYearId && dayOfWeek >= 1 && dayOfWeek <= 7,
@@ -129,7 +164,12 @@ export const timetablesOptions = {
   classroomAvailability: (classroomId: string, schoolYearId: string, dayOfWeek: number) =>
     queryOptions({
       queryKey: timetablesKeys.classroomAvailability(classroomId, schoolYearId, dayOfWeek),
-      queryFn: () => getClassroomAvailability({ data: { classroomId, schoolYearId, dayOfWeek } }),
+      queryFn: async () => {
+        const res = await getClassroomAvailability({ data: { classroomId, schoolYearId, dayOfWeek } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
       enabled: !!classroomId && !!schoolYearId && dayOfWeek >= 1 && dayOfWeek <= 7,

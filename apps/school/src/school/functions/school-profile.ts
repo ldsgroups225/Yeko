@@ -3,7 +3,7 @@ import {
   updateSchoolLogo as updateSchoolLogoQuery,
   updateSchoolProfile as updateSchoolProfileQuery,
   updateSchoolSettings as updateSchoolSettingsQuery,
-} from '@repo/data-ops'
+} from '@repo/data-ops/queries/schools'
 import { z } from 'zod'
 import {
   defaultSchoolSettings,

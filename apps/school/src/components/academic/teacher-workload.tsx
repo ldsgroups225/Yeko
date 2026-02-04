@@ -24,6 +24,7 @@ import {
 import { Progress } from '@workspace/ui/components/progress'
 import { Skeleton } from '@workspace/ui/components/skeleton'
 import { motion } from 'motion/react'
+import { useMemo } from 'react'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { getClassSubjects } from '@/school/functions/class-subjects'
@@ -118,35 +119,36 @@ export function TeacherWorkload() {
     return <WorkloadSkeleton />
   }
 
-  const teachers = teachersResult?.success ? teachersResult.data.teachers : []
+  const teachers = useMemo(() => teachersResult?.success ? teachersResult.data.teachers : [], [teachersResult])
 
   if (teachers.length === 0) {
     return <EmptyState />
   }
 
-  const subjects = classSubjectsResult?.success ? classSubjectsResult.data : []
+  const subjects = useMemo(() => classSubjectsResult?.success ? classSubjectsResult.data : [], [classSubjectsResult])
 
-  // Calculate workload per teacher
-  const teacherWorkloads = teachers.map((teacher) => {
-    const assignments
-      = subjects.filter(cs => cs.teacher?.id === teacher.id) || []
-    const totalHours = assignments.reduce(
-      (sum: number, cs) => sum + (cs.classSubject.hoursPerWeek || 0),
-      0,
-    )
-    const classCount = assignments.length
-    const isOverloaded = totalHours > MAX_HOURS_PER_WEEK
+  const teacherWorkloads = useMemo(() => {
+    return teachers.map((teacher) => {
+      const assignments
+        = subjects.filter(cs => cs.teacher?.id === teacher.id) || []
+      const totalHours = assignments.reduce(
+        (sum: number, cs) => sum + (cs.classSubject.hoursPerWeek || 0),
+        0,
+      )
+      const classCount = assignments.length
+      const isOverloaded = totalHours > MAX_HOURS_PER_WEEK
 
-    return {
-      teacher,
-      totalHours,
-      classCount,
-      isOverloaded,
-      assignments,
-    }
-  })
+      return {
+        teacher,
+        totalHours,
+        classCount,
+        isOverloaded,
+        assignments,
+      }
+    })
+  }, [teachers, subjects])
 
-  const overloadedTeachers = teacherWorkloads.filter(tw => tw.isOverloaded)
+  const overloadedTeachers = useMemo(() => teacherWorkloads.filter(tw => tw.isOverloaded), [teacherWorkloads])
 
   return (
     <div

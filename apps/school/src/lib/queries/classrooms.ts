@@ -22,7 +22,12 @@ export const classroomsOptions = {
   list: (filters: ClassroomFilters = {}) =>
     queryOptions({
       queryKey: classroomsKeys.list(filters),
-      queryFn: () => getClassrooms({ data: filters }),
+      queryFn: async () => {
+        const res = await getClassrooms({ data: filters })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000, // 5 minutes
       gcTime: 30 * 60 * 1000, // 30 minutes
     }),
@@ -30,7 +35,12 @@ export const classroomsOptions = {
   detail: (id: string) =>
     queryOptions({
       queryKey: classroomsKeys.detail(id),
-      queryFn: () => getClassroomById({ data: id }),
+      queryFn: async () => {
+        const res = await getClassroomById({ data: id })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
       enabled: !!id,

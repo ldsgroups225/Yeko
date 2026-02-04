@@ -10,7 +10,7 @@ import {
 import { useForm } from '@tanstack/react-form'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, redirect } from '@tanstack/react-router'
-import { zodValidator } from '@tanstack/zod-form-adapter'
+
 import { Badge } from '@workspace/ui/components/badge'
 import { Button } from '@workspace/ui/components/button'
 import {
@@ -167,12 +167,17 @@ function RoleManagement() {
       name: '',
       slug: '',
       description: '',
-      scope: 'school' as SchoolScope,
-      permissions: {} as SystemPermissions,
+      scope: 'school' as 'system' | 'school',
+      permissions: {} as Record<string, string[]>,
     },
-    validatorAdapter: zodValidator(),
     validators: {
-      onChange: roleSchema,
+      onChange: ({ value }) => {
+        const result = roleSchema.safeParse(value)
+        if (!result.success) {
+          return result.error.issues.map((e: { message: string }) => e.message).join(', ')
+        }
+        return undefined
+      },
     },
     onSubmit: async ({ value }) => {
       if (editingRole) {

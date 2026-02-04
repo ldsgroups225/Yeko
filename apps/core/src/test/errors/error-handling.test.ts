@@ -4,7 +4,7 @@
  * Using vitest with node environment for backend tests
  */
 
-import { getSchools } from '@repo/data-ops'
+import { getSchools } from '@repo/data-ops/queries/schools'
 import { describe, expect, test, vi } from 'vitest'
 
 // Create mock functions outside and use vi.hoisted or just define inside vi.mock

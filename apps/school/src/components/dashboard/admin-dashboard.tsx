@@ -31,6 +31,19 @@ const item = {
   show: { opacity: 1, y: 0 },
 }
 
+const chartMargin = { top: 10, right: 10, left: 0, bottom: 0 }
+
+const tooltipContentStyle = {
+  backgroundColor: 'var(--card)',
+  borderColor: 'var(--border)',
+  borderRadius: '12px',
+  boxShadow: 'var(--shadow-lg)',
+}
+
+const tooltipItemStyle = { color: 'var(--foreground)' }
+
+const barTooltipCursor = { fill: 'var(--muted)', opacity: 0.2 }
+
 export function AdminDashboard() {
   const t = useTranslations()
   return (
@@ -314,7 +327,7 @@ function RevenueChart() {
   return (
     <div className="h-[300px] w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+        <AreaChart data={chartData} margin={chartMargin}>
           <defs>
             <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3} />
@@ -339,13 +352,8 @@ function RevenueChart() {
             dx={-10}
           />
           <Tooltip
-            contentStyle={{
-              backgroundColor: 'var(--card)',
-              borderColor: 'var(--border)',
-              borderRadius: '12px',
-              boxShadow: 'var(--shadow-lg)',
-            }}
-            itemStyle={{ color: 'var(--foreground)' }}
+            contentStyle={tooltipContentStyle}
+            itemStyle={tooltipItemStyle}
           />
           <Area
             type="monotone"
@@ -375,7 +383,7 @@ function EnrollmentBarChart() {
   return (
     <div className="h-[300px] w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={enrollmentData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+        <BarChart data={enrollmentData} margin={chartMargin}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" opacity={0.5} />
           <XAxis
             dataKey="name"
@@ -393,14 +401,9 @@ function EnrollmentBarChart() {
             dx={-10}
           />
           <Tooltip
-            cursor={{ fill: 'var(--muted)', opacity: 0.2 }}
-            contentStyle={{
-              backgroundColor: 'var(--card)',
-              borderColor: 'var(--border)',
-              borderRadius: '12px',
-              boxShadow: 'var(--shadow-lg)',
-            }}
-            itemStyle={{ color: 'var(--foreground)' }}
+            cursor={barTooltipCursor}
+            contentStyle={tooltipContentStyle}
+            itemStyle={tooltipItemStyle}
           />
           <Bar dataKey="value" fill="var(--primary)" radius={[4, 4, 0, 0]} maxBarSize={40} />
         </BarChart>
@@ -435,13 +438,8 @@ function GenderPieChart() {
             ))}
           </Pie>
           <Tooltip
-            contentStyle={{
-              backgroundColor: 'var(--card)',
-              borderColor: 'var(--border)',
-              borderRadius: '12px',
-              boxShadow: 'var(--shadow-lg)',
-            }}
-            itemStyle={{ color: 'var(--foreground)' }}
+            contentStyle={tooltipContentStyle}
+            itemStyle={tooltipItemStyle}
           />
         </IconChartPie>
       </ResponsiveContainer>

@@ -1,9 +1,12 @@
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 import { IconLoader2 } from '@tabler/icons-react'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { useI18nContext } from '@/i18n/i18n-react'
 
 import { cn } from '@/lib/utils'
+
+const transitionStyle: CSSProperties = { transition: 'transform 0.2s ease-out' }
+const noTransitionStyle: CSSProperties = { transition: 'none' }
 
 interface PullToRefreshProps {
   children: ReactNode
@@ -73,6 +76,24 @@ export function PullToRefresh({
   const progress = Math.min(pullDistance / threshold, 1)
   const showIndicator = pullDistance > 10 || isRefreshing
 
+  const indicatorTopStyle = useMemo<CSSProperties>(
+    () => ({ top: Math.max(pullDistance - 40, 8) }),
+    [pullDistance],
+  )
+
+  const iconRotateStyle = useMemo<CSSProperties>(
+    () => ({ transform: isRefreshing ? undefined : `rotate(${progress * 360}deg)` }),
+    [isRefreshing, progress],
+  )
+
+  const contentTransformStyle = useMemo<CSSProperties>(
+    () => ({
+      transform: `translateY(${pullDistance}px)`,
+      ...(isPulling.current ? noTransitionStyle : transitionStyle),
+    }),
+    [pullDistance],
+  )
+
   return (
     <div
       ref={containerRef}
@@ -89,7 +110,7 @@ export function PullToRefresh({
             ? 'opacity-100'
             : 'opacity-0',
         )}
-        style={{ top: Math.max(pullDistance - 40, 8) }}
+        style={indicatorTopStyle}
       >
         <div className="flex flex-col items-center gap-1 rounded-full bg-background p-2 shadow-md">
           <IconLoader2
@@ -97,11 +118,7 @@ export function PullToRefresh({
               'h-5 w-5 text-primary',
               isRefreshing && 'animate-spin',
             )}
-            style={{
-              transform: isRefreshing
-                ? undefined
-                : `rotate(${progress * 360}deg)`,
-            }}
+            style={iconRotateStyle}
           />
           <span className="text-xs text-muted-foreground">
             {isRefreshing
@@ -112,14 +129,7 @@ export function PullToRefresh({
       </div>
 
       {/* Content with pull offset */}
-      <div
-        style={{
-          transform: `translateY(${pullDistance}px)`,
-          transition: isPulling.current
-            ? 'none'
-            : 'transform 0.2s ease-out',
-        }}
-      >
+      <div style={contentTransformStyle}>
         {children}
       </div>
     </div>

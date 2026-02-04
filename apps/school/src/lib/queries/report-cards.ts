@@ -63,7 +63,12 @@ export const reportCardsOptions = {
   byClass: (params: ReportCardsByClassParams) =>
     queryOptions({
       queryKey: reportCardsKeys.byClass(params.classId, params.termId, params.status),
-      queryFn: () => getReportCards({ data: params }),
+      queryFn: async () => {
+        const res = await getReportCards({ data: params })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000, // 5 minutes
       gcTime: 30 * 60 * 1000, // 30 minutes
       enabled: !!params.classId && !!params.termId,
@@ -72,7 +77,12 @@ export const reportCardsOptions = {
   byStudentTerm: (studentId: string, termId: string) =>
     queryOptions({
       queryKey: reportCardsKeys.byStudent(studentId, termId),
-      queryFn: () => getReportCardByStudentTerm({ data: { studentId, termId } }),
+      queryFn: async () => {
+        const res = await getReportCardByStudentTerm({ data: { studentId, termId } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
       enabled: !!studentId && !!termId,
@@ -81,7 +91,12 @@ export const reportCardsOptions = {
   detail: (id: string) =>
     queryOptions({
       queryKey: reportCardsKeys.detail(id),
-      queryFn: () => getReportCard({ data: { id } }),
+      queryFn: async () => {
+        const res = await getReportCard({ data: { id } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
       enabled: !!id,
@@ -90,7 +105,12 @@ export const reportCardsOptions = {
   data: (params: ReportCardDataParams) =>
     queryOptions({
       queryKey: reportCardsKeys.data(params.studentId, params.termId, params.classId),
-      queryFn: () => getReportCardData({ data: params }),
+      queryFn: async () => {
+        const res = await getReportCardData({ data: params })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 2 * 60 * 1000, // 2 minutes - averages may update
       gcTime: 15 * 60 * 1000,
       enabled: !!params.studentId && !!params.termId && !!params.classId,
@@ -99,7 +119,12 @@ export const reportCardsOptions = {
   stats: (classId: string, termId: string) =>
     queryOptions({
       queryKey: reportCardsKeys.stats(classId, termId),
-      queryFn: () => getClassReportCardStats({ data: { classId, termId } }),
+      queryFn: async () => {
+        const res = await getClassReportCardStats({ data: { classId, termId } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 2 * 60 * 1000,
       gcTime: 15 * 60 * 1000,
       enabled: !!classId && !!termId,
@@ -108,7 +133,12 @@ export const reportCardsOptions = {
   deliveryStatus: (classId: string, termId: string) =>
     queryOptions({
       queryKey: reportCardsKeys.delivery(classId, termId),
-      queryFn: () => getDeliveryStatusSummary({ data: { classId, termId } }),
+      queryFn: async () => {
+        const res = await getDeliveryStatusSummary({ data: { classId, termId } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 60 * 1000, // 1 minute - delivery status changes
       gcTime: 10 * 60 * 1000,
       enabled: !!classId && !!termId,
@@ -117,7 +147,12 @@ export const reportCardsOptions = {
   templates: (schoolId: string) =>
     queryOptions({
       queryKey: reportCardsKeys.templates(schoolId),
-      queryFn: () => getReportCardTemplates({ data: { schoolId } }),
+      queryFn: async () => {
+        const res = await getReportCardTemplates({ data: { schoolId } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 10 * 60 * 1000, // 10 minutes - templates rarely change
       gcTime: 60 * 60 * 1000, // 1 hour
       enabled: !!schoolId,
@@ -126,7 +161,12 @@ export const reportCardsOptions = {
   template: (id: string) =>
     queryOptions({
       queryKey: reportCardsKeys.template(id),
-      queryFn: () => getReportCardTemplate({ data: { id } }),
+      queryFn: async () => {
+        const res = await getReportCardTemplate({ data: { id } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 10 * 60 * 1000,
       gcTime: 60 * 60 * 1000,
       enabled: !!id,
@@ -135,7 +175,12 @@ export const reportCardsOptions = {
   defaultTemplate: (schoolId: string) =>
     queryOptions({
       queryKey: reportCardsKeys.defaultTemplate(schoolId),
-      queryFn: () => getDefaultTemplate({ data: { schoolId } }),
+      queryFn: async () => {
+        const res = await getDefaultTemplate({ data: { schoolId } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 10 * 60 * 1000,
       gcTime: 60 * 60 * 1000,
       enabled: !!schoolId,
@@ -144,7 +189,12 @@ export const reportCardsOptions = {
   comments: (reportCardId: string) =>
     queryOptions({
       queryKey: reportCardsKeys.comments(reportCardId),
-      queryFn: () => getTeacherComments({ data: { reportCardId } }),
+      queryFn: async () => {
+        const res = await getTeacherComments({ data: { reportCardId } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
       enabled: !!reportCardId,

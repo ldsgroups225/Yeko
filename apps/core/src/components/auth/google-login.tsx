@@ -6,8 +6,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@workspace/ui/components/card'
-import { authClient } from '@/lib/auth-client'
 import { useI18nContext } from '@/i18n/i18n-react'
+import { authClient } from '@/lib/auth-client'
 
 export function GoogleLogin() {
   const { LL } = useI18nContext()

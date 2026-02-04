@@ -3,6 +3,7 @@ import { IconCalendar, IconHash, IconInfoCircle, IconSchool, IconStar, IconTrend
 import { Badge } from '@workspace/ui/components/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { AnimatePresence, motion } from 'motion/react'
+import { useMemo } from 'react'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { formatDate } from '@/utils/formatDate'
@@ -67,10 +68,10 @@ export function StudentGradeCard({
 }: StudentGradeCardProps) {
   const t = useTranslations()
 
-  const validatedGrades = grades.filter(g => g.status === 'validated')
-  const pendingGrades = grades.filter(g => g.status !== 'validated')
+  const validatedGrades = useMemo(() => grades.filter(g => g.status === 'validated'), [grades])
+  const pendingGrades = useMemo(() => grades.filter(g => g.status !== 'validated'), [grades])
 
-  const gradesBySubject = validatedGrades.reduce(
+  const gradesBySubject = useMemo(() => validatedGrades.reduce(
     (acc, grade) => {
       const subjectName = grade.subject.name
       if (!acc[subjectName]) {
@@ -80,7 +81,7 @@ export function StudentGradeCard({
       return acc
     },
     {} as Record<string, Grade[]>,
-  )
+  ), [validatedGrades])
 
   return (
     <motion.div

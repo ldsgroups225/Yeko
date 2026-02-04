@@ -1,11 +1,14 @@
 import { IconSparkles } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import { motion } from 'motion/react'
-import { FinancialDashboard } from '@/components/finance'
+import { Suspense, lazy } from 'react'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
 import { refundsOptions, studentFeesOptions } from '@/lib/queries'
+
+const FinancialDashboard = lazy(() => import('@/components/finance').then(m => ({ default: m.FinancialDashboard })))
 
 export const Route = createFileRoute('/_auth/accounting/dashboard')({
   component: FinanceDashboardPage,
@@ -69,16 +72,18 @@ function FinanceDashboardPage() {
         </div>
       </motion.div>
 
-      <FinancialDashboard
-        totalExpectedRevenue={totalExpectedRevenue}
-        totalCollected={totalCollected}
-        totalOutstanding={totalOutstanding}
-        collectionRate={collectionRate}
-        totalStudents={totalStudents}
-        studentsWithBalance={studentsWithBalanceCount}
-        refundsPending={typeof pendingRefunds === 'number' ? pendingRefunds : 0}
-        isLoading={isLoading}
-      />
+      <Suspense fallback={<Skeleton className="h-[400px] w-full rounded-xl" />}>
+        <FinancialDashboard
+          totalExpectedRevenue={totalExpectedRevenue}
+          totalCollected={totalCollected}
+          totalOutstanding={totalOutstanding}
+          collectionRate={collectionRate}
+          totalStudents={totalStudents}
+          studentsWithBalance={studentsWithBalanceCount}
+          refundsPending={typeof pendingRefunds === 'number' ? pendingRefunds : 0}
+          isLoading={isLoading}
+        />
+      </Suspense>
     </div>
   )
 }

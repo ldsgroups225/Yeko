@@ -5,7 +5,7 @@ import {
   getPaymentById,
   getPaymentByReceiptNumber,
   getPayments,
-} from '@repo/data-ops'
+} from '@repo/data-ops/queries/payments'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import { z } from 'zod'
 import { cancelPaymentSchema, createPaymentSchema } from '@/schemas/payment'

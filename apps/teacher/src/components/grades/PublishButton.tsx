@@ -149,7 +149,7 @@ export function SyncStatusBadge({
       label: LL.sync.synced(),
       variant: 'outline' as const,
     }
-  }, [isOnline, isPublishing, pendingCount])
+  }, [isOnline, isPublishing, pendingCount, LL.sync])
 
   const Icon = status.icon
 

@@ -22,7 +22,12 @@ export const studentAttendanceKeys = {
 export function classAttendanceOptions(classId: string, date: string, classSessionId?: string) {
   return queryOptions({
     queryKey: studentAttendanceKeys.class(classId, date),
-    queryFn: () => getClassAttendanceForDate({ data: { classId, date, classSessionId } }),
+    queryFn: async () => {
+      const res = await getClassAttendanceForDate({ data: { classId, date, classSessionId } })
+      if (!res.success)
+        throw new Error(res.error)
+      return res.data
+    },
     staleTime: 2 * 60 * 1000,
     enabled: !!classId && !!date,
   })
@@ -36,7 +41,12 @@ export function studentAttendanceHistoryOptions(params: {
 }) {
   return queryOptions({
     queryKey: studentAttendanceKeys.student(params.studentId, params.startDate, params.endDate),
-    queryFn: () => getStudentHistory({ data: params }),
+    queryFn: async () => {
+      const res = await getStudentHistory({ data: params })
+      if (!res.success)
+        throw new Error(res.error)
+      return res.data
+    },
     staleTime: 5 * 60 * 1000,
   })
 }
@@ -48,7 +58,12 @@ export function attendanceStatisticsOptions(params: {
 }) {
   return queryOptions({
     queryKey: studentAttendanceKeys.statistics(params.startDate, params.endDate),
-    queryFn: () => getStatistics({ data: params }),
+    queryFn: async () => {
+      const res = await getStatistics({ data: params })
+      if (!res.success)
+        throw new Error(res.error)
+      return res.data
+    },
     staleTime: 5 * 60 * 1000,
   })
 }
@@ -60,7 +75,12 @@ export function chronicAbsenceOptions(params: {
 }) {
   return queryOptions({
     queryKey: studentAttendanceKeys.chronic(params.studentId),
-    queryFn: () => checkChronicAbsence({ data: params }),
+    queryFn: async () => {
+      const res = await checkChronicAbsence({ data: params })
+      if (!res.success)
+        throw new Error(res.error)
+      return res.data
+    },
     staleTime: 10 * 60 * 1000,
   })
 }

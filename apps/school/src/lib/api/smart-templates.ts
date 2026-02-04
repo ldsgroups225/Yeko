@@ -1,5 +1,5 @@
 import type { EducationLevel, Serie, Track } from '@repo/data-ops'
-import { getSmartCatalogData } from '@repo/data-ops'
+import { getSmartCatalogData } from '@repo/data-ops/queries/catalogs'
 import { createServerFn } from '@tanstack/react-start'
 import * as z from 'zod'
 

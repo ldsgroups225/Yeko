@@ -1,12 +1,11 @@
 import { IconArrowLeft, IconCloudUpload, IconDeviceFloppy, IconUsers } from '@tabler/icons-react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'
 import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { Input } from '@workspace/ui/components/input'
 import { Skeleton } from '@workspace/ui/components/skeleton'
-import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { SyncStatusContainer } from '@/components/grades/SyncStatusContainer'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
@@ -45,51 +44,44 @@ function GradeEntryPage() {
     enabled: !!context?.schoolYearId,
   })
 
-  // 3. Manage local note state
-  const [localNoteId, setLocalNoteId] = useState<string | null>(null)
+  // 3. Manage local note state with useQuery
+  const { data: localNoteId, isLoading: localNoteLoading } = useQuery({
+    queryKey: ['local-note', classId, subjectId, currentTerm?.id, context?.teacherId],
+    queryFn: async () => {
+      if (!context || !currentTerm || !classId || !subjectId || !data?.className)
+        return null
 
-  useEffect(() => {
-    if (context && currentTerm && classId && subjectId && data?.className) {
-      const initLocalNote = async () => {
-        try {
-          const note = await localNotesService.findNote({
-            classId,
-            subjectId,
-            termId: currentTerm.id,
-            type: 'CLASS_TEST',
-            teacherId: context.teacherId,
-          })
+      const note = await localNotesService.findNote({
+        classId,
+        subjectId,
+        termId: currentTerm.id,
+        type: 'CLASS_TEST',
+        teacherId: context.teacherId,
+      })
 
-          if (!note) {
-            const id = crypto.randomUUID()
-            await localNotesService.saveNoteLocally({
-              id,
-              title: LL.grades.entryTitle({
-                className: data.className,
-                subjectName: data.subjectName,
-              }),
-              type: 'CLASS_TEST',
-              classId,
-              subjectId,
-              termId: currentTerm.id,
-              teacherId: context.teacherId,
-              schoolId: context.schoolId,
-              schoolYearId: context.schoolYearId,
-              isPublished: false,
-            })
-            setLocalNoteId(id)
-          }
-          else {
-            setLocalNoteId(note.id)
-          }
-        }
-        catch (err) {
-          console.error('Failed to initialize local note:', err)
-        }
+      if (!note) {
+        const id = crypto.randomUUID()
+        await localNotesService.saveNoteLocally({
+          id,
+          title: LL.grades.entryTitle({
+            className: data.className,
+            subjectName: data.subjectName,
+          }),
+          type: 'CLASS_TEST',
+          classId,
+          subjectId,
+          termId: currentTerm.id,
+          teacherId: context.teacherId,
+          schoolId: context.schoolId,
+          schoolYearId: context.schoolYearId,
+          isPublished: false,
+        })
+        return id
       }
-      initLocalNote()
-    }
-  }, [context, currentTerm, classId, subjectId, data, LL])
+      return note.id
+    },
+    enabled: !!(context && currentTerm && classId && subjectId && data?.className),
+  })
 
   // 4. Hook into local grades
   const { grades: localGradesMap, updateGrade, isLoading: gradesLoading } = useNoteGrades({
@@ -97,31 +89,31 @@ function GradeEntryPage() {
   })
 
   // 5. Syncing hook
-  const { publishNotes, isPublishing } = useSync()
+  const { publishNotes, isPublishing: isSyncing } = useSync()
 
-  const handleSaveDraft = () => {
-    toast.success(LL.grades.draftSaved())
-  }
-
-  const handlePublish = async () => {
-    if (!localNoteId)
-      return
-
-    try {
+  const publishMutation = useMutation({
+    mutationFn: async () => {
+      if (!localNoteId)
+        return
       await localNotesService.publishNote(localNoteId)
-      const result = await publishNotes({ noteIds: [localNoteId] })
-
-      if (result.success) {
+      return publishNotes({ noteIds: [localNoteId] })
+    },
+    onSuccess: (result) => {
+      if (result?.success) {
         toast.success(LL.grades.published())
         queryClient.invalidateQueries({ queryKey: ['teacher', 'grades'] })
       }
       else {
         toast.error(LL.grades.publishFailed())
       }
-    }
-    catch {
+    },
+    onError: () => {
       toast.error(LL.errors.serverError())
-    }
+    },
+  })
+
+  const handleSaveDraft = () => {
+    toast.success(LL.grades.draftSaved())
   }
 
   const handleGradeChange = (studentId: string, value: string) => {
@@ -134,7 +126,8 @@ function GradeEntryPage() {
     }
   }
 
-  const isLoading = contextLoading || dataLoading || gradesLoading
+  const isLoading = contextLoading || dataLoading || gradesLoading || localNoteLoading
+  const isPublishing = publishMutation.isPending || isSyncing
 
   return (
     <div className="flex flex-col gap-4 p-4 pb-32">
@@ -201,7 +194,7 @@ function GradeEntryPage() {
                   </Button>
                   <Button
                     className="flex-1"
-                    onClick={handlePublish}
+                    onClick={() => publishMutation.mutate()}
                     disabled={isPublishing}
                   >
                     <IconCloudUpload className="mr-2 h-4 w-4" />

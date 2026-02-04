@@ -1,14 +1,14 @@
+import { getAttendanceSettings } from '@repo/data-ops/queries/attendance-settings'
+import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import {
   bulkUpsertTeacherAttendance,
   countTeacherLatenessInMonth,
   deleteTeacherAttendance,
-  getAttendanceSettings,
   getDailyTeacherAttendance,
   getTeacherAttendanceRange,
   getTeacherPunctualityReport,
   upsertTeacherAttendance,
-} from '@repo/data-ops'
-import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
+} from '@repo/data-ops/queries/teacher-attendance'
 import { z } from 'zod'
 import { bulkTeacherAttendanceSchema, teacherAttendanceSchema } from '@/schemas/teacher-attendance'
 import { authServerFn } from '../lib/server-fn'

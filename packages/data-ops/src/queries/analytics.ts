@@ -60,29 +60,35 @@ export async function getAnalyticsOverview(timeRange: '7d' | '30d' | '90d' | '1y
     )
   const previousPeriodSchools = previousPeriodResult?.count || 0
 
+  // Get real user activity data and growth in parallel
+  const [
+    activeUsers,
+    currentPeriodUsers,
+    previousPeriodUsers,
+    totalActiveUsers,
+    avgResponseTime,
+  ] = await Promise.all([
+    getDailyActiveUsers(startDate),
+    getUserActivityCount(startDate, now),
+    getUserActivityCount(previousStartDate, startDate),
+    getMonthlyActiveUsers(new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000)),
+    getAverageResponseTime(startDate),
+  ])
+
   // Calculate growth percentage
   const schoolsGrowth = previousPeriodSchools > 0
     ? Math.round(((currentPeriodSchools - previousPeriodSchools) / previousPeriodSchools) * 100)
     : 0
 
-  // Get real user activity data
-  const activeUsers = await getDailyActiveUsers(startDate)
-
   // Calculate user growth
-  const currentPeriodUsers = await getUserActivityCount(startDate, now)
-  const previousPeriodUsers = await getUserActivityCount(previousStartDate, startDate)
   const userGrowth = previousPeriodUsers > 0
     ? Math.round(((currentPeriodUsers - previousPeriodUsers) / previousPeriodUsers) * 100)
     : 0
 
   // Calculate engagement rate (DAU / Total users who have ever been active)
-  const totalActiveUsers = await getMonthlyActiveUsers(new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000))
   const engagementRate = totalActiveUsers > 0
     ? Math.round((activeUsers / totalActiveUsers) * 100)
     : 0
-
-  // Get real average response time
-  const avgResponseTime = await getAverageResponseTime(startDate)
 
   return {
     totalSchools,
@@ -118,21 +124,16 @@ export interface SchoolsPerformance {
 export async function getSchoolsPerformance(timeRange: '7d' | '30d' | '90d' | '1y'): Promise<SchoolsPerformance> {
   const db = getDb()
 
-  // Get schools by status
-  const [activeResult] = await db
-    .select({ count: count() })
-    .from(schools)
-    .where(eq(schools.status, 'active'))
-
-  const [inactiveResult] = await db
-    .select({ count: count() })
-    .from(schools)
-    .where(eq(schools.status, 'inactive'))
-
-  const [suspendedResult] = await db
-    .select({ count: count() })
-    .from(schools)
-    .where(eq(schools.status, 'suspended'))
+  // Get schools by status in parallel
+  const [
+    [activeResult],
+    [inactiveResult],
+    [suspendedResult],
+  ] = await Promise.all([
+    db.select({ count: count() }).from(schools).where(eq(schools.status, 'active')),
+    db.select({ count: count() }).from(schools).where(eq(schools.status, 'inactive')),
+    db.select({ count: count() }).from(schools).where(eq(schools.status, 'suspended')),
+  ])
 
   // Get top schools with real engagement scores
   const topSchoolsData = await db
@@ -213,19 +214,22 @@ export async function getPlatformUsage(timeRange: '7d' | '30d' | '90d' | '1y'): 
   const weekStartDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
   const monthStartDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
 
-  // Get real user activity data
-  const dau = await getDailyActiveUsers(new Date(now.getTime() - 24 * 60 * 60 * 1000))
-  const wau = await getWeeklyActiveUsers(weekStartDate)
-  const mau = await getMonthlyActiveUsers(monthStartDate)
-
-  // Get real feature usage
-  const featureUsage = await getFeatureUsage(startDate)
-
-  // Get real API endpoint usage
-  const apiEndpoints = await getApiEndpointUsage(startDate)
-
-  // Get real peak usage times
-  const peakUsageTimes = await getPeakUsageTimes(startDate)
+  // Get real user activity data, feature usage, API stats, and peak times in parallel
+  const [
+    dau,
+    wau,
+    mau,
+    featureUsage,
+    apiEndpoints,
+    peakUsageTimes,
+  ] = await Promise.all([
+    getDailyActiveUsers(new Date(now.getTime() - 24 * 60 * 60 * 1000)),
+    getWeeklyActiveUsers(weekStartDate),
+    getMonthlyActiveUsers(monthStartDate),
+    getFeatureUsage(startDate),
+    getApiEndpointUsage(startDate),
+    getPeakUsageTimes(startDate),
+  ])
 
   return {
     dau,

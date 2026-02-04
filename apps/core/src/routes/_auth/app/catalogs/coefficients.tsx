@@ -385,6 +385,8 @@ function CoefficientsCatalog() {
     if (!coefficientsData || !subjects || !grades)
       return null
 
+    const gradeOrderById = new Map(grades.map(grade => [grade.id, grade.order]))
+
     // Build unique column keys from actual data (grade or grade+series)
     const columnKeys = new Set<string>()
     const columnInfo: Record<string, { gradeId: string, gradeName: string, seriesId?: string, seriesName?: string }> = {}
@@ -407,9 +409,7 @@ function CoefficientsCatalog() {
     const sortedColumns = Array.from(columnKeys).sort((a, b) => {
       const infoA = columnInfo[a]
       const infoB = columnInfo[b]
-      const gradeA = grades.find(g => g.id === infoA?.gradeId)
-      const gradeB = grades.find(g => g.id === infoB?.gradeId)
-      const orderDiff = (gradeA?.order || 0) - (gradeB?.order || 0)
+      const orderDiff = (gradeOrderById.get(infoA?.gradeId ?? '') || 0) - (gradeOrderById.get(infoB?.gradeId ?? '') || 0)
       if (orderDiff !== 0)
         return orderDiff
       return (infoA?.seriesName || '').localeCompare(infoB?.seriesName || '')

@@ -10,6 +10,7 @@ import {
   TableRow,
 } from '@workspace/ui/components/table'
 import { AnimatePresence, motion } from 'motion/react'
+import { useMemo } from 'react'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
@@ -50,13 +51,13 @@ function getRankStyles(rank: number): string {
 
 export function ClassAveragesTable({ averages, className }: ClassAveragesTableProps) {
   const t = useTranslations()
-  const sortedAverages = [...averages].sort((a, b) => a.rank - b.rank)
+  const sortedAverages = useMemo(() => [...averages].sort((a, b) => a.rank - b.rank), [averages])
 
-  const classAverage = averages.length > 0
+  const classAverage = useMemo(() => averages.length > 0
     ? averages.reduce((sum, a) => sum + a.weightedAverage, 0) / averages.length
-    : 0
-  const passCount = averages.filter(a => a.weightedAverage >= 10).length
-  const passRate = averages.length > 0 ? (passCount / averages.length) * 100 : 0
+    : 0, [averages])
+  const passCount = useMemo(() => averages.filter(a => a.weightedAverage >= 10).length, [averages])
+  const passRate = useMemo(() => averages.length > 0 ? (passCount / averages.length) * 100 : 0, [passCount, averages.length])
 
   return (
     <Card className={cn('overflow-hidden rounded-2xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl', className)}>
