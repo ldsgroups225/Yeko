@@ -475,6 +475,7 @@ function CreateSchoolYearDialog({
                 {t.settings.schoolYears.startDate()}
               </Label>
               <DatePicker
+                captionLayout="dropdown"
                 date={startDate ? new Date(startDate) : undefined}
                 onSelect={(date: Date | undefined) => setStartDate(date ? (date.toISOString().split('T')[0] ?? '') : '')}
                 className={inputClass}
@@ -488,6 +489,7 @@ function CreateSchoolYearDialog({
                 {t.settings.schoolYears.endDate()}
               </Label>
               <DatePicker
+                captionLayout="dropdown"
                 date={endDate ? new Date(endDate) : undefined}
                 onSelect={(date: Date | undefined) => setEndDate(date ? (date.toISOString().split('T')[0] ?? '') : '')}
                 className={inputClass}

@@ -97,12 +97,10 @@ export function EnrollmentDialog({
 
   const selectedYearId = form.watch('schoolYearId')
 
-  const { data: classesResult, isLoading: classesLoading } = useQuery({
+  const { data: classes, isLoading: classesLoading } = useQuery({
     ...classesOptions.list({ schoolYearId: selectedYearId }),
     enabled: open && !!selectedYearId,
   })
-
-  const classesData = classesResult?.success ? classesResult.data : []
 
   const enrollMutation = useMutation({
     mutationFn: (data: EnrollmentFormData) =>
@@ -194,7 +192,7 @@ export function EnrollmentDialog({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {classesData?.map(cls => (
+                      {classes?.map(cls => (
                         <SelectItem key={cls.class.id} value={cls.class.id}>
                           {cls.grade?.name}
                           {' '}
@@ -209,7 +207,7 @@ export function EnrollmentDialog({
                     {selectedYearId && classesLoading && t.common.loading()}
                     {selectedYearId
                       && !classesLoading
-                      && (!classesData || classesData.length === 0)
+                      && (!classes || classes.length === 0)
                       && t.students.noClassesForYear()}
                   </FormDescription>
                   <FormMessage />
@@ -229,6 +227,7 @@ export function EnrollmentDialog({
                   </FormLabel>
                   <FormControl>
                     <DatePicker
+                      captionLayout="dropdown"
                       date={field.value ? new Date(field.value) : undefined}
                       onSelect={(date: Date | undefined) => field.onChange(date ? (date.toISOString().split('T')[0] ?? '') : '')}
                       placeholder={t.students.enrollmentDate()}
