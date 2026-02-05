@@ -558,6 +558,10 @@ export function StudentsList() {
                                 variant="ghost"
                                 size="icon"
                                 className="hover:bg-card/20"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  e.preventDefault()
+                                }}
                               >
                                 <IconDots className="h-4 w-4" />
                               </Button>
@@ -567,17 +571,6 @@ export function StudentsList() {
                             align="end"
                             className="backdrop-blur-xl bg-popover/90 border border-border/40"
                           >
-                            <DropdownMenuItem
-                              render={(
-                                <Link
-                                  to="/students/$studentId"
-                                  params={{ studentId: item.student.id }}
-                                >
-                                  <IconEye className="mr-2 h-4 w-4" />
-                                  {t.common.view()}
-                                </Link>
-                              )}
-                            />
                             <DropdownMenuItem
                               render={(
                                 <Link
@@ -748,7 +741,12 @@ export function StudentsList() {
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -10 }}
                           transition={{ delay: index * 0.02 }}
-                          className="border-border/10 group hover:bg-card/30 transition-colors"
+                          className="border-border/10 group hover:bg-card/30 transition-colors cursor-pointer"
+                          onClick={() =>
+                            navigate({
+                              to: '/students/$studentId',
+                              params: { studentId: item.student.id },
+                            })}
                         >
                           <TableCell>
                             <Checkbox
@@ -834,6 +832,10 @@ export function StudentsList() {
                                     variant="ghost"
                                     size="icon"
                                     className="hover:bg-card/20"
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      e.preventDefault()
+                                    }}
                                   >
                                     <IconDots className="h-4 w-4" />
                                   </Button>
@@ -843,17 +845,6 @@ export function StudentsList() {
                                 align="end"
                                 className="backdrop-blur-xl bg-popover/90 border border-border/40"
                               >
-                                <DropdownMenuItem
-                                  render={(
-                                    <Link
-                                      to="/students/$studentId"
-                                      params={{ studentId: item.student.id }}
-                                    >
-                                      <IconEye className="mr-2 h-4 w-4" />
-                                      {t.common.view()}
-                                    </Link>
-                                  )}
-                                />
                                 <DropdownMenuItem
                                   render={(
                                     <Link

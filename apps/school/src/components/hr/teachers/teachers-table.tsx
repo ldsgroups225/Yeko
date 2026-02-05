@@ -194,6 +194,10 @@ export function TeachersTable({ filters }: TeachersTableProps) {
                   variant="ghost"
                   size="icon"
                   className="hover:bg-primary/10 hover:text-primary transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    e.preventDefault()
+                  }}
                 >
                   <IconDots className="h-4 w-4" />
                 </Button>
@@ -203,14 +207,6 @@ export function TeachersTable({ filters }: TeachersTableProps) {
               align="end"
               className="backdrop-blur-2xl bg-popover/90 border-border/40 min-w-[160px]"
             >
-              <DropdownMenuItem
-                className="cursor-pointer gap-2"
-                onClick={() =>
-                  navigate({ to: `/users/teachers/${row.original.id}` })}
-              >
-                <IconEye className="h-4 w-4" />
-                {t.common.view()}
-              </DropdownMenuItem>
               <DropdownMenuItem
                 className="cursor-pointer gap-2"
                 onClick={() =>

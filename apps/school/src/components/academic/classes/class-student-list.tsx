@@ -142,7 +142,15 @@ export function ClassStudentList({ classId }: ClassStudentListProps) {
                 <DropdownMenu>
                   <DropdownMenuTrigger
                     render={(
-                      <Button variant="ghost" size="icon" className="size-8">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="size-8"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          e.preventDefault()
+                        }}
+                      >
                         <IconDots className="size-4" />
                       </Button>
                     )}

@@ -155,7 +155,8 @@ export function PaymentsTable({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className="group hover:bg-muted/30 border-border/40 transition-colors"
+                  className="group hover:bg-muted/30 border-border/40 transition-colors cursor-pointer"
+                  onClick={() => onView?.(payment)}
                 >
                   <TableCell className="font-mono text-sm text-muted-foreground font-medium">
                     {payment.receiptNumber || '-'}
@@ -216,6 +217,10 @@ export function PaymentsTable({
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 rounded-lg hover:bg-muted"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              e.preventDefault()
+                            }}
                           >
                             <IconDots className="h-4 w-4" />
                           </Button>
@@ -225,13 +230,6 @@ export function PaymentsTable({
                         align="end"
                         className="w-48 backdrop-blur-xl bg-card/95 border-border/40 shadow-xl rounded-xl p-1"
                       >
-                        <DropdownMenuItem
-                          onClick={() => onView?.(payment)}
-                          className="rounded-lg cursor-pointer focus:bg-primary/10 font-medium"
-                        >
-                          <IconEye className="mr-2 h-4 w-4 text-muted-foreground" />
-                          {t.common.view()}
-                        </DropdownMenuItem>
                         {payment.status === 'completed' && (
                           <DropdownMenuItem
                             onClick={() => onPrintReceipt?.(payment)}

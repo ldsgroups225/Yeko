@@ -209,6 +209,10 @@ export function ClassroomsTable({
                   variant="ghost"
                   size="icon"
                   className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    e.preventDefault()
+                  }}
                 >
                   <IconDots className="h-4 w-4" />
                 </Button>
@@ -218,16 +222,6 @@ export function ClassroomsTable({
               align="end"
               className="backdrop-blur-xl bg-card/95 border-border/40 shadow-xl rounded-xl p-1"
             >
-              <DropdownMenuItem
-                className="rounded-lg cursor-pointer focus:bg-primary/10 font-medium"
-                onClick={() =>
-                  navigate({
-                    to: `/spaces/classrooms/${row.original.id}`,
-                  })}
-              >
-                <IconEye className="mr-2 h-4 w-4 text-muted-foreground" />
-                {t.common.view()}
-              </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-destructive focus:bg-destructive/10 focus:text-destructive rounded-lg cursor-pointer font-medium"
                 onClick={() => setItemToDelete(row.original)}
@@ -350,7 +344,11 @@ export function ClassroomsTable({
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.15, delay: index * 0.03 }}
-                          className="group hover:bg-muted/30 border-border/40 transition-colors"
+                          className="group hover:bg-muted/30 border-border/40 transition-colors cursor-pointer"
+                          onClick={() =>
+                            navigate({
+                              to: `/spaces/classrooms/${row.original.id}`,
+                            })}
                         >
                           {row.getVisibleCells().map(cell => (
                             <TableCell key={cell.id}>

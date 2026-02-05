@@ -279,7 +279,14 @@ export function ClassesTable({
           <DropdownMenu>
             <DropdownMenuTrigger
               render={(
-                <Button variant="ghost" size="icon">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    e.preventDefault()
+                  }}
+                >
                   <IconDots className="h-4 w-4" />
                 </Button>
               )}
@@ -288,13 +295,6 @@ export function ClassesTable({
               align="end"
               className="backdrop-blur-xl bg-popover/90 border border-border/40"
             >
-              <DropdownMenuItem
-                onClick={() =>
-                  navigate({ to: `/classes/${row.original.class.id}` })}
-              >
-                <IconEye className="mr-2 h-4 w-4" />
-                {t.common.view()}
-              </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-destructive focus:text-destructive"
                 onClick={() => setClassToDelete(row.original)}
@@ -575,13 +575,6 @@ export function ClassesTable({
                             className="backdrop-blur-xl bg-popover/90 border border-border/40"
                           >
                             <DropdownMenuItem
-                              onClick={() =>
-                                navigate({ to: `/classes/${item.class.id}` })}
-                            >
-                              <IconEye className="mr-2 h-4 w-4" />
-                              {t.common.view()}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
                               onClick={() => setClassToDelete(item)}
                               className="text-destructive focus:text-destructive"
                             >
@@ -669,7 +662,9 @@ export function ClassesTable({
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
                         transition={{ delay: index * 0.02 }}
-                        className="border-border/10 group hover:bg-card/30 transition-colors"
+                        className="border-border/10 group hover:bg-card/30 transition-colors cursor-pointer"
+                        onClick={() =>
+                          navigate({ to: `/classes/${row.original.class.id}` })}
                       >
                         {row.getVisibleCells().map(cell => (
                           <TableCell key={cell.id} className="py-3">
