@@ -156,4 +156,11 @@ export default antfu({
   rules: {
     'neverthrow/must-use-result': 'off', // Disabled globally to prevent crash, will enable per-project
   },
+}, {
+  // TanStack Router route files specific configuration
+  // These files export a 'Route' constant which triggers react-refresh/only-export-components
+  files: ['**/src/routes/**/*.tsx'],
+  rules: {
+    'react-refresh/only-export-components': 'off',
+  },
 })
