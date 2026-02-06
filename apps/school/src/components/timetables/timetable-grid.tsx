@@ -1,9 +1,9 @@
-import type { TimetableSessionData } from './timetable-session-card'
-
-import { ScrollArea, ScrollBar } from '@workspace/ui/components/scroll-area'
-import { Skeleton } from '@workspace/ui/components/skeleton'
-
 import type { CSSProperties } from 'react'
+
+import type { TimetableSessionData } from './timetable-session-card'
+import { ScrollArea, ScrollBar } from '@workspace/ui/components/scroll-area'
+
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import { motion } from 'motion/react'
 import { Fragment, useEffect, useMemo, useState } from 'react'
 import { useTranslations } from '@/i18n'
@@ -140,7 +140,8 @@ export function TimetableGrid({
   }), [daysToShow.length, timeSlots.length])
 
   const currentTimeStyle = useMemo<CSSProperties | undefined>(() => {
-    if (!timePosition) return undefined
+    if (!timePosition)
+      return undefined
     return {
       ...currentTimeIndicatorStyle,
       gridRow: timePosition.row,

@@ -1,3 +1,4 @@
+import type { ResultAsync } from 'neverthrow'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { DatabaseError } from '../../errors'
 import { getStudentById, getStudents } from '../../queries/students'
@@ -87,9 +88,9 @@ describe('students queries', () => {
         throw new Error('Database connection failed')
       })
 
-      const result = await getStudents({ schoolId: 'school-1' })
+      const result = getStudents({ schoolId: 'school-1' })
 
-      await expectDatabaseErrorType(result as any, 'INTERNAL_ERROR')
+      await expectDatabaseErrorType(result as unknown as ResultAsync<unknown, DatabaseError>, 'INTERNAL_ERROR')
     })
 
     test('should apply filters correctly', async () => {
@@ -198,9 +199,9 @@ describe('students queries', () => {
         }),
       })
 
-      const result = await getStudentById('non-existent-id')
+      const result = getStudentById('non-existent-id')
 
-      await expectDatabaseErrorType(result as any, 'NOT_FOUND')
+      await expectDatabaseErrorType(result as unknown as ResultAsync<unknown, DatabaseError>, 'NOT_FOUND')
     })
 
     test('should handle database connection errors', async () => {

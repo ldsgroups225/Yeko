@@ -74,7 +74,7 @@ function CurriculumProgressPage() {
     ...progressOptions.byClass({ classId: selectedClassId, termId: selectedTermId }),
     enabled: !!selectedClassId && !!selectedTermId,
   })
-  const progress = progressResult?.success ? progressResult.data : []
+  const progress = progressResult || []
 
   const canShowProgress = effectiveYearId && selectedTermId && selectedClassId
 

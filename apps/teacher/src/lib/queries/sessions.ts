@@ -1,4 +1,4 @@
-import { queryOptions } from '@tanstack/react-query'
+import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 
 import { getParticipationGrades } from '@/teacher/functions/participation'
 import {
@@ -45,6 +45,7 @@ export function sessionHistoryQueryOptions(params: SessionHistoryParams) {
         },
       }),
     staleTime: 60 * 1000, // 1 minute
+    placeholderData: keepPreviousData,
   })
 }
 

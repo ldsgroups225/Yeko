@@ -115,16 +115,7 @@ export function TeacherWorkload() {
 
   const isLoading = schoolYearLoading || teachersLoading || subjectsLoading
 
-  if (isLoading) {
-    return <WorkloadSkeleton />
-  }
-
   const teachers = useMemo(() => teachersResult?.success ? teachersResult.data.teachers : [], [teachersResult])
-
-  if (teachers.length === 0) {
-    return <EmptyState />
-  }
-
   const subjects = useMemo(() => classSubjectsResult?.success ? classSubjectsResult.data : [], [classSubjectsResult])
 
   const teacherWorkloads = useMemo(() => {
@@ -149,6 +140,14 @@ export function TeacherWorkload() {
   }, [teachers, subjects])
 
   const overloadedTeachers = useMemo(() => teacherWorkloads.filter(tw => tw.isOverloaded), [teacherWorkloads])
+
+  if (isLoading) {
+    return <WorkloadSkeleton />
+  }
+
+  if (teachers.length === 0) {
+    return <EmptyState />
+  }
 
   return (
     <div

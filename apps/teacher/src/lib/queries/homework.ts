@@ -1,4 +1,4 @@
-import { queryOptions } from '@tanstack/react-query'
+import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 
 import { getHomework, getHomeworkDetails } from '@/teacher/functions/homework'
 
@@ -26,6 +26,7 @@ export function homeworkListQueryOptions(params: HomeworkListParams) {
         },
       }),
     staleTime: 60 * 1000, // 1 minute
+    placeholderData: keepPreviousData,
   })
 }
 

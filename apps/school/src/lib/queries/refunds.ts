@@ -1,4 +1,4 @@
-import { queryOptions } from '@tanstack/react-query'
+import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import {
   getPendingRefunds,
   getRefund,
@@ -35,6 +35,7 @@ export const refundsOptions = {
       },
       staleTime: 2 * 60 * 1000,
       gcTime: 10 * 60 * 1000,
+      placeholderData: keepPreviousData,
     }),
 
   detail: (id: string) =>

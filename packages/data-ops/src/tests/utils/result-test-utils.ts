@@ -1,3 +1,4 @@
+import type { YekoLogger } from '@repo/logger'
 import type { Result } from 'neverthrow'
 import type { Mock } from 'vitest'
 import { ResultAsync } from 'neverthrow'
@@ -100,9 +101,17 @@ export async function expectDatabaseErrorType<T>(
 }
 
 /**
- * Creates a mock logger for testing
+ * Simple mock type for database testing
  */
-export function createMockLogger(): any {
+export interface MockDb {
+  query: Record<string, Record<string, Mock>>
+  insert: Mock
+  update: Mock
+  delete: Mock
+  select: Mock
+  transaction: Mock
+}
+export function createMockLogger(): YekoLogger {
   return {
     debug: vi.fn(),
     info: vi.fn(),
@@ -112,6 +121,7 @@ export function createMockLogger(): any {
     audit: vi.fn(),
     performance: vi.fn(),
     security: vi.fn(),
+    child: vi.fn().mockReturnThis() as unknown as (category: string[]) => YekoLogger,
     withContext: vi.fn().mockReturnThis(),
     withUser: vi.fn().mockReturnThis(),
     withSchool: vi.fn().mockReturnThis(),
@@ -171,8 +181,8 @@ export function expectDatabaseErrorLogged(
 /**
  * Creates a mock database client for testing
  */
-export function createMockDbClient(): any {
-  return {
+export function createMockDbClient(): MockDb {
+  const mock = {
     query: {
       students: {
         findFirst: vi.fn(),
@@ -227,6 +237,7 @@ export function createMockDbClient(): any {
       delete: vi.fn().mockReturnValue({ where: vi.fn().mockReturnValue({ returning: vi.fn() }) }),
     })),
   }
+  return mock as unknown as MockDb
 }
 
 /**

@@ -81,7 +81,7 @@ export function ParentsList() {
   const queryClient = useQueryClient()
 
   const [search, setSearch] = useState('')
-  const [invitationStatus, setInvitationStatus] = useState<string>('all')
+  const [invitationStatus, setInvitationStatus] = useState<'all' | 'pending' | 'sent' | 'accepted' | 'expired'>('all')
   const [page, setPage] = useState(1)
 
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
@@ -101,7 +101,7 @@ export function ParentsList() {
     }),
   )
 
-  const data = parentsResult?.success ? parentsResult.data : null
+  const data = parentsResult || null
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteParent({ data: id }),
@@ -207,7 +207,7 @@ export function ParentsList() {
           </div>
           <Select
             value={invitationStatus}
-            onValueChange={val => setInvitationStatus(val ?? '')}
+            onValueChange={val => setInvitationStatus((val ?? 'all') as typeof invitationStatus)}
           >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder={t.parents.filterByStatus()} />

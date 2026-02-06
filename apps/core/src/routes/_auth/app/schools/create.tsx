@@ -24,7 +24,7 @@ function CreateSchool() {
   const createSchoolMutation = useMutation({
     ...createSchoolMutationOptions,
     onSuccess: (data) => {
-      const schoolData = data as any
+      const schoolData = data
       logger.info('School created successfully', {
         schoolId: schoolData.id,
         schoolName: schoolData.name,

@@ -64,7 +64,7 @@ interface StudentDetailProps {
 export function StudentDetail({ studentId }: StudentDetailProps) {
   const t = useTranslations()
   const queryClient = useQueryClient()
-  const { data: student, isLoading } = useQuery(studentsOptions.detail(studentId)) as any
+  const { data: student, isLoading } = useQuery(studentsOptions.detail(studentId))
 
   const [parentDialogOpen, setParentDialogOpen] = useState(false)
   const [enrollmentDialogOpen, setEnrollmentDialogOpen] = useState(false)
@@ -449,7 +449,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
               {parents && parents.length > 0
                 ? (
                     <div className="grid gap-4 md:grid-cols-2">
-                      {parents.map((item: any, idx: number) => (
+                      {parents.map((item, idx: number) => (
                         <motion.div
                           key={item.parent.id}
                           initial={{ opacity: 0, scale: 0.95 }}
@@ -566,7 +566,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
             <CardContent className="p-6">
               <EnrollmentTimeline
                 enrollments={
-                  enrollmentHistory?.map((item: any) => ({
+                  enrollmentHistory?.map(item => ({
                     ...item,
                     enrollment: {
                       ...item.enrollment,

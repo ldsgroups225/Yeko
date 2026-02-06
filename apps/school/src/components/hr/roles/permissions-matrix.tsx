@@ -1,12 +1,15 @@
+import type { RoleFormData } from '@/schemas/role'
 import { Button } from '@workspace/ui/components/button'
 import { Checkbox } from '@workspace/ui/components/checkbox'
 import { Label } from '@workspace/ui/components/label'
 import { motion } from 'motion/react'
 import { useTranslations } from '@/i18n'
 
+type Permissions = RoleFormData['permissions']
+
 interface PermissionsMatrixProps {
-  value: Record<string, string[]>
-  onChange: (permissions: Record<string, string[]>) => void
+  value: Permissions
+  onChange: (permissions: Permissions) => void
 }
 
 // Define available resources and actions
@@ -27,7 +30,7 @@ const ACTIONS = ['view', 'create', 'edit', 'delete'] as const
 export function PermissionsMatrix({ value, onChange }: PermissionsMatrixProps) {
   const t = useTranslations()
 
-  const handleToggle = (resource: string, action: string) => {
+  const handleToggle = (resource: string, action: Permissions[string][number]) => {
     const currentActions = value[resource] || []
     const newActions = currentActions.includes(action)
       ? currentActions.filter(a => a !== action)
@@ -59,7 +62,7 @@ export function PermissionsMatrix({ value, onChange }: PermissionsMatrixProps) {
     }
   }
 
-  const isChecked = (resource: string, action: string) => {
+  const isChecked = (resource: string, action: Permissions[string][number]) => {
     return value[resource]?.includes(action) || false
   }
 

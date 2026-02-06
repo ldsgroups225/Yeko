@@ -80,7 +80,7 @@ function ConductReportsPage() {
     enabled: !!schoolYearId,
   })
 
-  const rawRecords = result?.success ? (result.data.data ?? []) : []
+  const rawRecords = result ? (result.data ?? []) : []
 
   // Calculate statistics
   const stats = {

@@ -66,7 +66,7 @@ export function ConductSeverityBadge({
             className={cn('mr-1.5 h-1.5 w-1.5 rounded-full', config.dotClass)}
           />
         )}
-        {(t.conduct.severity as any)[severity]()}
+        {(severity === 'urgent' ? t.conduct.severity.critical() : t.conduct.severity[severity]())}
       </Badge>
     </motion.div>
   )

@@ -1,4 +1,4 @@
-import type { StudentWithDetails } from '@repo/data-ops/queries/students'
+import type { ExportStudentRow, ImportStudentResult, StudentFullProfile, StudentStatistics, StudentWithDetails } from '@repo/data-ops/queries/students'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import { getActiveSchoolYear } from '@repo/data-ops/queries/school-admin/school-years'
 import * as studentQueries from '@repo/data-ops/queries/students'
@@ -56,7 +56,7 @@ export const getStudents = authServerFn
 
 export const getStudentById = authServerFn
   .inputValidator(z.string())
-  .handler(async ({ data: id, context }): Promise<{ success: true, data: any } | { success: false, error: string }> => {
+  .handler(async ({ data: id, context }): Promise<{ success: true, data: StudentFullProfile } | { success: false, error: string }> => {
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
@@ -69,7 +69,7 @@ export const getStudentById = authServerFn
 
 export const createStudent = authServerFn
   .inputValidator(studentSchema)
-  .handler(async ({ data, context }): Promise<{ success: true, data: any } | { success: false, error: string }> => {
+  .handler(async ({ data, context }) => {
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
@@ -104,7 +104,7 @@ export const updateStudent = authServerFn
       data: studentSchema.partial(),
     }),
   )
-  .handler(async ({ data, context }): Promise<{ success: true, data: any } | { success: false, error: string }> => {
+  .handler(async ({ data, context }) => {
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
@@ -159,7 +159,7 @@ export const updateStudentStatus = authServerFn
       reason: z.string().optional(),
     }),
   )
-  .handler(async ({ data, context }): Promise<{ success: true, data: any } | { success: false, error: string }> => {
+  .handler(async ({ data, context }) => {
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
@@ -184,7 +184,7 @@ export const updateStudentStatus = authServerFn
 
 export const bulkImportStudents = authServerFn
   .inputValidator(z.array(studentSchema))
-  .handler(async ({ data, context }): Promise<{ success: true, data: any } | { success: false, error: string }> => {
+  .handler(async ({ data, context }): Promise<{ success: true, data: ImportStudentResult } | { success: false, error: string }> => {
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
@@ -212,7 +212,7 @@ export const bulkImportStudents = authServerFn
 
 export const exportStudents = authServerFn
   .inputValidator(studentFiltersSchema)
-  .handler(async ({ data, context }): Promise<{ success: true, data: any } | { success: false, error: string }> => {
+  .handler(async ({ data, context }): Promise<{ success: true, data: ExportStudentRow[] } | { success: false, error: string }> => {
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
@@ -224,7 +224,7 @@ export const exportStudents = authServerFn
   })
 
 export const getStudentStatistics = authServerFn
-  .handler(async ({ context }): Promise<{ success: true, data: any } | { success: false, error: string }> => {
+  .handler(async ({ context }): Promise<{ success: true, data: StudentStatistics } | { success: false, error: string }> => {
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
@@ -236,7 +236,7 @@ export const getStudentStatistics = authServerFn
   })
 
 export const generateMatricule = authServerFn
-  .handler(async ({ context }): Promise<{ success: true, data: any } | { success: false, error: string }> => {
+  .handler(async ({ context }): Promise<{ success: true, data: string } | { success: false, error: string }> => {
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 

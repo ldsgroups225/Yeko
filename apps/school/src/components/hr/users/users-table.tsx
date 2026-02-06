@@ -3,7 +3,6 @@ import {
   IconCalendar,
   IconDots,
   IconEdit,
-  IconEye,
   IconLoader2,
   IconMail,
   IconPhone,

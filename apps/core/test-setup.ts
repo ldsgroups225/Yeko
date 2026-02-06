@@ -41,7 +41,7 @@ vi.mock('@tanstack/react-router', async (importOriginal) => {
     useRouterState: vi.fn(() => ({ location: { pathname: '/' } })),
     createRootRouteWithContext: vi.fn().mockReturnValue(() => routeMock),
     createFileRoute: vi.fn().mockReturnValue(() => routeMock),
-    Link: ({ children, ...props }: any) => ({
+    Link: ({ children, ...props }: { children: React.ReactNode, [key: string]: unknown }) => ({
       type: 'a',
       props: { ...props, children },
     }),
@@ -57,15 +57,15 @@ vi.mock('@tanstack/react-start', async (importOriginal) => {
       server: vi.fn().mockImplementation(cb => cb),
     }),
     createServerFn: vi.fn().mockImplementation(() => {
-      let validator: any = null
-      const fnObj: any = {
+      let validator: ((v: unknown) => void) | null = null
+      const fnObj: Record<string, any> = {
         middleware: vi.fn().mockImplementation(() => fnObj),
         inputValidator: vi.fn().mockImplementation((v) => {
           validator = v
           return fnObj
         }),
-        handler: vi.fn().mockImplementation((cb) => {
-          const wrapper: any = async (payload: any) => {
+        handler: vi.fn().mockImplementation((cb: (args: { data: any, context: any }) => Promise<any>) => {
+          const wrapper = async (payload: any) => {
             const data = (payload && typeof payload === 'object' && 'data' in payload) ? payload.data : payload
             if (validator) {
               try {

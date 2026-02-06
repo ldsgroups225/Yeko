@@ -1,19 +1,19 @@
 import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
 
 interface StudentExportData {
-  matricule: string
+  matricule: string | null
   lastName: string
   firstName: string
-  dateOfBirth: string
-  gender: string
+  dateOfBirth: string | null
+  gender: string | null
   status: string
   class: string
   series: string
-  nationality: string
-  address: string
-  emergencyContact: string
-  emergencyPhone: string
-  admissionDate: string
+  nationality: string | null
+  address: string | null
+  emergencyContact: string | null
+  emergencyPhone: string | null
+  admissionDate: string | null
 }
 
 interface ExportTranslations {

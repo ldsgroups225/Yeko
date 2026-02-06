@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react'
 import { IconLanguage, IconLogout, IconPalette } from '@tabler/icons-react'
 import {
   Avatar,
@@ -18,7 +17,7 @@ import { ThemeToggle } from '@/components/theme/theme-toggle'
 import { authClient } from '@/lib/auth-client'
 
 interface AccountDialogProps {
-  children: ReactNode
+  children: React.ReactElement
 }
 
 export function AccountDialog({ children }: AccountDialogProps) {
@@ -39,7 +38,7 @@ export function AccountDialog({ children }: AccountDialogProps) {
 
   return (
     <Dialog>
-      <DialogTrigger render={children as any} />
+      <DialogTrigger render={children} />
       <DialogContent className="sm:max-w-md">
         <DialogHeader className="text-center pb-4">
           <DialogTitle>Account</DialogTitle>

@@ -32,249 +32,249 @@ export type { PresignedUrlOptions, PresignedUrlResult, R2Config } from './storag
 // These must be exported to satisfy the bundler's named export check in the browser context,
 // but they only contain stubs as they are never actually called in the client bundle.
 // Attendance
-export const bulkUpsertClassAttendance = undefined as any
-export const countStudentAbsences = undefined as any
-export const deleteStudentAttendance = undefined as any
-export const excuseStudentAbsence = undefined as any
-export const getAttendanceSettings = undefined as any
-export const getAttendanceStatistics = undefined as any
-export const getClassAttendance = undefined as any
-export const getStudentAttendanceHistory = undefined as any
-export const markParentNotified = undefined as any
-export const upsertStudentAttendance = undefined as any
-export const deleteAttendanceSettings = undefined as any
-export const upsertAttendanceSettings = undefined as any
+export const bulkUpsertClassAttendance = undefined as never
+export const countStudentAbsences = undefined as never
+export const deleteStudentAttendance = undefined as never
+export const excuseStudentAbsence = undefined as never
+export const getAttendanceSettings = undefined as never
+export const getAttendanceStatistics = undefined as never
+export const getClassAttendance = undefined as never
+export const getStudentAttendanceHistory = undefined as never
+export const markParentNotified = undefined as never
+export const upsertStudentAttendance = undefined as never
+export const deleteAttendanceSettings = undefined as never
+export const upsertAttendanceSettings = undefined as never
 
 // Teacher Attendance
-export const bulkUpsertTeacherAttendance = undefined as any
-export const countTeacherLatenessInMonth = undefined as any
-export const deleteTeacherAttendance = undefined as any
-export const getDailyTeacherAttendance = undefined as any
-export const getTeacherAttendanceRange = undefined as any
-export const getTeacherPunctualityReport = undefined as any
-export const upsertTeacherAttendance = undefined as any
+export const bulkUpsertTeacherAttendance = undefined as never
+export const countTeacherLatenessInMonth = undefined as never
+export const deleteTeacherAttendance = undefined as never
+export const getDailyTeacherAttendance = undefined as never
+export const getTeacherAttendanceRange = undefined as never
+export const getTeacherPunctualityReport = undefined as never
+export const upsertTeacherAttendance = undefined as never
 
 // Attendance Alerts
-export const acknowledgeAlert = undefined as any
-export const dismissAlert = undefined as any
-export const getActiveAlerts = undefined as any
-export const getAlerts = undefined as any
-export const resolveAlert = undefined as any
+export const acknowledgeAlert = undefined as never
+export const dismissAlert = undefined as never
+export const getActiveAlerts = undefined as never
+export const getAlerts = undefined as never
+export const resolveAlert = undefined as never
 
 // Storage server-side functions used in client-facing server functions
-export const generatePresignedUploadUrl = undefined as any
-export const getR2Client = undefined as any
-export const getR2Config = undefined as any
-export const getR2Endpoint = undefined as any
-export const initR2 = undefined as any
+export const generatePresignedUploadUrl = undefined as never
+export const getR2Client = undefined as never
+export const getR2Config = undefined as never
+export const getR2Endpoint = undefined as never
+export const initR2 = undefined as never
 
 // Conduct Records
-export const addConductFollowUp = undefined as any
-export const completeFollowUp = undefined as any
-export const createConductRecord = undefined as any
-export const deleteConductRecord = undefined as any
-export const deleteFollowUp = undefined as any
-export const getConductRecord = undefined as any
-export const getConductRecords = undefined as any
-export const getStudentConductSummary = undefined as any
-export const markConductParentAcknowledged = undefined as any
-export const markConductParentNotified = undefined as any
-export const updateConductRecord = undefined as any
-export const updateConductStatus = undefined as any
+export const addConductFollowUp = undefined as never
+export const completeFollowUp = undefined as never
+export const createConductRecord = undefined as never
+export const deleteConductRecord = undefined as never
+export const deleteFollowUp = undefined as never
+export const getConductRecord = undefined as never
+export const getConductRecords = undefined as never
+export const getStudentConductSummary = undefined as never
+export const markConductParentAcknowledged = undefined as never
+export const markConductParentNotified = undefined as never
+export const updateConductRecord = undefined as never
+export const updateConductStatus = undefined as never
 
 // Report Cards
-export const generateReportCard = undefined as any
-export const getReportCard = undefined as any
-export const getReportCards = undefined as any
-export const getReportCardsByStudentIds = undefined as any
-export const publishReportCard = undefined as any
+export const generateReportCard = undefined as never
+export const getReportCard = undefined as never
+export const getReportCards = undefined as never
+export const getReportCardsByStudentIds = undefined as never
+export const publishReportCard = undefined as never
 
 // Accounts
-export const createAccount = undefined as any
-export const deleteAccount = undefined as any
-export const getAccount = undefined as any
-export const getAccountById = undefined as any
-export const getAccounts = undefined as any
-export const getAccountsTree = undefined as any
-export const updateAccount = undefined as any
+export const createAccount = undefined as never
+export const deleteAccount = undefined as never
+export const getAccount = undefined as never
+export const getAccountById = undefined as never
+export const getAccounts = undefined as never
+export const getAccountsTree = undefined as never
+export const updateAccount = undefined as never
 
 // Payment Plans
-export const cancelPaymentPlan = undefined as any
-export const createPaymentPlanFromTemplate = undefined as any
-export const createPaymentPlanTemplate = undefined as any
-export const deletePaymentPlanTemplate = undefined as any
-export const getDefaultPaymentPlanTemplate = undefined as any
-export const getInstallmentsByPaymentPlan = undefined as any
-export const getPaymentPlanById = undefined as any
-export const getPaymentPlanForStudent = undefined as any
-export const getPaymentPlans = undefined as any
-export const getPaymentPlansSummary = undefined as any
-export const getPaymentPlanTemplateById = undefined as any
-export const getPaymentPlanTemplates = undefined as any
-export const setDefaultPaymentPlanTemplate = undefined as any
-export const updatePaymentPlanTemplate = undefined as any
+export const cancelPaymentPlan = undefined as never
+export const createPaymentPlanFromTemplate = undefined as never
+export const createPaymentPlanTemplate = undefined as never
+export const deletePaymentPlanTemplate = undefined as never
+export const getDefaultPaymentPlanTemplate = undefined as never
+export const getInstallmentsByPaymentPlan = undefined as never
+export const getPaymentPlanById = undefined as never
+export const getPaymentPlanForStudent = undefined as never
+export const getPaymentPlans = undefined as never
+export const getPaymentPlansSummary = undefined as never
+export const getPaymentPlanTemplateById = undefined as never
+export const getPaymentPlanTemplates = undefined as never
+export const setDefaultPaymentPlanTemplate = undefined as never
+export const updatePaymentPlanTemplate = undefined as never
 
 // Fee Types
-export const createFeeType = undefined as any
-export const deleteFeeType = undefined as any
-export const getFeeTypeById = undefined as any
-export const getFeeTypes = undefined as any
-export const updateFeeType = undefined as any
+export const createFeeType = undefined as never
+export const deleteFeeType = undefined as never
+export const getFeeTypeById = undefined as never
+export const getFeeTypes = undefined as never
+export const updateFeeType = undefined as never
 
 // Fee Structures
-export const createFeeStructure = undefined as any
-export const createFeeStructuresBulk = undefined as any
-export const deleteFeeStructure = undefined as any
-export const getFeeStructureById = undefined as any
-export const getFeeStructures = undefined as any
-export const getFeeStructuresWithTypes = undefined as any
-export const updateFeeStructure = undefined as any
+export const createFeeStructure = undefined as never
+export const createFeeStructuresBulk = undefined as never
+export const deleteFeeStructure = undefined as never
+export const getFeeStructureById = undefined as never
+export const getFeeStructures = undefined as never
+export const getFeeStructuresWithTypes = undefined as never
+export const updateFeeStructure = undefined as never
 
 // Discounts
-export const createDiscount = undefined as any
-export const deactivateDiscount = undefined as any
-export const deleteDiscount = undefined as any
-export const getAutoApplyDiscounts = undefined as any
-export const getDiscountById = undefined as any
-export const getDiscounts = undefined as any
-export const updateDiscount = undefined as any
+export const createDiscount = undefined as never
+export const deactivateDiscount = undefined as never
+export const deleteDiscount = undefined as never
+export const getAutoApplyDiscounts = undefined as never
+export const getDiscountById = undefined as never
+export const getDiscounts = undefined as never
+export const updateDiscount = undefined as never
 
 // Schools
-export const createSchool = undefined as any
-export const getSchool = undefined as any
-export const getSchoolById = undefined as any
-export const getSchools = undefined as any
-export const getSchoolProfile = undefined as any
-export const updateSchool = undefined as any
-export const updateSchoolLogo = undefined as any
-export const updateSchoolProfile = undefined as any
-export const updateSchoolSettings = undefined as any
-export const deleteSchool = undefined as any
-export const bulkCreateSchools = undefined as any
+export const createSchool = undefined as never
+export const getSchool = undefined as never
+export const getSchoolById = undefined as never
+export const getSchools = undefined as never
+export const getSchoolProfile = undefined as never
+export const updateSchool = undefined as never
+export const updateSchoolLogo = undefined as never
+export const updateSchoolProfile = undefined as never
+export const updateSchoolSettings = undefined as never
+export const deleteSchool = undefined as never
+export const bulkCreateSchools = undefined as never
 
 // Students & Classes
-export const getStudent = undefined as any
-export const getStudents = undefined as any
-export const getClass = undefined as any
-export const getClasses = undefined as any
+export const getStudent = undefined as never
+export const getStudents = undefined as never
+export const getClass = undefined as never
+export const getClasses = undefined as never
 
 // Teacher Subjects
-export const assignSubjectsToTeacher = undefined as any
-export const getTeacherSubjects = undefined as any
-export const removeSubjectsFromTeacher = undefined as any
+export const assignSubjectsToTeacher = undefined as never
+export const getTeacherSubjects = undefined as never
+export const removeSubjectsFromTeacher = undefined as never
 
 // Student Fees
-export const createStudentFee = undefined as any
-export const createStudentFeesBulk = undefined as any
-export const getStudentFeeById = undefined as any
-export const getStudentFees = undefined as any
-export const getStudentFeeSummary = undefined as any
-export const getStudentFeesWithDetails = undefined as any
-export const getStudentsWithOutstandingBalance = undefined as any
-export const waiveStudentFee = undefined as any
+export const createStudentFee = undefined as never
+export const createStudentFeesBulk = undefined as never
+export const getStudentFeeById = undefined as never
+export const getStudentFees = undefined as never
+export const getStudentFeeSummary = undefined as never
+export const getStudentFeesWithDetails = undefined as never
+export const getStudentsWithOutstandingBalance = undefined as never
+export const waiveStudentFee = undefined as never
 
 // Refunds
-export const approveRefund = undefined as any
-export const cancelRefund = undefined as any
-export const createRefund = undefined as any
-export const getPendingRefundsCount = undefined as any
-export const getRefundById = undefined as any
-export const getRefunds = undefined as any
-export const processRefund = undefined as any
-export const rejectRefund = undefined as any
+export const approveRefund = undefined as never
+export const cancelRefund = undefined as never
+export const createRefund = undefined as never
+export const getPendingRefundsCount = undefined as never
+export const getRefundById = undefined as never
+export const getRefunds = undefined as never
+export const processRefund = undefined as never
+export const rejectRefund = undefined as never
 
 // Payments
-export const cancelPayment = undefined as any
-export const createPaymentWithAllocations = undefined as any
-export const getCashierDailySummary = undefined as any
-export const getPaymentById = undefined as any
-export const getPaymentByReceiptNumber = undefined as any
-export const getPayments = undefined as any
+export const cancelPayment = undefined as never
+export const createPaymentWithAllocations = undefined as never
+export const getCashierDailySummary = undefined as never
+export const getPaymentById = undefined as never
+export const getPaymentByReceiptNumber = undefined as never
+export const getPayments = undefined as never
 
 // Roles & Users (Core App)
-export const getAllRoles = undefined as any
-export const createRole = undefined as any
-export const updateRole = undefined as any
-export const deleteRole = undefined as any
-export const countSystemUsers = undefined as any
-export const getSystemUsers = undefined as any
-export const updateSystemUser = undefined as any
-export const assignSystemRolesToUser = undefined as any
-export const getUserSystemPermissionsByAuthUserId = undefined as any
-export const getUserSystemRolesByAuthUserId = undefined as any
-export const syncUserAuthOnLogin = undefined as any
+export const getAllRoles = undefined as never
+export const createRole = undefined as never
+export const updateRole = undefined as never
+export const deleteRole = undefined as never
+export const countSystemUsers = undefined as never
+export const getSystemUsers = undefined as never
+export const updateSystemUser = undefined as never
+export const assignSystemRolesToUser = undefined as never
+export const getUserSystemPermissionsByAuthUserId = undefined as never
+export const getUserSystemRolesByAuthUserId = undefined as never
+export const syncUserAuthOnLogin = undefined as never
 
 // Coefficients
-export const getCoefficientTemplates = undefined as any
-export const getCoefficientTemplateById = undefined as any
-export const createCoefficientTemplate = undefined as any
-export const updateCoefficientTemplate = undefined as any
-export const deleteCoefficientTemplate = undefined as any
-export const bulkCreateCoefficients = undefined as any
-export const bulkUpdateCoefficients = undefined as any
-export const copyCoefficientTemplates = undefined as any
-export const getCoefficientStats = undefined as any
+export const getCoefficientTemplates = undefined as never
+export const getCoefficientTemplateById = undefined as never
+export const createCoefficientTemplate = undefined as never
+export const updateCoefficientTemplate = undefined as never
+export const deleteCoefficientTemplate = undefined as never
+export const bulkCreateCoefficients = undefined as never
+export const bulkUpdateCoefficients = undefined as never
+export const copyCoefficientTemplates = undefined as never
+export const getCoefficientStats = undefined as never
 
 // Analytics
-export const getAnalyticsOverview = undefined as any
-export const getSchoolsPerformance = undefined as any
-export const getPlatformUsage = undefined as any
-export const generateReportData = undefined as any
+export const getAnalyticsOverview = undefined as never
+export const getSchoolsPerformance = undefined as never
+export const getPlatformUsage = undefined as never
+export const generateReportData = undefined as never
 
 // Programs
-export const getSchoolYearTemplates = undefined as any
-export const getSchoolYearTemplateById = undefined as any
-export const createSchoolYearTemplate = undefined as any
-export const updateSchoolYearTemplate = undefined as any
-export const deleteSchoolYearTemplate = undefined as any
-export const getProgramTemplates = undefined as any
-export const getProgramTemplateById = undefined as any
-export const createProgramTemplate = undefined as any
-export const updateProgramTemplate = undefined as any
-export const deleteProgramTemplate = undefined as any
-export const cloneProgramTemplate = undefined as any
-export const getProgramTemplatesWithTerms = undefined as any
-export const getProgramTemplateChapters = undefined as any
-export const getProgramTemplateChapterById = undefined as any
-export const createProgramTemplateChapter = undefined as any
-export const updateProgramTemplateChapter = undefined as any
-export const deleteProgramTemplateChapter = undefined as any
-export const bulkUpdateChaptersOrder = undefined as any
-export const bulkCreateChapters = undefined as any
-export const publishProgram = undefined as any
-export const getProgramVersions = undefined as any
-export const restoreProgramVersion = undefined as any
-export const getProgramStats = undefined as any
-export const getTermTemplates = undefined as any
-export const getTermTemplateById = undefined as any
-export const createTermTemplate = undefined as any
-export const updateTermTemplate = undefined as any
-export const deleteTermTemplate = undefined as any
-export const bulkCreateTermTemplates = undefined as any
-export const getSchoolYearTemplatesWithTerms = undefined as any
+export const getSchoolYearTemplates = undefined as never
+export const getSchoolYearTemplateById = undefined as never
+export const createSchoolYearTemplate = undefined as never
+export const updateSchoolYearTemplate = undefined as never
+export const deleteSchoolYearTemplate = undefined as never
+export const getProgramTemplates = undefined as never
+export const getProgramTemplateById = undefined as never
+export const createProgramTemplate = undefined as never
+export const updateProgramTemplate = undefined as never
+export const deleteProgramTemplate = undefined as never
+export const cloneProgramTemplate = undefined as never
+export const getProgramTemplatesWithTerms = undefined as never
+export const getProgramTemplateChapters = undefined as never
+export const getProgramTemplateChapterById = undefined as never
+export const createProgramTemplateChapter = undefined as never
+export const updateProgramTemplateChapter = undefined as never
+export const deleteProgramTemplateChapter = undefined as never
+export const bulkUpdateChaptersOrder = undefined as never
+export const bulkCreateChapters = undefined as never
+export const publishProgram = undefined as never
+export const getProgramVersions = undefined as never
+export const restoreProgramVersion = undefined as never
+export const getProgramStats = undefined as never
+export const getTermTemplates = undefined as never
+export const getTermTemplateById = undefined as never
+export const createTermTemplate = undefined as never
+export const updateTermTemplate = undefined as never
+export const deleteTermTemplate = undefined as never
+export const bulkCreateTermTemplates = undefined as never
+export const getSchoolYearTemplatesWithTerms = undefined as never
 
 // Drizzle ORM operators - stubs for browser bundle
 // These are server-only but must be exported to satisfy bundler analysis
-export const and = undefined as any
-export const asc = undefined as any
-export const between = undefined as any
-export const count = undefined as any
-export const desc = undefined as any
-export const eq = undefined as any
-export const exists = undefined as any
-export const gt = undefined as any
-export const gte = undefined as any
-export const ilike = undefined as any
-export const inArray = undefined as any
-export const isNotNull = undefined as any
-export const isNull = undefined as any
-export const like = undefined as any
-export const lt = undefined as any
-export const lte = undefined as any
-export const ne = undefined as any
-export const not = undefined as any
-export const notBetween = undefined as any
-export const notExists = undefined as any
-export const notInArray = undefined as any
-export const or = undefined as any
-export const sql = undefined as any
+export const and = undefined as never
+export const asc = undefined as never
+export const between = undefined as never
+export const count = undefined as never
+export const desc = undefined as never
+export const eq = undefined as never
+export const exists = undefined as never
+export const gt = undefined as never
+export const gte = undefined as never
+export const ilike = undefined as never
+export const inArray = undefined as never
+export const isNotNull = undefined as never
+export const isNull = undefined as never
+export const like = undefined as never
+export const lt = undefined as never
+export const lte = undefined as never
+export const ne = undefined as never
+export const not = undefined as never
+export const notBetween = undefined as never
+export const notExists = undefined as never
+export const notInArray = undefined as never
+export const or = undefined as never
+export const sql = undefined as never

@@ -9,6 +9,7 @@ import {
   IconPhone,
   IconUsers,
 } from '@tabler/icons-react'
+import { useQueryClient } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import {
@@ -35,6 +36,7 @@ import {
   TableRow,
 } from '@workspace/ui/components/table'
 import { useRef } from 'react'
+import { schoolQueryOptions } from '@/integrations/tanstack-query/schools-options'
 
 interface SchoolsTableVirtualProps {
   schools: School[]
@@ -45,6 +47,7 @@ export function SchoolsTableVirtual({
   schools,
   onSchoolClick,
 }: SchoolsTableVirtualProps) {
+  const queryClient = useQueryClient()
   const parentRef = useRef<HTMLDivElement>(null)
 
   const virtualizer = useVirtualizer({
@@ -65,6 +68,10 @@ export function SchoolsTableVirtual({
       default:
         return <Badge variant="secondary">{status}</Badge>
     }
+  }
+
+  const handlePrefetchSchool = (schoolId: string) => {
+    void queryClient.prefetchQuery(schoolQueryOptions(schoolId))
   }
 
   return (
@@ -105,6 +112,7 @@ export function SchoolsTableVirtual({
                   }}
                   className="cursor-pointer"
                   onClick={() => onSchoolClick?.(school.id)}
+                  onMouseEnter={() => handlePrefetchSchool(school.id)}
                 >
                   <TableCell>
                     <div className="flex items-center gap-3">
@@ -174,6 +182,7 @@ export function SchoolsTableVirtual({
                             <Link
                               to="/app/schools/$schoolId"
                               params={{ schoolId: school.id }}
+                              onMouseEnter={() => handlePrefetchSchool(school.id)}
                             >
                               <IconEye className="mr-2 h-4 w-4" />
                               {' '}
@@ -187,6 +196,7 @@ export function SchoolsTableVirtual({
                               to="/app/schools/$schoolId"
                               params={{ schoolId: school.id }}
                               search={{ tab: 'users' }}
+                              onMouseEnter={() => handlePrefetchSchool(school.id)}
                             >
                               <IconUsers className="mr-2 h-4 w-4" />
                               {' '}
@@ -201,6 +211,7 @@ export function SchoolsTableVirtual({
                               to="/app/schools/$schoolId"
                               params={{ schoolId: school.id }}
                               search={{ edit: true }}
+                              onMouseEnter={() => handlePrefetchSchool(school.id)}
                             >
                               <IconPencil className="mr-2 h-4 w-4" />
                               {' '}

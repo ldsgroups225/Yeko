@@ -96,7 +96,7 @@ export const recordStudentAttendance = authServerFn
       classSessionId: data.classSessionId ?? undefined,
       schoolId,
       recordedBy: userId,
-      lateThresholdMinutes: (settings as any)?.studentLateThresholdMinutes ?? 10,
+      lateThresholdMinutes: settings?.studentLateThresholdMinutes ?? 10,
     })).match(
       async (result) => {
         await createAuditLog({
@@ -277,7 +277,7 @@ export const checkChronicAbsence = authServerFn
     }
 
     const settings = settingsResult.value
-    const threshold = Number((settings as any)?.chronicAbsenceThresholdPercent ?? 10)
+    const threshold = Number(settings.chronicAbsenceThresholdPercent ?? 10)
 
     return (await countStudentAbsences({
       ...data,

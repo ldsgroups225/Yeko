@@ -1,4 +1,4 @@
-import { queryOptions } from '@tanstack/react-query'
+import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import {
   exportStudents,
   generateMatricule,
@@ -45,6 +45,7 @@ export const studentsOptions = {
 
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
+      placeholderData: keepPreviousData,
     }),
 
   detail: (id: string) =>
@@ -71,7 +72,7 @@ export const studentsOptions = {
         if (result && 'success' in result && result.success) {
           return result.data
         }
-        throw new Error(result && 'error' in result ? (result as any).error : 'Failed to fetch statistics')
+        throw new Error(result && 'error' in result ? result.error : 'Failed to fetch statistics')
       },
       staleTime: 10 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
@@ -85,7 +86,7 @@ export const studentsOptions = {
         if (result && 'success' in result && result.success) {
           return result.data
         }
-        throw new Error(result && 'error' in result ? (result as any).error : 'Failed to export students')
+        throw new Error(result && 'error' in result ? result.error : 'Failed to export students')
       },
       staleTime: 0,
       gcTime: 5 * 60 * 1000,
@@ -100,7 +101,7 @@ export const studentsOptions = {
         if (result && typeof result === 'object' && 'success' in result && result.success) {
           return result.data
         }
-        throw new Error(result && typeof result === 'object' && 'error' in result ? (result as any).error : 'Failed to generate matricule')
+        throw new Error(result && typeof result === 'object' && 'error' in result ? result.error : 'Failed to generate matricule')
       },
       staleTime: 0,
       gcTime: 0,

@@ -6,7 +6,6 @@ import type {
 import {
   IconDots,
   IconEdit,
-  IconEye,
   IconFileAlert,
   IconTrash,
 } from '@tabler/icons-react'
@@ -272,7 +271,7 @@ export function ConductRecordTable({
         ),
       },
     ],
-    [t, onView, onEdit, onDelete, selection],
+    [t, onEdit, onDelete, selection],
   )
 
   const rowSelection = useMemo(() => {

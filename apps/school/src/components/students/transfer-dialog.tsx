@@ -72,7 +72,7 @@ export function TransferDialog({
     enabled: open && !!schoolYearId,
   })
 
-  const classesData = classesResult?.success ? classesResult.data : []
+  const classesData = classesResult || []
 
   const form = useForm<TransferFormData>({
     resolver: zodResolver(transferSchema),

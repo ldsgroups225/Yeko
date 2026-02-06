@@ -42,10 +42,14 @@ import {
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { z } from 'zod'
-import { getPlatformRoles } from '@/core/functions/roles'
-import { assignUserSystemRoles, getPlatformUsers } from '@/core/functions/users'
+import { assignUserSystemRoles } from '@/core/functions/users'
 import { useDateFormatter } from '@/hooks/use-date-formatter'
 import { useTranslations } from '@/i18n/hooks'
+import { platformRolesQueryOptions } from '@/integrations/tanstack-query/platform-roles-options'
+import {
+  platformUsersKeys,
+  platformUsersQueryOptions,
+} from '@/integrations/tanstack-query/platform-users-options'
 
 export const Route = createFileRoute('/_auth/app/users/')({
   beforeLoad: ({ context }) => {
@@ -72,20 +76,16 @@ function UserManagement() {
   const [isRolesDialogOpen, setIsRolesDialogOpen] = useState(false)
   const { format: formatDate } = useDateFormatter()
 
-  const { data: userData, isLoading: isUsersLoading } = useQuery({
-    queryKey: ['platform-users', search, page],
-    queryFn: () => getPlatformUsers({ data: { search, page, limit: 10 } }),
-  })
+  const { data: userData, isLoading: isUsersLoading } = useQuery(
+    platformUsersQueryOptions({ search, page, limit: 10 }),
+  )
 
-  const { data: allRoles = [] } = useQuery({
-    queryKey: ['platform-roles'],
-    queryFn: () => getPlatformRoles({ data: { scope: 'system' } }),
-  })
+  const { data: allRoles = [] } = useQuery(platformRolesQueryOptions('system'))
 
   const assignRolesMutation = useMutation({
     mutationFn: (data: { userId: string, roleIds: string[] }) => assignUserSystemRoles({ data }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['platform-users'] })
+      queryClient.invalidateQueries({ queryKey: platformUsersKeys.all })
       toast.success(t.users.updateSuccess())
       setIsRolesDialogOpen(false)
     },
@@ -322,7 +322,7 @@ function UserManagement() {
                 <FieldSet>
                   <FieldLegend>{t.users.availableRoles()}</FieldLegend>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {allRoles.map((role: Role) => {
+                    {allRoles.map((role) => {
                       const isChecked = field.state.value.includes(role.id)
                       const toggle = () => {
                         const next = isChecked

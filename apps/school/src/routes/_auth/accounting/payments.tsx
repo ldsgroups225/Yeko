@@ -38,8 +38,8 @@ function PaymentsPage() {
   const payments = paymentsData?.data?.map(p => ({
     id: p.id,
     receiptNumber: p.receiptNumber ?? undefined,
-    studentName: (p as any).studentName ?? 'N/A',
-    studentMatricule: (p as any).studentMatricule ?? 'N/A',
+    studentName: p.studentName ?? 'N/A',
+    studentMatricule: p.studentMatricule ?? 'N/A',
     amount: Number(p.amount),
     method: p.method,
     status: p.status ?? 'pending',

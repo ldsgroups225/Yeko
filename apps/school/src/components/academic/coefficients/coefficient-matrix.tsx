@@ -50,8 +50,8 @@ export function CoefficientMatrix({
   )
 
   const { subjects = [], grades = [], matrix = {} } = useMemo(() => {
-    if (data?.success) {
-      return data.data
+    if (data) {
+      return data
     }
     return { subjects: [], grades: [], matrix: {} }
   }, [data])

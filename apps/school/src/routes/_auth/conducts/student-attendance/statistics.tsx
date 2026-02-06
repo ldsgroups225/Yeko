@@ -66,7 +66,7 @@ function StudentAttendanceStatisticsPage() {
     }),
   )
 
-  const stats = result?.success ? result.data : undefined
+  const stats = result || undefined
 
   const container = {
     hidden: { opacity: 0 },

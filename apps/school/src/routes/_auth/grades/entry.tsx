@@ -22,13 +22,12 @@ import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useCurrentTeacher } from '@/hooks/use-current-teacher'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
-import { classSubjectsKeys } from '@/lib/queries/class-subjects'
+import { classSubjectsOptions } from '@/lib/queries/class-subjects'
 import { classesOptions } from '@/lib/queries/classes'
 import { enrollmentsOptions } from '@/lib/queries/enrollments'
 import { gradesOptions } from '@/lib/queries/grades'
 import { termsOptions } from '@/lib/queries/terms'
 import { defaultGradeWeights } from '@/schemas/grade'
-import { getClassSubjects } from '@/school/functions/class-subjects'
 import { generateUUID } from '@/utils/generateUUID'
 
 export const Route = createFileRoute('/_auth/grades/entry')({
@@ -49,25 +48,20 @@ function GradeEntryPage() {
   const [gradeDate, setGradeDate] = useState(new Date().toISOString().split('T')[0])
 
   // Fetch classes for current school year
-  const { data: classesResult, isLoading: classesLoading } = useQuery(
+  const { data: classesData = [], isLoading: classesLoading } = useQuery(
     classesOptions.list({ schoolYearId: schoolYearId ?? undefined, status: 'active' }),
   )
-  const classesData = classesResult?.success ? classesResult.data : []
 
   // Fetch subjects for selected class
-  const { data: classSubjectsResult, isLoading: subjectsLoading } = useQuery({
-    queryKey: classSubjectsKeys.list({ classId: selectedClassId }),
-    queryFn: () => getClassSubjects({ data: { classId: selectedClassId } }),
+  const { data: classSubjectsData = [], isLoading: subjectsLoading } = useQuery({
+    ...classSubjectsOptions.list({ classId: selectedClassId }),
     enabled: !!selectedClassId,
-    staleTime: 5 * 60 * 1000,
   })
-  const classSubjectsData = classSubjectsResult?.success ? classSubjectsResult.data : []
 
   // Fetch terms for current school year
-  const { data: termsResult, isLoading: termsLoading } = useQuery(
+  const { data: termsData = [], isLoading: termsLoading } = useQuery(
     termsOptions.list(schoolYearId ?? ''),
   )
-  const termsData = termsResult?.success ? termsResult.data : []
 
   // Fetch enrolled students for selected class
   const { data: enrollmentsResult, isLoading: studentsLoading } = useQuery({
@@ -82,7 +76,7 @@ function GradeEntryPage() {
 
   // Fetch grades when all selections are made
   const canFetchGrades = selectedClassId && selectedSubjectId && selectedTermId
-  const { data: gradesResult, isLoading: gradesLoading } = useQuery({
+  const { data: gradesData = [], isLoading: gradesLoading } = useQuery({
     ...gradesOptions.byClass({
       classId: selectedClassId,
       subjectId: selectedSubjectId,
@@ -90,7 +84,6 @@ function GradeEntryPage() {
     }),
     enabled: !!canFetchGrades,
   })
-  const gradesData = gradesResult?.success ? gradesResult.data : []
 
   // Determine effective teacher ID (assigned teacher for subject or current user if they are a teacher)
   const selectedClassSubject = classSubjectsData?.find(

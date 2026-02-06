@@ -2,7 +2,7 @@ import type { TimetableSessionData } from '@/components/timetables/timetable-ses
 import { IconCalendar } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { Skeleton } from '@workspace/ui/components/skeleton'
-import { Suspense, lazy } from 'react'
+import { lazy, Suspense } from 'react'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { teacherOptions } from '@/lib/queries/teachers'
@@ -23,7 +23,7 @@ export function TeacherTimetable({ teacherId }: TeacherTimetableProps) {
   })
 
   // Unwraps the Result object if successful, otherwise defaults to empty array
-  const sessionsList = sessions?.success ? sessions.data : []
+  const sessionsList = sessions || []
 
   const formattedSessions: TimetableSessionData[] = (sessionsList || []).map(session => ({
     id: session.id,

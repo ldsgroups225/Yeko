@@ -33,14 +33,40 @@ interface FeeBreakdownItem {
   isNewStudent: boolean
 }
 
+interface FeeItem {
+  fee_structures: {
+    id: string
+    amount: string | number
+    newStudentAmount?: string | number | null
+    gradeId: string | null
+    seriesId: string | null
+  }
+  fee_types: {
+    id: string
+    name: string
+    category: string
+  }
+}
+
+interface StudentDiscountItem {
+  discount: {
+    id: string
+    appliesToFeeTypes: string[] | null
+    calculationType: 'percentage' | 'fixed'
+    value: string | number
+    maxDiscountAmount?: string | number | null
+  }
+  calculatedAmount?: string | number
+}
+
 /**
  * Shared logic to calculate fee breakdown for a student
  * Uses cents (integers) for precision to avoid floating point issues
  */
 export function calculateBreakdown(params: {
   isNewStudent: boolean
-  applicableFees: any[]
-  studentDiscounts: any[]
+  applicableFees: FeeItem[]
+  studentDiscounts: StudentDiscountItem[]
 }) {
   const { isNewStudent, applicableFees, studentDiscounts } = params
   const breakdown: FeeBreakdownItem[] = []
@@ -55,19 +81,19 @@ export function calculateBreakdown(params: {
 
     let discountCents = 0
     for (const sd of studentDiscounts) {
-      const appliesToFeeTypes = sd.discount.appliesToFeeTypes as string[] | null
+      const appliesToFeeTypes = sd.discount.appliesToFeeTypes
       if (!appliesToFeeTypes || appliesToFeeTypes.includes(fee.fee_types.id)) {
         if (sd.discount.calculationType === 'percentage') {
           discountCents += Math.round(baseAmountCents * (Number(sd.discount.value) / 100))
         }
         else {
-          discountCents += Math.round(Number(sd.calculatedAmount) * 100)
+          discountCents += Math.round(Number(sd.calculatedAmount || 0) * 100)
         }
       }
     }
 
     // Apply max discount cap
-    const maxDiscountCents = studentDiscounts.reduce((max: number, sd: any) => {
+    const maxDiscountCents = studentDiscounts.reduce((max: number, sd: StudentDiscountItem) => {
       if (sd.discount.maxDiscountAmount) {
         return Math.min(max, Math.round(Number(sd.discount.maxDiscountAmount) * 100))
       }
@@ -397,14 +423,14 @@ export async function executeBulkFeeAssignment(params: {
     discountAmount: string
     finalAmount: string
     balance: string
-    status: 'pending' | 'paid' | 'partial' | 'overdue'
+    status: 'pending' | 'paid' | 'partial' | 'waived' | 'cancelled'
   }[] = []
 
   for (const enrollment of currentEnrollments) {
     const isNewStudent = (enrollmentCounts.get(enrollment.studentId) || 0) <= 1
     const studentDiscountsList = discountMap.get(enrollment.studentId) || []
 
-    const studentApplicableFees = applicableFees.filter((f: any) =>
+    const studentApplicableFees = applicableFees.filter((f: FeeItem) =>
       f.fee_structures.gradeId === enrollment.gradeId
       && (enrollment.seriesId
         ? f.fee_structures.seriesId === enrollment.seriesId
@@ -441,7 +467,7 @@ export async function executeBulkFeeAssignment(params: {
       await db.transaction(async (tx) => {
         const chunkSize = 100
         for (let i = 0; i < toInsert.length; i += chunkSize) {
-          await tx.insert(studentFees).values(toInsert.slice(i, i + chunkSize) as any[])
+          await tx.insert(studentFees).values(toInsert.slice(i, i + chunkSize))
         }
       })
       results.succeeded = params.studentIds.length

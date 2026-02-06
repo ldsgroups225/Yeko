@@ -27,7 +27,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { Can } from '@/components/auth/can'
 import { useDebounce } from '@/hooks/use-debounce'
-import { bulkCreateSchoolsMutationOptions, schoolsQueryOptions } from '@/integrations/tanstack-query/schools-options'
+import { schoolsPerformanceQueryOptions } from '@/integrations/tanstack-query/analytics-options'
+import { bulkCreateSchoolsMutationOptions, schoolsKeys, schoolsQueryOptions } from '@/integrations/tanstack-query/schools-options'
 import { useLogger } from '@/lib/logger'
 import { exportSchoolsToExcel, importSchoolsFromExcel } from '@/lib/schools-import-export'
 
@@ -58,7 +59,7 @@ function Schools() {
         errors: Array<{ index: number, code: string, error: string }>
       }
       if (typedResult.success) {
-        queryClient.invalidateQueries({ queryKey: ['schools'] })
+        queryClient.invalidateQueries({ queryKey: schoolsKeys.lists() })
         toast.success(`${typedResult.created} écoles importées avec succès`)
         logger.info('Bulk schools created', { count: typedResult.created })
       }
@@ -69,7 +70,7 @@ function Schools() {
           logger.error('Bulk schools creation failed', new Error(`${errorCount} errors during import`))
         }
         else if (typedResult.created > 0) {
-          queryClient.invalidateQueries({ queryKey: ['schools'] })
+          queryClient.invalidateQueries({ queryKey: schoolsKeys.lists() })
           toast.success(`${typedResult.created} écoles importées (${typedResult.errors.length} doublons ignorés)`)
         }
       }
@@ -102,8 +103,17 @@ function Schools() {
   // Fetch schools data
   const { data: schoolsData, isLoading, error } = useQuery(schoolsQueryOptions(queryParams))
 
-  // Fetch schools count for stats
-  const { data: allSchoolsData } = useQuery(schoolsQueryOptions({ page: 1, limit: 1000 }))
+  // Fetch schools stats for counts (uses existing analytics endpoint)
+  const { data: schoolsPerfData } = useQuery(schoolsPerformanceQueryOptions('30d'))
+
+  const allSchoolsQuery = schoolsQueryOptions({ page: 1, limit: 1000 })
+  const {
+    refetch: refetchAllSchools,
+    isFetching: isExportingSchools,
+  } = useQuery({
+    ...allSchoolsQuery,
+    enabled: false,
+  })
 
   useEffect(() => {
     logger.info('Schools page viewed', {
@@ -148,7 +158,9 @@ function Schools() {
     hasNext: boolean
     hasPrev: boolean
   } | undefined
-  const allSchools: School[] = allSchoolsData?.data || []
+  const allSchools: School[] = schoolsData?.data || []
+  const statusCounts = schoolsPerfData?.byStatus
+  const statsLoading = isLoading || schoolsPerfData === undefined
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -193,8 +205,11 @@ function Schools() {
             <Button
               variant="outline"
               className="gap-2"
-              onClick={() => exportSchoolsToExcel(allSchools)}
-              disabled={allSchools.length === 0}
+              onClick={async () => {
+                const result = await refetchAllSchools()
+                exportSchoolsToExcel(result.data?.data ?? [])
+              }}
+              disabled={isExportingSchools || (pagination?.total ?? 0) === 0}
             >
               <IconDownload className="h-4 w-4" />
               Exporter
@@ -302,7 +317,9 @@ function Schools() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {isLoading ? <Skeleton className="h-8 w-16" /> : allSchools.filter(s => s.status === 'active').length}
+              {statsLoading
+                ? <Skeleton className="h-8 w-16" />
+                : (statusCounts?.active ?? allSchools.filter(s => s.status === 'active').length)}
             </div>
             <p className="text-xs text-muted-foreground">
               Actuellement actives
@@ -317,7 +334,9 @@ function Schools() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {isLoading ? <Skeleton className="h-8 w-16" /> : allSchools.filter(s => s.status === 'inactive').length}
+              {statsLoading
+                ? <Skeleton className="h-8 w-16" />
+                : (statusCounts?.inactive ?? allSchools.filter(s => s.status === 'inactive').length)}
             </div>
             <p className="text-xs text-muted-foreground">
               Non actives
@@ -332,7 +351,9 @@ function Schools() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {isLoading ? <Skeleton className="h-8 w-16" /> : allSchools.filter(s => s.status === 'suspended').length}
+              {statsLoading
+                ? <Skeleton className="h-8 w-16" />
+                : (statusCounts?.suspended ?? allSchools.filter(s => s.status === 'suspended').length)}
             </div>
             <p className="text-xs text-muted-foreground">
               Temporairement suspendues

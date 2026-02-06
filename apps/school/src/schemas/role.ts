@@ -15,7 +15,7 @@ export const roleSchema = z.object({
       'Le slug ne peut contenir que des lettres minuscules, chiffres et tirets',
     ),
   description: z.string().optional().nullable(),
-  permissions: z.record(z.string(), z.array(z.string())),
+  permissions: z.record(z.string(), z.array(z.enum(['view', 'create', 'edit', 'delete', 'manage', 'export', 'validate', 'enroll', 'process_payment']))),
   scope: z.enum(['school', 'system'], {
     message: 'Portée invalide',
   }),

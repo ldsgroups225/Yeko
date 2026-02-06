@@ -211,7 +211,11 @@ export function EnrollmentDialog({
                                 return cls
                                   ? (
                                       <div className="flex items-center gap-2">
-                                        <span>{cls.grade?.name} {cls.class.section}</span>
+                                        <span>
+                                          {cls.grade?.name}
+                                          {' '}
+                                          {cls.class.section}
+                                        </span>
                                         {cls.series?.name && (
                                           <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
                                             {cls.series.name}

@@ -590,6 +590,10 @@ type RootTranslation = {
 		 */
 		payments: string
 		/**
+		 * É​c​h​é​a​n​c​i​e​r​s
+		 */
+		paymentPlans: string
+		/**
 		 * P​a​r​a​m​è​t​r​e​s
 		 */
 		settings: string
@@ -8594,6 +8598,10 @@ export type TranslationFunctions = {
 		 * Paiements
 		 */
 		payments: () => LocalizedString
+		/**
+		 * Échéanciers
+		 */
+		paymentPlans: () => LocalizedString
 		/**
 		 * Paramètres
 		 */

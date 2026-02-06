@@ -68,9 +68,20 @@ import { useParticipationManagement } from '@/hooks/use-participation-management
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { useI18nContext } from '@/i18n/i18n-react'
 import { localNotesService } from '@/lib/db/local-notes'
-import { classDetailsQueryOptions, classStatsQueryOptions, classStudentsQueryOptions } from '@/lib/queries/classes'
+import {
+  classDetailsQueryOptions,
+  classStatsQueryOptions,
+  classStudentsQueryOptions,
+} from '@/lib/queries/classes'
 import { teacherClassesQueryOptions } from '@/lib/queries/dashboard'
-import { getCurrentTermFn, getTeacherSchoolsQuery } from '@/teacher/functions/schools'
+import {
+  unpublishedCountQueryOptions,
+  unpublishedNoteQueryOptions,
+} from '@/lib/queries/local-notes'
+import {
+  currentTermQueryOptions,
+  teacherSchoolsQueryOptions,
+} from '@/lib/queries/schools'
 import { completeSession, startSession } from '@/teacher/functions/sessions'
 
 export const Route = createFileRoute('/_auth/app/schools/$schoolId/class/$classId')({
@@ -221,41 +232,33 @@ function ClassDetailPage() {
   const teacherSubjects = teacherClassInfo?.subjects ?? []
 
   // Fetch current term
-  const { data: currentTerm } = useQuery({
-    queryKey: ['schools', 'current-term', context?.schoolYearId],
-    queryFn: () => getCurrentTermFn({ data: { schoolYearId: context?.schoolYearId ?? '' } }),
-    enabled: !!context?.schoolYearId,
-  })
+  const { data: currentTerm } = useQuery(
+    currentTermQueryOptions(context?.schoolYearId ?? ''),
+  )
 
   // Fetch school info
-  const { data: schools } = useQuery({
-    queryKey: ['teacher', 'schools', context?.userId],
-    queryFn: () => getTeacherSchoolsQuery({ data: { userId: context?.userId ?? '' } }),
-    enabled: !!context?.userId,
-  })
+  const { data: schools } = useQuery(
+    teacherSchoolsQueryOptions(context?.userId ?? ''),
+  )
 
   const currentSchool = schools?.find((s: { id: string }) => s.id === schoolId)
 
   // Fetch unpublished note for this context
-  const { data: unpublishedNote, refetch: refetchUnpublished } = useQuery({
-    queryKey: ['local-notes', 'unpublished', schoolId, classId, context?.teacherId],
-    queryFn: () => localNotesService.findUnpublishedNote({
+  const { data: unpublishedNote, refetch: refetchUnpublished } = useQuery(
+    unpublishedNoteQueryOptions({
       classId,
       schoolId,
-      teacherId: context!.teacherId,
+      teacherId: context?.teacherId ?? '',
     }),
-    enabled: !!context?.teacherId && !!classId,
-  })
+  )
   // Fetch count of unpublished notes
-  const { data: unpublishedCount = 0, refetch: refetchUnpublishedCount } = useQuery({
-    queryKey: ['local-notes', 'unpublished-count', schoolId, classId, context?.teacherId],
-    queryFn: () => localNotesService.countUnpublishedNotes({
+  const { data: unpublishedCount = 0, refetch: refetchUnpublishedCount } = useQuery(
+    unpublishedCountQueryOptions({
       classId,
       schoolId,
-      teacherId: context!.teacherId,
+      teacherId: context?.teacherId ?? '',
     }),
-    enabled: !!context?.teacherId && !!classId,
-  })
+  )
 
   const isLoading = contextLoading || classLoading || studentsLoading || statsLoading
 

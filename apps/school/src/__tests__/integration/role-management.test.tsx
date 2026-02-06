@@ -1,3 +1,4 @@
+import type { RoleFormData } from '@/schemas/role'
 import { render, screen, waitFor } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
 import { describe, expect, test, vi } from 'vitest'
@@ -83,7 +84,7 @@ describe('role Management Integration', () => {
       const user = userEvent.setup()
       const mockOnSubmit = vi.fn()
 
-      const initialData = {
+      const initialData: RoleFormData & { id: string } = {
         id: '123',
         name: 'Teacher',
         slug: 'teacher',
@@ -92,7 +93,7 @@ describe('role Management Integration', () => {
           users: ['view'],
           students: ['view', 'create'],
         },
-        scope: 'school' as const,
+        scope: 'school',
       }
 
       render(<RoleForm initialData={initialData} onSubmit={mockOnSubmit} />)

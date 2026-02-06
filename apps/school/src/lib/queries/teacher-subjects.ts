@@ -13,11 +13,11 @@ export const teacherSubjectsOptions = {
     queryOptions({
       queryKey: teacherSubjectsKeys.list(teacherId),
       queryFn: async () => {
-      const res = await getTeacherAssignments({ data: { teacherId } })
-      if (!res.success)
-        throw new Error(res.error)
-      return res.data
-    },
+        const res = await getTeacherAssignments({ data: { teacherId } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
     }),
 
   available: (teacherId: string, schoolYearId?: string) =>

@@ -1,7 +1,10 @@
+import type { LinkProps } from '@tanstack/react-router'
 import { Link } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
 import { useTranslations } from '@/i18n'
 import { useI18nContext } from '@/i18n/i18n-react'
+
+type RouteId = LinkProps['to']
 
 /**
  * Example 1: Basic translation usage
@@ -29,12 +32,12 @@ export function BasicTranslationExample() {
 export function NavigationExample() {
   const t = useTranslations()
 
-  const navItems = [
-    { key: 'dashboard', icon: '📊' },
-    { key: 'users', icon: '👥' },
-    { key: 'students', icon: '🎓' },
-    { key: 'teachers', icon: '👨‍🏫' },
-    { key: 'finance', icon: '💰' },
+  const navItems: { key: RouteId, icon: string }[] = [
+    { key: '/dashboard', icon: '📊' },
+    { key: '/users', icon: '👥' },
+    { key: '/students', icon: '🎓' },
+    { key: '/users/teachers', icon: '👨‍🏫' },
+    { key: '/accounting', icon: '💰' },
   ]
 
   const navTranslations = {
@@ -50,7 +53,7 @@ export function NavigationExample() {
       {navItems.map(item => (
         <Link
           key={item.key}
-          to={`/${item.key}` as any}
+          to={item.key}
           className="flex items-center gap-2 px-4 py-2 rounded hover:bg-accent"
         >
           <span>{item.icon}</span>

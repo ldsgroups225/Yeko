@@ -10,6 +10,7 @@ import { getRoles } from '@/school/functions/roles'
 interface Role {
   id: string
   name: string
+  slug: string
   description?: string
   scope: 'system' | 'school'
 }
@@ -42,7 +43,7 @@ export function RoleSelector({
   })
 
   const roles = data ?? []
-  const filteredRoles = roles.filter(r => r.scope !== 'system' && (r as any).slug !== 'school_founder')
+  const filteredRoles = roles.filter(r => r.scope !== 'system' && r.slug !== 'school_founder')
   const availableRoles = filteredRoles.filter(r => !selectedRoleIds.includes(r.id))
   const selectedRoles = filteredRoles.filter(r => selectedRoleIds.includes(r.id))
 

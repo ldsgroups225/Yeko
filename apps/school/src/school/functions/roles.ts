@@ -119,7 +119,7 @@ export const createNewRole = authServerFn
       name: data.name,
       slug: data.slug,
       description: data.description || undefined,
-      permissions: data.permissions as any,
+      permissions: data.permissions,
       scope: data.scope,
     })
 
@@ -143,7 +143,7 @@ export const updateExistingRole = authServerFn
     const result = await updateRole(roleId, {
       name: data.name,
       description: data.description || undefined,
-      permissions: data.permissions as any,
+      permissions: data.permissions,
     })
 
     return { success: true as const, data: result }

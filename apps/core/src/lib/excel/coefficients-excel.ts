@@ -116,7 +116,7 @@ export function parseCoefficientsExcel(file: File): Promise<{
           return
         }
 
-        const jsonData = XLSX.utils.sheet_to_json(worksheet) as any[]
+        const jsonData = XLSX.utils.sheet_to_json(worksheet) as Record<string, unknown>[]
 
         const errors: string[] = []
         const validData: CoefficientImportRow[] = []

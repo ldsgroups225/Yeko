@@ -83,7 +83,7 @@ function MessagesPage() {
                     {data.messages.map(message => (
                       <MessageItem
                         key={message.id}
-                        message={message as any}
+                        message={message}
                         teacherId={context?.teacherId ?? ''}
                         locale={locale}
                       />

@@ -38,7 +38,7 @@ function EditStudentPage() {
       <Breadcrumbs
         items={[
           { label: t.students.title(), href: '/students' },
-          { label: `${data.student.lastName} ${data.student.firstName}`, href: `/students/${studentId}` },
+          { label: `${data.lastName} ${data.firstName}`, href: `/students/${studentId}` },
           { label: t.common.edit() },
         ]}
       />
@@ -51,22 +51,22 @@ function EditStudentPage() {
       <StudentForm
         mode="edit"
         student={{
-          id: data.student.id,
-          firstName: data.student.firstName,
-          lastName: data.student.lastName,
-          dob: data.student.dob,
-          gender: data.student.gender ?? undefined,
-          photoUrl: data.student.photoUrl ?? undefined,
-          matricule: data.student.matricule ?? undefined,
-          birthPlace: data.student.birthPlace ?? undefined,
-          nationality: data.student.nationality ?? undefined,
-          address: data.student.address ?? undefined,
-          emergencyContact: data.student.emergencyContact ?? undefined,
-          emergencyPhone: data.student.emergencyPhone ?? undefined,
-          bloodType: data.student.bloodType ?? undefined,
-          medicalNotes: data.student.medicalNotes ?? undefined,
-          previousSchool: data.student.previousSchool ?? undefined,
-          admissionDate: data.student.admissionDate ?? undefined,
+          id: data.id,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          dob: data.dob,
+          gender: data.gender ?? undefined,
+          photoUrl: data.photoUrl ?? undefined,
+          matricule: data.matricule ?? undefined,
+          birthPlace: data.birthPlace ?? undefined,
+          nationality: data.nationality ?? undefined,
+          address: data.address ?? undefined,
+          emergencyContact: data.emergencyContact ?? undefined,
+          emergencyPhone: data.emergencyPhone ?? undefined,
+          bloodType: data.bloodType ?? undefined,
+          medicalNotes: data.medicalNotes ?? undefined,
+          previousSchool: data.previousSchool ?? undefined,
+          admissionDate: data.admissionDate ?? undefined,
         }}
       />
     </div>

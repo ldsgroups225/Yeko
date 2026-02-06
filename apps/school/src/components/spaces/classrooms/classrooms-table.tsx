@@ -234,7 +234,7 @@ export function ClassroomsTable({
         ),
       },
     ],
-    [navigate, t],
+    [t],
   )
 
   const table = useReactTable({

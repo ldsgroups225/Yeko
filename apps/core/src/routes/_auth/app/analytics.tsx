@@ -275,8 +275,8 @@ function AnalyticsPage() {
                 {schoolsPerfLoading
                   ? (
                       <div className="space-y-2">
-                        {Array.from({ length: 3 }).map((_, i) => (
-                          <Skeleton key={`schools-status-skeleton-${i}`} className="h-12 w-full" />
+                        {[1, 2, 3].map(item => (
+                          <Skeleton key={`schools-status-skeleton-${item}`} className="h-12 w-full" />
                         ))}
                       </div>
                     )
@@ -348,8 +348,8 @@ function AnalyticsPage() {
               {schoolsPerfLoading
                 ? (
                     <div className="space-y-2">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Skeleton key={`top-schools-skeleton-${i}`} className="h-16 w-full" />
+                      {[1, 2, 3, 4, 5].map(item => (
+                        <Skeleton key={`top-schools-skeleton-${item}`} className="h-16 w-full" />
                       ))}
                     </div>
                   )
@@ -399,8 +399,8 @@ function AnalyticsPage() {
                 {usageLoading
                   ? (
                       <div className="space-y-2">
-                        {Array.from({ length: 3 }).map((_, i) => (
-                          <Skeleton key={`usage-active-skeleton-${i}`} className="h-12 w-full" />
+                        {[1, 2, 3].map(item => (
+                          <Skeleton key={`usage-active-skeleton-${item}`} className="h-12 w-full" />
                         ))}
                       </div>
                     )
@@ -433,8 +433,8 @@ function AnalyticsPage() {
                 {usageLoading
                   ? (
                       <div className="space-y-2">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <Skeleton key={`usage-feature-skeleton-${i}`} className="h-8 w-full" />
+                        {[1, 2, 3, 4, 5].map(item => (
+                          <Skeleton key={`usage-feature-skeleton-${item}`} className="h-8 w-full" />
                         ))}
                       </div>
                     )

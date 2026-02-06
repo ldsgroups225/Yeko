@@ -1,3 +1,4 @@
+import type { SchoolSubjectWithDetails } from '@repo/data-ops/queries/school-subjects'
 import type { ColumnDef } from '@tanstack/react-table'
 import {
   IconAdjustmentsHorizontal,
@@ -55,22 +56,6 @@ import { SubjectStatusToggle } from './subject-status-toggle'
 
 interface SchoolSubjectListProps {
   schoolYearId?: string
-}
-
-interface SchoolSubjectItem {
-  id: string
-  schoolId: string
-  subjectId: string
-  schoolYearId: string
-  status: 'active' | 'inactive'
-  createdAt: Date
-  updatedAt: Date
-  subject: {
-    id: string
-    name: string
-    shortName: string
-    category: string | null
-  }
 }
 
 const SUBJECT_CATEGORY_KEYS = [
@@ -159,15 +144,15 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
 
   const subjectsData = useMemo(
     () => {
-      if (result?.success) {
-        return result.data.subjects as unknown as SchoolSubjectItem[]
+      if (result) {
+        return result.subjects
       }
-      return [] as SchoolSubjectItem[]
+      return [] as SchoolSubjectWithDetails[]
     },
     [result],
   )
 
-  const columns = useMemo<ColumnDef<SchoolSubjectItem>[]>(
+  const columns = useMemo<ColumnDef<SchoolSubjectWithDetails>[]>(
     () => [
       {
         accessorKey: 'subject.name',

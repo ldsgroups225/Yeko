@@ -89,7 +89,7 @@ export function FeeTypeFormDialog({
       form.setValue('code', template.code)
       form.setValue('name', template.name)
       form.setValue('nameEn', template.nameEn || '')
-      form.setValue('category', template.category as any)
+      form.setValue('category', template.category)
       form.setValue('isMandatory', template.isMandatory)
       form.setValue('isRecurring', template.isRecurring)
       form.setValue('displayOrder', template.displayOrder)

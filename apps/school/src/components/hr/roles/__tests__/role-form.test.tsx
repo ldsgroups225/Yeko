@@ -1,3 +1,4 @@
+import type { RoleFormData } from '@/schemas/role'
 import { render, screen, waitFor } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
@@ -53,7 +54,7 @@ describe('roleForm Component', () => {
   })
 
   describe('rendering - IconEdit Mode', () => {
-    const initialData = {
+    const initialData: RoleFormData & { id: string } = {
       id: '123',
       name: 'Administrator',
       slug: 'administrator',
@@ -61,7 +62,7 @@ describe('roleForm Component', () => {
       permissions: {
         users: ['view', 'create', 'edit', 'delete'],
       },
-      scope: 'school' as const,
+      scope: 'school',
     }
 
     test('should populate form with initial data', () => {

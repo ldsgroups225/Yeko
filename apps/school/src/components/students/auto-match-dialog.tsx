@@ -82,7 +82,7 @@ export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
     enabled: open,
   })
 
-  const suggestions: Suggestion[] = data?.success ? data.data.suggestions : []
+  const suggestions: Suggestion[] = data ? data.suggestions : []
 
   const toggleSelection = (studentId: string, suggestion: Suggestion) => {
     const newMap = new Map(selectedMatches)

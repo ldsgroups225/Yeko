@@ -43,7 +43,7 @@ function NotificationsSettingsPage() {
     )
   }
 
-  const school = result?.success ? result.data : null
+  const school = result || null
   const settings = school?.settings as SchoolSettings | undefined
 
   return (

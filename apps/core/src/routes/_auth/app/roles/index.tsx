@@ -1,4 +1,4 @@
-import type { Role, RoleScope as SchoolScope, SystemAction, SystemPermissions } from '@repo/data-ops'
+import type { Role, RoleScope as SchoolScope, SystemAction } from '@repo/data-ops'
 import { hasPermission } from '@repo/data-ops/auth/permissions'
 import {
   IconDots,
@@ -132,7 +132,7 @@ function RoleManagement() {
       // eslint-disable-next-line ts/no-use-before-define
       form.reset()
     },
-    onError: (error: any) => toast.error(error.message || 'Erreur lors de la création'),
+    onError: (error: Error) => toast.error(error.message || 'Erreur lors de la création'),
   })
 
   const updateMutation = useMutation({
@@ -146,7 +146,7 @@ function RoleManagement() {
       // eslint-disable-next-line ts/no-use-before-define
       form.reset()
     },
-    onError: (error: any) => toast.error(error.message || 'Erreur lors de la mise à jour'),
+    onError: (error: Error) => toast.error(error.message || 'Erreur lors de la mise à jour'),
   })
 
   const deleteMutation = useMutation({
@@ -181,10 +181,10 @@ function RoleManagement() {
     },
     onSubmit: async ({ value }) => {
       if (editingRole) {
-        updateMutation.mutate({ id: editingRole.id, updates: value as any })
+        updateMutation.mutate({ id: editingRole.id, updates: value as Partial<RoleFormData> as unknown as Partial<Role> })
       }
       else {
-        createMutation.mutate(value as any)
+        createMutation.mutate(value as RoleFormData as unknown as RoleFormData)
       }
     },
   })
@@ -200,8 +200,8 @@ function RoleManagement() {
       form.setFieldValue('name', editingRole.name)
       form.setFieldValue('slug', editingRole.slug)
       form.setFieldValue('description', editingRole.description || '')
-      form.setFieldValue('scope', editingRole.scope as any)
-      form.setFieldValue('permissions', editingRole.permissions as any)
+      form.setFieldValue('scope', editingRole.scope as SchoolScope)
+      form.setFieldValue('permissions', editingRole.permissions as Record<string, string[]>)
     }
     else {
       form.reset()

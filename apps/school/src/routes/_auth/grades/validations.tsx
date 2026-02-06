@@ -83,7 +83,7 @@ function GradeValidationsPage() {
     gradesOptions.pending(schoolId ?? ''),
   )
 
-  const pendingValidations = pendingValidationsResult?.success ? pendingValidationsResult.data : []
+  const pendingValidations = pendingValidationsResult || []
 
   const validateMutation = useMutation({
     mutationFn: (params: {
@@ -92,7 +92,8 @@ function GradeValidationsPage() {
       comment?: string
     }) => validateGrades({ data: params }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: gradesKeys.all })
+      const pendingKey = schoolId ? gradesKeys.pending(schoolId) : gradesKeys.all
+      queryClient.invalidateQueries({ queryKey: pendingKey })
       setDialogOpen(false)
       setSelectedValidation(null)
       setSelectedRows([])
@@ -110,7 +111,8 @@ function GradeValidationsPage() {
       reason: string
     }) => rejectGrades({ data: params }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: gradesKeys.all })
+      const pendingKey = schoolId ? gradesKeys.pending(schoolId) : gradesKeys.all
+      queryClient.invalidateQueries({ queryKey: pendingKey })
       setDialogOpen(false)
       setSelectedValidation(null)
       setSelectedRows([])
@@ -205,7 +207,7 @@ function GradeValidationsPage() {
         // Filter successful results and flatten the arrays
         gradeIds = results
           .filter(r => r.success)
-          .flatMap(r => (r as any).data as string[])
+          .flatMap(r => r.data)
 
         if (results.some(r => !r.success)) {
           toast.error(t.academic.grades.errors.loadError())

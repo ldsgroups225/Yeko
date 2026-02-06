@@ -81,7 +81,7 @@ export const recordAttendance = authServerFn
       ...data,
       schoolId,
       recordedBy: userId,
-      expectedArrival: (settings as any)?.teacherExpectedArrival ?? '07:30',
+      expectedArrival: settings?.teacherExpectedArrival ?? '07:30',
     })).match(
       async (result) => {
         await createAuditLog({
@@ -102,7 +102,7 @@ export const recordAttendance = authServerFn
             now.getMonth() + 1,
           )
 
-          if (lateCountResult.isOk() && lateCountResult.value >= ((settings as any)?.teacherLatenessAlertCount ?? 3)) {
+          if (lateCountResult.isOk() && lateCountResult.value >= (settings?.teacherLatenessAlertCount ?? 3)) {
             return { success: true as const, data: { ...result, alertTriggered: true, lateCount: lateCountResult.value } }
           }
         }
@@ -136,7 +136,7 @@ export const bulkRecordAttendance = authServerFn
       date: data.date,
       entries: data.entries,
       recordedBy: userId,
-      expectedArrival: (settings as any)?.teacherExpectedArrival ?? '07:30',
+      expectedArrival: settings.teacherExpectedArrival ?? '07:30',
     })).match(
       async (result) => {
         await createAuditLog({

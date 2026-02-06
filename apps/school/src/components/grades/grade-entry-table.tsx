@@ -192,9 +192,9 @@ export function GradeEntryTable({
   const { data: classSubjectsData } = useQuery(
     classSubjectsOptions.list({ classId }),
   )
-  const teachers = teachersData?.success ? teachersData.data.teachers : []
+  const teachers = teachersData ? teachersData.teachers : []
 
-  const currentSubject = classSubjectsData?.success ? classSubjectsData.data.find(cs => cs.subject.id === subjectId) : undefined
+  const currentSubject = classSubjectsData ? classSubjectsData.find(cs => cs.subject.id === subjectId) : undefined
   const subjectName = currentSubject?.subject.name || ''
 
   const submitMutation = useMutation({

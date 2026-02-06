@@ -1,10 +1,10 @@
 import { getDb } from '@repo/data-ops/database/setup'
+import { grades, series } from '@repo/data-ops/drizzle/core-schema'
 import {
   and,
   eq,
   inArray,
 } from '@repo/data-ops/drizzle/operators'
-import { grades, series } from '@repo/data-ops/drizzle/core-schema'
 import {
   classes,
   enrollments,

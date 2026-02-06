@@ -1,3 +1,4 @@
+import type { TranslationFunctions } from '@/i18n'
 import { IconBook, IconCheck, IconLoader2, IconSparkles } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Badge } from '@workspace/ui/components/badge'
@@ -92,8 +93,8 @@ export function TeacherAssignmentDialog({
     },
   })
 
-  const subjects = (schoolSubjectsResult?.success ? (schoolSubjectsResult.data.subjects || []) : []) as SubjectBase[]
-  const assignedIds = assignedSubjectsResult?.success ? (assignedSubjectsResult.data.map(a => a.subjectId)) : []
+  const subjects = (schoolSubjectsResult ? (schoolSubjectsResult.subjects || []) : [])
+  const assignedIds = assignedSubjectsResult ? (assignedSubjectsResult.map(a => a.subjectId)) : []
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -152,7 +153,7 @@ interface AssignmentListProps {
   onAssign: (ids: string[]) => void
   isPending: boolean
   onCancel: () => void
-  t: any
+  t: TranslationFunctions
 }
 
 function AssignmentList({ subjects, assignedIds, onAssign, isPending, onCancel, t }: AssignmentListProps) {

@@ -33,7 +33,7 @@ export function PricingSection() {
       period: '',
       popular: false,
     },
-  ]
+  ] as const
 
   return (
     <section id="pricing" className="py-24 sm:py-32 bg-muted/30">
@@ -50,8 +50,8 @@ export function PricingSection() {
         <div className="mx-auto mt-16 grid max-w-lg grid-cols-1 gap-8 lg:max-w-none lg:grid-cols-3">
           {plans.map((plan) => {
             const planData = LL.nav.pricing.plans[
-              plan.key as keyof typeof LL.nav.pricing.plans
-            ] as any
+              plan.key
+            ]
             return (
               <Card
                 key={plan.key}
@@ -61,9 +61,9 @@ export function PricingSection() {
                     : 'border-2'
                 }`}
               >
-                {plan.popular && (
+                {plan.popular && 'popular' in planData && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                    <Badge className="px-4 py-1">{planData.popular()}</Badge>
+                    <Badge className="px-4 py-1">{(planData as { popular: () => string }).popular()}</Badge>
                   </div>
                 )}
                 <CardHeader className="pb-8">
@@ -83,9 +83,9 @@ export function PricingSection() {
                 <CardContent className="flex-1">
                   <ul className="space-y-3 mb-8">
                     {Object.values(planData.features).map(
-                      (featureFn: any, index) => (
+                      (featureFn: () => string) => (
                         <li
-                          key={`${plan.key}-${index}`}
+                          key={`${plan.key}-${featureFn()}`}
                           className="flex items-start gap-3"
                         >
                           <IconCheck className="h-5 w-5 text-primary shrink-0 mt-0.5" />

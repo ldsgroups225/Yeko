@@ -91,7 +91,7 @@ function StudentAttendancePage() {
     },
   })
 
-  const attendanceData = attendanceResult?.success ? attendanceResult.data : []
+  const attendanceData = attendanceResult || []
   const entries: StudentAttendanceEntry[] = (attendanceData as StudentAttendanceRecord[]).map(record => ({
     studentId: record.studentId,
     studentName: record.studentName,

@@ -41,8 +41,8 @@ interface SubjectPickerDialogProps {
 interface CoreSubject {
   id: string
   name: string
-  shortName: string
-  category: string | null
+  shortName: string | null
+  category: 'Scientifique' | 'Littéraire' | 'Sportif' | 'Autre'
 }
 
 export function SubjectPickerDialog({
@@ -70,11 +70,7 @@ export function SubjectPickerDialog({
   Fix: Unwrapping result and handling type mismatch properly.
   */
   // Ensure typed as CoreSubject[] and handle potential null values
-  const subjectsData = (result?.success ? result.data : []) as unknown as CoreSubject[]
-  const subjects = subjectsData.map(s => ({
-    ...s,
-    category: s.category || null, // Ensure category matches type definition
-  }))
+  const subjects: CoreSubject[] = result || []
 
   const addMutation = useMutation({
     mutationFn: (subjectIds: string[]) =>
@@ -114,18 +110,18 @@ export function SubjectPickerDialog({
 
   const handleSelectAll = (category: string) => {
     const categorySubjects = subjects.filter(
-      (s: CoreSubject) => (s.category || 'Autre') === category,
+      s => s.category === category,
     )
-    const allSelected = categorySubjects.every((s: CoreSubject) =>
+    const allSelected = categorySubjects.every(s =>
       selectedIds.has(s.id),
     )
 
     const newSelected = new Set(selectedIds)
     if (allSelected) {
-      categorySubjects.forEach((s: CoreSubject) => newSelected.delete(s.id))
+      categorySubjects.forEach(s => newSelected.delete(s.id))
     }
     else {
-      categorySubjects.forEach((s: CoreSubject) => newSelected.add(s.id))
+      categorySubjects.forEach(s => newSelected.add(s.id))
     }
     setSelectedIds(newSelected)
   }
@@ -140,7 +136,7 @@ export function SubjectPickerDialog({
 
   const groupedSubjects: Record<string, CoreSubject[]> = {}
   for (const subject of subjects) {
-    const category = subject.category || 'Autre'
+    const category = subject.category
     if (!groupedSubjects[category]) {
       groupedSubjects[category] = []
     }

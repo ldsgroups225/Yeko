@@ -45,7 +45,7 @@ const linkParentSchema = z.object({
 
 const parentFiltersSchema = z.object({
   search: z.string().optional(),
-  invitationStatus: z.string().optional(),
+  invitationStatus: z.enum(['pending', 'sent', 'accepted', 'expired']).optional(),
   page: z.number().optional(),
   limit: z.number().optional(),
 })
@@ -61,7 +61,7 @@ export const getParents = authServerFn
     const { school } = context
     await requirePermission('students', 'view')
 
-    const result = await parentQueries.getParents(school.schoolId, data as any)
+    const result = await parentQueries.getParents(school.schoolId, data)
     return result.match(
       value => ({ success: true as const, data: value }),
       error => ({ success: false as const, error: error.message }),

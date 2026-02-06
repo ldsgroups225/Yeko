@@ -1,3 +1,4 @@
+import type { ClassFilters } from '@repo/data-ops/queries/classes'
 import * as classQueries from '@repo/data-ops/queries/classes'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import { z } from 'zod'
@@ -21,7 +22,7 @@ export const getClasses = authServerFn
       schoolYearId: z.string().nullish(),
       gradeId: z.string().optional(),
       seriesId: z.string().optional(),
-      status: z.string().optional(),
+      status: z.enum(['active', 'archived']).optional(),
       search: z.string().optional(),
     }),
   )
@@ -33,11 +34,11 @@ export const getClasses = authServerFn
     await requirePermission('classes', 'view')
 
     // Filter out null values to match ClassFilters type
-    const filters: classQueries.ClassFilters = {
+    const filters: ClassFilters = {
       ...data,
       schoolId,
       schoolYearId: data.schoolYearId ?? undefined,
-      status: data.status as any,
+      status: data.status,
     }
 
     return (await classQueries.getClasses(filters)).match(

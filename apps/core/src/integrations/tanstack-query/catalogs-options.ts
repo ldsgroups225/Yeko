@@ -12,6 +12,7 @@ import type {
   UpdateSubjectInput,
   UpdateTrackInput,
 } from '@/schemas/catalog'
+import { keepPreviousData } from '@tanstack/react-query'
 import {
   bulkCreateSeriesMutation,
   bulkCreateSubjectsMutation,
@@ -171,6 +172,7 @@ export function subjectsQueryOptions(params: {
     queryFn: () => subjectsQuery({ data: params }),
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 15,
+    placeholderData: keepPreviousData,
   }
 }
 

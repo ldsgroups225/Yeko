@@ -56,10 +56,13 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { useTranslations } from '@/i18n'
 import {
+  schoolYearsKeys,
+  schoolYearsOptions,
+  schoolYearTemplatesOptions,
+} from '@/lib/queries/school-years'
+import {
   createSchoolYear,
   deleteSchoolYear,
-  getAvailableSchoolYearTemplates,
-  getSchoolYears,
   setActiveSchoolYear,
 } from '@/school/functions/school-years'
 import { parseServerFnError } from '@/utils/error-handlers'
@@ -77,29 +80,44 @@ function SchoolYearsSettingsPage() {
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
 
   // Fetch school years
-  const { data: schoolYearsResult, isLoading } = useQuery({
-    queryKey: ['school-years'],
-    queryFn: () => getSchoolYears(),
-  })
+  const { data: schoolYears = [], isLoading } = useQuery(schoolYearsOptions())
 
   // Fetch available templates
-  const { data: templatesResult } = useQuery({
-    queryKey: ['school-year-templates'],
-    queryFn: () => getAvailableSchoolYearTemplates(),
-  })
-
-  const schoolYears = schoolYearsResult?.success ? schoolYearsResult.data : []
-  const templates = templatesResult?.success ? templatesResult.data : []
+  const { data: templates = [] } = useQuery(schoolYearTemplatesOptions())
 
   // Set active mutation
   const setActiveMutation = useMutation({
     mutationFn: (id: string) => setActiveSchoolYear({ data: { id } }),
+    onMutate: async (id) => {
+      // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+      await queryClient.cancelQueries({ queryKey: schoolYearsKeys.all })
+
+      // Snapshot the previous value
+      const previousSchoolYears = queryClient.getQueryData(schoolYearsOptions().queryKey)
+
+      // Optimistically update to the new value
+      queryClient.setQueryData(schoolYearsOptions().queryKey, (old) => {
+        if (!old)
+          return []
+        return old.map(sy => ({
+          ...sy,
+          isActive: sy.id === id,
+        }))
+      })
+
+      // Return a context object with the snapshotted value
+      return { previousSchoolYears }
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['school-years'] })
+      queryClient.invalidateQueries({ queryKey: schoolYearsKeys.all })
       queryClient.invalidateQueries({ queryKey: ['school-context'] })
       toast.success(t.settings.schoolYears.activatedSuccess())
     },
-    onError: (err) => {
+    onError: (err, _id, context) => {
+      // If the mutation fails, use the context returned from onMutate to roll back
+      if (context?.previousSchoolYears) {
+        queryClient.setQueryData(schoolYearsOptions().queryKey, context.previousSchoolYears)
+      }
       toast.error(parseServerFnError(err, t.settings.schoolYears.activatedError()))
     },
   })
@@ -108,7 +126,7 @@ function SchoolYearsSettingsPage() {
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteSchoolYear({ data: { id } }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['school-years'] })
+      queryClient.invalidateQueries({ queryKey: schoolYearsKeys.all })
       toast.success(t.settings.schoolYears.deletedSuccess())
       setDeleteConfirmId(null)
     },
@@ -387,7 +405,7 @@ function CreateSchoolYearDialog({
         },
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['school-years'] })
+      queryClient.invalidateQueries({ queryKey: schoolYearsKeys.all })
       if (isActive) {
         queryClient.invalidateQueries({ queryKey: ['school-context'] })
       }

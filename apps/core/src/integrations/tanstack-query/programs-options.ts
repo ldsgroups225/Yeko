@@ -18,6 +18,7 @@ import type {
   UpdateSchoolYearTemplateInput,
   UpdateTermTemplateInput,
 } from '@/schemas/programs'
+import { keepPreviousData } from '@tanstack/react-query'
 import {
   bulkCreateChaptersMutation,
   bulkCreateTermTemplatesMutation,
@@ -98,6 +99,7 @@ export function programTemplatesQueryOptions(params: {
     queryFn: () => programTemplatesQuery({ data: params }),
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 15,
+    placeholderData: keepPreviousData,
   }
 }
 

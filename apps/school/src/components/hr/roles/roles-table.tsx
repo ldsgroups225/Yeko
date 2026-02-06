@@ -2,7 +2,6 @@ import type { ColumnDef } from '@tanstack/react-table'
 import {
   IconDots,
   IconEdit,
-  IconEye,
   IconSearch,
   IconShield,
   IconTrash,

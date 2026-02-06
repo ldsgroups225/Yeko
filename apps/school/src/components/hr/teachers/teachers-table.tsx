@@ -4,7 +4,6 @@ import {
   IconCalendar,
   IconDots,
   IconEdit,
-  IconEye,
   IconMail,
   IconSchool,
   IconSearch,

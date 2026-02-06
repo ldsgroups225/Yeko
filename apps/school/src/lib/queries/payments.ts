@@ -1,4 +1,4 @@
-import { queryOptions } from '@tanstack/react-query'
+import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import {
   getCashierSummary,
   getPayment,
@@ -39,6 +39,7 @@ export const paymentsOptions = {
       },
       staleTime: 2 * 60 * 1000,
       gcTime: 10 * 60 * 1000,
+      placeholderData: keepPreviousData,
     }),
 
   detail: (id: string) =>

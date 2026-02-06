@@ -1,7 +1,10 @@
+import type { RoleFormData } from '@/schemas/role'
 import { render, screen } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { PermissionsMatrix } from '../permissions-matrix'
+
+type Permissions = RoleFormData['permissions']
 
 describe('permissionsMatrix Component', () => {
   const mockOnChange = vi.fn()
@@ -61,7 +64,7 @@ describe('permissionsMatrix Component', () => {
     })
 
     test('should show checked checkboxes for granted permissions', () => {
-      const value = {
+      const value: Permissions = {
         users: ['view', 'create'],
       }
 
@@ -74,7 +77,7 @@ describe('permissionsMatrix Component', () => {
     })
 
     test('should show all checkboxes checked when all actions granted', () => {
-      const value = {
+      const value: Permissions = {
         users: ['view', 'create', 'edit', 'delete'],
       }
 
@@ -118,7 +121,7 @@ describe('permissionsMatrix Component', () => {
 
     test('should remove permission when checked checkbox is clicked', async () => {
       const user = userEvent.setup()
-      const value = {
+      const value: Permissions = {
         users: ['view', 'create'],
       }
 
@@ -165,7 +168,7 @@ describe('permissionsMatrix Component', () => {
 
     test('should deselect all actions for a resource', async () => {
       const user = userEvent.setup()
-      const value = {
+      const value: Permissions = {
         users: ['view', 'create', 'edit', 'delete'],
       }
 
@@ -191,7 +194,7 @@ describe('permissionsMatrix Component', () => {
     })
 
     test('should show permissions count when permissions are selected', () => {
-      const value = {
+      const value: Permissions = {
         users: ['view', 'create'],
         teachers: ['view'],
       }
@@ -233,7 +236,7 @@ describe('permissionsMatrix Component', () => {
 
   describe('edge Cases', () => {
     test('should handle multiple resources with different permissions', () => {
-      const value = {
+      const value: Permissions = {
         users: ['view', 'create'],
         teachers: ['view', 'edit', 'delete'],
         staff: ['view'],
@@ -251,7 +254,7 @@ describe('permissionsMatrix Component', () => {
     test('should handle empty resource permissions', () => {
       // When users array is empty, the component shows "0 permissions selected"
       // because Object.keys(value).length is 1 (users key exists)
-      const value = {
+      const value: Permissions = {
         users: [],
       }
 

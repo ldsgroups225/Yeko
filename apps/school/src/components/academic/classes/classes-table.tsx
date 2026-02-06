@@ -6,7 +6,6 @@ import {
   IconChevronRight,
   IconDots,
   IconDownload,
-  IconEye,
   IconPlus,
   IconSearch,
   IconTrash,
@@ -135,7 +134,7 @@ export function ClassesTable({
       const result = await getClasses({
         data: {
           search: debouncedSearch,
-          status: status === 'all' ? undefined : status,
+          status: status === 'all' ? undefined : status as 'active' | 'archived' | undefined,
         },
       })
       if (!result.success)
@@ -307,7 +306,7 @@ export function ClassesTable({
         ),
       },
     ],
-    [navigate, t, handleSelectAll, selectedRows, handleSelectRow],
+    [t, handleSelectAll, selectedRows, handleSelectRow],
   )
 
   const table = useReactTable({

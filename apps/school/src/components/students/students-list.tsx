@@ -8,7 +8,6 @@ import {
   IconDots,
   IconDownload,
   IconEdit,
-  IconEye,
   IconPlus,
   IconSearch,
   IconTrash,
@@ -167,6 +166,10 @@ export function StudentsList() {
     else {
       setSelectedRows(prev => prev.filter(rowId => rowId !== id))
     }
+  }
+
+  const handlePrefetchStudent = (studentId: string) => {
+    void queryClient.prefetchQuery(studentsOptions.detail(studentId))
   }
 
   // Filters are now calculated in useQuery directly to avoid hoisting issues
@@ -531,6 +534,7 @@ export function StudentsList() {
                             to="/students/$studentId"
                             params={{ studentId: item.student.id }}
                             className="flex items-center gap-3"
+                            onMouseEnter={() => handlePrefetchStudent(item.student.id)}
                           >
                             <Avatar className="h-12 w-12 border-2 border-border/20">
                               <AvatarImage src={item.student.photoUrl || undefined} />
@@ -747,6 +751,7 @@ export function StudentsList() {
                               to: '/students/$studentId',
                               params: { studentId: item.student.id },
                             })}
+                          onMouseEnter={() => handlePrefetchStudent(item.student.id)}
                         >
                           <TableCell>
                             <Checkbox
@@ -772,6 +777,7 @@ export function StudentsList() {
                                   to="/students/$studentId"
                                   params={{ studentId: item.student.id }}
                                   className="font-medium hover:text-primary transition-colors block"
+                                  onMouseEnter={() => handlePrefetchStudent(item.student.id)}
                                 >
                                   {item.student.lastName}
                                   {' '}

@@ -26,9 +26,8 @@ function NewConductRecordPage() {
     queryFn: () => getSchoolYears(),
   })
 
-  // Find the active school year or use context school year
-  const schoolYears = schoolYearsResult?.success ? schoolYearsResult.data : []
-  const activeSchoolYear = schoolYears.find((sy: any) => sy.isActive)
+  const schoolYears = schoolYearsResult?.success ? (schoolYearsResult.data) : []
+  const activeSchoolYear = schoolYears.find(sy => sy.isActive)
   const effectiveSchoolYearId = contextSchoolYearId || activeSchoolYear?.id
 
   const mutation = useMutation({

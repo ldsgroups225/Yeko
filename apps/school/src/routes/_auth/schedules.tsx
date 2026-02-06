@@ -18,7 +18,7 @@ import {
 } from '@workspace/ui/components/select'
 import { Skeleton } from '@workspace/ui/components/skeleton'
 import { AnimatePresence, motion } from 'motion/react'
-import { Suspense, lazy, useMemo, useState } from 'react'
+import { lazy, Suspense, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import {
@@ -122,15 +122,9 @@ function TimetablesPage() {
     staleTime: 5 * 60 * 1000,
   })
 
-  // We handle both array and object result structures gracefully with specific types
   const classrooms = useMemo(() => {
     if (classroomsResult?.success) {
-      const data = classroomsResult.data
-      if (Array.isArray(data))
-        return data
-      if (data && typeof data === 'object' && 'classrooms' in (data as object)) {
-        return (data as { classrooms: any[] }).classrooms
-      }
+      return classroomsResult.data
     }
     return []
   }, [classroomsResult])
@@ -163,8 +157,8 @@ function TimetablesPage() {
   // Transform timetable data to match TimetableSessionData interface
   const transformedTimetable = useMemo(() => {
     const timetable = viewMode === 'class'
-      ? (classTimetableResult?.success ? classTimetableResult.data : [])
-      : (teacherTimetableResult?.success ? teacherTimetableResult.data : [])
+      ? (classTimetableResult || [])
+      : (teacherTimetableResult || [])
 
     const sessions = (timetable?.map((session) => {
       // Handle different data structures for class vs teacher views
@@ -337,12 +331,10 @@ function TimetablesPage() {
     name: t.user?.name || 'Unknown',
   })), [teachers])
 
-  const formattedClassrooms = useMemo(() => classrooms.map((c) => {
-    return {
-      id: c.classroom?.id || 'unknown',
-      name: c.classroom?.name || 'Unknown',
-    }
-  }), [classrooms])
+  const formattedClassrooms = useMemo(() => classrooms.map(c => ({
+    id: c.id,
+    name: c.name,
+  })), [classrooms])
 
   return (
     <div className="space-y-8 p-1">

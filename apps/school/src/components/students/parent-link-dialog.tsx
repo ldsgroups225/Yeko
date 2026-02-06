@@ -212,8 +212,8 @@ export function ParentLinkDialog({
 
             {!parentsLoading
               && search.length >= 2
-              && parentsData?.success
-              && parentsData.data.data.length === 0 && (
+              && parentsData
+              && parentsData.data.length === 0 && (
               <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
                 <IconUser className="h-8 w-8 opacity-50 mb-2" />
                 <p>{t.parents.noParents()}</p>
@@ -227,14 +227,14 @@ export function ParentLinkDialog({
               </div>
             )}
 
-            {parentsData?.success && parentsData.data.data.length > 0 && (
+            {parentsData && parentsData.data.length > 0 && (
               <RadioGroup
                 value={selectedParentId || ''}
                 onValueChange={v => setSelectedParentId(v as string | null)}
                 className="max-h-[240px] overflow-y-auto pr-2"
               >
                 <div className="space-y-2">
-                  {parentsData.data.data.map(parent => (
+                  {parentsData.data.map(parent => (
                     <div
                       key={parent.id}
                       className="flex items-center space-x-3 rounded-lg border p-3 transition-colors hover:bg-muted/50"

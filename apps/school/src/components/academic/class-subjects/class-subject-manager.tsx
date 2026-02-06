@@ -58,7 +58,7 @@ export function ClassSubjectManager({
     classSubjectsOptions.list({ classId }),
   )
 
-  const subjects = subjectsResult?.success ? subjectsResult.data : []
+  const subjects = subjectsResult || []
 
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isCopyDialogOpen, setIsCopyDialogOpen] = useState(false)
@@ -111,7 +111,7 @@ export function ClassSubjectManager({
     },
   })
 
-  const teachers = teachersResult?.success ? (teachersResult.data.teachers || []) : []
+  const teachers = teachersResult ? (teachersResult.teachers || []) : []
 
   // Group subjects by category for better display if needed, but for now simple list
   // The query returns subjects sorted by name

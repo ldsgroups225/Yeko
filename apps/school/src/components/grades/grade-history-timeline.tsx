@@ -41,7 +41,7 @@ export function GradeHistoryTimeline({ gradeId }: GradeHistoryTimelineProps) {
 
   const { data: result, isLoading } = useQuery(gradesOptions.history(gradeId))
 
-  const history = result?.success ? result.data : []
+  const history = result || []
 
   if (isLoading) {
     return (

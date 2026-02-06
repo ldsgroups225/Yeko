@@ -1,13 +1,15 @@
+import type { GradeType } from '@/schemas/grade'
 import * as gradeQueries from '@repo/data-ops/queries/grades'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
-import { z } from 'zod'
 
+import { z } from 'zod'
 import {
   bulkGradesSchema,
   createGradeSchema,
   getGradesByClassSchema,
   getGradeStatisticsSchema,
   getPendingValidationsSchema,
+
   gradeTypes,
   rejectGradesSchema,
   submitGradesSchema,
@@ -145,7 +147,13 @@ export const updateGrade = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('grades', 'edit')
 
-    const updateData: Record<string, any> = {}
+    const updateData: Partial<{
+      value: string
+      type: GradeType
+      weight: number
+      description: string
+      gradeDate: string
+    }> = {}
     if (data.value !== undefined)
       updateData.value = String(data.value)
     if (data.type !== undefined)

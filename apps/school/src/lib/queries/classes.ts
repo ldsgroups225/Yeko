@@ -16,7 +16,7 @@ export interface ClassFilters {
   schoolYearId?: string
   gradeId?: string
   seriesId?: string
-  status?: string
+  status?: 'active' | 'archived'
   search?: string
 }
 

@@ -23,7 +23,7 @@ function GradesIndexPage() {
     gradesOptions.pending(schoolId ?? ''),
   )
 
-  const pendingValidations = result?.success ? result.data : []
+  const pendingValidations = result || []
   const pendingCount = pendingValidations.length
   const totalPendingGrades = pendingValidations.reduce(
     (sum, v) => sum + (v.pendingCount || 0),

@@ -28,7 +28,7 @@ export function BulkEnrollmentCard() {
   const [autoConfirm, setAutoConfirm] = useState(false)
 
   const { data: result } = useQuery(classesOptions.list())
-  const classes = result?.success ? result.data : []
+  const classes = result || []
 
   const enrollMutation = useMutation({
     mutationFn: bulkEnrollStudents,
@@ -62,7 +62,7 @@ export function BulkEnrollmentCard() {
       return
     }
 
-    const studentIds = studentsResult.data.data.map((s: any) => s.student.id)
+    const studentIds = (studentsResult.data.data).map(s => s.student.id)
 
     enrollMutation.mutate({
       data: {

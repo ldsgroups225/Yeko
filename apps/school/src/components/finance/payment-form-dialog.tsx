@@ -80,12 +80,9 @@ export function PaymentFormDialog({
   // Watch studentId to fetch fees
   const selectedStudentId = useWatch({ control: form.control, name: 'studentId' })
 
-  const { data: studentFees, isLoading: isLoadingFees } = useQuery(
+  const { data: studentFees } = useQuery(
     studentFeesOptions.studentDetails(selectedStudentId),
   )
-
-  console.log('PaymentForm - selectedStudentId:', selectedStudentId)
-  console.log('PaymentForm - studentFees:', studentFees)
 
   const mutation = useMutation({
     mutationFn: (data: PaymentFormData) => {

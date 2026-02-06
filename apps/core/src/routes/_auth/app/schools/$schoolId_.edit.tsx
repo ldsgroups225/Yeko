@@ -8,7 +8,7 @@ import { Skeleton } from '@workspace/ui/components/skeleton'
 import { useEffect } from 'react'
 import { toast } from 'sonner'
 import { SchoolForm } from '@/components/schools/school-form'
-import { schoolQueryOptions, updateSchoolMutationOptions } from '@/integrations/tanstack-query/schools-options'
+import { schoolQueryOptions, schoolsKeys, updateSchoolMutationOptions } from '@/integrations/tanstack-query/schools-options'
 import { useLogger } from '@/lib/logger'
 import { parseServerFnError } from '@/utils/error-handlers'
 
@@ -29,16 +29,17 @@ function EditSchool() {
   const updateSchoolMutation = useMutation({
     ...updateSchoolMutationOptions,
     onSuccess: (data) => {
-      logger.info('School updated successfully', {
-        schoolId: (data)?.id,
-        schoolName: (data)?.name,
+      const schoolData = data
+      logger.info('School created successfully', {
+        schoolId: schoolData.id,
+        schoolName: schoolData.name,
         action: 'update_school_success',
         timestamp: new Date().toISOString(),
       })
 
       // Invalidate queries
-      queryClient.invalidateQueries({ queryKey: ['schools'] })
-      queryClient.invalidateQueries({ queryKey: ['school', schoolId] })
+      queryClient.invalidateQueries({ queryKey: schoolsKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: schoolsKeys.detail(schoolId) })
 
       // Navigate back to school details
       navigate({ to: '/app/schools/$schoolId', params: { schoolId } })
@@ -93,7 +94,7 @@ function EditSchool() {
     )
   }
 
-  const schoolData = school as any
+  const schoolData = school
 
   return (
     <div className="space-y-6">

@@ -2,7 +2,7 @@
  * Attendance Query Options
  * TanStack Query options for student attendance tracking
  */
-import { queryOptions } from '@tanstack/react-query'
+import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 
 import {
   getAttendanceStats,
@@ -11,6 +11,21 @@ import {
   getStudentAttendanceTrend,
 } from '@/teacher/functions/attendance'
 
+export const attendanceKeys = {
+  all: ['attendance'] as const,
+  rosters: () => [...attendanceKeys.all, 'roster'] as const,
+  roster: (classId: string, date: string) => [...attendanceKeys.rosters(), classId, date] as const,
+  stats: () => [...attendanceKeys.all, 'stats'] as const,
+  classStats: (classId: string, start?: string, end?: string) =>
+    [...attendanceKeys.stats(), classId, start, end] as const,
+  history: () => [...attendanceKeys.all, 'history'] as const,
+  studentHistory: (studentId: string, classId?: string) =>
+    [...attendanceKeys.history(), studentId, classId] as const,
+  trends: () => [...attendanceKeys.all, 'trend'] as const,
+  studentTrend: (studentId: string, months?: number) =>
+    [...attendanceKeys.trends(), studentId, months] as const,
+}
+
 // Options for getting class roster for attendance taking
 export function classRosterQueryOptions(params: {
   classId: string
@@ -18,9 +33,9 @@ export function classRosterQueryOptions(params: {
   date: string
 }) {
   return queryOptions({
-    queryKey: ['attendance', 'classRoster', params.classId, params.date],
+    queryKey: attendanceKeys.roster(params.classId, params.date),
     queryFn: () => getClassRoster({ data: params }),
-    staleTime: 5 * 60 * 1000, // 5 minutes - roster doesn't change often during a session
+    staleTime: 5 * 60 * 1000,
   })
 }
 
@@ -32,9 +47,9 @@ export function attendanceStatsQueryOptions(params: {
   endDate?: string
 }) {
   return queryOptions({
-    queryKey: ['attendance', 'stats', params.classId, params.startDate, params.endDate],
+    queryKey: attendanceKeys.classStats(params.classId, params.startDate, params.endDate),
     queryFn: () => getAttendanceStats({ data: params }),
-    staleTime: 10 * 60 * 1000, // 10 minutes - stats are calculated data
+    staleTime: 10 * 60 * 1000,
   })
 }
 
@@ -49,17 +64,10 @@ export function studentAttendanceHistoryQueryOptions(params: {
   offset?: number
 }) {
   return queryOptions({
-    queryKey: [
-      'attendance',
-      'studentHistory',
-      params.studentId,
-      params.classId,
-      params.startDate,
-      params.endDate,
-      params.offset,
-    ],
+    queryKey: attendanceKeys.studentHistory(params.studentId, params.classId),
     queryFn: () => getStudentAttendanceHistory({ data: params }),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000,
+    placeholderData: keepPreviousData,
   })
 }
 
@@ -70,12 +78,12 @@ export function studentAttendanceTrendQueryOptions(params: {
   months?: number
 }) {
   return queryOptions({
-    queryKey: ['attendance', 'studentTrend', params.studentId, params.months],
+    queryKey: attendanceKeys.studentTrend(params.studentId, params.months),
     queryFn: () =>
       getStudentAttendanceTrend({
         data: { ...params, months: params.months ?? 6 },
       }),
-    staleTime: 30 * 60 * 1000, // 30 minutes - trend data changes slowly
+    staleTime: 30 * 60 * 1000,
   })
 }
 

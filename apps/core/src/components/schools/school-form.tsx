@@ -9,8 +9,9 @@ import { Label } from '@workspace/ui/components/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
 import { useRef, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
-import { checkStorageConfigured, getPresignedUploadUrl } from '@/core/functions/storage'
+import { getPresignedUploadUrl } from '@/core/functions/storage'
 import { useI18nContext } from '@/i18n/i18n-react'
+import { storageConfigQueryOptions } from '@/integrations/tanstack-query/storage-options'
 import { CreateSchoolSchema } from '@/schemas/school'
 
 interface SchoolFormProps {
@@ -32,16 +33,7 @@ export function SchoolForm({
 
   const { LL } = useI18nContext()
 
-  const { data: storageConfigResult, isPending: isCheckingStorage } = useQuery({
-    queryKey: ['storage-config'],
-    queryFn: async () => {
-      const result = await checkStorageConfigured()
-      return result.configured
-    },
-    staleTime: 1000 * 60 * 5,
-  })
-
-  const storageConfigured = isCheckingStorage ? null : (storageConfigResult ?? false)
+  const { data: storageConfigured = null } = useQuery(storageConfigQueryOptions())
 
   const [isUploading, setIsUploading] = useState(false)
   const [uploadError, setUploadError] = useState<string | null>(null)
@@ -71,7 +63,7 @@ export function SchoolForm({
     },
   })
 
-  const { register, handleSubmit, setValue, reset, control } = form
+  const { register, handleSubmit, setValue, control } = form
   const { errors } = form.formState
   const status = useWatch({ control, name: 'status' })
   const logoUrl = useWatch({ control, name: 'logoUrl' })

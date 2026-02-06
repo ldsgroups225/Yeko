@@ -1,4 +1,4 @@
-import { queryOptions } from '@tanstack/react-query'
+import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 
 import {
   getMessageDetails,
@@ -7,6 +7,15 @@ import {
   searchParents,
 } from '@/teacher/functions/messages'
 import { getTeacherNotifications } from '@/teacher/functions/notifications'
+
+export const messagesKeys = {
+  all: ['teacher', 'messages'] as const,
+  lists: () => [...messagesKeys.all, 'list'] as const,
+  list: (teacherId: string, folder?: string, page?: number) =>
+    [...messagesKeys.lists(), teacherId, folder ?? 'inbox', page ?? 1] as const,
+  details: () => [...messagesKeys.all, 'detail'] as const,
+  detail: (messageId: string) => [...messagesKeys.details(), messageId] as const,
+}
 
 interface MessagesParams {
   teacherId: string
@@ -18,7 +27,7 @@ interface MessagesParams {
 
 export function teacherMessagesQueryOptions(params: MessagesParams) {
   return queryOptions({
-    queryKey: ['teacher', 'messages', params.teacherId, params.folder, params.page],
+    queryKey: messagesKeys.list(params.teacherId, params.folder, params.page),
     queryFn: () =>
       getTeacherMessages({
         data: {
@@ -30,6 +39,7 @@ export function teacherMessagesQueryOptions(params: MessagesParams) {
         },
       }),
     staleTime: 30 * 1000, // 30 seconds
+    placeholderData: keepPreviousData,
   })
 }
 
@@ -40,7 +50,7 @@ interface MessageDetailParams {
 
 export function messageDetailQueryOptions(params: MessageDetailParams) {
   return queryOptions({
-    queryKey: ['teacher', 'message', params.messageId],
+    queryKey: messagesKeys.detail(params.messageId),
     queryFn: () => getMessageDetails({ data: params }),
     staleTime: 60 * 1000, // 1 minute
   })

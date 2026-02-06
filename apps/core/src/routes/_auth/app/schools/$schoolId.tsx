@@ -51,6 +51,7 @@ import { schoolUsersQueryOptions } from '@/integrations/tanstack-query/school-us
 import {
   deleteSchoolMutationOptions,
   schoolQueryOptions,
+  schoolsKeys,
 } from '@/integrations/tanstack-query/schools-options'
 import {
   removeUserMutationOptions,
@@ -117,8 +118,8 @@ function SchoolDetails() {
       })
 
       // Invalidate queries
-      queryClient.invalidateQueries({ queryKey: ['schools'] })
-      queryClient.invalidateQueries({ queryKey: ['schoolUsers'] })
+      queryClient.invalidateQueries({ queryKey: schoolsKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: ['schoolUsers', { schoolId }] })
 
       // Navigate to schools list
       navigate({ to: '/app/schools' })
@@ -148,7 +149,7 @@ function SchoolDetails() {
         timestamp: new Date().toISOString(),
       })
       toast.success('Utilisateur suspendu avec succès')
-      queryClient.invalidateQueries({ queryKey: ['schoolUsers'] })
+      queryClient.invalidateQueries({ queryKey: ['schoolUsers', { schoolId }] })
       setSuspendDialogOpen(false)
       setSelectedUserForSuspend(null)
     },
@@ -182,7 +183,7 @@ function SchoolDetails() {
         timestamp: new Date().toISOString(),
       })
       toast.success('Utilisateur supprimé avec succès')
-      queryClient.invalidateQueries({ queryKey: ['schoolUsers'] })
+      queryClient.invalidateQueries({ queryKey: ['schoolUsers', { schoolId }] })
       setRemoveDialogOpen(false)
       setSelectedUserForRemove(null)
     },

@@ -1,4 +1,4 @@
-import { queryOptions } from '@tanstack/react-query'
+import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 
 import {
   getConductRecordById,
@@ -39,6 +39,7 @@ export function conductRecordsOptions(params: {
       return res.data
     },
     staleTime: 5 * 60 * 1000,
+    placeholderData: keepPreviousData,
   })
 }
 

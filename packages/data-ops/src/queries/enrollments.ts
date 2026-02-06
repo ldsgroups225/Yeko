@@ -9,6 +9,8 @@ import { classes, enrollments, schoolYears, students, users } from '../drizzle/s
 import { DatabaseError, dbError } from '../errors'
 import { getNestedErrorMessage } from '../i18n'
 
+export type { Enrollment, EnrollmentInsert, EnrollmentStatus, Gender }
+
 // ==================== Types ====================
 export interface EnrollmentFilters {
   schoolId: string
@@ -114,7 +116,8 @@ export function getEnrollments(filters: EnrollmentFilters): ResultAsync<{
         )
       }
 
-      const query = db
+      const offset = (page - 1) * limit
+      const rows = await db
         .select({
           enrollment: enrollments,
           student: {
@@ -135,6 +138,7 @@ export function getEnrollments(filters: EnrollmentFilters): ResultAsync<{
             id: users.id,
             name: users.name,
           },
+          totalCount: sql<number>`COUNT(*) OVER()`.as('total_count'),
         })
         .from(enrollments)
         .innerJoin(students, eq(enrollments.studentId, students.id))
@@ -144,18 +148,11 @@ export function getEnrollments(filters: EnrollmentFilters): ResultAsync<{
         .leftJoin(users, eq(enrollments.confirmedBy, users.id))
         .where(and(eq(students.schoolId, schoolId), ...conditions))
         .orderBy(desc(enrollments.enrollmentDate))
+        .limit(limit)
+        .offset(offset)
 
-      const offset = (page - 1) * limit
-      const data = await query.limit(limit).offset(offset)
-
-      // Get total count
-      const countResult = await db
-        .select({ count: sql<number>`COUNT(*)` })
-        .from(enrollments)
-        .innerJoin(students, eq(enrollments.studentId, students.id))
-        .where(and(eq(students.schoolId, schoolId), ...conditions))
-
-      const total = Number(countResult[0]?.count || 0)
+      const total = Number(rows[0]?.totalCount || 0)
+      const data = rows.map(({ totalCount: _totalCount, ...rest }) => rest)
       return {
         data,
         total,

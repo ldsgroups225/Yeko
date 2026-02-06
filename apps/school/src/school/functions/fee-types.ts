@@ -1,3 +1,4 @@
+import { getFeeTypeTemplates } from '@repo/data-ops/queries/fee-type-templates'
 import {
   createFeeType,
   deleteFeeType,
@@ -5,7 +6,6 @@ import {
   getFeeTypes,
   updateFeeType,
 } from '@repo/data-ops/queries/fee-types'
-import { getFeeTypeTemplates } from '@repo/data-ops/queries/fee-type-templates'
 import { z } from 'zod'
 import { createFeeTypeSchema, updateFeeTypeSchema } from '@/schemas/fee-type'
 import { authServerFn } from '../lib/server-fn'
@@ -127,12 +127,12 @@ export const importFeeTypesFromTemplates = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const templatesResult = await getFeeTypeTemplates({})
-    
+
     return templatesResult.match(
       async (templates) => {
         const selectedTemplates = templates.filter(t => data.templateIds.includes(t.id))
         let created = 0
-        
+
         for (const template of selectedTemplates) {
           const result = await createFeeType({
             schoolId: context.school!.schoolId,
@@ -146,12 +146,13 @@ export const importFeeTypesFromTemplates = authServerFn
             displayOrder: template.displayOrder,
             status: 'active',
           })
-          
-          if (result.isOk()) created++
+
+          if (result.isOk())
+            created++
         }
-        
+
         return { success: true as const, data: { created } } as const
       },
-      (error) => ({ success: false as const, error: error.message }),
+      error => ({ success: false as const, error: error.message }),
     )
   })

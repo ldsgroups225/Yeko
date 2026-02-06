@@ -1,4 +1,4 @@
-import { queryOptions } from '@tanstack/react-query'
+import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import {
   autoMatchParents,
   getParentById,
@@ -16,7 +16,7 @@ export const parentsKeys = {
 
 export interface ParentFilters {
   search?: string
-  invitationStatus?: string
+  invitationStatus?: 'pending' | 'sent' | 'accepted' | 'expired'
   page?: number
   limit?: number
 }
@@ -33,6 +33,7 @@ export const parentsOptions = {
       },
       staleTime: 5 * 60 * 1000, // 5 minutes
       gcTime: 30 * 60 * 1000, // 30 minutes
+      placeholderData: keepPreviousData,
     }),
 
   detail: (id: string) =>

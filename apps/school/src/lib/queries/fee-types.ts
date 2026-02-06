@@ -1,8 +1,8 @@
 import { queryOptions } from '@tanstack/react-query'
 import {
+  getAvailableTemplates,
   getFeeType,
   getFeeTypesList,
-  getAvailableTemplates,
   importFeeTypesFromTemplates,
 } from '@/school/functions/fee-types'
 

@@ -31,7 +31,7 @@ const reEnrollSchema = z.object({
 const enrollmentFiltersSchema = z.object({
   schoolYearId: z.string().optional(),
   classId: z.string().optional(),
-  status: z.string().optional(),
+  status: z.enum(['pending', 'confirmed', 'cancelled', 'transferred']).optional(),
   search: z.string().optional(),
   page: z.number().optional(),
   limit: z.number().optional(),
@@ -48,7 +48,11 @@ export const getEnrollments = authServerFn
     const { schoolId } = context.school
     await requirePermission('enrollments', 'view')
 
-    return (await enrollmentQueries.getEnrollments({ ...data, schoolId } as any)).match(
+    return (await enrollmentQueries.getEnrollments({
+      ...data,
+      schoolId,
+      status: data.status,
+    })).match(
       paginatedData => ({ success: true as const, data: paginatedData }),
       _ => ({ success: false as const, error: 'Erreur lors de la récupération des inscriptions' }),
     )

@@ -1,3 +1,4 @@
+import { getFinanceStats } from '@repo/data-ops/queries/finance-stats'
 import {
   cancelPayment,
   createPaymentWithAllocations,
@@ -6,7 +7,6 @@ import {
   getPaymentByReceiptNumber,
   getPayments,
 } from '@repo/data-ops/queries/payments'
-import { getFinanceStats } from '@repo/data-ops/queries/finance-stats'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import { z } from 'zod'
 import { cancelPaymentSchema, createPaymentSchema } from '@/schemas/payment'

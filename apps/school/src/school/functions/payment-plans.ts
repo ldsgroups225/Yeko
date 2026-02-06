@@ -1,13 +1,6 @@
 import type { Installment, PaymentPlan, PaymentPlanSummary, PaymentPlanTemplate } from '@repo/data-ops'
 import type { DatabaseError } from '@repo/data-ops/errors'
-import {
-  cancelPaymentPlan,
-  createPaymentPlanFromTemplate,
-  getPaymentPlanById,
-  getPaymentPlanForStudent,
-  getPaymentPlans,
-  getPaymentPlansSummary,
-} from '@repo/data-ops/queries/payment-plans'
+import { getInstallmentsByPaymentPlan } from '@repo/data-ops/queries/installments'
 import {
   createPaymentPlanTemplate,
   deletePaymentPlanTemplate,
@@ -17,7 +10,14 @@ import {
   setDefaultPaymentPlanTemplate,
   updatePaymentPlanTemplate,
 } from '@repo/data-ops/queries/payment-plan-templates'
-import { getInstallmentsByPaymentPlan } from '@repo/data-ops/queries/installments'
+import {
+  cancelPaymentPlan,
+  createPaymentPlanFromTemplate,
+  getPaymentPlanById,
+  getPaymentPlanForStudent,
+  getPaymentPlans,
+  getPaymentPlansSummary,
+} from '@repo/data-ops/queries/payment-plans'
 import { ResultAsync } from 'neverthrow'
 import { z } from 'zod'
 import { createPaymentPlanFromTemplateSchema, createPaymentPlanTemplateSchema, updatePaymentPlanTemplateSchema } from '@/schemas/payment-plan'

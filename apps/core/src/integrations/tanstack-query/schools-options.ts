@@ -5,6 +5,7 @@ import type {
   SchoolIdInput,
   UpdateSchoolInput,
 } from '@/schemas/school'
+import { keepPreviousData } from '@tanstack/react-query'
 import {
   bulkCreateSchools,
   bulkUpdateSchools,
@@ -15,19 +16,30 @@ import {
   updateSchool,
 } from '@/core/functions/schools'
 
-export function schoolsQueryOptions(params: {
+export const schoolsKeys = {
+  all: ['schools'] as const,
+  lists: () => [...schoolsKeys.all, 'list'] as const,
+  list: (params: SchoolsQueryParams) => [...schoolsKeys.lists(), params] as const,
+  details: () => [...schoolsKeys.all, 'detail'] as const,
+  detail: (id: string) => [...schoolsKeys.details(), id] as const,
+}
+
+export interface SchoolsQueryParams {
   page?: number
   limit?: number
   search?: string
   status?: 'active' | 'inactive' | 'suspended'
   sortBy?: string
   sortOrder?: 'asc' | 'desc'
-}) {
+}
+
+export function schoolsQueryOptions(params: SchoolsQueryParams) {
   return {
-    queryKey: ['schools', params],
+    queryKey: schoolsKeys.list(params),
     queryFn: () => getSchools({ data: params }),
     staleTime: 1000 * 60 * 5, // 5 minutes
     gcTime: 1000 * 60 * 10, // 10 minutes
+    placeholderData: keepPreviousData,
     retry: 3,
     retryDelay: (attemptIndex: number) => Math.min(1000 * 2 ** attemptIndex, 30000),
   }
@@ -35,7 +47,7 @@ export function schoolsQueryOptions(params: {
 
 export function schoolQueryOptions(id: string) {
   return {
-    queryKey: ['school', id],
+    queryKey: schoolsKeys.detail(id),
     queryFn: () => getSchoolById({ data: { id } }),
     staleTime: 1000 * 60 * 2, // 2 minutes
     gcTime: 1000 * 60 * 5, // 5 minutes

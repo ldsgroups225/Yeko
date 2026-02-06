@@ -7,13 +7,24 @@ import { queryOptions } from '@tanstack/react-query'
 import { getClassDetails, getClassStats, getClassStudents, getTeacherClasses } from '@/teacher/functions/classes'
 
 // Options for getting teacher's classes
+export const classesKeys = {
+  all: ['classes'] as const,
+  teacher: (teacherId: string, schoolYearId: string, schoolId?: string) =>
+    [...classesKeys.all, 'teacher', teacherId, schoolYearId, schoolId] as const,
+  details: (classId: string) => [...classesKeys.all, 'details', classId] as const,
+  students: (classId: string, searchQuery?: string) =>
+    [...classesKeys.all, 'students', classId, searchQuery] as const,
+  stats: (classId: string) => [...classesKeys.all, 'stats', classId] as const,
+}
+
+// Options for getting teacher's classes
 export function teacherClassesQueryOptions(params: {
   teacherId: string
   schoolYearId: string
   schoolId?: string
 }) {
   return queryOptions({
-    queryKey: ['classes', 'teacher', params.teacherId, params.schoolYearId, params.schoolId],
+    queryKey: classesKeys.teacher(params.teacherId, params.schoolYearId, params.schoolId),
     queryFn: () => getTeacherClasses({ data: params }),
     staleTime: 10 * 60 * 1000, // 10 minutes - classes don't change often
   })
@@ -25,7 +36,7 @@ export function classDetailsQueryOptions(params: {
   schoolYearId: string
 }) {
   return queryOptions({
-    queryKey: ['classes', 'details', params.classId],
+    queryKey: classesKeys.details(params.classId),
     queryFn: () => getClassDetails({ data: params }),
     staleTime: 5 * 60 * 1000, // 5 minutes
   })
@@ -38,7 +49,7 @@ export function classStudentsQueryOptions(params: {
   searchQuery?: string
 }) {
   return queryOptions({
-    queryKey: ['classes', 'students', params.classId, params.searchQuery],
+    queryKey: classesKeys.students(params.classId, params.searchQuery),
     queryFn: () => getClassStudents({ data: params }),
     staleTime: 2 * 60 * 1000, // 2 minutes
   })
@@ -50,7 +61,7 @@ export function classStatsQueryOptions(params: {
   schoolYearId: string
 }) {
   return queryOptions({
-    queryKey: ['classes', 'stats', params.classId],
+    queryKey: classesKeys.stats(params.classId),
     queryFn: () => getClassStats({ data: params }),
     staleTime: 5 * 60 * 1000, // 5 minutes
   })

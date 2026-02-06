@@ -314,7 +314,7 @@ export function AssignmentMatrix({
                       {t.common.classes()}
                     </span>
                   </TableHead>
-                  {subjects.map((subject: any) => (
+                  {subjects.map(subject => (
                     <TableHead
                       key={subject.id}
                       className="text-center min-w-[160px] border-b border-border/10 py-4"
@@ -344,7 +344,7 @@ export function AssignmentMatrix({
                     >
                       {cls.name}
                     </TableCell>
-                    {subjects.map((subject: any) => {
+                    {subjects.map((subject) => {
                       const key = `${cls.id}-${subject.id}`
                       const assignment = assignmentMap.get(key)
                       const isEditing
@@ -402,7 +402,7 @@ export function AssignmentMatrix({
                                         >
                                           {t.assignmentMatrix.notAssigned()}
                                         </SelectItem>
-                                        {teachers.map((teacher: any) => {
+                                        {(teachers).map((teacher) => {
                                           const overloaded = isTeacherOverloaded(
                                             teacher.id,
                                           )

@@ -90,7 +90,7 @@ export function EnrollmentsList() {
   const { schoolYearId } = useSchoolYearContext()
 
   const [search, setSearch] = useState('')
-  const [status, setStatus] = useState<string>('all')
+  const [status, setStatus] = useState<'all' | 'pending' | 'confirmed' | 'cancelled' | 'transferred'>('all')
   const [classId, setClassId] = useState<string>('all')
   const [page, setPage] = useState(1)
 
@@ -190,7 +190,7 @@ export function EnrollmentsList() {
               className="pl-9"
             />
           </div>
-          <Select value={status} onValueChange={val => setStatus(val ?? '')}>
+          <Select value={status} onValueChange={val => setStatus((val ?? 'all') as typeof status)}>
             <SelectTrigger className="w-[150px]">
               <SelectValue placeholder={t.enrollments.filterByStatus()} />
             </SelectTrigger>
@@ -219,7 +219,7 @@ export function EnrollmentsList() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t.common.all()}</SelectItem>
-              {classesData?.success && classesData.data.map(cls => (
+              {classesData && classesData.map(cls => (
                 <SelectItem key={cls.class.id} value={cls.class.id}>
                   {cls.grade.name}
                   {' '}

@@ -18,6 +18,8 @@ import { DatabaseError, dbError } from '../errors'
 import { getNestedErrorMessage } from '../i18n'
 import { checkClassroomAvailability } from './classrooms'
 
+export type { ClassInsert, ClassStatus }
+
 export interface ClassFilters {
   schoolId: string
   schoolYearId?: string
