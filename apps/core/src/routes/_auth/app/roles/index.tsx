@@ -10,8 +10,8 @@ import {
 import { useForm } from '@tanstack/react-form'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, redirect } from '@tanstack/react-router'
-
 import { Badge } from '@workspace/ui/components/badge'
+
 import { Button } from '@workspace/ui/components/button'
 import {
   Card,
@@ -49,9 +49,15 @@ import { motion } from 'motion/react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { z } from 'zod'
-import { createPlatformRole, deletePlatformRole, getPlatformRoles, updatePlatformRole } from '@/core/functions/roles'
 import { useAuthorization } from '@/hooks/use-authorization'
 import { useTranslations } from '@/i18n/hooks'
+import {
+  createPlatformRoleMutationOptions,
+  deletePlatformRoleMutationOptions,
+  platformRolesKeys,
+  platformRolesQueryOptions,
+  updatePlatformRoleMutationOptions,
+} from '@/integrations/tanstack-query/platform-roles-options'
 
 export const Route = createFileRoute('/_auth/app/roles/')({
   beforeLoad: ({ context }) => {
@@ -124,9 +130,9 @@ function RoleManagement() {
   const [activeScope, setActiveScope] = useState<SchoolScope>('school')
 
   const createMutation = useMutation({
-    mutationFn: (data: RoleFormData) => createPlatformRole({ data }),
+    ...createPlatformRoleMutationOptions,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['platform-roles'] })
+      queryClient.invalidateQueries({ queryKey: platformRolesKeys.all })
       toast.success('Rôle créé avec succès')
       setIsDialogOpen(false)
       // eslint-disable-next-line ts/no-use-before-define
@@ -136,10 +142,9 @@ function RoleManagement() {
   })
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, updates }: { id: string, updates: Partial<Role> }) =>
-      updatePlatformRole({ data: { id, updates } }),
+    ...updatePlatformRoleMutationOptions,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['platform-roles'] })
+      queryClient.invalidateQueries({ queryKey: platformRolesKeys.all })
       toast.success('Rôle mis à jour avec succès')
       setIsDialogOpen(false)
       setEditingRole(null)
@@ -150,9 +155,9 @@ function RoleManagement() {
   })
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => deletePlatformRole({ data: { id } }),
+    ...deletePlatformRoleMutationOptions,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['platform-roles'] })
+      queryClient.invalidateQueries({ queryKey: platformRolesKeys.all })
       toast.success('Rôle supprimé')
       setIsDeleteOpen(false)
       setRoleToDelete(null)
@@ -189,10 +194,7 @@ function RoleManagement() {
     },
   })
 
-  const { data: roles = [], isLoading } = useQuery({
-    queryKey: ['platform-roles', activeScope],
-    queryFn: () => getPlatformRoles({ data: { scope: activeScope } }),
-  })
+  const { data: roles = [], isLoading } = useQuery(platformRolesQueryOptions(activeScope))
 
   // Sync form when editing
   useEffect(() => {

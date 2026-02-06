@@ -5,7 +5,7 @@ import type {
   SchoolIdInput,
   UpdateSchoolInput,
 } from '@/schemas/school'
-import { keepPreviousData } from '@tanstack/react-query'
+import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import {
   bulkCreateSchools,
   bulkUpdateSchools,
@@ -24,6 +24,14 @@ export const schoolsKeys = {
   detail: (id: string) => [...schoolsKeys.details(), id] as const,
 }
 
+export const schoolsMutationKeys = {
+  create: ['schools', 'create'] as const,
+  update: ['schools', 'update'] as const,
+  delete: ['schools', 'delete'] as const,
+  bulkUpdate: ['schools', 'bulkUpdate'] as const,
+  bulkCreate: ['schools', 'bulkCreate'] as const,
+}
+
 export interface SchoolsQueryParams {
   page?: number
   limit?: number
@@ -34,7 +42,7 @@ export interface SchoolsQueryParams {
 }
 
 export function schoolsQueryOptions(params: SchoolsQueryParams) {
-  return {
+  return queryOptions({
     queryKey: schoolsKeys.list(params),
     queryFn: () => getSchools({ data: params }),
     staleTime: 1000 * 60 * 5, // 5 minutes
@@ -42,11 +50,11 @@ export function schoolsQueryOptions(params: SchoolsQueryParams) {
     placeholderData: keepPreviousData,
     retry: 3,
     retryDelay: (attemptIndex: number) => Math.min(1000 * 2 ** attemptIndex, 30000),
-  }
+  })
 }
 
 export function schoolQueryOptions(id: string) {
-  return {
+  return queryOptions({
     queryKey: schoolsKeys.detail(id),
     queryFn: () => getSchoolById({ data: { id } }),
     staleTime: 1000 * 60 * 2, // 2 minutes
@@ -54,49 +62,31 @@ export function schoolQueryOptions(id: string) {
     retry: 3,
     retryDelay: (attemptIndex: number) => Math.min(1000 * 2 ** attemptIndex, 30000),
     enabled: !!id,
-  }
+  })
 }
 
 export const createSchoolMutationOptions = {
+  mutationKey: schoolsMutationKeys.create,
   mutationFn: (data: CreateSchoolInput) => createSchool({ data }),
-  onSuccess: (data: unknown) => {
-    console.warn('School created successfully:', data)
-    // Invalidate schools list cache
-    // This will be handled in the component with queryClient
-  },
-  onError: (error: Error) => {
-    console.error('Failed to create school:', error)
-  },
-  onSettled: () => {
-    // This will be handled in the component
-  },
 }
 
 export const updateSchoolMutationOptions = {
+  mutationKey: schoolsMutationKeys.update,
   mutationFn: (data: UpdateSchoolInput) => updateSchool({ data }),
-  onSuccess: (data: unknown) => {
-    console.warn('School updated successfully:', data)
-  },
-  onError: (error: Error) => {
-    console.error('Failed to update school:', error)
-  },
 }
 
 export const deleteSchoolMutationOptions = {
+  mutationKey: schoolsMutationKeys.delete,
   mutationFn: (data: SchoolIdInput) => deleteSchool({ data }),
-  onSuccess: (data: unknown) => {
-    console.warn('School deleted successfully:', data)
-  },
-  onError: (error: Error) => {
-    console.error('Failed to delete school:', error)
-  },
 }
 
 export const bulkUpdateSchoolsMutationOptions = {
+  mutationKey: schoolsMutationKeys.bulkUpdate,
   mutationFn: (data: BulkUpdateSchoolsInput) => bulkUpdateSchools({ data }),
 }
 
 export const bulkCreateSchoolsMutationOptions = {
+  mutationKey: schoolsMutationKeys.bulkCreate,
   mutationFn: (data: ImportSchoolsInput) => bulkCreateSchools({ data }),
 }
 

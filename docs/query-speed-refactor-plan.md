@@ -1,214 +1,262 @@
-# Plan de refactorisation performance requêtes (apps/core|school|teacher + packages/data-ops)
+# TanStack Query v5 — Optimization Plan
 
-## Objectif
+> **Date**: 2026-02-06
+> **Scope**: apps/core, apps/school, apps/teacher
+> **Status**: Phase 0+1 complete. All 12 core options files use queryOptions() + mutationKey. Starting Phase 2.
 
-Améliorer la vitesse perçue et réelle des requêtes/mutations en standardisant les patterns TanStack Query, en réduisant les requêtes inutiles, et en optimisant les accès DB dans `@repo/data-ops`.
+---
 
-## Constat rapide (exemples observés)
+## Audit Results
 
-1. Requêtes dérivées faites en `useQuery` séparé alors qu'elles peuvent être calculées depuis les données déjà en cache.
-2. Répétition de clés ou options non centralisées pour certains écrans.
-3. Mutations sans optimisme UI, ce qui ralentit la perception utilisateur.
-4. `getPayments` / `getEnrollments` font un double aller-retour (data + count) à chaque page.
-5. Plusieurs pages refetchent sans granularité (`invalidateQueries` sans `refetchType` ni `queryKey` précis).
+| Metric | Core | School | Teacher |
+|---|---|---|---|
+| `queryOptions()` adoption | 3/12 (25%) | 29/29 (100%) | 10/10 (100%) |
+| Mutations missing `mutationKey` | ~5 | ~95 | ~19 |
+| Deprecated v4 patterns (`cacheTime`, `keepPreviousData: true`, query `onSuccess`) | 0 | 0 | 0 |
+| `keepPreviousData` import (correct v5) | ✅ | ✅ | ✅ |
+| Global defaults configured | ✅ | ✅ | ✅ |
 
-## Principes directeurs
+### Key Findings
 
-1. Centraliser toutes les queries via `queryOptions` factories.
-2. Utiliser des clés de query dédiées (key factories) partout.
-3. Exploiter `useMutationState` pour l’optimisme UI sans manipulation de cache complexe.
-4. Limiter les `invalidateQueries` au scope exact (key + `refetchType`).
-5. Réduire les doubles requêtes côté DB (fenêtre analytique ou count conditionnel).
+- **110+ mutations lack `mutationKey`** — blocks `useMutationState()` tracking, devtools filtering, and global mutation observers.
+- **9 core options files return plain objects** instead of using the `queryOptions()` wrapper — loses type inference across `useQuery`, `prefetchQuery`, `ensureQueryData`.
+- **No deprecated v4 patterns remain.** The codebase has fully migrated `cacheTime → gcTime`, `keepPreviousData → placeholderData`, and removed query-level `onSuccess`/`onError` callbacks.
+- **`isLoading` usage (~500 occurrences)** is valid in v5 (means `isPending && isFetching`), but `isPending` is preferred for initial-load checks. Low priority — touch-as-you-go.
 
-## Plan d’actions (par zones)
+---
 
-### A. Standardisation TanStack Query (apps)
+## Established Patterns
 
-1. **Créer/renforcer des factories `queryOptions`** dans chaque app:
-   - `apps/core/src/lib/queries/*`
-   - `apps/school/src/lib/queries/*`
-   - `apps/teacher/src/lib/queries/*`
-2. **Remplacer les `useQuery` ad-hoc** par imports de ces factories.
-3. **Normaliser `staleTime`, `gcTime`, `placeholderData`** par type d’écran (listing vs détail).
-4. **Ajouter `queryKey` factories** pour éviter les invalidations globales.
+All new code and refactored code must follow these conventions:
 
-### B. Optimisme UI (mutations)
+### Query Key Factories
 
-1. **Attendance (teacher)**:
-   - Utiliser `useMutationState` pour afficher les statuts en attente en temps réel.
-   - Éviter le double `invalidateQueries` quand le payload retourne la nouvelle roster.
-2. **Bulk actions (imports, batch updates)**:
-   - Optimiser la perception avec affichage des éléments “pending” via `useMutationState`.
-3. **Standardiser callbacks mutation v5** (signature à 4 paramètres).
+Hierarchical key objects with typed helpers:
 
-### C. Éviter les requêtes dérivées inutiles
+```ts
+export const studentsKeys = {
+  all: ['students'] as const,
+  lists: () => [...studentsKeys.all, 'list'] as const,
+  list: (filters: StudentFilters) => [...studentsKeys.lists(), filters] as const,
+  details: () => [...studentsKeys.all, 'detail'] as const,
+  detail: (id: string) => [...studentsKeys.details(), id] as const,
+}
+```
 
-1. **Exemple attendance counts**:
-   - Remplacer `useQuery` secondaire par un `select` sur la query roster.
-2. **Listes paginées**:
-   - `placeholderData: keepPreviousData` pour éviter les clignotements.
+### Query Options with `queryOptions()` Wrapper
 
-### D. Data-ops (DB / Drizzle)
+```ts
+import { queryOptions } from '@tanstack/react-query'
 
-1. **Pagination optimisée**:
-   - Remplacer `count + data` par une unique requête avec `COUNT(*) OVER()` quand possible.
-2. **Indexation DB (à planifier)**:
-   - `enrollments.schoolYearId`, `enrollments.status`, `students.schoolId`, `payments.schoolId`, `payments.paymentDate`.
-3. **Batch & bulk**:
-   - Préparer les données en mémoire puis insérer en batch (déjà en place, à généraliser).
-4. **Limiter les joins**:
-   - Extraire seulement les colonnes nécessaires, éviter `select()` sans projection.
+export const studentDetailOptions = (id: string) =>
+  queryOptions({
+    queryKey: studentsKeys.detail(id),
+    queryFn: () => fetchStudent(id),
+    staleTime: 5 * 60 * 1000,
+  })
+```
 
-### E. Caching & invalidation
+### Mutation Key Convention
 
-1. **Invalidations ciblées**:
-   - Utiliser les clés exactes (pas `['schools']` global quand on peut cibler), donc créer des clés de query dédiées (key factories du genre `schoolsKeys.all` et `schoolsKeys.list()` sous forme d'enum).
-2. **`refetchType: 'all'`** uniquement quand on a un vrai besoin de rafraîchir les queries inactives.
-3. **Préfetch** pour transitions majeures (list → détail).
+Static, operation-level keys following `['app', 'domain', 'action']`:
 
-## Exemples concrets proposés
+```ts
+export const studentsMutationKeys = {
+  create: ['school', 'student', 'create'] as const,
+  update: ['school', 'student', 'update'] as const,
+  delete: ['school', 'student', 'delete'] as const,
+}
+```
 
-1. **Attendance (teacher)**:
-   - Roster query + `select` pour counts.
-   - `useMutationState` pour afficher un statut “pending” sans attendre la réponse serveur.
-2. **Schools (core)**:
-   - Remplacer `useQuery` pour le total par un endpoint dédié “count” ou un champ `total` déjà exposé.
-3. **Payments (data-ops)**:
-   - Requête unique avec `COUNT(*) OVER()` si compatible avec la DB.
-   - Colonnes explicitement listées pour éviter `select()` large.
+### Mutation Options (Centralized)
 
-## Audit additionnel (round 2)
+Options files provide `mutationKey` + `mutationFn` only. Components own UX side effects:
 
-Tous les points ci-dessous sont maintenant traites (voir "Avancement").
+```ts
+// In options file
+export const createStudentMutationOptions = {
+  mutationKey: studentsMutationKeys.create,
+  mutationFn: (data: StudentFormData) => createStudent(data),
+}
 
-### Core (Audit)
+// In component
+const mutation = useMutation({
+  ...createStudentMutationOptions,
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: studentsKeys.all })
+    toast.success('Élève créé')
+  },
+})
+```
 
-1. [apps/core/src/components/schools/school-form.tsx](file:///home/darius-kassi/Projects/Yeko/apps/core/src/components/schools/school-form.tsx#L35-L42)
-   - Query ad-hoc pour `storage-config`. A factoriser dans `queryOptions` + key factory. Termine.
-2. [apps/core/src/routes/_auth/app/analytics/index.tsx](file:///home/darius-kassi/Projects/Yeko/apps/core/src/routes/_auth/app/analytics/index.tsx#L47-L55)
-   - Multiples queries ad-hoc (overview, usage, perf). Centraliser dans `analyticsOptions` + keys dediees. Termine.
+### V5 Rules (Enforced)
 
-### School (Audit)
+- Object syntax only for all hooks
+- `isPending` for initial loading state, not `isLoading`
+- `gcTime` not `cacheTime`
+- `placeholderData: keepPreviousData` (imported from `@tanstack/react-query`)
+- `initialPageParam` required on infinite queries
+- No `onSuccess`/`onError`/`onSettled` on queries (removed in v5)
+- Mutation callbacks still supported (`onSuccess`/`onError` on `useMutation`)
 
-1. [apps/school/src/routes/_auth/grades/entry.tsx](file:///home/darius-kassi/Projects/Yeko/apps/school/src/routes/_auth/grades/entry.tsx#L52-L92)
-   - 5 queries en ligne (classes, subjects, terms, enrollments, grades). Centraliser dans `queries/*` + keys. Termine.
-2. [apps/school/src/routes/_auth/grades/statistics.tsx](file:///home/darius-kassi/Projects/Yeko/apps/school/src/routes/_auth/grades/statistics.tsx#L34-L51)
-   - Queries en ligne + `enabled` local. Centraliser + reduire les re-renders via `select`. Termine.
-3. [apps/school/src/routes/_auth/settings/school-years.tsx](file:///home/darius-kassi/Projects/Yeko/apps/school/src/routes/_auth/settings/school-years.tsx#L79-L112)
-   - Keys "string literals" (`school-years`, `school-year-templates`). Ajouter key factory pour invalidation ciblee. Termine.
-4. [apps/school/src/routes/_auth/grades/validations.tsx](file:///home/darius-kassi/Projects/Yeko/apps/school/src/routes/_auth/grades/validations.tsx#L88-L114)
-   - `invalidateQueries({ queryKey: gradesKeys.all })` trop large. Utiliser `gradesKeys.pending(schoolId)` + `refetchType` si besoin. Termine.
+---
 
-### Teacher (Audit)
+## Phased Plan
 
-1. [apps/teacher/src/routes/_auth/app/schools.$schoolId.class.$classId.tsx](file:///home/darius-kassi/Projects/Yeko/apps/teacher/src/routes/_auth/app/schools.$schoolId.class.$classId.tsx#L181-L249)
-   - Bloc massif de queries en ligne (class, students, stats, schools, term, notes). Creer un module `queries/class-detail` + `queryOptions` + `select` pour derives. Termine.
-2. [apps/teacher/src/routes/_auth/app/chat.$messageId.tsx](file:///home/darius-kassi/Projects/Yeko/apps/teacher/src/routes/_auth/app/chat.$messageId.tsx#L37-L41)
-   - Invalidation large `['teacher','messages']` sur lecture d'un message. Optimiser par `messagesKeys.detail(messageId)` + `messagesKeys.list(teacherId)`. Termine.
+### Phase 0 — Convention & Key Helpers
 
-## Avancement (implémenté)
+**Effort**: ~1h | **Risk**: None | **Status**: ☐ Not started
 
-### Data-ops
+Define mutation key factories for each app so naming stays consistent before mass edits.
 
-1. Pagination optimisée via `COUNT(*) OVER()` pour:
-   - `getPayments` ([packages/data-ops/src/queries/payments.ts](file:///home/darius-kassi/Projects/Yeko/packages/data-ops/src/queries/payments.ts#L58-L101))
-   - `getEnrollments` ([packages/data-ops/src/queries/enrollments.ts](file:///home/darius-kassi/Projects/Yeko/packages/data-ops/src/queries/enrollments.ts#L95-L165))
-   - `getStudents` ([packages/data-ops/src/queries/students.ts](file:///home/darius-kassi/Projects/Yeko/packages/data-ops/src/queries/students.ts#L162-L236))
-   - `getSchools` ([packages/data-ops/src/queries/schools.ts](file:///home/darius-kassi/Projects/Yeko/packages/data-ops/src/queries/schools.ts#L64-L94))
+**Deliverables:**
 
-### Core
+- [ ] Document key convention in this file (done above)
+- [ ] Create `coreMutationKeys` in `apps/core/src/integrations/tanstack-query/` (extend existing files)
+- [ ] Create `schoolMutationKeys` factory in `apps/school/src/lib/queries/keys.ts` (or per-file)
+- [ ] Create `teacherMutationKeys` factory in `apps/teacher/src/lib/queries/keys.ts` (or per-file)
 
-1. Suppression du double fetch `schools` pour stats, remplacement par `schoolsPerformanceQueryOptions`.
-2. Ajout `schoolsKeys` + invalidations ciblées sur:
-   - [apps/core/src/routes/_auth/app/schools/index.tsx](file:///home/darius-kassi/Projects/Yeko/apps/core/src/routes/_auth/app/schools/index.tsx#L52-L88)
-   - [apps/core/src/routes/_auth/app/schools/$schoolId.tsx](file:///home/darius-kassi/Projects/Yeko/apps/core/src/routes/_auth/app/schools/%24schoolId.tsx#L109-L152)
-   - [apps/core/src/routes/_auth/app/schools/$schoolId_.edit.tsx](file:///home/darius-kassi/Projects/Yeko/apps/core/src/routes/_auth/app/schools/%24schoolId_.edit.tsx#L29-L46)
-3. **User Management**: centralisation via `platformUsersQueryOptions` et `platformRolesQueryOptions` avec key factory `platformUsersKeys`.
-4. Export: refetch dédié sans polluer le cache principal.
+---
 
-### School
+### Phase 1 — Core `queryOptions()` Migration
 
-1. Centralisation `classSubjectsOptions` utilisée dans `grades/entry`.
-2. `grades/validations` invalidation ciblée `gradesKeys.pending`.
-3. **Settings**: refactorisation `school-years.tsx` et `profile.tsx` avec query options et key factories (`schoolYearsKeys`, `schoolProfileKeys`).
-4. **Grades Entry & Statistics**: refactorisation vers des `queryOptions` standardisées et nettoyage des desctructurations `success`.
-5. **Optimisme UI**: implémentation sur l'activation de l'année scolaire (`setActiveMutation`).
+**Effort**: ~2-3h | **Risk**: Low (type-only, no behavior change) | **Status**: ☐ Not started
 
-### Teacher
+Wrap 9 remaining core options files with `queryOptions()` for type safety. Add missing `mutationKey` to ~5 core mutations.
 
-1. **Class Detail**: refactorisation complète de `schools.$schoolId.class.$classId.tsx` vers des `queryOptions` centralisées (classes, students, stats).
-2. **Dashboard & Schedule**: passage aux key factories `scheduleKeys` et `schoolsKeys` pour une gestion granulaire du cache.
-3. **Chat & Messages**: Key factory `messagesKeys` centralisée, standardisation des queries de liste/détail et optimisme UI sur le statut "Lu" dans `chat.$messageId.tsx`.
-4. **Drafts**: centralisation de la persistance locale via `localNotesKeys`.
-5. **Attendance**: refactorisation complète de `attendance.tsx` et `attendance.ts` (query options, key factory `attendanceKeys`, consolidation des counts via `useMemo` et optimisme UI sur les mutations individuelles et en lot).
+**Files to migrate:**
 
-## Workflow de refactorisation
+| File | Queries | Mutations | Notes |
+|---|---|---|---|
+| `analytics-options.ts` | ✅ wrap | — | |
+| `catalogs-options.ts` | ✅ wrap | ✅ add keys | |
+| `coefficients-options.ts` | ✅ wrap | ✅ add keys | |
+| `dashboard-options.ts` | ✅ wrap | — | |
+| `programs-options.ts` | ✅ wrap | ✅ add keys | Uses `keepPreviousData` correctly |
+| `school-users-options.ts` | ✅ wrap | ✅ add keys | |
+| `storage-options.ts` | ✅ wrap | — | |
+| `support-options.ts` | ✅ wrap | ✅ add keys | |
+| `user-actions-options.ts` | — | ✅ add keys | Mutations only |
 
-### Règles
+**Validation:**
 
-1. Toujours utiliser `queryOptions` / key factories.
-2. Éviter `invalidateQueries()` sans `queryKey`.
-3. Préférer `select` / `useMutationState` pour l’optimisme UI.
-4. `COUNT(*) OVER()` pour pagination quand supporté.
-5. Ne pas casser la policy `ResultAsync` (data-ops).
+```bash
+pnpm --filter @repo/core run typecheck
+```
 
-### Procédure
+---
 
-1. Identifier les queries ad-hoc.
-2. Créer/étendre keys + options.
-3. Migrer les composants à ces options.
-4. Ajuster invalidations + refetch ciblés.
-5. Vérifier les écrans critiques (grades, schools, attendance).
+### Phase 2 — Add `mutationKey` Everywhere (No Structural Refactor)
 
-## Dépendances et risques
+**Effort**: ~4-6h | **Risk**: Low (purely additive, zero behavior change) | **Status**: ☐ Not started
 
-1. Certaines optimisations DB nécessitent un plan de migration (index).
-2. L’optimisme UI demande une gestion claire des erreurs (rollback visuel si échec).
-3. Les améliorations doivent rester compatibles avec la politique “No-Throw” et `ResultAsync`.
+Add `mutationKey` inline next to every `mutationFn`. No extraction to options files — keep component ownership of side effects intact.
 
-## Étapes proposées
+#### Phase 2A — Teacher App (19 mutations)
 
-1. Audit détaillé de tous les fichiers listés par query/mutation.
-2. Mise en place des factories `queryOptions` manquantes.
-3. Ajout des optimismes UI sur flux critiques (attendance, bulk import, notes/grades).
-4. Optimisations DB dans `packages/data-ops`.
-5. Validation fonctionnelle + perf (profilage des requêtes).
+**Scope**: `apps/teacher/src/lib/queries/*.ts` + any inline mutations in route components.
 
-## Validation (critères)
+| Query File | Estimated Mutations |
+|---|---|
+| `attendance.ts` | ~2 |
+| `calendar.ts` | ~1 |
+| `chat.ts` | ~2 |
+| `grades.ts` | ~3 |
+| `homework.ts` | ~3 |
+| `messages.ts` | ~2 |
+| `sessions.ts` | ~2 |
+| `student-notes.ts` | ~2 |
+| `students.ts` | ~1 |
+| Route components | ~1 |
 
-1. Diminution des requêtes doublons (counts, dérivées).
-2. Temps de réponse perçu amélioré sur les actions clés.
-3. Aucun contournement de la politique `ResultAsync`.
-4. Aucun hardcode de strings UI (i18n ok).
+**Validation:**
 
-## Restant a traiter
+```bash
+pnpm --filter @repo/teacher run typecheck
+```
 
-1. Planifier et appliquer l'indexation DB proposee (migration + validation perf).
-   - Constat: les indexes cibles sont deja presents dans le schema Drizzle.
-   - References:
-     - `students.school_id`, `students.status`, `students.admission_date` deja indexes.
-     - `enrollments.school_year_id`, `enrollments.status`, `enrollments.class_id` deja indexes.
-     - `payments.school_id`, `payments.payment_date`, `payments.status` deja indexes.
-   - Prochaine etape: verifier la prod (EXPLAIN) et ajouter un index composite si les filtres `school_id + status + payment_date` sont dominants dans `getPayments`.
-2. Normaliser `placeholderData: keepPreviousData` sur les listes paginees restantes (audit global).
-3. Generaliser l'optimisme UI via `useMutationState` sur les actions bulk/imports encore non couvertes.
-4. Ajouter les prefetchs sur les transitions majeures (liste -> detail) selon les ecrans critiques.
-5. Continuer l'audit des ecrans non listes ici pour detecter les queries ad-hoc restantes.
+#### Phase 2B — School App (95 mutations)
 
-### Mises a jour recentes
+**Scope**: `apps/school/src/lib/queries/*.ts` + any inline mutations in route/component files.
 
-1. Ajout de `placeholderData: keepPreviousData` sur les listes paginees suivantes:
-   - [apps/core/src/integrations/tanstack-query/schools-options.ts](file:///home/darius-kassi/Projects/Yeko/apps/core/src/integrations/tanstack-query/schools-options.ts#L27-L35)
-   - [apps/core/src/integrations/tanstack-query/programs-options.ts](file:///home/darius-kassi/Projects/Yeko/apps/core/src/integrations/tanstack-query/programs-options.ts#L88-L101)
-   - [apps/core/src/integrations/tanstack-query/platform-users-options.ts](file:///home/darius-kassi/Projects/Yeko/apps/core/src/integrations/tanstack-query/platform-users-options.ts#L11-L16)
-   - [apps/core/src/integrations/tanstack-query/catalogs-options.ts](file:///home/darius-kassi/Projects/Yeko/apps/core/src/integrations/tanstack-query/catalogs-options.ts#L162-L174)
-   - [apps/school/src/lib/queries/students.ts](file:///home/darius-kassi/Projects/Yeko/apps/school/src/lib/queries/students.ts#L34-L48)
-   - [apps/school/src/lib/queries/payments.ts](file:///home/darius-kassi/Projects/Yeko/apps/school/src/lib/queries/payments.ts#L30-L42)
-   - [apps/school/src/lib/queries/refunds.ts](file:///home/darius-kassi/Projects/Yeko/apps/school/src/lib/queries/refunds.ts#L26-L38)
-   - [apps/school/src/lib/queries/enrollments.ts](file:///home/darius-kassi/Projects/Yeko/apps/school/src/lib/queries/enrollments.ts#L26-L38)
-   - [apps/school/src/lib/queries/parents.ts](file:///home/darius-kassi/Projects/Yeko/apps/school/src/lib/queries/parents.ts#L24-L36)
-   - [apps/school/src/lib/queries/conduct-records.ts](file:///home/darius-kassi/Projects/Yeko/apps/school/src/lib/queries/conduct-records.ts#L19-L42)
-   - [apps/teacher/src/lib/queries/sessions.ts](file:///home/darius-kassi/Projects/Yeko/apps/teacher/src/lib/queries/sessions.ts#L32-L49)
-   - [apps/teacher/src/lib/queries/homework.ts](file:///home/darius-kassi/Projects/Yeko/apps/teacher/src/lib/queries/homework.ts#L14-L30)
-   - [apps/teacher/src/lib/queries/messages.ts](file:///home/darius-kassi/Projects/Yeko/apps/teacher/src/lib/queries/messages.ts#L28-L42)
-   - [apps/teacher/src/lib/queries/attendance.ts](file:///home/darius-kassi/Projects/Yeko/apps/teacher/src/lib/queries/attendance.ts#L56-L70)
+Batch by domain area to keep changes reviewable:
+
+| Domain | Query Files | Estimated Mutations |
+|---|---|---|
+| Students & Enrollment | `students.ts`, `enrollments.ts`, `enrollment-workflow.ts` | ~15 |
+| Finance | `fees.ts`, `payments.ts`, `refunds.ts`, `fee-templates.ts` | ~15 |
+| Staff & Users | `staff.ts`, `parents.ts`, `school-users.ts` | ~10 |
+| Academic | `subjects.ts`, `classes.ts`, `grade-management.ts`, `timetable.ts` | ~15 |
+| Communication | `announcements.ts`, `notifications.ts` | ~5 |
+| Reports & Analytics | `reports.ts`, `analytics.ts`, `dashboard.ts` | ~5 |
+| Config & Settings | `school-settings.ts`, `academic-years.ts` | ~5 |
+| Other | remaining files | ~25 |
+
+**Validation:**
+
+```bash
+pnpm --filter @repo/school run typecheck
+```
+
+---
+
+### Phase 3 — Selective Extraction (Deferred, Optional)
+
+**Effort**: ~1-2d | **Risk**: Medium (structural refactor) | **Status**: ☐ Deferred
+
+Only extract mutations to centralized options files when:
+
+- The same mutation appears in multiple components
+- Shared defaults are needed (retry, networkMode, meta)
+- Typed mutation variables/results need enforcement
+
+**Not** a blanket "extract everything" pass.
+
+---
+
+### Phase 4 — `isLoading` → `isPending` Cleanup (Touch-as-you-go)
+
+**Effort**: Ongoing | **Risk**: Low | **Status**: ☐ Deferred
+
+~500 `isLoading` usages across all apps. Valid in v5 but `isPending` is preferred for initial-load checks. Only change when already editing the file.
+
+---
+
+## Parallelization Strategy
+
+Phases 2A and 2B can run as **parallel sub-agents** since Teacher and School apps have zero file overlap:
+
+```
+┌─────────────┐     ┌──────────────────────┐     ┌──────────────────────┐
+│  Phase 0    │────▶│  Phase 1 (Core)      │────▶│  Phase 2A (Teacher)  │
+│  Convention │     │  queryOptions + keys  │     │  19 mutationKeys     │
+└─────────────┘     └──────────────────────┘     └──────────────────────┘
+                                                          ║ parallel
+                                                 ┌──────────────────────┐
+                                                 │  Phase 2B (School)   │
+                                                 │  95 mutationKeys     │
+                                                 └──────────────────────┘
+```
+
+---
+
+## Verification Checklist
+
+After each phase:
+
+- [ ] `pnpm run typecheck` passes for affected app(s)
+- [ ] `pnpm run lint` passes
+- [ ] No `mutationFn` without `mutationKey` (grep audit)
+- [ ] No plain-object query options in core (all wrapped with `queryOptions()`)
+- [ ] DevTools shows mutation keys for all operations
+- [ ] No regressions in existing mutation flows (create/update/delete still work)
+
+---
+
+## Files Already Completed (Phase 1 — Prior Work)
+
+- [x] `apps/core/src/integrations/tanstack-query/get-context.ts` — global defaults
+- [x] `apps/core/src/hooks/use-infinite-schools.ts` — removed redundant `pageParam` default
+- [x] `apps/core/src/integrations/tanstack-query/schools-options.ts` — `queryOptions()` + mutation keys
+- [x] `apps/core/src/integrations/tanstack-query/platform-roles-options.ts` — `queryOptions()` + mutation keys
+- [x] `apps/core/src/routes/_auth/app/roles/index.tsx` — migrated to centralized options

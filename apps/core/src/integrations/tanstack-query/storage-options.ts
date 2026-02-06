@@ -1,3 +1,4 @@
+import { queryOptions } from '@tanstack/react-query'
 import { checkStorageConfigured } from '@/core/functions/storage'
 
 export const storageKeys = {
@@ -6,7 +7,7 @@ export const storageKeys = {
 }
 
 export function storageConfigQueryOptions() {
-  return {
+  return queryOptions({
     queryKey: storageKeys.config(),
     queryFn: async () => {
       const result = await checkStorageConfigured()
@@ -14,7 +15,7 @@ export function storageConfigQueryOptions() {
     },
     staleTime: 1000 * 60 * 60, // 1 hour (config rarely changes)
     gcTime: 1000 * 60 * 60 * 2, // 2 hours
-  }
+  })
 }
 
 export const storageQueries = {

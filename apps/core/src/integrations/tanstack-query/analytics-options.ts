@@ -1,3 +1,5 @@
+import { queryOptions } from '@tanstack/react-query'
+
 import {
   analyticsOverviewQuery,
   generateReportMutation,
@@ -18,33 +20,38 @@ export const analyticsKeys = {
 }
 
 export function analyticsOverviewQueryOptions(timeRange: AnalyticsRange = '30d') {
-  return {
+  return queryOptions({
     queryKey: analyticsKeys.overview(timeRange),
     queryFn: () => analyticsOverviewQuery({ data: { timeRange } }),
     staleTime: 1000 * 60 * 5, // 5 minutes
     gcTime: 1000 * 60 * 15, // 15 minutes
-  }
+  })
 }
 
 export function schoolsPerformanceQueryOptions(timeRange: AnalyticsRange = '30d') {
-  return {
+  return queryOptions({
     queryKey: analyticsKeys.schoolPerf(timeRange),
     queryFn: () => schoolsPerformanceQuery({ data: { timeRange } }),
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 15,
-  }
+  })
 }
 
 export function platformUsageQueryOptions(timeRange: AnalyticsRange = '30d') {
-  return {
+  return queryOptions({
     queryKey: analyticsKeys.usageByRange(timeRange),
     queryFn: () => platformUsageQuery({ data: { timeRange } }),
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 15,
-  }
+  })
+}
+
+export const analyticsMutationKeys = {
+  generateReport: ['analytics', 'generateReport'] as const,
 }
 
 export const generateReportMutationOptions = {
+  mutationKey: analyticsMutationKeys.generateReport,
   mutationFn: (data: { timeRange: AnalyticsRange }) =>
     generateReportMutation({ data }),
 }

@@ -14,7 +14,7 @@ export function useInfiniteSchools(options: UseInfiniteSchoolsOptions = {}) {
 
   return useInfiniteQuery({
     queryKey: ['schools', 'infinite', { search, status, sortBy, sortOrder, limit }],
-    queryFn: async ({ pageParam = 1 }) => {
+    queryFn: async ({ pageParam }) => {
       const result = await getSchools({
         data: {
           page: pageParam,
