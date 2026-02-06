@@ -3,9 +3,9 @@ import { z } from 'zod'
 // IconUser validation schema
 export const userSchema = z.object({
   name: z.string().min(2, 'Minimum 2 caractères').max(100, 'Maximum 100 caractères'),
-  email: z.string().email('Email invalide'),
+  email: z.email('Email invalide'),
   phone: z.string().optional().nullable(),
-  avatarUrl: z.string().url('URL invalide').optional().nullable(),
+  avatarUrl: z.url('URL invalide').or(z.literal('')).optional().nullable(),
   status: z.enum(['active', 'inactive', 'suspended'], {
     message: 'Statut invalide',
   }),

@@ -148,6 +148,7 @@ const en: Translation = {
     accounting: 'Accounting',
     tuition: 'Tuition',
     payments: 'Payments',
+    paymentPlans: 'Payment Plans',
     settings: 'Settings',
     spaces: 'Spaces',
     classrooms: 'Classrooms',

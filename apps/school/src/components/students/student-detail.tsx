@@ -64,7 +64,7 @@ interface StudentDetailProps {
 export function StudentDetail({ studentId }: StudentDetailProps) {
   const t = useTranslations()
   const queryClient = useQueryClient()
-  const { data, isLoading } = useQuery(studentsOptions.detail(studentId)) as any
+  const { data: student, isLoading } = useQuery(studentsOptions.detail(studentId)) as any
 
   const [parentDialogOpen, setParentDialogOpen] = useState(false)
   const [enrollmentDialogOpen, setEnrollmentDialogOpen] = useState(false)
@@ -86,7 +86,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
     return <StudentDetailSkeleton />
   }
 
-  if (!data) {
+  if (!student) {
     return (
       <div className="flex items-center justify-center py-12">
         <p className="text-muted-foreground">{t.students.notFound()}</p>
@@ -94,13 +94,10 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
     )
   }
 
-  const {
-    student,
-    currentClass,
-    currentEnrollment,
-    parents,
-    enrollmentHistory,
-  } = data
+  const currentEnrollment = student.enrollmentHistory?.[0]?.enrollment
+  const currentClass = student.enrollmentHistory?.[0]?.class
+  const parents = student.parents || []
+  const enrollmentHistory = student.enrollmentHistory || []
 
   return (
     <motion.div
@@ -124,12 +121,12 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
               <div className="relative h-28 w-28 rounded-full border-4 border-white overflow-hidden dark:border-white/10">
                 <Avatar className="h-full w-full">
                   <AvatarImage
-                    src={student.photoUrl || undefined}
+                    src={student.photoUrl ?? undefined}
                     className="object-cover"
                   />
                   <AvatarFallback className="text-3xl font-bold bg-primary/10 text-primary">
-                    {student.firstName[0]}
-                    {student.lastName[0]}
+                    {student.firstName?.[0] || '?'}
+                    {student.lastName?.[0] || '?'}
                   </AvatarFallback>
                 </Avatar>
                 <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
