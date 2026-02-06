@@ -5,6 +5,7 @@ import {
   getFeeTypes,
   updateFeeType,
 } from '@repo/data-ops/queries/fee-types'
+import { getFeeTypeTemplates } from '@repo/data-ops/queries/fee-type-templates'
 import { z } from 'zod'
 import { createFeeTypeSchema, updateFeeTypeSchema } from '@/schemas/fee-type'
 import { authServerFn } from '../lib/server-fn'
@@ -97,5 +98,60 @@ export const deleteExistingFeeType = authServerFn
     return result.match(
       () => ({ success: true as const, data: { success: true } }),
       error => ({ success: false as const, error: error.message }),
+    )
+  })
+
+/**
+ * Get available templates for importing
+ */
+export const getAvailableTemplates = authServerFn.handler(async () => {
+  const result = await getFeeTypeTemplates({})
+
+  return result.match(
+    data => ({ success: true as const, data }),
+    error => ({ success: false as const, error: error.message }),
+  )
+})
+
+/**
+ * Import fee types from templates
+ */
+const importFromTemplatesSchema = z.object({
+  templateIds: z.array(z.string()).min(1),
+})
+
+export const importFeeTypesFromTemplates = authServerFn
+  .inputValidator(importFromTemplatesSchema)
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    const templatesResult = await getFeeTypeTemplates({})
+    
+    return templatesResult.match(
+      async (templates) => {
+        const selectedTemplates = templates.filter(t => data.templateIds.includes(t.id))
+        let created = 0
+        
+        for (const template of selectedTemplates) {
+          const result = await createFeeType({
+            schoolId: context.school!.schoolId,
+            feeTypeTemplateId: template.id,
+            code: template.code,
+            name: template.name,
+            nameEn: template.nameEn ?? undefined,
+            category: template.category,
+            isMandatory: template.isMandatory,
+            isRecurring: template.isRecurring,
+            displayOrder: template.displayOrder,
+            status: 'active',
+          })
+          
+          if (result.isOk()) created++
+        }
+        
+        return { success: true as const, data: { created } } as const
+      },
+      (error) => ({ success: false as const, error: error.message }),
     )
   })

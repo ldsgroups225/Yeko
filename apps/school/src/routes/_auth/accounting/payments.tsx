@@ -15,7 +15,7 @@ import { useState } from 'react'
 import { FinanceStats, PaymentFormDialog, PaymentsTable } from '@/components/finance'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
-import { paymentsOptions } from '@/lib/queries'
+import { financeStatsOptions, paymentsOptions } from '@/lib/queries'
 
 export const Route = createFileRoute('/_auth/accounting/payments')({
   component: PaymentsPage,
@@ -33,11 +33,13 @@ function PaymentsPage() {
     }),
   )
 
+  const { data: statsData, isLoading: statsLoading } = useQuery(financeStatsOptions.summary())
+
   const payments = paymentsData?.data?.map(p => ({
     id: p.id,
     receiptNumber: p.receiptNumber ?? undefined,
-    studentName: p.payerName ?? 'N/A',
-    studentMatricule: p.studentId ?? 'N/A',
+    studentName: (p as any).studentName ?? 'N/A',
+    studentMatricule: (p as any).studentMatricule ?? 'N/A',
     amount: Number(p.amount),
     method: p.method,
     status: p.status ?? 'pending',
@@ -98,8 +100,11 @@ function PaymentsPage() {
         transition={{ delay: 0.1 }}
       >
         <FinanceStats
-          totalPayments={paymentsData?.total ?? 0}
-          isLoading={isLoading}
+          totalRevenue={statsData?.totalRevenue ?? 0}
+          totalPayments={statsData?.totalPayments ?? 0}
+          pendingPayments={statsData?.pendingPayments ?? 0}
+          overdueAmount={statsData?.overdueAmount ?? 0}
+          isLoading={isLoading || statsLoading}
         />
       </motion.div>
 

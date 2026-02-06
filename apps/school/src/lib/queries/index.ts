@@ -8,6 +8,7 @@ export * from './curriculum-progress'
 export * from './discounts'
 export * from './fee-structures'
 export * from './fee-types'
+export * from './finance-stats'
 
 export * from './grades'
 export * from './payment-plans'

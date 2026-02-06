@@ -15,6 +15,7 @@ import {
   paymentPlans,
   payments,
   studentFees,
+  students,
 } from '../drizzle/school-schema'
 import { DatabaseError, dbError } from '../errors'
 import { getNestedErrorMessage } from '../i18n'
@@ -73,11 +74,28 @@ export function getPayments(params: GetPaymentsParams): ResultAsync<PaginatedPay
         conditions.push(lte(payments.paymentDate, endDate))
 
       const [data, countResult] = await Promise.all([
-        db.select().from(payments).where(and(...conditions)).orderBy(desc(payments.paymentDate), desc(payments.createdAt)).limit(pageSize).offset((page - 1) * pageSize),
+        db
+          .select({
+            id: payments.id,
+            receiptNumber: payments.receiptNumber,
+            amount: payments.amount,
+            method: payments.method,
+            status: payments.status,
+            createdAt: payments.createdAt,
+            paymentDate: payments.paymentDate,
+            studentName: sql<string>`concat(${students.firstName}, ' ', ${students.lastName})`.as('studentName'),
+            studentMatricule: students.matricule,
+          })
+          .from(payments)
+          .leftJoin(students, eq(payments.studentId, students.id))
+          .where(and(...conditions))
+          .orderBy(desc(payments.paymentDate), desc(payments.createdAt))
+          .limit(pageSize)
+          .offset((page - 1) * pageSize),
         db.select({ count: sql<number>`count(*)::int` }).from(payments).where(and(...conditions)),
       ])
 
-      return { data, total: countResult[0]?.count ?? 0, page, pageSize }
+      return { data: data as any, total: countResult[0]?.count ?? 0, page, pageSize }
     })(),
     err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'payment.fetchFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, studentId }))
@@ -169,7 +187,7 @@ export function createPaymentWithAllocations(
   const { allocations: allocationData, ...paymentData } = data
 
   return ResultAsync.fromPromise(
-    db.transaction(async (tx) => {
+    (async () => {
       // Validate payment amount matches allocations
       const totalAllocated = allocationData.reduce((sum: number, a: CreatePaymentAllocationData) => sum + Number.parseFloat(a.amount), 0)
       const paymentAmount = Number.parseFloat(paymentData.amount)
@@ -183,7 +201,7 @@ export function createPaymentWithAllocations(
         throw receiptNumberResult.error
       const receiptNumber = receiptNumberResult.value
 
-      const [payment] = await tx
+      const [payment] = await db
         .insert(payments)
         .values({ id: crypto.randomUUID(), receiptNumber, ...paymentData })
         .returning()
@@ -194,7 +212,7 @@ export function createPaymentWithAllocations(
 
       const allocations: PaymentAllocation[] = []
       for (const alloc of allocationData) {
-        const [allocation] = await tx
+        const [allocation] = await db
           .insert(paymentAllocations)
           .values({ id: crypto.randomUUID(), paymentId: payment.id, ...alloc })
           .returning()
@@ -204,7 +222,7 @@ export function createPaymentWithAllocations(
         }
         allocations.push(allocation)
 
-        await tx
+        await db
           .update(studentFees)
           .set({
             paidAmount: sql`${studentFees.paidAmount} + ${alloc.amount}::decimal`,
@@ -215,7 +233,7 @@ export function createPaymentWithAllocations(
           .where(eq(studentFees.id, alloc.studentFeeId))
 
         if (alloc.installmentId) {
-          await tx
+          await db
             .update(installments)
             .set({
               paidAmount: sql`${installments.paidAmount} + ${alloc.amount}::decimal`,
@@ -229,7 +247,7 @@ export function createPaymentWithAllocations(
       }
 
       if (payment.paymentPlanId) {
-        await tx
+        await db
           .update(paymentPlans)
           .set({
             paidAmount: sql`${paymentPlans.paidAmount} + ${payment.amount}::decimal`,
@@ -241,8 +259,11 @@ export function createPaymentWithAllocations(
       }
 
       return { payment, allocations }
-    }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'payment.createWithAllocationsFailed')),
+    })(),
+    (err: any) => {
+      console.error('Payment creation error:', err)
+      return DatabaseError.from(err, 'INTERNAL_ERROR', `Payment creation failed: ${err.message || String(err)}`)
+    },
   ).mapErr(tapLogErr(databaseLogger, { schoolId: data.schoolId, studentId: data.studentId }))
 }
 
@@ -253,7 +274,7 @@ export function cancelPayment(
 ): ResultAsync<Payment, DatabaseError> {
   const db = getDb()
   return ResultAsync.fromPromise(
-    db.transaction(async (tx) => {
+    (async () => {
       const paymentResult = await getPaymentById(paymentId)
       if (paymentResult.isErr())
         throw paymentResult.error
@@ -264,10 +285,10 @@ export function cancelPayment(
       if (payment.status === 'cancelled')
         throw dbError('CONFLICT', getNestedErrorMessage('finance', 'payment.alreadyCancelled'))
 
-      const allocs = await tx.select().from(paymentAllocations).where(eq(paymentAllocations.paymentId, paymentId))
+      const allocs = await db.select().from(paymentAllocations).where(eq(paymentAllocations.paymentId, paymentId))
 
       for (const alloc of allocs) {
-        await tx
+        await db
           .update(studentFees)
           .set({
             paidAmount: sql`${studentFees.paidAmount} - ${alloc.amount}::decimal`,
@@ -278,7 +299,7 @@ export function cancelPayment(
           .where(eq(studentFees.id, alloc.studentFeeId))
 
         if (alloc.installmentId) {
-          await tx
+          await db
             .update(installments)
             .set({
               paidAmount: sql`${installments.paidAmount} - ${alloc.amount}::decimal`,
@@ -292,7 +313,7 @@ export function cancelPayment(
       }
 
       if (payment.paymentPlanId) {
-        await tx
+        await db
           .update(paymentPlans)
           .set({
             paidAmount: sql`${paymentPlans.paidAmount} - ${payment.amount}::decimal`,
@@ -303,7 +324,7 @@ export function cancelPayment(
           .where(eq(paymentPlans.id, payment.paymentPlanId))
       }
 
-      const [cancelledPayment] = await tx
+      const [cancelledPayment] = await db
         .update(payments)
         .set({ status: 'cancelled', cancelledAt: new Date(), cancelledBy, cancellationReason: reason, updatedAt: new Date() })
         .where(eq(payments.id, paymentId))
@@ -314,7 +335,7 @@ export function cancelPayment(
       }
 
       return cancelledPayment
-    }),
+    })(),
     err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'payment.cancelFailed')),
   ).mapErr(tapLogErr(databaseLogger, { paymentId, cancelledBy }))
 }

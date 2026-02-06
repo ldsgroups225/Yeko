@@ -3,7 +3,8 @@ import { databaseLogger, tapLogErr } from '@repo/logger'
 import { and, eq, gt, sql } from 'drizzle-orm'
 import { ResultAsync } from 'neverthrow'
 import { getDb } from '../database/setup'
-import { enrollments, feeStructures, feeTypes, studentFees } from '../drizzle/school-schema'
+import { classes, enrollments, feeStructures, feeTypes, studentFees, students } from '../drizzle/school-schema'
+import { grades } from '../drizzle/core-schema'
 import { DatabaseError, dbError } from '../errors'
 
 export interface GetStudentFeesParams {
@@ -171,6 +172,10 @@ export function waiveStudentFee(
 
 export interface OutstandingBalanceEntry {
   studentId: string
+  firstName: string
+  lastName: string
+  matricule: string
+  className: string
   totalBalance: string
 }
 
@@ -183,12 +188,19 @@ export function getStudentsWithOutstandingBalance(
     db
       .select({
         studentId: studentFees.studentId,
+        firstName: students.firstName,
+        lastName: students.lastName,
+        matricule: students.matricule,
+        className: sql<string>`concat(${grades.name}, ' ', ${classes.section})`,
         totalBalance: sql<string>`SUM(${studentFees.balance})`,
       })
       .from(studentFees)
       .innerJoin(enrollments, eq(studentFees.enrollmentId, enrollments.id))
+      .innerJoin(students, eq(studentFees.studentId, students.id))
+      .innerJoin(classes, eq(enrollments.classId, classes.id))
+      .innerJoin(grades, eq(classes.gradeId, grades.id))
       .where(and(eq(enrollments.schoolYearId, schoolYearId), gt(studentFees.balance, '0')))
-      .groupBy(studentFees.studentId) as Promise<OutstandingBalanceEntry[]>,
+      .groupBy(studentFees.studentId, students.firstName, students.lastName, students.matricule, grades.name, classes.section) as Promise<OutstandingBalanceEntry[]>,
     err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch students with outstanding balance'),
   ).mapErr(tapLogErr(databaseLogger, { schoolYearId }))
 }
