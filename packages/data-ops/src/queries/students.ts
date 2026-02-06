@@ -171,6 +171,7 @@ export function getStudents(filters: StudentFilters): ResultAsync<{
           },
           parentsCount: sql<number>`COUNT(DISTINCT ${studentParents.id})`.as('parents_count'),
           enrollmentStatus: enrollments.status,
+          totalCount: sql<number>`COUNT(DISTINCT ${students.id}) OVER()`.as('total_count'),
         })
         .from(students)
         .leftJoin(
@@ -195,16 +196,6 @@ export function getStudents(filters: StudentFilters): ResultAsync<{
 
       const whereClause = and(...conditions)
 
-      // Get total count
-      const countResult = await db
-        .select({ count: sql<number>`COUNT(DISTINCT ${students.id})` })
-        .from(students)
-        .leftJoin(enrollments, eq(enrollments.studentId, students.id))
-        .leftJoin(classes, eq(enrollments.classId, classes.id))
-        .where(whereClause)
-
-      const total = Number(countResult[0]?.count || 0)
-      const totalPages = Math.ceil(total / limit)
       const offset = (page - 1) * limit
 
       // Apply sorting
@@ -217,14 +208,15 @@ export function getStudents(filters: StudentFilters): ResultAsync<{
         createdAt: students.createdAt,
       }[sortBy]
 
-      const data = await baseQuery
+      const rows = await baseQuery
         .where(whereClause)
         .groupBy(students.id, classes.id, grades.id, series.id, enrollments.status)
         .orderBy(orderFn(sortColumn))
         .limit(limit)
         .offset(offset)
 
-      const mappedData: StudentWithDetails[] = data.map(d => ({
+      const total = Number(rows[0]?.totalCount || 0)
+      const mappedData: StudentWithDetails[] = rows.map(({ totalCount: _totalCount, ...d }) => ({
         student: d.student,
         currentClass: d.currentClass.id
           ? {
@@ -238,7 +230,7 @@ export function getStudents(filters: StudentFilters): ResultAsync<{
         enrollmentStatus: d.enrollmentStatus,
       }))
 
-      return { data: mappedData, total, page, totalPages }
+      return { data: mappedData, total, page, totalPages: Math.ceil(total / limit) }
     })(),
     err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'fetchFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId: filters.schoolId }))
@@ -533,6 +525,7 @@ export function deleteStudent(id: string): ResultAsync<void, DatabaseError> {
 
 // ==================== Bulk Operations ====================
 
+// Batch import students to minimize round-trips
 export function bulkImportStudents(
   schoolId: string,
   studentsData: Array<CreateStudentInput & { matricule?: string }>,
@@ -542,7 +535,6 @@ export function bulkImportStudents(
     (async () => {
       const results = { success: 0, errors: [] as Array<{ row: number, error: string }> }
 
-      // Get active school year
       const [activeYear] = await db
         .select()
         .from(schoolYears)
@@ -552,34 +544,52 @@ export function bulkImportStudents(
         throw new Error(getNestedErrorMessage('students', 'noActiveSchoolYear'))
       }
 
+      // Prepare students for bulk insertion
+      const studentsToInsert = []
       for (let i = 0; i < studentsData.length; i++) {
-        try {
-          const studentData = studentsData[i]
-          if (!studentData)
+        const studentData = studentsData[i]
+        if (!studentData)
+          continue
+
+        let matricule = studentData.matricule
+        if (!matricule) {
+          const matriculeResult = await generateMatricule(schoolId, activeYear.id)
+          if (matriculeResult.isErr()) {
+            results.errors.push({ row: i + 1, error: matriculeResult.error.message })
             continue
-
-          // Generate matricule if not provided
-          let matricule = studentData.matricule
-          if (!matricule) {
-            const matriculeResult = await generateMatricule(schoolId, activeYear.id)
-            if (matriculeResult.isErr()) {
-              throw new Error(matriculeResult.error.message)
-            }
-            matricule = matriculeResult.value
           }
+          matricule = matriculeResult.value
+        }
 
-          const createResult = await createStudent({ ...studentData, schoolId, matricule })
-          if (createResult.isErr()) {
-            throw new Error(createResult.error.message)
+        studentsToInsert.push({
+          id: crypto.randomUUID(),
+          ...studentData,
+          matricule,
+          admissionDate: studentData.admissionDate || new Date().toISOString().split('T')[0],
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
+      }
+
+      if (studentsToInsert.length > 0) {
+        const inserted = await db
+          .insert(students)
+          .values(studentsToInsert)
+          .onConflictDoNothing({ target: [students.schoolId, students.matricule] })
+          .returning()
+
+        results.success = inserted?.length || 0
+
+        // Report errors for those that weren't inserted (duplicates)
+        const insertedMatricules = new Set(inserted?.map(s => s.matricule))
+        studentsToInsert.forEach((s, idx) => {
+          if (!insertedMatricules.has(s.matricule)) {
+            results.errors.push({
+              row: idx + 1,
+              error: getNestedErrorMessage('students', 'matriculeExistsWithId', { matricule: s.matricule }),
+            })
           }
-          results.success++
-        }
-        catch (error) {
-          results.errors.push({
-            row: i + 1,
-            error: error instanceof Error ? error.message : 'Unknown error',
-          })
-        }
+        })
       }
 
       return results

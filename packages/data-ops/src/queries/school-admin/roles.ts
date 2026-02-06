@@ -1,4 +1,4 @@
-import type { SystemPermissions } from '@repo/data-ops/auth/permissions'
+import type { SystemAction, SystemPermissions, SystemResource } from '@repo/data-ops/auth/permissions'
 import { and, count, desc, eq, ilike } from 'drizzle-orm'
 import { getDb } from '../../database/setup'
 import { roles, userRoles } from '../../drizzle/school-schema'
@@ -122,7 +122,7 @@ export async function deleteRole(roleId: string) {
   return { success: true }
 }
 
-export async function checkPermission(roleId: string, action: string, resource: string): Promise<boolean> {
+export async function checkPermission(roleId: string, action: SystemAction, resource: SystemResource | string): Promise<boolean> {
   const role = await getRoleById(roleId)
 
   if (!role) {
@@ -130,7 +130,7 @@ export async function checkPermission(roleId: string, action: string, resource: 
   }
 
   const permissions = role.permissions as SystemPermissions
-  return permissions[resource]?.includes(action as any) ?? false
+  return permissions[resource]?.includes(action) ?? false
 }
 
 // Phase 11: Count roles

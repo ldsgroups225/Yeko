@@ -163,7 +163,7 @@ export async function getSmartTemplateCurriculum(schoolId: string) {
   })
 
   return {
-    templateName: (activeYear as any).schoolYearTemplate?.name || 'Standard',
+    templateName: activeYear.schoolYearTemplate.name,
     curriculum: programs.map(p => ({
       subject: p.subject,
       grade: p.grade,

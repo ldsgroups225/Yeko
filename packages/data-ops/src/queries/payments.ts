@@ -33,8 +33,13 @@ export interface GetPaymentsParams {
   pageSize?: number
 }
 
+export interface PaymentWithDetails extends Omit<Payment, 'totalCount'> {
+  studentName: string
+  studentMatricule: string | null
+}
+
 export interface PaginatedPayments {
-  data: Payment[]
+  data: PaymentWithDetails[]
   total: number
   page: number
   pageSize: number
@@ -73,29 +78,30 @@ export function getPayments(params: GetPaymentsParams): ResultAsync<PaginatedPay
       if (endDate)
         conditions.push(lte(payments.paymentDate, endDate))
 
-      const [data, countResult] = await Promise.all([
-        db
-          .select({
-            id: payments.id,
-            receiptNumber: payments.receiptNumber,
-            amount: payments.amount,
-            method: payments.method,
-            status: payments.status,
-            createdAt: payments.createdAt,
-            paymentDate: payments.paymentDate,
-            studentName: sql<string>`concat(${students.firstName}, ' ', ${students.lastName})`.as('studentName'),
-            studentMatricule: students.matricule,
-          })
-          .from(payments)
-          .leftJoin(students, eq(payments.studentId, students.id))
-          .where(and(...conditions))
-          .orderBy(desc(payments.paymentDate), desc(payments.createdAt))
-          .limit(pageSize)
-          .offset((page - 1) * pageSize),
-        db.select({ count: sql<number>`count(*)::int` }).from(payments).where(and(...conditions)),
-      ])
+      const rows = await db
+        .select({
+          id: payments.id,
+          receiptNumber: payments.receiptNumber,
+          amount: payments.amount,
+          method: payments.method,
+          status: payments.status,
+          createdAt: payments.createdAt,
+          paymentDate: payments.paymentDate,
+          studentName: sql<string>`concat(${students.firstName}, ' ', ${students.lastName})`.as('studentName'),
+          studentMatricule: students.matricule,
+          totalCount: sql<number>`COUNT(*) OVER()`.as('total_count'),
+        })
+        .from(payments)
+        .leftJoin(students, eq(payments.studentId, students.id))
+        .where(and(...conditions))
+        .orderBy(desc(payments.paymentDate), desc(payments.createdAt))
+        .limit(pageSize)
+        .offset((page - 1) * pageSize)
 
-      return { data: data as any, total: countResult[0]?.count ?? 0, page, pageSize }
+      const total = rows[0]?.totalCount ?? 0
+      const data = rows.map(({ totalCount: _totalCount, ...rest }) => rest)
+
+      return { data: data as PaymentWithDetails[], total, page, pageSize }
     })(),
     err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'payment.fetchFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId, studentId }))
@@ -260,9 +266,10 @@ export function createPaymentWithAllocations(
 
       return { payment, allocations }
     })(),
-    (err: any) => {
-      console.error('Payment creation error:', err)
-      return DatabaseError.from(err, 'INTERNAL_ERROR', `Payment creation failed: ${err.message || String(err)}`)
+    (err: unknown) => {
+      const error = err as Error
+      console.error('Payment creation error:', error)
+      return DatabaseError.from(error, 'INTERNAL_ERROR', `Payment creation failed: ${error.message || String(error)}`)
     },
   ).mapErr(tapLogErr(databaseLogger, { schoolId: data.schoolId, studentId: data.studentId }))
 }

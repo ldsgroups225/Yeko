@@ -11,7 +11,7 @@ import { fr } from 'date-fns/locale'
 import { useEffect } from 'react'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { useI18nContext } from '@/i18n/i18n-react'
-import { messageDetailQueryOptions } from '@/lib/queries/messages'
+import { messageDetailQueryOptions, messagesKeys } from '@/lib/queries/messages'
 import { markMessageRead } from '@/teacher/functions/messages'
 
 export const Route = createFileRoute('/_auth/app/chat/$messageId')({
@@ -36,8 +36,39 @@ function MessageDetailPage() {
 
   const markReadMutation = useMutation({
     mutationFn: markMessageRead,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['teacher', 'messages'] })
+    onMutate: async (variables) => {
+      const id = variables.data.messageId
+
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: messagesKeys.lists() })
+      await queryClient.cancelQueries({ queryKey: messagesKeys.detail(id) })
+
+      // Snapshot the previous detail
+      const previousDetail = queryClient.getQueryData(messagesKeys.detail(id))
+
+      // Optimistically update the detail
+      queryClient.setQueryData(messagesKeys.detail(id), (old: { message?: MessageContentProps['message'] } | undefined) => {
+        if (!old || !old.message)
+          return old
+        return {
+          ...old,
+          message: {
+            ...old.message,
+            isRead: true,
+          },
+        }
+      })
+
+      return { previousDetail }
+    },
+    onError: (_err, variables, context) => {
+      if (context?.previousDetail) {
+        queryClient.setQueryData(messagesKeys.detail(variables.data.messageId), context.previousDetail)
+      }
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: messagesKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: messagesKeys.detail(variables.data.messageId) })
     },
   })
 
@@ -74,7 +105,7 @@ function MessageDetailPage() {
         : message
           ? (
               <MessageContent
-                message={message as any}
+                message={message}
                 teacherId={context?.teacherId ?? ''}
                 locale={locale}
               />

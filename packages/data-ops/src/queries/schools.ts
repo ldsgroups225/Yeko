@@ -1,12 +1,49 @@
 import type { School, SchoolInsert, SchoolStatus } from '../drizzle/core-schema'
 import { databaseLogger, tapLogErr } from '@repo/logger'
 
-import { and, asc, count, desc, eq, ilike, inArray, or } from 'drizzle-orm'
+import { and, asc, desc, eq, ilike, inArray, or, sql } from 'drizzle-orm'
 import { ResultAsync } from 'neverthrow'
 import { getDb } from '../database/setup'
 import { schools } from '../drizzle/core-schema'
 import { DatabaseError } from '../errors'
 import { getNestedErrorMessage } from '../i18n'
+
+// --- Prepared Statements ---
+
+/**
+ * Lazy-loaded prepared statements for performance
+ */
+const prepared = {
+  get getSchoolById() {
+    return getDb()
+      .select()
+      .from(schools)
+      .where(eq(schools.id, sql.placeholder('id')))
+      .prepare('get_school_by_id')
+  },
+  get deleteSchool() {
+    return getDb()
+      .delete(schools)
+      .where(eq(schools.id, sql.placeholder('id')))
+      .prepare('delete_school')
+  },
+  get getSchoolProfile() {
+    return getDb()
+      .select()
+      .from(schools)
+      .where(eq(schools.id, sql.placeholder('id')))
+      .limit(1)
+      .prepare('get_school_profile')
+  },
+  get updateSchoolLogo() {
+    return getDb()
+      .update(schools)
+      .set({ logoUrl: sql.placeholder('logoUrl') as unknown as string, updatedAt: new Date() })
+      .where(eq(schools.id, sql.placeholder('id')))
+      .returning()
+      .prepare('update_school_logo')
+  },
+}
 
 // Get all schools with pagination and filtering
 export function getSchools(options: {
@@ -65,23 +102,19 @@ export function getSchools(options: {
     const orderByClause
       = sortOrder === 'asc' ? asc(schools[sortBy]) : desc(schools[sortBy])
 
-    const [[countResult], schoolsList] = await Promise.all([
-      // Get total count
-      db
-        .select({ count: count() })
-        .from(schools)
-        .where(whereClause),
-      // Get schools with sorting
-      db
-        .select()
-        .from(schools)
-        .where(whereClause)
-        .orderBy(orderByClause)
-        .limit(limit)
-        .offset(offset),
-    ])
+    const rows = await db
+      .select({
+        school: schools,
+        totalCount: sql<number>`COUNT(*) OVER()`.as('total_count'),
+      })
+      .from(schools)
+      .where(whereClause)
+      .orderBy(orderByClause)
+      .limit(limit)
+      .offset(offset)
 
-    const total = countResult?.count || 0
+    const total = rows[0]?.totalCount || 0
+    const schoolsList = rows.map(({ school }) => school)
 
     return {
       schools: schoolsList,
@@ -98,10 +131,8 @@ export function getSchools(options: {
 
 // Get a single school by ID
 export function getSchoolById(id: string): ResultAsync<School | null, DatabaseError> {
-  const db = getDb()
-
   return ResultAsync.fromPromise(
-    db.select().from(schools).where(eq(schools.id, id)).then(res => res[0] || null),
+    prepared.getSchoolById.execute({ id }).then(res => res[0] || null),
     err => DatabaseError.from(err, 'INTERNAL_ERROR', `Failed to fetch school with id ${id}`),
   ).mapErr(tapLogErr(databaseLogger, { id }))
 }
@@ -158,10 +189,8 @@ export function updateSchool(
 
 // Delete a school
 export function deleteSchool(id: string): ResultAsync<void, DatabaseError> {
-  const db = getDb()
-
   return ResultAsync.fromPromise(
-    db.delete(schools).where(eq(schools.id, id)).then(() => {}),
+    prepared.deleteSchool.execute({ id }).then(() => {}),
     err => DatabaseError.from(err, 'INTERNAL_ERROR', `Failed to delete school with id ${id}`),
   ).mapErr(tapLogErr(databaseLogger, { id }))
 }
@@ -215,14 +244,8 @@ export function searchSchools(
 
 // Get school profile by ID with settings
 export function getSchoolProfile(id: string): ResultAsync<School | null, DatabaseError> {
-  const db = getDb()
   return ResultAsync.fromPromise(
-    db
-      .select()
-      .from(schools)
-      .where(eq(schools.id, id))
-      .limit(1)
-      .then(res => res[0] || null),
+    prepared.getSchoolProfile.execute({ id }).then(res => res[0] || null),
     err => DatabaseError.from(err, 'INTERNAL_ERROR', `Failed to fetch school profile for id ${id}`),
   ).mapErr(tapLogErr(databaseLogger, { id }))
 }
@@ -259,25 +282,18 @@ export function updateSchoolSettings(
 ): ResultAsync<School | null, DatabaseError> {
   const db = getDb()
 
-  return ResultAsync.fromPromise((async () => {
-    // Get current settings
-    const [school] = await db
-      .select({ settings: schools.settings })
-      .from(schools)
-      .where(eq(schools.id, id))
-      .limit(1)
-
-    const currentSettings = (school?.settings as Record<string, unknown>) ?? {}
-    const mergedSettings = { ...currentSettings, ...newSettings }
-
-    const [updated] = await db
+  return ResultAsync.fromPromise(
+    db
       .update(schools)
-      .set({ settings: mergedSettings, updatedAt: new Date() })
+      .set({
+        settings: sql`${schools.settings} || ${newSettings}::jsonb`,
+        updatedAt: new Date(),
+      })
       .where(eq(schools.id, id))
       .returning()
-    return updated || null
-  })(), err => DatabaseError.from(err, 'INTERNAL_ERROR', `Failed to update school settings for id ${id}`))
-    .mapErr(tapLogErr(databaseLogger, { id, newSettings }))
+      .then(res => res[0] || null),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', `Failed to update school settings for id ${id}`),
+  ).mapErr(tapLogErr(databaseLogger, { id, newSettings }))
 }
 
 // Update school logo
@@ -285,19 +301,12 @@ export function updateSchoolLogo(
   id: string,
   logoUrl: string | null,
 ): ResultAsync<School | null, DatabaseError> {
-  const db = getDb()
   return ResultAsync.fromPromise(
-    db
-      .update(schools)
-      .set({ logoUrl, updatedAt: new Date() })
-      .where(eq(schools.id, id))
-      .returning()
-      .then(res => res[0] || null),
+    prepared.updateSchoolLogo.execute({ id, logoUrl }).then(res => res[0] || null),
     err => DatabaseError.from(err, 'INTERNAL_ERROR', `Failed to update school logo for id ${id}`),
   ).mapErr(tapLogErr(databaseLogger, { id, logoUrl }))
 }
 
-// Bulk create schools with transaction
 export function bulkCreateSchools(
   schoolsData: Array<Omit<SchoolInsert, 'id' | 'createdAt' | 'updatedAt'>>,
   options?: { skipDuplicates?: boolean },
@@ -309,75 +318,44 @@ export function bulkCreateSchools(
   const db = getDb()
 
   return ResultAsync.fromPromise((async () => {
-    const created: School[] = []
+    if (schoolsData.length === 0) {
+      return { success: true, created: [], errors: [] }
+    }
+
+    const schoolsToInsert = schoolsData.map(data => ({
+      id: crypto.randomUUID(),
+      ...data,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }))
+
+    const inserted = await db
+      .insert(schools)
+      .values(schoolsToInsert)
+      .onConflictDoNothing({ target: schools.code })
+      .returning()
+
+    const created = inserted || []
+    const insertedCodes = new Set(created.map(s => s.code))
     const errors: Array<{ index: number, code: string, error: string }> = []
 
-    // Get existing codes to check for duplicates
-    const codes = schoolsData.map(
-      (s: Omit<SchoolInsert, 'id' | 'createdAt' | 'updatedAt'>) => s.code,
-    )
-    const existingSchools = await db
-      .select({ code: schools.code })
-      .from(schools)
-      .where(inArray(schools.code, codes))
-
-    const existingCodes = new Set(
-      existingSchools.map((s: { code: string }) => s.code),
-    )
-
-    // Filter out duplicates if skipDuplicates is true
-    const schoolsToCreate: Array<{
-      index: number
-      data: Omit<SchoolInsert, 'id' | 'createdAt' | 'updatedAt'>
-    }> = []
-
-    for (let i = 0; i < schoolsData.length; i++) {
-      const school = schoolsData[i]
-      if (!school)
-        continue
-
-      if (existingCodes.has(school.code)) {
-        if (options?.skipDuplicates) {
-          errors.push({
-            index: i,
-            code: school.code,
-            error: getNestedErrorMessage('school', 'alreadyExists'),
-          })
-          continue
-        }
-        else {
+    if (created.length < schoolsData.length) {
+      for (let i = 0; i < schoolsData.length; i++) {
+        const school = schoolsData[i]
+        if (school && !insertedCodes.has(school.code)) {
           errors.push({
             index: i,
             code: school.code,
             error: getNestedErrorMessage('school', 'alreadyExists'),
           })
         }
-      }
-      else {
-        schoolsToCreate.push({ index: i, data: school })
       }
     }
 
-    // If not skipping duplicates and there are errors, return early
+    // neon-http driver doesn't support interactive transactions for conditional rollbacks.
+    // We perform the bulk insert and return success status based on skipDuplicates policy.
     if (!options?.skipDuplicates && errors.length > 0) {
-      return { success: false, created: [], errors }
-    }
-
-    // Create schools
-    if (schoolsToCreate.length > 0) {
-      const inserted = await db
-        .insert(schools)
-        .values(schoolsToCreate.map(({ data }) => ({
-          id: crypto.randomUUID(),
-          ...data,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        })))
-        .returning()
-
-      if (inserted) {
-        created.push(...inserted)
-      }
+      return { success: false, created, errors }
     }
 
     return { success: true, created, errors }

@@ -20,15 +20,12 @@ import {
 } from '@workspace/ui/components/card'
 import { DatePicker } from '@workspace/ui/components/date-picker'
 import { Skeleton } from '@workspace/ui/components/skeleton'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
-
 import { useI18nContext } from '@/i18n/i18n-react'
+import { attendanceKeys, classRosterQueryOptions } from '@/lib/queries/attendance'
 import { teacherClassesQueryOptions } from '@/lib/queries/classes'
-import {
-  saveAttendance,
-  saveBulkAttendance,
-} from '@/teacher/functions/attendance'
+import { saveAttendance, saveBulkAttendance } from '@/teacher/functions/attendance'
 
 export const Route = createFileRoute('/_auth/app/attendance')({
   component: AttendancePage,
@@ -47,21 +44,6 @@ interface StudentAttendance {
     notes: string | null
     recordedAt: Date | null
   } | null
-}
-
-interface RosterResponse {
-  success: boolean
-  roster?: StudentAttendance[]
-  error?: string
-}
-
-interface CountsResponse {
-  total: number
-  present: number
-  absent: number
-  late: number
-  excused: number
-  notMarked: number
 }
 
 function AttendancePage() {
@@ -84,62 +66,76 @@ function AttendancePage() {
   })
 
   // Query for class roster
-  const { data: rosterData, isLoading: isLoadingRoster } = useQuery({
-    queryKey: ['attendance', 'classRoster', selectedClassId, selectedDate],
-    queryFn: async (): Promise<RosterResponse> => {
-      const { getClassRoster } = await import('@/teacher/functions/attendance')
-      return getClassRoster({
-        data: {
-          classId: selectedClassId,
-          schoolYearId: context?.schoolYearId ?? '',
-          date: selectedDate,
-        },
-      })
-    },
+  const { data: rosterResult, isLoading: isLoadingRoster } = useQuery({
+    ...classRosterQueryOptions({
+      classId: selectedClassId,
+      schoolYearId: context?.schoolYearId ?? '',
+      date: selectedDate,
+    }),
     enabled: Boolean(selectedClassId && context?.schoolYearId),
   })
 
-  // Query for attendance counts
-  const { data: counts } = useQuery({
-    queryKey: ['attendance', 'counts', selectedClassId, selectedDate],
-    queryFn: async (): Promise<CountsResponse> => {
-      if (!rosterData?.roster) {
-        return {
-          total: 0,
-          present: 0,
-          absent: 0,
-          late: 0,
-          excused: 0,
-          notMarked: 0,
-        }
-      }
-      return {
-        total: rosterData.roster.length,
-        present: rosterData.roster.filter(
-          s => s.attendance?.status === 'present',
-        ).length,
-        absent: rosterData.roster.filter(
-          s => s.attendance?.status === 'absent',
-        ).length,
-        late: rosterData.roster.filter(s => s.attendance?.status === 'late')
-          .length,
-        excused: rosterData.roster.filter(
-          s => s.attendance?.status === 'excused',
-        ).length,
-        notMarked: rosterData.roster.filter(s => !s.attendance).length,
-      }
-    },
-    enabled: Boolean(
-      selectedClassId && context?.schoolYearId && rosterData?.roster,
-    ),
-  })
+  const rosterData = rosterResult?.success ? rosterResult.roster : []
+
+  // Derived counts using useMemo to avoid extra queries
+  const counts = useMemo(() => {
+    if (!rosterData) {
+      return { total: 0, present: 0, absent: 0, late: 0, excused: 0, notMarked: 0 }
+    }
+    return {
+      total: rosterData.length,
+      present: rosterData.filter((s: StudentAttendance) => s.attendance?.status === 'present').length,
+      absent: rosterData.filter((s: StudentAttendance) => s.attendance?.status === 'absent').length,
+      late: rosterData.filter((s: StudentAttendance) => s.attendance?.status === 'late').length,
+      excused: rosterData.filter((s: StudentAttendance) => s.attendance?.status === 'excused').length,
+      notMarked: rosterData.filter((s: StudentAttendance) => !s.attendance).length,
+    }
+  }, [rosterData])
 
   // Mutation for saving individual attendance
   const saveMutation = useMutation({
     mutationFn: saveAttendance,
+    onMutate: async (variables) => {
+      const { enrollmentId, status } = variables.data
+      const queryKey = attendanceKeys.roster(selectedClassId, selectedDate)
+
+      await queryClient.cancelQueries({ queryKey })
+
+      const previousRoster = queryClient.getQueryData(queryKey)
+
+      queryClient.setQueryData(queryKey, (old: { success?: boolean, roster?: StudentAttendance[] } | undefined) => {
+        if (!old || !old.roster)
+          return old
+        return {
+          ...old,
+          roster: old.roster.map((student: StudentAttendance) =>
+            student.enrollmentId === enrollmentId
+              ? {
+                  ...student,
+                  attendance: {
+                    ...student.attendance,
+                    status,
+                    recordedAt: new Date(),
+                  },
+                }
+              : student,
+          ),
+        }
+      })
+
+      return { previousRoster }
+    },
+    onError: (_err, _variables, context) => {
+      if (context?.previousRoster) {
+        queryClient.setQueryData(
+          attendanceKeys.roster(selectedClassId, selectedDate),
+          context.previousRoster,
+        )
+      }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['attendance', 'classRoster', selectedClassId, selectedDate],
+        queryKey: attendanceKeys.roster(selectedClassId, selectedDate),
       })
     },
   })
@@ -147,9 +143,55 @@ function AttendancePage() {
   // Mutation for bulk save
   const bulkSaveMutation = useMutation({
     mutationFn: saveBulkAttendance,
+    onMutate: async (variables) => {
+      const { attendanceRecords } = variables.data
+      const queryKey = attendanceKeys.roster(selectedClassId, selectedDate)
+
+      await queryClient.cancelQueries({ queryKey })
+
+      const previousRoster = queryClient.getQueryData(queryKey)
+
+      queryClient.setQueryData(queryKey, (old: { success?: boolean, roster?: StudentAttendance[] } | undefined) => {
+        if (!old || !old.roster)
+          return old
+
+        const updatedEnrollmentIds = new Set(
+          attendanceRecords.map(r => r.enrollmentId),
+        )
+
+        return {
+          ...old,
+          roster: old.roster.map((student: StudentAttendance) =>
+            updatedEnrollmentIds.has(student.enrollmentId)
+              ? {
+                  ...student,
+                  attendance: {
+                    ...student.attendance,
+                    status:
+                      attendanceRecords.find(
+                        r => r.enrollmentId === student.enrollmentId,
+                      )?.status || 'present',
+                    recordedAt: new Date(),
+                  },
+                }
+              : student,
+          ),
+        }
+      })
+
+      return { previousRoster }
+    },
+    onError: (_err, _variables, context) => {
+      if (context?.previousRoster) {
+        queryClient.setQueryData(
+          attendanceKeys.roster(selectedClassId, selectedDate),
+          context.previousRoster,
+        )
+      }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['attendance', 'classRoster', selectedClassId, selectedDate],
+        queryKey: attendanceKeys.roster(selectedClassId, selectedDate),
       })
     },
   })
@@ -170,10 +212,10 @@ function AttendancePage() {
   }
 
   const handleMarkAllPresent = async () => {
-    if (!rosterData?.roster)
+    if (!rosterData || rosterData.length === 0)
       return
 
-    const records = rosterData.roster
+    const records = rosterData
       .filter(s => !s.attendance)
       .map(s => ({
         enrollmentId: s.enrollmentId,
@@ -287,7 +329,7 @@ function AttendancePage() {
                     ))}
                   </div>
                 )
-              : rosterData?.roster?.length === 0
+              : rosterData.length === 0
                 ? (
                     <p className="text-center text-muted-foreground py-8">
                       {LL.attendance.noStudents()}
@@ -295,7 +337,7 @@ function AttendancePage() {
                   )
                 : (
                     <div className="space-y-2">
-                      {rosterData?.roster?.map(student => (
+                      {rosterData.map(student => (
                         <StudentRow
                           key={student.studentId}
                           student={student}
