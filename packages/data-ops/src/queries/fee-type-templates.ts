@@ -1,16 +1,16 @@
 /**
  * Fee Type Template Queries
- * 
+ *
  * Core-level template management for SaaS fee type architecture.
  * Templates define standard fee types that schools can instantiate.
  */
 
+import type { FeeTypeCategory } from '../drizzle/core-schema'
 import { databaseLogger, tapLogErr } from '@repo/logger'
-import { and, asc, count, eq, sql } from 'drizzle-orm'
+import { and, asc, eq, sql } from 'drizzle-orm'
 import { ResultAsync } from 'neverthrow'
 import { getDb } from '../database/setup'
 import { feeTypeTemplates } from '../drizzle/core-schema'
-import type { FeeTypeCategory } from '../drizzle/core-schema'
 import { DatabaseError, dbError } from '../errors'
 
 // Type definitions from drizzle
@@ -170,7 +170,7 @@ export function deleteFeeTypeTemplate(templateId: string): ResultAsync<void, Dat
  * Get all template categories with counts
  */
 export function getTemplateCategoriesWithCounts(): ResultAsync<
-  { category: FeeTypeCategory; count: number }[],
+  { category: FeeTypeCategory, count: number }[],
   DatabaseError
 > {
   const db = getDb()

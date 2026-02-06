@@ -3,8 +3,8 @@ import { databaseLogger, tapLogErr } from '@repo/logger'
 import { and, eq, gt, sql } from 'drizzle-orm'
 import { ResultAsync } from 'neverthrow'
 import { getDb } from '../database/setup'
-import { classes, enrollments, feeStructures, feeTypes, studentFees, students } from '../drizzle/school-schema'
 import { grades } from '../drizzle/core-schema'
+import { classes, enrollments, feeStructures, feeTypes, studentFees, students } from '../drizzle/school-schema'
 import { DatabaseError, dbError } from '../errors'
 
 export interface GetStudentFeesParams {

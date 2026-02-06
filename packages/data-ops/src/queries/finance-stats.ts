@@ -32,8 +32,8 @@ export function getFinanceStats(schoolId: string): ResultAsync<FinanceStats, Dat
         .where(
           and(
             eq(payments.schoolId, schoolId),
-            eq(payments.status, 'completed')
-          )
+            eq(payments.status, 'completed'),
+          ),
         )
 
       const [pendingResult] = await db
@@ -44,8 +44,8 @@ export function getFinanceStats(schoolId: string): ResultAsync<FinanceStats, Dat
         .where(
           and(
             eq(payments.schoolId, schoolId),
-            eq(payments.status, 'pending')
-          )
+            eq(payments.status, 'pending'),
+          ),
         )
 
       const now = new Date().toISOString().split('T')[0]
@@ -60,8 +60,8 @@ export function getFinanceStats(schoolId: string): ResultAsync<FinanceStats, Dat
           and(
             eq(schoolYears.schoolId, schoolId),
             sql`${installments.dueDate} < ${now}`,
-            sql`${installments.balance} > 0`
-          )
+            sql`${installments.balance} > 0`,
+          ),
         )
 
       return {

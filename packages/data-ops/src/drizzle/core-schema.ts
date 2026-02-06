@@ -280,37 +280,37 @@ export const coefficientTemplatesRelations = relations(coefficientTemplates, ({ 
     fields: [coefficientTemplates.seriesId],
     references: [series.id],
   }),
- }))
+}))
 
- // --- Fee Type Templates (SaaS Core) ---
+// --- Fee Type Templates (SaaS Core) ---
 
- export const feeTypeCategories = ['tuition', 'registration', 'exam', 'books', 'transport', 'uniform', 'meals', 'activities', 'other'] as const
- export type FeeTypeCategory = typeof feeTypeCategories[number]
+export const feeTypeCategories = ['tuition', 'registration', 'exam', 'books', 'transport', 'uniform', 'meals', 'activities', 'other'] as const
+export type FeeTypeCategory = typeof feeTypeCategories[number]
 
- export const feeTypeTemplates = pgTable('fee_type_templates', {
-   id: text('id').primaryKey(),
-   code: text('code').notNull(), // UNIQUE across all templates
-   name: text('name').notNull(), // e.g., "Frais de Scolarité"
-   nameEn: text('name_en'), // e.g., "Tuition Fee"
-   category: text('category', { enum: feeTypeCategories }).notNull(),
-   description: text('description'),
-   defaultAmount: integer('default_amount'), // In XOF (cents)
-   isMandatory: boolean('is_mandatory').default(false).notNull(),
-   isRecurring: boolean('is_recurring').default(false).notNull(),
-   displayOrder: smallint('display_order').default(0).notNull(),
-   isActive: boolean('is_active').default(true).notNull(),
-   createdAt: timestamp('created_at').defaultNow().notNull(),
-   updatedAt: timestamp('updated_at')
-     .defaultNow()
-     .$onUpdate(() => new Date())
-     .notNull(),
- }, table => ({
-   codeIdx: index('idx_fee_template_code').on(table.code),
-   categoryIdx: index('idx_fee_template_category').on(table.category),
-   activeIdx: index('idx_fee_template_active').on(table.isActive),
-  }))
+export const feeTypeTemplates = pgTable('fee_type_templates', {
+  id: text('id').primaryKey(),
+  code: text('code').notNull(), // UNIQUE across all templates
+  name: text('name').notNull(), // e.g., "Frais de Scolarité"
+  nameEn: text('name_en'), // e.g., "Tuition Fee"
+  category: text('category', { enum: feeTypeCategories }).notNull(),
+  description: text('description'),
+  defaultAmount: integer('default_amount'), // In XOF (cents)
+  isMandatory: boolean('is_mandatory').default(false).notNull(),
+  isRecurring: boolean('is_recurring').default(false).notNull(),
+  displayOrder: smallint('display_order').default(0).notNull(),
+  isActive: boolean('is_active').default(true).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at')
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+}, table => ({
+  codeIdx: index('idx_fee_template_code').on(table.code),
+  categoryIdx: index('idx_fee_template_category').on(table.category),
+  activeIdx: index('idx_fee_template_active').on(table.isActive),
+}))
 
- // --- Activity Tracking & Analytics ---
+// --- Activity Tracking & Analytics ---
 
 export const activityLogs = pgTable('activity_logs', {
   id: text('id').primaryKey(), // UUID
