@@ -7,10 +7,11 @@
   ],
   "main": "./src/server.ts",
   "vars": {
+    "APP_URL": "https://yeko-core.yeko.workers.dev",
+    "BETTER_AUTH_BASE_URL": "https://yeko-core.yeko.workers.dev",
     "DATABASE_HOST": "ep-raspy-fog-agz58rrr-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require",
     "DATABASE_USERNAME": "neondb_owner",
     "GOOGLE_CLIENT_ID": "725781093652-vel4rol0r440ilpndk09t43og37iid32.apps.googleusercontent.com",
-    "BETTER_AUTH_BASE_URL": "https://yeko-core.yeko.workers.dev",
     "R2_ACCOUNT_ID": "6eba1152a9ffddc83690f84f367e0bc9",
     "R2_BUCKET_NAME": "yeko-uploads",
     "R2_PUBLIC_URL": "https://pub-f21332c38f574b2e9eced9cd17700bed.r2.dev"
