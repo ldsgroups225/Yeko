@@ -1,4 +1,4 @@
-import { inArray } from '@repo/data-ops'
+import { inArray } from '@repo/data-ops/drizzle/operators'
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 import { COEFFICIENT_LIMITS } from '@/constants/coefficients'

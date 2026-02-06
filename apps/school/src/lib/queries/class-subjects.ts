@@ -27,7 +27,12 @@ export const classSubjectsOptions = {
   list: (filters: ClassSubjectFilters = {}) =>
     queryOptions({
       queryKey: classSubjectsKeys.list(filters),
-      queryFn: () => getClassSubjects({ data: filters }),
+      queryFn: async () => {
+        const res = await getClassSubjects({ data: filters })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000, // 5 minutes
       gcTime: 30 * 60 * 1000, // 30 minutes
     }),
@@ -35,7 +40,12 @@ export const classSubjectsOptions = {
   matrix: (schoolYearId: string) =>
     queryOptions({
       queryKey: classSubjectsKeys.matrixByYear(schoolYearId),
-      queryFn: () => getAssignmentMatrix({ data: schoolYearId }),
+      queryFn: async () => {
+        const res = await getAssignmentMatrix({ data: schoolYearId })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
       enabled: !!schoolYearId,
@@ -44,7 +54,12 @@ export const classSubjectsOptions = {
   teacherConflicts: (teacherId: string, schoolYearId: string) =>
     queryOptions({
       queryKey: classSubjectsKeys.teacherConflicts(teacherId, schoolYearId),
-      queryFn: () => detectTeacherConflicts({ data: { teacherId, schoolYearId } }),
+      queryFn: async () => {
+        const res = await detectTeacherConflicts({ data: { teacherId, schoolYearId } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 2 * 60 * 1000, // 2 minutes - conflicts change more frequently
       gcTime: 10 * 60 * 1000,
       enabled: !!teacherId && !!schoolYearId,

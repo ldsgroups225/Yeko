@@ -3,6 +3,7 @@ import type { TimetableSessionData } from './timetable-session-card'
 import { ScrollArea, ScrollBar } from '@workspace/ui/components/scroll-area'
 import { Skeleton } from '@workspace/ui/components/skeleton'
 
+import type { CSSProperties } from 'react'
 import { motion } from 'motion/react'
 import { Fragment, useEffect, useMemo, useState } from 'react'
 import { useTranslations } from '@/i18n'
@@ -12,6 +13,14 @@ import { dayOfWeekLabels, defaultTimeSlots } from '@/schemas/timetable'
 import { TimetableSessionCard } from './timetable-session-card'
 
 const defaultDaysToShow = [1, 2, 3, 4, 5, 6]
+
+const motionInitial = { opacity: 0 }
+const motionAnimate = { opacity: 1 }
+const motionTransition = { duration: 0.5 }
+
+const timeColumnStyle = (idx: number): CSSProperties => ({ gridColumn: 1, gridRow: idx + 2 })
+const dayHeaderStyle = (idx: number): CSSProperties => ({ gridColumn: idx + 2, gridRow: 1 })
+const currentTimeIndicatorStyle: CSSProperties = { gridColumn: '2 / -1' }
 
 interface TimetableGridProps {
   sessions: TimetableSessionData[]
@@ -125,6 +134,20 @@ export function TimetableGrid({
 
   const currentDay = now.getDay() === 0 ? 7 : now.getDay() // Convert Sun=0 to 7
 
+  const gridStyle = useMemo<CSSProperties>(() => ({
+    gridTemplateColumns: `80px repeat(${daysToShow.length}, 1fr)`,
+    gridTemplateRows: `48px repeat(${timeSlots.length}, 96px)`,
+  }), [daysToShow.length, timeSlots.length])
+
+  const currentTimeStyle = useMemo<CSSProperties | undefined>(() => {
+    if (!timePosition) return undefined
+    return {
+      ...currentTimeIndicatorStyle,
+      gridRow: timePosition.row,
+      transform: `translateY(${timePosition.offset}px)`,
+    }
+  }, [timePosition])
+
   if (isLoading) {
     return <GridSkeleton />
   }
@@ -138,17 +161,14 @@ export function TimetableGrid({
   return (
     <ScrollArea className="w-full pb-4">
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
+        initial={motionInitial}
+        animate={motionAnimate}
+        transition={motionTransition}
         className="min-w-[800px]"
       >
         <div
           className="grid gap-1 relative"
-          style={{
-            gridTemplateColumns: `80px repeat(${daysToShow.length}, 1fr)`,
-            gridTemplateRows: `48px repeat(${timeSlots.length}, 96px)`,
-          }}
+          style={gridStyle}
         >
           {/* Header row with days */}
           <div className="h-12 bg-background/80 backdrop-blur-md sticky top-0 z-20 col-start-1 row-start-1" />
@@ -159,7 +179,7 @@ export function TimetableGrid({
                 'h-12 flex items-center justify-center bg-card/50 backdrop-blur-md border border-border/40 rounded-xl font-black text-xs uppercase tracking-widest text-muted-foreground shadow-sm sticky top-0 z-20',
                 day === currentDay && 'text-primary ring-1 ring-primary/20 bg-primary/5',
               )}
-              style={{ gridColumn: idx + 2, gridRow: 1 }}
+              style={dayHeaderStyle(idx)}
             >
               {dayOfWeekLabels[day]}
             </div>
@@ -170,7 +190,7 @@ export function TimetableGrid({
             <div
               key={`time-${slot.start}`}
               className="flex items-start justify-center text-[10px] font-bold text-muted-foreground/60 bg-muted/20 rounded-xl border border-border/10 h-full sticky left-0 z-10"
-              style={{ gridColumn: 1, gridRow: idx + 2 }}
+              style={timeColumnStyle(idx)}
             >
               {slot.start}
             </div>
@@ -226,14 +246,10 @@ export function TimetableGrid({
           ))}
 
           {/* Current Time Indicator */}
-          {timePosition && (
+          {timePosition && currentTimeStyle && (
             <div
               className="z-30 pointer-events-none flex items-center"
-              style={{
-                gridColumn: '2 / -1',
-                gridRow: timePosition.row,
-                transform: `translateY(${timePosition.offset}px)`,
-              }}
+              style={currentTimeStyle}
             >
               <div className="w-full h-0.5 bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.4)] relative">
                 <div className="absolute -left-1 -top-1 w-2.5 h-2.5 rounded-full bg-red-500 shadow-sm" />

@@ -1,16 +1,16 @@
+import { getAttendanceSettings } from '@repo/data-ops/queries/attendance-settings'
+import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import {
   bulkUpsertClassAttendance,
   countStudentAbsences,
   deleteStudentAttendance,
   excuseStudentAbsence,
-  getAttendanceSettings,
   getAttendanceStatistics,
   getClassAttendance,
   getStudentAttendanceHistory,
   markParentNotified,
   upsertStudentAttendance,
-} from '@repo/data-ops'
-import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
+} from '@repo/data-ops/queries/student-attendance'
 import { z } from 'zod'
 import {
   bulkStudentAttendanceSchema,

@@ -377,7 +377,14 @@ export function EnrollmentsList() {
                             <DropdownMenu>
                               <DropdownMenuTrigger
                                 render={(
-                                  <Button variant="ghost" size="icon">
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      e.preventDefault()
+                                    }}
+                                  >
                                     <IconDots className="h-4 w-4" />
                                   </Button>
                                 )}

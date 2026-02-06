@@ -1,6 +1,7 @@
 'use client'
 
 import type { DatabaseStats, DatabaseStatus } from '../lib/db/client-db'
+import { useQuery } from '@tanstack/react-query'
 import { useCallback, useEffect, useState, useSyncExternalStore } from 'react'
 import {
   clientDatabaseManager,
@@ -43,28 +44,16 @@ export function useDatabaseStats(): {
   isLoading: boolean
   refresh: () => Promise<void>
 } {
-  const [stats, setStats] = useState<DatabaseStats | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const { data: stats, isLoading, refetch } = useQuery({
+    queryKey: ['database', 'stats'],
+    queryFn: () => clientDatabaseManager.getStats(),
+  })
 
   const refresh = useCallback(async () => {
-    setIsLoading(true)
-    try {
-      const newStats = await clientDatabaseManager.getStats()
-      setStats(newStats)
-    }
-    catch (error) {
-      console.error('Failed to get database stats:', error)
-    }
-    finally {
-      setIsLoading(false)
-    }
-  }, [])
+    await refetch()
+  }, [refetch])
 
-  useEffect(() => {
-    refresh()
-  }, [refresh])
-
-  return { stats, isLoading, refresh }
+  return { stats: stats ?? null, isLoading, refresh }
 }
 
 // ============================================================================
@@ -83,7 +72,12 @@ export interface SyncStatus {
  * Hook to monitor sync status and pending items
  */
 export function useSyncStatus(): SyncStatus {
-  const [pendingItems, setPendingItems] = useState(0)
+  const { data: pendingItems } = useQuery({
+    queryKey: ['sync', 'pending-items'],
+    queryFn: () => localNotesService.getPendingSyncCount(),
+    refetchInterval: 5000,
+  })
+
   const [isOnline, setIsOnline] = useState(
     typeof navigator !== 'undefined' ? navigator.onLine : true,
   )
@@ -104,30 +98,12 @@ export function useSyncStatus(): SyncStatus {
     }
   }, [])
 
-  // Poll for pending sync items
-  useEffect(() => {
-    const checkPendingItems = async () => {
-      try {
-        const count = await localNotesService.getPendingSyncCount()
-        setPendingItems(count)
-      }
-      catch {
-        // Ignore errors during polling
-      }
-    }
-
-    checkPendingItems()
-    const interval = setInterval(checkPendingItems, 5000)
-
-    return () => clearInterval(interval)
-  }, [])
-
   return {
-    pendingItems,
+    pendingItems: pendingItems ?? 0,
     isOnline,
     isSyncing,
     lastSyncTime,
-    hasLocalChanges: pendingItems > 0,
+    hasLocalChanges: (pendingItems ?? 0) > 0,
   }
 }
 

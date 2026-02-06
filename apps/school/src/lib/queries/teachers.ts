@@ -15,27 +15,47 @@ export const teacherOptions = {
   list: (filters: { search?: string, subjectId?: string } = {}, pagination = { page: 1, limit: 20 }) =>
     queryOptions({
       queryKey: teacherKeys.list({ ...filters, ...pagination }),
-      queryFn: () => getTeachers({ data: { filters, pagination } }),
+      queryFn: async () => {
+        const res = await getTeachers({ data: { filters, pagination } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
     }),
 
   detail: (id: string) =>
     queryOptions({
       queryKey: teacherKeys.detail(id),
-      queryFn: () => getTeacher({ data: id }),
+      queryFn: async () => {
+        const res = await getTeacher({ data: id })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       enabled: !!id,
     }),
 
   classes: (id: string) =>
     queryOptions({
       queryKey: teacherKeys.classes(id),
-      queryFn: () => getTeacherClassesList({ data: id }),
+      queryFn: async () => {
+        const res = await getTeacherClassesList({ data: id })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       enabled: !!id,
     }),
 
   schedules: (id: string, schoolYearId: string) =>
     queryOptions({
       queryKey: teacherKeys.schedules(id, schoolYearId),
-      queryFn: () => getTeacherSchedulesList({ data: { teacherId: id, schoolYearId } }),
+      queryFn: async () => {
+        const res = await getTeacherSchedulesList({ data: { teacherId: id, schoolYearId } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       enabled: !!id && !!schoolYearId,
     }),
 }

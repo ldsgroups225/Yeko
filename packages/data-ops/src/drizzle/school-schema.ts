@@ -4,7 +4,7 @@ import { relations } from 'drizzle-orm'
 import { boolean, date, decimal, index, integer, jsonb, pgTable, smallint, text, timestamp, unique } from 'drizzle-orm/pg-core'
 // Import from core and auth schemas
 import { auth_user } from './auth-schema'
-import { coefficientTemplates, grades, programTemplateChapters, programTemplates, schools, schoolYearTemplates, series, subjects, termTemplates } from './core-schema'
+import { coefficientTemplates, feeTypeTemplates, grades, programTemplateChapters, programTemplates, schools, schoolYearTemplates, series, subjects, termTemplates } from './core-schema'
 
 // --- Level 0: Identity & Access (Foundation) ---
 
@@ -1728,6 +1728,7 @@ export const fiscalYears = pgTable('fiscal_years', {
 export const feeTypes = pgTable('fee_types', {
   id: text('id').primaryKey(),
   schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
+  feeTypeTemplateId: text('fee_type_template_id').references(() => feeTypeTemplates.id), // Template reference for SaaS architecture
   code: text('code').notNull(),
   name: text('name').notNull(),
   nameEn: text('name_en'),
@@ -1742,9 +1743,11 @@ export const feeTypes = pgTable('fee_types', {
   updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
 }, table => ({
   schoolIdx: index('idx_fee_types_school').on(table.schoolId),
+  templateIdx: index('idx_fee_types_template').on(table.feeTypeTemplateId),
   categoryIdx: index('idx_fee_types_category').on(table.category),
   statusIdx: index('idx_fee_types_status').on(table.status),
   uniqueSchoolCode: unique('unique_school_fee_code').on(table.schoolId, table.code),
+  uniqueSchoolTemplate: unique('unique_school_fee_template').on(table.schoolId, table.feeTypeTemplateId).nullsNotDistinct(),
 }))
 
 // Fee Structures Table

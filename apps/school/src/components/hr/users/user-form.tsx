@@ -286,7 +286,9 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
         <p className="mb-8 text-sm text-muted-foreground leading-relaxed">
           {t.hr.users.roleAssignmentDescription()}
           {' '}
-          ({t.common.optional()})
+          (
+          {t.common.optional()}
+          )
         </p>
         <div className="space-y-4">
           {t.hr.common.roles()}

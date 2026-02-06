@@ -19,7 +19,12 @@ export const teacherAttendanceKeys = {
 export function dailyTeacherAttendanceOptions(date: string) {
   return queryOptions({
     queryKey: teacherAttendanceKeys.daily('current', date),
-    queryFn: () => getDailyAttendance({ data: { date } }),
+    queryFn: async () => {
+      const res = await getDailyAttendance({ data: { date } })
+      if (!res.success)
+        throw new Error(res.error)
+      return res.data
+    },
     staleTime: 2 * 60 * 1000,
   })
 }
@@ -32,7 +37,12 @@ export function teacherAttendanceRangeOptions(params: {
 }) {
   return queryOptions({
     queryKey: teacherAttendanceKeys.range('current', params.startDate, params.endDate),
-    queryFn: () => getAttendanceRange({ data: params }),
+    queryFn: async () => {
+      const res = await getAttendanceRange({ data: params })
+      if (!res.success)
+        throw new Error(res.error)
+      return res.data
+    },
     staleTime: 5 * 60 * 1000,
   })
 }
@@ -44,7 +54,12 @@ export function teacherPunctualityReportOptions(params: {
 }) {
   return queryOptions({
     queryKey: teacherAttendanceKeys.report('current', params.startDate, params.endDate),
-    queryFn: () => getPunctualityReport({ data: params }),
+    queryFn: async () => {
+      const res = await getPunctualityReport({ data: params })
+      if (!res.success)
+        throw new Error(res.error)
+      return res.data
+    },
     staleTime: 5 * 60 * 1000,
   })
 }

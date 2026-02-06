@@ -1,19 +1,23 @@
+import type { Installment, PaymentPlan, PaymentPlanSummary, PaymentPlanTemplate } from '@repo/data-ops'
+import type { DatabaseError } from '@repo/data-ops/errors'
 import {
   cancelPaymentPlan,
   createPaymentPlanFromTemplate,
-  createPaymentPlanTemplate,
-  deletePaymentPlanTemplate,
-  getDefaultPaymentPlanTemplate,
-  getInstallmentsByPaymentPlan,
   getPaymentPlanById,
   getPaymentPlanForStudent,
   getPaymentPlans,
   getPaymentPlansSummary,
+} from '@repo/data-ops/queries/payment-plans'
+import {
+  createPaymentPlanTemplate,
+  deletePaymentPlanTemplate,
+  getDefaultPaymentPlanTemplate,
   getPaymentPlanTemplateById,
   getPaymentPlanTemplates,
   setDefaultPaymentPlanTemplate,
   updatePaymentPlanTemplate,
-} from '@repo/data-ops'
+} from '@repo/data-ops/queries/payment-plan-templates'
+import { getInstallmentsByPaymentPlan } from '@repo/data-ops/queries/installments'
 import { ResultAsync } from 'neverthrow'
 import { z } from 'zod'
 import { createPaymentPlanFromTemplateSchema, createPaymentPlanTemplateSchema, updatePaymentPlanTemplateSchema } from '@/schemas/payment-plan'
@@ -42,8 +46,8 @@ export const getPaymentPlanTemplatesList = authServerFn
     })
 
     return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
+      (data: PaymentPlanTemplate[]) => ({ success: true as const, data }),
+      (error: DatabaseError) => ({ success: false as const, error: error.message }),
     )
   })
 
@@ -64,8 +68,8 @@ export const getDefaultTemplate = authServerFn
     const result = await getDefaultPaymentPlanTemplate(school.schoolId, schoolYearId)
 
     return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
+      (data: PaymentPlanTemplate | null) => ({ success: true as const, data }),
+      (error: DatabaseError) => ({ success: false as const, error: error.message }),
     )
   })
 
@@ -78,8 +82,8 @@ export const getPaymentPlanTemplate = authServerFn
     const result = await getPaymentPlanTemplateById(templateId)
 
     return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
+      (data: PaymentPlanTemplate | null) => ({ success: true as const, data }),
+      (error: DatabaseError) => ({ success: false as const, error: error.message }),
     )
   })
 
@@ -98,8 +102,8 @@ export const createNewPaymentPlanTemplate = authServerFn
     })
 
     return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
+      (data: PaymentPlanTemplate) => ({ success: true as const, data }),
+      (error: DatabaseError) => ({ success: false as const, error: error.message }),
     )
   })
 
@@ -113,8 +117,8 @@ export const updateExistingPaymentPlanTemplate = authServerFn
     const result = await updatePaymentPlanTemplate(id, updateData)
 
     return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
+      (data: PaymentPlanTemplate | undefined) => ({ success: true as const, data }),
+      (error: DatabaseError) => ({ success: false as const, error: error.message }),
     )
   })
 
@@ -136,7 +140,7 @@ export const setDefaultTemplate = authServerFn
 
     return result.match(
       () => ({ success: true as const, data: { success: true } }),
-      error => ({ success: false as const, error: error.message }),
+      (error: DatabaseError) => ({ success: false as const, error: error.message }),
     )
   })
 
@@ -150,7 +154,7 @@ export const deleteExistingPaymentPlanTemplate = authServerFn
 
     return result.match(
       () => ({ success: true as const, data: { success: true } }),
-      error => ({ success: false as const, error: error.message }),
+      (error: DatabaseError) => ({ success: false as const, error: error.message }),
     )
   })
 
@@ -180,8 +184,8 @@ export const getPaymentPlansList = authServerFn
     })
 
     return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
+      (data: PaymentPlan[]) => ({ success: true as const, data }),
+      (error: DatabaseError) => ({ success: false as const, error: error.message }),
     )
   })
 
@@ -202,8 +206,8 @@ export const getStudentPaymentPlan = authServerFn
     const result = await getPaymentPlanForStudent(data.studentId, schoolYearId)
 
     return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
+      (data: PaymentPlan | null) => ({ success: true as const, data }),
+      (error: DatabaseError) => ({ success: false as const, error: error.message }),
     )
   })
 
@@ -219,8 +223,8 @@ export const getPaymentPlanWithInstallments = authServerFn
     ])
 
     return result.match(
-      ([plan, installments]) => ({ success: true as const, data: { plan, installments } }),
-      error => ({ success: false as const, error: error.message }),
+      ([plan, installments]: [PaymentPlan | null, Installment[]]) => ({ success: true as const, data: { plan, installments } }),
+      (error: DatabaseError) => ({ success: false as const, error: error.message }),
     )
   })
 
@@ -239,8 +243,8 @@ export const createStudentPaymentPlan = authServerFn
     })
 
     return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
+      (data: { plan: PaymentPlan, installments: Installment[] }) => ({ success: true as const, data }),
+      (error: DatabaseError) => ({ success: false as const, error: error.message }),
     )
   })
 
@@ -253,8 +257,8 @@ export const cancelStudentPaymentPlan = authServerFn
     const result = await cancelPaymentPlan(paymentPlanId)
 
     return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
+      (data: PaymentPlan | undefined) => ({ success: true as const, data }),
+      (error: DatabaseError) => ({ success: false as const, error: error.message }),
     )
   })
 
@@ -275,7 +279,7 @@ export const getPaymentPlansSummaryData = authServerFn
     const result = await getPaymentPlansSummary(schoolYearId)
 
     return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
+      (data: PaymentPlanSummary) => ({ success: true as const, data }),
+      (error: DatabaseError) => ({ success: false as const, error: error.message }),
     )
   })

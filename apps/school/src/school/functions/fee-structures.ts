@@ -6,7 +6,7 @@ import {
   getFeeStructures,
   getFeeStructuresWithTypes,
   updateFeeStructure,
-} from '@repo/data-ops'
+} from '@repo/data-ops/queries/fee-structures'
 import { z } from 'zod'
 import { bulkCreateFeeStructuresSchema, createFeeStructureSchema, updateFeeStructureSchema } from '@/schemas/fee-structure'
 import { authServerFn } from '../lib/server-fn'

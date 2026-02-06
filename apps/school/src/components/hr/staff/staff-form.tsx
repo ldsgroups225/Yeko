@@ -104,7 +104,9 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
             </Label>
             <Select
               value={watch('position')}
-              onValueChange={value => setValue('position', value as StaffFormData['position'])}
+              onValueChange={(value) => {
+                setValue('position', value as StaffFormData['position'], { shouldValidate: true })
+              }}
             >
               <SelectTrigger className="rounded-xl h-11 border-border/40 bg-background/50 focus:bg-background transition-all">
                 <SelectValue placeholder={t.hr.staff.selectPosition()}>
@@ -165,6 +167,7 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
           <div className="space-y-2">
             <Label htmlFor="hireDate" className="font-semibold text-foreground">{t.hr.staff.hireDate()}</Label>
             <DatePicker
+              captionLayout="dropdown"
               date={watch('hireDate') || undefined}
               onSelect={date => setValue('hireDate', date)}
               placeholder={t.hr.staff.selectHireDate()}

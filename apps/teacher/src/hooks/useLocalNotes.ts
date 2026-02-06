@@ -2,7 +2,7 @@
 
 import type { NoteWithDetails } from '../lib/db/local-notes'
 import type { NewNote, NewNoteDetail, Note } from '../lib/db/schema'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { localNotesService } from '../lib/db/local-notes'
 import { useDatabaseStatus } from './useDatabaseStatus'
 
@@ -22,7 +22,7 @@ export interface UseLocalNotesReturn {
   notes: Note[]
   isLoading: boolean
   error: string | null
-  refresh: () => Promise<void>
+  refresh: () => Promise<any>
   saveNote: (note: NewNote, details?: NewNoteDetail[]) => Promise<void>
   updateNote: (
     noteId: string,
@@ -49,185 +49,61 @@ export function useLocalNotes(options: UseLocalNotesOptions = {}): UseLocalNotes
     refreshInterval = 30000,
   } = options
 
-  const [notes, setNotes] = useState<Note[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
   const dbStatus = useDatabaseStatus()
-  const mountedRef = useRef(true)
-  const refreshTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const queryClient = useQueryClient()
 
   // Fetch notes from local database
-  const fetchNotes = useCallback(async () => {
-    if (!dbStatus.isInitialized) {
-      return
-    }
-
-    setIsLoading(true)
-    setError(null)
-
-    try {
-      let fetchedNotes: Note[]
-
+  const { data: notes, isLoading, error, refetch } = useQuery({
+    queryKey: ['notes', { classId, teacherId, includeUnpublished }],
+    queryFn: async () => {
       if (classId) {
-        fetchedNotes = await localNotesService.getNotesByClass(classId, {
+        return localNotesService.getNotesByClass(classId, {
           includeUnpublished,
         })
       }
-      else if (teacherId) {
-        fetchedNotes = await localNotesService.getNotesByTeacher(teacherId, {
+      if (teacherId) {
+        return localNotesService.getNotesByTeacher(teacherId, {
           classId,
           includeUnpublished,
         })
       }
-      else {
-        fetchedNotes = []
-      }
-
-      if (mountedRef.current) {
-        setNotes(fetchedNotes)
-      }
-    }
-    catch (err) {
-      if (mountedRef.current) {
-        const errorMessage
-          = err instanceof Error ? err.message : 'Failed to fetch notes'
-        setError(errorMessage)
-        console.error('Failed to fetch notes:', err)
-      }
-    }
-    finally {
-      if (mountedRef.current) {
-        setIsLoading(false)
-      }
-    }
-  }, [dbStatus.isInitialized, classId, teacherId, includeUnpublished])
-
-  // Save a new note
-  const saveNote = useCallback(
-    async (note: NewNote, details?: NewNoteDetail[]) => {
-      try {
-        await localNotesService.saveNoteLocally(note, details)
-        await fetchNotes()
-      }
-      catch (err) {
-        const errorMessage
-          = err instanceof Error ? err.message : 'Failed to save note'
-        setError(errorMessage)
-        throw err
-      }
+      return []
     },
-    [fetchNotes],
-  )
+    enabled: dbStatus.isInitialized,
+    refetchInterval: autoRefresh ? refreshInterval : false,
+  })
 
-  // Update an existing note
-  const updateNote = useCallback(
-    async (
-      noteId: string,
-      updates: Partial<NewNote>,
-      details?: NewNoteDetail[],
-    ) => {
-      try {
-        await localNotesService.updateNoteLocally(noteId, updates, details)
-        await fetchNotes()
-      }
-      catch (err) {
-        const errorMessage
-          = err instanceof Error ? err.message : 'Failed to update note'
-        setError(errorMessage)
-        throw err
-      }
-    },
-    [fetchNotes],
-  )
+  const saveNoteMutation = useMutation({
+    mutationFn: ({ note, details }: { note: NewNote, details?: NewNoteDetail[] }) =>
+      localNotesService.saveNoteLocally(note, details),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notes'] }),
+  })
 
-  // Delete a note
-  const deleteNote = useCallback(
-    async (noteId: string) => {
-      try {
-        await localNotesService.deleteNoteLocally(noteId)
-        await fetchNotes()
-      }
-      catch (err) {
-        const errorMessage
-          = err instanceof Error ? err.message : 'Failed to delete note'
-        setError(errorMessage)
-        throw err
-      }
-    },
-    [fetchNotes],
-  )
+  const updateNoteMutation = useMutation({
+    mutationFn: ({ noteId, updates, details }: { noteId: string, updates: Partial<NewNote>, details?: NewNoteDetail[] }) =>
+      localNotesService.updateNoteLocally(noteId, updates, details),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notes'] }),
+  })
 
-  // Publish a note
-  const publishNote = useCallback(
-    async (noteId: string) => {
-      try {
-        await localNotesService.publishNote(noteId)
-        await fetchNotes()
-      }
-      catch (err) {
-        const errorMessage
-          = err instanceof Error ? err.message : 'Failed to publish note'
-        setError(errorMessage)
-        throw err
-      }
-    },
-    [fetchNotes],
-  )
+  const deleteNoteMutation = useMutation({
+    mutationFn: (noteId: string) => localNotesService.deleteNoteLocally(noteId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notes'] }),
+  })
 
-  // Auto-refresh setup
-  useEffect(() => {
-    if (!autoRefresh || refreshInterval <= 0)
-      return
-
-    const scheduleRefresh = () => {
-      if (refreshTimeoutRef.current) {
-        clearTimeout(refreshTimeoutRef.current)
-      }
-
-      refreshTimeoutRef.current = setTimeout(() => {
-        if (mountedRef.current && dbStatus.isInitialized) {
-          fetchNotes()
-          scheduleRefresh()
-        }
-      }, refreshInterval)
-    }
-
-    scheduleRefresh()
-
-    return () => {
-      if (refreshTimeoutRef.current) {
-        clearTimeout(refreshTimeoutRef.current)
-      }
-    }
-  }, [autoRefresh, refreshInterval, fetchNotes, dbStatus.isInitialized])
-
-  // Initial fetch
-  useEffect(() => {
-    if (dbStatus.isInitialized) {
-      fetchNotes()
-    }
-  }, [fetchNotes, dbStatus.isInitialized])
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      mountedRef.current = false
-      if (refreshTimeoutRef.current) {
-        clearTimeout(refreshTimeoutRef.current)
-      }
-    }
-  }, [])
+  const publishNoteMutation = useMutation({
+    mutationFn: (noteId: string) => localNotesService.publishNote(noteId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notes'] }),
+  })
 
   return {
-    notes,
+    notes: notes ?? [],
     isLoading,
-    error,
-    refresh: fetchNotes,
-    saveNote,
-    updateNote,
-    deleteNote,
-    publishNote,
+    error: error instanceof Error ? error.message : null,
+    refresh: refetch,
+    saveNote: (note, details) => saveNoteMutation.mutateAsync({ note, details }),
+    updateNote: (noteId, updates, details) => updateNoteMutation.mutateAsync({ noteId, updates, details }),
+    deleteNote: noteId => deleteNoteMutation.mutateAsync(noteId),
+    publishNote: noteId => publishNoteMutation.mutateAsync(noteId),
   }
 }
 
@@ -244,7 +120,7 @@ export interface UseNoteGradesReturn {
   isLoading: boolean
   error: string | null
   updateGrade: (studentId: string, value: string) => Promise<void>
-  refresh: () => Promise<void>
+  refresh: () => Promise<any>
 }
 
 /**
@@ -252,79 +128,34 @@ export interface UseNoteGradesReturn {
  */
 export function useNoteGrades(options: UseNoteGradesOptions): UseNoteGradesReturn {
   const { noteId } = options
-
-  const [grades, setGrades] = useState<Map<string, string>>(() => new Map())
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
   const dbStatus = useDatabaseStatus()
+  const queryClient = useQueryClient()
 
-  // Fetch grades for the note
-  const fetchGrades = useCallback(async () => {
-    if (!dbStatus.isInitialized || !noteId) {
-      return
-    }
-
-    setIsLoading(true)
-    setError(null)
-
-    try {
+  const { data: gradesMap, isLoading, error, refetch } = useQuery({
+    queryKey: ['notes', noteId, 'grades'],
+    queryFn: async () => {
       const noteDetails = await localNotesService.getGradesByNote(noteId)
-      const gradesMap = new Map<string, string>()
-
+      const map = new Map<string, string>()
       for (const detail of noteDetails) {
-        gradesMap.set(detail.studentId, detail.value ?? '0')
+        map.set(detail.studentId, detail.value ?? '0')
       }
-
-      setGrades(gradesMap)
-    }
-    catch (err) {
-      const errorMessage
-        = err instanceof Error ? err.message : 'Failed to fetch grades'
-      setError(errorMessage)
-      console.error('Failed to fetch grades:', err)
-    }
-    finally {
-      setIsLoading(false)
-    }
-  }, [dbStatus.isInitialized, noteId])
-
-  // Update a student's grade
-  const updateGrade = useCallback(
-    async (studentId: string, value: string) => {
-      try {
-        await localNotesService.updateStudentGrade(noteId, studentId, value)
-
-        // Optimistically update local state
-        setGrades((prev) => {
-          const newGrades = new Map(prev)
-          newGrades.set(studentId, value)
-          return newGrades
-        })
-      }
-      catch (err) {
-        const errorMessage
-          = err instanceof Error ? err.message : 'Failed to update grade'
-        setError(errorMessage)
-        throw err
-      }
+      return map
     },
-    [noteId],
-  )
+    enabled: dbStatus.isInitialized && !!noteId,
+  })
 
-  // Initial fetch
-  useEffect(() => {
-    if (dbStatus.isInitialized) {
-      fetchGrades()
-    }
-  }, [fetchGrades, dbStatus.isInitialized])
+  const updateGradeMutation = useMutation({
+    mutationFn: ({ studentId, value }: { studentId: string, value: string }) =>
+      localNotesService.updateStudentGrade(noteId, studentId, value),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notes', noteId, 'grades'] }),
+  })
 
   return {
-    grades,
+    grades: gradesMap ?? new Map(),
     isLoading,
-    error,
-    updateGrade,
-    refresh: fetchGrades,
+    error: error instanceof Error ? error.message : null,
+    updateGrade: (studentId, value) => updateGradeMutation.mutateAsync({ studentId, value }),
+    refresh: refetch,
   }
 }
 
@@ -336,7 +167,7 @@ export interface UseUnpublishedNotesReturn {
   unpublishedNotes: NoteWithDetails[]
   isLoading: boolean
   error: string | null
-  refresh: () => Promise<void>
+  refresh: () => Promise<any>
   publishAll: () => Promise<void>
   clearAfterPublish: (noteIds: string[]) => Promise<void>
 }
@@ -345,82 +176,39 @@ export interface UseUnpublishedNotesReturn {
  * Hook for managing unpublished notes that need syncing
  */
 export function useUnpublishedNotes(): UseUnpublishedNotesReturn {
-  const [unpublishedNotes, setUnpublishedNotes] = useState<NoteWithDetails[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
   const dbStatus = useDatabaseStatus()
+  const queryClient = useQueryClient()
 
-  // Fetch unpublished notes
-  const fetchUnpublishedNotes = useCallback(async () => {
-    if (!dbStatus.isInitialized) {
-      return
-    }
+  const { data: unpublishedNotes, isLoading, error, refetch } = useQuery({
+    queryKey: ['notes', 'unpublished'],
+    queryFn: () => localNotesService.getUnpublishedNotes(),
+    enabled: dbStatus.isInitialized,
+  })
 
-    setIsLoading(true)
-    setError(null)
-
-    try {
-      const notes = await localNotesService.getUnpublishedNotes()
-      setUnpublishedNotes(notes)
-    }
-    catch (err) {
-      const errorMessage
-        = err instanceof Error ? err.message : 'Failed to fetch unpublished notes'
-      setError(errorMessage)
-      console.error('Failed to fetch unpublished notes:', err)
-    }
-    finally {
-      setIsLoading(false)
-    }
-  }, [dbStatus.isInitialized])
-
-  // Publish all unpublished notes
-  const publishAll = useCallback(async () => {
-    try {
-      for (const note of unpublishedNotes) {
+  const publishAllMutation = useMutation({
+    mutationFn: async (notes: NoteWithDetails[]) => {
+      for (const note of notes) {
         await localNotesService.publishNote(note.id)
       }
-      await fetchUnpublishedNotes()
-    }
-    catch (err) {
-      const errorMessage
-        = err instanceof Error ? err.message : 'Failed to publish notes'
-      setError(errorMessage)
-      throw err
-    }
-  }, [unpublishedNotes, fetchUnpublishedNotes])
-
-  // Clear local data after successful publish
-  const clearAfterPublish = useCallback(
-    async (noteIds: string[]) => {
-      try {
-        await localNotesService.clearLocalDataAfterPublish(noteIds)
-        await fetchUnpublishedNotes()
-      }
-      catch (err) {
-        const errorMessage
-          = err instanceof Error ? err.message : 'Failed to clear local data'
-        setError(errorMessage)
-        throw err
-      }
     },
-    [fetchUnpublishedNotes],
-  )
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notes'] })
+    },
+  })
 
-  // Initial fetch
-  useEffect(() => {
-    if (dbStatus.isInitialized) {
-      fetchUnpublishedNotes()
-    }
-  }, [fetchUnpublishedNotes, dbStatus.isInitialized])
+  const clearAfterPublishMutation = useMutation({
+    mutationFn: (noteIds: string[]) => localNotesService.clearLocalDataAfterPublish(noteIds),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notes'] })
+    },
+  })
 
   return {
-    unpublishedNotes,
+    unpublishedNotes: unpublishedNotes ?? [],
     isLoading,
-    error,
-    refresh: fetchUnpublishedNotes,
-    publishAll,
-    clearAfterPublish,
+    error: error instanceof Error ? error.message : null,
+    refresh: refetch,
+    publishAll: () => publishAllMutation.mutateAsync(unpublishedNotes ?? []),
+    clearAfterPublish: noteIds => clearAfterPublishMutation.mutateAsync(noteIds),
   }
 }

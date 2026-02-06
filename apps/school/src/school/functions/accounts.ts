@@ -5,7 +5,7 @@ import {
   getAccounts,
   getAccountsTree,
   updateAccount,
-} from '@repo/data-ops'
+} from '@repo/data-ops/queries/accounts'
 import { z } from 'zod'
 import { createAccountSchema, updateAccountSchema } from '@/schemas/account'
 import { authServerFn } from '../lib/server-fn'

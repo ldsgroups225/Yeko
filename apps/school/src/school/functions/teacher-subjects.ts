@@ -1,10 +1,10 @@
+import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
+import { getSchoolSubjects } from '@repo/data-ops/queries/school-subjects'
 import {
   assignSubjectsToTeacher,
   getTeacherSubjects,
   removeSubjectsFromTeacher,
-} from '@repo/data-ops'
-import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
-import { getSchoolSubjects } from '@repo/data-ops/queries/school-subjects'
+} from '@repo/data-ops/queries/teacher-subjects'
 import { z } from 'zod'
 import { assignSubjectsSchema } from '../../schemas/teacher-subject'
 import { authServerFn } from '../lib/server-fn'

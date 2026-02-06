@@ -87,9 +87,9 @@ describe('students queries', () => {
         throw new Error('Database connection failed')
       })
 
-      const result = getStudents({ schoolId: 'school-1' })
+      const result = await getStudents({ schoolId: 'school-1' })
 
-      await expectDatabaseErrorType(result, 'INTERNAL_ERROR')
+      await expectDatabaseErrorType(result as any, 'INTERNAL_ERROR')
     })
 
     test('should apply filters correctly', async () => {
@@ -133,7 +133,7 @@ describe('students queries', () => {
       })
 
       const data = await expectResultSuccess(result)
-      expect(data.data).toEqual([])
+      expect(data.data).toStrictEqual([])
     })
   })
 
@@ -198,9 +198,9 @@ describe('students queries', () => {
         }),
       })
 
-      const result = getStudentById('non-existent-id')
+      const result = await getStudentById('non-existent-id')
 
-      await expectDatabaseErrorType(result, 'NOT_FOUND')
+      await expectDatabaseErrorType(result as any, 'NOT_FOUND')
     })
 
     test('should handle database connection errors', async () => {

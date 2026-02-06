@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { IconLoader2 } from '@tabler/icons-react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Button } from '@workspace/ui/components/button'
 import {
   Dialog,
@@ -20,7 +20,6 @@ import {
   FormMessage,
 } from '@workspace/ui/components/form'
 import { Input } from '@workspace/ui/components/input'
-
 import {
   Select,
   SelectContent,
@@ -29,11 +28,13 @@ import {
   SelectValue,
 } from '@workspace/ui/components/select'
 import { Textarea } from '@workspace/ui/components/textarea'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import { StudentCombobox } from '@/components/attendance/student/student-combobox'
 import { useTranslations } from '@/i18n'
 import { paymentsKeys } from '@/lib/queries/payments'
+import { studentFeesOptions } from '@/lib/queries/student-fees'
 import { paymentMethodLabels, paymentMethods } from '@/schemas/payment'
 import { recordPayment } from '@/school/functions/payments'
 
@@ -76,21 +77,68 @@ export function PaymentFormDialog({
     },
   })
 
+  // Watch studentId to fetch fees
+  const selectedStudentId = useWatch({ control: form.control, name: 'studentId' })
+
+  const { data: studentFees, isLoading: isLoadingFees } = useQuery(
+    studentFeesOptions.studentDetails(selectedStudentId),
+  )
+
+  console.log('PaymentForm - selectedStudentId:', selectedStudentId)
+  console.log('PaymentForm - studentFees:', studentFees)
+
   const mutation = useMutation({
-    mutationFn: (data: PaymentFormData) =>
-      recordPayment({
+    mutationFn: (data: PaymentFormData) => {
+      const paymentAmount = Number.parseFloat(data.amount)
+      let remainingAmount = paymentAmount
+      const allocations: { studentFeeId: string, amount: string, installmentId?: string }[] = []
+
+      const pendingFees = studentFees?.filter(fee => Number.parseFloat(fee.studentFee.balance) > 0) || []
+
+      pendingFees.sort((a, b) => {
+        if (a.feeTypeCode.includes('inscription') && !b.feeTypeCode.includes('inscription'))
+          return -1
+        if (!a.feeTypeCode.includes('inscription') && b.feeTypeCode.includes('inscription'))
+          return 1
+
+        return new Date(a.studentFee.createdAt).getTime() - new Date(b.studentFee.createdAt).getTime()
+      })
+
+      for (const feeWithDetails of pendingFees) {
+        if (remainingAmount <= 0)
+          break
+
+        const feeBalance = Number.parseFloat(feeWithDetails.studentFee.balance)
+        const allocateAmount = Math.min(remainingAmount, feeBalance)
+
+        if (allocateAmount > 0) {
+          allocations.push({
+            studentFeeId: feeWithDetails.studentFee.id,
+            amount: allocateAmount.toString(),
+          })
+          remainingAmount -= allocateAmount
+        }
+      }
+
+      if (allocations.length === 0) {
+        throw new Error('Aucun frais en attente trouvé pour cet élève. Impossible d\'affecter le paiement.')
+      }
+
+      return recordPayment({
         data: {
           studentId: data.studentId,
           amount: data.amount,
           method: data.method,
           paymentDate: new Date().toISOString().split('T')[0] || '',
-          allocations: [],
+          allocations,
           reference: data.reference,
           notes: data.notes,
         },
-      }),
+      })
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: paymentsKeys.all })
+      queryClient.invalidateQueries({ queryKey: ['studentFees'] })
       toast.success(t.finance.payments.recordPayment())
       form.reset()
       onOpenChange(false)
@@ -156,10 +204,10 @@ export function PaymentFormDialog({
                       *
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
+                      <StudentCombobox
+                        value={field.value}
+                        onSelect={id => field.onChange(id)}
                         placeholder={t.students.searchPlaceholder()}
-                        className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors"
                       />
                     </FormControl>
                     <FormMessage />

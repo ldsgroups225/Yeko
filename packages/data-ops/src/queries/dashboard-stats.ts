@@ -8,42 +8,33 @@ import { activityLogs, schools } from '../drizzle/core-schema'
 export async function getDashboardStats(daysBack: number = 30): Promise<DashboardStats> {
   const db = getDb()
 
-  // Get total schools
-  const [totalSchoolsResult] = await db
-    .select({ count: count() })
-    .from(schools)
-  const totalSchools = totalSchoolsResult?.count || 0
-
-  // Get active schools
-  const [activeSchoolsResult] = await db
-    .select({ count: count() })
-    .from(schools)
-    .where(eq(schools.status, 'active'))
-  const activeSchools = activeSchoolsResult?.count || 0
-
   // Get recent registrations (last 30 days)
   const thirtyDaysAgo = new Date()
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - daysBack)
 
-  const [recentRegistrationsResult] = await db
-    .select({ count: count() })
-    .from(schools)
-    .where(gte(schools.createdAt, thirtyDaysAgo))
+  const [
+    [totalSchoolsResult],
+    [activeSchoolsResult],
+    [recentRegistrationsResult],
+    [inactiveSchoolsResult],
+    recentSchools,
+  ] = await Promise.all([
+    // Get total schools
+    db.select({ count: count() }).from(schools),
+    // Get active schools
+    db.select({ count: count() }).from(schools).where(eq(schools.status, 'active')),
+    // Get recent registrations (last 30 days)
+    db.select({ count: count() }).from(schools).where(gte(schools.createdAt, thirtyDaysAgo)),
+    // Get inactive schools
+    db.select({ count: count() }).from(schools).where(eq(schools.status, 'inactive')),
+    // Get recent schools list
+    db.select().from(schools).orderBy(desc(schools.createdAt)).limit(5),
+  ])
+
+  const totalSchools = totalSchoolsResult?.count || 0
+  const activeSchools = activeSchoolsResult?.count || 0
   const recentRegistrations = recentRegistrationsResult?.count || 0
-
-  // Get inactive schools
-  const [inactiveSchoolsResult] = await db
-    .select({ count: count() })
-    .from(schools)
-    .where(eq(schools.status, 'inactive'))
   const inactiveSchools = inactiveSchoolsResult?.count || 0
-
-  // Get recent schools list
-  const recentSchools = await db
-    .select()
-    .from(schools)
-    .orderBy(desc(schools.createdAt))
-    .limit(5)
 
   return {
     totalSchools,
@@ -192,31 +183,70 @@ export async function getActivityStats(
 ): Promise<ActivityStats> {
   const db = getDb()
 
-  // Total activities
-  const [totalResult] = await db
-    .select({ count: count() })
-    .from(activityLogs)
-    .where(
-      and(
-        gte(activityLogs.createdAt, startDate),
-        sql`${activityLogs.createdAt} <= ${endDate}`,
+  // Execute all stats queries in parallel
+  const [
+    [totalResult],
+    byActionResults,
+    byResourceResults,
+    trendResults,
+  ] = await Promise.all([
+    // Total activities
+    db
+      .select({ count: count() })
+      .from(activityLogs)
+      .where(
+        and(
+          gte(activityLogs.createdAt, startDate),
+          sql`${activityLogs.createdAt} <= ${endDate}`,
+        ),
       ),
-    )
 
-  // Group by action
-  const byActionResults = await db
-    .select({
-      action: activityLogs.action,
-      count: count(),
-    })
-    .from(activityLogs)
-    .where(
-      and(
-        gte(activityLogs.createdAt, startDate),
-        sql`${activityLogs.createdAt} <= ${endDate}`,
-      ),
-    )
-    .groupBy(activityLogs.action)
+    // Group by action
+    db
+      .select({
+        action: activityLogs.action,
+        count: count(),
+      })
+      .from(activityLogs)
+      .where(
+        and(
+          gte(activityLogs.createdAt, startDate),
+          sql`${activityLogs.createdAt} <= ${endDate}`,
+        ),
+      )
+      .groupBy(activityLogs.action),
+
+    // Group by resource
+    db
+      .select({
+        resource: activityLogs.resource,
+        count: count(),
+      })
+      .from(activityLogs)
+      .where(
+        and(
+          gte(activityLogs.createdAt, startDate),
+          sql`${activityLogs.createdAt} <= ${endDate}`,
+        ),
+      )
+      .groupBy(activityLogs.resource),
+
+    // Daily trend
+    db
+      .select({
+        date: sql<string>`DATE(${activityLogs.createdAt})`,
+        count: count(),
+      })
+      .from(activityLogs)
+      .where(
+        and(
+          gte(activityLogs.createdAt, startDate),
+          sql`${activityLogs.createdAt} <= ${endDate}`,
+        ),
+      )
+      .groupBy(sql`DATE(${activityLogs.createdAt})`)
+      .orderBy(sql`DATE(${activityLogs.createdAt})`),
+  ])
 
   const byAction: Record<string, number> = {}
   byActionResults.forEach((result) => {
@@ -225,43 +255,12 @@ export async function getActivityStats(
     }
   })
 
-  // Group by resource
-  const byResourceResults = await db
-    .select({
-      resource: activityLogs.resource,
-      count: count(),
-    })
-    .from(activityLogs)
-    .where(
-      and(
-        gte(activityLogs.createdAt, startDate),
-        sql`${activityLogs.createdAt} <= ${endDate}`,
-      ),
-    )
-    .groupBy(activityLogs.resource)
-
   const byResource: Record<string, number> = {}
   byResourceResults.forEach((result) => {
     if (result.resource) {
       byResource[result.resource] = result.count
     }
   })
-
-  // Daily trend
-  const trendResults = await db
-    .select({
-      date: sql<string>`DATE(${activityLogs.createdAt})`,
-      count: count(),
-    })
-    .from(activityLogs)
-    .where(
-      and(
-        gte(activityLogs.createdAt, startDate),
-        sql`${activityLogs.createdAt} <= ${endDate}`,
-      ),
-    )
-    .groupBy(sql`DATE(${activityLogs.createdAt})`)
-    .orderBy(sql`DATE(${activityLogs.createdAt})`)
 
   const trend = trendResults.map(result => ({
     date: result.date,
@@ -289,41 +288,48 @@ export async function getUserActivitySummary(
   const startDate = new Date()
   startDate.setDate(startDate.getDate() - days)
 
-  // Total actions
-  const [totalResult] = await db
-    .select({ count: count() })
-    .from(activityLogs)
-    .where(
-      and(
-        eq(activityLogs.userId, userId),
-        gte(activityLogs.createdAt, startDate),
+  // Execute all user queries in parallel
+  const [
+    [totalResult],
+    [lastActiveResult],
+    topActionsResults,
+  ] = await Promise.all([
+    // Total actions
+    db
+      .select({ count: count() })
+      .from(activityLogs)
+      .where(
+        and(
+          eq(activityLogs.userId, userId),
+          gte(activityLogs.createdAt, startDate),
+        ),
       ),
-    )
 
-  // Last active
-  const [lastActiveResult] = await db
-    .select({ createdAt: activityLogs.createdAt })
-    .from(activityLogs)
-    .where(eq(activityLogs.userId, userId))
-    .orderBy(desc(activityLogs.createdAt))
-    .limit(1)
+    // Last active
+    db
+      .select({ createdAt: activityLogs.createdAt })
+      .from(activityLogs)
+      .where(eq(activityLogs.userId, userId))
+      .orderBy(desc(activityLogs.createdAt))
+      .limit(1),
 
-  // Top actions
-  const topActionsResults = await db
-    .select({
-      action: activityLogs.action,
-      count: count(),
-    })
-    .from(activityLogs)
-    .where(
-      and(
-        eq(activityLogs.userId, userId),
-        gte(activityLogs.createdAt, startDate),
-      ),
-    )
-    .groupBy(activityLogs.action)
-    .orderBy(desc(count()))
-    .limit(5)
+    // Top actions
+    db
+      .select({
+        action: activityLogs.action,
+        count: count(),
+      })
+      .from(activityLogs)
+      .where(
+        and(
+          eq(activityLogs.userId, userId),
+          gte(activityLogs.createdAt, startDate),
+        ),
+      )
+      .groupBy(activityLogs.action)
+      .orderBy(desc(count()))
+      .limit(5),
+  ])
 
   return {
     totalActions: totalResult?.count || 0,

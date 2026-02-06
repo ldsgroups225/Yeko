@@ -1,5 +1,5 @@
 import { queueAuditLog } from '@repo/background-tasks'
-import { getReportCardsByStudentIds } from '@repo/data-ops'
+import { getReportCardsByStudentIds } from '@repo/data-ops/queries/report-cards'
 import * as reportCardQueries from '@repo/data-ops/queries/report-cards'
 
 import { z } from 'zod'

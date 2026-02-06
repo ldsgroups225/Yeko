@@ -149,6 +149,7 @@ const fr = {
     accounting: 'Comptabilité',
     tuition: 'Frais de scolarité',
     payments: 'Paiements',
+    paymentPlans: 'Échéanciers',
     settings: 'Paramètres',
     spaces: 'Espaces',
     classrooms: 'Salles de classe',

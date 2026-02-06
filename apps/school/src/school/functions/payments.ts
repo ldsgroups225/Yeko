@@ -5,7 +5,8 @@ import {
   getPaymentById,
   getPaymentByReceiptNumber,
   getPayments,
-} from '@repo/data-ops'
+} from '@repo/data-ops/queries/payments'
+import { getFinanceStats } from '@repo/data-ops/queries/finance-stats'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import { z } from 'zod'
 import { cancelPaymentSchema, createPaymentSchema } from '@/schemas/payment'
@@ -160,6 +161,24 @@ export const getCashierSummary = authServerFn
     const cashierId = data.cashierId || userId
     return (await getCashierDailySummary(schoolId, cashierId, data.date)).match(
       data => ({ success: true as const, data }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération du résumé de la caisse' }),
+      _error => ({ success: false as const, error: 'Erreur lors de la récupération du résumé de la caisse' }),
+    )
+  })
+
+/**
+ * Get finance stats (dashboard metrics)
+ * Necessary docstring: Public API documentation
+ */
+export const getFinanceDashboardStats = authServerFn
+  .handler(async ({ context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    const { schoolId } = context.school
+    await requirePermission('finance', 'view')
+
+    return (await getFinanceStats(schoolId)).match(
+      data => ({ success: true as const, data }),
+      _error => ({ success: false as const, error: 'Erreur lors de la récupération des statistiques financières' }),
     )
   })

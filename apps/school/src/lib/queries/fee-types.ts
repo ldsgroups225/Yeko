@@ -2,6 +2,8 @@ import { queryOptions } from '@tanstack/react-query'
 import {
   getFeeType,
   getFeeTypesList,
+  getAvailableTemplates,
+  importFeeTypesFromTemplates,
 } from '@/school/functions/fee-types'
 
 export const feeTypesKeys = {
@@ -44,4 +46,26 @@ export const feeTypesOptions = {
       gcTime: 30 * 60 * 1000,
       enabled: !!id,
     }),
+
+  templates: () =>
+    queryOptions({
+      queryKey: ['feeTypeTemplates'],
+      queryFn: async () => {
+        const res = await getAvailableTemplates({})
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
+      staleTime: 5 * 60 * 1000,
+      gcTime: 30 * 60 * 1000,
+    }),
+}
+
+export const importFromTemplates = {
+  mutation: async (templateIds: string[]) => {
+    const res = await importFeeTypesFromTemplates({ data: { templateIds } })
+    if (!res.success)
+      throw new Error(res.error)
+    return res.data
+  },
 }

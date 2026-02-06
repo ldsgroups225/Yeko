@@ -1,19 +1,21 @@
+import { getDb } from '@repo/data-ops/database/setup'
 import {
   and,
-  classes,
-  discounts,
-  enrollments,
   eq,
-  feeStructures,
-  feeTypes,
   inArray,
   isNull,
   sql,
+} from '@repo/data-ops/drizzle/operators'
+import {
+  classes,
+  discounts,
+  enrollments,
+  feeStructures,
+  feeTypes,
   studentDiscounts,
   studentFees,
   students,
-} from '@repo/data-ops'
-import { getDb } from '@repo/data-ops/database/setup'
+} from '@repo/data-ops/drizzle/school-schema'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import { z } from 'zod'
 import { generateUUID } from '@/utils/generateUUID'

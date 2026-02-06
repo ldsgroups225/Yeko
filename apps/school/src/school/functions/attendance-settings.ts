@@ -2,7 +2,7 @@ import {
   deleteAttendanceSettings,
   getAttendanceSettings,
   upsertAttendanceSettings,
-} from '@repo/data-ops'
+} from '@repo/data-ops/queries/attendance-settings'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import { z } from 'zod'
 import { authServerFn } from '../lib/server-fn'

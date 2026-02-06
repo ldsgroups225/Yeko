@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { z } from 'zod'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 
-import { StudentsList } from '@/components/students'
+import { StudentsList } from '@/components/students/students-list'
 import { useTranslations } from '@/i18n'
 
 const studentsSearchSchema = z.object({

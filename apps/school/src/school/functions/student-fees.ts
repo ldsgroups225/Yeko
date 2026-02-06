@@ -7,7 +7,7 @@ import {
   getStudentFeesWithDetails,
   getStudentsWithOutstandingBalance,
   waiveStudentFee,
-} from '@repo/data-ops'
+} from '@repo/data-ops/queries/student-fees'
 import { z } from 'zod'
 import { authServerFn } from '../lib/server-fn'
 

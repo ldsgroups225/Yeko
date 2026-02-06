@@ -546,82 +546,90 @@ export function getEnrollmentStatistics(schoolId: string, schoolYearId: string):
 
   return ResultAsync.fromPromise(
     (async () => {
-      // Enrollments by status
-      const byStatus = await db
-        .select({
-          status: enrollments.status,
-          count: sql<number>`COUNT(*)`.as('count'),
-        })
-        .from(enrollments)
-        .innerJoin(students, eq(enrollments.studentId, students.id))
-        .where(and(eq(students.schoolId, schoolId), eq(enrollments.schoolYearId, schoolYearId)))
-        .groupBy(enrollments.status)
+      // Execute all stats queries in parallel
+      const [
+        byStatus,
+        byGrade,
+        byClass,
+        trends,
+      ] = await Promise.all([
+        // Enrollments by status
+        db
+          .select({
+            status: enrollments.status,
+            count: sql<number>`COUNT(*)`.as('count'),
+          })
+          .from(enrollments)
+          .innerJoin(students, eq(enrollments.studentId, students.id))
+          .where(and(eq(students.schoolId, schoolId), eq(enrollments.schoolYearId, schoolYearId)))
+          .groupBy(enrollments.status),
 
-      // Enrollments by grade
-      const byGrade = await db
-        .select({
-          gradeId: grades.id,
-          gradeName: grades.name,
-          gradeOrder: grades.order,
-          count: sql<number>`COUNT(*)`.as('count'),
-          boys: sql<number>`COUNT(CASE WHEN ${students.gender} = 'M' THEN 1 END)`.as('boys'),
-          girls: sql<number>`COUNT(CASE WHEN ${students.gender} = 'F' THEN 1 END)`.as('girls'),
-        })
-        .from(enrollments)
-        .innerJoin(students, eq(enrollments.studentId, students.id))
-        .innerJoin(classes, eq(enrollments.classId, classes.id))
-        .innerJoin(grades, eq(classes.gradeId, grades.id))
-        .where(
-          and(
-            eq(students.schoolId, schoolId),
-            eq(enrollments.schoolYearId, schoolYearId),
-            eq(enrollments.status, 'confirmed'),
-          ),
-        )
-        .groupBy(grades.id, grades.name, grades.order)
-        .orderBy(grades.order)
+        // Enrollments by grade
+        db
+          .select({
+            gradeId: grades.id,
+            gradeName: grades.name,
+            gradeOrder: grades.order,
+            count: sql<number>`COUNT(*)`.as('count'),
+            boys: sql<number>`COUNT(CASE WHEN ${students.gender} = 'M' THEN 1 END)`.as('boys'),
+            girls: sql<number>`COUNT(CASE WHEN ${students.gender} = 'F' THEN 1 END)`.as('girls'),
+          })
+          .from(enrollments)
+          .innerJoin(students, eq(enrollments.studentId, students.id))
+          .innerJoin(classes, eq(enrollments.classId, classes.id))
+          .innerJoin(grades, eq(classes.gradeId, grades.id))
+          .where(
+            and(
+              eq(students.schoolId, schoolId),
+              eq(enrollments.schoolYearId, schoolYearId),
+              eq(enrollments.status, 'confirmed'),
+            ),
+          )
+          .groupBy(grades.id, grades.name, grades.order)
+          .orderBy(grades.order),
 
-      // Enrollments by class
-      const byClass = await db
-        .select({
-          classId: classes.id,
-          className: sql<string>`CONCAT(${grades.name}, ' ', ${classes.section})`.as('class_name'),
-          maxStudents: classes.maxStudents,
-          count: sql<number>`COUNT(*)`.as('count'),
-          boys: sql<number>`COUNT(CASE WHEN ${students.gender} = 'M' THEN 1 END)`.as('boys'),
-          girls: sql<number>`COUNT(CASE WHEN ${students.gender} = 'F' THEN 1 END)`.as('girls'),
-        })
-        .from(enrollments)
-        .innerJoin(students, eq(enrollments.studentId, students.id))
-        .innerJoin(classes, eq(enrollments.classId, classes.id))
-        .innerJoin(grades, eq(classes.gradeId, grades.id))
-        .where(
-          and(
-            eq(students.schoolId, schoolId),
-            eq(enrollments.schoolYearId, schoolYearId),
-            eq(enrollments.status, 'confirmed'),
-          ),
-        )
-        .groupBy(classes.id, grades.name, classes.section, classes.maxStudents, grades.order)
-        .orderBy(grades.order, classes.section)
+        // Enrollments by class
+        db
+          .select({
+            classId: classes.id,
+            className: sql<string>`CONCAT(${grades.name}, ' ', ${classes.section})`.as('class_name'),
+            maxStudents: classes.maxStudents,
+            count: sql<number>`COUNT(*)`.as('count'),
+            boys: sql<number>`COUNT(CASE WHEN ${students.gender} = 'M' THEN 1 END)`.as('boys'),
+            girls: sql<number>`COUNT(CASE WHEN ${students.gender} = 'F' THEN 1 END)`.as('girls'),
+          })
+          .from(enrollments)
+          .innerJoin(students, eq(enrollments.studentId, students.id))
+          .innerJoin(classes, eq(enrollments.classId, classes.id))
+          .innerJoin(grades, eq(classes.gradeId, grades.id))
+          .where(
+            and(
+              eq(students.schoolId, schoolId),
+              eq(enrollments.schoolYearId, schoolYearId),
+              eq(enrollments.status, 'confirmed'),
+            ),
+          )
+          .groupBy(classes.id, grades.name, classes.section, classes.maxStudents, grades.order)
+          .orderBy(grades.order, classes.section),
 
-      // Enrollment trends (last 30 days)
-      const trends = await db
-        .select({
-          date: sql<string>`DATE(${enrollments.enrollmentDate})`.as('date'),
-          count: sql<number>`COUNT(*)`.as('count'),
-        })
-        .from(enrollments)
-        .innerJoin(students, eq(enrollments.studentId, students.id))
-        .where(
-          and(
-            eq(students.schoolId, schoolId),
-            eq(enrollments.schoolYearId, schoolYearId),
-            sql`${enrollments.enrollmentDate} >= CURRENT_DATE - INTERVAL '30 days'`,
-          ),
-        )
-        .groupBy(sql`DATE(${enrollments.enrollmentDate})`)
-        .orderBy(sql`DATE(${enrollments.enrollmentDate})`)
+        // Enrollment trends (last 30 days)
+        db
+          .select({
+            date: sql<string>`DATE(${enrollments.enrollmentDate})`.as('date'),
+            count: sql<number>`COUNT(*)`.as('count'),
+          })
+          .from(enrollments)
+          .innerJoin(students, eq(enrollments.studentId, students.id))
+          .where(
+            and(
+              eq(students.schoolId, schoolId),
+              eq(enrollments.schoolYearId, schoolYearId),
+              sql`${enrollments.enrollmentDate} >= CURRENT_DATE - INTERVAL '30 days'`,
+            ),
+          )
+          .groupBy(sql`DATE(${enrollments.enrollmentDate})`)
+          .orderBy(sql`DATE(${enrollments.enrollmentDate})`),
+      ])
 
       return {
         byStatus,

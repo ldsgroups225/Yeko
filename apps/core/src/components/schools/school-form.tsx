@@ -1,16 +1,17 @@
 import type { CreateSchoolInput, SchoolStatus } from '@/schemas/school'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { IconDeviceFloppy, IconLoader2, IconSchool } from '@tabler/icons-react'
+import { useQuery } from '@tanstack/react-query'
 import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { Input } from '@workspace/ui/components/input'
 import { Label } from '@workspace/ui/components/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { checkStorageConfigured, getPresignedUploadUrl } from '@/core/functions/storage'
-import { CreateSchoolSchema } from '@/schemas/school'
 import { useI18nContext } from '@/i18n/i18n-react'
+import { CreateSchoolSchema } from '@/schemas/school'
 
 interface SchoolFormProps {
   defaultValues?: Partial<CreateSchoolInput>
@@ -30,13 +31,34 @@ export function SchoolForm({
   'use no memo'
 
   const { LL } = useI18nContext()
-  const [storageConfigured, setStorageConfigured] = useState<boolean | null>(null)
+
+  const { data: storageConfigResult, isPending: isCheckingStorage } = useQuery({
+    queryKey: ['storage-config'],
+    queryFn: async () => {
+      const result = await checkStorageConfigured()
+      return result.configured
+    },
+    staleTime: 1000 * 60 * 5,
+  })
+
+  const storageConfigured = isCheckingStorage ? null : (storageConfigResult ?? false)
+
   const [isUploading, setIsUploading] = useState(false)
   const [uploadError, setUploadError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const form = useForm({
     resolver: zodResolver(CreateSchoolSchema),
+    values: {
+      name: defaultValues?.name || '',
+      code: defaultValues?.code || '',
+      address: defaultValues?.address || '',
+      phone: defaultValues?.phone || '',
+      email: defaultValues?.email || '',
+      logoUrl: defaultValues?.logoUrl || '',
+      status: defaultValues?.status || 'active',
+      settings: defaultValues?.settings || {},
+    },
     defaultValues: {
       name: defaultValues?.name || '',
       code: defaultValues?.code || '',
@@ -53,22 +75,6 @@ export function SchoolForm({
   const { errors } = form.formState
   const status = useWatch({ control, name: 'status' })
   const logoUrl = useWatch({ control, name: 'logoUrl' })
-
-  // Check if R2 storage is configured on mount
-  useEffect(() => {
-    checkStorageConfigured().then((result) => {
-      setStorageConfigured(result.configured)
-    }).catch(() => {
-      setStorageConfigured(false)
-    })
-  }, [])
-
-  // Reset form when defaultValues change (for edit mode)
-  useEffect(() => {
-    if (defaultValues) {
-      reset(defaultValues)
-    }
-  }, [defaultValues, reset])
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -143,7 +149,11 @@ export function SchoolForm({
           <CardContent className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="name">{LL.schools.name()} *</Label>
+                <Label htmlFor="name">
+                  {LL.schools.name()}
+                  {' '}
+                  *
+                </Label>
                 <Input
                   id="name"
                   placeholder={LL.schools.namePlaceholder()}
@@ -154,7 +164,11 @@ export function SchoolForm({
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="code">{LL.schools.code()} *</Label>
+                <Label htmlFor="code">
+                  {LL.schools.code()}
+                  {' '}
+                  *
+                </Label>
                 <Input
                   id="code"
                   placeholder={LL.schools.codePlaceholder()}

@@ -82,7 +82,12 @@ export const progressOptions = {
   overview: (params: ProgressOverviewParams) =>
     queryOptions({
       queryKey: progressKeys.overview(params.schoolId, params.schoolYearId, params.termId),
-      queryFn: () => getProgressOverview({ data: params }),
+      queryFn: async () => {
+        const res = await getProgressOverview({ data: params })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 2 * 60 * 1000, // 2 minutes - progress updates frequently
       gcTime: 15 * 60 * 1000,
       enabled: !!params.schoolId && !!params.schoolYearId,
@@ -91,7 +96,12 @@ export const progressOptions = {
   byClass: (params: ProgressByClassParams) =>
     queryOptions({
       queryKey: progressKeys.byClass(params.classId, params.termId, params.subjectId),
-      queryFn: () => getCurriculumProgress({ data: params }),
+      queryFn: async () => {
+        const res = await getCurriculumProgress({ data: params })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 2 * 60 * 1000,
       gcTime: 15 * 60 * 1000,
       enabled: !!params.classId && !!params.termId,
@@ -100,7 +110,12 @@ export const progressOptions = {
   bySubject: (schoolId: string, termId: string) =>
     queryOptions({
       queryKey: progressKeys.bySubject(schoolId, termId),
-      queryFn: () => getProgressBySubject({ data: { schoolId, termId } }),
+      queryFn: async () => {
+        const res = await getProgressBySubject({ data: { schoolId, termId } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 2 * 60 * 1000,
       gcTime: 15 * 60 * 1000,
       enabled: !!schoolId && !!termId,
@@ -109,7 +124,12 @@ export const progressOptions = {
   byTeacher: (teacherId: string, termId: string) =>
     queryOptions({
       queryKey: progressKeys.byTeacher(teacherId, termId),
-      queryFn: () => getTeacherProgressSummary({ data: { teacherId, termId } }),
+      queryFn: async () => {
+        const res = await getTeacherProgressSummary({ data: { teacherId, termId } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 2 * 60 * 1000,
       gcTime: 15 * 60 * 1000,
       enabled: !!teacherId && !!termId,
@@ -118,7 +138,12 @@ export const progressOptions = {
   behindSchedule: (params: ClassesBehindParams) =>
     queryOptions({
       queryKey: progressKeys.behindSchedule(params.schoolId, params.termId, params.threshold),
-      queryFn: () => getClassesBehindSchedule({ data: params }),
+      queryFn: async () => {
+        const res = await getClassesBehindSchedule({ data: params })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 2 * 60 * 1000,
       gcTime: 15 * 60 * 1000,
       enabled: !!params.schoolId && !!params.termId,
@@ -127,7 +152,12 @@ export const progressOptions = {
   statsByStatus: (schoolId: string, termId: string) =>
     queryOptions({
       queryKey: progressKeys.statsByStatus(schoolId, termId),
-      queryFn: () => getProgressStatsByStatus({ data: { schoolId, termId } }),
+      queryFn: async () => {
+        const res = await getProgressStatsByStatus({ data: { schoolId, termId } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 2 * 60 * 1000,
       gcTime: 15 * 60 * 1000,
       enabled: !!schoolId && !!termId,
@@ -136,7 +166,12 @@ export const progressOptions = {
   sessions: (classId: string, filters: SessionFilters = {}) =>
     queryOptions({
       queryKey: progressKeys.sessionsList(classId, filters),
-      queryFn: () => getClassSessions({ data: { classId, ...filters } }),
+      queryFn: async () => {
+        const res = await getClassSessions({ data: { classId, ...filters } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 60 * 1000, // 1 minute
       gcTime: 10 * 60 * 1000,
       enabled: !!classId,
@@ -145,7 +180,12 @@ export const progressOptions = {
   sessionDetail: (id: string) =>
     queryOptions({
       queryKey: progressKeys.sessionDetail(id),
-      queryFn: () => getClassSession({ data: { id } }),
+      queryFn: async () => {
+        const res = await getClassSession({ data: { id } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 60 * 1000,
       gcTime: 10 * 60 * 1000,
       enabled: !!id,
@@ -154,7 +194,12 @@ export const progressOptions = {
   chapterCompletions: (classId: string, subjectId?: string) =>
     queryOptions({
       queryKey: progressKeys.chapterCompletions(classId, subjectId),
-      queryFn: () => getChapterCompletions({ data: { classId, subjectId } }),
+      queryFn: async () => {
+        const res = await getChapterCompletions({ data: { classId, subjectId } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 2 * 60 * 1000,
       gcTime: 15 * 60 * 1000,
       enabled: !!classId,
@@ -163,7 +208,12 @@ export const progressOptions = {
   isChapterCompleted: (classId: string, chapterId: string) =>
     queryOptions({
       queryKey: progressKeys.chapterStatus(classId, chapterId),
-      queryFn: () => isChapterCompleted({ data: { classId, chapterId } }),
+      queryFn: async () => {
+        const res = await isChapterCompleted({ data: { classId, chapterId } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 2 * 60 * 1000,
       gcTime: 15 * 60 * 1000,
       enabled: !!classId && !!chapterId,

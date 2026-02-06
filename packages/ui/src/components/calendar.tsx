@@ -4,6 +4,7 @@ import {
   getDefaultClassNames,
   type DayButton,
 } from "react-day-picker";
+import { fr } from "date-fns/locale";
 
 import { cn } from "@workspace/ui/lib/utils";
 import { Button, buttonVariants } from "@workspace/ui/components/button";
@@ -19,6 +20,8 @@ function Calendar({
   showOutsideDays = true,
   captionLayout = "label",
   buttonVariant = "ghost",
+  locale = fr,
+  weekStartsOn = 1,
   formatters,
   components,
   ...props
@@ -37,9 +40,11 @@ function Calendar({
         className,
       )}
       captionLayout={captionLayout}
+      locale={locale}
+      weekStartsOn={weekStartsOn}
       formatters={{
         formatMonthDropdown: (date) =>
-          date.toLocaleString("default", { month: "short" }),
+          date.toLocaleString(locale?.code || "fr", { month: "short" }),
         ...formatters,
       }}
       classNames={{
@@ -50,17 +55,17 @@ function Calendar({
         ),
         month: cn("flex flex-col w-full gap-4", defaultClassNames.month),
         nav: cn(
-          "flex items-center gap-1 w-full absolute top-0 inset-x-0 justify-between",
+          "flex items-center gap-1 w-full absolute top-0 inset-x-0 justify-between pointer-events-none z-0",
           defaultClassNames.nav,
         ),
         button_previous: cn(
           buttonVariants({ variant: buttonVariant }),
-          "size-(--cell-size) aria-disabled:opacity-50 p-0 select-none",
+          "size-(--cell-size) aria-disabled:opacity-50 p-0 select-none pointer-events-auto",
           defaultClassNames.button_previous,
         ),
         button_next: cn(
           buttonVariants({ variant: buttonVariant }),
-          "size-(--cell-size) aria-disabled:opacity-50 p-0 select-none",
+          "size-(--cell-size) aria-disabled:opacity-50 p-0 select-none pointer-events-auto",
           defaultClassNames.button_next,
         ),
         month_caption: cn(
@@ -68,15 +73,15 @@ function Calendar({
           defaultClassNames.month_caption,
         ),
         dropdowns: cn(
-          "w-full flex items-center text-sm font-medium justify-center h-(--cell-size) gap-1.5",
+          "w-full flex items-center text-sm font-medium justify-center h-(--cell-size) gap-2 z-10",
           defaultClassNames.dropdowns,
         ),
         dropdown_root: cn(
-          "relative cn-calendar-dropdown-root rounded-(--cell-radius)",
+          "relative z-10",
           defaultClassNames.dropdown_root,
         ),
         dropdown: cn(
-          "absolute bg-popover inset-0 opacity-0",
+          "relative z-10",
           defaultClassNames.dropdown,
         ),
         caption_label: cn(
@@ -164,6 +169,7 @@ function Calendar({
           );
         },
         DayButton: CalendarDayButton,
+        Dropdown: CalendarDropdown,
         WeekNumber: ({ children, ...props }) => {
           return (
             <td {...props}>
@@ -218,3 +224,60 @@ function CalendarDayButton({
 }
 
 export { Calendar, CalendarDayButton };
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@workspace/ui/components/select";
+
+function CalendarDropdown({
+  value,
+  onChange,
+  options,
+  disabled,
+  className,
+}: {
+  value?: string | number | readonly string[];
+  onChange?: React.ChangeEventHandler<HTMLSelectElement>;
+  options?: { label: string; value: string | number; disabled?: boolean }[];
+  disabled?: boolean;
+  className?: string;
+  [key: string]: any;
+}) {
+  const selectedValue = options?.find((option) => option.value === value);
+
+  return (
+    <Select
+      value={value?.toString()}
+      onValueChange={(val) => {
+        onChange?.({
+          target: { value: val },
+        } as React.ChangeEvent<HTMLSelectElement>);
+      }}
+      disabled={disabled}
+    >
+      <SelectTrigger
+        className={cn(
+          "h-7 w-fit gap-1 rounded-md border-0 bg-transparent p-0 px-1 text-sm font-medium focus:bg-accent focus:text-accent-foreground ring-0 focus:ring-0 shadow-none hover:bg-accent hover:text-accent-foreground",
+          className,
+        )}
+      >
+        <SelectValue>{selectedValue?.label}</SelectValue>
+      </SelectTrigger>
+      <SelectContent>
+        {options?.map((option) => (
+          <SelectItem
+            key={option.value}
+            value={option.value.toString()}
+            disabled={option.disabled}
+          >
+            {option.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}

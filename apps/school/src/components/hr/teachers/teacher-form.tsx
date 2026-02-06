@@ -158,6 +158,7 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
           <div className="space-y-2">
             <Label htmlFor="hireDate" className="font-semibold text-foreground">{t.hr.teachers.hireDate()}</Label>
             <DatePicker
+              captionLayout="dropdown"
               date={watch('hireDate') || undefined}
               onSelect={date => setValue('hireDate', date)}
               placeholder={t.hr.teachers.selectHireDate()}

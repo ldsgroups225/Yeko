@@ -233,6 +233,10 @@ export function ConductRecordTable({
                   variant="ghost"
                   size="icon"
                   className="rounded-xl hover:bg-primary/10 hover:text-primary transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    e.preventDefault()
+                  }}
                 >
                   <IconDots className="h-5 w-5" />
                 </Button>
@@ -242,15 +246,6 @@ export function ConductRecordTable({
               align="end"
               className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40"
             >
-              {onView && (
-                <DropdownMenuItem
-                  onClick={() => onView(row.original.id)}
-                  className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-2"
-                >
-                  <IconEye className="mr-2 h-4 w-4 text-primary/60" />
-                  {t.common.view()}
-                </DropdownMenuItem>
-              )}
               {onEdit && (
                 <DropdownMenuItem
                   onClick={() => onEdit(row.original.id)}
@@ -382,7 +377,8 @@ export function ConductRecordTable({
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="group border-b border-border/10 hover:bg-primary/5 transition-colors data-[selected=true]:bg-primary/5"
+                className="group border-b border-border/10 hover:bg-primary/5 transition-colors data-[selected=true]:bg-primary/5 cursor-pointer"
+                onClick={() => onView?.(row.original.id)}
                 data-selected={row.getIsSelected()}
               >
                 {row.getVisibleCells().map(cell => (

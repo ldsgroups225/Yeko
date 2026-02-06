@@ -290,6 +290,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 icon: IconUsers,
                 permission: { resource: 'finance', action: 'view' },
               },
+              {
+                title: t.nav.paymentPlans(),
+                href: '/accounting/payment-plans',
+                icon: IconFileText,
+                permission: { resource: 'finance', action: 'view' },
+              },
             ],
           },
         ],

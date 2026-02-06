@@ -12,6 +12,7 @@ import {
 import { cn } from "@workspace/ui/lib/utils";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import type { Locale } from "date-fns";
 
 interface DatePickerProps {
   date?: Date;
@@ -19,6 +20,10 @@ interface DatePickerProps {
   className?: string;
   placeholder?: string;
   disabled?: boolean;
+  captionLayout?: "label" | "dropdown";
+  locale?: Locale;
+  /* @default 1, 0 = Sunday, 1 = Monday, etc. */
+  weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6;
 }
 
 function DatePicker({
@@ -27,6 +32,9 @@ function DatePicker({
   className,
   placeholder = "Sélectionner une date",
   disabled,
+  captionLayout,
+  locale = fr,
+  weekStartsOn = 1,
 }: DatePickerProps) {
   return (
     <Popover>
@@ -43,7 +51,7 @@ function DatePicker({
           >
             <IconCalendar className="mr-2 h-4 w-4" />
             {date ? (
-              format(date, "PPP", { locale: fr })
+              format(date, "PPP", { locale })
             ) : (
               <span>{placeholder}</span>
             )}
@@ -53,9 +61,12 @@ function DatePicker({
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar
           mode="single"
+          captionLayout={captionLayout}
           selected={date}
           onSelect={onSelect}
-          initialFocus
+          locale={locale}
+          weekStartsOn={weekStartsOn}
+          autoFocus
         />
       </PopoverContent>
     </Popover>

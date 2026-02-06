@@ -11,7 +11,7 @@ import {
   markConductParentNotified,
   updateConductRecord,
   updateConductStatus,
-} from '@repo/data-ops'
+} from '@repo/data-ops/queries/conduct-records'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import { z } from 'zod'
 

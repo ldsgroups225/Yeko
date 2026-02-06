@@ -12,7 +12,7 @@ import {
 import { useForm } from '@tanstack/react-form'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, redirect } from '@tanstack/react-router'
-import { zodValidator } from '@tanstack/zod-form-adapter'
+
 import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
 import { Badge } from '@workspace/ui/components/badge'
 import { Button } from '@workspace/ui/components/button'
@@ -44,8 +44,8 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import { getPlatformRoles } from '@/core/functions/roles'
 import { assignUserSystemRoles, getPlatformUsers } from '@/core/functions/users'
+import { useDateFormatter } from '@/hooks/use-date-formatter'
 import { useTranslations } from '@/i18n/hooks'
-import { formatDate } from '@/utils/formatDate'
 
 export const Route = createFileRoute('/_auth/app/users/')({
   beforeLoad: ({ context }) => {
@@ -70,6 +70,7 @@ function UserManagement() {
   const [page, setPage] = useState(1)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [isRolesDialogOpen, setIsRolesDialogOpen] = useState(false)
+  const { format: formatDate } = useDateFormatter()
 
   const { data: userData, isLoading: isUsersLoading } = useQuery({
     queryKey: ['platform-users', search, page],
@@ -95,7 +96,6 @@ function UserManagement() {
     defaultValues: {
       roleIds: [] as string[],
     },
-    validatorAdapter: zodValidator(),
     validators: {
       onChange: userRolesSchema,
     },

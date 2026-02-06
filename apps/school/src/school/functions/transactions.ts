@@ -1,10 +1,10 @@
+import { getOpenFiscalYear } from '@repo/data-ops/queries/fiscal-years'
 import {
   createJournalEntry,
-  getOpenFiscalYear,
   getTransactionById,
   getTransactions,
   voidTransaction,
-} from '@repo/data-ops'
+} from '@repo/data-ops/queries/transactions'
 import { z } from 'zod'
 import { createTransactionSchema, transactionFiltersSchema, voidTransactionSchema } from '@/schemas/transaction'
 import { authServerFn } from '../lib/server-fn'

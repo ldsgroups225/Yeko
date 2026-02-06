@@ -1,9 +1,9 @@
+import type { TranslationFunctions } from '../../i18n/i18n-types'
 import { DatabaseError } from '@repo/data-ops/errors'
 import { createMiddleware, createServerFn } from '@tanstack/react-start'
+import { getServerTranslations } from '../../lib/i18n-server'
 import { getAuthContext } from '../middleware/auth'
 import { getSchoolContext, getSchoolYearContext } from '../middleware/school-context'
-import { getServerTranslations } from '../../lib/i18n-server'
-import type { TranslationFunctions } from '../../i18n/i18n-types'
 
 export interface ServerContext {
   auth: { userId: string, email: string, name: string }

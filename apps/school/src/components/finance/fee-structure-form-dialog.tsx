@@ -137,6 +137,14 @@ export function FeeStructureFormDialog({
     (ft: { id: string }) => ft.id === form.watch('feeTypeId'),
   )
 
+  const selectedGrade = gradesList.find(
+    (g: { id: string }) => g.id === form.watch('gradeId'),
+  )
+
+  const selectedSeries = seriesList.find(
+    (s: { id: string }) => s.id === form.watch('seriesId'),
+  )
+
   const mutation = useMutation({
     mutationFn: async (data: FeeStructureFormData) => {
       const yearContext = await getSchoolYearContext()
@@ -319,9 +327,11 @@ export function FeeStructureFormDialog({
                     >
                       <FormControl>
                         <SelectTrigger className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors">
-                          <SelectValue
-                            placeholder={t('finance.feeStructures.allLevels')}
-                          />
+                          <SelectValue placeholder={t('finance.feeStructures.allLevels')}>
+                            {field.value === 'all'
+                              ? t('finance.feeStructures.allLevels')
+                              : selectedGrade?.name}
+                          </SelectValue>
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="rounded-xl backdrop-blur-xl">
@@ -358,7 +368,11 @@ export function FeeStructureFormDialog({
                     >
                       <FormControl>
                         <SelectTrigger className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors">
-                          <SelectValue placeholder={t('finance.feeStructures.allSeries')} />
+                          <SelectValue placeholder={t('finance.feeStructures.allSeries')}>
+                            {field.value === 'all'
+                              ? t('finance.feeStructures.allSeries')
+                              : selectedSeries?.name}
+                          </SelectValue>
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="rounded-xl backdrop-blur-xl">

@@ -19,9 +19,9 @@ function StudentFeesPage() {
 
   const studentFeesList = (studentsWithBalance ?? []).map(s => ({
     id: s.studentId,
-    studentName: s.studentId, // This seems like placeholder data from backend, should be name if available
-    matricule: '',
-    className: '',
+    studentName: `${s.firstName} ${s.lastName}`,
+    matricule: s.matricule,
+    className: s.className,
     totalFees: Number(s.totalBalance ?? 0),
     paidAmount: 0,
     balance: Number(s.totalBalance ?? 0),

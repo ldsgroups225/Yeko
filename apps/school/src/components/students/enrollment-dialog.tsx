@@ -97,12 +97,10 @@ export function EnrollmentDialog({
 
   const selectedYearId = form.watch('schoolYearId')
 
-  const { data: classesResult, isLoading: classesLoading } = useQuery({
+  const { data: classes, isLoading: classesLoading } = useQuery({
     ...classesOptions.list({ schoolYearId: selectedYearId }),
     enabled: open && !!selectedYearId,
   })
-
-  const classesData = classesResult?.success ? classesResult.data : []
 
   const enrollMutation = useMutation({
     mutationFn: (data: EnrollmentFormData) =>
@@ -154,9 +152,25 @@ export function EnrollmentDialog({
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue
-                          placeholder={t.students.selectSchoolYear()}
-                        />
+                        <SelectValue placeholder={t.students.selectSchoolYear()}>
+                          {field.value
+                            ? (() => {
+                                const year = schoolYears.find(y => y.id === field.value)
+                                return year
+                                  ? (
+                                      <div className="flex items-center gap-2">
+                                        <span>{year.template.name}</span>
+                                        {year.isActive && (
+                                          <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                                            {t.common.active()}
+                                          </span>
+                                        )}
+                                      </div>
+                                    )
+                                  : undefined
+                              })()
+                            : undefined}
+                        </SelectValue>
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -190,11 +204,29 @@ export function EnrollmentDialog({
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder={t.students.selectClass()} />
+                        <SelectValue placeholder={t.students.selectClass()}>
+                          {field.value
+                            ? (() => {
+                                const cls = classes?.find(c => c.class.id === field.value)
+                                return cls
+                                  ? (
+                                      <div className="flex items-center gap-2">
+                                        <span>{cls.grade?.name} {cls.class.section}</span>
+                                        {cls.series?.name && (
+                                          <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                                            {cls.series.name}
+                                          </span>
+                                        )}
+                                      </div>
+                                    )
+                                  : undefined
+                              })()
+                            : undefined}
+                        </SelectValue>
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {classesData?.map(cls => (
+                      {classes?.map(cls => (
                         <SelectItem key={cls.class.id} value={cls.class.id}>
                           {cls.grade?.name}
                           {' '}
@@ -209,7 +241,7 @@ export function EnrollmentDialog({
                     {selectedYearId && classesLoading && t.common.loading()}
                     {selectedYearId
                       && !classesLoading
-                      && (!classesData || classesData.length === 0)
+                      && (!classes || classes.length === 0)
                       && t.students.noClassesForYear()}
                   </FormDescription>
                   <FormMessage />
@@ -229,6 +261,7 @@ export function EnrollmentDialog({
                   </FormLabel>
                   <FormControl>
                     <DatePicker
+                      captionLayout="dropdown"
                       date={field.value ? new Date(field.value) : undefined}
                       onSelect={(date: Date | undefined) => field.onChange(date ? (date.toISOString().split('T')[0] ?? '') : '')}
                       placeholder={t.students.enrollmentDate()}

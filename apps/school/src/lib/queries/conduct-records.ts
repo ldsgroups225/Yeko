@@ -32,7 +32,12 @@ export function conductRecordsOptions(params: {
 }) {
   return queryOptions({
     queryKey: conductRecordsKeys.list(params.schoolYearId, params),
-    queryFn: () => listConductRecords({ data: params }),
+    queryFn: async () => {
+      const res = await listConductRecords({ data: params })
+      if (!res.success)
+        throw new Error(res.error)
+      return res.data
+    },
     staleTime: 5 * 60 * 1000,
   })
 }
@@ -40,7 +45,12 @@ export function conductRecordsOptions(params: {
 export function conductRecordOptions(id: string) {
   return queryOptions({
     queryKey: conductRecordsKeys.detail(id),
-    queryFn: () => getConductRecordById({ data: { id } }),
+    queryFn: async () => {
+      const res = await getConductRecordById({ data: { id } })
+      if (!res.success)
+        throw new Error(res.error)
+      return res.data
+    },
     staleTime: 5 * 60 * 1000,
     enabled: !!id,
   })
@@ -49,7 +59,12 @@ export function conductRecordOptions(id: string) {
 export function studentConductSummaryOptions(studentId: string, schoolYearId: string) {
   return queryOptions({
     queryKey: conductRecordsKeys.summary(studentId, schoolYearId),
-    queryFn: () => getStudentSummary({ data: { studentId, schoolYearId } }),
+    queryFn: async () => {
+      const res = await getStudentSummary({ data: { studentId, schoolYearId } })
+      if (!res.success)
+        throw new Error(res.error)
+      return res.data
+    },
     staleTime: 5 * 60 * 1000,
     enabled: !!studentId && !!schoolYearId,
   })

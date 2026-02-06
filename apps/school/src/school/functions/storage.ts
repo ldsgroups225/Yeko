@@ -5,7 +5,7 @@ import {
   isR2Configured,
   isValidFileSize,
   isValidImageType,
-} from '@repo/data-ops'
+} from '@repo/data-ops/storage'
 import { z } from 'zod'
 import { authServerFn } from '../lib/server-fn'
 import { requirePermission } from '../middleware/permissions'

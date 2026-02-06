@@ -2,6 +2,8 @@ import type { Locale as DateFnsLocale } from 'date-fns/locale'
 import { format as dateFnsFormat } from 'date-fns'
 import { enUS, fr } from 'date-fns/locale'
 
+import { useSyncExternalStore } from 'react'
+
 // Removed i18n import to avoid stream errors
 
 /**
@@ -43,22 +45,46 @@ const formatMap: Record<DateFormatStyle, Record<DateLocale, string>> = {
   },
 }
 
-/**
- * Gets the current locale from localStorage or browser settings.
- * Fallback to 'fr'.
- */
-function getCurrentLocale(): DateLocale {
-  if (typeof window !== 'undefined') {
+const DEFAULT_LOCALE: DateLocale = 'fr'
+
+function getStoredLocale(): DateLocale {
+  try {
     const stored = localStorage.getItem('yeko_core_language')
     if (stored === 'en' || stored === 'fr')
       return stored
 
-    // Browser detection fallback
     const browserLang = navigator.language.split('-')[0]
     if (browserLang === 'en' || browserLang === 'fr')
       return browserLang
   }
-  return 'fr'
+  catch {
+    // Ignore storage errors
+  }
+  return DEFAULT_LOCALE
+}
+
+function subscribe(callback: () => void) {
+  window.addEventListener('storage', callback)
+  return () => window.removeEventListener('storage', callback)
+}
+
+function getServerSnapshot(): DateLocale {
+  return DEFAULT_LOCALE
+}
+
+export function useCurrentLocale(): DateLocale {
+  return useSyncExternalStore(subscribe, getStoredLocale, getServerSnapshot)
+}
+
+/**
+ * Gets the current locale. For components, prefer useCurrentLocale() hook.
+ * This function is safe for non-React contexts only.
+ */
+function getCurrentLocale(): DateLocale {
+  if (typeof window === 'undefined') {
+    return DEFAULT_LOCALE
+  }
+  return getStoredLocale()
 }
 
 /**

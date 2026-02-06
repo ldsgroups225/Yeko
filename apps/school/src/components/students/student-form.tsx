@@ -71,11 +71,11 @@ export function StudentForm({ student, mode }: StudentFormProps) {
       firstName: student?.firstName,
       lastName: student?.lastName,
       dob: student?.dob,
-      gender: student?.gender as any,
+      gender: student?.gender,
       photoUrl: student?.photoUrl,
       matricule: student?.matricule,
       birthPlace: student?.birthPlace,
-      nationality: student?.nationality || 'Ivoirien',
+      nationality: student?.nationality || 'Ivoirienne',
 
       address: student?.address,
       emergencyContact: student?.emergencyContact,
@@ -107,7 +107,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
 
   const updateMutation = useMutation({
     mutationFn: (data: StudentFormData) =>
-      updateStudent({ data: { id: student!.id, data } as any }),
+      updateStudent({ data: { id: student!.id, data } }),
 
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: studentsKeys.all })
@@ -326,6 +326,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                         </FormLabel>
                         <FormControl>
                           <DatePicker
+                            captionLayout="dropdown"
                             date={field.value ? new Date(field.value) : undefined}
                             onSelect={(date: Date | undefined) => field.onChange(date ? (date.toISOString().split('T')[0] ?? '') : '')}
                             placeholder={t.students.dateOfBirth()}
@@ -451,6 +452,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                         <FormLabel>{t.students.admissionDate()}</FormLabel>
                         <FormControl>
                           <DatePicker
+                            captionLayout="dropdown"
                             date={field.value ? new Date(field.value) : undefined}
                             onSelect={(date: Date | undefined) => field.onChange(date ? (date.toISOString().split('T')[0] ?? '') : '')}
                             placeholder={t.students.admissionDate()}

@@ -12,15 +12,25 @@ export const teacherSubjectsOptions = {
   list: (teacherId: string) =>
     queryOptions({
       queryKey: teacherSubjectsKeys.list(teacherId),
-      queryFn: () => getTeacherAssignments({ data: { teacherId } }),
+      queryFn: async () => {
+      const res = await getTeacherAssignments({ data: { teacherId } })
+      if (!res.success)
+        throw new Error(res.error)
+      return res.data
+    },
     }),
 
   available: (teacherId: string, schoolYearId?: string) =>
     queryOptions({
       queryKey: teacherSubjectsKeys.available(teacherId, schoolYearId || ''),
-      queryFn: () => schoolYearId
-        ? getAvailableSubjectsForTeacher({ data: { teacherId, schoolYearId } })
-        : Promise.resolve({ success: true as const, data: [] }),
+      queryFn: async () => {
+        if (!schoolYearId)
+          return []
+        const res = await getAvailableSubjectsForTeacher({ data: { teacherId, schoolYearId } })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       enabled: !!schoolYearId,
     }),
 }

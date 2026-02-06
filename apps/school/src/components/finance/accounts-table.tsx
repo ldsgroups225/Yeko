@@ -198,6 +198,10 @@ export function AccountsTable({
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              e.preventDefault()
+                            }}
                           >
                             <IconDots className="h-4 w-4" />
                           </Button>
@@ -275,6 +279,10 @@ export function AccountsTable({
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 rounded-lg -mr-2 -mt-2"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          e.preventDefault()
+                        }}
                       >
                         <IconDots className="h-4 w-4" />
                       </Button>

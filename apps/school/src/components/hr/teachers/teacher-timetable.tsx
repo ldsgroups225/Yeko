@@ -1,10 +1,13 @@
 import type { TimetableSessionData } from '@/components/timetables/timetable-session-card'
 import { IconCalendar } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
-import { TimetableGrid } from '@/components/timetables/timetable-grid'
+import { Skeleton } from '@workspace/ui/components/skeleton'
+import { Suspense, lazy } from 'react'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { teacherOptions } from '@/lib/queries/teachers'
+
+const TimetableGrid = lazy(() => import('@/components/timetables/timetable-grid').then(m => ({ default: m.TimetableGrid })))
 
 interface TeacherTimetableProps {
   teacherId: string
@@ -56,10 +59,12 @@ export function TeacherTimetable({ teacherId }: TeacherTimetableProps) {
 
   return (
     <div className="rounded-2xl border border-border/40 bg-card/20 p-4 shadow-sm backdrop-blur-sm">
-      <TimetableGrid
-        sessions={formattedSessions}
-        readOnly
-      />
+      <Suspense fallback={<Skeleton className="h-[400px] w-full rounded-xl" />}>
+        <TimetableGrid
+          sessions={formattedSessions}
+          readOnly
+        />
+      </Suspense>
     </div>
   )
 }

@@ -134,6 +134,10 @@ export function ConductRecordCard({
                   variant="ghost"
                   size="icon"
                   className="rounded-xl hover:bg-primary/10 hover:text-primary transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    e.preventDefault()
+                  }}
                 >
                   <IconDots className="h-5 w-5" />
                 </Button>

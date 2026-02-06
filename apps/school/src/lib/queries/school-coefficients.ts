@@ -33,7 +33,12 @@ export const schoolCoefficientsOptions = {
   list: (filters: CoefficientFilters) =>
     queryOptions({
       queryKey: schoolCoefficientsKeys.list(filters),
-      queryFn: () => getSchoolCoefficients({ data: filters }),
+      queryFn: async () => {
+        const res = await getSchoolCoefficients({ data: filters })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000, // 5 minutes
       gcTime: 30 * 60 * 1000, // 30 minutes
       enabled: !!filters.schoolYearTemplateId,
@@ -50,7 +55,12 @@ export const schoolCoefficientsOptions = {
   }) =>
     queryOptions({
       queryKey: schoolCoefficientsKeys.effectiveDetail(params),
-      queryFn: () => getEffectiveCoefficient({ data: params }),
+      queryFn: async () => {
+        const res = await getEffectiveCoefficient({ data: params })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
       enabled: !!params.subjectId && !!params.gradeId && !!params.schoolYearTemplateId,
@@ -62,7 +72,12 @@ export const schoolCoefficientsOptions = {
   matrix: (filters: CoefficientMatrixFilters) =>
     queryOptions({
       queryKey: schoolCoefficientsKeys.matrixFiltered(filters),
-      queryFn: () => getCoefficientMatrix({ data: filters }),
+      queryFn: async () => {
+        const res = await getCoefficientMatrix({ data: filters })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
       enabled: !!filters.schoolYearTemplateId,
@@ -74,7 +89,12 @@ export const schoolCoefficientsOptions = {
   stats: () =>
     queryOptions({
       queryKey: schoolCoefficientsKeys.stats(),
-      queryFn: () => getSchoolCoefficientStats(),
+      queryFn: async () => {
+        const res = await getSchoolCoefficientStats()
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
     }),

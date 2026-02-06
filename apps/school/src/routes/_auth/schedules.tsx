@@ -18,24 +18,20 @@ import {
 } from '@workspace/ui/components/select'
 import { Skeleton } from '@workspace/ui/components/skeleton'
 import { AnimatePresence, motion } from 'motion/react'
-import { useMemo, useState } from 'react'
+import { Suspense, lazy, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import {
-  TimetableGrid,
   TimetableViewSwitcher,
 } from '@/components/timetables'
 import { TimetableImportDialog } from '@/components/timetables/timetable-import-dialog'
-import { TimetableSessionDialog } from '@/components/timetables/timetable-session-dialog'
 import { useSchoolContext } from '@/hooks/use-school-context'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { timetablesOptions } from '@/lib/queries/timetables'
 import { detectConflicts } from '@/lib/utils/timetable-conflicts'
 import {
-
   dayOfWeekLabels,
-
 } from '@/schemas/timetable'
 import { getClassSubjects } from '@/school/functions/class-subjects'
 import { getClasses } from '@/school/functions/classes'
@@ -47,6 +43,9 @@ import {
   deleteTimetableSession,
   updateTimetableSession,
 } from '@/school/functions/timetables'
+
+const TimetableGrid = lazy(() => import('@/components/timetables').then(m => ({ default: m.TimetableGrid })))
+const TimetableSessionDialog = lazy(() => import('@/components/timetables/timetable-session-dialog').then(m => ({ default: m.TimetableSessionDialog })))
 
 export const Route = createFileRoute('/_auth/schedules')({
   component: TimetablesPage,
@@ -559,13 +558,15 @@ function TimetablesPage() {
                   className="bg-card/40 backdrop-blur-xl border border-border/40 p-1 rounded-3xl overflow-hidden shadow-xl"
                 >
                   <div className="p-4">
-                    <TimetableGrid
-                      sessions={transformedTimetable}
-                      isLoading={timetableLoading}
-                      onSlotClick={handleSlotClick}
-                      onSessionClick={handleSessionClick}
-                      readOnly={viewMode !== 'class'}
-                    />
+                    <Suspense fallback={<Skeleton className="h-[400px] w-full rounded-xl" />}>
+                      <TimetableGrid
+                        sessions={transformedTimetable}
+                        isLoading={timetableLoading}
+                        onSlotClick={handleSlotClick}
+                        onSessionClick={handleSessionClick}
+                        readOnly={viewMode !== 'class'}
+                      />
+                    </Suspense>
                   </div>
                 </motion.div>
               )
@@ -589,38 +590,40 @@ function TimetablesPage() {
         </AnimatePresence>
       </div>
 
-      <TimetableSessionDialog
-        open={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
-        mode={dialogMode}
-        initialData={
-          dialogMode === 'edit' && selectedSession
-            ? {
-                id: selectedSession.id,
-                subjectId: selectedSession.subjectId,
-                teacherId: selectedSession.teacherId ?? '',
-                classroomId: selectedSession.classroomId ?? '',
-                dayOfWeek: selectedSession.dayOfWeek,
-                startTime: selectedSession.startTime,
-                endTime: selectedSession.endTime,
-                color: selectedSession.color ?? undefined,
-              }
-            : selectedSlot
+      <Suspense fallback={null}>
+        <TimetableSessionDialog
+          open={isDialogOpen}
+          onOpenChange={setIsDialogOpen}
+          mode={dialogMode}
+          initialData={
+            dialogMode === 'edit' && selectedSession
               ? {
-                  dayOfWeek: selectedSlot.dayOfWeek,
-                  startTime: selectedSlot.startTime,
-                  endTime: selectedSlot.endTime,
+                  id: selectedSession.id,
+                  subjectId: selectedSession.subjectId,
+                  teacherId: selectedSession.teacherId ?? '',
+                  classroomId: selectedSession.classroomId ?? '',
+                  dayOfWeek: selectedSession.dayOfWeek,
+                  startTime: selectedSession.startTime,
+                  endTime: selectedSession.endTime,
+                  color: selectedSession.color ?? undefined,
                 }
-              : undefined
-        }
-        subjects={formattedSubjects}
-        teachers={formattedTeachers}
-        classrooms={formattedClassrooms}
-        onSubmit={handleSubmit}
-        onDelete={handleDelete}
-        isSubmitting={createMutation.isPending || updateMutation.isPending}
-        isDeleting={deleteMutation.isPending}
-      />
+              : selectedSlot
+                ? {
+                    dayOfWeek: selectedSlot.dayOfWeek,
+                    startTime: selectedSlot.startTime,
+                    endTime: selectedSlot.endTime,
+                  }
+                : undefined
+          }
+          subjects={formattedSubjects}
+          teachers={formattedTeachers}
+          classrooms={formattedClassrooms}
+          onSubmit={handleSubmit}
+          onDelete={handleDelete}
+          isSubmitting={createMutation.isPending || updateMutation.isPending}
+          isDeleting={deleteMutation.isPending}
+        />
+      </Suspense>
 
       <TimetableImportDialog
         open={isImportDialogOpen}

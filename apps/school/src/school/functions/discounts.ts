@@ -6,7 +6,7 @@ import {
   getDiscountById,
   getDiscounts,
   updateDiscount,
-} from '@repo/data-ops'
+} from '@repo/data-ops/queries/discounts'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import { z } from 'zod'
 import { createDiscountSchema, updateDiscountSchema } from '@/schemas/discount'

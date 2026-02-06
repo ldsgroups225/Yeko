@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { IconLoader2 } from '@tabler/icons-react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { IconCopy, IconLoader2 } from '@tabler/icons-react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Button } from '@workspace/ui/components/button'
 import { Checkbox } from '@workspace/ui/components/checkbox'
 import {
@@ -28,19 +28,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@workspace/ui/components/select'
+import { useCallback, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { useTranslations } from '@/i18n'
-import { feeTypesKeys } from '@/lib/queries/fee-types'
+import { feeTypesKeys, feeTypesOptions } from '@/lib/queries/fee-types'
 import { feeCategories, feeCategoryLabels } from '@/schemas/fee-type'
-import {
-  createNewFeeType,
-  updateExistingFeeType,
-} from '@/school/functions/fee-types'
+import { createNewFeeType, updateExistingFeeType } from '@/school/functions/fee-types'
 
 const feeTypeFormSchema = z.object({
   id: z.string().optional(),
+  templateId: z.string().optional(),
   code: z.string().min(1, 'Code requis').max(20, 'Code trop long'),
   name: z.string().min(1, 'Nom requis').max(100, 'Nom trop long'),
   nameEn: z.string().max(100).optional(),
@@ -67,6 +66,8 @@ export function FeeTypeFormDialog({
   const queryClient = useQueryClient()
   const isEditMode = !!editData
 
+  const { data: templates } = useQuery(feeTypesOptions.templates())
+
   const form = useForm<FeeTypeFormData>({
     resolver: zodResolver(feeTypeFormSchema) as never,
     defaultValues: {
@@ -80,8 +81,23 @@ export function FeeTypeFormDialog({
     },
   })
 
+  // Pre-fill form when template is selected
+  const handleTemplateSelect = useCallback((templateId: string) => {
+    const template = templates?.find(t => t.id === templateId)
+    if (template) {
+      form.setValue('templateId', templateId)
+      form.setValue('code', template.code)
+      form.setValue('name', template.name)
+      form.setValue('nameEn', template.nameEn || '')
+      form.setValue('category', template.category as any)
+      form.setValue('isMandatory', template.isMandatory)
+      form.setValue('isRecurring', template.isRecurring)
+      form.setValue('displayOrder', template.displayOrder)
+    }
+  }, [templates, form])
+
   // Reset form when opening/closing or switching modes
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     if (editData) {
       form.reset({
         id: editData.id,
@@ -105,12 +121,14 @@ export function FeeTypeFormDialog({
         displayOrder: 0,
       })
     }
-  }
+  }, [editData, form])
 
-  // Reset form when editData changes
-  if (open && form.formState.isDirty === false && editData) {
-    resetForm()
-  }
+  // Reset form when opening or editData changes
+  useEffect(() => {
+    if (open) {
+      resetForm()
+    }
+  }, [open, resetForm])
 
   const createMutation = useMutation({
     mutationFn: (data: FeeTypeFormData) =>
@@ -197,6 +215,73 @@ export function FeeTypeFormDialog({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            {!isEditMode && (
+              <FormField
+                control={form.control}
+                name="templateId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground flex items-center gap-2">
+                      <IconCopy className="h-3 w-3" />
+                      Import from template
+                    </FormLabel>
+                    <Select
+                      onValueChange={(value) => {
+                        if (value) {
+                          field.onChange(value)
+                          handleTemplateSelect(value)
+                        }
+                      }}
+                      value={field.value || ''}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors">
+                          <SelectValue placeholder="Sélectionner un modèle...">
+                            {field.value
+                              ? (() => {
+                                  const tpl = templates?.find(t => t.id === field.value)
+                                  return tpl
+                                    ? (
+                                        <div className="flex items-center gap-2">
+                                          <span className="font-medium">{tpl.name}</span>
+                                          <span className="text-muted-foreground text-xs">
+                                            (
+                                            {tpl.code}
+                                            )
+                                          </span>
+                                        </div>
+                                      )
+                                    : undefined
+                                })()
+                              : undefined}
+                          </SelectValue>
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">
+                        {templates?.map(template => (
+                          <SelectItem
+                            key={template.id}
+                            value={template.id}
+                            className="rounded-lg cursor-pointer focus:bg-primary/10"
+                          >
+                            <span className="font-medium">{template.name}</span>
+                            <span className="text-muted-foreground ml-2 text-xs">
+                              (
+                              {template.code}
+                              )
+                            </span>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription className="text-[11px]">
+                      Sélectionnez un modèle pour pré-remplir le formulaire
+                    </FormDescription>
+                  </FormItem>
+                )}
+              />
+            )}
+
             <div className="grid gap-4 md:grid-cols-2">
               <FormField
                 control={form.control}

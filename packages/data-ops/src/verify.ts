@@ -28,25 +28,22 @@ const db = drizzle(client, { schema })
 async function main() {
   console.log('🔍 Verifying database content...')
 
-  const levels = await db.select().from(schema.educationLevels)
+  const [levels, tracks, grades, series, subjects, years, terms] = await Promise.all([
+    db.select().from(schema.educationLevels),
+    db.select().from(schema.tracks),
+    db.select().from(schema.grades),
+    db.select().from(schema.series),
+    db.select().from(schema.subjects),
+    db.select().from(schema.schoolYearTemplates),
+    db.select().from(schema.termTemplates),
+  ])
+
   console.log(`Education Levels: ${levels.length} (Expected: 4)`)
-
-  const tracks = await db.select().from(schema.tracks)
   console.log(`Tracks: ${tracks.length} (Expected: 2)`)
-
-  const grades = await db.select().from(schema.grades)
   console.log(`Grades: ${grades.length} (Expected: 7)`)
-
-  const series = await db.select().from(schema.series)
   console.log(`Series: ${series.length} (Expected: 5)`)
-
-  const subjects = await db.select().from(schema.subjects)
   console.log(`Subjects: ${subjects.length} (Expected: 12)`)
-
-  const years = await db.select().from(schema.schoolYearTemplates)
   console.log(`School Years: ${years.length} (Expected: 1)`)
-
-  const terms = await db.select().from(schema.termTemplates)
   console.log(`Term Templates: ${terms.length} (Expected: 5)`)
 
   await client.end()
