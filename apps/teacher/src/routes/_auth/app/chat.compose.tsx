@@ -13,6 +13,7 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { useI18nContext } from '@/i18n/i18n-react'
+import { teacherMutationKeys } from '@/lib/queries/keys'
 import { parentSearchQueryOptions } from '@/lib/queries/messages'
 import { sendMessage } from '@/teacher/functions/messages'
 
@@ -54,6 +55,7 @@ function ComposeMessagePage() {
   })
 
   const sendMutation = useMutation({
+    mutationKey: teacherMutationKeys.messages.send,
     mutationFn: sendMessage,
     onSuccess: () => {
       toast.success(LL.messages.sentSuccess())

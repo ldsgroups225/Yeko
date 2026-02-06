@@ -3,6 +3,7 @@
 import type { NoteWithDetails } from '../lib/db/local-notes'
 import type { NewNote, NewNoteDetail, Note } from '../lib/db/schema'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { teacherMutationKeys } from '@/lib/queries/keys'
 import { localNotesService } from '../lib/db/local-notes'
 import { useDatabaseStatus } from './useDatabaseStatus'
 
@@ -74,23 +75,27 @@ export function useLocalNotes(options: UseLocalNotesOptions = {}): UseLocalNotes
   })
 
   const saveNoteMutation = useMutation({
+    mutationKey: teacherMutationKeys.localNotes.save,
     mutationFn: ({ note, details }: { note: NewNote, details?: NewNoteDetail[] }) =>
       localNotesService.saveNoteLocally(note, details),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notes'] }),
   })
 
   const updateNoteMutation = useMutation({
+    mutationKey: teacherMutationKeys.localNotes.update,
     mutationFn: ({ noteId, updates, details }: { noteId: string, updates: Partial<NewNote>, details?: NewNoteDetail[] }) =>
       localNotesService.updateNoteLocally(noteId, updates, details),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notes'] }),
   })
 
   const deleteNoteMutation = useMutation({
+    mutationKey: teacherMutationKeys.localNotes.delete,
     mutationFn: (noteId: string) => localNotesService.deleteNoteLocally(noteId),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notes'] }),
   })
 
   const publishNoteMutation = useMutation({
+    mutationKey: teacherMutationKeys.localNotes.publish,
     mutationFn: (noteId: string) => localNotesService.publishNote(noteId),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notes'] }),
   })
@@ -145,6 +150,7 @@ export function useNoteGrades(options: UseNoteGradesOptions): UseNoteGradesRetur
   })
 
   const updateGradeMutation = useMutation({
+    mutationKey: teacherMutationKeys.localNotes.updateGrade,
     mutationFn: ({ studentId, value }: { studentId: string, value: string }) =>
       localNotesService.updateStudentGrade(noteId, studentId, value),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notes', noteId, 'grades'] }),
@@ -186,6 +192,7 @@ export function useUnpublishedNotes(): UseUnpublishedNotesReturn {
   })
 
   const publishAllMutation = useMutation({
+    mutationKey: teacherMutationKeys.localNotes.publishAll,
     mutationFn: async (notes: NoteWithDetails[]) => {
       for (const note of notes) {
         await localNotesService.publishNote(note.id)
@@ -197,6 +204,7 @@ export function useUnpublishedNotes(): UseUnpublishedNotesReturn {
   })
 
   const clearAfterPublishMutation = useMutation({
+    mutationKey: teacherMutationKeys.localNotes.clearAfterPublish,
     mutationFn: (noteIds: string[]) => localNotesService.clearLocalDataAfterPublish(noteIds),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notes'] })

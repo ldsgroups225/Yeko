@@ -13,6 +13,7 @@ import { useNoteGrades } from '@/hooks/useLocalNotes'
 import { useSync } from '@/hooks/useSync'
 import { useI18nContext } from '@/i18n/i18n-react'
 import { localNotesService } from '@/lib/db/local-notes'
+import { teacherMutationKeys } from '@/lib/queries/keys'
 import { classStudentsQueryOptions } from '@/lib/queries/sessions'
 import { getCurrentTermFn } from '@/teacher/functions/schools'
 
@@ -92,6 +93,7 @@ function GradeEntryPage() {
   const { publishNotes, isPublishing: isSyncing } = useSync()
 
   const publishMutation = useMutation({
+    mutationKey: teacherMutationKeys.grades.publish,
     mutationFn: async () => {
       if (!localNoteId)
         return

@@ -14,6 +14,7 @@ import { SessionTimer } from '@/components/session/session-timer'
 import { StudentAttendanceList } from '@/components/session/student-attendance-list'
 import { StudentParticipationList } from '@/components/session/student-participation-list'
 import { useI18nContext } from '@/i18n/i18n-react'
+import { teacherMutationKeys } from '@/lib/queries/keys'
 import {
   participationGradesQueryOptions,
   sessionDetailsQueryOptions,
@@ -89,6 +90,7 @@ function SessionDetailPage() {
   }
 
   const saveParticipationMutation = useMutation({
+    mutationKey: teacherMutationKeys.sessions.saveParticipation,
     mutationFn: async () => {
       const grades = Array.from(localGrades.entries()).map(
         ([studentId, { grade, comment }]) => ({
@@ -117,6 +119,7 @@ function SessionDetailPage() {
   })
 
   const saveAttendanceMutation = useMutation({
+    mutationKey: teacherMutationKeys.sessions.saveAttendance,
     mutationFn: async () => {
       const studentsPresent = Array.from(attendance.values()).filter(s => s === 'present' || s === 'late').length
       const studentsAbsent = Array.from(attendance.values()).filter(s => s === 'absent' || s === 'excused').length
@@ -139,6 +142,7 @@ function SessionDetailPage() {
   })
 
   const completeMutation = useMutation({
+    mutationKey: teacherMutationKeys.sessions.complete,
     mutationFn: async () => {
       const studentsPresent = Array.from(attendance.values()).filter(s => s === 'present' || s === 'late').length
       const studentsAbsent = Array.from(attendance.values()).filter(s => s === 'absent' || s === 'excused').length

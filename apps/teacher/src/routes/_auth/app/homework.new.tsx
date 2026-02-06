@@ -21,6 +21,7 @@ import { toast } from 'sonner'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { useI18nContext } from '@/i18n/i18n-react'
 import { teacherClassesQueryOptions } from '@/lib/queries/dashboard'
+import { teacherMutationKeys } from '@/lib/queries/keys'
 import { createHomework } from '@/teacher/functions/homework'
 
 export const Route = createFileRoute('/_auth/app/homework/new')({
@@ -55,6 +56,7 @@ function NewHomeworkPage() {
   )
 
   const createMutation = useMutation({
+    mutationKey: teacherMutationKeys.homework.create,
     mutationFn: createHomework,
     onSuccess: () => {
       toast.success(LL.homework.created())

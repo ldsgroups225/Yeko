@@ -11,6 +11,7 @@ import { fr } from 'date-fns/locale'
 import { useEffect } from 'react'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { useI18nContext } from '@/i18n/i18n-react'
+import { teacherMutationKeys } from '@/lib/queries/keys'
 import { messageDetailQueryOptions, messagesKeys } from '@/lib/queries/messages'
 import { markMessageRead } from '@/teacher/functions/messages'
 
@@ -35,6 +36,7 @@ function MessageDetailPage() {
   })
 
   const markReadMutation = useMutation({
+    mutationKey: teacherMutationKeys.messages.markRead,
     mutationFn: markMessageRead,
     onMutate: async (variables) => {
       const id = variables.data.messageId

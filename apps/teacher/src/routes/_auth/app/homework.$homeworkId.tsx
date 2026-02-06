@@ -42,6 +42,7 @@ import { toast } from 'sonner'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { useI18nContext } from '@/i18n/i18n-react'
 import { homeworkDetailsQueryOptions } from '@/lib/queries/homework'
+import { teacherMutationKeys } from '@/lib/queries/keys'
 import { deleteHomework, updateHomework } from '@/teacher/functions/homework'
 
 export const Route = createFileRoute('/_auth/app/homework/$homeworkId')({
@@ -82,6 +83,7 @@ function HomeworkDetailPage() {
   }
 
   const updateMutation = useMutation({
+    mutationKey: teacherMutationKeys.homework.update,
     mutationFn: updateHomework,
     onSuccess: (result) => {
       if (result.success) {
@@ -99,6 +101,7 @@ function HomeworkDetailPage() {
   })
 
   const deleteMutation = useMutation({
+    mutationKey: teacherMutationKeys.homework.delete,
     mutationFn: deleteHomework,
     onSuccess: (result) => {
       if (result.success) {

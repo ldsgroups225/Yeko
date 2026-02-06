@@ -25,6 +25,7 @@ import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { useI18nContext } from '@/i18n/i18n-react'
 import { attendanceKeys, classRosterQueryOptions } from '@/lib/queries/attendance'
 import { teacherClassesQueryOptions } from '@/lib/queries/classes'
+import { teacherMutationKeys } from '@/lib/queries/keys'
 import { saveAttendance, saveBulkAttendance } from '@/teacher/functions/attendance'
 
 export const Route = createFileRoute('/_auth/app/attendance')({
@@ -94,6 +95,7 @@ function AttendancePage() {
 
   // Mutation for saving individual attendance
   const saveMutation = useMutation({
+    mutationKey: teacherMutationKeys.attendance.save,
     mutationFn: saveAttendance,
     onMutate: async (variables) => {
       const { enrollmentId, status } = variables.data
@@ -142,6 +144,7 @@ function AttendancePage() {
 
   // Mutation for bulk save
   const bulkSaveMutation = useMutation({
+    mutationKey: teacherMutationKeys.attendance.saveBulk,
     mutationFn: saveBulkAttendance,
     onMutate: async (variables) => {
       const { attendanceRecords } = variables.data
