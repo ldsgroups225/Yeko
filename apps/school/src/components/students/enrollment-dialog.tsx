@@ -152,9 +152,25 @@ export function EnrollmentDialog({
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue
-                          placeholder={t.students.selectSchoolYear()}
-                        />
+                        <SelectValue placeholder={t.students.selectSchoolYear()}>
+                          {field.value
+                            ? (() => {
+                                const year = schoolYears.find(y => y.id === field.value)
+                                return year
+                                  ? (
+                                      <div className="flex items-center gap-2">
+                                        <span>{year.template.name}</span>
+                                        {year.isActive && (
+                                          <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                                            {t.common.active()}
+                                          </span>
+                                        )}
+                                      </div>
+                                    )
+                                  : undefined
+                              })()
+                            : undefined}
+                        </SelectValue>
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -188,7 +204,25 @@ export function EnrollmentDialog({
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder={t.students.selectClass()} />
+                        <SelectValue placeholder={t.students.selectClass()}>
+                          {field.value
+                            ? (() => {
+                                const cls = classes?.find(c => c.class.id === field.value)
+                                return cls
+                                  ? (
+                                      <div className="flex items-center gap-2">
+                                        <span>{cls.grade?.name} {cls.class.section}</span>
+                                        {cls.series?.name && (
+                                          <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                                            {cls.series.name}
+                                          </span>
+                                        )}
+                                      </div>
+                                    )
+                                  : undefined
+                              })()
+                            : undefined}
+                        </SelectValue>
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
