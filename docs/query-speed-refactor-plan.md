@@ -2,7 +2,7 @@
 
 > **Date**: 2026-02-06
 > **Scope**: apps/core, apps/school, apps/teacher
-> **Status**: Phase 0+1 complete. All 12 core options files use queryOptions() + mutationKey. Starting Phase 2.
+> **Status**: Phase 0, 1, and 2 complete. All core options wrapped, and all mutations in School and Teacher apps now have `mutationKey`. Starting Phase 3 (Extraction where needed).
 
 ---
 
@@ -10,8 +10,8 @@
 
 | Metric | Core | School | Teacher |
 |---|---|---|---|
-| `queryOptions()` adoption | 3/12 (25%) | 29/29 (100%) | 10/10 (100%) |
-| Mutations missing `mutationKey` | ~5 | ~95 | ~19 |
+| `queryOptions()` adoption | 12/12 (100%) | 29/29 (100%) | 10/10 (100%) |
+| Mutations missing `mutationKey` | 0 | 0 | 0 |
 | Deprecated v4 patterns (`cacheTime`, `keepPreviousData: true`, query `onSuccess`) | 0 | 0 | 0 |
 | `keepPreviousData` import (correct v5) | ✅ | ✅ | ✅ |
 | Global defaults configured | ✅ | ✅ | ✅ |
@@ -111,16 +111,16 @@ Define mutation key factories for each app so naming stays consistent before mas
 
 **Deliverables:**
 
-- [ ] Document key convention in this file (done above)
-- [ ] Create `coreMutationKeys` in `apps/core/src/integrations/tanstack-query/` (extend existing files)
-- [ ] Create `schoolMutationKeys` factory in `apps/school/src/lib/queries/keys.ts` (or per-file)
-- [ ] Create `teacherMutationKeys` factory in `apps/teacher/src/lib/queries/keys.ts` (or per-file)
+- [x] Document key convention in this file (done above)
+- [x] Create `coreMutationKeys` in `apps/core/src/integrations/tanstack-query/` (done)
+- [x] Create `schoolMutationKeys` factory in `apps/school/src/lib/queries/keys.ts` (done)
+- [x] Create `teacherMutationKeys` factory in `apps/teacher/src/lib/queries/keys.ts` (done)
 
 ---
 
 ### Phase 1 — Core `queryOptions()` Migration
 
-**Effort**: ~2-3h | **Risk**: Low (type-only, no behavior change) | **Status**: ☐ Not started
+**Effort**: ~2-3h | **Risk**: Low (type-only, no behavior change) | **Status**: ✅ Complete
 
 Wrap 9 remaining core options files with `queryOptions()` for type safety. Add missing `mutationKey` to ~5 core mutations.
 
@@ -148,7 +148,7 @@ pnpm --filter @repo/core run typecheck
 
 ### Phase 2 — Add `mutationKey` Everywhere (No Structural Refactor)
 
-**Effort**: ~4-6h | **Risk**: Low (purely additive, zero behavior change) | **Status**: ☐ Not started
+**Effort**: ~4-6h | **Risk**: Low (purely additive, zero behavior change) | **Status**: ✅ Complete
 
 Add `mutationKey` inline next to every `mutationFn`. No extraction to options files — keep component ownership of side effects intact.
 
