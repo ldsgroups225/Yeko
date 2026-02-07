@@ -130,13 +130,17 @@ export function ClassesTable({
     setStatus('')
   }
 
+  const statusFilter = status && status !== 'all'
+    ? status as 'active' | 'archived'
+    : undefined
+
   const { data, isPending, refetch } = useQuery({
     queryKey: ['classes', { search: debouncedSearch, status }],
     queryFn: async () => {
       const result = await getClasses({
         data: {
           search: debouncedSearch,
-          status: status === 'all' ? undefined : status as 'active' | 'archived' | undefined,
+          status: statusFilter,
         },
       })
       if (!result.success)
