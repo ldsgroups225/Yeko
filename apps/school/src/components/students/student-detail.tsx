@@ -309,22 +309,18 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
                           />
                           <InfoRow
                             label={t.students.enrollmentStatus()}
-                            value={
-                              currentEnrollment?.status
-                                ? {
-                                    confirmed: t.students.enrollmentConfirmed,
-                                    pending: t.students.enrollmentPending,
-                                    cancelled: t.students.enrollmentCancelled,
-                                    transferred: t.students.enrollmentTransferred,
-                                  }[
-                                    currentEnrollment.status as
-                                    | 'confirmed'
-                                    | 'pending'
-                                    | 'cancelled'
-                                    | 'transferred'
-                                  ]()
-                                : '-'
-                            }
+                            value={(() => {
+                              const statusMap = {
+                                confirmed: t.students.enrollmentConfirmed,
+                                pending: t.students.enrollmentPending,
+                                cancelled: t.students.enrollmentCancelled,
+                                transferred: t.students.enrollmentTransferred,
+                              } as Record<string, (() => string) | undefined>
+                              const translationFn = currentEnrollment?.status
+                                ? statusMap[currentEnrollment.status]
+                                : undefined
+                              return translationFn ? translationFn() : (currentEnrollment?.status ?? '-')
+                            })()}
                           />
                           {currentEnrollment?.status === 'confirmed' && (
                             <Button

@@ -159,30 +159,6 @@ export function getStudents(filters: StudentFilters): ResultAsync<{
         )
       }
 
-      // Build query with joins for class/enrollment info
-      const baseQuery = db
-        .select({
-          student: students,
-          currentClass: {
-            id: classes.id,
-            section: classes.section,
-            gradeName: grades.name,
-            seriesName: series.name,
-          },
-          parentsCount: sql<number>`COUNT(DISTINCT ${studentParents.id})`.as('parents_count'),
-          enrollmentStatus: enrollments.status,
-          totalCount: sql<number>`COUNT(DISTINCT ${students.id}) OVER()`.as('total_count'),
-        })
-        .from(students)
-        .leftJoin(
-          enrollments,
-          and(eq(enrollments.studentId, students.id), eq(enrollments.status, 'confirmed')),
-        )
-        .leftJoin(classes, eq(enrollments.classId, classes.id))
-        .leftJoin(grades, eq(classes.gradeId, grades.id))
-        .leftJoin(series, eq(classes.seriesId, series.id))
-        .leftJoin(studentParents, eq(studentParents.studentId, students.id))
-
       // Apply class/grade/year filters
       if (classId) {
         conditions.push(eq(enrollments.classId, classId))
@@ -208,9 +184,37 @@ export function getStudents(filters: StudentFilters): ResultAsync<{
         createdAt: students.createdAt,
       }[sortBy]
 
-      const rows = await baseQuery
+      // Use subquery for parentsCount to avoid complex GROUP BY issues
+      const parentsCountSubquery = sql<number>`(
+        SELECT COUNT(*)::int FROM ${studentParents} 
+        WHERE ${studentParents.studentId} = ${students.id}
+      )`.as('parents_count')
+
+      // Use window function for total count
+      const totalCountExpr = sql<number>`COUNT(*) OVER()`.as('total_count')
+
+      const rows = await db
+        .select({
+          student: students,
+          currentClass: {
+            id: classes.id,
+            section: classes.section,
+            gradeName: grades.name,
+            seriesName: series.name,
+          },
+          parentsCount: parentsCountSubquery,
+          enrollmentStatus: enrollments.status,
+          totalCount: totalCountExpr,
+        })
+        .from(students)
+        .leftJoin(
+          enrollments,
+          and(eq(enrollments.studentId, students.id), eq(enrollments.status, 'confirmed')),
+        )
+        .leftJoin(classes, eq(enrollments.classId, classes.id))
+        .leftJoin(grades, eq(classes.gradeId, grades.id))
+        .leftJoin(series, eq(classes.seriesId, series.id))
         .where(whereClause)
-        .groupBy(students.id, classes.id, grades.id, series.id, enrollments.status)
         .orderBy(orderFn(sortColumn))
         .limit(limit)
         .offset(offset)
@@ -226,7 +230,7 @@ export function getStudents(filters: StudentFilters): ResultAsync<{
               seriesName: d.currentClass.seriesName,
             }
           : null,
-        parentsCount: d.parentsCount,
+        parentsCount: d.parentsCount ?? 0,
         enrollmentStatus: d.enrollmentStatus,
       }))
 
