@@ -4,6 +4,7 @@ import {
   IconBook,
   IconDatabase,
   IconPlus,
+  IconReceipt,
   IconSchool,
   IconSearch,
   IconTrendingUp,
@@ -69,6 +70,14 @@ function Catalogs() {
       href: '/app/catalogs/programs',
       stats: 'Bientôt disponible',
       variant: 'secondary' as const,
+    },
+    {
+      title: 'Modèles de Frais',
+      description: 'Définir les types de frais standards (Scolarité, Cantine, Transport) pour toutes les écoles',
+      icon: IconReceipt,
+      href: '/app/catalogs/fee-type-templates',
+      stats: 'Gérer les modèles',
+      variant: 'default' as const,
     },
   ]
 

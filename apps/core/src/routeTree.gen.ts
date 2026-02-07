@@ -33,6 +33,7 @@ import { Route as AuthAppCatalogsSubjectsRouteImport } from './routes/_auth/app/
 import { Route as AuthAppCatalogsSchoolYearsRouteImport } from './routes/_auth/app/catalogs/school-years'
 import { Route as AuthAppCatalogsProgramsRouteImport } from './routes/_auth/app/catalogs/programs'
 import { Route as AuthAppCatalogsGradesRouteImport } from './routes/_auth/app/catalogs/grades'
+import { Route as AuthAppCatalogsFeeTypeTemplatesRouteImport } from './routes/_auth/app/catalogs/fee-type-templates'
 import { Route as AuthAppCatalogsCoefficientsRouteImport } from './routes/_auth/app/catalogs/coefficients'
 import { Route as AuthAppSchoolsSchoolIdEditRouteImport } from './routes/_auth/app/schools/$schoolId_.edit'
 import { Route as AuthAppPolarCheckoutSuccessRouteImport } from './routes/_auth/app/polar/checkout.success'
@@ -159,6 +160,12 @@ const AuthAppCatalogsGradesRoute = AuthAppCatalogsGradesRouteImport.update({
   path: '/catalogs/grades',
   getParentRoute: () => AuthAppRouteRoute,
 } as any)
+const AuthAppCatalogsFeeTypeTemplatesRoute =
+  AuthAppCatalogsFeeTypeTemplatesRouteImport.update({
+    id: '/catalogs/fee-type-templates',
+    path: '/catalogs/fee-type-templates',
+    getParentRoute: () => AuthAppRouteRoute,
+  } as any)
 const AuthAppCatalogsCoefficientsRoute =
   AuthAppCatalogsCoefficientsRouteImport.update({
     id: '/catalogs/coefficients',
@@ -194,6 +201,7 @@ export interface FileRoutesByFullPath {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/app/': typeof AuthAppIndexRoute
   '/app/catalogs/coefficients': typeof AuthAppCatalogsCoefficientsRoute
+  '/app/catalogs/fee-type-templates': typeof AuthAppCatalogsFeeTypeTemplatesRoute
   '/app/catalogs/grades': typeof AuthAppCatalogsGradesRoute
   '/app/catalogs/programs': typeof AuthAppCatalogsProgramsRouteWithChildren
   '/app/catalogs/school-years': typeof AuthAppCatalogsSchoolYearsRoute
@@ -221,6 +229,7 @@ export interface FileRoutesByTo {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/app': typeof AuthAppIndexRoute
   '/app/catalogs/coefficients': typeof AuthAppCatalogsCoefficientsRoute
+  '/app/catalogs/fee-type-templates': typeof AuthAppCatalogsFeeTypeTemplatesRoute
   '/app/catalogs/grades': typeof AuthAppCatalogsGradesRoute
   '/app/catalogs/programs': typeof AuthAppCatalogsProgramsRouteWithChildren
   '/app/catalogs/school-years': typeof AuthAppCatalogsSchoolYearsRoute
@@ -252,6 +261,7 @@ export interface FileRoutesById {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_auth/app/': typeof AuthAppIndexRoute
   '/_auth/app/catalogs/coefficients': typeof AuthAppCatalogsCoefficientsRoute
+  '/_auth/app/catalogs/fee-type-templates': typeof AuthAppCatalogsFeeTypeTemplatesRoute
   '/_auth/app/catalogs/grades': typeof AuthAppCatalogsGradesRoute
   '/_auth/app/catalogs/programs': typeof AuthAppCatalogsProgramsRouteWithChildren
   '/_auth/app/catalogs/school-years': typeof AuthAppCatalogsSchoolYearsRoute
@@ -283,6 +293,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/app/'
     | '/app/catalogs/coefficients'
+    | '/app/catalogs/fee-type-templates'
     | '/app/catalogs/grades'
     | '/app/catalogs/programs'
     | '/app/catalogs/school-years'
@@ -310,6 +321,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/app'
     | '/app/catalogs/coefficients'
+    | '/app/catalogs/fee-type-templates'
     | '/app/catalogs/grades'
     | '/app/catalogs/programs'
     | '/app/catalogs/school-years'
@@ -340,6 +352,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/_auth/app/'
     | '/_auth/app/catalogs/coefficients'
+    | '/_auth/app/catalogs/fee-type-templates'
     | '/_auth/app/catalogs/grades'
     | '/_auth/app/catalogs/programs'
     | '/_auth/app/catalogs/school-years'
@@ -538,6 +551,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAppCatalogsGradesRouteImport
       parentRoute: typeof AuthAppRouteRoute
     }
+    '/_auth/app/catalogs/fee-type-templates': {
+      id: '/_auth/app/catalogs/fee-type-templates'
+      path: '/catalogs/fee-type-templates'
+      fullPath: '/app/catalogs/fee-type-templates'
+      preLoaderRoute: typeof AuthAppCatalogsFeeTypeTemplatesRouteImport
+      parentRoute: typeof AuthAppRouteRoute
+    }
     '/_auth/app/catalogs/coefficients': {
       id: '/_auth/app/catalogs/coefficients'
       path: '/catalogs/coefficients'
@@ -600,6 +620,7 @@ interface AuthAppRouteRouteChildren {
   AuthAppDashboardRoute: typeof AuthAppDashboardRoute
   AuthAppIndexRoute: typeof AuthAppIndexRoute
   AuthAppCatalogsCoefficientsRoute: typeof AuthAppCatalogsCoefficientsRoute
+  AuthAppCatalogsFeeTypeTemplatesRoute: typeof AuthAppCatalogsFeeTypeTemplatesRoute
   AuthAppCatalogsGradesRoute: typeof AuthAppCatalogsGradesRoute
   AuthAppCatalogsProgramsRoute: typeof AuthAppCatalogsProgramsRouteWithChildren
   AuthAppCatalogsSchoolYearsRoute: typeof AuthAppCatalogsSchoolYearsRoute
@@ -623,6 +644,7 @@ const AuthAppRouteRouteChildren: AuthAppRouteRouteChildren = {
   AuthAppDashboardRoute: AuthAppDashboardRoute,
   AuthAppIndexRoute: AuthAppIndexRoute,
   AuthAppCatalogsCoefficientsRoute: AuthAppCatalogsCoefficientsRoute,
+  AuthAppCatalogsFeeTypeTemplatesRoute: AuthAppCatalogsFeeTypeTemplatesRoute,
   AuthAppCatalogsGradesRoute: AuthAppCatalogsGradesRoute,
   AuthAppCatalogsProgramsRoute: AuthAppCatalogsProgramsRouteWithChildren,
   AuthAppCatalogsSchoolYearsRoute: AuthAppCatalogsSchoolYearsRoute,

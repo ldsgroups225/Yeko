@@ -14,6 +14,7 @@ import {
   IconHome,
   IconLayoutDashboard,
   IconLayoutGrid,
+  IconReceipt,
   IconReportAnalytics,
   IconSchool,
   IconSettings,
@@ -276,6 +277,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 title: t.nav.payments(),
                 href: '/accounting/payments',
                 icon: IconCreditCard,
+                permission: { resource: 'finance', action: 'view' },
+              },
+              {
+                title: t.finance.feeTypes.title(),
+                href: '/accounting/fee-types',
+                icon: IconReceipt,
                 permission: { resource: 'finance', action: 'view' },
               },
               {

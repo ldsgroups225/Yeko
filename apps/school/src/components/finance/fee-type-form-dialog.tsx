@@ -133,8 +133,8 @@ export function FeeTypeFormDialog({
 
   const createMutation = useMutation({
     mutationKey: schoolMutationKeys.feeTypes.create,
-    mutationFn: (data: FeeTypeFormData) =>
-      createNewFeeType({
+    mutationFn: async (data: FeeTypeFormData) => {
+      const result = await createNewFeeType({
         data: {
           code: data.code,
           name: data.name,
@@ -143,8 +143,14 @@ export function FeeTypeFormDialog({
           isMandatory: data.isMandatory,
           isRecurring: data.isRecurring,
           displayOrder: data.displayOrder,
+          feeTypeTemplateId: data.templateId || null,
         },
-      }),
+      })
+      if (!result.success) {
+        throw new Error(result.error)
+      }
+      return result.data
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: feeTypesKeys.all })
       toast.success(t.finance.feeTypes.created())
@@ -158,8 +164,8 @@ export function FeeTypeFormDialog({
 
   const updateMutation = useMutation({
     mutationKey: schoolMutationKeys.feeTypes.update,
-    mutationFn: (data: FeeTypeFormData) =>
-      updateExistingFeeType({
+    mutationFn: async (data: FeeTypeFormData) => {
+      const result = await updateExistingFeeType({
         data: {
           id: data.id!,
           code: data.code,
@@ -170,7 +176,12 @@ export function FeeTypeFormDialog({
           isRecurring: data.isRecurring,
           displayOrder: data.displayOrder,
         },
-      }),
+      })
+      if (!result.success) {
+        throw new Error(result.error)
+      }
+      return result.data
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: feeTypesKeys.all })
       toast.success('Type de frais mis à jour')

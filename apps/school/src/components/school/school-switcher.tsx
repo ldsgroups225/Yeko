@@ -23,7 +23,7 @@ export function SchoolSwitcher() {
   })
 
   /* Safe unwrapping of schools Result */
-  const schools = result?.success ? (result.data as Array<{ id: string, name: string }>) : []
+  const schools = result?.success ? result.data : []
 
   const currentSchool = schools.length > 0
     ? schools.find(school => school.id === schoolId)

@@ -19,6 +19,7 @@ export const createFeeTypeSchema = z.object({
   revenueAccountId: z.string().optional().nullable(),
   receivableAccountId: z.string().optional().nullable(),
   displayOrder: z.number().int().min(0).default(0),
+  feeTypeTemplateId: z.string().optional().nullable(),
 })
 
 export type CreateFeeTypeInput = z.infer<typeof createFeeTypeSchema>

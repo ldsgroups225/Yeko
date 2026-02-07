@@ -104,3 +104,38 @@ export type CreateSubjectInput = z.infer<typeof CreateSubjectSchema>
 export type UpdateSubjectInput = z.infer<typeof UpdateSubjectSchema>
 export type SubjectIdInput = z.infer<typeof SubjectIdSchema>
 export type GetSubjectsInput = z.infer<typeof GetSubjectsSchema>
+
+// ===== FEE TYPE TEMPLATES =====
+
+export const feeTypeCategories = ['tuition', 'registration', 'exam', 'books', 'transport', 'uniform', 'meals', 'activities', 'other'] as const
+
+export const CreateFeeTypeTemplateSchema = z.object({
+  code: z.string().min(2, 'Le code doit contenir au moins 2 caractères').regex(/^[A-Z0-9_]+$/, 'Le code doit contenir uniquement des lettres majuscules, chiffres et underscores'),
+  name: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
+  nameEn: z.string().optional(),
+  category: z.enum(feeTypeCategories),
+  description: z.string().optional(),
+  defaultAmount: z.number().int().min(0, 'Le montant ne peut pas être négatif').optional(),
+  isMandatory: z.boolean().default(false),
+  isRecurring: z.boolean().default(false),
+  displayOrder: z.number().int().min(0).default(0),
+  isActive: z.boolean().default(true),
+})
+
+export const UpdateFeeTypeTemplateSchema = CreateFeeTypeTemplateSchema.partial().merge(z.object({
+  id: z.string().min(1),
+}))
+
+export const FeeTypeTemplateIdSchema = z.object({
+  id: z.string().min(1),
+})
+
+export const GetFeeTypeTemplatesSchema = z.object({
+  category: z.enum(feeTypeCategories).optional(),
+  includeInactive: z.boolean().optional().default(false),
+})
+
+export type CreateFeeTypeTemplateInput = z.infer<typeof CreateFeeTypeTemplateSchema>
+export type UpdateFeeTypeTemplateInput = z.infer<typeof UpdateFeeTypeTemplateSchema>
+export type FeeTypeTemplateIdInput = z.infer<typeof FeeTypeTemplateIdSchema>
+export type GetFeeTypeTemplatesInput = z.input<typeof GetFeeTypeTemplatesSchema>

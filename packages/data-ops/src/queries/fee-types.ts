@@ -63,7 +63,20 @@ export function createFeeType(data: CreateFeeTypeData): ResultAsync<FeeType, Dat
       }
       return feeType
     })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create fee type'),
+    (err) => {
+      // Check for PostgreSQL unique constraint violations
+      const pgError = err as { code?: string, constraint?: string, detail?: string }
+      if (pgError.code === '23505') { // unique_violation
+        if (pgError.constraint?.includes('code')) {
+          return new DatabaseError('CONFLICT', `Le code "${data.code}" existe déjà pour cet établissement`, { code: data.code })
+        }
+        if (pgError.constraint?.includes('template')) {
+          return new DatabaseError('CONFLICT', 'Ce type de frais a déjà été importé depuis ce modèle', { templateId: data.feeTypeTemplateId })
+        }
+        return new DatabaseError('CONFLICT', 'Un type de frais avec ces informations existe déjà')
+      }
+      return DatabaseError.from(err, 'INTERNAL_ERROR', 'Échec de la création du type de frais')
+    },
   ).mapErr(tapLogErr(databaseLogger, { schoolId: data.schoolId, code: data.code }))
 }
 
