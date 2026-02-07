@@ -11,9 +11,7 @@ import { fr } from 'date-fns/locale'
 import { useEffect } from 'react'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { useI18nContext } from '@/i18n/i18n-react'
-import { teacherMutationKeys } from '@/lib/queries/keys'
-import { messageDetailQueryOptions, messagesKeys } from '@/lib/queries/messages'
-import { markMessageRead } from '@/teacher/functions/messages'
+import { messageDetailQueryOptions, messagesKeys, messagesMutations } from '@/lib/queries/messages'
 
 export const Route = createFileRoute('/_auth/app/chat/$messageId')({
   component: MessageDetailPage,
@@ -36,10 +34,9 @@ function MessageDetailPage() {
   })
 
   const markReadMutation = useMutation({
-    mutationKey: teacherMutationKeys.messages.markRead,
-    mutationFn: markMessageRead,
+    ...messagesMutations.markRead,
     onMutate: async (variables) => {
-      const id = variables.data.messageId
+      const id = variables.messageId
 
       // Cancel outgoing refetches
       await queryClient.cancelQueries({ queryKey: messagesKeys.lists() })
@@ -65,12 +62,12 @@ function MessageDetailPage() {
     },
     onError: (_err, variables, context) => {
       if (context?.previousDetail) {
-        queryClient.setQueryData(messagesKeys.detail(variables.data.messageId), context.previousDetail)
+        queryClient.setQueryData(messagesKeys.detail(variables.messageId), context.previousDetail)
       }
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: messagesKeys.lists() })
-      queryClient.invalidateQueries({ queryKey: messagesKeys.detail(variables.data.messageId) })
+      queryClient.invalidateQueries({ queryKey: messagesKeys.detail(variables.messageId) })
     },
   })
 
@@ -78,10 +75,8 @@ function MessageDetailPage() {
   useEffect(() => {
     if (data?.message && !data.message.isRead && context) {
       markReadMutation.mutate({
-        data: {
-          messageId,
-          teacherId: context.teacherId,
-        },
+        messageId,
+        teacherId: context.teacherId,
       })
     }
   }, [data?.message, context, messageId, markReadMutation])

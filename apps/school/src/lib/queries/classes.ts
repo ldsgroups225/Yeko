@@ -1,8 +1,12 @@
 import { queryOptions } from '@tanstack/react-query'
 import {
+  createClass,
+  deleteClass,
   getClassById,
   getClasses,
+  updateClass,
 } from '@/school/functions/classes'
+import { schoolMutationKeys } from './keys'
 
 export const classesKeys = {
   all: ['classes'] as const,
@@ -47,4 +51,20 @@ export const classesOptions = {
       gcTime: 30 * 60 * 1000,
       enabled: !!id,
     }),
+}
+
+// Class mutations
+export const classesMutations = {
+  create: {
+    mutationKey: schoolMutationKeys.classes.create,
+    mutationFn: (data: Parameters<typeof createClass>[0]['data']) => createClass({ data }),
+  },
+  update: {
+    mutationKey: schoolMutationKeys.classes.update,
+    mutationFn: (data: Parameters<typeof updateClass>[0]['data']) => updateClass({ data }),
+  },
+  delete: {
+    mutationKey: schoolMutationKeys.classes.delete,
+    mutationFn: (id: string) => deleteClass({ data: id }),
+  },
 }

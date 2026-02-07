@@ -1,9 +1,13 @@
 import { queryOptions } from '@tanstack/react-query'
 import {
+  createNewAccount,
+  deleteExistingAccount,
   getAccount,
   getAccountsList,
   getAccountsTreeData,
+  updateExistingAccount,
 } from '@/school/functions/accounts'
+import { schoolMutationKeys } from './keys'
 
 export const accountsKeys = {
   all: ['accounts'] as const,
@@ -60,4 +64,20 @@ export const accountsOptions = {
       gcTime: 30 * 60 * 1000,
       enabled: !!id,
     }),
+}
+
+// Accounts mutations
+export const accountsMutations = {
+  create: {
+    mutationKey: schoolMutationKeys.accounts.create,
+    mutationFn: (data: Parameters<typeof createNewAccount>[0]['data']) => createNewAccount({ data }),
+  },
+  update: {
+    mutationKey: schoolMutationKeys.accounts.update,
+    mutationFn: (data: Parameters<typeof updateExistingAccount>[0]['data']) => updateExistingAccount({ data }),
+  },
+  delete: {
+    mutationKey: schoolMutationKeys.accounts.delete,
+    mutationFn: (id: string) => deleteExistingAccount({ data: id }),
+  },
 }

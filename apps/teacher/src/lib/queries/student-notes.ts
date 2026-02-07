@@ -5,10 +5,14 @@
 import { queryOptions } from '@tanstack/react-query'
 
 import {
+  createStudentNote,
+  deleteStudentNote,
   getBehaviorSummary,
   getNotesTrend,
   getStudentNotes,
+  updateStudentNote,
 } from '@/teacher/functions/student-notes'
+import { teacherMutationKeys } from './keys'
 
 // Options for getting student notes
 export function studentNotesQueryOptions(params: {
@@ -61,4 +65,20 @@ export function notesTrendQueryOptions(params: {
     queryFn: () => getNotesTrend({ data: params }),
     staleTime: 30 * 60 * 1000, // 30 minutes - trend changes slowly
   })
+}
+
+// Student notes mutations
+export const studentNotesMutations = {
+  create: {
+    mutationKey: teacherMutationKeys.studentNotes.create,
+    mutationFn: (data: Parameters<typeof createStudentNote>[0]['data']) => createStudentNote({ data }),
+  },
+  update: {
+    mutationKey: teacherMutationKeys.studentNotes.update,
+    mutationFn: (data: Parameters<typeof updateStudentNote>[0]['data']) => updateStudentNote({ data }),
+  },
+  delete: {
+    mutationKey: teacherMutationKeys.studentNotes.delete,
+    mutationFn: (data: Parameters<typeof deleteStudentNote>[0]['data']) => deleteStudentNote({ data }),
+  },
 }

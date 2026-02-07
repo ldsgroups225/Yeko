@@ -13,9 +13,7 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { useI18nContext } from '@/i18n/i18n-react'
-import { teacherMutationKeys } from '@/lib/queries/keys'
-import { parentSearchQueryOptions } from '@/lib/queries/messages'
-import { sendMessage } from '@/teacher/functions/messages'
+import { messagesMutations, parentSearchQueryOptions } from '@/lib/queries/messages'
 
 const searchParamsSchema = z.object({
   replyTo: z.string().optional(),
@@ -55,8 +53,7 @@ function ComposeMessagePage() {
   })
 
   const sendMutation = useMutation({
-    mutationKey: teacherMutationKeys.messages.send,
-    mutationFn: sendMessage,
+    ...messagesMutations.send,
     onSuccess: () => {
       toast.success(LL.messages.sentSuccess())
       queryClient.invalidateQueries({ queryKey: ['teacher', 'messages'] })
@@ -72,14 +69,12 @@ function ComposeMessagePage() {
       return
 
     sendMutation.mutate({
-      data: {
-        teacherId: context.teacherId,
-        schoolId: context.schoolId,
-        recipientId: selectedParent.id,
-        subject: subject.trim() || undefined,
-        content: content.trim(),
-        replyToId: replyTo,
-      },
+      teacherId: context.teacherId,
+      schoolId: context.schoolId,
+      recipientId: selectedParent.id,
+      subject: subject.trim() || undefined,
+      content: content.trim(),
+      replyToId: replyTo,
     })
   }
 

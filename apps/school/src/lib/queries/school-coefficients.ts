@@ -1,11 +1,18 @@
 import type { CoefficientFilters, CoefficientMatrixFilters } from '@/schemas/coefficient-override'
 import { queryOptions } from '@tanstack/react-query'
 import {
+  bulkUpdateSchoolCoefficients,
+  copySchoolCoefficientsFromYear,
+  createCoefficientOverride,
+  deleteCoefficientOverride,
   getCoefficientMatrix,
   getEffectiveCoefficient,
   getSchoolCoefficients,
   getSchoolCoefficientStats,
+  resetAllSchoolCoefficients,
+  updateCoefficientOverride,
 } from '@/school/functions/school-coefficients'
+import { schoolMutationKeys } from './keys'
 
 // ===== SCHOOL COEFFICIENTS QUERY OPTIONS =====
 
@@ -98,4 +105,32 @@ export const schoolCoefficientsOptions = {
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
     }),
+}
+
+// School coefficients mutations
+export const schoolCoefficientsMutations = {
+  create: {
+    mutationKey: schoolMutationKeys.coefficients.create,
+    mutationFn: (data: Parameters<typeof createCoefficientOverride>[0]['data']) => createCoefficientOverride({ data }),
+  },
+  update: {
+    mutationKey: schoolMutationKeys.coefficients.update,
+    mutationFn: (data: Parameters<typeof updateCoefficientOverride>[0]['data']) => updateCoefficientOverride({ data }),
+  },
+  delete: {
+    mutationKey: schoolMutationKeys.coefficients.delete,
+    mutationFn: (id: string) => deleteCoefficientOverride({ data: id }),
+  },
+  bulkUpdate: {
+    mutationKey: schoolMutationKeys.coefficients.bulkUpdate,
+    mutationFn: (data: Parameters<typeof bulkUpdateSchoolCoefficients>[0]['data']) => bulkUpdateSchoolCoefficients({ data }),
+  },
+  copy: {
+    mutationKey: schoolMutationKeys.coefficients.copy,
+    mutationFn: (data: Parameters<typeof copySchoolCoefficientsFromYear>[0]['data']) => copySchoolCoefficientsFromYear({ data }),
+  },
+  reset: {
+    mutationKey: schoolMutationKeys.coefficients.reset,
+    mutationFn: () => resetAllSchoolCoefficients(),
+  },
 }

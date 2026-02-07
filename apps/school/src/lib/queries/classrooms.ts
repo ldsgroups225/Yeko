@@ -1,8 +1,12 @@
 import { queryOptions } from '@tanstack/react-query'
 import {
+  createClassroom,
+  deleteClassroom,
   getClassroomById,
   getClassrooms,
+  updateClassroom,
 } from '@/school/functions/classrooms'
+import { schoolMutationKeys } from './keys'
 
 export const classroomsKeys = {
   all: ['classrooms'] as const,
@@ -45,4 +49,20 @@ export const classroomsOptions = {
       gcTime: 30 * 60 * 1000,
       enabled: !!id,
     }),
+}
+
+// Classroom mutations
+export const classroomsMutations = {
+  create: {
+    mutationKey: schoolMutationKeys.classrooms.create,
+    mutationFn: (data: Parameters<typeof createClassroom>[0]['data']) => createClassroom({ data }),
+  },
+  update: {
+    mutationKey: schoolMutationKeys.classrooms.update,
+    mutationFn: (data: Parameters<typeof updateClassroom>[0]['data']) => updateClassroom({ data }),
+  },
+  delete: {
+    mutationKey: schoolMutationKeys.classrooms.delete,
+    mutationFn: (id: string) => deleteClassroom({ data: id }),
+  },
 }

@@ -2,6 +2,13 @@ import type { ReportCardStatus } from '@/schemas/report-card'
 
 import { queryOptions } from '@tanstack/react-query'
 import {
+  bulkGenerateReportCards,
+  bulkSendReportCards,
+  createReportCardTemplate,
+  createTeacherComment,
+  deleteReportCardTemplate,
+  deleteTeacherComment,
+  generateReportCard,
   getClassReportCardStats,
   getDefaultTemplate,
   getDeliveryStatusSummary,
@@ -12,7 +19,14 @@ import {
   getReportCardTemplate,
   getReportCardTemplates,
   getTeacherComments,
+  markReportCardDelivered,
+  markReportCardViewed,
+  sendReportCard,
+  updateHomeroomComment,
+  updateReportCardTemplate,
+  updateTeacherComment,
 } from '@/school/functions/report-cards'
+import { schoolMutationKeys } from './keys'
 
 // ============================================
 // QUERY KEYS
@@ -199,4 +213,68 @@ export const reportCardsOptions = {
       gcTime: 30 * 60 * 1000,
       enabled: !!reportCardId,
     }),
+}
+
+// Report cards mutations
+export const reportCardsMutations = {
+  generate: {
+    mutationKey: schoolMutationKeys.reportCards.generate,
+    mutationFn: (data: Parameters<typeof generateReportCard>[0]['data']) => generateReportCard({ data }),
+  },
+  bulkGenerate: {
+    mutationKey: schoolMutationKeys.reportCards.bulkGenerate,
+    mutationFn: (data: Parameters<typeof bulkGenerateReportCards>[0]['data']) => bulkGenerateReportCards({ data }),
+  },
+  updateHomeroomComment: {
+    mutationKey: schoolMutationKeys.reportCards.update,
+    mutationFn: (data: Parameters<typeof updateHomeroomComment>[0]['data']) => updateHomeroomComment({ data }),
+  },
+  send: {
+    mutationKey: schoolMutationKeys.reportCards.send,
+    mutationFn: (data: Parameters<typeof sendReportCard>[0]['data']) => sendReportCard({ data }),
+  },
+  bulkSend: {
+    mutationKey: schoolMutationKeys.reportCards.bulkSend,
+    mutationFn: (data: Parameters<typeof bulkSendReportCards>[0]['data']) => bulkSendReportCards({ data }),
+  },
+  markDelivered: {
+    mutationKey: schoolMutationKeys.reportCards.markDelivered,
+    mutationFn: (data: Parameters<typeof markReportCardDelivered>[0]['data']) => markReportCardDelivered({ data }),
+  },
+  markViewed: {
+    mutationKey: schoolMutationKeys.reportCards.markViewed,
+    mutationFn: (data: Parameters<typeof markReportCardViewed>[0]['data']) => markReportCardViewed({ data }),
+  },
+}
+
+// Report card templates mutations
+export const reportCardTemplatesMutations = {
+  create: {
+    mutationKey: schoolMutationKeys.reportCardTemplates.create,
+    mutationFn: (data: Parameters<typeof createReportCardTemplate>[0]['data']) => createReportCardTemplate({ data }),
+  },
+  update: {
+    mutationKey: schoolMutationKeys.reportCardTemplates.update,
+    mutationFn: (data: Parameters<typeof updateReportCardTemplate>[0]['data']) => updateReportCardTemplate({ data }),
+  },
+  delete: {
+    mutationKey: schoolMutationKeys.reportCardTemplates.delete,
+    mutationFn: (data: Parameters<typeof deleteReportCardTemplate>[0]['data']) => deleteReportCardTemplate({ data }),
+  },
+}
+
+// Teacher comments mutations
+export const teacherCommentsMutations = {
+  create: {
+    mutationKey: schoolMutationKeys.teacherComments.create,
+    mutationFn: (data: Parameters<typeof createTeacherComment>[0]['data']) => createTeacherComment({ data }),
+  },
+  update: {
+    mutationKey: schoolMutationKeys.teacherComments.update,
+    mutationFn: (data: Parameters<typeof updateTeacherComment>[0]['data']) => updateTeacherComment({ data }),
+  },
+  delete: {
+    mutationKey: schoolMutationKeys.teacherComments.delete,
+    mutationFn: (data: Parameters<typeof deleteTeacherComment>[0]['data']) => deleteTeacherComment({ data }),
+  },
 }

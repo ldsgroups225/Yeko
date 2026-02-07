@@ -1,12 +1,16 @@
 import type { SchoolSubjectsFilters } from '@/schemas/school-subject'
 import { queryOptions } from '@tanstack/react-query'
 import {
+  addSubjectsToSchool,
   checkSubjectInUseForUI,
+  deleteSchoolSubject,
   getAvailableCoreSubjects,
   getSchoolSubjectById,
   getSchoolSubjects,
   getSubjectUsageStats,
+  toggleSchoolSubjectStatus,
 } from '@/school/functions/school-subjects'
+import { schoolMutationKeys } from './keys'
 
 // ===== SCHOOL SUBJECTS QUERY OPTIONS =====
 
@@ -112,4 +116,20 @@ export const schoolSubjectsOptions = {
       gcTime: 5 * 60 * 1000,
       enabled: !!subjectId,
     }),
+}
+
+// School subjects mutations
+export const schoolSubjectsMutations = {
+  import: {
+    mutationKey: schoolMutationKeys.schoolSubjects.import,
+    mutationFn: (data: Parameters<typeof addSubjectsToSchool>[0]['data']) => addSubjectsToSchool({ data }),
+  },
+  toggleStatus: {
+    mutationKey: schoolMutationKeys.schoolSubjects.toggleStatus,
+    mutationFn: (data: Parameters<typeof toggleSchoolSubjectStatus>[0]['data']) => toggleSchoolSubjectStatus({ data }),
+  },
+  delete: {
+    mutationKey: schoolMutationKeys.schoolSubjects.delete,
+    mutationFn: (id: string) => deleteSchoolSubject({ data: id }),
+  },
 }

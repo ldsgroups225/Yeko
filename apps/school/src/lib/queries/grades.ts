@@ -1,12 +1,20 @@
 import { queryOptions } from '@tanstack/react-query'
-
 import {
+  createBulkGrades,
+  createGrade,
+  deleteDraftGrades,
+  deleteGrade,
   getGrade,
   getGradesByClass,
   getGradeStatistics,
   getGradeValidationHistory,
   getPendingValidations,
+  rejectGrades,
+  submitGradesForValidation,
+  updateGrade,
+  validateGrades,
 } from '@/school/functions/student-grades'
+import { schoolMutationKeys } from './keys'
 
 export const gradesKeys = {
   all: ['grades'] as const,
@@ -51,8 +59,8 @@ export const gradesOptions = {
           throw new Error(res.error)
         return res.data
       },
-      staleTime: 30 * 1000, // 30 seconds - grades change frequently
-      gcTime: 5 * 60 * 1000, // 5 minutes
+      staleTime: 30 * 1000,
+      gcTime: 5 * 60 * 1000,
       enabled: !!params.classId && !!params.subjectId && !!params.termId,
     }),
 
@@ -93,8 +101,8 @@ export const gradesOptions = {
           throw new Error(res.error)
         return res.data
       },
-      staleTime: 60 * 1000, // 1 minute
-      gcTime: 10 * 60 * 1000, // 10 minutes
+      staleTime: 60 * 1000,
+      gcTime: 10 * 60 * 1000,
       enabled: !!params.classId && !!params.termId,
     }),
 
@@ -107,8 +115,44 @@ export const gradesOptions = {
           throw new Error(res.error)
         return res.data
       },
-      staleTime: 60 * 1000, // 1 minute
-      gcTime: 10 * 60 * 1000, // 10 minutes
+      staleTime: 60 * 1000,
+      gcTime: 10 * 60 * 1000,
       enabled: !!gradeId,
     }),
+}
+
+// Grades mutations
+export const gradesMutations = {
+  create: {
+    mutationKey: schoolMutationKeys.grades.save,
+    mutationFn: (data: Parameters<typeof createGrade>[0]['data']) => createGrade({ data }),
+  },
+  bulkCreate: {
+    mutationKey: schoolMutationKeys.grades.bulkSave,
+    mutationFn: (data: Parameters<typeof createBulkGrades>[0]['data']) => createBulkGrades({ data }),
+  },
+  update: {
+    mutationKey: schoolMutationKeys.grades.save,
+    mutationFn: (data: Parameters<typeof updateGrade>[0]['data']) => updateGrade({ data }),
+  },
+  delete: {
+    mutationKey: schoolMutationKeys.grades.delete,
+    mutationFn: (id: string) => deleteGrade({ data: { id } }),
+  },
+  deleteDrafts: {
+    mutationKey: schoolMutationKeys.grades.delete,
+    mutationFn: (data: Parameters<typeof deleteDraftGrades>[0]['data']) => deleteDraftGrades({ data }),
+  },
+  submit: {
+    mutationKey: schoolMutationKeys.grades.publish,
+    mutationFn: (data: Parameters<typeof submitGradesForValidation>[0]['data']) => submitGradesForValidation({ data }),
+  },
+  validate: {
+    mutationKey: schoolMutationKeys.grades.validate,
+    mutationFn: (data: Parameters<typeof validateGrades>[0]['data']) => validateGrades({ data }),
+  },
+  reject: {
+    mutationKey: schoolMutationKeys.grades.reject,
+    mutationFn: (data: Parameters<typeof rejectGrades>[0]['data']) => rejectGrades({ data }),
+  },
 }

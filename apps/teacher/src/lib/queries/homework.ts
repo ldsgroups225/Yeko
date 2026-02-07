@@ -1,6 +1,13 @@
 import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 
-import { getHomework, getHomeworkDetails } from '@/teacher/functions/homework'
+import {
+  createHomework,
+  deleteHomework,
+  getHomework,
+  getHomeworkDetails,
+  updateHomework,
+} from '@/teacher/functions/homework'
+import { teacherMutationKeys } from './keys'
 
 interface HomeworkListParams {
   teacherId: string
@@ -40,4 +47,20 @@ export function homeworkDetailsQueryOptions(params: HomeworkDetailsParams) {
     queryFn: () => getHomeworkDetails({ data: params }),
     staleTime: 60 * 1000, // 1 minute
   })
+}
+
+// Homework mutations
+export const homeworkMutations = {
+  create: {
+    mutationKey: teacherMutationKeys.homework.create,
+    mutationFn: (data: Parameters<typeof createHomework>[0]['data']) => createHomework({ data }),
+  },
+  update: {
+    mutationKey: teacherMutationKeys.homework.update,
+    mutationFn: (data: Parameters<typeof updateHomework>[0]['data']) => updateHomework({ data }),
+  },
+  delete: {
+    mutationKey: teacherMutationKeys.homework.delete,
+    mutationFn: (data: Parameters<typeof deleteHomework>[0]['data']) => deleteHomework({ data }),
+  },
 }

@@ -1,5 +1,16 @@
 import { queryOptions } from '@tanstack/react-query'
-import { getTeacher, getTeacherClassesList, getTeachers, getTeacherSchedulesList } from '@/school/functions/teachers'
+import {
+  assignSubjects,
+  createNewTeacher,
+  deleteExistingTeacher,
+  getTeacher,
+  getTeacherClassesList,
+  getTeachers,
+  getTeacherSchedulesList,
+  linkTeacherByEmailFn,
+  updateExistingTeacher,
+} from '@/school/functions/teachers'
+import { schoolMutationKeys } from './keys'
 
 export const teacherKeys = {
   all: ['teachers'] as const,
@@ -21,6 +32,7 @@ export const teacherOptions = {
           throw new Error(res.error)
         return res.data
       },
+      staleTime: 5 * 60 * 1000,
     }),
 
   detail: (id: string) =>
@@ -33,6 +45,7 @@ export const teacherOptions = {
         return res.data
       },
       enabled: !!id,
+      staleTime: 5 * 60 * 1000,
     }),
 
   classes: (id: string) =>
@@ -45,6 +58,7 @@ export const teacherOptions = {
         return res.data
       },
       enabled: !!id,
+      staleTime: 5 * 60 * 1000,
     }),
 
   schedules: (id: string, schoolYearId: string) =>
@@ -57,5 +71,30 @@ export const teacherOptions = {
         return res.data
       },
       enabled: !!id && !!schoolYearId,
+      staleTime: 5 * 60 * 1000,
     }),
+}
+
+// Teachers mutations
+export const teacherMutations = {
+  assignSubjects: {
+    mutationKey: schoolMutationKeys.teachers.assign,
+    mutationFn: (data: Parameters<typeof assignSubjects>[0]['data']) => assignSubjects({ data }),
+  },
+  create: {
+    mutationKey: schoolMutationKeys.teachers.create,
+    mutationFn: (data: Parameters<typeof createNewTeacher>[0]['data']) => createNewTeacher({ data }),
+  },
+  delete: {
+    mutationKey: schoolMutationKeys.teachers.delete,
+    mutationFn: (id: string) => deleteExistingTeacher({ data: id }),
+  },
+  linkByEmail: {
+    mutationKey: schoolMutationKeys.teachers.link,
+    mutationFn: (data: Parameters<typeof linkTeacherByEmailFn>[0]['data']) => linkTeacherByEmailFn({ data }),
+  },
+  update: {
+    mutationKey: schoolMutationKeys.teachers.update,
+    mutationFn: (data: Parameters<typeof updateExistingTeacher>[0]['data']) => updateExistingTeacher({ data }),
+  },
 }

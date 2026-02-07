@@ -1,9 +1,15 @@
 import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import {
+  approveExistingRefund,
+  cancelExistingRefund,
   getPendingRefunds,
   getRefund,
   getRefundsList,
+  processExistingRefund,
+  rejectExistingRefund,
+  requestRefund,
 } from '@/school/functions/refunds'
+import { schoolMutationKeys } from './keys'
 
 export const refundsKeys = {
   all: ['refunds'] as const,
@@ -64,4 +70,28 @@ export const refundsOptions = {
       staleTime: 1 * 60 * 1000,
       gcTime: 5 * 60 * 1000,
     }),
+}
+
+// Refunds mutations
+export const refundsMutations = {
+  create: {
+    mutationKey: schoolMutationKeys.refunds.create,
+    mutationFn: (data: Parameters<typeof requestRefund>[0]['data']) => requestRefund({ data }),
+  },
+  approve: {
+    mutationKey: schoolMutationKeys.refunds.approve,
+    mutationFn: (data: Parameters<typeof approveExistingRefund>[0]['data']) => approveExistingRefund({ data }),
+  },
+  reject: {
+    mutationKey: schoolMutationKeys.refunds.reject,
+    mutationFn: (data: Parameters<typeof rejectExistingRefund>[0]['data']) => rejectExistingRefund({ data }),
+  },
+  process: {
+    mutationKey: schoolMutationKeys.refunds.process,
+    mutationFn: (data: Parameters<typeof processExistingRefund>[0]['data']) => processExistingRefund({ data }),
+  },
+  cancel: {
+    mutationKey: schoolMutationKeys.refunds.cancel,
+    mutationFn: (data: Parameters<typeof cancelExistingRefund>[0]['data']) => cancelExistingRefund({ data }),
+  },
 }

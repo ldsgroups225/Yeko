@@ -1187,6 +1187,10 @@ type RootTranslation = {
 		 */
 		markAllRead: string
 		/**
+		 * T​o​u​t​e​s​ ​l​e​s​ ​n​o​t​i​f​i​c​a​t​i​o​n​s​ ​o​n​t​ ​é​t​é​ ​m​a​r​q​u​é​e​s​ ​c​o​m​m​e​ ​l​u​e​s
+		 */
+		markedAllRead: string
+		/**
 		 * A​u​c​u​n​e​ ​n​o​t​i​f​i​c​a​t​i​o​n
 		 */
 		noNotifications: string
@@ -3135,6 +3139,10 @@ export type TranslationFunctions = {
 		 * Tout marquer comme lu
 		 */
 		markAllRead: () => LocalizedString
+		/**
+		 * Toutes les notifications ont été marquées comme lues
+		 */
+		markedAllRead: () => LocalizedString
 		/**
 		 * Aucune notification
 		 */

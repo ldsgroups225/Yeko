@@ -316,6 +316,7 @@ const fr: BaseTranslation = {
   notifications: {
     title: 'Notifications',
     markAllRead: 'Tout marquer comme lu',
+    markedAllRead: 'Toutes les notifications ont été marquées comme lues',
     noNotifications: 'Aucune notification',
     types: {
       message: 'Nouveau message',

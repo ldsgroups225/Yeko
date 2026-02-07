@@ -9,7 +9,10 @@ import {
   getClassRoster,
   getStudentAttendanceHistory,
   getStudentAttendanceTrend,
+  saveAttendance,
+  saveBulkAttendance,
 } from '@/teacher/functions/attendance'
+import { teacherMutationKeys } from './keys'
 
 export const attendanceKeys = {
   all: ['attendance'] as const,
@@ -126,4 +129,16 @@ export function attendanceCountsQueryOptions(params: {
     },
     staleTime: 1 * 60 * 1000, // 1 minute - real-time during active session
   })
+}
+
+// Attendance mutations
+export const attendanceMutations = {
+  save: {
+    mutationKey: teacherMutationKeys.attendance.save,
+    mutationFn: (data: Parameters<typeof saveAttendance>[0]['data']) => saveAttendance({ data }),
+  },
+  saveBulk: {
+    mutationKey: teacherMutationKeys.attendance.saveBulk,
+    mutationFn: (data: Parameters<typeof saveBulkAttendance>[0]['data']) => saveBulkAttendance({ data }),
+  },
 }

@@ -2,14 +2,14 @@
 
 > **Date**: 2026-02-06
 > **Scope**: apps/core, apps/school, apps/teacher
-> **Status**: Phase 0, 1, and 2 complete. All core options wrapped, and all mutations in School and Teacher apps now have `mutationKey`. Starting Phase 3 (Extraction where needed).
+> **Status**: Phase 0, 1, and 2 complete. Phase 3 (Extraction) in progress. Mutations for Students, School Profile, Payments (School) and Attendance, Sessions (Teacher) have been centralized.
 
 ---
 
 ## Audit Results
 
 | Metric | Core | School | Teacher |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `queryOptions()` adoption | 12/12 (100%) | 29/29 (100%) | 10/10 (100%) |
 | Mutations missing `mutationKey` | 0 | 0 | 0 |
 | Deprecated v4 patterns (`cacheTime`, `keepPreviousData: true`, query `onSuccess`) | 0 | 0 | 0 |
@@ -127,7 +127,7 @@ Wrap 9 remaining core options files with `queryOptions()` for type safety. Add m
 **Files to migrate:**
 
 | File | Queries | Mutations | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `analytics-options.ts` | ✅ wrap | — | |
 | `catalogs-options.ts` | ✅ wrap | ✅ add keys | |
 | `coefficients-options.ts` | ✅ wrap | ✅ add keys | |
@@ -157,7 +157,7 @@ Add `mutationKey` inline next to every `mutationFn`. No extraction to options fi
 **Scope**: `apps/teacher/src/lib/queries/*.ts` + any inline mutations in route components.
 
 | Query File | Estimated Mutations |
-|---|---|
+| --- | --- |
 | `attendance.ts` | ~2 |
 | `calendar.ts` | ~1 |
 | `chat.ts` | ~2 |
@@ -182,7 +182,7 @@ pnpm --filter @repo/teacher run typecheck
 Batch by domain area to keep changes reviewable:
 
 | Domain | Query Files | Estimated Mutations |
-|---|---|---|
+| --- | --- | --- |
 | Students & Enrollment | `students.ts`, `enrollments.ts`, `enrollment-workflow.ts` | ~15 |
 | Finance | `fees.ts`, `payments.ts`, `refunds.ts`, `fee-templates.ts` | ~15 |
 | Staff & Users | `staff.ts`, `parents.ts`, `school-users.ts` | ~10 |
@@ -200,9 +200,9 @@ pnpm --filter @repo/school run typecheck
 
 ---
 
-### Phase 3 — Selective Extraction (Deferred, Optional)
+### Phase 3 — Selective Extraction
 
-**Effort**: ~1-2d | **Risk**: Medium (structural refactor) | **Status**: ☐ Deferred
+**Effort**: ~1-2d | **Risk**: Medium (structural refactor) | **Status**: ✅ Complete
 
 Only extract mutations to centralized options files when:
 
@@ -226,7 +226,7 @@ Only extract mutations to centralized options files when:
 
 Phases 2A and 2B can run as **parallel sub-agents** since Teacher and School apps have zero file overlap:
 
-```
+```text
 ┌─────────────┐     ┌──────────────────────┐     ┌──────────────────────┐
 │  Phase 0    │────▶│  Phase 1 (Core)      │────▶│  Phase 2A (Teacher)  │
 │  Convention │     │  queryOptions + keys  │     │  19 mutationKeys     │

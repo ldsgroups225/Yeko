@@ -25,10 +25,8 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { useTranslations } from '@/i18n'
-import { schoolMutationKeys } from '@/lib/queries/keys'
-import { studentsKeys } from '@/lib/queries/students'
+import { studentsKeys, studentsMutations } from '@/lib/queries/students'
 import { getPresignedUploadUrl } from '@/school/functions/storage'
-import { createStudent, generateMatricule, updateStudent } from '@/school/functions/students'
 import { generateUUID } from '@/utils/generateUUID'
 import { PhotoUploadDialog } from './photo-upload-dialog'
 
@@ -89,8 +87,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
   })
 
   const createMutation = useMutation({
-    mutationKey: schoolMutationKeys.students.create,
-    mutationFn: (data: StudentFormData) => createStudent({ data }),
+    ...studentsMutations.create,
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: studentsKeys.all })
       if (result.success) {
@@ -108,9 +105,9 @@ export function StudentForm({ student, mode }: StudentFormProps) {
   })
 
   const updateMutation = useMutation({
-    mutationKey: schoolMutationKeys.students.update,
+    ...studentsMutations.update,
     mutationFn: (data: StudentFormData) =>
-      updateStudent({ data: { id: student!.id, data } }),
+      studentsMutations.update.mutationFn({ data: { id: student!.id, data } }),
 
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: studentsKeys.all })
@@ -129,8 +126,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
   })
 
   const generateMatriculeMutation = useMutation({
-    mutationKey: schoolMutationKeys.students.generateMatricule,
-    mutationFn: () => generateMatricule(),
+    ...studentsMutations.generateMatricule,
     onSuccess: (result) => {
       if (result.success) {
         form.setValue('matricule', result.data)
@@ -427,7 +423,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                             <Button
                               type="button"
                               variant="outline"
-                              onClick={() => generateMatriculeMutation.mutate()}
+                              onClick={() => generateMatriculeMutation.mutate(undefined)}
                               disabled={generateMatriculeMutation.isPending}
                             >
                               {generateMatriculeMutation.isPending

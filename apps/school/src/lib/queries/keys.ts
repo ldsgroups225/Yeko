@@ -46,6 +46,7 @@ export const schoolMutationKeys = {
     link: ['school', 'parents', 'link'] as const,
     unlink: ['school', 'parents', 'unlink'] as const,
     invite: ['school', 'parents', 'invite'] as const,
+    autoMatch: ['school', 'parents', 'auto-match'] as const,
   },
 
   // ============================================================================
@@ -76,10 +77,25 @@ export const schoolMutationKeys = {
     void: ['school', 'payments', 'void'] as const,
   },
 
+  paymentPlans: {
+    create: ['school', 'payment-plans', 'create'] as const,
+    cancel: ['school', 'payment-plans', 'cancel'] as const,
+  },
+
+  paymentPlanTemplates: {
+    create: ['school', 'payment-plan-templates', 'create'] as const,
+    update: ['school', 'payment-plan-templates', 'update'] as const,
+    delete: ['school', 'payment-plan-templates', 'delete'] as const,
+    setDefault: ['school', 'payment-plan-templates', 'set-default'] as const,
+  },
+
   refunds: {
     create: ['school', 'refunds', 'create'] as const,
+    update: ['school', 'refunds', 'update'] as const,
     approve: ['school', 'refunds', 'approve'] as const,
     reject: ['school', 'refunds', 'reject'] as const,
+    process: ['school', 'refunds', 'process'] as const,
+    cancel: ['school', 'refunds', 'cancel'] as const,
   },
 
   discounts: {
@@ -143,18 +159,24 @@ export const schoolMutationKeys = {
     delete: ['school', 'class-subjects', 'delete'] as const,
     copy: ['school', 'class-subjects', 'copy'] as const,
     assignTeacher: ['school', 'class-subjects', 'assign-teacher'] as const,
+    save: ['school', 'class-subjects', 'save'] as const,
+    updateConfig: ['school', 'class-subjects', 'update-config'] as const,
   },
 
   coefficients: {
+    create: ['school', 'coefficients', 'create'] as const,
     update: ['school', 'coefficients', 'update'] as const,
     bulkUpdate: ['school', 'coefficients', 'bulk-update'] as const,
     delete: ['school', 'coefficients', 'delete'] as const,
+    copy: ['school', 'coefficients', 'copy'] as const,
+    reset: ['school', 'coefficients', 'reset'] as const,
   },
 
   assignments: {
     create: ['school', 'assignments', 'create'] as const,
     update: ['school', 'assignments', 'update'] as const,
     delete: ['school', 'assignments', 'delete'] as const,
+    bulkAssign: ['school', 'assignments', 'bulk-assign'] as const,
   },
 
   // ============================================================================
@@ -177,6 +199,23 @@ export const schoolMutationKeys = {
     create: ['school', 'report-cards', 'create'] as const,
     update: ['school', 'report-cards', 'update'] as const,
     delete: ['school', 'report-cards', 'delete'] as const,
+    bulkGenerate: ['school', 'report-cards', 'bulk-generate'] as const,
+    send: ['school', 'report-cards', 'send'] as const,
+    bulkSend: ['school', 'report-cards', 'bulk-send'] as const,
+    markDelivered: ['school', 'report-cards', 'mark-delivered'] as const,
+    markViewed: ['school', 'report-cards', 'mark-viewed'] as const,
+  },
+
+  reportCardTemplates: {
+    create: ['school', 'report-card-templates', 'create'] as const,
+    update: ['school', 'report-card-templates', 'update'] as const,
+    delete: ['school', 'report-card-templates', 'delete'] as const,
+  },
+
+  teacherComments: {
+    create: ['school', 'teacher-comments', 'create'] as const,
+    update: ['school', 'teacher-comments', 'update'] as const,
+    delete: ['school', 'teacher-comments', 'delete'] as const,
   },
 
   validations: {
@@ -189,12 +228,17 @@ export const schoolMutationKeys = {
   // Conduct & Attendance
   // ============================================================================
   studentAttendance: {
-    save: ['school', 'student-attendance', 'save'] as const,
-    bulkSave: ['school', 'student-attendance', 'bulk-save'] as const,
+    record: ['school', 'student-attendance', 'record'] as const,
+    bulkRecord: ['school', 'student-attendance', 'bulk-record'] as const,
+    excuse: ['school', 'student-attendance', 'excuse'] as const,
+    notify: ['school', 'student-attendance', 'notify'] as const,
+    delete: ['school', 'student-attendance', 'delete'] as const,
   },
 
   teacherAttendance: {
-    save: ['school', 'teacher-attendance', 'save'] as const,
+    record: ['school', 'teacher-attendance', 'record'] as const,
+    bulkRecord: ['school', 'teacher-attendance', 'bulk-record'] as const,
+    delete: ['school', 'teacher-attendance', 'delete'] as const,
   },
 
   conductRecords: {
@@ -221,6 +265,7 @@ export const schoolMutationKeys = {
     create: ['school', 'timetables', 'create'] as const,
     update: ['school', 'timetables', 'update'] as const,
     delete: ['school', 'timetables', 'delete'] as const,
+    deleteClass: ['school', 'timetables', 'delete-class'] as const,
     import: ['school', 'timetables', 'import'] as const,
   },
 

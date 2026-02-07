@@ -1,5 +1,9 @@
 import { queryOptions } from '@tanstack/react-query'
 import {
+  cancelStudentPaymentPlan,
+  createNewPaymentPlanTemplate,
+  createStudentPaymentPlan,
+  deleteExistingPaymentPlanTemplate,
   getDefaultTemplate,
   getPaymentPlansList,
   getPaymentPlansSummaryData,
@@ -7,7 +11,10 @@ import {
   getPaymentPlanTemplatesList,
   getPaymentPlanWithInstallments,
   getStudentPaymentPlan,
+  setDefaultTemplate,
+  updateExistingPaymentPlanTemplate,
 } from '@/school/functions/payment-plans'
+import { schoolMutationKeys } from './keys'
 
 export const paymentPlansKeys = {
   all: ['paymentPlans'] as const,
@@ -129,4 +136,36 @@ export const paymentPlansOptions = {
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
     }),
+}
+
+// Payment plans mutations
+export const paymentPlansMutations = {
+  create: {
+    mutationKey: schoolMutationKeys.paymentPlans.create,
+    mutationFn: (data: Parameters<typeof createStudentPaymentPlan>[0]['data']) => createStudentPaymentPlan({ data }),
+  },
+  cancel: {
+    mutationKey: schoolMutationKeys.paymentPlans.cancel,
+    mutationFn: (data: Parameters<typeof cancelStudentPaymentPlan>[0]['data']) => cancelStudentPaymentPlan({ data }),
+  },
+}
+
+// Payment plan templates mutations
+export const paymentPlanTemplatesMutations = {
+  create: {
+    mutationKey: schoolMutationKeys.paymentPlanTemplates.create,
+    mutationFn: (data: Parameters<typeof createNewPaymentPlanTemplate>[0]['data']) => createNewPaymentPlanTemplate({ data }),
+  },
+  update: {
+    mutationKey: schoolMutationKeys.paymentPlanTemplates.update,
+    mutationFn: (data: Parameters<typeof updateExistingPaymentPlanTemplate>[0]['data']) => updateExistingPaymentPlanTemplate({ data }),
+  },
+  delete: {
+    mutationKey: schoolMutationKeys.paymentPlanTemplates.delete,
+    mutationFn: (data: Parameters<typeof deleteExistingPaymentPlanTemplate>[0]['data']) => deleteExistingPaymentPlanTemplate({ data }),
+  },
+  setDefault: {
+    mutationKey: schoolMutationKeys.paymentPlanTemplates.setDefault,
+    mutationFn: (data: Parameters<typeof setDefaultTemplate>[0]['data']) => setDefaultTemplate({ data }),
+  },
 }

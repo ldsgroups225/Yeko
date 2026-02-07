@@ -14,14 +14,12 @@ import { SessionTimer } from '@/components/session/session-timer'
 import { StudentAttendanceList } from '@/components/session/student-attendance-list'
 import { StudentParticipationList } from '@/components/session/student-participation-list'
 import { useI18nContext } from '@/i18n/i18n-react'
-import { teacherMutationKeys } from '@/lib/queries/keys'
 import {
   participationGradesQueryOptions,
   sessionDetailsQueryOptions,
+  sessionsMutations,
   sessionStudentsQueryOptions,
 } from '@/lib/queries/sessions'
-import { recordParticipation } from '@/teacher/functions/participation'
-import { completeSession, updateSessionAttendance } from '@/teacher/functions/sessions'
 
 export const Route = createFileRoute('/_auth/app/sessions/$sessionId')({
   component: SessionDetailPage,
@@ -90,23 +88,7 @@ function SessionDetailPage() {
   }
 
   const saveParticipationMutation = useMutation({
-    mutationKey: teacherMutationKeys.sessions.saveParticipation,
-    mutationFn: async () => {
-      const grades = Array.from(localGrades.entries()).map(
-        ([studentId, { grade, comment }]) => ({
-          studentId,
-          grade,
-          comment,
-        }),
-      )
-      return recordParticipation({
-        data: {
-          classSessionId: sessionId,
-          teacherId,
-          grades,
-        },
-      })
-    },
+    ...sessionsMutations.saveParticipation,
     onSuccess: () => {
       toast.success(LL.participation.saved())
       queryClient.invalidateQueries({
@@ -119,20 +101,7 @@ function SessionDetailPage() {
   })
 
   const saveAttendanceMutation = useMutation({
-    mutationKey: teacherMutationKeys.sessions.saveAttendance,
-    mutationFn: async () => {
-      const studentsPresent = Array.from(attendance.values()).filter(s => s === 'present' || s === 'late').length
-      const studentsAbsent = Array.from(attendance.values()).filter(s => s === 'absent' || s === 'excused').length
-
-      return updateSessionAttendance({
-        data: {
-          sessionId,
-          teacherId,
-          studentsPresent,
-          studentsAbsent,
-        },
-      })
-    },
+    ...sessionsMutations.saveAttendance,
     onSuccess: () => {
       toast.success(LL.common.saved())
     },
@@ -142,22 +111,7 @@ function SessionDetailPage() {
   })
 
   const completeMutation = useMutation({
-    mutationKey: teacherMutationKeys.sessions.complete,
-    mutationFn: async () => {
-      const studentsPresent = Array.from(attendance.values()).filter(s => s === 'present' || s === 'late').length
-      const studentsAbsent = Array.from(attendance.values()).filter(s => s === 'absent' || s === 'excused').length
-
-      const programNote = `Programme ministériel terminé: ${programCompleted ? 'Oui' : 'Non'}`
-
-      return completeSession({
-        data: {
-          sessionId,
-          studentsPresent,
-          studentsAbsent,
-          notes: programNote,
-        },
-      })
-    },
+    ...sessionsMutations.complete,
     onSuccess: () => {
       toast.success(LL.session.completed())
       navigate({ to: '/app' })
@@ -252,7 +206,16 @@ function SessionDetailPage() {
             students={studentsData?.students ?? []}
             attendance={attendance}
             onStatusChange={handleAttendanceChange}
-            onSave={() => saveAttendanceMutation.mutate()}
+            onSave={() => {
+              const studentsPresent = Array.from(attendance.values()).filter(s => s === 'present' || s === 'late').length
+              const studentsAbsent = Array.from(attendance.values()).filter(s => s === 'absent' || s === 'excused').length
+              saveAttendanceMutation.mutate({
+                sessionId,
+                teacherId,
+                studentsPresent,
+                studentsAbsent,
+              })
+            }}
             isSaving={saveAttendanceMutation.isPending}
           />
         </TabsContent>
@@ -263,7 +226,20 @@ function SessionDetailPage() {
             grades={grades}
             onGradeChange={handleGradeChange}
             onCommentChange={handleCommentChange}
-            onSave={() => saveParticipationMutation.mutate()}
+            onSave={() => {
+              const grades = Array.from(localGrades.entries()).map(
+                ([studentId, { grade, comment }]) => ({
+                  studentId,
+                  grade,
+                  comment,
+                }),
+              )
+              saveParticipationMutation.mutate({
+                classSessionId: sessionId,
+                teacherId,
+                grades,
+              })
+            }}
             isSaving={saveParticipationMutation.isPending}
           />
         </TabsContent>
@@ -312,7 +288,18 @@ function SessionDetailPage() {
         <Button
           className="w-full"
           size="lg"
-          onClick={() => completeMutation.mutate()}
+          onClick={() => {
+            const studentsPresent = Array.from(attendance.values()).filter(s => s === 'present' || s === 'late').length
+            const studentsAbsent = Array.from(attendance.values()).filter(s => s === 'absent' || s === 'excused').length
+            const programNote = `Programme ministériel terminé: ${programCompleted ? 'Oui' : 'Non'}`
+
+            completeMutation.mutate({
+              sessionId,
+              studentsPresent,
+              studentsAbsent,
+              notes: programNote,
+            })
+          }}
           disabled={completeMutation.isPending}
         >
           <IconCircleCheck className="mr-2 h-5 w-5" />

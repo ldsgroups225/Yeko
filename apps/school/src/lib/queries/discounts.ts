@@ -1,9 +1,14 @@
 import { queryOptions } from '@tanstack/react-query'
 import {
+  createNewDiscount,
+  deactivateExistingDiscount,
+  deleteExistingDiscount,
   getAutoApplyDiscountsList,
   getDiscount,
   getDiscountsList,
+  updateExistingDiscount,
 } from '@/school/functions/discounts'
+import { schoolMutationKeys } from './keys'
 
 export const discountsKeys = {
   all: ['discounts'] as const,
@@ -59,4 +64,24 @@ export const discountsOptions = {
       gcTime: 30 * 60 * 1000,
       enabled: !!id,
     }),
+}
+
+// Discounts mutations
+export const discountsMutations = {
+  create: {
+    mutationKey: schoolMutationKeys.discounts.create,
+    mutationFn: (data: Parameters<typeof createNewDiscount>[0]['data']) => createNewDiscount({ data }),
+  },
+  update: {
+    mutationKey: schoolMutationKeys.discounts.update,
+    mutationFn: (data: Parameters<typeof updateExistingDiscount>[0]['data']) => updateExistingDiscount({ data }),
+  },
+  delete: {
+    mutationKey: schoolMutationKeys.discounts.delete,
+    mutationFn: (id: string) => deleteExistingDiscount({ data: id }),
+  },
+  deactivate: {
+    mutationKey: schoolMutationKeys.discounts.update,
+    mutationFn: (id: string) => deactivateExistingDiscount({ data: id }),
+  },
 }

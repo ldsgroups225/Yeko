@@ -1,10 +1,14 @@
 import { queryOptions } from '@tanstack/react-query'
 
 import {
+  bulkRecordAttendance,
   getAttendanceRange,
   getDailyAttendance,
   getPunctualityReport,
+  recordAttendance,
+  removeAttendance,
 } from '@/school/functions/teacher-attendance'
+import { schoolMutationKeys } from './keys'
 
 export const teacherAttendanceKeys = {
   all: ['teacher-attendance'] as const,
@@ -62,4 +66,20 @@ export function teacherPunctualityReportOptions(params: {
     },
     staleTime: 5 * 60 * 1000,
   })
+}
+
+// Teacher attendance mutations
+export const teacherAttendanceMutations = {
+  record: {
+    mutationKey: schoolMutationKeys.teacherAttendance.record,
+    mutationFn: (data: Parameters<typeof recordAttendance>[0]['data']) => recordAttendance({ data }),
+  },
+  bulkRecord: {
+    mutationKey: schoolMutationKeys.teacherAttendance.bulkRecord,
+    mutationFn: (data: Parameters<typeof bulkRecordAttendance>[0]['data']) => bulkRecordAttendance({ data }),
+  },
+  delete: {
+    mutationKey: schoolMutationKeys.teacherAttendance.delete,
+    mutationFn: (data: Parameters<typeof removeAttendance>[0]['data']) => removeAttendance({ data }),
+  },
 }

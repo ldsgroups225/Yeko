@@ -66,11 +66,9 @@ import { useDebounce } from '@/hooks/use-debounce'
 import { useTranslations } from '@/i18n'
 import { downloadExcelFile, exportStudentsToExcel } from '@/lib/excel-export'
 import { schoolMutationKeys } from '@/lib/queries/keys'
-import { studentsKeys, studentsOptions } from '@/lib/queries/students'
+import { studentsKeys, studentsMutations, studentsOptions } from '@/lib/queries/students'
 import {
-  deleteStudent,
   exportStudents,
-  updateStudentStatus,
 } from '@/school/functions/students'
 
 import { formatDate } from '@/utils/formatDate'
@@ -176,8 +174,7 @@ export function StudentsList() {
   // Filters are now calculated in useQuery directly to avoid hoisting issues
 
   const deleteMutation = useMutation({
-    mutationKey: schoolMutationKeys.students.delete,
-    mutationFn: (id: string) => deleteStudent({ data: id }),
+    ...studentsMutations.delete,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: studentsKeys.all })
       toast.success(t.students.deleteSuccess())
@@ -189,12 +186,7 @@ export function StudentsList() {
   })
 
   const statusMutation = useMutation({
-    mutationKey: schoolMutationKeys.students.update,
-    mutationFn: (input: {
-      id: string
-      status: StudentStatus
-      reason?: string
-    }) => updateStudentStatus({ data: input }),
+    ...studentsMutations.updateStatus,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: studentsKeys.all })
       toast.success(t.students.statusUpdateSuccess())

@@ -1,11 +1,15 @@
 import { queryOptions } from '@tanstack/react-query'
 import {
+  bulkCreateStudentFees,
+  createNewStudentFee,
   getStudentFee,
   getStudentFeesDetails,
   getStudentFeesList,
   getStudentFeeSummaryData,
   getStudentsWithBalance,
+  waiveExistingStudentFee,
 } from '@/school/functions/student-fees'
+import { schoolMutationKeys } from './keys'
 
 export const studentFeesKeys = {
   all: ['studentFees'] as const,
@@ -92,4 +96,20 @@ export const studentFeesOptions = {
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
     }),
+}
+
+// Student fee mutations
+export const studentFeesMutations = {
+  create: {
+    mutationKey: schoolMutationKeys.fees.assign,
+    mutationFn: (data: Parameters<typeof createNewStudentFee>[0]['data']) => createNewStudentFee({ data }),
+  },
+  bulkCreate: {
+    mutationKey: schoolMutationKeys.fees.bulkAssign,
+    mutationFn: (data: Parameters<typeof bulkCreateStudentFees>[0]['data']) => bulkCreateStudentFees({ data }),
+  },
+  waive: {
+    mutationKey: schoolMutationKeys.fees.remove,
+    mutationFn: (data: Parameters<typeof waiveExistingStudentFee>[0]['data']) => waiveExistingStudentFee({ data }),
+  },
 }

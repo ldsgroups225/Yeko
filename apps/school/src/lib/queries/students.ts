@@ -1,11 +1,16 @@
 import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import {
+  createStudent,
+  deleteStudent,
   exportStudents,
   generateMatricule,
   getStudentById,
   getStudents,
   getStudentStatistics,
+  updateStudent,
+  updateStudentStatus,
 } from '@/school/functions/students'
+import { schoolMutationKeys } from './keys'
 
 export const studentsKeys = {
   all: ['students'] as const,
@@ -106,4 +111,28 @@ export const studentsOptions = {
       staleTime: 0,
       gcTime: 0,
     }),
+}
+
+// Student mutations
+export const studentsMutations = {
+  create: {
+    mutationKey: schoolMutationKeys.students.create,
+    mutationFn: (data: Parameters<typeof createStudent>[0]['data']) => createStudent({ data }),
+  },
+  update: {
+    mutationKey: schoolMutationKeys.students.update,
+    mutationFn: (data: Parameters<typeof updateStudent>[0]['data']) => updateStudent({ data }),
+  },
+  delete: {
+    mutationKey: schoolMutationKeys.students.delete,
+    mutationFn: (id: string) => deleteStudent({ data: id }),
+  },
+  updateStatus: {
+    mutationKey: schoolMutationKeys.students.update, // Reusing student update key
+    mutationFn: (data: Parameters<typeof updateStudentStatus>[0]['data']) => updateStudentStatus({ data }),
+  },
+  generateMatricule: {
+    mutationKey: schoolMutationKeys.students.generateMatricule,
+    mutationFn: () => generateMatricule(),
+  },
 }

@@ -1,10 +1,13 @@
 import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import {
+  cancelExistingPayment,
   getCashierSummary,
   getPayment,
   getPaymentByReceipt,
   getPaymentsList,
+  recordPayment,
 } from '@/school/functions/payments'
+import { schoolMutationKeys } from './keys'
 
 export const paymentsKeys = {
   all: ['payments'] as const,
@@ -83,4 +86,16 @@ export const paymentsOptions = {
       gcTime: 5 * 60 * 1000,
       enabled: !!date,
     }),
+}
+
+// Payment mutations
+export const paymentsMutations = {
+  create: {
+    mutationKey: schoolMutationKeys.payments.create,
+    mutationFn: (data: Parameters<typeof recordPayment>[0]['data']) => recordPayment({ data }),
+  },
+  cancel: {
+    mutationKey: schoolMutationKeys.payments.void, // Using 'void' key for cancellation as defined in keys.ts
+    mutationFn: (data: Parameters<typeof cancelExistingPayment>[0]['data']) => cancelExistingPayment({ data }),
+  },
 }

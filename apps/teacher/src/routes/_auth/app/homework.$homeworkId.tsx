@@ -41,9 +41,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { useI18nContext } from '@/i18n/i18n-react'
-import { homeworkDetailsQueryOptions } from '@/lib/queries/homework'
-import { teacherMutationKeys } from '@/lib/queries/keys'
-import { deleteHomework, updateHomework } from '@/teacher/functions/homework'
+import { homeworkDetailsQueryOptions, homeworkMutations } from '@/lib/queries/homework'
 
 export const Route = createFileRoute('/_auth/app/homework/$homeworkId')({
   component: HomeworkDetailPage,
@@ -83,8 +81,7 @@ function HomeworkDetailPage() {
   }
 
   const updateMutation = useMutation({
-    mutationKey: teacherMutationKeys.homework.update,
-    mutationFn: updateHomework,
+    ...homeworkMutations.update,
     onSuccess: (result) => {
       if (result.success) {
         toast.success(LL.homework.updated())
@@ -101,8 +98,7 @@ function HomeworkDetailPage() {
   })
 
   const deleteMutation = useMutation({
-    mutationKey: teacherMutationKeys.homework.delete,
-    mutationFn: deleteHomework,
+    ...homeworkMutations.delete,
     onSuccess: (result) => {
       if (result.success) {
         toast.success(LL.homework.deleted())
@@ -123,15 +119,13 @@ function HomeworkDetailPage() {
       return
 
     updateMutation.mutate({
-      data: {
-        id: homework.id,
-        teacherId: context.teacherId,
-        title: title.trim(),
-        description: description.trim() || undefined,
-        dueDate,
-        dueTime: dueTime || undefined,
-        status: newStatus ?? homework.status,
-      },
+      id: homework.id,
+      teacherId: context.teacherId,
+      title: title.trim(),
+      description: description.trim() || undefined,
+      dueDate,
+      dueTime: dueTime || undefined,
+      status: newStatus ?? homework.status,
     })
   }
 
@@ -139,10 +133,8 @@ function HomeworkDetailPage() {
     if (!context || !homework)
       return
     deleteMutation.mutate({
-      data: {
-        homeworkId: homework.id,
-        teacherId: context.teacherId,
-      },
+      homeworkId: homework.id,
+      teacherId: context.teacherId,
     })
   }
 

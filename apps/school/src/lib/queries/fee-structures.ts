@@ -1,9 +1,14 @@
 import { queryOptions } from '@tanstack/react-query'
 import {
+  bulkCreateFeeStructures,
+  createNewFeeStructure,
+  deleteExistingFeeStructure,
   getFeeStructure,
   getFeeStructuresList,
   getFeeStructuresWithDetails,
+  updateExistingFeeStructure,
 } from '@/school/functions/fee-structures'
+import { schoolMutationKeys } from './keys'
 
 export const feeStructuresKeys = {
   all: ['feeStructures'] as const,
@@ -61,4 +66,24 @@ export const feeStructuresOptions = {
       gcTime: 30 * 60 * 1000,
       enabled: !!id,
     }),
+}
+
+// Fee structures mutations
+export const feeStructuresMutations = {
+  create: {
+    mutationKey: schoolMutationKeys.feeStructures.create,
+    mutationFn: (data: Parameters<typeof createNewFeeStructure>[0]['data']) => createNewFeeStructure({ data }),
+  },
+  bulkCreate: {
+    mutationKey: schoolMutationKeys.feeStructures.create,
+    mutationFn: (data: Parameters<typeof bulkCreateFeeStructures>[0]['data']) => bulkCreateFeeStructures({ data }),
+  },
+  update: {
+    mutationKey: schoolMutationKeys.feeStructures.update,
+    mutationFn: (data: Parameters<typeof updateExistingFeeStructure>[0]['data']) => updateExistingFeeStructure({ data }),
+  },
+  delete: {
+    mutationKey: schoolMutationKeys.feeStructures.delete,
+    mutationFn: (id: string) => deleteExistingFeeStructure({ data: id }),
+  },
 }

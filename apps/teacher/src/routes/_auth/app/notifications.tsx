@@ -1,10 +1,13 @@
 import { IconBell, IconCheck } from '@tabler/icons-react'
+import { useMutation } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
-
 import { Card, CardContent } from '@workspace/ui/components/card'
+import { toast } from 'sonner'
+
 import { MobileHeader } from '@/components/layout/mobile-header'
 import { useI18nContext } from '@/i18n/i18n-react'
+import { notificationsMutations } from '@/lib/queries/notifications'
 
 export const Route = createFileRoute('/_auth/app/notifications')({
   component: NotificationsPage,
@@ -12,6 +15,17 @@ export const Route = createFileRoute('/_auth/app/notifications')({
 
 function NotificationsPage() {
   const { LL } = useI18nContext()
+  const { teacherContext } = Route.useRouteContext()
+
+  const markAllReadMutation = useMutation({
+    ...notificationsMutations.markAllRead,
+    onSuccess: () => {
+      toast.success(LL.notifications.markedAllRead())
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : 'Error')
+    },
+  })
 
   return (
     <div className="flex flex-col pb-20">
@@ -20,7 +34,13 @@ function NotificationsPage() {
         showBack
         showNotifications={false}
         rightAction={(
-          <Button variant="ghost" size="sm" className="text-xs">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-xs"
+            onClick={() => markAllReadMutation.mutate({ teacherId: teacherContext?.teacherId || '' })}
+            disabled={markAllReadMutation.isPending}
+          >
             <IconCheck className="mr-1 h-3 w-3" />
             {LL.notifications.markAllRead()}
           </Button>

@@ -1,11 +1,14 @@
 import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 
-import { getParticipationGrades } from '@/teacher/functions/participation'
+import { getParticipationGrades, recordParticipation } from '@/teacher/functions/participation'
 import {
+  completeSession,
   getSessionDetails,
   getSessionHistory,
   getSessionStudents,
+  updateSessionAttendance,
 } from '@/teacher/functions/sessions'
+import { teacherMutationKeys } from './keys'
 
 interface SessionDetailsParams {
   sessionId: string
@@ -86,4 +89,20 @@ export function classStudentsQueryOptions(params: ClassStudentsParams) {
     queryFn: () => getSessionStudents({ data: params }),
     staleTime: 5 * 60 * 1000, // 5 minutes
   })
+}
+
+// Sessions mutations
+export const sessionsMutations = {
+  saveParticipation: {
+    mutationKey: teacherMutationKeys.sessions.saveParticipation,
+    mutationFn: (data: Parameters<typeof recordParticipation>[0]['data']) => recordParticipation({ data }),
+  },
+  saveAttendance: {
+    mutationKey: teacherMutationKeys.sessions.saveAttendance,
+    mutationFn: (data: Parameters<typeof updateSessionAttendance>[0]['data']) => updateSessionAttendance({ data }),
+  },
+  complete: {
+    mutationKey: teacherMutationKeys.sessions.complete,
+    mutationFn: (data: Parameters<typeof completeSession>[0]['data']) => completeSession({ data }),
+  },
 }

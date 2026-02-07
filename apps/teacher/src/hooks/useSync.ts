@@ -1,7 +1,9 @@
 'use client'
 
 import type { PublishOptions, SyncResult } from '../lib/services/sync-service'
+import { useMutation } from '@tanstack/react-query'
 import { useCallback, useEffect, useState } from 'react'
+import { teacherMutationKeys } from '@/lib/queries/keys'
 import { syncService } from '../lib/services/sync-service'
 import { useSyncStatus } from './useDatabaseStatus'
 
@@ -29,7 +31,6 @@ export interface UseSyncReturn {
  * Hook for managing note synchronization with remote database
  */
 export function useSync(): UseSyncReturn {
-  const [isPublishing, setIsPublishing] = useState(false)
   const [publishProgress, setPublishProgress] = useState<{
     current: number
     total: number
@@ -39,105 +40,68 @@ export function useSync(): UseSyncReturn {
 
   const syncStatus = useSyncStatus()
 
-  // Publish notes
-  const publishNotes = useCallback(
-    async (options: PublishOptions = {}): Promise<SyncResult> => {
+  // Publish notes mutation
+  const publishMutation = useMutation({
+    mutationKey: teacherMutationKeys.localNotes.publishAll,
+    mutationFn: async (options: PublishOptions = {}) => {
       if (!syncStatus.isOnline) {
-        const offlineResult: SyncResult = {
-          success: false,
-          syncedNotes: [],
-          failedNotes: [],
-          errors: [{ noteId: '', error: 'Vous êtes hors ligne' }],
-        }
-        setLastSyncResult(offlineResult)
-        setError('Vous êtes hors ligne. Veuillez réessayer une fois connecté.')
-        return offlineResult
+        throw new Error('Vous êtes hors ligne. Veuillez réessayer une fois connecté.')
       }
-
-      setIsPublishing(true)
-      setError(null)
       setPublishProgress({ current: 0, total: 0 })
-
-      try {
-        const result = await syncService.publishNotes({
-          ...options,
-          onProgress: (current, total) => {
-            setPublishProgress({ current, total })
-          },
-        })
-
-        setLastSyncResult(result)
-
-        if (!result.success) {
-          setError(
-            `Échec de la publication de ${result.failedNotes.length} note(s)`,
-          )
-        }
-
-        return result
-      }
-      catch (err) {
-        const errorMessage
-          = err instanceof Error ? err.message : 'Échec de la publication'
-        setError(errorMessage)
-        const failedResult: SyncResult = {
-          success: false,
-          syncedNotes: [],
-          failedNotes: [],
-          errors: [{ noteId: '', error: errorMessage }],
-        }
-        setLastSyncResult(failedResult)
-        return failedResult
-      }
-      finally {
-        setIsPublishing(false)
-        setPublishProgress(null)
+      return syncService.publishNotes({
+        ...options,
+        onProgress: (current, total) => {
+          setPublishProgress({ current, total })
+        },
+      })
+    },
+    onSuccess: (result) => {
+      setLastSyncResult(result)
+      if (!result.success) {
+        setError(`Échec de la publication de ${result.failedNotes.length} note(s)`)
       }
     },
-    [syncStatus.isOnline],
-  )
-
-  // Process sync queue
-  const processSyncQueue = useCallback(async (): Promise<SyncResult> => {
-    if (!syncStatus.isOnline) {
-      const offlineResult: SyncResult = {
-        success: false,
-        syncedNotes: [],
-        failedNotes: [],
-        errors: [{ noteId: '', error: 'Vous êtes hors ligne' }],
-      }
-      return offlineResult
-    }
-
-    setIsPublishing(true)
-    setError(null)
-
-    try {
-      const result = await syncService.processSyncQueue()
-      setLastSyncResult(result)
-
-      if (!result.success) {
-        setError(`Échec de la synchronisation de ${result.failedNotes.length} élément(s)`)
-      }
-
-      return result
-    }
-    catch (err) {
-      const errorMessage
-        = err instanceof Error ? err.message : 'Échec de la synchronisation'
+    onError: (err) => {
+      const errorMessage = err instanceof Error ? err.message : 'Échec de la publication'
       setError(errorMessage)
-      const failedResult: SyncResult = {
+      setLastSyncResult({
         success: false,
         syncedNotes: [],
         failedNotes: [],
         errors: [{ noteId: '', error: errorMessage }],
+      })
+    },
+    onSettled: () => {
+      setPublishProgress(null)
+    },
+  })
+
+  // Sync queue mutation
+  const syncQueueMutation = useMutation({
+    mutationKey: teacherMutationKeys.localNotes.publish, // Generic publish key or add sync-queue
+    mutationFn: async () => {
+      if (!syncStatus.isOnline) {
+        throw new Error('Vous êtes hors ligne')
       }
-      return failedResult
-    }
-    finally {
-      setIsPublishing(false)
-    }
-  }, [syncStatus.isOnline])
+      return syncService.processSyncQueue()
+    },
+    onSuccess: (result) => {
+      setLastSyncResult(result)
+      if (!result.success) {
+        setError(`Échec de la synchronisation de ${result.failedNotes.length} élément(s)`)
+      }
+    },
+    onError: (err) => {
+      const errorMessage = err instanceof Error ? err.message : 'Échec de la synchronisation'
+      setError(errorMessage)
+      setLastSyncResult({
+        success: false,
+        syncedNotes: [],
+        failedNotes: [],
+        errors: [{ noteId: '', error: errorMessage }],
+      })
+    },
+  })
 
   // Clear error
   const clearError = useCallback(() => {
@@ -145,14 +109,14 @@ export function useSync(): UseSyncReturn {
   }, [])
 
   return {
-    isPublishing,
+    isPublishing: publishMutation.isPending || syncQueueMutation.isPending,
     publishProgress,
     lastSyncResult,
     error,
     pendingCount: syncStatus.pendingItems,
     isOnline: syncStatus.isOnline,
-    publishNotes,
-    processSyncQueue,
+    publishNotes: options => publishMutation.mutateAsync(options ?? {}),
+    processSyncQueue: () => syncQueueMutation.mutateAsync(),
     clearError,
   }
 }

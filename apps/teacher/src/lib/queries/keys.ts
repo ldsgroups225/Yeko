@@ -41,6 +41,7 @@ export const teacherMutationKeys = {
   // ============================================================================
   grades: {
     publish: ['teacher', 'grades', 'publish'] as const,
+    submit: ['teacher', 'grades', 'submit'] as const,
   },
 
   // ============================================================================
@@ -50,6 +51,14 @@ export const teacherMutationKeys = {
     create: ['teacher', 'homework', 'create'] as const,
     update: ['teacher', 'homework', 'update'] as const,
     delete: ['teacher', 'homework', 'delete'] as const,
+  },
+
+  // ============================================================================
+  // Notifications
+  // ============================================================================
+  notifications: {
+    markRead: ['teacher', 'notifications', 'mark-read'] as const,
+    markAllRead: ['teacher', 'notifications', 'mark-all-read'] as const,
   },
 
   // ============================================================================
@@ -63,5 +72,14 @@ export const teacherMutationKeys = {
     publishAll: ['teacher', 'local-notes', 'publish-all'] as const,
     clearAfterPublish: ['teacher', 'local-notes', 'clear-after-publish'] as const,
     updateGrade: ['teacher', 'local-notes', 'update-grade'] as const,
+  },
+
+  // ============================================================================
+  // Student Notes (Behavior/Academic)
+  // ============================================================================
+  studentNotes: {
+    create: ['teacher', 'student-notes', 'create'] as const,
+    update: ['teacher', 'student-notes', 'update'] as const,
+    delete: ['teacher', 'student-notes', 'delete'] as const,
   },
 }

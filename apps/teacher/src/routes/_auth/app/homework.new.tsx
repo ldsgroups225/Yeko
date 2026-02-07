@@ -21,8 +21,7 @@ import { toast } from 'sonner'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { useI18nContext } from '@/i18n/i18n-react'
 import { teacherClassesQueryOptions } from '@/lib/queries/dashboard'
-import { teacherMutationKeys } from '@/lib/queries/keys'
-import { createHomework } from '@/teacher/functions/homework'
+import { homeworkMutations } from '@/lib/queries/homework'
 
 export const Route = createFileRoute('/_auth/app/homework/new')({
   component: NewHomeworkPage,
@@ -56,8 +55,7 @@ function NewHomeworkPage() {
   )
 
   const createMutation = useMutation({
-    mutationKey: teacherMutationKeys.homework.create,
-    mutationFn: createHomework,
+    ...homeworkMutations.create,
     onSuccess: () => {
       toast.success(LL.homework.created())
       queryClient.invalidateQueries({ queryKey: ['teacher', 'homework'] })
@@ -73,17 +71,15 @@ function NewHomeworkPage() {
       return
 
     createMutation.mutate({
-      data: {
-        teacherId: context.teacherId,
-        schoolId: context.schoolId,
-        classId: selectedClassId,
-        subjectId: selectedSubjectId,
-        title: title.trim(),
-        description: description.trim() || undefined,
-        dueDate,
-        dueTime: dueTime || undefined,
-        status,
-      },
+      teacherId: context.teacherId,
+      schoolId: context.schoolId,
+      classId: selectedClassId,
+      subjectId: selectedSubjectId,
+      title: title.trim(),
+      description: description.trim() || undefined,
+      dueDate,
+      dueTime: dueTime || undefined,
+      status,
     })
   }
 

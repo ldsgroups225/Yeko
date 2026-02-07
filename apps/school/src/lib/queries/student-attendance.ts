@@ -1,11 +1,17 @@
 import { queryOptions } from '@tanstack/react-query'
 
 import {
+  bulkRecordClassAttendance,
   checkChronicAbsence,
+  excuseAbsence,
   getClassAttendanceForDate,
   getStatistics,
   getStudentHistory,
+  notifyParent,
+  recordStudentAttendance,
+  removeStudentAttendance,
 } from '@/school/functions/student-attendance'
+import { schoolMutationKeys } from './keys'
 
 export const studentAttendanceKeys = {
   all: ['student-attendance'] as const,
@@ -83,4 +89,28 @@ export function chronicAbsenceOptions(params: {
     },
     staleTime: 10 * 60 * 1000,
   })
+}
+
+// Student attendance mutations
+export const studentAttendanceMutations = {
+  record: {
+    mutationKey: schoolMutationKeys.studentAttendance.record,
+    mutationFn: (data: Parameters<typeof recordStudentAttendance>[0]['data']) => recordStudentAttendance({ data }),
+  },
+  bulkRecord: {
+    mutationKey: schoolMutationKeys.studentAttendance.bulkRecord,
+    mutationFn: (data: Parameters<typeof bulkRecordClassAttendance>[0]['data']) => bulkRecordClassAttendance({ data }),
+  },
+  excuse: {
+    mutationKey: schoolMutationKeys.studentAttendance.excuse,
+    mutationFn: (data: Parameters<typeof excuseAbsence>[0]['data']) => excuseAbsence({ data }),
+  },
+  notify: {
+    mutationKey: schoolMutationKeys.studentAttendance.notify,
+    mutationFn: (data: Parameters<typeof notifyParent>[0]['data']) => notifyParent({ data }),
+  },
+  delete: {
+    mutationKey: schoolMutationKeys.studentAttendance.delete,
+    mutationFn: (data: Parameters<typeof removeStudentAttendance>[0]['data']) => removeStudentAttendance({ data }),
+  },
 }

@@ -1,9 +1,17 @@
 import { queryOptions } from '@tanstack/react-query'
 import {
+  assignTeacherToClassSubject,
+  bulkAssignTeacher,
+  copyClassSubjects,
   detectTeacherConflicts,
   getAssignmentMatrix,
   getClassSubjects,
+  removeClassSubject,
+  removeTeacherFromClassSubject,
+  saveClassSubject,
+  updateClassSubjectConfig,
 } from '@/school/functions/class-subjects'
+import { schoolMutationKeys } from './keys'
 
 export const classSubjectsKeys = {
   all: ['classSubjects'] as const,
@@ -64,4 +72,36 @@ export const classSubjectsOptions = {
       gcTime: 10 * 60 * 1000,
       enabled: !!teacherId && !!schoolYearId,
     }),
+}
+
+// Class-subject mutations
+export const classSubjectsMutations = {
+  assignTeacher: {
+    mutationKey: schoolMutationKeys.classSubjects.assignTeacher,
+    mutationFn: (data: Parameters<typeof assignTeacherToClassSubject>[0]['data']) => assignTeacherToClassSubject({ data }),
+  },
+  bulkAssignTeacher: {
+    mutationKey: schoolMutationKeys.assignments.bulkAssign,
+    mutationFn: (data: Parameters<typeof bulkAssignTeacher>[0]['data']) => bulkAssignTeacher({ data }),
+  },
+  removeTeacher: {
+    mutationKey: schoolMutationKeys.assignments.delete,
+    mutationFn: (data: Parameters<typeof removeTeacherFromClassSubject>[0]['data']) => removeTeacherFromClassSubject({ data }),
+  },
+  save: {
+    mutationKey: schoolMutationKeys.classSubjects.save,
+    mutationFn: (data: Parameters<typeof saveClassSubject>[0]['data']) => saveClassSubject({ data }),
+  },
+  updateConfig: {
+    mutationKey: schoolMutationKeys.classSubjects.updateConfig,
+    mutationFn: (data: Parameters<typeof updateClassSubjectConfig>[0]['data']) => updateClassSubjectConfig({ data }),
+  },
+  remove: {
+    mutationKey: schoolMutationKeys.classSubjects.delete,
+    mutationFn: (data: Parameters<typeof removeClassSubject>[0]['data']) => removeClassSubject({ data }),
+  },
+  copy: {
+    mutationKey: schoolMutationKeys.classSubjects.copy,
+    mutationFn: (data: Parameters<typeof copyClassSubjects>[0]['data']) => copyClassSubjects({ data }),
+  },
 }

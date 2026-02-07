@@ -23,10 +23,8 @@ import { Skeleton } from '@workspace/ui/components/skeleton'
 import { useMemo, useState } from 'react'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { useI18nContext } from '@/i18n/i18n-react'
-import { attendanceKeys, classRosterQueryOptions } from '@/lib/queries/attendance'
+import { attendanceKeys, attendanceMutations, classRosterQueryOptions } from '@/lib/queries/attendance'
 import { teacherClassesQueryOptions } from '@/lib/queries/classes'
-import { teacherMutationKeys } from '@/lib/queries/keys'
-import { saveAttendance, saveBulkAttendance } from '@/teacher/functions/attendance'
 
 export const Route = createFileRoute('/_auth/app/attendance')({
   component: AttendancePage,
@@ -95,10 +93,9 @@ function AttendancePage() {
 
   // Mutation for saving individual attendance
   const saveMutation = useMutation({
-    mutationKey: teacherMutationKeys.attendance.save,
-    mutationFn: saveAttendance,
+    ...attendanceMutations.save,
     onMutate: async (variables) => {
-      const { enrollmentId, status } = variables.data
+      const { enrollmentId, status } = variables
       const queryKey = attendanceKeys.roster(selectedClassId, selectedDate)
 
       await queryClient.cancelQueries({ queryKey })
@@ -144,10 +141,9 @@ function AttendancePage() {
 
   // Mutation for bulk save
   const bulkSaveMutation = useMutation({
-    mutationKey: teacherMutationKeys.attendance.saveBulk,
-    mutationFn: saveBulkAttendance,
+    ...attendanceMutations.saveBulk,
     onMutate: async (variables) => {
-      const { attendanceRecords } = variables.data
+      const { attendanceRecords } = variables
       const queryKey = attendanceKeys.roster(selectedClassId, selectedDate)
 
       await queryClient.cancelQueries({ queryKey })
@@ -159,12 +155,12 @@ function AttendancePage() {
           return old
 
         const updatedEnrollmentIds = new Set(
-          attendanceRecords.map(r => r.enrollmentId),
+          attendanceRecords.map((r: { enrollmentId: string }) => r.enrollmentId),
         )
 
         return {
           ...old,
-          roster: old.roster.map((student: StudentAttendance) =>
+          roster: old.roster.map(student =>
             updatedEnrollmentIds.has(student.enrollmentId)
               ? {
                   ...student,
@@ -172,7 +168,7 @@ function AttendancePage() {
                     ...student.attendance,
                     status:
                       attendanceRecords.find(
-                        r => r.enrollmentId === student.enrollmentId,
+                        (r: { enrollmentId: string }) => r.enrollmentId === student.enrollmentId,
                       )?.status || 'present',
                     recordedAt: new Date(),
                   },
@@ -204,13 +200,11 @@ function AttendancePage() {
     status: 'present' | 'absent' | 'late' | 'excused',
   ) => {
     await saveMutation.mutateAsync({
-      data: {
-        enrollmentId,
-        sessionId: `temp-${Date.now()}`,
-        sessionDate: selectedDate,
-        status,
-        teacherId: context?.teacherId ?? '',
-      },
+      enrollmentId,
+      sessionId: `temp-${Date.now()}`,
+      sessionDate: selectedDate,
+      status,
+      teacherId: context?.teacherId ?? '',
     })
   }
 
@@ -227,13 +221,11 @@ function AttendancePage() {
 
     if (records.length > 0) {
       await bulkSaveMutation.mutateAsync({
-        data: {
-          classId: selectedClassId,
-          sessionId: `temp-${Date.now()}`,
-          sessionDate: selectedDate,
-          teacherId: context?.teacherId ?? '',
-          attendanceRecords: records,
-        },
+        classId: selectedClassId,
+        sessionId: `temp-${Date.now()}`,
+        sessionDate: selectedDate,
+        teacherId: context?.teacherId ?? '',
+        attendanceRecords: records,
       })
     }
   }

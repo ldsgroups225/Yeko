@@ -4,9 +4,12 @@ import {
   getMessageDetails,
   getMessageTemplates,
   getTeacherMessages,
+  markMessageRead,
   searchParents,
+  sendMessage,
 } from '@/teacher/functions/messages'
 import { getTeacherNotifications } from '@/teacher/functions/notifications'
+import { teacherMutationKeys } from './keys'
 
 export const messagesKeys = {
   all: ['teacher', 'messages'] as const,
@@ -105,4 +108,16 @@ export function teacherNotificationsQueryOptions(params: NotificationsParams) {
       }),
     staleTime: 30 * 1000, // 30 seconds
   })
+}
+
+// Messages mutations
+export const messagesMutations = {
+  send: {
+    mutationKey: teacherMutationKeys.messages.send,
+    mutationFn: (data: Parameters<typeof sendMessage>[0]['data']) => sendMessage({ data }),
+  },
+  markRead: {
+    mutationKey: teacherMutationKeys.messages.markRead,
+    mutationFn: (data: Parameters<typeof markMessageRead>[0]['data']) => markMessageRead({ data }),
+  },
 }

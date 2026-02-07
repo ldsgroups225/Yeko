@@ -1,6 +1,9 @@
 import { queryOptions } from '@tanstack/react-query'
 
 import {
+  createTimetableSession,
+  deleteClassTimetable,
+  deleteTimetableSession,
   getAllConflicts,
   getClassroomAvailability,
   getTeacherAvailability,
@@ -9,7 +12,10 @@ import {
   getTimetableByClassroom,
   getTimetableByTeacher,
   getTimetableSession,
+  importTimetable,
+  updateTimetableSession,
 } from '@/school/functions/timetables'
+import { schoolMutationKeys } from './keys'
 
 // ============================================
 // QUERY KEYS
@@ -174,4 +180,28 @@ export const timetablesOptions = {
       gcTime: 30 * 60 * 1000,
       enabled: !!classroomId && !!schoolYearId && dayOfWeek >= 1 && dayOfWeek <= 7,
     }),
+}
+
+// Timetables mutations
+export const timetablesMutations = {
+  create: {
+    mutationKey: schoolMutationKeys.timetables.create,
+    mutationFn: (data: Parameters<typeof createTimetableSession>[0]['data']) => createTimetableSession({ data }),
+  },
+  update: {
+    mutationKey: schoolMutationKeys.timetables.update,
+    mutationFn: (data: Parameters<typeof updateTimetableSession>[0]['data']) => updateTimetableSession({ data }),
+  },
+  delete: {
+    mutationKey: schoolMutationKeys.timetables.delete,
+    mutationFn: (data: Parameters<typeof deleteTimetableSession>[0]['data']) => deleteTimetableSession({ data }),
+  },
+  import: {
+    mutationKey: schoolMutationKeys.timetables.import,
+    mutationFn: (data: Parameters<typeof importTimetable>[0]['data']) => importTimetable({ data }),
+  },
+  deleteClass: {
+    mutationKey: schoolMutationKeys.timetables.deleteClass,
+    mutationFn: (data: Parameters<typeof deleteClassTimetable>[0]['data']) => deleteClassTimetable({ data }),
+  },
 }

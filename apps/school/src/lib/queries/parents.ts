@@ -1,9 +1,16 @@
 import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import {
   autoMatchParents,
+  createParent,
+  deleteParent,
   getParentById,
   getParents,
+  linkParentToStudent,
+  sendParentInvitation,
+  unlinkParentFromStudent,
+  updateParent,
 } from '@/school/functions/parents'
+import { schoolMutationKeys } from './keys'
 
 export const parentsKeys = {
   all: ['parents'] as const,
@@ -63,4 +70,36 @@ export const parentsOptions = {
       gcTime: 5 * 60 * 1000,
       enabled: false, // Manual trigger only
     }),
+}
+
+// Parent mutations
+export const parentsMutations = {
+  create: {
+    mutationKey: schoolMutationKeys.parents.create,
+    mutationFn: (data: Parameters<typeof createParent>[0]['data']) => createParent({ data }),
+  },
+  update: {
+    mutationKey: schoolMutationKeys.parents.update,
+    mutationFn: (data: Parameters<typeof updateParent>[0]['data']) => updateParent({ data }),
+  },
+  delete: {
+    mutationKey: schoolMutationKeys.parents.delete,
+    mutationFn: (id: string) => deleteParent({ data: id }),
+  },
+  linkToStudent: {
+    mutationKey: schoolMutationKeys.parents.link,
+    mutationFn: (data: Parameters<typeof linkParentToStudent>[0]['data']) => linkParentToStudent({ data }),
+  },
+  unlinkFromStudent: {
+    mutationKey: schoolMutationKeys.parents.unlink,
+    mutationFn: (data: Parameters<typeof unlinkParentFromStudent>[0]['data']) => unlinkParentFromStudent({ data }),
+  },
+  sendInvitation: {
+    mutationKey: schoolMutationKeys.parents.invite,
+    mutationFn: (parentId: string) => sendParentInvitation({ data: parentId }),
+  },
+  autoMatch: {
+    mutationKey: schoolMutationKeys.parents.autoMatch,
+    mutationFn: () => autoMatchParents(),
+  },
 }

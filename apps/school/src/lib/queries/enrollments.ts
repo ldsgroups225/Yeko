@@ -1,9 +1,16 @@
 import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import {
+  bulkReEnroll,
+  cancelEnrollment,
+  confirmEnrollment,
+  createEnrollment,
+  deleteEnrollment,
   getEnrollmentById,
   getEnrollments,
   getEnrollmentStatistics,
+  transferStudent,
 } from '@/school/functions/enrollments'
+import { schoolMutationKeys } from './keys'
 
 export const enrollmentsKeys = {
   all: ['enrollments'] as const,
@@ -65,4 +72,32 @@ export const enrollmentsOptions = {
       gcTime: 30 * 60 * 1000,
       enabled: !!schoolYearId,
     }),
+}
+
+// Enrollment mutations
+export const enrollmentsMutations = {
+  create: {
+    mutationKey: schoolMutationKeys.enrollments.create,
+    mutationFn: (data: Parameters<typeof createEnrollment>[0]['data']) => createEnrollment({ data }),
+  },
+  confirm: {
+    mutationKey: schoolMutationKeys.enrollments.confirm,
+    mutationFn: (data: Parameters<typeof confirmEnrollment>[0]['data']) => confirmEnrollment({ data }),
+  },
+  cancel: {
+    mutationKey: schoolMutationKeys.enrollments.cancel,
+    mutationFn: (data: Parameters<typeof cancelEnrollment>[0]['data']) => cancelEnrollment({ data }),
+  },
+  delete: {
+    mutationKey: schoolMutationKeys.enrollments.delete,
+    mutationFn: (id: string) => deleteEnrollment({ data: id }),
+  },
+  transfer: {
+    mutationKey: schoolMutationKeys.students.transfer,
+    mutationFn: (data: Parameters<typeof transferStudent>[0]['data']) => transferStudent({ data }),
+  },
+  bulkReEnroll: {
+    mutationKey: schoolMutationKeys.students.bulkReEnroll,
+    mutationFn: (data: Parameters<typeof bulkReEnroll>[0]['data']) => bulkReEnroll({ data }),
+  },
 }
