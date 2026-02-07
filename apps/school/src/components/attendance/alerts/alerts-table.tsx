@@ -53,14 +53,14 @@ export interface AttendanceAlert {
 
 interface AlertsTableProps {
   alerts: AttendanceAlert[]
-  isLoading?: boolean
+  isPending?: boolean
   onAcknowledge?: (id: string) => void
   onDismiss?: (id: string) => void
 }
 
 export function AlertsTable({
   alerts,
-  isLoading,
+  isPending,
   onAcknowledge,
   onDismiss,
 }: AlertsTableProps) {
@@ -207,7 +207,7 @@ export function AlertsTable({
     },
   })
 
-  if (isLoading) {
+  if (isPending) {
     return <TableSkeleton columns={6} rows={5} />
   }
 

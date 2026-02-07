@@ -95,25 +95,25 @@ function EmptyState() {
 
 export function TeacherWorkload() {
   const t = useTranslations()
-  const { data: schoolYearResult, isLoading: schoolYearLoading } = useQuery({
+  const { data: schoolYearResult, isPending: isPendingSchoolYear } = useQuery({
     queryKey: ['activeSchoolYear'],
     queryFn: () => getActiveSchoolYear(),
   })
 
   const schoolYear = schoolYearResult?.success ? schoolYearResult.data : undefined
 
-  const { data: teachersResult, isLoading: teachersLoading } = useQuery({
+  const { data: teachersResult, isPending: isPendingTeachers } = useQuery({
     queryKey: ['teachers'],
     queryFn: () => getTeachers({ data: {} }),
   })
 
-  const { data: classSubjectsResult, isLoading: subjectsLoading } = useQuery({
+  const { data: classSubjectsResult, isPending: isPendingSubjects } = useQuery({
     queryKey: ['classSubjects', schoolYear?.id],
     queryFn: () => getClassSubjects({ data: { schoolYearId: schoolYear?.id } }),
     enabled: !!schoolYear?.id,
   })
 
-  const isLoading = schoolYearLoading || teachersLoading || subjectsLoading
+  const isPending = isPendingSchoolYear || isPendingTeachers || isPendingSubjects
 
   const teachers = useMemo(() => teachersResult?.success ? teachersResult.data.teachers : [], [teachersResult])
   const subjects = useMemo(() => classSubjectsResult?.success ? classSubjectsResult.data : [], [classSubjectsResult])
@@ -141,7 +141,7 @@ export function TeacherWorkload() {
 
   const overloadedTeachers = useMemo(() => teacherWorkloads.filter(tw => tw.isOverloaded), [teacherWorkloads])
 
-  if (isLoading) {
+  if (isPending) {
     return <WorkloadSkeleton />
   }
 

@@ -147,7 +147,7 @@ describe('timetables Integration', () => {
     })
 
     test('should show loading skeletons when loading', () => {
-      render(<TimetableGrid sessions={[]} isLoading />)
+      render(<TimetableGrid sessions={[]} isPending />)
       const skeletons = document.querySelectorAll('[class*="animate-pulse"], [data-slot="skeleton"]')
       expect(skeletons.length).toBeGreaterThan(0)
     })

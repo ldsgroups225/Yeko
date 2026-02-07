@@ -42,7 +42,7 @@ function ClassDetailPage() {
   const queryClient = useQueryClient()
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
-  const { data: result, isLoading } = useQuery({
+  const { data: result, isPending } = useQuery({
     queryKey: ['class', classId],
     queryFn: () => getClassById({ data: classId }),
   })
@@ -63,7 +63,7 @@ function ClassDetailPage() {
     },
   })
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="space-y-6">
         <div className="flex items-start justify-between">
@@ -300,7 +300,7 @@ function ClassDetailPage() {
         description={t.common.deleteConfirmDescription({ name: className })}
         confirmText={className}
         onConfirm={() => deleteMutation.mutate()}
-        isLoading={deleteMutation.isPending}
+        isPending={deleteMutation.isPending}
       />
     </div>
   )

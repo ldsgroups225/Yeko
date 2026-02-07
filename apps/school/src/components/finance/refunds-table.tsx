@@ -25,7 +25,7 @@ interface Refund {
 
 interface RefundsTableProps {
   refunds: Refund[]
-  isLoading?: boolean
+  isPending?: boolean
   onApprove?: (id: string) => void
   onReject?: (id: string) => void
 }
@@ -62,13 +62,13 @@ function formatDate(dateStr: string) {
 
 export function RefundsTable({
   refunds,
-  isLoading,
+  isPending,
   onApprove,
   onReject,
 }: RefundsTableProps) {
   const t = useTranslations()
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="space-y-4 p-4">
         {Array.from({ length: 5 }).map(() => (

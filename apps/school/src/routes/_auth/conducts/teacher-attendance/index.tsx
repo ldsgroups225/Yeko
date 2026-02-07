@@ -38,10 +38,10 @@ function TeacherAttendancePage() {
 
   const dateStr = date.toISOString().split('T')[0] ?? ''
 
-  const { data, isLoading } = useQuery(dailyTeacherAttendanceOptions(dateStr))
+  const { data, isPending } = useQuery(dailyTeacherAttendanceOptions(dateStr))
 
   const mutation = useMutation({
-    mutationKey: schoolMutationKeys.teacherAttendance.save,
+    mutationKey: schoolMutationKeys.teacherAttendance.bulkRecord,
     mutationFn: (params: { date: string, entries: Array<{ teacherId: string, status: 'present' | 'late' | 'absent' | 'excused' | 'on_leave', arrivalTime?: string | null, reason?: string | null }> }) =>
       bulkRecordAttendance({ data: params }),
     onSuccess: () => {
@@ -139,7 +139,7 @@ function TeacherAttendancePage() {
           <TeacherAttendanceGrid
             entries={entries}
             onSave={handleSave}
-            isLoading={isLoading}
+            isPending={isPending}
             isSaving={mutation.isPending}
           />
         </motion.div>

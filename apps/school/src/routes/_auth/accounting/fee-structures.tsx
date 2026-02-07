@@ -26,7 +26,7 @@ function FeeStructuresPage() {
   const [editingStructure, setEditingStructure] = useState<FeeStructure | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
-  const { data: feeStructures, isLoading } = useQuery(
+  const { data: feeStructures, isPending } = useQuery(
     feeStructuresOptions.withDetails(),
   )
 
@@ -125,7 +125,7 @@ function FeeStructuresPage() {
           <CardContent className="p-0">
             <FeeStructuresTable
               feeStructures={feeStructuresList}
-              isLoading={isLoading}
+              isPending={isPending}
               onEdit={handleEdit}
               onDelete={handleDelete}
             />
@@ -150,7 +150,7 @@ function FeeStructuresPage() {
           if (deletingId)
             deleteMutation.mutate(deletingId)
         }}
-        isLoading={deleteMutation.isPending}
+        isPending={deleteMutation.isPending}
         title={t('finance.feeStructures.deleteFeeStructure')}
         description={t('finance.feeStructures.deleteFeeStructureConfirm')}
       />

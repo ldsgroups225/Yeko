@@ -54,7 +54,7 @@ function RouteComponent() {
   const loaderData = Route.useLoaderData()
   const nav = Route.useNavigate()
 
-  const { data, isLoading, isFetching, error } = useQuery({
+  const { data, isPending, isFetching, error } = useQuery({
     queryKey: [loaderData.checkoutId],
     queryFn: collectSubscription,
     refetchInterval: (query) => {
@@ -70,7 +70,7 @@ function RouteComponent() {
       return 'error'
     if (data)
       return 'success'
-    if (isFetching || isLoading)
+    if (isFetching || isPending)
       return 'processing'
     return 'processing'
   }

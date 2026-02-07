@@ -15,6 +15,7 @@ export const databaseMiddleware = createMiddleware().server(async ({ next }) => 
   // Also ensure auth is configured with this DB instance
   setAuth({
     secret: env.BETTER_AUTH_SECRET,
+    baseURL: env.BETTER_AUTH_BASE_URL,
     emailAndPassword: {
       enabled: true,
       requireEmailVerification: false,

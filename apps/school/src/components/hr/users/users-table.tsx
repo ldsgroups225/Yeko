@@ -101,7 +101,7 @@ export function UsersTable({ filters }: UsersTableProps) {
     },
   })
 
-  const { data, isLoading } = useQuery({
+  const { data, isPending } = useQuery({
     queryKey: ['users', { ...filters, search: debouncedSearch }],
     queryFn: async () => {
       const result = await getUsers({
@@ -266,7 +266,7 @@ export function UsersTable({ filters }: UsersTableProps) {
     pageCount: usersData?.totalPages || 0,
   })
 
-  if (isLoading) {
+  if (isPending) {
     return <TableSkeleton columns={6} rows={5} />
   }
 

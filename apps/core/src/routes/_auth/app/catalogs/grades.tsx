@@ -64,9 +64,9 @@ function GradesManagement() {
   const [deletingGrade, setDeletingGrade] = useState<{ id: string, name: string } | null>(null)
   const [deletingSerie, setDeletingSerie] = useState<{ id: string, name: string } | null>(null)
 
-  const { data: tracks, isLoading: tracksLoading } = useQuery(tracksQueryOptions())
-  const { data: grades, isLoading: gradesLoading } = useQuery(gradesQueryOptions())
-  const { data: series, isLoading: seriesLoading } = useQuery(seriesQueryOptions())
+  const { data: tracks, isPending: tracksPending } = useQuery(tracksQueryOptions())
+  const { data: grades, isPending: gradesPending } = useQuery(gradesQueryOptions())
+  const { data: series, isPending: seriesPending } = useQuery(seriesQueryOptions())
 
   const createGradeMutation = useMutation({
     ...createGradeMutationOptions,
@@ -325,7 +325,7 @@ function GradesManagement() {
     }))
   }, [series, tracks])
 
-  if (tracksLoading || gradesLoading || seriesLoading) {
+  if (tracksPending || gradesPending || seriesPending) {
     return (
       <div className="space-y-6">
         <div className="space-y-2">
@@ -884,7 +884,7 @@ function GradesManagement() {
         description={`Êtes-vous sûr de vouloir supprimer le niveau "${deletingGrade?.name}" ? Cette action est irréversible.`}
         confirmText={deletingGrade?.name}
         onConfirm={handleDeleteGrade}
-        isLoading={deleteGradeMutation.isPending}
+        isPending={deleteGradeMutation.isPending}
       />
 
       <DeleteConfirmationDialog
@@ -894,7 +894,7 @@ function GradesManagement() {
         description={`Êtes-vous sûr de vouloir supprimer la série "${deletingSerie?.name}" ? Cette action est irréversible.`}
         confirmText={deletingSerie?.name}
         onConfirm={handleDeleteSerie}
-        isLoading={deleteSerieMutation.isPending}
+        isPending={deleteSerieMutation.isPending}
       />
     </div>
   )

@@ -77,7 +77,7 @@ function SchoolYearsCatalog() {
   const [createTermType, setCreateTermType] = useState<string>('')
   const [editTermType, setEditTermType] = useState<string>('')
 
-  const { data: schoolYears, isLoading } = useQuery(schoolYearTemplatesWithTermsQueryOptions())
+  const { data: schoolYears, isPending } = useQuery(schoolYearTemplatesWithTermsQueryOptions())
 
   // Mutations
   const createYearMutation = useMutation({
@@ -241,7 +241,7 @@ function SchoolYearsCatalog() {
     updateTermMutation.mutate(data)
   }
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="space-y-6">
         <div className="space-y-2">
@@ -746,7 +746,7 @@ function SchoolYearsCatalog() {
             deleteYearMutation.mutate({ id: deletingYear.id })
           }
         }}
-        isLoading={deleteYearMutation.isPending}
+        isPending={deleteYearMutation.isPending}
       />
 
       {/* Delete Term Dialog */}
@@ -761,7 +761,7 @@ function SchoolYearsCatalog() {
             deleteTermMutation.mutate({ id: deletingTerm.id })
           }
         }}
-        isLoading={deleteTermMutation.isPending}
+        isPending={deleteTermMutation.isPending}
       />
     </div>
   )

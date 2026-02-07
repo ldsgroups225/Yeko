@@ -25,13 +25,13 @@ function EditClassroomPage() {
   const { classroomId } = Route.useParams()
   const navigate = useNavigate()
 
-  const { data: result, isLoading } = useQuery({
+  const { data: result, isPending } = useQuery({
     queryKey: ['classroom', classroomId],
     queryFn: () => getClassroomById({ data: classroomId }),
   })
   const data = result?.success ? result.data : null
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />

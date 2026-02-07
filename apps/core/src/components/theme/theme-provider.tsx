@@ -29,25 +29,28 @@ export function ThemeProvider({
   disableTransitionOnChange = false,
   ...props
 }: ThemeProviderProps) {
-  const [theme, setThemeState] = useState<Theme>(defaultTheme)
-  const [systemTheme, setSystemTheme] = useState<'light' | 'dark' | undefined>(undefined)
-  const [isMounted, setIsMounted] = useState(false)
-
-  // Initialize theme from storage on mount
-  useEffect(() => {
+  const [theme, setThemeState] = useState<Theme>(() => {
     if (typeof window !== 'undefined') {
       try {
         const stored = localStorage.getItem(storageKey) as Theme
-        if (stored) {
-          setThemeState(stored)
-        }
+        if (stored)
+          return stored
       }
       catch {
         // Ignore
       }
-      setSystemTheme(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
     }
-  }, [storageKey])
+    return defaultTheme
+  })
+
+  const [systemTheme, setSystemTheme] = useState<'light' | 'dark' | undefined>(() => {
+    if (typeof window !== 'undefined') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    }
+    return undefined
+  })
+
+  const [isMounted, setIsMounted] = useState(false)
 
   const resolvedTheme = theme === 'system' ? systemTheme : theme
 

@@ -83,10 +83,10 @@ function ProgramsCatalog() {
   const debouncedSearch = useDebounce(search, 500)
 
   // Fetch data
-  const { data: schoolYears, isLoading: yearsLoading } = useQuery(schoolYearTemplatesQueryOptions())
+  const { data: schoolYears, isPending: yearsPending } = useQuery(schoolYearTemplatesQueryOptions())
   const { data: subjects } = useQuery(subjectsQueryOptions({ limit: 100 }))
   const { data: grades } = useQuery(gradesQueryOptions())
-  const { data: stats, isLoading: statsLoading } = useQuery(programStatsQueryOptions())
+  const { data: stats, isPending: statsPending } = useQuery(programStatsQueryOptions())
 
   const queryParams = useMemo(() => ({
     schoolYearTemplateId: yearFilter === 'all' ? undefined : yearFilter,
@@ -98,7 +98,7 @@ function ProgramsCatalog() {
     limit: 20,
   }), [yearFilter, subjectFilter, gradeFilter, statusFilter, debouncedSearch, page])
 
-  const { data: programsData, isLoading: programsLoading } = useQuery(programTemplatesQueryOptions(queryParams))
+  const { data: programsData, isPending: programsPending } = useQuery(programTemplatesQueryOptions(queryParams))
 
   // Mutations
   const createProgramMutation = useMutation({
@@ -195,7 +195,7 @@ function ProgramsCatalog() {
 
   const activeYear = schoolYears?.find(y => y.isActive)
 
-  if (yearsLoading || statsLoading) {
+  if (yearsPending || statsPending) {
     return (
       <div className="space-y-6">
         <div className="space-y-2">
@@ -485,7 +485,7 @@ function ProgramsCatalog() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {programsLoading && page === 1
+          {programsPending && page === 1
             ? (
                 <CatalogListSkeleton count={5} />
               )
@@ -653,7 +653,7 @@ function ProgramsCatalog() {
         description={`Êtes-vous sûr de vouloir supprimer le programme "${deletingProgram?.name}" ? Cette action supprimera également tous les chapitres associés.`}
         confirmText={deletingProgram?.name}
         onConfirm={handleDeleteProgram}
-        isLoading={deleteProgramMutation.isPending}
+        isPending={deleteProgramMutation.isPending}
       />
     </div>
   )

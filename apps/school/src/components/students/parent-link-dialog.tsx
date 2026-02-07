@@ -84,7 +84,7 @@ export function ParentLinkDialog({
   const [newCanPickup, setNewCanPickup] = useState(true)
   const [newReceiveNotifications, setNewReceiveNotifications] = useState(true)
 
-  const { data: parentsData, isLoading: parentsLoading } = useQuery({
+  const { data: parentsData, isPending: isPendingParents } = useQuery({
     ...parentsOptions.list({ search, limit: 10 }),
     enabled: open && tab === 'existing' && search.length >= 2,
   })
@@ -207,13 +207,13 @@ export function ParentLinkDialog({
               />
             </div>
 
-            {parentsLoading && (
+            {isPendingParents && (
               <div className="flex justify-center py-8">
                 <IconLoader2 className="h-6 w-6 animate-spin text-primary" />
               </div>
             )}
 
-            {!parentsLoading
+            {!isPendingParents
               && search.length >= 2
               && parentsData
               && parentsData.data.length === 0 && (

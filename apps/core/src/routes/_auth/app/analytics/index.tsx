@@ -44,13 +44,13 @@ function Analytics() {
   const { logger } = useLogger()
   const [timeRange, setTimeRange] = useState<TimeRange>('30d')
 
-  const { data: overview, isLoading: overviewLoading } = useQuery(
+  const { data: overview, isPending: overviewPending } = useQuery(
     analyticsOverviewQueryOptions(timeRange),
   )
-  const { data: schoolsPerf, isLoading: schoolsLoading } = useQuery(
+  const { data: schoolsPerf, isPending: schoolsPending } = useQuery(
     schoolsPerformanceQueryOptions(timeRange),
   )
-  const { data: platformUsage, isLoading: usageLoading } = useQuery(
+  const { data: platformUsage, isPending: usagePending } = useQuery(
     platformUsageQueryOptions(timeRange),
   )
 
@@ -108,7 +108,7 @@ function Analytics() {
 
       {/* KPI Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {overviewLoading
+        {overviewPending
           ? (
               [1, 2, 3, 4].map(i => (
                 <Card key={i}>
@@ -171,7 +171,7 @@ function Analytics() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {usageLoading
+            {usagePending
               ? (
                   <div className="space-y-4">
                     {[1, 2, 3].map(i => (
@@ -213,7 +213,7 @@ function Analytics() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {usageLoading
+            {usagePending
               ? (
                   <div className="space-y-3">
                     {[1, 2, 3, 4].map(i => (
@@ -264,7 +264,7 @@ function Analytics() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {schoolsLoading
+            {schoolsPending
               ? (
                   <div className="space-y-3">
                     {[1, 2, 3].map(i => (
@@ -306,7 +306,7 @@ function Analytics() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {schoolsLoading
+            {schoolsPending
               ? (
                   <div className="space-y-3">
                     {[1, 2, 3, 4].map(i => (
@@ -361,7 +361,7 @@ function Analytics() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {usageLoading
+          {usagePending
             ? (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                   {[1, 2, 3, 4].map(i => (

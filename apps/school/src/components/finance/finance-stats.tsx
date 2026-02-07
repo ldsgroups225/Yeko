@@ -10,7 +10,7 @@ interface FinanceStatsProps {
   totalPayments?: number
   pendingPayments?: number
   overdueAmount?: number
-  isLoading?: boolean
+  isPending?: boolean
 }
 
 export function FinanceStats({
@@ -18,7 +18,7 @@ export function FinanceStats({
   totalPayments = 0,
   pendingPayments = 0,
   overdueAmount = 0,
-  isLoading = false,
+  isPending = false,
 }: FinanceStatsProps) {
   const t = useTranslations()
 
@@ -68,7 +68,7 @@ export function FinanceStats({
     },
   ]
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {Array.from({ length: 4 }).map(() => (

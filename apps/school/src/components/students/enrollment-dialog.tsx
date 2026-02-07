@@ -98,7 +98,7 @@ export function EnrollmentDialog({
 
   const selectedYearId = form.watch('schoolYearId')
 
-  const { data: classes, isLoading: classesLoading } = useQuery({
+  const { data: classes, isPending: isPendingClasses } = useQuery({
     ...classesOptions.list({ schoolYearId: selectedYearId }),
     enabled: open && !!selectedYearId,
   })
@@ -244,9 +244,9 @@ export function EnrollmentDialog({
                   </Select>
                   <FormDescription>
                     {!selectedYearId && t.students.selectSchoolYearFirst()}
-                    {selectedYearId && classesLoading && t.common.loading()}
+                    {selectedYearId && isPendingClasses && t.common.loading()}
                     {selectedYearId
-                      && !classesLoading
+                      && !isPendingClasses
                       && (!classes || classes.length === 0)
                       && t.students.noClassesForYear()}
                   </FormDescription>

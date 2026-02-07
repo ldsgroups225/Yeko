@@ -40,7 +40,7 @@ export const Route = createFileRoute('/_auth/grades/report-cards')({
 function ReportCardsPage() {
   const t = useTranslations()
   const { schoolId } = useSchoolContext()
-  const { schoolYearId: contextSchoolYearId } = useSchoolYearContext()
+  const { schoolYearId: contextSchoolYearId, isPending: contextPending } = useSchoolYearContext()
   const queryClient = useQueryClient()
   const session = authClient.useSession()
   const authUserId = session.data?.user?.id
@@ -52,7 +52,7 @@ function ReportCardsPage() {
   const [isGenerationDialogOpen, setIsGenerationDialogOpen] = useState(false)
 
   // Fetch school years
-  const { data: schoolYearsResult, isLoading: yearsLoading } = useQuery({
+  const { data: schoolYearsResult, isPending: yearsPending } = useQuery({
     queryKey: ['school-years'],
     queryFn: () => getSchoolYears(),
     staleTime: 5 * 60 * 1000,
@@ -64,7 +64,7 @@ function ReportCardsPage() {
   const effectiveYearId = contextSchoolYearId || localYearId || activeYear?.id || ''
 
   // Fetch terms for selected year
-  const { data: termsResult, isLoading: termsLoading } = useQuery({
+  const { data: termsResult, isPending: termsPending } = useQuery({
     queryKey: ['terms', effectiveYearId],
     queryFn: () => getTerms({ data: { schoolYearId: effectiveYearId } }),
     enabled: !!effectiveYearId,
@@ -73,7 +73,7 @@ function ReportCardsPage() {
   const terms = termsResult?.success ? termsResult.data : []
 
   // Fetch classes for selected year
-  const { data: classesResult, isLoading: classesLoading } = useQuery({
+  const { data: classesResult, isPending: classesPending } = useQuery({
     queryKey: ['classes', effectiveYearId],
     queryFn: () => getClasses({ data: { schoolYearId: effectiveYearId } }),
     enabled: !!effectiveYearId,
@@ -90,7 +90,7 @@ function ReportCardsPage() {
   })
 
   // Fetch existing report cards
-  const { data: reportCardsResult, isLoading: reportCardsLoading } = useQuery({
+  const { data: reportCardsResult, isPending: reportCardsPending } = useQuery({
     queryKey: ['report-cards', selectedClassId, selectedTermId],
     queryFn: () => getReportCards({ data: { classId: selectedClassId, termId: selectedTermId } }),
     enabled: !!selectedClassId && !!selectedTermId,
@@ -204,7 +204,7 @@ function ReportCardsPage() {
             <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
               {t.settings.schoolYears.title()}
             </Label>
-            {yearsLoading
+            {yearsPending || contextPending
               ? (
                   <Skeleton className="h-11 w-full rounded-xl" />
                 )
@@ -236,7 +236,7 @@ function ReportCardsPage() {
             <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
               {t.academic.grades.entry.term()}
             </Label>
-            {termsLoading
+            {termsPending || contextPending
               ? (
                   <Skeleton className="h-11 w-full rounded-xl" />
                 )
@@ -265,7 +265,7 @@ function ReportCardsPage() {
             <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
               {t.academic.grades.entry.class()}
             </Label>
-            {classesLoading
+            {classesPending || contextPending
               ? (
                   <Skeleton className="h-11 w-full rounded-xl" />
                 )
@@ -337,7 +337,7 @@ function ReportCardsPage() {
           ? (
               <ReportCardList
                 reportCards={mappedReportCards}
-                isLoading={reportCardsLoading}
+                isPending={reportCardsPending}
               />
             )
           : (

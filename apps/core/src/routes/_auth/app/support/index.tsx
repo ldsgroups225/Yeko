@@ -48,10 +48,10 @@ function Support() {
   }, [logger])
 
   // Fetch real data using TanStack Query
-  const { data: stats, isLoading: statsLoading } = useQuery(
+  const { data: stats, isPending: statsPending } = useQuery(
     ticketStatsQueryOptions(),
   )
-  const { data: recentTicketsData, isLoading: ticketsLoading } = useQuery(
+  const { data: recentTicketsData, isPending: ticketsPending } = useQuery(
     recentTicketsQueryOptions(5),
   )
 
@@ -171,7 +171,7 @@ function Support() {
             <IconHelpCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            {statsLoading
+            {statsPending
               ? (
                   <div className="h-8 w-16 animate-pulse bg-muted rounded" />
                 )
@@ -188,7 +188,7 @@ function Support() {
             <IconAlertCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            {statsLoading
+            {statsPending
               ? (
                   <div className="h-8 w-16 animate-pulse bg-muted rounded" />
                 )
@@ -207,7 +207,7 @@ function Support() {
             <IconClock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            {statsLoading
+            {statsPending
               ? (
                   <div className="h-8 w-16 animate-pulse bg-muted rounded" />
                 )
@@ -226,7 +226,7 @@ function Support() {
             <IconCircleCheck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            {statsLoading
+            {statsPending
               ? (
                   <div className="h-8 w-16 animate-pulse bg-muted rounded" />
                 )
@@ -245,7 +245,7 @@ function Support() {
             <IconClock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            {statsLoading
+            {statsPending
               ? (
                   <div className="h-8 w-20 animate-pulse bg-muted rounded" />
                 )
@@ -266,7 +266,7 @@ function Support() {
             <IconUsers className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            {statsLoading
+            {statsPending
               ? (
                   <div className="h-8 w-16 animate-pulse bg-muted rounded" />
                 )
@@ -292,7 +292,7 @@ function Support() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {ticketsLoading
+            {ticketsPending
               ? (
                   <div className="space-y-4">
                     {[1, 2, 3, 4].map(i => (

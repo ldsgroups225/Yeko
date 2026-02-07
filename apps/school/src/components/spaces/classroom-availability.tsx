@@ -162,12 +162,12 @@ function EmptyState() {
 export function ClassroomAvailability() {
   const t = useTranslations()
 
-  const { data: classrooms, isLoading } = useQuery({
+  const { data: classrooms, isPending } = useQuery({
     queryKey: ['classrooms'],
     queryFn: () => getClassrooms({ data: {} }),
   })
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="space-y-6">
         <div className="grid gap-6 md:grid-cols-4">

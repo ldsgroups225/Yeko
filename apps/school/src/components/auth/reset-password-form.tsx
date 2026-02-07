@@ -30,7 +30,7 @@ interface ResetPasswordFormProps {
 
 export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   const t = useTranslations()
-  const [isLoading, setIsLoading] = useState(false)
+  const [isPending, setIsPending] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
 
   const form = useForm<ResetPasswordFormData>({
@@ -38,7 +38,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   })
 
   const onSubmit = async (data: ResetPasswordFormData) => {
-    setIsLoading(true)
+    setIsPending(true)
     try {
       await authClient.resetPassword({
         newPassword: data.password,
@@ -51,7 +51,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
       toast.error(t.auth.resetPassword.error())
     }
     finally {
-      setIsLoading(false)
+      setIsPending(false)
     }
   }
 
@@ -148,7 +148,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
               id="password"
               type="password"
               placeholder={t.auth.resetPassword.newPasswordPlaceholder()}
-              disabled={isLoading}
+              disabled={isPending}
               className="h-12"
               {...form.register('password')}
             />
@@ -167,7 +167,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
               id="confirmPassword"
               type="password"
               placeholder={t.auth.resetPassword.confirmPasswordPlaceholder()}
-              disabled={isLoading}
+              disabled={isPending}
               className="h-12"
               {...form.register('confirmPassword')}
             />
@@ -181,9 +181,9 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
           <Button
             type="submit"
             className="w-full h-12 text-base"
-            disabled={isLoading}
+            disabled={isPending}
           >
-            {isLoading
+            {isPending
               ? (
                   <>
                     <IconLoader2 className="mr-2 h-5 w-5 animate-spin" />

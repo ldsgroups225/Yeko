@@ -64,7 +64,7 @@ interface StudentDetailProps {
 export function StudentDetail({ studentId }: StudentDetailProps) {
   const t = useTranslations()
   const queryClient = useQueryClient()
-  const { data: student, isLoading } = useQuery(studentsOptions.detail(studentId))
+  const { data: student, isPending } = useQuery(studentsOptions.detail(studentId))
 
   const [parentDialogOpen, setParentDialogOpen] = useState(false)
   const [enrollmentDialogOpen, setEnrollmentDialogOpen] = useState(false)
@@ -83,7 +83,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
     },
   })
 
-  if (isLoading) {
+  if (isPending) {
     return <StudentDetailSkeleton />
   }
 

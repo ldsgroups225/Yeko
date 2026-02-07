@@ -22,12 +22,12 @@ import { getOnboardingStatus } from '@/lib/api/onboarding'
 export function OnboardingWidget() {
   const navigate = useNavigate()
 
-  const { data: status, isLoading } = useQuery({
+  const { data: status, isPending } = useQuery({
     queryKey: ['onboarding-status'],
     queryFn: () => getOnboardingStatus(),
   })
 
-  if (isLoading)
+  if (isPending)
     return null // Or skeleton
   if (!status)
     return null

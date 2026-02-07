@@ -61,8 +61,8 @@ function ProgramDetails() {
   const [showImport, setShowImport] = useState(false)
   const [importContent, setImportContent] = useState('')
 
-  const { data: program, isLoading: programLoading } = useQuery(programTemplateByIdQueryOptions(programId))
-  const { data: chapters, isLoading: chaptersLoading } = useQuery(programTemplateChaptersQueryOptions(programId))
+  const { data: program, isPending: programPending } = useQuery(programTemplateByIdQueryOptions(programId))
+  const { data: chapters, isPending: chaptersPending } = useQuery(programTemplateChaptersQueryOptions(programId))
   const { data: versions = [] } = useQuery(getProgramVersionsQueryOptions(programId))
 
   const updateProgramMutation = useMutation({
@@ -224,7 +224,7 @@ function ProgramDetails() {
 
   const totalDuration = chapters?.reduce((sum: number, ch) => sum + (ch.durationHours || 0), 0) || 0
 
-  if (programLoading || chaptersLoading) {
+  if (programPending || chaptersPending) {
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-4">
@@ -668,7 +668,7 @@ function ProgramDetails() {
         description={`Êtes-vous sûr de vouloir supprimer le chapitre "${deletingChapter?.title}" ? Cette action est irréversible.`}
         confirmText={deletingChapter?.title}
         onConfirm={handleDeleteChapter}
-        isLoading={deleteChapterMutation.isPending}
+        isPending={deleteChapterMutation.isPending}
       />
     </div>
   )

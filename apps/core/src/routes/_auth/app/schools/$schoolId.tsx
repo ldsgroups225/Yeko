@@ -84,10 +84,10 @@ function SchoolDetails() {
 
   const {
     data: school,
-    isLoading,
+    isPending,
     error,
   } = useQuery(schoolQueryOptions(schoolId))
-  const { data: usersData, isLoading: usersLoading } = useQuery(
+  const { data: usersData, isPending: usersPending } = useQuery(
     schoolUsersQueryOptions({ schoolId }),
   )
 
@@ -223,7 +223,7 @@ function SchoolDetails() {
     }
   }, [school, schoolId, logger])
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="space-y-6">
         {/* Header skeleton */}
@@ -455,7 +455,7 @@ function SchoolDetails() {
               </div>
             </CardHeader>
             <CardContent>
-              {usersLoading
+              {usersPending
                 ? (
                     <div className="space-y-4">
                       <div className="grid gap-4 md:grid-cols-3">
@@ -840,7 +840,7 @@ function SchoolDetails() {
         description={`Êtes-vous sûr de vouloir supprimer "${school.name}" ? Cette action est irréversible.`}
         confirmText={school.code}
         onConfirm={handleDelete}
-        isLoading={deleteSchoolMutation.isPending}
+        isPending={deleteSchoolMutation.isPending}
       />
 
       {/* Suspend User Confirmation Dialog */}
@@ -856,7 +856,7 @@ function SchoolDetails() {
         description={`Êtes-vous sûr de vouloir suspendre "${selectedUserForSuspend?.name}" ? L'utilisateur ne pourra plus se connecter.`}
         confirmText="Suspendre"
         onConfirm={handleSuspendUser}
-        isLoading={suspendUserMutation.isPending}
+        isPending={suspendUserMutation.isPending}
       />
 
       {/* Remove User Confirmation Dialog */}
@@ -872,7 +872,7 @@ function SchoolDetails() {
         description={`Êtes-vous sûr de vouloir supprimer "${selectedUserForRemove?.name}" ? Cette action est irréversible.`}
         confirmText="Supprimer"
         onConfirm={handleRemoveUser}
-        isLoading={removeUserMutation.isPending}
+        isPending={removeUserMutation.isPending}
       />
     </div>
   )

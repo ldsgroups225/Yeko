@@ -24,7 +24,7 @@ function StudentNotesPage() {
   const { context } = useRequiredTeacherContext()
   // const queryClient = useQueryClient()
 
-  const { data: summary, isLoading: isLoadingSummary } = useQuery({
+  const { data: summary, isPending: isPendingSummary } = useQuery({
     ...behaviorSummaryQueryOptions({
       studentId,
       schoolYearId: context?.schoolYearId ?? '',
@@ -32,7 +32,7 @@ function StudentNotesPage() {
     enabled: !!studentId && !!context?.schoolYearId,
   })
 
-  const { data: notes, isLoading: isLoadingNotes } = useQuery({
+  const { data: notes, isPending: isPendingNotes } = useQuery({
     ...studentNotesQueryOptions({ studentId }),
     enabled: !!studentId,
   })
@@ -61,7 +61,7 @@ function StudentNotesPage() {
           <CardTitle>{LL.notes.summary()}</CardTitle>
         </CardHeader>
         <CardContent>
-          {isLoadingSummary
+          {isPendingSummary
             ? (
                 <div className="grid grid-cols-3 gap-4">
                   {[1, 2, 3].map(el => (
@@ -100,7 +100,7 @@ function StudentNotesPage() {
           <CardTitle>{LL.notes.history()}</CardTitle>
         </CardHeader>
         <CardContent>
-          {isLoadingNotes
+          {isPendingNotes
             ? (
                 <div className="space-y-3">
                   {[1, 2, 3, 4, 5, 6].map(el => (

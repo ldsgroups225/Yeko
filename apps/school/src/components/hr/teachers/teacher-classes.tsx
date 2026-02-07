@@ -16,13 +16,13 @@ export interface TeacherClass {
 
 interface TeacherClassesProps {
   classes: TeacherClass[]
-  isLoading?: boolean
+  isPending?: boolean
 }
 
-export function TeacherClasses({ classes, isLoading }: TeacherClassesProps) {
+export function TeacherClasses({ classes, isPending }: TeacherClassesProps) {
   const t = useTranslations()
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {['skeleton-1', 'skeleton-2', 'skeleton-3'].map(key => (

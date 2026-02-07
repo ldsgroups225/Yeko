@@ -28,8 +28,8 @@ export default {
         provider: 'pg',
       },
       secret: env.BETTER_AUTH_SECRET,
-      baseURL: env.BETTER_AUTH_URL,
-      trustedOrigins: [env.BETTER_AUTH_URL, 'http://localhost:3001'],
+      baseURL: env.BETTER_AUTH_BASE_URL,
+      trustedOrigins: [env.BETTER_AUTH_BASE_URL, 'http://localhost:3001'],
       socialProviders: {
         google: {
           clientId: env.GOOGLE_CLIENT_ID,

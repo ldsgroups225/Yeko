@@ -23,7 +23,7 @@ interface DeleteConfirmationDialogProps {
   description?: React.ReactNode
   confirmText?: string
   cancelText?: string
-  isLoading?: boolean
+  isPending?: boolean
 }
 
 function DeleteConfirmationDialog({
@@ -34,7 +34,7 @@ function DeleteConfirmationDialog({
   description = 'Cette action est irréversible. Êtes-vous sûr de vouloir continuer ?',
   confirmText = 'Supprimer',
   cancelText = 'Annuler',
-  isLoading = false,
+  isPending = false,
 }: DeleteConfirmationDialogProps) {
   const handleConfirm = async () => {
     await onConfirm()
@@ -56,17 +56,17 @@ function DeleteConfirmationDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isLoading}>
+          <AlertDialogCancel disabled={isPending}>
             {cancelText}
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleConfirm}
-            disabled={isLoading}
+            disabled={isPending}
             className={cn(
               'bg-destructive text-destructive-foreground hover:bg-destructive/90',
             )}
           >
-            {isLoading && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isPending && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
             {confirmText}
           </AlertDialogAction>
         </AlertDialogFooter>

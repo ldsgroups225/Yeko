@@ -93,7 +93,7 @@ export function ClassroomsTable({
   const [itemToDelete, setItemToDelete] = useState<ClassroomItem | null>(null)
   const debouncedSearch = useDebounce(searchInput, 500)
 
-  const { data: result, isLoading: isLoadingQuery } = useQuery({
+  const { data: result, isPending: isPendingQuery } = useQuery({
     queryKey: ['classrooms', { search: debouncedSearch }],
     queryFn: async () => {
       const res = await getClassrooms({
@@ -106,7 +106,7 @@ export function ClassroomsTable({
   })
 
   const data = result?.success ? (result.data as unknown as ClassroomItem[]) : []
-  const isLoading = isLoadingQuery
+  const isPending = isPendingQuery
 
   const queryClient = useQueryClient()
   const deleteMutation = useMutation({
@@ -254,7 +254,7 @@ export function ClassroomsTable({
     },
   })
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <Card className="border-border/40 bg-card/40 backdrop-blur-xl">
         <CardContent className="p-6">

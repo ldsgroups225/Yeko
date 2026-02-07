@@ -10,7 +10,7 @@
   "vars": {
     "APP_NAME": "Yeko School",
     "APP_URL": "https://yeko-school.yeko.workers.dev/",
-    "BETTER_AUTH_URL": "https://yeko-school.yeko.workers.dev/",
+    "BETTER_AUTH_BASE_URL": "https://yeko-school.yeko.workers.dev/",
     "DATABASE_HOST": "ep-raspy-fog-agz58rrr-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require",
     "DATABASE_USERNAME": "neondb_owner",
     "GOOGLE_CLIENT_ID": "725781093652-vel4rol0r440ilpndk09t43og37iid32.apps.googleusercontent.com",

@@ -46,7 +46,7 @@ function AttendanceSettingsPage() {
   const t = useTranslations()
   const queryClient = useQueryClient()
 
-  const { data: result, isLoading } = useQuery({
+  const { data: result, isPending } = useQuery({
     queryKey: ['attendance-settings'],
     queryFn: () => getSettings(),
   })
@@ -104,7 +104,7 @@ function AttendanceSettingsPage() {
     mutation.mutate(values)
   }
 
-  if (isLoading) {
+  if (isPending) {
     return <SettingsSkeleton />
   }
 

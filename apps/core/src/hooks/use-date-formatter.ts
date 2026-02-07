@@ -7,20 +7,23 @@ import { formatDate } from '@/utils/formatDate'
  * Returns a formatter function that uses the current locale.
  */
 export function useDateFormatter() {
-  const [locale, setLocale] = useState<DateLocale>('fr')
-
-  useEffect(() => {
-    // Client-side only: detect locale from storage or browser
+  const [locale] = useState<DateLocale>(() => {
+    if (typeof window === 'undefined')
+      return 'fr'
     const stored = localStorage.getItem('yeko_core_language') as DateLocale | null
     if (stored === 'en' || stored === 'fr') {
-      setLocale(stored)
-      return
+      return stored
     }
 
     const browserLang = navigator.language.split('-')[0] as DateLocale
     if (browserLang === 'en' || browserLang === 'fr') {
-      setLocale(browserLang)
+      return browserLang
     }
+    return 'fr'
+  })
+
+  useEffect(() => {
+    // Keep locale in sync with storage changes if needed, but for now we just initialize once
   }, [])
 
   const format = (date: Date | string, style: DateFormatStyle = 'SHORT') => {

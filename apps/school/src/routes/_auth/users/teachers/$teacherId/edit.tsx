@@ -14,7 +14,7 @@ function EditTeacherPage() {
   const t = useTranslations()
   const navigate = useNavigate()
 
-  const { data: teacherResult, isLoading } = useQuery({
+  const { data: teacherResult, isPending } = useQuery({
     queryKey: ['teacher', teacherId],
     queryFn: async () => {
       const result = await getTeacher({ data: teacherId })
@@ -28,7 +28,7 @@ function EditTeacherPage() {
     navigate({ to: `/users/teachers/${teacherId}` })
   }
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-center">

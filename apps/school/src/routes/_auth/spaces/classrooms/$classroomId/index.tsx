@@ -44,7 +44,7 @@ function ClassroomDetailPage() {
   const queryClient = useQueryClient()
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
-  const { data: result, isLoading } = useQuery({
+  const { data: result, isPending } = useQuery({
     queryKey: ['classroom', classroomId],
     queryFn: () => getClassroomById({ data: classroomId }),
   })
@@ -63,7 +63,7 @@ function ClassroomDetailPage() {
     },
   })
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
@@ -411,7 +411,7 @@ function ClassroomDetailPage() {
         })}
         confirmText={classroom.code}
         onConfirm={() => deleteMutation.mutate()}
-        isLoading={deleteMutation.isPending}
+        isPending={deleteMutation.isPending}
       />
     </div>
   )

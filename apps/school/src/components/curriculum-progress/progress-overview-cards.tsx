@@ -15,7 +15,7 @@ interface ProgressOverviewData {
 
 interface ProgressOverviewCardsProps {
   data: ProgressOverviewData | null
-  isLoading?: boolean
+  isPending?: boolean
 }
 
 function CardSkeleton() {
@@ -31,10 +31,10 @@ function CardSkeleton() {
   )
 }
 
-export function ProgressOverviewCards({ data, isLoading }: ProgressOverviewCardsProps) {
+export function ProgressOverviewCards({ data, isPending }: ProgressOverviewCardsProps) {
   const t = useTranslations()
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <CardSkeleton />

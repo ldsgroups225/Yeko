@@ -153,7 +153,7 @@ export function AssignmentMatrix({
   const activeSchoolYear = schoolYearResult?.success ? schoolYearResult.data : null
   const effectiveSchoolYearId = propSchoolYearId || activeSchoolYear?.id
 
-  const { data: matrixResult, isLoading: matrixLoading } = useQuery({
+  const { data: matrixResult, isPending: isPendingMatrix } = useQuery({
     queryKey: ['assignmentMatrix', effectiveSchoolYearId],
     queryFn: () => getAssignmentMatrix({ data: effectiveSchoolYearId! }),
     enabled: !!effectiveSchoolYearId,
@@ -228,7 +228,7 @@ export function AssignmentMatrix({
     return (teacherWorkload.get(teacherId) || 0) > 30
   }
 
-  if (matrixLoading) {
+  if (isPendingMatrix) {
     return <MatrixSkeleton />
   }
 

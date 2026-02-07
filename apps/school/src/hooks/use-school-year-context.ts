@@ -8,7 +8,7 @@ import { getSchoolYearContext, setSchoolYearContext } from '@/school/middleware/
 export function useSchoolYearContext() {
   const queryClient = useQueryClient()
 
-  const { data: context, isLoading } = useQuery({
+  const { data: context, isPending } = useQuery({
     queryKey: ['school-year-context'],
     queryFn: async () => await getSchoolYearContext(),
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -28,7 +28,7 @@ export function useSchoolYearContext() {
 
   return {
     schoolYearId: context?.schoolYearId ?? null,
-    isLoading,
+    isPending,
     switchSchoolYear: switchSchoolYear.mutate,
     isSwitching: switchSchoolYear.isPending,
   }

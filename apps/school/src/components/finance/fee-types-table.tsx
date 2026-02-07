@@ -33,14 +33,14 @@ interface FeeType {
 
 interface FeeTypesTableProps {
   feeTypes: FeeType[]
-  isLoading?: boolean
+  isPending?: boolean
   onEdit?: (feeType: FeeType) => void
   onDelete?: (feeType: FeeType) => void
 }
 
 export function FeeTypesTable({
   feeTypes,
-  isLoading = false,
+  isPending = false,
   onEdit,
   onDelete,
 }: FeeTypesTableProps) {
@@ -64,7 +64,7 @@ export function FeeTypesTable({
     )
   }
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="space-y-4 p-4">
         {Array.from({ length: 5 }).map(() => (

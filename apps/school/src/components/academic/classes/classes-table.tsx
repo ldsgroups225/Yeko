@@ -130,7 +130,7 @@ export function ClassesTable({
     setStatus('')
   }
 
-  const { data, isLoading, refetch } = useQuery({
+  const { data, isPending, refetch } = useQuery({
     queryKey: ['classes', { search: debouncedSearch, status }],
     queryFn: async () => {
       const result = await getClasses({
@@ -328,7 +328,7 @@ export function ClassesTable({
     },
   })
 
-  if (isLoading) {
+  if (isPending) {
     return <TableSkeleton columns={6} rows={5} />
   }
 
@@ -491,7 +491,7 @@ export function ClassesTable({
 
       {/* Mobile Card View */}
       <div className="space-y-3 md:hidden">
-        {isLoading
+        {isPending
           ? (
               Array.from({ length: 5 }, () => (
                 <div

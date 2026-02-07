@@ -55,7 +55,7 @@ export function ClassSubjectManager({
 }: ClassSubjectManagerProps) {
   const t = useTranslations()
   const queryClient = useQueryClient()
-  const { data: subjectsResult, isLoading } = useQuery(
+  const { data: subjectsResult, isPending } = useQuery(
     classSubjectsOptions.list({ classId }),
   )
 
@@ -121,7 +121,7 @@ export function ClassSubjectManager({
 
   return (
     <div className="space-y-6">
-      {!isLoading && subjects && <ClassCoverageSummary subjects={subjects} />}
+      {!isPending && subjects && <ClassCoverageSummary subjects={subjects} />}
 
       <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
@@ -167,7 +167,7 @@ export function ClassSubjectManager({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {isLoading
+                {isPending
                   ? (
                       Array.from({ length: 3 }, (_, i) => (
                         <TableRow key={`skeleton-${i}`}>
@@ -327,7 +327,7 @@ export function ClassSubjectManager({
               })
             }
           }}
-          isLoading={deleteMutation.isPending}
+          isPending={deleteMutation.isPending}
         />
 
         <ConfirmationDialog
@@ -347,7 +347,7 @@ export function ClassSubjectManager({
               })
             }
           }}
-          isLoading={assignMutation.isPending}
+          isPending={assignMutation.isPending}
         />
       </Card>
     </div>

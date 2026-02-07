@@ -14,9 +14,9 @@ import { usePermissions } from '@/hooks/use-permissions'
  * Example 1: Using the usePermissions hook directly
  */
 export function UserManagementExample() {
-  const { can, canAny, isLoading } = usePermissions()
+  const { can, canAny, isPending } = usePermissions()
 
-  if (isLoading) {
+  if (isPending) {
     return <div>Loading permissions...</div>
   }
 

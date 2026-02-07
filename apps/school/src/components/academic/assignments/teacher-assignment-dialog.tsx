@@ -55,17 +55,17 @@ export function TeacherAssignmentDialog({
   const { schoolYearId } = useSchoolYearContext()
   const queryClient = useQueryClient()
 
-  const { data: schoolSubjectsResult, isLoading: loadingAll } = useQuery({
+  const { data: schoolSubjectsResult, isPending: isPendingAll } = useQuery({
     ...schoolSubjectsOptions.list({ schoolYearId: schoolYearId ?? '' }),
     enabled: open && !!schoolYearId,
   })
 
-  const { data: assignedSubjectsResult, isLoading: loadingAssigned } = useQuery({
+  const { data: assignedSubjectsResult, isPending: isPendingAssigned } = useQuery({
     ...teacherSubjectsOptions.list(teacherId),
     enabled: open && !!teacherId,
   })
 
-  const isLoading = loadingAll || loadingAssigned
+  const isPending = isPendingAll || isPendingAssigned
 
   const assignMutation = useMutation({
     mutationKey: schoolMutationKeys.teachers.assign,
@@ -119,7 +119,7 @@ export function TeacherAssignmentDialog({
 
         <ScrollArea className="h-[450px] px-6 py-4">
           <AnimatePresence mode="wait">
-            {isLoading
+            {isPending
               ? (
                   <motion.div
                     key="loading"

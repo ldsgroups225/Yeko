@@ -44,7 +44,7 @@ export function useDatabaseStats(): {
   isLoading: boolean
   refresh: () => Promise<void>
 } {
-  const { data: stats, isLoading, refetch } = useQuery({
+  const { data: stats, isPending, refetch } = useQuery({
     queryKey: ['database', 'stats'],
     queryFn: () => clientDatabaseManager.getStats(),
   })
@@ -53,7 +53,7 @@ export function useDatabaseStats(): {
     await refetch()
   }, [refetch])
 
-  return { stats: stats ?? null, isLoading, refresh }
+  return { stats: stats ?? null, isLoading: isPending, refresh }
 }
 
 // ============================================================================

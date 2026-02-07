@@ -28,7 +28,7 @@ interface FinancialDashboardProps {
   studentsWithBalance?: number
   paymentsThisMonth?: number
   refundsPending?: number
-  isLoading?: boolean
+  isPending?: boolean
 }
 
 function formatCurrency(amount: number) {
@@ -47,11 +47,11 @@ export function FinancialDashboard({
   studentsWithBalance = 0,
   paymentsThisMonth = 0,
   refundsPending = 0,
-  isLoading = false,
+  isPending = false,
 }: FinancialDashboardProps) {
   const t = useTranslations()
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="space-y-6">
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">

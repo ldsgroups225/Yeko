@@ -36,7 +36,7 @@ function AlertsPage() {
   const t = useTranslations()
   const queryClient = useQueryClient()
 
-  const { data: alertsResult, isLoading } = useQuery({
+  const { data: alertsResult, isPending } = useQuery({
     queryKey: ['attendance-alerts', 'active'],
     queryFn: () => getActiveAlerts({ data: {} }),
   })
@@ -124,7 +124,7 @@ function AlertsPage() {
                 teacherName: item.teacherName,
                 studentName: item.studentName,
               })) || []}
-              isLoading={isLoading}
+              isPending={isPending}
               onAcknowledge={handleAcknowledge}
               onDismiss={handleDismiss}
             />

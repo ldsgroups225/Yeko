@@ -56,7 +56,7 @@ function HomeworkDetailPage() {
 
   const { context, isLoading: contextLoading } = useRequiredTeacherContext()
 
-  const { data, isLoading: dataLoading } = useQuery({
+  const { data, isPending: dataPending } = useQuery({
     ...homeworkDetailsQueryOptions({ homeworkId }),
     enabled: !!homeworkId,
   })
@@ -138,9 +138,9 @@ function HomeworkDetailPage() {
     })
   }
 
-  const isLoading = contextLoading || dataLoading
+  const isPending = contextLoading || dataPending
 
-  if (isLoading) {
+  if (isPending) {
     return <DetailSkeleton />
   }
 

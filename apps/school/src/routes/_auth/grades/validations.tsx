@@ -68,7 +68,7 @@ export const Route = createFileRoute('/_auth/grades/validations')({
 function GradeValidationsPage() {
   const t = useTranslations()
   const queryClient = useQueryClient()
-  const { schoolId } = useSchoolContext()
+  const { schoolId, isPending: contextPending } = useSchoolContext()
   const session = authClient.useSession()
   const userId = session.data?.user?.id
   const [selectedValidation, setSelectedValidation]
@@ -80,7 +80,7 @@ function GradeValidationsPage() {
   const [search, setSearch] = useState('')
   const [selectedRows, setSelectedRows] = useState<string[]>([])
 
-  const { data: pendingValidationsResult, isLoading } = useQuery(
+  const { data: pendingValidationsResult, isPending } = useQuery(
     gradesOptions.pending(schoolId ?? ''),
   )
 
@@ -436,7 +436,7 @@ function GradeValidationsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isLoading
+            {isPending || contextPending
               ? (
                   Array.from({ length: 5 }).map(() => (
                     <TableRow key={generateUUID()} className="border-border/10">
@@ -599,7 +599,7 @@ function GradeValidationsPage() {
             : totalPendingSelected
         }
         onConfirm={handleConfirm}
-        isLoading={isMutating}
+        isPending={isMutating}
       />
     </div>
   )

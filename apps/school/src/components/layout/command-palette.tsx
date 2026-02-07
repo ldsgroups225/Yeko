@@ -40,7 +40,7 @@ export function CommandPalette() {
     return () => document.removeEventListener('keydown', down)
   }, [])
 
-  const { query, setQuery, results, isLoading } = useSearch()
+  const { query, setQuery, results, isPending } = useSearch()
 
   const runCommand = React.useCallback((command: () => unknown) => {
     setOpen(false)
@@ -59,7 +59,7 @@ export function CommandPalette() {
 
         {query.length > 0 && (
           <CommandGroup heading={t('students.title')}>
-            {isLoading
+            {isPending
               ? (
                   <CommandItem disabled>{t('common.loading')}</CommandItem>
                 )

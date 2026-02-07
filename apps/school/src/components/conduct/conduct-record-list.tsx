@@ -28,7 +28,7 @@ interface ConductRecord {
 
 interface ConductRecordListProps {
   records: ConductRecord[]
-  isLoading?: boolean
+  isPending?: boolean
   onView?: (id: string) => void
   onEdit?: (id: string) => void
   onDelete?: (id: string) => void
@@ -36,14 +36,14 @@ interface ConductRecordListProps {
 
 export function ConductRecordList({
   records,
-  isLoading,
+  isPending,
   onView,
   onEdit,
   onDelete,
 }: ConductRecordListProps) {
   const t = useTranslations()
 
-  if (isLoading) {
+  if (isPending) {
     return <ConductRecordListSkeleton />
   }
 

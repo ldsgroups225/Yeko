@@ -133,24 +133,6 @@ async function main() {
     }
   }
 
-  console.log('Seeding Fee Types...')
-
-  for (const feeType of feeTypesData) {
-    const schoolId = '058d8e86-09a0-4173-a667-3dd90b652140' // Lycée Jules Verne
-    const insertQuery = db.insert(schoolSchema.feeTypes).values({
-      id: crypto.randomUUID(),
-      ...feeType,
-      schoolId,
-      status: 'active',
-    })
-
-    if (isFresh) {
-      await insertQuery
-    } else {
-      await insertQuery.onConflictDoNothing({ target: [schoolSchema.feeTypes.schoolId, schoolSchema.feeTypes.code] })
-    }
-  }
-
   console.log('Seeding Fee Type Templates (Core)...')
 
   for (const template of feeTypeTemplatesData) {

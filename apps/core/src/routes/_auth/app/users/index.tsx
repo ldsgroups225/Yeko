@@ -76,7 +76,7 @@ function UserManagement() {
   const [isRolesDialogOpen, setIsRolesDialogOpen] = useState(false)
   const { format: formatDate } = useDateFormatter()
 
-  const { data: userData, isLoading: isUsersLoading } = useQuery(
+  const { data: userData, isPending: isUsersPending } = useQuery(
     platformUsersQueryOptions({ search, page, limit: 10 }),
   )
 
@@ -162,7 +162,7 @@ function UserManagement() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isUsersLoading
+            {isUsersPending
               ? (
                   <TableRow>
                     <TableCell colSpan={5} className="h-64 text-center">

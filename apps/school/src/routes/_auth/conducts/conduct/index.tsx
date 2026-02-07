@@ -49,7 +49,7 @@ function ConductPage() {
   const activeSchoolYear = schoolYears.find(sy => sy.isActive)
   const schoolYearId = contextSchoolYearId || activeSchoolYear?.id || 'current-year'
 
-  const { data: recordsData, isLoading } = useQuery(
+  const { data: recordsData, isPending } = useQuery(
     conductRecordsOptions({
       schoolYearId,
       type: search.type,
@@ -266,7 +266,7 @@ function ConductPage() {
       >
         <ConductRecordTable
           records={records}
-          isLoading={isLoading}
+          isPending={isPending}
           onView={id => navigate({ to: `/conducts/conduct/${id}` })}
           onEdit={id => navigate({ to: `/conducts/conduct/${id}/edit` })}
           selection={{

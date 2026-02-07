@@ -70,7 +70,7 @@ function ReportCardTemplatesSettingsPage() {
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
 
   // Fetch templates
-  const { data: templatesResult, isLoading } = useQuery({
+  const { data: templatesResult, isPending } = useQuery({
     queryKey: ['report-card-templates', schoolId],
     queryFn: () =>
       getReportCardTemplates({ data: { schoolId: schoolId ?? '' } }),
@@ -141,7 +141,7 @@ function ReportCardTemplatesSettingsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="p-0">
-            {isLoading
+            {isPending
               ? (
                   <div className="space-y-4 p-6">
                     {Array.from({ length: 3 }).map(() => (

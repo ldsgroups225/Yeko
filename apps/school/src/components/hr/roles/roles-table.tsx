@@ -69,7 +69,7 @@ export function RolesTable({ filters }: RolesTableProps) {
   const [searchInput, setSearchInput] = useState(filters.search || '')
   const debouncedSearch = useDebounce(searchInput, 500)
 
-  const { data, isLoading } = useQuery({
+  const { data, isPending } = useQuery({
     queryKey: ['roles', { ...filters, search: debouncedSearch }],
     queryFn: async () => {
       const result = await getRoles({
@@ -213,7 +213,7 @@ export function RolesTable({ filters }: RolesTableProps) {
     pageCount: rolesData?.totalPages || 0,
   })
 
-  if (isLoading) {
+  if (isPending) {
     return <TableSkeleton columns={5} rows={5} />
   }
 

@@ -50,7 +50,7 @@ function SchoolClassesPage() {
   const { context, isLoading: contextLoading } = useRequiredTeacherContext()
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
 
-  const { data, isLoading: classesLoading } = useQuery({
+  const { data, isPending: classesPending } = useQuery({
     ...teacherClassesQueryOptions({
       teacherId: context?.teacherId ?? '',
       schoolYearId: context?.schoolYearId ?? '',
@@ -65,7 +65,7 @@ function SchoolClassesPage() {
     enabled: !!context?.userId,
   })
 
-  const isLoading = contextLoading || classesLoading
+  const isPending = contextLoading || classesPending
   const classes = data?.classes || []
 
   // Find current school from the schools list
@@ -73,7 +73,7 @@ function SchoolClassesPage() {
   const schoolName = currentSchool?.name || (classes[0] as { schoolName?: string })?.schoolName || LL.classes.defaultSchool()
   const schoolLogo = currentSchool?.logoUrl
 
-  if (isLoading) {
+  if (isPending) {
     return <ClassesPageSkeleton />
   }
 

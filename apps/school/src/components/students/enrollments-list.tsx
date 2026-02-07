@@ -117,7 +117,7 @@ export function EnrollmentsList() {
     [schoolYearId, classId, status, debouncedSearch, page],
   )
 
-  const { data, isLoading } = useQuery(enrollmentsOptions.list(filters))
+  const { data, isPending } = useQuery(enrollmentsOptions.list(filters))
 
   const { data: classesData } = useQuery({
     ...classesOptions.list({ schoolYearId: schoolYearId || undefined }),
@@ -260,7 +260,7 @@ export function EnrollmentsList() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {isLoading
+              {isPending
                 ? (
                     Array.from({ length: 5 }, () => (
                       <TableRow key={`skeleton-${generateUUID()}`}>

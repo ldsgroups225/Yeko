@@ -9,9 +9,9 @@ export type Permissions = Record<string, string[]>
  * @example
  * ```tsx
  * function UserManagement() {
- *   const { can, canAny, canAll, isLoading } = usePermissions();
+ *   const { can, canAny, canAll, isPending } = usePermissions();
  *
- *   if (isLoading) return <Spinner />;
+ *   if (isPending) return <Spinner />;
  *
  *   return (
  *     <div>
@@ -24,7 +24,7 @@ export type Permissions = Record<string, string[]>
  * ```
  */
 export function usePermissions() {
-  const { data: result, isLoading, error } = useQuery({
+  const { data: result, isPending, error } = useQuery({
     queryKey: ['user-permissions'],
     queryFn: () => getUserPermissions(),
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -69,7 +69,7 @@ export function usePermissions() {
     can,
     canAny,
     canAll,
-    isLoading,
+    isPending,
     error,
   }
 }

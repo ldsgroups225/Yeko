@@ -24,7 +24,7 @@ function ClassesPage() {
   const { LL } = useI18nContext()
   const { context } = useRequiredTeacherContext()
 
-  const { data, isLoading } = useQuery({
+  const { data, isPending } = useQuery({
     ...teacherClassesQueryOptions({
       teacherId: context?.teacherId ?? '',
       schoolYearId: context?.schoolYearId ?? '',
@@ -42,7 +42,7 @@ function ClassesPage() {
         </Button>
       </div>
 
-      {isLoading
+      {isPending
         ? (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {[1, 2, 3, 4, 5, 6].map(el => (

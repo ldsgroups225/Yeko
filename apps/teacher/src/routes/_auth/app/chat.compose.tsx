@@ -42,7 +42,7 @@ function ComposeMessagePage() {
   const [subject, setSubject] = useState('')
   const [content, setContent] = useState('')
 
-  const { data: searchResults, isLoading: searchLoading } = useQuery({
+  const { data: searchResults, isPending: searchPending } = useQuery({
     ...parentSearchQueryOptions({
       teacherId: context?.teacherId ?? '',
       schoolId: context?.schoolId ?? '',
@@ -78,7 +78,7 @@ function ComposeMessagePage() {
     })
   }
 
-  const isLoading = contextLoading
+  const isPending = contextLoading
 
   return (
     <div className="flex flex-col gap-4 p-4 pb-24">
@@ -91,7 +91,7 @@ function ComposeMessagePage() {
         <h1 className="text-lg font-semibold">{LL.messages.compose()}</h1>
       </div>
 
-      {isLoading
+      {isPending
         ? <ComposeSkeleton />
         : (
             <div className="space-y-4">
@@ -142,7 +142,7 @@ function ComposeMessagePage() {
                         {searchQuery.length >= 2 && (
                           <Card>
                             <CardContent className="p-2">
-                              {searchLoading
+                              {searchPending
                                 ? (
                                     <div className="space-y-2 p-2">
                                       <Skeleton className="h-10 w-full" />

@@ -43,11 +43,11 @@ export function TeacherAssignmentList() {
     name: string
   } | null>(null)
 
-  const { data: result, isLoading } = useQuery(teacherOptions.list({ search }))
+  const { data: result, isPending } = useQuery(teacherOptions.list({ search }))
 
   const teachers = result ? (result.teachers || []) : []
 
-  if (isLoading) {
+  if (isPending) {
     return <TableSkeleton columns={4} rows={5} />
   }
 

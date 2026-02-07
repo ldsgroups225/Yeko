@@ -41,14 +41,14 @@ export interface AccountsTableItem {
 
 interface AccountsTableProps {
   accounts: AccountsTableItem[]
-  isLoading?: boolean
+  isPending?: boolean
   onEdit?: (account: AccountsTableItem) => void
   onDelete?: (account: AccountsTableItem) => void
 }
 
 export function AccountsTable({
   accounts,
-  isLoading = false,
+  isPending = false,
   onEdit,
   onDelete,
 }: AccountsTableProps) {
@@ -89,7 +89,7 @@ export function AccountsTable({
     }
   }
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="space-y-4 p-4">
         {Array.from({ length: 8 }).map(() => (

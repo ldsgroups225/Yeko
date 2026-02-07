@@ -36,7 +36,7 @@ export const Route = createFileRoute('/_auth/grades/entry')({
 
 function GradeEntryPage() {
   const t = useTranslations()
-  const { schoolYearId } = useSchoolYearContext()
+  const { schoolYearId, isPending: contextPending } = useSchoolYearContext()
   const { data: currentTeacherResult } = useCurrentTeacher()
   const currentTeacher = currentTeacherResult?.success ? currentTeacherResult.data : null
   const [selectedClassId, setSelectedClassId] = useState<string>('')
@@ -48,23 +48,23 @@ function GradeEntryPage() {
   const [gradeDate, setGradeDate] = useState(new Date().toISOString().split('T')[0])
 
   // Fetch classes for current school year
-  const { data: classesData = [], isLoading: classesLoading } = useQuery(
+  const { data: classesData = [], isPending: classesPending } = useQuery(
     classesOptions.list({ schoolYearId: schoolYearId ?? undefined, status: 'active' }),
   )
 
   // Fetch subjects for selected class
-  const { data: classSubjectsData = [], isLoading: subjectsLoading } = useQuery({
+  const { data: classSubjectsData = [], isPending: subjectsPending } = useQuery({
     ...classSubjectsOptions.list({ classId: selectedClassId }),
     enabled: !!selectedClassId,
   })
 
   // Fetch terms for current school year
-  const { data: termsData = [], isLoading: termsLoading } = useQuery(
+  const { data: termsData = [], isPending: termsPending } = useQuery(
     termsOptions.list(schoolYearId ?? ''),
   )
 
   // Fetch enrolled students for selected class
-  const { data: enrollmentsResult, isLoading: studentsLoading } = useQuery({
+  const { data: enrollmentsResult, isPending: studentsPending } = useQuery({
     ...enrollmentsOptions.list({
       classId: selectedClassId,
       schoolYearId: schoolYearId ?? '',
@@ -76,7 +76,7 @@ function GradeEntryPage() {
 
   // Fetch grades when all selections are made
   const canFetchGrades = selectedClassId && selectedSubjectId && selectedTermId
-  const { data: gradesData = [], isLoading: gradesLoading } = useQuery({
+  const { data: gradesData = [], isPending: gradesPending } = useQuery({
     ...gradesOptions.byClass({
       classId: selectedClassId,
       subjectId: selectedSubjectId,
@@ -179,7 +179,7 @@ function GradeEntryPage() {
                 <Label htmlFor="class-select" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
                   {t.academic.grades.entry.class()}
                 </Label>
-                {classesLoading
+                {classesPending || contextPending
                   ? (
                       <Skeleton className="h-11 w-full rounded-xl" />
                     )
@@ -226,7 +226,7 @@ function GradeEntryPage() {
                 <Label htmlFor="subject-select" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
                   {t.academic.grades.entry.subject()}
                 </Label>
-                {subjectsLoading
+                {subjectsPending || contextPending
                   ? (
                       <Skeleton className="h-11 w-full rounded-xl" />
                     )
@@ -269,7 +269,7 @@ function GradeEntryPage() {
                 <Label htmlFor="term-select" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
                   {t.academic.grades.entry.term()}
                 </Label>
-                {termsLoading
+                {termsPending || contextPending
                   ? (
                       <Skeleton className="h-11 w-full rounded-xl" />
                     )
@@ -382,7 +382,7 @@ function GradeEntryPage() {
               </div>
             </CardHeader>
             <CardContent className="pt-8">
-              {gradesLoading || studentsLoading
+              {gradesPending || studentsPending
                 ? (
                     <div className="space-y-4">
                       {Array.from({ length: 10 }).map(() => (

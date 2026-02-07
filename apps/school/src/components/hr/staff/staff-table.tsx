@@ -65,7 +65,7 @@ export function StaffTable({ filters }: StaffTableProps) {
   const [searchInput, setSearchInput] = useState(filters.search || '')
   const debouncedSearch = useDebounce(searchInput, 500)
 
-  const { data: result, isLoading } = useQuery({
+  const { data: result, isPending } = useQuery({
     queryKey: ['staff', { ...filters, search: debouncedSearch }],
     queryFn: async () => {
       const result = await getStaffList({
@@ -222,7 +222,7 @@ export function StaffTable({ filters }: StaffTableProps) {
     pageCount: staffData?.totalPages || 0,
   })
 
-  if (isLoading) {
+  if (isPending) {
     return <TableSkeleton columns={6} rows={5} />
   }
 

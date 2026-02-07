@@ -115,7 +115,7 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
     }
   }
 
-  const isLoading = createMutation.isPending || updateMutation.isPending
+  const isPending = createMutation.isPending || updateMutation.isPending
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
@@ -298,7 +298,7 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
           <RoleSelector
             selectedRoleIds={watch('roleIds') || []}
             onChange={roleIds => setValue('roleIds', roleIds, { shouldValidate: true })}
-            disabled={isLoading}
+            disabled={isPending}
           />
         </div>
       </motion.div>
@@ -314,10 +314,10 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
         </Button>
         <Button
           type="submit"
-          disabled={isLoading}
+          disabled={isPending}
           className="rounded-xl px-8 min-w-[140px] font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-primary/20"
         >
-          {isLoading
+          {isPending
             ? (
                 <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
               )

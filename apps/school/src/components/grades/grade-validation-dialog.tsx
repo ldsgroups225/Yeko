@@ -39,7 +39,7 @@ interface GradeValidationDialogProps {
   mode: 'validate' | 'reject'
   gradeCount: number
   onConfirm: (reason?: string) => void
-  isLoading?: boolean
+  isPending?: boolean
 }
 
 export function GradeValidationDialog({
@@ -48,7 +48,7 @@ export function GradeValidationDialog({
   mode,
   gradeCount,
   onConfirm,
-  isLoading,
+  isPending,
 }: GradeValidationDialogProps) {
   const t = useTranslations()
   const [comment, setComment] = useState('')
@@ -153,7 +153,7 @@ export function GradeValidationDialog({
           <Button
             variant="ghost"
             onClick={() => handleOpenChange(false)}
-            disabled={isLoading}
+            disabled={isPending}
             className="rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-background/80"
           >
             {t.common.cancel()}
@@ -161,14 +161,14 @@ export function GradeValidationDialog({
           <Button
             variant={isReject ? 'destructive' : 'default'}
             onClick={handleConfirm}
-            disabled={isLoading}
+            disabled={isPending}
             className={cn(
               'rounded-xl font-bold uppercase tracking-widest text-[10px] px-8 shadow-lg transition-all',
               !isReject && 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-500/20',
               isReject && 'shadow-destructive/20',
             )}
           >
-            {isLoading
+            {isPending
               ? t.common.loading()
               : isReject
                 ? t.academic.grades.validations.confirmReject()

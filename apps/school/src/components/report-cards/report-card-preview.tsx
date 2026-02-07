@@ -46,7 +46,7 @@ interface ReportCardPreviewData {
 
 interface ReportCardPreviewProps {
   data: ReportCardPreviewData | null
-  isLoading?: boolean
+  isPending?: boolean
 }
 
 function PreviewSkeleton() {
@@ -69,10 +69,10 @@ function PreviewSkeleton() {
   )
 }
 
-export function ReportCardPreview({ data, isLoading }: ReportCardPreviewProps) {
+export function ReportCardPreview({ data, isPending }: ReportCardPreviewProps) {
   const t = useTranslations()
 
-  if (isLoading) {
+  if (isPending) {
     return <PreviewSkeleton />
   }
 

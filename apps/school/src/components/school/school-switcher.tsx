@@ -17,7 +17,7 @@ export function SchoolSwitcher() {
   const t = useTranslations()
   const { schoolId, isSwitching, switchSchool } = useSchoolContext()
 
-  const { data: result, isLoading } = useQuery({
+  const { data: result, isPending } = useQuery({
     queryKey: ['user-schools'],
     queryFn: async () => await getUserSchools(),
   })
@@ -29,7 +29,7 @@ export function SchoolSwitcher() {
     ? schools.find(school => school.id === schoolId)
     : null
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="flex h-10 w-[200px] items-center gap-2 rounded-md border border-input bg-background px-3">
         <IconBuilding className="h-4 w-4 text-muted-foreground animate-pulse" />

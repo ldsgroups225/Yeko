@@ -8,8 +8,8 @@ import { getAuthStatus } from '@/core/functions/get-auth-status'
 import { loadAllLocales } from '@/i18n/i18n-util.sync'
 import appCss from '@/styles.css?url'
 import { seo } from '@/utils/seo'
-import { RootComponent } from './root-component'
-import { RootDocument } from './root-document'
+import { RootComponent } from './-root-component'
+import { RootDocument } from './-root-document'
 
 loadAllLocales()
 

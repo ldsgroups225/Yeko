@@ -63,7 +63,7 @@ export function TeachersTable({ filters }: TeachersTableProps) {
   const [searchInput, setSearchInput] = useState(filters.search || '')
   const debouncedSearch = useDebounce(searchInput, 500)
 
-  const { data, isLoading } = useQuery({
+  const { data, isPending } = useQuery({
     queryKey: ['teachers', { ...filters, search: debouncedSearch }],
     queryFn: async () => {
       const result = await getTeachers({
@@ -234,7 +234,7 @@ export function TeachersTable({ filters }: TeachersTableProps) {
     pageCount: teachersData?.totalPages || 0,
   })
 
-  if (isLoading) {
+  if (isPending) {
     return <TableSkeleton columns={6} rows={5} />
   }
 

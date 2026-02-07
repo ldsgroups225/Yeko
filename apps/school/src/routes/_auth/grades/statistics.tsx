@@ -27,20 +27,20 @@ export const Route = createFileRoute('/_auth/grades/statistics')({
 
 function GradeStatisticsPage() {
   const t = useTranslations()
-  const { schoolYearId } = useSchoolYearContext()
+  const { schoolYearId, isPending: contextPending } = useSchoolYearContext()
   const [selectedClassId, setSelectedClassId] = useState<string>('')
   const [selectedTermId, setSelectedTermId] = useState<string>('')
 
-  const { data: classesData = [], isLoading: classesLoading } = useQuery(
+  const { data: classesData = [], isPending: classesPending } = useQuery(
     classesOptions.list({ schoolYearId: schoolYearId ?? undefined, status: 'active' }),
   )
 
-  const { data: termsData = [], isLoading: termsLoading } = useQuery(
+  const { data: termsData = [], isPending: termsPending } = useQuery(
     termsOptions.list(schoolYearId ?? ''),
   )
 
   const canFetchStats = selectedClassId && selectedTermId
-  const { data: statisticsData = [], isLoading: statsLoading } = useQuery({
+  const { data: statisticsData = [], isPending: statsPending } = useQuery({
     ...gradesOptions.statistics({
       classId: selectedClassId,
       termId: selectedTermId,
@@ -99,7 +99,7 @@ function GradeStatisticsPage() {
                 <Label htmlFor="class-select" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
                   {t.academic.grades.entry.class()}
                 </Label>
-                {classesLoading
+                {classesPending || contextPending
                   ? (
                       <Skeleton className="h-11 w-full rounded-xl" />
                     )
@@ -144,7 +144,7 @@ function GradeStatisticsPage() {
                 <Label htmlFor="term-select" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
                   {t.academic.grades.entry.term()}
                 </Label>
-                {termsLoading
+                {termsPending || contextPending
                   ? (
                       <Skeleton className="h-11 w-full rounded-xl" />
                     )
@@ -182,7 +182,7 @@ function GradeStatisticsPage() {
 
       {canFetchStats && (
         <div className="space-y-8">
-          {statsLoading
+          {statsPending
             ? (
                 <div className="grid gap-6 md:grid-cols-3">
                   <Skeleton className="h-32 w-full rounded-2xl" />

@@ -54,7 +54,7 @@ function AccountsPage() {
   const [editingAccount, setEditingAccount] = useState<CRUDAccount | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
-  const { data: accountsTree, isLoading } = useQuery(accountsOptions.tree())
+  const { data: accountsTree, isPending } = useQuery(accountsOptions.tree())
 
   const deleteMutation = useMutation({
     mutationKey: schoolMutationKeys.accounts.delete,
@@ -149,7 +149,7 @@ function AccountsPage() {
           <CardContent className="p-0">
             <AccountsTable
               accounts={accountsList}
-              isLoading={isLoading}
+              isPending={isPending}
               onEdit={handleEdit}
               onDelete={handleDelete}
             />
@@ -174,7 +174,7 @@ function AccountsPage() {
           if (deletingId)
             deleteMutation.mutate(deletingId)
         }}
-        isLoading={deleteMutation.isPending}
+        isPending={deleteMutation.isPending}
         title={t.accounting.accounts.deleteAccount()}
         description={t.accounting.accounts.deleteAccountConfirm()}
       />

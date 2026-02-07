@@ -46,7 +46,7 @@ export function CoefficientMatrix({
   const [editedCells, setEditedCells] = useState(() => new Map<string, number>())
   const queryClient = useQueryClient()
 
-  const { data, isLoading, error } = useQuery(
+  const { data, isPending, error } = useQuery(
     schoolCoefficientsOptions.matrix({ schoolYearTemplateId, seriesId }),
   )
 
@@ -130,7 +130,7 @@ export function CoefficientMatrix({
     )
   }
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
         <CardHeader>

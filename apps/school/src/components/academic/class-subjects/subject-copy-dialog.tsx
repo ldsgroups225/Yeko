@@ -62,7 +62,7 @@ export function SubjectCopyDialog({
   const { schoolYearId } = useSchoolYearContext()
   const queryClient = useQueryClient()
 
-  const { data: classesData, isLoading: isLoadingClasses } = useQuery({
+  const { data: classesData, isPending: isPendingClasses } = useQuery({
     queryKey: ['classes', 'list', schoolYearId],
     queryFn: () => getClasses({ data: { schoolYearId: schoolYearId! } }),
     enabled: !!schoolYearId && open,
@@ -155,7 +155,7 @@ export function SubjectCopyDialog({
                   >
                     <FormControl>
                       <SelectTrigger
-                        disabled={isLoadingClasses}
+                        disabled={isPendingClasses}
                         className="h-11 bg-white/5 border-white/10 focus:ring-primary/40"
                       >
                         <SelectValue

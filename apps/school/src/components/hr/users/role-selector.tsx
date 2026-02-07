@@ -28,7 +28,7 @@ export function RoleSelector({
 }: RoleSelectorProps) {
   const t = useTranslations()
 
-  const { data, isLoading } = useQuery({
+  const { data, isPending } = useQuery({
     queryKey: ['roles-for-user'],
     queryFn: async () => {
       const result = await getRoles({
@@ -71,7 +71,7 @@ export function RoleSelector({
     }
   }
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="flex flex-col items-center justify-center py-16 space-y-4">
         <div className="relative">

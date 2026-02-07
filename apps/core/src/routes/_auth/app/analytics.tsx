@@ -49,13 +49,13 @@ function AnalyticsPage() {
   const [activeTab, setActiveTab] = useState('overview')
 
   // Fetch analytics data
-  const { data: overview, isLoading: overviewLoading } = useQuery(
+  const { data: overview, isPending: overviewPending } = useQuery(
     analyticsOverviewQueryOptions(timeRange),
   )
-  const { data: schoolsPerf, isLoading: schoolsPerfLoading } = useQuery(
+  const { data: schoolsPerf, isPending: schoolsPerfPending } = useQuery(
     schoolsPerformanceQueryOptions(timeRange),
   )
-  const { data: platformUsage, isLoading: usageLoading } = useQuery(
+  const { data: platformUsage, isPending: usagePending } = useQuery(
     platformUsageQueryOptions(timeRange),
   )
 
@@ -141,7 +141,7 @@ function AnalyticsPage() {
         <TabsContent value="overview" className="space-y-6">
           {/* Key Metrics */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {overviewLoading
+            {overviewPending
               ? (
                   OVERVIEW_SKELETON_KEYS.map(key => (
                     <Card key={key}>
@@ -272,7 +272,7 @@ function AnalyticsPage() {
                 <CardDescription>{LL.analytics.schools.byStatusDesc()}</CardDescription>
               </CardHeader>
               <CardContent>
-                {schoolsPerfLoading
+                {schoolsPerfPending
                   ? (
                       <div className="space-y-2">
                         {[1, 2, 3].map(item => (
@@ -345,7 +345,7 @@ function AnalyticsPage() {
               <CardDescription>{LL.analytics.schools.topPerformingDesc()}</CardDescription>
             </CardHeader>
             <CardContent>
-              {schoolsPerfLoading
+              {schoolsPerfPending
                 ? (
                     <div className="space-y-2">
                       {[1, 2, 3, 4, 5].map(item => (
@@ -396,7 +396,7 @@ function AnalyticsPage() {
                 <CardDescription>{LL.analytics.usage.activeUsersDesc()}</CardDescription>
               </CardHeader>
               <CardContent>
-                {usageLoading
+                {usagePending
                   ? (
                       <div className="space-y-2">
                         {[1, 2, 3].map(item => (
@@ -430,7 +430,7 @@ function AnalyticsPage() {
                 <CardDescription>{LL.analytics.usage.featureUsageDesc()}</CardDescription>
               </CardHeader>
               <CardContent>
-                {usageLoading
+                {usagePending
                   ? (
                       <div className="space-y-2">
                         {[1, 2, 3, 4, 5].map(item => (

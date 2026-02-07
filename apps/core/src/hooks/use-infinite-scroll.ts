@@ -3,21 +3,21 @@ import { useEffect, useRef } from 'react'
 interface UseInfiniteScrollOptions {
   onLoadMore: () => void
   hasMore: boolean
-  isLoading: boolean
+  isPending: boolean
   threshold?: number
 }
 
 export function useInfiniteScroll({
   onLoadMore,
   hasMore,
-  isLoading,
+  isPending,
   threshold = 100,
 }: UseInfiniteScrollOptions) {
   const observerRef = useRef<IntersectionObserver | null>(null)
   const loadMoreRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    if (isLoading || !hasMore)
+    if (isPending || !hasMore)
       return
 
     const options = {
@@ -27,7 +27,7 @@ export function useInfiniteScroll({
     }
 
     observerRef.current = new IntersectionObserver((entries) => {
-      if (entries[0]?.isIntersecting && hasMore && !isLoading) {
+      if (entries[0]?.isIntersecting && hasMore && !isPending) {
         onLoadMore()
       }
     }, options)
@@ -42,7 +42,7 @@ export function useInfiniteScroll({
         observerRef.current.unobserve(currentRef)
       }
     }
-  }, [hasMore, isLoading, onLoadMore, threshold])
+  }, [hasMore, isPending, onLoadMore, threshold])
 
   return loadMoreRef
 }

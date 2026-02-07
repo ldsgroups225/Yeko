@@ -89,6 +89,22 @@ CREATE TABLE "education_levels" (
 	CONSTRAINT "education_levels_name_unique" UNIQUE("name")
 );
 --> statement-breakpoint
+CREATE TABLE "fee_type_templates" (
+	"id" text PRIMARY KEY NOT NULL,
+	"code" text NOT NULL,
+	"name" text NOT NULL,
+	"name_en" text,
+	"category" text NOT NULL,
+	"description" text,
+	"default_amount" integer,
+	"is_mandatory" boolean DEFAULT false NOT NULL,
+	"is_recurring" boolean DEFAULT false NOT NULL,
+	"display_order" smallint DEFAULT 0 NOT NULL,
+	"is_active" boolean DEFAULT true NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE "grades" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
@@ -469,6 +485,7 @@ CREATE TABLE "fee_structures" (
 CREATE TABLE "fee_types" (
 	"id" text PRIMARY KEY NOT NULL,
 	"school_id" text NOT NULL,
+	"fee_type_template_id" text,
 	"code" text NOT NULL,
 	"name" text NOT NULL,
 	"name_en" text,
@@ -481,7 +498,8 @@ CREATE TABLE "fee_types" (
 	"status" text DEFAULT 'active',
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
-	CONSTRAINT "unique_school_fee_code" UNIQUE("school_id","code")
+	CONSTRAINT "unique_school_fee_code" UNIQUE("school_id","code"),
+	CONSTRAINT "unique_school_fee_template" UNIQUE NULLS NOT DISTINCT("school_id","fee_type_template_id")
 );
 --> statement-breakpoint
 CREATE TABLE "fiscal_years" (
@@ -1168,6 +1186,92 @@ CREATE TABLE "users" (
 	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
+CREATE TABLE "crm_activities" (
+	"id" text PRIMARY KEY NOT NULL,
+	"contact_id" text NOT NULL,
+	"school_id" text,
+	"user_id" text,
+	"type" text NOT NULL,
+	"subject" text,
+	"description" text,
+	"outcome" text,
+	"next_follow_up" timestamp,
+	"created_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "crm_contacts" (
+	"id" text PRIMARY KEY NOT NULL,
+	"school_id" text,
+	"contact_name" text NOT NULL,
+	"email" text,
+	"phone" text,
+	"role" text,
+	"notes" text,
+	"last_contacted_at" timestamp,
+	"next_follow_up" timestamp,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "crm_tasks" (
+	"id" text PRIMARY KEY NOT NULL,
+	"contact_id" text,
+	"school_id" text,
+	"user_id" text,
+	"title" text NOT NULL,
+	"description" text,
+	"status" text DEFAULT 'pending' NOT NULL,
+	"due_date" timestamp,
+	"priority" text DEFAULT 'medium' NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"completed_at" timestamp
+);
+--> statement-breakpoint
+CREATE TABLE "knowledge_base_articles" (
+	"id" text PRIMARY KEY NOT NULL,
+	"title" text NOT NULL,
+	"content" text NOT NULL,
+	"summary" text,
+	"category" text NOT NULL,
+	"tags" jsonb,
+	"views" integer DEFAULT 0,
+	"helpful_count" integer DEFAULT 0,
+	"not_helpful_count" integer DEFAULT 0,
+	"is_published" boolean DEFAULT false,
+	"is_featured" boolean DEFAULT false,
+	"author_id" text,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"published_at" timestamp
+);
+--> statement-breakpoint
+CREATE TABLE "support_tickets" (
+	"id" text PRIMARY KEY NOT NULL,
+	"school_id" text,
+	"user_id" text,
+	"title" text NOT NULL,
+	"description" text NOT NULL,
+	"category" text NOT NULL,
+	"priority" text DEFAULT 'medium' NOT NULL,
+	"status" text DEFAULT 'open' NOT NULL,
+	"assignee_id" text,
+	"resolution" text,
+	"satisfaction_rating" smallint,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"resolved_at" timestamp,
+	"closed_at" timestamp
+);
+--> statement-breakpoint
+CREATE TABLE "ticket_comments" (
+	"id" text PRIMARY KEY NOT NULL,
+	"ticket_id" text NOT NULL,
+	"user_id" text,
+	"message" text NOT NULL,
+	"is_internal" boolean DEFAULT false,
+	"created_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
 ALTER TABLE "auth_account" ADD CONSTRAINT "auth_account_user_id_auth_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."auth_user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "auth_session" ADD CONSTRAINT "auth_session_user_id_auth_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."auth_user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "activity_logs" ADD CONSTRAINT "activity_logs_user_id_auth_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."auth_user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -1242,6 +1346,7 @@ ALTER TABLE "fee_structures" ADD CONSTRAINT "fee_structures_fee_type_id_fee_type
 ALTER TABLE "fee_structures" ADD CONSTRAINT "fee_structures_grade_id_grades_id_fk" FOREIGN KEY ("grade_id") REFERENCES "public"."grades"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "fee_structures" ADD CONSTRAINT "fee_structures_series_id_series_id_fk" FOREIGN KEY ("series_id") REFERENCES "public"."series"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "fee_types" ADD CONSTRAINT "fee_types_school_id_schools_id_fk" FOREIGN KEY ("school_id") REFERENCES "public"."schools"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "fee_types" ADD CONSTRAINT "fee_types_fee_type_template_id_fee_type_templates_id_fk" FOREIGN KEY ("fee_type_template_id") REFERENCES "public"."fee_type_templates"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "fee_types" ADD CONSTRAINT "fee_types_revenue_account_id_accounts_id_fk" FOREIGN KEY ("revenue_account_id") REFERENCES "public"."accounts"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "fee_types" ADD CONSTRAINT "fee_types_receivable_account_id_accounts_id_fk" FOREIGN KEY ("receivable_account_id") REFERENCES "public"."accounts"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "fiscal_years" ADD CONSTRAINT "fiscal_years_school_id_schools_id_fk" FOREIGN KEY ("school_id") REFERENCES "public"."schools"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -1369,6 +1474,19 @@ ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_school_id_schools_id_fk" FOR
 ALTER TABLE "user_schools" ADD CONSTRAINT "user_schools_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_schools" ADD CONSTRAINT "user_schools_school_id_schools_id_fk" FOREIGN KEY ("school_id") REFERENCES "public"."schools"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "users" ADD CONSTRAINT "users_auth_user_id_auth_user_id_fk" FOREIGN KEY ("auth_user_id") REFERENCES "public"."auth_user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "crm_activities" ADD CONSTRAINT "crm_activities_contact_id_crm_contacts_id_fk" FOREIGN KEY ("contact_id") REFERENCES "public"."crm_contacts"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "crm_activities" ADD CONSTRAINT "crm_activities_school_id_schools_id_fk" FOREIGN KEY ("school_id") REFERENCES "public"."schools"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "crm_activities" ADD CONSTRAINT "crm_activities_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "crm_contacts" ADD CONSTRAINT "crm_contacts_school_id_schools_id_fk" FOREIGN KEY ("school_id") REFERENCES "public"."schools"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "crm_tasks" ADD CONSTRAINT "crm_tasks_contact_id_crm_contacts_id_fk" FOREIGN KEY ("contact_id") REFERENCES "public"."crm_contacts"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "crm_tasks" ADD CONSTRAINT "crm_tasks_school_id_schools_id_fk" FOREIGN KEY ("school_id") REFERENCES "public"."schools"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "crm_tasks" ADD CONSTRAINT "crm_tasks_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "knowledge_base_articles" ADD CONSTRAINT "knowledge_base_articles_author_id_users_id_fk" FOREIGN KEY ("author_id") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "support_tickets" ADD CONSTRAINT "support_tickets_school_id_schools_id_fk" FOREIGN KEY ("school_id") REFERENCES "public"."schools"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "support_tickets" ADD CONSTRAINT "support_tickets_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "support_tickets" ADD CONSTRAINT "support_tickets_assignee_id_users_id_fk" FOREIGN KEY ("assignee_id") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ticket_comments" ADD CONSTRAINT "ticket_comments_ticket_id_support_tickets_id_fk" FOREIGN KEY ("ticket_id") REFERENCES "public"."support_tickets"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ticket_comments" ADD CONSTRAINT "ticket_comments_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "auth_account_userId_idx" ON "auth_account" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "auth_session_userId_idx" ON "auth_session" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "auth_verification_identifier_idx" ON "auth_verification" USING btree ("identifier");--> statement-breakpoint
@@ -1383,6 +1501,9 @@ CREATE INDEX "idx_coeff_lookup" ON "coefficient_templates" USING btree ("school_
 CREATE INDEX "idx_coeff_year" ON "coefficient_templates" USING btree ("school_year_template_id");--> statement-breakpoint
 CREATE INDEX "idx_coeff_grade" ON "coefficient_templates" USING btree ("grade_id");--> statement-breakpoint
 CREATE INDEX "idx_coeff_subject" ON "coefficient_templates" USING btree ("subject_id");--> statement-breakpoint
+CREATE INDEX "idx_fee_template_code" ON "fee_type_templates" USING btree ("code");--> statement-breakpoint
+CREATE INDEX "idx_fee_template_category" ON "fee_type_templates" USING btree ("category");--> statement-breakpoint
+CREATE INDEX "idx_fee_template_active" ON "fee_type_templates" USING btree ("is_active");--> statement-breakpoint
 CREATE INDEX "idx_accounts_school" ON "accounts" USING btree ("school_id");--> statement-breakpoint
 CREATE INDEX "idx_accounts_parent" ON "accounts" USING btree ("parent_id");--> statement-breakpoint
 CREATE INDEX "idx_accounts_type" ON "accounts" USING btree ("type");--> statement-breakpoint
@@ -1450,6 +1571,7 @@ CREATE INDEX "idx_fee_structures_grade" ON "fee_structures" USING btree ("grade_
 CREATE INDEX "idx_fee_structures_fee_type" ON "fee_structures" USING btree ("fee_type_id");--> statement-breakpoint
 CREATE INDEX "idx_fee_structures_lookup" ON "fee_structures" USING btree ("school_id","school_year_id","grade_id");--> statement-breakpoint
 CREATE INDEX "idx_fee_types_school" ON "fee_types" USING btree ("school_id");--> statement-breakpoint
+CREATE INDEX "idx_fee_types_template" ON "fee_types" USING btree ("fee_type_template_id");--> statement-breakpoint
 CREATE INDEX "idx_fee_types_category" ON "fee_types" USING btree ("category");--> statement-breakpoint
 CREATE INDEX "idx_fee_types_status" ON "fee_types" USING btree ("status");--> statement-breakpoint
 CREATE INDEX "idx_fiscal_years_school" ON "fiscal_years" USING btree ("school_id");--> statement-breakpoint
@@ -1593,4 +1715,30 @@ CREATE INDEX "idx_user_schools_composite" ON "user_schools" USING btree ("user_i
 CREATE INDEX "idx_users_email" ON "users" USING btree ("email");--> statement-breakpoint
 CREATE INDEX "idx_users_phone" ON "users" USING btree ("phone");--> statement-breakpoint
 CREATE INDEX "idx_users_status" ON "users" USING btree ("status");--> statement-breakpoint
-CREATE INDEX "idx_users_auth_user" ON "users" USING btree ("auth_user_id");
+CREATE INDEX "idx_users_auth_user" ON "users" USING btree ("auth_user_id");--> statement-breakpoint
+CREATE INDEX "idx_crm_activities_contact" ON "crm_activities" USING btree ("contact_id");--> statement-breakpoint
+CREATE INDEX "idx_crm_activities_school" ON "crm_activities" USING btree ("school_id");--> statement-breakpoint
+CREATE INDEX "idx_crm_activities_type" ON "crm_activities" USING btree ("type");--> statement-breakpoint
+CREATE INDEX "idx_crm_activities_created" ON "crm_activities" USING btree ("created_at");--> statement-breakpoint
+CREATE INDEX "idx_crm_contacts_school" ON "crm_contacts" USING btree ("school_id");--> statement-breakpoint
+CREATE INDEX "idx_crm_contacts_email" ON "crm_contacts" USING btree ("email");--> statement-breakpoint
+CREATE INDEX "idx_crm_contacts_name" ON "crm_contacts" USING btree ("contact_name");--> statement-breakpoint
+CREATE INDEX "idx_crm_contacts_followup" ON "crm_contacts" USING btree ("next_follow_up");--> statement-breakpoint
+CREATE INDEX "idx_crm_tasks_contact" ON "crm_tasks" USING btree ("contact_id");--> statement-breakpoint
+CREATE INDEX "idx_crm_tasks_school" ON "crm_tasks" USING btree ("school_id");--> statement-breakpoint
+CREATE INDEX "idx_crm_tasks_user" ON "crm_tasks" USING btree ("user_id");--> statement-breakpoint
+CREATE INDEX "idx_crm_tasks_status" ON "crm_tasks" USING btree ("status");--> statement-breakpoint
+CREATE INDEX "idx_crm_tasks_due" ON "crm_tasks" USING btree ("due_date");--> statement-breakpoint
+CREATE INDEX "idx_kb_articles_category" ON "knowledge_base_articles" USING btree ("category");--> statement-breakpoint
+CREATE INDEX "idx_kb_articles_published" ON "knowledge_base_articles" USING btree ("is_published");--> statement-breakpoint
+CREATE INDEX "idx_kb_articles_views" ON "knowledge_base_articles" USING btree ("views");--> statement-breakpoint
+CREATE INDEX "idx_kb_articles_featured" ON "knowledge_base_articles" USING btree ("is_featured");--> statement-breakpoint
+CREATE INDEX "idx_support_tickets_school" ON "support_tickets" USING btree ("school_id");--> statement-breakpoint
+CREATE INDEX "idx_support_tickets_status" ON "support_tickets" USING btree ("status");--> statement-breakpoint
+CREATE INDEX "idx_support_tickets_priority" ON "support_tickets" USING btree ("priority");--> statement-breakpoint
+CREATE INDEX "idx_support_tickets_assignee" ON "support_tickets" USING btree ("assignee_id");--> statement-breakpoint
+CREATE INDEX "idx_support_tickets_created" ON "support_tickets" USING btree ("created_at");--> statement-breakpoint
+CREATE INDEX "idx_support_tickets_school_status" ON "support_tickets" USING btree ("school_id","status");--> statement-breakpoint
+CREATE INDEX "idx_ticket_comments_ticket" ON "ticket_comments" USING btree ("ticket_id");--> statement-breakpoint
+CREATE INDEX "idx_ticket_comments_user" ON "ticket_comments" USING btree ("user_id");--> statement-breakpoint
+CREATE INDEX "idx_ticket_comments_created" ON "ticket_comments" USING btree ("created_at");

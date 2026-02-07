@@ -26,14 +26,14 @@ function PaymentsPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [showPaymentDialog, setShowPaymentDialog] = useState(false)
 
-  const { data: paymentsData, isLoading } = useQuery(
+  const { data: paymentsData, isPending } = useQuery(
     paymentsOptions.list({
       status: statusFilter === 'all' ? undefined : statusFilter as 'completed' | 'pending' | 'cancelled',
       pageSize: 20,
     }),
   )
 
-  const { data: statsData, isLoading: statsLoading } = useQuery(financeStatsOptions.summary())
+  const { data: statsData, isPending: statsPending } = useQuery(financeStatsOptions.summary())
 
   const payments = paymentsData?.data?.map(p => ({
     id: p.id,
@@ -104,7 +104,7 @@ function PaymentsPage() {
           totalPayments={statsData?.totalPayments ?? 0}
           pendingPayments={statsData?.pendingPayments ?? 0}
           overdueAmount={statsData?.overdueAmount ?? 0}
-          isLoading={isLoading || statsLoading}
+          isPending={isPending || statsPending}
         />
       </motion.div>
 
@@ -120,7 +120,7 @@ function PaymentsPage() {
           <CardContent className="p-0">
             <PaymentsTable
               payments={payments}
-              isLoading={isLoading}
+              isPending={isPending}
             />
           </CardContent>
         </Card>

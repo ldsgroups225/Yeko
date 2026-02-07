@@ -27,7 +27,7 @@ interface FeeStructure {
 
 interface FeeStructuresTableProps {
   feeStructures: FeeStructure[]
-  isLoading?: boolean
+  isPending?: boolean
   onEdit?: (id: string) => void
   onDelete?: (id: string) => void
 }
@@ -38,13 +38,13 @@ function formatCurrency(amount: number, currency: string = 'XOF') {
 
 export function FeeStructuresTable({
   feeStructures,
-  isLoading,
+  isPending,
   onEdit,
   onDelete,
 }: FeeStructuresTableProps) {
   const { t } = useTranslation()
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="space-y-4 p-4">
         {Array.from({ length: 5 }).map(() => (

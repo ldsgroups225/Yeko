@@ -49,7 +49,7 @@ function TeacherPunctualityReportsPage() {
   const startDateStr = startDate.toISOString().split('T')[0] ?? ''
   const endDateStr = endDate.toISOString().split('T')[0] ?? ''
 
-  const { data, isLoading } = useQuery(
+  const { data, isPending } = useQuery(
     teacherPunctualityReportOptions({
       startDate: startDateStr,
       endDate: endDateStr,
@@ -97,7 +97,7 @@ function TeacherPunctualityReportsPage() {
           <CardTitle>{t.attendance.punctualityReport()}</CardTitle>
         </CardHeader>
         <CardContent>
-          {isLoading
+          {isPending
             ? (
                 <div className="space-y-2">
                   {Array.from({ length: 5 }).map(() => (

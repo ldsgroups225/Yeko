@@ -38,7 +38,7 @@ export interface TeacherAttendanceEntry {
 interface TeacherAttendanceGridProps {
   entries: TeacherAttendanceEntry[]
   onSave: (entries: TeacherAttendanceEntry[]) => void
-  isLoading?: boolean
+  isPending?: boolean
   isSaving?: boolean
 }
 
@@ -95,7 +95,7 @@ const statusConfig: Record<TeacherAttendanceStatus, {
 export function TeacherAttendanceGrid({
   entries: initialEntries,
   onSave,
-  isLoading,
+  isPending,
   isSaving,
 }: TeacherAttendanceGridProps) {
   const t = useTranslations()
@@ -142,7 +142,7 @@ export function TeacherAttendanceGrid({
     excused: entries.filter(e => e.status === 'excused').length,
   }), [entries])
 
-  if (isLoading) {
+  if (isPending) {
     return <TeacherAttendanceGridSkeleton />
   }
 
@@ -321,7 +321,7 @@ export function TeacherAttendanceGrid({
         title={t.attendance.save()}
         description={t.attendance.saveConfirmDescription()}
         onConfirm={onConfirmSave}
-        isLoading={isSaving}
+        isPending={isSaving}
         confirmLabel={t.common.save()}
       />
     </Card>

@@ -29,19 +29,19 @@ function Dashboard() {
   const { format: formatDate } = useDateFormatter()
 
   // Fetch real data using TanStack Query
-  const { data: stats, isLoading: statsLoading, error: statsError } = useQuery(dashboardStatsQueryOptions())
-  const { data: health, isLoading: healthLoading, error: healthError } = useQuery(systemHealthQueryOptions())
-  const { data: activities, isLoading: activitiesLoading, error: activitiesError } = useQuery(recentActivityQueryOptions(5))
+  const { data: stats, isPending: statsPending, error: statsError } = useQuery(dashboardStatsQueryOptions())
+  const { data: health, isPending: healthPending, error: healthError } = useQuery(systemHealthQueryOptions())
+  const { data: activities, isPending: activitiesPending, error: activitiesError } = useQuery(recentActivityQueryOptions(5))
 
   useEffect(() => {
     logger.info('Dashboard viewed', {
       page: 'dashboard',
       timestamp: new Date().toISOString(),
-      statsLoaded: !statsLoading && !statsError,
-      healthLoaded: !healthLoading && !healthError,
-      activitiesLoaded: !activitiesLoading && !activitiesError,
+      statsLoaded: !statsPending && !statsError,
+      healthLoaded: !healthPending && !healthError,
+      activitiesLoaded: !activitiesPending && !activitiesError,
     })
-  }, [logger, statsLoading, statsError, healthLoading, healthError, activitiesLoading, activitiesError])
+  }, [logger, statsPending, statsError, healthPending, healthError, activitiesPending, activitiesError])
 
   // Quick actions remain the same
   const quickActions = [
@@ -160,7 +160,7 @@ function Dashboard() {
           change={12}
           changeLabel="actives ce mois"
           icon={IconSchool}
-          isLoading={statsLoading}
+          isLoading={statsPending}
           error={statsError?.message}
         />
 
@@ -170,7 +170,7 @@ function Dashboard() {
           change={8}
           changeLabel="ce mois"
           icon={IconCircleCheck}
-          isLoading={statsLoading}
+          isLoading={statsPending}
           error={statsError?.message}
         />
 
@@ -180,7 +180,7 @@ function Dashboard() {
           change={15}
           changeLabel="ces 30 derniers jours"
           icon={IconTrendingUp}
-          isLoading={statsLoading}
+          isLoading={statsPending}
           error={statsError?.message}
         />
 
@@ -190,7 +190,7 @@ function Dashboard() {
           change={-5}
           changeLabel="ce mois"
           icon={IconClock}
-          isLoading={statsLoading}
+          isLoading={statsPending}
           error={statsError?.message}
         />
       </div>
@@ -278,7 +278,7 @@ function Dashboard() {
       {/* System Health */}
       <SystemHealth
         health={healthData}
-        isLoading={healthLoading}
+        isLoading={healthPending}
         error={healthError?.message}
         collapsedByDefault={true}
       />
@@ -286,7 +286,7 @@ function Dashboard() {
       {/* Activity Feed */}
       <ActivityFeed
         activities={activityData}
-        isLoading={activitiesLoading}
+        isLoading={activitiesPending}
         error={activitiesError?.message}
         limit={5}
       />

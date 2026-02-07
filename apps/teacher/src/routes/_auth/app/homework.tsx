@@ -29,7 +29,7 @@ function HomeworkPage() {
 
   const { context, isLoading: contextLoading } = useRequiredTeacherContext()
 
-  const { data, isLoading: dataLoading } = useQuery({
+  const { data, isPending: dataPending } = useQuery({
     ...homeworkListQueryOptions({
       teacherId: context?.teacherId ?? '',
       status: status === 'closed' ? 'closed' : status,
@@ -37,7 +37,7 @@ function HomeworkPage() {
     enabled: !!context,
   })
 
-  const isLoading = contextLoading || dataLoading
+  const isPending = contextLoading || dataPending
 
   return (
     <div className="flex flex-col gap-4 p-4 pb-20">
@@ -71,7 +71,7 @@ function HomeworkPage() {
         </TabsList>
 
         <TabsContent value={status} className="mt-4">
-          {isLoading
+          {isPending
             ? (
                 <HomeworkSkeleton />
               )

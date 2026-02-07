@@ -107,7 +107,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
   const updateMutation = useMutation({
     ...studentsMutations.update,
     mutationFn: (data: StudentFormData) =>
-      studentsMutations.update.mutationFn({ data: { id: student!.id, data } }),
+      studentsMutations.update.mutationFn({ id: student!.id, data }),
 
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: studentsKeys.all })
@@ -151,7 +151,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
     }
   }
 
-  const isLoading = createMutation.isPending || updateMutation.isPending
+  const isPending = createMutation.isPending || updateMutation.isPending
 
   return (
     <Form {...form}>
@@ -618,8 +618,8 @@ export function StudentForm({ student, mode }: StudentFormProps) {
             <IconX className="mr-2 h-4 w-4" />
             {t.common.cancel()}
           </Button>
-          <Button type="submit" disabled={isLoading} className="bg-primary text-primary-foreground shadow-sm hover:shadow-md transition-all">
-            {isLoading ? <IconLoader2 className="mr-2 h-4 w-4 animate-spin" /> : <IconDeviceFloppy className="mr-2 h-4 w-4" />}
+          <Button type="submit" disabled={isPending} className="bg-primary text-primary-foreground shadow-sm hover:shadow-md transition-all">
+            {isPending ? <IconLoader2 className="mr-2 h-4 w-4 animate-spin" /> : <IconDeviceFloppy className="mr-2 h-4 w-4" />}
             {mode === 'create' ? t.students.createStudent() : t.students.updateStudent()}
           </Button>
         </div>

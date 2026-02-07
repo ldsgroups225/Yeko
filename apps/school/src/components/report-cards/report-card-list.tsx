@@ -8,7 +8,7 @@ import { ReportCardCard } from './report-card-card'
 
 interface ReportCardListProps {
   reportCards: ReportCardData[]
-  isLoading?: boolean
+  isPending?: boolean
   onPreview?: (id: string) => void
   onDownload?: (id: string) => void
   onSend?: (id: string) => void
@@ -43,7 +43,7 @@ function ReportCardSkeleton() {
 
 export function ReportCardList({
   reportCards,
-  isLoading,
+  isPending,
   onPreview,
   onDownload,
   onSend,
@@ -52,7 +52,7 @@ export function ReportCardList({
 }: ReportCardListProps) {
   const t = useTranslations()
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 6 }).map(() => (

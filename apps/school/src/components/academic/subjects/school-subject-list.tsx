@@ -118,7 +118,7 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
         : undefined,
   }
 
-  const { data: result, isLoading, error } = useQuery(
+  const { data: result, isPending, error } = useQuery(
     schoolSubjectsOptions.list(filters),
   )
 
@@ -241,7 +241,7 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
     )
   }
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="space-y-6">
         <div className="h-20 w-full rounded-2xl bg-white/5 animate-pulse" />

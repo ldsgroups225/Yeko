@@ -32,7 +32,7 @@ function ConductRecordDetailPage() {
   const { recordId } = Route.useParams()
   const queryClient = useQueryClient()
 
-  const { data: result, isLoading } = useQuery(conductRecordOptions(recordId))
+  const { data: result, isPending } = useQuery(conductRecordOptions(recordId))
 
   const record = result || null
 
@@ -56,7 +56,7 @@ function ConductRecordDetailPage() {
     })
   }
 
-  if (isLoading) {
+  if (isPending) {
     return <ConductRecordDetailSkeleton />
   }
 

@@ -23,7 +23,7 @@ function EditSchool() {
   const queryClient = useQueryClient()
 
   // Fetch school data
-  const { data: school, isLoading, error } = useQuery(schoolQueryOptions(schoolId))
+  const { data: school, isPending, error } = useQuery(schoolQueryOptions(schoolId))
 
   // Set up mutation for updating school
   const updateSchoolMutation = useMutation({
@@ -69,7 +69,7 @@ function EditSchool() {
     } as const)
   }, [logger, schoolId])
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="space-y-6">
         <Skeleton className="h-8 w-64" />

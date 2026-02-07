@@ -35,14 +35,14 @@ export interface DiscountsTableItem {
 
 interface DiscountsTableProps {
   discounts: DiscountsTableItem[]
-  isLoading?: boolean
+  isPending?: boolean
   onEdit?: (discount: DiscountsTableItem) => void
   onDelete?: (discount: DiscountsTableItem) => void
 }
 
 export function DiscountsTable({
   discounts,
-  isLoading = false,
+  isPending = false,
   onEdit,
   onDelete,
 }: DiscountsTableProps) {
@@ -70,7 +70,7 @@ export function DiscountsTable({
     }).format(discount.value)} FCFA`
   }
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="space-y-4 p-4">
         {Array.from({ length: 5 }).map(() => (

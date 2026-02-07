@@ -77,7 +77,7 @@ export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
     created: number
   } | null>(null)
 
-  const { data, isLoading } = useQuery({
+  const { data, isPending } = useQuery({
     ...parentsOptions.autoMatch(),
     enabled: open,
   })
@@ -229,7 +229,7 @@ export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
                 </DialogFooter>
               </div>
             )
-          : isLoading
+          : isPending
             ? (
                 <div className="flex items-center justify-center py-8">
                   <IconLoader2 className="h-8 w-8 animate-spin text-muted-foreground" />

@@ -25,7 +25,7 @@ function MessageDetailPage() {
 
   const { context, isLoading: contextLoading } = useRequiredTeacherContext()
 
-  const { data, isLoading: dataLoading } = useQuery({
+  const { data, isPending: dataPending } = useQuery({
     ...messageDetailQueryOptions({
       messageId,
       teacherId: context?.teacherId ?? '',
@@ -81,7 +81,7 @@ function MessageDetailPage() {
     }
   }, [data?.message, context, messageId, markReadMutation])
 
-  const isLoading = contextLoading || dataLoading
+  const isPending = contextLoading || dataPending
   const message = data?.message
 
   return (
@@ -95,7 +95,7 @@ function MessageDetailPage() {
         <h1 className="text-lg font-semibold">{LL.messages.title()}</h1>
       </div>
 
-      {isLoading
+      {isPending
         ? (
             <MessageDetailSkeleton />
           )

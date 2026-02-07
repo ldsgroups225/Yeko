@@ -65,7 +65,6 @@ import { toast } from 'sonner'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useTranslations } from '@/i18n'
 import { downloadExcelFile, exportStudentsToExcel } from '@/lib/excel-export'
-import { schoolMutationKeys } from '@/lib/queries/keys'
 import { studentsKeys, studentsMutations, studentsOptions } from '@/lib/queries/students'
 import {
   exportStudents,
@@ -131,7 +130,7 @@ export function StudentsList() {
     setGender('')
   }
 
-  const { data, isLoading, error } = useQuery(studentsOptions.list(filters))
+  const { data, isPending, error } = useQuery(studentsOptions.list(filters))
 
   const getStudentStatusLabel = (value: string) => {
     switch (value) {
@@ -469,7 +468,7 @@ export function StudentsList() {
 
       {/* Mobile Card View */}
       <div className="space-y-3 md:hidden">
-        {isLoading
+        {isPending
           ? (
               Array.from({ length: 5 }, () => (
                 <div
@@ -666,7 +665,7 @@ export function StudentsList() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isLoading
+            {isPending
               ? (
                   Array.from({ length: 10 }, () => (
                     <TableRow
@@ -921,7 +920,7 @@ export function StudentsList() {
             deleteMutation.mutate(selectedStudent.student.id)
           }
         }}
-        isLoading={deleteMutation.isPending}
+        isPending={deleteMutation.isPending}
       />
 
       {/* Status Change Dialog */}
@@ -936,7 +935,7 @@ export function StudentsList() {
             status: newStatus as StudentStatus,
             reason,
           })}
-        isLoading={statusMutation.isPending}
+        isPending={statusMutation.isPending}
       />
 
       {/* Bulk Re-enrollment Dialog */}

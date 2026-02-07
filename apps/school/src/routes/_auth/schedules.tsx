@@ -73,7 +73,7 @@ function TimetablesPage() {
   const t = useTranslations()
   const queryClient = useQueryClient()
   const { schoolId } = useSchoolContext()
-  const { schoolYearId: contextSchoolYearId } = useSchoolYearContext()
+  const { schoolYearId: contextSchoolYearId, isPending: contextPending } = useSchoolYearContext()
   const [viewMode, setViewMode] = useState<TimetableViewMode>('class')
   const [localYearId, setLocalYearId] = useState<string>('')
   const [selectedClassId, setSelectedClassId] = useState<string>('')
@@ -87,7 +87,7 @@ function TimetablesPage() {
   const [selectedSlot, setSelectedSlot] = useState<{ dayOfWeek: number, startTime: string, endTime: string } | null>(null)
 
   // Fetch school years
-  const { data: schoolYearsResult, isLoading: yearsLoading } = useQuery({
+  const { data: schoolYearsResult, isPending: yearsPending } = useQuery({
     queryKey: ['school-years'],
     queryFn: () => getSchoolYears(),
     staleTime: 5 * 60 * 1000,
@@ -99,7 +99,7 @@ function TimetablesPage() {
   const effectiveYearId = contextSchoolYearId || localYearId || activeYear?.id || ''
 
   // Fetch classes for selected year
-  const { data: classesResult, isLoading: classesLoading } = useQuery({
+  const { data: classesResult, isPending: classesPending } = useQuery({
     queryKey: ['classes', effectiveYearId],
     queryFn: () => getClasses({ data: { schoolYearId: effectiveYearId } }),
     enabled: !!effectiveYearId,
@@ -108,7 +108,7 @@ function TimetablesPage() {
   const classes = classesResult?.success ? classesResult.data : []
 
   // Fetch teachers
-  const { data: teachersResult, isLoading: teachersLoading } = useQuery({
+  const { data: teachersResult, isPending: teachersPending } = useQuery({
     queryKey: ['teachers'],
     queryFn: () => getTeachers({ data: {} }),
     staleTime: 5 * 60 * 1000,
@@ -142,18 +142,18 @@ function TimetablesPage() {
   }, [classSubjectsResult])
 
   // Fetch timetable for class view
-  const { data: classTimetableResult, isLoading: classTimetableLoading } = useQuery({
+  const { data: classTimetableResult, isPending: classTimetablePending } = useQuery({
     ...timetablesOptions.byClass({ classId: selectedClassId, schoolYearId: effectiveYearId }),
     enabled: viewMode === 'class' && !!selectedClassId && !!effectiveYearId,
   })
 
   // Fetch timetable for teacher view
-  const { data: teacherTimetableResult, isLoading: teacherTimetableLoading } = useQuery({
+  const { data: teacherTimetableResult, isPending: teacherTimetablePending } = useQuery({
     ...timetablesOptions.byTeacher({ teacherId: selectedTeacherId, schoolYearId: effectiveYearId }),
     enabled: viewMode === 'teacher' && !!selectedTeacherId && !!effectiveYearId,
   })
 
-  const timetableLoading = viewMode === 'class' ? classTimetableLoading : teacherTimetableLoading
+  const timetablePending = viewMode === 'class' ? classTimetablePending : teacherTimetablePending
 
   // Transform timetable data to match TimetableSessionData interface
   const transformedTimetable = useMemo(() => {
@@ -400,7 +400,7 @@ function TimetablesPage() {
               <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">
                 {t.schoolYear.title()}
               </label>
-              {yearsLoading
+              {yearsPending || contextPending
                 ? (
                     <Skeleton className="h-11 w-full rounded-xl" />
                   )
@@ -446,7 +446,7 @@ function TimetablesPage() {
                 <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">
                   {t.classes.title()}
                 </label>
-                {classesLoading
+                {classesPending || contextPending
                   ? (
                       <Skeleton className="h-11 w-full rounded-xl" />
                     )
@@ -501,7 +501,7 @@ function TimetablesPage() {
                 <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">
                   {t.teachers.title()}
                 </label>
-                {teachersLoading
+                {teachersPending
                   ? (
                       <Skeleton className="h-11 w-full rounded-xl" />
                     )
@@ -557,7 +557,7 @@ function TimetablesPage() {
                     <Suspense fallback={<Skeleton className="h-[400px] w-full rounded-xl" />}>
                       <TimetableGrid
                         sessions={transformedTimetable}
-                        isLoading={timetableLoading}
+                        isPending={timetablePending}
                         onSlotClick={handleSlotClick}
                         onSessionClick={handleSessionClick}
                         readOnly={viewMode !== 'class'}

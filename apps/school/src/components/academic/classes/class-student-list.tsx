@@ -35,12 +35,12 @@ interface ClassStudentListProps {
 export function ClassStudentList({ classId }: ClassStudentListProps) {
   const t = useTranslations()
 
-  const { data, isLoading } = useQuery({
+  const { data, isPending } = useQuery({
     ...enrollmentsOptions.list({ classId, status: 'confirmed', limit: 100 }),
     enabled: !!classId,
   })
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="space-y-4">
         {Array.from({ length: 5 }).map(() => (

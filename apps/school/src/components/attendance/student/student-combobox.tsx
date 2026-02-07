@@ -55,7 +55,7 @@ export function StudentCombobox({
   const [open, setOpen] = React.useState(false)
   const [search, setSearch] = React.useState('')
 
-  const { data, isLoading } = useQuery({
+  const { data, isPending } = useQuery({
     queryKey: ['students-combobox', search, classId],
     queryFn: async () => {
       const result = await getStudents({
@@ -136,7 +136,7 @@ export function StudentCombobox({
             onValueChange={setSearch}
           />
           <CommandList id="student-combobox-list">
-            {isLoading
+            {isPending
               ? (
                   <div className="flex items-center justify-center py-6">
                     <IconLoader2 className="h-4 w-4 animate-spin" />

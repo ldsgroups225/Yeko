@@ -194,7 +194,7 @@ function RoleManagement() {
     },
   })
 
-  const { data: roles = [], isLoading } = useQuery(platformRolesQueryOptions(activeScope))
+  const { data: roles = [], isPending } = useQuery(platformRolesQueryOptions(activeScope))
 
   // Sync form when editing
   useEffect(() => {
@@ -480,7 +480,7 @@ function RoleManagement() {
 
         <TabsContent value="school" className="mt-0">
           <div className="grid gap-6">
-            {isLoading
+            {isPending
               ? (
                   <div className="flex justify-center py-20">
                     <IconShield className="animate-spin h-10 w-10 text-primary/40" />
@@ -512,7 +512,7 @@ function RoleManagement() {
 
         <TabsContent value="system" className="mt-0">
           <div className="grid gap-6">
-            {isLoading
+            {isPending
               ? (
                   <div className="flex justify-center py-20">
                     <IconShield className="animate-spin h-10 w-10 text-primary/40" />
@@ -556,7 +556,7 @@ function RoleManagement() {
           if (roleToDelete?.id)
             deleteMutation.mutate(roleToDelete.id)
         }}
-        isLoading={deleteMutation.isPending}
+        isPending={deleteMutation.isPending}
       />
     </div>
   )

@@ -9,7 +9,7 @@ export function useSearch() {
   const debouncedQuery = useDebounce(query, 300)
   const { schoolId } = useSchoolContext()
 
-  const { data: students, isLoading } = useQuery({
+  const { data: students, isPending } = useQuery({
     queryKey: ['search-students', schoolId, debouncedQuery],
     queryFn: async () => {
       if (!debouncedQuery || debouncedQuery.length < 2)
@@ -35,6 +35,6 @@ export function useSearch() {
     results: {
       students: students || [],
     },
-    isLoading,
+    isPending,
   }
 }

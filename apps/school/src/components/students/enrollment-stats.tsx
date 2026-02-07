@@ -84,7 +84,7 @@ export function EnrollmentStats() {
   const t = useTranslations()
   const { schoolYearId } = useSchoolYearContext()
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isPending, error } = useQuery({
     ...enrollmentsOptions.statistics(schoolYearId || ''),
     enabled: !!schoolYearId,
   })
@@ -99,7 +99,7 @@ export function EnrollmentStats() {
     )
   }
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="space-y-4">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

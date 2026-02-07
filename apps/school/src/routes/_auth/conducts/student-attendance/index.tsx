@@ -72,13 +72,13 @@ function StudentAttendancePage() {
 
   const dateStr = date.toISOString().split('T')[0] ?? ''
 
-  const { data: attendanceResult, isLoading } = useQuery({
+  const { data: attendanceResult, isPending } = useQuery({
     ...classAttendanceOptions(classId, dateStr),
     enabled: !!classId,
   })
 
   const mutation = useMutation({
-    mutationKey: schoolMutationKeys.studentAttendance.bulkSave,
+    mutationKey: schoolMutationKeys.studentAttendance.bulkRecord,
     mutationFn: (params: { classId: string, date: string, entries: Array<{ studentId: string, status: 'present' | 'late' | 'absent' | 'excused', arrivalTime?: string | null, reason?: string | null }> }) =>
       bulkRecordClassAttendance({ data: params }),
     onSuccess: () => {
@@ -208,7 +208,7 @@ function StudentAttendancePage() {
                   className={className}
                   entries={entries}
                   onSave={handleSave}
-                  isLoading={isLoading}
+                  isPending={isPending}
                   isSaving={mutation.isPending}
                 />
               </motion.div>

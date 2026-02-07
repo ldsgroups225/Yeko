@@ -26,7 +26,7 @@ function SchoolSubjectsPage() {
   const [selectedYearId, setSelectedYearId] = useState<string>('')
 
   // Fetch school years
-  const { data: schoolYearsResult, isLoading: yearsLoading } = useQuery({
+  const { data: schoolYearsResult, isPending: yearsPending } = useQuery({
     queryKey: ['school-years'],
     queryFn: () => getSchoolYears(),
     staleTime: 5 * 60 * 1000,
@@ -73,7 +73,7 @@ function SchoolSubjectsPage() {
           <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1 block">
             {t.schoolYear.title()}
           </span>
-          {yearsLoading
+          {yearsPending
             ? (
                 <Skeleton className="h-11 w-full rounded-xl" />
               )

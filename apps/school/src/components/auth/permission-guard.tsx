@@ -43,10 +43,10 @@ export function PermissionGuard({
   showDenied = false,
 }: PermissionGuardProps) {
   const { t } = useTranslation()
-  const { can, isLoading } = usePermissions()
+  const { can, isPending } = usePermissions()
 
   // Show loading state
-  if (isLoading) {
+  if (isPending) {
     return null
   }
 
@@ -105,9 +105,9 @@ export function MultiPermissionGuard({
   children,
   fallback,
 }: MultiPermissionGuardProps) {
-  const { canAny, canAll, isLoading } = usePermissions()
+  const { canAny, canAll, isPending } = usePermissions()
 
-  if (isLoading) {
+  if (isPending) {
     return null
   }
 

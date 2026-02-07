@@ -26,7 +26,7 @@ interface StudentFee {
 
 interface StudentFeesTableProps {
   studentFees: StudentFee[]
-  isLoading?: boolean
+  isPending?: boolean
 }
 
 function getStatusVariant(status: string) {
@@ -53,11 +53,11 @@ function formatCurrency(amount: number) {
 
 export function StudentFeesTable({
   studentFees,
-  isLoading,
+  isPending,
 }: StudentFeesTableProps) {
   const t = useTranslations()
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="space-y-4 p-4">
         {Array.from({ length: 5 }).map(() => (

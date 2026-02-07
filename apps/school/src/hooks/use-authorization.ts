@@ -6,7 +6,7 @@ import { useSchoolContext } from '@/hooks/use-school-context'
  * Adapter for school app to match core's signature
  */
 export function useAuthorization() {
-  const { can: canOriginal, isLoading, permissions } = usePermissions()
+  const { can: canOriginal, isPending, permissions } = usePermissions()
   const { schoolId } = useSchoolContext()
 
   /**
@@ -19,7 +19,7 @@ export function useAuthorization() {
 
   return {
     can,
-    isLoading,
+    isPending,
     permissions,
     // exposing auth object structure similar to core
     auth: {

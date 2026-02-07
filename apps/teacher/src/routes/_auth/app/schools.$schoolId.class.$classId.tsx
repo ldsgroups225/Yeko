@@ -190,7 +190,7 @@ function ClassDetailPage() {
   const { timetableSessionId } = Route.useSearch()
 
   // Fetch class details
-  const { data: classData, isLoading: classLoading } = useQuery({
+  const { data: classData, isPending: classPending } = useQuery({
     ...classDetailsQueryOptions({
       classId,
       schoolYearId: context?.schoolYearId ?? '',
@@ -199,7 +199,7 @@ function ClassDetailPage() {
   })
 
   // Fetch students
-  const { data: studentsData, isLoading: studentsLoading } = useQuery({
+  const { data: studentsData, isPending: studentsPending } = useQuery({
     ...classStudentsQueryOptions({
       classId,
       schoolYearId: context?.schoolYearId ?? '',
@@ -209,7 +209,7 @@ function ClassDetailPage() {
   })
 
   // Fetch class stats
-  const { data: statsData, isLoading: statsLoading } = useQuery({
+  const { data: statsData, isPending: statsPending } = useQuery({
     ...classStatsQueryOptions({
       classId,
       schoolYearId: context?.schoolYearId ?? '',
@@ -260,7 +260,7 @@ function ClassDetailPage() {
     }),
   )
 
-  const isLoading = contextLoading || classLoading || studentsLoading || statsLoading
+  const isPending = contextLoading || classPending || studentsPending || statsPending
 
   const classInfo = classData?.class
   const students = useMemo(() => studentsData?.students ?? [], [studentsData?.students])
@@ -671,7 +671,7 @@ function ClassDetailPage() {
     setExpandedStudent(prev => (prev === studentId ? null : studentId))
   }
 
-  if (isLoading) {
+  if (isPending) {
     return <ClassDetailSkeleton />
   }
 
@@ -1348,7 +1348,7 @@ function ClassDetailPage() {
           open={isConfirmDialogOpen}
           onOpenChange={setIsConfirmDialogOpen}
           onConfirm={executePublish}
-          isLoading={isSaving}
+          isPending={isSaving}
           title={LL.grades.confirmPublishTitle()}
           description={LL.grades.confirmPublishDescription({ count: students.length - unpublishedNote.details.length })}
           confirmText={LL.grades.confirmPublish()}

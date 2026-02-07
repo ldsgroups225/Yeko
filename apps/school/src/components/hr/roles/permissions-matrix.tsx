@@ -5,7 +5,7 @@ import { Label } from '@workspace/ui/components/label'
 import { motion } from 'motion/react'
 import { useTranslations } from '@/i18n'
 
-type Permissions = RoleFormData['permissions']
+export type Permissions = RoleFormData['permissions']
 
 interface PermissionsMatrixProps {
   value: Permissions

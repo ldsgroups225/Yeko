@@ -15,7 +15,7 @@ export const Route = createFileRoute('/_auth/accounting/payment-plans')({
 function PaymentPlansPage() {
   const t = useTranslations()
 
-  const { data: paymentPlans, isLoading } = useQuery(paymentPlansOptions.list())
+  const { data: paymentPlans, isPending } = useQuery(paymentPlansOptions.list())
 
   const paymentPlansList = (paymentPlans ?? []).map((p: { id: string, totalAmount: string | null, paidAmount: string | null, status: string | null, studentId: string }) => ({
     id: p.id,
@@ -63,7 +63,7 @@ function PaymentPlansPage() {
           <CardContent className="p-0">
             <PaymentPlansTable
               paymentPlans={paymentPlansList}
-              isLoading={isLoading}
+              isPending={isPending}
             />
           </CardContent>
         </Card>

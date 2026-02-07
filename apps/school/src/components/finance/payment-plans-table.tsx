@@ -27,7 +27,7 @@ interface PaymentPlan {
 
 interface PaymentPlansTableProps {
   paymentPlans: PaymentPlan[]
-  isLoading?: boolean
+  isPending?: boolean
 }
 
 function getStatusVariant(status: string) {
@@ -52,11 +52,11 @@ function formatCurrency(amount: number) {
 
 export function PaymentPlansTable({
   paymentPlans,
-  isLoading,
+  isPending,
 }: PaymentPlansTableProps) {
   const t = useTranslations()
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="space-y-4 p-4">
         {Array.from({ length: 5 }).map(() => (

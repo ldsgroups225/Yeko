@@ -56,7 +56,7 @@ function FeeTypesPage() {
 
   const {
     data: feeTypes,
-    isLoading,
+    isPending,
   } = useQuery(feeTypesOptions.list())
 
   const queryClient = useQueryClient()
@@ -164,7 +164,7 @@ function FeeTypesPage() {
           <CardContent className="p-0">
             <FeeTypesTable
               feeTypes={feeTypesList}
-              isLoading={isLoading}
+              isPending={isPending}
               onEdit={handleEdit}
               onDelete={handleDeleteClick}
             />
@@ -186,7 +186,7 @@ function FeeTypesPage() {
         open={!!deleteData}
         onOpenChange={open => !open && setDeleteData(null)}
         onConfirm={handleDeleteConfirm}
-        isLoading={deleteMutation.isPending}
+        isPending={deleteMutation.isPending}
         title={t.accounting.feeTypes.deleteConfirmTitle()}
         description={
           deleteData

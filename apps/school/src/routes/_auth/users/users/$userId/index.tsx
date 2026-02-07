@@ -39,7 +39,7 @@ function UserDetailsPage() {
   const queryClient = useQueryClient()
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
-  const { data: userResult, isLoading } = useQuery({
+  const { data: userResult, isPending } = useQuery({
     queryKey: ['user', userId],
     queryFn: async () => {
       const result = await getUser({ data: userId })
@@ -72,7 +72,7 @@ function UserDetailsPage() {
     },
   })
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-center">
@@ -291,7 +291,7 @@ function UserDetailsPage() {
         description={t.hr.users.deleteConfirm()}
         confirmText={user?.name}
         onConfirm={() => deleteMutation.mutate()}
-        isLoading={deleteMutation.isPending}
+        isPending={deleteMutation.isPending}
       />
     </div>
   )

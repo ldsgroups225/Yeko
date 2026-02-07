@@ -67,11 +67,11 @@ function CoefficientsCatalog() {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Fetch data
-  const { data: schoolYears, isLoading: yearsLoading } = useQuery(schoolYearTemplatesQueryOptions())
+  const { data: schoolYears, isPending: yearsPending } = useQuery(schoolYearTemplatesQueryOptions())
   const { data: subjects } = useQuery(subjectsQueryOptions({ limit: 100 }))
   const { data: grades } = useQuery(gradesQueryOptions())
   const { data: seriesData } = useQuery(seriesQueryOptions())
-  const { data: stats, isLoading: statsLoading } = useQuery(coefficientStatsQueryOptions())
+  const { data: stats, isPending: statsPending } = useQuery(coefficientStatsQueryOptions())
 
   const queryParams = useMemo(() => ({
     schoolYearTemplateId: yearFilter === 'all' ? undefined : yearFilter,
@@ -80,7 +80,7 @@ function CoefficientsCatalog() {
     limit: 200,
   }), [yearFilter, gradeFilter, seriesFilter])
 
-  const { data: coefficientsData, isLoading: coefficientsLoading } = useQuery(
+  const { data: coefficientsData, isPending: coefficientsPending } = useQuery(
     coefficientTemplatesQueryOptions(queryParams),
   )
 
@@ -437,7 +437,7 @@ function CoefficientsCatalog() {
 
   const activeYear = schoolYears?.find(y => y.isActive)
 
-  if (yearsLoading || statsLoading) {
+  if (yearsPending || statsPending) {
     return (
       <div className="space-y-6">
         <div className="space-y-2">
@@ -858,7 +858,7 @@ function CoefficientsCatalog() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {coefficientsLoading
+            {coefficientsPending
               ? (
                   <CatalogListSkeleton count={5} />
                 )
@@ -929,7 +929,7 @@ function CoefficientsCatalog() {
         description={`Êtes-vous sûr de vouloir supprimer le coefficient "${deletingCoefficient?.name}" ? Cette action est irréversible.`}
         confirmText={deletingCoefficient?.name}
         onConfirm={handleDelete}
-        isLoading={deleteMutation.isPending}
+        isPending={deleteMutation.isPending}
       />
     </div>
   )

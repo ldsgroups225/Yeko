@@ -70,7 +70,7 @@ function SubjectsCatalog() {
     limit: 20,
   }), [debouncedSearch, categoryFilter, page])
 
-  const { data: subjectsData, isLoading, error } = useQuery(subjectsQueryOptions(queryParams))
+  const { data: subjectsData, isPending, error } = useQuery(subjectsQueryOptions(queryParams))
 
   // Manage infinite scroll subjects with derived state
   const allSubjects = useMemo(() => {
@@ -89,7 +89,7 @@ function SubjectsCatalog() {
   const loadMoreRef = useInfiniteScroll({
     onLoadMore: handleLoadMore,
     hasMore,
-    isLoading,
+    isPending,
   })
 
   const createMutation = useMutation({
@@ -303,7 +303,7 @@ function SubjectsCatalog() {
       </div>
 
       {/* Stats Cards */}
-      {isLoading && page === 1
+      {isPending && page === 1
         ? (
             <CatalogStatsSkeleton />
           )
@@ -454,7 +454,7 @@ function SubjectsCatalog() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {isLoading && page === 1
+          {isPending && page === 1
             ? (
                 <CatalogListSkeleton count={5} />
               )
@@ -604,7 +604,7 @@ function SubjectsCatalog() {
                     {/* Infinite Scroll Trigger */}
                     {hasMore && (
                       <div ref={loadMoreRef} className="py-4">
-                        {isLoading && (
+                        {isPending && (
                           <div className="space-y-4">
                             {Array.from({ length: 3 }).map(() => (
                               <div key={generateUUID()} className="flex items-center justify-between p-4 border rounded-lg">
@@ -634,7 +634,7 @@ function SubjectsCatalog() {
         description={`Êtes-vous sûr de vouloir supprimer la matière "${deletingSubject?.name}" ? Cette action est irréversible.`}
         confirmText={deletingSubject?.name}
         onConfirm={handleDelete}
-        isLoading={deleteMutation.isPending}
+        isPending={deleteMutation.isPending}
       />
     </div>
   )

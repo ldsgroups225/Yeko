@@ -24,7 +24,7 @@ const currentTimeIndicatorStyle: CSSProperties = { gridColumn: '2 / -1' }
 
 interface TimetableGridProps {
   sessions: TimetableSessionData[]
-  isLoading?: boolean
+  isPending?: boolean
   onSessionClick?: (session: TimetableSessionData) => void
   onSlotClick?: (dayOfWeek: number, startTime: string, endTime: string) => void
   readOnly?: boolean
@@ -52,7 +52,7 @@ function GridSkeleton() {
 
 export function TimetableGrid({
   sessions,
-  isLoading,
+  isPending,
   onSessionClick,
   onSlotClick,
   readOnly = false,
@@ -149,7 +149,7 @@ export function TimetableGrid({
     }
   }, [timePosition])
 
-  if (isLoading) {
+  if (isPending) {
     return <GridSkeleton />
   }
 

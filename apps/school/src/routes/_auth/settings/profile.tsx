@@ -18,7 +18,7 @@ function SettingsProfilePage() {
   const t = useTranslations()
   const queryClient = useQueryClient()
 
-  const { data: result, isLoading } = useQuery(schoolProfileOptions.detail())
+  const { data: result, isPending } = useQuery(schoolProfileOptions.detail())
 
   const profileMutation = useMutation({
     ...schoolProfileMutations.update,
@@ -54,18 +54,18 @@ function SettingsProfilePage() {
   })
 
   const handleProfileUpdate = (data: UpdateSchoolProfileInput) => {
-    profileMutation.mutate({ data })
+    profileMutation.mutate(data)
   }
 
   const handleSettingsUpdate = (data: Partial<SchoolSettings>) => {
-    settingsMutation.mutate({ data })
+    settingsMutation.mutate(data)
   }
 
   const handleLogoUpdate = (logoUrl: string) => {
-    logoMutation.mutate({ data: { logoUrl } })
+    logoMutation.mutate({ logoUrl })
   }
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="space-y-6">
         <div className="grid gap-6 lg:grid-cols-2">

@@ -10,6 +10,8 @@ vi.unmock('react-hook-form')
 const { RoleForm } = await import('@/components/hr/roles/role-form')
 const { PermissionsMatrix } = await import('@/components/hr/roles/permissions-matrix')
 
+type Permissions = RoleFormData['permissions']
+
 describe('role Management Integration', () => {
   describe('create Role Flow', () => {
     test('should create a new role with permissions', async () => {
@@ -145,7 +147,7 @@ describe('role Management Integration', () => {
       const user = userEvent.setup()
       const mockOnChange = vi.fn()
 
-      const value = {
+      const value: Permissions = {
         users: ['view', 'create', 'edit', 'delete'],
       }
 
@@ -159,7 +161,7 @@ describe('role Management Integration', () => {
     })
 
     test('should show permissions count', () => {
-      const value = {
+      const value: Permissions = {
         users: ['view', 'create'],
         teachers: ['view', 'edit', 'delete'],
       }

@@ -17,9 +17,9 @@ export const Route = createFileRoute('/_auth/grades/')({
 
 function GradesIndexPage() {
   const t = useTranslations()
-  const { schoolId } = useSchoolContext()
+  const { schoolId, isPending: contextPending } = useSchoolContext()
 
-  const { data: result, isLoading: pendingLoading } = useQuery(
+  const { data: result, isPending: pendingLoading } = useQuery(
     gradesOptions.pending(schoolId ?? ''),
   )
 
@@ -65,7 +65,7 @@ function GradesIndexPage() {
               </div>
             </CardHeader>
             <CardContent>
-              {pendingLoading
+              {pendingLoading || contextPending
                 ? (
                     <Skeleton className="h-8 w-16" />
                   )

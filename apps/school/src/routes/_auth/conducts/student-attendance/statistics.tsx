@@ -58,7 +58,7 @@ function StudentAttendanceStatisticsPage() {
   const startDateStr = startDate.toISOString().split('T')[0] ?? ''
   const endDateStr = endDate.toISOString().split('T')[0] ?? ''
 
-  const { data: result, isLoading } = useQuery(
+  const { data: result, isPending } = useQuery(
     attendanceStatisticsOptions({
       startDate: startDateStr,
       endDate: endDateStr,
@@ -152,7 +152,7 @@ function StudentAttendanceStatisticsPage() {
       </motion.div>
 
       <AnimatePresence mode="wait">
-        {isLoading
+        {isPending
           ? (
               <motion.div
                 key="loading"

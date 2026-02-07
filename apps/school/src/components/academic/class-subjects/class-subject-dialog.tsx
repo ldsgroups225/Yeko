@@ -43,7 +43,7 @@ export function ClassSubjectDialog({
   const [coefficient, setCoefficient] = useState(2)
   const [hours, setHours] = useState(3)
 
-  const { data: result, isLoading } = useQuery({
+  const { data: result, isPending } = useQuery({
     queryKey: ['schoolSubjects', schoolYearId],
     queryFn: () => getSchoolSubjects({ data: { schoolYearId: schoolYearId! } }),
     enabled: open && !!schoolYearId,
@@ -113,7 +113,7 @@ export function ClassSubjectDialog({
             </Label>
             <ScrollArea className="h-[240px] rounded-xl border border-white/10 bg-white/5 overflow-hidden">
               <AnimatePresence mode="wait">
-                {isLoading
+                {isPending
                   ? (
                       <motion.div
                         initial={{ opacity: 0 }}

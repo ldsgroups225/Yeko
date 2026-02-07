@@ -54,7 +54,7 @@ export function useLocalNotes(options: UseLocalNotesOptions = {}): UseLocalNotes
   const queryClient = useQueryClient()
 
   // Fetch notes from local database
-  const { data: notes, isLoading, error, refetch } = useQuery({
+  const { data: notes, isPending, error, refetch } = useQuery({
     queryKey: ['notes', { classId, teacherId, includeUnpublished }],
     queryFn: async () => {
       if (classId) {
@@ -102,7 +102,7 @@ export function useLocalNotes(options: UseLocalNotesOptions = {}): UseLocalNotes
 
   return {
     notes: notes ?? [],
-    isLoading,
+    isLoading: isPending,
     error: error instanceof Error ? error.message : null,
     refresh: refetch,
     saveNote: (note, details) => saveNoteMutation.mutateAsync({ note, details }),
@@ -136,7 +136,7 @@ export function useNoteGrades(options: UseNoteGradesOptions): UseNoteGradesRetur
   const dbStatus = useDatabaseStatus()
   const queryClient = useQueryClient()
 
-  const { data: gradesMap, isLoading, error, refetch } = useQuery({
+  const { data: gradesMap, isPending, error, refetch } = useQuery({
     queryKey: ['notes', noteId, 'grades'],
     queryFn: async () => {
       const noteDetails = await localNotesService.getGradesByNote(noteId)
@@ -158,7 +158,7 @@ export function useNoteGrades(options: UseNoteGradesOptions): UseNoteGradesRetur
 
   return {
     grades: gradesMap ?? new Map(),
-    isLoading,
+    isLoading: isPending,
     error: error instanceof Error ? error.message : null,
     updateGrade: (studentId, value) => updateGradeMutation.mutateAsync({ studentId, value }),
     refresh: refetch,
@@ -185,7 +185,7 @@ export function useUnpublishedNotes(): UseUnpublishedNotesReturn {
   const dbStatus = useDatabaseStatus()
   const queryClient = useQueryClient()
 
-  const { data: unpublishedNotes, isLoading, error, refetch } = useQuery({
+  const { data: unpublishedNotes, isPending, error, refetch } = useQuery({
     queryKey: ['notes', 'unpublished'],
     queryFn: () => localNotesService.getUnpublishedNotes(),
     enabled: dbStatus.isInitialized,
@@ -213,7 +213,7 @@ export function useUnpublishedNotes(): UseUnpublishedNotesReturn {
 
   return {
     unpublishedNotes: unpublishedNotes ?? [],
-    isLoading,
+    isLoading: isPending,
     error: error instanceof Error ? error.message : null,
     refresh: refetch,
     publishAll: () => publishAllMutation.mutateAsync(unpublishedNotes ?? []),

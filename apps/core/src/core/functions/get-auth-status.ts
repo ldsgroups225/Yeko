@@ -15,8 +15,6 @@ export const getAuthStatus = createServerFn({ method: 'GET' })
     const auth = getAuth()
     const req = getRequest()
 
-    // Better Auth getSession works by passing the request's headers
-    // to search for session cookies/tokens
     const session = await auth.api.getSession({
       headers: req?.headers,
     })

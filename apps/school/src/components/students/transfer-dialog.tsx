@@ -68,7 +68,7 @@ export function TransferDialog({
   const t = useTranslations()
   const queryClient = useQueryClient()
 
-  const { data: classesResult, isLoading: classesLoading } = useQuery({
+  const { data: classesResult, isPending: isPendingClasses } = useQuery({
     ...classesOptions.list({ schoolYearId }),
     enabled: open && !!schoolYearId,
   })
@@ -164,7 +164,7 @@ export function TransferDialog({
                       <SelectTrigger>
                         <SelectValue
                           placeholder={
-                            classesLoading
+                            isPendingClasses
                               ? t.common.loading()
                               : t.students.selectNewClass()
                           }

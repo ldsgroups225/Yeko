@@ -50,11 +50,11 @@ function TeacherDetailsPage() {
   const queryClient = useQueryClient()
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
-  const { data: teacher, isLoading } = useQuery({
+  const { data: teacher, isPending } = useQuery({
     ...teacherOptions.detail(teacherId),
   })
 
-  const { data: classes, isLoading: isLoadingClasses } = useQuery({
+  const { data: classes, isPending: isPendingClasses } = useQuery({
     ...teacherOptions.classes(teacherId),
   })
 
@@ -73,7 +73,7 @@ function TeacherDetailsPage() {
     },
   })
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="space-y-6">
         <Skeleton className="h-4 w-1/4" />
@@ -346,7 +346,7 @@ function TeacherDetailsPage() {
           <TabsContent value="classes" className="m-0">
             <TeacherClasses
               classes={classes || []}
-              isLoading={isLoadingClasses}
+              isPending={isPendingClasses}
             />
           </TabsContent>
 
@@ -362,7 +362,7 @@ function TeacherDetailsPage() {
         title={t.hr.teachers.deleteTeacher()}
         description={t.hr.teachers.deleteConfirm()}
         onConfirm={() => deleteMutation.mutate()}
-        isLoading={deleteMutation.isPending}
+        isPending={deleteMutation.isPending}
       />
     </div>
   )

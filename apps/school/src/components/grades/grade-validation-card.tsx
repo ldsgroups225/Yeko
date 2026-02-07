@@ -25,7 +25,7 @@ interface GradeValidationCardProps {
   onViewDetails: () => void
   onValidate: () => void
   onReject: () => void
-  isLoading?: boolean
+  isPending?: boolean
   className?: string
 }
 
@@ -34,7 +34,7 @@ export function GradeValidationCard({
   onViewDetails,
   onValidate,
   onReject,
-  isLoading,
+  isPending,
   className,
 }: GradeValidationCardProps) {
   const t = useTranslations()
@@ -106,7 +106,7 @@ export function GradeValidationCard({
             variant="ghost"
             size="sm"
             onClick={onViewDetails}
-            disabled={isLoading}
+            disabled={isPending}
             className="flex-1 rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-background/80"
           >
             {t.academic.grades.validations.viewDetails()}
@@ -117,7 +117,7 @@ export function GradeValidationCard({
             variant="outline"
             size="sm"
             onClick={onReject}
-            disabled={isLoading}
+            disabled={isPending}
             className="flex-1 rounded-xl font-bold uppercase tracking-widest text-[10px] border-destructive/30 text-destructive hover:bg-destructive hover:text-destructive-foreground transition-all shadow-sm"
           >
             <IconCircleX className="mr-1.5 size-3.5" />
@@ -128,7 +128,7 @@ export function GradeValidationCard({
             variant="default"
             size="sm"
             onClick={onValidate}
-            disabled={isLoading}
+            disabled={isPending}
             className="flex-1 rounded-xl font-bold uppercase tracking-widest text-[10px] bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-500/20"
           >
             <IconCircleCheck className="mr-1.5 size-3.5" />

@@ -58,7 +58,7 @@ export function SubjectPickerDialog({
 
   const queryClient = useQueryClient()
 
-  const { data: result, isLoading } = useQuery({
+  const { data: result, isPending } = useQuery({
     ...schoolSubjectsOptions.available({
       search: search || undefined,
       category: categoryFilter !== 'all' ? categoryFilter : undefined,
@@ -214,7 +214,7 @@ export function SubjectPickerDialog({
 
         <div className="flex-1 px-6 py-4 overflow-y-auto scrollbar-none">
           <AnimatePresence mode="wait">
-            {isLoading
+            {isPending
               ? (
                   <motion.div
                     key="loading"

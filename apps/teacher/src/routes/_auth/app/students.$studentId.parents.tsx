@@ -15,7 +15,7 @@ function StudentParentsPage() {
   const { studentId } = Route.useParams()
   const { LL } = useI18nContext()
 
-  const { data, isLoading } = useQuery({
+  const { data, isPending } = useQuery({
     queryKey: ['student-parents', studentId],
     queryFn: async () => {
       const result = await getStudentParents(studentId)
@@ -26,7 +26,7 @@ function StudentParentsPage() {
     enabled: !!studentId,
   })
 
-  if (isLoading) {
+  if (isPending) {
     return <ParentsSkeleton />
   }
 

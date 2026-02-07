@@ -17,9 +17,9 @@ export const Route = createFileRoute('/_auth/dashboard')({
 
 function DashboardPage() {
   const t = useTranslations()
-  const { role, isLoading } = useRole()
+  const { role, isPending } = useRole()
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="space-y-6">
         <Skeleton className="h-8 w-48" />

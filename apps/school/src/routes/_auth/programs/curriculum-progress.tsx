@@ -33,13 +33,13 @@ export const Route = createFileRoute('/_auth/programs/curriculum-progress')({
 
 function CurriculumProgressPage() {
   const t = useTranslations()
-  const { schoolYearId: contextSchoolYearId } = useSchoolYearContext()
+  const { schoolYearId: contextSchoolYearId, isPending: contextPending } = useSchoolYearContext()
   const [localYearId, setLocalYearId] = useState<string>('')
   const [selectedTermId, setSelectedTermId] = useState<string>('')
   const [selectedClassId, setSelectedClassId] = useState<string>('')
 
   // Fetch school years
-  const { data: schoolYearsResult, isLoading: yearsLoading } = useQuery({
+  const { data: schoolYearsResult, isPending: yearsPending } = useQuery({
     queryKey: ['school-years'],
     queryFn: () => getSchoolYears(),
     staleTime: 5 * 60 * 1000,
@@ -52,7 +52,7 @@ function CurriculumProgressPage() {
   const effectiveYearId = contextSchoolYearId || localYearId || activeYear?.id || ''
 
   // Fetch terms for selected year
-  const { data: termsResult, isLoading: termsLoading } = useQuery({
+  const { data: termsResult, isPending: termsPending } = useQuery({
     queryKey: ['terms', effectiveYearId],
     queryFn: () => getTerms({ data: { schoolYearId: effectiveYearId } }),
     enabled: !!effectiveYearId,
@@ -61,7 +61,7 @@ function CurriculumProgressPage() {
   const terms = termsResult?.success ? termsResult.data : []
 
   // Fetch classes for selected year
-  const { data: classesResult, isLoading: classesLoading } = useQuery({
+  const { data: classesResult, isPending: classesPending } = useQuery({
     queryKey: ['classes', effectiveYearId],
     queryFn: () => getClasses({ data: { schoolYearId: effectiveYearId } }),
     enabled: !!effectiveYearId,
@@ -70,7 +70,7 @@ function CurriculumProgressPage() {
   const classes = classesResult?.success ? classesResult.data : []
 
   // Fetch progress for selected class and term
-  const { data: progressResult, isLoading: progressLoading } = useQuery({
+  const { data: progressResult, isPending: progressPending } = useQuery({
     ...progressOptions.byClass({ classId: selectedClassId, termId: selectedTermId }),
     enabled: !!selectedClassId && !!selectedTermId,
   })
@@ -137,7 +137,7 @@ function CurriculumProgressPage() {
             <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1 block">
               {t.schoolYear.title()}
             </span>
-            {yearsLoading
+            {yearsPending || contextPending
               ? (
                   <Skeleton className="h-11 w-full rounded-xl" />
                 )
@@ -164,7 +164,7 @@ function CurriculumProgressPage() {
             <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1 block">
               Trimestre
             </span>
-            {termsLoading
+            {termsPending || contextPending
               ? (
                   <Skeleton className="h-11 w-full rounded-xl" />
                 )
@@ -193,7 +193,7 @@ function CurriculumProgressPage() {
             <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1 block">
               {t.classes.title()}
             </span>
-            {classesLoading
+            {classesPending || contextPending
               ? (
                   <Skeleton className="h-11 w-full rounded-xl" />
                 )
@@ -231,7 +231,7 @@ function CurriculumProgressPage() {
           ? (
               <div className="space-y-6">
                 {/* Overview Cards */}
-                <ProgressOverviewCards data={overviewData} isLoading={progressLoading} />
+                <ProgressOverviewCards data={overviewData} isPending={progressPending} />
 
                 {/* Behind Schedule Alert */}
                 {behindClasses.length > 0 && (
@@ -240,7 +240,7 @@ function CurriculumProgressPage() {
 
                 {/* Progress Cards Grid */}
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  {progressLoading
+                  {progressPending
                     ? (
                         Array.from({ length: 6 }).map(() => (
                           <Skeleton key={generateUUID()} className="h-48 rounded-3xl" />

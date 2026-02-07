@@ -118,15 +118,15 @@ SchoolCard.displayName = 'SchoolCard'
 function SchoolsPage() {
   const { LL } = useI18nContext()
   const { context, isLoading: contextLoading } = useRequiredTeacherContext()
-  const { data: schools, isLoading: schoolsLoading } = useQuery({
+  const { data: schools, isPending: schoolsPending } = useQuery({
     queryKey: ['teacher', 'schools', context?.userId],
     queryFn: () => getTeacherSchoolsQuery({ data: { userId: context?.userId ?? '' } }),
     enabled: !!context?.userId,
   })
 
-  const isLoading = contextLoading || schoolsLoading
+  const isPending = contextLoading || schoolsPending
 
-  if (isLoading) {
+  if (isPending) {
     return <SchoolsPageSkeleton />
   }
 

@@ -43,7 +43,7 @@ export function SubjectMultiSelect({
   const [open, setOpen] = React.useState(false)
   const [search, setSearch] = React.useState('')
 
-  const { data, isLoading } = useQuery({
+  const { data, isPending } = useQuery({
     queryKey: ['subjects', search],
     queryFn: async () => {
       const result = await getAllSubjectsOfTheSchoolThisCurrentYear({ data: { search } })
@@ -114,7 +114,7 @@ export function SubjectMultiSelect({
             </div>
             <CommandList id="subject-list">
               <AnimatePresence mode="wait">
-                {isLoading
+                {isPending
                   ? (
                       <motion.div
                         key="loading"

@@ -28,8 +28,8 @@ type AuthView = 'login' | 'forgot-password' | 'email-sent'
 
 export function LoginForm() {
   const t = useTranslations()
-  const [isLoading, setIsLoading] = useState(false)
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false)
+  const [isPending, setIsPending] = useState(false)
+  const [isGooglePending, setIsGooglePending] = useState(false)
   const [view, setView] = useState<AuthView>('login')
   const [sentEmail, setSentEmail] = useState('')
 
@@ -46,7 +46,7 @@ export function LoginForm() {
   })
 
   const onLoginSubmit = async (data: LoginFormData) => {
-    setIsLoading(true)
+    setIsPending(true)
     try {
       const result = await authClient.signIn.email({
         email: data.email,
@@ -69,12 +69,12 @@ export function LoginForm() {
       toast.error(t?.auth?.login?.error?.() || 'Erreur de connexion')
     }
     finally {
-      setIsLoading(false)
+      setIsPending(false)
     }
   }
 
   const onForgotSubmit = async (data: ForgotPasswordFormData) => {
-    setIsLoading(true)
+    setIsPending(true)
     try {
       await authClient.requestPasswordReset({
         email: data.email,
@@ -90,12 +90,12 @@ export function LoginForm() {
       )
     }
     finally {
-      setIsLoading(false)
+      setIsPending(false)
     }
   }
 
   const handleGoogleSignIn = async () => {
-    setIsGoogleLoading(true)
+    setIsGooglePending(true)
     try {
       await authClient.signIn.social({
         provider: 'google',
@@ -107,7 +107,7 @@ export function LoginForm() {
         t?.auth?.login?.googleError?.()
         || 'Erreur lors de la connexion avec Google',
       )
-      setIsGoogleLoading(false)
+      setIsGooglePending(false)
     }
   }
 
@@ -210,12 +210,12 @@ export function LoginForm() {
               <motion.div variants={itemVariants}>
                 <Button
                   onClick={handleGoogleSignIn}
-                  disabled={isGoogleLoading || isLoading}
+                  disabled={isGooglePending || isPending}
                   className="w-full h-12 text-base"
                   variant="outline"
                   type="button"
                 >
-                  {isGoogleLoading
+                  {isGooglePending
                     ? (
                         <IconLoader2 className="mr-2 h-5 w-5 animate-spin" />
                       )
@@ -270,7 +270,7 @@ export function LoginForm() {
                     id="email"
                     type="email"
                     placeholder={t.auth.login.emailPlaceholder()}
-                    disabled={isLoading || isGoogleLoading}
+                    disabled={isPending || isGooglePending}
                     className="h-12"
                     {...loginForm.register('email')}
                   />
@@ -296,7 +296,7 @@ export function LoginForm() {
                     id="password"
                     type="password"
                     placeholder={t.auth.login.passwordPlaceholder()}
-                    disabled={isLoading || isGoogleLoading}
+                    disabled={isPending || isGooglePending}
                     className="h-12"
                     {...loginForm.register('password')}
                   />
@@ -310,9 +310,9 @@ export function LoginForm() {
                 <Button
                   type="submit"
                   className="w-full h-12 text-base"
-                  disabled={isLoading || isGoogleLoading}
+                  disabled={isPending || isGooglePending}
                 >
-                  {isLoading
+                  {isPending
                     ? (
                         <>
                           <IconLoader2 className="mr-2 h-5 w-5 animate-spin" />
@@ -366,7 +366,7 @@ export function LoginForm() {
                     id="forgot-email"
                     type="email"
                     placeholder={t.auth.login.emailPlaceholder()}
-                    disabled={isLoading}
+                    disabled={isPending}
                     className="h-12"
                     {...forgotForm.register('email')}
                   />
@@ -380,9 +380,9 @@ export function LoginForm() {
                 <Button
                   type="submit"
                   className="w-full h-12 text-base"
-                  disabled={isLoading}
+                  disabled={isPending}
                 >
-                  {isLoading
+                  {isPending
                     ? (
                         <>
                           <IconLoader2 className="mr-2 h-5 w-5 animate-spin" />

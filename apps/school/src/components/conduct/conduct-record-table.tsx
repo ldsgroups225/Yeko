@@ -76,7 +76,7 @@ export interface ConductRecord {
 
 interface ConductRecordTableProps {
   records: ConductRecord[]
-  isLoading?: boolean
+  isPending?: boolean
   onView?: (id: string) => void
   onEdit?: (id: string) => void
   onDelete?: (id: string) => void
@@ -88,7 +88,7 @@ interface ConductRecordTableProps {
 
 export function ConductRecordTable({
   records,
-  isLoading,
+  isPending,
   onView,
   onEdit,
   onDelete,
@@ -315,7 +315,7 @@ export function ConductRecordTable({
     },
   })
 
-  if (isLoading) {
+  if (isPending) {
     return <TableSkeleton columns={7} rows={5} />
   }
 

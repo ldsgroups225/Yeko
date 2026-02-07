@@ -39,11 +39,11 @@ const actionColors = {
 export function GradeHistoryTimeline({ gradeId }: GradeHistoryTimelineProps) {
   const t = useTranslations()
 
-  const { data: result, isLoading } = useQuery(gradesOptions.history(gradeId))
+  const { data: result, isPending } = useQuery(gradesOptions.history(gradeId))
 
   const history = result || []
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="space-y-6 relative pl-4">
         <div className="absolute left-0 top-0 h-full w-px bg-border/20" />

@@ -362,7 +362,7 @@ export function GradeEntryTable({
     }
   }
 
-  const isLoading = updateMutation.isPending || createBulkMutation.isPending || submitMutation.isPending
+  const isPendingAction = updateMutation.isPending || createBulkMutation.isPending || submitMutation.isPending
 
   return (
     <div className="space-y-6">
@@ -481,7 +481,7 @@ export function GradeEntryTable({
                           value={currentValue}
                           status={status}
                           onChange={value => handleGradeChange(student.id, value)}
-                          disabled={isLoading}
+                          disabled={isPendingAction}
                           rejectionReason={grade?.rejectionReason ?? undefined}
                         />
                       </div>
@@ -585,7 +585,7 @@ export function GradeEntryTable({
               >
                 <Button
                   onClick={handleSavePending}
-                  disabled={isLoading || isMissingTeacher}
+                  disabled={isPendingAction || isMissingTeacher}
                   variant="outline"
                   className="rounded-xl border-amber-500/30 font-bold bg-amber-500/5 hover:bg-amber-500/10 text-amber-700"
                 >
@@ -604,7 +604,7 @@ export function GradeEntryTable({
 
           <Button
             onClick={handleSubmitForValidation}
-            disabled={!isComplete || isLoading}
+            disabled={!isComplete || isPendingAction}
             className="rounded-xl font-bold shadow-lg shadow-primary/20 px-6"
           >
             {submitMutation.isPending
@@ -639,7 +639,7 @@ export function GradeEntryTable({
             assignMutation.mutate(pendingAssignment.teacherId)
           }
         }}
-        isLoading={assignMutation.isPending}
+        isPending={assignMutation.isPending}
       />
 
       <ConfirmationDialog
@@ -648,7 +648,7 @@ export function GradeEntryTable({
         title={t.academic.grades.validations.confirmSubmitTitle()}
         description={t.academic.grades.validations.confirmSubmitDescription({ count: gradesByStudent.size })}
         onConfirm={confirmSubmit}
-        isLoading={submitMutation.isPending}
+        isPending={submitMutation.isPending}
       />
 
       <ConfirmationDialog
@@ -658,7 +658,7 @@ export function GradeEntryTable({
         description={t.academic.grades.entry.confirmResetDescription({ count: pendingChanges.size + gradesByStudent.size })}
         onConfirm={confirmReset}
         variant="destructive"
-        isLoading={deleteDraftMutation.isPending}
+        isPending={deleteDraftMutation.isPending}
       />
 
     </div>

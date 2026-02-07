@@ -28,7 +28,7 @@ function Catalogs() {
   const { logger } = useLogger()
 
   // Fetch real catalog stats
-  const { data: catalogStats, isLoading } = useQuery(catalogStatsQueryOptions())
+  const { data: catalogStats, isPending } = useQuery(catalogStatsQueryOptions())
 
   useEffect(() => {
     logger.info('Catalogs page viewed', {
@@ -43,7 +43,7 @@ function Catalogs() {
       description: 'Définir les niveaux éducatifs (Primaire, Secondaire, etc.) et les filières (Générale, Technique)',
       icon: IconSchool,
       href: '/app/catalogs/tracks',
-      stats: isLoading ? '...' : `${catalogStats?.educationLevels || 0} niveaux, ${catalogStats?.tracks || 0} filières`,
+      stats: isPending ? '...' : `${catalogStats?.educationLevels || 0} niveaux, ${catalogStats?.tracks || 0} filières`,
       variant: 'default' as const,
     },
     {
@@ -51,7 +51,7 @@ function Catalogs() {
       description: 'Gérer les niveaux de classe (6ème à Terminale) et les séries académiques (C, D, A, etc.)',
       icon: IconAward,
       href: '/app/catalogs/grades',
-      stats: isLoading ? '...' : `${catalogStats?.grades || 0} classes, ${catalogStats?.series || 0} séries`,
+      stats: isPending ? '...' : `${catalogStats?.grades || 0} classes, ${catalogStats?.series || 0} séries`,
       variant: 'default' as const,
     },
     {
@@ -59,7 +59,7 @@ function Catalogs() {
       description: 'Catalogue global de toutes les matières enseignées dans les écoles (Mathématiques, Physique, etc.)',
       icon: IconBook,
       href: '/app/catalogs/subjects',
-      stats: isLoading ? '...' : `${catalogStats?.subjects || 0} matières`,
+      stats: isPending ? '...' : `${catalogStats?.subjects || 0} matières`,
       variant: 'secondary' as const,
     },
     {
@@ -109,7 +109,7 @@ function Catalogs() {
             <IconSchool className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            {isLoading ? <Skeleton className="h-8 w-16" /> : <div className="text-2xl font-bold">{catalogStats?.educationLevels || 0}</div>}
+            {isPending ? <Skeleton className="h-8 w-16" /> : <div className="text-2xl font-bold">{catalogStats?.educationLevels || 0}</div>}
             <p className="text-xs text-muted-foreground">
               Niveaux disponibles
             </p>
@@ -122,7 +122,7 @@ function Catalogs() {
             <IconAward className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            {isLoading ? <Skeleton className="h-8 w-16" /> : <div className="text-2xl font-bold">{catalogStats?.tracks || 0}</div>}
+            {isPending ? <Skeleton className="h-8 w-16" /> : <div className="text-2xl font-bold">{catalogStats?.tracks || 0}</div>}
             <p className="text-xs text-muted-foreground">
               Filières académiques
             </p>
@@ -135,7 +135,7 @@ function Catalogs() {
             <IconBook className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            {isLoading ? <Skeleton className="h-8 w-16" /> : <div className="text-2xl font-bold">{catalogStats?.subjects || 0}</div>}
+            {isPending ? <Skeleton className="h-8 w-16" /> : <div className="text-2xl font-bold">{catalogStats?.subjects || 0}</div>}
             <p className="text-xs text-muted-foreground">
               Catalogue global
             </p>
@@ -148,7 +148,7 @@ function Catalogs() {
             <IconDatabase className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            {isLoading ? <Skeleton className="h-8 w-16" /> : <div className="text-2xl font-bold">{(catalogStats?.grades || 0) + (catalogStats?.series || 0)}</div>}
+            {isPending ? <Skeleton className="h-8 w-16" /> : <div className="text-2xl font-bold">{(catalogStats?.grades || 0) + (catalogStats?.series || 0)}</div>}
             <p className="text-xs text-muted-foreground">
               Niveaux et séries
             </p>

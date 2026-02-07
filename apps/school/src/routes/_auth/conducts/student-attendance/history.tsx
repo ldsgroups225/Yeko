@@ -16,11 +16,6 @@ export const Route = createFileRoute('/_auth/conducts/student-attendance/history
   component: StudentAttendanceHistoryPage,
 })
 
-interface AttendanceRecord {
-  date: string
-  status: string
-}
-
 function StudentAttendanceHistoryPage() {
   const t = useTranslations()
   const [studentId, setStudentId] = useState('')
@@ -31,7 +26,7 @@ function StudentAttendanceHistoryPage() {
   const startDate = new Date(month.getFullYear(), month.getMonth(), 1)
   const endDate = new Date(month.getFullYear(), month.getMonth() + 1, 0)
 
-  const { data, isLoading } = useQuery({
+  const { data, isPending } = useQuery({
     ...studentAttendanceHistoryOptions({
       studentId,
       startDate: startDate.toISOString().split('T')[0] ?? '',
@@ -40,9 +35,9 @@ function StudentAttendanceHistoryPage() {
     enabled: !!studentId,
   })
 
-  const attendanceData = (data as { records: AttendanceRecord[] } | undefined)?.records?.map(record => ({
+  const attendanceData = data?.map(record => ({
     date: record.date,
-    status: record.status as 'present' | 'late' | 'absent' | 'excused',
+    status: record.status,
   })) ?? []
 
   const handleStudentSelect = (id: string, name: string, image?: string) => {
@@ -115,7 +110,7 @@ function StudentAttendanceHistoryPage() {
                 exit={{ opacity: 0, y: -20 }}
                 className="flex justify-center"
               >
-                {isLoading
+                {isPending
                   ? (
                       <Card className="w-full max-w-2xl rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl p-8">
                         <Skeleton className="h-[400px] w-full rounded-2xl" />

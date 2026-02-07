@@ -138,7 +138,7 @@ describe('report Cards Integration', () => {
     })
 
     test('should show loading skeletons when loading', () => {
-      render(<ReportCardList reportCards={[]} isLoading />)
+      render(<ReportCardList reportCards={[]} isPending />)
       // Should render skeleton elements
       const skeletons = document.querySelectorAll('[class*="animate-pulse"], [data-slot="skeleton"]')
       expect(skeletons.length).toBeGreaterThan(0)

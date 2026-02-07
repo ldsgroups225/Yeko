@@ -81,10 +81,10 @@ function SchoolYearsSettingsPage() {
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
 
   // Fetch school years
-  const { data: schoolYears = [], isLoading } = useQuery(schoolYearsOptions())
+  const { data: schoolYears = [], isPending: isYearsPending } = useQuery(schoolYearsOptions())
 
   // Fetch available templates
-  const { data: templates = [] } = useQuery(schoolYearTemplatesOptions())
+  const { data: templates = [], isPending: isTemplatesPending } = useQuery(schoolYearTemplatesOptions())
 
   // Set active mutation
   const setActiveMutation = useMutation({
@@ -179,7 +179,7 @@ function SchoolYearsSettingsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="p-0">
-            {isLoading
+            {isYearsPending || isTemplatesPending
               ? (
                   <div className="space-y-4 p-6">
                     {Array.from({ length: 3 }).map(() => (

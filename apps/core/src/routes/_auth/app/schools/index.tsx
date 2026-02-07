@@ -101,7 +101,7 @@ function Schools() {
   }), [page, limit, debouncedSearch, status, sortBy, sortOrder])
 
   // Fetch schools data
-  const { data: schoolsData, isLoading, error } = useQuery(schoolsQueryOptions(queryParams))
+  const { data: schoolsData, isPending, error } = useQuery(schoolsQueryOptions(queryParams))
 
   // Fetch schools stats for counts (uses existing analytics endpoint)
   const { data: schoolsPerfData } = useQuery(schoolsPerformanceQueryOptions('30d'))
@@ -120,10 +120,10 @@ function Schools() {
       page: 'schools',
       timestamp: new Date().toISOString(),
       filters: queryParams,
-      isLoading,
+      isPending,
       error: error?.message,
     })
-  }, [logger, queryParams, isLoading, error])
+  }, [logger, queryParams, isPending, error])
 
   const handleSearch = (value: string) => {
     setSearch(value)
@@ -160,7 +160,7 @@ function Schools() {
   } | undefined
   const allSchools: School[] = schoolsData?.data || []
   const statusCounts = schoolsPerfData?.byStatus
-  const statsLoading = isLoading || schoolsPerfData === undefined
+  const statsLoading = isPending || schoolsPerfData === undefined
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -302,7 +302,7 @@ function Schools() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {isLoading ? <Skeleton className="h-8 w-16" /> : allSchools.length}
+              {isPending ? <Skeleton className="h-8 w-16" /> : allSchools.length}
             </div>
             <p className="text-xs text-muted-foreground">
               Toutes les écoles partenaires
@@ -436,7 +436,7 @@ function Schools() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {isLoading
+          {isPending
             ? (
                 <div className="flex justify-center py-8">
                   <IconLoader2 className="h-8 w-8 animate-spin" />

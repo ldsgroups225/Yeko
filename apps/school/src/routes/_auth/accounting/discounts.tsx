@@ -31,7 +31,7 @@ function DiscountsPage() {
   const [editingDiscount, setEditingDiscount] = useState<CRUDDiscount | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
-  const { data: discounts, isLoading } = useQuery(discountsOptions.list())
+  const { data: discounts, isPending } = useQuery(discountsOptions.list())
 
   const deleteMutation = useMutation({
     mutationKey: schoolMutationKeys.discounts.delete,
@@ -125,7 +125,7 @@ function DiscountsPage() {
           <CardContent className="p-0">
             <DiscountsTable
               discounts={discountsList}
-              isLoading={isLoading}
+              isPending={isPending}
               onEdit={handleEdit}
               onDelete={handleDelete}
             />
@@ -150,7 +150,7 @@ function DiscountsPage() {
           if (deletingId)
             deleteMutation.mutate(deletingId)
         }}
-        isLoading={deleteMutation.isPending}
+        isPending={deleteMutation.isPending}
         title={t.accounting.discounts.deleteDiscount()}
         description={t.accounting.discounts.deleteDiscountConfirm()}
       />

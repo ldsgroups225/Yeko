@@ -227,7 +227,7 @@ describe('curriculum Progress Integration', () => {
     })
 
     test('should show loading skeletons when loading', () => {
-      render(<ProgressOverviewCards data={null} isLoading />)
+      render(<ProgressOverviewCards data={null} isPending />)
       const skeletons = document.querySelectorAll('[class*="animate-pulse"], [data-slot="skeleton"]')
       expect(skeletons.length).toBeGreaterThan(0)
     })

@@ -29,7 +29,7 @@ function GradeEntryPage() {
   const { context, isLoading: contextLoading } = useRequiredTeacherContext()
 
   // 1. Fetch class students
-  const { data, isLoading: dataLoading } = useQuery({
+  const { data, isPending: dataPending } = useQuery({
     ...classStudentsQueryOptions({
       classId,
       schoolYearId: context?.schoolYearId ?? '',
@@ -46,7 +46,7 @@ function GradeEntryPage() {
   })
 
   // 3. Manage local note state with useQuery
-  const { data: localNoteId, isLoading: localNoteLoading } = useQuery({
+  const { data: localNoteId, isPending: localNotePending } = useQuery({
     queryKey: ['local-note', classId, subjectId, currentTerm?.id, context?.teacherId],
     queryFn: async () => {
       if (!context || !currentTerm || !classId || !subjectId || !data?.className)
@@ -85,7 +85,7 @@ function GradeEntryPage() {
   })
 
   // 4. Hook into local grades
-  const { grades: localGradesMap, updateGrade, isLoading: gradesLoading } = useNoteGrades({
+  const { grades: localGradesMap, updateGrade, isLoading: gradesPending } = useNoteGrades({
     noteId: localNoteId ?? '',
   })
 
@@ -128,7 +128,7 @@ function GradeEntryPage() {
     }
   }
 
-  const isLoading = contextLoading || dataLoading || gradesLoading || localNoteLoading
+  const isPending = contextLoading || dataPending || gradesPending || localNotePending
   const isPublishing = publishMutation.isPending || isSyncing
 
   return (
@@ -153,7 +153,7 @@ function GradeEntryPage() {
         <SyncStatusContainer />
       </div>
 
-      {isLoading
+      {isPending
         ? <GradeEntrySkeleton />
         : data?.students && data.students.length > 0
           ? (

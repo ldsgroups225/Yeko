@@ -21,9 +21,9 @@ export function useTeacherContext() {
  * Use this in components that require teacher authentication
  */
 export function useRequiredTeacherContext() {
-  const { data, isLoading, error } = useTeacherContext()
+  const { data, isPending, error } = useTeacherContext()
 
-  if (isLoading) {
+  if (isPending) {
     return { isLoading: true, context: null } as const
   }
 

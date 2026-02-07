@@ -23,7 +23,7 @@ interface ConfirmationDialogProps {
   confirmText?: string
   confirmLabel?: string // Alias for confirmText
   cancelText?: string
-  isLoading?: boolean
+  isPending?: boolean
   variant?: 'default' | 'destructive'
 }
 
@@ -36,7 +36,7 @@ function ConfirmationDialog({
   confirmText,
   confirmLabel,
   cancelText = 'Annuler',
-  isLoading = false,
+  isPending = false,
   variant = 'default',
 }: ConfirmationDialogProps) {
   const finalConfirmText = confirmText || confirmLabel || 'Confirmer'
@@ -63,18 +63,18 @@ function ConfirmationDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isLoading}>
+          <AlertDialogCancel disabled={isPending}>
             {cancelText}
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleConfirm}
-            disabled={isLoading}
+            disabled={isPending}
             className={cn(
               variant === 'destructive'
               && 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
             )}
           >
-            {isLoading && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isPending && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
             {finalConfirmText}
           </AlertDialogAction>
         </AlertDialogFooter>

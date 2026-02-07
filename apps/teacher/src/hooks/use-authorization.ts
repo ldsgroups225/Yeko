@@ -5,7 +5,7 @@ import { useTeacherContext } from '@/hooks/use-teacher-context'
  * Adapter for teacher app
  */
 export function useAuthorization() {
-  const { data: teacher, isLoading } = useTeacherContext()
+  const { data: teacher, isPending } = useTeacherContext()
 
   /**
    * Check if user has a specific permission
@@ -19,7 +19,7 @@ export function useAuthorization() {
 
   return {
     can,
-    isLoading,
+    isLoading: isPending,
     auth: {
       isAuthenticated: !!teacher?.schoolId,
       user: teacher,

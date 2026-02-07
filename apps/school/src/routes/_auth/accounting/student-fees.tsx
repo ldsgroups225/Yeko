@@ -15,7 +15,7 @@ export const Route = createFileRoute('/_auth/accounting/student-fees')({
 function StudentFeesPage() {
   const t = useTranslations()
 
-  const { data: studentsWithBalance, isLoading } = useQuery(studentFeesOptions.withBalance())
+  const { data: studentsWithBalance, isPending } = useQuery(studentFeesOptions.withBalance())
 
   const studentFeesList = (studentsWithBalance ?? []).map(s => ({
     id: s.studentId,
@@ -63,7 +63,7 @@ function StudentFeesPage() {
           <CardContent className="p-0">
             <StudentFeesTable
               studentFees={studentFeesList}
-              isLoading={isLoading}
+              isPending={isPending}
             />
           </CardContent>
         </Card>

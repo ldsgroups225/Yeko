@@ -19,29 +19,25 @@ import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { getSchoolYears } from '@/school/functions/school-years'
 
-interface SchoolYear {
-  id: string
-  isActive: boolean
-  template: {
-    id: string
-    name: string
-  }
-}
-
 export function SchoolYearSwitcher() {
   const t = useTranslations()
-  const { schoolYearId, switchSchoolYear, isSwitching }
+  const {
+    schoolYearId,
+    switchSchoolYear,
+    isSwitching,
+    isPending: isContextPending,
+  }
     = useSchoolYearContext()
   const [open, setOpen] = useState(false)
 
-  const { data: schoolYearsResult, isLoading } = useQuery({
+  const { data: schoolYearsResult, isPending: isPendingYears } = useQuery({
     queryKey: ['school-years'],
     queryFn: async () => await getSchoolYears(),
   })
   const schoolYears = schoolYearsResult?.success ? schoolYearsResult.data : []
 
   const currentYear = schoolYears?.find(
-    (sy: SchoolYear) => sy.id === schoolYearId,
+    sy => sy.id === schoolYearId,
   )
 
   const handleSelect = (yearId: string) => {
@@ -51,7 +47,7 @@ export function SchoolYearSwitcher() {
     setOpen(false)
   }
 
-  if (isLoading) {
+  if (isPendingYears || isContextPending) {
     return (
       <div className="flex h-9 w-[156px] items-center gap-2 rounded-md border border-input bg-background px-3">
         <IconCalendar className="h-4 w-4 text-muted-foreground" />
@@ -102,7 +98,7 @@ export function SchoolYearSwitcher() {
           <CommandList id={listboxId}>
             <CommandEmpty>{t.schoolYear.noYears()}</CommandEmpty>
             <CommandGroup>
-              {schoolYears.map((year: SchoolYear) => (
+              {schoolYears.map(year => (
                 <CommandItem
                   key={year.id}
                   value={year.id}

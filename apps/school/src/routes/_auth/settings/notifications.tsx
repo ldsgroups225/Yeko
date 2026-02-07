@@ -19,7 +19,7 @@ function NotificationsSettingsPage() {
   const t = useTranslations()
   const queryClient = useQueryClient()
 
-  const { data: result, isLoading } = useQuery(schoolProfileOptions.detail())
+  const { data: result, isPending } = useQuery(schoolProfileOptions.detail())
 
   const settingsMutation = useMutation({
     mutationKey: schoolMutationKeys.schoolProfile.updateSettings,
@@ -37,7 +37,7 @@ function NotificationsSettingsPage() {
     settingsMutation.mutate({ data })
   }
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="space-y-6">
         <Skeleton className="h-[400px] w-full rounded-3xl" />

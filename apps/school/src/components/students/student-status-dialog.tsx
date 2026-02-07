@@ -31,7 +31,7 @@ interface StudentStatusDialogProps {
     status: string
   }
   onConfirm: (status: string, reason?: string) => void
-  isLoading?: boolean
+  isPending?: boolean
 }
 
 export function StudentStatusDialog({
@@ -39,7 +39,7 @@ export function StudentStatusDialog({
   onOpenChange,
   student,
   onConfirm,
-  isLoading,
+  isPending,
 }: StudentStatusDialogProps) {
   const t = useTranslations()
   const [status, setStatus] = useState(student?.status || 'active')
@@ -110,15 +110,15 @@ export function StudentStatusDialog({
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
-            disabled={isLoading}
+            disabled={isPending}
           >
             {t.common.cancel()}
           </Button>
           <Button
             onClick={handleConfirm}
-            disabled={isLoading || (requiresReason && !reason)}
+            disabled={isPending || (requiresReason && !reason)}
           >
-            {isLoading && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isPending && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
             {t.common.confirm()}
           </Button>
         </DialogFooter>

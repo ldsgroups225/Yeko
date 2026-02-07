@@ -34,7 +34,7 @@ function MessagesPage() {
 
   const { context, isLoading: contextLoading } = useRequiredTeacherContext()
 
-  const { data, isLoading: dataLoading } = useQuery({
+  const { data, isPending: dataPending } = useQuery({
     ...teacherMessagesQueryOptions({
       teacherId: context?.teacherId ?? '',
       folder,
@@ -42,7 +42,7 @@ function MessagesPage() {
     enabled: !!context,
   })
 
-  const isLoading = contextLoading || dataLoading
+  const isPending = contextLoading || dataPending
 
   return (
     <div className="flex flex-col gap-4 p-4 pb-20">
@@ -73,7 +73,7 @@ function MessagesPage() {
         </TabsList>
 
         <TabsContent value={folder} className="mt-4">
-          {isLoading
+          {isPending
             ? (
                 <MessagesSkeleton />
               )

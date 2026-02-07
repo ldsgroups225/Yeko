@@ -14,9 +14,9 @@ export const Route = createFileRoute('/_auth/students/$studentId/edit')({
 function EditStudentPage() {
   const t = useTranslations()
   const { studentId } = Route.useParams()
-  const { data, isLoading } = useQuery(studentsOptions.detail(studentId))
+  const { data, isPending } = useQuery(studentsOptions.detail(studentId))
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="space-y-6">
         <Skeleton className="h-8 w-64" />

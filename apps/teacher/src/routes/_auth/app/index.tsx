@@ -33,7 +33,7 @@ function SchedulePage() {
   })
   const weekEnd = addDays(weekStart, 6)
 
-  const { data, isLoading: dataLoading } = useQuery({
+  const { data, isPending: dataPending } = useQuery({
     ...detailedScheduleQueryOptions({
       teacherId: context?.teacherId ?? '',
       schoolId: context?.schoolId ?? '',
@@ -45,7 +45,7 @@ function SchedulePage() {
   })
 
   // Keep pending grades count from the old dashboard logic as it was present in planning.tsx
-  const { data: dashboardData, isLoading: dashboardLoading } = useQuery({
+  const { data: dashboardData, isPending: dashboardPending } = useQuery({
     ...teacherDashboardQueryOptions({
       teacherId: context?.teacherId ?? '',
       schoolId: context?.schoolId ?? '',
@@ -55,7 +55,7 @@ function SchedulePage() {
     enabled: !!context,
   })
 
-  const isLoading = contextLoading || dataLoading || dashboardLoading
+  const isPending = contextLoading || dataPending || dashboardPending
 
   const daySchedule
     = data?.sessions.filter(s => s.dayOfWeek === selectedDay) ?? []
@@ -74,7 +74,7 @@ function SchedulePage() {
       === format(today, 'yyyy-MM-dd'),
   }))
 
-  if (isLoading) {
+  if (isPending) {
     return <ScheduleSkeleton />
   }
 

@@ -23,7 +23,7 @@ vi.mock('@/hooks/use-school-context', () => ({
   useSchoolContext: vi.fn(() => ({
     schoolId: 'school-123',
     schoolName: 'Test School',
-    isLoading: false,
+    isPending: false,
   })),
 }))
 
@@ -31,7 +31,7 @@ vi.mock('@/hooks/use-school-context', () => ({
 vi.mock('@/hooks/use-role', () => ({
   useRole: vi.fn(() => ({
     role: 'school_director',
-    isLoading: false,
+    isPending: false,
   })),
 }))
 

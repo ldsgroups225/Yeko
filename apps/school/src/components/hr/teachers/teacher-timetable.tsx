@@ -17,7 +17,7 @@ export function TeacherTimetable({ teacherId }: TeacherTimetableProps) {
   const t = useTranslations()
   const { schoolYearId } = useSchoolYearContext()
 
-  const { data: sessions, isLoading } = useQuery({
+  const { data: sessions, isPending } = useQuery({
     ...teacherOptions.schedules(teacherId, schoolYearId || ''),
     enabled: !!teacherId && !!schoolYearId,
   })
@@ -38,7 +38,7 @@ export function TeacherTimetable({ teacherId }: TeacherTimetableProps) {
     color: 'primary',
   }))
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="space-y-4">
         <div className="h-10 w-48 animate-pulse rounded-lg bg-card" />

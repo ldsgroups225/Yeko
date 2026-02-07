@@ -92,7 +92,7 @@ export function ParentsList() {
 
   const debouncedSearch = useDebounce(search, 500)
 
-  const { data: parentsResult, isLoading } = useQuery(
+  const { data: parentsResult, isPending } = useQuery(
     parentsOptions.list({
       search: debouncedSearch || undefined,
       invitationStatus:
@@ -264,7 +264,7 @@ export function ParentsList() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {isLoading
+              {isPending
                 ? (
                     Array.from({ length: 5 }, () => (
                       <TableRow key={`skeleton-${generateUUID()}`}>

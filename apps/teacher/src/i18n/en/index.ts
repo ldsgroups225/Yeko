@@ -316,6 +316,7 @@ const en: Translation = {
   notifications: {
     title: 'Notifications',
     markAllRead: 'Mark all as read',
+    markedAllRead: 'All notifications marked as read',
     noNotifications: 'No notifications',
     types: {
       message: 'New message',

@@ -68,7 +68,7 @@ function ConductReportsPage() {
   const startDateStr = startDate.toISOString().split('T')[0] ?? ''
   const endDateStr = endDate.toISOString().split('T')[0] ?? ''
 
-  const { data: result, isLoading } = useQuery({
+  const { data: result, isPending } = useQuery({
     ...conductRecordsOptions({
       schoolYearId: schoolYearId || '',
       classId: classId || undefined,
@@ -200,7 +200,7 @@ function ConductReportsPage() {
       </motion.div>
 
       <AnimatePresence mode="wait">
-        {isLoading
+        {isPending
           ? (
               <motion.div
                 key="skeleton"

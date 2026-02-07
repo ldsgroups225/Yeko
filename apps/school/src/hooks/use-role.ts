@@ -10,7 +10,7 @@ export type RoleSlug
     | 'registrar'
 
 export function useRole() {
-  const { data: result, isLoading } = useQuery({
+  const { data: result, isPending } = useQuery({
     queryKey: ['user-role'],
     queryFn: () => getCurrentUserRole(),
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -22,6 +22,6 @@ export function useRole() {
     role: roleData?.roleSlug as RoleSlug | undefined,
     roleName: roleData?.roleName,
     permissions: roleData?.permissions,
-    isLoading,
+    isPending,
   }
 }

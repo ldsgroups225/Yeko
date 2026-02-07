@@ -19,7 +19,7 @@ function RefundsPage() {
   const t = useTranslations()
   const queryClient = useQueryClient()
 
-  const { data: refunds, isLoading } = useQuery(refundsOptions.list())
+  const { data: refunds, isPending } = useQuery(refundsOptions.list())
 
   const approveMutation = useMutation({
     mutationKey: schoolMutationKeys.refunds.approve,
@@ -85,7 +85,7 @@ function RefundsPage() {
           <CardContent className="p-0">
             <RefundsTable
               refunds={refundsList}
-              isLoading={isLoading}
+              isPending={isPending}
               onApprove={id => approveMutation.mutate(id)}
               onReject={id => rejectMutation.mutate(id)}
             />

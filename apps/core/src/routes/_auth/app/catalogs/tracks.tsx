@@ -44,8 +44,8 @@ function TracksManagement() {
   const [newTrackLevelId, setNewTrackLevelId] = useState<string>('')
   const [editTrackLevelId, setEditTrackLevelId] = useState<string>('')
 
-  const { data: educationLevels, isLoading: levelsLoading } = useQuery(educationLevelsQueryOptions())
-  const { data: tracks, isLoading: tracksLoading } = useQuery(tracksQueryOptions())
+  const { data: educationLevels, isPending: levelsPending } = useQuery(educationLevelsQueryOptions())
+  const { data: tracks, isPending: tracksPending } = useQuery(tracksQueryOptions())
 
   const createMutation = useMutation({
     ...createTrackMutationOptions,
@@ -139,7 +139,7 @@ function TracksManagement() {
     }))
   }, [tracks, educationLevels])
 
-  if (levelsLoading || tracksLoading) {
+  if (levelsPending || tracksPending) {
     return <div>Chargement...</div>
   }
 
@@ -370,7 +370,7 @@ function TracksManagement() {
         description={`Êtes-vous sûr de vouloir supprimer la filière "${deletingTrack?.name}" ? Cette action est irréversible.`}
         confirmText={deletingTrack?.name}
         onConfirm={handleDelete}
-        isLoading={deleteMutation.isPending}
+        isPending={deleteMutation.isPending}
       />
     </div>
   )

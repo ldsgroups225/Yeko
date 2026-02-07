@@ -51,7 +51,7 @@ export function UserCombobox({
   const [open, setOpen] = React.useState(false)
   const [search, setSearch] = React.useState('')
 
-  const { data, isLoading } = useQuery({
+  const { data, isPending } = useQuery({
     queryKey: ['users-for-staff', search],
     queryFn: async () => {
       const result = await getUsers({
@@ -124,7 +124,7 @@ export function UserCombobox({
           </div>
           <CommandList id="user-combobox-list">
             <AnimatePresence mode="wait">
-              {isLoading
+              {isPending
                 ? (
                     <motion.div
                       key="loading"

@@ -24,7 +24,7 @@ function SessionsPage() {
 
   const { context, isLoading: contextLoading } = useRequiredTeacherContext()
 
-  const { data, isLoading: dataLoading } = useQuery({
+  const { data, isPending: dataPending } = useQuery({
     ...sessionHistoryQueryOptions({
       teacherId: context?.teacherId ?? '',
       page: 1,
@@ -35,7 +35,7 @@ function SessionsPage() {
 
   // Check for active session
   // Check for active session
-  const { data: dashboardData, isLoading: dashboardLoading } = useQuery({
+  const { data: dashboardData, isPending: dashboardPending } = useQuery({
     ...teacherDashboardQueryOptions({
       teacherId: context?.teacherId ?? '',
       schoolId: context?.schoolId ?? '',
@@ -44,9 +44,9 @@ function SessionsPage() {
     enabled: !!context,
   })
 
-  const isLoading = contextLoading || dataLoading || dashboardLoading
+  const isPending = contextLoading || dataPending || dashboardPending
 
-  if (isLoading) {
+  if (isPending) {
     return <SessionsSkeleton />
   }
 

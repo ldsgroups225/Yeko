@@ -41,7 +41,7 @@ export const createPlatformRoleMutationOptions = {
 
 export const updatePlatformRoleMutationOptions = {
   mutationKey: platformRolesMutationKeys.update,
-  mutationFn: ({ id, updates }: { id: string; updates: Partial<Role> }) =>
+  mutationFn: ({ id, updates }: { id: string, updates: Partial<Role> }) =>
     updatePlatformRole({ data: { id, updates } }),
 }
 

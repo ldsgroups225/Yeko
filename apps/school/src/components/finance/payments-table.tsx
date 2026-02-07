@@ -38,14 +38,14 @@ interface Payment {
 
 interface PaymentsTableProps {
   payments: Payment[]
-  isLoading?: boolean
+  isPending?: boolean
   onView?: (payment: Payment) => void
   onPrintReceipt?: (payment: Payment) => void
 }
 
 export function PaymentsTable({
   payments,
-  isLoading = false,
+  isPending = false,
   onView,
   onPrintReceipt,
 }: PaymentsTableProps) {
@@ -96,7 +96,7 @@ export function PaymentsTable({
     }
   }
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="space-y-4 p-4">
         {Array.from({ length: 5 }).map(() => (

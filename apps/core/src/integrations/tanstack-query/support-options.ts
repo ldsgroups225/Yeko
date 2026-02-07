@@ -1,10 +1,10 @@
+import { queryOptions } from '@tanstack/react-query'
 import {
   contactsQuery,
   recentTicketsQuery,
   ticketsQuery,
   ticketStatsQuery,
 } from '@/core/functions/support'
-import { queryOptions } from '@tanstack/react-query'
 
 export function ticketStatsQueryOptions() {
   return queryOptions({

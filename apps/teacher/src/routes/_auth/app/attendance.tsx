@@ -65,7 +65,7 @@ function AttendancePage() {
   })
 
   // Query for class roster
-  const { data: rosterResult, isLoading: isLoadingRoster } = useQuery({
+  const { data: rosterResult, isPending: isPendingRoster } = useQuery({
     ...classRosterQueryOptions({
       classId: selectedClassId,
       schoolYearId: context?.schoolYearId ?? '',
@@ -74,7 +74,7 @@ function AttendancePage() {
     enabled: Boolean(selectedClassId && context?.schoolYearId),
   })
 
-  const rosterData = rosterResult?.success ? rosterResult.roster : []
+  const rosterData = useMemo(() => rosterResult?.success ? rosterResult.roster : [], [rosterResult])
 
   // Derived counts using useMemo to avoid extra queries
   const counts = useMemo(() => {
@@ -316,7 +316,7 @@ function AttendancePage() {
             </Button>
           </CardHeader>
           <CardContent>
-            {isLoadingRoster
+            {isPendingRoster
               ? (
                   <div className="space-y-3">
                     {[1, 2, 3, 4, 5].map(el => (

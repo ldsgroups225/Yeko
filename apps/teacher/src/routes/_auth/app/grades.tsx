@@ -18,7 +18,7 @@ function GradesPage() {
 
   const { context, isLoading: contextLoading } = useRequiredTeacherContext()
 
-  const { data, isLoading: dataLoading } = useQuery({
+  const { data, isPending: dataPending } = useQuery({
     ...teacherClassesQueryOptions({
       teacherId: context?.teacherId ?? '',
       schoolId: context?.schoolId ?? '',
@@ -27,7 +27,7 @@ function GradesPage() {
     enabled: !!context,
   })
 
-  const isLoading = contextLoading || dataLoading
+  const isPending = contextLoading || dataPending
 
   return (
     <div className="flex flex-col gap-4 p-4 pb-20">
@@ -38,7 +38,7 @@ function GradesPage() {
 
       <p className="text-sm text-muted-foreground">{LL.grades.selectClass()}</p>
 
-      {isLoading
+      {isPending
         ? (
             <GradesSkeleton />
           )

@@ -17,15 +17,15 @@ export const Route = createFileRoute('/_auth/accounting/dashboard')({
 function FinanceDashboardPage() {
   const t = useTranslations()
 
-  const { data: studentsWithBalance, isLoading: isLoadingStudents } = useQuery(
+  const { data: studentsWithBalance, isPending: isPendingStudents } = useQuery(
     studentFeesOptions.withBalance(),
   )
 
-  const { data: pendingRefunds, isLoading: isLoadingRefunds } = useQuery(
+  const { data: pendingRefunds, isPending: isPendingRefunds } = useQuery(
     refundsOptions.pendingCount(),
   )
 
-  const { data: financeStats, isLoading: isLoadingStats } = useQuery(
+  const { data: financeStats, isPending: isPendingStats } = useQuery(
     financeStatsOptions.summary(),
   )
 
@@ -51,7 +51,7 @@ function FinanceDashboardPage() {
     ? (totalCollected / totalExpectedRevenue) * 100
     : 0
 
-  const isLoading = isLoadingStudents || isLoadingRefunds || isLoadingStats
+  const isPending = isPendingStudents || isPendingRefunds || isPendingStats
 
   return (
     <div className="space-y-8 p-1">
@@ -85,7 +85,7 @@ function FinanceDashboardPage() {
           totalStudents={totalStudents}
           studentsWithBalance={studentsWithBalanceCount}
           refundsPending={typeof pendingRefunds === 'number' ? pendingRefunds : 0}
-          isLoading={isLoading}
+          isPending={isPending}
         />
       </Suspense>
     </div>

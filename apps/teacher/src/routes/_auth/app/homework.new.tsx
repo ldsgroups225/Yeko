@@ -34,7 +34,7 @@ function NewHomeworkPage() {
 
   const { context, isLoading: contextLoading } = useRequiredTeacherContext()
 
-  const { data: classesData, isLoading: classesLoading } = useQuery({
+  const { data: classesData, isPending: classesPending } = useQuery({
     ...teacherClassesQueryOptions({
       teacherId: context?.teacherId ?? '',
       schoolId: context?.schoolId ?? '',
@@ -83,7 +83,7 @@ function NewHomeworkPage() {
     })
   }
 
-  const isLoading = contextLoading || classesLoading
+  const isPending = contextLoading || classesPending
   const canSubmit = selectedClassId && selectedSubjectId && title.trim() && dueDate
 
   return (
@@ -97,7 +97,7 @@ function NewHomeworkPage() {
         <h1 className="text-lg font-semibold">{LL.homework.new()}</h1>
       </div>
 
-      {isLoading
+      {isPending
         ? <FormSkeleton />
         : (
             <div className="space-y-4">

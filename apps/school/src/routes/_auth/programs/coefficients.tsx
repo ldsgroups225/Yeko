@@ -22,7 +22,7 @@ function CoefficientsPage() {
   const [selectedSeriesId, setSelectedSeriesId] = useState<string>('all')
 
   // Fetch school years to get templates
-  const { data: schoolYearsResult, isLoading: yearsLoading } = useQuery({
+  const { data: schoolYearsResult, isPending: yearsPending } = useQuery({
     queryKey: ['school-years'],
     queryFn: () => getSchoolYears(),
     staleTime: 5 * 60 * 1000,
@@ -31,7 +31,7 @@ function CoefficientsPage() {
   const schoolYears = schoolYearsResult?.success ? schoolYearsResult.data : []
 
   // Fetch series for filtering
-  const { data: seriesResult, isLoading: seriesLoading } = useQuery({
+  const { data: seriesResult, isPending: seriesPending } = useQuery({
     queryKey: ['series'],
     queryFn: () => getSeries({ data: {} }),
     staleTime: 10 * 60 * 1000,
@@ -80,7 +80,7 @@ function CoefficientsPage() {
             <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1 block">
               {t.schoolYear.title()}
             </span>
-            {yearsLoading
+            {yearsPending
               ? (
                   <Skeleton className="h-11 w-full rounded-xl" />
                 )
@@ -113,7 +113,7 @@ function CoefficientsPage() {
             <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1 block">
               {t.academic.coefficients.filters.series()}
             </span>
-            {seriesLoading
+            {seriesPending
               ? (
                   <Skeleton className="h-11 w-full rounded-xl" />
                 )
